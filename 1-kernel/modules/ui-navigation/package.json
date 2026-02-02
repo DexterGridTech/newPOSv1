@@ -1,0 +1,34 @@
+{
+  "name": "@impos2/kernel-module-ui-navigation",
+  "version": "1.0.0",
+  "description": "UI Navigation module for POS Kernel",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "react-native": "./src/index.ts",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "build-for-product": "rm -rf dist && tsc",
+    "dev": "ts-node src/index.ts",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@impos2/kernel-base": "*",
+    "@reduxjs/toolkit": "^2.11.2",
+    "lodash": "^4.17.21",
+    "react": "18.3.1",
+    "react-redux": "^9.2.0",
+    "redux-observable": "^3.0.0-rc.3",
+    "rxjs": "^7.8.2"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.17.20",
+    "@types/node": "^24.10.0",
+    "@types/react": "~18.3.12",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}

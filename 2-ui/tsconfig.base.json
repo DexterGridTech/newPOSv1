@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "lib": ["esnext"],
+    "jsx": "react-native",
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": false,
+    "allowJs": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "test"
+  ]
+}

@@ -1,0 +1,37 @@
+import {
+    CommandHandler,
+    currentState,
+    customizedPathValue,
+    dispatchAction,
+    getPathValuesFromUnitData,
+    IActor,
+    ICommand,
+    logger
+} from "../../core";
+import {UnitDataChangedCommand} from "../commands";
+import {RootState, UDG_SystemParameters} from "../rootState";
+import {parameterCategory} from "../parameter";
+import {systemParametersActions} from "../slices";
+
+class SystemParametersActor extends IActor {
+    @CommandHandler(UnitDataChangedCommand)
+    private async handleUnitDataChanged(command: UnitDataChangedCommand) {
+        if (command.payload.changeSet.group == UDG_SystemParameters) {
+            logger.log(`${UDG_SystemParameters} unit data changed`)
+            const state = currentState<RootState>()
+            const udg_systemParameters = state[UDG_SystemParameters]
+            const {operatingEntity, model} = state.terminalInfo
+            const pathValues = getPathValuesFromUnitData(
+                operatingEntity!, model!, udg_systemParameters
+            )
+            dispatchAction(systemParametersActions.setParameters(pathValues), command)
+        }
+    }
+}
+
+
+customizedPathValue.provider[parameterCategory] = (path: string) => {
+    return currentState<RootState>().systemParameters.parameters[path] ?? null
+}
+
+export const systemParametersActor = new SystemParametersActor()

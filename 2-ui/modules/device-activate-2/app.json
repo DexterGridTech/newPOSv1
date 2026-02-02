@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "device-activate-android",
+    "slug": "device-activate-android",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "entryPoint": "./index.ts",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}

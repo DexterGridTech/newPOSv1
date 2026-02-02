@@ -1,0 +1,37 @@
+{
+  "name": "@impos2/kernel-server",
+  "version": "1.0.0",
+  "description": "IMPOS2 Kernel Test Server",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit && cd web && yarn build",
+    "build-for-product": "tsc && cd web && yarn build-for-product",
+    "build:server": "tsc",
+    "build:web": "cd web && yarn build",
+    "dev": "concurrently \"yarn dev:server\" \"yarn dev:web\"",
+    "dev:server": "tsx watch src/index.ts",
+    "dev:web": "cd web && yarn dev",
+    "start": "node dist/index.js",
+    "clean": "rm -rf dist node_modules web/dist web/node_modules",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@types/ws": "^8.18.1",
+    "better-sqlite3": "^11.8.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "nanoid": "^3.3.7",
+    "ws": "^8.19.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.9",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^24.10.0",
+    "concurrently": "^8.2.2",
+    "ts-node-dev": "^2.0.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}
