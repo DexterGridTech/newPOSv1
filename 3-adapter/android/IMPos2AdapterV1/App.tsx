@@ -20,8 +20,9 @@ import { posAdapter } from './src/adapters';
 import { ExternalCallDebugger } from './dev/screens/ExternalCallDebugger';
 import LoggerDebugger from './dev/screens/LoggerDebugger';
 import SystemStatusDebugger from './dev/screens/SystemStatusDebugger';
+import ScriptsDebugger from './dev/screens/ScriptsDebugger';
 
-type MenuType = 'deviceInfo' | 'storage' | 'externalCall' | 'logger' | 'systemStatus';
+type MenuType = 'deviceInfo' | 'storage' | 'externalCall' | 'logger' | 'systemStatus' | 'scripts';
 
 function App(): React.JSX.Element {
   const [activeMenu, setActiveMenu] = useState<MenuType>('deviceInfo');
@@ -181,6 +182,18 @@ function App(): React.JSX.Element {
               系统状态
             </Text>
           </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.menuItem, activeMenu === 'scripts' && styles.activeMenuItem]}
+            onPress={() => setActiveMenu('scripts')}
+            activeOpacity={0.7}>
+            <View style={[styles.menuIcon, activeMenu === 'scripts' && styles.activeMenuIcon]}>
+              <Text style={styles.menuIconText}>⚡</Text>
+            </View>
+            <Text style={[styles.menuText, activeMenu === 'scripts' && styles.activeMenuText]}>
+              脚本执行
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {/* 右侧内容区域 */}
@@ -336,8 +349,10 @@ function App(): React.JSX.Element {
           <ExternalCallDebugger />
         ) : activeMenu === 'logger' ? (
           <LoggerDebugger />
-        ) : (
+        ) : activeMenu === 'systemStatus' ? (
           <SystemStatusDebugger />
+        ) : (
+          <ScriptsDebugger />
         )}
         </ScrollView>
       </View>

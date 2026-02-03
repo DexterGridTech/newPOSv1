@@ -122,6 +122,8 @@ export interface PowerStatusChangeEvent {
     batteryLevel: number;
     /** 电池状态 */
     batteryStatus: 'charging' | 'discharging' | 'full' | 'not_charging' | 'unknown';
+    /** 电池健康状态 */
+    batteryHealth?: 'good' | 'overheat' | 'dead' | 'over_voltage' | 'cold' | 'unknown';
     /** 变化时间戳 */
     timestamp: number;
 }

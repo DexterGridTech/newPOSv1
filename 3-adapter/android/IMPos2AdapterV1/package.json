@@ -43,6 +43,7 @@
     "node": ">=18"
   },
   "dependencies": {
-    "react-native-mmkv": "^2.12.2"
+    "react-native-mmkv": "^2.12.2",
+    "react-native-quickjs": "^0.0.2"
   }
 }

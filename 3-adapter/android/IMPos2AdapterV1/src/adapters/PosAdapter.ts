@@ -4,6 +4,7 @@ import { storageAdapter } from './StorageAdapter';
 import { externalCallAdapter } from './ExternalCallAdapter';
 import { loggerAdapter } from './LoggerAdapter';
 import { systemStatusAdapter } from './SystemStatusAdapter';
+import { scriptsAdapter } from './ScriptsAdapter';
 
 /**
  * PosAdapter 单例类
@@ -59,6 +60,13 @@ class PosAdapterImpl implements IPosAdapter {
    */
   get systemStatus() {
     return systemStatusAdapter;
+  }
+
+  /**
+   * 脚本执行适配器
+   */
+  get scripts() {
+    return scriptsAdapter;
   }
 }
 

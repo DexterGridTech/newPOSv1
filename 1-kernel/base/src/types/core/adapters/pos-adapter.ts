@@ -3,6 +3,7 @@ import {IDeviceInfoAdapter} from "./device-info";
 import {IExternalCallAdapter} from "./external-call";
 import {ILoggerAdapter} from "./logger";
 import {ISystemStatusAdapter} from "./system-status";
+import {IScriptsAdapter} from "./scripts";
 
 
 export interface IPosAdapter {
@@ -11,4 +12,5 @@ export interface IPosAdapter {
     externalCall:IExternalCallAdapter
     logger:ILoggerAdapter
     systemStatus:ISystemStatusAdapter
+    scripts:IScriptsAdapter
 }
