@@ -5,6 +5,7 @@ import { externalCallAdapter } from './ExternalCallAdapter';
 import { loggerAdapter } from './LoggerAdapter';
 import { systemStatusAdapter } from './SystemStatusAdapter';
 import { scriptsAdapter } from './ScriptsAdapter';
+import { localWebServerAdapter } from './LocalWebServerAdapter';
 
 /**
  * PosAdapter 单例类
@@ -67,6 +68,13 @@ class PosAdapterImpl implements IPosAdapter {
    */
   get scripts() {
     return scriptsAdapter;
+  }
+
+  /**
+   * LocalWebServer 适配器
+   */
+  get localWebServer() {
+    return localWebServerAdapter;
   }
 }
 

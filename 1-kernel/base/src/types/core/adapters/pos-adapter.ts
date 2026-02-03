@@ -4,6 +4,7 @@ import {IExternalCallAdapter} from "./external-call";
 import {ILoggerAdapter} from "./logger";
 import {ISystemStatusAdapter} from "./system-status";
 import {IScriptsAdapter} from "./scripts";
+import {ILocalWebServerAdapter} from "./local-web-server";
 
 
 export interface IPosAdapter {
@@ -13,4 +14,5 @@ export interface IPosAdapter {
     logger:ILoggerAdapter
     systemStatus:ISystemStatusAdapter
     scripts:IScriptsAdapter
+    localWebServer:ILocalWebServerAdapter
 }

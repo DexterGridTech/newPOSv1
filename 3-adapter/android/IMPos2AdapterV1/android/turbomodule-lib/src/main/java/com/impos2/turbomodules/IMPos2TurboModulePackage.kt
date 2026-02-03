@@ -15,6 +15,7 @@ class IMPos2TurboModulePackage : TurboReactPackage() {
             LoggerTurboModule.NAME -> LoggerTurboModule(reactContext)
             SystemStatusTurboModule.NAME -> SystemStatusTurboModule(reactContext)
             ScriptsTurboModule.NAME -> ScriptsTurboModule(reactContext)
+            LocalWebServerTurboModule.NAME -> LocalWebServerTurboModule(reactContext)
             else -> null
         }
     }
@@ -57,6 +58,14 @@ class IMPos2TurboModulePackage : TurboReactPackage() {
                 ScriptsTurboModule.NAME to ReactModuleInfo(
                     ScriptsTurboModule.NAME,
                     ScriptsTurboModule::class.java.name,
+                    false, // canOverrideExistingModule
+                    false, // needsEagerInit
+                    false, // isCxxModule
+                    true   // isTurboModule
+                ),
+                LocalWebServerTurboModule.NAME to ReactModuleInfo(
+                    LocalWebServerTurboModule.NAME,
+                    LocalWebServerTurboModule::class.java.name,
                     false, // canOverrideExistingModule
                     false, // needsEagerInit
                     false, // isCxxModule

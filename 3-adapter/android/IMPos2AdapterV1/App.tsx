@@ -21,8 +21,9 @@ import { ExternalCallDebugger } from './dev/screens/ExternalCallDebugger';
 import LoggerDebugger from './dev/screens/LoggerDebugger';
 import SystemStatusDebugger from './dev/screens/SystemStatusDebugger';
 import ScriptsDebugger from './dev/screens/ScriptsDebugger';
+import LocalWebServerDebugger from './dev/screens/LocalWebServerDebugger';
 
-type MenuType = 'deviceInfo' | 'storage' | 'externalCall' | 'logger' | 'systemStatus' | 'scripts';
+type MenuType = 'deviceInfo' | 'storage' | 'externalCall' | 'logger' | 'systemStatus' | 'scripts' | 'localWebServer';
 
 function App(): React.JSX.Element {
   const [activeMenu, setActiveMenu] = useState<MenuType>('deviceInfo');
@@ -194,6 +195,18 @@ function App(): React.JSX.Element {
               脚本执行
             </Text>
           </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.menuItem, activeMenu === 'localWebServer' && styles.activeMenuItem]}
+            onPress={() => setActiveMenu('localWebServer')}
+            activeOpacity={0.7}>
+            <View style={[styles.menuIcon, activeMenu === 'localWebServer' && styles.activeMenuIcon]}>
+              <Text style={styles.menuIconText}>🌐</Text>
+            </View>
+            <Text style={[styles.menuText, activeMenu === 'localWebServer' && styles.activeMenuText]}>
+              本地服务器
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {/* 右侧内容区域 */}
@@ -351,8 +364,10 @@ function App(): React.JSX.Element {
           <LoggerDebugger />
         ) : activeMenu === 'systemStatus' ? (
           <SystemStatusDebugger />
-        ) : (
+        ) : activeMenu === 'scripts' ? (
           <ScriptsDebugger />
+        ) : (
+          <LocalWebServerDebugger />
         )}
         </ScrollView>
       </View>
