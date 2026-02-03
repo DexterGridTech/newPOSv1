@@ -1,35 +1,3 @@
-
-export interface IExternalCallAdapter {
-    /**
-     * 执行外部调用
-     * @param request 外部调用请求
-     * @returns Promise<ExternalCallResponse<T>> 外部调用响应
-     */
-    externalCall<T = any>(request: ExternalCallRequest): Promise<ExternalCallResponse<T>>;
-
-    /**
-     * 检查外部调用目标是否可用
-     * @param type 调用类型
-     * @param target 目标标识
-     * @returns Promise<boolean> 是否可用
-     */
-    externalCallTargetIsAvailable(type: CallType, target: string): Promise<boolean>;
-
-    /**
-     * 获取可用的外部调用目标列表
-     * @param type 调用类型
-     * @returns Promise<string[]> 可用目标列表
-     */
-    getAvailableExternalCallTargets(type: CallType): Promise<string[]>;
-
-    /**
-     * 取消外部调用
-     * @param requestId 请求ID，如果不传则取消所有请求
-     * @returns Promise<void>
-     */
-    cancelExternalCall(requestId?: string): Promise<void>;
-}
-
 /**
  * External Call 核心类型定义
  * 从 1-kernel/modules/external-call 迁移到 1-kernel/base

@@ -1,6 +1,9 @@
 import { IPosAdapter } from '@impos2/kernel-base';
 import { deviceInfoAdapter } from './DeviceInfoAdapter';
 import { storageAdapter } from './StorageAdapter';
+import { externalCallAdapter } from './ExternalCallAdapter';
+import { loggerAdapter } from './LoggerAdapter';
+import { systemStatusAdapter } from './SystemStatusAdapter';
 
 /**
  * PosAdapter 单例类
@@ -35,6 +38,27 @@ class PosAdapterImpl implements IPosAdapter {
    */
   get deviceInfo() {
     return deviceInfoAdapter;
+  }
+
+  /**
+   * 外部调用适配器
+   */
+  get externalCall() {
+    return externalCallAdapter;
+  }
+
+  /**
+   * 日志适配器
+   */
+  get logger() {
+    return loggerAdapter;
+  }
+
+  /**
+   * 系统状态适配器
+   */
+  get systemStatus() {
+    return systemStatusAdapter;
   }
 }
 
