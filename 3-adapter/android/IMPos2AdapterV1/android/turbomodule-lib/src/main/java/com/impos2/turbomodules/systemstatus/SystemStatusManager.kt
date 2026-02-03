@@ -1,14 +1,18 @@
 package com.impos2.turbomodules.systemstatus
 
+import android.Manifest
 import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.location.Location
+import android.location.LocationListener
 import android.location.LocationManager
 import android.os.BatteryManager
 import android.os.Build
+import android.os.Bundle
+import androidx.core.content.ContextCompat
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableArray
 import com.facebook.react.bridge.WritableMap
@@ -444,5 +448,145 @@ class SystemStatusManager private constructor(private val context: Context) {
             // 忽略错误
         }
         return array
+    }
+
+    /**
+     * 获取实时 GPS 位置（主动请求新定位）
+     */
+    fun getCurrentLocation(callback: (WritableMap?) -> Unit) {
+        val map = Arguments.createMap()
+        try {
+            val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as? LocationManager
+
+            // 权限检查
+            val hasFineLocationPermission = ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+
+            val hasCoarseLocationPermission = ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+
+            // 无权限处理
+            if (!hasFineLocationPermission && !hasCoarseLocationPermission) {
+                map.putBoolean("available", false)
+                map.putDouble("latitude", 0.0)
+                map.putDouble("longitude", 0.0)
+                map.putDouble("altitude", 0.0)
+                map.putDouble("accuracy", 0.0)
+                map.putDouble("speed", 0.0)
+                map.putDouble("bearing", 0.0)
+                map.putString("provider", "no_permission")
+                map.putDouble("timestamp", 0.0)
+                callback(map)
+                return
+            }
+
+            // 检查定位服务是否启用
+            val isGpsEnabled = locationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER) ?: false
+            val isNetworkEnabled = locationManager?.isProviderEnabled(LocationManager.NETWORK_PROVIDER) ?: false
+
+            if (!isGpsEnabled && !isNetworkEnabled) {
+                map.putBoolean("available", false)
+                map.putDouble("latitude", 0.0)
+                map.putDouble("longitude", 0.0)
+                map.putDouble("altitude", 0.0)
+                map.putDouble("accuracy", 0.0)
+                map.putDouble("speed", 0.0)
+                map.putDouble("bearing", 0.0)
+                map.putString("provider", "disabled")
+                map.putDouble("timestamp", 0.0)
+                callback(map)
+                return
+            }
+
+            // 创建位置监听器（单次定位）
+            val locationListener = object : LocationListener {
+                override fun onLocationChanged(location: Location) {
+                    // 获取到位置后立即移除监听器
+                    locationManager?.removeUpdates(this)
+
+                    val result = Arguments.createMap().apply {
+                        putBoolean("available", true)
+                        putDouble("latitude", location.latitude)
+                        putDouble("longitude", location.longitude)
+                        putDouble("altitude", location.altitude)
+                        putDouble("accuracy", location.accuracy.toDouble())
+                        putDouble("speed", location.speed.toDouble())
+                        putDouble("bearing", location.bearing.toDouble())
+                        putString("provider", location.provider ?: "unknown")
+                        putDouble("timestamp", location.time.toDouble())
+                    }
+                    callback(result)
+                }
+
+                override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
+                override fun onProviderEnabled(provider: String) {}
+                override fun onProviderDisabled(provider: String) {}
+            }
+
+            // 请求单次定位更新
+            val provider = if (isGpsEnabled && hasFineLocationPermission) {
+                LocationManager.GPS_PROVIDER
+            } else {
+                LocationManager.NETWORK_PROVIDER
+            }
+
+            locationManager?.requestSingleUpdate(provider, locationListener, null)
+
+            // 设置超时（10秒后如果还没有获取到位置，返回最后已知位置）
+            android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                locationManager?.removeUpdates(locationListener)
+
+                // 尝试获取最后已知位置
+                var location: Location? = null
+                if (isGpsEnabled && hasFineLocationPermission) {
+                    location = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                }
+                if (location == null && isNetworkEnabled) {
+                    location = locationManager?.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+                }
+
+                if (location != null) {
+                    val result = Arguments.createMap().apply {
+                        putBoolean("available", true)
+                        putDouble("latitude", location.latitude)
+                        putDouble("longitude", location.longitude)
+                        putDouble("altitude", location.altitude)
+                        putDouble("accuracy", location.accuracy.toDouble())
+                        putDouble("speed", location.speed.toDouble())
+                        putDouble("bearing", location.bearing.toDouble())
+                        putString("provider", "${location.provider}_cached")
+                        putDouble("timestamp", location.time.toDouble())
+                    }
+                    callback(result)
+                } else {
+                    map.putBoolean("available", false)
+                    map.putDouble("latitude", 0.0)
+                    map.putDouble("longitude", 0.0)
+                    map.putDouble("altitude", 0.0)
+                    map.putDouble("accuracy", 0.0)
+                    map.putDouble("speed", 0.0)
+                    map.putDouble("bearing", 0.0)
+                    map.putString("provider", "timeout")
+                    map.putDouble("timestamp", 0.0)
+                    callback(map)
+                }
+            }, 10000L)
+
+        } catch (e: Exception) {
+            map.putBoolean("available", false)
+            map.putDouble("latitude", 0.0)
+            map.putDouble("longitude", 0.0)
+            map.putDouble("altitude", 0.0)
+            map.putDouble("accuracy", 0.0)
+            map.putDouble("speed", 0.0)
+            map.putDouble("bearing", 0.0)
+            map.putString("provider", "error")
+            map.putDouble("timestamp", 0.0)
+            callback(map)
+        }
     }
 }

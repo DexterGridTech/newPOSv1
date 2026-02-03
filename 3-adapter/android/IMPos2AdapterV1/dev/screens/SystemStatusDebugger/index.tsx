@@ -29,12 +29,43 @@ export default function SystemStatusDebugger() {
   const [powerEvents, setPowerEvents] = useState<PowerStatusChangeEvent[]>([])
   const [unsubscribePower, setUnsubscribePower] = useState<(() => void) | null>(null)
 
+  // 请求 GPS 权限
+  const requestGpsPermission = async () => {
+    try {
+      const granted = await posAdapter.systemStatus.requestLocationPermission()
+      if (granted) {
+        Alert.alert('成功', 'GPS 权限已授予')
+        // 权限授予后重新加载系统状态
+        await loadSystemStatus()
+      } else {
+        Alert.alert('提示', 'GPS 权限被拒绝，无法获取位置信息。请点击"请求 GPS 权限"按钮重新授权。')
+      }
+      return granted
+    } catch (error) {
+      console.error('请求 GPS 权限失败:', error)
+      Alert.alert('错误', `请求 GPS 权限失败: ${error}`)
+      return false
+    }
+  }
+
   // 加载系统状态
   const loadSystemStatus = async () => {
     setLoading(true)
     try {
       const status = await posAdapter.systemStatus.getSystemStatus()
       setSystemStatus(status)
+
+      // 检查 GPS 是否可用，如果不可用且是权限问题，提示用户
+      if (!status.gps.available && status.gps.provider === 'no_permission') {
+        Alert.alert(
+          'GPS 权限未授予',
+          '检测到 GPS 权限未授予，是否现在授权？',
+          [
+            { text: '取消', style: 'cancel' },
+            { text: '授权', onPress: requestGpsPermission }
+          ]
+        )
+      }
     } catch (error) {
       Alert.alert('错误', `获取系统状态失败: ${error}`)
     } finally {
@@ -104,6 +135,15 @@ export default function SystemStatusDebugger() {
         >
           <Text style={styles.buttonText}>
             {powerListening ? '停止监听电源' : '开始监听电源'}
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.button, styles.buttonGps]}
+          onPress={requestGpsPermission}
+        >
+          <Text style={styles.buttonText}>
+            请求 GPS 权限
           </Text>
         </TouchableOpacity>
       </View>
@@ -279,68 +319,89 @@ function getBatteryHealthText(health: string): string {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
-    padding: 16,
+    backgroundColor: '#f0f4f8',
+    padding: 12,
   },
   title: {
-    fontSize: 24,
+    fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#333',
+    marginBottom: 8,
+    color: '#1a237e',
+    paddingVertical: 4,
   },
   section: {
     backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 16,
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    borderLeftWidth: 4,
+    borderLeftColor: '#2196f3',
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: 'bold',
-    marginBottom: 12,
-    color: '#333',
+    marginBottom: 10,
+    color: '#1976d2',
   },
   button: {
     backgroundColor: '#2196f3',
     paddingVertical: 12,
-    borderRadius: 4,
+    borderRadius: 8,
     alignItems: 'center',
+    marginBottom: 8,
+    shadowColor: '#2196f3',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
   },
   buttonActive: {
-    backgroundColor: '#f44336',
+    backgroundColor: '#ff5722',
+    shadowColor: '#ff5722',
+  },
+  buttonGps: {
+    backgroundColor: '#4caf50',
+    shadowColor: '#4caf50',
   },
   buttonText: {
     color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 14,
+    fontWeight: '700',
   },
   infoText: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 8,
+    fontSize: 13,
+    color: '#424242',
+    marginBottom: 6,
+    lineHeight: 18,
   },
   deviceText: {
-    fontSize: 12,
-    color: '#666',
-    marginBottom: 4,
+    fontSize: 11,
+    color: '#616161',
+    marginBottom: 3,
+    lineHeight: 16,
   },
   eventItem: {
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: '#e3f2fd',
     paddingVertical: 8,
+    backgroundColor: '#fafafa',
+    paddingHorizontal: 6,
+    borderRadius: 6,
+    marginBottom: 6,
   },
   eventText: {
-    fontSize: 14,
-    color: '#333',
+    fontSize: 13,
+    color: '#1565c0',
+    fontWeight: '500',
   },
   eventTime: {
-    fontSize: 12,
-    color: '#999',
-    marginTop: 4,
+    fontSize: 11,
+    color: '#757575',
+    marginTop: 3,
   },
 })

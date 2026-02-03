@@ -1,17 +1,22 @@
 package com.impos2.turbomodules
 
+import android.Manifest
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.os.BatteryManager
 import android.util.Log
+import androidx.core.content.ContextCompat
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.modules.core.DeviceEventManagerModule
+import com.facebook.react.modules.core.PermissionAwareActivity
+import com.facebook.react.modules.core.PermissionListener
 import com.impos2.turbomodules.systemstatus.SystemStatusManager
 
 /**
@@ -29,6 +34,9 @@ class SystemStatusTurboModule(reactContext: ReactApplicationContext) :
         private const val TAG = "SystemStatusTurboModule"
         const val NAME = "SystemStatusTurboModule"
         private const val EVENT_POWER_STATUS_CHANGED = "onPowerStatusChanged"
+
+        // GPS 权限请求码
+        private const val REQUEST_LOCATION_PERMISSION = 1001
     }
 
     private val systemStatusManager: SystemStatusManager by lazy {
@@ -38,6 +46,9 @@ class SystemStatusTurboModule(reactContext: ReactApplicationContext) :
     private var powerStatusReceiver: BroadcastReceiver? = null
     private val powerStatusHandler = android.os.Handler(android.os.Looper.getMainLooper())
     private var powerStatusRunnable: Runnable? = null
+
+    // GPS 权限请求相关
+    private var locationPermissionPromise: Promise? = null
 
     override fun getName(): String = NAME
 
@@ -52,6 +63,98 @@ class SystemStatusTurboModule(reactContext: ReactApplicationContext) :
         } catch (e: Exception) {
             Log.e(TAG, "getSystemStatus 失败", e)
             promise.reject("GET_SYSTEM_STATUS_ERROR", e.message, e)
+        }
+    }
+
+    /**
+     * 请求 GPS 定位权限
+     */
+    @ReactMethod
+    fun requestLocationPermission(promise: Promise) {
+        try {
+            val activity = currentActivity
+            if (activity == null) {
+                promise.reject("NO_ACTIVITY", "当前没有可用的 Activity")
+                return
+            }
+
+            // 检查是否已有权限
+            val hasFineLocation = ContextCompat.checkSelfPermission(
+                reactApplicationContext,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+
+            val hasCoarseLocation = ContextCompat.checkSelfPermission(
+                reactApplicationContext,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+
+            if (hasFineLocation && hasCoarseLocation) {
+                promise.resolve(true)
+                return
+            }
+
+            // 保存 Promise
+            locationPermissionPromise = promise
+
+            // 请求权限
+            val permissionAwareActivity = activity as? PermissionAwareActivity
+            if (permissionAwareActivity != null) {
+                permissionAwareActivity.requestPermissions(
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    ),
+                    REQUEST_LOCATION_PERMISSION,
+                    createLocationPermissionListener()
+                )
+            } else {
+                promise.reject("PERMISSION_ERROR", "Activity 不支持权限请求")
+                locationPermissionPromise = null
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "requestLocationPermission 失败", e)
+            promise.reject("REQUEST_PERMISSION_ERROR", e.message, e)
+            locationPermissionPromise = null
+        }
+    }
+
+    /**
+     * 创建权限请求监听器
+     */
+    private fun createLocationPermissionListener(): PermissionListener {
+        return PermissionListener { requestCode, permissions, grantResults ->
+            if (requestCode == REQUEST_LOCATION_PERMISSION) {
+                val promise = locationPermissionPromise
+                locationPermissionPromise = null
+
+                if (promise != null) {
+                    val granted = grantResults.isNotEmpty() &&
+                            grantResults.all { it == PackageManager.PERMISSION_GRANTED }
+                    promise.resolve(granted)
+                }
+                return@PermissionListener true
+            }
+            false
+        }
+    }
+
+    /**
+     * 获取实时 GPS 位置
+     */
+    @ReactMethod
+    fun getCurrentLocation(promise: Promise) {
+        try {
+            systemStatusManager.getCurrentLocation { location ->
+                if (location != null) {
+                    promise.resolve(location)
+                } else {
+                    promise.reject("GET_LOCATION_ERROR", "无法获取 GPS 位置")
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "getCurrentLocation 失败", e)
+            promise.reject("GET_LOCATION_ERROR", e.message, e)
         }
     }
 

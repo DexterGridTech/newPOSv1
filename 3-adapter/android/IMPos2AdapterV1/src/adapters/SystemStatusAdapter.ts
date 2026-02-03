@@ -45,6 +45,32 @@ export class SystemStatusAdapter implements ISystemStatusAdapter {
   }
 
   /**
+   * 请求 GPS 定位权限
+   */
+  async requestLocationPermission(): Promise<boolean> {
+    try {
+      const granted = await SystemStatusTurboModule.requestLocationPermission()
+      return granted
+    } catch (error) {
+      console.error('[SystemStatusAdapter] requestLocationPermission 失败:', error)
+      return false
+    }
+  }
+
+  /**
+   * 获取实时 GPS 位置
+   */
+  async getCurrentLocation(): Promise<any> {
+    try {
+      const location = await SystemStatusTurboModule.getCurrentLocation()
+      return location
+    } catch (error) {
+      console.error('[SystemStatusAdapter] getCurrentLocation 失败:', error)
+      throw error
+    }
+  }
+
+  /**
    * 添加电源状态变化监听器
    */
   addPowerStatusChangeListener(listener: (event: PowerStatusChangeEvent) => void): () => void {

@@ -8,3 +8,24 @@
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
 # Add any project specific keep options here:
+
+# LocalWebServer Service 相关
+-keep class com.impos2.turbomodules.localwebserver.** { *; }
+-keep class com.impos2.turbomodules.LocalWebServerTurboModule { *; }
+
+# Ktor 相关
+-keep class io.ktor.** { *; }
+-keepclassmembers class io.ktor.** { *; }
+
+# Kotlin 协程
+-keepclassmembernames class kotlinx.** { *; }
+
+# Kotlinx Serialization
+-keepattributes *Annotation*, InnerClasses
+-dontnote kotlinx.serialization.AnnotationsKt
+-keepclassmembers class kotlinx.serialization.json.** {
+    *** Companion;
+}
+-keepclasseswithmembers class kotlinx.serialization.json.** {
+    kotlinx.serialization.KSerializer serializer(...);
+}
