@@ -1,15 +1,22 @@
 {
-  "name": "IMPos2DesktopV1",
-  "version": "0.0.1",
+  "name": "@impos2/assembly-impos2-desktopv1",
+  "version": "1.0.0",
+  "description": "整合层：IMPos2 Desktop 集成包",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
-    "lint": "eslint .",
     "start": "react-native start",
+    "start:clean": "react-native start --reset-cache",
+    "android": "react-native run-android",
+    "android:debug": "react-native run-android --mode=debug",
+    "android:release": "cd android && ./gradlew assembleRelease",
+    "clean": "rm -rf node_modules && cd android && ./gradlew clean",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint .",
     "test": "jest"
   },
   "dependencies": {
+    "@impos2/adapter-impos2-adapterv1": "*",
+    "@impos2/kernel-base": "*",
     "react": "18.3.1",
     "react-native": "0.76.6"
   },
@@ -35,5 +42,13 @@
   },
   "engines": {
     "node": ">=18"
+  },
+  "reactNativeConfig": {
+    "project": {
+      "android": {
+        "sourceDir": "./android",
+        "packageName": "com.impos2desktopv1"
+      }
+    }
   }
 }

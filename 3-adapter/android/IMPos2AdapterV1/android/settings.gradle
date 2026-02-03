@@ -1,0 +1,13 @@
+pluginManagement { includeBuild("../../../../node_modules/@react-native/gradle-plugin") }
+plugins { id("com.facebook.react.settings") }
+// 在 Monorepo 中禁用 autolinking，手动配置依赖
+// extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
+rootProject.name = 'IMPos2AdapterV1'
+include ':app'
+include ':turbomodule-lib'
+
+// 手动引入 react-native-mmkv
+include ':react-native-mmkv'
+project(':react-native-mmkv').projectDir = file('../../../../node_modules/react-native-mmkv/android')
+
+includeBuild('../../../../node_modules/@react-native/gradle-plugin')

@@ -1,6 +1,18 @@
-pluginManagement { includeBuild("../node_modules/@react-native/gradle-plugin") }
+pluginManagement { includeBuild("../../../../node_modules/@react-native/gradle-plugin") }
 plugins { id("com.facebook.react.settings") }
-extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
+// 在 Monorepo 中禁用 autolinking，手动配置依赖
+// extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
 rootProject.name = 'IMPos2DesktopV1'
 include ':app'
-includeBuild('../node_modules/@react-native/gradle-plugin')
+includeBuild('../../../../node_modules/@react-native/gradle-plugin')
+
+// 引入适配层的 TurboModule 库模块
+def adapterTurboModuleDir = file("../../../../3-adapter/android/IMPos2AdapterV1/android/turbomodule-lib")
+include ':impos2-turbomodule'
+project(':impos2-turbomodule').projectDir = adapterTurboModuleDir
+
+// 引入 react-native-mmkv 原生模块
+def mmkvProjectDir = file("../../../../node_modules/react-native-mmkv/android")
+include ':react-native-mmkv'
+project(':react-native-mmkv').projectDir = mmkvProjectDir
+

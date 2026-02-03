@@ -1,7 +1,6 @@
 package com.impos2desktopv1
 
 import android.app.Application
-import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactHost
 import com.facebook.react.ReactNativeHost
@@ -9,18 +8,24 @@ import com.facebook.react.ReactPackage
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
+import com.facebook.react.shell.MainReactPackage
 import com.facebook.react.soloader.OpenSourceMergedSoMapping
 import com.facebook.soloader.SoLoader
+import com.impos2.turbomodules.IMPos2TurboModulePackage
+import com.reactnativemmkv.MmkvPackage
 
 class MainApplication : Application(), ReactApplication {
 
   override val reactNativeHost: ReactNativeHost =
       object : DefaultReactNativeHost(this) {
-        override fun getPackages(): List<ReactPackage> =
-            PackageList(this).packages.apply {
-              // Packages that cannot be autolinked yet can be added manually here, for example:
-              // add(MyReactNativePackage())
-            }
+        override fun getPackages(): List<ReactPackage> {
+          // 在 Monorepo 中手动配置 packages，不使用 autolinking
+          return listOf(
+              MainReactPackage(),
+              IMPos2TurboModulePackage(),
+              MmkvPackage() // 添加 MMKV Package
+          )
+        }
 
         override fun getJSMainModuleName(): String = "index"
 

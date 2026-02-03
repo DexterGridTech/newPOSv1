@@ -1,8 +1,4 @@
-import {DeviceInfo} from "../../features";
-
-
 export interface ISystemStatusAdapter {
-    getDeviceInfo(): Promise<DeviceInfo>;
     /**
      * 获取系统运行状态
      * @returns Promise<PosSystemStatus> 系统运行状态
