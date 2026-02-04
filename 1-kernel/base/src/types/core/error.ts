@@ -1,7 +1,7 @@
 export interface DefinedErrorInfo {
     category: ErrorCategory;
     severity: ErrorSeverity;
-    type: string
+    key: string
     defaultMessage: string
 }
 

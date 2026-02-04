@@ -8,7 +8,7 @@ export const commandBus = new Subject<ICommand<any>>();
  * 命令生命周期回调类型定义
  */
 export type CommandStartCallback = (actorName: string, command: ICommand<any>) => void;
-export type CommandCompleteCallback = (actorName: string, command: ICommand<any>) => void;
+export type CommandCompleteCallback = (actorName: string, command: ICommand<any>,result?:Record<string, any>) => void;
 export type CommandErrorCallback = (actorName: string, command: ICommand<any>, error: AppError) => void;
 
 /**

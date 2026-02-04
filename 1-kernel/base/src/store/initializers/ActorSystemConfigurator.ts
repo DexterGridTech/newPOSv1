@@ -1,7 +1,7 @@
-import { EnhancedStore } from "@reduxjs/toolkit";
-import { RootState, requestStatusActions, instanceInfoSlice } from "../../features";
-import { ActorSystem, dispatchSimpleAction } from "../../core";
-import { INTERNAL } from "../../types";
+import {EnhancedStore} from "@reduxjs/toolkit";
+import {instanceInfoSlice, requestStatusActions, RootState} from "../../features";
+import {ActorSystem, dispatchSimpleAction} from "../../core";
+import {INTERNAL} from "../../types";
 
 /**
  * ActorSystem 配置器
@@ -24,23 +24,27 @@ export class ActorSystemConfigurator {
     configureLifecycleListeners(): void {
         ActorSystem.getInstance().registerLifecycleListener({
             onCommandStart: (actorName, command) => {
-                dispatchSimpleAction(requestStatusActions.commandStart({
-                    actor: actorName,
-                    command: command
-                }));
+                if (command.requestId && command.requestId != INTERNAL)
+                    dispatchSimpleAction(requestStatusActions.commandStart({
+                        actor: actorName,
+                        command: command
+                    }));
             },
-            onCommandComplete: (actorName, command) => {
-                dispatchSimpleAction(requestStatusActions.commandComplete({
-                    actor: actorName,
-                    command: command
-                }));
+            onCommandComplete: (actorName, command, result?: Record<string, any>) => {
+                if (command.requestId && command.requestId != INTERNAL)
+                    dispatchSimpleAction(requestStatusActions.commandComplete({
+                        actor: actorName,
+                        command: command,
+                        result: result
+                    }));
             },
             onCommandError: (actorName, command, appError) => {
-                dispatchSimpleAction(requestStatusActions.commandError({
-                    actor: actorName,
-                    command: command,
-                    appError: appError
-                }));
+                if (command.requestId && command.requestId != INTERNAL)
+                    dispatchSimpleAction(requestStatusActions.commandError({
+                        actor: actorName,
+                        command: command,
+                        appError: appError
+                    }));
             }
         });
     }

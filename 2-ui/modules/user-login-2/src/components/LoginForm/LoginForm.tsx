@@ -9,12 +9,12 @@ import {
     Dimensions,
     Animated,
 } from 'react-native';
-import { RequestQueryResult } from "@impos2/kernel-base";
+import {RequestStatus} from "@impos2/kernel-base";
 
 export interface LoginFormProps {
     userId: string;
     password: string;
-    loginStatus: RequestQueryResult;
+    loginStatus: RequestStatus|null;
     onUserIdChange: (value: string) => void;
     onPasswordChange: (value: string) => void;
     onSubmit: () => void;
@@ -43,8 +43,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     const [showPassword, setShowPassword] = useState(false);
     const [focusedField, setFocusedField] = useState<'userId' | 'password' | null>(null);
 
-    const isLoading = loginStatus.status === 'loading';
-    const hasError = !!loginStatus.errorAt;
+    const isLoading = loginStatus?.status === 'started';
+    const hasError = loginStatus?.status === 'error';
     const isValidForm = userId.length > 0 && password.length > 0;
     const canSubmit = isValidForm && !isLoading;
 
@@ -134,12 +134,16 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
                     {/* 错误提示 */}
                     {hasError && (
-                        <View style={styles.errorContainer}>
-                            <View style={styles.errorIndicator} />
-                            <Text style={styles.errorText}>
-                                {loginStatus.errorMessage || '登录失败，请检查账号密码'}
-                            </Text>
-                        </View>
+                        Object.values(loginStatus!.errors).map(
+                            (error) => (
+                                <View key={error.key} style={styles.errorContainer}>
+                                    <View style={styles.errorIndicator}/>
+                                    <Text style={styles.errorText}>
+                                        {error.message}
+                                    </Text>
+                                </View>
+                            )
+                        )
                     )}
                 </View>
 

@@ -1,19 +1,10 @@
 import React from 'react';
-import {
-    StyleSheet,
-    View,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    ActivityIndicator,
-    Dimensions,
-    Platform,
-} from 'react-native';
-import { RequestQueryResult } from "@impos2/kernel-base";
+import {ActivityIndicator, Dimensions, StyleSheet, Text, TextInput, TouchableOpacity, View,} from 'react-native';
+import {RequestStatus} from "@impos2/kernel-base";
 
 export interface ActivateFormProps {
     activationCode: string;
-    activateStatus: RequestQueryResult,
+    activateStatus: RequestStatus | null,
     onActivationCodeChange: (value: string) => void;
     onSubmit: () => void;
 }
@@ -40,8 +31,8 @@ export const ActivateForm: React.FC<ActivateFormProps> = (
 
     const [isFocused, setIsFocused] = React.useState(false);
 
-    const isLoading = activateStatus.status === 'loading';
-    const hasError = !!activateStatus.errorAt;
+    const isLoading = activateStatus?.status === 'started';
+    const hasError = activateStatus?.status === 'error';
     const isValidLength = activationCode.length >= 6;
     const canSubmit = isValidLength && !isLoading;
 
@@ -49,7 +40,7 @@ export const ActivateForm: React.FC<ActivateFormProps> = (
         <View style={styles.container}>
             {/* 背景 - 极简设计 */}
             <View style={styles.backgroundDecoration}>
-                <View style={styles.gridPattern} />
+                <View style={styles.gridPattern}/>
             </View>
 
             {/* 主卡片 */}
@@ -103,15 +94,18 @@ export const ActivateForm: React.FC<ActivateFormProps> = (
                             </Text>
                         </View>
                     )}
-
                     {/* 错误提示 */}
                     {hasError && (
-                        <View style={styles.errorContainer}>
-                            <View style={styles.errorIndicator} />
-                            <Text style={styles.errorText}>
-                                {activateStatus.errorMessage}
-                            </Text>
-                        </View>
+                        Object.values(activateStatus!.errors).map(
+                            (error) => (
+                                <View key={error.key} style={styles.errorContainer}>
+                                    <View style={styles.errorIndicator}/>
+                                    <Text style={styles.errorText}>
+                                        {error.message}
+                                    </Text>
+                                </View>
+                            )
+                        )
                     )}
                 </View>
 
@@ -126,10 +120,10 @@ export const ActivateForm: React.FC<ActivateFormProps> = (
                     activeOpacity={0.85}
                     accessibilityLabel="激活按钮"
                     accessibilityRole="button"
-                    accessibilityState={{ disabled: !canSubmit, busy: isLoading }}
+                    accessibilityState={{disabled: !canSubmit, busy: isLoading}}
                 >
                     {isLoading ? (
-                        <ActivityIndicator size="small" color="#FFFFFF" />
+                        <ActivityIndicator size="small" color="#FFFFFF"/>
                     ) : (
                         <Text style={styles.buttonText}>
                             {isLoading ? '激活中...' : '立即激活'}
@@ -168,7 +162,7 @@ const COLORS = {
     disabled: '#CBD5E1',    // Slate 300 - 禁用
 };
 
-const { width, height } = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 
 const styles = StyleSheet.create({
     container: {

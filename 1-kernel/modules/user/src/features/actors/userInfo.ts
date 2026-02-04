@@ -41,6 +41,10 @@ class UserInfoActor extends IActor {
                 }
                 dispatchAction(userInfoActions.setUser(user), command)
                 new UserLoginCompleteCommand().executeFromParent(command)
+
+                return {
+                    [command.commandName]: user
+                }
             } else {
                 throw new AppError(UserErrors.USER_LOGIN_FAILED, "", command)
             }

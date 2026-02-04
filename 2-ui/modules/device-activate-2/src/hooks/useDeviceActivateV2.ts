@@ -1,28 +1,14 @@
 import {useCallback, useState} from 'react';
-import {
-    ActivateDeviceCommand,
-    BaseModuleCommandNames,
-    logger,
-    useRequestStatus
-} from "@impos2/kernel-base";
-import {
-    AlertCommand,
-    AlertInfo,
-    createAlert,
-    createModelScreen,
-    UiNavigationCommandNames,
-    useEditableUiVariable
-} from "@impos2/kernel-module-ui-navigation";
+import {ActivateDeviceCommand, logger, useRequestStatus} from "@impos2/kernel-base";
+import {useEditableUiVariable} from "@impos2/kernel-module-ui-navigation";
 import {nanoid} from "@reduxjs/toolkit";
 import {deviceActivateVariable} from "../variables";
-import {testModalScreenPart} from "../modals";
 
 // 设备激活Hook
 export const useDeviceActivate = () => {
-    console.log("========$$$==========")
     const [requestId, setRequestId] = useState<string | null>(null);
-    const newRequest=()=>{
-        const random=nanoid(8)
+    const newRequest = () => {
+        const random = nanoid(8)
         setRequestId(random)
         return random
     }
@@ -69,7 +55,7 @@ export const useDeviceActivate = () => {
             // new AlertCommand({model: alertModel}).executeInternally()
 
 
-            if (activateStatus.status === 'loading')
+            if (activateStatus?.status === 'started')
                 return;
             logger.log('提交激活', activationCode);
 

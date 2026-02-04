@@ -130,12 +130,12 @@ export class ActorSystem {
      * 命令执行完成时调用
      * 通知所有注册的监听器
      */
-    commandComplete(actorName: string, command: ICommand<any>): void {
+    commandComplete(actorName: string, command: ICommand<any>,result?:Record<string, any>): void {
         logger.log(`命令结束=>${actorName} ${command.commandName} [CID:${command.id}][RID:${command.requestId}][SID:${command.sessionId}]`)
         this.lifecycleListeners.forEach(listener => {
             if (listener.onCommandComplete) {
                 try {
-                    listener.onCommandComplete(actorName, command);
+                    listener.onCommandComplete(actorName, command,result);
                 } catch (error) {
                     logger.error('commandComplete 监听器执行失败:', error);
                 }
@@ -196,8 +196,8 @@ export abstract class IActor {
 
         //发射后不管,不需要并发控制
         actorSystem.commandStart(actorName, command);
-        handler(command).then(() => {
-            actorSystem.commandComplete(actorName, command);
+        handler(command).then((result) => {
+            actorSystem.commandComplete(actorName, command,result);
         }).catch((error: any) => {
             // 标准化错误
             const appError = this.normalizeError(error, command);
@@ -208,10 +208,10 @@ export abstract class IActor {
     /**
      * 查找命令处理器
      */
-    private findHandler(command: ICommand<any>): ((cmd: ICommand<any>) => Promise<void>) | null {
+    private findHandler(command: ICommand<any>): ((cmd: ICommand<any>) => Promise<Record<string, any>>) | null {
         for (const [clazz, method] of this.methodMap!) {
             if (command.commandName === clazz.name) {
-                return method as (cmd: ICommand<any>) => Promise<void>;
+                return method as (cmd: ICommand<any>) => Promise<Record<string, any>>;
             }
         }
         return null;
@@ -230,7 +230,7 @@ export abstract class IActor {
         return new AppError({
             category: ErrorCategory.SYSTEM,
             severity: ErrorSeverity.MEDIUM,
-            type: 'ERR_COMMAND_EXECUTION_FAILED',
+            key: 'ERR_COMMAND_EXECUTION_FAILED',
             defaultMessage: error.message || '命令执行失败'
         }, '', command);
     }
@@ -243,13 +243,13 @@ export const SystemCommandErrors = {
     COMMAND_FORBIDDEN_ON_MASTER: {
         category: ErrorCategory.SYSTEM,
         severity: ErrorSeverity.HIGH,
-        type: "command.forbidden.master.execute.slave.only",
+        key: "command.forbidden.master.execute.slave.only",
         defaultMessage: "该命令只能在副设备上执行"
     },
     COMMAND_FORBIDDEN_ON_SLAVE: {
         category: ErrorCategory.SYSTEM,
         severity: ErrorSeverity.HIGH,
-        type: "command.forbidden.slave.execute.master.only",
+        key: "command.forbidden.slave.execute.master.only",
         defaultMessage: "该命令只能在主设备上执行"
     }
 } as const;

@@ -46,7 +46,7 @@ export const useUserLogin = () => {
 
     // 提交登录
     const handleSubmit = useCallback(async () => {
-        if (loginStatus.status === 'loading')
+        if (loginStatus?.status === 'started')
             return;
         logger.log('提交登录', userId, password);
 

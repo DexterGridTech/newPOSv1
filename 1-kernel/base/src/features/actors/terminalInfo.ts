@@ -9,7 +9,7 @@ import {
     SetOperatingEntityCommand,
     SetOperatingEntityCompleteCommand
 } from "../commands";
-import {terminalInfoActions, deviceStatusSlice, terminalInfoSlice} from "../slices";
+import {deviceStatusSlice, terminalInfoActions, terminalInfoSlice} from "../slices";
 import {ActivateDeviceRequest, kernelDeviceAPI, SetOperatingEntityRequest} from "../../api/device";
 
 
@@ -33,6 +33,10 @@ class TerminalInfoActor extends IActor {
                 dispatchAction(terminalInfoActions.setTerminalInfo(result.data!), command)
                 new SetOperatingEntityCommand(result.data!.hostEntity).executeFromParent(command)
                 new ActivateDeviceSuccessCommand().executeFromParent(command)
+
+                return {
+                    [command.commandName]: result.data
+                }
             } else {
                 throw new APIError(result)
             }
