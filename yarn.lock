@@ -2523,6 +2523,7 @@ __metadata:
     prettier: 2.8.8
     react: 18.3.1
     react-native: 0.76.6
+    react-native-splash-screen: ^3.3.0
     react-test-renderer: 18.3.1
     typescript: 5.0.4
   languageName: unknown
@@ -12172,6 +12173,15 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 04a751afed448b31dc401f0e8ecf9cf3edc4fe77b5c16cb7bc2a70381c3a2ffa54f42a313a46ad7deec0aff74a3f5650cf49db0264ba4a6c4f6a1d69ecf489fd
+  languageName: node
+  linkType: hard
+
+"react-native-splash-screen@npm:^3.3.0":
+  version: 3.3.0
+  resolution: "react-native-splash-screen@npm:3.3.0"
+  peerDependencies:
+    react-native: ">=0.57.0"
+  checksum: 14c565d5d4214f55586dcf6f7abd12d99d3e0667f67de3bda7aa24988971567b283a4187fbc0c6269c83b3c21d59d1950335c61bb0780ec2d065e20b3b9199d0
   languageName: node
   linkType: hard
 

@@ -50,13 +50,21 @@ class MultiDisplayTurboModule(reactContext: ReactApplicationContext) :
             }
 
             // 调用重启方法（重启主屏+副屏，通过中间页）
-            multiDisplayManager.restartApplication {
+            val result = multiDisplayManager.restartApplication {
                 // 跳转到中间页并重启主屏
                 activity.reloadReactApplication()
             }
 
-            promise.resolve(true)
-            Log.d(TAG, "restartApplication调用成功")
+            if (result.success) {
+                promise.resolve(true)
+                Log.d(TAG, "restartApplication调用成功")
+            } else {
+                promise.reject(
+                    result.errorCode ?: "RESTART_ERROR",
+                    result.errorMessage ?: "重启应用失败"
+                )
+                Log.e(TAG, "restartApplication失败: ${result.errorMessage}")
+            }
         } catch (e: Exception) {
             Log.e(TAG, "restartApplication失败", e)
             promise.reject("RESTART_ERROR", "重启应用失败: ${e.message}", e)

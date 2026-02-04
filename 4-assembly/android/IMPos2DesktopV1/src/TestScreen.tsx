@@ -1,9 +1,7 @@
 /**
- * IMPos2 Desktop V1 - 整合层应用
+ * IMPos2 Desktop V1 - 测试调试界面
  * @format
  */
-
-console.log('========== App.tsx 开始加载 ==========');
 
 import React, { useState, useEffect } from 'react';
 import {
@@ -16,22 +14,19 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
-  NativeModules,
 } from 'react-native';
 import { posAdapter } from '@impos2/adapter-impos2-adapterv1';
-import MultiDisplayManager from './src/MultiDisplayManager';
-
-console.log('========== App.tsx 导入完成 ==========');
+import MultiDisplayManager from './MultiDisplayManager';
 
 // 定义 Props 接口
-interface AppProps {
+interface TestScreenProps {
   screenType?: string;
   displayId?: number;
   displayName?: string;
 }
 
-function App(props: AppProps): React.JSX.Element {
-  console.log('========== App 组件函数被调用 ==========');
+function TestScreen(props: TestScreenProps): React.JSX.Element {
+  console.log('========== TestScreen 组件函数被调用 ==========');
   console.log('接收到的 props:', props);
 
   const [deviceInfo, setDeviceInfo] = useState<any>(null);
@@ -46,11 +41,11 @@ function App(props: AppProps): React.JSX.Element {
     displayName: props.displayName || 'Primary Display',
   };
 
-  console.log('App 组件状态初始化完成');
+  console.log('TestScreen 组件状态初始化完成');
   console.log('屏幕参数:', screenParams);
 
   useEffect(() => {
-    console.log('========== App useEffect 执行 ==========');
+    console.log('========== TestScreen useEffect 执行 ==========');
     // 自动加载设备信息
     handleGetDeviceInfo();
   }, []);
@@ -98,8 +93,6 @@ function App(props: AppProps): React.JSX.Element {
       ],
     );
   };
-
-  console.log('App 组件准备渲染，screenParams:', screenParams);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -300,4 +293,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+export default TestScreen;

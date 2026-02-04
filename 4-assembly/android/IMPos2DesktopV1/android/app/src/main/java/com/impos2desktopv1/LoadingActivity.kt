@@ -21,6 +21,8 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import com.impos2desktopv1.utils.FullscreenHelper
+import org.devio.rn.splashscreen.SplashScreen
 
 /**
  * 加载中间页 - 高级设计版
@@ -54,8 +56,20 @@ class LoadingActivity : Activity() {
     private var containerLayout: LinearLayout? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // 在 super.onCreate 之前设置早期全屏（确保 SplashScreen 也全屏）
+        FullscreenHelper.setFullscreenEarly(this)
+
         super.onCreate(savedInstanceState)
         Log.d(TAG, "LoadingActivity onCreate")
+
+        // 在 super.onCreate 之后再次设置完整的全屏模式
+        FullscreenHelper.setFullscreen(this)
+
+        // 显示启动屏
+        SplashScreen.show(this)
+
+        // 设置 SplashScreen Dialog 全屏
+        FullscreenHelper.setSplashScreenFullscreen(this)
 
         // 获取参数
         val message = intent.getStringExtra(EXTRA_MESSAGE) ?: "正在重启应用..."

@@ -15,6 +15,25 @@ import com.impos2.turbomodules.IMPos2TurboModulePackage
 import com.reactnativemmkv.MmkvPackage
 
 /**
+ * 重启错误类型
+ */
+enum class RestartError(val code: String, val message: String) {
+    DESTROY_SECONDARY_FAILED("E001", "销毁副屏失败"),
+    MAIN_SCREEN_RESTART_FAILED("E002", "主屏重启失败"),
+    SECONDARY_SCREEN_RESTART_FAILED("E003", "副屏重启失败"),
+    UNKNOWN_ERROR("E999", "未知错误")
+}
+
+/**
+ * 重启结果
+ */
+data class RestartResult(
+    val success: Boolean,
+    val errorCode: String? = null,
+    val errorMessage: String? = null
+)
+
+/**
  * 多屏显示管理器
  *
  * 功能：
@@ -149,6 +168,7 @@ class MultiDisplayManager(
     /**
      * 创建副屏的独立ReactInstanceManager
      * 与主屏使用相同的JS Bundle
+     * 注意：副屏不包含 SplashScreenReactPackage，因为副屏不需要启动屏
      */
     private fun createSecondaryReactInstanceManager(): ReactInstanceManager {
         Log.d(TAG, "创建副屏的ReactInstanceManager")
@@ -158,6 +178,8 @@ class MultiDisplayManager(
         packages.add(IMPos2TurboModulePackage())
         packages.add(MmkvPackage())
         packages.add(MultiDisplayTurboModulePackage())
+        packages.add(com.impos2desktopv1.screen.ScreenControlTurboModulePackage())
+        // 注意：副屏不添加 SplashScreenReactPackage，因为副屏不需要启动屏
 
         val builder = ReactInstanceManager.builder()
             .setApplication(activity.application)
@@ -229,25 +251,57 @@ class MultiDisplayManager(
      * 通过中间页避免退回桌面
      *
      * @param onMainScreenRestart 主屏重启回调，由 MainActivity 实现跳转到 LoadingActivity
+     * @return RestartResult 重启结果，包含成功状态和错误信息
      */
-    fun restartApplication(onMainScreenRestart: () -> Unit) {
+    fun restartApplication(onMainScreenRestart: () -> Unit): RestartResult {
         Log.d(TAG, "开始重启应用（主屏+副屏）...")
 
-        mainHandler.post {
+        return try {
+            // 1. 先销毁副屏
             try {
-                // 1. 先销毁副屏
                 destroySecondaryScreen()
-
-                // 2. 通知 MainActivity 跳转到中间页并重启主屏
-                onMainScreenRestart.invoke()
-
-                // 3. 延迟重启副屏
-                restartSecondaryScreen()
-
-                Log.d(TAG, "应用重启流程已启动")
             } catch (e: Exception) {
-                Log.e(TAG, "重启应用失败", e)
+                Log.e(TAG, "销毁副屏失败", e)
+                return RestartResult(
+                    false,
+                    RestartError.DESTROY_SECONDARY_FAILED.code,
+                    e.message ?: RestartError.DESTROY_SECONDARY_FAILED.message
+                )
             }
+
+            // 2. 通知 MainActivity 跳转到中间页并重启主屏
+            try {
+                onMainScreenRestart.invoke()
+            } catch (e: Exception) {
+                Log.e(TAG, "主屏重启失败", e)
+                return RestartResult(
+                    false,
+                    RestartError.MAIN_SCREEN_RESTART_FAILED.code,
+                    e.message ?: RestartError.MAIN_SCREEN_RESTART_FAILED.message
+                )
+            }
+
+            // 3. 延迟重启副屏
+            try {
+                restartSecondaryScreen()
+            } catch (e: Exception) {
+                Log.e(TAG, "副屏重启失败", e)
+                return RestartResult(
+                    false,
+                    RestartError.SECONDARY_SCREEN_RESTART_FAILED.code,
+                    e.message ?: RestartError.SECONDARY_SCREEN_RESTART_FAILED.message
+                )
+            }
+
+            Log.d(TAG, "应用重启流程已启动")
+            RestartResult(true)
+        } catch (e: Exception) {
+            Log.e(TAG, "重启应用失败", e)
+            RestartResult(
+                false,
+                RestartError.UNKNOWN_ERROR.code,
+                e.message ?: RestartError.UNKNOWN_ERROR.message
+            )
         }
     }
 

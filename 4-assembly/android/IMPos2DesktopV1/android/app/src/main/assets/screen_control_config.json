@@ -1,0 +1,11 @@
+{
+  "fullscreenEnabled": true,
+  "keepScreenOn": true,
+  "autoRestore": true,
+  "lockTaskEnabled": false,
+  "interceptHomeKey": true,
+  "interceptRecentKey": true,
+  "interceptBackKey": false,
+  "interceptVolumeKey": false,
+  "setAsHomeLauncher": false
+}

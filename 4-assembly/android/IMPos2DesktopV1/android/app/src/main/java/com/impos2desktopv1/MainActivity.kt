@@ -1,15 +1,17 @@
 package com.impos2desktopv1
 
-import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
+import android.view.KeyEvent
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
+import com.facebook.react.ReactInstanceManager
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
 import com.facebook.react.defaults.DefaultReactActivityDelegate
 import com.impos2desktopv1.multidisplay.MultiDisplayManager
+import com.impos2desktopv1.screen.ScreenControlManager
+import com.impos2desktopv1.utils.FullscreenHelper
+import org.devio.rn.splashscreen.SplashScreen
 
 class MainActivity : ReactActivity() {
 
@@ -17,8 +19,8 @@ class MainActivity : ReactActivity() {
     private const val TAG = "MainActivity"
   }
 
-  private var multiDisplayManager: MultiDisplayManager? = null
-  private val mainHandler = Handler(Looper.getMainLooper())
+  private lateinit var appInitializer: AppInitializer
+  private lateinit var appRestartManager: AppRestartManager
 
   /**
    * Returns the name of the main component registered from JavaScript. This is used to schedule
@@ -43,9 +45,28 @@ class MainActivity : ReactActivity() {
       }
 
   override fun onCreate(savedInstanceState: Bundle?) {
+    // 在 super.onCreate 之前设置早期全屏（确保 SplashScreen 也全屏）
+    FullscreenHelper.setFullscreenEarly(this)
+
     try {
       super.onCreate(savedInstanceState)
       Log.d(TAG, "MainActivity onCreate")
+
+      // 在 super.onCreate 之后再次设置完整的全屏模式
+      FullscreenHelper.setFullscreen(this)
+
+      // 显示启动屏
+      SplashScreen.show(this)
+
+      // 设置 SplashScreen Dialog 全屏
+      FullscreenHelper.setSplashScreenFullscreen(this)
+
+      // 初始化应用初始化器和重启管理器
+      appInitializer = AppInitializer(this)
+      appRestartManager = AppRestartManager(this)
+
+      // 执行应用初始化
+      appInitializer.initialize()
     } catch (e: Exception) {
       Log.e(TAG, "主屏初始化失败", e)
     }
@@ -55,46 +76,74 @@ class MainActivity : ReactActivity() {
     super.onResume()
     Log.d(TAG, "MainActivity onResume")
 
-    // 只在首次启动时初始化多屏显示
-    if (multiDisplayManager == null) {
-      mainHandler.postDelayed({
-        initializeMultiDisplay()
-      }, 3000)
-    }
+    // 强制隐藏状态栏（force = true）
+    appInitializer.screenControlManager?.enableFullscreen(force = true)
+
+    // 调度多屏显示初始化
+    appInitializer.scheduleMultiDisplayInit(reactNativeHost.reactInstanceManager)
+  }
+
+  override fun onNewIntent(intent: android.content.Intent?) {
+    super.onNewIntent(intent)
+    Log.d(TAG, "MainActivity onNewIntent - 从 LoadingActivity 返回")
+
+    // 从 LoadingActivity 返回时，显示启动屏
+    SplashScreen.show(this)
   }
 
   override fun onDestroy() {
     super.onDestroy()
     try {
-      multiDisplayManager?.destroy()
-      multiDisplayManager = null
-      Log.d(TAG, "多屏资源已释放")
+      appInitializer.destroy()
+      Log.d(TAG, "应用资源已释放")
     } catch (e: Exception) {
-      Log.e(TAG, "销毁多屏资源失败", e)
+      Log.e(TAG, "销毁资源失败", e)
     }
   }
 
   /**
-   * 初始化多屏显示
+   * 窗口焦点变化时强制隐藏状态栏
    */
-  private fun initializeMultiDisplay() {
-    try {
-      if (multiDisplayManager == null) {
-        val reactInstanceManager = reactNativeHost.reactInstanceManager
-        multiDisplayManager = MultiDisplayManager(this, reactInstanceManager)
-        multiDisplayManager?.initialize()
-        Log.d(TAG, "多屏显示管理器已初始化")
-      }
-    } catch (e: Exception) {
-      Log.e(TAG, "初始化多屏显示失败", e)
+  override fun onWindowFocusChanged(hasFocus: Boolean) {
+    super.onWindowFocusChanged(hasFocus)
+    if (hasFocus) {
+      // 每次获得焦点时强制隐藏状态栏（force = true）
+      appInitializer.screenControlManager?.enableFullscreen(force = true)
+      Log.d(TAG, "窗口获得焦点，强制隐藏状态栏")
     }
+  }
+
+  /**
+   * 拦截按键事件
+   */
+  override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+    // 先尝试屏幕控制拦截
+    if (appInitializer.screenControlManager?.onKeyDown(keyCode, event) == true) {
+      return true
+    }
+    // 如果没有拦截，交给父类处理
+    return super.onKeyDown(keyCode, event)
   }
 
   /**
    * 获取MultiDisplayManager实例（供TurboModule调用）
    */
   fun getMultiDisplayManager(): MultiDisplayManager? {
-    return multiDisplayManager
+    return appInitializer.multiDisplayManager
+  }
+
+  /**
+   * 获取ScreenControlManager实例（供TurboModule调用）
+   */
+  fun getScreenControlManager(): ScreenControlManager? {
+    return appInitializer.screenControlManager
+  }
+
+  /**
+   * 获取ReactInstanceManager实例（供AppRestartManager调用）
+   */
+  fun provideReactInstanceManager(): ReactInstanceManager {
+    return reactNativeHost.reactInstanceManager
   }
 
   /**
@@ -102,35 +151,6 @@ class MainActivity : ReactActivity() {
    * 用于重启功能，避免应用退回桌面
    */
   fun reloadReactApplication() {
-    try {
-      Log.d(TAG, "开始重新加载React应用（通过中间页）")
-
-      // 跳转到 LoadingActivity
-      val intent = Intent(this, LoadingActivity::class.java).apply {
-        putExtra(LoadingActivity.EXTRA_MESSAGE, "正在重启应用...")
-        putExtra(LoadingActivity.EXTRA_AUTO_RETURN, true)
-        putExtra(LoadingActivity.EXTRA_DELAY_MS, 2500L) // 2.5秒后返回
-      }
-      startActivity(intent)
-
-      // 延迟1秒后开始重新创建 ReactContext
-      // 确保 LoadingActivity 已经完全显示
-      mainHandler.postDelayed({
-        try {
-          Log.d(TAG, "开始重新创建ReactContext")
-          val reactInstanceManager = reactNativeHost.reactInstanceManager
-
-          // 使用 recreateReactContextInBackground 重新加载
-          reactInstanceManager.recreateReactContextInBackground()
-
-          Log.d(TAG, "ReactContext重新创建已触发")
-        } catch (e: Exception) {
-          Log.e(TAG, "重新创建ReactContext失败", e)
-        }
-      }, 1000)
-
-    } catch (e: Exception) {
-      Log.e(TAG, "reloadReactApplication失败", e)
-    }
+    appRestartManager.reloadReactApplication()
   }
 }

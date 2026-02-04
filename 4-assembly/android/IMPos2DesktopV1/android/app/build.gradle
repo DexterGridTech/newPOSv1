@@ -143,4 +143,9 @@ dependencies {
 
     // 引入 react-native-mmkv 原生模块
     implementation project(':react-native-mmkv')
+
+    // 引入 react-native-splash-screen 原生模块（排除旧的 Support 库，使用 AndroidX）
+    implementation(project(':react-native-splash-screen')) {
+        exclude group: 'com.android.support', module: 'support-compat'
+    }
 }
