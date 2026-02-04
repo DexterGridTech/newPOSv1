@@ -15,7 +15,6 @@ import com.impos2.turbomodules.IMPos2TurboModulePackage
 import com.reactnativemmkv.MmkvPackage
 import com.impos2desktopv1.multidisplay.MultiDisplayTurboModulePackage
 import com.impos2desktopv1.screen.ScreenControlTurboModulePackage
-import org.devio.rn.splashscreen.SplashScreenReactPackage
 
 class MainApplication : Application(), ReactApplication {
 
@@ -26,10 +25,9 @@ class MainApplication : Application(), ReactApplication {
           return listOf(
               MainReactPackage(),
               IMPos2TurboModulePackage(),
-              MmkvPackage(), // 添加 MMKV Package
-              MultiDisplayTurboModulePackage(), // 添加多屏显示 TurboModule Package
-              ScreenControlTurboModulePackage(), // 添加屏幕控制 TurboModule Package
-              SplashScreenReactPackage() // 添加 SplashScreen Package
+              MmkvPackage(),
+              MultiDisplayTurboModulePackage(),
+              ScreenControlTurboModulePackage()
           )
         }
 

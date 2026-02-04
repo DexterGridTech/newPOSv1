@@ -4,6 +4,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import com.facebook.react.ReactInstanceManager
+import com.impos2desktopv1.base.ActivityContext
 import com.impos2desktopv1.multidisplay.MultiDisplayConfig
 import com.impos2desktopv1.multidisplay.MultiDisplayManager
 import com.impos2desktopv1.screen.ScreenControlConfig
@@ -16,8 +17,12 @@ import com.impos2desktopv1.screen.ScreenControlManager
  * 1. 初始化屏幕控制
  * 2. 调度多屏显示初始化
  * 3. 管理初始化状态
+ *
+ * 设计原则：
+ * - 依赖倒置：依赖 ActivityContext 接口而非具体 Activity
+ * - 单一职责：只负责初始化逻辑
  */
-class AppInitializer(private val activity: MainActivity) {
+class AppInitializer(private val activityContext: ActivityContext) {
 
     companion object {
         private const val TAG = "AppInitializer"
@@ -41,7 +46,7 @@ class AppInitializer(private val activity: MainActivity) {
             Log.d(TAG, "开始初始化应用...")
 
             // 1. 加载多屏配置
-            multiDisplayConfig = MultiDisplayConfig.loadFromAssets(activity)
+            multiDisplayConfig = MultiDisplayConfig.loadFromAssets(activityContext.getContext())
 
             // 2. 初始化屏幕控制
             initializeScreenControl()
@@ -53,16 +58,28 @@ class AppInitializer(private val activity: MainActivity) {
     }
 
     /**
-     * 调度多屏显示初始化（在 onResume 时调用）
+     * 调度多屏显示初始化
      */
     fun scheduleMultiDisplayInit(reactInstanceManager: ReactInstanceManager) {
-        // 只在首次且配置启用时初始化
-        if (!isMultiDisplayInitialized && shouldInitMultiDisplay()) {
+        // 使用 synchronized 确保线程安全
+        synchronized(this) {
+            if (isMultiDisplayInitialized) {
+                Log.d(TAG, "多屏显示已初始化或已调度，跳过")
+                return
+            }
+
+            if (!shouldInitMultiDisplay()) {
+                Log.d(TAG, "多屏显示功能未启用，跳过")
+                return
+            }
+
+            // 立即标记为已初始化，避免重复调度
+            isMultiDisplayInitialized = true
+
             val delayMs = getInitDelayFromConfig()
             Log.d(TAG, "将在 ${delayMs}ms 后初始化多屏显示")
             mainHandler.postDelayed({
                 initializeMultiDisplay(reactInstanceManager)
-                isMultiDisplayInitialized = true
             }, delayMs)
         }
     }
@@ -72,8 +89,8 @@ class AppInitializer(private val activity: MainActivity) {
      */
     private fun initializeScreenControl() {
         try {
-            val config = ScreenControlConfig.loadFromAssets(activity)
-            screenControlManager = ScreenControlManager(activity, config)
+            val config = ScreenControlConfig.loadFromAssets(activityContext.getContext())
+            screenControlManager = ScreenControlManager(activityContext.getActivity(), config)
             screenControlManager?.initialize()
             Log.d(TAG, "屏幕控制管理器已初始化")
         } catch (e: Exception) {
@@ -87,7 +104,10 @@ class AppInitializer(private val activity: MainActivity) {
     private fun initializeMultiDisplay(reactInstanceManager: ReactInstanceManager) {
         try {
             if (multiDisplayManager == null) {
-                multiDisplayManager = MultiDisplayManager(activity, reactInstanceManager)
+                multiDisplayManager = MultiDisplayManager(
+                    activityContext.getActivity(),
+                    reactInstanceManager
+                )
                 multiDisplayManager?.initialize()
                 Log.d(TAG, "多屏显示管理器已初始化")
             }
@@ -96,16 +116,10 @@ class AppInitializer(private val activity: MainActivity) {
         }
     }
 
-    /**
-     * 判断是否应该初始化多屏显示
-     */
     private fun shouldInitMultiDisplay(): Boolean {
         return multiDisplayConfig?.enabled == true
     }
 
-    /**
-     * 从配置获取初始化延迟时间
-     */
     private fun getInitDelayFromConfig(): Long {
         return multiDisplayConfig?.initDelayMs ?: 3000L
     }
@@ -115,6 +129,7 @@ class AppInitializer(private val activity: MainActivity) {
      */
     fun destroy() {
         try {
+            mainHandler.removeCallbacksAndMessages(null)
             multiDisplayManager?.destroy()
             multiDisplayManager = null
             screenControlManager?.destroy()
