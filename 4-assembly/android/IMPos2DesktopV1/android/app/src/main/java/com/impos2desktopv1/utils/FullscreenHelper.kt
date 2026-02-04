@@ -21,6 +21,9 @@ object FullscreenHelper {
 
     private const val TAG = "FullscreenHelper"
 
+    // 配置项：SplashScreen Dialog 延迟时间
+    private const val SPLASH_DIALOG_DELAY_MS = 50L
+
     /**
      * 设置 Activity 为全屏模式
      *
@@ -34,30 +37,18 @@ object FullscreenHelper {
         immersive: Boolean = true
     ) {
         try {
-            Log.d(TAG, "========== 开始设置全屏 ==========")
-            Log.d(TAG, "Activity: ${activity.javaClass.simpleName}")
-            Log.d(TAG, "Android 版本: ${Build.VERSION.SDK_INT}")
-            Log.d(TAG, "keepScreenOn: $keepScreenOn, immersive: $immersive")
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                // Android 11 (API 30) 及以上
-                Log.d(TAG, "使用 Android 11+ API")
                 setFullscreenForAndroid11Plus(activity, immersive)
             } else {
-                // Android 11 以下
-                Log.d(TAG, "使用旧版 API")
                 setFullscreenForLegacy(activity, immersive)
             }
 
             // 设置屏幕常亮
             if (keepScreenOn) {
                 activity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                Log.d(TAG, "屏幕常亮已设置")
             }
-
-            Log.d(TAG, "✅ 全屏模式设置成功")
         } catch (e: Exception) {
-            Log.e(TAG, "❌ 设置全屏模式失败 - Activity: ${activity.javaClass.simpleName}", e)
+            Log.e(TAG, "设置全屏模式失败 - Activity: ${activity.javaClass.simpleName}", e)
         }
     }
 
@@ -124,8 +115,6 @@ object FullscreenHelper {
      */
     fun setFullscreenEarly(activity: Activity) {
         try {
-            Log.d(TAG, "========== 设置早期全屏（SplashScreen 用）==========")
-
             // 设置 Window 标志
             activity.window.setFlags(
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -134,13 +123,10 @@ object FullscreenHelper {
 
             // 隐藏导航栏
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                // Android 11+
                 activity.window.setDecorFitsSystemWindows(false)
             }
-
-            Log.d(TAG, "✅ 早期全屏设置成功")
         } catch (e: Exception) {
-            Log.e(TAG, "❌ 早期全屏设置失败", e)
+            Log.e(TAG, "早期全屏设置失败", e)
         }
     }
 
@@ -169,25 +155,72 @@ object FullscreenHelper {
      */
     fun setSplashScreenFullscreen(activity: Activity) {
         try {
-            Log.d(TAG, "========== 设置 SplashScreen Dialog 全屏 ==========")
+            // 立即设置 Activity Window 全屏
+            setFullscreen(activity)
 
-            // 延迟一小段时间，确保 Dialog 已经创建
+            // 延迟设置 Dialog 全屏
             activity.window.decorView.postDelayed({
-                try {
-                    // 获取所有 Window
-                    val windowManager = activity.getSystemService(android.content.Context.WINDOW_SERVICE) as? android.view.WindowManager
-
-                    // 再次设置 Activity Window 全屏
-                    setFullscreen(activity)
-
-                    Log.d(TAG, "✅ SplashScreen Dialog 全屏设置完成")
-                } catch (e: Exception) {
-                    Log.e(TAG, "❌ 设置 SplashScreen Dialog 全屏失败", e)
-                }
-            }, 50) // 延迟 50ms
-
+                setSplashDialogFullscreen()
+            }, SPLASH_DIALOG_DELAY_MS)
         } catch (e: Exception) {
-            Log.e(TAG, "❌ 设置 SplashScreen Dialog 全屏失败", e)
+            Log.e(TAG, "设置 SplashScreen 全屏失败", e)
         }
     }
+
+    /**
+     * 设置 SplashScreen Dialog 全屏（通过反射）
+     * 如果反射失败，不影响主流程
+     */
+    private fun setSplashDialogFullscreen() {
+        try {
+            val dialog = getSplashDialog() ?: return
+
+            dialog.window?.let { dialogWindow ->
+                applyFullscreenToWindow(dialogWindow)
+                Log.d(TAG, "SplashScreen Dialog 全屏设置成功")
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "设置 SplashScreen Dialog 全屏失败（非致命错误）", e)
+        }
+    }
+
+    /**
+     * 通过反射获取 SplashScreen Dialog
+     * 返回 null 表示获取失败
+     */
+    private fun getSplashDialog(): android.app.Dialog? {
+        return try {
+            val dialogField = org.devio.rn.splashscreen.SplashScreen::class.java
+                .getDeclaredField("mSplashDialog")
+            dialogField.isAccessible = true
+            dialogField.get(null) as? android.app.Dialog
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    /**
+     * 将全屏设置应用到指定 Window
+     * 抽象出来便于复用
+     */
+    private fun applyFullscreenToWindow(window: android.view.Window) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.setDecorFitsSystemWindows(false)
+            window.insetsController?.let { controller ->
+                controller.hide(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
+                controller.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            }
+        } else {
+            @Suppress("DEPRECATION")
+            window.decorView.systemUiVisibility = (
+                View.SYSTEM_UI_FLAG_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+            )
+        }
+    }
+
 }

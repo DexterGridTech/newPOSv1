@@ -5,11 +5,14 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
+import android.view.animation.AnimationUtils
+import android.widget.ImageView
 import com.facebook.react.ReactInstanceManager
 import com.impos2desktopv1.base.ActivityContext
 import com.impos2desktopv1.base.BaseReactActivity
 import com.impos2desktopv1.multidisplay.MultiDisplayManager
 import com.impos2desktopv1.screen.ScreenControlManager
+import org.devio.rn.splashscreen.SplashScreen
 
 /**
  * 主 Activity
@@ -41,6 +44,15 @@ class MainActivity : BaseReactActivity(), ActivityContext {
     override fun onInitialize(savedInstanceState: Bundle?) {
         try {
             Log.d(TAG, "开始初始化主屏")
+
+            // 显示 SplashScreen（只在主屏显示）
+            SplashScreen.show(this)
+
+            // SplashScreen 显示后立即重新设置全屏，确保 SplashScreen 也是全屏的
+            com.impos2desktopv1.utils.FullscreenHelper.setSplashScreenFullscreen(this)
+
+            // 设置 ScreenInitManager 的 MainActivity 引用
+            ScreenInitManager.setMainActivity(this)
 
             // 初始化应用初始化器和重启管理器
             appInitializer = AppInitializer(this)

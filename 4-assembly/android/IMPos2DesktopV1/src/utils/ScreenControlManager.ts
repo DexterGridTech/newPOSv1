@@ -1,4 +1,4 @@
-import ScreenControlTurboModule from './types/ScreenControlTurboModule';
+import ScreenControlTurboModule from '../types/ScreenControlTurboModule.ts';
 
 /**
  * 屏幕控制管理器（TypeScript 层）

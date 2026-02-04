@@ -14,9 +14,13 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
+  NativeModules,
 } from 'react-native';
 import { posAdapter } from '@impos2/adapter-impos2-adapterv1';
-import MultiDisplayManager from './MultiDisplayManager';
+import MultiDisplayManager from './utils/MultiDisplayManager.ts';
+
+// 获取 ScreenInitModule
+const { ScreenInitModule } = NativeModules;
 
 // 定义 Props 接口
 interface TestScreenProps {
@@ -46,6 +50,16 @@ function TestScreen(props: TestScreenProps): React.JSX.Element {
 
   useEffect(() => {
     console.log('========== TestScreen useEffect 执行 ==========');
+
+    // 通知原生层屏幕初始化完成
+    if (ScreenInitModule) {
+      console.log('通知原生层屏幕初始化完成:', screenParams);
+      ScreenInitModule.notifyScreenInitialized(
+        screenParams.screenType,
+        screenParams
+      );
+    }
+
     // 自动加载设备信息
     handleGetDeviceInfo();
   }, []);

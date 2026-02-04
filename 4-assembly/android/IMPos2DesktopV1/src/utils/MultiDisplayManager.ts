@@ -1,4 +1,4 @@
-import MultiDisplayTurboModule from './types/MultiDisplayTurboModule';
+import MultiDisplayTurboModule from '../types/MultiDisplayTurboModule.ts';
 
 /**
  * 多屏显示管理器 - JS层封装

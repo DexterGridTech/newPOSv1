@@ -27,7 +27,8 @@ class MainApplication : Application(), ReactApplication {
               IMPos2TurboModulePackage(),
               MmkvPackage(),
               MultiDisplayTurboModulePackage(),
-              ScreenControlTurboModulePackage()
+              ScreenControlTurboModulePackage(),
+              ScreenInitPackage()
           )
         }
 

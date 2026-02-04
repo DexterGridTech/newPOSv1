@@ -3,12 +3,8 @@
  * @format
  */
 
-console.log('========== App.tsx 开始加载 ==========');
-
 import React from 'react';
 import TestScreen from './TestScreen';
-
-console.log('========== App.tsx 导入完成 ==========');
 
 // 定义 Props 接口
 interface AppProps {
@@ -18,10 +14,6 @@ interface AppProps {
 }
 
 function App(props: AppProps): React.JSX.Element {
-  console.log('========== App 组件函数被调用 ==========');
-  console.log('接收到的 props:', props);
-  console.log('App 组件准备渲染');
-
   // 加载测试界面
   return <TestScreen {...props} />;
 }

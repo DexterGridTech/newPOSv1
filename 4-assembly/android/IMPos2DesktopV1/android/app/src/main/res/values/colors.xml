@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 启动屏幕背景色 -->
+    <color name="white">#FFFFFF</color>
+    <color name="launch_background">#F5F5F5</color>
+</resources>
