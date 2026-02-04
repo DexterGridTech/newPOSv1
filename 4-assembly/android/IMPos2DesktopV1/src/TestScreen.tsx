@@ -51,17 +51,36 @@ function TestScreen(props: TestScreenProps): React.JSX.Element {
   useEffect(() => {
     console.log('========== TestScreen useEffect 执行 ==========');
 
-    // 通知原生层屏幕初始化完成
-    if (ScreenInitModule) {
-      console.log('通知原生层屏幕初始化完成:', screenParams);
-      ScreenInitModule.notifyScreenInitialized(
-        screenParams.screenType,
-        screenParams
-      );
-    }
+    // 定义初始化流程
+    const initializeScreen = async () => {
+      try {
+        // 1. 先加载设备信息
+        console.log('开始加载设备信息...');
+        await handleGetDeviceInfo();
+        console.log('设备信息加载完成');
 
-    // 自动加载设备信息
-    handleGetDeviceInfo();
+        // 2. 设备信息加载完成后，通知原生层屏幕初始化完成
+        if (ScreenInitModule) {
+          console.log('通知原生层屏幕初始化完成:', screenParams);
+          ScreenInitModule.notifyScreenInitialized(
+            screenParams.screenType,
+            screenParams
+          );
+        }
+      } catch (error) {
+        console.error('屏幕初始化流程出错:', error);
+        // 即使出错也通知原生层（避免原生层一直等待）
+        if (ScreenInitModule) {
+          console.log('初始化出错，仍通知原生层:', screenParams);
+          ScreenInitModule.notifyScreenInitialized(
+            screenParams.screenType,
+            screenParams
+          );
+        }
+      }
+    };
+    // 执行初始化流程
+    initializeScreen();
   }, []);
 
   const handleGetDeviceInfo = async () => {
@@ -179,7 +198,17 @@ function TestScreen(props: TestScreenProps): React.JSX.Element {
               {Object.entries(deviceInfo).map(([key, value]) => (
                 <View key={key} style={styles.infoRow}>
                   <Text style={styles.infoKey}>{key}:</Text>
-                  <Text style={styles.infoValue}>{String(value)}</Text>
+                  {key === 'displays' && Array.isArray(value) ? (
+                    <View style={styles.displaysContainer}>
+                      {value.map((display, index) => (
+                        <Text key={index} style={styles.displayItem}>
+                          {display}
+                        </Text>
+                      ))}
+                    </View>
+                  ) : (
+                    <Text style={styles.infoValue}>{String(value)}</Text>
+                  )}
                 </View>
               ))}
             </View>
@@ -304,6 +333,15 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#333',
     flex: 1,
+  },
+  displaysContainer: {
+    flex: 1,
+  },
+  displayItem: {
+    fontSize: 14,
+    color: '#333',
+    paddingVertical: 4,
+    lineHeight: 20,
   },
 });
 

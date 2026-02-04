@@ -7,5 +7,5 @@ export interface DeviceInfo {
     memory: string;
     disk: string;
     network: string;
-    display: string;
+    displays: string[];
 }

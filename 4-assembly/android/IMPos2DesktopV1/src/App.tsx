@@ -4,18 +4,17 @@
  */
 
 import React from 'react';
-import TestScreen from './TestScreen';
+import {AppProps} from "./types/AppProps.ts";
+import RootApplication from "./RootApplication.tsx";
+import TestScreen from "./TestScreen.tsx";
 
 // 定义 Props 接口
-interface AppProps {
-  screenType?: string;
-  displayId?: number;
-  displayName?: string;
-}
 
 function App(props: AppProps): React.JSX.Element {
-  // 加载测试界面
-  return <TestScreen {...props} />;
+    // // 加载应用界面
+    return <RootApplication {...props} />;
+    //加载测试界面
+    // return <TestScreen {...props} />;
 }
 
 export default App;

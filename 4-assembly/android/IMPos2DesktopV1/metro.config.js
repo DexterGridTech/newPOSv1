@@ -16,6 +16,10 @@ const config = {
       path.resolve(__dirname, 'node_modules'),
       path.resolve(__dirname, '../../../node_modules'),
     ],
+    // 配置解析字段优先级，确保使用 React Native 和浏览器版本
+    resolverMainFields: ['react-native', 'browser', 'main'],
+    // 启用 unstable_enablePackageExports 以支持 package.json 的 exports 字段
+    unstable_enablePackageExports: true,
   },
 };
 

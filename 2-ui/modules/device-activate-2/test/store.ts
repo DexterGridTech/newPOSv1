@@ -22,7 +22,7 @@ const deviceInfo: DeviceInfo = {
     memory: "4gb",
     disk: "64gb",
     network: "Lan",
-    display: "unknown"
+    displays: ["unknown"]
 }
 
 

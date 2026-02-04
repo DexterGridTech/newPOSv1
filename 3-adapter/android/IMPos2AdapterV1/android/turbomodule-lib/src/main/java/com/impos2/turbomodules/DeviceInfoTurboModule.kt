@@ -3,6 +3,9 @@ package com.impos2.turbomodules
 import android.app.ActivityManager
 import android.content.Context
 import android.hardware.display.DisplayManager
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Environment
 import android.os.StatFs
@@ -42,8 +45,8 @@ class DeviceInfoTurboModule(reactContext: ReactApplicationContext) :
             deviceInfo.putString("cpu", getCpuInfo())
             deviceInfo.putString("memory", getMemoryInfo())
             deviceInfo.putString("disk", getDiskInfo())
-            deviceInfo.putString("network", "Unknown")
-            deviceInfo.putString("display", getDisplayInfo())
+            deviceInfo.putString("network", getNetworkInfo())
+            deviceInfo.putArray("displays", getDisplayInfoArray())
 
             promise.resolve(deviceInfo)
         } catch (e: Exception) {
@@ -118,16 +121,17 @@ class DeviceInfoTurboModule(reactContext: ReactApplicationContext) :
         }
     }
 
-    private fun getDisplayInfo(): String {
+    private fun getDisplayInfoArray(): WritableArray {
         return try {
             val displayManager = reactApplicationContext.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
             val displays = displayManager.displays
 
-            if (displays.isEmpty()) {
-                return "Unknown"
-            }
+            val displayArray: WritableArray = Arguments.createArray()
 
-            val displayInfoList = mutableListOf<String>()
+            if (displays.isEmpty()) {
+                displayArray.pushString("Unknown")
+                return displayArray
+            }
 
             displays.forEachIndexed { index, display ->
                 val metrics = DisplayMetrics()
@@ -140,12 +144,83 @@ class DeviceInfoTurboModule(reactContext: ReactApplicationContext) :
                 val refreshRate = display.refreshRate
 
                 val displayInfo = "屏幕${index + 1}: ${width}x${height}, 密度: ${density}x, DPI: $dpi, 刷新率: ${refreshRate}Hz"
-                displayInfoList.add(displayInfo)
+                displayArray.pushString(displayInfo)
             }
 
-            displayInfoList.joinToString(" | ")
+            displayArray
+        } catch (e: Exception) {
+            val errorArray: WritableArray = Arguments.createArray()
+            errorArray.pushString("Unknown")
+            errorArray
+        }
+    }
+
+    private fun getNetworkInfo(): String {
+        return try {
+            val connectivityManager = reactApplicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                val network = connectivityManager.activeNetwork
+                val capabilities = connectivityManager.getNetworkCapabilities(network)
+
+                if (capabilities == null) {
+                    return "未连接"
+                }
+
+                val networkType = when {
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> "WiFi"
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> "移动网络"
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> "以太网"
+                    else -> "其他"
+                }
+
+                val downSpeed = capabilities.linkDownstreamBandwidthKbps / 1024
+                val upSpeed = capabilities.linkUpstreamBandwidthKbps / 1024
+
+                var networkInfo = "类型: $networkType"
+
+                if (networkType == "WiFi") {
+                    val wifiInfo = getWifiInfo()
+                    if (wifiInfo.isNotEmpty()) {
+                        networkInfo += ", $wifiInfo"
+                    }
+                }
+
+                if (downSpeed > 0 || upSpeed > 0) {
+                    networkInfo += ", 下行: ${downSpeed}Mbps, 上行: ${upSpeed}Mbps"
+                }
+
+                networkInfo
+            } else {
+                @Suppress("DEPRECATION")
+                val networkInfo = connectivityManager.activeNetworkInfo
+                if (networkInfo?.isConnected == true) {
+                    "类型: ${networkInfo.typeName}"
+                } else {
+                    "未连接"
+                }
+            }
         } catch (e: Exception) {
             "Unknown"
+        }
+    }
+
+    private fun getWifiInfo(): String {
+        return try {
+            val wifiManager = reactApplicationContext.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+            val wifiInfo = wifiManager.connectionInfo
+
+            if (wifiInfo != null) {
+                val ssid = wifiInfo.ssid?.replace("\"", "") ?: "Unknown"
+                val rssi = wifiInfo.rssi
+                val linkSpeed = wifiInfo.linkSpeed
+
+                "SSID: $ssid, 信号: ${rssi}dBm, 速率: ${linkSpeed}Mbps"
+            } else {
+                ""
+            }
+        } catch (e: Exception) {
+            ""
         }
     }
 }
