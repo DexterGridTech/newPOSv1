@@ -13,6 +13,7 @@ import com.facebook.react.soloader.OpenSourceMergedSoMapping
 import com.facebook.soloader.SoLoader
 import com.impos2.turbomodules.IMPos2TurboModulePackage
 import com.reactnativemmkv.MmkvPackage
+import com.impos2desktopv1.multidisplay.MultiDisplayTurboModulePackage
 
 class MainApplication : Application(), ReactApplication {
 
@@ -23,7 +24,8 @@ class MainApplication : Application(), ReactApplication {
           return listOf(
               MainReactPackage(),
               IMPos2TurboModulePackage(),
-              MmkvPackage() // 添加 MMKV Package
+              MmkvPackage(), // 添加 MMKV Package
+              MultiDisplayTurboModulePackage() // 添加多屏显示 TurboModule Package
           )
         }
 

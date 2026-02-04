@@ -1,0 +1,15 @@
+{
+  "multiDisplay": {
+    "enabled": true,
+    "initDelayMs": 500,
+    "maxRetryCount": 6,
+    "retryIntervalMs": 500,
+    "keepScreenOn": true,
+    "preloadBundle": true,
+    "secondaryScreenComponent": "IMPos2DesktopV1",
+    "errorHandling": {
+      "catchSecondaryScreenErrors": true,
+      "fallbackToSingleScreen": true
+    }
+  }
+}
