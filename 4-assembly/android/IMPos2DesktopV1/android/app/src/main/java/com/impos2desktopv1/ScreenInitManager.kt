@@ -1,5 +1,7 @@
 package com.impos2desktopv1
 
+import android.content.Context
+import android.hardware.display.DisplayManager
 import android.util.Log
 import org.devio.rn.splashscreen.SplashScreen
 
@@ -9,7 +11,8 @@ import org.devio.rn.splashscreen.SplashScreen
  * 职责：
  * 1. 跟踪主屏的初始化状态
  * 2. 当主屏初始化完成后，隐藏 SplashScreen
- * 3. 管理全屏恢复任务的生命周期
+ * 3. 检测副屏硬件并启动副屏
+ * 4. 管理全屏恢复任务的生命周期
  */
 object ScreenInitManager {
 
@@ -24,22 +27,34 @@ object ScreenInitManager {
 
     // 用于管理延迟任务，防止内存泄漏
     private val pendingRunnables = mutableListOf<Runnable>()
+
+    // 副屏启动器
+    private var secondaryScreenLauncher: SecondaryScreenLauncher? = null
     
     /**
      * 设置 MainActivity 引用
      */
     fun setMainActivity(activity: MainActivity) {
         mainActivity = activity
+        // 初始化副屏启动器
+        secondaryScreenLauncher = SecondaryScreenLauncher(activity, activity)
         Log.d(TAG, "MainActivity 已设置")
     }
     
     /**
      * 通知主屏初始化完成
+     * 主屏初始化完成后：
+     * 1. 隐藏 SplashScreen
+     * 2. 检测副屏硬件
+     * 3. 如果有副屏，则启动副屏
      */
     fun notifyPrimaryScreenInitialized(props: Map<String, Any>) {
         Log.d(TAG, "主屏初始化完成，props: $props")
         primaryScreenInitialized = true
         checkAndHideSplashScreen()
+
+        // 检测并启动副屏
+        checkAndStartSecondaryScreen()
     }
     
     /**
@@ -71,6 +86,19 @@ object ScreenInitManager {
             } catch (e: Exception) {
                 Log.e(TAG, "隐藏 SplashScreen 失败", e)
             }
+        }
+    }
+
+    /**
+     * 检测并启动副屏
+     * 在主屏初始化完成后调用
+     */
+    private fun checkAndStartSecondaryScreen() {
+        try {
+            Log.d(TAG, "开始检测副屏硬件...")
+            secondaryScreenLauncher?.launchSecondaryScreen()
+        } catch (e: Exception) {
+            Log.e(TAG, "检测或启动副屏失败", e)
         }
     }
 
@@ -118,6 +146,7 @@ object ScreenInitManager {
         cancelPendingFullscreenRestore()
         primaryScreenInitialized = false
         secondaryScreenInitialized = false
+        secondaryScreenLauncher = null
         mainActivity = null
     }
 }

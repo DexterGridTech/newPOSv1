@@ -53,6 +53,13 @@ class AppRestartManager(private val activity: MainActivity) {
     private fun recreateReactContext() {
         try {
             Log.d(TAG, "开始重新创建ReactContext")
+
+            // 重置 ScreenInitManager 状态，确保重启后可以重新初始化
+            ScreenInitManager.reset()
+
+            // 重新设置 MainActivity，确保副屏可以正常启动
+            ScreenInitManager.setMainActivity(activity)
+
             val reactInstanceManager = activity.provideReactInstanceManager()
 
             // 使用 recreateReactContextInBackground 重新加载

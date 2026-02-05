@@ -58,13 +58,14 @@ class AppInitializer(private val activityContext: ActivityContext) {
     }
 
     /**
-     * 调度多屏显示初始化
+     * 初始化多屏显示管理器（不自动启动副屏）
+     * 仅创建 MultiDisplayManager 实例，不启动副屏
+     * 副屏将在主屏初始化完成后由 ScreenInitManager 自动启动
      */
-    fun scheduleMultiDisplayInit(reactInstanceManager: ReactInstanceManager) {
-        // 使用 synchronized 确保线程安全
+    fun initializeMultiDisplayManager(reactInstanceManager: ReactInstanceManager) {
         synchronized(this) {
             if (isMultiDisplayInitialized) {
-                Log.d(TAG, "多屏显示已初始化或已调度，跳过")
+                Log.d(TAG, "多屏显示管理器已初始化，跳过")
                 return
             }
 
@@ -73,14 +74,13 @@ class AppInitializer(private val activityContext: ActivityContext) {
                 return
             }
 
-            // 立即标记为已初始化，避免重复调度
-            isMultiDisplayInitialized = true
+            // 先尝试初始化，成功后再标记为已初始化
+            initializeMultiDisplay(reactInstanceManager)
 
-            val delayMs = getInitDelayFromConfig()
-            Log.d(TAG, "将在 ${delayMs}ms 后初始化多屏显示")
-            mainHandler.postDelayed({
-                initializeMultiDisplay(reactInstanceManager)
-            }, delayMs)
+            // 只有成功创建了 MultiDisplayManager 实例才标记为已初始化
+            if (multiDisplayManager != null) {
+                isMultiDisplayInitialized = true
+            }
         }
     }
 
@@ -120,10 +120,6 @@ class AppInitializer(private val activityContext: ActivityContext) {
         return multiDisplayConfig?.enabled == true
     }
 
-    private fun getInitDelayFromConfig(): Long {
-        return multiDisplayConfig?.initDelayMs ?: 3000L
-    }
-
     /**
      * 清理资源
      */
@@ -134,6 +130,7 @@ class AppInitializer(private val activityContext: ActivityContext) {
             multiDisplayManager = null
             screenControlManager?.destroy()
             screenControlManager = null
+            isMultiDisplayInitialized = false
             Log.d(TAG, "应用资源已释放")
         } catch (e: Exception) {
             Log.e(TAG, "清理资源失败", e)

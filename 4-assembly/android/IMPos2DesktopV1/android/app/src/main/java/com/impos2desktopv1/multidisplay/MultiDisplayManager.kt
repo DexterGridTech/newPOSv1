@@ -49,7 +49,6 @@ class MultiDisplayManager(
 ) {
     companion object {
         private const val TAG = "MultiDisplayManager"
-        private const val SECONDARY_SCREEN_DELAY_MS = 3000L
     }
 
     private val config: MultiDisplayConfig = MultiDisplayConfig.loadFromAssets(activity)
@@ -59,12 +58,13 @@ class MultiDisplayManager(
 
     private var secondaryPresentation: SecondaryDisplayPresentation? = null
     private var secondaryReactInstanceManager: ReactInstanceManager? = null
-    private var isInitialized = false
+    private var isManagerInitialized = false
+    private var isSecondaryScreenStarted = false
     private val mainHandler = Handler(Looper.getMainLooper())
 
     /**
-     * 初始化多屏显示
-     * 主屏启动 3 秒后调用，直接初始化副屏
+     * 初始化多屏显示管理器（不自动启动副屏）
+     * 仅初始化管理器，不启动副屏
      */
     fun initialize() {
         if (!config.enabled) {
@@ -72,12 +72,31 @@ class MultiDisplayManager(
             return
         }
 
-        if (isInitialized) {
-            Log.d(TAG, "多屏显示已初始化，跳过")
+        if (isManagerInitialized) {
+            Log.d(TAG, "多屏显示管理器已初始化")
             return
         }
 
-        Log.d(TAG, "开始初始化多屏显示（主屏已启动完成）")
+        Log.d(TAG, "多屏显示管理器初始化完成（不自动启动副屏）")
+        isManagerInitialized = true
+    }
+
+    /**
+     * 手动启动副屏
+     * 由 ScreenInitManager 在主屏初始化完成后调用
+     */
+    fun startSecondaryScreen() {
+        if (!config.enabled) {
+            Log.d(TAG, "多屏显示功能已禁用")
+            return
+        }
+
+        if (isSecondaryScreenStarted) {
+            Log.d(TAG, "副屏已启动，跳过重复启动")
+            return
+        }
+
+        Log.d(TAG, "手动启动副屏...")
         initializeSecondaryDisplay()
     }
 
@@ -114,7 +133,7 @@ class MultiDisplayManager(
                     showSecondaryDisplay(secondaryDisplay)
                 }
 
-                isInitialized = true
+                isSecondaryScreenStarted = true
             } else {
                 Log.w(TAG, "未检测到副屏，当前只有 ${displays.size} 个屏幕")
             }
@@ -199,30 +218,6 @@ class MultiDisplayManager(
     }
 
     /**
-     * 重启副屏
-     */
-    private fun restartSecondaryScreen() {
-        if (!config.enabled) {
-            Log.d(TAG, "多屏显示功能已禁用，跳过副屏重启")
-            return
-        }
-
-        try {
-            Log.d(TAG, "开始重启副屏...")
-            destroySecondaryScreen()
-            isInitialized = false
-
-            // 延迟后重新初始化副屏
-            mainHandler.postDelayed({
-                initializeSecondaryDisplay()
-                Log.d(TAG, "副屏重启完成")
-            }, SECONDARY_SCREEN_DELAY_MS)
-        } catch (e: Exception) {
-            Log.e(TAG, "重启副屏失败", e)
-        }
-    }
-
-    /**
      * 处理初始化错误
      */
     private fun handleInitializationError(e: Exception) {
@@ -247,14 +242,14 @@ class MultiDisplayManager(
     }
 
     /**
-     * 重启应用（主屏+副屏）
+     * 重启应用（只重启主屏，副屏由主屏初始化完成后自动启动）
      * 通过中间页避免退回桌面
      *
      * @param onMainScreenRestart 主屏重启回调，由 MainActivity 实现跳转到 LoadingActivity
      * @return RestartResult 重启结果，包含成功状态和错误信息
      */
     fun restartApplication(onMainScreenRestart: () -> Unit): RestartResult {
-        Log.d(TAG, "开始重启应用（主屏+副屏）...")
+        Log.d(TAG, "开始重启应用（只重启主屏）...")
 
         return try {
             // 1. 先销毁副屏
@@ -270,6 +265,7 @@ class MultiDisplayManager(
             }
 
             // 2. 通知 MainActivity 跳转到中间页并重启主屏
+            // 主屏初始化完成后，会通过 ScreenInitManager 自动检测并启动副屏
             try {
                 onMainScreenRestart.invoke()
             } catch (e: Exception) {
@@ -281,19 +277,7 @@ class MultiDisplayManager(
                 )
             }
 
-            // 3. 延迟重启副屏
-            try {
-                restartSecondaryScreen()
-            } catch (e: Exception) {
-                Log.e(TAG, "副屏重启失败", e)
-                return RestartResult(
-                    false,
-                    RestartError.SECONDARY_SCREEN_RESTART_FAILED.code,
-                    e.message ?: RestartError.SECONDARY_SCREEN_RESTART_FAILED.message
-                )
-            }
-
-            Log.d(TAG, "应用重启流程已启动")
+            Log.d(TAG, "应用重启流程已启动（主屏重启，副屏将在主屏初始化完成后自动启动）")
             RestartResult(true)
         } catch (e: Exception) {
             Log.e(TAG, "重启应用失败", e)
@@ -314,6 +298,7 @@ class MultiDisplayManager(
             secondaryPresentation = null
             secondaryReactInstanceManager?.destroy()
             secondaryReactInstanceManager = null
+            isSecondaryScreenStarted = false
             Log.d(TAG, "副屏资源已释放")
         } catch (e: Exception) {
             Log.e(TAG, "销毁副屏资源失败", e)
@@ -325,6 +310,8 @@ class MultiDisplayManager(
      */
     fun destroy() {
         destroySecondaryScreen()
+        isManagerInitialized = false
+        Log.d(TAG, "多屏显示管理器已销毁")
     }
 
     /**

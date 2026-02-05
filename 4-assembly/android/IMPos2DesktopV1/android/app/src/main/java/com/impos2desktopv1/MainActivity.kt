@@ -71,8 +71,9 @@ class MainActivity : BaseReactActivity(), ActivityContext {
         // 强制隐藏状态栏
         appInitializer.screenControlManager?.enableFullscreen(force = true)
 
-        // 调度多屏显示初始化
-        appInitializer.scheduleMultiDisplayInit(reactNativeHost.reactInstanceManager)
+        // 初始化多屏显示管理器（不自动启动副屏）
+        // 副屏将在主屏初始化完成后由 ScreenInitManager 自动启动
+        appInitializer.initializeMultiDisplayManager(reactNativeHost.reactInstanceManager)
     }
 
     override fun onNewIntent(intent: android.content.Intent?) {
@@ -112,6 +113,10 @@ class MainActivity : BaseReactActivity(), ActivityContext {
 
     fun reloadReactApplication() {
         appRestartManager.reloadReactApplication()
+    }
+
+    fun initializeMultiDisplayManager(reactInstanceManager: ReactInstanceManager) {
+        appInitializer.initializeMultiDisplayManager(reactInstanceManager)
     }
 
     // ========== ActivityContext 接口实现 ==========
