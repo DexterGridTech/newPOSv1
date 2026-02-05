@@ -1,11 +1,14 @@
 import {
     ApiServerAddress,
-    DisplayMode, generateStore,
+    DisplayMode,
+    generateStore,
     InstanceMode,
     IPosAdapter,
     KERNEL_API_SERVER_NAME,
     KERNEL_WS_SERVER_NAME,
-    ScreenMode, Slave, StoreConfig,
+    ScreenMode,
+    Slave,
+    StoreConfig,
     Workspace
 } from "@impos2/kernel-base";
 import {AppProps} from "../types/AppProps.ts";
@@ -67,7 +70,7 @@ async function createStore(props: AppProps, posAdapter: IPosAdapter) {
     const standAlone = props.displayId === 0
     const instanceMode: InstanceMode = standAlone ? InstanceMode.MASTER : InstanceMode.SLAVE
     const displayMode: DisplayMode = standAlone ? DisplayMode.PRIMARY : DisplayMode.SECONDARY;
-    const screenMode = displays[0].isMobile ?   ScreenMode.MOBILE : ScreenMode.DESKTOP
+    const screenMode = displays[0].isMobile ? ScreenMode.MOBILE : ScreenMode.DESKTOP
 
 
     if (displays.length > 1) {
@@ -111,7 +114,7 @@ async function createStore(props: AppProps, posAdapter: IPosAdapter) {
             } : {},
         },
     };
-    const rootModule=uiIntegrateDesktop2Module
+    const rootModule = uiIntegrateDesktop2Module
     console.log("rootModule", rootModule)
     if (!rootModule) {
         throw new Error("rootModule is null or undefined")
@@ -120,17 +123,7 @@ async function createStore(props: AppProps, posAdapter: IPosAdapter) {
 
     const storeConfig: StoreConfig = {
         workspace: workspace,
-        devTools: {
-            enabled: true,
-            name: `IMPos2 Desktop - ${displayMode === DisplayMode.PRIMARY ? '主屏' : '副屏'}`,
-            trace: true,
-            maxAge: 50,
-            remote: {
-                hostname: 'localhost',
-                port: 8000,
-                secure: false
-            }
-        },
+        devTools: true,
         nativeAdapter: null,
         preInitiatedState: preInitiatedState,
         kernelModules: [rootModule],

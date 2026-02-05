@@ -4,7 +4,7 @@
   "description": "整合层：IMPos2 Desktop 集成包",
   "private": true,
   "scripts": {
-    "start": "react-native start",
+    "start": "react-native start --reset-cache",
     "start:clean": "react-native start --reset-cache",
     "android": "react-native run-android",
     "android:debug": "react-native run-android --mode=debug",
