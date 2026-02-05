@@ -2,7 +2,7 @@ import { AppEpic, RootState } from "../features";
 import { INativeAdapter, Workspace } from "../types";
 import { IActor } from "../core";
 import { ScreenPartRegistration } from "@impos2/kernel-module-ui-navigation";
-import { Reducer } from "@reduxjs/toolkit";
+import { Reducer, StoreEnhancer } from "@reduxjs/toolkit";
 import { Storage } from 'redux-persist';
 /**
  * Kernel 模块接口
@@ -20,12 +20,16 @@ export interface KernelModule {
  * Store 配置接口
  */
 export interface StoreConfig {
-    devTools: boolean;
     nativeAdapter: INativeAdapter | null;
     preInitiatedState: Partial<RootState>;
     workspace: Workspace;
     kernelModules: KernelModule[];
-    reduxStorage?:Storage
+    reduxStorage?: Storage;
+    /**
+     * Reactotron enhancer (可选)
+     * 用于在开发环境下集成 Reactotron 调试工具
+     */
+    reactotronEnhancer?: StoreEnhancer;
 }
 
 /**

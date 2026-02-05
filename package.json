@@ -26,13 +26,9 @@
     "build-for-product:clean": "turbo run build-for-product --force",
     "type-check": "turbo run type-check",
     "kill-port": "node scripts/kill-port.js",
-    "redux-devtools": "redux-devtools --hostname localhost --port 8000",
-    "redux-devtools:start": "node scripts/start-redux-devtools.js",
-    "redux-devtools:start:simple": "node scripts/start-redux-devtools-simple.js",
     "android:port-forward": "node scripts/setup-android-port-forwarding.js",
     "android:port-list": "node scripts/setup-android-port-forwarding.js --list",
     "android:port-clear": "node scripts/setup-android-port-forwarding.js --clear",
-    "test:redux-devtools": "node scripts/test-redux-devtools-connection.js",
     "-------": "---------------------------------------",
     "A:kernel-server": "corepack yarn workspace @impos2/kernel-server dev",
     "B:master-ws-server": "corepack yarn workspace @impos2/master-ws-server dev",
@@ -51,7 +47,6 @@
     "lint": "turbo run lint"
   },
   "devDependencies": {
-    "@redux-devtools/cli": "4.0.0",
     "turbo": "^2.8.1",
     "typescript": "^5.9.3"
   },
@@ -80,9 +75,5 @@
     "@babel/plugin-proposal-decorators": "^7.25.9",
     "@babel/plugin-proposal-class-properties": "^7.18.6",
     "monaco-editor": "^0.52.2"
-  },
-  "dependencies": {
-    "@redux-devtools/extension": "^3.3.0",
-    "@redux-devtools/remote": "^0.9.5"
   }
 }

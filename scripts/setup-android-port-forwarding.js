@@ -15,8 +15,8 @@ const ADB_PATH = '/Users/dexter/Library/Android/sdk/platform-tools/adb';
 
 // 需要映射的端口列表
 const PORTS_TO_FORWARD = [
-  { host: 8000, device: 8000, description: 'Redux DevTools CLI' },
-  { host: 9999, device: 9999, description: 'Custom Service' }
+  { host: 9999, device: 9999, description: 'Custom Service' },
+  { host: 9090, device: 9090, description: 'Reactotron' }
 ];
 
 /**

@@ -102,7 +102,6 @@ const preInitiatedState = {
 
 const storeConfig: StoreConfig = {
     workspace: workspace,
-    devTools: true,
     nativeAdapter: null,
     preInitiatedState: preInitiatedState,
     kernelModules: [uiUserLoginModule]

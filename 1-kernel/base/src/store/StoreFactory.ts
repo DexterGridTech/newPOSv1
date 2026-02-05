@@ -110,16 +110,24 @@ export class StoreFactory {
 
         // 步骤 6: 创建 Store
         this.logger.logStep(6, 'Creating Redux Store');
-        this.logger.logDetail('DevTools', config.devTools ? 'Enabled' : 'Disabled');
-        const store = configureStore({
-            devTools: config.devTools,
+        this.logger.logDetail('Reactotron', config.reactotronEnhancer ? 'Enabled' : 'Disabled');
+
+        const storeOptions: any = {
             reducer: rootReducer,
             preloadedState: config.preInitiatedState as RootState,
-            middleware: (getDefaultMiddleware) =>
+            middleware: (getDefaultMiddleware: any) =>
                 getDefaultMiddleware({
                     serializableCheck: false
                 }).concat(middlewares)
-        }) as EnhancedStore<RootState>;
+        };
+
+        // 如果提供了 Reactotron enhancer，添加到 store 配置中
+        if (config.reactotronEnhancer) {
+            storeOptions.enhancers = (getDefaultEnhancers: any) =>
+                getDefaultEnhancers().concat(config.reactotronEnhancer);
+        }
+
+        const store = configureStore(storeOptions) as EnhancedStore<RootState>;
         this.logger.logSuccess('Redux Store created');
         this.logger.logStepEnd();
 

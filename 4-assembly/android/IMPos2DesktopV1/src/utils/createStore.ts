@@ -13,6 +13,7 @@ import {
 } from "@impos2/kernel-base";
 import {AppProps} from "../types/AppProps.ts";
 import {uiIntegrateDesktop2Module} from "@impos2/integrate-desktop-2";
+import reactotron from "../config/ReactotronConfig";
 
 async function createStore(props: AppProps, posAdapter: IPosAdapter) {
     const kernelApiServerAddress: ApiServerAddress = {
@@ -123,10 +124,11 @@ async function createStore(props: AppProps, posAdapter: IPosAdapter) {
 
     const storeConfig: StoreConfig = {
         workspace: workspace,
-        devTools: true,
         nativeAdapter: null,
         preInitiatedState: preInitiatedState,
         kernelModules: [rootModule],
+        // 在开发环境下启用 Reactotron
+        reactotronEnhancer: __DEV__ ? reactotron.createEnhancer!() : undefined,
     };
 
     return generateStore(storeConfig);
