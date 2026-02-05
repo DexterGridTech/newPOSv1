@@ -20,8 +20,3 @@ project(':react-native-mmkv').projectDir = mmkvProjectDir
 def splashScreenProjectDir = file("../../../../node_modules/react-native-splash-screen/android")
 include ':react-native-splash-screen'
 project(':react-native-splash-screen').projectDir = splashScreenProjectDir
-
-// 引入 react-native-device-info 原生模块
-def deviceInfoProjectDir = file("../../../../node_modules/react-native-device-info/android")
-include ':react-native-device-info'
-project(':react-native-device-info').projectDir = deviceInfoProjectDir

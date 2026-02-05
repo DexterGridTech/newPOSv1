@@ -247,7 +247,7 @@ export class ApiManager {
 
         let instance = this.axiosInstances.get(instanceKey);
         if (!instance) {
-            instance = axios.create({
+            const newInstance = axios.create({
                 baseURL: address.baseURL,
                 timeout: address.timeout
             });
@@ -255,7 +255,7 @@ export class ApiManager {
             // 应用请求拦截器
             this.requestInterceptors.forEach(interceptor => {
                 if (!interceptor.serverName || interceptor.serverName === serverName) {
-                    instance!.interceptors.request.use(
+                    newInstance.interceptors.request.use(
                         interceptor.onRequest,
                         interceptor.onRequestError
                     );
@@ -265,14 +265,15 @@ export class ApiManager {
             // 应用响应拦截器
             this.responseInterceptors.forEach(interceptor => {
                 if (!interceptor.serverName || interceptor.serverName === serverName) {
-                    instance!.interceptors.response.use(
+                    newInstance.interceptors.response.use(
                         interceptor.onResponse,
                         interceptor.onResponseError
                     );
                 }
             });
 
-            this.axiosInstances.set(instanceKey, instance);
+            this.axiosInstances.set(instanceKey, newInstance);
+            instance = newInstance;
         }
 
         return instance;
@@ -394,10 +395,11 @@ export class ApiManager {
             // 处理取消请求
             if (axios.isCancel(error)) {
                 this.metrics.cancelledRequests++;
+                const errorMessage = (error as any)?.message || '请求已取消';
                 return {
                     response: {
                         code: APIErrorCode.REQUEST_CANCELLED,
-                        message: error.message || '请求已取消'
+                        message: errorMessage
                     },
                     record: {
                         addressName: address.addressName,
@@ -408,7 +410,7 @@ export class ApiManager {
                         responseTime,
                         success: false,
                         errorCode: APIErrorCode.REQUEST_CANCELLED,
-                        errorMessage: error.message || '请求已取消'
+                        errorMessage: errorMessage
                     }
                 };
             }

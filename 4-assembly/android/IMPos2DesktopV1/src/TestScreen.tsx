@@ -201,9 +201,16 @@ function TestScreen(props: TestScreenProps): React.JSX.Element {
                   {key === 'displays' && Array.isArray(value) ? (
                     <View style={styles.displaysContainer}>
                       {value.map((display, index) => (
-                        <Text key={index} style={styles.displayItem}>
-                          {display}
-                        </Text>
+                        <View key={index} style={styles.displayItemContainer}>
+                          <Text style={styles.displayItemTitle}>屏幕 {index + 1}:</Text>
+                          <Text style={styles.displayItem}>ID: {display.id}</Text>
+                          <Text style={styles.displayItem}>类型: {display.displayType}</Text>
+                          <Text style={styles.displayItem}>分辨率: {display.width}x{display.height}</Text>
+                          <Text style={styles.displayItem}>物理尺寸: {display.physicalWidth.toFixed(1)}mm x {display.physicalHeight.toFixed(1)}mm</Text>
+                          <Text style={styles.displayItem}>刷新率: {display.refreshRate}Hz</Text>
+                          <Text style={styles.displayItem}>方向: {display.orientation}</Text>
+                          <Text style={styles.displayItem}>移动设备: {display.isMobile ? '是' : '否'}</Text>
+                        </View>
                       ))}
                     </View>
                   ) : (
@@ -337,11 +344,25 @@ const styles = StyleSheet.create({
   displaysContainer: {
     flex: 1,
   },
+  displayItemContainer: {
+    backgroundColor: '#f9f9f9',
+    padding: 10,
+    marginVertical: 5,
+    borderRadius: 6,
+    borderLeftWidth: 3,
+    borderLeftColor: '#007AFF',
+  },
+  displayItemTitle: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#007AFF',
+    marginBottom: 5,
+  },
   displayItem: {
-    fontSize: 14,
+    fontSize: 13,
     color: '#333',
-    paddingVertical: 4,
-    lineHeight: 20,
+    paddingVertical: 2,
+    lineHeight: 18,
   },
 });
 

@@ -247,7 +247,24 @@ function App(): React.JSX.Element {
                   {Object.entries(deviceInfo).map(([key, value]) => (
                     <View key={key} style={styles.infoRow}>
                       <Text style={styles.infoKey}>{key}</Text>
-                      <Text style={styles.infoValue}>{String(value)}</Text>
+                      {key === 'displays' && Array.isArray(value) ? (
+                        <View style={styles.displaysContainer}>
+                          {value.map((display, index) => (
+                            <View key={index} style={styles.displayCard}>
+                              <Text style={styles.displayTitle}>屏幕 {index + 1}</Text>
+                              <Text style={styles.displayDetail}>ID: {display.id}</Text>
+                              <Text style={styles.displayDetail}>类型: {display.displayType}</Text>
+                              <Text style={styles.displayDetail}>分辨率: {display.width}x{display.height}</Text>
+                              <Text style={styles.displayDetail}>物理尺寸: {display.physicalWidth.toFixed(1)}mm x {display.physicalHeight.toFixed(1)}mm</Text>
+                              <Text style={styles.displayDetail}>刷新率: {display.refreshRate}Hz</Text>
+                              <Text style={styles.displayDetail}>方向: {display.orientation}</Text>
+                              <Text style={styles.displayDetail}>移动设备: {display.isMobile ? '是' : '否'}</Text>
+                            </View>
+                          ))}
+                        </View>
+                      ) : (
+                        <Text style={styles.infoValue}>{String(value)}</Text>
+                      )}
                     </View>
                   ))}
                 </View>
@@ -689,6 +706,29 @@ const styles = StyleSheet.create({
     color: '#1f2937',
     flex: 1,
     lineHeight: 20,
+  },
+  displaysContainer: {
+    flex: 1,
+  },
+  displayCard: {
+    backgroundColor: '#f0f9ff',
+    padding: 12,
+    marginVertical: 6,
+    borderRadius: 8,
+    borderLeftWidth: 3,
+    borderLeftColor: '#3b82f6',
+  },
+  displayTitle: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#1e40af',
+    marginBottom: 8,
+  },
+  displayDetail: {
+    fontSize: 13,
+    color: '#374151',
+    paddingVertical: 2,
+    lineHeight: 18,
   },
   codeBlock: {
     backgroundColor: '#1f2937',

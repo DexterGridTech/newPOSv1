@@ -15,7 +15,6 @@ import com.impos2.turbomodules.IMPos2TurboModulePackage
 import com.reactnativemmkv.MmkvPackage
 import com.impos2desktopv1.multidisplay.MultiDisplayTurboModulePackage
 import com.impos2desktopv1.screen.ScreenControlTurboModulePackage
-import com.learnium.RNDeviceInfo.RNDeviceInfo
 
 class MainApplication : Application(), ReactApplication {
 
@@ -29,8 +28,7 @@ class MainApplication : Application(), ReactApplication {
               MmkvPackage(),
               MultiDisplayTurboModulePackage(),
               ScreenControlTurboModulePackage(),
-              ScreenInitPackage(),
-              RNDeviceInfo()
+              ScreenInitPackage()
           )
         }
 

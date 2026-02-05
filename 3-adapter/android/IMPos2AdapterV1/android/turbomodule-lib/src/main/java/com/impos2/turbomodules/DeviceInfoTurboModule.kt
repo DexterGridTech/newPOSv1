@@ -129,29 +129,32 @@ class DeviceInfoTurboModule(reactContext: ReactApplicationContext) :
             val displayArray: WritableArray = Arguments.createArray()
 
             if (displays.isEmpty()) {
-                displayArray.pushString("Unknown")
                 return displayArray
             }
 
-            displays.forEachIndexed { index, display ->
+            displays.forEach { display ->
                 val metrics = DisplayMetrics()
                 display.getRealMetrics(metrics)
 
-                val width = metrics.widthPixels
-                val height = metrics.heightPixels
-                val density = metrics.density
-                val dpi = metrics.densityDpi
-                val refreshRate = display.refreshRate
+                val displayInfo: WritableMap = Arguments.createMap()
 
-                val displayInfo = "屏幕${index + 1}: ${width}x${height}, 密度: ${density}x, DPI: $dpi, 刷新率: ${refreshRate}Hz"
-                displayArray.pushString(displayInfo)
+                // 按照 DisplayInfo 接口定义返回字段
+                displayInfo.putString("id", display.displayId.toString())
+                displayInfo.putString("displayType", getDisplayType(display))
+                displayInfo.putInt("refreshRate", display.refreshRate.toInt())
+                displayInfo.putInt("width", metrics.widthPixels)
+                displayInfo.putInt("height", metrics.heightPixels)
+                displayInfo.putDouble("physicalWidth", (metrics.widthPixels / metrics.xdpi) * 25.4)
+                displayInfo.putDouble("physicalHeight", (metrics.heightPixels / metrics.ydpi) * 25.4)
+                displayInfo.putString("orientation", getOrientation(display))
+                displayInfo.putBoolean("isMobile", isMobileDevice())
+
+                displayArray.pushMap(displayInfo)
             }
 
             displayArray
         } catch (e: Exception) {
-            val errorArray: WritableArray = Arguments.createArray()
-            errorArray.pushString("Unknown")
-            errorArray
+            Arguments.createArray()
         }
     }
 
@@ -221,6 +224,45 @@ class DeviceInfoTurboModule(reactContext: ReactApplicationContext) :
             }
         } catch (e: Exception) {
             ""
+        }
+    }
+
+    private fun getDisplayType(display: Display): String {
+        return when {
+            display.displayId == Display.DEFAULT_DISPLAY -> "primary"
+            else -> "secondary"
+        }
+    }
+
+    private fun getOrientation(display: Display): String {
+        return when (display.rotation) {
+            0 -> "portrait"
+            1 -> "landscape"
+            2 -> "portrait-reverse"
+            3 -> "landscape-reverse"
+            else -> "unknown"
+        }
+    }
+
+    private fun isMobileDevice(): Boolean {
+        return try {
+            val configuration = reactApplicationContext.resources.configuration
+            val uiMode = configuration.uiMode and android.content.res.Configuration.UI_MODE_TYPE_MASK
+
+            // 判断设备类型
+            when (uiMode) {
+                android.content.res.Configuration.UI_MODE_TYPE_NORMAL -> {
+                    // 普通设备（手机或平板），通过屏幕尺寸进一步判断
+                    val screenLayout = configuration.screenLayout and android.content.res.Configuration.SCREENLAYOUT_SIZE_MASK
+                    // 小屏和普通屏认为是手机，大屏和超大屏认为是平板/laptop
+                    screenLayout <= android.content.res.Configuration.SCREENLAYOUT_SIZE_NORMAL
+                }
+                android.content.res.Configuration.UI_MODE_TYPE_TELEVISION,
+                android.content.res.Configuration.UI_MODE_TYPE_DESK -> false // TV 和桌面设备
+                else -> true // 其他情况默认为移动设备
+            }
+        } catch (e: Exception) {
+            true // 出错时默认为移动设备
         }
     }
 }

@@ -22,7 +22,17 @@ const deviceInfo: DeviceInfo = {
     memory: "4gb",
     disk: "64gb",
     network: "Lan",
-    displays: ["unknown"]
+    displays: [{
+        id: "1",
+        displayType: "LCD",
+        refreshRate: 60,
+        width: 1920,
+        height: 1080,
+        physicalWidth: 150,
+        physicalHeight: 84,
+        orientation: "portrait",
+        isMobile: false
+    }]
 }
 
 

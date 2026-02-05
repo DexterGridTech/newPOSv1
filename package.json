@@ -25,6 +25,7 @@
     "build-for-product": "turbo run build-for-product",
     "build-for-product:clean": "turbo run build-for-product --force",
     "type-check": "turbo run type-check",
+    "kill-port": "node scripts/kill-port.js",
     "-------": "---------------------------------------",
     "A:kernel-server": "corepack yarn workspace @impos2/kernel-server dev",
     "B:master-ws-server": "corepack yarn workspace @impos2/master-ws-server dev",

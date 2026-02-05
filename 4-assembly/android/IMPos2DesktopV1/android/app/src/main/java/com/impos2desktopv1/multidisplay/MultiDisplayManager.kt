@@ -198,6 +198,7 @@ class MultiDisplayManager(
         packages.add(MmkvPackage())
         packages.add(MultiDisplayTurboModulePackage())
         packages.add(com.impos2desktopv1.screen.ScreenControlTurboModulePackage())
+        packages.add(com.impos2desktopv1.ScreenInitPackage())
         // 注意：副屏不添加 SplashScreenReactPackage，因为副屏不需要启动屏
 
         val builder = ReactInstanceManager.builder()

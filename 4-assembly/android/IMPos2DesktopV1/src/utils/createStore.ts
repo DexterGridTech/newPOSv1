@@ -9,7 +9,6 @@ import {
     Workspace
 } from "@impos2/kernel-base";
 import {AppProps} from "../types/AppProps.ts";
-import isDesktop from "./isDesktop.ts";
 import {uiIntegrateDesktop2Module} from "@impos2/integrate-desktop-2";
 
 async function createStore(props: AppProps, posAdapter: IPosAdapter) {
@@ -63,13 +62,14 @@ async function createStore(props: AppProps, posAdapter: IPosAdapter) {
 
     const deviceInfo = await posAdapter.deviceInfo.getDeviceInfo()
     console.log("获取deviceInfo成功")
+    const displays = deviceInfo.displays;
 
     const standAlone = props.displayId === 0
     const instanceMode: InstanceMode = standAlone ? InstanceMode.MASTER : InstanceMode.SLAVE
     const displayMode: DisplayMode = standAlone ? DisplayMode.PRIMARY : DisplayMode.SECONDARY;
-    const screenMode = isDesktop ? ScreenMode.DESKTOP : ScreenMode.MOBILE
+    const screenMode = displays[0].isMobile ?   ScreenMode.MOBILE : ScreenMode.DESKTOP
 
-    const displays = deviceInfo.displays;
+
     if (displays.length > 1) {
 
     }
@@ -120,11 +120,20 @@ async function createStore(props: AppProps, posAdapter: IPosAdapter) {
 
     const storeConfig: StoreConfig = {
         workspace: workspace,
-        devTools: true,
-        nativeAdapter: null, // TODO: posAdapter 需要实现完整的 INativeAdapter 接口
+        devTools: {
+            enabled: true,
+            name: `IMPos2 Desktop - ${displayMode === DisplayMode.PRIMARY ? '主屏' : '副屏'}`,
+            trace: true,
+            maxAge: 50,
+            remote: {
+                hostname: 'localhost',
+                port: 8000,
+                secure: false
+            }
+        },
+        nativeAdapter: null,
         preInitiatedState: preInitiatedState,
         kernelModules: [rootModule],
-        // reduxStorage: reduxStorage,
     };
 
     return generateStore(storeConfig);

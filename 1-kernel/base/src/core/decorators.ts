@@ -28,9 +28,9 @@ export function CommandHandler<T extends ICommand<any>>(
 ) {
     return function (
         target: any,
-        propertyKey: string,
+        propertyKey: string | symbol,
         descriptor?: PropertyDescriptor
-    ): any {
+    ): void | PropertyDescriptor {
         // 获取或创建命令处理器映射
         if (!target[COMMAND_HANDLERS_KEY]) {
             target[COMMAND_HANDLERS_KEY] = new Map();
@@ -39,7 +39,7 @@ export function CommandHandler<T extends ICommand<any>>(
         // 注册命令处理器
         const handlers = target[COMMAND_HANDLERS_KEY] as Map<
             new (...args: any[]) => ICommand<any>,
-            string
+            string | symbol
         >;
 
         handlers.set(commandClass, propertyKey);
