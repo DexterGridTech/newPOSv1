@@ -4,6 +4,7 @@
 export const BaseModuleCommandNames = {
     // 初始化相关
     Initialize: "InitializeCommand",
+    NextDataVersion: "NextDataVersionCommand",
     Navigation: "NavigationCommand",
 
     // 主设备相关 (Master)

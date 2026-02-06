@@ -17,8 +17,7 @@ export class MultiDisplayManager {
    */
   static async restartApplication(): Promise<boolean> {
     try {
-      const result = await this.module.restartApplication();
-      return result;
+      return await this.module.restartApplication();
     } catch (error) {
       console.error('MultiDisplayManager.restartApplication 失败:', error);
       throw error;

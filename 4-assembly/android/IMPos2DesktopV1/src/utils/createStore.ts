@@ -73,10 +73,8 @@ async function createStore(props: AppProps, posAdapter: IPosAdapter) {
     const displayMode: DisplayMode = standAlone ? DisplayMode.PRIMARY : DisplayMode.SECONDARY;
     const screenMode = displays[0].isMobile ? ScreenMode.MOBILE : ScreenMode.DESKTOP
 
+    const enableSlaves=standAlone && (displays.length > 1)
 
-    if (displays.length > 1) {
-
-    }
     const preInitiatedState = {
         deviceStatus: {
             deviceInfo: deviceInfo,
@@ -89,8 +87,8 @@ async function createStore(props: AppProps, posAdapter: IPosAdapter) {
             },
             workspace: workspace,
             standAlone: standAlone,
-            enableSlaves: standAlone && (displays.length > 1),
-            masterSlaves: (standAlone && (displays.length > 1)) ? {
+            enableSlaves:enableSlaves,
+            masterSlaves: enableSlaves ? {
                 ['embeddedDisplay']: {
                     name: "embeddedDisplay",
                     addedAt: 0,

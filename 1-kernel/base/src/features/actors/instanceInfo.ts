@@ -1,6 +1,7 @@
-import {AppError, CommandHandler, currentState, dispatchAction, IActor, ICommand} from "../../core";
+import {AppError, CommandHandler, currentState, dispatchAction, IActor, logger, storage} from "../../core";
 import {
     AddSlaveCommand,
+    NextDataVersionCommand,
     RegisterSlaveCommand,
     RemoveSlaveCommand,
     SetSlaveInfoCommand,
@@ -14,6 +15,12 @@ import {ModifySlaveErrors} from "../errors";
 
 
 class InstanceInfoActor extends IActor {
+    @CommandHandler(NextDataVersionCommand)
+    private async handleNextDataVersion(command: NextDataVersionCommand) {
+        logger.log([command.commandName], "storage.setToNextDataVersion()")
+        await storage.setToNextDataVersion()
+    }
+
     @CommandHandler(AddSlaveCommand)
     private async handleAddSlave(command: AddSlaveCommand) {
         const state = currentState<RootState>()

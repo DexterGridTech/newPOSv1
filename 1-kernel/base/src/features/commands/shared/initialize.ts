@@ -10,3 +10,8 @@ export class InitializeCommand extends defineCommand<void>(
     BaseModuleCommandNames.Initialize,
     ExecutionType.SEND_AND_EXECUTE_SEPARATELY
 ) {}
+
+export class NextDataVersionCommand extends defineCommand<void>(
+    BaseModuleCommandNames.NextDataVersion,
+    ExecutionType.SEND_AND_EXECUTE_SEPARATELY
+) {}

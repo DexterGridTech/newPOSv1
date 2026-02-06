@@ -25,7 +25,7 @@ export class ReducerBuilder implements IReducerBuilder {
 
         // 如果 storage 不为空，对需要持久化的 state 进行包装
         if (reduxStorage) {
-            const dataVersion = await storage.getItem<number>(currentWorkspace, 'dataVersion') ?? 0
+            const dataVersion = await storage.getDataVersion()
             const statesToPersist = getStatesToPersist();
 
             logger.debug([moduleName, LOG_TAGS.Store, 'ReducerBuilder'], `Applying persistence with workspace:${currentWorkspace}`, { dataVersion, statesToPersist: statesToPersist.join(',') });
