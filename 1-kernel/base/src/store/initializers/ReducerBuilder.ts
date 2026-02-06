@@ -23,7 +23,7 @@ export class ReducerBuilder implements IReducerBuilder {
 
         const reduxStorage = storage.getReduxStorage()
 
-        // 如果 storage 不为空并且是standAlone模式（主机非副屏），对需要持久化的 state 进行包装
+        // 如果storage不为空并且是standAlone模式（主机非副屏），对需要持久化的 state 进行包装
         if (reduxStorage && standAlone) {
             const dataVersion = await storage.getDataVersion()
             const statesToPersist = getStatesToPersist();
