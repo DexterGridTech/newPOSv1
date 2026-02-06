@@ -73,7 +73,7 @@ export class StoreFactory {
         // 步骤 3: 构建 Reducers
         this.logger.logStep(3, 'Building Reducers');
 
-        const rootReducer = await this.reducerBuilder.buildReducers(resolvedModules, config.workspace.selectedWorkspace)
+        const rootReducer = await this.reducerBuilder.buildReducers(config.standAlone, resolvedModules, config.workspace.selectedWorkspace)
         const reducerCount = Object.keys(rootReducer).length;
         this.logger.logDetail('Total Reducers', reducerCount);
         this.logger.logSuccess('Reducers built successfully');
