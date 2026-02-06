@@ -14,6 +14,7 @@ import {Persistor} from "redux-persist/es/types";
 const {ScreenInitModule} = NativeModules;
 
 function RootApplication(props: AppProps): React.JSX.Element {
+    console.log('===============', props);
     const [store, setStore] = useState<EnhancedStore<RootState> | null>(null);
     const [persistor, setPersistor] = useState<Persistor | null>(null);
     useEffect(() => {

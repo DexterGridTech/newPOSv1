@@ -154,6 +154,9 @@ Desktop.ini
 !.yarn/sdks
 !.yarn/versions
 
+# 保留 install-state.gz 以加速安装
+!.yarn/install-state.gz
+
 # ============================================
 # Package Manager Lock Files (keep yarn.lock)
 # ============================================

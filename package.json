@@ -20,6 +20,7 @@
   ],
   "scripts": {
     "setup": "corepack yarn install",
+    "check-env": "node scripts/check-env.js",
     "build": "turbo run build",
     "build:clean": "turbo run build --force",
     "build-for-product": "turbo run build-for-product",
