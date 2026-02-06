@@ -7,6 +7,8 @@ import {
   ConnectionErrorType,
 } from '../../types';
 import {logger} from "../nativeAdapter";
+import { LOG_TAGS } from '../../types/core/logTags';
+import { moduleName } from '../../module';
 
 /**
  * WebSocket 连接管理器
@@ -191,7 +193,7 @@ export class MasterConnectionManager {
             const message: MessageWrapper = JSON.parse(event.data);
             this.onMessageCallback(message);
           } catch (error) {
-            logger.error('消息解析错误:', error);
+            logger.error([moduleName, LOG_TAGS.WebSocket, "ConnectionManager"], '消息解析错误:', error);
           }
         };
 

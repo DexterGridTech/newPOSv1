@@ -42,11 +42,11 @@ export class StoreManager {
         return StoreManager.instance;
     }
 
-    generateStore(config: StoreConfig) {
+    async generateStore(config: StoreConfig) {
         if (this.store) {
             throw new Error('Store already exists');
         }
-        const {store, persistor} = this.storeFactory.createStore(config);
+        const {store, persistor} = await this.storeFactory.createStore(config);
         this.store = store;
         this.persistor = persistor;
         return {store, persistor};

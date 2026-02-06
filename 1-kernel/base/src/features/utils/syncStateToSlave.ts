@@ -1,6 +1,8 @@
 import {logger, MasterWebSocketClient} from "../../core";
 import {MasterServerMessageType, SyncStateWrapper} from "../../types";
 import {PayloadAction} from "@reduxjs/toolkit";
+import { LOG_TAGS } from '../../types/core/logTags';
+import { moduleName } from '../../module';
 
 /**
  * 同步状态到从设备
@@ -13,10 +15,10 @@ export const syncStateToSlave = async (key: string, stateChanged: Record<string,
             stateChanged: stateChanged,
             targetDevice
         }
-        logger.log("state sync--> ", syncState)
+        logger.log([moduleName, LOG_TAGS.System, "syncStateToSlave"], "state sync--> ", syncState)
         await wsClient.sendMessage(MasterServerMessageType.SYNC_STATE, syncState, null)
             .catch(error => {
-                logger.error("state sync error--> ", error)
+                logger.error([moduleName, LOG_TAGS.System, "syncStateToSlave"], "state sync error--> ", error)
             })
     }
 }

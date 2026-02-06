@@ -123,16 +123,16 @@ async function createStore(props: AppProps, posAdapter: IPosAdapter) {
     console.log("rootModule.name", rootModule.name)
 
     const storeConfig: StoreConfig = {
+        standAlone:standAlone,
         workspace: workspace,
-        nativeAdapter: null,
+        nativeAdapter: posAdapter,
         preInitiatedState: preInitiatedState,
         kernelModules: [rootModule],
-        reduxStorage: posAdapter.storage.getStorage(),
         // 在开发环境下启用 Reactotron
         reactotronEnhancer: __DEV__ ? reactotron.createEnhancer!() : undefined,
     };
 
-    return generateStore(storeConfig);
+    return await generateStore(storeConfig);
 }
 
 export default createStore;

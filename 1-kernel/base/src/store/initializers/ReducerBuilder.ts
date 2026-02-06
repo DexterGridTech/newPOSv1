@@ -1,15 +1,16 @@
 import {Reducer} from "@reduxjs/toolkit";
 import {generateUnitDataSlice, unitDataGroups} from "../../features";
 import {IReducerBuilder, KernelModule} from "../types";
-import {persistReducer, Storage} from 'redux-persist';
-import {getStatesToPersist, logger} from "../../core";
+import {persistReducer} from 'redux-persist';
+import {getStatesToPersist, logger, storage} from "../../core";
+import {LOG_TAGS, moduleName} from "../../types";
 
 /**
  * Reducer 构建器实现
  * 职责: 负责构建和合并所有 Reducers，并根据配置进行持久化处理
  */
 export class ReducerBuilder implements IReducerBuilder {
-    buildReducers(modules: KernelModule[], currentWorkspace: string, storage?: Storage): Record<string, Reducer> {
+    async buildReducers(modules: KernelModule[], currentWorkspace: string): Promise<Record<string, Reducer>> {
         // 构建基础 UnitData Reducers
         let rootReducer: Record<string, Reducer> = Object.fromEntries(
             Array.from(unitDataGroups).map(group => [group, generateUnitDataSlice(group)])
@@ -20,15 +21,14 @@ export class ReducerBuilder implements IReducerBuilder {
             rootReducer = {...rootReducer, ...module.reducers};
         });
 
+        const reduxStorage = storage.getReduxStorage()
+
         // 如果 storage 不为空，对需要持久化的 state 进行包装
-        if (storage) {
+        if (reduxStorage) {
+            const dataVersion = await storage.getItem<number>(currentWorkspace, 'dataVersion') ?? 0
             const statesToPersist = getStatesToPersist();
 
-            logger.debug('[ReducerBuilder] Applying persistence', {
-                storage: storage.constructor.name,
-                statesToPersist: statesToPersist.length,
-                stateNames: statesToPersist
-            });
+            logger.debug([moduleName, LOG_TAGS.Store, 'ReducerBuilder'], `Applying persistence with workspace:${currentWorkspace}`, { dataVersion, statesToPersist: statesToPersist.join(',') });
 
             // 遍历需要持久化的 state
             statesToPersist.forEach(stateName => {
@@ -36,25 +36,22 @@ export class ReducerBuilder implements IReducerBuilder {
                 if (rootReducer[stateName]) {
                     // 创建持久化配置
                     const persistConfig = {
-                        key: `${currentWorkspace}-${stateName}`,
-                        storage: storage,
+                        key: `${currentWorkspace}-${dataVersion}-${stateName}`,
+                        storage: reduxStorage,
                     };
-
                     // 使用 persistReducer 包装原始 reducer
                     rootReducer[stateName] = persistReducer(persistConfig, rootReducer[stateName]);
-
-                    logger.debug(`[ReducerBuilder] Persisted state: ${stateName}`);
+                    logger.debug([moduleName,LOG_TAGS.Store, 'ReducerBuilder'], `Persisted state: ${stateName}`);
                 } else {
-                    logger.warn(`[ReducerBuilder] State "${stateName}" marked for persistence but not found in reducers`);
+                    logger.warn([moduleName, LOG_TAGS.Store, 'ReducerBuilder'], `State "${stateName}" marked for persistence but not found in reducers`);
                 }
             });
-
-            logger.log('[ReducerBuilder] Persistence applied successfully', {
+            logger.log([moduleName,LOG_TAGS.Store, 'ReducerBuilder'], 'Persistence applied successfully', {
                 totalReducers: Object.keys(rootReducer).length,
                 persistedReducers: statesToPersist.length
             });
         } else {
-            logger.debug('[ReducerBuilder] No storage provided, skipping persistence');
+            logger.debug([moduleName,LOG_TAGS.Store, 'ReducerBuilder'], 'No storage provided, skipping persistence');
         }
 
         return rootReducer;

@@ -3,6 +3,8 @@ import {DisplayMode, ErrorCategory, ErrorSeverity, ExecutionType} from "../types
 import {AppError} from "./error";
 import {commandBus, CommandLifecycleListener, ICommand, SendToMasterCommand} from "./command";
 import {getCommandHandlers} from "./decorators";
+import { LOG_TAGS } from '../types/core/logTags';
+import { moduleName } from '../module';
 
 /**
  * 状态选择器类型定义
@@ -105,7 +107,7 @@ export class ActorSystem {
             commandToExecute.slaveInfo = {slaveName, displayMode}
             commandToExecute = new SendToMasterCommand(commandToExecute)
         }
-        logger.log("send command->", commandToExecute.commandName)
+        logger.log([moduleName, LOG_TAGS.Actor, "actor"], "send command->", commandToExecute.commandName)
         this.actors.forEach(actor => actor.executeCommand(commandToExecute))
     }
 
@@ -114,13 +116,13 @@ export class ActorSystem {
      * 通知所有注册的监听器
      */
     commandStart(actorName: string, command: ICommand<any>): void {
-        logger.log(`命令开始=>${actorName} ${command.commandName} [CID:${command.id}][RID:${command.requestId}][SID:${command.sessionId}]`)
+        logger.log([moduleName, LOG_TAGS.Actor, "actor"], `命令开始=>${actorName} ${command.commandName} [CID:${command.id}][RID:${command.requestId}][SID:${command.sessionId}]`)
         this.lifecycleListeners.forEach(listener => {
             if (listener.onCommandStart) {
                 try {
                     listener.onCommandStart(actorName, command);
                 } catch (error) {
-                    logger.error('commandStart 监听器执行失败:', error);
+                    logger.error([moduleName, LOG_TAGS.Actor, "actor"], 'commandStart 监听器执行失败:', error);
                 }
             }
         });
@@ -131,13 +133,13 @@ export class ActorSystem {
      * 通知所有注册的监听器
      */
     commandComplete(actorName: string, command: ICommand<any>,result?:Record<string, any>): void {
-        logger.log(`命令结束=>${actorName} ${command.commandName} [CID:${command.id}][RID:${command.requestId}][SID:${command.sessionId}]`)
+        logger.log([moduleName, LOG_TAGS.Actor, "actor"], `命令结束=>${actorName} ${command.commandName} [CID:${command.id}][RID:${command.requestId}][SID:${command.sessionId}]`)
         this.lifecycleListeners.forEach(listener => {
             if (listener.onCommandComplete) {
                 try {
                     listener.onCommandComplete(actorName, command,result);
                 } catch (error) {
-                    logger.error('commandComplete 监听器执行失败:', error);
+                    logger.error([moduleName, LOG_TAGS.Actor, "actor"], 'commandComplete 监听器执行失败:', error);
                 }
             }
         });
@@ -148,13 +150,13 @@ export class ActorSystem {
      * 通知所有注册的监听器
      */
     commandError(actorName: string, command: ICommand<any>, appError: AppError): void {
-        logger.log(`命令错误=>${actorName} ${command.commandName} [CID:${command.id}][RID:${command.requestId}][SID:${command.sessionId}] Error:${appError.message}`)
+        logger.log([moduleName, LOG_TAGS.Actor, "actor"], `命令错误=>${actorName} ${command.commandName} [CID:${command.id}][RID:${command.requestId}][SID:${command.sessionId}] Error:${appError.message}`)
         this.lifecycleListeners.forEach(listener => {
             if (listener.onCommandError) {
                 try {
                     listener.onCommandError(actorName, command, appError);
                 } catch (err) {
-                    logger.error('commandError 监听器执行失败:', err);
+                    logger.error([moduleName, LOG_TAGS.Actor, "actor"], 'commandError 监听器执行失败:', err);
                 }
             }
         });

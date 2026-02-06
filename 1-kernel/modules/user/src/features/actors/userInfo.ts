@@ -6,6 +6,8 @@ import {
     IActor, ICommand,
     InitializeCommand,
     logger,
+    LOG_TAGS,
+    moduleName,
     RootState
 } from "@impos2/kernel-base";
 import {
@@ -21,7 +23,7 @@ import {User} from "../../types";
 class UserInfoActor extends IActor {
     @CommandHandler(InitializeCommand)
     private async handleInitialize(command: InitializeCommand) {
-        logger.log('-------->Initialize instance command received by user info actor')
+        logger.log([moduleName, LOG_TAGS.Actor, 'UserInfoActor'], 'Initialize instance command received by user info actor')
     }
 
     @CommandHandler(UserPasswordLoginCommand)
@@ -67,7 +69,7 @@ class UserInfoActor extends IActor {
     @CommandHandler(UserLogoutCompleteCommand)
     @CommandHandler(UserLoginCompleteCommand)
     private async complete(command: ICommand<any>) {
-        logger.log('-------->Complete command received by user info actor',command.commandName)
+        logger.log([moduleName, LOG_TAGS.Actor, 'UserInfoActor'], 'Complete command received by user info actor', command.commandName)
     }
 }
 

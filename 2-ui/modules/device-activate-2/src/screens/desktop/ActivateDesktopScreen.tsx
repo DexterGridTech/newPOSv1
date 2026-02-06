@@ -7,11 +7,14 @@ import {
     instanceInfoSlice,
     InstanceMode,
     logger,
+    LOG_TAGS,
     RootState,
     ScreenMode,
     terminalInfoSlice,
 } from "@impos2/kernel-base";
 import {ScreenPartRegistration} from "@impos2/kernel-module-ui-navigation";
+
+const moduleName = 'device-activate-2';
 
 // 诊断：打印导入的函数和组件
 console.log('🔍 useDeviceActivate 函数:', useDeviceActivate);
@@ -53,12 +56,12 @@ export const activateDesktopScreenPart: ScreenPartRegistration = {
         console.log('🟡 terminal:', state[terminalInfoSlice.name].terminal);
 
         if(state[instanceInfoSlice.name].instance.instanceMode !==InstanceMode.MASTER){
-            logger.debug("非master设备，不能进入ActivateDesktopScreen")
+            logger.debug([moduleName, LOG_TAGS.System, 'ActivateDesktopScreen'], "非master设备，不能进入ActivateDesktopScreen");
             console.log('🟡 device-activate-2: readyToEnter 返回 false (非master)');
             return false;
         }
         if (state[terminalInfoSlice.name].terminal) {
-            logger.debug("设备已激活，不能进入ActivateDesktopScreen")
+            logger.debug([moduleName, LOG_TAGS.System, 'ActivateDesktopScreen'], "设备已激活，不能进入ActivateDesktopScreen");
             console.log('🟡 device-activate-2: readyToEnter 返回 false (已激活)');
             return false;
         }

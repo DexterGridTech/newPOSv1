@@ -10,6 +10,8 @@ import {
 } from '../../types';
 import {logger} from '../nativeAdapter';
 import {ApiManager} from '../http';
+import { LOG_TAGS } from '../../types/core/logTags';
+import { moduleName } from '../../module';
 
 export class KernelConnectionManager {
     private ws: WebSocket | null = null;
@@ -73,7 +75,7 @@ export class KernelConnectionManager {
                 return; // 连接成功,立即返回
             } catch (error: any) {
                 lastError = error as KernelConnectionError;
-                logger.warn(`[KernelWS] 连接服务器失败: ${addressConfig.baseURL}`);
+                logger.warn([moduleName, LOG_TAGS.WebSocket, "ConnectionManager"], `[KernelWS] 连接服务器失败: ${addressConfig.baseURL}`);
 
                 // 清理失败的连接
                 this.cleanupFailedConnection();
@@ -101,7 +103,7 @@ export class KernelConnectionManager {
         // 将 http/https 替换为 ws/wss
         const wsAddress = address.replace(/^http:/, 'ws:').replace(/^https:/, 'wss:');
         const wsUrl = `${wsAddress}${path}?deviceId=${deviceId}&token=${token}`;
-        logger.log("准备连接WS服务:", wsUrl)
+        logger.log([moduleName, LOG_TAGS.WebSocket, "ConnectionManager"], "准备连接WS服务:", wsUrl)
         await this.connectWebSocket(wsUrl, connectionTimeout);
         this.currentServerUrl = wsAddress;
     }
@@ -197,7 +199,7 @@ export class KernelConnectionManager {
                         const message = JSON.parse(event.data) as KernelMessageWrapper;
                         this.onMessageCallback(message);
                     } catch (error) {
-                        logger.error('[KernelWS] Failed to parse message:', error);
+                        logger.error([moduleName, LOG_TAGS.WebSocket, "ConnectionManager"], '[KernelWS] Failed to parse message:', error);
                     }
                 };
 
@@ -229,9 +231,9 @@ export class KernelConnectionManager {
             // 连接未建立,加入队列
             if (this.messageQueue.length < this.maxQueueSize) {
                 this.messageQueue.push(message);
-                logger.log('[KernelWS] Message queued:', message.type);
+                logger.log([moduleName, LOG_TAGS.WebSocket, "ConnectionManager"], '[KernelWS] Message queued:', message.type);
             } else {
-                logger.warn('[KernelWS] Message queue full, dropping message:', message.type);
+                logger.warn([moduleName, LOG_TAGS.WebSocket, "ConnectionManager"], '[KernelWS] Message queue full, dropping message:', message.type);
             }
             return;
         }
@@ -239,7 +241,7 @@ export class KernelConnectionManager {
         try {
             this.ws.send(JSON.stringify(message));
         } catch (error) {
-            logger.error('[KernelWS] Failed to send message:', error);
+            logger.error([moduleName, LOG_TAGS.WebSocket, "ConnectionManager"], '[KernelWS] Failed to send message:', error);
             throw error;
         }
     }
@@ -254,11 +256,11 @@ export class KernelConnectionManager {
 
         // 检查连接状态
         if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
-            logger.warn('[KernelWS] Cannot flush queue, connection not open');
+            logger.warn([moduleName, LOG_TAGS.WebSocket, "ConnectionManager"], '[KernelWS] Cannot flush queue, connection not open');
             return;
         }
 
-        logger.log(`[KernelWS] Flushing ${this.messageQueue.length} queued messages`);
+        logger.log([moduleName, LOG_TAGS.WebSocket, "ConnectionManager"], `[KernelWS] Flushing ${this.messageQueue.length} queued messages`);
 
         // 复制队列并清空,避免递归
         const messages = [...this.messageQueue];
@@ -272,11 +274,11 @@ export class KernelConnectionManager {
                     this.ws.send(JSON.stringify(message));
                 } else {
                     // 连接已断开,停止发送
-                    logger.warn('[KernelWS] Connection lost during flush, stopping');
+                    logger.warn([moduleName, LOG_TAGS.WebSocket, "ConnectionManager"], '[KernelWS] Connection lost during flush, stopping');
                     break;
                 }
             } catch (error) {
-                logger.error('[KernelWS] Failed to send queued message:', error);
+                logger.error([moduleName, LOG_TAGS.WebSocket, "ConnectionManager"], '[KernelWS] Failed to send queued message:', error);
             }
         }
     }
@@ -292,7 +294,7 @@ export class KernelConnectionManager {
             try {
                 this.ws.close(1000, reason);
             } catch (error) {
-                logger.error('[KernelWS] Error closing WebSocket:', error);
+                logger.error([moduleName, LOG_TAGS.WebSocket, "ConnectionManager"], '[KernelWS] Error closing WebSocket:', error);
             }
             this.ws = null;
         }

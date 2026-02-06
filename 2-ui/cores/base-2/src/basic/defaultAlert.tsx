@@ -6,8 +6,10 @@ import {
     ModalScreen,
     ScreenPartRegistration
 } from "@impos2/kernel-module-ui-navigation";
-import {CommandRegistry, ScreenMode, logger} from "@impos2/kernel-base";
+import {CommandRegistry, ScreenMode, logger, LOG_TAGS} from "@impos2/kernel-base";
 import {CloseModalCommand} from "@impos2/kernel-module-ui-navigation/";
+
+const moduleName = 'ui-base';
 
 /**
  * Alert 弹窗组件 - 企业级设计
@@ -42,8 +44,8 @@ export const DefaultAlert: React.FC<ModalScreen<AlertInfo>> = React.memo((model)
     // 追踪动画状态，避免重复触发
     const isAnimatingRef = useRef<boolean>(false);
 
-    // 追踪上一次的 open 状态
-    const prevOpenRef = useRef<boolean>(model.open);
+    // 追踪上一次的 open 状态，初始化为 false 以确保首次打开时能触发动画
+    const prevOpenRef = useRef<boolean>(false);
 
     /**
      * 根据标题判断 Alert 类型
@@ -74,7 +76,7 @@ export const DefaultAlert: React.FC<ModalScreen<AlertInfo>> = React.memo((model)
             ...extraInfo
         };
 
-        logger.log(`[DefaultAlert] ${action.toUpperCase()}`, alertInfo);
+        logger.log([moduleName, LOG_TAGS.System, 'DefaultAlert'], `${action.toUpperCase()}`, alertInfo);
     }, [model, getAlertType]);
 
     /**
@@ -89,7 +91,7 @@ export const DefaultAlert: React.FC<ModalScreen<AlertInfo>> = React.memo((model)
             ...details
         };
 
-        logger.error('[DefaultAlert] Error', errorInfo);
+        logger.error([moduleName, LOG_TAGS.System, 'DefaultAlert'], 'Error', errorInfo);
     }, [model]);
 
     /**
@@ -159,7 +161,7 @@ export const DefaultAlert: React.FC<ModalScreen<AlertInfo>> = React.memo((model)
                 : null;
 
             if (confirmCommand) {
-                logger.debug('[DefaultAlert] Executing confirm command', {
+                logger.debug([moduleName, LOG_TAGS.System, 'DefaultAlert'], 'Executing confirm command', {
                     commandName: model.props?.confirmCommandName,
                     payload: model.props?.confirmCommandPayload
                 });
@@ -190,7 +192,7 @@ export const DefaultAlert: React.FC<ModalScreen<AlertInfo>> = React.memo((model)
 
         // 检查是否正在动画中，避免重复触发
         if (isAnimatingRef.current) {
-            logger.debug('[DefaultAlert] Animation already in progress, skipping');
+            logger.debug([moduleName, LOG_TAGS.System, 'DefaultAlert'], 'Animation already in progress, skipping');
             return;
         }
 
@@ -221,7 +223,7 @@ export const DefaultAlert: React.FC<ModalScreen<AlertInfo>> = React.memo((model)
             ]).start(() => {
                 if (isMountedRef.current) {
                     isAnimatingRef.current = false;
-                    logger.debug('[DefaultAlert] Open animation completed');
+                    logger.debug([moduleName, LOG_TAGS.System, 'DefaultAlert'], 'Open animation completed');
                 }
             });
         } else if (isVisible) {
@@ -245,7 +247,7 @@ export const DefaultAlert: React.FC<ModalScreen<AlertInfo>> = React.memo((model)
                 if (isMountedRef.current) {
                     setIsVisible(false);
                     isAnimatingRef.current = false;
-                    logger.debug('[DefaultAlert] Close animation completed');
+                    logger.debug([moduleName, LOG_TAGS.System, 'DefaultAlert'], 'Close animation completed');
                 }
             });
         }
@@ -260,7 +262,7 @@ export const DefaultAlert: React.FC<ModalScreen<AlertInfo>> = React.memo((model)
     useEffect(() => {
         isMountedRef.current = true;
 
-        logger.debug('[DefaultAlert] Component mounted', {
+        logger.debug([moduleName, LOG_TAGS.System, 'DefaultAlert'], 'Component mounted', {
             modelId: model.id,
             title: model.props?.title,
             timestamp: new Date().toISOString()
@@ -274,7 +276,7 @@ export const DefaultAlert: React.FC<ModalScreen<AlertInfo>> = React.memo((model)
             scaleAnim.stopAnimation();
             opacityAnim.stopAnimation();
 
-            logger.debug('[DefaultAlert] Component unmounting', {
+            logger.debug([moduleName, LOG_TAGS.System, 'DefaultAlert'], 'Component unmounting', {
                 modelId: model.id,
                 wasVisible: isVisible,
                 timestamp: new Date().toISOString()
@@ -284,7 +286,7 @@ export const DefaultAlert: React.FC<ModalScreen<AlertInfo>> = React.memo((model)
             prevOpenRef.current = false;
             isAnimatingRef.current = false;
 
-            logger.debug('[DefaultAlert] Component unmounted and resources released');
+            logger.debug([moduleName, LOG_TAGS.System, 'DefaultAlert'], 'Component unmounted and resources released');
         };
     }, [model.id, scaleAnim, opacityAnim]);
 
@@ -299,12 +301,12 @@ export const DefaultAlert: React.FC<ModalScreen<AlertInfo>> = React.memo((model)
      * 边界情况处理：缺少必要的 props
      */
     if (!model.props) {
-        logger.warn('[DefaultAlert] Missing props', { modelId: model.id });
+        logger.warn([moduleName, LOG_TAGS.System, 'DefaultAlert'], 'Missing props', { modelId: model.id });
         return null;
     }
 
     if (!model.props.title && !model.props.message) {
-        logger.warn('[DefaultAlert] Missing title and message', { modelId: model.id });
+        logger.warn([moduleName, LOG_TAGS.System, 'DefaultAlert'], 'Missing title and message', { modelId: model.id });
         return null;
     }
 
@@ -392,8 +394,10 @@ export const DefaultAlert: React.FC<ModalScreen<AlertInfo>> = React.memo((model)
     );
 }, (prevProps, nextProps) => {
     // 自定义比较函数，优化重渲染
+    // 注意：传入的是整个 ModalScreen 对象，不是单独的 props
     return prevProps.id === nextProps.id &&
            prevProps.open === nextProps.open &&
+           prevProps.partKey === nextProps.partKey &&
            prevProps.props?.title === nextProps.props?.title &&
            prevProps.props?.message === nextProps.props?.message &&
            prevProps.props?.confirmText === nextProps.props?.confirmText &&

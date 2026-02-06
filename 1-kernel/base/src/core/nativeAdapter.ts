@@ -1,34 +1,50 @@
-import {INativeAdapter, ServerAddress, SystemStatus} from "../types";
+import {IPosAdapter} from "../types";
 
-const defaultNativeAdapter: INativeAdapter = {
-    workspace: 'defaultWS',
-    log(...args: any[]) {
-        console.log(`[${this.workspace}][log]`, ...args)
+let nativeAdapter: IPosAdapter | null = null;
+let workspace: string = 'unknownWorkspace';
+
+export function setNativeAdapter(currentWorkspace: string, adapter: IPosAdapter): void {
+    nativeAdapter = adapter;
+    workspace = currentWorkspace
+}
+
+export const getNativeAdapter = (): IPosAdapter | null => {
+    return nativeAdapter;
+};
+export const logger = {
+    debug: (tags: string[], message: string, data?: any) => {
+        const tag = `[${workspace}-${tags.join('.')}]`
+        console.debug(tag, message, data)
+        getNativeAdapter()?.logger.debug(tag, message, data)
     },
-    warn(...args: any[]) {
-        console.warn(`[${this.workspace}][warn]`, ...args)
+    log: (tags: string[], message: string, data?: any) => {
+        const tag = `[${workspace}-${tags.join('.')}]`
+        console.log(tag, message, data)
+        getNativeAdapter()?.logger.log(tag, message, data)
     },
-    debug(...args: any[]) {
-        console.debug(`[${this.workspace}][debug]`, ...args)
+    warn: (tags: string[], message: string, data?: any) => {
+        const tag = `[${workspace}-${tags.join('.')}]`
+        console.warn(tag, message, data)
+        getNativeAdapter()?.logger.warn(tag, message, data)
     },
-    error(...args: any[]) {
-        console.error(`[${this.workspace}][error]`, ...args)
+    error: (tags: string[], message: string, data?: any) => {
+        const tag = `[${workspace}-${tags.join('.')}]`
+        console.error(tag, message, data)
+        getNativeAdapter()?.logger.error(tag, message, data)
     },
-    sendLogFileToServer(fileDate: string, apiPath: string, serverAddresses: ServerAddress[]): Promise<void> {
-        console.log(`[${this.workspace}][sendLogFileToServer]`, fileDate, apiPath, serverAddresses)
-        return Promise.resolve()
+}
+export const storage = {
+    setItem: <T>(nameSpace: string, key: string, value: T) => {
+        getNativeAdapter()?.storage.setItem(nameSpace, key, value)
     },
-    persistStatePropertyValue(stateKey: string, propertyKey: string, propertyValue: any): Promise<void> {
-        console.log(`[${this.workspace}][persistStatePropertyValue]`, stateKey, propertyKey, propertyValue)
-        return Promise.resolve()
+    getItem: <T>(nameSpace: string, key: string) => {
+        return getNativeAdapter()?.storage.getItem<T>(nameSpace, key)
     },
-    getPersistedState(): Promise<any> {
-        console.log(`[${this.workspace}][getPersistedState]`)
-        return Promise.resolve(null)
-    },
-    startServer(): Promise<ServerAddress[]> {
-        console.log(`[start master server]`)
-        return Promise.resolve([
+    getReduxStorage:()=>getNativeAdapter()?.storage.getStorage()
+}
+export const masterServer = {
+    startServer: () => {
+        return getNativeAdapter()?.localWebServer.startLocalWebServer() ?? Promise.resolve([
             {
                 name: "address1",
                 address: "http://localhost:8888/mockMasterServer",
@@ -38,65 +54,10 @@ const defaultNativeAdapter: INativeAdapter = {
                 address: "http://localhost:9999/mockMasterServer",
             }
         ])
-    },
-    getSystemStatus(): Promise<SystemStatus> {
-        return Promise.resolve({
-            cpu: {
-                usage: Math.random() + '',
-                temperature: Math.random() + '',
-                frequency: Math.random() + ''
-            },
-            power: {
-                status: 'charging',
-                connect: 'on',
-            }
-        })
-    },
-    getCurrentAppVersion(): Promise<string> {
-        return Promise.resolve('1.0.0')
-
-    },
-    getCurrentAssemblyVersion(): Promise<string> {
-        return Promise.resolve('1.0.0')
-    },
-    downloadAssemblyVersion(version: string, apiPath: string, serverAddresses: ServerAddress[]): Promise<void> {
-        console.log('[downloadAssemblyVersion]', version, apiPath, serverAddresses)
-        return Promise.resolve()
-    },
-    switchToAssemblyVersion(version: string): Promise<void> {
-        console.log('[switchToAssemblyVersion]', version)
-        return Promise.resolve()
     }
 }
-
-
-let nativeAdapter: INativeAdapter = defaultNativeAdapter;
-
-export function setNativeAdapter(adapter: INativeAdapter): void {
-    nativeAdapter = adapter;
-}
-
-export const getNativeAdapter = (): INativeAdapter => {
-    return nativeAdapter;
-};
-export const logger = {
-    log: (...args: any[]) => getNativeAdapter().log(...args),
-    warn: (...args: any[]) => getNativeAdapter().warn(...args),
-    debug: (...args: any[]) => getNativeAdapter().debug(...args),
-    error: (...args: any[]) => getNativeAdapter().error(...args),
-    sendLogFileToServer: (fileDate: string, apiPath: string, serverAddresses: ServerAddress[]) => getNativeAdapter().sendLogFileToServer(fileDate, apiPath, serverAddresses),
-}
-export const storage = {
-    persistStatePropertyValue: (stateKey: string, propertyKey: string, propertyValue: any) => getNativeAdapter().persistStatePropertyValue(stateKey, propertyKey, propertyValue),
-    getPersistedState: () => getNativeAdapter().getPersistedState(),
-}
-export const masterServer = {
-    startServer: () => getNativeAdapter().startServer(),
-}
 export const deviceController = {
-    getSystemStatus: () => getNativeAdapter().getSystemStatus(),
-    getCurrentAppVersion: () => getNativeAdapter().getCurrentAppVersion(),
-    getCurrentAssemblyVersion: () => getNativeAdapter().getCurrentAssemblyVersion(),
-    downloadAssemblyVersion: (version: string, apiPath: string, serverAddresses: ServerAddress[]) => getNativeAdapter().downloadAssemblyVersion(version, apiPath, serverAddresses),
-    switchToAssemblyVersion: (version: string) => getNativeAdapter().switchToAssemblyVersion(version),
+    getSystemStatus: () => {
+        return getNativeAdapter()?.systemStatus.getSystemStatus()
+    }
 }

@@ -1,9 +1,11 @@
 import {useCallback, useState} from 'react';
-import {logger, useRequestStatus} from "@impos2/kernel-base";
+import {logger, LOG_TAGS, useRequestStatus} from "@impos2/kernel-base";
 import {useEditableUiVariable} from "@impos2/kernel-module-ui-navigation";
 import {userLoginVariable} from "../variables";
 import {nanoid} from "@reduxjs/toolkit";
 import { UserPasswordLoginCommand} from "@impos2/kernel-module-user";
+
+const moduleName = 'user-login-2';
 
 // 用户登录Hook
 export const useUserLogin = () => {
@@ -48,7 +50,7 @@ export const useUserLogin = () => {
     const handleSubmit = useCallback(async () => {
         if (loginStatus?.status === 'started')
             return;
-        logger.log('提交登录', userId, password);
+        logger.log([moduleName, LOG_TAGS.System, 'useUserLogin'], '提交登录', { userId, password });
 
         new UserPasswordLoginCommand({userId: userId, password: password})
             .executeFromRequest( newRequest());

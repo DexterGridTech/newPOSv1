@@ -1,7 +1,7 @@
-import {combineReducers, configureStore, EnhancedStore, PayloadAction} from "@reduxjs/toolkit";
+import {configureStore, EnhancedStore, PayloadAction} from "@reduxjs/toolkit";
 import {createEpicMiddleware} from "redux-observable";
 import {RootState} from "../features";
-import {getStatesToPersist, setStoreAccessor} from "../core";
+import {setStoreAccessor} from "../core";
 import {
     IMiddlewareConfigurator,
     IModuleDependencyResolver,
@@ -14,7 +14,7 @@ import {
 import {ActorSystemConfigurator} from "./initializers/ActorSystemConfigurator";
 import {ModuleRegistrar} from "./initializers/ModuleRegistrar";
 import {StoreInitLogger} from "./logger/StoreInitLogger";
-import {persistReducer, persistStore,} from 'redux-persist';
+import {persistStore,} from 'redux-persist';
 
 /**
  * Store 工厂类
@@ -47,7 +47,7 @@ export class StoreFactory {
         this.logger = new StoreInitLogger();
     }
 
-    createStore(config: StoreConfig) {
+    async createStore(config: StoreConfig) {
         // 打印横幅
         this.logger.logBanner();
 
@@ -65,7 +65,7 @@ export class StoreFactory {
         this.logger.logStep(2, 'Initializing Native Adapter & API Server');
         this.logger.logDetail('Native Adapter', config.nativeAdapter ? 'Provided' : 'Not Provided');
         this.logger.logDetail('Workspace', config.workspace.selectedWorkspace);
-        this.nativeAdapterInitializer.initialize(config);
+        await this.nativeAdapterInitializer.initialize(config);
         this.logger.logSuccess('Native Adapter initialized');
         this.logger.logStepEnd();
 
@@ -73,7 +73,7 @@ export class StoreFactory {
         // 步骤 3: 构建 Reducers
         this.logger.logStep(3, 'Building Reducers');
 
-        const rootReducer = this.reducerBuilder.buildReducers(resolvedModules,config.workspace.selectedWorkspace,config.reduxStorage)
+        const rootReducer = await this.reducerBuilder.buildReducers(resolvedModules, config.workspace.selectedWorkspace)
         const reducerCount = Object.keys(rootReducer).length;
         this.logger.logDetail('Total Reducers', reducerCount);
         this.logger.logSuccess('Reducers built successfully');

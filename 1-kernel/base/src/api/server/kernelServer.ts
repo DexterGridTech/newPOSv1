@@ -1,6 +1,8 @@
 import {RequestInterceptor, ResponseInterceptor} from "../../types";
 import {InternalAxiosRequestConfig} from "axios";
 import {ApiManager, logger} from "../../core";
+import { LOG_TAGS } from '../../types/core/logTags';
+import { moduleName } from '../../module';
 
 export const KERNEL_API_SERVER_NAME = "kernelApi";
 export const KERNEL_WS_SERVER_NAME = "kernelWS";
@@ -16,22 +18,22 @@ const logRequestInterceptor: RequestInterceptor = {
         if (config.headers) {
             config.headers['Content-Type'] = `application/json`;
         }
-        logger.log('[请求拦截器] 发送请求:', config.url);
+        logger.log([moduleName, LOG_TAGS.System, "kernelServer"], '[请求拦截器] 发送请求:', config.url);
         return config;
     },
     onRequestError: (error) => {
-        logger.error('[请求拦截器] 请求错误:', error);
+        logger.error([moduleName, LOG_TAGS.System, "kernelServer"], '[请求拦截器] 请求错误:', error);
         return Promise.reject(error);
     }
 };
 
 const logResponseInterceptor: ResponseInterceptor = {
     onResponse: (response) => {
-        logger.log('[响应拦截器] 收到响应:', response.status);
+        logger.log([moduleName, LOG_TAGS.System, "kernelServer"], '[响应拦截器] 收到响应:', response.status);
         return response;
     },
     onResponseError: (error) => {
-        logger.error('[响应拦截器] 响应错误:', error.message);
+        logger.error([moduleName, LOG_TAGS.System, "kernelServer"], '[响应拦截器] 响应错误:', error.message);
         return Promise.reject(error);
     }
 };

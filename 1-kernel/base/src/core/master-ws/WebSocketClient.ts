@@ -22,6 +22,8 @@ import { MasterEventManager } from './EventManager';
 import { MasterHeartbeatManager } from './HeartbeatManager';
 import { MasterConnectionManager } from './ConnectionManager';
 import {logger} from "../nativeAdapter";
+import { LOG_TAGS } from '../../types/core/logTags';
+import { moduleName } from '../../module';
 
 /**
  * 默认配置
@@ -74,7 +76,7 @@ export class MasterWebSocketClient implements IWebSocketClient {
 
       // 检查是否过期
       if (currentTime - cachedTime < MESSAGE_DEDUP_CONFIG.MESSAGE_TTL) {
-        logger.warn('重复消息,跳过:', message.id);
+        logger.warn([moduleName, LOG_TAGS.WebSocket, "WebSocketClient"], '重复消息,跳过:', message.id);
         return true;
       }
 
@@ -124,7 +126,7 @@ export class MasterWebSocketClient implements IWebSocketClient {
     expiredKeys.forEach(key => this.processedMessageCache.delete(key));
 
     if (expiredKeys.length > 0) {
-      logger.debug(`清理过期消息缓存: ${expiredKeys.length} 条`);
+      logger.debug([moduleName, LOG_TAGS.WebSocket, "WebSocketClient"], `清理过期消息缓存: ${expiredKeys.length} 条`);
     }
   }
 
@@ -177,17 +179,17 @@ export class MasterWebSocketClient implements IWebSocketClient {
 
       // 连接失败时断开（disconnect 内部有状态检查，重复调用安全）
       instance.on(ConnectionEventType.CONNECT_FAILED, (event: ConnectFailedEvent) => {
-        logger.error(event.error.message)
+        logger.error([moduleName, LOG_TAGS.WebSocket, "WebSocketClient"], event.error.message)
         instance.disconnect("连接失败")
       });
       // 错误时断开（disconnect 内部有状态检查，重复调用安全）
       instance.on(ConnectionEventType.ERROR, (event: ErrorEvent) => {
-        logger.error(event.error.message)
+        logger.error([moduleName, LOG_TAGS.WebSocket, "WebSocketClient"], event.error.message)
         instance.disconnect("连接ERROR")
       })
       // 心跳超时时断开（disconnect 内部有状态检查，重复调用安全）
       instance.on(ConnectionEventType.HEARTBEAT_TIMEOUT, (event: ErrorEvent) => {
-        logger.error(event.error.message)
+        logger.error([moduleName, LOG_TAGS.WebSocket, "WebSocketClient"], event.error.message)
         instance.disconnect("心跳超时")
       })
     }
@@ -322,7 +324,7 @@ export class MasterWebSocketClient implements IWebSocketClient {
     const waitForConnection = options?.waitForConnection ?? false;
 
     try {
-      logger.log('sendMessage',message)
+      logger.log([moduleName, LOG_TAGS.WebSocket, "WebSocketClient"], 'sendMessage', message)
       this.connectionManager.sendMessage(message, waitForConnection);
     } catch (error: any) {
       throw new Error(`发送消息失败: ${error.message}`);
@@ -536,7 +538,7 @@ export class MasterWebSocketClient implements IWebSocketClient {
       try {
         this.connectionManager.sendMessage(message);
       } catch (error) {
-        logger.error('发送心跳消息失败:', error);
+        logger.error([moduleName, LOG_TAGS.WebSocket, "WebSocketClient"], '发送心跳消息失败:', error);
       }
     }
   }

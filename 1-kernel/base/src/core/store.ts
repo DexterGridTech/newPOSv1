@@ -1,5 +1,5 @@
 import {Middleware, PayloadAction} from "@reduxjs/toolkit";
-import {ActionMeta, InstanceMode, IStoreAccessor} from "../types";
+import {ActionMeta, InstanceMode, IStoreAccessor, LOG_TAGS, moduleName} from "../types";
 import {ICommand} from "./command";
 import {logger} from "./nativeAdapter";
 import {getStatesToSync} from "./specialStateList";
@@ -54,6 +54,36 @@ export const currentState = <S>(): S => {
     return _storeAccessor.getState() as S;
 }
 
+/**
+ * 过滤掉对象中下划线开头的属性（非业务属性）
+ * @param obj 要过滤的对象
+ * @returns 过滤后的新对象
+ */
+const filterUnderscoreProps = (obj: Record<string, any>): Record<string, any> => {
+    if (!obj || typeof obj !== 'object') {
+        return obj;
+    }
+
+    const filtered: Record<string, any> = {};
+
+    for (const key in obj) {
+        // 跳过下划线开头的属性
+        if (key.startsWith('_')) {
+            continue;
+        }
+
+        // 递归处理嵌套对象
+        const value = obj[key];
+        if (value && typeof value === 'object' && !Array.isArray(value)) {
+            filtered[key] = filterUnderscoreProps(value);
+        } else {
+            filtered[key] = value;
+        }
+    }
+
+    return filtered;
+};
+
 export const createStateSyncMiddleware = (): Middleware => {
     // 只保存需要同步的 state 切片，减少内存占用
     let prevSyncStates: Record<string, any> = {};
@@ -68,7 +98,7 @@ export const createStateSyncMiddleware = (): Middleware => {
 
         // 边界检查：确保 instanceInfo 存在
         if (!instanceInfo?.instance) {
-            logger.warn('[StateSyncMiddleware] instanceInfo not found in state');
+            logger.warn([moduleName, LOG_TAGS.Store, 'StateSyncMiddleware'], 'instanceInfo not found in state');
             return result;
         }
 
@@ -95,23 +125,26 @@ export const createStateSyncMiddleware = (): Middleware => {
                     // 计算差异
                     const fullDiff = diff(prevSlice || {}, nextSlice || {});
 
+                    // 过滤掉下划线开头的属性（非业务属性）
+                    const filteredDiff = filterUnderscoreProps(fullDiff);
+
                     // 只有存在差异时才同步
-                    if (Object.keys(fullDiff).length > 0) {
-                        logger.debug('[StateSyncMiddleware] Syncing state', {
+                    if (Object.keys(filteredDiff).length > 0) {
+                        logger.debug([moduleName, LOG_TAGS.Store, 'StateSyncMiddleware'], 'Syncing state', {
                             key,
-                            diffKeys: Object.keys(fullDiff)
+                            diffKeys: Object.keys(filteredDiff)
                         });
 
                         // 异步同步到 slave
-                        syncStateToSlave(key, fullDiff, null)
+                        syncStateToSlave(key, filteredDiff, null)
                             .then(() => {
-                                logger.debug('[StateSyncMiddleware] Sync success', { key });
+                                logger.debug([moduleName, LOG_TAGS.Store, 'StateSyncMiddleware'], 'Sync success', { key });
                             })
                             .catch((err) => {
-                                logger.error('[StateSyncMiddleware] Sync failed', {
+                                logger.error([moduleName, LOG_TAGS.Store, 'StateSyncMiddleware'], 'Sync failed', {
                                     key,
                                     error: err instanceof Error ? err.message : String(err),
-                                    diff: fullDiff
+                                    diff: filteredDiff
                                 });
                             });
                     }

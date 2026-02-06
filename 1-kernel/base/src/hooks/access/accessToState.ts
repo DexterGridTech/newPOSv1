@@ -2,6 +2,6 @@ import {instanceInfoSlice, RootState} from "../../features";
 import {currentState} from "../../core";
 
 
-export const getInstance = () => {
+export const selectInstance = () => {
     return currentState<RootState>()[instanceInfoSlice.name].instance;
 };

@@ -1,16 +1,19 @@
 import {
     CommandHandler,
     currentState,
-    dispatchSimpleAction, getInstance,
+    dispatchSimpleAction, selectInstance,
     IActor,
     instanceInfoSlice,
     logger,
-    RootState
+    RootState,
+    LOG_TAGS
 } from "@impos2/kernel-base";
 import { NavigationCommand, SetUiVariablesCommand} from "../commands";
 import {ScreenPart} from "../../types";
 import {uiVariablesActions} from "../slices";
 import {getScreenPartReadyToEnter} from "../../core";
+
+const moduleName = 'kernel-ui-navigation';
 
 
 class NavigatorActor extends IActor {
@@ -39,14 +42,14 @@ class NavigatorActor extends IActor {
                 }
             }).executeInternally();
         } catch (error) {
-            logger.error(`Navigation failed: ${error}`);
+            logger.error([moduleName, LOG_TAGS.Actor, 'NavigatorActor'], `Navigation failed: ${error}`);
             throw error;
         }
     }
 
     @CommandHandler(SetUiVariablesCommand)
     private async handleSetUiVariables(command: SetUiVariablesCommand) {
-        const instance = getInstance()
+        const instance = selectInstance()
         dispatchSimpleAction(uiVariablesActions.update({
             instance: instance,
             uiVariables: command.payload.uiVariables

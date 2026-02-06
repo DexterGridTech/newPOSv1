@@ -33,6 +33,8 @@ import {
 import type {RootState} from "../rootState";
 import {InstanceErrors, MasterServerErrors, SlaveErrors} from "../errors";
 import {SlaveParameters} from "../parameter";
+import { LOG_TAGS } from '../../types/core/logTags';
+import { moduleName } from '../../module';
 
 
 class SlaveStatusActor extends IActor {
@@ -73,16 +75,16 @@ class SlaveStatusActor extends IActor {
         ]
 
         const failedConditions = conditions.filter(c => !c.passed)
-        logger.log("--== check and connect master server as slave ==--")
+        logger.log([moduleName, LOG_TAGS.Actor, "slaveStatus"], "--== check and connect master server as slave ==--")
         if (failedConditions.length === 0) {
-            logger.log("具备websocket连接条件，准备对master server 进行连接")
-            logger.log("通过的条件:", conditions.map(c => c.name).join(', '))
+            logger.log([moduleName, LOG_TAGS.Actor, "slaveStatus"], "具备websocket连接条件，准备对master server 进行连接")
+            logger.log([moduleName, LOG_TAGS.Actor, "slaveStatus"], "通过的条件:", conditions.map(c => c.name).join(', '))
             await this.connectMasterServerWebsocket(command)
         } else {
-            logger.log("不具备websocket连接条件，跳过对master server 进行连接")
-            logger.log("未通过的条件:")
+            logger.log([moduleName, LOG_TAGS.Actor, "slaveStatus"], "不具备websocket连接条件，跳过对master server 进行连接")
+            logger.log([moduleName, LOG_TAGS.Actor, "slaveStatus"], "未通过的条件:")
             failedConditions.forEach(c => {
-                logger.log(`  - ${c.name}: ${c.reason}`)
+                logger.log([moduleName, LOG_TAGS.Actor, "slaveStatus"], `  - ${c.name}: ${c.reason}`)
             })
         }
     }
@@ -121,7 +123,7 @@ class SlaveStatusActor extends IActor {
         }
         const wsClient = this.getWsClient();
         if (wsClient.isConnected()) {
-            logger.log("remote command send--> ", remoteCommand)
+            logger.log([moduleName, LOG_TAGS.Actor, "slaveStatus"], "remote command send--> ", remoteCommand)
             wsClient.sendMessage(MasterServerMessageType.REMOTE_COMMAND, remoteCommand, null)
                 .catch((error: any) => {
                     throw new AppError(SlaveErrors.REMOTE_COMMAND_SEND_FAILED, error, command)
@@ -138,7 +140,7 @@ class SlaveStatusActor extends IActor {
         delay(3000)
     ).subscribe(command => {
         if (this.remoteCommandExecuted.has(command.id)) {
-            logger.log('远程方法已经执行', command.id);
+            logger.log([moduleName, LOG_TAGS.Actor, "slaveStatus"], '远程方法已经执行', command.id);
             this.remoteCommandExecuted.delete(command.id)
         } else {
             if (this.remoteCommandExecuted.size > 1000) {
@@ -160,7 +162,7 @@ class SlaveStatusActor extends IActor {
             new ConnectedToMasterCommand().executeInternally()
         });
         wsClient.on(ConnectionEventType.MESSAGE, (event: WSMessageEvent) => {
-            logger.log('收到消息:', event.message);
+            logger.log([moduleName, LOG_TAGS.Actor, "slaveStatus"], '收到消息:', event.message);
             if (event.message.type === MasterServerMessageType.SYNC_STATE) {
                 try {
                     const {key, state} = event.message.data
@@ -169,9 +171,9 @@ class SlaveStatusActor extends IActor {
                         type: actionType,
                         payload: state
                     })
-                    logger.log('状态同步完成:', actionType)
+                    logger.log([moduleName, LOG_TAGS.Actor, "slaveStatus"], '状态同步完成:', actionType)
                 } catch (e: any) {
-                    logger.error('状态同步错误:' + e + ' ' + +event.message.data)
+                    logger.error([moduleName, LOG_TAGS.Actor, "slaveStatus"], '状态同步错误:' + e + ' ' + +event.message.data)
                 }
             } else if (event.message.type === MasterServerMessageType.REMOTE_COMMAND_EXECUTED) {
                 this.remoteCommandExecuted.add(event.message.data);

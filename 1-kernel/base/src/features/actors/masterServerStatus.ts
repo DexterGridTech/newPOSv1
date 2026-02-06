@@ -37,6 +37,8 @@ import type {RootState} from "../rootState";
 import {MasterServerErrors} from "../errors";
 import {SlaveErrors} from "../errors";
 import {MasterParameters} from "../parameter";
+import { LOG_TAGS } from '../../types/core/logTags';
+import { moduleName } from '../../module';
 
 class MasterServerStatusActor extends IActor {
     @CommandHandler(InitializeCommand)
@@ -71,15 +73,15 @@ class MasterServerStatusActor extends IActor {
         ]
 
         const failedConditions = conditions.filter(c => !c.passed)
-        logger.log("--== check and start master server as master ==--")
+        logger.log([moduleName, LOG_TAGS.Actor, "masterServerStatus"], "--== check and start master server as master ==--")
         if (failedConditions.length === 0) {
-            logger.log("具备Master Server启动条件，准备启动服务")
-            logger.log("通过的条件:", conditions.map(c => c.name).join(', '))
+            logger.log([moduleName, LOG_TAGS.Actor, "masterServerStatus"], "具备Master Server启动条件，准备启动服务")
+            logger.log([moduleName, LOG_TAGS.Actor, "masterServerStatus"], "通过的条件:", conditions.map(c => c.name).join(', '))
         } else {
-            logger.log("不具备Master Server启动条件，跳过启动")
-            logger.log("未通过的条件:")
+            logger.log([moduleName, LOG_TAGS.Actor, "masterServerStatus"], "不具备Master Server启动条件，跳过启动")
+            logger.log([moduleName, LOG_TAGS.Actor, "masterServerStatus"], "未通过的条件:")
             failedConditions.forEach(c => {
-                logger.log(`  - ${c.name}: ${c.reason}`)
+                logger.log([moduleName, LOG_TAGS.Actor, "masterServerStatus"], `  - ${c.name}: ${c.reason}`)
             })
             throw new AppError(MasterServerErrors.START_CONDITION_NOT_FIT, failedConditions.map(c => c.reason).join(), command)
         }
@@ -135,7 +137,7 @@ class MasterServerStatusActor extends IActor {
                 remoteCommand.id,
                 remoteCommand.slaveInfo?.slaveName ?? null)
                 .catch(error => {
-                    logger.error("send remoteCommandExecuted error--> ", error)
+                    logger.error([moduleName, LOG_TAGS.Actor, "masterServerStatus"], "send remoteCommandExecuted error--> ", error)
                 })
         }
     }
@@ -146,7 +148,7 @@ class MasterServerStatusActor extends IActor {
             dispatchAction(masterServerStatusActions.setMasterServerConnectionStatus(ServerConnectionStatus.CONNECTED))
         });
         wsClient.on(ConnectionEventType.MESSAGE, (event: WSMessageEvent) => {
-            logger.log('收到Master Server消息:', event.message);
+            logger.log([moduleName, LOG_TAGS.Actor, "masterServerStatus"], '收到Master Server消息:', event.message);
             if (event.message.type === SYSTEM_MESSAGE_TYPES.SLAVE_CONNECTED) {
                 const {deviceId, deviceName} = event.message.data
                 new SlaveConnectedCommand({
@@ -168,15 +170,15 @@ class MasterServerStatusActor extends IActor {
                     if (remote) {
                         remote.id = remoteCommand.commandId
                         remote.slaveInfo = remoteCommand.slaveInfo
-                        logger.log('执行远程方法:', remote.id)
+                        logger.log([moduleName, LOG_TAGS.Actor, "masterServerStatus"], '执行远程方法:', remote.id)
                         remote.executeFromRequest(remoteCommand.requestId, remoteCommand.sessionId)
                         this.remoteCommandExecuted(remote)
-                        logger.log('反馈Slave:', remote.slaveInfo, "远程方法已执行", remote.id)
+                        logger.log([moduleName, LOG_TAGS.Actor, 'masterServerStatus'], '反馈Slave', { slaveInfo: remote.slaveInfo, message: '远程方法已执行', id: remote.id })
                     } else {
-                        logger.error('远程方法初始化失败' + event.message.data)
+                        logger.error([moduleName, LOG_TAGS.Actor, "masterServerStatus"], '远程方法初始化失败' + event.message.data)
                     }
                 } catch (e: any) {
-                    logger.error('执行远程方法错误:' + e + ' ' + event.message.data)
+                    logger.error([moduleName, LOG_TAGS.Actor, "masterServerStatus"], '执行远程方法错误:' + e + ' ' + event.message.data)
                     throw new AppError(SlaveErrors.REMOTE_COMMAND_EXECUTION_ERROR, e.toString() + event.message.data)
                 }
             }

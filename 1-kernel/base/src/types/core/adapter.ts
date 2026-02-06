@@ -3,7 +3,6 @@ import {ServerAddress, SystemStatus} from "./base";
 
 //即将废弃，不要引用这个类
 export interface INativeAdapter {
-    workspace: string;
 
     debug(...args: any[]): void;
 

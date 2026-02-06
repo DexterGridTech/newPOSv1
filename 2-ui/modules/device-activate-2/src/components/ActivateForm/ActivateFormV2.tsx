@@ -27,10 +27,8 @@ export const ActivateForm: React.FC<ActivateFormProps> = (
         onActivationCodeChange,
         onSubmit,
     }) => {
-    console.log('🔶 device-activate-2: ActivateForm 组件被渲染');
 
     const [isFocused, setIsFocused] = React.useState(false);
-
     const isLoading = activateStatus?.status === 'started';
     const hasError = activateStatus?.status === 'error';
     const isValidLength = activationCode.length >= 6;

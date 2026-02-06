@@ -1,6 +1,6 @@
 import {ScreenPart, ScreenPartRegistration} from "../types";
 import {ComponentType} from "react";
-import {getInstance, logger} from "@impos2/kernel-base";
+import {selectInstance, logger} from "@impos2/kernel-base";
 
 /**
  * ScreenPart 注册信息存储
@@ -29,7 +29,7 @@ export function registerScreenPart(registration: ScreenPartRegistration) {
  * 获取 ScreenPart 的 componentType
  */
 export function getScreenPartComponentType(key: string): ComponentType<any> | undefined {
-    const screenMode = getInstance().screenMode
+    const screenMode = selectInstance().screenMode
     return screenRegistryMap[screenMode].get(key)?.componentType
 }
 
@@ -37,12 +37,12 @@ export function getScreenPartComponentType(key: string): ComponentType<any> | un
  * 获取 ScreenPart 的 readyToEnter 方法
  */
 export function getScreenPartReadyToEnter(key: string): (() => boolean) | undefined {
-    const screenMode = getInstance().screenMode
+    const screenMode = selectInstance().screenMode
     return screenRegistryMap[screenMode].get(key)?.readyToEnter
 }
 
 export function getFirstReadyScreenPartByContainerKey(containerKey: string, fromIndex: number): ScreenPart | undefined {
-    const screenMode = getInstance().screenMode
+    const screenMode = selectInstance().screenMode
     return Array.from(screenRegistryMap[screenMode].values())
         .filter(part =>
             part.containerKey === containerKey &&

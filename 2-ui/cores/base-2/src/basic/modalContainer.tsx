@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useMemo, useCallback } from "react";
 import { getScreenPartComponentType, useUiModels, ModalScreen } from "@impos2/kernel-module-ui-navigation";
 import { EmptyScreen } from "./emptyScreen";
-import { logger } from "@impos2/kernel-base";
+import { logger, LOG_TAGS } from "@impos2/kernel-base";
+
+const moduleName = 'ui-base-2';
 
 /**
  * Modal 子项接口
@@ -47,7 +49,7 @@ export const ModalContainer: React.FC = React.memo(() => {
             propsCount: model.props ? Object.keys(model.props).length : 0
         };
 
-        logger.log(`[ModalContainer] Modal ${action.toUpperCase()}`, modalInfo);
+        logger.log([moduleName, LOG_TAGS.System, 'ModalContainer'], `Modal ${action.toUpperCase()}`, modalInfo);
     }, []);
 
     /**
@@ -63,10 +65,10 @@ export const ModalContainer: React.FC = React.memo(() => {
             suggestion: 'Ensure the component is registered via registerScreenPart()'
         };
 
-        logger.error('[ModalContainer] Component not found', errorInfo);
+        logger.error([moduleName, LOG_TAGS.System, 'ModalContainer'], 'Component not found', errorInfo);
 
         // 额外打印更详细的调试信息
-        logger.debug('[ModalContainer] Debug Info', {
+        logger.debug([moduleName, LOG_TAGS.System, 'ModalContainer'], 'Debug Info', {
             modelObject: model,
             modelType: typeof model,
             modelKeys: model ? Object.keys(model) : []
@@ -85,7 +87,7 @@ export const ModalContainer: React.FC = React.memo(() => {
 
         models.forEach((model) => {
             if (!model || !model.partKey) {
-                logger.warn('[ModalContainer] Invalid model', { model });
+                logger.warn([moduleName, LOG_TAGS.System, 'ModalContainer'], 'Invalid model', { model });
                 return;
             }
 
@@ -144,7 +146,7 @@ export const ModalContainer: React.FC = React.memo(() => {
 
         // 记录 Modal 数量变化
         if (prevModels.length !== currentModels.length) {
-            logger.log('[ModalContainer] Modal count changed', {
+            logger.log([moduleName, LOG_TAGS.System, 'ModalContainer'], 'Modal count changed', {
                 from: prevModels.length,
                 to: currentModels.length,
                 timestamp: new Date().toISOString()
@@ -161,7 +163,7 @@ export const ModalContainer: React.FC = React.memo(() => {
     useEffect(() => {
         isMountedRef.current = true;
 
-        logger.debug('[ModalContainer] Container mounted', {
+        logger.debug([moduleName, LOG_TAGS.System, 'ModalContainer'], 'Container mounted', {
             initialModalCount: models.length,
             timestamp: new Date().toISOString()
         });
@@ -172,7 +174,7 @@ export const ModalContainer: React.FC = React.memo(() => {
 
             // 记录卸载信息
             if (currentModalIdsRef.current.size > 0) {
-                logger.debug('[ModalContainer] Container unmounting', {
+                logger.debug([moduleName, LOG_TAGS.System, 'ModalContainer'], 'Container unmounting', {
                     openModals: Array.from(currentModalIdsRef.current),
                     timestamp: new Date().toISOString()
                 });
@@ -182,7 +184,7 @@ export const ModalContainer: React.FC = React.memo(() => {
             prevModelsRef.current = [];
             currentModalIdsRef.current.clear();
 
-            logger.debug('[ModalContainer] Container unmounted and resources released');
+            logger.debug([moduleName, LOG_TAGS.System, 'ModalContainer'], 'Container unmounted and resources released');
         };
     }, [models.length]);
 
@@ -199,12 +201,15 @@ export const ModalContainer: React.FC = React.memo(() => {
                 const { ComponentType, model } = child;
                 const key = model.id || model.partKey;
 
+                logger.debug([moduleName, LOG_TAGS.System, 'ModalContainer'], 'Rendering modal', { key, model, ComponentType });
+
                 if (!key) {
-                    logger.warn('[ModalContainer] Modal without id or partKey', { model });
+                    logger.warn([moduleName, LOG_TAGS.System, 'ModalContainer'], 'Modal without id or partKey', { model });
                     return null;
                 }
 
-                return <ComponentType key={key} {...model.props} />;
+                // 传递整个 model 对象，而不是只传递 model.props
+                return <ComponentType key={key} {...model} />;
             })}
         </>
     );

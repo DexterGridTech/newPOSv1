@@ -101,11 +101,11 @@ const preInitiatedState = {
 }
 
 const storeConfig: StoreConfig = {
+    standAlone:true,
     workspace: workspace,
-    nativeAdapter: null,
     preInitiatedState: preInitiatedState,
     kernelModules: [uiUserLoginModule]
 }
 
-export const {store,persistor} = generateStore(storeConfig)
+export const {store,persistor} = await generateStore(storeConfig)
 console.log("生成devStore")

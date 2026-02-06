@@ -10,6 +10,8 @@ import {AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, CancelToke
 import {logger} from '../nativeAdapter';
 import {CircuitBreaker} from './CircuitBreakerManager';
 import {RequestQueue} from './RequestQueueManager';
+import { LOG_TAGS } from '../../types/core/logTags';
+import { moduleName } from '../../module';
 import {
     APIErrorCode,
     ApiServerAddress,
@@ -97,7 +99,7 @@ export class ApiManager {
             throw new Error(errorMessage);
         }
         if (strategy === 'log') {
-            logger.error(errorMessage, error);
+            logger.error([moduleName, LOG_TAGS.Http, "ApiManager"], errorMessage, error);
         }
         // silent模式不做任何处理
     }
@@ -128,7 +130,7 @@ export class ApiManager {
         if (index > -1) {
             this.requestInterceptors.splice(index, 1);
             // 注意: axios 不支持移除特定拦截器,需要重新创建实例
-            logger.warn(ERROR_MESSAGES.INTERCEPTOR_REMOVAL_WARNING);
+            logger.warn([moduleName, LOG_TAGS.Http, "ApiManager"], ERROR_MESSAGES.INTERCEPTOR_REMOVAL_WARNING);
         }
     }
 
@@ -139,7 +141,7 @@ export class ApiManager {
         const index = this.responseInterceptors.indexOf(interceptor);
         if (index > -1) {
             this.responseInterceptors.splice(index, 1);
-            logger.warn(ERROR_MESSAGES.INTERCEPTOR_REMOVAL_WARNING);
+            logger.warn([moduleName, LOG_TAGS.Http, "ApiManager"], ERROR_MESSAGES.INTERCEPTOR_REMOVAL_WARNING);
         }
     }
 

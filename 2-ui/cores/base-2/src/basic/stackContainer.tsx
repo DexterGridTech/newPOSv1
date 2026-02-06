@@ -6,7 +6,9 @@ import {
 } from "@impos2/kernel-module-ui-navigation";
 import React, { useEffect, useRef, useMemo, useCallback } from "react";
 import { EmptyScreen } from "./emptyScreen";
-import { logger } from "@impos2/kernel-base";
+import { logger, LOG_TAGS } from "@impos2/kernel-base";
+
+const moduleName = 'ui-base-2';
 
 export interface StackContainerProps {
     containerPart: UIVariable<ScreenPart>
@@ -50,7 +52,7 @@ export const StackContainer: React.FC<StackContainerProps> = React.memo(({
             containerPartKey: containerPart?.key || 'undefined'
         };
 
-        logger.log(`[StackContainer] ${action.toUpperCase()}`, childInfo);
+        logger.log([moduleName, LOG_TAGS.System, 'StackContainer'], action.toUpperCase(), childInfo);
     }, [containerPart]);
 
     /**
@@ -66,10 +68,10 @@ export const StackContainer: React.FC<StackContainerProps> = React.memo(({
             suggestion: 'Ensure the component is registered via registerScreenPart()'
         };
 
-        logger.error('[StackContainer] Component not found', errorInfo);
+        logger.error([moduleName, LOG_TAGS.System, 'StackContainer'], 'Component not found', errorInfo);
 
         // 额外打印更详细的调试信息
-        logger.debug('[StackContainer] Debug Info', {
+        logger.debug([moduleName, LOG_TAGS.System, 'StackContainer'], 'Debug Info', {
             childObject: child,
             childType: typeof child,
             childKeys: child ? Object.keys(child) : [],
@@ -82,7 +84,7 @@ export const StackContainer: React.FC<StackContainerProps> = React.memo(({
      */
     const ComponentType = useMemo(() => {
         if (!child || !child.partKey) {
-            logger.warn('[StackContainer] Invalid child', { child });
+            logger.warn([moduleName, LOG_TAGS.System, 'StackContainer'], 'Invalid child', { child });
             return EmptyScreen;
         }
 
@@ -112,7 +114,7 @@ export const StackContainer: React.FC<StackContainerProps> = React.memo(({
         }
         // child 发生变化
         else if (prevChild && currentChild && prevChild.partKey !== currentChild.partKey) {
-            logger.log('[StackContainer] Child changed', {
+            logger.log([moduleName, LOG_TAGS.System, 'StackContainer'], 'Child changed', {
                 from: prevChild.partKey,
                 to: currentChild.partKey,
                 timestamp: new Date().toISOString()
@@ -137,7 +139,7 @@ export const StackContainer: React.FC<StackContainerProps> = React.memo(({
     useEffect(() => {
         isMountedRef.current = true;
 
-        logger.debug('[StackContainer] Container mounted', {
+        logger.debug([moduleName, LOG_TAGS.System, 'StackContainer'], 'Container mounted', {
             containerPartKey: containerPart?.key || 'undefined',
             timestamp: new Date().toISOString()
         });
@@ -148,7 +150,7 @@ export const StackContainer: React.FC<StackContainerProps> = React.memo(({
 
             // 记录卸载信息
             if (currentComponentRef.current) {
-                logger.debug('[StackContainer] Container unmounting', {
+                logger.debug([moduleName, LOG_TAGS.System, 'StackContainer'], 'Container unmounting', {
                     lastComponent: currentComponentRef.current,
                     timestamp: new Date().toISOString()
                 });
@@ -158,7 +160,7 @@ export const StackContainer: React.FC<StackContainerProps> = React.memo(({
             prevChildRef.current = null;
             currentComponentRef.current = null;
 
-            logger.debug('[StackContainer] Container unmounted and resources released');
+            logger.debug([moduleName, LOG_TAGS.System, 'StackContainer'], 'Container unmounted and resources released');
         };
     }, [containerPart]);
 
@@ -166,7 +168,7 @@ export const StackContainer: React.FC<StackContainerProps> = React.memo(({
      * 渲染组件
      */
     if (!child) {
-        logger.warn('[StackContainer] No child to render', {
+        logger.warn([moduleName, LOG_TAGS.System, 'StackContainer'], 'No child to render', {
             containerPartKey: containerPart?.key || 'undefined'
         });
         return <EmptyScreen />;

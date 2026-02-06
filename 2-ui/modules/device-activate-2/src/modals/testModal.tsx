@@ -20,9 +20,7 @@ export interface TestModalProps {
  * - 企业级配色方案
  * - 流畅的滑入动画
  */
-export const TestModal: React.FC<ModalScreen<TestModalProps>> = (
-    model
-) => {
+export const TestModal: React.FC<ModalScreen<TestModalProps>> = (model) => {
     const slideAnim = React.useRef(new Animated.Value(-280)).current;
     const opacityAnim = React.useRef(new Animated.Value(0)).current;
     const [isVisible, setIsVisible] = React.useState(false);

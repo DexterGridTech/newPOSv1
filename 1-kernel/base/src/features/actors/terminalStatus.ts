@@ -34,6 +34,8 @@ import {
 import {terminalConnectionStatusActions, deviceStatusSlice, terminalInfoSlice} from "../slices";
 import {SlaveErrors, TerminalErrors} from "../errors";
 import {TerminalParameters} from "../parameter";
+import { LOG_TAGS } from '../../types/core/logTags';
+import { moduleName } from '../../module';
 
 class TerminalStatusActor extends IActor {
     @CommandHandler(GetDeviceStateCommand)
@@ -42,9 +44,9 @@ class TerminalStatusActor extends IActor {
         const deviceId = state[deviceStatusSlice.name].deviceInfo?.id!
         const request: SendDeviceStateRequest = {deviceId, state}
         kernelDeviceAPI.sendDeviceState.run({request: request}).then(result => {
-            logger.log("发送设备state成功")
+            logger.log([moduleName, LOG_TAGS.Actor, "terminalStatus"], "发送设备state成功")
         }).catch(err => {
-            logger.error("发送设备state失败", err.stack)
+            logger.error([moduleName, LOG_TAGS.Actor, "terminalStatus"], "发送设备state失败", err.stack)
         })
     }
 
@@ -83,15 +85,15 @@ class TerminalStatusActor extends IActor {
         ]
 
         const failedConditions = conditions.filter(c => !c.passed)
-        logger.log("--== check and connect kernel websocket as master ==--")
+        logger.log([moduleName, LOG_TAGS.Actor, "terminalStatus"], "--== check and connect kernel websocket as master ==--")
         if (failedConditions.length === 0) {
-            logger.log("具备websocket连接条件，准备kernel websocket连接")
-            logger.log("通过的条件:", conditions.map(c => c.name).join(', '))
+            logger.log([moduleName, LOG_TAGS.Actor, "terminalStatus"], "具备websocket连接条件，准备kernel websocket连接")
+            logger.log([moduleName, LOG_TAGS.Actor, "terminalStatus"], "通过的条件:", conditions.map(c => c.name).join(', '))
         } else {
-            logger.log("不具备websocket连接条件，跳过kernel websocket连接")
-            logger.log("未通过的条件:")
+            logger.log([moduleName, LOG_TAGS.Actor, "terminalStatus"], "不具备websocket连接条件，跳过kernel websocket连接")
+            logger.log([moduleName, LOG_TAGS.Actor, "terminalStatus"], "未通过的条件:")
             failedConditions.forEach(c => {
-                logger.log(`  - ${c.name}: ${c.reason}`)
+                logger.log([moduleName, LOG_TAGS.Actor, "terminalStatus"], `  - ${c.name}: ${c.reason}`)
             })
             return
         }
@@ -99,7 +101,7 @@ class TerminalStatusActor extends IActor {
         //先关闭，再开启
         const wsClient = KernelWebSocketClient.getInstance();
         if (wsClient.getState() != KernelConnectionState.DISCONNECTED) {
-            logger.log("连接前先关闭原有websocket")
+            logger.log([moduleName, LOG_TAGS.Actor, "terminalStatus"], "连接前先关闭原有websocket")
             wsClient.disconnect("重启前关闭")
         }
         await this.startConnectWSEServer(command)
@@ -145,7 +147,7 @@ class TerminalStatusActor extends IActor {
         });
 
         wsClient.on(KernelConnectionEventType.MESSAGE, (event: KernelMessageEvent) => {
-            logger.log('收到Kernel消息:', JSON.stringify(event.message));
+            logger.log([moduleName, LOG_TAGS.Actor, "terminalStatus"], '收到Kernel消息:', JSON.stringify(event.message));
             if (event.message.type === KernelMessageType.UNIT_DATA_CHANGED) {
                 new ChangeUnitDataCommand({
                     changeSet: event.message.data
@@ -157,18 +159,18 @@ class TerminalStatusActor extends IActor {
                     const remote = CommandRegistry.create(remoteCommandFromKernel.type, remoteCommandFromKernel.payload)
                     if (remote) {
                         remote.id = remoteCommandFromKernel.commandId
-                        logger.log('执行Kernel远程方法:', remote)
+                        logger.log([moduleName, LOG_TAGS.Actor, "terminalStatus"], '执行Kernel远程方法:', remote)
                         remote.executeFromRequest(remoteCommandFromKernel.requestId, remoteCommandFromKernel.sessionId)
 
                         const request: RemoteCommandConfirmRequest = {commandId: remote.id}
                         kernelDeviceAPI.remoteCommandConfirm.run({request: request}).then(() => {
-                            logger.log('反馈Kernel:', remoteCommandFromKernel.type, "远程方法已执行", remote.id)
+                            logger.log([moduleName, LOG_TAGS.Actor, 'terminalStatus'], '反馈Kernel', { type: remoteCommandFromKernel.type, message: '远程方法已执行', id: remote.id })
                         })
                     } else {
-                        logger.error('Kernel远程方法初始化失败' + event.message.data)
+                        logger.error([moduleName, LOG_TAGS.Actor, "terminalStatus"], 'Kernel远程方法初始化失败' + event.message.data)
                     }
                 } catch (e: any) {
-                    logger.error('执行远程方法错误:' + e + ' ' + event.message.data)
+                    logger.error([moduleName, LOG_TAGS.Actor, "terminalStatus"], '执行远程方法错误:' + e + ' ' + event.message.data)
                     throw new AppError(SlaveErrors.REMOTE_COMMAND_EXECUTION_ERROR, e.toString() + event.message.data)
                 }
             }

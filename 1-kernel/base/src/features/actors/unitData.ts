@@ -9,6 +9,8 @@ import {RootState, unitDataGroups} from "../rootState";
 import {GetUnitDataByGroupRequest, kernelDeviceAPI} from "../../api/device";
 import {UnitDataChangedSet, UnitDataState} from "../../types";
 import {PayloadAction} from "@reduxjs/toolkit";
+import { LOG_TAGS } from '../../types/core/logTags';
+import { moduleName } from '../../module';
 
 
 class UnitDataActor extends IActor {
@@ -42,7 +44,7 @@ class UnitDataActor extends IActor {
         const changeSet = command.payload.changeSet
         if ((changeSet.updated ?? []).length == 0 &&
             (changeSet.deleted ?? []).length == 0) {
-            logger.log(`UDG [${changeSet.group}] has no change from kernel server`)
+            logger.log([moduleName, LOG_TAGS.Actor, "unitData"], `UDG [${changeSet.group}] has no change from kernel server`)
             return
         }
         const action: PayloadAction<UnitDataChangedSet> = {

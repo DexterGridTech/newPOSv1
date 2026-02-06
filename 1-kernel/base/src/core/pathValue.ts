@@ -1,5 +1,5 @@
 import {logger} from "./nativeAdapter";
-import {Unit, UnitData, UnitDataState, UnitType} from "../types";
+import {LOG_TAGS, moduleName, Unit, UnitData, UnitDataState, UnitType} from "../types";
 
 interface DataProvider {
     provider: {
@@ -30,11 +30,11 @@ export class SimplePathValue<T> {
             const customizedDataValue = provider(this.path)
             if (customizedDataValue != null) {
 
-                logger.debug(`${this.category}:${this.name} customize(${customizedDataValue.id})=${customizedDataValue.value}`)
+                logger.debug([moduleName,LOG_TAGS.System, "PathValue"], `${this.category}:${this.name} customize(${customizedDataValue.id})=${customizedDataValue.value}`)
                 return customizedDataValue.value as T
             }
         }
-        logger.debug(`${this.category}:${this.name} default=${this.defaultValue}`)
+        logger.debug([moduleName, LOG_TAGS.System, "PathValue"], `${this.category}:${this.name} default=${this.defaultValue}`)
         return this.defaultValue;
     }
 }
@@ -84,12 +84,12 @@ export const priorThen = (
     else if (value1UnitType === UnitType.ENTITY && value2UnitType === UnitType.MODEL)
         return false
 
-    if (value1UnitType === UnitType.MODEL){
+    if (value1UnitType === UnitType.MODEL) {
         const value1Index = modelRootPath.indexOf(value1UnitId)
         const value2Index = modelRootPath.indexOf(value2UnitId)
         return value1Index > value2Index
     }
-    if (value1UnitType === UnitType.ENTITY){
+    if (value1UnitType === UnitType.ENTITY) {
         const value1Index = operatingEntityRootPath.indexOf(value1UnitId)
         const value2Index = operatingEntityRootPath.indexOf(value2UnitId)
         return value1Index > value2Index

@@ -1,9 +1,9 @@
-import { AppEpic, RootState } from "../features";
-import { INativeAdapter, Workspace } from "../types";
-import { IActor } from "../core";
-import { ScreenPartRegistration } from "@impos2/kernel-module-ui-navigation";
-import { Reducer, StoreEnhancer } from "@reduxjs/toolkit";
-import { Storage } from 'redux-persist';
+import {AppEpic, RootState} from "../features";
+import {IPosAdapter, IStorageAdapter, Workspace} from "../types";
+import {IActor} from "../core";
+import {ScreenPartRegistration} from "@impos2/kernel-module-ui-navigation";
+import {Reducer, StoreEnhancer} from "@reduxjs/toolkit";
+
 /**
  * Kernel 模块接口
  */
@@ -20,30 +20,30 @@ export interface KernelModule {
  * Store 配置接口
  */
 export interface StoreConfig {
-    nativeAdapter: INativeAdapter | null;
-    preInitiatedState: Partial<RootState>;
-    workspace: Workspace;
-    kernelModules: KernelModule[];
-    reduxStorage?: Storage;
+    standAlone: boolean
+    preInitiatedState: Partial<RootState>
+    workspace: Workspace
+    kernelModules: KernelModule[]
+    nativeAdapter?: IPosAdapter
     /**
      * Reactotron enhancer (可选)
      * 用于在开发环境下集成 Reactotron 调试工具
      */
-    reactotronEnhancer?: StoreEnhancer;
+    reactotronEnhancer?: StoreEnhancer
 }
 
 /**
  * Store 初始化器接口 - 单一职责原则 (SRP)
  */
 export interface IStoreInitializer {
-    initialize(config: StoreConfig): void;
+    initialize(config: StoreConfig): Promise<void>;
 }
 
 /**
  * Reducer 构建器接口 - 单一职责原则 (SRP)
  */
 export interface IReducerBuilder {
-    buildReducers(modules: KernelModule[],currentWorkspace:string,storage?:Storage): Record<string, Reducer>;
+    buildReducers(modules: KernelModule[], currentWorkspace: string): Promise<Record<string, Reducer>>;
 }
 
 /**

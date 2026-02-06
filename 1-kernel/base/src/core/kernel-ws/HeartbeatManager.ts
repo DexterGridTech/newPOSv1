@@ -4,6 +4,8 @@
  */
 
 import { logger } from '../nativeAdapter';
+import { LOG_TAGS } from '../../types/core/logTags';
+import { moduleName } from '../../module';
 
 export class KernelHeartbeatManager {
   private heartbeatTimeout: number;
@@ -24,7 +26,7 @@ export class KernelHeartbeatManager {
   start(): void {
     this.stop();
     this.startTimeoutCheck();
-    logger.log(`[KernelHeartbeat] Started, timeout: ${this.heartbeatTimeout}ms`);
+    logger.log([moduleName, LOG_TAGS.WebSocket, "HeartbeatManager"], `[KernelHeartbeat] Started, timeout: ${this.heartbeatTimeout}ms`);
   }
 
   /**
@@ -36,7 +38,7 @@ export class KernelHeartbeatManager {
     }
 
     this.heartbeatTimeoutTimer = setTimeout(() => {
-      logger.warn('[KernelHeartbeat] Timeout detected');
+      logger.warn([moduleName, LOG_TAGS.WebSocket, "HeartbeatManager"], '[KernelHeartbeat] Timeout detected');
       this.onTimeout();
     }, this.heartbeatTimeout);
   }
@@ -57,6 +59,6 @@ export class KernelHeartbeatManager {
       this.heartbeatTimeoutTimer = null;
     }
 
-    logger.log('[KernelHeartbeat] Stopped');
+    logger.log([moduleName, LOG_TAGS.WebSocket, "HeartbeatManager"], '[KernelHeartbeat] Stopped');
   }
 }

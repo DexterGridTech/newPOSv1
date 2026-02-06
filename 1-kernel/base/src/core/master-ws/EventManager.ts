@@ -1,5 +1,7 @@
 import { ConnectionEventType } from '../../types';
 import {logger} from "../nativeAdapter";
+import { LOG_TAGS } from '../../types/core/logTags';
+import { moduleName } from '../../module';
 
 /**
  * 事件管理器
@@ -41,7 +43,7 @@ export class MasterEventManager {
         try {
           callback(...args);
         } catch (error) {
-          logger.error(`事件回调执行错误 [${eventType}]:`, error);
+          logger.error([moduleName, LOG_TAGS.WebSocket, "EventManager"], `事件回调执行错误 [${eventType}]:`, error);
         }
       });
     }

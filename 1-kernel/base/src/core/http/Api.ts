@@ -8,6 +8,8 @@ import {CancelTokenSource} from 'axios';
 import {ApiManager} from './ApiManager';
 import {HttpMethod, RequestWrapper, ResponseWrapper} from '../../types';
 import {logger} from "../nativeAdapter";
+import { LOG_TAGS } from '../../types/core/logTags';
+import { moduleName } from '../../module';
 
 /**
  * API 类
@@ -56,7 +58,7 @@ export class Api<T, R> {
                 clearTimeout(timeoutId);
             }
             this.cancelTokenSource = undefined;
-            logger.debug(this._serverName, apiManager.getMetrics())
+            logger.debug([moduleName, LOG_TAGS.Http, "Api"], this._serverName, apiManager.getMetrics())
         }
     }
 

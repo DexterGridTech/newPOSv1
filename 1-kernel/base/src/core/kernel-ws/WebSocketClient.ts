@@ -26,6 +26,8 @@ import { KernelEventManager } from './EventManager';
 import { KernelHeartbeatManager } from './HeartbeatManager';
 import { KernelConnectionManager } from './ConnectionManager';
 import { logger } from '../nativeAdapter';
+import { LOG_TAGS } from '../../types/core/logTags';
+import { moduleName } from '../../module';
 
 /**
  * 默认配置
@@ -260,7 +262,7 @@ export class KernelWebSocketClient implements IKernelWebSocketClient {
     }
 
     this.state = newState;
-    logger.log(`[KernelWS] State: ${oldState} -> ${newState}`);
+    logger.log([moduleName, LOG_TAGS.WebSocket, "WebSocketClient"], `[KernelWS] State: ${oldState} -> ${newState}`);
 
     this.eventManager.emit(KernelConnectionEventType.STATE_CHANGE, {
       oldState,
@@ -272,7 +274,7 @@ export class KernelWebSocketClient implements IKernelWebSocketClient {
    * WebSocket 打开处理
    */
   private handleWebSocketOpen(): void {
-    logger.log('[KernelWS] WebSocket opened');
+    logger.log([moduleName, LOG_TAGS.WebSocket, "WebSocketClient"], '[KernelWS] WebSocket opened');
 
     this.setState(KernelConnectionState.CONNECTED);
 
@@ -291,7 +293,7 @@ export class KernelWebSocketClient implements IKernelWebSocketClient {
    * WebSocket 关闭处理
    */
   private handleWebSocketClose(event: CloseEvent): void {
-    logger.log(`[KernelWS] WebSocket closed: ${event.code} ${event.reason}`);
+    logger.log([moduleName, LOG_TAGS.WebSocket, "WebSocketClient"], `[KernelWS] WebSocket closed: ${event.code} ${event.reason}`);
 
     if (this.state !== KernelConnectionState.DISCONNECTING) {
       this.emitDisconnected(false, event.reason);
@@ -305,7 +307,7 @@ export class KernelWebSocketClient implements IKernelWebSocketClient {
    * WebSocket 错误处理
    */
   private handleWebSocketError(event: Event): void {
-    logger.error('[KernelWS] WebSocket error:', event);
+    logger.error([moduleName, LOG_TAGS.WebSocket, "WebSocketClient"], '[KernelWS] WebSocket error:', event);
 
     this.emitError({
       type: KernelConnectionErrorType.UNKNOWN_ERROR,
@@ -325,14 +327,14 @@ export class KernelWebSocketClient implements IKernelWebSocketClient {
     }
 
     if (message.type === KernelMessageType.CONNECTED) {
-      logger.log('[KernelWS] Received CONNECTED message:', message.data);
+      logger.log([moduleName, LOG_TAGS.WebSocket, "WebSocketClient"], '[KernelWS] Received CONNECTED message:', message.data);
       return;
     }
 
     // 消息去重检查
     const messageId = this.generateMessageId(message);
     if (this.processedMessageCache.has(messageId)) {
-      logger.warn('[KernelWS] Duplicate message ignored:', messageId);
+      logger.warn([moduleName, LOG_TAGS.WebSocket, "WebSocketClient"], '[KernelWS] Duplicate message ignored:', messageId);
       return;
     }
 
@@ -379,7 +381,7 @@ export class KernelWebSocketClient implements IKernelWebSocketClient {
         data: { timestamp: now() },
       });
     } catch (error) {
-      logger.error('[KernelWS] Failed to send heartbeat response:', error);
+      logger.error([moduleName, LOG_TAGS.WebSocket, "WebSocketClient"], '[KernelWS] Failed to send heartbeat response:', error);
     }
   }
 
@@ -387,7 +389,7 @@ export class KernelWebSocketClient implements IKernelWebSocketClient {
    * 心跳超时处理
    */
   private handleHeartbeatTimeout(): void {
-    logger.warn('[KernelWS] Heartbeat timeout');
+    logger.warn([moduleName, LOG_TAGS.WebSocket, "WebSocketClient"], '[KernelWS] Heartbeat timeout');
 
     // 只触发 HEARTBEAT_TIMEOUT 事件，不触发 ERROR 事件
     // 避免全局错误处理器重复处理
@@ -489,13 +491,13 @@ export class KernelWebSocketClient implements IKernelWebSocketClient {
   private registerGlobalErrorHandlers(): void {
     // 连接失败时断开
     const connectFailedHandler = (event: KernelConnectFailedEvent) => {
-      logger.error('[KernelWS]', event.error.message);
+      logger.error([moduleName, LOG_TAGS.WebSocket, "WebSocketClient"], '[KernelWS]', event.error.message);
       if (!this.isDisconnecting && this.state !== KernelConnectionState.DISCONNECTED) {
         this.isDisconnecting = true;
         try {
           this.disconnect('连接失败');
         } catch (error) {
-          logger.error('[KernelWS] Error during disconnect:', error);
+          logger.error([moduleName, LOG_TAGS.WebSocket, "WebSocketClient"], '[KernelWS] Error during disconnect:', error);
         } finally {
           this.isDisconnecting = false;
         }
@@ -504,13 +506,13 @@ export class KernelWebSocketClient implements IKernelWebSocketClient {
 
     // 错误时断开
     const errorHandler = (event: KernelErrorEvent) => {
-      logger.error('[KernelWS]', event.error.message);
+      logger.error([moduleName, LOG_TAGS.WebSocket, "WebSocketClient"], '[KernelWS]', event.error.message);
       if (!this.isDisconnecting && this.state !== KernelConnectionState.DISCONNECTED) {
         this.isDisconnecting = true;
         try {
           this.disconnect('连接错误');
         } catch (error) {
-          logger.error('[KernelWS] Error during disconnect:', error);
+          logger.error([moduleName, LOG_TAGS.WebSocket, "WebSocketClient"], '[KernelWS] Error during disconnect:', error);
         } finally {
           this.isDisconnecting = false;
         }
@@ -519,7 +521,7 @@ export class KernelWebSocketClient implements IKernelWebSocketClient {
 
     // 心跳超时时断开 - 由于心跳超时已经在handleHeartbeatTimeout中处理，这里不再重复断开
     const heartbeatTimeoutHandler = (event: KernelErrorEvent) => {
-      logger.error('[KernelWS]', event.error.message);
+      logger.error([moduleName, LOG_TAGS.WebSocket, "WebSocketClient"], '[KernelWS]', event.error.message);
       // 心跳超时已在handleHeartbeatTimeout中直接断开连接，此处仅记录日志
     };
 
@@ -560,7 +562,7 @@ export class KernelWebSocketClient implements IKernelWebSocketClient {
     expiredKeys.forEach(key => this.processedMessageCache.delete(key));
 
     if (expiredKeys.length > 0) {
-      logger.log(`[KernelWS] Cleaned ${expiredKeys.length} expired message cache entries`);
+      logger.log([moduleName, LOG_TAGS.WebSocket, "WebSocketClient"], `[KernelWS] Cleaned ${expiredKeys.length} expired message cache entries`);
     }
 
     // 如果还超过大小限制,删除最旧的消息
@@ -573,7 +575,7 @@ export class KernelWebSocketClient implements IKernelWebSocketClient {
         this.processedMessageCache.delete(entries[i][0]);
       }
 
-      logger.log(`[KernelWS] Cleaned ${deleteCount} oldest messages due to size limit`);
+      logger.log([moduleName, LOG_TAGS.WebSocket, "WebSocketClient"], `[KernelWS] Cleaned ${deleteCount} oldest messages due to size limit`);
     }
   }
 }
