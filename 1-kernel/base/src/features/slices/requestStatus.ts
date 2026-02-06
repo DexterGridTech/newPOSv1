@@ -95,7 +95,7 @@ export const requestStatusSlice = createSlice({
             if (request) {
                 const commandStatus = request.commandsStatus[command.id]
                 if (commandStatus) {
-                    commandStatus.completeAt = Date.now()
+                    commandStatus.completeAt = now()
                     commandStatus.status = 'complete'
                 }
                 if (result)
@@ -111,7 +111,7 @@ export const requestStatusSlice = createSlice({
             if (request) {
                 const commandStatus = request.commandsStatus[command.id]
                 if (commandStatus) {
-                    commandStatus.errorAt = Date.now()
+                    commandStatus.errorAt = now()
                     commandStatus.errorKey = appError.key
                     commandStatus.status = 'error'
                 }

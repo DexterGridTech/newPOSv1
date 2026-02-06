@@ -1,4 +1,6 @@
 import { KernelModule } from "../types";
+import {now} from 'lodash';
+
 
 /**
  * Store 初始化日志工具
@@ -46,7 +48,7 @@ export class StoreInitLogger {
 ╚═══════════════════════════════════════════════════════════════════════╝
         `;
         console.log(this.colorize(banner, 'CYAN', 'BRIGHT'));
-        this.startTime = Date.now();
+        this.startTime = now();
     }
 
     /**
@@ -160,7 +162,7 @@ export class StoreInitLogger {
      * 打印总结信息
      */
     logSummary(resolvedModules: KernelModule[]): void {
-        const elapsed = Date.now() - this.startTime;
+        const elapsed = now() - this.startTime;
         const totalReducers = resolvedModules.reduce((sum, m) => sum + Object.keys(m.reducers || {}).length, 0);
         const totalEpics = resolvedModules.reduce((sum, m) => sum + (m.epics?.length || 0), 0);
         const totalActors = resolvedModules.reduce((sum, m) => sum + (m.actors?.length || 0), 0);

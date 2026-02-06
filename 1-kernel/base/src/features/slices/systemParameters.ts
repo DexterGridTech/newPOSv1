@@ -1,4 +1,6 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {now} from 'lodash';
+
 import {registerStateToPersist, registerStateToSync} from "../../core";
 
 
@@ -25,7 +27,7 @@ export const systemParametersSlice = createSlice(
         reducers: {
             setParameters: (state, action: PayloadAction<{ [path: string]: any }>) => {
                 state.parameters = action.payload
-                state.updatedAt = Date.now()
+                state.updatedAt = now()
             }
         }
     }

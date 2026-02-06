@@ -4,6 +4,8 @@
  */
 
 import { DEFAULT_CONFIG, PERFORMANCE_CONFIG } from '../../types';
+import {now} from 'lodash';
+
 
 /**
  * 请求队列类
@@ -41,9 +43,9 @@ export class RequestQueue {
     }
 
     private checkRateLimit(): void {
-        const now = Date.now();
+        const currentTime = now();
         this.requestTimestamps = this.requestTimestamps.filter(
-            timestamp => now - timestamp < this.rateLimitWindow
+            timestamp => currentTime - timestamp < this.rateLimitWindow
         );
 
         if (this.requestTimestamps.length >= this.rateLimitMax) {
@@ -52,14 +54,15 @@ export class RequestQueue {
     }
 
     private recordRequest(): void {
-        const now = Date.now();
-        this.requestTimestamps.push(now);
+        const currentTime = now();
+        this.requestTimestamps.push(currentTime);
 
         // 使用常量替代魔法数字
         if (this.requestTimestamps.length % PERFORMANCE_CONFIG.CLEANUP_INTERVAL === 0 ||
             this.requestTimestamps.length > PERFORMANCE_CONFIG.MAX_TIMESTAMPS) {
+            const cleanupTime = now();
             this.requestTimestamps = this.requestTimestamps.filter(
-                timestamp => now - timestamp < this.rateLimitWindow
+                timestamp => cleanupTime - timestamp < this.rateLimitWindow
             );
         }
     }

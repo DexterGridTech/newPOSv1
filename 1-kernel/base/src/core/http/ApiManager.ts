@@ -4,6 +4,8 @@
  */
 
 import {axios} from './axiosConfig';
+import {now} from 'lodash';
+
 import {AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, CancelTokenSource} from 'axios';
 import {logger} from '../nativeAdapter';
 import {CircuitBreaker} from './CircuitBreakerManager';
@@ -294,7 +296,7 @@ export class ApiManager {
     ): Promise<{ response: ResponseWrapper<R>; record: ServerAttemptRecord }> {
         const config = this.serverMap.get(serverName);
         if (!config) {
-            const now = Date.now();
+            const currentTime = now();
             return {
                 response: {
                     code: APIErrorCode.SERVER_NOT_FOUND,
@@ -304,8 +306,8 @@ export class ApiManager {
                     addressName: 'unknown',
                     addressIndex,
                     attemptNumber,
-                    startTime: now,
-                    endTime: now,
+                    startTime: currentTime,
+                    endTime: currentTime,
                     responseTime: 0,
                     success: false,
                     errorCode: APIErrorCode.SERVER_NOT_FOUND,
@@ -319,7 +321,7 @@ export class ApiManager {
         const axiosInstance = this.axiosInstances.get(instanceKey);
 
         if (!axiosInstance) {
-            const now = Date.now();
+            const currentTime = now();
             return {
                 response: {
                     code: APIErrorCode.AXIOS_INSTANCE_NOT_FOUND,
@@ -329,8 +331,8 @@ export class ApiManager {
                     addressName: address.addressName,
                     addressIndex,
                     attemptNumber,
-                    startTime: now,
-                    endTime: now,
+                    startTime: currentTime,
+                    endTime: currentTime,
                     responseTime: 0,
                     success: false,
                     errorCode: APIErrorCode.AXIOS_INSTANCE_NOT_FOUND,
@@ -340,7 +342,7 @@ export class ApiManager {
         }
 
         // 记录请求开始时间
-        const startTime = Date.now();
+        const startTime = now();
         this.metrics.totalRequests++;
 
         // 初始化地址指标
@@ -365,7 +367,7 @@ export class ApiManager {
             const response: AxiosResponse<ResponseWrapper<R>> = await axiosInstance.request(axiosConfig);
 
             // 记录成功指标
-            const endTime = Date.now();
+            const endTime = now();
             const responseTime = endTime - startTime;
             this.metrics.successfulRequests++;
             this.metrics.totalResponseTime += responseTime;
@@ -387,7 +389,7 @@ export class ApiManager {
             };
         } catch (error) {
             // 记录响应时间
-            const endTime = Date.now();
+            const endTime = now();
             const responseTime = endTime - startTime;
             this.metrics.totalResponseTime += responseTime;
             addressMetric.totalResponseTime += responseTime;
@@ -540,7 +542,7 @@ export class ApiManager {
 
         // 记录所有尝试
         const attemptRecords: ServerAttemptRecord[] = [];
-        const requestStartTime = Date.now();
+        const requestStartTime = now();
 
         // 轮询所有地址,直到成功或达到最大尝试次数
         let skippedCount = 0; // 跳过的断路器数量
@@ -562,7 +564,7 @@ export class ApiManager {
                         path,
                         method,
                         totalAttempts: attemptCount,
-                        totalResponseTime: Date.now() - requestStartTime,
+                        totalResponseTime: now() - requestStartTime,
                         attemptRecords,
                         requestExtra: requestWrapper.extra
                     }
@@ -581,8 +583,8 @@ export class ApiManager {
                     addressName: address.addressName,
                     addressIndex,
                     attemptNumber: attemptCount + 1,
-                    startTime: Date.now(),
-                    endTime: Date.now(),
+                    startTime: now(),
+                    endTime: now(),
                     responseTime: 0,
                     success: false,
                     skipped: true,
@@ -601,7 +603,7 @@ export class ApiManager {
                             path,
                             method,
                             totalAttempts: attemptCount,
-                            totalResponseTime: Date.now() - requestStartTime,
+                            totalResponseTime: now() - requestStartTime,
                             attemptRecords,
                             requestExtra: requestWrapper.extra
                         }
@@ -639,7 +641,7 @@ export class ApiManager {
                 config.lastSuccessfulAddressIndex = addressIndex;
 
                 // 成功,返回结果并附加所有尝试记录和请求extra
-                const totalResponseTime = Date.now() - requestStartTime;
+                const totalResponseTime = now() - requestStartTime;
                 return {
                     ...response,
                     extra: {
@@ -672,7 +674,7 @@ export class ApiManager {
         }
 
         // 所有尝试都失败了
-        const totalResponseTime = Date.now() - requestStartTime;
+        const totalResponseTime = now() - requestStartTime;
         return {
             code: APIErrorCode.ALL_SERVERS_FAILED,
             message: ERROR_MESSAGES.ALL_SERVERS_FAILED(serverName),

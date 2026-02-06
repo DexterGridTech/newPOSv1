@@ -1,4 +1,6 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {now} from 'lodash';
+
 import {Unit} from "../../types";
 import {registerStateToPersist, registerStateToSync} from "../../core";
 import {ActivateDeviceResponse} from "../../api/device";
@@ -24,11 +26,11 @@ export const terminalInfoSlice = createSlice({
             state.model = action.payload.model
             state.hostEntity = action.payload.hostEntity
             state.token = action.payload.token
-            state.updatedAt = Date.now()
+            state.updatedAt = now()
         },
         setOperatingEntity: (state, action: PayloadAction<Unit>) => {
             state.operatingEntity = action.payload
-            state.updatedAt = Date.now()
+            state.updatedAt = now()
         },
         updateState: updateState
     }

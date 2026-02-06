@@ -1,4 +1,4 @@
-import { createTraceMiddleware } from "../../core";
+import { createStateSyncMiddleware } from "../../core";
 import { IMiddlewareConfigurator } from "../types";
 
 /**
@@ -8,7 +8,7 @@ import { IMiddlewareConfigurator } from "../types";
 export class MiddlewareConfigurator implements IMiddlewareConfigurator {
     configureMiddleware(epicMiddleware: any): any[] {
         return [
-            createTraceMiddleware() as any,
+            createStateSyncMiddleware() as any,
             epicMiddleware as any
         ];
     }

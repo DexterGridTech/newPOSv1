@@ -1,4 +1,6 @@
 import { nanoid } from 'nanoid/non-secure';
+import {now} from 'lodash';
+
 import { MessageWrapper, SYSTEM_MESSAGE_TYPES } from '../../types';
 
 /**
@@ -51,7 +53,7 @@ export class MasterHeartbeatManager {
 
     this.isRunning = true;
     this.hasReceivedFirstHeartbeat = false;
-    this.lastHeartbeatTime = Date.now();
+    this.lastHeartbeatTime = now();
     this.startHeartbeatTimeoutCheck();
   }
 
@@ -99,7 +101,7 @@ export class MasterHeartbeatManager {
    * 更新最后心跳时间
    */
   updateHeartbeatTime(): void {
-    this.lastHeartbeatTime = Date.now();
+    this.lastHeartbeatTime = now();
 
     // 重置超时检查定时器
     this.startHeartbeatTimeoutCheck();
@@ -121,8 +123,8 @@ export class MasterHeartbeatManager {
         return;
       }
 
-      const now = Date.now();
-      const elapsed = now - this.lastHeartbeatTime;
+      const currentTime = now();
+      const elapsed = currentTime - this.lastHeartbeatTime;
       // 首次心跳前使用宽限期，之后使用正常超时时间
       const timeout = this.hasReceivedFirstHeartbeat
         ? this.heartbeatTimeout

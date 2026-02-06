@@ -1,4 +1,6 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {now} from 'lodash';
+
 import {DisplayMode, InstanceMode, ScreenMode, Slave, SlaveConnectionInfo, Workspace} from "../../types";
 import {registerStateToPersist} from "../../core";
 
@@ -48,21 +50,21 @@ export const instanceInfoSlice = createSlice({
                 slaves[action.payload.name] = {
                     name: action.payload.name,
                     embedded: false,
-                    addedAt: Date.now()
+                    addedAt: now()
                 }
             }
             state.masterSlaves = slaves
-            state.updatedAt = Date.now()
+            state.updatedAt = now()
         },
         registerSlave: (state, action: PayloadAction<{ name: string, deviceId: string }>) => {
             const slaves = state.masterSlaves
             const existedSlave = slaves[action.payload.name]
             if (existedSlave && !existedSlave.embedded) {
-                existedSlave.registeredAt = Date.now()
+                existedSlave.registeredAt = now()
                 existedSlave.deviceId = action.payload.deviceId
             }
             state.masterSlaves = slaves
-            state.updatedAt = Date.now()
+            state.updatedAt = now()
         },
         unregisterSlave: (state, action: PayloadAction<{ name: string }>) => {
             const slaves = state.masterSlaves
@@ -72,7 +74,7 @@ export const instanceInfoSlice = createSlice({
                 existedSlave.deviceId = null
             }
             state.masterSlaves = slaves
-            state.updatedAt = Date.now()
+            state.updatedAt = now()
         },
         removeSlave: (state, action: PayloadAction<{ name: string }>) => {
             const slaves = state.masterSlaves
@@ -81,11 +83,11 @@ export const instanceInfoSlice = createSlice({
                 delete slaves[action.payload.name]
             }
             state.masterSlaves = slaves
-            state.updatedAt = Date.now()
+            state.updatedAt = now()
         },
         setSlaveConnectionInfo: (state, action: PayloadAction<SlaveConnectionInfo>) => {
             state.slaveConnectionInfo = action.payload
-            state.updatedAt = Date.now()
+            state.updatedAt = now()
         },
     }
 })

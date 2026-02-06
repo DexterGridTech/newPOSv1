@@ -1,4 +1,6 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {now} from 'lodash';
+
 import {ServerAddress, ServerConnectionStatus, SlaveConnection} from "../../types";
 
 export interface MasterServerStatusState {
@@ -23,14 +25,14 @@ export const masterServerStatusSlice = createSlice({
             if (!state.slaveConnection) {
                 state.slaveConnection = {}
             }
-            action.payload.connectedAt = Date.now()
+            action.payload.connectedAt = now()
             state.slaveConnection[action.payload.slaveName] = action.payload
         },
         slaveDisconnected: (state, action: PayloadAction<SlaveConnection>) => {
             if (state.slaveConnection) {
                 const connection = state.slaveConnection[action.payload.slaveName]
                 if (connection) {
-                    connection.disconnectedAt = Date.now()
+                    connection.disconnectedAt = now()
                 }
                 delete state.slaveConnection[action.payload.slaveName]
 

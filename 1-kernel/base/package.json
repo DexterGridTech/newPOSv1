@@ -20,6 +20,7 @@
     "@reduxjs/toolkit": "^2.11.2",
     "axios": "^1.13.2",
     "deep-diff": "^1.0.2",
+    "deep-object-diff": "^1.1.9",
     "lodash": "^4.17.21",
     "nanoid": "^5.1.6",
     "redux-observable": "^3.0.0-rc.3",

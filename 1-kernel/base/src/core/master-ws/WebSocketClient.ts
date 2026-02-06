@@ -1,4 +1,6 @@
 import { nanoid } from 'nanoid/non-secure';
+import {now} from 'lodash';
+
 import {
   IWebSocketClient,
   WebSocketClientConfig,
@@ -63,7 +65,7 @@ export class MasterWebSocketClient implements IWebSocketClient {
    * 使用 LRU + TTL 策略进行去重
    */
   private isMessageDuplicated(message: MessageWrapper): boolean {
-    const now = Date.now();
+    const currentTime = now();
     const messageId = message.id;
 
     // 检查是否已处理过该消息
@@ -71,7 +73,7 @@ export class MasterWebSocketClient implements IWebSocketClient {
       const cachedTime = this.processedMessageCache.get(messageId)!;
 
       // 检查是否过期
-      if (now - cachedTime < MESSAGE_DEDUP_CONFIG.MESSAGE_TTL) {
+      if (currentTime - cachedTime < MESSAGE_DEDUP_CONFIG.MESSAGE_TTL) {
         logger.warn('重复消息,跳过:', message.id);
         return true;
       }
@@ -81,7 +83,7 @@ export class MasterWebSocketClient implements IWebSocketClient {
     }
 
     // 添加新消息到缓存
-    this.processedMessageCache.set(messageId, now);
+    this.processedMessageCache.set(messageId, currentTime);
 
     // 检查缓存大小,超出限制时清理最旧的条目
     if (this.processedMessageCache.size > MESSAGE_DEDUP_CONFIG.MAX_CACHE_SIZE) {
@@ -110,11 +112,11 @@ export class MasterWebSocketClient implements IWebSocketClient {
    * 清理过期的缓存条目 (TTL 策略)
    */
   private cleanupExpiredEntries(): void {
-    const now = Date.now();
+    const currentTime = now();
     const expiredKeys: string[] = [];
 
     for (const [key, timestamp] of this.processedMessageCache.entries()) {
-      if (now - timestamp >= MESSAGE_DEDUP_CONFIG.MESSAGE_TTL) {
+      if (currentTime - timestamp >= MESSAGE_DEDUP_CONFIG.MESSAGE_TTL) {
         expiredKeys.push(key);
       }
     }
@@ -385,7 +387,7 @@ export class MasterWebSocketClient implements IWebSocketClient {
     const event: StateChangeEvent = {
       oldState,
       newState,
-      timestamp: Date.now(),
+      timestamp: now(),
     };
 
     this.eventManager.emit(ConnectionEventType.STATE_CHANGE, event);
@@ -418,7 +420,7 @@ export class MasterWebSocketClient implements IWebSocketClient {
     // 触发连接成功事件
     const event: ConnectedEvent = {
       serverUrl: this.connectionManager!.getCurrentServerUrl()!,
-      timestamp: Date.now(),
+      timestamp: now(),
       deviceInfo: {
         deviceType: this.config!.deviceRegistration.type,
         deviceId: this.config!.deviceRegistration.deviceId,
@@ -496,7 +498,7 @@ export class MasterWebSocketClient implements IWebSocketClient {
     // 触发消息事件
     const event: MessageEvent = {
       message,
-      timestamp: Date.now(),
+      timestamp: now(),
     };
 
     if (!this.isMessageDuplicated(message)){
@@ -519,7 +521,7 @@ export class MasterWebSocketClient implements IWebSocketClient {
 
     const event: ErrorEvent = {
       error,
-      timestamp: Date.now(),
+      timestamp: now(),
     };
 
     this.eventManager.emit(ConnectionEventType.HEARTBEAT_TIMEOUT, event);
@@ -545,7 +547,7 @@ export class MasterWebSocketClient implements IWebSocketClient {
   private emitConnectFailed(error: ConnectionError): void {
     const event: ConnectFailedEvent = {
       error,
-      timestamp: Date.now(),
+      timestamp: now(),
     };
 
     this.eventManager.emit(ConnectionEventType.CONNECT_FAILED, event);
@@ -559,7 +561,7 @@ export class MasterWebSocketClient implements IWebSocketClient {
       wasClean,
       reason,
       error,
-      timestamp: Date.now(),
+      timestamp: now(),
     };
 
     this.eventManager.emit(ConnectionEventType.DISCONNECTED, event);
@@ -571,7 +573,7 @@ export class MasterWebSocketClient implements IWebSocketClient {
   private emitError(error: ConnectionError): void {
     const event: ErrorEvent = {
       error,
-      timestamp: Date.now(),
+      timestamp: now(),
     };
 
     this.eventManager.emit(ConnectionEventType.ERROR, event);

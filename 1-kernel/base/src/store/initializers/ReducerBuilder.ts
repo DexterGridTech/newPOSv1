@@ -1,25 +1,61 @@
-import { Reducer } from "@reduxjs/toolkit";
-import { generateUnitDataSlice, unitDataGroups, UnitDataGroupStates } from "../../features";
-import { UnitDataState } from "../../types";
-import { KernelModule, IReducerBuilder } from "../types";
+import {Reducer} from "@reduxjs/toolkit";
+import {generateUnitDataSlice, unitDataGroups} from "../../features";
+import {IReducerBuilder, KernelModule} from "../types";
+import {persistReducer, Storage} from 'redux-persist';
+import {getStatesToPersist, logger} from "../../core";
 
 /**
  * Reducer 构建器实现
- * 职责: 负责构建和合并所有 Reducers
+ * 职责: 负责构建和合并所有 Reducers，并根据配置进行持久化处理
  */
 export class ReducerBuilder implements IReducerBuilder {
-    buildReducers(modules: KernelModule[]): Record<string, Reducer> {
+    buildReducers(modules: KernelModule[], currentWorkspace: string, storage?: Storage): Record<string, Reducer> {
         // 构建基础 UnitData Reducers
-        let rootReducer = Object.fromEntries(
+        let rootReducer: Record<string, Reducer> = Object.fromEntries(
             Array.from(unitDataGroups).map(group => [group, generateUnitDataSlice(group)])
-        ) as {
-            [K in keyof UnitDataGroupStates]: Reducer<UnitDataState>;
-        };
+        );
 
         // 合并模块 Reducers
         modules.forEach(module => {
-            rootReducer = { ...rootReducer, ...module.reducers };
+            rootReducer = {...rootReducer, ...module.reducers};
         });
+
+        // 如果 storage 不为空，对需要持久化的 state 进行包装
+        if (storage) {
+            const statesToPersist = getStatesToPersist();
+
+            logger.debug('[ReducerBuilder] Applying persistence', {
+                storage: storage.constructor.name,
+                statesToPersist: statesToPersist.length,
+                stateNames: statesToPersist
+            });
+
+            // 遍历需要持久化的 state
+            statesToPersist.forEach(stateName => {
+                // 检查该 state 是否存在于 rootReducer 中
+                if (rootReducer[stateName]) {
+                    // 创建持久化配置
+                    const persistConfig = {
+                        key: `${currentWorkspace}-${stateName}`,
+                        storage: storage,
+                    };
+
+                    // 使用 persistReducer 包装原始 reducer
+                    rootReducer[stateName] = persistReducer(persistConfig, rootReducer[stateName]);
+
+                    logger.debug(`[ReducerBuilder] Persisted state: ${stateName}`);
+                } else {
+                    logger.warn(`[ReducerBuilder] State "${stateName}" marked for persistence but not found in reducers`);
+                }
+            });
+
+            logger.log('[ReducerBuilder] Persistence applied successfully', {
+                totalReducers: Object.keys(rootReducer).length,
+                persistedReducers: statesToPersist.length
+            });
+        } else {
+            logger.debug('[ReducerBuilder] No storage provided, skipping persistence');
+        }
 
         return rootReducer;
     }

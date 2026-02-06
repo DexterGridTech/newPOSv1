@@ -73,23 +73,7 @@ export class StoreFactory {
         // 步骤 3: 构建 Reducers
         this.logger.logStep(3, 'Building Reducers');
 
-        const rootReducer = persistReducer({
-            key: 'root',
-            version: 1,
-            storage: config.reduxStorage ?? {
-                setItem: (key, value) => {
-                    return Promise.resolve(true);
-                },
-                getItem: (key) => {
-                    return Promise.resolve(null);
-                },
-                removeItem: (key) => {
-                    return Promise.resolve();
-                },
-            },
-            whitelist: getStatesToPersist().concat(),
-            blacklist: []
-        }, combineReducers(this.reducerBuilder.buildReducers(resolvedModules)))
+        const rootReducer = this.reducerBuilder.buildReducers(resolvedModules,config.workspace.selectedWorkspace,config.reduxStorage)
         const reducerCount = Object.keys(rootReducer).length;
         this.logger.logDetail('Total Reducers', reducerCount);
         this.logger.logSuccess('Reducers built successfully');

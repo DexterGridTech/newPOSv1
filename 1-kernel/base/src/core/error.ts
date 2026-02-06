@@ -1,3 +1,4 @@
+import {now} from 'lodash';
 import {
     APIErrorCode,
     DefinedErrorInfo,
@@ -33,7 +34,7 @@ export class AppError extends Error {
         this.category = definedError.category || ErrorCategory.UNKNOWN;
         this.severity = definedError.severity || ErrorSeverity.MEDIUM;
         this.key = definedError.key || 'ERR_UNKNOWN';
-        this.createdAt = Date.now();
+        this.createdAt = now();
         this.commandId = command?.id
         this.commandName = command?.commandName
         this.requestId = command?.requestId

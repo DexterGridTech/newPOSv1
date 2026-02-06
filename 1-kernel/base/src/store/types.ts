@@ -43,7 +43,7 @@ export interface IStoreInitializer {
  * Reducer 构建器接口 - 单一职责原则 (SRP)
  */
 export interface IReducerBuilder {
-    buildReducers(modules: KernelModule[]): Record<string, Reducer>;
+    buildReducers(modules: KernelModule[],currentWorkspace:string,storage?:Storage): Record<string, Reducer>;
 }
 
 /**

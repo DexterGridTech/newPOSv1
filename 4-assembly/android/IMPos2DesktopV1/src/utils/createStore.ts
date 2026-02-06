@@ -127,6 +127,7 @@ async function createStore(props: AppProps, posAdapter: IPosAdapter) {
         nativeAdapter: null,
         preInitiatedState: preInitiatedState,
         kernelModules: [rootModule],
+        reduxStorage: posAdapter.storage.getStorage(),
         // 在开发环境下启用 Reactotron
         reactotronEnhancer: __DEV__ ? reactotron.createEnhancer!() : undefined,
     };

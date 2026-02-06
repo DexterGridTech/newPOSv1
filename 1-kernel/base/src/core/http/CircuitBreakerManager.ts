@@ -4,6 +4,8 @@
  */
 
 import { CircuitState, DEFAULT_CONFIG } from '../../types';
+import {now} from 'lodash';
+
 
 /**
  * 断路器类
@@ -23,7 +25,7 @@ export class CircuitBreaker {
     async execute<T>(fn: () => Promise<T>): Promise<T> {
         // 检查状态
         if (this.state === CircuitState.OPEN) {
-            if (Date.now() - this.lastFailureTime >= this.timeout) {
+            if (now() - this.lastFailureTime >= this.timeout) {
                 // 只允许第一个请求转换状态
                 if (!this.executing) {
                     this.state = CircuitState.HALF_OPEN;
@@ -66,7 +68,7 @@ export class CircuitBreaker {
 
     private onFailure(): void {
         this.failureCount++;
-        this.lastFailureTime = Date.now();
+        this.lastFailureTime = now();
 
         if (this.failureCount >= this.threshold) {
             this.state = CircuitState.OPEN;
