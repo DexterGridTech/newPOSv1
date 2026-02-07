@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import {Provider} from 'react-redux';
 import {storePromise} from './store';
-import {SystemAdminDesktopScreen} from '../src';
 import {PersistGate} from "redux-persist/integration/react";
 import {InitializeCommand} from "@impos2/kernel-base";
 import type { Store } from '@reduxjs/toolkit';
 import type { Persistor } from 'redux-persist';
+import {TestScreen} from "./TestScreen";
 
 export const DevApp: React.FC = () => {
     const [storeReady, setStoreReady] = useState<{ store: Store; persistor: Persistor } | null>(null);
@@ -23,7 +23,7 @@ export const DevApp: React.FC = () => {
     return (
         <Provider store={storeReady.store}>
             <PersistGate persistor={storeReady.persistor} onBeforeLift={()=>{new InitializeCommand().executeInternally()}}>
-                <SystemAdminDesktopScreen/>
+                <TestScreen/>
             </PersistGate>
         </Provider>
     );

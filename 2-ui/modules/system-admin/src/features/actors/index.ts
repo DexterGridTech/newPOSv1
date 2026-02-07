@@ -1,5 +1,3 @@
 // 导出所有 actors
-// export * from './someActor';
+export * from './systemAdmin';
 
-// 空导出，避免 TypeScript 错误
-export {};

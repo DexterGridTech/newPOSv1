@@ -138,30 +138,29 @@ export const useDeviceActivate = (config?: UseDeviceActivateConfig) => {
     const handleSubmit = useCallback(
         () => {
             // 创建 testModal 的 model（不立即打开）
-            const model =
-                createModelScreen(testModalScreenPart, nanoid(8), {
-                    name: 'test'
-                })
+            // const model =
+            //     createModelScreen(testModalScreenPart, nanoid(8), {
+            //         name: 'test'
+            //     })
+            //
+            // // 创建 Alert，确认后才打开 testModal
+            // const alertInfo: AlertInfo = {
+            //     title: "新闻",
+            //     message: "新华社北京1月27日电（记者冯歆然）1月27日上午，国家主席习近\\n平在北京人民大会堂会见来华进行正式访问的芬兰总理奥尔波。",
+            //     confirmText: "确认",
+            //     confirmCommandName: UiNavigationCommandNames.OpenModal,
+            //     confirmCommandPayload: {model},
+            //     cancelText: "取消",
+            // }
+            // const alertModel = createAlert(nanoid(8), alertInfo)
+            // new AlertCommand({model: alertModel}).executeInternally()
 
-            // 创建 Alert，确认后才打开 testModal
-            const alertInfo: AlertInfo = {
-                title: "新闻",
-                message: "新华社北京1月27日电（记者冯歆然）1月27日上午，国家主席习近\\n平在北京人民大会堂会见来华进行正式访问的芬兰总理奥尔波。",
-                confirmText: "确认",
-                confirmCommandName: UiNavigationCommandNames.OpenModal,
-                confirmCommandPayload: {model},
-                cancelText: "取消",
-            }
-            const alertModel = createAlert(nanoid(8), alertInfo)
-            new AlertCommand({model: alertModel}).executeInternally()
 
+            if (activateStatus?.status === 'started')
+                return;
 
-            // if (activateStatus?.status === 'started')
-            //     return;
-            // logger.log('提交激活', activationCode);
-
-            // new ActivateDeviceCommand({activateCode: activationCode})
-            //     .executeFromRequest(newRequest());
+            new ActivateDeviceCommand({activateCode: activationCode})
+                .executeFromRequest(newRequest());
         },
         [activationCode, activateStatus]
     );

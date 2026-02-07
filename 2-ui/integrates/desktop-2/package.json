@@ -24,6 +24,7 @@
     "@impos2/ui-core-base-2": "*",
     "@impos2/ui-module-device-activate-2": "*",
     "@impos2/ui-module-user-login-2": "*",
+    "@impos2/ui-module-system-admin": "*",
     "@reduxjs/toolkit": "^2.11.2",
     "react": "18.3.1",
     "react-native": "0.76.6",

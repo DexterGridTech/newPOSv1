@@ -1,4 +1,5 @@
 import {IActor} from "@impos2/kernel-base";
+import {systemAdminActor} from "./actors";
 
 /**
  * 系统管理模块的所有 Actors
@@ -6,6 +7,5 @@ import {IActor} from "@impos2/kernel-base";
  * Actors 用于处理命令和业务逻辑
  */
 export const moduleActors: IActor[] = [
-    // 在这里添加你的 actors
-    // 例如: systemAdminNavigatorActor
+    systemAdminActor,
 ];

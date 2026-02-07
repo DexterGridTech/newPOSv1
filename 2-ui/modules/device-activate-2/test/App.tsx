@@ -44,7 +44,6 @@ export const DevApp: React.FC = () => {
                     }
                 }}
             >
-                {console.log("准备渲染 ActivateDesktopScreen")}
                 <ActivateDesktopScreen/>
             </PersistGate>
         </Provider>

@@ -49,22 +49,13 @@ export const activateDesktopScreenPart: ScreenPartRegistration = {
     componentType: ActivateDesktopScreen,
     indexInContainer: 1,
     readyToEnter: () => {
-        console.log('🟡 device-activate-2: readyToEnter 被调用');
         const state = currentState<RootState>()
-        console.log('🟡 instanceMode:', state[instanceInfoSlice.name].instance.instanceMode);
-        console.log('🟡 terminal:', state[terminalInfoSlice.name].terminal);
-
         if(state[instanceInfoSlice.name].instance.instanceMode !==InstanceMode.MASTER){
-            logger.debug([moduleName, LOG_TAGS.System, 'ActivateDesktopScreen'], "非master设备，不能进入ActivateDesktopScreen");
-            console.log('🟡 device-activate-2: readyToEnter 返回 false (非master)');
             return false;
         }
         if (state[terminalInfoSlice.name].terminal) {
-            logger.debug([moduleName, LOG_TAGS.System, 'ActivateDesktopScreen'], "设备已激活，不能进入ActivateDesktopScreen");
-            console.log('🟡 device-activate-2: readyToEnter 返回 false (已激活)');
             return false;
         }
-        console.log('🟡 device-activate-2: readyToEnter 返回 true');
         return true;
     }
 }
