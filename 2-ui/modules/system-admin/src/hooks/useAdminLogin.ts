@@ -1,9 +1,15 @@
 import {useCallback, useEffect, useState} from 'react';
 import {useRequestStatus} from "@impos2/kernel-base";
-import {CloseModalCommand, useEditableUiVariable} from "@impos2/kernel-module-ui-navigation";
+import {
+    CloseModalCommand,
+    createModelScreen,
+    OpenModalCommand,
+    useEditableUiVariable
+} from "@impos2/kernel-module-ui-navigation";
 import {nanoid} from "@reduxjs/toolkit";
 import {systemAdminVariable} from "../variables";
-import {AdminLoginCommand} from "../features/commands";
+import {AdminLoginCommand} from "../features";
+import {adminPanelModalPart} from "../ui";
 
 export const useAdminLogin = (config: { modalId: string }) => {
     const {
@@ -36,15 +42,27 @@ export const useAdminLogin = (config: { modalId: string }) => {
     }, []); // 空依赖数组，只在挂载和卸载时执行
 
     /**
+     * 关闭弹窗
+     */
+    const handleClose = useCallback(() => {
+        setPassword('')
+        new CloseModalCommand({modelId: modalId}).executeInternally();
+    }, [modalId, setPassword]);
+
+    /**
      * 监听登录状态，成功后关闭弹窗
      */
     useEffect(() => {
         if (loginStatus?.status === 'complete' && modalId) {
+
+            const adminPanelModel =
+                createModelScreen(adminPanelModalPart, nanoid(8), {})
+            new OpenModalCommand({model: adminPanelModel}).executeInternally()
+
             // 关闭弹窗
             handleClose();
-
         }
-    }, [loginStatus?.status, modalId]);
+    }, [loginStatus?.status, modalId, handleClose]);
 
     /**
      * 处理密码变更
@@ -69,14 +87,6 @@ export const useAdminLogin = (config: { modalId: string }) => {
         },
         [loginStatus, password]
     );
-
-    /**
-     * 关闭弹窗
-     */
-    const handleClose = useCallback(() => {
-        setPassword('')
-        new CloseModalCommand({modelId: modalId}).executeInternally();
-    }, [modalId]);
 
     return {
         // 状态

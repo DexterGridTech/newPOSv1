@@ -1,4 +1,4 @@
-import {adminLoginModalPart} from "./modals/adminLoginModal";
+import {adminLoginModalPart, adminPanelModalPart} from "./modals";
 
 /**
  * 系统管理模块的所有 ScreenParts
@@ -7,5 +7,6 @@ import {adminLoginModalPart} from "./modals/adminLoginModal";
  */
 export const moduleScreenParts = [
     adminLoginModalPart,
+    adminPanelModalPart,
     // 在这里添加更多的 screen parts
 ];

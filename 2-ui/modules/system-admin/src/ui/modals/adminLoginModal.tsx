@@ -1,12 +1,12 @@
-import React, { useEffect, useRef, useCallback } from "react";
+import React, { useCallback } from "react";
 import {Animated, Dimensions, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator} from "react-native";
 import {
     ModalScreen,
     ScreenPartRegistration
 } from "@impos2/kernel-module-ui-navigation";
-import {ScreenMode, logger, LOG_TAGS} from "@impos2/kernel-base";
+import {ScreenMode} from "@impos2/kernel-base";
 import { moduleName } from "../../types";
-import { useAdminLogin } from "../../hooks";
+import { useAdminLogin, useModalAnimation } from "../../hooks";
 
 /**
  * 管理员登录表单 Modal 组件 - 企业级设计
@@ -32,22 +32,17 @@ export interface AdminLoginModalProps {
 }
 
 export const AdminLoginModal: React.FC<ModalScreen<AdminLoginModalProps>> = React.memo((model) => {
-    // 动画值
-    const scaleAnim = useRef(new Animated.Value(0.9)).current;
-    const opacityAnim = useRef(new Animated.Value(0)).current;
+    // 使用通用的 Modal 动画 Hook
+    const { scaleAnim, opacityAnim, isVisible } = useModalAnimation(model.open, model.id, {
+        modalName: 'AdminLoginModal',
+        openDuration: 200,
+        closeDuration: 150,
+        tension: 50,
+        friction: 7,
+    });
 
     // 组件状态
-    const [isVisible, setIsVisible] = React.useState(false);
     const [isFocused, setIsFocused] = React.useState(false);
-
-    // 追踪组件挂载状态，防止内存泄漏
-    const isMountedRef = useRef<boolean>(true);
-
-    // 追踪动画状态，避免重复触发
-    const isAnimatingRef = useRef<boolean>(false);
-
-    // 追踪上一次的 open 状态
-    const prevOpenRef = useRef<boolean>(false);
 
     // 使用 hook 管理登录逻辑
     const {
@@ -70,97 +65,6 @@ export const AdminLoginModal: React.FC<ModalScreen<AdminLoginModalProps>> = Reac
     const onSubmit = useCallback(() => {
         handleSubmit();
     }, [handleSubmit]);
-
-    /**
-     * 动画效果管理
-     */
-    useEffect(() => {
-        // 检查组件是否已挂载
-        if (!isMountedRef.current) return;
-
-        // 检查是否正在动画中，避免重复触发
-        if (isAnimatingRef.current) {
-            return;
-        }
-
-        const prevOpen = prevOpenRef.current;
-        const currentOpen = model.open;
-
-        // 状态未变化，跳过
-        if (prevOpen === currentOpen) return;
-
-        if (currentOpen) {
-            // 打开动画
-            isAnimatingRef.current = true;
-            setIsVisible(true);
-
-            Animated.parallel([
-                Animated.spring(scaleAnim, {
-                    toValue: 1,
-                    tension: 50,
-                    friction: 7,
-                    useNativeDriver: true,
-                }),
-                Animated.timing(opacityAnim, {
-                    toValue: 1,
-                    duration: 200,
-                    useNativeDriver: true,
-                }),
-            ]).start(() => {
-                if (isMountedRef.current) {
-                    isAnimatingRef.current = false;
-                    logger.debug([moduleName, LOG_TAGS.System, 'AdminLoginModal'], 'Open animation completed');
-                }
-            });
-        } else if (isVisible) {
-            // 关闭动画
-            isAnimatingRef.current = true;
-
-            Animated.parallel([
-                Animated.timing(scaleAnim, {
-                    toValue: 0.9,
-                    duration: 150,
-                    useNativeDriver: true,
-                }),
-                Animated.timing(opacityAnim, {
-                    toValue: 0,
-                    duration: 150,
-                    useNativeDriver: true,
-                }),
-            ]).start(() => {
-                // 动画完成后卸载组件
-                if (isMountedRef.current) {
-                    setIsVisible(false);
-                    isAnimatingRef.current = false;
-                    logger.debug([moduleName, LOG_TAGS.System, 'AdminLoginModal'], 'Close animation completed');
-                }
-            });
-        }
-
-        // 更新 ref
-        prevOpenRef.current = currentOpen;
-    }, [model.open, isVisible, scaleAnim, opacityAnim]);
-
-    /**
-     * 组件挂载和卸载的生命周期管理
-     */
-    useEffect(() => {
-        isMountedRef.current = true;
-
-        // 组件卸载时的清理函数
-        return () => {
-            isMountedRef.current = false;
-
-            // 停止所有正在进行的动画
-            scaleAnim.stopAnimation();
-            opacityAnim.stopAnimation();
-
-            // 清理 refs
-            prevOpenRef.current = false;
-            isAnimatingRef.current = false;
-
-        };
-    }, [model.id, scaleAnim, opacityAnim]);
 
     /**
      * 边界情况处理：组件不可见时不渲染
