@@ -1,5 +1,5 @@
 export * from './types';
-export * from './variables';
+export * from './ui/variables';
 export * from './features';
 export * from './hooks';
 export * from './ui';

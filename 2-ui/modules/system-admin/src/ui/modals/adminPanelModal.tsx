@@ -9,9 +9,9 @@ import {
 } from "@impos2/kernel-module-ui-navigation";
 import {ScreenMode} from "@impos2/kernel-base";
 import {CloseModalCommand} from "@impos2/kernel-module-ui-navigation/";
-import { useModalAnimation, StackContainer, useClearance } from "@impos2/ui-core-base-2";
+import { useModalAnimation, StackContainer, useLifecycle } from "@impos2/ui-core-base-2";
 import { moduleName } from "../../types";
-import { systemAdminVariable } from "../../variables";
+import { systemAdminVariable } from "../variables";
 
 /**
  * 管理员面板 Modal 组件 - 企业级设计
@@ -62,9 +62,12 @@ export const AdminPanelModal: React.FC<ModalScreen<AdminPanelModalProps>> = Reac
         new CloseModalCommand({modelId: model.id}).executeInternally();
     }, [model.id]);
 
-    // 使用 useClearance hook 处理组件卸载或不可见时的清理
-    useClearance({
+    // 使用 useLifecycle hook 处理组件生命周期
+    useLifecycle({
         isVisible,
+        onInitiated: useCallback(() => {
+            console.log(`[${moduleName}] AdminPanelModal 初始化完成: modalId=${model.id}`);
+        }, [model.id]),
         onClearance: useCallback(() => {
             console.log(`[${moduleName}] AdminPanelModal 清理资源: modalId=${model.id}`);
             // 可以在这里添加其他清理逻辑，如重置选中状态等

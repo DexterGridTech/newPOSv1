@@ -2,8 +2,8 @@ import React, { useCallback } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { ScreenMode } from "@impos2/kernel-base";
 import { ScreenPartRegistration } from "@impos2/kernel-module-ui-navigation";
-import { useClearance } from "@impos2/ui-core-base-2";
-import { systemAdminVariable } from "../../variables";
+import { useLifecycle } from "@impos2/ui-core-base-2";
+import { systemAdminVariable } from "../variables";
 import { moduleName } from "../../types";
 
 /**
@@ -12,13 +12,17 @@ import { moduleName } from "../../types";
  * 职责：
  * 1. 提供数据版本清除功能
  * 2. 管理数据版本相关操作
- * 3. 组件卸载时清理资源
+ * 3. 管理组件生命周期
  */
 export const ClearDataVersionScreen: React.FC = () => {
-    // 使用 useClearance hook 处理组件卸载时的清理
+    // 使用 useLifecycle hook 处理组件生命周期
     // Screen 组件始终可见，所以 isVisible 设为 true，只在卸载时触发清理
-    useClearance({
+    useLifecycle({
         isVisible: true,
+        onInitiated: useCallback(() => {
+            console.log(`[${moduleName}] ClearDataVersionScreen 初始化完成`);
+            // 可以在这里添加初始化逻辑，如加载数据等
+        }, []),
         onClearance: useCallback(() => {
             console.log(`[${moduleName}] ClearDataVersionScreen 清理资源`);
             // 可以在这里添加其他清理逻辑

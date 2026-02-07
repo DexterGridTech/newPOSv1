@@ -16,7 +16,6 @@ class SystemAdminActor extends IActor {
 
     @CommandHandler(AdminLoginCommand)
     private async handleAdminLogin(command: AdminLoginCommand) {
-        // 从 UI 变量中读取密码
         const adminPassword = command.payload.adminPassword
 
         // 验证密码

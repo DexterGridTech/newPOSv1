@@ -1,13 +1,18 @@
 import { useEffect, useRef } from 'react';
 
 /**
- * Clearance Hook 配置接口
+ * Lifecycle Hook 配置接口
  */
-export interface UseClearanceConfig {
+export interface UseLifecycleConfig {
     /**
      * 组件是否可见
      */
     isVisible: boolean;
+    /**
+     * 初始化回调函数（可选）
+     * 在组件首次挂载完成时调用
+     */
+    onInitiated?: () => void;
     /**
      * 清理回调函数
      * 在组件卸载或变为不可见时调用
@@ -16,20 +21,25 @@ export interface UseClearanceConfig {
 }
 
 /**
- * 通用清理 Hook
+ * 通用生命周期 Hook
  *
  * 职责：
- * 1. 监听组件的可见性状态
- * 2. 在组件卸载时触发清理回调
- * 3. 在组件从可见变为不可见时触发清理回调
- * 4. 防止重复触发清理回调
+ * 1. 在组件首次挂载完成时触发初始化回调
+ * 2. 监听组件的可见性状态
+ * 3. 在组件卸载时触发清理回调
+ * 4. 在组件从可见变为不可见时触发清理回调
+ * 5. 防止重复触发清理回调
  *
  * @param config - 配置对象
  *
  * @example
  * ```typescript
- * useClearance({
+ * useLifecycle({
  *   isVisible: modalOpen,
+ *   onInitiated: () => {
+ *     console.log('组件初始化完成');
+ *     // 初始化逻辑
+ *   },
  *   onClearance: () => {
  *     console.log('清理资源');
  *     // 清理逻辑
@@ -37,14 +47,27 @@ export interface UseClearanceConfig {
  * });
  * ```
  */
-export const useClearance = (config: UseClearanceConfig): void => {
-    const { isVisible, onClearance } = config;
+export const useLifecycle = (config: UseLifecycleConfig): void => {
+    const { isVisible, onInitiated, onClearance } = config;
 
     // 追踪上一次的可见状态
     const prevVisibleRef = useRef<boolean>(isVisible);
 
     // 追踪是否已经触发过清理
     const hasCleanedRef = useRef<boolean>(false);
+
+    // 追踪是否已经触发过初始化
+    const hasInitiatedRef = useRef<boolean>(false);
+
+    /**
+     * 组件首次挂载时的初始化
+     */
+    useEffect(() => {
+        if (onInitiated && !hasInitiatedRef.current) {
+            onInitiated();
+            hasInitiatedRef.current = true;
+        }
+    }, [onInitiated]);
 
     /**
      * 监听可见性变化

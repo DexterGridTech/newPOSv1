@@ -1,6 +1,5 @@
 import {adminLoginModalPart, adminPanelModalPart} from "./modals";
-import {setupWorkSpaceScreenPart} from "./screens/setupWorkSpaceScreen";
-import {clearDataVersionScreenPart} from "./screens/clearDataVersionScreen";
+import {clearDataVersionScreenPart, setupWorkSpaceScreenPart} from "./screens";
 
 /**
  * 系统管理模块的所有 ScreenParts
