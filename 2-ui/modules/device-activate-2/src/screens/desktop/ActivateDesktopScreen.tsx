@@ -43,6 +43,9 @@ export const ActivateDesktopScreen: React.FC = () => {
 };
 
 export const activateDesktopScreenPart: ScreenPartRegistration = {
+    name: 'activateDesktopScreen',
+    title: '设备激活',
+    description: '设备激活页面（桌面版）',
     partKey: 'activate-v2',
     containerKey: 'screen.container.root',
     screenMode: [ScreenMode.DESKTOP],

@@ -356,6 +356,9 @@ const styles = StyleSheet.create({
 export const adminPanelModalPartKey = 'adminPanelModal';
 
 export const adminPanelModalPart: ScreenPartRegistration = {
+    name: 'adminPanelModal',
+    title: '管理员面板',
+    description: '管理员控制面板，提供系统管理和配置功能',
     partKey: adminPanelModalPartKey,
     screenMode: [ScreenMode.DESKTOP, ScreenMode.MOBILE],
     componentType: AdminPanelModal

@@ -46,6 +46,9 @@ export const LoginDesktopScreen: React.FC = () => {
 };
 
 export const loginDesktopScreenPart: ScreenPartRegistration = {
+    name: 'loginDesktopScreen',
+    title: '用户登录',
+    description: '用户登录页面（桌面版）',
     partKey: 'login',
     containerKey: 'screen.container.root',
     screenMode: [ScreenMode.DESKTOP],

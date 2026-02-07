@@ -541,6 +541,9 @@ const styles = StyleSheet.create({
 });
 
 export const defaultAlertPart: ScreenPartRegistration = {
+    name: 'defaultAlert',
+    title: '系统提示',
+    description: '默认的系统提示弹窗组件',
     partKey: defaultAlertPartKey,
     screenMode: [ScreenMode.DESKTOP, ScreenMode.MOBILE],
     componentType: DefaultAlert

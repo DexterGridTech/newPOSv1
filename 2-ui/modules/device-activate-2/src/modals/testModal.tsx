@@ -228,6 +228,9 @@ const styles = StyleSheet.create({
 });
 
 export const testModalScreenPart: ScreenPartRegistration = {
+    name: 'testModal',
+    title: '测试弹窗',
+    description: '用于测试的弹窗组件',
     partKey: 'testModal',
     containerKey: '',
     screenMode: [ScreenMode.DESKTOP,ScreenMode.MOBILE],

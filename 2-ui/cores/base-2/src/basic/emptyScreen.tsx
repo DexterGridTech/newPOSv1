@@ -126,6 +126,9 @@ const styles = StyleSheet.create({
 });
 
 export const emptyScreenPart: ScreenPartRegistration = {
+    name: 'emptyScreen',
+    title: '空白页面',
+    description: '默认的空白页面组件',
     partKey: 'empty',
     screenMode: [ScreenMode.DESKTOP, ScreenMode.MOBILE],
     componentType: EmptyScreen

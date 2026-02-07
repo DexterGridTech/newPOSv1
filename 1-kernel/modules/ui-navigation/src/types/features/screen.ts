@@ -5,6 +5,9 @@ import {ScreenMode} from "@impos2/kernel-base";
  * ScreenPart 可序列化部分 - 可以存储在 Redux state 中
  */
 export interface ScreenPart {
+    name: string,
+    title: string,
+    description: string,
     partKey: string
     screenMode: ScreenMode[]
     id?: string | null

@@ -443,6 +443,9 @@ const styles = StyleSheet.create({
 export const adminLoginModalPartKey = 'adminLoginModal';
 
 export const adminLoginModalPart: ScreenPartRegistration = {
+    name: 'adminLoginModal',
+    title: '管理员登录',
+    description: '管理员身份验证登录弹窗',
     partKey: adminLoginModalPartKey,
     screenMode: [ScreenMode.DESKTOP, ScreenMode.MOBILE],
     componentType: AdminLoginModal
