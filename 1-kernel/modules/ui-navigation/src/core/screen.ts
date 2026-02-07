@@ -52,3 +52,15 @@ export function getFirstReadyScreenPartByContainerKey(containerKey: string, from
         .sort((a, b) => (a.indexInContainer ?? 0) - (b.indexInContainer ?? 0))
         .find(part => part.readyToEnter?.() ?? true)
 }
+
+/**
+ * 获取指定 containerKey 下的所有 ScreenPartRegistration
+ * @param containerKey 容器的 key
+ * @returns 该容器下的所有 ScreenPartRegistration，按 indexInContainer 排序
+ */
+export function getScreenPartsByContainerKey(containerKey: string): ScreenPartRegistration[] {
+    const screenMode = selectInstance().screenMode
+    return Array.from(screenRegistryMap[screenMode].values())
+        .filter(part => part.containerKey === containerKey)
+        .sort((a, b) => (a.indexInContainer ?? 0) - (b.indexInContainer ?? 0))
+}

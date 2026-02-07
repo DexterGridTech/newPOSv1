@@ -1,4 +1,4 @@
-import {loginDesktopScreenPart} from "./desktop/LoginDesktopScreen";
+import {loginDesktopScreenPart} from "./desktop";
 
 
 export const moduleScreenParts = [

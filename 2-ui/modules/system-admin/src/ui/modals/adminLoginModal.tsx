@@ -5,7 +5,7 @@ import {
     ScreenPartRegistration
 } from "@impos2/kernel-module-ui-navigation";
 import {ScreenMode} from "@impos2/kernel-base";
-import { useModalAnimation } from "@impos2/ui-core-base-2";
+import { useModalAnimation, useClearance } from "@impos2/ui-core-base-2";
 import { moduleName } from "../../types";
 import { useAdminLogin } from "../../hooks";
 
@@ -54,6 +54,16 @@ export const AdminLoginModal: React.FC<ModalScreen<AdminLoginModalProps>> = Reac
         handleSubmit,
         handleClose,
     } = useAdminLogin({ modalId: model.id });
+
+    // 使用 useClearance hook 处理组件卸载或不可见时的清理
+    useClearance({
+        isVisible,
+        onClearance: useCallback(() => {
+            console.log(`[${moduleName}] AdminLoginModal 清理资源: modalId=${model.id}`);
+            // 清理表单状态
+            setIsFocused(false);
+        }, [model.id]),
+    });
 
     const isLoading = loginStatus?.status === 'started';
     const hasError = loginStatus?.status === 'error';

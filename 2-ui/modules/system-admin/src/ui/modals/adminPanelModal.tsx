@@ -1,13 +1,17 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo } from "react";
 import {Animated, Dimensions, StyleSheet, Text, TouchableOpacity, View, ScrollView} from "react-native";
 import {
     ModalScreen,
-    ScreenPartRegistration
+    ScreenPartRegistration,
+    getScreenPartsByContainerKey,
+    NavigationCommand,
+    useChildScreenPart,
 } from "@impos2/kernel-module-ui-navigation";
 import {ScreenMode} from "@impos2/kernel-base";
 import {CloseModalCommand} from "@impos2/kernel-module-ui-navigation/";
-import { useModalAnimation } from "@impos2/ui-core-base-2";
+import { useModalAnimation, StackContainer, useClearance } from "@impos2/ui-core-base-2";
 import { moduleName } from "../../types";
+import { systemAdminVariable } from "../../variables";
 
 /**
  * 管理员面板 Modal 组件 - 企业级设计
@@ -15,9 +19,9 @@ import { moduleName } from "../../types";
  * 职责：
  * 1. 展示管理员管理面板
  * 2. 管理弹窗的打开/关闭动画
- * 3. 提供菜单导航和内容展示
- * 4. 管理组件生命周期和资源释放
- * 5. 提供详细的调试日志
+ * 3. 动态加载注册到 systemAdminPanel 的所有功能页面
+ * 4. 使用 StackContainer 渲染选中的功能页面
+ * 5. 管理组件生命周期和资源释放
  *
  * 设计系统:
  * - 极简主义风格 (Minimalism & Swiss Style)
@@ -32,12 +36,6 @@ export interface AdminPanelModalProps {
     // 可以添加额外的配置参数
 }
 
-// 菜单项类型
-interface MenuItem {
-    id: string;
-    label: string;
-}
-
 export const AdminPanelModal: React.FC<ModalScreen<AdminPanelModalProps>> = React.memo((model) => {
     // 使用通用的 Modal 动画 Hook
     const { scaleAnim, opacityAnim, isVisible } = useModalAnimation(model.open, model.id, {
@@ -49,14 +47,13 @@ export const AdminPanelModal: React.FC<ModalScreen<AdminPanelModalProps>> = Reac
         friction: 7,
     });
 
-    // 组件状态
-    const [selectedMenuItem, setSelectedMenuItem] = useState<string>('welcome');
+    // 获取当前选中的子 ScreenPart
+    const currentChild = useChildScreenPart(systemAdminVariable.systemAdminPanel);
 
-    // 菜单项
-    const menuItems: MenuItem[] = [
-        { id: 'welcome', label: '欢迎' },
-        { id: 'settings', label: '设置' },
-    ];
+    // 动态获取所有注册到 systemAdminPanel 的 ScreenPart
+    const menuItems = useMemo(() => {
+        return getScreenPartsByContainerKey(systemAdminVariable.systemAdminPanel.key);
+    }, []);
 
     /**
      * 关闭弹窗函数
@@ -65,11 +62,30 @@ export const AdminPanelModal: React.FC<ModalScreen<AdminPanelModalProps>> = Reac
         new CloseModalCommand({modelId: model.id}).executeInternally();
     }, [model.id]);
 
+    // 使用 useClearance hook 处理组件卸载或不可见时的清理
+    useClearance({
+        isVisible,
+        onClearance: useCallback(() => {
+            console.log(`[${moduleName}] AdminPanelModal 清理资源: modalId=${model.id}`);
+            // 可以在这里添加其他清理逻辑，如重置选中状态等
+        }, [model.id]),
+    });
+
     /**
      * 菜单项选择处理
      */
-    const handleMenuSelect = useCallback((menuId: string) => {
-        setSelectedMenuItem(menuId);
+    const handleMenuSelect = useCallback((screenPart: ScreenPartRegistration) => {
+        new NavigationCommand({
+            target: {
+                partKey: screenPart.partKey,
+                name: screenPart.name,
+                title: screenPart.title,
+                description: screenPart.description,
+                screenMode: screenPart.screenMode,
+                containerKey: screenPart.containerKey,
+                indexInContainer: screenPart.indexInContainer,
+            }
+        }).executeInternally();
     }, []);
 
     /**
@@ -78,38 +94,6 @@ export const AdminPanelModal: React.FC<ModalScreen<AdminPanelModalProps>> = Reac
     if (!isVisible) {
         return null;
     }
-
-    /**
-     * 渲染内容区域
-     */
-    const renderContent = () => {
-        switch (selectedMenuItem) {
-            case 'welcome':
-                return (
-                    <View style={styles.contentContainer}>
-                        <Text style={styles.welcomeTitle}>欢迎使用管理员面板</Text>
-                        <Text style={styles.welcomeText}>
-                            这是管理员控制中心，您可以在这里管理系统设置和配置。
-                        </Text>
-                    </View>
-                );
-            case 'settings':
-                return (
-                    <View style={styles.contentContainer}>
-                        <Text style={styles.contentTitle}>系统设置</Text>
-                        <Text style={styles.contentText}>
-                            设置功能正在开发中...
-                        </Text>
-                    </View>
-                );
-            default:
-                return (
-                    <View style={styles.contentContainer}>
-                        <Text style={styles.contentText}>请选择菜单项</Text>
-                    </View>
-                );
-        }
-    };
 
     /**
      * 渲染组件
@@ -151,37 +135,38 @@ export const AdminPanelModal: React.FC<ModalScreen<AdminPanelModalProps>> = Reac
 
                 {/* Main Content Area */}
                 <View style={styles.mainContent}>
-                    {/* Left Sidebar - Menu */}
+                    {/* Left Sidebar - Dynamic Menu */}
                     <View style={styles.sidebar}>
                         <ScrollView style={styles.menuScrollView}>
-                            {menuItems.map((item) => (
-                                <TouchableOpacity
-                                    key={item.id}
-                                    style={[
-                                        styles.menuItem,
-                                        selectedMenuItem === item.id && styles.menuItemActive
-                                    ]}
-                                    onPress={() => handleMenuSelect(item.id)}
-                                    activeOpacity={0.7}
-                                    accessibilityLabel={item.label}
-                                    accessibilityRole="button"
-                                >
-                                    <Text style={[
-                                        styles.menuItemText,
-                                        selectedMenuItem === item.id && styles.menuItemTextActive
-                                    ]}>
-                                        {item.label}
-                                    </Text>
-                                </TouchableOpacity>
-                            ))}
+                            {menuItems.map((item) => {
+                                const isActive = currentChild?.partKey === item.partKey;
+                                return (
+                                    <TouchableOpacity
+                                        key={item.partKey}
+                                        style={[
+                                            styles.menuItem,
+                                            isActive && styles.menuItemActive
+                                        ]}
+                                        onPress={() => handleMenuSelect(item)}
+                                        activeOpacity={0.7}
+                                        accessibilityLabel={item.title}
+                                        accessibilityRole="button"
+                                    >
+                                        <Text style={[
+                                            styles.menuItemText,
+                                            isActive && styles.menuItemTextActive
+                                        ]}>
+                                            {item.title}
+                                        </Text>
+                                    </TouchableOpacity>
+                                );
+                            })}
                         </ScrollView>
                     </View>
 
-                    {/* Right Content Area */}
+                    {/* Right Content Area - StackContainer */}
                     <View style={styles.contentArea}>
-                        <ScrollView style={styles.contentScrollView}>
-                            {renderContent()}
-                        </ScrollView>
+                        <StackContainer containerPart={systemAdminVariable.systemAdminPanel} />
                     </View>
                 </View>
             </Animated.View>
@@ -318,38 +303,6 @@ const styles = StyleSheet.create({
     contentArea: {
         flex: 1,
         backgroundColor: COLORS.surface,
-    },
-    contentScrollView: {
-        flex: 1,
-    },
-    contentContainer: {
-        padding: 24,
-    },
-    welcomeTitle: {
-        fontSize: 24,
-        fontWeight: '600',
-        color: COLORS.text,
-        marginBottom: 16,
-        letterSpacing: -0.5,
-    },
-    welcomeText: {
-        fontSize: 16,
-        lineHeight: 24,
-        color: COLORS.textSecondary,
-        fontWeight: '400',
-    },
-    contentTitle: {
-        fontSize: 20,
-        fontWeight: '600',
-        color: COLORS.text,
-        marginBottom: 12,
-        letterSpacing: -0.3,
-    },
-    contentText: {
-        fontSize: 15,
-        lineHeight: 22,
-        color: COLORS.textSecondary,
-        fontWeight: '400',
     },
 });
 

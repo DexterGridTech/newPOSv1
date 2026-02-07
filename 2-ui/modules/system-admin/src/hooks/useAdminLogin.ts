@@ -1,15 +1,9 @@
 import {useCallback, useEffect, useState} from 'react';
 import {useRequestStatus} from "@impos2/kernel-base";
-import {
-    CloseModalCommand,
-    createModelScreen,
-    OpenModalCommand,
-    useEditableUiVariable
-} from "@impos2/kernel-module-ui-navigation";
+import {CloseModalCommand, useEditableUiVariable} from "@impos2/kernel-module-ui-navigation";
 import {nanoid} from "@reduxjs/toolkit";
 import {systemAdminVariable} from "../variables";
 import {AdminLoginCommand} from "../features";
-import {adminPanelModalPart} from "../ui";
 
 export const useAdminLogin = (config: { modalId: string }) => {
     const {
@@ -54,11 +48,6 @@ export const useAdminLogin = (config: { modalId: string }) => {
      */
     useEffect(() => {
         if (loginStatus?.status === 'complete' && modalId) {
-
-            const adminPanelModel =
-                createModelScreen(adminPanelModalPart, nanoid(8), {})
-            new OpenModalCommand({model: adminPanelModel}).executeInternally()
-
             // 关闭弹窗
             handleClose();
         }
