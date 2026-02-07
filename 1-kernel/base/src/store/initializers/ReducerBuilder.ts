@@ -21,41 +21,46 @@ export class ReducerBuilder implements IReducerBuilder {
             rootReducer = {...rootReducer, ...module.reducers};
         });
 
-        const reduxStorage = storage.getReduxStorage()
+        const reduxStorage = (standAlone ? storage.getReduxStorage() : undefined) ?? {
+            getItem: async () => {
+                return null;
+            },
+            setItem: async () => {
+            },
+            removeItem: async () => {
+            },
+        }
+
 
         // 如果storage不为空并且是standAlone模式（主机非副屏），对需要持久化的 state 进行包装
-        if (reduxStorage && standAlone) {
-            const dataVersion = await storage.getDataVersion()
-            const statesToPersist = getStatesToPersist();
+        const dataVersion = await storage.getDataVersion()
+        const statesToPersist = getStatesToPersist();
 
-            logger.debug([moduleName, LOG_TAGS.Store, 'ReducerBuilder'], `Applying persistence with workspace:${currentWorkspace}`, {
-                dataVersion,
-                statesToPersist: statesToPersist.join(',')
-            });
+        logger.debug([moduleName, LOG_TAGS.Store, 'ReducerBuilder'], `Applying persistence with workspace:${currentWorkspace}`, {
+            dataVersion,
+            statesToPersist: statesToPersist.join(',')
+        });
 
-            // 遍历需要持久化的 state
-            statesToPersist.forEach(stateName => {
-                // 检查该 state 是否存在于 rootReducer 中
-                if (rootReducer[stateName]) {
-                    // 创建持久化配置
-                    const persistConfig = {
-                        key: `${currentWorkspace}-${dataVersion}-${stateName}`,
-                        storage: reduxStorage,
-                    };
-                    // 使用 persistReducer 包装原始 reducer
-                    rootReducer[stateName] = persistReducer(persistConfig, rootReducer[stateName]);
-                    logger.debug([moduleName, LOG_TAGS.Store, 'ReducerBuilder'], `Persisted state: ${stateName}`);
-                } else {
-                    logger.warn([moduleName, LOG_TAGS.Store, 'ReducerBuilder'], `State "${stateName}" marked for persistence but not found in reducers`);
-                }
-            });
-            logger.log([moduleName, LOG_TAGS.Store, 'ReducerBuilder'], 'Persistence applied successfully', {
-                totalReducers: Object.keys(rootReducer).length,
-                persistedReducers: statesToPersist.length
-            });
-        } else {
-            logger.debug([moduleName, LOG_TAGS.Store, 'ReducerBuilder'], 'No storage provided, skipping persistence');
-        }
+        // 遍历需要持久化的 state
+        statesToPersist.forEach(stateName => {
+            // 检查该 state 是否存在于 rootReducer 中
+            if (rootReducer[stateName]) {
+                // 创建持久化配置
+                const persistConfig = {
+                    key: `${currentWorkspace}-${dataVersion}-${stateName}`,
+                    storage: reduxStorage,
+                };
+                // 使用 persistReducer 包装原始 reducer
+                rootReducer[stateName] = persistReducer(persistConfig, rootReducer[stateName]);
+                logger.debug([moduleName, LOG_TAGS.Store, 'ReducerBuilder'], `Persisted state: ${stateName}`);
+            } else {
+                logger.warn([moduleName, LOG_TAGS.Store, 'ReducerBuilder'], `State "${stateName}" marked for persistence but not found in reducers`);
+            }
+        });
+        logger.log([moduleName, LOG_TAGS.Store, 'ReducerBuilder'], 'Persistence applied successfully', {
+            totalReducers: Object.keys(rootReducer).length,
+            persistedReducers: statesToPersist.length
+        });
 
         return rootReducer;
     }
