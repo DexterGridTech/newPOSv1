@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Animated } from 'react-native';
 import { logger, LOG_TAGS } from '@impos2/kernel-base';
-import { moduleName } from '../types';
 
 /**
  * Modal 动画配置接口
@@ -27,6 +26,10 @@ export interface ModalAnimationConfig {
      * Modal 名称（用于日志）
      */
     modalName?: string;
+    /**
+     * 模块名称（用于日志）
+     */
+    moduleName?: string;
 }
 
 /**
@@ -71,7 +74,8 @@ export const useModalAnimation = (
         closeDuration = 150,
         tension = 50,
         friction = 7,
-        modalName = 'Modal'
+        modalName = 'Modal',
+        moduleName = 'UI'
     } = config;
 
     // 动画值
@@ -158,7 +162,7 @@ export const useModalAnimation = (
 
         // 更新 ref
         prevOpenRef.current = currentOpen;
-    }, [open, isVisible, scaleAnim, opacityAnim, openDuration, closeDuration, tension, friction, modalName]);
+    }, [open, isVisible, scaleAnim, opacityAnim, openDuration, closeDuration, tension, friction, modalName, moduleName]);
 
     /**
      * 组件挂载和卸载的生命周期管理

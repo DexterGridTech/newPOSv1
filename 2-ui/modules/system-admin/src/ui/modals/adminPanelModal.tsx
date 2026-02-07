@@ -6,8 +6,8 @@ import {
 } from "@impos2/kernel-module-ui-navigation";
 import {ScreenMode} from "@impos2/kernel-base";
 import {CloseModalCommand} from "@impos2/kernel-module-ui-navigation/";
+import { useModalAnimation } from "@impos2/ui-core-base-2";
 import { moduleName } from "../../types";
-import { useModalAnimation } from "../../hooks";
 
 /**
  * 管理员面板 Modal 组件 - 企业级设计
@@ -42,6 +42,7 @@ export const AdminPanelModal: React.FC<ModalScreen<AdminPanelModalProps>> = Reac
     // 使用通用的 Modal 动画 Hook
     const { scaleAnim, opacityAnim, isVisible } = useModalAnimation(model.open, model.id, {
         modalName: 'AdminPanelModal',
+        moduleName,
         openDuration: 200,
         closeDuration: 150,
         tension: 50,
