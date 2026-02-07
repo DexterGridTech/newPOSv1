@@ -27,7 +27,7 @@ import { KernelHeartbeatManager } from './HeartbeatManager';
 import { KernelConnectionManager } from './ConnectionManager';
 import { logger } from '../nativeAdapter';
 import { LOG_TAGS } from '../../types/core/logTags';
-import { moduleName } from '../../module';
+import { moduleName } from '../../types';
 
 /**
  * 默认配置

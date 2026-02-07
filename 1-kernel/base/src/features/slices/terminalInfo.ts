@@ -2,7 +2,7 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {now} from 'lodash';
 
 import {Unit} from "../../types";
-import {registerStateToPersist, registerStateToSync} from "../../core";
+import {registerStateToPersist, registerStateToSync} from "../../core/specialStateList";
 import {ActivateDeviceResponse} from "../../api/device";
 import {updateState} from "../utils";
 

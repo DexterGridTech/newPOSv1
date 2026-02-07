@@ -34,7 +34,7 @@ import type {RootState} from "../rootState";
 import {InstanceErrors, MasterServerErrors, SlaveErrors} from "../errors";
 import {SlaveParameters} from "../parameter";
 import { LOG_TAGS } from '../../types/core/logTags';
-import { moduleName } from '../../module';
+import { moduleName } from '../../types';
 
 
 class SlaveStatusActor extends IActor {

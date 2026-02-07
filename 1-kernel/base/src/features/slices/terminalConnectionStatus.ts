@@ -1,6 +1,6 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {ServerConnectionStatus} from "../../types";
-import {registerStateToSync} from "../../core";
+import {registerStateToSync} from "../../core/specialStateList";
 
 export interface TerminalConnectionStatusState {
     terminalConnectionStatus?: ServerConnectionStatus

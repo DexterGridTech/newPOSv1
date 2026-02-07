@@ -1,5 +1,6 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {AppError, ICommand, registerStateToSync} from "../../core";
+import {AppError, ICommand} from "../../core";
+import {registerStateToSync} from "../../core/specialStateList";
 import {updateState} from "../utils";
 import {now} from "lodash";
 

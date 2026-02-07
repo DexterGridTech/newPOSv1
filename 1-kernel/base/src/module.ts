@@ -8,6 +8,3 @@ export const kernalBaseModule: KernelModule = {
     epics: baseModuleEpics,
     actors: baseModuleActors,
 }
-
-// 导出 moduleName 供其他模块使用
-export { moduleName };

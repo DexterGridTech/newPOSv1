@@ -2,7 +2,7 @@ import {logger, MasterWebSocketClient} from "../../core";
 import {MasterServerMessageType, SyncStateWrapper} from "../../types";
 import {PayloadAction} from "@reduxjs/toolkit";
 import { LOG_TAGS } from '../../types/core/logTags';
-import { moduleName } from '../../module';
+import { moduleName } from '../../types';
 
 /**
  * 同步状态到从设备

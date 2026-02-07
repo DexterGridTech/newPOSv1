@@ -3,6 +3,7 @@ import {moduleActors} from "./features";
 import {moduleScreenParts} from "./screens";
 import {uiCoreBaseModule} from "@impos2/ui-core-base-2";
 import {kernelUiNavigationModule} from "@impos2/kernel-module-ui-navigation";
+import {moduleName} from "./types";
 
 /**
  * 系统管理模块
@@ -13,7 +14,7 @@ import {kernelUiNavigationModule} from "@impos2/kernel-module-ui-navigation";
  * 3. 提供系统管理相关的页面和弹窗
  */
 export const uiSystemAdminModule: KernelModule = {
-    name: 'ui-system-admin',
+    name: moduleName,
     reducers: {},
     epics: [],
     actors: moduleActors,

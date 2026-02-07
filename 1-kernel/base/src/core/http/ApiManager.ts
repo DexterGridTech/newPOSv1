@@ -11,7 +11,7 @@ import {logger} from '../nativeAdapter';
 import {CircuitBreaker} from './CircuitBreakerManager';
 import {RequestQueue} from './RequestQueueManager';
 import { LOG_TAGS } from '../../types/core/logTags';
-import { moduleName } from '../../module';
+import { moduleName } from '../../types';
 import {
     APIErrorCode,
     ApiServerAddress,

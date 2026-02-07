@@ -8,8 +8,7 @@ import {
 } from "@impos2/kernel-module-ui-navigation";
 import {CommandRegistry, ScreenMode, logger, LOG_TAGS} from "@impos2/kernel-base";
 import {CloseModalCommand} from "@impos2/kernel-module-ui-navigation/";
-
-const moduleName = 'ui-base';
+import { moduleName } from "../types";
 
 /**
  * Alert 弹窗组件 - 企业级设计

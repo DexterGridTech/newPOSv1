@@ -7,7 +7,6 @@ import {
     InitializeCommand,
     logger,
     LOG_TAGS,
-    moduleName,
     RootState
 } from "@impos2/kernel-base";
 import {
@@ -18,7 +17,7 @@ import {
 } from "../commands/user";
 import {UserErrors} from "../errors";
 import {userInfoActions, userInfoSlice} from "../slices";
-import {User} from "../../types";
+import {moduleName, User} from "../../types";
 
 class UserInfoActor extends IActor {
     @CommandHandler(InitializeCommand)

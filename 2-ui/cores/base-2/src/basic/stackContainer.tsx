@@ -7,8 +7,7 @@ import {
 import React, { useEffect, useRef, useMemo, useCallback } from "react";
 import { EmptyScreen } from "./emptyScreen";
 import { logger, LOG_TAGS } from "@impos2/kernel-base";
-
-const moduleName = 'ui-base-2';
+import { moduleName } from "../types";
 
 export interface StackContainerProps {
     containerPart: UIVariable<ScreenPart>

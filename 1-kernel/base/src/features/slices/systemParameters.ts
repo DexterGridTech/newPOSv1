@@ -1,7 +1,7 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {now} from 'lodash';
 
-import {registerStateToPersist, registerStateToSync} from "../../core";
+import {registerStateToPersist, registerStateToSync} from "../../core/specialStateList";
 
 
 export interface SystemParametersState {

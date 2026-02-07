@@ -13,8 +13,7 @@ import {
 } from "@impos2/kernel-base";
 import {ScreenPartRegistration} from "@impos2/kernel-module-ui-navigation";
 import {userInfoSlice} from "@impos2/kernel-module-user";
-
-const moduleName = 'user-login-2';
+import {moduleName} from "../../types";
 
 // 诊断：打印导入的函数和组件
 console.log('🔍 useUserLogin 函数:', useUserLogin);

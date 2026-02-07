@@ -2,8 +2,7 @@ import {useCallback, useEffect} from 'react';
 import {logger, LOG_TAGS} from "@impos2/kernel-base";
 import {useEditableUiVariable} from "@impos2/kernel-module-ui-navigation";
 import {systemAdminVariable} from "../variables";
-
-const moduleName = 'ui-system-admin';
+import {moduleName} from "../types";
 
 /**
  * 生命周期回调接口

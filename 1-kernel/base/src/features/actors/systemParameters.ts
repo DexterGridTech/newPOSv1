@@ -13,7 +13,7 @@ import {RootState, UDG_SystemParameters} from "../rootState";
 import {parameterCategory} from "../parameter";
 import {systemParametersActions} from "../slices";
 import { LOG_TAGS } from '../../types/core/logTags';
-import { moduleName } from '../../module';
+import { moduleName } from '../../types';
 
 class SystemParametersActor extends IActor {
     @CommandHandler(UnitDataChangedCommand)

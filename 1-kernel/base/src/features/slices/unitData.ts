@@ -1,6 +1,6 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {UnitDataChangedSet, UnitDataState} from "../../types";
-import {registerStateToPersist} from "../../core";
+import {registerStateToPersist} from "../../core/specialStateList";
 
 export const generateUnitDataSlice = (group: string) => {
     const initialState: UnitDataState = {

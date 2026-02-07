@@ -10,7 +10,7 @@ import {GetUnitDataByGroupRequest, kernelDeviceAPI} from "../../api/device";
 import {UnitDataChangedSet, UnitDataState} from "../../types";
 import {PayloadAction} from "@reduxjs/toolkit";
 import { LOG_TAGS } from '../../types/core/logTags';
-import { moduleName } from '../../module';
+import { moduleName } from '../../types';
 
 
 class UnitDataActor extends IActor {

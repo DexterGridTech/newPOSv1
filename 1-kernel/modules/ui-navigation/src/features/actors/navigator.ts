@@ -9,11 +9,9 @@ import {
     LOG_TAGS
 } from "@impos2/kernel-base";
 import { NavigationCommand, SetUiVariablesCommand} from "../commands";
-import {ScreenPart} from "../../types";
+import {moduleName, ScreenPart} from "../../types";
 import {uiVariablesActions} from "../slices";
 import {getScreenPartReadyToEnter} from "../../core";
-
-const moduleName = 'kernel-ui-navigation';
 
 
 class NavigatorActor extends IActor {

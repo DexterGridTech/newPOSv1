@@ -107,5 +107,15 @@ const storeConfig: StoreConfig = {
     kernelModules: [uiUserLoginModule]
 }
 
-export const {store,persistor} = await generateStore(storeConfig)
-console.log("生成devStore")
+// 使用 IIFE 处理异步初始化
+let store: any;
+let persistor: any;
+
+(async () => {
+    const result = await generateStore(storeConfig);
+    store = result.store;
+    persistor = result.persistor;
+    console.log("生成devStore");
+})();
+
+export { store, persistor };

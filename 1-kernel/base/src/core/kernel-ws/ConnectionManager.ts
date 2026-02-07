@@ -11,7 +11,7 @@ import {
 import {logger} from '../nativeAdapter';
 import {ApiManager} from '../http';
 import { LOG_TAGS } from '../../types/core/logTags';
-import { moduleName } from '../../module';
+import { moduleName } from '../../types';
 
 export class KernelConnectionManager {
     private ws: WebSocket | null = null;

@@ -1,9 +1,10 @@
 import {KernelModule} from "@impos2/kernel-base";
 import {userModuleActors, userModuleReducers} from "./features";
+import {moduleName} from "./types";
 
 
 export const kernalUserModule: KernelModule = {
-    name: 'kernel-user',
+    name: moduleName,
     reducers: userModuleReducers,
     actors: userModuleActors,
     epics: [],

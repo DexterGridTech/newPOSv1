@@ -1,4 +1,4 @@
-import { defineCommand } from "../../../core";
+import { defineCommand } from "../../../core/command";
 import { ExecutionType, Unit } from "../../../types";
 import { BaseModuleCommandNames } from "../commandNames";
 

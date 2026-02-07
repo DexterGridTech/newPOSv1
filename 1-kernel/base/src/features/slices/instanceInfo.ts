@@ -2,7 +2,7 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {now} from 'lodash';
 
 import {DisplayMode, InstanceMode, ScreenMode, Slave, SlaveConnectionInfo, Workspace} from "../../types";
-import {registerStateToPersist} from "../../core";
+import {registerStateToPersist} from "../../core/specialStateList";
 
 export interface InstanceInfo {
     instanceMode: InstanceMode
