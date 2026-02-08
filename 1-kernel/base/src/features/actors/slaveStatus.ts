@@ -2,13 +2,14 @@ import {
     ActorSystem,
     AppError,
     CommandHandler,
-    currentState,
-    dispatchAction, getStatesToSync,
+    dispatchAction,
+    getStatesToSync,
     IActor,
     ICommand,
     logger,
     MasterWebSocketClient,
     SendToMasterCommand,
+    storeEntry,
     WSMessageEvent
 } from "../../core";
 import {
@@ -19,8 +20,9 @@ import {
     StartToConnectMasterServerCommand,
     SynStateAtConnectedCommand
 } from "../commands";
-import {instanceInfoSlice, slaveConnectionStatusActions, deviceStatusSlice} from "../slices";
+import {slaveConnectionStatusActions} from "../slices";
 import {delay, Subject} from "rxjs";
+import {KernelBaseStateNames} from "../../types/stateNames";
 import {
     ConnectedEvent,
     ConnectionEventType,
@@ -33,8 +35,8 @@ import {
 import type {RootState} from "../rootState";
 import {InstanceErrors, MasterServerErrors, SlaveErrors} from "../errors";
 import {SlaveParameters} from "../parameters";
-import { LOG_TAGS } from '../../types/core/logTags';
-import { moduleName } from '../../moduleName';
+import {LOG_TAGS} from '../../types/core/logTags';
+import {moduleName} from '../../moduleName';
 
 
 class SlaveStatusActor extends IActor {
@@ -42,15 +44,14 @@ class SlaveStatusActor extends IActor {
     @CommandHandler(StartToConnectMasterServerCommand)
     @CommandHandler(ReconnectMasterServerCommand)
     private async checkAndConnectMasterServer(command: ICommand<any>) {
-        const state = currentState<RootState>()
-        const slaveConnectionInfo = state[instanceInfoSlice.name].slaveConnectionInfo
+        const slaveConnectionInfo = storeEntry.getSlaveConnectionInfo()
 
         // 细分条件检查
         const conditions = [
             {
                 name: '实例模式为从机',
-                passed: (state[instanceInfoSlice.name].instance.instanceMode ?? InstanceMode.MASTER) === InstanceMode.SLAVE,
-                reason: `当前模式为 ${state[instanceInfoSlice.name].instance.instanceMode ?? InstanceMode.MASTER}，非从机模式`
+                passed: storeEntry.isSlaveMode(),
+                reason: `当前模式为 ${storeEntry.getInstanceMode()}，非从机模式`
             },
             {
                 name: '从机名称已配置',
@@ -101,7 +102,7 @@ class SlaveStatusActor extends IActor {
 
     @CommandHandler(ConnectedToMasterCommand)
     private async handleConnectedToMaster(command: ConnectedToMasterCommand) {
-        const state = currentState<RootState>()
+        const state = storeEntry.getState<RootState>()
         const stateToSync: { [stateKey: string]: number | null } = {}
         getStatesToSync().forEach(stateKey => {
             stateToSync[stateKey] = ((state[stateKey as keyof RootState] as {
@@ -193,10 +194,10 @@ class SlaveStatusActor extends IActor {
     }
 
     private async connectMasterServerWebsocket(command: ICommand<any>) {
-        const state = currentState<RootState>()
-        const masterDeviceId = state[instanceInfoSlice.name].slaveConnectionInfo.masterDeviceId
-        const serverAddresses = state[instanceInfoSlice.name].slaveConnectionInfo.masterServerAddress ?? []
-        const deviceId = state[deviceStatusSlice.name].deviceInfo?.id ?? ''
+        const slaveConnectionInfo = storeEntry.getSlaveConnectionInfo()
+        const masterDeviceId = slaveConnectionInfo.masterDeviceId
+        const serverAddresses = slaveConnectionInfo.masterServerAddress ?? []
+        const deviceId = storeEntry.getDeviceId() ?? ''
         const wsClient = this.getWsClient();
         if (!masterDeviceId && serverAddresses.length === 0) {
             throw new AppError(MasterServerErrors.MASTER_SERVER_ADDRESS_IS_EMPTY, "", command)
@@ -210,7 +211,7 @@ class SlaveStatusActor extends IActor {
                 deviceRegistration: {
                     type: InstanceMode.SLAVE,
                     deviceId: 'slave-' + deviceId,
-                    deviceName: state[instanceInfoSlice.name].slaveConnectionInfo.slaveName!,
+                    deviceName: storeEntry.getSlaveName()!,
                     masterDeviceId: 'master-' + masterDeviceId
                 },
                 serverUrls: serverAddresses.map((serverAddress: any) => serverAddress.address),

@@ -3,7 +3,7 @@ import {useRequestStatus} from "@impos2/kernel-base";
 import {CloseModalCommand, useEditableUiVariable} from "@impos2/kernel-base";
 import {nanoid} from "@reduxjs/toolkit";
 import {systemAdminVariable} from "../ui-variables";
-import {AdminLoginCommand} from "../features";
+import {AdminLoginCommand} from "../features/commands";
 
 export const useAdminLogin = (config: { modalId: string }) => {
     const {
@@ -20,7 +20,6 @@ export const useAdminLogin = (config: { modalId: string }) => {
     // 使用 UI 变量 Hook 管理密码
     const {value: password, setValue: setPassword} = useEditableUiVariable({
         variable: systemAdminVariable.adminPassword,
-        debounceMs: 300
     });
 
     const loginStatus = useRequestStatus(requestId);
@@ -76,6 +75,12 @@ export const useAdminLogin = (config: { modalId: string }) => {
         },
         [loginStatus, password]
     );
+    const cleanup=useCallback(
+        ()=>{
+            setPassword("")
+        },
+        [setPassword]
+    )
 
     return {
         // 状态
@@ -85,5 +90,6 @@ export const useAdminLogin = (config: { modalId: string }) => {
         handlePasswordChange,
         handleSubmit,
         handleClose,
+        cleanup
     };
 };

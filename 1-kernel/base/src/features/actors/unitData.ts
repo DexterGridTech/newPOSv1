@@ -1,4 +1,13 @@
-import {APIError, APIErrorCode, CommandHandler, currentState, dispatchAction, IActor, ICommand, logger} from "../../core";
+import {
+    APIError,
+    APIErrorCode,
+    CommandHandler,
+    dispatchAction,
+    IActor,
+    ICommand,
+    logger,
+    storeEntry
+} from "../../core";
 import {
     ChangeUnitDataCommand,
     GetUnitDataCommand,
@@ -9,18 +18,18 @@ import {RootState, unitDataGroups} from "../rootState";
 import {GetUnitDataByGroupRequest, kernelDeviceAPI} from "../../api/device";
 import {UnitDataChangedSet, UnitDataState} from "../../types";
 import {PayloadAction} from "@reduxjs/toolkit";
-import { LOG_TAGS } from '../../types/core/logTags';
-import { moduleName } from '../../moduleName';
+import {LOG_TAGS} from '../../types/core/logTags';
+import {moduleName} from '../../moduleName';
 
 
 class UnitDataActor extends IActor {
     @CommandHandler(GetUnitDataCommand)
     private async handleGetUnitData(command: GetUnitDataCommand) {
-        const rootState = currentState<RootState>()
+        const rootState = storeEntry.getState<RootState>()
         const group = command.payload.group as keyof RootState
         const groupState = rootState[group] as UnitDataState
         const request: GetUnitDataByGroupRequest = {
-            deviceId: rootState.deviceStatus.deviceInfo?.id!,
+            deviceId: storeEntry.getDeviceId()!,
             group: group,
             data: Object.keys(groupState).map((unitDateId) => {
                 return {

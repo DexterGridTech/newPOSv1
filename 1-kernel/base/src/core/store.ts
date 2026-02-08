@@ -1,24 +1,259 @@
-import {Middleware, PayloadAction} from "@reduxjs/toolkit";
-import {ActionMeta, InstanceMode, IStoreAccessor, LOG_TAGS} from "../types";
+import {EnhancedStore, Middleware, PayloadAction} from "@reduxjs/toolkit";
+import {ActionMeta, InstanceMode, LOG_TAGS, ServerConnectionStatus} from "../types";
 import {moduleName} from "../moduleName";
 import {ICommand} from "./command";
 import {logger} from "./nativeAdapter";
 import {getStatesToSync, registerStateToPersist, registerStateToSync} from "./specialStateList";
 import {diff} from 'deep-object-diff';
-import {instanceInfoSlice, InstanceInfoState, syncStateToSlave} from "../features";
 import {now} from 'lodash';
+import {KernelBaseStateNames} from "../types/stateNames";
 
 // 重新导出供外部使用
-export { registerStateToPersist, registerStateToSync };
-
-let _storeAccessor: IStoreAccessor | null = null;
+export {registerStateToPersist, registerStateToSync};
 
 /**
- * 设置store访问器 - 由store模块在初始化时调用
+ * Store注册表 - 统一管理所有store相关的访问和依赖注入
  */
-export const setStoreAccessor = (accessor: IStoreAccessor) => {
-    _storeAccessor = accessor;
-};
+class StoreEntry {
+    private store: EnhancedStore<any> | null = null;
+    private syncStateToSlaveFunc: ((key: string, diff: any, meta: any) => Promise<void>) | null = null;
+
+    /**
+     * 初始化注册表（只能调用一次）
+     */
+    initialize(
+        store: EnhancedStore<any>,
+        syncStateToSlave: (key: string, diff: any, meta: any) => Promise<void>
+    ): void {
+        if (this.store) {
+            throw new Error("StoreEntry already initialized");
+        }
+        this.store = store;
+        this.syncStateToSlaveFunc = syncStateToSlave;
+    }
+
+    /**
+     * 获取当前状态
+     */
+    getState<S>(): S {
+        if (!this.store) {
+            throw new Error("StoreEntry not initialized");
+        }
+        return this.store.getState() as S;
+    }
+
+    /**
+     * 分发action
+     */
+    dispatch(action: PayloadAction<any>): void {
+        if (!this.store) {
+            throw new Error("StoreEntry not initialized");
+        }
+        this.store.dispatch(action);
+    }
+
+    /**
+     * 获取slave名称
+     */
+    getSlaveName(): string | null {
+        if (!this.store) {
+            throw new Error("StoreEntry not initialized");
+        }
+        const state = this.store.getState();
+        return state[KernelBaseStateNames.instanceInfo].slaveConnectionInfo.slaveName ?? null;
+    }
+
+    /**
+     * 获取显示模式
+     */
+    getDisplayMode() {
+        if (!this.store) {
+            throw new Error("StoreEntry not initialized");
+        }
+        const state = this.store.getState();
+        return state[KernelBaseStateNames.instanceInfo].instance.displayMode;
+    }
+
+    /**
+     * 获取屏幕模式
+     */
+    getScreenMode() {
+        if (!this.store) {
+            throw new Error("StoreEntry not initialized");
+        }
+        const state = this.store.getState();
+        return state[KernelBaseStateNames.instanceInfo].instance.screenMode;
+    }
+
+    /**
+     * 获取设备ID
+     */
+    getDeviceId(): string | undefined {
+        if (!this.store) {
+            throw new Error("StoreEntry not initialized");
+        }
+        const state = this.store.getState();
+        return state[KernelBaseStateNames.deviceStatus].deviceInfo?.id;
+    }
+
+    /**
+     * 获取终端Token
+     */
+    getTerminalToken(): string | undefined {
+        if (!this.store) {
+            throw new Error("StoreEntry not initialized");
+        }
+        const state = this.store.getState();
+        return state[KernelBaseStateNames.terminalInfo].token;
+    }
+
+    /**
+     * 获取实例模式
+     */
+    getInstanceMode() {
+        if (!this.store) {
+            throw new Error("StoreEntry not initialized");
+        }
+        const state = this.store.getState();
+        return state[KernelBaseStateNames.instanceInfo].instance.instanceMode;
+    }
+
+    /**
+     * 是否为主机模式
+     */
+    isMasterMode(): boolean {
+        return this.getInstanceMode() === InstanceMode.MASTER;
+    }
+
+    /**
+     * 是否为从机模式
+     */
+    isSlaveMode(): boolean {
+        return this.getInstanceMode() === InstanceMode.SLAVE;
+    }
+
+    /**
+     * 获取从机连接信息
+     */
+    getSlaveConnectionInfo() {
+        if (!this.store) {
+            throw new Error("StoreEntry not initialized");
+        }
+        const state = this.store.getState();
+        return state[KernelBaseStateNames.instanceInfo].slaveConnectionInfo;
+    }
+
+    /**
+     * 获取主服务器连接状态
+     */
+    getMasterServerStatus() {
+        if (!this.store) {
+            throw new Error("StoreEntry not initialized");
+        }
+        const state = this.store.getState();
+        return state[KernelBaseStateNames.masterServerStatus].serverConnectionStatus;
+    }
+
+    /**
+     * 是否有终端Token
+     */
+    hasTerminalToken(): boolean {
+        return !!this.getTerminalToken();
+    }
+
+    /**
+     * 获取操作实体
+     */
+    getOperatingEntity() {
+        if (!this.store) {
+            throw new Error("StoreEntry not initialized");
+        }
+        const state = this.store.getState();
+        return state[KernelBaseStateNames.terminalInfo].operatingEntity;
+    }
+
+    /**
+     * 是否有操作实体
+     */
+    hasOperatingEntity(): boolean {
+        return !!this.getOperatingEntity();
+    }
+
+    /**
+     * 获取设备信息
+     */
+    getDeviceInfo() {
+        if (!this.store) {
+            throw new Error("StoreEntry not initialized");
+        }
+        const state = this.store.getState();
+        return state[KernelBaseStateNames.deviceStatus].deviceInfo;
+    }
+
+    /**
+     * 获取主机从机列表
+     */
+    getMasterSlaves() {
+        if (!this.store) {
+            throw new Error("StoreEntry not initialized");
+        }
+        const state = this.store.getState();
+        return state[KernelBaseStateNames.instanceInfo].masterSlaves;
+    }
+
+    /**
+     * 获取系统参数
+     */
+    getSystemParameter(path: string) {
+        if (!this.store) {
+            throw new Error("StoreEntry not initialized");
+        }
+        const state = this.store.getState();
+        return state.systemParameters.parameters[path] ?? null;
+    }
+
+    /**
+     * 是否启用从机
+     */
+    isEnableSlaves(): boolean {
+        if (!this.store) {
+            throw new Error("StoreEntry not initialized");
+        }
+        const state = this.store.getState();
+        return state[KernelBaseStateNames.instanceInfo].enableSlaves ?? false;
+    }
+
+    /**
+     * 获取服务器地址列表
+     */
+    getServerAddresses() {
+        if (!this.store) {
+            throw new Error("StoreEntry not initialized");
+        }
+        const state = this.store.getState();
+        return state[KernelBaseStateNames.masterServerStatus].serverAddresses ?? [];
+    }
+
+    /**
+     * 同步状态到slave
+     */
+    syncStateToSlave(key: string, diff: any, meta: any): Promise<void> {
+        if (!this.syncStateToSlaveFunc) {
+            throw new Error("StoreEntry not initialized");
+        }
+        return this.syncStateToSlaveFunc(key, diff, meta);
+    }
+
+    /**
+     * 检查是否已初始化
+     */
+    isInitialized(): boolean {
+        return this.store !== null;
+    }
+}
+
+// 导出单例
+export const storeEntry = new StoreEntry();
 
 const traceActionFromCommand = (
     action: PayloadAction<any>,
@@ -38,24 +273,15 @@ const traceActionFromCommand = (
 };
 
 export const dispatchAction = (action: PayloadAction<any>, command?: ICommand<any>) => {
-    if (!_storeAccessor) {
-        throw new Error("StoreAccessor not initialized. Call setStoreAccessor first.");
-    }
-    _storeAccessor.dispatch(traceActionFromCommand(action, command));
-}
-export const dispatchSimpleAction = (action: PayloadAction<any>) => {
-    if (!_storeAccessor) {
-        throw new Error("StoreAccessor not initialized. Call setStoreAccessor first.");
-    }
-    _storeAccessor.dispatch(action);
+    storeEntry.dispatch(traceActionFromCommand(action, command));
 }
 
+export const dispatchSimpleAction = (action: PayloadAction<any>) => {
+    storeEntry.dispatch(action);
+}
 
 export const currentState = <S>(): S => {
-    if (!_storeAccessor) {
-        throw new Error("StoreAccessor not initialized. Call setStoreAccessor first.");
-    }
-    return _storeAccessor.getState() as S;
+    return storeEntry.getState<S>();
 }
 
 /**
@@ -98,7 +324,13 @@ export const createStateSyncMiddleware = (): Middleware => {
         const result = next(action);
         const nextState = getState();
 
-        const instanceInfo: InstanceInfoState = nextState[instanceInfoSlice.name];
+        // 检查是否已初始化依赖
+        if (!storeEntry.isInitialized()) {
+            return result;
+        }
+
+        const instanceInfo = nextState[KernelBaseStateNames.instanceInfo];
+        const masterServerStatus = nextState[KernelBaseStateNames.masterServerStatus];
 
         // 边界检查：确保 instanceInfo 存在
         if (!instanceInfo?.instance) {
@@ -107,7 +339,8 @@ export const createStateSyncMiddleware = (): Middleware => {
         }
 
         // 只在 MASTER 模式下同步
-        if (instanceInfo.instance.instanceMode === InstanceMode.MASTER) {
+        if (instanceInfo.instance.instanceMode === InstanceMode.MASTER &&
+            masterServerStatus.serverConnectionStatus === ServerConnectionStatus.CONNECTED) {
             const statesToSync = getStatesToSync();
 
             // 初始化时保存当前状态，避免第一次错误 diff
@@ -140,9 +373,9 @@ export const createStateSyncMiddleware = (): Middleware => {
                         });
 
                         // 异步同步到 slave
-                        syncStateToSlave(key, filteredDiff, null)
+                        storeEntry.syncStateToSlave(key, filteredDiff, null)
                             .then(() => {
-                                logger.debug([moduleName, LOG_TAGS.Store, 'StateSyncMiddleware'], 'Sync success', { key });
+                                logger.debug([moduleName, LOG_TAGS.Store, 'StateSyncMiddleware'], 'Sync success', {key});
                             })
                             .catch((err) => {
                                 logger.error([moduleName, LOG_TAGS.Store, 'StateSyncMiddleware'], 'Sync failed', {

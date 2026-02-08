@@ -2,12 +2,12 @@ import {
     AppError,
     CommandHandler,
     CommandRegistry,
-    currentState,
     dispatchAction,
     IActor,
     ICommand,
     KernelWebSocketClient,
-    logger
+    logger,
+    storeEntry
 } from "../../core";
 import {
     ChangeUnitDataCommand,
@@ -31,17 +31,18 @@ import {
     RemoteCommandFromKernel,
     ServerConnectionStatus,
 } from "../../types";
-import {terminalConnectionStatusActions, deviceStatusSlice, terminalInfoSlice} from "../slices";
+import {terminalConnectionStatusActions} from "../slices";
 import {SlaveErrors, TerminalErrors} from "../errors";
 import {TerminalParameters} from "../parameters";
-import { LOG_TAGS } from '../../types/core/logTags';
-import { moduleName } from '../../moduleName';
+import {LOG_TAGS} from '../../types/core/logTags';
+import {moduleName} from '../../moduleName';
+import {KernelBaseStateNames} from "../../types/stateNames";
 
 class TerminalStatusActor extends IActor {
     @CommandHandler(GetDeviceStateCommand)
     private async handleGetDeviceState(command: GetDeviceStateCommand) {
-        const state = currentState<RootState>()
-        const deviceId = state[deviceStatusSlice.name].deviceInfo?.id!
+        const deviceId = storeEntry.getDeviceId()!
+        const state = storeEntry.getState<RootState>()
         const request: SendDeviceStateRequest = {deviceId, state}
         kernelDeviceAPI.sendDeviceState.run({request: request}).then(result => {
             logger.log([moduleName, LOG_TAGS.Actor, "terminalStatus"], "发送设备state成功")
@@ -68,18 +69,16 @@ class TerminalStatusActor extends IActor {
     @CommandHandler(StartToConnectKernelWSServerCommand)
     @CommandHandler(ReconnectKernelWSServerCommand)
     private async checkAndConnectSSEServer(command: ICommand<any>) {
-        const state = currentState<RootState>()
-
         // 细分条件检查
         const conditions = [
             {
                 name: '终端Token已获取',
-                passed: !!state[terminalInfoSlice.name].token,
+                passed: storeEntry.hasTerminalToken(),
                 reason: '终端Token(token)未获取，设备可能未激活'
             },
             {
                 name: '操作实体已设置',
-                passed: !!state[terminalInfoSlice.name].operatingEntity,
+                passed: storeEntry.hasOperatingEntity(),
                 reason: '操作实体(operatingEntity)未设置'
             }
         ]
@@ -108,9 +107,8 @@ class TerminalStatusActor extends IActor {
     }
 
     private async startConnectWSEServer(command: ICommand<any>) {
-        const state = currentState<RootState>()
-        const deviceId = state[deviceStatusSlice.name].deviceInfo?.id!
-        const token = state[terminalInfoSlice.name].token!
+        const deviceId = storeEntry.getDeviceId()!
+        const token = storeEntry.getTerminalToken()!
         const wsAPI = kernelDeviceWS.connectKernelWS
         try {
             dispatchAction(terminalConnectionStatusActions.setTerminalConnectionStatus(ServerConnectionStatus.CONNECTING))
@@ -164,7 +162,11 @@ class TerminalStatusActor extends IActor {
 
                         const request: RemoteCommandConfirmRequest = {commandId: remote.id}
                         kernelDeviceAPI.remoteCommandConfirm.run({request: request}).then(() => {
-                            logger.log([moduleName, LOG_TAGS.Actor, 'terminalStatus'], '反馈Kernel', { type: remoteCommandFromKernel.type, message: '远程方法已执行', id: remote.id })
+                            logger.log([moduleName, LOG_TAGS.Actor, 'terminalStatus'], '反馈Kernel', {
+                                type: remoteCommandFromKernel.type,
+                                message: '远程方法已执行',
+                                id: remote.id
+                            })
                         })
                     } else {
                         logger.error([moduleName, LOG_TAGS.Actor, "terminalStatus"], 'Kernel远程方法初始化失败' + event.message.data)

@@ -19,6 +19,7 @@ import {UserErrors} from "../errors";
 import {userInfoActions, userInfoSlice} from "../slices";
 import {moduleName} from "../../moduleName";
 import {User} from "../../types";
+import {KernelUserStateNames} from "../../types/stateNames";
 
 class UserInfoActor extends IActor {
     @CommandHandler(InitializeCommand)
@@ -29,7 +30,7 @@ class UserInfoActor extends IActor {
     @CommandHandler(UserPasswordLoginCommand)
     private async handleUserPasswordLogin(command: UserPasswordLoginCommand) {
         const state = currentState<RootState>()
-        if (state[userInfoSlice.name].user) {
+        if (state[KernelUserStateNames.userInfo].user) {
             throw new AppError(UserErrors.USER_ALREADY_LOGGED_IN, "", command)
         } else {
             //api login
@@ -56,7 +57,7 @@ class UserInfoActor extends IActor {
     @CommandHandler(UserLogoutCommand)
     private async handleUserLogout(command: UserLogoutCommand) {
         const state = currentState<RootState>()
-        if (!state[userInfoSlice.name].user) {
+        if (!state[KernelUserStateNames.userInfo].user) {
             throw new AppError(UserErrors.USER_NOT_LOGGED_IN, "", command)
         } else {
             //api logout

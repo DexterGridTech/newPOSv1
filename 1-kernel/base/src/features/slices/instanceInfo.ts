@@ -3,22 +3,10 @@ import {now} from 'lodash';
 
 import {DisplayMode, InstanceMode, ScreenMode, Slave, SlaveConnectionInfo, Workspace} from "../../types";
 import {registerStateToPersist} from "../../core/specialStateList";
+import {KernelBaseStateNames} from "../../types/stateNames";
+import {InstanceInfo, InstanceInfoState} from "../../types/state";
 
-export interface InstanceInfo {
-    instanceMode: InstanceMode
-    displayMode: DisplayMode
-    screenMode: ScreenMode
-}
-
-export interface InstanceInfoState {
-    instance: InstanceInfo
-    standAlone: boolean
-    enableSlaves: boolean
-    workspace: Workspace
-    masterSlaves: { [name: string]: Slave }
-    slaveConnectionInfo: SlaveConnectionInfo
-    updatedAt?: number | null
-}
+export type {InstanceInfo, InstanceInfoState}
 
 const initialState: InstanceInfoState = {
     instance: {
@@ -37,7 +25,7 @@ const initialState: InstanceInfoState = {
 }
 
 export const instanceInfoSlice = createSlice({
-    name: 'instanceInfo',
+    name: KernelBaseStateNames.instanceInfo,
     initialState,
     reducers: {
         setDisplayMode: (state, action: PayloadAction<DisplayMode>) => {
@@ -97,4 +85,4 @@ export const instanceInfoSlice = createSlice({
 
 export const instanceInfoActions = instanceInfoSlice.actions
 
-registerStateToPersist(instanceInfoSlice.name)
+registerStateToPersist(KernelBaseStateNames.instanceInfo)

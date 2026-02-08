@@ -1,26 +1,25 @@
 import {
     CommandHandler,
-    currentState,
     customizedPathValue,
     dispatchAction,
     getPathValuesFromUnitData,
     IActor,
-    ICommand,
-    logger
+    logger,
+    storeEntry
 } from "../../core";
 import {UnitDataChangedCommand} from "../commands";
 import {RootState, UDG_SystemParameters} from "../rootState";
 import {parameterCategory} from "../parameters";
 import {systemParametersActions} from "../slices";
-import { LOG_TAGS } from '../../types/core/logTags';
-import { moduleName } from '../../moduleName';
+import {LOG_TAGS} from '../../types/core/logTags';
+import {moduleName} from '../../moduleName';
 
 class SystemParametersActor extends IActor {
     @CommandHandler(UnitDataChangedCommand)
     private async handleUnitDataChanged(command: UnitDataChangedCommand) {
         if (command.payload.changeSet.group == UDG_SystemParameters) {
             logger.log([moduleName, LOG_TAGS.Actor, "systemParameters"], `${UDG_SystemParameters} unit data changed`)
-            const state = currentState<RootState>()
+            const state = storeEntry.getState<RootState>()
             const udg_systemParameters = state[UDG_SystemParameters]
             const {operatingEntity, model} = state.terminalInfo
             const pathValues = getPathValuesFromUnitData(
@@ -33,7 +32,7 @@ class SystemParametersActor extends IActor {
 
 
 customizedPathValue.provider[parameterCategory] = (path: string) => {
-    return currentState<RootState>().systemParameters.parameters[path] ?? null
+    return storeEntry.getSystemParameter(path)
 }
 
 export const systemParametersActor = new SystemParametersActor()

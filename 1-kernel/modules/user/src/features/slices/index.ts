@@ -1,7 +1,8 @@
 import {userInfoSlice} from "./userInfo";
+import {KernelUserStateNames} from "../../types/stateNames";
 
 export * from './userInfo'
 
 export const userModuleReducers = {
-    [userInfoSlice.name]: userInfoSlice.reducer,
+    [KernelUserStateNames.userInfo]: userInfoSlice.reducer,
 }

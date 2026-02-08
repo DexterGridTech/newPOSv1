@@ -3,35 +3,10 @@ import {AppError, ICommand} from "../../core";
 import {registerStateToSync} from "../../core/specialStateList";
 import {updateState} from "../utils";
 import {now} from "lodash";
+import {KernelBaseStateNames} from "../../types/stateNames";
+import {RequestStatusType, CommandStatus, RequestStatus, RequestStatusState} from "../../types/state";
 
-export type RequestStatusType = "started" | "complete" | "error"
-
-export interface CommandStatus {
-    commandId: string
-    actorName: string
-    commandName: string
-    requestId: string
-    sessionId?: string | null
-    startAt: number
-    completeAt?: number | null
-    errorAt?: number | null
-    errorKey?: string | null
-    status: RequestStatusType
-}
-
-export interface RequestStatus {
-    requestId: string
-    commandsStatus: { [commandId: string]: CommandStatus }
-    errors: { [errorKey: string]: AppError }
-    results: { [resultKey: string]: any }
-    status: RequestStatusType
-    startAt: number
-    updatedAt: number
-}
-
-export interface RequestStatusState {
-    [requestId: string]: RequestStatus
-}
+export type {RequestStatusType, CommandStatus, RequestStatus, RequestStatusState}
 
 const initialState: RequestStatusState = {}
 
@@ -54,7 +29,7 @@ const calculateRequestStatus = (commandStatuses: CommandStatus[]): RequestStatus
 }
 
 export const requestStatusSlice = createSlice({
-    name: 'requestStatus',
+    name: KernelBaseStateNames.requestStatus,
     initialState,
     reducers: {
         commandStart: (state, action: PayloadAction<{ actor: string, command: ICommand<any> }>) => {
@@ -128,4 +103,4 @@ export const requestStatusSlice = createSlice({
 
 export const requestStatusActions = requestStatusSlice.actions
 
-registerStateToSync(requestStatusSlice.name)
+registerStateToSync(KernelBaseStateNames.requestStatus)

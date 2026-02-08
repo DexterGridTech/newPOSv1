@@ -11,11 +11,9 @@ export const useUserLogin = () => {
 
     const {value: userId, setValue: setUserId} = useEditableUiVariable({
         variable: userLoginVariable.userId,
-        debounceMs: 300,
     });
     const {value: password, setValue: setPassword} = useEditableUiVariable({
         variable: userLoginVariable.password,
-        debounceMs: 300,
     });
 
     const [requestId, setRequestId] = useState<string | null>(null);
@@ -56,6 +54,14 @@ export const useUserLogin = () => {
     }, [userId, password, loginStatus]);
 
 
+    const cleanup=useCallback(
+        ()=>{
+            setUserId("")
+            setPassword("")
+        },
+        [setUserId,setPassword]
+    )
+
     return {
         // 状态
         userId,
@@ -65,5 +71,6 @@ export const useUserLogin = () => {
         handleUserIdChange,
         handlePasswordChange,
         handleSubmit,
+        cleanup
     };
 };

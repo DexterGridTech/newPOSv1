@@ -1,7 +1,7 @@
 {
   "name": "@impos2/kernel-base",
   "version": "1.0.0",
-  "description": "POS Kernel base - Refactored Architecture",
+  "description": "POS Kernel base - Good Architecture",
   "exports": {
     ".": "./src/index.ts"
   },

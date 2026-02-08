@@ -2,17 +2,14 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {now} from 'lodash';
 
 import {ServerAddress, ServerConnectionStatus, SlaveConnection} from "../../types";
+import {KernelBaseStateNames} from "../../types/stateNames";
+import {MasterServerStatusState} from "../../types/state";
 
-export interface MasterServerStatusState {
-    serverAddresses?:ServerAddress[]
-    serverConnectionStatus?:ServerConnectionStatus
-    slaveConnection?:{[name:string]:SlaveConnection}
-    slaveConnectionHistory?:{[name:string]:SlaveConnection[]}
-}
+export type {MasterServerStatusState}
 const initialState: MasterServerStatusState = {}
 
 export const masterServerStatusSlice = createSlice({
-    name: 'masterServerStatus',
+    name: KernelBaseStateNames.masterServerStatus,
     initialState,
     reducers: {
         setMasterServerAddresses: (state, action: PayloadAction<ServerAddress[]>) => {

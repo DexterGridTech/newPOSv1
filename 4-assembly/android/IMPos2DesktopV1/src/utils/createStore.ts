@@ -1,3 +1,4 @@
+console.log('[createStore] 开始导入依赖');
 import {
     DisplayMode,
     generateStore,
@@ -7,10 +8,12 @@ import {
     Slave,
     StoreConfig
 } from "@impos2/kernel-base";
+console.log('[createStore] kernel-base 导入成功');
 import {AppProps} from "../types/AppProps.ts";
 import reactotron from "./ReactotronConfig.ts";
 import {assemblyModule} from "../module.ts";
 import {workspace} from "@impos2/workspace-dev";
+console.log('[createStore] 所有依赖导入完成');
 
 async function createStore(props: AppProps, posAdapter: IPosAdapter) {
 

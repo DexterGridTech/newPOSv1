@@ -1,3 +1,3 @@
-export * from './clearDataVersionScreen';
-export * from './setupWorkSpaceScreen';
+export * from './ClearDataVersionScreen';
+export * from './SetupWorkSpaceScreen';
 

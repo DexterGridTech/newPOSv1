@@ -1,4 +1,4 @@
-import {AppError, CommandHandler, currentState, dispatchAction, IActor, storage} from "../../core";
+import {AppError, CommandHandler, dispatchAction, IActor, storage, storeEntry} from "../../core";
 import {
     AddSlaveCommand,
     NextDataVersionCommand,
@@ -10,9 +10,11 @@ import {
     UnregisterSlaveCommand,
     UpdateWorkSpaceCommand
 } from "../commands";
-import {instanceInfoActions, instanceInfoSlice} from "../slices";
+import {instanceInfoActions} from "../slices";
 import {RootState} from "../rootState";
 import {InstanceErrors, ModifySlaveErrors} from "../errors";
+import {KernelBaseStateNames} from "../../types/stateNames";
+import {selectState} from "../../hooks/accessToState";
 
 
 class InstanceInfoActor extends IActor {
@@ -37,8 +39,8 @@ class InstanceInfoActor extends IActor {
 
     @CommandHandler(AddSlaveCommand)
     private async handleAddSlave(command: AddSlaveCommand) {
-        const state = currentState<RootState>()
-        if (state[instanceInfoSlice.name].masterSlaves.hasOwnProperty(command.payload.name)) {
+        const instanceInfo = selectState('instanceInfo')
+        if (instanceInfo.masterSlaves.hasOwnProperty(command.payload.name)) {
             throw new AppError(ModifySlaveErrors.SLAVE_EXISTED, command.payload.name, command)
         } else {
             dispatchAction(instanceInfoActions.addSlave(command.payload), command)
@@ -48,10 +50,10 @@ class InstanceInfoActor extends IActor {
 
     @CommandHandler(RemoveSlaveCommand)
     private async handleRemoveSlave(command: RemoveSlaveCommand) {
-        const state = currentState<RootState>()
-        if (!state[instanceInfoSlice.name].masterSlaves.hasOwnProperty(command.payload.name)) {
+        const instanceInfo = selectState('instanceInfo')
+        if (!instanceInfo.masterSlaves.hasOwnProperty(command.payload.name)) {
             throw new AppError(ModifySlaveErrors.SLAVE_NOT_EXISTED, command.payload.name, command)
-        } else if (state[instanceInfoSlice.name].masterSlaves[command.payload.name].embedded) {
+        } else if (instanceInfo.masterSlaves[command.payload.name].embedded) {
             throw new AppError(ModifySlaveErrors.SLAVE_IS_EMBEDDED, command.payload.name, command)
         } else {
             dispatchAction(instanceInfoActions.removeSlave(command.payload), command)
@@ -60,12 +62,12 @@ class InstanceInfoActor extends IActor {
 
     @CommandHandler(RegisterSlaveCommand)
     private async handleRegisterSlave(command: RegisterSlaveCommand) {
-        const state = currentState<RootState>()
-        if (!state[instanceInfoSlice.name].masterSlaves.hasOwnProperty(command.payload.name)) {
+        const masterSlaves = storeEntry.getMasterSlaves()
+        if (!masterSlaves.hasOwnProperty(command.payload.name)) {
             throw new AppError(ModifySlaveErrors.SLAVE_NOT_EXISTED, command.payload.name, command)
-        } else if (state[instanceInfoSlice.name].masterSlaves[command.payload.name].embedded) {
+        } else if (masterSlaves[command.payload.name].embedded) {
             throw new AppError(ModifySlaveErrors.SLAVE_IS_EMBEDDED, command.payload.name, command)
-        } else if (state[instanceInfoSlice.name].masterSlaves[command.payload.name].deviceId) {
+        } else if (masterSlaves[command.payload.name].deviceId) {
             throw new AppError(ModifySlaveErrors.SLAVE_IS_REGISTERED, command.payload.name, command)
         } else {
             dispatchAction(instanceInfoActions.registerSlave(command.payload), command)
@@ -74,10 +76,10 @@ class InstanceInfoActor extends IActor {
 
     @CommandHandler(UnregisterSlaveCommand)
     private async handleUnregisterSlave(command: UnregisterSlaveCommand) {
-        const state = currentState<RootState>()
-        if (!state[instanceInfoSlice.name].masterSlaves.hasOwnProperty(command.payload.name)) {
+        const masterSlaves = storeEntry.getMasterSlaves()
+        if (!masterSlaves.hasOwnProperty(command.payload.name)) {
             throw new AppError(ModifySlaveErrors.SLAVE_NOT_EXISTED, command.payload.name, command)
-        } else if (state[instanceInfoSlice.name].masterSlaves[command.payload.name].embedded) {
+        } else if (masterSlaves[command.payload.name].embedded) {
             throw new AppError(ModifySlaveErrors.SLAVE_IS_EMBEDDED, command.payload.name, command)
         } else {
             dispatchAction(instanceInfoActions.unregisterSlave(command.payload), command)

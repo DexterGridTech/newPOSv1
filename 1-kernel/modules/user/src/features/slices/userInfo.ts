@@ -1,18 +1,17 @@
 import {registerStateToPersist, registerStateToSync} from "@impos2/kernel-base";
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {User} from "../../types";
+import {KernelUserStateNames} from "../../types/stateNames";
+import {UserInfoState} from "../../types/state";
 
-
-export interface UserInfoState {
-    user?:User|null
-}
+export type {UserInfoState}
 
 export const initialState:UserInfoState = {
     user:null
 }
 
 export const userInfoSlice = createSlice({
-    name: 'userInfo',
+    name: KernelUserStateNames.userInfo,
     initialState,
     reducers: {
         setUser: (state, action: PayloadAction<User>) => {
@@ -26,5 +25,5 @@ export const userInfoSlice = createSlice({
 
 export const userInfoActions = userInfoSlice.actions
 
-registerStateToPersist(userInfoSlice.name)
-registerStateToSync(userInfoSlice.name)
+registerStateToPersist(KernelUserStateNames.userInfo)
+registerStateToSync(KernelUserStateNames.userInfo)

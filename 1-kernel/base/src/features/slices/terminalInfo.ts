@@ -5,20 +5,15 @@ import {Unit} from "../../types";
 import {registerStateToPersist, registerStateToSync} from "../../core/specialStateList";
 import {ActivateDeviceResponse} from "../../api/device";
 import {updateState} from "../utils";
+import {KernelBaseStateNames} from "../../types/stateNames";
+import {TerminalInfoState} from "../../types/state";
 
-export interface TerminalInfoState {
-    terminal?: Unit | null
-    model?: Unit | null
-    hostEntity?: Unit | null
-    operatingEntity?: Unit | null
-    token?: string | null
-    updatedAt?: number | null
-}
+export type {TerminalInfoState}
 
 const initialState: TerminalInfoState = {}
 
 export const terminalInfoSlice = createSlice({
-    name: 'terminalInfo',
+    name: KernelBaseStateNames.terminalInfo,
     initialState,
     reducers: {
         setTerminalInfo: (state, action: PayloadAction<ActivateDeviceResponse>) => {
@@ -38,5 +33,5 @@ export const terminalInfoSlice = createSlice({
 
 export const terminalInfoActions = terminalInfoSlice.actions
 
-registerStateToSync(terminalInfoSlice.name)
-registerStateToPersist(terminalInfoSlice.name)
+registerStateToSync(KernelBaseStateNames.terminalInfo)
+registerStateToPersist(KernelBaseStateNames.terminalInfo)

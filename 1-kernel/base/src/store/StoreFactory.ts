@@ -1,7 +1,8 @@
 import {configureStore, EnhancedStore, PayloadAction} from "@reduxjs/toolkit";
 import {createEpicMiddleware} from "redux-observable";
-import {RootState} from "../features";
-import {setStoreAccessor} from "../core";
+import {RootState, instanceInfoSlice, masterServerStatusSlice, syncStateToSlave, requestStatusSlice} from "../features";
+import {storeEntry} from "../core";
+import {KernelBaseStateNames} from "../types/stateNames";
 import {
     IMiddlewareConfigurator,
     IModuleDependencyResolver,
@@ -115,19 +116,14 @@ export class StoreFactory {
         this.logger.logSuccess('Redux Store created');
         this.logger.logStepEnd();
 
-        // 步骤 7: 设置 Store 访问器
-        this.logger.logStep(7, 'Setting Store Accessor');
-        setStoreAccessor({
-            getState: () => store.getState(),
-            dispatch: (action: any) => store.dispatch(action as PayloadAction)
-        });
-        this.logger.logSuccess('Store Accessor set');
+        // 步骤 7: 初始化 StoreRegistry
+        this.logger.logStep(7, 'Initializing StoreRegistry');
+        storeEntry.initialize(store, syncStateToSlave);
+        this.logger.logSuccess('StoreRegistry initialized');
         this.logger.logStepEnd();
 
         // 步骤 8: 配置 ActorSystem
         this.logger.logStep(8, 'Configuring ActorSystem');
-        this.actorSystemConfigurator.configureStateSelectors(store);
-        this.logger.logSuccess('State Selectors configured');
         this.actorSystemConfigurator.configureLifecycleListeners();
         this.logger.logSuccess('Lifecycle Listeners configured');
         this.logger.logStepEnd();

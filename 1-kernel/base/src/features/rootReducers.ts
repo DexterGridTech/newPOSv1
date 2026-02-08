@@ -10,16 +10,17 @@ import {
     uiVariablesSlice,
     uiModalsSlice
 } from "./slices";
+import {KernelBaseStateNames} from "../types/stateNames";
 
 export const baseModuleReducers = {
-    [instanceInfoSlice.name]: instanceInfoSlice.reducer,
-    [deviceStatusSlice.name]: deviceStatusSlice.reducer,
-    [masterServerStatusSlice.name]: masterServerStatusSlice.reducer,
-    [slaveConnectionStatusSlice.name]: slaveConnectionStatusSlice.reducer,
-    [systemParametersSlice.name]: systemParametersSlice.reducer,
-    [requestStatusSlice.name]: requestStatusSlice.reducer,
-    [terminalInfoSlice.name]: terminalInfoSlice.reducer,
-    [terminalConnectionStatusSlice.name]: terminalConnectionStatusSlice.reducer,
-    [uiVariablesSlice.name]: uiVariablesSlice.reducer,
-    [uiModalsSlice.name]: uiModalsSlice.reducer,
+    [KernelBaseStateNames.instanceInfo]: instanceInfoSlice.reducer,
+    [KernelBaseStateNames.deviceStatus]: deviceStatusSlice.reducer,
+    [KernelBaseStateNames.masterServerStatus]: masterServerStatusSlice.reducer,
+    [KernelBaseStateNames.slaveConnectionStatus]: slaveConnectionStatusSlice.reducer,
+    [KernelBaseStateNames.systemParameters]: systemParametersSlice.reducer,
+    [KernelBaseStateNames.requestStatus]: requestStatusSlice.reducer,
+    [KernelBaseStateNames.terminalInfo]: terminalInfoSlice.reducer,
+    [KernelBaseStateNames.terminalConnectionStatus]: terminalConnectionStatusSlice.reducer,
+    [KernelBaseStateNames.uiVariables]: uiVariablesSlice.reducer,
+    [KernelBaseStateNames.uiModals]: uiModalsSlice.reducer,
 };

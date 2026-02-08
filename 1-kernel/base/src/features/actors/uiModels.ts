@@ -1,4 +1,5 @@
-import {CommandHandler, dispatchSimpleAction, selectInstance, IActor} from "../../core";
+import {CommandHandler, dispatchSimpleAction, IActor} from "../../core";
+import {selectInstance} from "../../hooks/accessToState";
 import {AlertCommand, CloseModalCommand, OpenModalCommand} from "../commands/shared";
 import {uiModelsActions} from "../slices/uiModals";
 

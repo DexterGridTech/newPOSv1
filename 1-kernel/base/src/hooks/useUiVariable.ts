@@ -7,12 +7,13 @@ import {uiVariablesSlice} from "../features/slices/uiVariables";
 import {UIVariable, generateUiVariableKey} from "../core/uiVariable";
 import {RootState} from "../features/rootState";
 import {instanceInfoSlice} from "../features/slices/instanceInfo";
+import {KernelBaseStateNames} from "../types/stateNames";
 
 
-const selectUiVariablesState = (state: RootState) => state[uiVariablesSlice.name];
+const selectUiVariablesState = (state: RootState) => state[KernelBaseStateNames.uiVariables];
 
 // 内部使用的 selector，不导出以避免与 accessToState 中的冲突
-const selectInstanceFromState = (state: RootState) => state[instanceInfoSlice.name].instance;
+const selectInstanceFromState = (state: RootState) => state[KernelBaseStateNames.instanceInfo].instance;
 
 // 缓存 selector 实例，避免重复创建
 const selectorCache = new Map<string, ReturnType<typeof createSelector>>();
@@ -125,7 +126,7 @@ export interface UseEditableUiVariableResult<T> {
  */
 export function useEditableUiVariable<T>({
                                              variable,
-                                             debounceMs = 300,
+                                             debounceMs = 100,
                                          }: UseEditableUiVariableOptions<T>): UseEditableUiVariableResult<T> {
 
     // 从 Redux state 获取初始值

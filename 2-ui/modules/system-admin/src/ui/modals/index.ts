@@ -1,3 +1,4 @@
-export * from './adminLoginModal';
-export * from './adminPanelModal';
+export * from './AdminLoginModal';
+export * from './AdminPanelModal';
+
 

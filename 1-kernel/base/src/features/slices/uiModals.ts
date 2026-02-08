@@ -2,12 +2,10 @@ import {ModalScreen, ScreenPart} from "../../types/core/screen";
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {InstanceMode} from "../../types/core";
 import {registerStateToPersist, registerStateToSync} from "../../core/store";
+import {KernelBaseStateNames} from "../../types/stateNames";
+import {UiModalsState} from "../../types/state";
 
-
-export interface UiModalsState {
-    master: ModalScreen<any>[]
-    slave: ModalScreen<any>[]
-}
+export type {UiModalsState}
 
 const initialState: UiModalsState = {
     master: [],
@@ -15,7 +13,7 @@ const initialState: UiModalsState = {
 }
 
 export const uiModalsSlice = createSlice({
-    name: 'uiModals',
+    name: KernelBaseStateNames.uiModals,
     initialState,
     reducers: {
         openModal: (state, action: PayloadAction<{ model: ScreenPart, instanceMode: InstanceMode }>) => {
@@ -54,5 +52,5 @@ export const uiModalsSlice = createSlice({
 
 export const uiModelsActions = uiModalsSlice.actions
 
-registerStateToSync(uiModalsSlice.name)
-registerStateToPersist(uiModalsSlice.name)
+registerStateToSync(KernelBaseStateNames.uiModals)
+registerStateToPersist(KernelBaseStateNames.uiModals)

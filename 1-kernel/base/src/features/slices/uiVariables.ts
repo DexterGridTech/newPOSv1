@@ -1,16 +1,16 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {registerStateToPersist, registerStateToSync} from "../../core/store";
-import {InstanceInfo} from "./instanceInfo";
+import {InstanceInfo} from "../../types/state";
 import {generateUiVariableKey} from "../../core/uiVariable";
+import {KernelBaseStateNames} from "../../types/stateNames";
+import {UiVariablesState} from "../../types/state";
 
-export interface UiVariablesState {
-    [key: string]: any;
-}
+export type {UiVariablesState}
 
 const initialState: UiVariablesState = {}
 
 export const uiVariablesSlice = createSlice({
-    name: 'uiVariables',
+    name: KernelBaseStateNames.uiVariables,
     initialState,
     reducers: {
         update: (state, action: PayloadAction<{instance:InstanceInfo,uiVariables: { [key: string]: any } }>) => {
@@ -25,5 +25,5 @@ export const uiVariablesSlice = createSlice({
 
 export const uiVariablesActions = uiVariablesSlice.actions
 
-registerStateToSync(uiVariablesSlice.name)
-registerStateToPersist(uiVariablesSlice.name)
+registerStateToSync(KernelBaseStateNames.uiVariables)
+registerStateToPersist(KernelBaseStateNames.uiVariables)

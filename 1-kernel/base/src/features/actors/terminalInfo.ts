@@ -1,4 +1,4 @@
-import {APIError, APIErrorCode, CommandHandler, currentState, dispatchAction, IActor} from "../../core";
+import {APIError, APIErrorCode, CommandHandler, dispatchAction, IActor, storeEntry} from "../../core";
 import {kernelTokenGetter} from "../../api";
 import {RootState} from "../rootState";
 import {
@@ -9,8 +9,9 @@ import {
     SetOperatingEntityCommand,
     SetOperatingEntityCompleteCommand
 } from "../commands";
-import {deviceStatusSlice, terminalInfoActions, terminalInfoSlice} from "../slices";
+import {terminalInfoActions} from "../slices";
 import {ActivateDeviceRequest, kernelDeviceAPI, SetOperatingEntityRequest} from "../../api/device";
+import {KernelBaseStateNames} from "../../types/stateNames";
 
 
 class TerminalInfoActor extends IActor {
@@ -21,8 +22,7 @@ class TerminalInfoActor extends IActor {
     @CommandHandler(ActivateDeviceCommand)
     private async handleActivateDevice(command: ActivateDeviceCommand) {
         const {activateCode} = command.payload;
-        const state = currentState<RootState>()
-        const deviceInfo = state[deviceStatusSlice.name].deviceInfo
+        const deviceInfo = storeEntry.getDeviceInfo()
         if (deviceInfo) {
             const activeDeviceRequest: ActivateDeviceRequest = {
                 activeCode: activateCode,
@@ -49,9 +49,8 @@ class TerminalInfoActor extends IActor {
 
     @CommandHandler(SetOperatingEntityCommand)
     private async handleSetOperatingEntity(command: SetOperatingEntityCommand) {
-        const state = currentState<RootState>()
         const operatingEntity = command.payload;
-        const deviceInfo = state[deviceStatusSlice.name].deviceInfo
+        const deviceInfo = storeEntry.getDeviceInfo()
         if (deviceInfo) {
             const setOperatingEntityRequest: SetOperatingEntityRequest = {
                 deviceId: deviceInfo.id,
@@ -68,6 +67,6 @@ class TerminalInfoActor extends IActor {
     }
 }
 
-kernelTokenGetter.get = () => currentState<RootState>()[terminalInfoSlice.name].token
+kernelTokenGetter.get = () => storeEntry.getTerminalToken()
 
 export const terminalInfoActor = new TerminalInfoActor()

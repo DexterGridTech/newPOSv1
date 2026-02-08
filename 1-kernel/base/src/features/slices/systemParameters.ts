@@ -2,19 +2,10 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {now} from 'lodash';
 
 import {registerStateToPersist, registerStateToSync} from "../../core/specialStateList";
+import {KernelBaseStateNames} from "../../types/stateNames";
+import {SystemParametersState} from "../../types/state";
 
-
-export interface SystemParametersState {
-    parameters: {
-        [path: string]: {
-            id: string,
-            key: string,
-            value: any,
-            updatedAt: number
-        }
-    }
-    updatedAt?: number
-}
+export type {SystemParametersState}
 
 const initialState: SystemParametersState = {
     parameters: {}
@@ -22,7 +13,7 @@ const initialState: SystemParametersState = {
 
 export const systemParametersSlice = createSlice(
     {
-        name: 'systemParameters',
+        name: KernelBaseStateNames.systemParameters,
         initialState,
         reducers: {
             setParameters: (state, action: PayloadAction<{ [path: string]: any }>) => {
@@ -35,5 +26,5 @@ export const systemParametersSlice = createSlice(
 
 export const systemParametersActions = systemParametersSlice.actions
 
-registerStateToSync(systemParametersSlice.name)
-registerStateToPersist(systemParametersSlice.name)
+registerStateToSync(KernelBaseStateNames.systemParameters)
+registerStateToPersist(KernelBaseStateNames.systemParameters)

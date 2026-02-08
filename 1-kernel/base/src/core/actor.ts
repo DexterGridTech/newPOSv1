@@ -1,16 +1,10 @@
 import {logger} from "./nativeAdapter";
-import {DisplayMode, ErrorCategory, ErrorSeverity, ExecutionType} from "../types";
+import {ErrorCategory, ErrorSeverity, ExecutionType, LOG_TAGS} from "../types";
 import {AppError} from "./error";
 import {commandBus, CommandLifecycleListener, ICommand, SendToMasterCommand} from "./command";
 import {getCommandHandlers} from "./decorators";
-import { LOG_TAGS } from '../types/core/logTags';
-import { moduleName } from '../moduleName';
-
-/**
- * 状态选择器类型定义
- */
-type SlaveNameSelector = () => string | null;
-type DisplayModeSelector = () => DisplayMode | null;
+import {moduleName} from '../moduleName';
+import {storeEntry} from "./store";
 
 /**
  * Actor 系统 - 命令总线
@@ -23,12 +17,6 @@ export class ActorSystem {
      * 使用回调模式解耦,避免直接覆盖方法
      */
     private lifecycleListeners: CommandLifecycleListener[] = [];
-
-    /**
-     * 状态选择器函数 - 通过依赖注入方式设置
-     */
-    private slaveNameSelector: SlaveNameSelector = () => null;
-    private displayModeSelector: DisplayModeSelector = () => null;
 
     static getInstance(): ActorSystem {
         if (!ActorSystem.instance) {
@@ -68,22 +56,10 @@ export class ActorSystem {
         this.actors.push(actor)
     }
 
-    /**
-     * 设置状态选择器 - 由store模块在初始化时调用
-     * 使用依赖注入模式,避免循环依赖
-     */
-    setStateSelectors(selectors: {
-        slaveNameSelector: SlaveNameSelector;
-        displayModeSelector: DisplayModeSelector;
-    }): void {
-        this.slaveNameSelector = selectors.slaveNameSelector;
-        this.displayModeSelector = selectors.displayModeSelector;
-    }
-
     runCommand(command: ICommand<any>): void {
         let commandToExecute = command
-        const slaveName = this.slaveNameSelector();
-        const displayMode = this.displayModeSelector();
+        const slaveName = storeEntry.getSlaveName();
+        const displayMode = storeEntry.getDisplayMode();
 
         if (slaveName &&
             commandToExecute.executionType === ExecutionType.ONLY_SEND_AND_EXECUTE_ON_MASTER) {
@@ -107,7 +83,7 @@ export class ActorSystem {
             commandToExecute.slaveInfo = {slaveName, displayMode}
             commandToExecute = new SendToMasterCommand(commandToExecute)
         }
-        logger.log([moduleName, LOG_TAGS.Actor, "actor"], "send command->", commandToExecute.commandName)
+        logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `发出命令->${commandToExecute.commandName}`, commandToExecute)
         this.actors.forEach(actor => actor.executeCommand(commandToExecute))
     }
 
@@ -116,13 +92,13 @@ export class ActorSystem {
      * 通知所有注册的监听器
      */
     commandStart(actorName: string, command: ICommand<any>): void {
-        logger.log([moduleName, LOG_TAGS.Actor, "actor"], `命令开始=>${actorName} ${command.commandName} [CID:${command.id}][RID:${command.requestId}][SID:${command.sessionId}]`)
+        logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `命令开始=>${actorName} ${command.commandName} [RID:${command.requestId}][CID:${command.id}][SID:${command.sessionId}]`)
         this.lifecycleListeners.forEach(listener => {
             if (listener.onCommandStart) {
                 try {
                     listener.onCommandStart(actorName, command);
                 } catch (error) {
-                    logger.error([moduleName, LOG_TAGS.Actor, "actor"], 'commandStart 监听器执行失败:', error);
+                    logger.error([moduleName, LOG_TAGS.System, "ActorSystem"], 'commandStart 监听器执行失败:', error);
                 }
             }
         });
@@ -132,14 +108,14 @@ export class ActorSystem {
      * 命令执行完成时调用
      * 通知所有注册的监听器
      */
-    commandComplete(actorName: string, command: ICommand<any>,result?:Record<string, any>): void {
-        logger.log([moduleName, LOG_TAGS.Actor, "actor"], `命令结束=>${actorName} ${command.commandName} [CID:${command.id}][RID:${command.requestId}][SID:${command.sessionId}]`)
+    commandComplete(actorName: string, command: ICommand<any>, result?: Record<string, any>): void {
+        logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `命令结束=>${actorName} ${command.commandName} [RID:${command.requestId}][CID:${command.id}][SID:${command.sessionId}]`)
         this.lifecycleListeners.forEach(listener => {
             if (listener.onCommandComplete) {
                 try {
-                    listener.onCommandComplete(actorName, command,result);
+                    listener.onCommandComplete(actorName, command, result);
                 } catch (error) {
-                    logger.error([moduleName, LOG_TAGS.Actor, "actor"], 'commandComplete 监听器执行失败:', error);
+                    logger.error([moduleName, LOG_TAGS.System, "ActorSystem"], 'commandComplete 监听器执行失败:', error);
                 }
             }
         });
@@ -150,13 +126,13 @@ export class ActorSystem {
      * 通知所有注册的监听器
      */
     commandError(actorName: string, command: ICommand<any>, appError: AppError): void {
-        logger.log([moduleName, LOG_TAGS.Actor, "actor"], `命令错误=>${actorName} ${command.commandName} [CID:${command.id}][RID:${command.requestId}][SID:${command.sessionId}] Error:${appError.message}`)
+        logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `命令错误=>${actorName} ${command.commandName} [RID:${command.requestId}][CID:${command.id}][SID:${command.sessionId}] Error:${appError.message}`)
         this.lifecycleListeners.forEach(listener => {
             if (listener.onCommandError) {
                 try {
                     listener.onCommandError(actorName, command, appError);
                 } catch (err) {
-                    logger.error([moduleName, LOG_TAGS.Actor, "actor"], 'commandError 监听器执行失败:', err);
+                    logger.error([moduleName, LOG_TAGS.System, "ActorSystem"], 'commandError 监听器执行失败:', err);
                 }
             }
         });
@@ -199,7 +175,7 @@ export abstract class IActor {
         //发射后不管,不需要并发控制
         actorSystem.commandStart(actorName, command);
         handler(command).then((result) => {
-            actorSystem.commandComplete(actorName, command,result);
+            actorSystem.commandComplete(actorName, command, result);
         }).catch((error: any) => {
             // 标准化错误
             const appError = this.normalizeError(error, command);

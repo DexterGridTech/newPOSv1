@@ -2,14 +2,15 @@ import {
     AppError,
     CommandHandler,
     CommandRegistry,
-    currentState,
     DisconnectedEvent,
-    dispatchAction, getStatesToSync,
+    dispatchAction,
+    getStatesToSync,
     IActor,
     ICommand,
     logger,
     masterServer,
     MasterWebSocketClient,
+    storeEntry,
     WSMessageEvent
 } from "../../core";
 import {
@@ -22,7 +23,7 @@ import {
     StartMasterServerCommand,
     SynStateAtConnectedCommand
 } from "../commands";
-import {masterServerStatusActions, instanceInfoSlice, masterServerStatusSlice, deviceStatusSlice} from "../slices";
+import {masterServerStatusActions} from "../slices";
 import {syncStateToSlave} from "../utils";
 import {
     ConnectedEvent,
@@ -34,11 +35,11 @@ import {
     SYSTEM_MESSAGE_TYPES
 } from "../../types";
 import type {RootState} from "../rootState";
-import {MasterServerErrors} from "../errors";
-import {SlaveErrors} from "../errors";
+import {MasterServerErrors, SlaveErrors} from "../errors";
 import {MasterParameters} from "../parameters";
-import { LOG_TAGS } from '../../types/core/logTags';
-import { moduleName } from '../../moduleName';
+import {LOG_TAGS} from '../../types/core/logTags';
+import {KernelBaseStateNames} from "../../types/stateNames";
+import {moduleName} from '../../moduleName';
 
 class MasterServerStatusActor extends IActor {
     @CommandHandler(InitializeCommand)
@@ -46,29 +47,27 @@ class MasterServerStatusActor extends IActor {
     @CommandHandler(StartMasterServerCommand)
     @CommandHandler(RestartMasterServerCommand)
     private async checkAndStartMasterServer(command: ICommand<any>) {
-        const state = currentState<RootState>()
-
         // 细分条件检查
         const conditions = [
             {
                 name: '实例模式为主机',
-                passed: (state[instanceInfoSlice.name].instance.instanceMode ?? InstanceMode.SLAVE) === InstanceMode.MASTER,
-                reason: `当前模式为 ${state[instanceInfoSlice.name].instance.instanceMode ?? InstanceMode.SLAVE}，非主机模式`
+                passed: storeEntry.isMasterMode(),
+                reason: `当前模式为 ${storeEntry.getInstanceMode()}，非主机模式`
             },
             {
                 name: 'Slave功能已启用',
-                passed: (state[instanceInfoSlice.name].enableSlaves ?? false),
+                passed: storeEntry.isEnableSlaves(),
                 reason: 'Slave功能(enableSlaves)未启用'
             },
             {
                 name: '已配置Slave设备',
-                passed: Object.keys(state[instanceInfoSlice.name].masterSlaves ?? {}).length > 0,
+                passed: Object.keys(storeEntry.getMasterSlaves() ?? {}).length > 0,
                 reason: '没有配置的Slave设备(masterSlaves为空)'
             },
             {
                 name: '服务器状态为断开',
-                passed: (state[masterServerStatusSlice.name].serverConnectionStatus ?? ServerConnectionStatus.DISCONNECTED) === ServerConnectionStatus.DISCONNECTED,
-                reason: `服务器状态为 ${state[masterServerStatusSlice.name].serverConnectionStatus}，非DISCONNECTED状态`
+                passed: storeEntry.getMasterServerStatus() === ServerConnectionStatus.DISCONNECTED,
+                reason: `服务器状态为 ${storeEntry.getMasterServerStatus()}，非DISCONNECTED状态`
             }
         ]
 
@@ -119,7 +118,7 @@ class MasterServerStatusActor extends IActor {
     @CommandHandler(SynStateAtConnectedCommand)
     private async handleSyncState(command: SynStateAtConnectedCommand) {
         const slaveState = command.payload
-        const state = currentState<RootState>()
+        const state = storeEntry.getState<RootState>()
         getStatesToSync().forEach(stateKey => {
             const masterState = state[stateKey as keyof RootState] as { updatedAt: number | null }
             if ((masterState.updatedAt ?? 1) > (slaveState[stateKey] ?? 0)) {
@@ -173,7 +172,11 @@ class MasterServerStatusActor extends IActor {
                         logger.log([moduleName, LOG_TAGS.Actor, "masterServerStatus"], '执行远程方法:', remote.id)
                         remote.executeFromRequest(remoteCommand.requestId, remoteCommand.sessionId)
                         this.remoteCommandExecuted(remote)
-                        logger.log([moduleName, LOG_TAGS.Actor, 'masterServerStatus'], '反馈Slave', { slaveInfo: remote.slaveInfo, message: '远程方法已执行', id: remote.id })
+                        logger.log([moduleName, LOG_TAGS.Actor, 'masterServerStatus'], '反馈Slave', {
+                            slaveInfo: remote.slaveInfo,
+                            message: '远程方法已执行',
+                            id: remote.id
+                        })
                     } else {
                         logger.error([moduleName, LOG_TAGS.Actor, "masterServerStatus"], '远程方法初始化失败' + event.message.data)
                     }
@@ -197,10 +200,9 @@ class MasterServerStatusActor extends IActor {
     }
 
     private async startMasterServerWebsocket(command: ICommand<any>) {
-        const state = currentState<RootState>()
-        const serverAddresses = state[masterServerStatusSlice.name].serverAddresses ?? []
-        const deviceId = state[deviceStatusSlice.name].deviceInfo?.id ?? ''
-        const masterServerStatus = state[masterServerStatusSlice.name].serverConnectionStatus ?? ServerConnectionStatus.DISCONNECTED
+        const serverAddresses = storeEntry.getServerAddresses()
+        const deviceId = storeEntry.getDeviceId() ?? ''
+        const masterServerStatus = storeEntry.getMasterServerStatus()
         const wsClient = this.getWsClient();
         if (serverAddresses.length === 0) {
             throw new AppError(MasterServerErrors.MASTER_SERVER_ADDRESS_IS_EMPTY, "", command)

@@ -1,5 +1,5 @@
 import {kernalBaseModule, KernelModule} from "@impos2/kernel-base";
-import {moduleScreenParts} from "./basic";
+import {moduleScreenParts} from "./ui";
 import {moduleName} from './moduleName';
 
 export const uiCoreBaseModule: KernelModule = {

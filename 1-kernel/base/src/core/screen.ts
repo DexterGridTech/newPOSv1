@@ -1,9 +1,16 @@
 import {ScreenPart, ScreenPartRegistration, ScreenMode} from "../types";
 import {ComponentType} from "react";
-import {selectInstance} from "../hooks";
+import {storeEntry} from "./store";
 
 // 重新导出 ScreenMode 供外部使用
 export { ScreenMode };
+
+/**
+ * 获取当前的 screenMode
+ */
+function getScreenMode(): ScreenMode {
+    return storeEntry.getScreenMode();
+}
 
 /**
  * ScreenPart 注册信息存储
@@ -32,7 +39,7 @@ export function registerScreenPart(registration: ScreenPartRegistration) {
  * 获取 ScreenPart 的 componentType
  */
 export function getScreenPartComponentType(key: string): ComponentType<any> | undefined {
-    const screenMode = selectInstance().screenMode
+    const screenMode = getScreenMode()
     return screenRegistryMap[screenMode].get(key)?.componentType
 }
 
@@ -40,12 +47,12 @@ export function getScreenPartComponentType(key: string): ComponentType<any> | un
  * 获取 ScreenPart 的 readyToEnter 方法
  */
 export function getScreenPartReadyToEnter(key: string): (() => boolean) | undefined {
-    const screenMode = selectInstance().screenMode
+    const screenMode = getScreenMode()
     return screenRegistryMap[screenMode].get(key)?.readyToEnter
 }
 
 export function getFirstReadyScreenPartByContainerKey(containerKey: string, fromIndex: number): ScreenPart | undefined {
-    const screenMode = selectInstance().screenMode
+    const screenMode = getScreenMode()
     const registration = Array.from(screenRegistryMap[screenMode].values())
         .filter(part =>
             part.containerKey === containerKey &&
@@ -70,7 +77,7 @@ export function getFirstReadyScreenPartByContainerKey(containerKey: string, from
  * @returns 该容器下的所有 ScreenPartRegistration，按 indexInContainer 排序
  */
 export function getScreenPartsByContainerKey(containerKey: string): ScreenPartRegistration[] {
-    const screenMode = selectInstance().screenMode
+    const screenMode = getScreenMode()
     return Array.from(screenRegistryMap[screenMode].values())
         .filter(part => part.containerKey === containerKey)
         .sort((a, b) => (a.indexInContainer ?? 0) - (b.indexInContainer ?? 0))

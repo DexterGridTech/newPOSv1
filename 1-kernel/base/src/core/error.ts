@@ -6,7 +6,7 @@ import {
     errorMessageTextGetter,
     ErrorSeverity,
     ResponseWrapper
-} from "../types";
+} from "../types/core";
 
 /**
  * Command 最小接口定义，避免循环依赖
