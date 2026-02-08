@@ -17,7 +17,8 @@ import {
 } from "../commands/user";
 import {UserErrors} from "../errors";
 import {userInfoActions, userInfoSlice} from "../slices";
-import {moduleName, User} from "../../types";
+import {moduleName} from "../../moduleName";
+import {User} from "../../types";
 
 class UserInfoActor extends IActor {
     @CommandHandler(InitializeCommand)

@@ -1,4 +1,4 @@
-import {AppError, CommandHandler, currentState, dispatchAction, IActor, logger, storage} from "../../core";
+import {AppError, CommandHandler, currentState, dispatchAction, IActor, storage} from "../../core";
 import {
     AddSlaveCommand,
     NextDataVersionCommand,
@@ -7,18 +7,31 @@ import {
     SetSlaveInfoCommand,
     SlaveAddedCommand,
     StartToConnectMasterServerCommand,
-    UnregisterSlaveCommand
+    UnregisterSlaveCommand,
+    UpdateWorkSpaceCommand
 } from "../commands";
 import {instanceInfoActions, instanceInfoSlice} from "../slices";
 import {RootState} from "../rootState";
-import {ModifySlaveErrors} from "../errors";
+import {InstanceErrors, ModifySlaveErrors} from "../errors";
 
 
 class InstanceInfoActor extends IActor {
     @CommandHandler(NextDataVersionCommand)
     private async handleNextDataVersion(command: NextDataVersionCommand) {
-        logger.log([command.commandName], "storage.setToNextDataVersion()")
-        await storage.setToNextDataVersion()
+        try {
+            await storage.setToNextDataVersion()
+        } catch (e) {
+            throw new AppError(InstanceErrors.STORAGE_PROCESS_ERROR, JSON.stringify(command.payload), command)
+        }
+    }
+
+    @CommandHandler(UpdateWorkSpaceCommand)
+    private async handleUpdateWorkSpaceCommand(command: UpdateWorkSpaceCommand) {
+        try {
+            await storage.setWorkspace(command.payload)
+        } catch (e) {
+            throw new AppError(InstanceErrors.STORAGE_PROCESS_ERROR, JSON.stringify(command.payload), command)
+        }
     }
 
     @CommandHandler(AddSlaveCommand)

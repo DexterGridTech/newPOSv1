@@ -35,7 +35,7 @@ import {terminalConnectionStatusActions, deviceStatusSlice, terminalInfoSlice} f
 import {SlaveErrors, TerminalErrors} from "../errors";
 import {TerminalParameters} from "../parameter";
 import { LOG_TAGS } from '../../types/core/logTags';
-import { moduleName } from '../../types';
+import { moduleName } from '../../moduleName';
 
 class TerminalStatusActor extends IActor {
     @CommandHandler(GetDeviceStateCommand)

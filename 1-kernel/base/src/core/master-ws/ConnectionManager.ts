@@ -8,7 +8,7 @@ import {
 } from '../../types';
 import {logger} from "../nativeAdapter";
 import { LOG_TAGS } from '../../types/core/logTags';
-import { moduleName } from '../../types';
+import { moduleName } from '../../moduleName';
 
 /**
  * WebSocket 连接管理器

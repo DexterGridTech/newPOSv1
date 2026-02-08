@@ -4,7 +4,7 @@ import {useEditableUiVariable} from "@impos2/kernel-module-ui-navigation";
 import {userLoginVariable} from "../variables";
 import {nanoid} from "@reduxjs/toolkit";
 import { UserPasswordLoginCommand} from "@impos2/kernel-module-user";
-import {moduleName} from "../types";
+import {moduleName} from "../moduleName";
 
 // 用户登录Hook
 export const useUserLogin = () => {

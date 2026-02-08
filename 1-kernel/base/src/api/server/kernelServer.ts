@@ -2,7 +2,7 @@ import {RequestInterceptor, ResponseInterceptor} from "../../types";
 import {InternalAxiosRequestConfig} from "axios";
 import {ApiManager, logger} from "../../core";
 import { LOG_TAGS } from '../../types/core/logTags';
-import { moduleName } from '../../types';
+import { moduleName } from '../../moduleName';
 
 export const KERNEL_API_SERVER_NAME = "kernelApi";
 export const KERNEL_WS_SERVER_NAME = "kernelWS";

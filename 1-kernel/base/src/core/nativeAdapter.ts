@@ -49,9 +49,6 @@ export const storage = {
     getDataVersion: async () => {
         return await getNativeAdapter()?.storage.getItem<number>(currentWorkspace, 'dataVersion') ?? 0
     },
-    getWorkspace: async () => {
-        return getNativeAdapter()?.storage.getItem<Workspace>("global", 'workspace');
-    },
     setWorkspace: async (workspace: Workspace) => {
         await getNativeAdapter()?.storage.setItem("global", 'workspace', workspace)
     }

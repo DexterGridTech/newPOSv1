@@ -71,13 +71,13 @@ export const useLongPress = ({ onLongPress, delay = 1000 }: UseLongPressOptions)
     }, []);
 
     const handleMoveShouldSetResponder = useCallback(() => {
-        return true;
+        return false; // 移动时不接管 responder
     }, []);
 
     const handleStartShouldSetResponderCapture = useCallback(() => {
-        startTimer();
+        // 捕获阶段不启动定时器，避免干扰子组件（如输入框）
         return false;
-    }, [startTimer]);
+    }, []);
 
     const handleMoveShouldSetResponderCapture = useCallback(() => {
         return false;

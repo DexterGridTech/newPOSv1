@@ -1,6 +1,6 @@
 import {KernelModule} from "@impos2/kernel-base";
 import {userModuleActors, userModuleReducers} from "./features";
-import {moduleName} from "./types";
+import {moduleName} from "./moduleName";
 
 
 export const kernalUserModule: KernelModule = {

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useMemo, useCallback } from "react";
 import { getScreenPartComponentType, useUiModels, ModalScreen } from "@impos2/kernel-module-ui-navigation";
 import { EmptyScreen } from "./emptyScreen";
 import { logger, LOG_TAGS } from "@impos2/kernel-base";
-import { moduleName } from "../types";
+import { moduleName } from "../moduleName";
 
 /**
  * Modal 子项接口

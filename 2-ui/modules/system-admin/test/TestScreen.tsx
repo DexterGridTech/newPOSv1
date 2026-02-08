@@ -8,7 +8,7 @@ export const TestScreen: React.FC = () => {
         onLongPress: () => {
             new LongPressCommand("primary-container").executeInternally();
         },
-        delay: 500
+        delay: 2000
     });
     return (
         <View style={{flex: 1}}>

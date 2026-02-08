@@ -6,7 +6,7 @@ import {
 } from "@impos2/kernel-module-ui-navigation";
 import {ScreenMode} from "@impos2/kernel-base";
 import { useModalAnimation, useLifecycle } from "@impos2/ui-core-base-2";
-import { moduleName } from "../../types";
+import { moduleName } from "../../moduleName";
 import { useAdminLogin } from "../../hooks";
 
 /**

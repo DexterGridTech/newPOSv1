@@ -4,7 +4,7 @@ import {moduleScreenParts} from "./screens";
 import {uiCoreBaseModule} from "@impos2/ui-core-base-2";
 import {kernelUiNavigationModule} from "@impos2/kernel-module-ui-navigation";
 import {kernalUserModule} from "@impos2/kernel-module-user";
-import {moduleName} from "./types";
+import {moduleName} from './moduleName';
 
 export const uiUserLoginModule: KernelModule = {
     name: moduleName,

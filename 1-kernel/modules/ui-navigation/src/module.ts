@@ -1,6 +1,6 @@
 import {KernelModule} from "@impos2/kernel-base";
 import {uiNavigationModuleActors, uiNavigationModuleReducers} from "./features";
-import {moduleName} from "./types";
+import {moduleName} from "./moduleName";
 
 
 export const kernelUiNavigationModule: KernelModule = {

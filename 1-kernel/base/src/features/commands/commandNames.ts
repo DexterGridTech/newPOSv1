@@ -5,7 +5,8 @@ export const BaseModuleCommandNames = {
     // 初始化相关
     Initialize: "InitializeCommand",
     NextDataVersion: "NextDataVersionCommand",
-    Navigation: "NavigationCommand",
+    UpdateWorkSpace: "UpdateWorkSpaceCommand",
+    RestartApplication: "RestartApplicationCommand",
 
     // 主设备相关 (Master)
     AddSlave: "AddSlaveCommand",

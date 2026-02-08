@@ -1,5 +1,6 @@
 import {Middleware, PayloadAction} from "@reduxjs/toolkit";
-import {ActionMeta, InstanceMode, IStoreAccessor, LOG_TAGS, moduleName} from "../types";
+import {ActionMeta, InstanceMode, IStoreAccessor, LOG_TAGS} from "../types";
+import {moduleName} from "../moduleName";
 import {ICommand} from "./command";
 import {logger} from "./nativeAdapter";
 import {getStatesToSync} from "./specialStateList";

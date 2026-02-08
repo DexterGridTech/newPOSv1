@@ -3,7 +3,8 @@ import {generateUnitDataSlice, unitDataGroups} from "../../features";
 import {IReducerBuilder, KernelModule} from "../types";
 import {persistReducer} from 'redux-persist';
 import {getStatesToPersist, logger, storage} from "../../core";
-import {LOG_TAGS, moduleName} from "../../types";
+import {LOG_TAGS} from "../../types";
+import {moduleName} from "../../moduleName";
 
 /**
  * Reducer 构建器实现

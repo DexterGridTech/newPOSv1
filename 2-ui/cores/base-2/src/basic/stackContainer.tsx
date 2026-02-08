@@ -7,7 +7,7 @@ import {
 import React, { useEffect, useRef, useMemo, useCallback } from "react";
 import { EmptyScreen } from "./emptyScreen";
 import { logger, LOG_TAGS } from "@impos2/kernel-base";
-import { moduleName } from "../types";
+import { moduleName } from "../moduleName";
 
 export interface StackContainerProps {
     containerPart: UIVariable<ScreenPart>

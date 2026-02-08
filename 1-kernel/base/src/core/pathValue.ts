@@ -1,5 +1,6 @@
 import {logger} from "./nativeAdapter";
-import {LOG_TAGS, moduleName, Unit, UnitData, UnitDataState, UnitType} from "../types";
+import {LOG_TAGS, Unit, UnitData, UnitDataState, UnitType} from "../types";
+import {moduleName} from "../moduleName";
 
 interface DataProvider {
     provider: {

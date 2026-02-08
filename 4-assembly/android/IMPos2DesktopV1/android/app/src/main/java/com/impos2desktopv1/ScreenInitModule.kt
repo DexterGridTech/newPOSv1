@@ -25,16 +25,23 @@ class ScreenInitModule(reactContext: ReactApplicationContext) :
     
     /**
      * React 层调用此方法通知屏幕初始化完成
-     * @param screenType 屏幕类型（primary 或 secondary）
-     * @param props 初始化属性
+     * @param props 初始化属性（包含 screenType 字段）
      */
     @ReactMethod
-    fun notifyScreenInitialized(screenType: String, props: ReadableMap) {
-        Log.d(TAG, "收到屏幕初始化通知 - screenType: $screenType")
-        
+    fun notifyScreenInitialized(props: ReadableMap) {
         // 将 ReadableMap 转换为 Map
         val propsMap = props.toHashMap()
-        
+
+        // 从 props 中提取 screenType
+        val screenType = propsMap["screenType"] as? String
+
+        if (screenType == null) {
+            Log.e(TAG, "props 中缺少 screenType 字段")
+            return
+        }
+
+        Log.d(TAG, "收到屏幕初始化通知 - screenType: $screenType")
+
         when (screenType) {
             "primary" -> {
                 ScreenInitManager.notifyPrimaryScreenInitialized(propsMap)

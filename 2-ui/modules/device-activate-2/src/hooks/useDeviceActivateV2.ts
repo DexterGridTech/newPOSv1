@@ -10,7 +10,7 @@ import {
 import {nanoid} from "@reduxjs/toolkit";
 import {deviceActivateVariable} from "../variables";
 import {testModalScreenPart} from "../modals";
-import {moduleName} from "../types";
+import {moduleName} from "../moduleName";
 
 /**
  * 生命周期回调接口

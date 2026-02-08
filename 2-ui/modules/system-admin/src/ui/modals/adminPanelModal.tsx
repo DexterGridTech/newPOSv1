@@ -10,7 +10,7 @@ import {
 import {ScreenMode} from "@impos2/kernel-base";
 import {CloseModalCommand} from "@impos2/kernel-module-ui-navigation/";
 import { useModalAnimation, StackContainer, useLifecycle } from "@impos2/ui-core-base-2";
-import { moduleName } from "../../types";
+import { moduleName } from '../../moduleName';
 import { systemAdminVariable } from "../variables";
 
 /**

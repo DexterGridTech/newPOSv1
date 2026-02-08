@@ -4,7 +4,7 @@ import { ScreenMode } from "@impos2/kernel-base";
 import { ScreenPartRegistration } from "@impos2/kernel-module-ui-navigation";
 import { useLifecycle } from "@impos2/ui-core-base-2";
 import { systemAdminVariable } from "../variables";
-import { moduleName } from "../../types";
+import { moduleName } from '../../moduleName';
 
 /**
  * 工作空间设置页面

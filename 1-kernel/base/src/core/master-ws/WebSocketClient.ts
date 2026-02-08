@@ -23,7 +23,7 @@ import { MasterHeartbeatManager } from './HeartbeatManager';
 import { MasterConnectionManager } from './ConnectionManager';
 import {logger} from "../nativeAdapter";
 import { LOG_TAGS } from '../../types/core/logTags';
-import { moduleName } from '../../types';
+import { moduleName } from '../../moduleName';
 
 /**
  * 默认配置

@@ -12,8 +12,8 @@ import {
     Workspace
 } from "@impos2/kernel-base";
 import {AppProps} from "../types/AppProps.ts";
-import {uiIntegrateDesktop2Module} from "@impos2/integrate-desktop-2";
-import reactotron from "../config/ReactotronConfig";
+import reactotron from "./ReactotronConfig.ts";
+import {assemblyModule} from "../module.ts";
 
 async function createStore(props: AppProps, posAdapter: IPosAdapter) {
     const kernelApiServerAddress: ApiServerAddress = {
@@ -73,7 +73,7 @@ async function createStore(props: AppProps, posAdapter: IPosAdapter) {
     const displayMode: DisplayMode = standAlone ? DisplayMode.PRIMARY : DisplayMode.SECONDARY;
     const screenMode = displays[0].isMobile ? ScreenMode.MOBILE : ScreenMode.DESKTOP
 
-    const enableSlaves=standAlone && (displays.length > 1)
+    const enableSlaves = standAlone && (displays.length > 1)
 
     const preInitiatedState = {
         deviceStatus: {
@@ -87,7 +87,7 @@ async function createStore(props: AppProps, posAdapter: IPosAdapter) {
             },
             workspace: workspace,
             standAlone: standAlone,
-            enableSlaves:enableSlaves,
+            enableSlaves: enableSlaves,
             masterSlaves: enableSlaves ? {
                 ['embeddedDisplay']: {
                     name: "embeddedDisplay",
@@ -113,19 +113,13 @@ async function createStore(props: AppProps, posAdapter: IPosAdapter) {
             } : {},
         },
     };
-    const rootModule = uiIntegrateDesktop2Module
-    console.log("rootModule", rootModule)
-    if (!rootModule) {
-        throw new Error("rootModule is null or undefined")
-    }
-    console.log("rootModule.name", rootModule.name)
 
     const storeConfig: StoreConfig = {
-        standAlone:standAlone,
+        standAlone: standAlone,
         workspace: workspace,
         nativeAdapter: posAdapter,
         preInitiatedState: preInitiatedState,
-        kernelModules: [rootModule],
+        kernelModules: [assemblyModule],
         // 在开发环境下启用 Reactotron
         reactotronEnhancer: __DEV__ ? reactotron.createEnhancer!() : undefined,
     };

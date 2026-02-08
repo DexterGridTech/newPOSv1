@@ -2,7 +2,7 @@ import {CommandHandler, deviceController, dispatchAction, IActor, ICommand, logg
 import {InitializeCommand} from "../commands";
 import {deviceStatusActions} from "../slices";
 import { LOG_TAGS } from '../../types/core/logTags';
-import { moduleName } from '../../types';
+import { moduleName } from '../../moduleName';
 
 class DeviceStatusActor extends IActor {
     @CommandHandler(InitializeCommand)

@@ -7,5 +7,11 @@ export const InstanceErrors = {
         key: "device.id.empty",
         defaultMessage: "设备ID为空"
     },
+    STORAGE_PROCESS_ERROR:{
+        category: ErrorCategory.DATABASE,
+        severity: ErrorSeverity.HIGH,
+        key: "storage.process.error",
+        defaultMessage: "本地存储失败"
+    }
 } as const;
 

@@ -6,10 +6,10 @@ import createStore from "./utils/createStore.ts";
 import {EnhancedStore} from "@reduxjs/toolkit";
 import {NativeModules} from "react-native";
 import {PersistGate} from "redux-persist/integration/react";
-import LoadingScreen from "./components/LoadingScreen.tsx";
 import {App} from "@impos2/integrate-desktop-2";
 import {Provider} from "react-redux";
 import {Persistor} from "redux-persist/es/types";
+import LoadingScreen from "./ui/screens/LoadingScreen.tsx";
 
 const {ScreenInitModule} = NativeModules;
 
@@ -21,11 +21,7 @@ function RootApplication(props: AppProps): React.JSX.Element {
             ({store, persistor}) => {
                 setStore(store);
                 setPersistor(persistor);
-                ScreenInitModule.notifyScreenInitialized(
-                    props.screenType,
-                    props
-                );
-
+                ScreenInitModule.notifyScreenInitialized(props);
             }
         ).catch(error => console.error('createStore error', error))
     }, [])
@@ -39,8 +35,7 @@ function RootApplication(props: AppProps): React.JSX.Element {
                 persistor={persistor}
                 onBeforeLift={() => {
                     new InitializeCommand().executeInternally();
-                }}
-            >
+                }}>
                 <App/>
             </PersistGate>
         </Provider>

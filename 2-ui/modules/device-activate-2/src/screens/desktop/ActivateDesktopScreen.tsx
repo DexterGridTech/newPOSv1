@@ -13,7 +13,7 @@ import {
     terminalInfoSlice,
 } from "@impos2/kernel-base";
 import {ScreenPartRegistration} from "@impos2/kernel-module-ui-navigation";
-import {moduleName} from "../../types";
+import {moduleName} from '../../moduleName';
 
 // 诊断：打印导入的函数和组件
 console.log('🔍 useDeviceActivate 函数:', useDeviceActivate);

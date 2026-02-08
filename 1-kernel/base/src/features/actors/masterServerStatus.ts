@@ -38,7 +38,7 @@ import {MasterServerErrors} from "../errors";
 import {SlaveErrors} from "../errors";
 import {MasterParameters} from "../parameter";
 import { LOG_TAGS } from '../../types/core/logTags';
-import { moduleName } from '../../types';
+import { moduleName } from '../../moduleName';
 
 class MasterServerStatusActor extends IActor {
     @CommandHandler(InitializeCommand)

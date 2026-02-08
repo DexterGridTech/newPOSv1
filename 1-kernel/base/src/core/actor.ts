@@ -4,7 +4,7 @@ import {AppError} from "./error";
 import {commandBus, CommandLifecycleListener, ICommand, SendToMasterCommand} from "./command";
 import {getCommandHandlers} from "./decorators";
 import { LOG_TAGS } from '../types/core/logTags';
-import { moduleName } from '../types';
+import { moduleName } from '../moduleName';
 
 /**
  * 状态选择器类型定义

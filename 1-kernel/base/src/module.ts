@@ -1,6 +1,6 @@
 import {baseModuleActors, baseModuleEpics, baseModuleReducers,} from "./features";
 import {KernelModule} from "./store";
-import {moduleName} from "./types";
+import {moduleName} from "./moduleName";
 
 export const kernalBaseModule: KernelModule = {
     name: moduleName,
