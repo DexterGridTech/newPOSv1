@@ -1,16 +1,18 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useSelector} from 'react-redux';
 import {debounce} from 'lodash';
-import {instanceInfoSlice, RootState} from "@impos2/kernel-base";
 import {createSelector} from "@reduxjs/toolkit";
-import {SetUiVariablesCommand} from "../features";
-import {uiVariablesSlice} from "../features";
-import {UIVariable, generateUiVariableKey} from "../core";
+import {SetUiVariablesCommand} from "../features/commands/shared";
+import {uiVariablesSlice} from "../features/slices/uiVariables";
+import {UIVariable, generateUiVariableKey} from "../core/uiVariable";
+import {RootState} from "../features/rootState";
+import {instanceInfoSlice} from "../features/slices/instanceInfo";
 
 
 const selectUiVariablesState = (state: RootState) => state[uiVariablesSlice.name];
 
-export const selectInstance = (state: RootState) => state[instanceInfoSlice.name].instance;
+// 内部使用的 selector，不导出以避免与 accessToState 中的冲突
+const selectInstanceFromState = (state: RootState) => state[instanceInfoSlice.name].instance;
 
 // 缓存 selector 实例，避免重复创建
 const selectorCache = new Map<string, ReturnType<typeof createSelector>>();
@@ -20,7 +22,7 @@ export const selectUiVariable = <T = any>(state: RootState, key: string): T => {
     if (!selectorCache.has(key)) {
         // 创建新的 selector 并缓存
         const selector = createSelector(
-            [selectUiVariablesState, selectInstance],
+            [selectUiVariablesState, selectInstanceFromState],
             (uiVariablesState, instance): T => {
                 const fullKey = generateUiVariableKey(key, instance.instanceMode, instance.displayMode);
                 return uiVariablesState[fullKey];

@@ -3,6 +3,9 @@ import {ExecutePath, ExecutionType, INTERNAL, SlaveInfo} from "../types";
 import {AppError} from "./error";
 import {Subject} from "rxjs";
 
+// 重新导出 ExecutionType 供外部使用
+export { ExecutionType };
+
 export const commandBus = new Subject<ICommand<any>>();
 /**
  * 命令生命周期回调类型定义

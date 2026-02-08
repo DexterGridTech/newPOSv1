@@ -4,7 +4,7 @@ import {AdminLoginCommand} from "../commands";
 import {SystemAdminErrors} from "../errors";
 import {adminLoginModalPart, adminPanelModalPart} from "../../ui";
 import {nanoid} from "@reduxjs/toolkit";
-import {createModelScreen, OpenModalCommand} from "@impos2/kernel-module-ui-navigation";
+import {createModelScreen, OpenModalCommand} from "@impos2/kernel-base";
 
 class SystemAdminActor extends IActor {
     @CommandHandler(LongPressCommand)

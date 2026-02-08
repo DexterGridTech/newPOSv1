@@ -6,7 +6,9 @@ import {
     slaveConnectionStatusSlice,
     systemParametersSlice,
     terminalConnectionStatusSlice,
-    terminalInfoSlice
+    terminalInfoSlice,
+    uiVariablesSlice,
+    uiModalsSlice
 } from "./slices";
 
 export const baseModuleReducers = {
@@ -18,4 +20,6 @@ export const baseModuleReducers = {
     [requestStatusSlice.name]: requestStatusSlice.reducer,
     [terminalInfoSlice.name]: terminalInfoSlice.reducer,
     [terminalConnectionStatusSlice.name]: terminalConnectionStatusSlice.reducer,
+    [uiVariablesSlice.name]: uiVariablesSlice.reducer,
+    [uiModalsSlice.name]: uiModalsSlice.reducer,
 };

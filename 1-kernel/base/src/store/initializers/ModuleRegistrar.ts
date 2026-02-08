@@ -1,20 +1,12 @@
 import { combineEpics } from "redux-observable";
-import { ActorSystem } from "../../core";
-import { KernelModule, IModuleRegistrar, ScreenPartRegisterFunction } from "../types";
+import { ActorSystem, registerScreenPart } from "../../core";
+import { KernelModule, IModuleRegistrar } from "../types";
 
 /**
  * 模块注册器实现
  * 职责: 负责注册所有模块的 Actors、Epics 和 ScreenParts
  */
 export class ModuleRegistrar implements IModuleRegistrar {
-    private screenPartRegisterFn?: ScreenPartRegisterFunction;
-
-    /**
-     * 设置 ScreenPart 注册函数
-     */
-    setScreenPartRegisterFunction(fn: ScreenPartRegisterFunction): void {
-        this.screenPartRegisterFn = fn;
-    }
 
     registerModules(modules: KernelModule[]): void {
         // 注册 Actors
@@ -34,15 +26,10 @@ export class ModuleRegistrar implements IModuleRegistrar {
     }
 
     registerScreenParts(modules: KernelModule[]): void {
-        if (!this.screenPartRegisterFn) {
-            console.warn('ScreenPart register function not set, skipping screen part registration');
-            return;
-        }
-
         modules.forEach(module => {
             if (module.screenParts) {
                 module.screenParts.forEach(screenPart => {
-                    this.screenPartRegisterFn!(screenPart);
+                    registerScreenPart(screenPart);
                 });
             }
         });

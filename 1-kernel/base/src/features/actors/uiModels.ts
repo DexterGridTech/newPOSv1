@@ -1,6 +1,6 @@
-import {CommandHandler, dispatchSimpleAction, selectInstance, IActor, logger} from "@impos2/kernel-base";
-import {AlertCommand, CloseModalCommand, OpenModalCommand} from "../commands";
-import {uiModelsActions} from "../slices";
+import {CommandHandler, dispatchSimpleAction, selectInstance, IActor} from "../../core";
+import {AlertCommand, CloseModalCommand, OpenModalCommand} from "../commands/shared";
+import {uiModelsActions} from "../slices/uiModals";
 
 
 class UiModelActor extends IActor {

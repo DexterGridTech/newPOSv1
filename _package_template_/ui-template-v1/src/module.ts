@@ -3,7 +3,7 @@ import { moduleName } from "./moduleName";
 import { moduleReducers, moduleEpics, moduleActors } from "./features";
 import { moduleScreenParts } from "./ui";
 import { uiCoreBaseModule } from "@impos2/ui-core-base-2";
-import { kernelUiNavigationModule } from "@impos2/kernel-module-ui-navigation";
+import { kernelUiNavigationModule } from "@impos2/kernel-base";
 
 /**
  * {{displayName}} 模块定义

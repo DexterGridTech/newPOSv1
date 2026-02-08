@@ -19,7 +19,6 @@
   },
   "dependencies": {
     "@impos2/kernel-base": "*",
-    "@impos2/kernel-module-ui-navigation": "*",
     "@impos2/ui-core-base-2": "*",
     "@impos2/workspace-dev": "*",
     "@reduxjs/toolkit": "^2.11.2",

@@ -1,7 +1,7 @@
 import React from "react";
-import {EmptyScreen, LongPressCommand, ModalContainer, StackContainer, useLongPress} from "@impos2/ui-core-base-2";
+import {LongPressCommand, ModalContainer, StackContainer, useLongPress} from "@impos2/ui-core-base-2";
 import {View} from "react-native";
-import {registerUIVariable} from "@impos2/kernel-module-ui-navigation";
+import {registerUIVariable, ScreenMode} from "@impos2/kernel-base";
 
 export const TestScreen: React.FC = () => {
     const longPressHandlers = useLongPress({
@@ -21,5 +21,14 @@ export const TestScreen: React.FC = () => {
     );
 };
 export const testVariables = {
-    rootScreenContainer: registerUIVariable({key: 'screen.container.root', defaultValue: EmptyScreen})
+    rootScreenContainer: registerUIVariable({
+        key: 'screen.container.root',
+        defaultValue: {
+            name: 'emptyScreen',
+            title: '空白页面',
+            description: '默认的空白页面组件',
+            partKey: 'empty',
+            screenMode: [ScreenMode.DESKTOP, ScreenMode.MOBILE]
+        }
+    })
 }

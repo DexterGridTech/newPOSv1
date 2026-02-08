@@ -3,7 +3,7 @@ import {
     ScreenPart,
     UIVariable,
     useChildScreenPart
-} from "@impos2/kernel-module-ui-navigation";
+} from "@impos2/kernel-base";
 import React, { useEffect, useRef, useMemo, useCallback } from "react";
 import { EmptyScreen } from "./emptyScreen";
 import { logger, LOG_TAGS } from "@impos2/kernel-base";

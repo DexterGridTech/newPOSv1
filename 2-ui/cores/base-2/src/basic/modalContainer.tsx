@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useMemo, useCallback } from "react";
-import { getScreenPartComponentType, useUiModels, ModalScreen } from "@impos2/kernel-module-ui-navigation";
+import { getScreenPartComponentType, useUiModels, ModalScreen } from "@impos2/kernel-base";
 import { EmptyScreen } from "./emptyScreen";
 import { logger, LOG_TAGS } from "@impos2/kernel-base";
 import { moduleName } from "../moduleName";

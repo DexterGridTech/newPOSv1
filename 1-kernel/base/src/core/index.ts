@@ -11,3 +11,9 @@ export * from './kernel-ws'
 export * from './error'
 export * from './env'
 export * from './store'
+export * from './screen'
+export * from './uiVariable'
+
+// 从其他模块重新导出常用的工具
+export { selectInstance } from '../hooks/access/accessToState'
+export { LOG_TAGS } from '../types/core/logTags'

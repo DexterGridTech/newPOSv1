@@ -11,7 +11,7 @@ import {
     ScreenMode,
     terminalInfoSlice,
 } from "@impos2/kernel-base";
-import {ScreenPartRegistration} from "@impos2/kernel-module-ui-navigation";
+import {ScreenPartRegistration} from "@impos2/kernel-base";
 import {moduleName} from '../../../moduleName';
 
 export const ActivateDesktopScreen: React.FC = () => {

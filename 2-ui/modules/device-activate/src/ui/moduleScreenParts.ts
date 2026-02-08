@@ -1,4 +1,4 @@
-import { ScreenPartRegistration } from "@impos2/kernel-module-ui-navigation";
+import { ScreenPartRegistration } from "@impos2/kernel-base";
 import { activateDesktopScreenPart } from "./screens";
 import { testModalScreenPart } from "./modals";
 

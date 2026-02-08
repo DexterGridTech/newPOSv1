@@ -11,7 +11,7 @@ import {
     RootState,
     ScreenMode
 } from "@impos2/kernel-base";
-import {ScreenPartRegistration} from "@impos2/kernel-module-ui-navigation";
+import {ScreenPartRegistration} from "@impos2/kernel-base";
 import {userInfoSlice} from "@impos2/kernel-module-user";
 import {moduleName} from "../../../moduleName";
 

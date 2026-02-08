@@ -3,10 +3,13 @@ import {ActionMeta, InstanceMode, IStoreAccessor, LOG_TAGS} from "../types";
 import {moduleName} from "../moduleName";
 import {ICommand} from "./command";
 import {logger} from "./nativeAdapter";
-import {getStatesToSync} from "./specialStateList";
+import {getStatesToSync, registerStateToPersist, registerStateToSync} from "./specialStateList";
 import {diff} from 'deep-object-diff';
 import {instanceInfoSlice, InstanceInfoState, syncStateToSlave} from "../features";
 import {now} from 'lodash';
+
+// 重新导出供外部使用
+export { registerStateToPersist, registerStateToSync };
 
 let _storeAccessor: IStoreAccessor | null = null;
 

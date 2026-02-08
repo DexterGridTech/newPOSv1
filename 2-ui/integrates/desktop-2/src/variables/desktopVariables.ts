@@ -1,4 +1,4 @@
-import {registerUIVariable} from "@impos2/kernel-module-ui-navigation";
+import {registerUIVariable} from "@impos2/kernel-base";
 import {EmptyScreen} from "@impos2/ui-core-base-2";
 
 export const desktopVariables = {

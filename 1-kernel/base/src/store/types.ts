@@ -1,7 +1,7 @@
 import {AppEpic, RootState} from "../features";
 import {IPosAdapter, IStorageAdapter, Workspace} from "../types";
 import {IActor} from "../core";
-import {ScreenPartRegistration} from "@impos2/kernel-module-ui-navigation";
+import {ScreenPartRegistration} from "../types/core/screen";
 import {Reducer, StoreEnhancer} from "@reduxjs/toolkit";
 
 /**
@@ -66,9 +66,3 @@ export interface IModuleRegistrar {
 export interface IModuleDependencyResolver {
     resolveModules(modules: KernelModule[]): KernelModule[];
 }
-
-/**
- * ScreenPart 注册函数类型
- */
-export type ScreenPartRegisterFunction = (screenPart: ScreenPartRegistration) => void;
-

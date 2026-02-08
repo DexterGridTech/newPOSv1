@@ -5,9 +5,9 @@ import {
     defaultAlertPartKey,
     ModalScreen,
     ScreenPartRegistration
-} from "@impos2/kernel-module-ui-navigation";
+} from "@impos2/kernel-base";
 import {CommandRegistry, ScreenMode, logger, LOG_TAGS} from "@impos2/kernel-base";
-import {CloseModalCommand} from "@impos2/kernel-module-ui-navigation/";
+import {CloseModalCommand} from "@impos2/kernel-base/";
 import { moduleName } from "../moduleName";
 
 /**

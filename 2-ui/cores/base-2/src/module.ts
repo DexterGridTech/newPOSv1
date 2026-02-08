@@ -1,6 +1,5 @@
 import {kernalBaseModule, KernelModule} from "@impos2/kernel-base";
 import {moduleScreenParts} from "./basic";
-import {kernelUiNavigationModule} from "@impos2/kernel-module-ui-navigation";
 import {moduleName} from './moduleName';
 
 export const uiCoreBaseModule: KernelModule = {
@@ -10,7 +9,6 @@ export const uiCoreBaseModule: KernelModule = {
     actors: [],
     screenParts: moduleScreenParts,
     dependencies:[
-        kernalBaseModule,
-        kernelUiNavigationModule
+        kernalBaseModule
     ]
 }

@@ -1,4 +1,4 @@
-import { ScreenPartRegistration } from "@impos2/kernel-module-ui-navigation";
+import { ScreenPartRegistration } from "@impos2/kernel-base";
 
 /**
  * {{displayName}} 模块所有 ScreenParts 注册

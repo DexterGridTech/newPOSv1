@@ -1,5 +1,5 @@
 import {ComponentType} from 'react';
-import {ScreenMode} from "@impos2/kernel-base";
+import {ScreenMode} from './base';
 
 /**
  * ScreenPart 可序列化部分 - 可以存储在 Redux state 中
@@ -24,6 +24,7 @@ export interface AlertInfo {
     confirmCommandName?: string
     confirmCommandPayload?: any
 }
+
 export interface ModalScreen<T> {
     id: string,
     partKey: string,
@@ -44,7 +45,9 @@ export const createModelScreen =
     <T>(screenPart: ScreenPart, id: string, props: T) => {
         return {...screenPart, id, props}
     }
+
 export const defaultAlertPartKey = "alert"
+
 export const createAlert =
     (id: string, props: AlertInfo) => {
         return {

@@ -1,5 +1,6 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {registerStateToPersist, registerStateToSync, InstanceInfo} from "@impos2/kernel-base";
+import {registerStateToPersist, registerStateToSync} from "../../core/store";
+import {InstanceInfo} from "./instanceInfo";
 import {generateUiVariableKey} from "../../core/uiVariable";
 
 export interface UiVariablesState {

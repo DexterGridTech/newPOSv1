@@ -1,14 +1,15 @@
-import {ModalScreen, ScreenPart} from "../../types";
+import {ModalScreen, ScreenPart} from "../../types/core/screen";
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {InstanceMode, registerStateToPersist, registerStateToSync} from "@impos2/kernel-base";
+import {InstanceMode} from "../../types/core";
+import {registerStateToPersist, registerStateToSync} from "../../core/store";
 
 
-export interface UiModelsState {
+export interface UiModalsState {
     master: ModalScreen<any>[]
     slave: ModalScreen<any>[]
 }
 
-const initialState: UiModelsState = {
+const initialState: UiModalsState = {
     master: [],
     slave: []
 }

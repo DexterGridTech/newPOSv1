@@ -1,6 +1,6 @@
 import {useCallback, useState} from 'react';
 import {logger, LOG_TAGS, useRequestStatus} from "@impos2/kernel-base";
-import {useEditableUiVariable} from "@impos2/kernel-module-ui-navigation";
+import {useEditableUiVariable} from "@impos2/kernel-base";
 import {userLoginVariable} from "../ui-variables";
 import {nanoid} from "@reduxjs/toolkit";
 import { UserPasswordLoginCommand} from "@impos2/kernel-module-user";

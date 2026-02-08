@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { ScreenMode } from "@impos2/kernel-base";
-import { ScreenPartRegistration } from "@impos2/kernel-module-ui-navigation";
+import { ScreenPartRegistration } from "@impos2/kernel-base";
 import { useLifecycle } from "@impos2/ui-core-base-2";
 import { systemAdminVariable } from "../../ui-variables";
 import { moduleName } from '../../moduleName';

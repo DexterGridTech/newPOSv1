@@ -1,4 +1,4 @@
-import {registerUIVariable} from "@impos2/kernel-module-ui-navigation";
+import {registerUIVariable} from "@impos2/kernel-base";
 
 export const userLoginVariable={
     userId:registerUIVariable({key:'ui.user.login.userId',defaultValue:''}),

@@ -1,6 +1,6 @@
 import React from 'react';
 import {Text, View, StyleSheet, Dimensions} from 'react-native';
-import {ScreenPartRegistration} from "@impos2/kernel-module-ui-navigation";
+import {ScreenPartRegistration} from "@impos2/kernel-base";
 import {ScreenMode} from "@impos2/kernel-base";
 
 /**

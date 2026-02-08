@@ -4,9 +4,9 @@ import {
     AlertCommand,
     AlertInfo, createAlert,
     createModelScreen,
-    OpenModalCommand, UiNavigationCommandNames,
+    OpenModalCommand,
     useEditableUiVariable
-} from "@impos2/kernel-module-ui-navigation";
+} from "@impos2/kernel-base";
 import {nanoid} from "@reduxjs/toolkit";
 import {deviceActivateVariable} from "../ui-variables";
 import {moduleName} from "../moduleName";

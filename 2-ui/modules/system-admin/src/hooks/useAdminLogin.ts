@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useState} from 'react';
 import {useRequestStatus} from "@impos2/kernel-base";
-import {CloseModalCommand, useEditableUiVariable} from "@impos2/kernel-module-ui-navigation";
+import {CloseModalCommand, useEditableUiVariable} from "@impos2/kernel-base";
 import {nanoid} from "@reduxjs/toolkit";
 import {systemAdminVariable} from "../ui-variables";
 import {AdminLoginCommand} from "../features";

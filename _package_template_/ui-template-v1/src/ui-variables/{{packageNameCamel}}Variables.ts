@@ -1,4 +1,4 @@
-import { registerUIVariable } from "@impos2/kernel-module-ui-navigation";
+import { registerUIVariable } from "@impos2/kernel-base";
 
 /**
  * {{displayName}} 模块的 UI 变量

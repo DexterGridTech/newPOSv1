@@ -19,7 +19,6 @@
   },
   "dependencies": {
     "@impos2/kernel-base": "*",
-    "@impos2/kernel-module-ui-navigation": "*",
     "@impos2/kernel-module-user": "*",
     "@impos2/ui-core-base-2": "*",
     "@impos2/ui-module-device-activate": "*",

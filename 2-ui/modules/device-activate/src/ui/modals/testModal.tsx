@@ -3,7 +3,7 @@ import {
     CloseModalCommand,
     ModalScreen,
     ScreenPartRegistration
-} from "@impos2/kernel-module-ui-navigation";
+} from "@impos2/kernel-base";
 import {ScreenMode} from "@impos2/kernel-base";
 import {nanoid} from "@reduxjs/toolkit";
 import {View, Text, TouchableOpacity, StyleSheet, Animated} from 'react-native';

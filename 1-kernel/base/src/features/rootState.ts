@@ -7,7 +7,9 @@ import {
     MasterServerStatusState, slaveConnectionStatusSlice,
     SlaveConnectionStatusState, systemParametersSlice, SystemParametersState, terminalConnectionStatusSlice,
     TerminalConnectionStatusState, terminalInfoSlice,
-    TerminalInfoState
+    TerminalInfoState, uiVariablesSlice,
+    UiVariablesState, uiModalsSlice,
+    UiModalsState
 } from "./slices";
 import {PayloadAction} from "@reduxjs/toolkit";
 import {Epic} from "redux-observable";
@@ -34,6 +36,8 @@ export interface RootStateBase {
     [requestStatusSlice.name]: RequestStatusState;
     [terminalInfoSlice.name]: TerminalInfoState;
     [terminalConnectionStatusSlice.name]: TerminalConnectionStatusState;
+    [uiVariablesSlice.name]: UiVariablesState;
+    [uiModalsSlice.name]: UiModalsState;
 }
 
 /** 扩展 RootState 接口(供其他模块扩展) */

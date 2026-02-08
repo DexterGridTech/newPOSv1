@@ -7,6 +7,8 @@ import {terminalInfoActor} from "./actors/terminalInfo";
 import {systemParametersActor} from "./actors/systemParameters";
 import {terminalStatusActor} from "./actors/terminalStatus";
 import {unitDataActor} from "./actors/unitData";
+import {navigatorActor} from "./actors/navigator";
+import {uiModelActor} from "./actors/uiModels";
 
 export const baseModuleActors:IActor[] = [
     deviceStatusActor,
@@ -16,5 +18,7 @@ export const baseModuleActors:IActor[] = [
     systemParametersActor,
     terminalInfoActor,
     terminalStatusActor,
-    unitDataActor
+    unitDataActor,
+    navigatorActor,
+    uiModelActor
 ]

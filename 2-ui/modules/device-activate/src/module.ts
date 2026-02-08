@@ -3,7 +3,6 @@ import { moduleName } from "./moduleName";
 import { moduleReducers, moduleEpics, moduleActors } from "./features";
 import { moduleScreenParts } from "./ui";
 import { uiCoreBaseModule } from "@impos2/ui-core-base-2";
-import { kernelUiNavigationModule } from "@impos2/kernel-module-ui-navigation";
 
 /**
  * 设备激活UI 模块定义
@@ -20,7 +19,6 @@ export const uiDeviceActivateModule: KernelModule = {
     actors: moduleActors,
     screenParts: moduleScreenParts,
     dependencies: [
-        kernelUiNavigationModule,
         uiCoreBaseModule
     ]
 };

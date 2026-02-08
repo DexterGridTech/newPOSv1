@@ -44,4 +44,11 @@ export const BaseModuleCommandNames = {
     GetUnitData: "GetUnitDataCommand",
     ChangeUnitData: "ChangeUnitDataCommand",
     UnitDataChanged: "UnitDataChangedCommand",
+
+    // UI Navigation 相关
+    Navigation: "NavigationCommand",
+    SetUiVariables: "SetUiVariablesCommand",
+    OpenModal: "OpenModalCommand",
+    CloseModal: "CloseModalCommand",
+    Alert: "AlertCommand",
 } as const;

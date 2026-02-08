@@ -48,8 +48,7 @@
   ],
   "dependencies": {
     "kernel": [
-      "@impos2/kernel-base",
-      "@impos2/kernel-module-ui-navigation"
+      "@impos2/kernel-base"
     ],
     "ui": [
       "@impos2/ui-core-base-2"

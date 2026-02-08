@@ -1,18 +1,19 @@
-import {defineCommand, ExecutionType, InstanceMode} from "@impos2/kernel-base";
-import {UiNavigationCommandNames} from "./commandNames";
-import {ScreenPart} from "../../types";
+import {defineCommand, ExecutionType} from "../../../core/command";
+import {BaseModuleCommandNames} from "../commandNames";
+import {ScreenPart} from "../../../types/core/screen";
 
 export class AlertCommand extends defineCommand<{
     model: ScreenPart
 }>(
-    UiNavigationCommandNames.Alert,
+    BaseModuleCommandNames.Alert,
     ExecutionType.SEND_AND_EXECUTE_SEPARATELY
 ) {
 }
+
 export class OpenModalCommand extends defineCommand<{
     model: ScreenPart
 }>(
-    UiNavigationCommandNames.OpenModal,
+    BaseModuleCommandNames.OpenModal,
     ExecutionType.SEND_AND_EXECUTE_SEPARATELY
 ) {
 }
@@ -20,7 +21,7 @@ export class OpenModalCommand extends defineCommand<{
 export class CloseModalCommand extends defineCommand<{
     modelId: string
 }>(
-    UiNavigationCommandNames.CloseModal,
+    BaseModuleCommandNames.CloseModal,
     ExecutionType.SEND_AND_EXECUTE_SEPARATELY
 ) {
 }

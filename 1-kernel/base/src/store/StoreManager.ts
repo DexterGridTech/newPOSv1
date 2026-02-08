@@ -1,6 +1,6 @@
 import {EnhancedStore} from "@reduxjs/toolkit";
 import {RootState} from "../features";
-import {ScreenPartRegisterFunction, StoreConfig} from "./types";
+import {StoreConfig} from "./types";
 import {StoreFactory} from "./StoreFactory";
 import {ReducerBuilder} from "./initializers/ReducerBuilder";
 import {MiddlewareConfigurator} from "./initializers/MiddlewareConfigurator";
@@ -19,10 +19,9 @@ export class StoreManager {
     private store: EnhancedStore<RootState> | null = null;
     private persistor: Persistor | null = null;
     private storeFactory: StoreFactory;
-    private moduleRegistrar: ModuleRegistrar;
 
     private constructor() {
-        this.moduleRegistrar = new ModuleRegistrar();
+        const moduleRegistrar = new ModuleRegistrar();
 
         // 使用依赖注入创建 StoreFactory
         this.storeFactory = new StoreFactory(
@@ -30,7 +29,7 @@ export class StoreManager {
             new MiddlewareConfigurator(),
             new NativeAdapterInitializer(),
             new ActorSystemConfigurator(),
-            this.moduleRegistrar,
+            moduleRegistrar,
             new ModuleDependencyResolver()
         );
     }
@@ -58,14 +57,6 @@ export class StoreManager {
 
     getPersistor(): Persistor | null {
         return this.persistor;
-    }
-
-    /**
-     * 设置 ScreenPart 注册函数
-     * 此方法应在 Store 创建前调用,用于注入 registerScreenPart 函数
-     */
-    setScreenPartRegisterFunction(fn: ScreenPartRegisterFunction): void {
-        this.moduleRegistrar.setScreenPartRegisterFunction(fn);
     }
 
 }

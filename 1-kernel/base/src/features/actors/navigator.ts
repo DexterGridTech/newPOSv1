@@ -1,18 +1,15 @@
 import {
     CommandHandler,
-    currentState,
-    dispatchSimpleAction, selectInstance,
+    dispatchSimpleAction,
+    selectInstance,
     IActor,
-    instanceInfoSlice,
     logger,
-    RootState,
     LOG_TAGS
-} from "@impos2/kernel-base";
-import { NavigationCommand, SetUiVariablesCommand} from "../commands";
-import {moduleName} from "../../moduleName";
-import {ScreenPart} from "../../types";
-import {uiVariablesActions} from "../slices";
-import {getScreenPartReadyToEnter} from "../../core";
+} from "../../core";
+import {NavigationCommand, SetUiVariablesCommand} from "../commands/shared";
+import {ScreenPart} from "../../types/core/screen";
+import {uiVariablesActions} from "../slices/uiVariables";
+import {getScreenPartReadyToEnter} from "../../core/screen";
 
 
 class NavigatorActor extends IActor {
@@ -41,7 +38,7 @@ class NavigatorActor extends IActor {
                 }
             }).executeInternally();
         } catch (error) {
-            logger.error([moduleName, LOG_TAGS.Actor, 'NavigatorActor'], `Navigation failed: ${error}`);
+            logger.error(['kernel-base', LOG_TAGS.Actor, 'NavigatorActor'], `Navigation failed: ${error}`);
             throw error;
         }
     }

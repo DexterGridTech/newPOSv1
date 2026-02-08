@@ -1,14 +1,17 @@
-import {ScreenPart, ScreenPartRegistration} from "../types";
+import {ScreenPart, ScreenPartRegistration, ScreenMode} from "../types";
 import {ComponentType} from "react";
-import {selectInstance, logger} from "@impos2/kernel-base";
+import {selectInstance} from "../hooks";
+
+// 重新导出 ScreenMode 供外部使用
+export { ScreenMode };
 
 /**
  * ScreenPart 注册信息存储
  */
 // 按 category 分类存储的注册表
-const screenRegistryMap = {
-    mobile: new Map<string, ScreenPartRegistration>(),
-    desktop: new Map<string, ScreenPartRegistration>()
+const screenRegistryMap: Record<ScreenMode, Map<string, ScreenPartRegistration>> = {
+    [ScreenMode.MOBILE]: new Map<string, ScreenPartRegistration>(),
+    [ScreenMode.DESKTOP]: new Map<string, ScreenPartRegistration>()
 }
 
 /**
@@ -43,7 +46,7 @@ export function getScreenPartReadyToEnter(key: string): (() => boolean) | undefi
 
 export function getFirstReadyScreenPartByContainerKey(containerKey: string, fromIndex: number): ScreenPart | undefined {
     const screenMode = selectInstance().screenMode
-    return Array.from(screenRegistryMap[screenMode].values())
+    const registration = Array.from(screenRegistryMap[screenMode].values())
         .filter(part =>
             part.containerKey === containerKey &&
             part.indexInContainer != null &&
@@ -51,6 +54,14 @@ export function getFirstReadyScreenPartByContainerKey(containerKey: string, from
         )
         .sort((a, b) => (a.indexInContainer ?? 0) - (b.indexInContainer ?? 0))
         .find(part => part.readyToEnter?.() ?? true)
+
+    if (!registration) {
+        return undefined
+    }
+
+    // 将 ScreenPartRegistration 转换为 ScreenPart（去除 componentType）
+    const { componentType, ...screenPart } = registration
+    return screenPart
 }
 
 /**
