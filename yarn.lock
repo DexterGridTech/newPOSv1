@@ -2729,6 +2729,7 @@ __metadata:
     "@impos2/kernel-base": "*"
     "@impos2/kernel-module-ui-navigation": "*"
     "@impos2/ui-core-base-2": "*"
+    "@impos2/workspace-dev": "*"
     "@reduxjs/toolkit": ^2.11.2
     "@types/react": ~18.3.12
     expo: ~54.0.31
@@ -2763,6 +2764,20 @@ __metadata:
     react-redux: ^9.1.0
     redux-persist: ^6.0.0
     reselect: ^5.1.0
+    typescript: ^5.9.3
+  languageName: unknown
+  linkType: soft
+
+"@impos2/workspace-dev@*, @impos2/workspace-dev@workspace:1-kernel/workspaces/workspace-dev":
+  version: 0.0.0-use.local
+  resolution: "@impos2/workspace-dev@workspace:1-kernel/workspaces/workspace-dev"
+  dependencies:
+    "@impos2/kernel-base": "*"
+    "@types/deep-diff": ^1.0.5
+    "@types/lodash": ^4.17.20
+    "@types/node": ^24.10.0
+    madge: ^8.0.0
+    ts-node: ^10.9.2
     typescript: ^5.9.3
   languageName: unknown
   linkType: soft

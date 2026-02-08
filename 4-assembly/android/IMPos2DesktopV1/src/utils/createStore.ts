@@ -1,67 +1,18 @@
 import {
-    ApiServerAddress,
     DisplayMode,
     generateStore,
     InstanceMode,
     IPosAdapter,
-    KERNEL_API_SERVER_NAME,
-    KERNEL_WS_SERVER_NAME,
     ScreenMode,
     Slave,
-    StoreConfig,
-    Workspace
+    StoreConfig
 } from "@impos2/kernel-base";
 import {AppProps} from "../types/AppProps.ts";
 import reactotron from "./ReactotronConfig.ts";
 import {assemblyModule} from "../module.ts";
+import {workspace} from "@impos2/workspace-dev";
 
 async function createStore(props: AppProps, posAdapter: IPosAdapter) {
-    const kernelApiServerAddress: ApiServerAddress = {
-        serverName: KERNEL_API_SERVER_NAME,
-        retryCount: 3,
-        retryInterval: 1000,
-        addresses: [
-            {
-                addressName: "主线路1",
-                baseURL: "http://169.254.237.142:9999/kernel-server",
-                timeout: 3000,
-            },
-            {
-                addressName: "主线路2",
-                baseURL: "http://localhost:9999/kernel-server",
-                timeout: 3000,
-            },
-        ],
-    };
-    // 配置 WebSocket 服务器地址
-    const kernelWSServerAddress: ApiServerAddress = {
-        serverName: KERNEL_WS_SERVER_NAME,
-        retryCount: 3,
-        retryInterval: 1000,
-        addresses: [
-            {
-                addressName: "主线路1",
-                baseURL: "ws://169.254.237.142:9999/kernel-server",
-                timeout: 3000,
-            },
-            {
-                addressName: "主线路2",
-                baseURL: "ws://localhost:9999/kernel-server",
-                timeout: 3000,
-            },
-        ],
-    };
-
-    // 配置工作空间
-    const workspace: Workspace = {
-        selectedWorkspace: "mixcDesktop",
-        workspaces: [
-            {
-                workspaceName: "mixcDesktop",
-                apiServerAddresses: [kernelApiServerAddress, kernelWSServerAddress],
-            },
-        ],
-    };
 
 
     const deviceInfo = await posAdapter.deviceInfo.getDeviceInfo()

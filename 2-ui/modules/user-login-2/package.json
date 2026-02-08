@@ -16,6 +16,7 @@
     "@impos2/kernel-base": "*",
     "@impos2/kernel-module-ui-navigation": "*",
     "@impos2/kernel-module-user": "*",
+    "@impos2/workspace-dev": "*",
     "@impos2/ui-core-base-2": "*",
     "@reduxjs/toolkit": "^2.11.2",
     "react": "18.3.1",

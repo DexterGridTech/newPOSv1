@@ -29,6 +29,7 @@ class InstanceInfoActor extends IActor {
     private async handleUpdateWorkSpaceCommand(command: UpdateWorkSpaceCommand) {
         try {
             await storage.setWorkspace(command.payload)
+            dispatchAction(instanceInfoActions.setWorkspace(command.payload), command)
         } catch (e) {
             throw new AppError(InstanceErrors.STORAGE_PROCESS_ERROR, JSON.stringify(command.payload), command)
         }

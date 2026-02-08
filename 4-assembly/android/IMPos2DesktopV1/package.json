@@ -18,6 +18,7 @@
     "@impos2/adapter-impos2-adapterv1": "*",
     "@impos2/integrate-desktop-2": "*",
     "@impos2/kernel-base": "*",
+    "@impos2/workspace-dev": "*",
     "react": "18.3.1",
     "react-native": "0.76.6",
     "react-native-splash-screen": "^3.3.0"

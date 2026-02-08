@@ -21,7 +21,7 @@ export class UpdateWorkSpaceCommand extends defineCommand<Workspace>(
     ExecutionType.SEND_AND_EXECUTE_SEPARATELY
 ) {}
 
-export class RestartApplicationCommand extends defineCommand<Workspace>(
+export class RestartApplicationCommand extends defineCommand<string>(
     BaseModuleCommandNames.RestartApplication,
     ExecutionType.SEND_AND_EXECUTE_SEPARATELY
 ) {}

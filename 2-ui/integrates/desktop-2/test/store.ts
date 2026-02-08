@@ -11,6 +11,7 @@ import {
     Workspace
 } from "@impos2/kernel-base";
 import {uiIntegrateDesktop2Module} from "../src";
+import {workspace} from "@impos2/workspace-dev";
 
 //待从原生层获取
 const deviceInfo: DeviceInfo = {
@@ -33,54 +34,6 @@ const deviceInfo: DeviceInfo = {
         orientation: "portrait",
         isMobile: false
     }]
-}
-
-
-const kernelApiServerAddress: ApiServerAddress = {
-    serverName: KERNEL_API_SERVER_NAME,
-    retryCount: 3,
-    retryInterval: 1000,
-    addresses: [
-        {
-            addressName: "主线路1",
-            baseURL: "http://127.0.0.1:999/kernel-server",
-            timeout: 3000
-        },
-        {
-            addressName: "主线路2",
-            baseURL: "http://localhost:9999/kernel-server",
-            timeout: 3000
-        }
-    ]
-}
-const kernelWSServerAddress: ApiServerAddress = {
-    serverName: KERNEL_WS_SERVER_NAME,
-    retryCount: 3,
-    retryInterval: 1000,
-    addresses: [
-        {
-            addressName: "主线路1",
-            baseURL: "ws://127.0.0.1:999/kernel-server",
-            timeout: 3000
-        },
-        {
-            addressName: "主线路2",
-            baseURL: "ws://localhost:9999/kernel-server",
-            timeout: 3000
-        }
-    ]
-}
-const workspace: Workspace = {
-    selectedWorkspace: "test",
-    workspaces: [
-        {
-            workspaceName: "test",
-            apiServerAddresses: [
-                kernelApiServerAddress,
-                kernelWSServerAddress
-            ]
-        }
-    ]
 }
 const preInitiatedState = {
     deviceStatus: {

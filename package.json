@@ -10,6 +10,7 @@
     "0-mock-server/kernel-server/web",
     "1-kernel/base",
     "1-kernel/modules/*",
+    "1-kernel/workspaces/*",
     "2-ui/cores/*",
     "2-ui/modules/*",
     "2-ui/integrates/*",

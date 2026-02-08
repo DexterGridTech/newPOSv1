@@ -104,12 +104,9 @@ export const AdminPanelModal: React.FC<ModalScreen<AdminPanelModalProps>> = Reac
     return (
         <View style={styles.modalOverlay}>
             <Animated.View style={[styles.backdropAnimated, { opacity: opacityAnim }]}>
-                <TouchableOpacity
+                <View
                     style={styles.backdrop}
-                    activeOpacity={1}
-                    onPress={handleClose}
-                    accessibilityLabel="关闭弹窗"
-                    accessibilityRole="button"
+                    accessibilityLabel="背景遮罩"
                 />
             </Animated.View>
 

@@ -43,6 +43,9 @@ export const instanceInfoSlice = createSlice({
         setDisplayMode: (state, action: PayloadAction<DisplayMode>) => {
             state.instance.displayMode = action.payload
         },
+        setWorkspace: (state, action: PayloadAction<Workspace>) => {
+            state.workspace = action.payload
+        },
         addSlave: (state, action: PayloadAction<{ name: string }>) => {
             const slaves = state.masterSlaves
             const existedSlave = slaves[action.payload.name]
