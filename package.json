@@ -31,12 +31,13 @@
     "android:port-forward": "node scripts/setup-android-port-forwarding.js",
     "android:port-list": "node scripts/setup-android-port-forwarding.js --list",
     "android:port-clear": "node scripts/setup-android-port-forwarding.js --clear",
+    "create-module": "node scripts/create-module-from-template.cjs",
     "-------": "---------------------------------------",
     "A:kernel-server": "corepack yarn workspace @impos2/kernel-server dev",
     "B:master-ws-server": "corepack yarn workspace @impos2/master-ws-server dev",
     "---------": "---------------------------------------",
-    "ui:module-device-activate-2": "corepack yarn workspace @impos2/ui-module-device-activate-2 web",
-    "ui:module-user-login-2": "corepack yarn workspace @impos2/ui-module-user-login-2 web",
+    "ui:module-device-activate": "yarn workspace @impos2/ui-module-device-activate web",
+    "ui:module-user-login": "corepack yarn workspace @impos2/ui-module-user-login web",
     "ui:module-system-admin": "corepack yarn workspace @impos2/ui-module-system-admin web",
     "ui:integrate-desktop-2": "corepack yarn workspace @impos2/integrate-desktop-2 web",
     "--------": "---------------------------------------",
@@ -50,6 +51,7 @@
     "lint": "turbo run lint"
   },
   "devDependencies": {
+    "inquirer": "^8.2.6",
     "turbo": "latest",
     "typescript": "^5.9.3"
   },

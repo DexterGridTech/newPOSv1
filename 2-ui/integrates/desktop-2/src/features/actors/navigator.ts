@@ -1,6 +1,6 @@
 import {ActivateDeviceSuccessCommand, CommandHandler, IActor} from "@impos2/kernel-base";
 import {NavigationCommand} from "@impos2/kernel-module-ui-navigation";
-import {loginDesktopScreenPart} from "@impos2/ui-module-user-login-2";
+import {loginDesktopScreenPart} from "@impos2/ui-module-user-login";
 
 
 class NavigatorActor extends IActor {

@@ -1,0 +1,78 @@
+{
+  "templateName": "ui-template-v1",
+  "templateType": "ui",
+  "displayName": "UI 模块模版 v1",
+  "description": "UI 层模块模版",
+  "targetLayer": "2-ui/modules",
+  "needsStartScript": true,
+  "startScriptPrefix": "ui:module",
+  "moduleExportPrefix": "ui",
+  "variables": [
+    {
+      "name": "packageName",
+      "displayName": "包名",
+      "description": "包的短名称（如 my-module）",
+      "required": true,
+      "example": "my-module"
+    },
+    {
+      "name": "displayName",
+      "displayName": "显示名称",
+      "description": "模块的显示名称（如 我的模块）",
+      "required": true,
+      "example": "我的模块"
+    },
+    {
+      "name": "description",
+      "displayName": "描述",
+      "description": "模块的功能描述",
+      "required": true,
+      "example": "这是一个示例模块，用于演示模块开发"
+    },
+    {
+      "name": "author",
+      "displayName": "作者",
+      "description": "模块作者",
+      "required": false,
+      "default": "",
+      "example": "Your Name"
+    },
+    {
+      "name": "version",
+      "displayName": "版本号",
+      "description": "初始版本号",
+      "required": false,
+      "default": "1.0.0",
+      "example": "1.0.0"
+    }
+  ],
+  "dependencies": {
+    "kernel": [
+      "@impos2/kernel-base",
+      "@impos2/kernel-module-ui-navigation"
+    ],
+    "ui": [
+      "@impos2/ui-core-base-2"
+    ]
+  },
+  "postCreateActions": [
+    {
+      "name": "installDependencies",
+      "displayName": "安装依赖",
+      "description": "运行 yarn install 安装依赖",
+      "default": true
+    },
+    {
+      "name": "addToRootScripts",
+      "displayName": "添加到根目录脚本",
+      "description": "在根目录 package.json 中添加启动脚本",
+      "default": true
+    },
+    {
+      "name": "openInEditor",
+      "displayName": "在编辑器中打开",
+      "description": "创建完成后在编辑器中打开",
+      "default": false
+    }
+  ]
+}

@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal } from 'rea
 import { ScreenMode } from "@impos2/kernel-base";
 import { ScreenPartRegistration } from "@impos2/kernel-module-ui-navigation";
 import { useLifecycle } from "@impos2/ui-core-base-2";
-import { systemAdminVariable } from "../variables";
+import { systemAdminVariable } from "../../ui-variables";
 import { moduleName } from '../../moduleName';
 import { useClearDataVersion } from "../../hooks";
 

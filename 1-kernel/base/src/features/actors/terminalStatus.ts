@@ -33,7 +33,7 @@ import {
 } from "../../types";
 import {terminalConnectionStatusActions, deviceStatusSlice, terminalInfoSlice} from "../slices";
 import {SlaveErrors, TerminalErrors} from "../errors";
-import {TerminalParameters} from "../parameter";
+import {TerminalParameters} from "../parameters";
 import { LOG_TAGS } from '../../types/core/logTags';
 import { moduleName } from '../../moduleName';
 

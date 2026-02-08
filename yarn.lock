@@ -2508,6 +2508,7 @@ __metadata:
     "@impos2/adapter-impos2-adapterv1": "*"
     "@impos2/integrate-desktop-2": "*"
     "@impos2/kernel-base": "*"
+    "@impos2/workspace-dev": "*"
     "@react-native-community/cli": 15.0.1
     "@react-native-community/cli-platform-android": 15.0.1
     "@react-native-community/cli-platform-ios": 15.0.1
@@ -2541,9 +2542,10 @@ __metadata:
     "@impos2/kernel-module-ui-navigation": "*"
     "@impos2/kernel-module-user": "*"
     "@impos2/ui-core-base-2": "*"
-    "@impos2/ui-module-device-activate-2": "*"
+    "@impos2/ui-module-device-activate": "*"
     "@impos2/ui-module-system-admin": "*"
     "@impos2/ui-module-user-login-2": "*"
+    "@impos2/workspace-dev": "*"
     "@reduxjs/toolkit": ^2.11.2
     "@types/react": ~18.3.12
     expo: ~54.0.31
@@ -2699,13 +2701,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/ui-module-device-activate-2@*, @impos2/ui-module-device-activate-2@workspace:2-ui/modules/device-activate-2":
+"@impos2/ui-module-device-activate@*, @impos2/ui-module-device-activate@workspace:2-ui/modules/device-activate":
   version: 0.0.0-use.local
-  resolution: "@impos2/ui-module-device-activate-2@workspace:2-ui/modules/device-activate-2"
+  resolution: "@impos2/ui-module-device-activate@workspace:2-ui/modules/device-activate"
   dependencies:
     "@impos2/kernel-base": "*"
     "@impos2/kernel-module-ui-navigation": "*"
-    "@impos2/kernel-module-user": "*"
     "@impos2/ui-core-base-2": "*"
     "@reduxjs/toolkit": ^2.11.2
     "@types/react": ~18.3.12
@@ -2753,6 +2754,29 @@ __metadata:
     "@impos2/kernel-module-ui-navigation": "*"
     "@impos2/kernel-module-user": "*"
     "@impos2/ui-core-base-2": "*"
+    "@impos2/workspace-dev": "*"
+    "@reduxjs/toolkit": ^2.11.2
+    "@types/react": ~18.3.12
+    expo: ~54.0.31
+    expo-status-bar: ~3.0.9
+    react: 18.3.1
+    react-dom: 18.3.1
+    react-native: 0.76.6
+    react-native-web: ^0.21.0
+    react-redux: ^9.1.0
+    redux-persist: ^6.0.0
+    reselect: ^5.1.0
+    typescript: ^5.9.3
+  languageName: unknown
+  linkType: soft
+
+"@impos2/ui-module-user-login@workspace:2-ui/modules/user-login":
+  version: 0.0.0-use.local
+  resolution: "@impos2/ui-module-user-login@workspace:2-ui/modules/user-login"
+  dependencies:
+    "@impos2/kernel-base": "*"
+    "@impos2/kernel-module-ui-navigation": "*"
+    "@impos2/ui-core-base-2": "*"
     "@reduxjs/toolkit": ^2.11.2
     "@types/react": ~18.3.12
     expo: ~54.0.31
@@ -2781,6 +2805,21 @@ __metadata:
     typescript: ^5.9.3
   languageName: unknown
   linkType: soft
+
+"@inquirer/external-editor@npm:^1.0.0":
+  version: 1.0.3
+  resolution: "@inquirer/external-editor@npm:1.0.3"
+  dependencies:
+    chardet: ^2.1.1
+    iconv-lite: ^0.7.0
+  peerDependencies:
+    "@types/node": ">=18"
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+  checksum: 9bd7a05247a00408c194648c74046d8a212df1e6b9fe0879b945ebfc35c2524e995e43f7ecd83f14d0bd4e31f985d18819efc31c27810e2c2b838ded7261431f
+  languageName: node
+  linkType: hard
 
 "@isaacs/balanced-match@npm:^4.0.1":
   version: 4.0.1
@@ -5786,7 +5825,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chalk@npm:^4.0.0, chalk@npm:^4.1.0, chalk@npm:^4.1.2":
+"chalk@npm:^4.0.0, chalk@npm:^4.1.0, chalk@npm:^4.1.1, chalk@npm:^4.1.2":
   version: 4.1.2
   resolution: "chalk@npm:4.1.2"
   dependencies:
@@ -5800,6 +5839,13 @@ __metadata:
   version: 1.0.2
   resolution: "char-regex@npm:1.0.2"
   checksum: b563e4b6039b15213114626621e7a3d12f31008bdce20f9c741d69987f62aeaace7ec30f6018890ad77b2e9b4d95324c9f5acfca58a9441e3b1dcdd1e2525d17
+  languageName: node
+  linkType: hard
+
+"chardet@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "chardet@npm:2.1.1"
+  checksum: 4e3dba2699018b79bb90a9562b5e5be27fcaab55250c12fa72f026b859fb24846396c346968546c14efc69b9f23aca3ef2b9816775012d08a4686ce3c362415c
   languageName: node
   linkType: hard
 
@@ -5907,6 +5953,13 @@ __metadata:
   version: 2.9.2
   resolution: "cli-spinners@npm:2.9.2"
   checksum: 1bd588289b28432e4676cb5d40505cfe3e53f2e4e10fbe05c8a710a154d6fe0ce7836844b00d6858f740f2ffe67cdc36e0fce9c7b6a8430e80e6388d5aa4956c
+  languageName: node
+  linkType: hard
+
+"cli-width@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "cli-width@npm:3.0.0"
+  checksum: 4c94af3769367a70e11ed69aa6095f1c600c0ff510f3921ab4045af961820d57c0233acfa8b6396037391f31b4c397e1f614d234294f979ff61430a6c166c3f6
   languageName: node
   linkType: hard
 
@@ -7846,6 +7899,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"figures@npm:^3.0.0":
+  version: 3.2.0
+  resolution: "figures@npm:3.2.0"
+  dependencies:
+    escape-string-regexp: ^1.0.5
+  checksum: 85a6ad29e9aca80b49b817e7c89ecc4716ff14e3779d9835af554db91bac41c0f289c418923519392a1e582b4d10482ad282021330cd045bb7b80c84152f2a2b
+  languageName: node
+  linkType: hard
+
 "file-entry-cache@npm:^6.0.1":
   version: 6.0.1
   resolution: "file-entry-cache@npm:6.0.1"
@@ -8657,6 +8719,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "impos2new@workspace:."
   dependencies:
+    inquirer: ^8.2.6
     turbo: latest
     typescript: ^5.9.3
   languageName: unknown
@@ -8699,6 +8762,29 @@ __metadata:
   dependencies:
     css-in-js-utils: ^3.1.0
   checksum: 07a72573dfdac5e08fa18f5ce71d922861716955e230175ac415db227d9ed49443c764356cb407a92f4c85b30ebf39604165260b4dfbf3196b7736d7332c5c06
+  languageName: node
+  linkType: hard
+
+"inquirer@npm:^8.2.6":
+  version: 8.2.7
+  resolution: "inquirer@npm:8.2.7"
+  dependencies:
+    "@inquirer/external-editor": ^1.0.0
+    ansi-escapes: ^4.2.1
+    chalk: ^4.1.1
+    cli-cursor: ^3.1.0
+    cli-width: ^3.0.0
+    figures: ^3.0.0
+    lodash: ^4.17.21
+    mute-stream: 0.0.8
+    ora: ^5.4.1
+    run-async: ^2.4.0
+    rxjs: ^7.5.5
+    string-width: ^4.1.0
+    strip-ansi: ^6.0.0
+    through: ^2.3.6
+    wrap-ansi: ^6.0.1
+  checksum: b7e39a04da31207826f675e2ff491bd35bb28efbe336e8fb49641d8353d4a312943514452fb0a23702e64f70c7e44188586880c902d67541aae579cd6564c3fb
   languageName: node
   linkType: hard
 
@@ -11026,6 +11112,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mute-stream@npm:0.0.8":
+  version: 0.0.8
+  resolution: "mute-stream@npm:0.0.8"
+  checksum: ff48d251fc3f827e5b1206cda0ffdaec885e56057ee86a3155e1951bc940fd5f33531774b1cc8414d7668c10a8907f863f6561875ee6e8768931a62121a531a1
+  languageName: node
+  linkType: hard
+
 "mz@npm:^2.7.0":
   version: 2.7.0
   resolution: "mz@npm:2.7.0"
@@ -12960,6 +13053,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"run-async@npm:^2.4.0":
+  version: 2.4.1
+  resolution: "run-async@npm:2.4.1"
+  checksum: a2c88aa15df176f091a2878eb840e68d0bdee319d8d97bbb89112223259cebecb94bc0defd735662b83c2f7a30bed8cddb7d1674eb48ae7322dc602b22d03797
+  languageName: node
+  linkType: hard
+
 "run-parallel@npm:^1.1.9":
   version: 1.2.0
   resolution: "run-parallel@npm:1.2.0"
@@ -13966,6 +14066,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"through@npm:^2.3.6":
+  version: 2.3.8
+  resolution: "through@npm:2.3.8"
+  checksum: a38c3e059853c494af95d50c072b83f8b676a9ba2818dcc5b108ef252230735c54e0185437618596c790bbba8fcdaef5b290405981ffa09dce67b1f1bf190cbd
+  languageName: node
+  linkType: hard
+
 "tinyglobby@npm:^0.2.11, tinyglobby@npm:^0.2.12, tinyglobby@npm:^0.2.15":
   version: 0.2.15
   resolution: "tinyglobby@npm:0.2.15"
@@ -14788,7 +14895,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrap-ansi@npm:^6.2.0":
+"wrap-ansi@npm:^6.0.1, wrap-ansi@npm:^6.2.0":
   version: 6.2.0
   resolution: "wrap-ansi@npm:6.2.0"
   dependencies:

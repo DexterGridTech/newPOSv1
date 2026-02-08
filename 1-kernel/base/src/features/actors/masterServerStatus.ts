@@ -36,7 +36,7 @@ import {
 import type {RootState} from "../rootState";
 import {MasterServerErrors} from "../errors";
 import {SlaveErrors} from "../errors";
-import {MasterParameters} from "../parameter";
+import {MasterParameters} from "../parameters";
 import { LOG_TAGS } from '../../types/core/logTags';
 import { moduleName } from '../../moduleName';
 

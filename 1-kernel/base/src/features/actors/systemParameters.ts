@@ -10,7 +10,7 @@ import {
 } from "../../core";
 import {UnitDataChangedCommand} from "../commands";
 import {RootState, UDG_SystemParameters} from "../rootState";
-import {parameterCategory} from "../parameter";
+import {parameterCategory} from "../parameters";
 import {systemParametersActions} from "../slices";
 import { LOG_TAGS } from '../../types/core/logTags';
 import { moduleName } from '../../moduleName';
