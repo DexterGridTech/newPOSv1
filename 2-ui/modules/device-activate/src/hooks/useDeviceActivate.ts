@@ -1,15 +1,13 @@
-import {useCallback, useEffect, useState} from 'react';
-import {ActivateDeviceCommand, logger, LOG_TAGS, useRequestStatus} from "@impos2/kernel-base";
+import {useCallback, useState} from 'react';
 import {
-    AlertCommand,
-    AlertInfo, createAlert,
-    createModelScreen,
-    OpenModalCommand,
-    useEditableUiVariable
+    ActivateDeviceCommand,
+    ClearUiVariablesCommand,
+    useEditableUiVariable,
+    useRequestStatus
 } from "@impos2/kernel-base";
 import {nanoid} from "@reduxjs/toolkit";
-import {deviceActivateVariable} from "../ui-variables";
-import {moduleName} from "../moduleName";
+import {deviceActivateVariable} from "../ui/deviceActivateVariables";
+
 export const useDeviceActivate = () => {
 
     const [requestId, setRequestId] = useState<string | null>(null);
@@ -48,9 +46,9 @@ export const useDeviceActivate = () => {
         [activationCode, activateStatus]
     );
 
-    const cleanup=useCallback(
-        ()=>{
-            setActivationCode("")
+    const cleanup = useCallback(
+        () => {
+            new ClearUiVariablesCommand({uiVariableKeys: [deviceActivateVariable.activationCode.key]})
         },
         [setActivationCode]
     )

@@ -43,6 +43,28 @@ class StoreEntry {
     }
 
     /**
+     * 类型安全的状态选择器
+     */
+    selectState<K extends keyof typeof KernelBaseStateNames>(stateKey: K) {
+        if (!this.store) {
+            throw new Error("StoreEntry not initialized");
+        }
+        const state = this.store.getState();
+        return state[KernelBaseStateNames[stateKey]];
+    }
+
+    /**
+     * 获取实例信息
+     */
+    getInstance() {
+        if (!this.store) {
+            throw new Error("StoreEntry not initialized");
+        }
+        const state = this.store.getState();
+        return state[KernelBaseStateNames.instanceInfo].instance;
+    }
+
+    /**
      * 分发action
      */
     dispatch(action: PayloadAction<any>): void {

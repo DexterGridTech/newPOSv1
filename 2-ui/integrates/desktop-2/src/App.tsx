@@ -1,5 +1,5 @@
 import React from 'react';
-import {desktopVariables} from "./variables/desktopVariables";
+import {desktopVariables} from "./ui/desktopVariables";
 import {LongPressCommand, ModalContainer, StackContainer, useLongPress} from "@impos2/ui-core-base-2";
 import {View} from "react-native";
 

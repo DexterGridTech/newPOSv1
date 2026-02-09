@@ -1,9 +1,9 @@
 import {useCallback, useEffect, useState} from 'react';
-import {useRequestStatus} from "@impos2/kernel-base";
+import {ClearUiVariablesCommand, useRequestStatus} from "@impos2/kernel-base";
 import {CloseModalCommand, useEditableUiVariable} from "@impos2/kernel-base";
 import {nanoid} from "@reduxjs/toolkit";
-import {systemAdminVariable} from "../ui-variables";
 import {AdminLoginCommand} from "../features/commands";
+import {systemAdminVariable} from "../ui/systemAdminVariables";
 
 export const useAdminLogin = (config: { modalId: string }) => {
     const {
@@ -24,15 +24,6 @@ export const useAdminLogin = (config: { modalId: string }) => {
 
     const loginStatus = useRequestStatus(requestId);
 
-    /**
-     * 组件生命周期管理
-     */
-    useEffect(() => {
-        // 组件挂载
-        return () => {
-            // 组件卸载
-        };
-    }, []); // 空依赖数组，只在挂载和卸载时执行
 
     /**
      * 关闭弹窗
@@ -77,7 +68,7 @@ export const useAdminLogin = (config: { modalId: string }) => {
     );
     const cleanup=useCallback(
         ()=>{
-            setPassword("")
+            new ClearUiVariablesCommand({uiVariableKeys: [systemAdminVariable.adminPassword.key]})
         },
         [setPassword]
     )

@@ -54,6 +54,9 @@ export const createAlert =
             id,
             props,
             partKey: defaultAlertPartKey,
+            name: "Alert",
+            title:"Alert",
+            description:"Alert",
             screenMode: [ScreenMode.DESKTOP, ScreenMode.MOBILE]
         }
     }

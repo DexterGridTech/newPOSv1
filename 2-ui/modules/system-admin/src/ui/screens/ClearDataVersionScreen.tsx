@@ -1,11 +1,9 @@
-import React, { useCallback, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal } from 'react-native';
-import { ScreenMode } from "@impos2/kernel-base";
-import { ScreenPartRegistration } from "@impos2/kernel-base";
-import { useLifecycle } from "@impos2/ui-core-base-2";
-import { systemAdminVariable } from "../../ui-variables";
-import { moduleName } from '../../moduleName';
-import { useClearDataVersion } from "../../hooks";
+import React, {useCallback} from 'react';
+import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {ScreenMode, ScreenPartRegistration} from "@impos2/kernel-base";
+import {useLifecycle} from "@impos2/ui-core-base-2";
+import {useClearDataVersion} from "../../hooks";
+import {systemAdminVariable} from "../systemAdminVariables";
 
 /**
  * 清除数据版本页面
@@ -16,13 +14,11 @@ import { useClearDataVersion } from "../../hooks";
  * 3. 清除后自动重启应用
  */
 export const ClearDataVersionScreen: React.FC = () => {
-    const [showConfirmModal, setShowConfirmModal] = useState(false);
 
     // 使用 hook 管理清除数据逻辑
     const {
         currentWorkspace,
         dataVersion,
-        isLoading,
         handleClearData,
     } = useClearDataVersion();
 
@@ -31,28 +27,10 @@ export const ClearDataVersionScreen: React.FC = () => {
         isVisible: true,
         componentName: 'ClearDataVersionScreen',
         onInitiated: useCallback(() => {
-            console.log(`[${moduleName}] ClearDataVersionScreen 初始化完成`);
         }, []),
         onClearance: useCallback(() => {
-            console.log(`[${moduleName}] ClearDataVersionScreen 清理资源`);
         }, []),
     });
-
-    // 显示确认对话框
-    const handleShowConfirm = useCallback(() => {
-        setShowConfirmModal(true);
-    }, []);
-
-    // 取消清除
-    const handleCancel = useCallback(() => {
-        setShowConfirmModal(false);
-    }, []);
-
-    // 确认清除
-    const handleConfirm = useCallback(() => {
-        setShowConfirmModal(false);
-        handleClearData();
-    }, [handleClearData]);
 
     return (
         <View style={styles.container}>
@@ -71,7 +49,7 @@ export const ClearDataVersionScreen: React.FC = () => {
                         <Text style={styles.infoLabel}>当前工作空间</Text>
                         <Text style={styles.infoValue}>{currentWorkspace}</Text>
                     </View>
-                    <View style={styles.divider} />
+                    <View style={styles.divider}/>
                     <View style={styles.infoRow}>
                         <Text style={styles.infoLabel}>数据版本</Text>
                         <Text style={styles.infoValueHighlight}>{dataVersion}</Text>
@@ -96,46 +74,13 @@ export const ClearDataVersionScreen: React.FC = () => {
             <View style={styles.footer}>
                 <TouchableOpacity
                     style={styles.clearButton}
-                    onPress={handleShowConfirm}
-                    disabled={isLoading}
+                    onPress={handleClearData}
                 >
                     <Text style={styles.clearButtonText}>
-                        {isLoading ? '正在清除...' : '清除数据'}
+                        清除数据
                     </Text>
                 </TouchableOpacity>
             </View>
-
-            {/* 确认对话框 */}
-            <Modal
-                visible={showConfirmModal}
-                transparent={true}
-                animationType="fade"
-                onRequestClose={handleCancel}
-            >
-                <View style={styles.modalOverlay}>
-                    <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>确认清除数据</Text>
-                        <Text style={styles.modalMessage}>
-                            确定要清除数据吗？{'\n'}
-                            清除后应用将自动重启。
-                        </Text>
-                        <View style={styles.modalButtons}>
-                            <TouchableOpacity
-                                style={[styles.modalButton, styles.modalButtonCancel]}
-                                onPress={handleCancel}
-                            >
-                                <Text style={styles.modalButtonTextCancel}>取消</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={[styles.modalButton, styles.modalButtonConfirm]}
-                                onPress={handleConfirm}
-                            >
-                                <Text style={styles.modalButtonTextConfirm}>确认清除</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </View>
-            </Modal>
         </View>
     );
 };

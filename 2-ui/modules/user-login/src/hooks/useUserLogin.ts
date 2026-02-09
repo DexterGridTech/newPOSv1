@@ -1,10 +1,9 @@
 import {useCallback, useState} from 'react';
-import {logger, LOG_TAGS, useRequestStatus} from "@impos2/kernel-base";
-import {useEditableUiVariable} from "@impos2/kernel-base";
-import {userLoginVariable} from "../ui-variables";
+import {ClearUiVariablesCommand, LOG_TAGS, logger, useEditableUiVariable, useRequestStatus} from "@impos2/kernel-base";
 import {nanoid} from "@reduxjs/toolkit";
-import { UserPasswordLoginCommand} from "@impos2/kernel-module-user";
+import {UserPasswordLoginCommand} from "@impos2/kernel-module-user";
 import {moduleName} from "../moduleName";
+import {userLoginVariable} from "../ui/userLoginVariables";
 
 // 用户登录Hook
 export const useUserLogin = () => {
@@ -17,8 +16,8 @@ export const useUserLogin = () => {
     });
 
     const [requestId, setRequestId] = useState<string | null>(null);
-    const newRequest=()=>{
-        const random=nanoid(8)
+    const newRequest = () => {
+        const random = nanoid(8)
         setRequestId(random)
         return random
     }
@@ -47,19 +46,24 @@ export const useUserLogin = () => {
     const handleSubmit = useCallback(async () => {
         if (loginStatus?.status === 'started')
             return;
-        logger.log([moduleName, LOG_TAGS.System, 'useUserLogin'], '提交登录', { userId, password });
+        logger.log([moduleName, LOG_TAGS.System, 'useUserLogin'], '提交登录', {userId, password});
 
         new UserPasswordLoginCommand({userId: userId, password: password})
-            .executeFromRequest( newRequest());
+            .executeFromRequest(newRequest());
     }, [userId, password, loginStatus]);
 
 
-    const cleanup=useCallback(
-        ()=>{
-            setUserId("")
-            setPassword("")
+    const cleanup = useCallback(
+        () => {
+
+            new ClearUiVariablesCommand({
+                uiVariableKeys: [
+                    userLoginVariable.userId.key,
+                    userLoginVariable.password.key,
+                ]
+            })
         },
-        [setUserId,setPassword]
+        [setUserId, setPassword]
     )
 
     return {

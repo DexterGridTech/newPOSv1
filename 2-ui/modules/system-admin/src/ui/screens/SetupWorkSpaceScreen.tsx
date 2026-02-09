@@ -3,9 +3,9 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator
 import { ScreenMode } from "@impos2/kernel-base";
 import { ScreenPartRegistration } from "@impos2/kernel-base";
 import { useLifecycle } from "@impos2/ui-core-base-2";
-import { systemAdminVariable } from "../../ui-variables";
 import { moduleName } from '../../moduleName';
 import { useSetupWorkspace } from "../../hooks";
+import {systemAdminVariable} from "../systemAdminVariables";
 
 /**
  * 工作空间设置页面

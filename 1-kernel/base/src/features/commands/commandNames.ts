@@ -48,6 +48,7 @@ export const BaseModuleCommandNames = {
     // UI Navigation 相关
     Navigation: "NavigationCommand",
     SetUiVariables: "SetUiVariablesCommand",
+    ClearUiVariables: "ClearUiVariablesCommand",
     OpenModal: "OpenModalCommand",
     CloseModal: "CloseModalCommand",
     Alert: "AlertCommand",

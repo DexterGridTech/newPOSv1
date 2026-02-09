@@ -3,7 +3,7 @@ import {
     AddSlaveCommand,
     NextDataVersionCommand,
     RegisterSlaveCommand,
-    RemoveSlaveCommand,
+    RemoveSlaveCommand, RestartApplicationCommand,
     SetSlaveInfoCommand,
     SlaveAddedCommand,
     StartToConnectMasterServerCommand,
@@ -14,7 +14,6 @@ import {instanceInfoActions} from "../slices";
 import {RootState} from "../rootState";
 import {InstanceErrors, ModifySlaveErrors} from "../errors";
 import {KernelBaseStateNames} from "../../types/stateNames";
-import {selectState} from "../../hooks/accessToState";
 
 
 class InstanceInfoActor extends IActor {
@@ -22,6 +21,7 @@ class InstanceInfoActor extends IActor {
     private async handleNextDataVersion(command: NextDataVersionCommand) {
         try {
             await storage.setToNextDataVersion()
+            new RestartApplicationCommand("数据已清除").executeFromParent(command);
         } catch (e) {
             throw new AppError(InstanceErrors.STORAGE_PROCESS_ERROR, JSON.stringify(command.payload), command)
         }
@@ -39,7 +39,7 @@ class InstanceInfoActor extends IActor {
 
     @CommandHandler(AddSlaveCommand)
     private async handleAddSlave(command: AddSlaveCommand) {
-        const instanceInfo = selectState('instanceInfo')
+        const instanceInfo = storeEntry.selectState('instanceInfo')
         if (instanceInfo.masterSlaves.hasOwnProperty(command.payload.name)) {
             throw new AppError(ModifySlaveErrors.SLAVE_EXISTED, command.payload.name, command)
         } else {
@@ -50,7 +50,7 @@ class InstanceInfoActor extends IActor {
 
     @CommandHandler(RemoveSlaveCommand)
     private async handleRemoveSlave(command: RemoveSlaveCommand) {
-        const instanceInfo = selectState('instanceInfo')
+        const instanceInfo = storeEntry.selectState('instanceInfo')
         if (!instanceInfo.masterSlaves.hasOwnProperty(command.payload.name)) {
             throw new AppError(ModifySlaveErrors.SLAVE_NOT_EXISTED, command.payload.name, command)
         } else if (instanceInfo.masterSlaves[command.payload.name].embedded) {

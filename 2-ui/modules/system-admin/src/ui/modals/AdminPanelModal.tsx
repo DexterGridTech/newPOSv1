@@ -1,17 +1,18 @@
-import React, { useCallback, useMemo } from "react";
-import {Animated, Dimensions, StyleSheet, Text, TouchableOpacity, View, ScrollView} from "react-native";
+import React, {useCallback, useMemo} from "react";
+import {Animated, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {
-    ModalScreen,
-    ScreenPartRegistration,
+    ClearUiVariablesCommand,
     getScreenPartsByContainerKey,
+    ModalScreen,
     NavigationCommand,
+    ScreenMode,
+    ScreenPartRegistration,
     useChildScreenPart,
 } from "@impos2/kernel-base";
-import {ScreenMode} from "@impos2/kernel-base";
 import {CloseModalCommand} from "@impos2/kernel-base/";
-import { useModalAnimation, StackContainer, useLifecycle } from "@impos2/ui-core-base-2";
-import { moduleName } from '../../moduleName';
-import { systemAdminVariable } from "../../ui-variables";
+import {StackContainer, useLifecycle, useModalAnimation} from "@impos2/ui-core-base-2";
+import {moduleName} from '../../moduleName';
+import {systemAdminVariable} from "../systemAdminVariables";
 
 /**
  * 管理员面板 Modal 组件 - 企业级设计
@@ -39,7 +40,7 @@ export interface AdminPanelModalProps {
 export const AdminPanelModal: React.FC<ModalScreen<AdminPanelModalProps>> = React.memo((model) => {
 
     // 使用通用的 Modal 动画 Hook
-    const { scaleAnim, opacityAnim, isVisible } = useModalAnimation(model.open, model.id, {
+    const {scaleAnim, opacityAnim, isVisible} = useModalAnimation(model.open, model.id, {
         modalName: 'AdminPanelModal',
         moduleName,
         openDuration: 200,
@@ -70,7 +71,11 @@ export const AdminPanelModal: React.FC<ModalScreen<AdminPanelModalProps>> = Reac
         onInitiated: useCallback(() => {
         }, [model.id]),
         onClearance: useCallback(() => {
-            // 可以在这里添加其他清理逻辑，如重置选中状态等
+            new ClearUiVariablesCommand({
+                uiVariableKeys: [
+                    systemAdminVariable.systemAdminPanel.key,
+                ]
+            })
         }, [model.id]),
     });
 
@@ -103,7 +108,7 @@ export const AdminPanelModal: React.FC<ModalScreen<AdminPanelModalProps>> = Reac
      */
     return (
         <View style={styles.modalOverlay}>
-            <Animated.View style={[styles.backdropAnimated, { opacity: opacityAnim }]}>
+            <Animated.View style={[styles.backdropAnimated, {opacity: opacityAnim}]}>
                 <View
                     style={styles.backdrop}
                     accessibilityLabel="背景遮罩"
@@ -166,7 +171,7 @@ export const AdminPanelModal: React.FC<ModalScreen<AdminPanelModalProps>> = Reac
 
                     {/* Right Content Area - StackContainer */}
                     <View style={styles.contentArea}>
-                        <StackContainer containerPart={systemAdminVariable.systemAdminPanel} />
+                        <StackContainer containerPart={systemAdminVariable.systemAdminPanel}/>
                     </View>
                 </View>
             </Animated.View>
@@ -175,8 +180,8 @@ export const AdminPanelModal: React.FC<ModalScreen<AdminPanelModalProps>> = Reac
 }, (prevProps, nextProps) => {
     // 自定义比较函数，优化重渲染
     return prevProps.id === nextProps.id &&
-           prevProps.open === nextProps.open &&
-           prevProps.partKey === nextProps.partKey;
+        prevProps.open === nextProps.open &&
+        prevProps.partKey === nextProps.partKey;
 });
 
 // 设计系统常量

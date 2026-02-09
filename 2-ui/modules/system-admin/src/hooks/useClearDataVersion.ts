@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState, NextDataVersionCommand, RestartApplicationCommand } from '@impos2/kernel-base';
-import { storage } from '@impos2/kernel-base';
+import {useCallback, useEffect, useState} from 'react';
+import {useSelector} from 'react-redux';
+import {AlertCommand, BaseModuleCommandNames, createAlert, RootState, storage} from '@impos2/kernel-base';
+import {nanoid} from "@reduxjs/toolkit";
 
 /**
  * 清除数据版本 Hook
@@ -14,7 +14,6 @@ import { storage } from '@impos2/kernel-base';
  */
 export const useClearDataVersion = () => {
     const [dataVersion, setDataVersion] = useState<number>(0);
-    const [isLoading, setIsLoading] = useState(false);
 
     // 从 Redux 获取当前工作空间
     const currentWorkspace = useSelector((state: RootState) =>
@@ -33,28 +32,27 @@ export const useClearDataVersion = () => {
 
     // 组件挂载时加载数据版本
     useEffect(() => {
-        loadDataVersion();
+        loadDataVersion().then();
     }, [loadDataVersion]);
 
     // 清除数据处理函数
     const handleClearData = useCallback(async () => {
-        setIsLoading(true);
-        try {
-            // 执行 NextDataVersionCommand
-            await new NextDataVersionCommand().executeInternally();
 
-            // 重启应用
-            new RestartApplicationCommand("数据已清除").executeInternally();
-        } catch (error) {
-            console.error('清除数据失败:', error);
-            setIsLoading(false);
-        }
+        const alertModel = createAlert(nanoid(8), {
+            title: "危险",
+            message: "清除后数据将无法恢复",
+            confirmText: "确认",
+            confirmCommandName: BaseModuleCommandNames.NextDataVersion,
+            confirmCommandPayload: {},
+            cancelText: "取消",
+        })
+        new AlertCommand({model: alertModel}).executeFromRequest(nanoid(8));
+
     }, []);
 
     return {
         currentWorkspace,
         dataVersion,
-        isLoading,
         handleClearData,
     };
 };

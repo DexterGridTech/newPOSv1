@@ -1,17 +1,13 @@
 import React, {useCallback} from 'react';
-import {useDeviceActivate} from '../../hooks';
 import {ActivateForm} from '../components';
 import {
     currentState,
-    instanceInfoSlice,
-    InstanceMode, LOG_TAGS, logger,
+    InstanceMode,
+    KernelBaseStateNames,
     RootState,
     ScreenMode,
     ScreenPartRegistration,
-    terminalInfoSlice,
-    KernelBaseStateNames,
 } from "@impos2/kernel-base";
-import {moduleName} from "../../moduleName";
 import {useLifecycle} from "@impos2/ui-core-base-2";
 
 export const ActivateDesktopScreen: React.FC = () => {
@@ -25,7 +21,7 @@ export const ActivateDesktopScreen: React.FC = () => {
     });
 
     return (
-        <ActivateForm />
+        <ActivateForm/>
     );
 };
 

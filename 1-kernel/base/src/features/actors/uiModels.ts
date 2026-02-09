@@ -1,5 +1,4 @@
-import {CommandHandler, dispatchSimpleAction, IActor} from "../../core";
-import {selectInstance} from "../../hooks/accessToState";
+import {CommandHandler, dispatchSimpleAction, IActor, storeEntry} from "../../core";
 import {AlertCommand, CloseModalCommand, OpenModalCommand} from "../commands/shared";
 import {uiModelsActions} from "../slices/uiModals";
 
@@ -7,7 +6,7 @@ import {uiModelsActions} from "../slices/uiModals";
 class UiModelActor extends IActor {
     @CommandHandler(OpenModalCommand)
     private async handleOpenModal(command: OpenModalCommand) {
-        const instanceMode = selectInstance().instanceMode
+        const instanceMode = storeEntry.getInstance().instanceMode
         dispatchSimpleAction(uiModelsActions.openModal({
             instanceMode: instanceMode,
             model: command.payload.model
@@ -16,7 +15,7 @@ class UiModelActor extends IActor {
 
     @CommandHandler(CloseModalCommand)
     private async handleCloseModal(command: CloseModalCommand) {
-        const instanceMode = selectInstance().instanceMode
+        const instanceMode = storeEntry.getInstance().instanceMode
         dispatchSimpleAction(uiModelsActions.closeModal({
             instanceMode: instanceMode,
             modelId: command.payload.modelId
@@ -25,7 +24,7 @@ class UiModelActor extends IActor {
 
     @CommandHandler(AlertCommand)
     private async handleAlert(command: AlertCommand) {
-        const instanceMode = selectInstance().instanceMode
+        const instanceMode = storeEntry.getInstance().instanceMode
         dispatchSimpleAction(uiModelsActions.openModal({
             instanceMode: instanceMode,
             model: command.payload.model
