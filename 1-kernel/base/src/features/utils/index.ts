@@ -1,2 +1,3 @@
 
-export * from './syncStateToSlave'
+export * from './syncStateToSlave';
+export * from './time';

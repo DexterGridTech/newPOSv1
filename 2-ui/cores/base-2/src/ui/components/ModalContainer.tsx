@@ -1,5 +1,5 @@
-import React, {useCallback, useEffect, useMemo, useRef} from "react";
-import {getScreenPartComponentType, LOG_TAGS, logger, ModalScreen, useUiModels} from "@impos2/kernel-base";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {getScreenPartComponentType, LOG_TAGS, logger, ModalScreen, useUiModels, formattedTime} from "@impos2/kernel-base";
 import {moduleName} from "../../moduleName";
 
 /**
@@ -8,6 +8,7 @@ import {moduleName} from "../../moduleName";
 interface ModalChild {
     ComponentType: React.ComponentType<any>;
     model: ModalScreen<any>;
+    isClosing: boolean; // 标记是否正在关闭（播放关闭动画）
 }
 
 /**
@@ -18,10 +19,14 @@ interface ModalChild {
  * 2. 监听 Modal 列表变化并更新页面
  * 3. 管理组件生命周期和资源释放
  * 4. 提供详细的错误信息和调试日志
+ * 5. 处理 Modal 关闭动画：当 Modal 从 state 中删除时，先播放关闭动画，然后再从视图中移除
  */
 export const ModalContainer: React.FC = React.memo(() => {
     // 获取当前所有 Modal
     const models = useUiModels();
+
+    // 使用 state 管理正在关闭的 Modal（需要播放关闭动画）
+    const [closingModals, setClosingModals] = useState<Map<string, ModalScreen<any>>>(new Map());
 
     // 使用 ref 追踪上一次的 models，用于检测变化
     const prevModelsRef = useRef<ModalScreen<any>[]>([]);
@@ -32,11 +37,14 @@ export const ModalContainer: React.FC = React.memo(() => {
     // 使用 ref 追踪当前显示的 Modal IDs
     const currentModalIdsRef = useRef<Set<string>>(new Set());
 
+    // 关闭动画时长（毫秒）
+    const CLOSE_ANIMATION_DURATION = 800;
+
     /**
      * 打印详细的 Modal 信息
      */
     const logModalInfo = useCallback((model: ModalScreen<any>, action: 'open' | 'close') => {
-        const timestamp = new Date().toISOString();
+        const timestamp = formattedTime();
         const modalInfo = {
             action,
             timestamp,
@@ -54,7 +62,7 @@ export const ModalContainer: React.FC = React.memo(() => {
      */
     const logComponentNotFound = useCallback((model: ModalScreen<any>) => {
         const errorInfo = {
-            timestamp: new Date().toISOString(),
+            timestamp: formattedTime(),
             id: model.id || 'undefined',
             partKey: model.partKey || 'undefined',
             props: model.props || {},
@@ -73,39 +81,55 @@ export const ModalContainer: React.FC = React.memo(() => {
     }, []);
 
     /**
-     * 使用 useMemo 缓存 Modal 子项列表，避免重复处理
+     * 使用 useMemo 缓存 Modal 子项列表，包含正在显示的和正在关闭的
      */
     const children = useMemo<ModalChild[]>(() => {
-        if (!models || models.length === 0) {
-            return [];
-        }
-
         const validChildren: ModalChild[] = [];
 
-        models.forEach((model) => {
-            if (!model || !model.partKey) {
-                logger.warn([moduleName, LOG_TAGS.UI, 'ModalContainer'], 'Invalid model', {model});
-                return;
-            }
+        // 1. 处理当前显示的 Modal
+        if (models && models.length > 0) {
+            models.forEach((model) => {
+                if (!model || !model.partKey) {
+                    logger.warn([moduleName, LOG_TAGS.UI, 'ModalContainer'], 'Invalid model', {model});
+                    return;
+                }
 
+                const ComponentType = getScreenPartComponentType(model.partKey);
+
+                if (!ComponentType) {
+                    logComponentNotFound(model);
+                    return;
+                }
+
+                validChildren.push({
+                    ComponentType,
+                    model,
+                    isClosing: false,
+                });
+            });
+        }
+
+        // 2. 处理正在关闭的 Modal（播放关闭动画）
+        closingModals.forEach((model, id) => {
             const ComponentType = getScreenPartComponentType(model.partKey);
 
-            if (!ComponentType) {
-                logComponentNotFound(model);
-                return;
+            if (ComponentType) {
+                validChildren.push({
+                    ComponentType,
+                    model: {
+                        ...model,
+                        open: false, // 设置 open 为 false，触发关闭动画
+                    },
+                    isClosing: true,
+                });
             }
-
-            validChildren.push({
-                ComponentType,
-                model
-            });
         });
 
         return validChildren;
-    }, [models, logComponentNotFound]);
+    }, [models, closingModals, logComponentNotFound]);
 
     /**
-     * 监听 Modal 列表变化
+     * 监听 Modal 列表变化，处理关闭动画
      */
     useEffect(() => {
         if (!isMountedRef.current) return;
@@ -128,15 +152,32 @@ export const ModalContainer: React.FC = React.memo(() => {
             }
         });
 
-        // 检测关闭的 Modal
+        // 检测关闭的 Modal - 不立即删除，而是先播放关闭动画
         prevIds.forEach((id) => {
             if (!currentIds.has(id)) {
                 const model = prevModels.find(m => m.id === id);
                 if (model) {
                     logModalInfo(model, 'close');
-                    if (id) {
-                        currentModalIdsRef.current.delete(id);
-                    }
+
+                    // 将 Modal 添加到 closingModals，开始播放关闭动画
+                    setClosingModals((prev) => {
+                        const newMap = new Map(prev);
+                        newMap.set(id as string, model);
+                        return newMap;
+                    });
+
+                    // 在动画时长后，从 closingModals 中移除
+                    setTimeout(() => {
+                        setClosingModals((prev) => {
+                            const newMap = new Map(prev);
+                            newMap.delete(id as string);
+                            return newMap;
+                        });
+
+                        if (id) {
+                            currentModalIdsRef.current.delete(id);
+                        }
+                    }, CLOSE_ANIMATION_DURATION);
                 }
             }
         });
@@ -146,13 +187,14 @@ export const ModalContainer: React.FC = React.memo(() => {
             logger.log([moduleName, LOG_TAGS.UI, 'ModalContainer'], 'Modal count changed', {
                 from: prevModels.length,
                 to: currentModels.length,
-                timestamp: new Date().toISOString()
+                closingCount: closingModals.size,
+                timestamp: formattedTime()
             });
         }
 
         // 更新 ref
         prevModelsRef.current = currentModels;
-    }, [models, logModalInfo]);
+    }, [models, logModalInfo, closingModals.size, CLOSE_ANIMATION_DURATION]);
 
     /**
      * 组件挂载时的生命周期
@@ -162,7 +204,7 @@ export const ModalContainer: React.FC = React.memo(() => {
 
         logger.debug([moduleName, LOG_TAGS.UI, 'ModalContainer'], 'Container mounted', {
             initialModalCount: models.length,
-            timestamp: new Date().toISOString()
+            timestamp: formattedTime()
         });
 
         // 组件卸载时的清理函数
@@ -173,13 +215,14 @@ export const ModalContainer: React.FC = React.memo(() => {
             if (currentModalIdsRef.current.size > 0) {
                 logger.debug([moduleName, LOG_TAGS.UI, 'ModalContainer'], 'Container unmounting', {
                     openModals: Array.from(currentModalIdsRef.current),
-                    timestamp: new Date().toISOString()
+                    timestamp: formattedTime()
                 });
             }
 
-            // 清理 refs
+            // 清理 refs 和 state
             prevModelsRef.current = [];
             currentModalIdsRef.current.clear();
+            setClosingModals(new Map());
 
             logger.debug([moduleName, LOG_TAGS.UI, 'ModalContainer'], 'Container unmounted and resources released');
         };

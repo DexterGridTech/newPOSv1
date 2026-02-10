@@ -1,6 +1,6 @@
 import React, {useCallback} from 'react';
-import {ActivityIndicator, Dimensions, StyleSheet, Text, TextInput, TouchableOpacity, View,} from 'react-native';
-import {useLifecycle} from "@impos2/ui-core-base-2";
+import {ActivityIndicator, Dimensions, StyleSheet, Text, TouchableOpacity, View,} from 'react-native';
+import {FancyInput, useLifecycle} from "@impos2/ui-core-base-2";
 import {useDeviceActivate} from "../../hooks";
 
 /**
@@ -61,19 +61,16 @@ export const ActivateForm: React.FC = () => {
                         hasError && styles.inputWrapperError,
                         isValidLength && !hasError && styles.inputWrapperSuccess
                     ]}>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="请输入至少6位激活码"
-                            placeholderTextColor="#94A3B8"
+                        <FancyInput
                             value={activationCode}
                             onChangeText={handleActivationCodeChange}
-                            onFocus={() => setIsFocused(true)}
-                            onBlur={() => setIsFocused(false)}
+                            keyboardType="full"
+                            onSubmit={() => {
+                            }}
                             editable={!isLoading}
-                            autoCapitalize="none"
-                            autoCorrect={false}
-                            accessibilityLabel="激活码输入框"
-                            accessibilityHint="请输入至少6位激活码"
+                            placeholder="请输入至少6位激活码"
+                            placeholderTextColor="#94A3B8"
+                            style={styles.input}
                         />
                         {isValidLength && !hasError && (
                             <Text style={styles.successIndicator}>✓</Text>

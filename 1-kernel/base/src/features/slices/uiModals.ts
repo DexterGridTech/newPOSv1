@@ -37,15 +37,11 @@ export const uiModalsSlice = createSlice({
                 props: model.props,
                 open: true,
             });
-
-            // 清理已关闭的模型（垃圾回收）
-            state[instanceMode] = models.filter(m => m.open);
         },
         closeModal: (state, action: PayloadAction<{ modelId: string, instanceMode: InstanceMode }>) => {
-            const models = state[action.payload.instanceMode]
-            const find = models.find(model => model.id === action.payload.modelId)
-            if (find)
-                find.open = false
+            const { modelId, instanceMode } = action.payload;
+            const models = state[instanceMode];
+            state[instanceMode] = models.filter(model => model.id !== modelId);
         }
     }
 })

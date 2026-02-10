@@ -15,14 +15,14 @@ export {registerStateToPersist, registerStateToSync};
  * Store注册表 - 统一管理所有store相关的访问和依赖注入
  */
 class StoreEntry {
-    private store: EnhancedStore<any> | null = null;
+    private store: EnhancedStore | null = null;
     private syncStateToSlaveFunc: ((key: string, diff: any, meta: any) => Promise<void>) | null = null;
 
     /**
      * 初始化注册表（只能调用一次）
      */
     initialize(
-        store: EnhancedStore<any>,
+        store: EnhancedStore,
         syncStateToSlave: (key: string, diff: any, meta: any) => Promise<void>
     ): void {
         if (this.store) {

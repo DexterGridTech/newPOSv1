@@ -2,6 +2,7 @@ import http from 'http';
 import url from 'url';
 import WebSocket, { WebSocketServer } from 'ws';
 import { nanoid } from 'nanoid';
+import { format } from 'date-fns';
 import { DeviceConnectionManager } from './DeviceConnectionManager';
 import { Logger } from './Logger';
 import { ServerConfig, mergeConfig } from './config';
@@ -193,7 +194,7 @@ export class MasterSlaveWebSocketServer {
    */
   private handleHealthCheck(req: http.IncomingMessage, res: http.ServerResponse) {
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ status: 'ok', timestamp: new Date().toISOString() }));
+    res.end(JSON.stringify({ status: 'ok', timestamp: format(new Date(), 'yyyy-M-d HH:mm:ss SSS') }));
   }
 
   /**
@@ -391,7 +392,7 @@ export class MasterSlaveWebSocketServer {
         data: {
           deviceId: slaveInfo.deviceId,
           deviceName: slaveInfo.deviceName,
-          connectedAt: new Date().toISOString()
+          connectedAt: format(new Date(), 'yyyy-M-d HH:mm:ss SSS')
         }
       };
 
@@ -413,7 +414,7 @@ export class MasterSlaveWebSocketServer {
         data: {
           deviceId: slaveInfo.deviceId,
           deviceName: slaveInfo.deviceName,
-          disconnectedAt: new Date().toISOString()
+          disconnectedAt: format(new Date(), 'yyyy-M-d HH:mm:ss SSS')
         }
       };
 

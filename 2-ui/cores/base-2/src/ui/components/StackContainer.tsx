@@ -2,7 +2,8 @@ import {
     getScreenPartComponentType,
     ScreenPart,
     UIVariable,
-    useChildScreenPart
+    useChildScreenPart,
+    formattedTime
 } from "@impos2/kernel-base";
 import React, { useEffect, useRef, useMemo, useCallback } from "react";
 import { EmptyScreen } from "../screens/EmptyScreen";
@@ -41,7 +42,7 @@ export const StackContainer: React.FC<StackContainerProps> = React.memo(({
      * 打印详细的 child 信息
      */
     const logChildInfo = useCallback((child: ScreenPart, action: 'mount' | 'update' | 'unmount') => {
-        const timestamp = new Date().toISOString();
+        const timestamp = formattedTime();
         const childInfo = {
             action,
             timestamp,
@@ -59,7 +60,7 @@ export const StackContainer: React.FC<StackContainerProps> = React.memo(({
      */
     const logComponentNotFound = useCallback((child: ScreenPart) => {
         const errorInfo = {
-            timestamp: new Date().toISOString(),
+            timestamp: formattedTime(),
             partKey: child?.partKey || 'undefined',
             containerPartKey: containerPart?.key || 'undefined',
             props: child?.props || {},
@@ -116,7 +117,7 @@ export const StackContainer: React.FC<StackContainerProps> = React.memo(({
             logger.log([moduleName, LOG_TAGS.UI, 'StackContainer'], 'Child changed', {
                 from: prevChild.partKey,
                 to: currentChild.partKey,
-                timestamp: new Date().toISOString()
+                timestamp: formattedTime()
             });
 
             logChildInfo(currentChild, 'update');
@@ -138,9 +139,9 @@ export const StackContainer: React.FC<StackContainerProps> = React.memo(({
     useEffect(() => {
         isMountedRef.current = true;
 
-        logger.debug([moduleName, LOG_TAGS.UI, 'StackContainer'], 'Container mounted', {
+        logger.log([moduleName, LOG_TAGS.UI, 'StackContainer'], 'Container mounted', {
             containerPartKey: containerPart?.key || 'undefined',
-            timestamp: new Date().toISOString()
+            timestamp: formattedTime()
         });
 
         // 组件卸载时的清理函数
@@ -149,9 +150,9 @@ export const StackContainer: React.FC<StackContainerProps> = React.memo(({
 
             // 记录卸载信息
             if (currentComponentRef.current) {
-                logger.debug([moduleName, LOG_TAGS.UI, 'StackContainer'], 'Container unmounting', {
+                logger.log([moduleName, LOG_TAGS.UI, 'StackContainer'], 'Container unmounting', {
                     lastComponent: currentComponentRef.current,
-                    timestamp: new Date().toISOString()
+                    timestamp: formattedTime()
                 });
             }
 
@@ -159,7 +160,7 @@ export const StackContainer: React.FC<StackContainerProps> = React.memo(({
             prevChildRef.current = null;
             currentComponentRef.current = null;
 
-            logger.debug([moduleName, LOG_TAGS.UI, 'StackContainer'], 'Container unmounted and resources released');
+            logger.log([moduleName, LOG_TAGS.UI, 'StackContainer'], 'Container unmounted and resources released');
         };
     }, [containerPart]);
 

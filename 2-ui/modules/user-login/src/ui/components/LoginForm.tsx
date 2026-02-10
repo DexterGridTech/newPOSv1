@@ -1,7 +1,7 @@
 import React, {useCallback, useState} from 'react';
-import {ActivityIndicator, Dimensions, StyleSheet, Text, TextInput, TouchableOpacity, View,} from 'react-native';
+import {ActivityIndicator, Dimensions, StyleSheet, Text, TouchableOpacity, View,} from 'react-native';
 import {useUserLogin} from "../../hooks";
-import {useLifecycle} from "@impos2/ui-core-base-2";
+import {FancyInput, useLifecycle} from "@impos2/ui-core-base-2";
 
 
 export const LoginForm: React.FC = () => {
@@ -63,19 +63,15 @@ export const LoginForm: React.FC = () => {
                             focusedField === 'userId' && styles.inputWrapperFocused,
                             hasError && styles.inputWrapperError
                         ]}>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="请输入账号"
-                                placeholderTextColor="#94A3B8"
+                            <FancyInput
                                 value={userId}
                                 onChangeText={handleUserIdChange}
-                                onFocus={() => setFocusedField('userId')}
-                                onBlur={() => setFocusedField(null)}
-                                editable={!isLoading}
-                                autoCapitalize="none"
-                                autoCorrect={false}
-                                accessibilityLabel="账号输入框"
-                                accessibilityHint="请输入您的登录账号"
+                                keyboardType="full"
+                                onSubmit={() => {
+                                }}
+                                placeholder="请输入账号"
+                                placeholderTextColor="#94A3B8"
+                                style={styles.input}
                             />
                         </View>
                     </View>
@@ -88,20 +84,16 @@ export const LoginForm: React.FC = () => {
                             focusedField === 'password' && styles.inputWrapperFocused,
                             hasError && styles.inputWrapperError
                         ]}>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="请输入密码"
-                                placeholderTextColor="#94A3B8"
+                            <FancyInput
                                 value={password}
                                 onChangeText={handlePasswordChange}
-                                onFocus={() => setFocusedField('password')}
-                                onBlur={() => setFocusedField(null)}
-                                editable={!isLoading}
+                                keyboardType="full"
+                                onSubmit={() => {
+                                }}
+                                placeholder="请输入密码"
+                                placeholderTextColor="#94A3B8"
                                 secureTextEntry={!showPassword}
-                                autoCapitalize="none"
-                                autoCorrect={false}
-                                accessibilityLabel="密码输入框"
-                                accessibilityHint="请输入您的登录密码"
+                                style={styles.input}
                             />
                             <TouchableOpacity
                                 style={styles.eyeButton}

@@ -4,7 +4,8 @@ import {
     AlertInfo,
     defaultAlertPartKey,
     ModalScreen,
-    ScreenPartRegistration
+    ScreenPartRegistration,
+    formattedTime
 } from "@impos2/kernel-base";
 import {CommandRegistry, ScreenMode, logger, LOG_TAGS} from "@impos2/kernel-base";
 import {CloseModalCommand} from "@impos2/kernel-base/";
@@ -61,7 +62,7 @@ export const DefaultAlert: React.FC<ModalScreen<AlertInfo>> = React.memo((model)
      * 打印详细的日志信息
      */
     const logAlertInfo = useCallback((action: 'open' | 'close' | 'confirm' | 'cancel', extraInfo?: any) => {
-        const timestamp = new Date().toISOString();
+        const timestamp = formattedTime();
         const alertInfo = {
             action,
             timestamp,
@@ -83,7 +84,7 @@ export const DefaultAlert: React.FC<ModalScreen<AlertInfo>> = React.memo((model)
      */
     const logError = useCallback((error: string, details?: any) => {
         const errorInfo = {
-            timestamp: new Date().toISOString(),
+            timestamp: formattedTime(),
             modelId: model.id,
             error,
             title: model.props?.title,
@@ -264,7 +265,7 @@ export const DefaultAlert: React.FC<ModalScreen<AlertInfo>> = React.memo((model)
         logger.debug([moduleName, LOG_TAGS.UI, 'DefaultAlert'], 'Component mounted', {
             modelId: model.id,
             title: model.props?.title,
-            timestamp: new Date().toISOString()
+            timestamp: formattedTime()
         });
 
         // 组件卸载时的清理函数
@@ -278,7 +279,7 @@ export const DefaultAlert: React.FC<ModalScreen<AlertInfo>> = React.memo((model)
             logger.debug([moduleName, LOG_TAGS.UI, 'DefaultAlert'], 'Component unmounting', {
                 modelId: model.id,
                 wasVisible: isVisible,
-                timestamp: new Date().toISOString()
+                timestamp: formattedTime()
             });
 
             // 清理 refs

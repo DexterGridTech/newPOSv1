@@ -1,13 +1,17 @@
-import React, { useCallback } from "react";
-import {Animated, Dimensions, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator} from "react-native";
+import React, {useCallback} from "react";
 import {
-    ModalScreen,
-    ScreenPartRegistration
-} from "@impos2/kernel-base";
-import {ScreenMode} from "@impos2/kernel-base";
-import { useModalAnimation, useLifecycle } from "@impos2/ui-core-base-2";
-import { moduleName } from "../../moduleName";
-import { useAdminLogin } from "../../hooks";
+    ActivityIndicator,
+    Animated,
+    Dimensions,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
+} from "react-native";
+import {ModalScreen, ScreenMode, ScreenPartRegistration} from "@impos2/kernel-base";
+import {FancyInput, useLifecycle, useModalAnimation} from "@impos2/ui-core-base-2";
+import {moduleName} from "../../moduleName";
+import {useAdminLogin} from "../../hooks";
 
 /**
  * 管理员登录表单 Modal 组件 - 企业级设计
@@ -35,7 +39,7 @@ export interface AdminLoginModalProps {
 export const AdminLoginModal: React.FC<ModalScreen<AdminLoginModalProps>> = React.memo((model) => {
 
     // 使用通用的 Modal 动画 Hook
-    const { scaleAnim, opacityAnim, isVisible } = useModalAnimation(model.open, model.id, {
+    const {scaleAnim, opacityAnim, isVisible} = useModalAnimation(model.open, model.id, {
         modalName: 'AdminLoginModal',
         moduleName,
         openDuration: 200,
@@ -55,7 +59,7 @@ export const AdminLoginModal: React.FC<ModalScreen<AdminLoginModalProps>> = Reac
         handleSubmit,
         handleClose,
         cleanup
-    } = useAdminLogin({ modalId: model.id });
+    } = useAdminLogin({modalId: model.id});
 
     // 使用 useLifecycle hook 处理组件生命周期
     useLifecycle({
@@ -93,7 +97,7 @@ export const AdminLoginModal: React.FC<ModalScreen<AdminLoginModalProps>> = Reac
      */
     return (
         <View style={styles.modalOverlay}>
-            <Animated.View style={[styles.backdropAnimated, { opacity: opacityAnim }]}>
+            <Animated.View style={[styles.backdropAnimated, {opacity: opacityAnim}]}>
                 <TouchableOpacity
                     style={styles.backdrop}
                     activeOpacity={1}
@@ -134,20 +138,16 @@ export const AdminLoginModal: React.FC<ModalScreen<AdminLoginModalProps>> = Reac
                         hasError && styles.inputWrapperError,
                         isValidLength && !hasError && styles.inputWrapperSuccess
                     ]}>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="请输入密码"
-                            placeholderTextColor="#94A3B8"
+                        <FancyInput
                             value={password || ''}
                             onChangeText={handlePasswordChange}
-                            onFocus={() => setIsFocused(true)}
-                            onBlur={() => setIsFocused(false)}
-                            editable={!isLoading}
+                            keyboardType="number"
+                            onSubmit={() => {
+                            }}
+                            placeholder="请输入密码"
+                            placeholderTextColor="#94A3B8"
                             secureTextEntry={true}
-                            autoCapitalize="none"
-                            autoCorrect={false}
-                            accessibilityLabel="管理员密码输入框"
-                            accessibilityHint="请输入管理员密码"
+                            style={styles.input}
                         />
                         {isValidLength && !hasError && (
                             <Text style={styles.successIndicator}>✓</Text>
@@ -218,8 +218,8 @@ export const AdminLoginModal: React.FC<ModalScreen<AdminLoginModalProps>> = Reac
 }, (prevProps, nextProps) => {
     // 自定义比较函数，优化重渲染
     return prevProps.id === nextProps.id &&
-           prevProps.open === nextProps.open &&
-           prevProps.partKey === nextProps.partKey;
+        prevProps.open === nextProps.open &&
+        prevProps.partKey === nextProps.partKey;
 });
 
 // 设计系统常量

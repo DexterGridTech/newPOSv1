@@ -8,11 +8,16 @@ const kernelApiServerAddress_1: ApiServerAddress = {
     addresses: [
         {
             addressName: "主线路1",
-            baseURL: "http://127.0.0.1:999/kernel-server",
+            baseURL: "http://127.0.0.1:9999/kernel-server",
             timeout: 3000
         },
         {
             addressName: "主线路2",
+            baseURL: "http://172.20.10.2:9999/kernel-server",
+            timeout: 3000
+        },
+        {
+            addressName: "主线路3",
             baseURL: "http://localhost:9999/kernel-server",
             timeout: 3000
         }
@@ -25,12 +30,17 @@ const kernelWSServerAddress_1: ApiServerAddress = {
     addresses: [
         {
             addressName: "主线路1",
-            baseURL: "ws://127.0.0.1:999/kernel-server",
+            baseURL: "ws://127.0.0.1:9999/kernel-server",
             timeout: 3000
         },
         {
             addressName: "主线路2",
             baseURL: "ws://localhost:9999/kernel-server",
+            timeout: 3000
+        },
+        {
+            addressName: "主线路2",
+            baseURL: "ws://172.20.10.2:9999/kernel-server",
             timeout: 3000
         }
     ]

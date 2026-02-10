@@ -2569,6 +2569,7 @@ __metadata:
     "@types/lodash": ^4.17.20
     "@types/node": ^24.10.0
     axios: ^1.13.2
+    date-fns: ^4.1.0
     deep-diff: ^1.0.2
     deep-object-diff: ^1.1.9
     lodash: ^4.17.21
@@ -2651,6 +2652,7 @@ __metadata:
   dependencies:
     "@types/node": ^24.10.0
     "@types/ws": ^8.5.13
+    date-fns: ^4.1.0
     nanoid: ^3.3.7
     ts-node: ^10.9.2
     tsx: ^4.21.0
@@ -6339,6 +6341,13 @@ __metadata:
   dependencies:
     "@babel/runtime": ^7.21.0
   checksum: f7be01523282e9bb06c0cd2693d34f245247a29098527d4420628966a2d9aad154bd0e90a6b1cf66d37adcb769cd108cf8a7bd49d76db0fb119af5cdd13644f4
+  languageName: node
+  linkType: hard
+
+"date-fns@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "date-fns@npm:4.1.0"
+  checksum: fb681b242cccabed45494468f64282a7d375ea970e0adbcc5dcc92dcb7aba49b2081c2c9739d41bf71ce89ed68dd73bebfe06ca35129490704775d091895710b
   languageName: node
   linkType: hard
 

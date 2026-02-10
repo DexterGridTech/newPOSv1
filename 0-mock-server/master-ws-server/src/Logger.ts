@@ -1,3 +1,5 @@
+import {format} from 'date-fns';
+
 /**
  * 日志级别枚举
  */
@@ -36,7 +38,7 @@ export class Logger {
   }
 
   private formatMessage(level: string, message: string): string {
-    const timestamp = new Date().toISOString();
+    const timestamp = format(new Date(), 'yyyy-M-d HH:mm:ss SSS');
     const prefixStr = this.prefix ? `[${this.prefix}] ` : '';
     return `${timestamp} [${level}] ${prefixStr}${message}`;
   }
