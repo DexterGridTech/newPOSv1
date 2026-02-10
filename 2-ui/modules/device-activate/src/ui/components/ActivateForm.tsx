@@ -1,6 +1,6 @@
 import React, {useCallback} from 'react';
 import {ActivityIndicator, Dimensions, StyleSheet, Text, TouchableOpacity, View,} from 'react-native';
-import {FancyInput, useLifecycle} from "@impos2/ui-core-base-2";
+import {FancyInput, FancyInputV2, useLifecycle} from "@impos2/ui-core-base-2";
 import {useDeviceActivate} from "../../hooks";
 
 /**
@@ -61,7 +61,7 @@ export const ActivateForm: React.FC = () => {
                         hasError && styles.inputWrapperError,
                         isValidLength && !hasError && styles.inputWrapperSuccess
                     ]}>
-                        <FancyInput
+                        <FancyInputV2
                             value={activationCode}
                             onChangeText={handleActivationCodeChange}
                             keyboardType="full"
@@ -70,6 +70,8 @@ export const ActivateForm: React.FC = () => {
                             editable={!isLoading}
                             placeholder="请输入至少6位激活码"
                             placeholderTextColor="#94A3B8"
+                            promptText="请输入6位激活码"
+                            maxLength={6}
                             style={styles.input}
                         />
                         {isValidLength && !hasError && (

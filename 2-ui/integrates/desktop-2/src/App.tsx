@@ -1,9 +1,9 @@
 import React, {useEffect, useRef} from 'react';
 import {desktopVariables} from "./ui/desktopVariables";
 import {
-    FancyContainer,
-    FancyKeyboardOverlay,
-    FancyKeyboardProvider,
+    FancyContainer, FancyContainerV2,
+    FancyKeyboardOverlay, FancyKeyboardOverlayV2,
+    FancyKeyboardProvider, FancyKeyboardProviderV2,
     LongPressCommand,
     ModalContainer,
     StackContainer,
@@ -39,11 +39,11 @@ export const App: React.FC<AppProps> = ({onLoadComplete}) => {
     }, [onLoadComplete]);
 
     return (
-        <FancyKeyboardProvider
+        <FancyKeyboardProviderV2
             animationDuration={300}
             animationEasing="easeInOut"
         >
-            <FancyContainer>
+            <FancyContainerV2>
                 {/* 你的页面内容 */}
                 <View
                     key={"primary-container"}
@@ -56,11 +56,11 @@ export const App: React.FC<AppProps> = ({onLoadComplete}) => {
                     </StackContainer>
                 </View>
                 <ModalContainer/>
-            </FancyContainer>
+            </FancyContainerV2>
 
             {/* 必须添加键盘遮罩层 */}
-            <FancyKeyboardOverlay/>
-        </FancyKeyboardProvider>
+            <FancyKeyboardOverlayV2/>
+        </FancyKeyboardProviderV2>
 
     );
 };

@@ -9,7 +9,7 @@ import {
     View
 } from "react-native";
 import {ModalScreen, ScreenMode, ScreenPartRegistration} from "@impos2/kernel-base";
-import {FancyInput, useLifecycle, useModalAnimation} from "@impos2/ui-core-base-2";
+import {FancyInput, FancyInputV2, useLifecycle, useModalAnimation} from "@impos2/ui-core-base-2";
 import {moduleName} from "../../moduleName";
 import {useAdminLogin} from "../../hooks";
 
@@ -138,7 +138,7 @@ export const AdminLoginModal: React.FC<ModalScreen<AdminLoginModalProps>> = Reac
                         hasError && styles.inputWrapperError,
                         isValidLength && !hasError && styles.inputWrapperSuccess
                     ]}>
-                        <FancyInput
+                        <FancyInputV2
                             value={password || ''}
                             onChangeText={handlePasswordChange}
                             keyboardType="number"
@@ -147,6 +147,8 @@ export const AdminLoginModal: React.FC<ModalScreen<AdminLoginModalProps>> = Reac
                             placeholder="请输入密码"
                             placeholderTextColor="#94A3B8"
                             secureTextEntry={true}
+                            promptText="请输入3位数字密码（123）"
+                            maxLength={3}
                             style={styles.input}
                         />
                         {isValidLength && !hasError && (

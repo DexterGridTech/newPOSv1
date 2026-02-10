@@ -1,7 +1,7 @@
 import React, {useCallback, useState} from 'react';
 import {ActivityIndicator, Dimensions, StyleSheet, Text, TouchableOpacity, View,} from 'react-native';
 import {useUserLogin} from "../../hooks";
-import {FancyInput, useLifecycle} from "@impos2/ui-core-base-2";
+import {FancyInput, FancyInputV2, useLifecycle} from "@impos2/ui-core-base-2";
 
 
 export const LoginForm: React.FC = () => {
@@ -63,7 +63,7 @@ export const LoginForm: React.FC = () => {
                             focusedField === 'userId' && styles.inputWrapperFocused,
                             hasError && styles.inputWrapperError
                         ]}>
-                            <FancyInput
+                            <FancyInputV2
                                 value={userId}
                                 onChangeText={handleUserIdChange}
                                 keyboardType="full"
@@ -71,6 +71,8 @@ export const LoginForm: React.FC = () => {
                                 }}
                                 placeholder="请输入账号"
                                 placeholderTextColor="#94A3B8"
+                                promptText="请输用户名："
+                                maxLength={20}
                                 style={styles.input}
                             />
                         </View>
@@ -84,7 +86,7 @@ export const LoginForm: React.FC = () => {
                             focusedField === 'password' && styles.inputWrapperFocused,
                             hasError && styles.inputWrapperError
                         ]}>
-                            <FancyInput
+                            <FancyInputV2
                                 value={password}
                                 onChangeText={handlePasswordChange}
                                 keyboardType="full"
@@ -93,6 +95,8 @@ export const LoginForm: React.FC = () => {
                                 placeholder="请输入密码"
                                 placeholderTextColor="#94A3B8"
                                 secureTextEntry={!showPassword}
+                                promptText="请输入密码："
+                                maxLength={20}
                                 style={styles.input}
                             />
                             <TouchableOpacity
