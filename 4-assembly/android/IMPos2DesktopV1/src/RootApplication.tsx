@@ -1,5 +1,5 @@
 import {AppProps} from "./types/AppProps.ts";
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {InitializeCommand, RootState} from "@impos2/kernel-base";
 import {posAdapter} from '@impos2/adapter-impos2-adapterv1';
 import createStore from "./utils/createStore.ts";
@@ -16,12 +16,17 @@ const {ScreenInitModule} = NativeModules;
 function RootApplication(props: AppProps): React.JSX.Element {
     const [store, setStore] = useState<EnhancedStore<RootState> | null>(null);
     const [persistor, setPersistor] = useState<Persistor | null>(null);
+
+    // 处理 App 加载完成的回调
+    const handleAppLoadComplete = useCallback(() => {
+        ScreenInitModule.notifyScreenInitialized(props);
+    }, []);
+
     useEffect(() => {
         createStore(props, posAdapter).then(
             ({store, persistor}) => {
                 setStore(store);
                 setPersistor(persistor);
-                ScreenInitModule.notifyScreenInitialized(props);
             }
         ).catch(error => console.error('createStore error', error))
     }, [])
@@ -36,7 +41,7 @@ function RootApplication(props: AppProps): React.JSX.Element {
                 onBeforeLift={() => {
                     new InitializeCommand().executeInternally();
                 }}>
-                <App/>
+                <App onLoadComplete={handleAppLoadComplete}/>
             </PersistGate>
         </Provider>
     )
