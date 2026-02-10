@@ -101,11 +101,25 @@ export const FancyKeyboardOverlayV2: React.FC = () => {
     const editingContentHeight = 80;
     const totalHeight = keyboardHeight + editingContentHeight;
 
+    // 判断是否有变化
+    const hasChanges = activeInput ? activeInput.value !== activeInput.editingValue : false;
+
+    // 处理遮罩点击
+    const handleBackdropPress = () => {
+        if (hasChanges) {
+            // 有变化：抖动确定按钮提示用户
+            shakeConfirmButton();
+        } else {
+            // 无变化：直接关闭键盘
+            cancelInput();
+        }
+    };
+
     return (
         <View style={styles.overlay} pointerEvents={isVisible ? 'auto' : 'none'}>
             {/* 遮罩 */}
             <BackdropV2
-                onPress={shakeConfirmButton}
+                onPress={handleBackdropPress}
                 activeInput={activeInput}
                 containerOffset={containerOffset}
                 opacity={backdropOpacity}
@@ -133,6 +147,7 @@ export const FancyKeyboardOverlayV2: React.FC = () => {
                             onCancel={cancelInput}
                             onConfirm={confirmInput}
                             shouldShake={shouldShakeConfirmButton}
+                            hasChanges={hasChanges}
                         />
                     </View>
                     <View style={{display: keyboardType === 'number' ? 'flex' : 'none', flex: 1, opacity: isVisible ? 1 : 0}}>
@@ -141,6 +156,7 @@ export const FancyKeyboardOverlayV2: React.FC = () => {
                             onCancel={cancelInput}
                             onConfirm={confirmInput}
                             shouldShake={shouldShakeConfirmButton}
+                            hasChanges={hasChanges}
                         />
                     </View>
                 </View>

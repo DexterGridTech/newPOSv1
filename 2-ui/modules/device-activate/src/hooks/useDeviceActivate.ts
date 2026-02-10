@@ -17,9 +17,7 @@ export const useDeviceActivate = () => {
         return random
     }
     // 使用 UI 变量 Hook 管理激活码
-    const {value: activationCode, setValue: setActivationCode} = useEditableUiVariable({
-        variable: deviceActivateVariable.activationCode
-    });
+    const {value: activationCode, setValue: setActivationCode} = useEditableUiVariable(deviceActivateVariable.activationCode);
 
     const activateStatus = useRequestStatus(requestId);
 

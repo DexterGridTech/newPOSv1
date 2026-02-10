@@ -6,6 +6,7 @@ interface FancyNumberKeyBoardV2Props {
     onCancel: () => void;
     onConfirm: () => void;
     shouldShake?: boolean;
+    hasChanges?: boolean;
 }
 
 /**
@@ -17,7 +18,7 @@ interface FancyNumberKeyBoardV2Props {
  * 4. 横屏平板优化
  */
 export const FancyNumberKeyBoardV2: React.FC<FancyNumberKeyBoardV2Props> = React.memo(
-    ({onKeyPress, onCancel, onConfirm, shouldShake = false}) => {
+    ({onKeyPress, onCancel, onConfirm, shouldShake = false, hasChanges = false}) => {
         // 确定按钮抖动动画
         const shakeAnim = useRef(new Animated.Value(0)).current;
 
@@ -124,14 +125,24 @@ export const FancyNumberKeyBoardV2: React.FC<FancyNumberKeyBoardV2Props> = React
 
                 {/* 右侧：取消/确定按钮 */}
                 <View style={styles.actionButtons}>
-                    <TouchableOpacity style={styles.cancelButton} onPress={onCancel} activeOpacity={0.7}>
-                        <Text style={styles.cancelButtonText}>取消</Text>
-                    </TouchableOpacity>
-                    <Animated.View style={{flex: 1, transform: [{translateX: shakeAnim}]}}>
-                        <TouchableOpacity style={styles.confirmButton} onPress={onConfirm} activeOpacity={0.7}>
-                            <Text style={styles.confirmButtonText}>确定</Text>
+                    {hasChanges ? (
+                        // 有变化：显示取消和确定按钮
+                        <>
+                            <TouchableOpacity style={styles.cancelButton} onPress={onCancel} activeOpacity={0.7}>
+                                <Text style={styles.cancelButtonText}>取消</Text>
+                            </TouchableOpacity>
+                            <Animated.View style={{flex: 1, transform: [{translateX: shakeAnim}]}}>
+                                <TouchableOpacity style={styles.confirmButton} onPress={onConfirm} activeOpacity={0.7}>
+                                    <Text style={styles.confirmButtonText}>确定</Text>
+                                </TouchableOpacity>
+                            </Animated.View>
+                        </>
+                    ) : (
+                        // 无变化：只显示关闭按钮，占据整个区域
+                        <TouchableOpacity style={styles.closeButtonFull} onPress={onCancel} activeOpacity={0.7}>
+                            <Text style={styles.closeButtonText}>关闭</Text>
                         </TouchableOpacity>
-                    </Animated.View>
+                    )}
                 </View>
             </View>
         );
@@ -199,6 +210,23 @@ const styles = StyleSheet.create({
         elevation: 3,
     },
     cancelButtonText: {
+        fontSize: 18,
+        fontWeight: '700',
+        color: '#FFFFFF',
+    },
+    closeButtonFull: {
+        flex: 1,
+        backgroundColor: '#FCA5A5', // 淡红色
+        borderRadius: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.2,
+        shadowRadius: 2,
+        elevation: 3,
+    },
+    closeButtonText: {
         fontSize: 18,
         fontWeight: '700',
         color: '#FFFFFF',

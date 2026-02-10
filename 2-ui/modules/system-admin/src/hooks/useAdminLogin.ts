@@ -18,9 +18,7 @@ export const useAdminLogin = (config: { modalId: string }) => {
     }
 
     // 使用 UI 变量 Hook 管理密码
-    const {value: password, setValue: setPassword} = useEditableUiVariable({
-        variable: systemAdminVariable.adminPassword,
-    });
+    const {value: password, setValue: setPassword} = useEditableUiVariable(systemAdminVariable.adminPassword);
 
     const loginStatus = useRequestStatus(requestId);
 

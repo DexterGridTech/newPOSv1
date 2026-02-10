@@ -8,12 +8,8 @@ import {userLoginVariable} from "../ui/userLoginVariables";
 // 用户登录Hook
 export const useUserLogin = () => {
 
-    const {value: userId, setValue: setUserId} = useEditableUiVariable({
-        variable: userLoginVariable.userId,
-    });
-    const {value: password, setValue: setPassword} = useEditableUiVariable({
-        variable: userLoginVariable.password,
-    });
+    const {value: userId, setValue: setUserId} = useEditableUiVariable(userLoginVariable.userId);
+    const {value: password, setValue: setPassword} = useEditableUiVariable(userLoginVariable.password);
 
     const [requestId, setRequestId] = useState<string | null>(null);
     const newRequest = () => {
