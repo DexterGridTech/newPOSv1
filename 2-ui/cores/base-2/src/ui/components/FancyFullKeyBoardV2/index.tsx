@@ -17,7 +17,7 @@ interface FancyFullKeyBoardV2Props {
  * 3. 切换后显示数字+符号键盘
  * 4. 右侧整合取消/确定按钮
  */
-export const FancyFullKeyBoardV2: React.FC<FancyFullKeyBoardV2Props> = React.memo(
+export const FancyFullKeyBoardV2: React.FC<FancyFullKeyBoardV2Props> = (
     ({onKeyPress, onCancel, onConfirm, shouldShake = false, hasChanges = false}) => {
         const [isUpperCase, setIsUpperCase] = useState(false);
         const [isSymbolMode, setIsSymbolMode] = useState(false);
@@ -57,7 +57,7 @@ export const FancyFullKeyBoardV2: React.FC<FancyFullKeyBoardV2Props> = React.mem
                     }),
                 ]).start();
             }
-        }, [shouldShake, shakeAnim]);
+        }, [shouldShake]); // 移除 shakeAnim 依赖
 
         const handleKeyPress = useCallback(
             (value: string) => {

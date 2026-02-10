@@ -48,6 +48,15 @@ export const FancyInputV2: React.FC<FancyInputV2Props> = ({
     // 用于防止重复点击
     const isProcessingRef = React.useRef(false);
 
+    // 使用 ref 存储稳定的回调，避免依赖数组过大
+    const onChangeTextRef = React.useRef(onChangeText);
+    const onSubmitRef = React.useRef(onSubmit);
+
+    React.useEffect(() => {
+        onChangeTextRef.current = onChangeText;
+        onSubmitRef.current = onSubmit;
+    }, [onChangeText, onSubmit]);
+
     // 判断当前输入框是否激活
     const isActive = activeInput?.id === inputIdRef.current;
 
@@ -111,8 +120,8 @@ export const FancyInputV2: React.FC<FancyInputV2Props> = ({
                                     editingValue: value,
                                     position: {x: rect.left, y: rect.top, width: rect.width, height: rect.height},
                                     initialPosition: {x: rect.left, y: rect.top, width: rect.width, height: rect.height},
-                                    onChangeText,
-                                    onSubmit,
+                                    onChangeText: onChangeTextRef.current,
+                                    onSubmit: onSubmitRef.current,
                                     promptText,
                                     maxLength,
                                     secureTextEntry,
@@ -130,8 +139,8 @@ export const FancyInputV2: React.FC<FancyInputV2Props> = ({
                                     editingValue: value,
                                     position: {x: 0, y: defaultY, width: 300, height: 50},
                                     initialPosition: {x: 0, y: defaultY, width: 300, height: 50},
-                                    onChangeText,
-                                    onSubmit,
+                                    onChangeText: onChangeTextRef.current,
+                                    onSubmit: onSubmitRef.current,
                                     promptText,
                                     maxLength,
                                     secureTextEntry,
@@ -211,8 +220,8 @@ export const FancyInputV2: React.FC<FancyInputV2Props> = ({
                             editingValue: value,
                             position: {x: safePageX, y: safePageY, width: safeWidth, height: safeHeight},
                             initialPosition: {x: safePageX, y: safePageY, width: safeWidth, height: safeHeight},
-                            onChangeText,
-                            onSubmit,
+                            onChangeText: onChangeTextRef.current,
+                            onSubmit: onSubmitRef.current,
                             promptText,
                             maxLength,
                             secureTextEntry,
@@ -229,7 +238,7 @@ export const FancyInputV2: React.FC<FancyInputV2Props> = ({
             clearTimeout(resetTimeout);
             isProcessingRef.current = false;
         }
-    }, [editable, value, keyboardType, onSubmit, showKeyboard, onChangeText, promptText, maxLength, secureTextEntry]);
+    }, [editable, value, keyboardType, showKeyboard, promptText, maxLength, secureTextEntry]);
 
     // 监听布局变化
     const handleLayout = React.useCallback(() => {

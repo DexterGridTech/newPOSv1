@@ -15,38 +15,21 @@ export const FancyContainerV2: React.FC<FancyContainerV2Props> = ({children}) =>
     const translateY = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
-
-        if (Platform.OS === 'web') {
-            // Web 环境：使用 timing 动画，不使用 useNativeDriver
-            Animated.timing(translateY, {
-                toValue: containerOffset,
-                duration: animationConfig.duration,
-                useNativeDriver: false,
-            }).start();
-        } else {
-            // 原生环境：使用 timing 动画，使用 useNativeDriver
-            Animated.timing(translateY, {
-                toValue: containerOffset,
-                duration: animationConfig.duration,
-                useNativeDriver: true,
-            }).start();
-        }
+        // 统一使用 timing 动画，使用 useNativeDriver
+        Animated.timing(translateY, {
+            toValue: containerOffset,
+            duration: animationConfig.duration,
+            useNativeDriver: true,
+        }).start();
     }, [containerOffset, animationConfig.duration, translateY]);
 
     return (
         <Animated.View
             style={[
                 styles.container,
-                Platform.OS === 'web'
-                    ? {
-                          // Web 环境：使用 top 而不是 transform
-                          position: 'relative',
-                          top: translateY,
-                      }
-                    : {
-                          // 原生环境：使用 transform
-                          transform: [{translateY}],
-                      },
+                {
+                    transform: [{translateY}],
+                },
             ]}
         >
             {children}

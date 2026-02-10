@@ -18,28 +18,22 @@ export const BackdropV2: React.FC<BackdropV2Props> = ({onPress, activeInput, con
     const screenWidth = Dimensions.get('window').width;
     const [isInteractionEnabled, setIsInteractionEnabled] = React.useState(false);
 
-    // 监听 opacity 变化，只有当 opacity 接近 1 时才启用交互
+    // 简化逻辑：延迟启用交互，等待动画完成
     React.useEffect(() => {
-
-        if (!activeInput) {
-            setIsInteractionEnabled(false);
-            return;
-        }
-
-        // 使用 opacity 的监听器来判断动画是否完成
-        const listenerId = opacity.addListener(({value}) => {
-            // 当透明度大于 0.8 时，认为动画基本完成，可以启用交互
-            if (value > 0.8) {
+        if (activeInput) {
+            // 延迟启用交互，等待动画完成（500ms = 动画时长 + 缓冲）
+            const timer = setTimeout(() => {
                 setIsInteractionEnabled(true);
-            } else {
-                setIsInteractionEnabled(false);
-            }
-        });
+            }, 500);
 
-        return () => {
-            opacity.removeListener(listenerId);
-        };
-    }, [activeInput, opacity]);
+            return () => {
+                clearTimeout(timer);
+                setIsInteractionEnabled(false);
+            };
+        } else {
+            setIsInteractionEnabled(false);
+        }
+    }, [activeInput]);
 
     const handlePress = (event: any) => {
         // 在 Web 环境下，阻止事件传播
@@ -80,10 +74,6 @@ export const BackdropV2: React.FC<BackdropV2Props> = ({onPress, activeInput, con
                             StyleSheet.absoluteFillObject,
                             {
                                 backgroundColor: backgroundColor,
-                                // Web 特定优化
-                                ...(Platform.OS === 'web' ? {
-                                    willChange: 'background-color',
-                                } : {}),
                             }
                         ]}
                     />
@@ -105,10 +95,10 @@ export const BackdropV2: React.FC<BackdropV2Props> = ({onPress, activeInput, con
         targetY = position.y;
     }
 
-    // 挖空区域比输入框大小上下左右都多出 10px
+    // 挖空区域：上下与输入框高度一致，左右多出 10px
     const padding = 10;
-    const inputTop = targetY - padding;
-    const inputBottom = targetY + position.height + padding;
+    const inputTop = targetY; // 上方遮罩到输入框顶部，不加 padding
+    const inputBottom = targetY + position.height; // 下方遮罩从输入框底部开始，不加 padding
     const inputLeft = position.x - padding;
     const inputRight = position.x + position.width + padding;
 
@@ -160,7 +150,7 @@ export const BackdropV2: React.FC<BackdropV2Props> = ({onPress, activeInput, con
                                 top: inputTop,
                                 left: 0,
                                 width: inputLeft,
-                                height: position.height + padding * 2,
+                                height: position.height, // 与输入框高度一致
                             },
                             Platform.OS === 'web'
                                 ? {backgroundColor: backgroundColor}
@@ -178,7 +168,7 @@ export const BackdropV2: React.FC<BackdropV2Props> = ({onPress, activeInput, con
                                 top: inputTop,
                                 left: inputRight,
                                 width: screenWidth - inputRight,
-                                height: position.height + padding * 2,
+                                height: position.height, // 与输入框高度一致
                             },
                             Platform.OS === 'web'
                                 ? {backgroundColor: backgroundColor}

@@ -16,6 +16,8 @@ export const EditingContent: React.FC<EditingContentProps> = ({activeInput, shou
     const cursorOpacity = useRef(new Animated.Value(1)).current;
     // 抖动动画
     const shakeAnim = useRef(new Animated.Value(0)).current;
+    // 防止重复抖动
+    const isShakingRef = useRef(false);
 
     useEffect(() => {
         if (activeInput) {
@@ -40,20 +42,23 @@ export const EditingContent: React.FC<EditingContentProps> = ({activeInput, shou
                 blinkAnimation.stop();
             };
         }
-    }, [activeInput, cursorOpacity]);
+    }, [activeInput]); // 移除 cursorOpacity 依赖
 
     // 监听 shouldShake 触发抖动
     useEffect(() => {
-        if (shouldShake) {
+        if (shouldShake && !isShakingRef.current) {
+            isShakingRef.current = true;
             const useNative = Platform.OS !== 'web';
             Animated.sequence([
                 Animated.timing(shakeAnim, {toValue: 10, duration: 50, useNativeDriver: useNative}),
                 Animated.timing(shakeAnim, {toValue: -10, duration: 50, useNativeDriver: useNative}),
                 Animated.timing(shakeAnim, {toValue: 10, duration: 50, useNativeDriver: useNative}),
                 Animated.timing(shakeAnim, {toValue: 0, duration: 50, useNativeDriver: useNative}),
-            ]).start();
+            ]).start(() => {
+                isShakingRef.current = false;
+            });
         }
-    }, [shouldShake, shakeAnim]);
+    }, [shouldShake]); // 移除 shakeAnim 依赖
 
     if (!activeInput) {
         return null;

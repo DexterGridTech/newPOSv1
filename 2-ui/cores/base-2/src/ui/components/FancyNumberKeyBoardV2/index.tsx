@@ -17,7 +17,7 @@ interface FancyNumberKeyBoardV2Props {
  * 3. 经典计算器布局
  * 4. 横屏平板优化
  */
-export const FancyNumberKeyBoardV2: React.FC<FancyNumberKeyBoardV2Props> = React.memo(
+export const FancyNumberKeyBoardV2: React.FC<FancyNumberKeyBoardV2Props> = (
     ({onKeyPress, onCancel, onConfirm, shouldShake = false, hasChanges = false}) => {
         // 确定按钮抖动动画
         const shakeAnim = useRef(new Animated.Value(0)).current;
@@ -54,7 +54,7 @@ export const FancyNumberKeyBoardV2: React.FC<FancyNumberKeyBoardV2Props> = React
                     }),
                 ]).start();
             }
-        }, [shouldShake, shakeAnim]);
+        }, [shouldShake]); // 移除 shakeAnim 依赖
 
         const handleKeyPress = useCallback(
             (value: string) => {
