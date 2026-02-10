@@ -74,7 +74,7 @@ export const AdminPanelModal: React.FC<ModalScreen<AdminPanelModalProps>> = Reac
                 uiVariableKeys: [
                     systemAdminVariable.systemAdminPanel.key,
                 ]
-            })
+            }).executeInternally()
         }, [model.id]),
     });
 

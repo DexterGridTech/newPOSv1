@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useRef} from 'react';
-import {View, TouchableOpacity, Text, StyleSheet, Animated, Platform} from 'react-native';
+import {View, TouchableOpacity, Text, StyleSheet, Animated, Platform, Dimensions} from 'react-native';
 
 interface FancyNumberKeyBoardV2Props {
     onKeyPress: (key: string) => void;
@@ -67,16 +67,16 @@ export const FancyNumberKeyBoardV2: React.FC<FancyNumberKeyBoardV2Props> = (
             <View style={styles.container}>
                 {/* 左侧：数字键盘主体 */}
                 <View style={styles.keyboardMain}>
-                    {/* 第一行: 7 8 9 */}
+                    {/* 第一行: 1 2 3 */}
                     <View style={styles.row}>
-                        <TouchableOpacity style={styles.key} onPress={() => handleKeyPress('7')} activeOpacity={0.6}>
-                            <Text style={styles.keyText}>7</Text>
+                        <TouchableOpacity style={styles.key} onPress={() => handleKeyPress('1')} activeOpacity={0.6}>
+                            <Text style={styles.keyText}>1</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.key} onPress={() => handleKeyPress('8')} activeOpacity={0.6}>
-                            <Text style={styles.keyText}>8</Text>
+                        <TouchableOpacity style={styles.key} onPress={() => handleKeyPress('2')} activeOpacity={0.6}>
+                            <Text style={styles.keyText}>2</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.key} onPress={() => handleKeyPress('9')} activeOpacity={0.6}>
-                            <Text style={styles.keyText}>9</Text>
+                        <TouchableOpacity style={styles.key} onPress={() => handleKeyPress('3')} activeOpacity={0.6}>
+                            <Text style={styles.keyText}>3</Text>
                         </TouchableOpacity>
                     </View>
 
@@ -93,16 +93,16 @@ export const FancyNumberKeyBoardV2: React.FC<FancyNumberKeyBoardV2Props> = (
                         </TouchableOpacity>
                     </View>
 
-                    {/* 第三行: 1 2 3 */}
+                    {/* 第三行: 7 8 9 */}
                     <View style={styles.row}>
-                        <TouchableOpacity style={styles.key} onPress={() => handleKeyPress('1')} activeOpacity={0.6}>
-                            <Text style={styles.keyText}>1</Text>
+                        <TouchableOpacity style={styles.key} onPress={() => handleKeyPress('7')} activeOpacity={0.6}>
+                            <Text style={styles.keyText}>7</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.key} onPress={() => handleKeyPress('2')} activeOpacity={0.6}>
-                            <Text style={styles.keyText}>2</Text>
+                        <TouchableOpacity style={styles.key} onPress={() => handleKeyPress('8')} activeOpacity={0.6}>
+                            <Text style={styles.keyText}>8</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.key} onPress={() => handleKeyPress('3')} activeOpacity={0.6}>
-                            <Text style={styles.keyText}>3</Text>
+                        <TouchableOpacity style={styles.key} onPress={() => handleKeyPress('9')} activeOpacity={0.6}>
+                            <Text style={styles.keyText}>9</Text>
                         </TouchableOpacity>
                     </View>
 
@@ -160,12 +160,12 @@ const styles = StyleSheet.create({
     },
     keyboardMain: {
         flex: 1,
-        justifyContent: 'space-between',
+        gap: 3, // 添加行与行之间的间隔（左右间隔的一半）
     },
     row: {
         flexDirection: 'row',
         gap: 6,
-        height: 60,
+        flex: 1, // 改为 flex: 1，让每行平均分配高度
     },
     key: {
         flex: 1,

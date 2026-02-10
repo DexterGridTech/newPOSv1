@@ -1,5 +1,5 @@
 import React, {useState, useCallback, useEffect, useRef} from 'react';
-import {View, TouchableOpacity, Text, StyleSheet, Animated, Platform} from 'react-native';
+import {View, TouchableOpacity, Text, StyleSheet, Animated, Platform, Dimensions} from 'react-native';
 
 interface FancyFullKeyBoardV2Props {
     onKeyPress: (key: string) => void;
@@ -21,6 +21,10 @@ export const FancyFullKeyBoardV2: React.FC<FancyFullKeyBoardV2Props> = (
     ({onKeyPress, onCancel, onConfirm, shouldShake = false, hasChanges = false}) => {
         const [isUpperCase, setIsUpperCase] = useState(false);
         const [isSymbolMode, setIsSymbolMode] = useState(false);
+
+        // 根据屏幕高度动态计算图标字体大小
+        const screenHeight = Dimensions.get('window').height;
+        const iconFontSize = Math.max(24, Math.min(36, screenHeight * 0.035)); // 屏幕高度的 3.5%，最小 24，最大 36
 
         // 确定按钮抖动动画
         const shakeAnim = useRef(new Animated.Value(0)).current;
@@ -175,7 +179,7 @@ export const FancyFullKeyBoardV2: React.FC<FancyFullKeyBoardV2Props> = (
                                     onPress={() => handleKeyPress('DELETE')}
                                     activeOpacity={0.6}
                                 >
-                                    <Text style={styles.functionKeyText}>⌫</Text>
+                                    <Text style={[styles.functionKeyText, {fontSize: iconFontSize}]}>⌫</Text>
                                 </TouchableOpacity>
                             </>
                         ) : (
@@ -187,7 +191,7 @@ export const FancyFullKeyBoardV2: React.FC<FancyFullKeyBoardV2Props> = (
                                     onPress={() => handleKeyPress('SHIFT')}
                                     activeOpacity={0.6}
                                 >
-                                    <Text style={[styles.functionKeyText, isUpperCase && styles.activeShiftText]}>
+                                    <Text style={[styles.functionKeyText, isUpperCase && styles.activeShiftText, {fontSize: iconFontSize}]}>
                                         ⇧
                                     </Text>
                                 </TouchableOpacity>
@@ -218,7 +222,7 @@ export const FancyFullKeyBoardV2: React.FC<FancyFullKeyBoardV2Props> = (
                                     onPress={() => handleKeyPress('DELETE')}
                                     activeOpacity={0.6}
                                 >
-                                    <Text style={styles.functionKeyText}>⌫</Text>
+                                    <Text style={[styles.functionKeyText, {fontSize: iconFontSize}]}>⌫</Text>
                                 </TouchableOpacity>
                             </>
                         )}
@@ -261,12 +265,12 @@ const styles = StyleSheet.create({
     },
     keyboardMain: {
         flex: 1,
-        justifyContent: 'space-between',
+        gap: 3, // 添加行与行之间的间隔（左右间隔的一半）
     },
     row: {
         flexDirection: 'row',
         gap: 6,
-        height: 60,
+        flex: 1, // 改为 flex: 1，让每行平均分配高度
     },
     key: {
         flex: 1,
