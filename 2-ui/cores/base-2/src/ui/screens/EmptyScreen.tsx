@@ -21,7 +21,6 @@ import {useLifecycle} from "../../hooks";
 export const EmptyScreen: React.FC = React.memo(() => {
 
     useLifecycle({
-        isVisible: true,
         componentName: 'EmptyScreen',
         onInitiated: useCallback(() => {
         }, []),

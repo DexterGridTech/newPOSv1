@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useRef} from 'react';
-import {View, TouchableOpacity, Text, StyleSheet, Animated} from 'react-native';
+import {View, TouchableOpacity, Text, StyleSheet, Animated, Platform} from 'react-native';
 
 interface FancyNumberKeyBoardV2Props {
     onKeyPress: (key: string) => void;
@@ -24,32 +24,33 @@ export const FancyNumberKeyBoardV2: React.FC<FancyNumberKeyBoardV2Props> = React
 
         useEffect(() => {
             if (shouldShake) {
+                const useNative = Platform.OS !== 'web';
                 // 抖动动画：左右摇摆
                 Animated.sequence([
                     Animated.timing(shakeAnim, {
                         toValue: 10,
                         duration: 50,
-                        useNativeDriver: true,
+                        useNativeDriver: useNative,
                     }),
                     Animated.timing(shakeAnim, {
                         toValue: -10,
                         duration: 50,
-                        useNativeDriver: true,
+                        useNativeDriver: useNative,
                     }),
                     Animated.timing(shakeAnim, {
                         toValue: 10,
                         duration: 50,
-                        useNativeDriver: true,
+                        useNativeDriver: useNative,
                     }),
                     Animated.timing(shakeAnim, {
                         toValue: -10,
                         duration: 50,
-                        useNativeDriver: true,
+                        useNativeDriver: useNative,
                     }),
                     Animated.timing(shakeAnim, {
                         toValue: 0,
                         duration: 50,
-                        useNativeDriver: true,
+                        useNativeDriver: useNative,
                     }),
                 ]).start();
             }

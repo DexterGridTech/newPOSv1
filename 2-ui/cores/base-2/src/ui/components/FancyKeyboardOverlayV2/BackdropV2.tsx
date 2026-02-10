@@ -1,5 +1,5 @@
 import React from 'react';
-import {TouchableOpacity, StyleSheet, View, Dimensions, Animated} from 'react-native';
+import {Pressable, StyleSheet, View, Dimensions, Animated, Platform} from 'react-native';
 import {ActiveInputInfoV2} from '../../../contexts/FancyKeyboardContextV2';
 
 interface BackdropV2Props {
@@ -16,27 +16,79 @@ interface BackdropV2Props {
 export const BackdropV2: React.FC<BackdropV2Props> = ({onPress, activeInput, containerOffset, opacity}) => {
     const screenHeight = Dimensions.get('window').height;
     const screenWidth = Dimensions.get('window').width;
+    const [isInteractionEnabled, setIsInteractionEnabled] = React.useState(false);
 
+    // 监听 opacity 变化，只有当 opacity 接近 1 时才启用交互
+    React.useEffect(() => {
+
+        if (!activeInput) {
+            setIsInteractionEnabled(false);
+            return;
+        }
+
+        // 使用 opacity 的监听器来判断动画是否完成
+        const listenerId = opacity.addListener(({value}) => {
+            // 当透明度大于 0.8 时，认为动画基本完成，可以启用交互
+            if (value > 0.8) {
+                setIsInteractionEnabled(true);
+            } else {
+                setIsInteractionEnabled(false);
+            }
+        });
+
+        return () => {
+            opacity.removeListener(listenerId);
+        };
+    }, [activeInput, opacity]);
+
+    const handlePress = (event: any) => {
+        // 在 Web 环境下，阻止事件传播
+        if (Platform.OS === 'web' && event) {
+            event.stopPropagation();
+        }
+
+        if (!isInteractionEnabled) {
+            return;
+        }
+
+        onPress();
+    };
+
+    // 如果没有激活输入框，显示简单的全屏遮罩
     if (!activeInput) {
-        // 如果没有激活的输入框，显示全屏半透明遮罩（带透明度动画）
+        // 将 opacity (0-1) 转换为 backgroundColor 的 rgba
+        const backgroundColor = opacity.interpolate({
+            inputRange: [0, 1],
+            outputRange: ['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.5)'],
+        });
+
         return (
-            <Animated.View
+            <View
                 style={[
                     styles.backdrop,
                     {
-                        opacity: opacity,
+                        pointerEvents: 'box-none',
                     },
                 ]}
-                pointerEvents="box-none"
             >
-                <TouchableOpacity
+                <Pressable
                     style={StyleSheet.absoluteFillObject}
-                    activeOpacity={1}
-                    onPress={onPress}
+                    onPress={handlePress}
                 >
-                    <View style={styles.overlay} />
-                </TouchableOpacity>
-            </Animated.View>
+                    <Animated.View
+                        style={[
+                            StyleSheet.absoluteFillObject,
+                            {
+                                backgroundColor: backgroundColor,
+                                // Web 特定优化
+                                ...(Platform.OS === 'web' ? {
+                                    willChange: 'background-color',
+                                } : {}),
+                            }
+                        ]}
+                    />
+                </Pressable>
+            </View>
         );
     }
 
@@ -60,28 +112,31 @@ export const BackdropV2: React.FC<BackdropV2Props> = ({onPress, activeInput, con
     const inputLeft = position.x - padding;
     const inputRight = position.x + position.width + padding;
 
+    // 将 opacity (0-1) 转换为 backgroundColor 的 rgba（用于 Web 环境）
+    const backgroundColor = opacity.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.5)'],
+    });
+
     return (
-        <Animated.View
+        <View
             style={[
                 styles.backdrop,
                 {
-                    opacity: opacity,
+                    pointerEvents: 'box-none',
                 },
             ]}
-            pointerEvents="box-none"
         >
-            <TouchableOpacity
+            <Pressable
                 style={StyleSheet.absoluteFillObject}
-                activeOpacity={1}
-                onPress={onPress}
+                onPress={handlePress}
             >
-                {/* 使用 4 个 View 围绕输入框，形成"挖空"效果 */}
+                {/* 使用 4 个 Animated.View 围绕输入框，形成"挖空"效果 */}
 
                 {/* 输入框上方的遮罩 */}
                 {inputTop > 0 && (
-                    <View
+                    <Animated.View
                         style={[
-                            styles.overlay,
                             {
                                 position: 'absolute',
                                 top: 0,
@@ -89,15 +144,17 @@ export const BackdropV2: React.FC<BackdropV2Props> = ({onPress, activeInput, con
                                 width: screenWidth,
                                 height: inputTop,
                             },
+                            Platform.OS === 'web'
+                                ? {backgroundColor: backgroundColor}
+                                : {backgroundColor: 'rgba(0, 0, 0, 0.5)', opacity: opacity},
                         ]}
                     />
                 )}
 
                 {/* 输入框左侧的遮罩 */}
                 {inputLeft > 0 && (
-                    <View
+                    <Animated.View
                         style={[
-                            styles.overlay,
                             {
                                 position: 'absolute',
                                 top: inputTop,
@@ -105,15 +162,17 @@ export const BackdropV2: React.FC<BackdropV2Props> = ({onPress, activeInput, con
                                 width: inputLeft,
                                 height: position.height + padding * 2,
                             },
+                            Platform.OS === 'web'
+                                ? {backgroundColor: backgroundColor}
+                                : {backgroundColor: 'rgba(0, 0, 0, 0.5)', opacity: opacity},
                         ]}
                     />
                 )}
 
                 {/* 输入框右侧的遮罩 */}
                 {inputRight < screenWidth && (
-                    <View
+                    <Animated.View
                         style={[
-                            styles.overlay,
                             {
                                 position: 'absolute',
                                 top: inputTop,
@@ -121,15 +180,17 @@ export const BackdropV2: React.FC<BackdropV2Props> = ({onPress, activeInput, con
                                 width: screenWidth - inputRight,
                                 height: position.height + padding * 2,
                             },
+                            Platform.OS === 'web'
+                                ? {backgroundColor: backgroundColor}
+                                : {backgroundColor: 'rgba(0, 0, 0, 0.5)', opacity: opacity},
                         ]}
                     />
                 )}
 
                 {/* 输入框下方的遮罩 */}
                 {inputBottom < screenHeight && (
-                    <View
+                    <Animated.View
                         style={[
-                            styles.overlay,
                             {
                                 position: 'absolute',
                                 top: inputBottom,
@@ -137,17 +198,21 @@ export const BackdropV2: React.FC<BackdropV2Props> = ({onPress, activeInput, con
                                 width: screenWidth,
                                 height: screenHeight - inputBottom,
                             },
+                            Platform.OS === 'web'
+                                ? {backgroundColor: backgroundColor}
+                                : {backgroundColor: 'rgba(0, 0, 0, 0.5)', opacity: opacity},
                         ]}
                     />
                 )}
-            </TouchableOpacity>
-        </Animated.View>
+            </Pressable>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
     backdrop: {
         ...StyleSheet.absoluteFillObject,
+        zIndex: 9998, // 在键盘下方，但在内容上方
     },
     overlay: {
         backgroundColor: 'rgba(0, 0, 0, 0.5)', // 半透明黑色，透明度 0.5

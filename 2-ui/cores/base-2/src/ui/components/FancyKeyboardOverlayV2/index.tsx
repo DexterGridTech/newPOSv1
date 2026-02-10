@@ -1,5 +1,5 @@
 import React, {useRef, useEffect} from 'react';
-import {View, StyleSheet, Dimensions, Animated, TouchableOpacity, Text} from 'react-native';
+import {View, StyleSheet, Dimensions, Animated, TouchableOpacity, Text, Platform} from 'react-native';
 import {useFancyKeyboardV2} from '../../../hooks/useFancyKeyboardV2';
 import {FancyFullKeyBoardV2} from '../FancyFullKeyBoardV2';
 import {FancyNumberKeyBoardV2} from '../FancyNumberKeyBoardV2';
@@ -33,38 +33,54 @@ export const FancyKeyboardOverlayV2: React.FC = () => {
     const [shouldShakeEditingContent, setShouldShakeEditingContent] = React.useState(false);
 
     useEffect(() => {
+
         if (isVisible) {
-            // 键盘位移和遮罩渐变同时开始，但遮罩延迟到键盘位移完成后才开始
-            const keyboardAnimation = Animated.spring(keyboardTranslateY, {
-                toValue: 0,
-                useNativeDriver: true,
-                tension: 50,
-                friction: 8,
-            });
-
-            // 计算键盘动画大约需要的时间（spring动画大约300-400ms）
-            keyboardAnimation.start();
-
-            // 延迟启动遮罩动画，等待键盘位移完成
-            setTimeout(() => {
-                Animated.timing(backdropOpacity, {
-                    toValue: 1,
-                    duration: 200,
+            // 在 Web 环境使用更简单的动画
+            if (Platform.OS === 'web') {
+                // Web: 使用 timing 动画代替 spring，不使用 useNativeDriver
+                Animated.timing(keyboardTranslateY, {
+                    toValue: 0,
+                    duration: 300,
+                    useNativeDriver: false,
+                }).start(() => {
+                    Animated.timing(backdropOpacity, {
+                        toValue: 1,
+                        duration: 200,
+                        useNativeDriver: false,
+                    }).start();
+                });
+            } else {
+                // 原生: 使用 spring 动画
+                const keyboardAnimation = Animated.spring(keyboardTranslateY, {
+                    toValue: 0,
                     useNativeDriver: true,
-                }).start();
-            }, 350); // spring动画大约350ms完成
+                    tension: 50,
+                    friction: 8,
+                });
+
+                keyboardAnimation.start();
+
+                // 延迟启动遮罩动画，等待键盘位移完成
+                setTimeout(() => {
+                    Animated.timing(backdropOpacity, {
+                        toValue: 1,
+                        duration: 200,
+                        useNativeDriver: true,
+                    }).start();
+                }, 350);
+            }
         } else {
             // 隐藏时，遮罩立刻消失，然后键盘下滑
             Animated.timing(backdropOpacity, {
                 toValue: 0,
                 duration: 0,
-                useNativeDriver: true,
+                useNativeDriver: Platform.OS !== 'web',
             }).start(() => {
                 // 遮罩消失后，键盘下滑
                 Animated.timing(keyboardTranslateY, {
                     toValue: screenHeight,
                     duration: 200,
-                    useNativeDriver: true,
+                    useNativeDriver: Platform.OS !== 'web',
                 }).start();
             });
         }
@@ -116,7 +132,14 @@ export const FancyKeyboardOverlayV2: React.FC = () => {
     };
 
     return (
-        <View style={styles.overlay} pointerEvents={isVisible ? 'auto' : 'none'}>
+        <View
+            style={[
+                styles.overlay,
+                {
+                    pointerEvents: isVisible ? 'auto' : 'none',
+                },
+            ]}
+        >
             {/* 遮罩 */}
             <BackdropV2
                 onPress={handleBackdropPress}
@@ -131,8 +154,20 @@ export const FancyKeyboardOverlayV2: React.FC = () => {
                     styles.keyboardContainer,
                     {
                         height: totalHeight,
-                        transform: [{translateY: keyboardTranslateY}],
                     },
+                    Platform.OS === 'web'
+                        ? {
+                              // Web 环境：直接使用 bottom 动画
+                              bottom: keyboardTranslateY.interpolate({
+                                  inputRange: [0, screenHeight],
+                                  outputRange: [0, -screenHeight],
+                              }),
+                              willChange: 'bottom',
+                          }
+                        : {
+                              // 原生环境：使用 transform
+                              transform: [{translateY: keyboardTranslateY}],
+                          },
                 ]}
             >
                 {/* EditingContent 区域 */}
@@ -181,6 +216,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 8,
         elevation: 10,
+        zIndex: 10000, // 确保键盘在最上层
     },
     keyboardArea: {
         backgroundColor: '#E5E7EB',

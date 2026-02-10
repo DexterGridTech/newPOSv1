@@ -1,6 +1,6 @@
 import React, {useCallback} from 'react';
 import {ActivityIndicator, Dimensions, StyleSheet, Text, TouchableOpacity, View,} from 'react-native';
-import {FancyInput, FancyInputV2, useLifecycle} from "@impos2/ui-core-base-2";
+import {FancyInputV2, useLifecycle} from "@impos2/ui-core-base-2";
 import {useDeviceActivate} from "../../hooks";
 
 /**
@@ -22,7 +22,7 @@ export const ActivateForm: React.FC = () => {
     const canSubmit = isValidLength && !isLoading;
 
     useLifecycle({
-        isVisible: true,
+
         componentName: 'ActivateForm',
         onInitiated: useCallback(() => {
         }, []),

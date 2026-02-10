@@ -7,10 +7,6 @@ import {moduleName} from "../moduleName";
  */
 export interface UseLifecycleConfig {
     /**
-     * 组件是否可见
-     */
-    isVisible: boolean;
-    /**
      * 组件名称（可选）
      * 用于日志输出，便于调试
      */
@@ -22,47 +18,13 @@ export interface UseLifecycleConfig {
     onInitiated?: () => void;
     /**
      * 清理回调函数
-     * 在组件卸载或变为不可见时调用
+     * 在组件卸载时调用
      */
     onClearance: () => void;
 }
 
-/**
- * 通用生命周期 Hook
- *
- * 职责：
- * 1. 在组件首次挂载完成时触发初始化回调
- * 2. 监听组件的可见性状态
- * 3. 在组件卸载时触发清理回调
- * 4. 在组件从可见变为不可见时触发清理回调
- * 5. 防止重复触发清理回调
- * 6. 打印组件名称，便于调试
- *
- * @param config - 配置对象
- *
- * @example
- * ```typescript
- * const componentRef = useRef(null);
- *
- * useLifecycle({
- *   isVisible: modalOpen,
- *   componentRef: componentRef,
- *   onInitiated: () => {
- *     console.log('组件初始化完成');
- *     // 初始化逻辑
- *   },
- *   onClearance: () => {
- *     console.log('清理资源');
- *     // 清理逻辑
- *   }
- * });
- * ```
- */
 export const useLifecycle = (config: UseLifecycleConfig): void => {
-    const { isVisible, componentName, onInitiated, onClearance } = config;
-
-    // 追踪上一次的可见状态
-    const prevVisibleRef = useRef<boolean>(isVisible);
+    const { componentName, onInitiated, onClearance } = config;
 
     // 追踪是否已经触发过清理
     const hasCleanedRef = useRef<boolean>(false);
@@ -88,30 +50,6 @@ export const useLifecycle = (config: UseLifecycleConfig): void => {
     }, [onInitiated]);
 
     /**
-     * 监听可见性变化
-     */
-    useEffect(() => {
-        const prevVisible = prevVisibleRef.current;
-        const currentVisible = isVisible;
-
-        // 从可见变为不可见时触发清理
-        if (prevVisible && !currentVisible && !hasCleanedRef.current) {
-            const componentName = getComponentName();
-            logger.log([moduleName,LOG_TAGS.Hook,'useLifecycle'],`不可见：${componentName}`)
-            onClearance();
-            hasCleanedRef.current = true;
-        }
-
-        // 从不可见变为可见时重置清理标记
-        if (!prevVisible && currentVisible) {
-            hasCleanedRef.current = false;
-        }
-
-        // 更新上一次的状态
-        prevVisibleRef.current = currentVisible;
-    }, [isVisible, onClearance]);
-
-    /**
      * 组件卸载时的清理
      */
     useEffect(() => {
@@ -121,6 +59,7 @@ export const useLifecycle = (config: UseLifecycleConfig): void => {
                 const componentName = getComponentName();
                 logger.log([moduleName,LOG_TAGS.Hook,'useLifecycle'],`卸载：${componentName}`)
                 onClearance();
+                hasCleanedRef.current = true;
             }
         };
     }, [onClearance]);

@@ -28,9 +28,7 @@ export const SetupWorkSpaceScreen: React.FC = () => {
     } = useSetupWorkspace();
 
     // 使用 useLifecycle hook 处理组件生命周期
-    // Screen 组件始终可见，所以 isVisible 设为 true，只在卸载时触发清理
     useLifecycle({
-        isVisible: true,
         componentName: 'SetupWorkSpaceScreen',
         onInitiated: useCallback(() => {
             console.log(`[${moduleName}] SetupWorkSpaceScreen 初始化完成`);

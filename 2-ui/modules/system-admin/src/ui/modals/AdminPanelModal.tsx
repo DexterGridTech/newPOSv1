@@ -66,7 +66,6 @@ export const AdminPanelModal: React.FC<ModalScreen<AdminPanelModalProps>> = Reac
 
     // 使用 useLifecycle hook 处理组件生命周期
     useLifecycle({
-        isVisible,
         componentName: 'AdminPanelModal',
         onInitiated: useCallback(() => {
         }, [model.id]),

@@ -12,7 +12,6 @@ import {useLifecycle} from "@impos2/ui-core-base-2";
 
 export const ActivateDesktopScreen: React.FC = () => {
     useLifecycle({
-        isVisible: true,
         componentName: 'ActivateDesktopScreen',
         onInitiated: useCallback(() => {
         }, []),

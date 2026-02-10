@@ -1,5 +1,5 @@
 import React, {useRef, useEffect} from 'react';
-import {View, Text, StyleSheet, Animated} from 'react-native';
+import {View, Text, StyleSheet, Animated, Platform} from 'react-native';
 import {ActiveInputInfoV2} from '../../../contexts/FancyKeyboardContextV2';
 
 interface EditingContentProps {
@@ -25,12 +25,12 @@ export const EditingContent: React.FC<EditingContentProps> = ({activeInput, shou
                     Animated.timing(cursorOpacity, {
                         toValue: 0,
                         duration: 500,
-                        useNativeDriver: true,
+                        useNativeDriver: Platform.OS !== 'web',
                     }),
                     Animated.timing(cursorOpacity, {
                         toValue: 1,
                         duration: 500,
-                        useNativeDriver: true,
+                        useNativeDriver: Platform.OS !== 'web',
                     }),
                 ])
             );
@@ -45,11 +45,12 @@ export const EditingContent: React.FC<EditingContentProps> = ({activeInput, shou
     // 监听 shouldShake 触发抖动
     useEffect(() => {
         if (shouldShake) {
+            const useNative = Platform.OS !== 'web';
             Animated.sequence([
-                Animated.timing(shakeAnim, {toValue: 10, duration: 50, useNativeDriver: true}),
-                Animated.timing(shakeAnim, {toValue: -10, duration: 50, useNativeDriver: true}),
-                Animated.timing(shakeAnim, {toValue: 10, duration: 50, useNativeDriver: true}),
-                Animated.timing(shakeAnim, {toValue: 0, duration: 50, useNativeDriver: true}),
+                Animated.timing(shakeAnim, {toValue: 10, duration: 50, useNativeDriver: useNative}),
+                Animated.timing(shakeAnim, {toValue: -10, duration: 50, useNativeDriver: useNative}),
+                Animated.timing(shakeAnim, {toValue: 10, duration: 50, useNativeDriver: useNative}),
+                Animated.timing(shakeAnim, {toValue: 0, duration: 50, useNativeDriver: useNative}),
             ]).start();
         }
     }, [shouldShake, shakeAnim]);

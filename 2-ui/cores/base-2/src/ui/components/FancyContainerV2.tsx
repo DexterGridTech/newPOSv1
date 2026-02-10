@@ -1,5 +1,5 @@
 import React, {useRef, useEffect} from 'react';
-import {Animated, StyleSheet, View, Dimensions} from 'react-native';
+import {Animated, StyleSheet, View, Dimensions, Platform} from 'react-native';
 import {useFancyKeyboardV2} from '../../hooks/useFancyKeyboardV2';
 
 interface FancyContainerV2Props {
@@ -15,20 +15,38 @@ export const FancyContainerV2: React.FC<FancyContainerV2Props> = ({children}) =>
     const translateY = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
-        Animated.timing(translateY, {
-            toValue: containerOffset,
-            duration: animationConfig.duration,
-            useNativeDriver: true,
-        }).start();
+
+        if (Platform.OS === 'web') {
+            // Web 环境：使用 timing 动画，不使用 useNativeDriver
+            Animated.timing(translateY, {
+                toValue: containerOffset,
+                duration: animationConfig.duration,
+                useNativeDriver: false,
+            }).start();
+        } else {
+            // 原生环境：使用 timing 动画，使用 useNativeDriver
+            Animated.timing(translateY, {
+                toValue: containerOffset,
+                duration: animationConfig.duration,
+                useNativeDriver: true,
+            }).start();
+        }
     }, [containerOffset, animationConfig.duration, translateY]);
 
     return (
         <Animated.View
             style={[
                 styles.container,
-                {
-                    transform: [{translateY}],
-                },
+                Platform.OS === 'web'
+                    ? {
+                          // Web 环境：使用 top 而不是 transform
+                          position: 'relative',
+                          top: translateY,
+                      }
+                    : {
+                          // 原生环境：使用 transform
+                          transform: [{translateY}],
+                      },
             ]}
         >
             {children}

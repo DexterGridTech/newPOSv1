@@ -1,7 +1,7 @@
 import React, {useCallback, useState} from 'react';
 import {ActivityIndicator, Dimensions, StyleSheet, Text, TouchableOpacity, View,} from 'react-native';
 import {useUserLogin} from "../../hooks";
-import {FancyInput, FancyInputV2, useLifecycle} from "@impos2/ui-core-base-2";
+import {FancyInputV2, useLifecycle} from "@impos2/ui-core-base-2";
 
 
 export const LoginForm: React.FC = () => {
@@ -25,7 +25,6 @@ export const LoginForm: React.FC = () => {
 
 
     useLifecycle({
-        isVisible: true,
         componentName: 'LoginForm',
         onInitiated: useCallback(() => {
         }, []),

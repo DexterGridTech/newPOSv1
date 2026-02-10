@@ -24,7 +24,6 @@ export const ClearDataVersionScreen: React.FC = () => {
 
     // 使用 useLifecycle hook 处理组件生命周期
     useLifecycle({
-        isVisible: true,
         componentName: 'ClearDataVersionScreen',
         onInitiated: useCallback(() => {
         }, []),
