@@ -42,12 +42,53 @@ export const FancyInputV2: React.FC<FancyInputV2Props> = ({
     const inputIdRef = React.useRef<string>(Math.random().toString(36).substr(2, 9));
     const {showKeyboard, activeInput, updateInputPosition} = useFancyKeyboardV2();
 
+    // 动画值：用于字体缩放
+    const scaleAnim = React.useRef(new Animated.Value(1)).current;
+
+    // 用于防止重复点击
+    const isProcessingRef = React.useRef(false);
+
     // 判断当前输入框是否激活
     const isActive = activeInput?.id === inputIdRef.current;
+
+    // 按下动画：字体放大到 1.1 倍
+    const handlePressIn = React.useCallback(() => {
+        if (!editable) return;
+        Animated.spring(scaleAnim, {
+            toValue: 1.1,
+            useNativeDriver: true,
+            friction: 5,
+            tension: 100,
+        }).start();
+    }, [editable, scaleAnim]);
+
+    // 松开动画：字体恢复到原始大小
+    const handlePressOut = React.useCallback(() => {
+        if (!editable) return;
+        Animated.spring(scaleAnim, {
+            toValue: 1,
+            useNativeDriver: true,
+            friction: 5,
+            tension: 100,
+        }).start();
+    }, [editable, scaleAnim]);
 
     // 处理点击事件
     const handlePress = React.useCallback(() => {
         if (!editable) return;
+
+        // 防止重复点击
+        if (isProcessingRef.current) {
+            console.log('[FancyInputV2] Click ignored - already processing');
+            return;
+        }
+
+        isProcessingRef.current = true;
+
+        // 设置超时保护，确保标志位会被重置
+        const resetTimeout = setTimeout(() => {
+            isProcessingRef.current = false;
+        }, 1000);
 
         if (containerRef.current) {
             // 在 Web 环境中，使用 getBoundingClientRect 获取真实位置
@@ -118,11 +159,45 @@ export const FancyInputV2: React.FC<FancyInputV2Props> = ({
                             },
                             keyboardType
                         );
+                    } finally {
+                        clearTimeout(resetTimeout);
+                        isProcessingRef.current = false;
                     }
                 }, 0);
             } else {
                 // 原生环境：使用 measure 获取准确位置
+                // 添加超时保护，如果 measure 回调没有执行，使用默认位置
+                let measureExecuted = false;
+
+                const fallbackTimeout = setTimeout(() => {
+                    if (!measureExecuted) {
+                        console.warn('[FancyInputV2] measure callback not executed, using fallback');
+                        const screenHeight = Dimensions.get('window').height;
+                        const defaultY = screenHeight * 0.6;
+                        showKeyboard(
+                            {
+                                id: inputIdRef.current,
+                                value,
+                                editingValue: value,
+                                position: {x: 0, y: defaultY, width: 300, height: 50},
+                                initialPosition: {x: 0, y: defaultY, width: 300, height: 50},
+                                onChangeText,
+                                onSubmit,
+                                promptText,
+                                maxLength,
+                                secureTextEntry,
+                            },
+                            keyboardType
+                        );
+                        clearTimeout(resetTimeout);
+                        isProcessingRef.current = false;
+                    }
+                }, 300);
+
                 containerRef.current.measure((x, y, width, height, pageX, pageY) => {
+                    measureExecuted = true;
+                    clearTimeout(fallbackTimeout);
+
                     // 添加容错处理
                     const safePageX = pageX || 0;
                     const safePageY = pageY || 0;
@@ -144,8 +219,15 @@ export const FancyInputV2: React.FC<FancyInputV2Props> = ({
                         },
                         keyboardType
                     );
+
+                    clearTimeout(resetTimeout);
+                    isProcessingRef.current = false;
                 });
             }
+        } else {
+            // 如果 ref 不存在，直接重置标志位
+            clearTimeout(resetTimeout);
+            isProcessingRef.current = false;
         }
     }, [editable, value, keyboardType, onSubmit, showKeyboard, onChangeText, promptText, maxLength, secureTextEntry]);
 
@@ -175,25 +257,38 @@ export const FancyInputV2: React.FC<FancyInputV2Props> = ({
     }, [value, secureTextEntry]);
 
     return (
-        <Pressable
-            onPress={editable ? handlePress : undefined}
-            style={[styles.container, style]}
-            ref={containerRef}
-            onLayout={handleLayout}
-        >
-            {displayText ? (
-                <Text style={[styles.text, textStyle]}>{displayText}</Text>
-            ) : (
-                <Text style={[styles.placeholder, {color: placeholderTextColor}]}>{placeholder}</Text>
-            )}
-        </Pressable>
+        <View style={[styles.wrapper, style]} ref={containerRef} onLayout={handleLayout}>
+            <Pressable
+                onPress={editable ? handlePress : undefined}
+                onPressIn={editable ? handlePressIn : undefined}
+                onPressOut={editable ? handlePressOut : undefined}
+                style={styles.pressable}
+                hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+            >
+                <Animated.View
+                    style={{transform: [{scale: scaleAnim}]}}
+                    pointerEvents="none"
+                >
+                    {displayText ? (
+                        <Text style={[styles.text, textStyle]}>{displayText}</Text>
+                    ) : (
+                        <Text style={[styles.placeholder, {color: placeholderTextColor}]}>{placeholder}</Text>
+                    )}
+                </Animated.View>
+            </Pressable>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
+    wrapper: {
+        flex: 1,
+        minHeight: 40,
+    },
+    pressable: {
         flex: 1,
         justifyContent: 'center',
+        minHeight: 40,
     },
     text: {
         fontSize: 16,

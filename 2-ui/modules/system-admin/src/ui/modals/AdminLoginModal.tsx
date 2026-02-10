@@ -9,7 +9,7 @@ import {
     View
 } from "react-native";
 import {ModalScreen, ScreenMode, ScreenPartRegistration} from "@impos2/kernel-base";
-import {FancyInput, FancyInputV2, useLifecycle, useModalAnimation} from "@impos2/ui-core-base-2";
+import {FancyInputV2, useLifecycle, useModalAnimation} from "@impos2/ui-core-base-2";
 import {moduleName} from "../../moduleName";
 import {useAdminLogin} from "../../hooks";
 

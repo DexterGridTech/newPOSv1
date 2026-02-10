@@ -1,8 +1,8 @@
 import React, {useEffect, useRef} from 'react';
 import {desktopVariables} from "./ui/desktopVariables";
 import {
-    FancyContainer, FancyContainerV2,
-    FancyKeyboardOverlay, FancyKeyboardOverlayV2,
+    FancyContainerV2,
+    FancyKeyboardOverlayV2,
     FancyKeyboardProvider, FancyKeyboardProviderV2,
     LongPressCommand,
     ModalContainer,

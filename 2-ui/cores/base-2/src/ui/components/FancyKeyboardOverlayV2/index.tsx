@@ -162,7 +162,6 @@ export const FancyKeyboardOverlayV2: React.FC = () => {
                                   inputRange: [0, screenHeight],
                                   outputRange: [0, -screenHeight],
                               }),
-                              willChange: 'bottom',
                           }
                         : {
                               // 原生环境：使用 transform
