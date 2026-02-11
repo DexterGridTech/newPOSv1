@@ -9,6 +9,7 @@
     "0-mock-server/*",
     "0-mock-server/kernel-server/web",
     "1-kernel/base",
+    "1-kernel/cores/*",
     "1-kernel/modules/*",
     "1-kernel/workspaces/*",
     "2-ui/cores/*",

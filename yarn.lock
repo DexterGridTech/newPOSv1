@@ -2568,9 +2568,33 @@ __metadata:
     "@types/deep-diff": ^1.0.5
     "@types/lodash": ^4.17.20
     "@types/node": ^24.10.0
+    "@types/redux-persist": ^4.3.1
     axios: ^1.13.2
     date-fns: ^4.1.0
     deep-diff: ^1.0.2
+    deep-object-diff: ^1.1.9
+    lodash: ^4.17.21
+    madge: ^8.0.0
+    nanoid: ^5.1.6
+    redux-observable: ^3.0.0-rc.3
+    redux-persist: ^6.0.0
+    rxjs: ^7.8.2
+    ts-node: ^10.9.2
+    typescript: ^5.9.3
+  languageName: unknown
+  linkType: soft
+
+"@impos2/kernel-core-base@workspace:1-kernel/cores/base":
+  version: 0.0.0-use.local
+  resolution: "@impos2/kernel-core-base@workspace:1-kernel/cores/base"
+  dependencies:
+    "@reduxjs/toolkit": ^2.11.2
+    "@types/deep-diff": ^1.0.5
+    "@types/lodash": ^4.17.20
+    "@types/node": ^25.0.9
+    "@types/redux-persist": ^4.3.1
+    axios: ^1.13.2
+    date-fns: ^4.1.0
     deep-object-diff: ^1.1.9
     lodash: ^4.17.21
     madge: ^8.0.0
@@ -4381,6 +4405,15 @@ __metadata:
     "@types/prop-types": "*"
     csstype: ^3.2.2
   checksum: c74d0ab5155226998a52b568f6280536205f8fe4317f77bd5d5258bc131cc9134a2db68dc818cb8e8402a2f229843c4a5bde339faf7e64d441630e569a9e5421
+  languageName: node
+  linkType: hard
+
+"@types/redux-persist@npm:^4.3.1":
+  version: 4.3.1
+  resolution: "@types/redux-persist@npm:4.3.1"
+  dependencies:
+    redux-persist: "*"
+  checksum: 0b4518fd8a38ddf4538c7f7141323ea81f8b5918df1ce2ba35c609b71b0766a23c8d4ab1bcfb5021b8b3546f2365670b33ff5de870f40f72c65e8c45a47ef1b1
   languageName: node
   linkType: hard
 
@@ -12548,7 +12581,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"redux-persist@npm:^6.0.0":
+"redux-persist@npm:*, redux-persist@npm:^6.0.0":
   version: 6.0.0
   resolution: "redux-persist@npm:6.0.0"
   peerDependencies:

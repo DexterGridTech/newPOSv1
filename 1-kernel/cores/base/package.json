@@ -1,7 +1,9 @@
 {
-  "name": "@impos2/kernel-base",
+  "name": "@impos2/kernel-core-base",
   "version": "1.0.0",
-  "description": "POS Kernel base - Good Architecture",
+  "description": "POS Kernel base - Perfect Architecture",
+  "author": "DexterYang",
+  "license": "ISC",
   "exports": {
     ".": "./src/index.ts"
   },
@@ -14,13 +16,10 @@
     "type-check": "tsc --noEmit",
     "check:circular": "madge --circular --extensions ts src/"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "@reduxjs/toolkit": "^2.11.2",
     "axios": "^1.13.2",
     "date-fns": "^4.1.0",
-    "deep-diff": "^1.0.2",
     "deep-object-diff": "^1.1.9",
     "lodash": "^4.17.21",
     "nanoid": "^5.1.6",
@@ -31,7 +30,7 @@
   "devDependencies": {
     "@types/deep-diff": "^1.0.5",
     "@types/lodash": "^4.17.20",
-    "@types/node": "^24.10.0",
+    "@types/node": "^25.0.9",
     "@types/redux-persist": "^4.3.1",
     "madge": "^8.0.0",
     "ts-node": "^10.9.2",

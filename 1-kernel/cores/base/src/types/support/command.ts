@@ -1,3 +1,6 @@
+
+export const INTERNAL='INTERNAL'
+
 export enum ExecutionType {
     SEND_AND_EXECUTE_SEPARATELY = 'SEND_AND_EXECUTE_SEPARATELY',
     SLAVE_SEND_MASTER_EXECUTE = 'SLAVE_SEND_MASTER_EXECUTE',
@@ -7,6 +10,5 @@ export enum ExecutionType {
 
 export interface ExecutePath {
     id: string,
-    type: string
+    name: string
 }
-
