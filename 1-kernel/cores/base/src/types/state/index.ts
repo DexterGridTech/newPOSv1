@@ -1,4 +1,4 @@
 export * from './requestStatus'
 export * from './errorMessages'
 export * from './systemParameters'
-export * from './moduleState'
+export * from './moduleRootState'

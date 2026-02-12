@@ -1,14 +1,14 @@
-import {AppModule, IModuleDependencyResolver} from "./moduleType";
+import {AppModule} from "./types";
 
 /**
  * 模块依赖解析器实现
  * 职责: 负责深度遍历、拉平和去重 KernelModule 依赖
  */
-export class ModuleDependencyResolver implements IModuleDependencyResolver {
+export class ModuleDependencyResolver {
     /**
      * 解析模块依赖,返回拉平且去重后的模块列表
      * @param modules 输入的模块列表
-     * @returns 拉平且去重后的模块列表
+     * @returns 拉平且去重后的模块列表，按 priority 升序排序（priority 越小越靠前，未定义的排最后）
      */
     resolveModules(modules: AppModule[]): AppModule[] {
         const resolvedModules: AppModule[] = [];
@@ -19,7 +19,18 @@ export class ModuleDependencyResolver implements IModuleDependencyResolver {
             this.traverseModule(module, resolvedModules, visitedModules);
         });
 
-        return resolvedModules;
+        // 根据 priority 排序，priority 越小越靠前，未定义 priority 的排在最后
+        return resolvedModules.sort((a, b) => {
+            const priorityA = a.modulePreInitiatePriority;
+            const priorityB = b.modulePreInitiatePriority;
+
+            // 如果 a 未定义 priority，排在后面
+            if (priorityA === undefined) return 1;
+            // 如果 b 未定义 priority，排在后面
+            if (priorityB === undefined) return -1;
+            // 都定义了，按升序排序
+            return priorityA - priorityB;
+        });
     }
 
     /**

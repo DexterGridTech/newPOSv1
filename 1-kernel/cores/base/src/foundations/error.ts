@@ -1,7 +1,6 @@
 import _, {now} from 'lodash';
 import {DefinedErrorMessage, ErrorCategory, ErrorSeverity} from "./errorMessage";
 
-
 interface ICommandLike {
     id?: string;
     commandName?: string;

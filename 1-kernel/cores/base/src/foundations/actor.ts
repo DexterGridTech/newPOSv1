@@ -6,17 +6,17 @@ import {logger} from "./logger";
 import {DefinedErrorMessage, ErrorCategory, ErrorSeverity} from "./errorMessage";
 
 
-export type CommandStartCallback = (actorName: string, command: ICommand<any>) => void;
-export type CommandCompleteCallback = (actorName: string, command: ICommand<any>, result?: Record<string, any>) => void;
-export type CommandErrorCallback = (actorName: string, command: ICommand<any>, error: AppError) => void;
-
 /**
  * 命令生命周期监听器接口
  */
 export interface CommandLifecycleListener {
-    onCommandStart?: CommandStartCallback;
-    onCommandComplete?: CommandCompleteCallback;
-    onCommandError?: CommandErrorCallback;
+    onCommandStart: (actorName: string, command: ICommand<any>) => void;
+    onCommandComplete: (actorName: string, command: ICommand<any>, result?: Record<string, any>) => void;
+    onCommandError: (actorName: string, command: ICommand<any>, error: AppError) => void;
+}
+
+export interface CommandConverter {
+    convertCommand: (command: ICommand<any>) => ICommand<any>;
 }
 
 export abstract class IActor {
@@ -24,13 +24,13 @@ export abstract class IActor {
     readonly moduleName: string;
     private _handlers?: Map<string, (command: ICommand<any>) => Promise<Record<string, any>>>;
 
-    constructor(actorName: string,moduleName: string) {
+    constructor(actorName: string, moduleName: string) {
         this.actorName = actorName;
         this.moduleName = moduleName;
     }
 
     // 静态方法：创建命令处理器的辅助函数
-    static defineHandler<T>(
+    static defineCommandHandler<T>(
         commandFactory: (value: T) => ICommand<T>,
         handler: (command: ReturnType<typeof commandFactory>) => Promise<Record<string, any>>
     ) {
@@ -69,21 +69,19 @@ export abstract class IActor {
 
     executeCommand = (command: ICommand<any>) => {
         const handler = this.getCommandHandlers().get(command.commandName);
-        if (!handler) {
-            return;
+        if (handler) {
+            const actorName = this.constructor.name;
+            const actorSystem = ActorSystem.getInstance();
+            //发射后不管,不需要并发控制
+            actorSystem.commandStart(actorName, command);
+            handler(command).then((result) => {
+                actorSystem.commandComplete(actorName, command, result);
+            }).catch((error: any) => {
+                // 标准化错误
+                const appError = this.normalizeError(error, command);
+                actorSystem.commandError(actorName, command, appError);
+            })
         }
-        const actorName = this.constructor.name;
-        const actorSystem = ActorSystem.getInstance();
-
-        //发射后不管,不需要并发控制
-        actorSystem.commandStart(actorName, command);
-        handler(command).then((result) => {
-            actorSystem.commandComplete(actorName, command, result);
-        }).catch((error: any) => {
-            // 标准化错误
-            const appError = this.normalizeError(error, command);
-            actorSystem.commandError(actorName, command, appError);
-        })
     }
 
     private normalizeError(error: any, command: ICommand<any>): AppError {
@@ -103,11 +101,8 @@ export abstract class IActor {
 export class ActorSystem {
     private static instance: ActorSystem;
     private actors: IActor[] = [];
-    /**
-     * 命令生命周期监听器列表
-     * 使用回调模式解耦,避免直接覆盖方法
-     */
     private lifecycleListeners: CommandLifecycleListener[] = [];
+    private commandConverters: CommandConverter[] = [];
 
     static getInstance(): ActorSystem {
         if (!ActorSystem.instance) {
@@ -119,63 +114,26 @@ export class ActorSystem {
         return ActorSystem.instance;
     }
 
-    /**
-     * 注册命令生命周期监听器
-     * @param listener 监听器对象
-     * @returns 取消注册的函数
-     */
-    registerLifecycleListener(listener: CommandLifecycleListener): () => void {
+    registerLifecycleListener(listener: CommandLifecycleListener) {
         this.lifecycleListeners.push(listener);
-        // 返回取消注册的函数
-        return () => {
-            const index = this.lifecycleListeners.indexOf(listener);
-            if (index > -1) {
-                this.lifecycleListeners.splice(index, 1);
-            }
-        };
     }
 
-    register(actor: IActor): void {
+    registerCommandConverter(converter: CommandConverter) {
+        this.commandConverters.push(converter);
+    }
+
+    registerActor(actor: IActor): void {
         this.actors.push(actor)
     }
 
     runCommand(command: ICommand<any>): void {
-        let commandToExecute = command
-        //todo
-
-        // const slaveName = storeEntry.getSlaveName();
-        // const displayMode = storeEntry.getDisplayMode();
-        //
-        // if (slaveName &&
-        //     commandToExecute.executionType === ExecutionType.ONLY_SEND_AND_EXECUTE_ON_MASTER) {
-        //     this.commandError(
-        //         this.constructor.name,
-        //         commandToExecute,
-        //         new AppError(SystemCommandErrors.COMMAND_FORBIDDEN_ON_SLAVE, command.commandName, command))
-        //     return
-        // }
-        // if (!slaveName &&
-        //     commandToExecute.executionType === ExecutionType.ONLY_SEND_AND_EXECUTE_ON_SLAVE) {
-        //     this.commandError(
-        //         this.constructor.name,
-        //         commandToExecute,
-        //         new AppError(SystemCommandErrors.COMMAND_FORBIDDEN_ON_MASTER, command.commandName, command))
-        //     return
-        // }
-        // if (slaveName &&
-        //     displayMode &&
-        //     commandToExecute.executionType === ExecutionType.SLAVE_SEND_MASTER_EXECUTE) {
-        //     commandToExecute.slaveInfo = {slaveName, displayMode}
-        //     commandToExecute = new SendToMasterCommand(commandToExecute)
-        // }
-        // logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `发出命令->${commandToExecute.commandName}`, commandToExecute)
+        let commandToExecute =
+            this.commandConverters.reduce((prev, converter) =>
+                converter.convertCommand(prev), command)
+        logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `发出命令->${commandToExecute.commandName}`, commandToExecute)
         this.actors.forEach(actor => actor.executeCommand(commandToExecute))
     }
 
-    /**
-     * 命令开始执行时调用
-     * 通知所有注册的监听器
-     */
     commandStart(actorName: string, command: ICommand<any>): void {
         logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `命令开始=>${actorName} ${command.commandName} [RID:${command.requestId}][CID:${command.id}][SID:${command.sessionId}]`)
         this.lifecycleListeners.forEach(listener => {
@@ -189,10 +147,6 @@ export class ActorSystem {
         });
     }
 
-    /**
-     * 命令执行完成时调用
-     * 通知所有注册的监听器
-     */
     commandComplete(actorName: string, command: ICommand<any>, result?: Record<string, any>): void {
         logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `命令结束=>${actorName} ${command.commandName} [RID:${command.requestId}][CID:${command.id}][SID:${command.sessionId}]`)
         this.lifecycleListeners.forEach(listener => {
@@ -206,10 +160,6 @@ export class ActorSystem {
         });
     }
 
-    /**
-     * 命令执行出错时调用
-     * 通知所有注册的监听器
-     */
     commandError(actorName: string, command: ICommand<any>, appError: AppError): void {
         logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `命令错误=>${actorName} ${command.commandName} [RID:${command.requestId}][CID:${command.id}][SID:${command.sessionId}] Error:${appError.message}`)
         this.lifecycleListeners.forEach(listener => {
@@ -224,12 +174,6 @@ export class ActorSystem {
     }
 }
 
-/**
- * 工具方法：自动将属性名作为 actorName 传递给 Actor 构造函数
- * @param moduleName 模块名
- * @param actorClasses Actor 类的映射对象
- * @returns 实例化后的 Actor 对象
- */
 export function createActors<T extends Record<string, new (actorName: string, moduleName: string) => IActor>>(
     moduleName: string,
     actorClasses: T

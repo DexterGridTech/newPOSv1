@@ -1,5 +1,20 @@
-import {kernelCoreBaseState, KeyValue} from "../types";
+import {kernelCoreBaseState, KeyValue, LOG_TAGS} from "../types";
+import {logger} from "./logger";
+import {moduleName} from "../moduleName";
 
+const allErrorMessages: Record<string, DefinedErrorMessage> = {}
+export const registerModuleErrorMessages = (_moduleName: string, errorMessages: DefinedErrorMessage[]) => {
+    errorMessages.forEach(errorMessage => {
+        logger.log([moduleName], LOG_TAGS.System, `registerModuleErrors:${_moduleName}.${errorMessage.key}:${errorMessage.name}`)
+        if (Object.keys(allErrorMessages).indexOf(errorMessage.key) != -1) {
+            throw new Error(`Error ${errorMessage.key} has been registered`);
+        }
+        allErrorMessages[errorMessage.key] = errorMessage;
+    })
+}
+export const getDefinedErrorMessageByKey = (key: string) => {
+    return allErrorMessages[key]
+}
 export class DefinedErrorMessage extends KeyValue< string > {
     readonly category: ErrorCategory;
     readonly severity: ErrorSeverity;

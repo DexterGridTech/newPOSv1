@@ -1,4 +1,4 @@
-import {RootState} from "../state/moduleState";
+import {RootState} from "../state/moduleRootState";
 import {storeEntry} from "./storeEntry";
 import {ValueWithUpdate} from "../shared/valueWithUpdate";
 
@@ -101,7 +101,8 @@ const zone2Commands = createCommandZone({
 zone2Commands.CCommand("hello").run(""); // 自动创建 ACommand 实例
 
 
-const allZoneCommands = {...zone1Commands, ...zone2Commands}
+const allZoneCommands = {}
+Object.assign(allZoneCommands, zone1Commands, zone2Commands)
 
 const runFromOutside = (commandName: string, value: any, runArgs: any): void => {
     const commandFactory = allZoneCommands[commandName as keyof typeof allZoneCommands];

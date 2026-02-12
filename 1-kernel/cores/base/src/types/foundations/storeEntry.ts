@@ -3,7 +3,7 @@
  * 支持在其他 package 中扩展功能
  */
 import {EnhancedStore, PayloadAction} from "@reduxjs/toolkit";
-import {RootState} from "../state/moduleState";
+import {RootState} from "../state/moduleRootState";
 
 export interface StoreEntry {
     setStore: (store: EnhancedStore) => void
@@ -34,7 +34,7 @@ class StoreEntryImpl implements StoreEntry {
         }
         return state[stateKey]
     }
-    dispatchAction(action: PayloadAction)  {
+    dispatchAction(action: PayloadAction<any>)  {
         if (!this.store) {
             throw new Error('Store is not initialized yet')
         }

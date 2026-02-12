@@ -1,8 +1,12 @@
 import {moduleName} from "../../moduleName";
-import {InitActor} from "./init";
+import {InitializeActor} from "./initialize";
 import {createActors} from "../../foundations";
+import {ErrorMessagesActor} from "./errorMessages";
+import {SystemParametersActor} from "./systemParameters";
 
 
 export const kernelCoreBaseActors = createActors(moduleName, {
-    initActor: InitActor
+    initializeActor: InitializeActor,
+    errorMessagesActor: ErrorMessagesActor,
+    systemParametersActor: SystemParametersActor
 });

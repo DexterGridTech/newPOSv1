@@ -1,8 +1,26 @@
 import {Subject} from "rxjs";
 import {nanoid} from "nanoid";
-import {ExecutePath, ExecutionType, INTERNAL} from "../types";
+import {ExecutePath, ExecutionType, INTERNAL, LOG_TAGS} from "../types";
+import {logger} from "./logger";
+import {moduleName} from "../moduleName";
 
 export const commandBus = new Subject<ICommand<any>>();
+
+const allCommands: Record<string, new (args: any) => ICommand<any>> = {}
+
+export const registerModuleCommands = (_moduleName: string, commands: Record<string, new (args: any) => ICommand<any>>) => {
+    Object.keys(commands).forEach(commandName => {
+        logger.log([moduleName], LOG_TAGS.System, `registerModuleCommands:${_moduleName}.${commandName}`)
+        if (Object.keys(allCommands).indexOf(commandName) != -1) {
+            throw new Error(`Command ${commandName} has been registered`);
+        }
+        allCommands[commandName] = commands[commandName];
+    })
+}
+
+export const getCommandByName = (commandName: string) => {
+    return allCommands[commandName];
+}
 
 export abstract class ICommand<P> {
     abstract readonly commandName: string;

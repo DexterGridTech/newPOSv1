@@ -1,4 +1,20 @@
-import {kernelCoreBaseState, KeyValue} from "../types";
+import {kernelCoreBaseState, KeyValue, LOG_TAGS} from "../types";
+import {logger} from "./logger";
+import {moduleName} from "../moduleName";
+
+const allSystemParameters: Record<string, any> = {};
+export const registerModuleSystemParameter = (_moduleName: string, systemParameters: DefinedSystemParameter<any>[]) => {
+    systemParameters.forEach(systemParameter => {
+        logger.log([moduleName], LOG_TAGS.System, `registerModuleSystemParameter:${_moduleName}.${systemParameter.key}:${systemParameter.name}`)
+        if (Object.keys(allSystemParameters).indexOf(systemParameter.key) != -1) {
+            throw new Error(`System Parameter ${systemParameter.key} has been registered`);
+        }
+        allSystemParameters[systemParameter.key] = systemParameter;
+    })
+}
+export const getSystemParameterByKey = (key: string) => {
+    return allSystemParameters[key];
+}
 
 export class DefinedSystemParameter<T> extends KeyValue<T> {
     constructor(
