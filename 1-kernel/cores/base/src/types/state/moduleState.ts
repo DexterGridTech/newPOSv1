@@ -1,6 +1,7 @@
-import {RequestStatusState} from "./state";
-import {ErrorMessagesState} from "./state/errorMessages";
-import {SystemParametersState} from "@impos2/kernel-base";
+import {RequestStatusState} from "./requestStatus";
+import {ErrorMessagesState} from "./errorMessages";
+import {moduleName} from "../../moduleName";
+import {SystemParametersState} from "./systemParameters";
 
 /**
  * Redux Persist 的状态接口
@@ -12,13 +13,13 @@ interface PersistState {
 }
 
 export interface PersistPartial {
-    _persist: PersistState;
+    _persist?: PersistState;
 }
 
 export const kernelCoreBaseState = {
-    requestStatus: "requestStatus",
-    errorMessages:"errorMessages",
-    systemParameters:"systemParameters"
+    requestStatus: `${moduleName}.requestStatus`,
+    errorMessages:`${moduleName}.errorMessages`,
+    systemParameters:`${moduleName}.systemParameters`
 } as const
 
 export type KernelCoreBaseStateMap = {

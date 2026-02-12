@@ -3,7 +3,7 @@ import {commandBus, ICommand} from "./command";
 import {AppError} from "./error";
 import {LOG_TAGS} from "../types";
 import {logger} from "./logger";
-import {ErrorCategory, ErrorSeverity} from "./definedErrorMessages";
+import {DefinedErrorMessage, ErrorCategory, ErrorSeverity} from "./errorMessage";
 
 
 export type CommandStartCallback = (actorName: string, command: ICommand<any>) => void;
@@ -19,8 +19,15 @@ export interface CommandLifecycleListener {
     onCommandError?: CommandErrorCallback;
 }
 
-abstract class IActor {
+export abstract class IActor {
+    readonly actorName: string;
+    readonly moduleName: string;
     private _handlers?: Map<string, (command: ICommand<any>) => Promise<Record<string, any>>>;
+
+    constructor(actorName: string,moduleName: string) {
+        this.actorName = actorName;
+        this.moduleName = moduleName;
+    }
 
     // 静态方法：创建命令处理器的辅助函数
     static defineHandler<T>(
@@ -83,13 +90,13 @@ abstract class IActor {
         if (error instanceof AppError) {
             return error;
         }
+        const definedErrorMessage = new DefinedErrorMessage(ErrorCategory.SYSTEM,
+            ErrorSeverity.MEDIUM,
+            "COMMAND_EXECUTION_FAILED",
+            'ERR_COMMAND_EXECUTION_FAILED',
+            error.message || '命令执行失败')
         // 将普通错误转换为 AppError
-        return new AppError({
-            category: ErrorCategory.SYSTEM,
-            severity: ErrorSeverity.MEDIUM,
-            key: 'ERR_COMMAND_EXECUTION_FAILED',
-            defaultMessage: error.message || '命令执行失败'
-        }, '', command);
+        return new AppError(definedErrorMessage, '', command);
     }
 }
 
@@ -215,4 +222,24 @@ export class ActorSystem {
             }
         });
     }
+}
+
+/**
+ * 工具方法：自动将属性名作为 actorName 传递给 Actor 构造函数
+ * @param moduleName 模块名
+ * @param actorClasses Actor 类的映射对象
+ * @returns 实例化后的 Actor 对象
+ */
+export function createActors<T extends Record<string, new (actorName: string, moduleName: string) => IActor>>(
+    moduleName: string,
+    actorClasses: T
+): { [K in keyof T]: InstanceType<T[K]> } {
+    const actors = {} as { [K in keyof T]: InstanceType<T[K]> };
+
+    for (const actorName in actorClasses) {
+        const ActorClass = actorClasses[actorName];
+        actors[actorName] = new ActorClass(actorName, moduleName) as InstanceType<T[typeof actorName]>;
+    }
+
+    return actors;
 }

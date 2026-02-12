@@ -1,5 +1,6 @@
+import {ValueWithUpdate} from "../shared/valueWithUpdate";
 
 
 export interface ErrorMessagesState {
-    [key: string]: string
+    [key: string]: ValueWithUpdate<string>
 }

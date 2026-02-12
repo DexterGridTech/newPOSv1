@@ -1,6 +1,6 @@
-import {KeyValue,kernelCoreBaseState} from "../types";
+import {kernelCoreBaseState, KeyValue} from "../types";
 
-export class DefinedErrorMessages extends KeyValue< string > {
+export class DefinedErrorMessage extends KeyValue< string > {
     readonly category: ErrorCategory;
     readonly severity: ErrorSeverity;
     constructor(
@@ -8,9 +8,9 @@ export class DefinedErrorMessages extends KeyValue< string > {
         severity: ErrorSeverity,
         name: string,
         key: string,
-        value: string
+        defaultValue: string
     ) {
-        super(kernelCoreBaseState.errorMessages, name, key, value);
+        super(kernelCoreBaseState.errorMessages, name, key, defaultValue);
         this.category = category;
         this.severity = severity;
     }

@@ -1,3 +1,3 @@
-export * from './support';
+export * from './shared';
 export * from './state';
-export * from './moduleState';
+export * from './foundations';

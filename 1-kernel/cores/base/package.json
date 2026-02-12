@@ -14,7 +14,7 @@
     "dev": "ts-node src/index.ts",
     "clean": "rm -rf dist",
     "type-check": "tsc --noEmit",
-    "check:circular": "madge --circular --extensions ts src/"
+    "check:circular": "madge --circular --extensions ts --warning src/"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.11.2",
@@ -31,7 +31,6 @@
     "@types/deep-diff": "^1.0.5",
     "@types/lodash": "^4.17.20",
     "@types/node": "^25.0.9",
-    "@types/redux-persist": "^4.3.1",
     "madge": "^8.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"

@@ -1,5 +1,5 @@
+import {ValueWithUpdate} from "../shared/valueWithUpdate";
 
-
-export interface SystemParameters {
-    [key: string]: any
+export interface SystemParametersState {
+    [key: string]: ValueWithUpdate<any>
 }

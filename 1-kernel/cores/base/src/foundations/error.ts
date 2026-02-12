@@ -1,5 +1,5 @@
 import _, {now} from 'lodash';
-import {DefinedErrorMessages, ErrorCategory, ErrorSeverity} from "./definedErrorMessages";
+import {DefinedErrorMessage, ErrorCategory, ErrorSeverity} from "./errorMessage";
 
 
 interface ICommandLike {
@@ -10,10 +10,8 @@ interface ICommandLike {
 }
 
 export const errorMessageTextGetter = {
-    getErrorMessage: (definedError: DefinedErrorMessages, args?: any): string => {
-        // todo
-        const customizedErrorMessages = new Map<string, string>()
-        const message = customizedErrorMessages.get(definedError.key) ?? definedError.value
+    getErrorMessage: (definedError: DefinedErrorMessage, args?: any): string => {
+        const message = definedError.value
         if (args) {
             const compiled = _.template(message, {interpolate: /\$\{([\s\S]+?)\}/g});
             return compiled(args);
@@ -33,7 +31,7 @@ export class AppError extends Error {
     sessionId?: string;
     public readonly createdAt: number;
 
-    constructor(definedError: DefinedErrorMessages, args?: any, command?: ICommandLike) {
+    constructor(definedError: DefinedErrorMessage, args?: any, command?: ICommandLike) {
         super(errorMessageTextGetter.getErrorMessage(definedError, args));
         this.name = this.constructor.name;
         this.category = definedError.category || ErrorCategory.UNKNOWN;

@@ -1,16 +1,23 @@
-import {RootState} from "../moduleState";
+import {RootState} from "../state/moduleState";
+import {storeEntry} from "./storeEntry";
+import {ValueWithUpdate} from "../shared/valueWithUpdate";
 
 export abstract class KeyValue<T> {
     readonly stateName: keyof RootState;
     readonly key: string;
     readonly name: string;
-    readonly value: T;
+    readonly defaultValue: T;
 
-    protected constructor(stateName: keyof RootState, name: string, key: string, value: T) {
+    protected constructor(stateName: keyof RootState, name: string, key: string, defaultValue: T) {
         this.stateName = stateName;
         this.name = name;
         this.key = key;
-        this.value = value;
+        this.defaultValue = defaultValue;
+    }
+
+    get value(): T {
+        const state = storeEntry.state(this.stateName) as { [key: string]: ValueWithUpdate<T> };
+        return (state[this.key]?.value) ?? this.defaultValue;
     }
 }
 
@@ -72,7 +79,7 @@ type CommandConfig<T> = {
 
 // 类型推断辅助函数
 function defineCommand<T>(commandType: CommandType): CommandConfig<T> {
-    return { valueType: undefined as any as T, commandType };
+    return {valueType: undefined as any as T, commandType};
 }
 
 // 使用配置对象生成 zone1Commands
@@ -159,19 +166,19 @@ abstract class Actor {
 }
 
 class ActorA extends Actor {
-    handleACommand = Actor.defineHandler(zone1Commands.ACommand, (command):Promise<any> => {
+    handleACommand = Actor.defineHandler(zone1Commands.ACommand, (command): Promise<any> => {
         console.log(command.name);
         console.log(command.value.toUpperCase()); // 自动推断为 string
         return Promise.resolve();
     });
 
-    processDCommand = Actor.defineHandler(zone2Commands.DCommand, (command):Promise<any> => {
+    processDCommand = Actor.defineHandler(zone2Commands.DCommand, (command): Promise<any> => {
         console.log(command.name);
         console.log(command.value.toFixed(2)); // 自动推断为 number
         return Promise.resolve();
     });
 
-    anotherDCommand = Actor.defineHandler(zone2Commands.DCommand, (command):Promise<any> => {
+    anotherDCommand = Actor.defineHandler(zone2Commands.DCommand, (command): Promise<any> => {
         console.log('Another handler:', command.name);
         console.log(command.value.toFixed(2)); // 自动推断为 number
         return Promise.resolve();
@@ -179,19 +186,19 @@ class ActorA extends Actor {
 }
 
 class ActorB extends Actor {
-    onACommand = Actor.defineHandler(zone1Commands.ACommand, (command):Promise<any> => {
+    onACommand = Actor.defineHandler(zone1Commands.ACommand, (command): Promise<any> => {
         console.log(command.name);
         console.log(command.value.toUpperCase()); // 自动推断为 string
         return Promise.resolve();
     });
 
-    onBCommand = Actor.defineHandler(zone1Commands.BCommand, (command):Promise<any> => {
+    onBCommand = Actor.defineHandler(zone1Commands.BCommand, (command): Promise<any> => {
         console.log(command.name);
         console.log(command.value.toFixed(2)); // 自动推断为 number
         return Promise.resolve();
     });
 
-    onCCommand = Actor.defineHandler(zone2Commands.CCommand, (command):Promise<any> => {
+    onCCommand = Actor.defineHandler(zone2Commands.CCommand, (command): Promise<any> => {
         console.log(command.name);
         console.log(command.value.toUpperCase()); // 自动推断为 string
         return Promise.resolve();
