@@ -1,8 +1,7 @@
-import {KernelCoreInterconnectionStateMap} from "./moduleState";
+import {KernelCoreInterconnectionState} from "./moduleState";
 
 declare module '@impos2/kernel-core-base' {
-    // 扩展 RootState 接口
-    export interface RootState extends KernelCoreInterconnectionStateMap {
-
+    // 使用声明合并扩展 RootState 接口
+    export interface RootState extends KernelCoreInterconnectionState {
     }
 }

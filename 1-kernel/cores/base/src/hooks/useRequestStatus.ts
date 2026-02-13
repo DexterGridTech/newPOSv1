@@ -1,9 +1,9 @@
-import {kernelCoreBaseState, RequestStatus, RootState} from "../types";
+import {kernelCoreBaseState, RequestStatus, RootState, RequestStatusState} from "../types";
 import {createSelector} from "@reduxjs/toolkit";
 import {useSelector} from 'react-redux';
 
-const selectRequestStatusState = (state: RootState) => {
-    return state[kernelCoreBaseState.requestStatus];
+const selectRequestStatusState = (state: RootState): RequestStatusState => {
+    return state[kernelCoreBaseState.requestStatus] as RequestStatusState;
 };
 
 const selectRequest = (state: RootState, requestId?: string | null) => requestId;

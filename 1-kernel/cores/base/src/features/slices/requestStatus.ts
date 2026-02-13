@@ -5,6 +5,7 @@ import {
     kernelCoreBaseState,
     LOG_TAGS,
     ModuleSliceConfig,
+    RequestStatus,
     RequestStatusState,
     RequestStatusType
 } from "../../types";
@@ -101,7 +102,7 @@ export const slice = createSlice({
             request.status = calculateRequestStatus(commandStatuses)
             request.updatedAt = now()
         },
-        batchUpdateState: (state, action) => {
+        batchUpdateState: (state, action: PayloadAction<Record<string, RequestStatus | undefined | null>>) => {
             batchUpdateState(state, action)
             logger.log([moduleName, LOG_TAGS.Reducer, kernelCoreBaseState.requestStatus], 'batch update state', action.payload)
         }

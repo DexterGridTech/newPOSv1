@@ -7,8 +7,12 @@ import {kernelCoreInterconnectionState} from "./shared/moduleStateKey";
 import {MasterInterconnectionState} from "./state/masterInterconnection";
 import {SlaveInterconnectionState} from "./state/slaveInterconnection";
 
-export type KernelCoreInterconnectionStateMap = {
-    [kernelCoreInterconnectionState.instanceInfo]:InstanceInfoState
-    [kernelCoreInterconnectionState.masterConnection]:MasterInterconnectionState
-    [kernelCoreInterconnectionState.slaveConnection]:SlaveInterconnectionState
+export type KernelCoreInterconnectionState = {
+    [kernelCoreInterconnectionState.instanceInfo]: InstanceInfoState
+    [kernelCoreInterconnectionState.masterInterconnection]: MasterInterconnectionState
+    [kernelCoreInterconnectionState.slaveInterconnection]: SlaveInterconnectionState
+    _persist: {
+        version: number;
+        rehydrated: boolean;
+    };
 }

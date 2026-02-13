@@ -21,7 +21,6 @@ export const getCommandByName = (commandName: string) => {
 
 export abstract class Command<P> {
     abstract readonly commandName: string;
-    abstract readonly moduleName: string;
     id = nanoid(8);
     readonly timestamp = Date.now();
     abstract readonly executionType: ExecutionType
@@ -31,7 +30,7 @@ export abstract class Command<P> {
     private _executePath: ExecutePath[] | null = null;
 
     printId() {
-        return `${this.moduleName}.${this.commandName}[CID:${this.id},RID:${this.requestId},SID:${this.sessionId}]`
+        return `${this.commandName}[CID:${this.id},RID:${this.requestId},SID:${this.sessionId}]`
     }
 
     get executePath(): ExecutePath[] {
@@ -78,29 +77,28 @@ export abstract class Command<P> {
 
 // 辅助类型：用于定义命令配置
 type CommandConfig<P> = {
-    moduleName: string;
     payloadType: P;
     executionType: ExecutionType;
 }
 
 // 类型推断辅助函数
-export function defineCommand<P>(executionType: ExecutionType, moduleName: string): CommandConfig<P> {
-    return {payloadType: undefined as any as P, executionType, moduleName};
+export function defineCommand<P>(executionType: ExecutionType): CommandConfig<P> {
+    return {payloadType: undefined as any as P, executionType};
 }
 
 // 通用的命令区域生成器
 export function createModuleCommands<T extends Record<string, {
     payloadType: any;
     executionType: ExecutionType;
-    moduleName: string
 }>>(
+    moduleName: string,
     config: T
 ): { [K in keyof T]: (payload: T[K]['payloadType']) => Command<T[K]['payloadType']> } {
     // 创建命令类的工厂函数
-    function createCommandClass<P>(name: string, executionType: ExecutionType, moduleName: string) {
+    function createCommandClass<P>(key: string, executionType: ExecutionType, moduleName: string) {
+        const fullCommandName = `${moduleName}.${key}`;
         return class extends Command<P> {
-            readonly moduleName = moduleName;
-            readonly commandName = name;
+            readonly commandName = fullCommandName;
             readonly executionType = executionType;
 
             constructor(payload: P) {
@@ -112,11 +110,11 @@ export function createModuleCommands<T extends Record<string, {
     const result: any = {};
     const classCache: any = {};
 
-    for (const [name, commandConfig] of Object.entries(config)) {
+    for (const [key, commandConfig] of Object.entries(config)) {
         // 缓存命令类
-        classCache[name] = createCommandClass(name, commandConfig.executionType, commandConfig.moduleName);
+        classCache[key] = createCommandClass(key, commandConfig.executionType, moduleName);
         // 创建工厂函数
-        result[name] = (payload: any) => new classCache[name](payload);
+        result[key] = (payload: any) => new classCache[key](payload);
     }
 
     return result;

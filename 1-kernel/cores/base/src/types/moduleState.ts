@@ -4,22 +4,28 @@ import {SystemParametersState} from "./state/systemParameters";
 import {kernelCoreBaseState} from "./shared/moduleStateKey";
 
 /**
- * Redux Persist 的状态接口
- * 直接定义，避免导入问题
+ * 核心状态映射类型
  */
-
-type KernelCoreBaseStateMap = {
+interface KernelCoreBaseState {
     [kernelCoreBaseState.requestStatus]: RequestStatusState;
     [kernelCoreBaseState.errorMessages]: ErrorMessagesState;
     [kernelCoreBaseState.systemParameters]: SystemParametersState;
-}
-
-interface PersistPartial {
-    _persist?: {
+    _persist: {
         version: number;
         rehydrated: boolean;
     };
 }
-/** 扩展 RootState 接口(供其他模块扩展) */
-export interface RootState extends KernelCoreBaseStateMap,PersistPartial {
+
+
+/**
+ * RootState 接口（供其他模块扩展）
+ * 使用 interface 支持声明合并
+ * 注意：PersistPartial 通过交叉类型添加，避免索引签名冲突
+ */
+export interface RootState extends KernelCoreBaseState{
 }
+
+/**
+ * 完整的 RootState 类型（包含 PersistPartial）
+ * 用于实际的类型标注
+ */
