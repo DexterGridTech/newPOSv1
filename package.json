@@ -37,6 +37,8 @@
     "A:kernel-server": "corepack yarn workspace @impos2/kernel-server dev",
     "B:master-ws-server": "corepack yarn workspace @impos2/master-ws-server dev",
     "---------": "---------------------------------------",
+    "kernel-core-base": "corepack yarn workspace @impos2/kernel-core-base dev",
+    "----------": "----------------------------------------",
     "ui:module-device-activate": "yarn workspace @impos2/ui-module-device-activate web",
     "ui:module-user-login": "corepack yarn workspace @impos2/ui-module-user-login web",
     "ui:module-system-admin": "corepack yarn workspace @impos2/ui-module-system-admin web",

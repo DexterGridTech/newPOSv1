@@ -32,6 +32,7 @@ export * from "./foundations";
 export * from "./supports";
 export * from "./selectors";
 export * from "./application/types";
+export * from "./application/applicationManager";
 export {kernelCoreBaseSlice} from "./features/slices";
 export {kernelCoreBaseCommands} from "./features/commands";
 export {kernelCoreBaseErrorMessages} from "./supports/errors";

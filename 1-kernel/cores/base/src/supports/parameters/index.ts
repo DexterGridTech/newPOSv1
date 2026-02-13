@@ -1,10 +1,10 @@
 import {DefinedSystemParameter} from "../../foundations";
 
 
-export const kernelCoreBaseParameters:Record<string, DefinedSystemParameter<any>> = {
-    testTimeout: new DefinedSystemParameter(
-        '测试参数',
-        "system.test.timeout",
-        1000
+export const kernelCoreBaseParameters = {
+    requestCleanOutTime: new DefinedSystemParameter(
+        '请求清理时间',
+        "system.request.clean.out.time",
+        360000
     )
 };

@@ -45,7 +45,7 @@ export class ApiManager {
 
     public getServerConfig = (serverName: string) => this.serverMap.get(serverName)
 
-    // 请求指标
+    // 请求指标（使用滑动窗口）
     private metrics = {
         totalRequests: 0,
         successfulRequests: 0,
@@ -56,8 +56,11 @@ export class ApiManager {
             requests: number;
             failures: number;
             totalResponseTime: number;
+            lastAccessTime: number; // 添加最后访问时间
         }>()
     };
+    private metricsWindowSize = 3600000; // 滑动窗口大小：1小时
+    private lastMetricsCleanup = now(); // 上次清理时间
 
     private constructor() {
         // 移除检查，由 getInstance 控制
@@ -352,11 +355,13 @@ export class ApiManager {
             this.metrics.addressMetrics.set(address.addressName, {
                 requests: 0,
                 failures: 0,
-                totalResponseTime: 0
+                totalResponseTime: 0,
+                lastAccessTime: now()
             });
         }
         const addressMetric = this.metrics.addressMetrics.get(address.addressName)!;
         addressMetric.requests++;
+        addressMetric.lastAccessTime = now(); // 更新最后访问时间
 
         try {
             const axiosConfig: AxiosRequestConfig = {
@@ -749,15 +754,32 @@ export class ApiManager {
     }
 
     /**
-     * 清理metrics以防止内存泄漏
+     * 清理metrics以防止内存泄漏（使用滑动窗口算法）
      */
     private pruneMetricsIfNeeded(): void {
-        if (this.metrics.addressMetrics.size > PERFORMANCE_CONFIG.MAX_METRICS_ENTRIES) {
-            // 转换为数组并按请求次数排序,保留活跃度高的条目
-            const entries = Array.from(this.metrics.addressMetrics.entries());
-            entries.sort((a, b) => b[1].requests - a[1].requests);
+        const currentTime = now();
 
-            // 只保留前MAX_METRICS_ENTRIES个条目
+        // 每5分钟清理一次
+        if (currentTime - this.lastMetricsCleanup < 300000) {
+            return;
+        }
+
+        this.lastMetricsCleanup = currentTime;
+
+        // 使用滑动窗口：删除超过窗口时间的条目
+        const windowStart = currentTime - this.metricsWindowSize;
+
+        for (const [key, metric] of this.metrics.addressMetrics.entries()) {
+            if (metric.lastAccessTime < windowStart) {
+                this.metrics.addressMetrics.delete(key);
+            }
+        }
+
+        // 如果仍然超过最大条目数，按最后访问时间排序，保留最近的
+        if (this.metrics.addressMetrics.size > PERFORMANCE_CONFIG.MAX_METRICS_ENTRIES) {
+            const entries = Array.from(this.metrics.addressMetrics.entries());
+            entries.sort((a, b) => b[1].lastAccessTime - a[1].lastAccessTime);
+
             this.metrics.addressMetrics.clear();
             entries.slice(0, PERFORMANCE_CONFIG.MAX_METRICS_ENTRIES).forEach(([key, value]) => {
                 this.metrics.addressMetrics.set(key, value);

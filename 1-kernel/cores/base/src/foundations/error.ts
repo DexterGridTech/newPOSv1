@@ -9,7 +9,7 @@ interface ICommandLike {
     sessionId?: string;
 }
 
-export const errorMessageTextGetter = {
+export const getErrorMessageText = {
     getErrorMessage: (definedError: DefinedErrorMessage, args?: any): string => {
         const message = definedError.value
         if (args) {
@@ -32,7 +32,7 @@ export class AppError extends Error implements IAppError {
     public readonly createdAt: number;
 
     constructor(definedError: DefinedErrorMessage, args?: any, command?: ICommandLike) {
-        super(errorMessageTextGetter.getErrorMessage(definedError, args));
+        super(getErrorMessageText.getErrorMessage(definedError, args));
         this.name = this.constructor.name;
         this.category = definedError.category || ErrorCategory.UNKNOWN;
         this.severity = definedError.severity || ErrorSeverity.MEDIUM;

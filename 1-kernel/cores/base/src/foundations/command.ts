@@ -5,14 +5,14 @@ import {LOG_TAGS} from "../types/shared/logTags";
 import {logger} from "./logger";
 import {moduleName} from "../moduleName";
 
-export const commandBus = new Subject<ICommand<any>>();
+export const commandBus = new Subject<Command<any>>();
 
-const allCommands: Record<string, new (args: any) => ICommand<any>> = {}
+const allCommands: Record<string, new (args: any) => Command<any>> = {}
 
-export const registerModuleCommands = (_moduleName: string, commands: Record<string, new (args: any) => ICommand<any>>) => {
+export const registerModuleCommands = (_moduleName: string, commands: Record<string, new (args: any) => Command<any>>) => {
     Object.keys(commands).forEach(commandName => {
-        logger.log([moduleName, LOG_TAGS.System, "registerModuleCommands"],`${_moduleName}.${commandName}`)
-        if (Object.keys(allCommands).indexOf(commandName) != -1) {
+        logger.log([moduleName, LOG_TAGS.System, "registerModuleCommands"], `${_moduleName}.${commandName}`)
+        if (allCommands.hasOwnProperty(commandName)) {
             throw new Error(`Command ${commandName} has been registered`);
         }
         allCommands[commandName] = commands[commandName];
@@ -23,7 +23,7 @@ export const getCommandByName = (commandName: string) => {
     return allCommands[commandName];
 }
 
-export abstract class ICommand<P> {
+export abstract class Command<P> {
     abstract readonly commandName: string;
     abstract readonly moduleName: string;
     id = nanoid(8);
@@ -32,10 +32,17 @@ export abstract class ICommand<P> {
     readonly payload: P;
     requestId?: string;
     sessionId?: string;
-    executePath: ExecutePath[] = [{id: this.id, name: this.getCommandName()}];
+    private _executePath: ExecutePath[] | null = null;
 
-    get fullName(): string {
-        return `${this.moduleName}.${this.commandName}`
+    printId(){
+        return `${this.moduleName}.${this.commandName}[CID:${this.id},RID:${this.requestId},SID:${this.sessionId}]`
+    }
+
+    get executePath(): ExecutePath[] {
+        if (!this._executePath) {
+            this._executePath = [{name: this.commandName, id: this.id}]
+        }
+        return this._executePath;
     }
 
     protected constructor(payload: P) {
@@ -56,18 +63,20 @@ export abstract class ICommand<P> {
         return this.execute(INTERNAL, INTERNAL)
     }
 
-    executeFromParent(parent?: ICommand<any>): void {
+    executeFromParent(parent?: Command<any>): void {
         if (parent) {
             this.executePath.push(...parent.executePath);
             parent.executePath.forEach(parentNode => {
                 if (parentNode.name === this.getCommandName()) {
-                    throw new Error("command in circle: " + this.executePath);
+                    throw new Error("command in circle: " + this.executePath.map(pathNode => `${pathNode.name}(${pathNode.id})`).join(" <- "));
                 }
             })
             this.requestId = parent.requestId;
             this.sessionId = parent.sessionId;
+            commandBus.next(this);
+        } else {
+            throw new Error("parent command is null")
         }
-        commandBus.next(this);
     }
 }
 
@@ -90,10 +99,10 @@ export function createModuleCommands<T extends Record<string, {
     moduleName: string
 }>>(
     config: T
-): { [K in keyof T]: (payload: T[K]['payloadType']) => ICommand<T[K]['payloadType']> } {
+): { [K in keyof T]: (payload: T[K]['payloadType']) => Command<T[K]['payloadType']> } {
     // 创建命令类的工厂函数
     function createCommandClass<P>(name: string, executionType: ExecutionType, moduleName: string) {
-        return class extends ICommand<P> {
+        return class extends Command<P> {
             readonly moduleName = moduleName;
             readonly commandName = name;
             readonly executionType = executionType;

@@ -1,13 +1,13 @@
-import {AppError, getSystemParameterByKey, IActor, logger} from "../../foundations";
+import {AppError, getSystemParameterByKey, Actor, logger} from "../../foundations";
 import {kernelCoreBaseCommands} from "../commands";
 import {LOG_TAGS, storeEntry, ValueWithUpdateTime} from "../../types";
 import {kernelCoreBaseErrorMessages} from "../../supports/errors";
 import {systemParametersActions} from "../slices/systemParameters";
 import {moduleName} from "../../moduleName";
 
-export class SystemParametersActor extends IActor {
+export class SystemParametersActor extends Actor {
     updateSystemParameters =
-        IActor.defineCommandHandler(kernelCoreBaseCommands.updateSystemParameters,
+        Actor.defineCommandHandler(kernelCoreBaseCommands.updateSystemParameters,
             (command): Promise<Record<string, any>> => {
                 logger.log([moduleName, LOG_TAGS.Actor, "SystemParametersActor"], 'updateSystemParameters')
                 const keysNotFound: string[] = [];

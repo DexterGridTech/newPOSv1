@@ -1,13 +1,13 @@
-import {AppError, getDefinedErrorMessageByKey, IActor, logger} from "../../foundations";
+import {Actor, AppError, getDefinedErrorMessageByKey, logger} from "../../foundations";
 import {kernelCoreBaseCommands} from "../commands";
 import {LOG_TAGS, storeEntry, ValueWithUpdateTime} from "../../types";
 import {kernelCoreBaseErrorMessages} from "../../supports/errors";
 import {errorMessagesActions} from "../slices/errorMessages";
 import {moduleName} from "../../moduleName";
 
-export class ErrorMessagesActor extends IActor {
+export class ErrorMessagesActor extends Actor {
     updateErrorMessages =
-        IActor.defineCommandHandler(kernelCoreBaseCommands.updateErrorMessages,
+        Actor.defineCommandHandler(kernelCoreBaseCommands.updateErrorMessages,
             (command): Promise<Record<string, any>> => {
                 logger.log([moduleName, LOG_TAGS.Actor, "ErrorMessagesActor"], 'updateErrorMessages')
                 const keysNotFound: string[] = [];

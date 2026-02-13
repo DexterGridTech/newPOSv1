@@ -1,7 +1,7 @@
 import {RequestStatusState} from "./state/requestStatus";
 import {ErrorMessagesState} from "./state/errorMessages";
 import {SystemParametersState} from "./state/systemParameters";
-import {kernelCoreBaseState} from "./shared/constants";
+import {kernelCoreBaseState} from "./shared/moduleStateKey";
 
 /**
  * Redux Persist 的状态接口

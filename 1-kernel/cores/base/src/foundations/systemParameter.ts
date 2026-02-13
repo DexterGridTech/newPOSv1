@@ -1,6 +1,6 @@
-import {kernelCoreBaseState} from "../types/shared/constants";
+import {kernelCoreBaseState} from "../types/shared/moduleStateKey";
 import {LOG_TAGS} from "../types/shared/logTags";
-import type {KeyValue} from "../types/foundations/keyValue";
+import  {KeyValue} from "../types/foundations/keyValue";
 import {logger} from "./logger";
 import {moduleName} from "../moduleName";
 
@@ -18,20 +18,12 @@ export const getSystemParameterByKey = (key: string) => {
     return allSystemParameters[key];
 }
 
-export class DefinedSystemParameter<T> {
-    readonly stateName: string;
-    readonly key: string;
-    readonly name: string;
-    readonly defaultValue: T;
-
+export class DefinedSystemParameter<T> extends KeyValue<T> {
     constructor(
         name: string,
         key: string,
         defaultValue: T
     ) {
-        this.stateName = kernelCoreBaseState.systemParameters;
-        this.name = name;
-        this.key = key;
-        this.defaultValue = defaultValue;
+        super(kernelCoreBaseState.systemParameters, name, key, defaultValue);
     }
 }

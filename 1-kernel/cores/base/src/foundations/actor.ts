@@ -1,7 +1,7 @@
 import {moduleName} from "../moduleName";
-import {commandBus, ICommand} from "./command";
+import {commandBus, Command} from "./command";
 import {AppError} from "./error";
-import {LOG_TAGS} from "../types/shared/logTags";
+import {LOG_TAGS} from "../types";
 import {logger} from "./logger";
 import {DefinedErrorMessage, ErrorCategory, ErrorSeverity} from "./errorMessage";
 
@@ -10,20 +10,21 @@ import {DefinedErrorMessage, ErrorCategory, ErrorSeverity} from "./errorMessage"
  * 命令生命周期监听器接口
  */
 export interface CommandLifecycleListener {
-    onCommandStart: (actorName: string, command: ICommand<any>) => void;
-    onCommandComplete: (actorName: string, command: ICommand<any>, result?: Record<string, any>) => void;
-    onCommandError: (actorName: string, command: ICommand<any>, error: AppError) => void;
+    onCommandStart: (actor:Actor, command: Command<any>) => void;
+    onCommandComplete: (actor:Actor, command: Command<any>, result?: Record<string, any>) => void;
+    onCommandError: (actor:Actor, command: Command<any>, error: AppError) => void;
 }
 
 export interface CommandConverter {
-    convertCommand: (command: ICommand<any>) => ICommand<any>;
+    convertCommand: (command: Command<any>) => Command<any>;
 }
 
-export abstract class IActor {
+export abstract class Actor {
     readonly actorName: string;
     readonly moduleName: string;
-    private _handlers?: Map<string, (command: ICommand<any>) => Promise<Record<string, any>>>;
+    private _handlers?: Map<string, (command: Command<any>) => Promise<Record<string, any>>>;
 
+    printName = () => `${this.moduleName}.${this.actorName}`;
     constructor(actorName: string, moduleName: string) {
         this.actorName = actorName;
         this.moduleName = moduleName;
@@ -31,7 +32,7 @@ export abstract class IActor {
 
     // 静态方法：创建命令处理器的辅助函数
     static defineCommandHandler<T>(
-        commandFactory: (value: T) => ICommand<T>,
+        commandFactory: (value: T) => Command<T>,
         handler: (command: ReturnType<typeof commandFactory>) => Promise<Record<string, any>>
     ) {
         return {
@@ -43,7 +44,7 @@ export abstract class IActor {
     }
 
     // 自动扫描类的属性，查找通过 defineHandler 定义的处理器
-    private getCommandHandlers(): Map<string, (command: ICommand<any>) => Promise<Record<string, any>>> {
+    private getCommandHandlers(): Map<string, (command: Command<any>) => Promise<Record<string, any>>> {
         if (!this._handlers) {
             this._handlers = new Map();
 
@@ -53,7 +54,7 @@ export abstract class IActor {
                 // 检查是否是通过 defineHandler 创建的处理器
                 if (prop && prop.__isCommandHandler) {
                     const tempCommand = prop.commandFactory(null as any);
-                    const commandName = tempCommand.name;
+                    const commandName = tempCommand.commandName;
 
                     // 检查是否已经存在该命令的处理器
                     if (this._handlers!.has(commandName)) {
@@ -67,24 +68,23 @@ export abstract class IActor {
         return this._handlers;
     }
 
-    executeCommand = (command: ICommand<any>) => {
+    executeCommand = (command: Command<any>) => {
         const handler = this.getCommandHandlers().get(command.commandName);
         if (handler) {
-            const actorName = this.constructor.name;
             const actorSystem = ActorSystem.getInstance();
             //发射后不管,不需要并发控制
-            actorSystem.commandStart(actorName, command);
+            actorSystem.commandStart(this, command);
             handler(command).then((result) => {
-                actorSystem.commandComplete(actorName, command, result);
+                actorSystem.commandComplete(this, command, result);
             }).catch((error: any) => {
                 // 标准化错误
                 const appError = this.normalizeError(error, command);
-                actorSystem.commandError(actorName, command, appError);
+                actorSystem.commandError(this, command, appError);
             })
         }
     }
 
-    private normalizeError(error: any, command: ICommand<any>): AppError {
+    private normalizeError(error: any, command: Command<any>): AppError {
         if (error instanceof AppError) {
             return error;
         }
@@ -100,7 +100,7 @@ export abstract class IActor {
 
 export class ActorSystem {
     private static instance: ActorSystem;
-    private actors: IActor[] = [];
+    private actors: Actor[] = [];
     private lifecycleListeners: CommandLifecycleListener[] = [];
     private commandConverters: CommandConverter[] = [];
 
@@ -122,24 +122,24 @@ export class ActorSystem {
         this.commandConverters.push(converter);
     }
 
-    registerActor(actor: IActor): void {
+    registerActor(actor: Actor): void {
         this.actors.push(actor)
     }
 
-    runCommand(command: ICommand<any>): void {
+    runCommand(command: Command<any>): void {
         const commandToExecute =
             this.commandConverters.reduce((prev, converter) =>
                 converter.convertCommand(prev), command)
-        logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `收到命令${command.fullName}、发出命令${commandToExecute.fullName}`, commandToExecute)
+        logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `收到命令${command.commandName}=>执行命令${commandToExecute.commandName}`, commandToExecute)
         this.actors.forEach(actor => actor.executeCommand(commandToExecute))
     }
 
-    commandStart(actorName: string, command: ICommand<any>): void {
-        logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `命令开始=>${actorName} ${command.fullName} [RID:${command.requestId}][CID:${command.id}][SID:${command.sessionId}]`)
+    commandStart(actor:Actor, command: Command<any>): void {
+        logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `命令开始=>${actor.printName()}:${command.printId()}`)
         this.lifecycleListeners.forEach(listener => {
             if (listener.onCommandStart) {
                 try {
-                    listener.onCommandStart(actorName, command);
+                    listener.onCommandStart(actor, command);
                 } catch (error) {
                     logger.error([moduleName, LOG_TAGS.System, "ActorSystem"], 'commandStart 监听器执行失败:', error);
                 }
@@ -147,12 +147,12 @@ export class ActorSystem {
         });
     }
 
-    commandComplete(actorName: string, command: ICommand<any>, result?: Record<string, any>): void {
-        logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `命令结束=>${actorName} ${command.fullName} [RID:${command.requestId}][CID:${command.id}][SID:${command.sessionId}]`)
+    commandComplete(actor:Actor, command: Command<any>, result?: Record<string, any>): void {
+        logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `命令结束=>${actor.printName()}:${command.printId()}`)
         this.lifecycleListeners.forEach(listener => {
             if (listener.onCommandComplete) {
                 try {
-                    listener.onCommandComplete(actorName, command, result);
+                    listener.onCommandComplete(actor, command, result);
                 } catch (error) {
                     logger.error([moduleName, LOG_TAGS.System, "ActorSystem"], 'commandComplete 监听器执行失败:', error);
                 }
@@ -160,12 +160,12 @@ export class ActorSystem {
         });
     }
 
-    commandError(actorName: string, command: ICommand<any>, appError: AppError): void {
-        logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `命令错误=>${actorName} ${command.fullName} [RID:${command.requestId}][CID:${command.id}][SID:${command.sessionId}] Error:${appError.message}`)
+    commandError(actor:Actor, command: Command<any>, appError: AppError): void {
+        logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `命令错误=>${actor.printName()}:${command.printId()}`)
         this.lifecycleListeners.forEach(listener => {
             if (listener.onCommandError) {
                 try {
-                    listener.onCommandError(actorName, command, appError);
+                    listener.onCommandError(actor, command, appError);
                 } catch (err) {
                     logger.error([moduleName, LOG_TAGS.System, "ActorSystem"], 'commandError 监听器执行失败:', err);
                 }
@@ -174,7 +174,7 @@ export class ActorSystem {
     }
 }
 
-export function createActors<T extends Record<string, new (actorName: string, moduleName: string) => IActor>>(
+export function createActors<T extends Record<string, new (actorName: string, moduleName: string) => Actor>>(
     moduleName: string,
     actorClasses: T
 ): { [K in keyof T]: InstanceType<T[K]> } {

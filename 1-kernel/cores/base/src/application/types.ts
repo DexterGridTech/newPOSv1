@@ -1,6 +1,6 @@
 import {Environment, ModuleSliceConfig, RootState} from "../types";
 import {Epic} from "redux-observable";
-import {Api, DefinedErrorMessage, DefinedSystemParameter, IActor, ICommand} from "../foundations";
+import {Api, DefinedErrorMessage, DefinedSystemParameter, Actor, Command} from "../foundations";
 import {Middleware, PayloadAction, StoreEnhancer} from "@reduxjs/toolkit";
 
 export type DeepPartial<T> = {
@@ -22,7 +22,7 @@ export interface AppModule {
     slices: Record<string, ModuleSliceConfig>
     epics: Record<string, Epic<PayloadAction, PayloadAction, RootState>>
     middlewares: Record<string, Middleware>
-    actors: Record<string, IActor>
+    actors: Record<string, Actor>
     commands: Record<string, any>
     apis: Record<string, Api<any, any>>
     errorMessages: Record<string, DefinedErrorMessage>

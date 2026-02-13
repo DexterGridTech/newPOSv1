@@ -1,9 +1,10 @@
 import {Environment} from "../types/shared/environment";
 
-let environment: Environment | null = null;
+let environment: Environment = {
+    standalone: true,
+    production: false
+};
 export const getEnvironment = () => {
-    if (!environment)
-        throw new Error('Environment not initialized')
     return environment
 };
 export const setEnvironment = (env: Environment) => {

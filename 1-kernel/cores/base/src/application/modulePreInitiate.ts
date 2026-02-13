@@ -3,6 +3,7 @@ import {ActorSystem, logger} from "../foundations";
 import {moduleName} from "../moduleName";
 import {ApplicationConfig, AppModule} from "./types";
 import {requestStatusActions} from "../features/slices/requestStatus";
+import {kernelCoreBaseParameters} from "../supports";
 
 
 export const kernelCoreBaseModulePreInitiate = async (config: ApplicationConfig, allModules: AppModule[]) => {
@@ -13,25 +14,26 @@ export const kernelCoreBaseModulePreInitiate = async (config: ApplicationConfig,
 const registerActorSystem = () => {
     logger.log([moduleName, LOG_TAGS.System, 'PreInitiate'], 'register actor system lifecycle listener')
     ActorSystem.getInstance().registerLifecycleListener({
-        onCommandStart: (actorName, command) => {
+        onCommandStart: (actor, command) => {
             if (command.requestId && command.requestId != INTERNAL)
                 storeEntry.dispatchAction(requestStatusActions.commandStart({
-                    actor: actorName,
-                    command: command
+                    actor: actor.printName(),
+                    command: command,
+                    requestCleanOutTime: kernelCoreBaseParameters.requestCleanOutTime.value
                 }));
         },
-        onCommandComplete: (actorName, command, result?: Record<string, any>) => {
+        onCommandComplete: (actor, command, result?: Record<string, any>) => {
             if (command.requestId && command.requestId != INTERNAL)
                 storeEntry.dispatchAction(requestStatusActions.commandComplete({
-                    actor: actorName,
+                    actor: actor.printName(),
                     command: command,
                     result: result
                 }));
         },
-        onCommandError: (actorName, command, appError) => {
+        onCommandError: (actor, command, appError) => {
             if (command.requestId && command.requestId != INTERNAL)
                 storeEntry.dispatchAction(requestStatusActions.commandError({
-                    actor: actorName,
+                    actor: actor.printName(),
                     command: command,
                     appError: appError
                 }));

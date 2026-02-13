@@ -8,7 +8,7 @@ import {
     RequestStatusState,
     RequestStatusType
 } from "../../types";
-import {AppError, batchUpdateState, ICommand, logger} from "../../foundations";
+import {AppError, batchUpdateState, Command, logger} from "../../foundations";
 import {moduleName} from "../../moduleName";
 
 
@@ -29,7 +29,12 @@ export const slice = createSlice({
     name: kernelCoreBaseState.requestStatus,
     initialState,
     reducers: {
-        commandStart: (state, action: PayloadAction<{ actor: string, command: ICommand<any> }>) => {
+        commandStart: (state, action: PayloadAction<{
+            actor: string,
+            command: Command<any>,
+            requestCleanOutTime: number
+        }>) => {
+            logger.log([moduleName, LOG_TAGS.Reducer, "requestStatus"], `command start=>${action.payload.command.printId()}`)
             const {actor, command} = action.payload
             const request = state[command.requestId!] ?? {
                 requestId: command.requestId,
@@ -52,18 +57,18 @@ export const slice = createSlice({
 
             Object.keys(state).filter(requestId => {
                 const request = state[requestId]
-                return (now() - request.updatedAt) > 360000
+                return (now() - request.updatedAt) > action.payload.requestCleanOutTime
             }).forEach(requestIdToDelete => {
                 delete state[requestIdToDelete]
             })
             request.updatedAt = now()
-            logger.log([moduleName, LOG_TAGS.Reducer, kernelCoreBaseState.requestStatus], 'command start', request)
         },
         commandComplete: (state, action: PayloadAction<{
             actor: string,
-            command: ICommand<any>,
+            command: Command<any>,
             result?: Record<string, any>
         }>) => {
+            logger.log([moduleName, LOG_TAGS.Reducer, "requestStatus"], `command complete=>${action.payload.command.printId()}`)
             const {command, result} = action.payload
             const request = state[command.requestId!]
             if (request) {
@@ -78,9 +83,9 @@ export const slice = createSlice({
                 request.status = calculateRequestStatus(commandStatuses)
                 request.updatedAt = now()
             }
-            logger.log([moduleName, LOG_TAGS.Reducer, kernelCoreBaseState.requestStatus], 'command complete', request)
         },
-        commandError: (state, action: PayloadAction<{ actor: string, command: ICommand<any>, appError: AppError }>) => {
+        commandError: (state, action: PayloadAction<{ actor: string, command: Command<any>, appError: AppError }>) => {
+            logger.log([moduleName, LOG_TAGS.Reducer, "requestStatus"], `command error=>${action.payload.command.printId()}`)
             const {command, appError} = action.payload
             const request = state[command.requestId!]
             if (request) {
@@ -95,7 +100,6 @@ export const slice = createSlice({
             const commandStatuses = Object.values(request.commandsStatus)
             request.status = calculateRequestStatus(commandStatuses)
             request.updatedAt = now()
-            logger.log([moduleName, LOG_TAGS.Reducer, kernelCoreBaseState.requestStatus], 'command error', request)
         },
         batchUpdateState: (state, action) => {
             batchUpdateState(state, action)

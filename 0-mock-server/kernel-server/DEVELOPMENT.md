@@ -791,7 +791,7 @@ npm install --save-dev jest @types/jest ts-jest
 ```
 
 ```typescript
-// __tests__/UnitService.test.ts
+// __tests__/UnitService.index.ts
 import { UnitService } from '../src/services/UnitService';
 
 describe('UnitService', () => {

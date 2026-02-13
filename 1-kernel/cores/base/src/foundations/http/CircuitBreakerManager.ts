@@ -15,7 +15,7 @@ export class CircuitBreaker {
     private failureCount: number = 0;
     private successCount: number = 0;
     private lastFailureTime: number = 0;
-    private executing: boolean = false; // 添加执行标志位
+    private executingPromise: Promise<any> | null = null; // 使用 Promise 实现原子操作
 
     constructor(
         private threshold: number = DEFAULT_CONFIG.CIRCUIT_BREAKER_THRESHOLD,
@@ -26,34 +26,44 @@ export class CircuitBreaker {
         // 检查状态
         if (this.state === CircuitState.OPEN) {
             if (now() - this.lastFailureTime >= this.timeout) {
-                // 只允许第一个请求转换状态
-                if (!this.executing) {
-                    this.state = CircuitState.HALF_OPEN;
-                    this.successCount = 0;
-                } else {
-                    throw new Error('Circuit breaker is OPEN');
-                }
+                // 转换到 HALF_OPEN 状态
+                this.state = CircuitState.HALF_OPEN;
+                this.successCount = 0;
             } else {
                 throw new Error('Circuit breaker is OPEN');
             }
         }
 
-        // HALF_OPEN状态只允许一个请求
-        if (this.state === CircuitState.HALF_OPEN && this.executing) {
-            throw new Error('Circuit breaker is HALF_OPEN, only one request allowed');
+        // HALF_OPEN 状态只允许一个请求（原子操作）
+        if (this.state === CircuitState.HALF_OPEN) {
+            if (this.executingPromise) {
+                throw new Error('Circuit breaker is HALF_OPEN, only one request allowed');
+            }
         }
 
-        this.executing = true;
-        try {
-            const result = await fn();
-            this.onSuccess();
-            return result;
-        } catch (error) {
-            this.onFailure();
-            throw error;
-        } finally {
-            this.executing = false;
-        }
+        // 创建执行 Promise（原子操作）
+        const executePromise = (async () => {
+            try {
+                const result = await fn();
+                this.onSuccess();
+                return result;
+            } catch (error) {
+                this.onFailure();
+                throw error;
+            }
+        })();
+
+        // 保存当前执行的 Promise
+        this.executingPromise = executePromise;
+
+        // 执行完成后清除标志
+        executePromise.finally(() => {
+            if (this.executingPromise === executePromise) {
+                this.executingPromise = null;
+            }
+        });
+
+        return executePromise;
     }
 
     private onSuccess(): void {

@@ -21,6 +21,7 @@ export class ApplicationManager {
     private store: EnhancedStore<RootState> | null = null;
     private persistor: Persistor | null = null;
     private moduleDependencyResolver = new ModuleDependencyResolver()
+    private storeGenerationPromise: Promise<{store: EnhancedStore<RootState>, persistor: Persistor}> | null = null;
 
     static getInstance(): ApplicationManager {
         if (!ApplicationManager.instance) {
@@ -30,13 +31,27 @@ export class ApplicationManager {
     }
 
     async generateStore(config: ApplicationConfig) {
-        if (this.store) {
-            throw new Error('Store already exists');
+        // 双重检查锁定：如果已经有 store，直接返回
+        if (this.store && this.persistor) {
+            return {store: this.store, persistor: this.persistor};
         }
-        const {store, persistor} = await this.createStore(config);
-        this.store = store;
-        this.persistor = persistor;
-        return {store, persistor};
+
+        // 如果正在创建中，等待创建完成
+        if (this.storeGenerationPromise) {
+            return this.storeGenerationPromise;
+        }
+        // 创建 store
+        this.storeGenerationPromise = this.createStore(config).then(({store, persistor}) => {
+            this.store = store;
+            this.persistor = persistor;
+            return {store, persistor};
+        }).catch((error) => {
+            // 创建失败，清除 Promise 缓存，允许重试
+            this.storeGenerationPromise = null;
+            throw error;
+        });
+
+        return this.storeGenerationPromise;
     }
 
     getStore(): EnhancedStore<RootState> | null {
