@@ -1,7 +1,7 @@
 {
   "name": "@impos2/kernel-core-base",
   "version": "1.0.0",
-  "description": "POS Kernel base - Perfect Architecture",
+  "description": "POS Kernel core base ",
   "author": "DexterYang",
   "license": "ISC",
   "exports": {

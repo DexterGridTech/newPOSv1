@@ -1,9 +1,6 @@
 import {Environment} from "../types/shared/environment";
 
-let environment: Environment = {
-    standalone: true,
-    production: false
-};
+let environment: Environment | null = null
 export const getEnvironment = () => {
     return environment
 };

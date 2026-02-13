@@ -1,20 +1,18 @@
 import {configureStore, EnhancedStore, Middleware, PayloadAction, Reducer} from "@reduxjs/toolkit";
 import {Persistor, persistReducer, persistStore} from "redux-persist";
-import {LOG_TAGS, RootState, storeEntry} from "../types";
+import {RootState, storeEntry} from "../types";
 import {ModuleDependencyResolver} from "./moduleDependencyResolver";
 import {ApplicationConfig} from "./types";
 import {setEnvironment} from "../foundations/environment";
 import {
     ActorSystem,
-    logger,
     registerModuleCommands,
     registerModuleErrorMessages,
     registerModuleSystemParameter
 } from "../foundations";
-import {moduleName} from "../moduleName";
 import {getStateStorage, getStateStoragePrefix} from "../foundations/stateStorage";
 import {combineEpics, createEpicMiddleware} from "redux-observable";
-import {InitLogger} from "./InitLogger";
+import {InitLogger} from "./initLogger";
 
 
 export class ApplicationManager {
@@ -22,7 +20,7 @@ export class ApplicationManager {
     private store: EnhancedStore<RootState> | null = null;
     private persistor: Persistor | null = null;
     private moduleDependencyResolver = new ModuleDependencyResolver()
-    private storeGenerationPromise: Promise<{store: EnhancedStore<RootState>, persistor: Persistor}> | null = null;
+    private storeGenerationPromise: Promise<{ store: EnhancedStore<RootState>, persistor: Persistor }> | null = null;
 
     static getInstance(): ApplicationManager {
         if (!ApplicationManager.instance) {
@@ -73,7 +71,9 @@ export class ApplicationManager {
         initLogger.logStep(1, 'Setting Environment');
         setEnvironment(config.environment);
         initLogger.logDetail('Production', config.environment.production);
-        initLogger.logDetail('Standalone', config.environment.standalone);
+        initLogger.logDetail('ScreenMode', config.environment.screenMode);
+        initLogger.logDetail('Display Count', config.environment.displayCount);
+        initLogger.logDetail('Display Index', config.environment.displayIndex);
         initLogger.logSuccess('Environment configured');
         initLogger.logStepEnd();
 
@@ -163,7 +163,7 @@ export class ApplicationManager {
             if (sliceCount > 0) {
                 let modulePersisted = 0;
                 Object.values(module.slices).forEach(sliceConfig => {
-                    if (sliceConfig.statePersistToStorage) {
+                    if (sliceConfig.statePersistToStorage && (config.environment.displayIndex === 0)) {
                         persistedCount++;
                         modulePersisted++;
                         const stateStorage = getStateStorage();

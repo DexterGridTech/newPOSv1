@@ -3,10 +3,9 @@
  * 负责服务器配置管理、拦截器管理、请求执行和指标统计
  */
 
-import {axios} from './axiosConfig';
 import {now} from 'lodash';
 
-import {AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, CancelTokenSource} from 'axios';
+import axios, {AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, CancelTokenSource} from 'axios';
 import {CircuitBreaker} from './CircuitBreakerManager';
 import {RequestQueue} from './RequestQueueManager';
 import { moduleName } from '../../moduleName';

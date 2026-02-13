@@ -1,9 +1,6 @@
 import {Subject} from "rxjs";
 import {nanoid} from "nanoid";
 import {ExecutePath, ExecutionType, INTERNAL} from "../types/shared/command";
-import {LOG_TAGS} from "../types/shared/logTags";
-import {logger} from "./logger";
-import {moduleName} from "../moduleName";
 
 export const commandBus = new Subject<Command<any>>();
 
@@ -33,7 +30,7 @@ export abstract class Command<P> {
     sessionId?: string;
     private _executePath: ExecutePath[] | null = null;
 
-    printId(){
+    printId() {
         return `${this.moduleName}.${this.commandName}[CID:${this.id},RID:${this.requestId},SID:${this.sessionId}]`
     }
 

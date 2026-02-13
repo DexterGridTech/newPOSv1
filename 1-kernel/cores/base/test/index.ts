@@ -2,14 +2,16 @@ import {
     ApplicationManager,
     ApplicationConfig,
     kernelCoreBaseModule,
-    kernelCoreBaseCommands, kernelCoreBaseState,
+    kernelCoreBaseCommands, kernelCoreBaseState, ScreenMode,
 } from "../src/index"
 
 
 const appConfig: ApplicationConfig = {
     environment: {
         production: false,
-        standalone: true
+        screenMode: ScreenMode.DESKTOP,
+        displayCount: 1,
+        displayIndex: 0
     },
     preInitiatedState: {},
     module: kernelCoreBaseModule

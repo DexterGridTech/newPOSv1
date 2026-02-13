@@ -28,7 +28,7 @@ export const kernelCoreBaseModule: AppModule = {
 export * from "./types";
 export * from "./foundations";
 export * from "./supports";
-export * from "./selectors";
+export * from "./hooks";
 export * from "./application/types";
 export * from "./application/applicationManager";
 export {kernelCoreBaseSlice} from "./features/slices";

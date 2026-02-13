@@ -3,8 +3,7 @@
  * 封装单个 API 请求的执行和取消
  */
 
-import {axios} from './axiosConfig';
-import {CancelTokenSource} from 'axios';
+import axios, {CancelTokenSource} from 'axios';
 import {ApiManager} from './ApiManager';
 import {HttpMethod, RequestWrapper, ResponseWrapper} from '../../types/shared/http';
 import { moduleName } from '../../moduleName';

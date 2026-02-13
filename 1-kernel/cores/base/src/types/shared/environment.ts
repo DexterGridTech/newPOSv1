@@ -1,5 +1,12 @@
 
 export interface Environment {
-    standalone: boolean
     production: boolean
+    screenMode: ScreenMode
+    displayCount: number
+    displayIndex: number
+}
+
+export enum ScreenMode {
+    MOBILE = 'mobile',
+    DESKTOP = 'desktop'
 }

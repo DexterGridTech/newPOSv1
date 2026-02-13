@@ -38,6 +38,7 @@
     "B:master-ws-server": "corepack yarn workspace @impos2/master-ws-server dev",
     "---------": "---------------------------------------",
     "kernel-core-base": "corepack yarn workspace @impos2/kernel-core-base dev",
+    "kernel-core-interconnection": "corepack yarn workspace @impos2/kernel-core-interconnection dev",
     "----------": "----------------------------------------",
     "ui:module-device-activate": "yarn workspace @impos2/ui-module-device-activate web",
     "ui:module-user-login": "corepack yarn workspace @impos2/ui-module-user-login web",
