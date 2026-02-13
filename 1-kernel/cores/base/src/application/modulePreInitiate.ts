@@ -8,11 +8,9 @@ import {kernelCoreBaseParameters} from "../supports";
 
 export const kernelCoreBaseModulePreInitiate = async (config: ApplicationConfig, allModules: AppModule[]) => {
     registerActorSystem()
-    logger.log([moduleName, LOG_TAGS.System, 'PreInitiate'], 'setup completed.')
 }
 
 const registerActorSystem = () => {
-    logger.log([moduleName, LOG_TAGS.System, 'PreInitiate'], 'register actor system lifecycle listener')
     ActorSystem.getInstance().registerLifecycleListener({
         onCommandStart: (actor, command) => {
             if (command.requestId && command.requestId != INTERNAL)

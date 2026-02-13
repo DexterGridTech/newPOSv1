@@ -8,7 +8,6 @@ import {kernelCoreBaseErrorMessages} from "./supports/errors";
 import {kernelCoreBaseParameters} from "./supports/parameters";
 import {kernelCoreBaseEpics} from "./features/epics";
 import {kernelCoreBaseMiddlewares} from "./features/middlewares";
-import {kernelCoreBaseApis} from "./supports";
 
 export const kernelCoreBaseModule: AppModule = {
     name: moduleName,
@@ -18,7 +17,6 @@ export const kernelCoreBaseModule: AppModule = {
     epics: kernelCoreBaseEpics,
     commands: kernelCoreBaseCommands,
     actors: kernelCoreBaseActors,
-    apis: kernelCoreBaseApis,
     errorMessages: kernelCoreBaseErrorMessages,
     parameters: kernelCoreBaseParameters,
     dependencies: [],
@@ -37,3 +35,4 @@ export {kernelCoreBaseSlice} from "./features/slices";
 export {kernelCoreBaseCommands} from "./features/commands";
 export {kernelCoreBaseErrorMessages} from "./supports/errors";
 export {kernelCoreBaseParameters} from "./supports/parameters";
+export {kernelCoreBaseApis} from "./supports";

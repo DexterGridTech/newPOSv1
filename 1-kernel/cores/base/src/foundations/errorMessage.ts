@@ -8,7 +8,6 @@ import {moduleName} from "../moduleName";
 const allErrorMessages: Record<string, DefinedErrorMessage> = {}
 export const registerModuleErrorMessages = (_moduleName: string, errorMessages: DefinedErrorMessage[]) => {
     errorMessages.forEach(errorMessage => {
-        logger.log([moduleName, LOG_TAGS.System, "registerModuleErrorMessages"],`${_moduleName}.${errorMessage.key}:${errorMessage.name}`)
         if (Object.keys(allErrorMessages).indexOf(errorMessage.key) != -1) {
             throw new Error(`Error ${errorMessage.key} has been registered`);
         }

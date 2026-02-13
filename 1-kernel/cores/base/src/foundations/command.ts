@@ -11,7 +11,6 @@ const allCommands: Record<string, new (args: any) => Command<any>> = {}
 
 export const registerModuleCommands = (_moduleName: string, commands: Record<string, new (args: any) => Command<any>>) => {
     Object.keys(commands).forEach(commandName => {
-        logger.log([moduleName, LOG_TAGS.System, "registerModuleCommands"], `${_moduleName}.${commandName}`)
         if (allCommands.hasOwnProperty(commandName)) {
             throw new Error(`Command ${commandName} has been registered`);
         }

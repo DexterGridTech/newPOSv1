@@ -1,6 +1,6 @@
 import {Environment, ModuleSliceConfig, RootState} from "../types";
 import {Epic} from "redux-observable";
-import {Api, DefinedErrorMessage, DefinedSystemParameter, Actor, Command} from "../foundations";
+import {Actor, DefinedErrorMessage, DefinedSystemParameter} from "../foundations";
 import {Middleware, PayloadAction, StoreEnhancer} from "@reduxjs/toolkit";
 
 export type DeepPartial<T> = {
@@ -10,9 +10,7 @@ export type DeepPartial<T> = {
 export interface ApplicationConfig {
     environment: Environment
     preInitiatedState: DeepPartial<RootState>
-    // workspace: Workspace
     module: AppModule
-    // nativeAdapter?: IPosAdapter
     reactotronEnhancer?: StoreEnhancer
 }
 
@@ -24,10 +22,9 @@ export interface AppModule {
     middlewares: Record<string, Middleware>
     actors: Record<string, Actor>
     commands: Record<string, any>
-    apis: Record<string, Api<any, any>>
     errorMessages: Record<string, DefinedErrorMessage>
     parameters: Record<string, DefinedSystemParameter<any>>
     dependencies: AppModule[]
-    modulePreInitiate?: (config: ApplicationConfig,allModules:AppModule[]) => Promise<void>
+    modulePreInitiate?: (config: ApplicationConfig, allModules: AppModule[]) => Promise<void>
     loadingPriority?: number
 }

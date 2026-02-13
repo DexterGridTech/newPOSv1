@@ -14,6 +14,7 @@ import {
 import {moduleName} from "../moduleName";
 import {getStateStorage, getStateStoragePrefix} from "../foundations/stateStorage";
 import {combineEpics, createEpicMiddleware} from "redux-observable";
+import {InitLogger} from "./InitLogger";
 
 
 export class ApplicationManager {
@@ -63,65 +64,142 @@ export class ApplicationManager {
     }
 
     private async createStore(config: ApplicationConfig) {
-        setEnvironment(config.environment)
+        const initLogger = new InitLogger();
 
+        // 打印横幅
+        initLogger.logBanner();
+
+        // 步骤 1: 设置环境
+        initLogger.logStep(1, 'Setting Environment');
+        setEnvironment(config.environment);
+        initLogger.logDetail('Production', config.environment.production);
+        initLogger.logDetail('Standalone', config.environment.standalone);
+        initLogger.logSuccess('Environment configured');
+        initLogger.logStepEnd();
+
+        // 步骤 2: 解析模块依赖
+        initLogger.logStep(2, 'Resolving Module Dependencies');
         const allModules = this.moduleDependencyResolver.resolveModules([config.module]);
-        logger.log([moduleName, LOG_TAGS.System, "createStore"], `loading ${allModules.length} modules`)
+        initLogger.logDetail('Input Modules', 1);
+        initLogger.logDetail('Resolved Modules', allModules.length);
+        allModules.forEach((module, index) => {
+            initLogger.logModule(module, index, allModules.length);
+        });
+        initLogger.logSuccess(`Resolved ${allModules.length} modules`);
+        initLogger.logStepEnd();
 
-
+        // 步骤 3: 模块预初始化
+        initLogger.logStep(3, 'Pre-initializing Modules');
         for (const module of allModules) {
-            logger.log([moduleName, LOG_TAGS.System, "createStore"], `preInitiate: ${module.name}`)
-            await module.modulePreInitiate?.(config, allModules)
+            await module.modulePreInitiate?.(config, allModules);
+            initLogger.logSuccess(`${module.name} pre-initialized`);
         }
+        initLogger.logStepEnd();
 
+        // 步骤 4: 注册 Actors
+        initLogger.logStep(4, 'Registering Actors');
+        let totalActors = 0;
         allModules.forEach(module => {
-            logger.log([moduleName, LOG_TAGS.System, "createStore"], `register actor: ${module.name}`)
-            Object.values(module.actors).forEach(actor => {
-                ActorSystem.getInstance().registerActor(actor)
-            })
-        })
+            const actorCount = Object.keys(module.actors).length;
+            if (actorCount > 0) {
+                initLogger.logDetail(`${module.name}`, actorCount);
+                totalActors += actorCount;
+                Object.values(module.actors).forEach(actor => {
+                    ActorSystem.getInstance().registerActor(actor);
+                });
+            }
+        });
+        initLogger.logSuccess(`Registered ${totalActors} actors`);
+        initLogger.logStepEnd();
 
+        // 步骤 5: 注册 Commands
+        initLogger.logStep(5, 'Registering Commands');
+        let totalCommands = 0;
         allModules.forEach(module => {
-            logger.log([moduleName, LOG_TAGS.System, "createStore"], `register command: ${module.name}`)
-            registerModuleCommands(module.name, module.commands)
-        })
+            const commandCount = Object.keys(module.commands).length;
+            if (commandCount > 0) {
+                initLogger.logDetail(`${module.name}`, commandCount);
+                totalCommands += commandCount;
+                registerModuleCommands(module.name, module.commands);
+            }
+        });
+        initLogger.logSuccess(`Registered ${totalCommands} commands`);
+        initLogger.logStepEnd();
 
+        // 步骤 6: 注册 Error Messages
+        initLogger.logStep(6, 'Registering Error Messages');
+        let totalErrors = 0;
         allModules.forEach(module => {
-            logger.log([moduleName, LOG_TAGS.System, "createStore"], `register error messages: ${module.name}`)
-            registerModuleErrorMessages(module.name, Object.values(module.errorMessages))
-        })
+            const errorCount = Object.keys(module.errorMessages).length;
+            if (errorCount > 0) {
+                initLogger.logDetail(`${module.name}`, errorCount);
+                totalErrors += errorCount;
+                registerModuleErrorMessages(module.name, Object.values(module.errorMessages));
+            }
+        });
+        initLogger.logSuccess(`Registered ${totalErrors} error messages`);
+        initLogger.logStepEnd();
 
+        // 步骤 7: 注册 System Parameters
+        initLogger.logStep(7, 'Registering System Parameters');
+        let totalParams = 0;
         allModules.forEach(module => {
-            logger.log([moduleName, LOG_TAGS.System, "createStore"], `register system parameters: ${module.name}`)
-            registerModuleSystemParameter(module.name, Object.values(module.parameters))
-        })
+            const paramCount = Object.keys(module.parameters).length;
+            if (paramCount > 0) {
+                initLogger.logDetail(`${module.name}`, paramCount);
+                totalParams += paramCount;
+                registerModuleSystemParameter(module.name, Object.values(module.parameters));
+            }
+        });
+        initLogger.logSuccess(`Registered ${totalParams} system parameters`);
+        initLogger.logStepEnd();
 
-        const rootReducer: Record<string, Reducer> = {}
+        // 步骤 8: 构建 Reducers
+        initLogger.logStep(8, 'Building Reducers');
+        const rootReducer: Record<string, Reducer> = {};
+        let persistedCount = 0;
         allModules.forEach(module => {
-            logger.log([moduleName, LOG_TAGS.System, "createStore"], `register reducer: ${module.name}`)
-            Object.values(module.slices).forEach(sliceConfig => {
-                if (sliceConfig.statePersistToStorage) {
-                    const stateStorage = getStateStorage()
-                    const stateStoragePrefix = getStateStoragePrefix()
-                    const storageKey = `${stateStoragePrefix}-${sliceConfig.name}`
-                    const persistConfig = {
-                        key: storageKey,
-                        storage: stateStorage,
-                    };
-                    rootReducer[sliceConfig.name] = persistReducer(persistConfig, sliceConfig.reducer);
-                } else {
-                    rootReducer[sliceConfig.name] = sliceConfig.reducer
-                }
-            })
-        })
+            const sliceCount = Object.keys(module.slices).length;
+            if (sliceCount > 0) {
+                let modulePersisted = 0;
+                Object.values(module.slices).forEach(sliceConfig => {
+                    if (sliceConfig.statePersistToStorage) {
+                        persistedCount++;
+                        modulePersisted++;
+                        const stateStorage = getStateStorage();
+                        const stateStoragePrefix = getStateStoragePrefix();
+                        const storageKey = `${stateStoragePrefix}-${sliceConfig.name}`;
+                        const persistConfig = {
+                            key: storageKey,
+                            storage: stateStorage,
+                        };
+                        rootReducer[sliceConfig.name] = persistReducer(persistConfig, sliceConfig.reducer);
+                    } else {
+                        rootReducer[sliceConfig.name] = sliceConfig.reducer;
+                    }
+                });
+                const persistInfo = modulePersisted > 0 ? ` (${modulePersisted} persisted)` : '';
+                initLogger.logDetail(`${module.name}`, `${sliceCount}${persistInfo}`);
+            }
+        });
+        const reducerCount = Object.keys(rootReducer).length;
+        initLogger.logSuccess(`Built ${reducerCount} reducers (${persistedCount} persisted)`);
+        initLogger.logStepEnd();
 
-
+        // 步骤 9: 配置 Middleware
+        initLogger.logStep(9, 'Configuring Middleware');
         const epicMiddleware = createEpicMiddleware<PayloadAction, PayloadAction, RootState>();
         const middlewares: Middleware[] = [epicMiddleware];
         allModules.forEach(module => {
-            middlewares.push(...Object.values(module.middlewares))
-        })
+            middlewares.push(...Object.values(module.middlewares));
+        });
+        initLogger.logDetail('Middleware Count', middlewares.length);
+        initLogger.logSuccess('Middleware configured');
+        initLogger.logStepEnd();
 
+        // 步骤 10: 创建 Redux Store
+        initLogger.logStep(10, 'Creating Redux Store');
+        initLogger.logDetail('Reactotron', config.reactotronEnhancer ? 'Enabled' : 'Disabled');
         const storeOptions: any = {
             reducer: rootReducer,
             preloadedState: config.preInitiatedState,
@@ -136,14 +214,35 @@ export class ApplicationManager {
                 getDefaultEnhancers().concat(config.reactotronEnhancer);
         }
 
-
         const store = configureStore(storeOptions) as EnhancedStore<RootState>;
-        storeEntry.setStore(store)
+        storeEntry.setStore(store);
+        initLogger.logSuccess('Redux Store created');
+        initLogger.logStepEnd();
 
-        const epics = allModules.flatMap(module => Object.values(module.epics))
-        epicMiddleware.run(combineEpics(...epics))
+        // 步骤 11: 注册 Epics
+        initLogger.logStep(11, 'Registering Epics');
+        let totalEpics = 0;
+        allModules.forEach(module => {
+            const epicCount = Object.keys(module.epics).length;
+            if (epicCount > 0) {
+                initLogger.logDetail(`${module.name}`, epicCount);
+                totalEpics += epicCount;
+            }
+        });
+        const epics = allModules.flatMap(module => Object.values(module.epics));
+        epicMiddleware.run(combineEpics(...epics));
+        initLogger.logSuccess(`Registered ${totalEpics} epics and running`);
+        initLogger.logStepEnd();
 
+        // 步骤 12: 创建 Persistor
+        initLogger.logStep(12, 'Creating Persistor');
         const persistor = persistStore(store);
+        initLogger.logSuccess('Persistor created');
+        initLogger.logStepEnd();
+
+        // 打印总结
+        initLogger.logSummary(allModules);
+
         return {store, persistor};
     }
 }
