@@ -1,5 +1,6 @@
 import _, {now} from 'lodash';
 import {DefinedErrorMessage, ErrorCategory, ErrorSeverity} from "./errorMessage";
+import type {IAppError} from "../types/shared/error";
 
 interface ICommandLike {
     id?: string;
@@ -20,7 +21,7 @@ export const errorMessageTextGetter = {
 }
 
 
-export class AppError extends Error {
+export class AppError extends Error implements IAppError {
     public readonly category: ErrorCategory;
     public readonly severity: ErrorSeverity;
     public readonly key: string;

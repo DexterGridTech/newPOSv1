@@ -6,27 +6,31 @@ import {kernelCoreBaseCommands} from "./features/commands";
 import {kernelCoreBaseModulePreInitiate} from "./application/modulePreInitiate";
 import {kernelCoreBaseErrorMessages} from "./supports/errors";
 import {kernelCoreBaseParameters} from "./supports/parameters";
+import {kernelCoreBaseEpics} from "./features/epics";
+import {kernelCoreBaseMiddlewares} from "./features/middlewares";
+import {kernelCoreBaseApis} from "./supports";
 
 export const kernelCoreBaseModule: AppModule = {
     name: moduleName,
     version: '0.0.1',
     slices: kernelCoreBaseSlice,
-    middlewares: [],
-    epics: {},
+    middlewares: kernelCoreBaseMiddlewares,
+    epics: kernelCoreBaseEpics,
     commands: kernelCoreBaseCommands,
     actors: kernelCoreBaseActors,
-    apis: {},
+    apis: kernelCoreBaseApis,
     errorMessages: kernelCoreBaseErrorMessages,
     parameters: kernelCoreBaseParameters,
     dependencies: [],
     modulePreInitiate: kernelCoreBaseModulePreInitiate,
-    modulePreInitiatePriority: 0
+    loadingPriority: 0
 }
 
 
 export * from "./types";
 export * from "./foundations";
 export * from "./supports";
+export * from "./selectors";
 export * from "./application/types";
 export {kernelCoreBaseSlice} from "./features/slices";
 export {kernelCoreBaseCommands} from "./features/commands";

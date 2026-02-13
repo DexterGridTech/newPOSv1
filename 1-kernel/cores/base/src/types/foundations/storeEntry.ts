@@ -3,7 +3,7 @@
  * 支持在其他 package 中扩展功能
  */
 import {EnhancedStore, PayloadAction} from "@reduxjs/toolkit";
-import {RootState} from "../state/moduleRootState";
+import {RootState} from "../moduleState";
 
 export interface StoreEntry {
     setStore: (store: EnhancedStore) => void

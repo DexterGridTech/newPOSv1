@@ -1,7 +1,7 @@
 import {moduleName} from "../moduleName";
 import {commandBus, ICommand} from "./command";
 import {AppError} from "./error";
-import {LOG_TAGS} from "../types";
+import {LOG_TAGS} from "../types/shared/logTags";
 import {logger} from "./logger";
 import {DefinedErrorMessage, ErrorCategory, ErrorSeverity} from "./errorMessage";
 
@@ -127,15 +127,15 @@ export class ActorSystem {
     }
 
     runCommand(command: ICommand<any>): void {
-        let commandToExecute =
+        const commandToExecute =
             this.commandConverters.reduce((prev, converter) =>
                 converter.convertCommand(prev), command)
-        logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `发出命令->${commandToExecute.commandName}`, commandToExecute)
+        logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `收到命令${command.fullName}、发出命令${commandToExecute.fullName}`, commandToExecute)
         this.actors.forEach(actor => actor.executeCommand(commandToExecute))
     }
 
     commandStart(actorName: string, command: ICommand<any>): void {
-        logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `命令开始=>${actorName} ${command.commandName} [RID:${command.requestId}][CID:${command.id}][SID:${command.sessionId}]`)
+        logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `命令开始=>${actorName} ${command.fullName} [RID:${command.requestId}][CID:${command.id}][SID:${command.sessionId}]`)
         this.lifecycleListeners.forEach(listener => {
             if (listener.onCommandStart) {
                 try {
@@ -148,7 +148,7 @@ export class ActorSystem {
     }
 
     commandComplete(actorName: string, command: ICommand<any>, result?: Record<string, any>): void {
-        logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `命令结束=>${actorName} ${command.commandName} [RID:${command.requestId}][CID:${command.id}][SID:${command.sessionId}]`)
+        logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `命令结束=>${actorName} ${command.fullName} [RID:${command.requestId}][CID:${command.id}][SID:${command.sessionId}]`)
         this.lifecycleListeners.forEach(listener => {
             if (listener.onCommandComplete) {
                 try {
@@ -161,7 +161,7 @@ export class ActorSystem {
     }
 
     commandError(actorName: string, command: ICommand<any>, appError: AppError): void {
-        logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `命令错误=>${actorName} ${command.commandName} [RID:${command.requestId}][CID:${command.id}][SID:${command.sessionId}] Error:${appError.message}`)
+        logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `命令错误=>${actorName} ${command.fullName} [RID:${command.requestId}][CID:${command.id}][SID:${command.sessionId}] Error:${appError.message}`)
         this.lifecycleListeners.forEach(listener => {
             if (listener.onCommandError) {
                 try {

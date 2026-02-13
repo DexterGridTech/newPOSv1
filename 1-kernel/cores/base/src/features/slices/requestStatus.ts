@@ -3,11 +3,13 @@ import {now} from "lodash";
 import {
     CommandStatus,
     kernelCoreBaseState,
+    LOG_TAGS,
     ModuleSliceConfig,
     RequestStatusState,
     RequestStatusType
 } from "../../types";
-import {AppError, batchUpdateState, ICommand} from "../../foundations";
+import {AppError, batchUpdateState, ICommand, logger} from "../../foundations";
+import {moduleName} from "../../moduleName";
 
 
 const initialState: RequestStatusState = {}
@@ -55,6 +57,7 @@ export const slice = createSlice({
                 delete state[requestIdToDelete]
             })
             request.updatedAt = now()
+            logger.log([moduleName, LOG_TAGS.Reducer, kernelCoreBaseState.requestStatus], 'command start', request)
         },
         commandComplete: (state, action: PayloadAction<{
             actor: string,
@@ -75,6 +78,7 @@ export const slice = createSlice({
                 request.status = calculateRequestStatus(commandStatuses)
                 request.updatedAt = now()
             }
+            logger.log([moduleName, LOG_TAGS.Reducer, kernelCoreBaseState.requestStatus], 'command complete', request)
         },
         commandError: (state, action: PayloadAction<{ actor: string, command: ICommand<any>, appError: AppError }>) => {
             const {command, appError} = action.payload
@@ -91,15 +95,20 @@ export const slice = createSlice({
             const commandStatuses = Object.values(request.commandsStatus)
             request.status = calculateRequestStatus(commandStatuses)
             request.updatedAt = now()
+            logger.log([moduleName, LOG_TAGS.Reducer, kernelCoreBaseState.requestStatus], 'command error', request)
         },
-        batchUpdateState: batchUpdateState
+        batchUpdateState: (state, action) => {
+            batchUpdateState(state, action)
+            logger.log([moduleName, LOG_TAGS.Reducer, kernelCoreBaseState.requestStatus], 'batch update state', action.payload)
+        }
     }
 })
 
-export const requestStatusConfig: ModuleSliceConfig<RequestStatusState, typeof slice.actions> = {
+export const requestStatusActions = slice.actions
+
+export const requestStatusConfig: ModuleSliceConfig<RequestStatusState> = {
     name: slice.name,
     reducer: slice.reducer,
-    actions: slice.actions,
     statePersistToStorage: false,
     stateSyncToSlave: true
 }

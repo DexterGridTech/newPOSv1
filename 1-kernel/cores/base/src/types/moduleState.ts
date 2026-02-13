@@ -1,18 +1,12 @@
-import {RequestStatusState} from "./requestStatus";
-import {ErrorMessagesState} from "./errorMessages";
-import {moduleName} from "../../moduleName";
-import {SystemParametersState} from "./systemParameters";
+import {RequestStatusState} from "./state/requestStatus";
+import {ErrorMessagesState} from "./state/errorMessages";
+import {SystemParametersState} from "./state/systemParameters";
+import {kernelCoreBaseState} from "./shared/constants";
 
 /**
  * Redux Persist 的状态接口
  * 直接定义，避免导入问题
  */
-
-export const kernelCoreBaseState = {
-    requestStatus: `${moduleName}.requestStatus`,
-    errorMessages:`${moduleName}.errorMessages`,
-    systemParameters:`${moduleName}.systemParameters`
-} as const
 
 type KernelCoreBaseStateMap = {
     [kernelCoreBaseState.requestStatus]: RequestStatusState;

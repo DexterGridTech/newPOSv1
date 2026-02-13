@@ -1,6 +1,5 @@
-import {ValueWithUpdate} from "../shared/valueWithUpdate";
+import {ValueWithUpdateTime} from "../shared/valueWithUpdateTime";
 
 
-export interface ErrorMessagesState {
-    [key: string]: ValueWithUpdate<string>
+export interface ErrorMessagesState extends Record<string, ValueWithUpdateTime<string>>{
 }

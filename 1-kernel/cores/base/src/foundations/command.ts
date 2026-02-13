@@ -1,6 +1,7 @@
 import {Subject} from "rxjs";
 import {nanoid} from "nanoid";
-import {ExecutePath, ExecutionType, INTERNAL, LOG_TAGS} from "../types";
+import {ExecutePath, ExecutionType, INTERNAL} from "../types/shared/command";
+import {LOG_TAGS} from "../types/shared/logTags";
 import {logger} from "./logger";
 import {moduleName} from "../moduleName";
 
@@ -10,7 +11,7 @@ const allCommands: Record<string, new (args: any) => ICommand<any>> = {}
 
 export const registerModuleCommands = (_moduleName: string, commands: Record<string, new (args: any) => ICommand<any>>) => {
     Object.keys(commands).forEach(commandName => {
-        logger.log([moduleName], LOG_TAGS.System, `registerModuleCommands:${_moduleName}.${commandName}`)
+        logger.log([moduleName, LOG_TAGS.System, "registerModuleCommands"],`${_moduleName}.${commandName}`)
         if (Object.keys(allCommands).indexOf(commandName) != -1) {
             throw new Error(`Command ${commandName} has been registered`);
         }
@@ -32,6 +33,10 @@ export abstract class ICommand<P> {
     requestId?: string;
     sessionId?: string;
     executePath: ExecutePath[] = [{id: this.id, name: this.getCommandName()}];
+
+    get fullName(): string {
+        return `${this.moduleName}.${this.commandName}`
+    }
 
     protected constructor(payload: P) {
         this.payload = payload;

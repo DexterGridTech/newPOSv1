@@ -1,22 +1,23 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {kernelCoreBaseState, ModuleSliceConfig, SystemParametersState} from "../../types";
-import {batchUpdateState} from "../../foundations";
+import {kernelCoreBaseState, LOG_TAGS, ModuleSliceConfig, SystemParametersState} from "../../types";
+import {batchUpdateState, logger} from "../../foundations";
+import {moduleName} from "../../moduleName";
 
 const initialState: SystemParametersState = {}
 const slice = createSlice({
     name: kernelCoreBaseState.systemParameters,
     initialState,
     reducers: {
-
-
-        batchUpdateState: batchUpdateState
+        batchUpdateState: (state, action) => {
+            batchUpdateState(state, action)
+            logger.log([moduleName, LOG_TAGS.Reducer, kernelCoreBaseState.systemParameters], 'batch update state', action.payload)
+        }
     }
 })
-
-export const systemParametersConfig: ModuleSliceConfig<SystemParametersState, typeof slice.actions> = {
+export const systemParametersActions = slice.actions
+export const systemParametersConfig: ModuleSliceConfig<SystemParametersState> = {
     name: slice.name,
     reducer: slice.reducer,
-    actions: slice.actions,
     statePersistToStorage: true,
     stateSyncToSlave: true
 }

@@ -1,3 +1,5 @@
+import type {IAppError} from "../shared/error";
+
 export type RequestStatusType = "started" | "complete" | "error"
 
 export interface CommandStatus {
@@ -15,15 +17,13 @@ export interface CommandStatus {
 
 export interface RequestStatus {
     requestId: string
-    commandsStatus: { [commandId: string]: CommandStatus }
-    //todo AppError
-    errors: { [errorKey: string]: any }
-    results: { [resultKey: string]: any }
+    commandsStatus: Record<string, CommandStatus>
+    errors: Record<string, IAppError>
+    results: Record<string, any>
     status: RequestStatusType
     startAt: number
     updatedAt: number
 }
 
-export interface RequestStatusState {
-    [requestId: string]: RequestStatus
+export interface RequestStatusState extends Record<string, RequestStatus>{
 }

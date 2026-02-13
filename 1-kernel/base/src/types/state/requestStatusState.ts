@@ -25,6 +25,5 @@ export interface RequestStatus {
     updatedAt: number
 }
 
-export interface RequestStatusState {
-    [requestId: string]: RequestStatus
+export interface RequestStatusState extends Record<string, RequestStatus> {
 }

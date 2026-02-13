@@ -1,6 +1,6 @@
-import {RootState} from "../state/moduleRootState";
+import {RootState} from "../moduleState";
 import {storeEntry} from "./storeEntry";
-import {ValueWithUpdate} from "../shared/valueWithUpdate";
+import {ValueWithUpdateTime} from "../shared/valueWithUpdateTime";
 
 export abstract class KeyValue<T> {
     readonly stateName: keyof RootState;
@@ -16,7 +16,7 @@ export abstract class KeyValue<T> {
     }
 
     get value(): T {
-        const state = storeEntry.state(this.stateName) as { [key: string]: ValueWithUpdate<T> };
+        const state = storeEntry.state(this.stateName) as Record<string, ValueWithUpdateTime<T>>;
         return (state[this.key]?.value) ?? this.defaultValue;
     }
 }

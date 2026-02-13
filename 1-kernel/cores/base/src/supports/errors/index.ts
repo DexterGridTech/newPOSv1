@@ -1,7 +1,7 @@
 import {DefinedErrorMessage, ErrorCategory, ErrorSeverity} from "../../foundations";
 
 
-export const kernelCoreBaseErrorMessages = {
+export const kernelCoreBaseErrorMessages: Record<string, DefinedErrorMessage> = {
     errorMessageKeyNotExists: new DefinedErrorMessage(
         ErrorCategory.VALIDATION,
         ErrorSeverity.MEDIUM,

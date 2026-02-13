@@ -1,4 +1,4 @@
-import {Environment} from "../types";
+import {Environment} from "../types/shared/environment";
 
 let environment: Environment | null = null;
 export const getEnvironment = () => {
