@@ -72,6 +72,12 @@ export class InitLogger {
         console.log(this.colorize(`│  │  └─ Parameters: ${paramCount}`, paramCount > 0 ? 'CYAN' : 'WHITE'));
     }
 
+    logNames(names: string[]): void {
+        names.forEach(name => {
+            console.log(this.colorize(`│  │  · ${name}`, 'DIM'));
+        });
+    }
+
     logSuccess(message: string): void {
         console.log(this.colorize(`│  ✓ ${message}`, 'GREEN'));
     }

@@ -103,6 +103,7 @@ export class ApplicationManager {
             const actorCount = Object.keys(module.actors).length;
             if (actorCount > 0) {
                 initLogger.logDetail(`${module.name}`, actorCount);
+                initLogger.logNames(Object.values(module.actors).map(a => a.actorName));
                 totalActors += actorCount;
                 Object.values(module.actors).forEach(actor => {
                     ActorSystem.getInstance().registerActor(actor);
@@ -119,6 +120,7 @@ export class ApplicationManager {
             const commandCount = Object.keys(module.commands).length;
             if (commandCount > 0) {
                 initLogger.logDetail(`${module.name}`, commandCount);
+                initLogger.logNames(Object.keys(module.commands));
                 totalCommands += commandCount;
                 registerModuleCommands(module.name, module.commands);
             }
@@ -133,6 +135,7 @@ export class ApplicationManager {
             const errorCount = Object.keys(module.errorMessages).length;
             if (errorCount > 0) {
                 initLogger.logDetail(`${module.name}`, errorCount);
+                initLogger.logNames(Object.values(module.errorMessages).map(e => e.key));
                 totalErrors += errorCount;
                 registerModuleErrorMessages(module.name, Object.values(module.errorMessages));
             }
@@ -147,6 +150,7 @@ export class ApplicationManager {
             const paramCount = Object.keys(module.parameters).length;
             if (paramCount > 0) {
                 initLogger.logDetail(`${module.name}`, paramCount);
+                initLogger.logNames(Object.values(module.parameters).map(p => p.key));
                 totalParams += paramCount;
                 registerModuleSystemParameter(module.name, Object.values(module.parameters));
             }
@@ -162,8 +166,11 @@ export class ApplicationManager {
             const sliceCount = Object.keys(module.slices).length;
             if (sliceCount > 0) {
                 let modulePersisted = 0;
+                const sliceNames: string[] = [];
                 Object.values(module.slices).forEach(sliceConfig => {
-                    if (sliceConfig.statePersistToStorage && (config.environment.displayIndex === 0)) {
+                    const persisted = sliceConfig.statePersistToStorage && (config.environment.displayIndex === 0);
+                    sliceNames.push(persisted ? `${sliceConfig.name} [persisted]` : sliceConfig.name);
+                    if (persisted) {
                         persistedCount++;
                         modulePersisted++;
                         const stateStorage = getStateStorage();
@@ -180,6 +187,7 @@ export class ApplicationManager {
                 });
                 const persistInfo = modulePersisted > 0 ? ` (${modulePersisted} persisted)` : '';
                 initLogger.logDetail(`${module.name}`, `${sliceCount}${persistInfo}`);
+                initLogger.logNames(sliceNames);
             }
         });
         const reducerCount = Object.keys(rootReducer).length;

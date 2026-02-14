@@ -35,7 +35,7 @@ export const slice = createSlice({
             command: Command<any>,
             requestCleanOutTime: number
         }>) => {
-            logger.log([moduleName, LOG_TAGS.Reducer, "requestStatus"], `command start=>${action.payload.command.printId()}`)
+            logger.log([moduleName, LOG_TAGS.Reducer, "requestStatus"], `保存命令开始=>${action.payload.command.printId()}`)
             const {actor, command} = action.payload
             const request = state[command.requestId!] ?? {
                 requestId: command.requestId,
@@ -69,7 +69,7 @@ export const slice = createSlice({
             command: Command<any>,
             result?: Record<string, any>
         }>) => {
-            logger.log([moduleName, LOG_TAGS.Reducer, "requestStatus"], `command complete=>${action.payload.command.printId()}`)
+            logger.log([moduleName, LOG_TAGS.Reducer, "requestStatus"], `保持命令结束=>${action.payload.command.printId()}`)
             const {command, result} = action.payload
             const request = state[command.requestId!]
             if (request) {
@@ -86,7 +86,7 @@ export const slice = createSlice({
             }
         },
         commandError: (state, action: PayloadAction<{ actor: string, command: Command<any>, appError: AppError }>) => {
-            logger.log([moduleName, LOG_TAGS.Reducer, "requestStatus"], `command error=>${action.payload.command.printId()}`)
+            logger.log([moduleName, LOG_TAGS.Reducer, "requestStatus"], `保存命令错误=>${action.payload.command.printId()}`)
             const {command, appError} = action.payload
             const request = state[command.requestId!]
             if (request) {

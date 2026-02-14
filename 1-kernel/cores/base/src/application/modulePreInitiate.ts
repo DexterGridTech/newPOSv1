@@ -1,6 +1,5 @@
-import {INTERNAL, LOG_TAGS, storeEntry} from "../types";
-import {ActorSystem, logger} from "../foundations";
-import {moduleName} from "../moduleName";
+import {INTERNAL, storeEntry} from "../types";
+import {ActorSystem} from "../foundations";
 import {ApplicationConfig, AppModule} from "./types";
 import {requestStatusActions} from "../features/slices/requestStatus";
 import {kernelCoreBaseParameters} from "../supports";
