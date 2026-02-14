@@ -1,18 +1,8 @@
-/**
- * Redux Persist 的状态接口
- * 直接定义，避免导入问题
- */
-import {InstanceInfoState} from "./state/instanceInfo";
-import {kernelCoreInterconnectionState} from "./shared/moduleStateKey";
-import {MasterInterconnectionState} from "./state/masterInterconnection";
-import {SlaveInterconnectionState} from "./state/slaveInterconnection";
+import {kernelCoreInterconnectionState} from "./shared";
+import {InstanceInfoState, MasterInterconnectionState, SlaveInterconnectionState} from "./state";
 
-export type KernelCoreInterconnectionState = {
+export interface KernelCoreInterconnectionState  {
     [kernelCoreInterconnectionState.instanceInfo]: InstanceInfoState
     [kernelCoreInterconnectionState.masterInterconnection]: MasterInterconnectionState
     [kernelCoreInterconnectionState.slaveInterconnection]: SlaveInterconnectionState
-    _persist: {
-        version: number;
-        rehydrated: boolean;
-    };
 }

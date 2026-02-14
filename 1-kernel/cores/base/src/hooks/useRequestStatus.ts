@@ -3,7 +3,7 @@ import {createSelector} from "@reduxjs/toolkit";
 import {useSelector} from 'react-redux';
 
 const selectRequestStatusState = (state: RootState): RequestStatusState => {
-    return state[kernelCoreBaseState.requestStatus] as RequestStatusState;
+    return state[kernelCoreBaseState.requestStatus];
 };
 
 const selectRequest = (state: RootState, requestId?: string | null) => requestId;
