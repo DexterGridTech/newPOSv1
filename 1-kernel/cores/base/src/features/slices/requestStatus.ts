@@ -1,29 +1,19 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {
-    CommandStatus,
-    kernelCoreBaseState,
-    LOG_TAGS,
-    ModuleSliceConfig,
-    RequestStatus,
-    RequestStatusState,
-    RequestStatusType
-} from "../../types";
-import {AppError, batchUpdateState, Command, logger} from "../../foundations";
+import {kernelCoreBaseState, LOG_TAGS, ModuleSliceConfig, RequestStatus, RequestStatusState} from "../../types";
+import {AppError, Command, logger} from "../../foundations";
 import {moduleName} from "../../moduleName";
 
 
 const initialState: RequestStatusState = {}
-const calculateRequestStatus = (commandStatuses: CommandStatus[]): RequestStatusType => {
+const updateRequestStatus = (request: RequestStatus) => {
+    const commandStatuses = Object.values(request.commandsStatus)
+    const hasError = commandStatuses.some(cs => cs.status === 'error')
     const allComplete = commandStatuses.every(cs => cs.status === 'complete')
-    const hasStarted = commandStatuses.some(cs => cs.status === 'started')
-
-    if (allComplete) {
-        return 'complete'
-    } else if (hasStarted) {
-        return 'started'
-    } else {
-        return 'error'
-    }
+    request.status = hasError ? 'error' : allComplete ? 'complete' : 'started'
+    request.updatedAt = commandStatuses.reduce((latest, cs) => {
+        const time = cs.completeAt ?? cs.errorAt ?? 0
+        return time > latest ? time : latest
+    }, 0)
 }
 export const slice = createSlice({
     name: kernelCoreBaseState.requestStatus,
@@ -35,29 +25,30 @@ export const slice = createSlice({
             requestCleanOutTime: number
         }>) => {
             logger.log([moduleName, LOG_TAGS.Reducer, "requestStatus"], `保存命令开始=>${action.payload.command.printId()}`)
-            const {actor, command} = action.payload
-            const request = state[command.requestId!] ?? {
-                requestId: command.requestId,
+            const {actor, command, requestCleanOutTime} = action.payload
+            const requestId = command.requestId!
+            const request = state[requestId] ?? {
+                requestId: requestId,
                 commandsStatus: {},
                 errors: {},
                 results: {},
                 status: 'started',
                 startAt: Date.now()
             }
-            request.commandsStatus[command.id] = {
+            request.commandsStatus[`${actor}-${command.id}`] = {
                 commandId: command.id,
                 commandName: command.commandName,
                 actorName: actor,
-                requestId: command.requestId!,
+                requestId: requestId,
                 sessionId: command.sessionId,
                 startAt: Date.now(),
                 status: 'started'
             }
-            state[command.requestId!] = request
+            state[requestId] = request
 
             Object.keys(state).filter(requestId => {
                 const request = state[requestId]
-                return (Date.now() - request.updatedAt) > action.payload.requestCleanOutTime
+                return (Date.now() - request.updatedAt) > requestCleanOutTime
             }).forEach(requestIdToDelete => {
                 delete state[requestIdToDelete]
             })
@@ -69,41 +60,44 @@ export const slice = createSlice({
             result?: Record<string, any>
         }>) => {
             logger.log([moduleName, LOG_TAGS.Reducer, "requestStatus"], `保持命令结束=>${action.payload.command.printId()}`)
-            const {command, result} = action.payload
+            const {actor, command, result} = action.payload
             const request = state[command.requestId!]
             if (request) {
-                const commandStatus = request.commandsStatus[command.id]
+                const commandStatus = request.commandsStatus[`${actor}-${command.id}`]
                 if (commandStatus) {
                     commandStatus.completeAt = Date.now()
+                    commandStatus.result = result
                     commandStatus.status = 'complete'
                 }
-                if (result)
-                    Object.assign(request.results, result)
-                const commandStatuses = Object.values(request.commandsStatus)
-                request.status = calculateRequestStatus(commandStatuses)
-                request.updatedAt = Date.now()
+                updateRequestStatus(request)
             }
         },
         commandError: (state, action: PayloadAction<{ actor: string, command: Command<any>, appError: AppError }>) => {
             logger.log([moduleName, LOG_TAGS.Reducer, "requestStatus"], `保存命令错误=>${action.payload.command.printId()}`)
-            const {command, appError} = action.payload
+            const {actor, command, appError} = action.payload
             const request = state[command.requestId!]
             if (request) {
-                const commandStatus = request.commandsStatus[command.id]
+                const commandStatus = request.commandsStatus[`${actor}-${command.id}`]
                 if (commandStatus) {
                     commandStatus.errorAt = Date.now()
-                    commandStatus.errorKey = appError.key
+                    commandStatus.error = appError
                     commandStatus.status = 'error'
                 }
-                request.errors[appError.key] = appError
             }
-            const commandStatuses = Object.values(request.commandsStatus)
-            request.status = calculateRequestStatus(commandStatuses)
-            request.updatedAt = Date.now()
+            updateRequestStatus(request)
         },
         //stateSyncToSlave: true的时候，必须有batchUpdateState方法
         batchUpdateState: (state, action: PayloadAction<Record<string, RequestStatus | undefined | null>>) => {
-            batchUpdateState(state, action)
+            Object.keys(action.payload).forEach(key => {
+                const currentRequest = state[key]
+                const newRequest = action.payload[key]
+                if (currentRequest && newRequest) {
+                    Object.keys(newRequest.commandsStatus).forEach(k => {
+                        currentRequest.commandsStatus[k] = newRequest.commandsStatus[k]
+                    })
+                    updateRequestStatus(currentRequest)
+                }
+            })
             logger.log([moduleName, LOG_TAGS.Reducer, kernelCoreBaseState.requestStatus], 'batch update state', action.payload)
         }
     }
