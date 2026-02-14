@@ -180,6 +180,7 @@ export class ApplicationManager {
                         const persistConfig = {
                             key: storageKey,
                             storage: stateStorage,
+                            blacklist: sliceConfig.persistBlacklist || [],
                         };
                         rootReducer[sliceConfig.name] = persistReducer(persistConfig, sliceConfig.reducer);
                     } else {

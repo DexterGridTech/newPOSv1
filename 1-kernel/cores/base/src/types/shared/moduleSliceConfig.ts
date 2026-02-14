@@ -5,4 +5,5 @@ export interface ModuleSliceConfig<State = any> {
     reducer: Reducer<State>  // 只保留 Reducer 类型
     statePersistToStorage: boolean
     stateSyncToSlave: boolean
+    persistBlacklist?: string[]
 }

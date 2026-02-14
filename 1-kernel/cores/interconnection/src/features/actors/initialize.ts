@@ -6,12 +6,11 @@ import {kernelCoreInterconnectionCommands} from "../commands";
 
 export class InitializeActor extends Actor {
     initialize = Actor.defineCommandHandler(kernelCoreBaseCommands.initialize,
-        (command): Promise<Record<string, any>> => {
+        async (command): Promise<Record<string, any>> => {
             logger.log([moduleName, LOG_TAGS.Actor, "InitializeActor"], 'Initializing kernel core interconnection...')
             const instanceInfo = storeEntry.state(kernelCoreInterconnectionState.instanceInfo)
             if (instanceInfo.instanceMode === InstanceMode.MASTER
-                && instanceInfo.enableSlave
-                && instanceInfo.slaveInfo) {
+                && instanceInfo.enableSlave) {
                 setTimeout(() => {
                     kernelCoreInterconnectionCommands.startMasterServer().executeInternally()
                 }, kernelCoreInterconnectionParameters.masterServerBootstrapDelayAfterStartup.value)

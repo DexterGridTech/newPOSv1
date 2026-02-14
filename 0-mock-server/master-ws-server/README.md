@@ -274,7 +274,7 @@ Master 设备发送消息时指定 `targetDevice` 字段,服务器会只发送�
 
 ```
 src/
-├── index.ts                          # 服务器入口
+├── master.ts                          # 服务器入口
 ├── MasterSlaveWebSocketServer.ts     # WebSocket服务器核心实现
 ├── DeviceConnectionManager.ts        # 设备连接管理器
 ├── Logger.ts                         # 日志管理器

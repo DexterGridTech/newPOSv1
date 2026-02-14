@@ -8,7 +8,7 @@ import {moduleName} from "../../moduleName";
 export class ErrorMessagesActor extends Actor {
     updateErrorMessages =
         Actor.defineCommandHandler(kernelCoreBaseCommands.updateErrorMessages,
-            (command): Promise<Record<string, any>> => {
+            async (command): Promise<Record<string, any>> => {
                 logger.log([moduleName, LOG_TAGS.Actor, "ErrorMessagesActor"], 'updateErrorMessages')
                 const keysNotFound: string[] = [];
                 const keysFound: string[] = [];

@@ -56,9 +56,8 @@ export class MasterConnectionManager {
       try {
         await this.connectToServer(serverUrl, deviceRegistration, connectionTimeout);
         return; // 连接成功,返回
-      } catch (error) {
+      } catch (error:Error|any) {
         lastError = error as ConnectionError;
-        console.warn(`连接服务器失败: ${serverUrl}`);
       }
     }
 
@@ -81,11 +80,11 @@ export class MasterConnectionManager {
     // 步骤1: HTTP 注册
     const token = await this.registerDevice(serverUrl, deviceRegistration, connectionTimeout);
 
+    // 保存连接信息（需在 connectWebSocket 之前赋值，因为 onOpenCallback 会读取）
+    this.currentServerUrl = serverUrl;
+
     // 步骤2: WebSocket 连接
     await this.connectWebSocket(serverUrl, token, connectionTimeout);
-
-    // 保存连接信息
-    this.currentServerUrl = serverUrl;
   }
 
   /**
@@ -106,6 +105,8 @@ export class MasterConnectionManager {
       );
 
       if (!response.success || !response.token) {
+
+        logger.error([moduleName,LOG_TAGS.Http,"WSClient"],`注册失败:${registerUrl}`,deviceRegistration);
         throw {
           type: ConnectionErrorType.REGISTRATION_FAILED,
           message: response.error || '注册失败',
@@ -114,7 +115,8 @@ export class MasterConnectionManager {
       }
 
       return response.token;
-    } catch (error: any) {
+    } catch (error: Error|any) {
+      logger.error([moduleName,LOG_TAGS.Http,"WSClient"],`HTTP注册失败:${serverUrl}`,error.code);
       throw {
         type: ConnectionErrorType.REGISTRATION_FAILED,
         message: error.message || 'HTTP注册失败',
@@ -213,7 +215,8 @@ export class MasterConnectionManager {
           }
         });
 
-      } catch (error: any) {
+      } catch (error: Error|any) {
+        logger.error([moduleName,LOG_TAGS.Http,"WSClient"],`WebSocket创建失败:${serverUrl}`,error.code);
         resolved = true;
         clearConnectionTimeout();
         reject({

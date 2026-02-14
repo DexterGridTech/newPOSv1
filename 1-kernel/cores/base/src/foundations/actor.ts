@@ -161,7 +161,7 @@ export class ActorSystem {
     }
 
     commandError(actor:Actor, command: Command<any>, appError: AppError): void {
-        logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `命令错误=>${actor.printName()}:${command.printId()}`)
+        logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `命令错误=>${actor.printName()}:${command.printId()},${appError.message}`)
         this.lifecycleListeners.forEach(listener => {
             if (listener.onCommandError) {
                 try {

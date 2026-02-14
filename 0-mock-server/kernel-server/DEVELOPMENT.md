@@ -362,7 +362,7 @@ router.delete('/notifications/:id', (req: Request, res: Response) => {
 export default router;
 ```
 
-#### 6. 注册路由 (routes/manager/index.ts)
+#### 6. 注册路由 (routes/manager/master.ts)
 
 ```typescript
 import notificationRoutes from './notifications';
@@ -791,7 +791,7 @@ npm install --save-dev jest @types/jest ts-jest
 ```
 
 ```typescript
-// __tests__/UnitService.index.ts
+// __tests__/UnitService.master.ts
 import { UnitService } from '../src/services/UnitService';
 
 describe('UnitService', () => {
@@ -858,7 +858,7 @@ pm2 monit
 
 ### Q: 如何修改端口?
 
-A: 编辑 `src/config/index.ts`,修改 `PORT` 配置。
+A: 编辑 `src/config/master.ts`,修改 `PORT` 配置。
 
 ### Q: 如何添加新的SSE消息类型?
 

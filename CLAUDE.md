@@ -323,7 +323,7 @@ class MainApplication : Application(), ReactApplication {
 tsx
 
 ```
-// packages/app/business-device-b/src/store/index.ts
+// packages/app/business-device-b/src/store/master.ts
 import { configureStore } from '@reduxjs/toolkit';
 import { createEpicMiddleware } from 'redux-observable';
 // 业务逻辑层的reducer/epic
@@ -720,9 +720,9 @@ json
   "name": "@mono/adapter-a", // 包名：@命名空间/包名，避免冲突
   "version": "1.0.0",
   "description": "适配层A：Android原生能力+Adapter接口实现",
-  "main": "src/index.ts", // 生产核心入口
-  "types": "src/index.ts", // TS类型入口
-  "dev:main": "src/debug/index.ts", // 调试入口（自定义）
+  "main": "src/master.ts", // 生产核心入口
+  "types": "src/master.ts", // TS类型入口
+  "dev:main": "src/debug/master.ts", // 调试入口（自定义）
   "private": false, // 若需发布为私有包，设为true；否则false
   "scripts": {
     "dev": "react-native start", // 独立调试

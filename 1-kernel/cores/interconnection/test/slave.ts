@@ -13,17 +13,15 @@ const appConfig: ApplicationConfig = {
         production: false,
         screenMode: ScreenMode.DESKTOP,
         displayCount: 2,
-        displayIndex: 0
+        displayIndex: 1
     },
     preInitiatedState: {},
     module: kernelCoreInterconnectionModule
 }
 
 async function initializeApp() {
-    const {store} = await ApplicationManager.getInstance().generateStore(appConfig)
-    // console.log(store.getState())
+    await ApplicationManager.getInstance().generateStore(appConfig)
     console.log(storeEntry.state(kernelCoreInterconnectionState.instanceInfo))
-
     // 执行命令
     kernelCoreBaseCommands.initialize().executeInternally()
 }

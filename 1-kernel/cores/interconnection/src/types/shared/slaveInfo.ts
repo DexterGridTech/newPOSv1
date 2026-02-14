@@ -12,3 +12,11 @@ export interface SlaveConnection {
     connectedAt:number
     disconnectedAt?:number
 }
+
+export interface RemoteCommandFromSlave {
+    commandId:string;
+    commandName: string;
+    payload: any;
+    requestId: string;
+    sessionId: string;
+}

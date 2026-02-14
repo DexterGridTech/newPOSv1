@@ -6,14 +6,14 @@ export const kernelCoreBaseErrorMessages = {
         ErrorCategory.VALIDATION,
         ErrorSeverity.MEDIUM,
         "错误信息Key未定义",
-        'ERROR_MESSAGE_KEY_NOT_EXISTS',
+        'error.message.key.not.exists',
         "错误信息Key未定义:${keysNotFound.join(',')}"
     ),
     systemParameterKeyNotExists: new DefinedErrorMessage(
         ErrorCategory.VALIDATION,
         ErrorSeverity.MEDIUM,
         "系统参数Key未定义",
-        'SYSTEM_PARAMETER_KEY_NOT_EXISTS',
+        'system.parameter.key.not.exists',
         "系统参数Key未定义:${keysNotFound.join(',')}"
     )
 };

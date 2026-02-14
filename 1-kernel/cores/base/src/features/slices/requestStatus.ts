@@ -101,6 +101,7 @@ export const slice = createSlice({
             request.status = calculateRequestStatus(commandStatuses)
             request.updatedAt = Date.now()
         },
+        //stateSyncToSlave: true的时候，必须有batchUpdateState方法
         batchUpdateState: (state, action: PayloadAction<Record<string, RequestStatus | undefined | null>>) => {
             batchUpdateState(state, action)
             logger.log([moduleName, LOG_TAGS.Reducer, kernelCoreBaseState.requestStatus], 'batch update state', action.payload)

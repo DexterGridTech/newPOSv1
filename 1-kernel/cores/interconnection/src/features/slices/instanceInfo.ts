@@ -3,7 +3,7 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {InstanceInfoState} from "../../types/state/instanceInfo";
 import {DisplayMode, InstanceMode} from "../../types/shared/instance";
 import {kernelCoreInterconnectionState} from "../../types/shared/moduleStateKey";
-import {MasterInfo, SlaveInfo} from "../../types";
+import {MasterInfo} from "../../types";
 
 const initialState: InstanceInfoState = {
     instanceMode: InstanceMode.MASTER,
@@ -24,11 +24,8 @@ const slice = createSlice({
         enableSlave: (state, action: PayloadAction<boolean>) => {
             state.enableSlave = action.payload
         },
-        setMasterInfo: (state,action:PayloadAction<MasterInfo>) => {
+        setMasterInfo: (state, action: PayloadAction<MasterInfo | null>) => {
             state.masterInfo = action.payload
-        },
-        setSlaveInfo: (state,action:PayloadAction<SlaveInfo>) => {
-            state.slaveInfo = action.payload
         }
     }
 })

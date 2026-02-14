@@ -2,10 +2,10 @@ import {ServerConnectionStatus} from "../shared/connection";
 
 
 export interface SlaveInterconnectionState {
-    connectionStatus: ServerConnectionStatus
-    connectedAt?: number
-    disconnectedAt?: number
-    connectionError?: string
+    serverConnectionStatus: ServerConnectionStatus
+    connectedAt?: number | null
+    disconnectedAt?: number| null
+    connectionError?: string| null
     connectionHistory: {
         connectedAt: number
         disconnectedAt: number

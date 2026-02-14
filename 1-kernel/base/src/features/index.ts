@@ -1,5 +1,5 @@
 //注意导出顺序
-console.log('[kernel-base/features] index.ts - 开始加载');
+console.log('[kernel-base/features] master.ts - 开始加载');
 export * from './commands'
 console.log('[kernel-base/features] 已加载 commands');
 export * from './slices'
@@ -17,4 +17,4 @@ console.log('[kernel-base/features] 已加载 rootActors');
 export * from './rootEpics'
 console.log('[kernel-base/features] 已加载 rootEpics');
 export * from './rootReducers'
-console.log('[kernel-base/features] index.ts - 加载完成');
+console.log('[kernel-base/features] master.ts - 加载完成');

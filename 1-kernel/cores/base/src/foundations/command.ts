@@ -4,9 +4,9 @@ import {ExecutePath, ExecutionType, INTERNAL} from "../types/shared/command";
 
 export const commandBus = new Subject<Command<any>>();
 
-const allCommands: Record<string, new (args: any) => Command<any>> = {}
+const allCommands: Record<string, (payload: any) => Command<any>> = {}
 
-export const registerModuleCommands = (_moduleName: string, commands: Record<string, new (args: any) => Command<any>>) => {
+export const registerModuleCommands = (_moduleName: string, commands: Record<string, (payload: any) => Command<any>>) => {
     Object.keys(commands).forEach(commandName => {
         if (allCommands.hasOwnProperty(commandName)) {
             throw new Error(`Command ${commandName} has been registered`);
@@ -15,8 +15,8 @@ export const registerModuleCommands = (_moduleName: string, commands: Record<str
     })
 }
 
-export const getCommandByName = (commandName: string) => {
-    return allCommands[commandName];
+export const getCommandByName = (commandName: string,payload:any) => {
+    return allCommands[commandName](payload);
 }
 
 export abstract class Command<P> {

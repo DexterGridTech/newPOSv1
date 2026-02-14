@@ -20,7 +20,7 @@ src/core/http/
 ├── Api.ts                 # 单个API请求封装
 ├── CircuitBreakerManager.ts # 断路器
 ├── RequestQueueManager.ts  # 请求队列
-└── index.ts               # 模块导出
+└── master.ts               # 模块导出
 ```
 
 ## 快速开始

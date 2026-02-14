@@ -5,19 +5,25 @@ import {SlaveInterconnectionState} from "../../types/state/slaveInterconnection"
 import {ServerConnectionStatus} from "../../types/shared/connection";
 
 const initialState: SlaveInterconnectionState = {
-    connectionStatus: ServerConnectionStatus.DISCONNECTED,
+    serverConnectionStatus: ServerConnectionStatus.DISCONNECTED,
     connectionHistory: [],
 }
 const slice = createSlice({
     name: kernelCoreInterconnectionState.slaveInterconnection,
     initialState,
     reducers: {
+        connecting: (state) => {
+            state.serverConnectionStatus = ServerConnectionStatus.CONNECTING
+            state.connectedAt = null
+            state.disconnectedAt = null
+            state.connectionError = null
+        },
         connected: (state) => {
-            state.connectionStatus = ServerConnectionStatus.CONNECTED
+            state.serverConnectionStatus = ServerConnectionStatus.CONNECTED
             state.connectedAt = Date.now()
         },
         disconnected: (state,action:PayloadAction<{connectionError:string}>) => {
-            state.connectionStatus = ServerConnectionStatus.DISCONNECTED
+            state.serverConnectionStatus = ServerConnectionStatus.DISCONNECTED
             state.disconnectedAt = Date.now()
             state.connectionError = action.payload.connectionError
             state.connectionHistory.push({

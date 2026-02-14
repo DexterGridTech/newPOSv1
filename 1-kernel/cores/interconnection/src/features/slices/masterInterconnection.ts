@@ -2,24 +2,36 @@ import {ModuleSliceConfig} from "@impos2/kernel-core-base";
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {kernelCoreInterconnectionState} from "../../types/shared/moduleStateKey";
 import {MasterInterconnectionState} from "../../types/state/masterInterconnection";
-import {ServerAddress, ServerConnectionStatus} from "../../types";
+import {ServerConnectionStatus} from "../../types";
 
 const initialState: MasterInterconnectionState = {
     serverConnectionStatus: ServerConnectionStatus.DISCONNECTED,
     slaveConnectionHistory: [],
+    connectionHistory: []
 }
 const slice = createSlice({
     name: kernelCoreInterconnectionState.masterInterconnection,
     initialState,
     reducers: {
-        setServerAddresses: (state, action: PayloadAction<ServerAddress[]>) => {
-            state.serverAddresses = action.payload
+        connecting: (state) => {
+            state.serverConnectionStatus = ServerConnectionStatus.CONNECTING
+            state.connectedAt = null
+            state.disconnectedAt = null
+            state.connectionError = null
         },
-        serverConnected: (state) => {
+        connected: (state) => {
             state.serverConnectionStatus = ServerConnectionStatus.CONNECTED
+            state.connectedAt = Date.now()
         },
-        serverDisconnected: (state) => {
+        disconnected: (state,action:PayloadAction<{connectionError:string}>) => {
             state.serverConnectionStatus = ServerConnectionStatus.DISCONNECTED
+            state.disconnectedAt = Date.now()
+            state.connectionError = action.payload.connectionError
+            state.connectionHistory.push({
+                connectedAt: state.connectedAt!,
+                disconnectedAt: state.disconnectedAt!,
+                connectionError: state.connectionError!
+            })
         },
         slaveConnected: (state, action: PayloadAction<{ name: string, deviceId: string }>) => {
             state.slaveConnection = {

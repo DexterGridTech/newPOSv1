@@ -245,7 +245,7 @@ export class MasterWebSocketClient implements IWebSocketClient {
       );
 
       // 连接成功在 handleWebSocketOpen 中处理
-    } catch (error) {
+    } catch (error:Error|any) {
       // 重置连接标志位
       this.isConnecting = false;
 
