@@ -6,7 +6,7 @@ export interface SlaveInterconnectionState {
     connectedAt?: number
     disconnectedAt?: number
     connectionError?: string
-    connectionHistory?: {
+    connectionHistory: {
         connectedAt: number
         disconnectedAt: number
         connectionError: string

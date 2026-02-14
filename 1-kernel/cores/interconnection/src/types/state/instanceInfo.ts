@@ -1,12 +1,12 @@
 import {DisplayMode, InstanceMode} from "../shared/instance";
-import {Slave} from "../shared/slave";
-import {Master} from "../shared/master";
+import {SlaveInfo} from "../shared/slaveInfo";
+import {MasterInfo} from "../shared/masterInfo";
 
 export interface InstanceInfoState {
     instanceMode: InstanceMode
     displayMode: DisplayMode
-    standAlone: boolean
+    standalone: boolean
     enableSlave: boolean
-    master?:Master
-    slave?: Slave
+    masterInfo?:MasterInfo|null
+    slaveInfo?: SlaveInfo|null
 }

@@ -25,6 +25,6 @@ export interface AppModule {
     errorMessages: Record<string, DefinedErrorMessage>
     parameters: Record<string, DefinedSystemParameter<any>>
     dependencies: AppModule[]
-    modulePreInitiate?: (config: ApplicationConfig, allModules: AppModule[]) => Promise<void>
-    loadingPriority?: number
+    modulePreSetup?: (config: ApplicationConfig, allModules: AppModule[]) => Promise<void>
+    preSetupPriority?: number
 }

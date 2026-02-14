@@ -1,6 +1,6 @@
 import {ServerAddress} from "./connection";
 
-export interface Master {
+export interface MasterInfo {
     name: string;
     deviceId: string;
     serverAddress: ServerAddress[];

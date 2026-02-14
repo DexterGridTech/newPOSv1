@@ -5,7 +5,7 @@ import {requestStatusActions} from "../features/slices/requestStatus";
 import {kernelCoreBaseParameters} from "../supports";
 
 
-export const kernelCoreBaseModulePreInitiate = async (config: ApplicationConfig, allModules: AppModule[]) => {
+export const kernelCoreBaseModulePreSetup = async (config: ApplicationConfig, allModules: AppModule[]) => {
     registerActorSystem()
 }
 

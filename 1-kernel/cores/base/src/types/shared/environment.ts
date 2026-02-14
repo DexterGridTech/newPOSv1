@@ -1,5 +1,6 @@
 
 export interface Environment {
+    deviceId:string
     production: boolean
     screenMode: ScreenMode
     displayCount: number

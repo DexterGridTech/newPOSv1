@@ -2,7 +2,7 @@ import {moduleName} from "./moduleName";
 import {kernelCoreInterconnectionSlice} from "./features/slices";
 import {kernelCoreInterconnectionActors} from "./features/actors";
 import {kernelCoreInterconnectionCommands} from "./features/commands";
-import {kernelCoreInterconnectionModulePreInitiate} from "./application/modulePreInitiate";
+import {kernelCoreInterconnectionModulePreSetup} from "./application/modulePreSetup";
 import {kernelCoreInterconnectionErrorMessages} from "./supports/errors";
 import {kernelCoreInterconnectionParameters} from "./supports/parameters";
 import {kernelCoreInterconnectionEpics} from "./features/epics";
@@ -20,8 +20,8 @@ export const kernelCoreInterconnectionModule: AppModule = {
     errorMessages: kernelCoreInterconnectionErrorMessages,
     parameters: kernelCoreInterconnectionParameters,
     dependencies: [kernelCoreBaseModule],
-    modulePreInitiate: kernelCoreInterconnectionModulePreInitiate,
-    loadingPriority: 10
+    modulePreSetup: kernelCoreInterconnectionModulePreSetup,
+    preSetupPriority: 1000//需要再适配层加载完再加载，因为要使用适配层的server
 }
 
 

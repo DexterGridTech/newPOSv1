@@ -3,7 +3,7 @@ import {moduleName} from "./moduleName";
 import {kernelCoreBaseSlice} from "./features/slices";
 import {kernelCoreBaseActors} from "./features/actors";
 import {kernelCoreBaseCommands} from "./features/commands";
-import {kernelCoreBaseModulePreInitiate} from "./application/modulePreInitiate";
+import {kernelCoreBaseModulePreSetup} from "./application/modulePreSetup";
 import {kernelCoreBaseErrorMessages} from "./supports/errors";
 import {kernelCoreBaseParameters} from "./supports/parameters";
 import {kernelCoreBaseEpics} from "./features/epics";
@@ -20,8 +20,8 @@ export const kernelCoreBaseModule: AppModule = {
     errorMessages: kernelCoreBaseErrorMessages,
     parameters: kernelCoreBaseParameters,
     dependencies: [],
-    modulePreInitiate: kernelCoreBaseModulePreInitiate,
-    loadingPriority: 0
+    modulePreSetup: kernelCoreBaseModulePreSetup,
+    preSetupPriority: 100//无加载优先级需求
 }
 
 

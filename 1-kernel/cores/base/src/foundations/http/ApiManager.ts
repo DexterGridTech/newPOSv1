@@ -3,8 +3,6 @@
  * 负责服务器配置管理、拦截器管理、请求执行和指标统计
  */
 
-import {now} from 'lodash';
-
 import axios, {AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, CancelTokenSource} from 'axios';
 import {CircuitBreaker} from './CircuitBreakerManager';
 import {RequestQueue} from './RequestQueueManager';
@@ -59,7 +57,7 @@ export class ApiManager {
         }>()
     };
     private metricsWindowSize = 3600000; // 滑动窗口大小：1小时
-    private lastMetricsCleanup = now(); // 上次清理时间
+    private lastMetricsCleanup = Date.now(); // 上次清理时间
 
     private constructor() {
         // 移除检查，由 getInstance 控制
@@ -300,7 +298,7 @@ export class ApiManager {
     ): Promise<{ response: ResponseWrapper<R>; record: ServerAttemptRecord }> {
         const config = this.serverMap.get(serverName);
         if (!config) {
-            const currentTime = now();
+            const currentTime = Date.now();
             return {
                 response: {
                     code: APIErrorCode.SERVER_NOT_FOUND,
@@ -325,7 +323,7 @@ export class ApiManager {
         const axiosInstance = this.axiosInstances.get(instanceKey);
 
         if (!axiosInstance) {
-            const currentTime = now();
+            const currentTime = Date.now();
             return {
                 response: {
                     code: APIErrorCode.AXIOS_INSTANCE_NOT_FOUND,
@@ -346,7 +344,7 @@ export class ApiManager {
         }
 
         // 记录请求开始时间
-        const startTime = now();
+        const startTime = Date.now();
         this.metrics.totalRequests++;
 
         // 初始化地址指标
@@ -355,12 +353,12 @@ export class ApiManager {
                 requests: 0,
                 failures: 0,
                 totalResponseTime: 0,
-                lastAccessTime: now()
+                lastAccessTime: Date.now()
             });
         }
         const addressMetric = this.metrics.addressMetrics.get(address.addressName)!;
         addressMetric.requests++;
-        addressMetric.lastAccessTime = now(); // 更新最后访问时间
+        addressMetric.lastAccessTime = Date.now(); // 更新最后访问时间
 
         try {
             const axiosConfig: AxiosRequestConfig = {
@@ -373,7 +371,7 @@ export class ApiManager {
             const response: AxiosResponse<ResponseWrapper<R>> = await axiosInstance.request(axiosConfig);
 
             // 记录成功指标
-            const endTime = now();
+            const endTime = Date.now();
             const responseTime = endTime - startTime;
             this.metrics.successfulRequests++;
             this.metrics.totalResponseTime += responseTime;
@@ -395,7 +393,7 @@ export class ApiManager {
             };
         } catch (error) {
             // 记录响应时间
-            const endTime = now();
+            const endTime = Date.now();
             const responseTime = endTime - startTime;
             this.metrics.totalResponseTime += responseTime;
             addressMetric.totalResponseTime += responseTime;
@@ -548,7 +546,7 @@ export class ApiManager {
 
         // 记录所有尝试
         const attemptRecords: ServerAttemptRecord[] = [];
-        const requestStartTime = now();
+        const requestStartTime = Date.now();
 
         // 轮询所有地址,直到成功或达到最大尝试次数
         let skippedCount = 0; // 跳过的断路器数量
@@ -570,7 +568,7 @@ export class ApiManager {
                         path,
                         method,
                         totalAttempts: attemptCount,
-                        totalResponseTime: now() - requestStartTime,
+                        totalResponseTime: Date.now() - requestStartTime,
                         attemptRecords,
                         requestExtra: requestWrapper.extra
                     }
@@ -589,8 +587,8 @@ export class ApiManager {
                     addressName: address.addressName,
                     addressIndex,
                     attemptNumber: attemptCount + 1,
-                    startTime: now(),
-                    endTime: now(),
+                    startTime: Date.now(),
+                    endTime: Date.now(),
                     responseTime: 0,
                     success: false,
                     skipped: true,
@@ -609,7 +607,7 @@ export class ApiManager {
                             path,
                             method,
                             totalAttempts: attemptCount,
-                            totalResponseTime: now() - requestStartTime,
+                            totalResponseTime: Date.now() - requestStartTime,
                             attemptRecords,
                             requestExtra: requestWrapper.extra
                         }
@@ -647,7 +645,7 @@ export class ApiManager {
                 config.lastSuccessfulAddressIndex = addressIndex;
 
                 // 成功,返回结果并附加所有尝试记录和请求extra
-                const totalResponseTime = now() - requestStartTime;
+                const totalResponseTime = Date.now() - requestStartTime;
                 return {
                     ...response,
                     extra: {
@@ -680,7 +678,7 @@ export class ApiManager {
         }
 
         // 所有尝试都失败了
-        const totalResponseTime = now() - requestStartTime;
+        const totalResponseTime = Date.now() - requestStartTime;
         return {
             code: APIErrorCode.ALL_SERVERS_FAILED,
             message: ERROR_MESSAGES.ALL_SERVERS_FAILED(serverName),
@@ -756,7 +754,7 @@ export class ApiManager {
      * 清理metrics以防止内存泄漏（使用滑动窗口算法）
      */
     private pruneMetricsIfNeeded(): void {
-        const currentTime = now();
+        const currentTime = Date.now();
 
         // 每5分钟清理一次
         if (currentTime - this.lastMetricsCleanup < 300000) {

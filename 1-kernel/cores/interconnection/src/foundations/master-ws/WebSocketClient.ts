@@ -1,5 +1,4 @@
 import { nanoid } from 'nanoid/non-secure';
-import {now} from 'lodash';
 
 import {
   IWebSocketClient,
@@ -67,7 +66,7 @@ export class MasterWebSocketClient implements IWebSocketClient {
    * 使用 LRU + TTL 策略进行去重
    */
   private isMessageDuplicated(message: MessageWrapper): boolean {
-    const currentTime = now();
+    const currentTime = Date.now();
     const messageId = message.id;
 
     // 检查是否已处理过该消息
@@ -114,7 +113,7 @@ export class MasterWebSocketClient implements IWebSocketClient {
    * 清理过期的缓存条目 (TTL 策略)
    */
   private cleanupExpiredEntries(): void {
-    const currentTime = now();
+    const currentTime = Date.now();
     const expiredKeys: string[] = [];
 
     for (const [key, timestamp] of this.processedMessageCache.entries()) {
@@ -389,7 +388,7 @@ export class MasterWebSocketClient implements IWebSocketClient {
     const event: StateChangeEvent = {
       oldState,
       newState,
-      timestamp: now(),
+      timestamp: Date.now(),
     };
 
     this.eventManager.emit(ConnectionEventType.STATE_CHANGE, event);
@@ -422,7 +421,7 @@ export class MasterWebSocketClient implements IWebSocketClient {
     // 触发连接成功事件
     const event: ConnectedEvent = {
       serverUrl: this.connectionManager!.getCurrentServerUrl()!,
-      timestamp: now(),
+      timestamp: Date.now(),
       deviceInfo: {
         deviceType: this.config!.deviceRegistration.type,
         deviceId: this.config!.deviceRegistration.deviceId,
@@ -500,7 +499,7 @@ export class MasterWebSocketClient implements IWebSocketClient {
     // 触发消息事件
     const event: MessageEvent = {
       message,
-      timestamp: now(),
+      timestamp: Date.now(),
     };
 
     if (!this.isMessageDuplicated(message)){
@@ -523,7 +522,7 @@ export class MasterWebSocketClient implements IWebSocketClient {
 
     const event: ErrorEvent = {
       error,
-      timestamp: now(),
+      timestamp: Date.now(),
     };
 
     this.eventManager.emit(ConnectionEventType.HEARTBEAT_TIMEOUT, event);
@@ -549,7 +548,7 @@ export class MasterWebSocketClient implements IWebSocketClient {
   private emitConnectFailed(error: ConnectionError): void {
     const event: ConnectFailedEvent = {
       error,
-      timestamp: now(),
+      timestamp: Date.now(),
     };
 
     this.eventManager.emit(ConnectionEventType.CONNECT_FAILED, event);
@@ -563,7 +562,7 @@ export class MasterWebSocketClient implements IWebSocketClient {
       wasClean,
       reason,
       error,
-      timestamp: now(),
+      timestamp: Date.now(),
     };
 
     this.eventManager.emit(ConnectionEventType.DISCONNECTED, event);
@@ -575,7 +574,7 @@ export class MasterWebSocketClient implements IWebSocketClient {
   private emitError(error: ConnectionError): void {
     const event: ErrorEvent = {
       error,
-      timestamp: now(),
+      timestamp: Date.now(),
     };
 
     this.eventManager.emit(ConnectionEventType.ERROR, event);

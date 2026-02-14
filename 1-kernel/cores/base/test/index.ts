@@ -8,6 +8,7 @@ import {
 
 const appConfig: ApplicationConfig = {
     environment: {
+        deviceId:"123",
         production: false,
         screenMode: ScreenMode.DESKTOP,
         displayCount: 1,

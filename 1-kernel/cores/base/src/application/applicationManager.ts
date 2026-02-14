@@ -70,6 +70,7 @@ export class ApplicationManager {
         // 步骤 1: 设置环境
         initLogger.logStep(1, 'Setting Environment');
         setEnvironment(config.environment);
+        initLogger.logDetail('Device ID', config.environment.deviceId);
         initLogger.logDetail('Production', config.environment.production);
         initLogger.logDetail('ScreenMode', config.environment.screenMode);
         initLogger.logDetail('Display Count', config.environment.displayCount);
@@ -89,10 +90,10 @@ export class ApplicationManager {
         initLogger.logStepEnd();
 
         // 步骤 3: 模块预初始化
-        initLogger.logStep(3, 'Pre-initializing Modules');
+        initLogger.logStep(3, 'Pre-Setup Modules');
         for (const module of allModules) {
-            await module.modulePreInitiate?.(config, allModules);
-            initLogger.logSuccess(`${module.name} pre-initialized`);
+            await module.modulePreSetup?.(config, allModules);
+            initLogger.logSuccess(`${module.name} finished pre-setup`);
         }
         initLogger.logStepEnd();
 

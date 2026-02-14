@@ -1,5 +1,4 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {now} from "lodash";
 import {
     CommandStatus,
     kernelCoreBaseState,
@@ -43,7 +42,7 @@ export const slice = createSlice({
                 errors: {},
                 results: {},
                 status: 'started',
-                startAt: now()
+                startAt: Date.now()
             }
             request.commandsStatus[command.id] = {
                 commandId: command.id,
@@ -51,18 +50,18 @@ export const slice = createSlice({
                 actorName: actor,
                 requestId: command.requestId!,
                 sessionId: command.sessionId,
-                startAt: now(),
+                startAt: Date.now(),
                 status: 'started'
             }
             state[command.requestId!] = request
 
             Object.keys(state).filter(requestId => {
                 const request = state[requestId]
-                return (now() - request.updatedAt) > action.payload.requestCleanOutTime
+                return (Date.now() - request.updatedAt) > action.payload.requestCleanOutTime
             }).forEach(requestIdToDelete => {
                 delete state[requestIdToDelete]
             })
-            request.updatedAt = now()
+            request.updatedAt = Date.now()
         },
         commandComplete: (state, action: PayloadAction<{
             actor: string,
@@ -75,14 +74,14 @@ export const slice = createSlice({
             if (request) {
                 const commandStatus = request.commandsStatus[command.id]
                 if (commandStatus) {
-                    commandStatus.completeAt = now()
+                    commandStatus.completeAt = Date.now()
                     commandStatus.status = 'complete'
                 }
                 if (result)
                     Object.assign(request.results, result)
                 const commandStatuses = Object.values(request.commandsStatus)
                 request.status = calculateRequestStatus(commandStatuses)
-                request.updatedAt = now()
+                request.updatedAt = Date.now()
             }
         },
         commandError: (state, action: PayloadAction<{ actor: string, command: Command<any>, appError: AppError }>) => {
@@ -92,7 +91,7 @@ export const slice = createSlice({
             if (request) {
                 const commandStatus = request.commandsStatus[command.id]
                 if (commandStatus) {
-                    commandStatus.errorAt = now()
+                    commandStatus.errorAt = Date.now()
                     commandStatus.errorKey = appError.key
                     commandStatus.status = 'error'
                 }
@@ -100,7 +99,7 @@ export const slice = createSlice({
             }
             const commandStatuses = Object.values(request.commandsStatus)
             request.status = calculateRequestStatus(commandStatuses)
-            request.updatedAt = now()
+            request.updatedAt = Date.now()
         },
         batchUpdateState: (state, action: PayloadAction<Record<string, RequestStatus | undefined | null>>) => {
             batchUpdateState(state, action)

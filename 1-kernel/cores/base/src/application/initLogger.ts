@@ -1,4 +1,4 @@
-import {now} from "lodash";
+
 
 /**
  * 初始化日志工具类
@@ -28,13 +28,14 @@ export class InitLogger {
         const banner = `
 ╔═══════════════════════════════════════════════════════════════════════╗
 ║                                                                       ║
-║     🚀  Application Initialization                                    ║
-║     📦  IMPOS2 System                                                 ║
+║    🖥️  IMPOS2 System With Refined Architecture                       ║
+║    👨🏻 Designed By Dexter 2026                                       ║
+║     🚀  Application Initializing                                      ║
 ║                                                                       ║
 ╚═══════════════════════════════════════════════════════════════════════╝
         `;
         console.log(this.colorize(banner, 'CYAN', 'BRIGHT'));
-        this.startTime = now();
+        this.startTime = Date.now();
     }
 
     logStep(step: number, title: string): void {
@@ -83,7 +84,7 @@ export class InitLogger {
     }
 
     logSummary(allModules: any[]): void {
-        const elapsed = now() - this.startTime;
+        const elapsed = Date.now() - this.startTime;
         const totalActors = allModules.reduce((sum, m) => sum + Object.keys(m.actors || {}).length, 0);
         const totalCommands = allModules.reduce((sum, m) => sum + Object.keys(m.commands || {}).length, 0);
         const totalSlices = allModules.reduce((sum, m) => sum + Object.keys(m.slices || {}).length, 0);

@@ -1,4 +1,4 @@
-export interface Slave {
+export interface SlaveInfo {
     name:string
     deviceId:string
     embedded:boolean

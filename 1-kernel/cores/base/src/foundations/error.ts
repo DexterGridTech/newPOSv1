@@ -1,4 +1,4 @@
-import _, {now} from 'lodash';
+import _ from 'lodash';
 import {DefinedErrorMessage, ErrorCategory, ErrorSeverity} from "./errorMessage";
 import type {IAppError} from "../types/shared/error";
 
@@ -37,7 +37,7 @@ export class AppError extends Error implements IAppError {
         this.category = definedError.category || ErrorCategory.UNKNOWN;
         this.severity = definedError.severity || ErrorSeverity.MEDIUM;
         this.key = definedError.key || 'ERR_UNKNOWN';
-        this.createdAt = now();
+        this.createdAt = Date.now();
         this.commandId = command?.id
         this.commandName = command?.commandName
         this.requestId = command?.requestId

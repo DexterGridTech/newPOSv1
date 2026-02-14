@@ -21,8 +21,8 @@ export class ModuleDependencyResolver {
 
         // 根据 priority 排序，priority 越小越靠前，未定义 priority 的排在最后
         return resolvedModules.sort((a, b) => {
-            const priorityA = a.loadingPriority;
-            const priorityB = b.loadingPriority;
+            const priorityA = a.preSetupPriority;
+            const priorityB = b.preSetupPriority;
 
             // 如果 a 未定义 priority，排在后面
             if (priorityA === undefined) return 1;

@@ -2,7 +2,7 @@ import {moduleName} from "./moduleName";
 import {kernelXXXSlice} from "./features/slices";
 import {kernelXXXActors} from "./features/actors";
 import {kernelXXXCommands} from "./features/commands";
-import {kernelXXXModulePreInitiate} from "./application/modulePreInitiate";
+import {kernelXXXModulePreSetup} from "./application/modulePreSetup";
 import {kernelXXXErrorMessages} from "./supports/errors";
 import {kernelXXXParameters} from "./supports/parameters";
 import {kernelXXXEpics} from "./features/epics";
@@ -20,8 +20,8 @@ export const kernelXXXModule: AppModule = {
     errorMessages: kernelXXXErrorMessages,
     parameters: kernelXXXParameters,
     dependencies: [],
-    modulePreInitiate: kernelXXXModulePreInitiate,
-    loadingPriority: 0
+    modulePreSetup: kernelXXXModulePreSetup,
+    preSetupPriority: 0
 }
 
 

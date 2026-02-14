@@ -1,17 +1,18 @@
 import {
     ApplicationConfig,
     ApplicationManager,
-    kernelCoreBaseCommands, ScreenMode,
+    kernelCoreBaseCommands, ScreenMode, storeEntry,
     // @ts-ignore
 } from "@impos2/kernel-core-base";
-import {kernelCoreInterconnectionModule} from "../src/index";
+import {kernelCoreInterconnectionModule, kernelCoreInterconnectionState} from "../src/index";
 
 
 const appConfig: ApplicationConfig = {
     environment: {
+        deviceId:"123",
         production: false,
         screenMode: ScreenMode.DESKTOP,
-        displayCount: 1,
+        displayCount: 2,
         displayIndex: 0
     },
     preInitiatedState: {},
@@ -20,18 +21,11 @@ const appConfig: ApplicationConfig = {
 
 async function initializeApp() {
     const {store} = await ApplicationManager.getInstance().generateStore(appConfig)
-
-    const requestId = "123"
-
-    // 订阅 store 变化，打印 requestStatus
-    // store.subscribe(() => {
-    //     const state = store.getState()
-    //     const requestStatus = state[kernelCoreBaseState.requestStatus][requestId]
-    //     console.log('requestStatus 变化:', requestStatus)
-    // })
+    // console.log(store.getState())
+    console.log(storeEntry.state(kernelCoreInterconnectionState.instanceInfo))
 
     // 执行命令
-    kernelCoreBaseCommands.initialize().execute(requestId)
+    kernelCoreBaseCommands.initialize().executeInternally()
 }
 
 initializeApp().catch(error => {

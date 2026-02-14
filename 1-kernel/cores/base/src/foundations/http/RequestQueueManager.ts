@@ -4,7 +4,6 @@
  */
 
 import { DEFAULT_CONFIG, PERFORMANCE_CONFIG } from '../../types/shared/http';
-import {now} from 'lodash';
 
 
 /**
@@ -43,7 +42,7 @@ export class RequestQueue {
     }
 
     private checkRateLimit(): void {
-        const currentTime = now();
+        const currentTime = Date.now();
         this.requestTimestamps = this.requestTimestamps.filter(
             timestamp => currentTime - timestamp < this.rateLimitWindow
         );
@@ -54,13 +53,13 @@ export class RequestQueue {
     }
 
     private recordRequest(): void {
-        const currentTime = now();
+        const currentTime = Date.now();
         this.requestTimestamps.push(currentTime);
 
         // 使用常量替代魔法数字
         if (this.requestTimestamps.length % PERFORMANCE_CONFIG.CLEANUP_INTERVAL === 0 ||
             this.requestTimestamps.length > PERFORMANCE_CONFIG.MAX_TIMESTAMPS) {
-            const cleanupTime = now();
+            const cleanupTime = Date.now();
             this.requestTimestamps = this.requestTimestamps.filter(
                 timestamp => cleanupTime - timestamp < this.rateLimitWindow
             );
