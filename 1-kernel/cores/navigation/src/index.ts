@@ -22,7 +22,7 @@ export const kernelCoreNavigationModule: AppModule = {
     parameters: kernelCoreNavigationParameters,
     dependencies: [kernelCoreBaseModule,kernelCoreInterconnectionModule],
     modulePreSetup: kernelCoreNavigationModulePreSetup,
-    preSetupPriority: 0
+    preSetupPriority: 10
 }
 
 
