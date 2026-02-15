@@ -7,17 +7,12 @@ import {
 } from "../../types";
 import {statesNeedToSync} from "../../foundations/statesNeedToSync";
 import {syncStateToSlave} from "../../types/foundations/syncStateToSlave";
-import {kernelCoreInterconnectionParameters} from "../../supports";
 
 export const createStateSyncMiddleware = (): Middleware => {
     // 缓存的状态快照
     let cachedStates: Record<string, Record<string, any>> = {}
     // 是否正在同步
     let isSyncing = false
-    // 防抖定时器
-    let debounceTimer: NodeJS.Timeout | null = null
-    // 待同步的变化队列
-    let pendingChanges: Record<string, Record<string, any>> = {}
 
     return ({getState}) => (next) => (action: any) => {
         // 获取 action 执行前的状态
@@ -39,7 +34,6 @@ export const createStateSyncMiddleware = (): Middleware => {
             logger.log([moduleName, LOG_TAGS.System, "stateSyncMiddleware"], "开始状态同步，缓存当前状态")
             isSyncing = true
             cachedStates = {}
-            pendingChanges = {}
 
             statesNeedToSync.forEach(stateKey => {
                 const state = nextState[stateKey] as Record<string, any>
@@ -52,16 +46,13 @@ export const createStateSyncMiddleware = (): Middleware => {
             logger.log([moduleName, LOG_TAGS.System, "stateSyncMiddleware"], "停止状态同步，清空缓存")
             isSyncing = false
             cachedStates = {}
-            pendingChanges = {}
-            if (debounceTimer) {
-                clearTimeout(debounceTimer)
-                debounceTimer = null
-            }
         } else if (isSyncing && nextStartToSync) {
             // 正在同步中，检测状态变化
             const slaveConnection = nextMasterInterconnection?.slaveConnection
 
             if (!slaveConnection?.disconnectedAt && slaveConnection?.name) {
+                const changesToSync: Record<string, Record<string, any>> = {}
+
                 statesNeedToSync.forEach(stateKey => {
                     const cachedState = cachedStates[stateKey]
                     const currentState = nextState[stateKey] as Record<string, any>
@@ -90,13 +81,11 @@ export const createStateSyncMiddleware = (): Middleware => {
                                     !cachedProperty.updateAt ||
                                     currentProperty.updateAt > cachedProperty.updateAt) {
 
-                                    // 记录变化到待同步队列
-                                    if (!pendingChanges[stateKey]) {
-                                        pendingChanges[stateKey] = {}
+                                    // 记录变化
+                                    if (!changesToSync[stateKey]) {
+                                        changesToSync[stateKey] = {}
                                     }
-                                    pendingChanges[stateKey][key] = currentProperty
-
-                                    // 暂不更新缓存，等同步成功后再更新
+                                    changesToSync[stateKey][key] = currentProperty
                                 }
                             }
                         } catch (error) {
@@ -115,10 +104,10 @@ export const createStateSyncMiddleware = (): Middleware => {
                             if (cachedProperty && typeof cachedProperty === 'object' && cachedProperty.updateAt) {
                                 if (!currentProperty) {
                                     // 记录删除操作，同步 null 给 slave
-                                    if (!pendingChanges[stateKey]) {
-                                        pendingChanges[stateKey] = {}
+                                    if (!changesToSync[stateKey]) {
+                                        changesToSync[stateKey] = {}
                                     }
-                                    pendingChanges[stateKey][key] = null
+                                    changesToSync[stateKey][key] = null
                                 }
                             }
                         } catch (error) {
@@ -128,56 +117,36 @@ export const createStateSyncMiddleware = (): Middleware => {
                     })
                 })
 
-                // 如果有待同步的变化，启动防抖定时器
-                if (Object.keys(pendingChanges).length > 0) {
-                    if (debounceTimer) {
-                        clearTimeout(debounceTimer)
-                    }
+                // 如果有变化，立即同步
+                if (Object.keys(changesToSync).length > 0) {
+                    logger.log([moduleName, LOG_TAGS.System, "stateSyncMiddleware"], "同步状态变化:", changesToSync)
 
-                    const debounceTime = kernelCoreInterconnectionParameters.stateSyncDebounceTime.value
+                    const syncPromises = Object.keys(changesToSync).map(stateKey =>
+                        syncStateToSlave(stateKey, changesToSync[stateKey], slaveConnection.name)
+                    )
 
-                    debounceTimer = setTimeout(() => {
-                        // 执行同步
-                        const changesToSync = {...pendingChanges}
-                        pendingChanges = {}
-
-                        logger.log([moduleName, LOG_TAGS.System, "stateSyncMiddleware"], "同步状态变化:", changesToSync)
-
-                        const syncPromises = Object.keys(changesToSync).map(stateKey =>
-                            syncStateToSlave(stateKey, changesToSync[stateKey], slaveConnection.name)
-                        )
-
-                        Promise.all(syncPromises)
-                            .then(() => {
-                                // 同步成功后更新缓存
-                                Object.keys(changesToSync).forEach(stateKey => {
-                                    const changes = changesToSync[stateKey]
-                                    Object.keys(changes).forEach(key => {
-                                        const value = changes[key]
-                                        if (value === null) {
-                                            // 删除缓存中的属性
-                                            delete cachedStates[stateKey][key]
-                                        } else {
-                                            // 更新缓存
-                                            cachedStates[stateKey][key] = JSON.parse(JSON.stringify(value))
-                                        }
-                                    })
-                                })
-                                logger.log([moduleName, LOG_TAGS.System, "stateSyncMiddleware"], "状态同步成功，缓存已更新")
-                            })
-                            .catch(error => {
-                                // 同步失败，将变化重新加入队列
-                                logger.error([moduleName, LOG_TAGS.System, "stateSyncMiddleware"], "状态同步失败，重新加入队列:", error)
-                                Object.keys(changesToSync).forEach(stateKey => {
-                                    if (!pendingChanges[stateKey]) {
-                                        pendingChanges[stateKey] = {}
+                    Promise.all(syncPromises)
+                        .then(() => {
+                            // 同步成功后更新缓存
+                            Object.keys(changesToSync).forEach(stateKey => {
+                                const changes = changesToSync[stateKey]
+                                Object.keys(changes).forEach(key => {
+                                    const value = changes[key]
+                                    if (value === null) {
+                                        // 删除缓存中的属性
+                                        delete cachedStates[stateKey][key]
+                                    } else {
+                                        // 更新缓存
+                                        cachedStates[stateKey][key] = JSON.parse(JSON.stringify(value))
                                     }
-                                    Object.assign(pendingChanges[stateKey], changesToSync[stateKey])
                                 })
                             })
-
-                        debounceTimer = null
-                    }, debounceTime)
+                            logger.log([moduleName, LOG_TAGS.System, "stateSyncMiddleware"], "状态同步成功，缓存已更新")
+                        })
+                        .catch(error => {
+                            // 同步失败，记录错误（不重新加入队列，因为没有防抖机制）
+                            logger.error([moduleName, LOG_TAGS.System, "stateSyncMiddleware"], "状态同步失败:", error)
+                        })
                 }
             }
         }

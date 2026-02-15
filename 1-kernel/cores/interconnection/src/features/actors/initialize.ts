@@ -23,5 +23,12 @@ export class InitializeActor extends Actor {
             }
             return Promise.resolve({});
         });
+
+    test = Actor.defineCommandHandler(kernelCoreInterconnectionCommands.test,
+        async (command): Promise<Record<string, any>> => {
+            await new Promise(resolve => setTimeout(resolve, 3000))
+            console.log('=====================test=====================')
+            return Promise.resolve({});
+        });
 }
 

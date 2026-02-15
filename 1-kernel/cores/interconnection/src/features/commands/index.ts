@@ -29,6 +29,8 @@ export const kernelCoreInterconnectionCommands = createModuleCommands(moduleName
     slaveSendMasterExecute: defineCommand<Command<any>>(ExecutionType.ONLY_SEND_AND_EXECUTE_ON_SLAVE),
 
     //数据同步
-    synStateAtConnected: defineCommand<Record<string, Record<string, {updateAt: number}>>>(ExecutionType.SLAVE_SEND_MASTER_EXECUTE)
+    synStateAtConnected: defineCommand<Record<string, Record<string, {updateAt: number}>>>(ExecutionType.SLAVE_SEND_MASTER_EXECUTE),
+    test: defineCommand<any>(ExecutionType.SLAVE_SEND_MASTER_EXECUTE)
+
 })
 

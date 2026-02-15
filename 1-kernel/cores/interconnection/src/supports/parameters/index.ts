@@ -56,10 +56,5 @@ export const kernelCoreInterconnectionParameters = {
         '远程命令响应超时',
         "remote.command.response.timeout",
         6000
-    ),
-    stateSyncDebounceTime: new DefinedSystemParameter(
-        '状态同步防抖时间',
-        "state.sync.debounce.time",
-        100
-    ),
+    )
 };

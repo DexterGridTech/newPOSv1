@@ -1,10 +1,14 @@
 import {
     ApplicationConfig,
     ApplicationManager,
-    kernelCoreBaseCommands, ScreenMode, storeEntry,
+    kernelCoreBaseCommands, kernelCoreBaseState, ScreenMode, storeEntry,
     // @ts-ignore
 } from "@impos2/kernel-core-base";
-import {kernelCoreInterconnectionModule, kernelCoreInterconnectionState} from "../src/index";
+import {
+    kernelCoreInterconnectionCommands,
+    kernelCoreInterconnectionModule,
+    kernelCoreInterconnectionState
+} from "../src/index";
 
 
 const appConfig: ApplicationConfig = {
@@ -20,10 +24,23 @@ const appConfig: ApplicationConfig = {
 }
 
 async function initializeApp() {
-    await ApplicationManager.getInstance().generateStore(appConfig)
-    console.log(storeEntry.state(kernelCoreInterconnectionState.instanceInfo))
+    const {store}=await ApplicationManager.getInstance().generateStore(appConfig)
     // 执行命令
     kernelCoreBaseCommands.initialize().executeInternally()
+
+    setTimeout(() => {
+        const requestId = "123"
+        // 订阅 store 变化，打印 requestStatus
+        store.subscribe(() => {
+            const state = store.getState()
+            const requestStatus = state[kernelCoreBaseState.requestStatus][requestId]
+            console.log('requestStatus 变化:', requestStatus)
+        })
+        console.log('-------------------')
+        // 执行命令
+        kernelCoreInterconnectionCommands.test().execute(requestId)
+        console.log('===================')
+    },10000)
 }
 
 initializeApp().catch(error => {
