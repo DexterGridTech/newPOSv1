@@ -92,13 +92,14 @@ export const slice = createSlice({
                 const currentRequest = state[key]
                 const newRequest = action.payload[key]
                 if (currentRequest && newRequest) {
+                    logger.log([moduleName, LOG_TAGS.Reducer, kernelCoreBaseState.requestStatus], `requestId existed : ${key}`)
                     Object.keys(newRequest.commandsStatus).forEach(k => {
                         currentRequest.commandsStatus[k] = newRequest.commandsStatus[k]
+                        logger.log([moduleName, LOG_TAGS.Reducer, kernelCoreBaseState.requestStatus], 'commandsStatus changed', newRequest.commandsStatus[k])
                     })
                     updateRequestStatus(currentRequest)
                 }
             })
-            logger.log([moduleName, LOG_TAGS.Reducer, kernelCoreBaseState.requestStatus], 'batch update state', action.payload)
         }
     }
 })

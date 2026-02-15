@@ -7,7 +7,7 @@ import {
     ExecutionType,
     INTERNAL,
     LOG_TAGS,
-    logger,
+    logger, RootState,
     storeEntry
 } from "@impos2/kernel-core-base";
 import {DisplayMode, InstanceInfoState, InstanceMode, kernelCoreInterconnectionState, MasterInfo} from "../types";
@@ -15,7 +15,6 @@ import {defaultMasterInfo, defaultSlaveInfo} from "../foundations/masterServer";
 import {kernelCoreInterconnectionCommands} from "../features/commands";
 import {moduleName} from "../moduleName";
 import {statesNeedToSync} from "../foundations/statesNeedToSync";
-import type {RootState} from "@impos2/kernel-base";
 
 
 export const kernelCoreInterconnectionModulePreSetup = async (config: ApplicationConfig, allModules: AppModule[]) => {

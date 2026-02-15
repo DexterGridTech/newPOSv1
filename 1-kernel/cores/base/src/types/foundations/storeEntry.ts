@@ -34,6 +34,12 @@ class StoreEntryImpl implements StoreEntry {
         }
         return state[stateKey]
     }
+    wholeState(): RootState {
+        if (!this.store) {
+            throw new Error('Store is not initialized yet')
+        }
+        return this.store.getState() as RootState
+    }
     dispatchAction(action: PayloadAction<any>)  {
         if (!this.store) {
             throw new Error('Store is not initialized yet')

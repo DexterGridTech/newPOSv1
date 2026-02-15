@@ -6,12 +6,13 @@ export const commandBus = new Subject<Command<any>>();
 
 const allCommands: Record<string, (payload: any) => Command<any>> = {}
 
-export const registerModuleCommands = (_moduleName: string, commands: Record<string, (payload: any) => Command<any>>) => {
+export const registerModuleCommands = (moduleName: string, commands: Record<string, (payload: any) => Command<any>>) => {
     Object.keys(commands).forEach(commandName => {
-        if (allCommands.hasOwnProperty(commandName)) {
-            throw new Error(`Command ${commandName} has been registered`);
+        const fullCommandName = `${moduleName}.${commandName}`;
+        if (allCommands.hasOwnProperty(fullCommandName)) {
+            throw new Error(`Command ${fullCommandName} has been registered`);
         }
-        allCommands[commandName] = commands[commandName];
+        allCommands[fullCommandName] = commands[commandName];
     })
 }
 

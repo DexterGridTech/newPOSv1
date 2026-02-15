@@ -26,6 +26,9 @@ export const kernelCoreInterconnectionCommands = createModuleCommands(moduleName
     slaveDisconnectedFromServer: defineCommand<string>(ExecutionType.ONLY_SEND_AND_EXECUTE_ON_SLAVE),
 
     //slave 远程方法
-    slaveSendMasterExecute: defineCommand<Command<any>>(ExecutionType.ONLY_SEND_AND_EXECUTE_ON_SLAVE)
+    slaveSendMasterExecute: defineCommand<Command<any>>(ExecutionType.ONLY_SEND_AND_EXECUTE_ON_SLAVE),
+
+    //数据同步
+    synStateAtConnected: defineCommand<Record<string, Record<string, {updateAt: number}>>>(ExecutionType.SLAVE_SEND_MASTER_EXECUTE)
 })
 

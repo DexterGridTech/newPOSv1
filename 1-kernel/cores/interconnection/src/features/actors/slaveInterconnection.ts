@@ -1,4 +1,4 @@
-import {Actor, AppError, Command, DeepPartial, LOG_TAGS, logger, RootState, storeEntry} from "@impos2/kernel-core-base";
+import {Actor, AppError, Command, LOG_TAGS, logger, storeEntry} from "@impos2/kernel-core-base";
 import {kernelCoreInterconnectionCommands} from "../commands";
 import {moduleName} from "../../moduleName";
 import {
@@ -17,6 +17,7 @@ import {MasterWebSocketClient, WSMessageEvent} from "../../foundations";
 import {slaveInterconnectionActions} from "../slices/slaveInterconnection";
 import {Subject} from "rxjs";
 import {statesNeedToSync} from "../../foundations/statesNeedToSync";
+import {nanoid} from "nanoid/non-secure";
 
 
 export class SlaveInterconnectionActor extends Actor {
@@ -29,20 +30,18 @@ export class SlaveInterconnectionActor extends Actor {
         async (command): Promise<Record<string, any>> => {
             storeEntry.dispatchAction(slaveInterconnectionActions.connected())
 
-            const localStateToSync: DeepPartial<RootState> = {}
-
+            const localStateToSync: Record<string, Record<string, { updateAt: number }>> = {}
             statesNeedToSync.forEach(stateKey => {
-                const state = storeEntry.state(stateKey)
-                localStateToSync[stateKey]={}
+                const state = storeEntry.state(stateKey) as Record<string, any>
+                localStateToSync[stateKey] = {}
                 Object.keys(state).forEach((key) => {
-                    const property = state[key] as {updateAt: number}
-                    if(property&&property.updateAt){
-                        localStateToSync[stateKey][key]={updateAt: property.updateAt}
+                    const property = state[key] as { updateAt?: number }
+                    if (property && property.updateAt) {
+                        localStateToSync[stateKey][key] = {updateAt: property.updateAt}
                     }
                 })
             })
-
-
+            kernelCoreInterconnectionCommands.synStateAtConnected(localStateToSync).execute(nanoid(8))
             return Promise.resolve({});
         })
     slaveDisconnectedFromServer = Actor.defineCommandHandler(kernelCoreInterconnectionCommands.slaveDisconnectedFromServer,
@@ -162,16 +161,17 @@ export class SlaveInterconnectionActor extends Actor {
         const wsClient = MasterWebSocketClient.getInstance();
         wsClient.on(ConnectionEventType.CONNECTED, (event: ConnectedEvent) => {
             logger.log([moduleName, LOG_TAGS.Actor, "slave"], 'Master Server连接成功', event);
+            kernelCoreInterconnectionCommands.slaveConnectedToServer().executeInternally()
         });
         wsClient.on(ConnectionEventType.MESSAGE, (event: WSMessageEvent) => {
             logger.log([moduleName, LOG_TAGS.Actor, "slave"], '收到Master Server消息:', event.message);
             if (event.message.type === MasterServerMessageType.SYNC_STATE) {
                 try {
-                    const {key, state} = event.message.data
+                    const {key, stateChanged} = event.message.data
                     const actionType = key + '/batchUpdateState'
                     storeEntry.dispatchAction({
                         type: actionType,
-                        payload: state
+                        payload: stateChanged
                     })
                     logger.log([moduleName, LOG_TAGS.Actor, "slave"], '状态同步完成:', actionType)
                 } catch (e: any) {

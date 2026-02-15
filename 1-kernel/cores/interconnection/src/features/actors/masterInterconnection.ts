@@ -17,6 +17,8 @@ import {defaultMasterInfo, masterServer} from "../../foundations/masterServer";
 import {instanceInfoActions} from "../slices/instanceInfo";
 import {masterInterconnectionActions} from "../slices/masterInterconnection";
 import {MasterWebSocketClient, WSMessageEvent} from "../../foundations";
+import {statesNeedToSync} from "../../foundations/statesNeedToSync";
+import {syncStateToSlave} from "../../types/foundations/syncStateToSlave";
 
 
 export class MasterInterconnectionActor extends Actor {
@@ -55,6 +57,81 @@ export class MasterInterconnectionActor extends Actor {
         async (command): Promise<Record<string, any>> => {
             storeEntry.dispatchAction(masterInterconnectionActions.slaveDisconnected())
             logger.log([moduleName, LOG_TAGS.Actor, "master"], `Slave已断开`)
+            return Promise.resolve({});
+        })
+
+    synStateAtConnected = Actor.defineCommandHandler(kernelCoreInterconnectionCommands.synStateAtConnected,
+        async (command): Promise<Record<string, any>> => {
+
+            const masterInterconnection = storeEntry.state(kernelCoreInterconnectionState.masterInterconnection)
+            const slaveConnection = masterInterconnection.slaveConnection
+            if (!slaveConnection?.disconnectedAt && slaveConnection?.name) {
+                const stateFromSlave = command.payload as Record<string, Record<string, { updateAt: number }>>
+                const stateAtLocal = storeEntry.wholeState()
+                // 构建需要同步回 slave 的差异数据
+                const result: Record<string, Record<string, any>> = {}
+
+                statesNeedToSync.forEach(stateKey => {
+                    const slaveState = stateFromSlave[stateKey]
+                    const localState = stateAtLocal[stateKey] as Record<string, any>
+
+                    if (!slaveState) {
+                        // slave 没有这个状态，跳过
+                        return
+                    }
+
+                    if (!localState) {
+                        // local 没有这个状态，但 slave 有，标记所有属性为 null
+                        result[stateKey] = {}
+                        Object.keys(slaveState).forEach(key => {
+                            result[stateKey][key] = null
+                        })
+                        return
+                    }
+
+                    // 比较 slave 和 local 的每个属性
+                    Object.keys(slaveState).forEach(key => {
+                        const slaveProperty = slaveState[key]
+                        const localProperty = localState[key] as { updateAt?: number }
+
+                        if (!localProperty || typeof localProperty !== 'object' || !localProperty.updateAt) {
+                            // local 没有这个属性，或者不是带 updateAt 的对象，标记为 null
+                            if (!result[stateKey]) {
+                                result[stateKey] = {}
+                            }
+                            result[stateKey][key] = null
+                        } else if (localProperty.updateAt > slaveProperty.updateAt) {
+                            // local 的数据更新，需要同步给 slave
+                            if (!result[stateKey]) {
+                                result[stateKey] = {}
+                            }
+                            result[stateKey][key] = localProperty
+                        }
+                        // 如果 slave 的数据更新或相同，不需要同步
+                    })
+
+                    // 检查 local 是否有 slave 没有的属性（这些属性也需要同步）
+                    Object.keys(localState).forEach(key => {
+                        if (!slaveState[key]) {
+                            const localProperty = localState[key]
+                            // 只同步带 updateAt 的对象
+                            if (localProperty && typeof localProperty === 'object' && localProperty.updateAt) {
+                                if (!result[stateKey]) {
+                                    result[stateKey] = {}
+                                }
+                                result[stateKey][key] = localProperty
+                            }
+                        }
+                    })
+                })
+
+                // 将 result 发送回 slave，等待所有同步操作完成
+                logger.log([moduleName, LOG_TAGS.Actor, "master"], `状态同步差异数据:`, result)
+                const syncPromises = Object.keys(result).map(stateKey =>
+                    syncStateToSlave(stateKey, result[stateKey], slaveConnection.name)
+                )
+                await Promise.all(syncPromises)
+            }
             return Promise.resolve({});
         })
 
@@ -140,7 +217,7 @@ export class MasterInterconnectionActor extends Actor {
                     const localCommand = getCommandByName(remoteCommand.commandName, remoteCommand.payload)
                     if (localCommand) {
                         localCommand.id = remoteCommand.commandId
-                        logger.log([moduleName, LOG_TAGS.Actor, "master"], `执行远程方法`, localCommand)
+                        logger.log([moduleName, LOG_TAGS.Actor, "master"], `执行远程方法${localCommand.commandName}`)
                         localCommand.execute(remoteCommand.requestId, remoteCommand.sessionId)
                         this.remoteCommandExecuted(remoteCommand.commandId)
                     } else {
