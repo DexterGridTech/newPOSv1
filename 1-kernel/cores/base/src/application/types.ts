@@ -4,7 +4,9 @@ import {Actor, DefinedErrorMessage, DefinedSystemParameter} from "../foundations
 import {Middleware, PayloadAction, StoreEnhancer} from "@reduxjs/toolkit";
 
 export type DeepPartial<T> = {
-    [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
+    [P in keyof T]?: T[P] extends Array<infer U>
+        ? Array<DeepPartial<U>>
+        : T[P] extends object ? DeepPartial<T[P]> : T[P];
 };
 
 export interface ApplicationConfig {
@@ -19,7 +21,7 @@ export interface AppModule {
     version: string
     slices: Record<string, ModuleSliceConfig>
     epics: Record<string, Epic<PayloadAction, PayloadAction, RootState>>
-    middlewares: Record<string, Middleware>
+    middlewares: Record<string, {middleware:Middleware,priority:number}>
     actors: Record<string, Actor>
     commands: Record<string, any>
     errorMessages: Record<string, DefinedErrorMessage>

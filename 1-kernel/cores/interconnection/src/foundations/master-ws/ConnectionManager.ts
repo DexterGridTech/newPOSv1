@@ -277,16 +277,15 @@ export class MasterConnectionManager {
    * 注意：先关闭 WebSocket，再清理监听器，避免竞态条件
    */
   disconnect(reason?: string): void {
+    // 先清理所有资源（包括事件监听器），再关闭 WebSocket
+    this.cleanupFunctions.forEach(fn => fn());
+    this.cleanupFunctions = [];
+
     if (this.ws) {
       this.isConnected = false;
-      // 先关闭 WebSocket
       this.ws.close(1000, reason);
       this.ws = null;
     }
-
-    // 再清理所有资源（包括事件监听器）
-    this.cleanupFunctions.forEach(fn => fn());
-    this.cleanupFunctions = [];
 
     this.currentServerUrl = null;
     this.messageQueue = [];

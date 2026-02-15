@@ -66,9 +66,6 @@ export class MasterInterconnectionActor extends Actor {
             const masterInterconnection = storeEntry.state(kernelCoreInterconnectionState.masterInterconnection)
             const slaveConnection = masterInterconnection.slaveConnection
             if (!slaveConnection?.disconnectedAt && slaveConnection?.name) {
-                // 在开始初始同步前就设置 startToSync = true，避免同步窗口期的数据丢失
-                storeEntry.dispatchAction(masterInterconnectionActions.startToSync())
-
                 const stateFromSlave = command.payload as Record<string, Record<string, { updateAt: number }>>
                 const stateAtLocal = storeEntry.wholeState()
                 // 构建需要同步回 slave 的差异数据
@@ -134,6 +131,9 @@ export class MasterInterconnectionActor extends Actor {
                     syncStateToSlave(stateKey, result[stateKey], slaveConnection.name)
                 )
                 await Promise.all(syncPromises)
+
+                // 初始同步完成后才开启增量同步，避免竞态条件
+                storeEntry.dispatchAction(masterInterconnectionActions.startToSync())
             }
             return Promise.resolve({});
         })

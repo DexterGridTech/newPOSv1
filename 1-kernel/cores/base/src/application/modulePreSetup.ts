@@ -4,15 +4,19 @@ import {ApplicationConfig, AppModule} from "./types";
 import {requestStatusActions} from "../features/slices/requestStatus";
 import {kernelCoreBaseParameters} from "../supports";
 
+let actorSystemRegistered = false;
 
 export const kernelCoreBaseModulePreSetup = async (config: ApplicationConfig, allModules: AppModule[]) => {
     registerActorSystem()
 }
 
 const registerActorSystem = () => {
+    if (actorSystemRegistered) return;
+    actorSystemRegistered = true;
+
     ActorSystem.getInstance().registerLifecycleListener({
         onCommandStart: (actor, command) => {
-            if (command.requestId && command.requestId != INTERNAL)
+            if (command.requestId && command.requestId !== INTERNAL)
                 storeEntry.dispatchAction(requestStatusActions.commandStart({
                     actor: actor.printName(),
                     command: command,
@@ -20,7 +24,7 @@ const registerActorSystem = () => {
                 }));
         },
         onCommandComplete: (actor, command, result?: Record<string, any>) => {
-            if (command.requestId && command.requestId != INTERNAL)
+            if (command.requestId && command.requestId !== INTERNAL)
                 storeEntry.dispatchAction(requestStatusActions.commandComplete({
                     actor: actor.printName(),
                     command: command,
@@ -28,7 +32,7 @@ const registerActorSystem = () => {
                 }));
         },
         onCommandError: (actor, command, appError) => {
-            if (command.requestId && command.requestId != INTERNAL)
+            if (command.requestId && command.requestId !== INTERNAL)
                 storeEntry.dispatchAction(requestStatusActions.commandError({
                     actor: actor.printName(),
                     command: command,

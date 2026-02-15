@@ -4,13 +4,11 @@
  */
 
 import axios, {AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, CancelTokenSource} from 'axios';
-import {CircuitBreaker} from './CircuitBreakerManager';
 import {RequestQueue} from './RequestQueueManager';
 import { moduleName } from '../../moduleName';
 import {
     APIErrorCode,
     ApiServerAddress,
-    CircuitState,
     ERROR_MESSAGES,
     ErrorHandlingStrategy,
     HttpMethod,
@@ -35,7 +33,6 @@ export class ApiManager {
     private static creating = false;
     private serverMap: Map<string, ServerConfig> = new Map();
     private axiosInstances: Map<string, AxiosInstance> = new Map();
-    private circuitBreakers: Map<string, CircuitBreaker> = new Map();
     private requestQueue: RequestQueue = new RequestQueue();
     private requestInterceptors: RequestInterceptor[] = [];
     private responseInterceptors: ResponseInterceptor[] = [];
@@ -188,10 +185,9 @@ export class ApiManager {
             lastSuccessfulAddressIndex: 0
         });
 
-        // 为每个地址创建 axios 实例和断路器
+        // 为每个地址创建 axios 实例
         addresses.forEach((_, index) => {
             this.createAxiosInstance(serverName, index);
-            this.circuitBreakers.set(this.getInstanceKey(serverName, index), new CircuitBreaker());
         });
     }
 
@@ -214,25 +210,19 @@ export class ApiManager {
 
         // 如果更新了地址列表,需要重新创建实例
         if (updates.addresses) {
-            // 清理旧的实例和断路器
+            // 清理旧的实例
             this.axiosInstances.forEach((_, key) => {
                 if (key.startsWith(`${serverName}-`)) {
                     this.axiosInstances.delete(key);
-                }
-            });
-            this.circuitBreakers.forEach((_, key) => {
-                if (key.startsWith(`${serverName}-`)) {
-                    this.circuitBreakers.delete(key);
                 }
             });
 
             // 更新地址列表
             config.addresses = updates.addresses;
 
-            // 重新创建实例和断路器
+            // 重新创建实例
             updates.addresses.forEach((_, index) => {
                 this.createAxiosInstance(serverName, index);
-                this.circuitBreakers.set(this.getInstanceKey(serverName, index), new CircuitBreaker());
             });
         }
     }
@@ -502,7 +492,7 @@ export class ApiManager {
         // 请求队列和限流控制
         try {
             return await this.requestQueue.enqueue(async () => {
-                return await this.executeWithCircuitBreaker<T, R>(
+                return await this.executeWithRetry<T, R>(
                     serverName,
                     path,
                     method,
@@ -529,9 +519,9 @@ export class ApiManager {
     }
 
     /**
-     * 通过断路器执行请求(支持轮询重试)
+     * 执行请求(支持轮询重试)
      */
-    private async executeWithCircuitBreaker<T, R>(
+    private async executeWithRetry<T, R>(
         serverName: string,
         path: string,
         method: HttpMethod,
@@ -548,92 +538,24 @@ export class ApiManager {
         const attemptRecords: ServerAttemptRecord[] = [];
         const requestStartTime = Date.now();
 
-        // 轮询所有地址,直到成功或达到最大尝试次数
-        let skippedCount = 0; // 跳过的断路器数量
-        const maxSkipped = totalAddresses * PERFORMANCE_CONFIG.SKIP_MULTIPLIER; // 防止无限循环
-        const startAddressIndex = config.lastSuccessfulAddressIndex; // 从上次成功的地址开始
+        // 从上次成功的地址开始轮询
+        const startAddressIndex = config.lastSuccessfulAddressIndex;
 
         while (attemptCount < maxAttempts) {
             // 计算当前应该使用的地址索引(从上次成功的地址开始轮询)
             const addressIndex = (startAddressIndex + attemptCount) % totalAddresses;
-            const circuitBreakerKey = this.getInstanceKey(serverName, addressIndex);
-            const circuitBreaker = this.circuitBreakers.get(circuitBreakerKey);
-
-            if (!circuitBreaker) {
-                return {
-                    code: APIErrorCode.UNKNOWN_ERROR,
-                    message: ERROR_MESSAGES.CIRCUIT_BREAKER_NOT_INITIALIZED,
-                    extra: {
-                        serverName,
-                        path,
-                        method,
-                        totalAttempts: attemptCount,
-                        totalResponseTime: Date.now() - requestStartTime,
-                        attemptRecords,
-                        requestExtra: requestWrapper.extra
-                    }
-                };
-            }
-
-            const circuitBreakerState = circuitBreaker.getState();
-
-            // 如果断路器打开,跳过此地址(不计入尝试次数)
-            if (circuitBreakerState === CircuitState.OPEN) {
-                skippedCount++;
-
-                // 记录被跳过的尝试
-                const address = addresses[addressIndex];
-                attemptRecords.push({
-                    addressName: address.addressName,
-                    addressIndex,
-                    attemptNumber: attemptCount + 1,
-                    startTime: Date.now(),
-                    endTime: Date.now(),
-                    responseTime: 0,
-                    success: false,
-                    skipped: true,
-                    circuitBreakerState: CircuitState.OPEN,
-                    errorCode: APIErrorCode.CIRCUIT_BREAKER_OPEN,
-                    errorMessage: '断路器已打开,跳过此服务器'
-                });
-
-                // 如果所有断路器都打开,避免无限循环
-                if (skippedCount >= maxSkipped) {
-                    return {
-                        code: APIErrorCode.CIRCUIT_BREAKER_OPEN,
-                        message: ERROR_MESSAGES.ALL_CIRCUIT_BREAKERS_OPEN(serverName),
-                        extra: {
-                            serverName,
-                            path,
-                            method,
-                            totalAttempts: attemptCount,
-                            totalResponseTime: Date.now() - requestStartTime,
-                            attemptRecords,
-                            requestExtra: requestWrapper.extra
-                        }
-                    };
-                }
-                attemptCount++; // 仅递增索引,不计入实际尝试
-                await this.delay(retryInterval);
-                continue;
-            }
 
             try {
-                // 通过断路器执行请求
-                const {response, record} = await circuitBreaker.execute(async () => {
-                    return await this.sendOnce<T, R>(
-                        serverName,
-                        addressIndex,
-                        path,
-                        method,
-                        requestWrapper.request,
-                        attemptCount + 1,
-                        cancelTokenSource
-                    );
-                });
+                const {response, record} = await this.sendOnce<T, R>(
+                    serverName,
+                    addressIndex,
+                    path,
+                    method,
+                    requestWrapper.request,
+                    attemptCount + 1,
+                    cancelTokenSource
+                );
 
-                // 添加断路器状态到记录
-                record.circuitBreakerState = circuitBreakerState;
                 attemptRecords.push(record);
 
                 // 如果是网络错误,继续重试
@@ -660,14 +582,7 @@ export class ApiManager {
                     }
                 };
             } catch (error) {
-                // 重置跳过计数(说明有可用的断路器)
-                skippedCount = 0;
                 attemptCount++;
-
-                // 断路器打开错误(理论上不应该到这里,因为上面已经检查过)
-                if (error instanceof Error && error.message === 'Circuit breaker is OPEN') {
-                    continue;
-                }
 
                 // 网络错误,如果还有重试机会,等待后继续
                 if (attemptCount < maxAttempts) {
@@ -794,28 +709,6 @@ export class ApiManager {
         this.metrics.cancelledRequests = 0;
         this.metrics.totalResponseTime = 0;
         this.metrics.addressMetrics.clear();
-    }
-
-    /**
-     * 获取断路器状态
-     */
-    getCircuitBreakerStates(): Record<string, CircuitState> {
-        const states: Record<string, CircuitState> = {};
-        this.circuitBreakers.forEach((breaker, key) => {
-            states[key] = breaker.getState();
-        });
-        return states;
-    }
-
-    /**
-     * 重置指定服务器的断路器
-     */
-    resetCircuitBreaker(serverName: string): void {
-        this.circuitBreakers.forEach((breaker, key) => {
-            if (key.startsWith(serverName)) {
-                breaker.reset();
-            }
-        });
     }
 
     /**

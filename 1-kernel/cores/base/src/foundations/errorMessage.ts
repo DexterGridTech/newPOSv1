@@ -1,9 +1,6 @@
 import {kernelCoreBaseState} from "../types/shared/moduleStateKey";
-import {LOG_TAGS} from "../types/shared/logTags";
 import  {KeyValue} from "../types/foundations/keyValue";
 import {ErrorCategory, ErrorSeverity} from "../types/shared/error";
-import {logger} from "./logger";
-import {moduleName} from "../moduleName";
 
 const allErrorMessages: Record<string, DefinedErrorMessage> = {}
 export const registerModuleErrorMessages = (_moduleName: string, errorMessages: DefinedErrorMessage[]) => {

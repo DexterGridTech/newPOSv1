@@ -1,5 +1,8 @@
 import {createStateSyncMiddleware} from "./stateSyncMiddleware";
 
 export const kernelCoreInterconnectionMiddlewares = {
-    stateSyncMiddleware: createStateSyncMiddleware()
+    stateSyncMiddleware: {
+        middleware: createStateSyncMiddleware(),
+        priority: 100
+    }
 }

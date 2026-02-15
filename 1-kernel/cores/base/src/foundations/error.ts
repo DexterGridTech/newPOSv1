@@ -45,7 +45,9 @@ export class AppError extends Error implements IAppError {
 
         // 保持正确的原型链
         Object.setPrototypeOf(this, new.target.prototype);
-        Error.captureStackTrace(this, this.constructor);
+        if (typeof Error.captureStackTrace === 'function') {
+            Error.captureStackTrace(this, this.constructor);
+        }
     }
 
     toJSON() {

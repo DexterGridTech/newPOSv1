@@ -1,8 +1,5 @@
 import {kernelCoreBaseState} from "../types/shared/moduleStateKey";
-import {LOG_TAGS} from "../types/shared/logTags";
 import  {KeyValue} from "../types/foundations/keyValue";
-import {logger} from "./logger";
-import {moduleName} from "../moduleName";
 
 const allSystemParameters: Record<string, any> = {};
 export const registerModuleSystemParameter = (_moduleName: string, systemParameters: DefinedSystemParameter<any>[]) => {

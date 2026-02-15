@@ -17,7 +17,11 @@ export const registerModuleCommands = (moduleName: string, commands: Record<stri
 }
 
 export const getCommandByName = (commandName: string,payload:any) => {
-    return allCommands[commandName](payload);
+    const factory = allCommands[commandName];
+    if (!factory) {
+        throw new Error(`Command not found: ${commandName}`);
+    }
+    return factory(payload);
 }
 
 export abstract class Command<P> {
@@ -61,12 +65,14 @@ export abstract class Command<P> {
 
     executeFromParent(parent?: Command<any>): void {
         if (parent) {
-            this.executePath.push(...parent.executePath);
+            // 先检查循环依赖
             parent.executePath.forEach(parentNode => {
                 if (parentNode.name === this.getCommandName()) {
-                    throw new Error("command in circle: " + this.executePath.map(pathNode => `${pathNode.name}(${pathNode.id})`).join(" <- "));
+                    throw new Error("command in circle: " + [...parent.executePath, {name: this.commandName, id: this.id}].map(pathNode => `${pathNode.name}(${pathNode.id})`).join(" <- "));
                 }
             })
+            // 将父路径放在前面，当前节点追加在后面
+            this._executePath = [...parent.executePath, ...this.executePath];
             this.requestId = parent.requestId;
             this.sessionId = parent.sessionId;
             commandBus.next(this);

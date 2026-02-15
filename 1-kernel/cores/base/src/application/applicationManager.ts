@@ -199,14 +199,20 @@ export class ApplicationManager {
         // 步骤 9: 配置 Middleware
         initLogger.logStep(9, 'Configuring Middleware');
         const epicMiddleware = createEpicMiddleware<PayloadAction, PayloadAction, RootState>();
-        const middlewares: Middleware[] = [epicMiddleware];
-        const middlewareNames: string[] = ['epicMiddleware'];
+        const moduleMiddlewares: {middleware: Middleware, priority: number, name: string}[] = [];
         allModules.forEach(module => {
-            Object.keys(module.middlewares).forEach(middlewareName => {
-                middlewareNames.push(`${module.name}.${middlewareName}`);
+            Object.entries(module.middlewares).forEach(([middlewareName, config]) => {
+                moduleMiddlewares.push({
+                    middleware: config.middleware,
+                    priority: config.priority,
+                    name: `${module.name}.${middlewareName}`
+                });
             });
-            middlewares.push(...Object.values(module.middlewares));
         });
+        // 按 priority 升序排序（数值越小优先级越高）
+        moduleMiddlewares.sort((a, b) => a.priority - b.priority);
+        const middlewares: Middleware[] = [epicMiddleware, ...moduleMiddlewares.map(m => m.middleware)];
+        const middlewareNames: string[] = ['epicMiddleware', ...moduleMiddlewares.map(m => `${m.name}(p:${m.priority})`)];
         initLogger.logDetail('Middleware Count', middlewares.length);
         initLogger.logNames(middlewareNames);
         initLogger.logSuccess('Middleware configured');
@@ -245,7 +251,9 @@ export class ApplicationManager {
             }
         });
         const epics = allModules.flatMap(module => Object.values(module.epics));
-        epicMiddleware.run(combineEpics(...epics));
+        if (epics.length > 0) {
+            epicMiddleware.run(combineEpics(...epics));
+        }
         initLogger.logSuccess(`Registered ${totalEpics} epics and running`);
         initLogger.logStepEnd();
 

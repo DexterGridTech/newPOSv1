@@ -7,12 +7,15 @@ import {
 } from "../../types";
 import {statesNeedToSync} from "../../foundations/statesNeedToSync";
 import {syncStateToSlave} from "../../types/foundations/syncStateToSlave";
+import {SyncRetryQueue} from "../../foundations/syncRetryQueue";
 
 export const createStateSyncMiddleware = (): Middleware => {
     // 缓存的状态快照
     let cachedStates: Record<string, Record<string, any>> = {}
     // 是否正在同步
     let isSyncing = false
+    // 同步失败重试队列
+    const retryQueue = new SyncRetryQueue()
 
     return ({getState}) => (next) => (action: any) => {
         // 获取 action 执行前的状态
@@ -46,6 +49,7 @@ export const createStateSyncMiddleware = (): Middleware => {
             logger.log([moduleName, LOG_TAGS.System, "stateSyncMiddleware"], "停止状态同步，清空缓存")
             isSyncing = false
             cachedStates = {}
+            retryQueue.clear()
         } else if (isSyncing && nextStartToSync) {
             // 正在同步中，检测状态变化
             const slaveConnection = nextMasterInterconnection?.slaveConnection
@@ -144,8 +148,11 @@ export const createStateSyncMiddleware = (): Middleware => {
                             logger.log([moduleName, LOG_TAGS.System, "stateSyncMiddleware"], "状态同步成功，缓存已更新")
                         })
                         .catch(error => {
-                            // 同步失败，记录错误（不重新加入队列，因为没有防抖机制）
-                            logger.error([moduleName, LOG_TAGS.System, "stateSyncMiddleware"], "状态同步失败:", error)
+                            // 同步失败，将失败项加入重试队列
+                            logger.error([moduleName, LOG_TAGS.System, "stateSyncMiddleware"], "状态同步失败，加入重试队列:", error)
+                            Object.keys(changesToSync).forEach(stateKey => {
+                                retryQueue.enqueue(stateKey, changesToSync[stateKey], slaveConnection.name)
+                            })
                         })
                 }
             }

@@ -30,19 +30,9 @@ export enum APIErrorCode {
     NETWORK_ERROR = 'NETWORK_ERROR',
     ALL_SERVERS_FAILED = 'ALL_SERVERS_FAILED',
     UNKNOWN_ERROR = 'UNKNOWN_ERROR',
-    CIRCUIT_BREAKER_OPEN = 'CIRCUIT_BREAKER_OPEN',
     RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED',
     REQUEST_TIMEOUT = 'REQUEST_TIMEOUT',
     REQUEST_CANCELLED = 'REQUEST_CANCELLED'
-}
-
-/**
- * 断路器状态
- */
-export enum CircuitState {
-    CLOSED = 'CLOSED',    // 正常状态
-    OPEN = 'OPEN',        // 断开状态
-    HALF_OPEN = 'HALF_OPEN' // 半开状态
 }
 
 // ================================
@@ -67,8 +57,6 @@ export const DEFAULT_CONFIG = {
     TIMEOUT: 5000,
     RETRY_COUNT: 3,
     RETRY_INTERVAL: 1000,
-    CIRCUIT_BREAKER_THRESHOLD: 5,
-    CIRCUIT_BREAKER_TIMEOUT: 60000,
     MAX_CONCURRENT_REQUESTS: 10,
     RATE_LIMIT_WINDOW: 1000,
     RATE_LIMIT_MAX_REQUESTS: 100
@@ -80,7 +68,6 @@ export const DEFAULT_CONFIG = {
 export const PERFORMANCE_CONFIG = {
     CLEANUP_INTERVAL: 100,              // 清理间隔(每N次请求清理一次)
     MAX_TIMESTAMPS: 1000,                // 时间戳数组最大长度
-    SKIP_MULTIPLIER: 2,                  // 跳过断路器的倍数
     MAX_METRICS_ENTRIES: 1000            // metrics最大条目数
 } as const;
 
@@ -92,8 +79,6 @@ export const ERROR_MESSAGES = {
     INTERCEPTOR_REMOVAL_WARNING: '移除拦截器需要重新初始化服务器配置才能完全生效',
     SERVER_NOT_INITIALIZED: (serverName: string) => `服务器 ${serverName} 未初始化`,
     EMPTY_ADDRESSES: (serverName: string) => `服务器 ${serverName} 的地址列表不能为空`,
-    CIRCUIT_BREAKER_NOT_INITIALIZED: '断路器未初始化',
-    ALL_CIRCUIT_BREAKERS_OPEN: (serverName: string) => `服务器 ${serverName} 所有断路器都已打开`,
     INSTANCE_NOT_FOUND: (instanceKey: string) => `服务器实例 ${instanceKey} 不存在`,
     ALL_SERVERS_FAILED: (serverName: string) => `服务器 ${serverName} 的所有地址都不可用`,
     HEADERS_FETCH_FAILED: 'headers 获取失败',
@@ -143,8 +128,6 @@ export interface ServerAttemptRecord {
     errorMessage?: string;          // 错误信息
     status?: number;                // HTTP状态码
     statusText?: string;            // HTTP状态文本
-    circuitBreakerState?: string;   // 断路器状态
-    skipped?: boolean;              // 是否因断路器打开而跳过
 }
 
 /**

@@ -70,7 +70,7 @@ export class SlaveInterconnectionActor extends Actor {
             const slaveInterconnection = storeEntry.state(kernelCoreInterconnectionState.slaveInterconnection)
             const wsClient = this.getWsClient();
             if (slaveInterconnection.serverConnectionStatus === ServerConnectionStatus.CONNECTED && wsClient.isConnected()) {
-                wsClient.sendMessage(MasterServerMessageType.REMOTE_COMMAND, remoteCommand, null)
+                await wsClient.sendMessage(MasterServerMessageType.REMOTE_COMMAND, remoteCommand, null)
                     .catch((error: Error | any) => {
                         throw new AppError(kernelCoreInterconnectionErrorMessages.remoteCommandSendError, {message: error.message}, command)
                     })
@@ -119,7 +119,7 @@ export class SlaveInterconnectionActor extends Actor {
         const reasons: string[] = []
         if (instanceInfo.instanceMode !== InstanceMode.SLAVE) reasons.push(`当前实例模式为${instanceInfo.instanceMode},非SLAVE`)
         if (!instanceInfo.masterInfo) reasons.push('Master目标不存在')
-        if (instanceInfo.masterInfo!.serverAddress.length === 0) reasons.push('Master服务地址不存在')
+        if (instanceInfo.masterInfo && instanceInfo.masterInfo.serverAddress.length === 0) reasons.push('Master服务地址不存在')
         if (slaveInterconnection.serverConnectionStatus !== ServerConnectionStatus.DISCONNECTED) reasons.push(`当前连接状态为${slaveInterconnection.serverConnectionStatus},非DISCONNECTED`)
         if (reasons.length > 0) {
             throw new AppError(kernelCoreInterconnectionErrorMessages.slaveConnectionPrecheckFailed, {reasons}, command)
@@ -175,7 +175,7 @@ export class SlaveInterconnectionActor extends Actor {
                     })
                     logger.log([moduleName, LOG_TAGS.Actor, "slave"], '状态同步完成:', actionType)
                 } catch (e: any) {
-                    logger.error([moduleName, LOG_TAGS.Actor, "slave"], '状态同步错误:' + e + ' ' + +event.message.data)
+                    logger.error([moduleName, LOG_TAGS.Actor, "slave"], '状态同步错误:' + e + ' ' + JSON.stringify(event.message.data))
                 }
             } else if (event.message.type === MasterServerMessageType.REMOTE_COMMAND_EXECUTED) {
                 this.remoteCommandResponse.next(event.message.data)

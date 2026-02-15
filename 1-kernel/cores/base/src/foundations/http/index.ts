@@ -7,7 +7,7 @@ export {Api} from './Api';
 export {ApiManager} from './ApiManager';
 
 // 枚举需要作为值导出(不能用 export type)
-export {HttpMethod, APIErrorCode, CircuitState} from '../../types/shared/http';
+export {HttpMethod, APIErrorCode} from '../../types/shared/http';
 
 export type {
     // 基础类型
