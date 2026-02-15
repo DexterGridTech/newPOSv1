@@ -130,12 +130,12 @@ export class ActorSystem {
         const commandToExecute =
             this.commandConverters.reduce((prev, converter) =>
                 converter.convertCommand(prev), command)
-        logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `收到命令${command.commandName}=>执行命令${commandToExecute.commandName}`, commandToExecute)
+        logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `收到并准备执行命令${commandToExecute.commandName}`, commandToExecute)
         this.actors.forEach(actor => actor.executeCommand(commandToExecute))
     }
 
     commandStart(actor:Actor, command: Command<any>): void {
-        logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `命令开始=>${actor.printName()}:${command.printId()}`)
+        logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `命令开始=>${actor.printName()}执行${command.printId()}`)
         this.lifecycleListeners.forEach(listener => {
             if (listener.onCommandStart) {
                 try {
@@ -148,7 +148,7 @@ export class ActorSystem {
     }
 
     commandComplete(actor:Actor, command: Command<any>, result?: Record<string, any>): void {
-        logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `命令结束=>${actor.printName()}:${command.printId()}`)
+        logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `命令结束=>${actor.printName()}结束执行${command.printId()}`)
         this.lifecycleListeners.forEach(listener => {
             if (listener.onCommandComplete) {
                 try {
@@ -161,7 +161,7 @@ export class ActorSystem {
     }
 
     commandError(actor:Actor, command: Command<any>, appError: AppError): void {
-        logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `命令错误=>${actor.printName()}:${command.printId()},${appError.message}`)
+        logger.log([moduleName, LOG_TAGS.System, "ActorSystem"], `命令错误=>${actor.printName()}执行错误${command.printId()},${appError.message}`)
         this.lifecycleListeners.forEach(listener => {
             if (listener.onCommandError) {
                 try {

@@ -24,14 +24,15 @@ async function initializeApp() {
     const requestId = "123"
 
     // 订阅 store 变化，打印 requestStatus
-    // store.subscribe(() => {
-    //     const state = store.getState()
-    //     const requestStatus = state[kernelCoreBaseState.requestStatus][requestId]
-    //     console.log('requestStatus 变化:', requestStatus)
-    // })
-
+    store.subscribe(() => {
+        const state = store.getState()
+        const requestStatus = state[kernelCoreBaseState.requestStatus][requestId]
+        console.log('requestStatus 变化:', requestStatus)
+    })
+    console.log('-------------------')
     // 执行命令
     kernelCoreBaseCommands.initialize().execute(requestId)
+    console.log('===================')
 }
 
 initializeApp().catch(error => {

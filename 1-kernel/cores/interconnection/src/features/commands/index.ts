@@ -1,4 +1,4 @@
-import {createModuleCommands, defineCommand, ExecutionType} from "@impos2/kernel-core-base";
+import {Command, createModuleCommands, defineCommand, ExecutionType} from "@impos2/kernel-core-base";
 import {moduleName} from "../../moduleName";
 
 export const kernelCoreInterconnectionCommands = createModuleCommands(moduleName, {
@@ -25,6 +25,7 @@ export const kernelCoreInterconnectionCommands = createModuleCommands(moduleName
     slaveConnectedToServer: defineCommand<void>(ExecutionType.ONLY_SEND_AND_EXECUTE_ON_SLAVE),
     slaveDisconnectedFromServer: defineCommand<string>(ExecutionType.ONLY_SEND_AND_EXECUTE_ON_SLAVE),
 
-
+    //slave 远程方法
+    slaveSendMasterExecute: defineCommand<Command<any>>(ExecutionType.ONLY_SEND_AND_EXECUTE_ON_SLAVE)
 })
 

@@ -8,13 +8,15 @@ import {
     InstanceMode,
     kernelCoreInterconnectionState,
     MasterServerMessageType,
+    RemoteCommandFromSlave,
     ServerConnectionStatus
 } from "../../types";
 import {kernelCoreInterconnectionErrorMessages, kernelCoreInterconnectionParameters} from "../../supports";
 import {defaultSlaveInfo} from "../../foundations/masterServer";
 import {MasterWebSocketClient, WSMessageEvent} from "../../foundations";
-import {dispatchAction} from "@impos2/kernel-base";
+import {dispatchAction, ICommand} from "@impos2/kernel-base";
 import {slaveInterconnectionActions} from "../slices/slaveInterconnection";
+import {Subject} from "rxjs";
 
 
 export class SlaveInterconnectionActor extends Actor {
@@ -38,11 +40,42 @@ export class SlaveInterconnectionActor extends Actor {
                     kernelCoreInterconnectionCommands.connectMasterServer().executeInternally()
                 },
                 slaveReconnectInterval)
+            return Promise.resolve({});
+        })
+
+
+    slaveSendMasterExecute = Actor.defineCommandHandler(kernelCoreInterconnectionCommands.slaveSendMasterExecute,
+        async (command): Promise<Record<string, any>> => {
+            const remoteCommand: RemoteCommandFromSlave = {
+                commandId: command.payload.id,
+                commandName: command.payload.commandName,
+                payload: command.payload.payload,
+                requestId: command.payload.requestId ?? 'unknown',
+                sessionId: command.payload.sessionId ?? 'unknown',
+            }
+            const slaveInterconnection = storeEntry.state(kernelCoreInterconnectionState.slaveInterconnection)
+            const wsClient = this.getWsClient();
+            if (slaveInterconnection.serverConnectionStatus === ServerConnectionStatus.CONNECTED && wsClient.isConnected()) {
+                wsClient.sendMessage(MasterServerMessageType.REMOTE_COMMAND, remoteCommand, null)
+                    .catch((error: Error | any) => {
+                        throw new AppError(kernelCoreInterconnectionErrorMessages.remoteCommandSendError, {message: error.message}, command)
+                    })
+            } else {
+                throw new AppError(kernelCoreInterconnectionErrorMessages.slaveNotConnected, null, command)
+            }
+            const remoteCommandId=command.payload.id
+            //todo
+            // 监听remoteCommandResponse
+            // 如果remoteCommandResponse发射的内容包含remoteCommandId，则指令完成，return Promise.resolve({});
+            // 如果超过5秒remoteCommandResponse也没有发射包含remoteCommandId的内容，则报错throw new AppError(kernelCoreInterconnectionErrorMessages.remoteCommandResponseTimeout, null, command)
+            // 请注意线程安全与内存
 
             return Promise.resolve({});
         })
 
+
     private connectCount = 0;
+    private remoteCommandResponse = new Subject<string>()
 
     private async connectToMasterServer(command: Command<any>) {
         logger.log([moduleName, LOG_TAGS.Actor, "slave"], `Slave准备开始连接服务器:第${++this.connectCount}次`)
@@ -67,7 +100,7 @@ export class SlaveInterconnectionActor extends Actor {
                     type: InstanceMode.SLAVE,
                     deviceId: defaultSlaveInfo.deviceId,
                     deviceName: defaultSlaveInfo.name,
-                    masterDeviceId:instanceInfo.masterInfo!.deviceId
+                    masterDeviceId: instanceInfo.masterInfo!.deviceId
                 },
                 serverUrls: instanceInfo.masterInfo!.serverAddress.map((serverAddress) => serverAddress.address),
                 connectionTimeout: kernelCoreInterconnectionParameters.slaveConnectionTimeout.value,
@@ -110,7 +143,7 @@ export class SlaveInterconnectionActor extends Actor {
                     logger.error([moduleName, LOG_TAGS.Actor, "slave"], '状态同步错误:' + e + ' ' + +event.message.data)
                 }
             } else if (event.message.type === MasterServerMessageType.REMOTE_COMMAND_EXECUTED) {
-                // this.remoteCommandExecuted.add(event.message.data);
+                this.remoteCommandResponse.next(event.message.data)
             }
         });
         wsClient.on(ConnectionEventType.DISCONNECTED, (event: DisconnectedEvent) => {

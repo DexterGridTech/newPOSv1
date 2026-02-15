@@ -33,7 +33,7 @@ export class MasterInterconnectionActor extends Actor {
         })
     masterDisconnectedFromServer = Actor.defineCommandHandler(kernelCoreInterconnectionCommands.masterDisconnectedFromServer,
         async (command): Promise<Record<string, any>> => {
-            storeEntry.dispatchAction(masterInterconnectionActions.disconnected({connectionError:command.payload}))
+            storeEntry.dispatchAction(masterInterconnectionActions.disconnected({connectionError: command.payload}))
             storeEntry.dispatchAction(masterInterconnectionActions.slaveDisconnected())
             const masterReconnectInterval = kernelCoreInterconnectionParameters.masterReconnectInterval.value
             logger.log([moduleName, LOG_TAGS.Actor, "master"], `Master与服务器已断开,${masterReconnectInterval}毫秒后重连`)
@@ -57,7 +57,6 @@ export class MasterInterconnectionActor extends Actor {
             logger.log([moduleName, LOG_TAGS.Actor, "master"], `Slave已断开`)
             return Promise.resolve({});
         })
-
 
     private connectCount = 0;
 
@@ -85,7 +84,7 @@ export class MasterInterconnectionActor extends Actor {
         }
         defaultMasterInfo.serverAddress = addresses
         defaultMasterInfo.addedAt = Date.now()
-        storeEntry.dispatchAction(instanceInfoActions.setMasterInfo({ ...defaultMasterInfo }))
+        storeEntry.dispatchAction(instanceInfoActions.setMasterInfo({...defaultMasterInfo}))
         storeEntry.dispatchAction(masterInterconnectionActions.connecting())
 
         const wsClient = this.getWsClient();
