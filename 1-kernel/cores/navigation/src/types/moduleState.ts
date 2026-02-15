@@ -3,5 +3,5 @@
  * 直接定义，避免导入问题
  */
 
-export interface  KernelXXXStateMap  {
+export interface  KernelCoreNavigationStateMap  {
 }

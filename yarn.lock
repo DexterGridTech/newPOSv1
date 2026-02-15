@@ -2606,11 +2606,35 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/kernel-core-interconnection@workspace:1-kernel/cores/interconnection":
+"@impos2/kernel-core-interconnection@*, @impos2/kernel-core-interconnection@workspace:1-kernel/cores/interconnection":
   version: 0.0.0-use.local
   resolution: "@impos2/kernel-core-interconnection@workspace:1-kernel/cores/interconnection"
   dependencies:
     "@impos2/kernel-core-base": "*"
+    "@reduxjs/toolkit": ^2.11.2
+    "@types/deep-diff": ^1.0.5
+    "@types/lodash": ^4.17.20
+    "@types/node": ^25.0.9
+    axios: ^1.13.2
+    date-fns: ^4.1.0
+    deep-object-diff: ^1.1.9
+    lodash: ^4.17.21
+    madge: ^8.0.0
+    nanoid: ^5.1.6
+    redux-observable: ^3.0.0-rc.3
+    redux-persist: ^6.0.0
+    rxjs: ^7.8.2
+    ts-node: ^10.9.2
+    typescript: ^5.9.3
+  languageName: unknown
+  linkType: soft
+
+"@impos2/kernel-core-navigation@workspace:1-kernel/cores/navigation":
+  version: 0.0.0-use.local
+  resolution: "@impos2/kernel-core-navigation@workspace:1-kernel/cores/navigation"
+  dependencies:
+    "@impos2/kernel-core-base": "*"
+    "@impos2/kernel-core-interconnection": "*"
     "@reduxjs/toolkit": ^2.11.2
     "@types/deep-diff": ^1.0.5
     "@types/lodash": ^4.17.20

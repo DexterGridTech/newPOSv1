@@ -28,7 +28,7 @@ export const kernelXXXModule: AppModule = {
 export * from "./types";
 export * from "./foundations";
 export * from "./supports";
-export * from "./selectors";
+export * from "./hooks";
 export {kernelXXXSlice} from "./features/slices";
 export {kernelXXXCommands} from "./features/commands";
 export {kernelXXXErrorMessages} from "./supports/errors";
