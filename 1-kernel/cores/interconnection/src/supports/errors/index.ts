@@ -49,6 +49,6 @@ export const kernelCoreInterconnectionErrorMessages = {
         ErrorSeverity.HIGH,
         "远程命令响应超时",
         'remote.command.response.timeout',
-        "远程命令响应超时:${message}"
+        "远程命令响应超时:${message},${timeout}ms"
     ),
 };

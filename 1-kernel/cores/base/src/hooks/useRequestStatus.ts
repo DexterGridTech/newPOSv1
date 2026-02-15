@@ -32,7 +32,7 @@ const toSimpleRequestStatus = (request: RequestStatus): SimpleRequestStatus => {
         requestId: request.requestId,
         status: request.status,
         startAt: request.startAt,
-        updatedAt: request.updatedAt,
+        updateAt: request.updateAt,
         results,
         errors
     }
@@ -57,7 +57,7 @@ export interface SimpleRequestStatus {
     requestId: string
     status: RequestStatusType
     startAt: number
-    updatedAt: number
+    updateAt: number
     results?: Record<string, any>
     errors?: Record<string, IAppError>
 }

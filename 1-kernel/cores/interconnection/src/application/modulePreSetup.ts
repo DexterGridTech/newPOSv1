@@ -4,13 +4,18 @@ import {
     AppModule,
     Command,
     CommandConverter,
-    ExecutionType, INTERNAL, LOG_TAGS, logger,
+    ExecutionType,
+    INTERNAL,
+    LOG_TAGS,
+    logger,
     storeEntry
 } from "@impos2/kernel-core-base";
 import {DisplayMode, InstanceInfoState, InstanceMode, kernelCoreInterconnectionState, MasterInfo} from "../types";
 import {defaultMasterInfo, defaultSlaveInfo} from "../foundations/masterServer";
 import {kernelCoreInterconnectionCommands} from "../features/commands";
 import {moduleName} from "../moduleName";
+import {statesNeedToSync} from "../foundations/statesNeedToSync";
+import type {RootState} from "@impos2/kernel-base";
 
 
 export const kernelCoreInterconnectionModulePreSetup = async (config: ApplicationConfig, allModules: AppModule[]) => {
@@ -18,6 +23,17 @@ export const kernelCoreInterconnectionModulePreSetup = async (config: Applicatio
         = preInitiateInstanceInfo(config)
 
     ActorSystem.getInstance().registerCommandConverter(remoteCommandConverter)
+
+    setStateNeedToSync(allModules)
+}
+
+const setStateNeedToSync = (allModules: AppModule[]) => {
+    allModules.forEach(module => {
+        Object.values(module.slices).forEach(slice => {
+            if (slice.stateSyncToSlave)
+                statesNeedToSync.add(slice.name as keyof RootState)
+        })
+    })
 }
 
 const remoteCommandConverter: CommandConverter = {
@@ -34,13 +50,13 @@ const remoteCommandConverter: CommandConverter = {
             throw new Error(`command 只能在Master模式下运行 ${command.commandName}`)
         } else if (command.executionType === ExecutionType.SLAVE_SEND_MASTER_EXECUTE
             && instanceInfo.instanceMode === InstanceMode.SLAVE) {
-            if(command.requestId===INTERNAL){
+            if (command.requestId === INTERNAL) {
                 throw new Error(`远程命令requestId不可以是INTERNAL ${command.commandName}`)
             }
             commandToExecute = kernelCoreInterconnectionCommands.slaveSendMasterExecute(command)
             commandToExecute.requestId = command.requestId
             commandToExecute.sessionId = command.sessionId
-            logger.log([moduleName,LOG_TAGS.System,"remoteCommandConverter"],`远程调用转换${command.commandName}->${commandToExecute.commandName}`)
+            logger.log([moduleName, LOG_TAGS.System, "remoteCommandConverter"], `远程调用转换${command.commandName}->${commandToExecute.commandName}`)
         }
         return commandToExecute
     }

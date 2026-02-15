@@ -52,4 +52,9 @@ export const kernelCoreInterconnectionParameters = {
         "slave.heartbeat.timeout",
         60000
     ),
+    remoteCommandResponseTimeout: new DefinedSystemParameter(
+        '远程命令响应超时',
+        "remote.command.response.timeout",
+        6000
+    ),
 };

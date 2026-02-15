@@ -10,7 +10,7 @@ const updateRequestStatus = (request: RequestStatus) => {
     const hasError = commandStatuses.some(cs => cs.status === 'error')
     const allComplete = commandStatuses.every(cs => cs.status === 'complete')
     request.status = hasError ? 'error' : allComplete ? 'complete' : 'started'
-    request.updatedAt = commandStatuses.reduce((latest, cs) => {
+    request.updateAt = commandStatuses.reduce((latest, cs) => {
         const time = cs.completeAt ?? cs.errorAt ?? 0
         return time > latest ? time : latest
     }, 0)
@@ -48,11 +48,11 @@ export const slice = createSlice({
 
             Object.keys(state).filter(requestId => {
                 const request = state[requestId]
-                return (Date.now() - request.updatedAt) > requestCleanOutTime
+                return (Date.now() - request.updateAt) > requestCleanOutTime
             }).forEach(requestIdToDelete => {
                 delete state[requestIdToDelete]
             })
-            request.updatedAt = Date.now()
+            request.updateAt = Date.now()
         },
         commandComplete: (state, action: PayloadAction<{
             actor: string,
@@ -109,6 +109,7 @@ export const requestStatusConfig: ModuleSliceConfig<RequestStatusState> = {
     name: slice.name,
     reducer: slice.reducer,
     statePersistToStorage: false,
+    //如果stateSyncToSlave=true,state的属性需集成{updateAt:number}才能被同步
     stateSyncToSlave: true
 }
 

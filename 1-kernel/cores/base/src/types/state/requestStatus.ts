@@ -20,7 +20,7 @@ export interface RequestStatus {
     commandsStatus: Record<string, CommandStatus>
     status: RequestStatusType
     startAt: number
-    updatedAt: number
+    updateAt: number
 }
 
 export interface RequestStatusState extends Record<string, RequestStatus>{

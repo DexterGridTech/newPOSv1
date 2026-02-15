@@ -1,4 +1,4 @@
-import {Actor, AppError, Command, LOG_TAGS, logger, storeEntry} from "@impos2/kernel-core-base";
+import {Actor, AppError, Command, DeepPartial, LOG_TAGS, logger, RootState, storeEntry} from "@impos2/kernel-core-base";
 import {kernelCoreInterconnectionCommands} from "../commands";
 import {moduleName} from "../../moduleName";
 import {
@@ -14,9 +14,9 @@ import {
 import {kernelCoreInterconnectionErrorMessages, kernelCoreInterconnectionParameters} from "../../supports";
 import {defaultSlaveInfo} from "../../foundations/masterServer";
 import {MasterWebSocketClient, WSMessageEvent} from "../../foundations";
-import {dispatchAction, ICommand} from "@impos2/kernel-base";
 import {slaveInterconnectionActions} from "../slices/slaveInterconnection";
 import {Subject} from "rxjs";
+import {statesNeedToSync} from "../../foundations/statesNeedToSync";
 
 
 export class SlaveInterconnectionActor extends Actor {
@@ -28,6 +28,21 @@ export class SlaveInterconnectionActor extends Actor {
     slaveConnectedToServer = Actor.defineCommandHandler(kernelCoreInterconnectionCommands.slaveConnectedToServer,
         async (command): Promise<Record<string, any>> => {
             storeEntry.dispatchAction(slaveInterconnectionActions.connected())
+
+            const localStateToSync: DeepPartial<RootState> = {}
+
+            statesNeedToSync.forEach(stateKey => {
+                const state = storeEntry.state(stateKey)
+                localStateToSync[stateKey]={}
+                Object.keys(state).forEach((key) => {
+                    const property = state[key] as {updateAt: number}
+                    if(property&&property.updateAt){
+                        localStateToSync[stateKey][key]={updateAt: property.updateAt}
+                    }
+                })
+            })
+
+
             return Promise.resolve({});
         })
     slaveDisconnectedFromServer = Actor.defineCommandHandler(kernelCoreInterconnectionCommands.slaveDisconnectedFromServer,
@@ -63,14 +78,34 @@ export class SlaveInterconnectionActor extends Actor {
             } else {
                 throw new AppError(kernelCoreInterconnectionErrorMessages.slaveNotConnected, null, command)
             }
-            const remoteCommandId=command.payload.id
-            //todo
-            // 监听remoteCommandResponse
-            // 如果remoteCommandResponse发射的内容包含remoteCommandId，则指令完成，return Promise.resolve({});
-            // 如果超过5秒remoteCommandResponse也没有发射包含remoteCommandId的内容，则报错throw new AppError(kernelCoreInterconnectionErrorMessages.remoteCommandResponseTimeout, null, command)
-            // 请注意线程安全与内存
+            const remoteCommandId = command.payload.id
+            const remoteCommandResponseTimeout = kernelCoreInterconnectionParameters.remoteCommandResponseTimeout.value
 
-            return Promise.resolve({});
+            // 监听 remoteCommandResponse，等待包含 remoteCommandId 的响应
+            return new Promise((resolve, reject) => {
+                const timeout = setTimeout(() => {
+                    subscription.unsubscribe()
+                    reject(new AppError(kernelCoreInterconnectionErrorMessages.remoteCommandResponseTimeout, {
+                        message: remoteCommand.commandName,
+                        timeout: remoteCommandResponseTimeout
+                    }, command))
+                }, remoteCommandResponseTimeout)
+
+                const subscription = this.remoteCommandResponse.subscribe({
+                    next: (responseId) => {
+                        if (responseId === remoteCommandId) {
+                            clearTimeout(timeout)
+                            subscription.unsubscribe()
+                            resolve({})
+                        }
+                    },
+                    error: (err) => {
+                        clearTimeout(timeout)
+                        subscription.unsubscribe()
+                        reject(err)
+                    }
+                })
+            })
         })
 
 
@@ -134,7 +169,7 @@ export class SlaveInterconnectionActor extends Actor {
                 try {
                     const {key, state} = event.message.data
                     const actionType = key + '/batchUpdateState'
-                    dispatchAction({
+                    storeEntry.dispatchAction({
                         type: actionType,
                         payload: state
                     })
