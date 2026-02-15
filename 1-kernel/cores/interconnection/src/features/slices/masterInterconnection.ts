@@ -7,7 +7,8 @@ import {ServerConnectionStatus} from "../../types";
 const initialState: MasterInterconnectionState = {
     serverConnectionStatus: ServerConnectionStatus.DISCONNECTED,
     slaveConnectionHistory: [],
-    connectionHistory: []
+    connectionHistory: [],
+    startToSync: false
 }
 const slice = createSlice({
     name: kernelCoreInterconnectionState.masterInterconnection,
@@ -23,15 +24,19 @@ const slice = createSlice({
             state.serverConnectionStatus = ServerConnectionStatus.CONNECTED
             state.connectedAt = Date.now()
         },
-        disconnected: (state,action:PayloadAction<{connectionError:string}>) => {
+        disconnected: (state, action: PayloadAction<{ connectionError: string }>) => {
             state.serverConnectionStatus = ServerConnectionStatus.DISCONNECTED
             state.disconnectedAt = Date.now()
             state.connectionError = action.payload.connectionError
+            state.startToSync = false
             state.connectionHistory.push({
                 connectedAt: state.connectedAt!,
                 disconnectedAt: state.disconnectedAt!,
                 connectionError: state.connectionError!
             })
+        },
+        startToSync: (state) => {
+            state.startToSync = true
         },
         slaveConnected: (state, action: PayloadAction<{ name: string, deviceId: string }>) => {
             state.slaveConnection = {
@@ -48,6 +53,7 @@ const slice = createSlice({
                 }
                 state.slaveConnectionHistory.push(state.slaveConnection)
             }
+            state.startToSync = false
         }
     }
 })

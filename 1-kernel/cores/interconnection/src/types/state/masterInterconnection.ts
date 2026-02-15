@@ -5,6 +5,7 @@ export interface MasterInterconnectionState {
     serverConnectionStatus:ServerConnectionStatus
     slaveConnection?:SlaveConnection
     slaveConnectionHistory:SlaveConnection[]
+    startToSync:boolean
     connectedAt?: number | null
     disconnectedAt?: number| null
     connectionError?: string| null

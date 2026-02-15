@@ -200,10 +200,15 @@ export class ApplicationManager {
         initLogger.logStep(9, 'Configuring Middleware');
         const epicMiddleware = createEpicMiddleware<PayloadAction, PayloadAction, RootState>();
         const middlewares: Middleware[] = [epicMiddleware];
+        const middlewareNames: string[] = ['epicMiddleware'];
         allModules.forEach(module => {
+            Object.keys(module.middlewares).forEach(middlewareName => {
+                middlewareNames.push(`${module.name}.${middlewareName}`);
+            });
             middlewares.push(...Object.values(module.middlewares));
         });
         initLogger.logDetail('Middleware Count', middlewares.length);
+        initLogger.logNames(middlewareNames);
         initLogger.logSuccess('Middleware configured');
         initLogger.logStepEnd();
 

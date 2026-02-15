@@ -1,3 +1,5 @@
-import {Middleware} from "@reduxjs/toolkit";
+import {createStateSyncMiddleware} from "./stateSyncMiddleware";
 
-export const kernelCoreInterconnectionMiddlewares = {}
+export const kernelCoreInterconnectionMiddlewares = {
+    stateSyncMiddleware: createStateSyncMiddleware()
+}
