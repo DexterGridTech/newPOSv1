@@ -15,6 +15,7 @@ import {defaultMasterInfo, defaultSlaveInfo} from "../foundations/masterServer";
 import {kernelCoreInterconnectionCommands} from "../features/commands";
 import {moduleName} from "../moduleName";
 import {statesNeedToSync} from "../foundations/statesNeedToSync";
+import {getInstanceMode} from "../foundations/accessory";
 
 
 export const kernelCoreInterconnectionModulePreSetup = async (config: ApplicationConfig, allModules: AppModule[]) => {
@@ -38,17 +39,16 @@ const setStateNeedToSync = (allModules: AppModule[]) => {
 const remoteCommandConverter: CommandConverter = {
     convertCommand: (command: Command<any>) => {
         let commandToExecute = command
-        const instanceInfo = storeEntry.state(kernelCoreInterconnectionState.instanceInfo)
-        instanceInfo.instanceMode
+        const instanceMode = getInstanceMode()
 
         if (command.executionType === ExecutionType.ONLY_SEND_AND_EXECUTE_ON_SLAVE
-            && instanceInfo.instanceMode === InstanceMode.MASTER) {
+            && instanceMode === InstanceMode.MASTER) {
             throw new Error(`command 只能在slave模式下运行 ${command.commandName}`)
         } else if (command.executionType === ExecutionType.ONLY_SEND_AND_EXECUTE_ON_MASTER
-            && instanceInfo.instanceMode === InstanceMode.SLAVE) {
+            && instanceMode === InstanceMode.SLAVE) {
             throw new Error(`command 只能在Master模式下运行 ${command.commandName}`)
         } else if (command.executionType === ExecutionType.SLAVE_SEND_MASTER_EXECUTE
-            && instanceInfo.instanceMode === InstanceMode.SLAVE) {
+            && instanceMode === InstanceMode.SLAVE) {
             if (command.requestId === INTERNAL) {
                 throw new Error(`远程命令requestId不可以是INTERNAL ${command.commandName}`)
             }

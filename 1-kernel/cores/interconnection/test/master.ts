@@ -21,7 +21,7 @@ const appConfig: ApplicationConfig = {
 
 async function initializeApp() {
     await ApplicationManager.getInstance().generateStore(appConfig)
-    console.log(storeEntry.state(kernelCoreInterconnectionState.instanceInfo))
+    console.log(storeEntry.getStateByKey(kernelCoreInterconnectionState.instanceInfo))
     // 执行命令
     kernelCoreBaseCommands.initialize().executeInternally()
 }

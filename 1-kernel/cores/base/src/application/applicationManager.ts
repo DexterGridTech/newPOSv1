@@ -1,6 +1,6 @@
 import {configureStore, EnhancedStore, Middleware, PayloadAction, Reducer} from "@reduxjs/toolkit";
 import {Persistor, persistReducer, persistStore} from "redux-persist";
-import {RootState, storeEntry} from "../types";
+import {RootState, ScreenMode, storeEntry} from "../types";
 import {ModuleDependencyResolver} from "./moduleDependencyResolver";
 import {ApplicationConfig} from "./types";
 import {setEnvironment} from "../foundations/environment";
@@ -21,7 +21,9 @@ export class ApplicationManager {
     private persistor: Persistor | null = null;
     private moduleDependencyResolver = new ModuleDependencyResolver()
     private storeGenerationPromise: Promise<{ store: EnhancedStore<RootState>, persistor: Persistor }> | null = null;
-
+    screenMode: ScreenMode | null = null;
+    deviceId: string | null = null;
+    production: boolean | null = null;
     static getInstance(): ApplicationManager {
         if (!ApplicationManager.instance) {
             ApplicationManager.instance = new ApplicationManager();
@@ -62,6 +64,11 @@ export class ApplicationManager {
     }
 
     private async createStore(config: ApplicationConfig) {
+        // 初始化获得三个参数供后续使用
+        this.screenMode = config.environment.screenMode;
+        this.deviceId = config.environment.deviceId;
+        this.production = config.environment.production;
+
         const initLogger = new InitLogger();
 
         // 打印横幅

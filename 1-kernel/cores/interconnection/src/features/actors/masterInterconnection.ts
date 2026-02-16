@@ -19,6 +19,7 @@ import {masterInterconnectionActions} from "../slices/masterInterconnection";
 import {MasterWebSocketClient, WSMessageEvent} from "../../foundations";
 import {statesNeedToSync} from "../../foundations/statesNeedToSync";
 import {syncStateToSlave} from "../../types/foundations/syncStateToSlave";
+import {getInstanceMode, getStandalone} from "../../foundations/accessory";
 
 
 export class MasterInterconnectionActor extends Actor {
@@ -63,11 +64,11 @@ export class MasterInterconnectionActor extends Actor {
     synStateAtConnected = Actor.defineCommandHandler(kernelCoreInterconnectionCommands.synStateAtConnected,
         async (command): Promise<Record<string, any>> => {
 
-            const masterInterconnection = storeEntry.state(kernelCoreInterconnectionState.masterInterconnection)
+            const masterInterconnection = storeEntry.getStateByKey(kernelCoreInterconnectionState.masterInterconnection)
             const slaveConnection = masterInterconnection.slaveConnection
             if (!slaveConnection?.disconnectedAt && slaveConnection?.name) {
                 const stateFromSlave = command.payload as Record<string, Record<string, { updateAt: number }>>
-                const stateAtLocal = storeEntry.wholeState()
+                const stateAtLocal = storeEntry.getState()
                 // 构建需要同步回 slave 的差异数据
                 const result: Record<string, Record<string, any>> = {}
 
@@ -142,12 +143,12 @@ export class MasterInterconnectionActor extends Actor {
 
     private async connectToMasterServer(command: Command<any>) {
         logger.log([moduleName, LOG_TAGS.Actor, "master"], `Master准备开始连接服务器:第${++this.connectCount}次`)
-        const instanceInfo = storeEntry.state(kernelCoreInterconnectionState.instanceInfo)
-        const masterInterconnection = storeEntry.state(kernelCoreInterconnectionState.masterInterconnection)
+        const instanceInfo = storeEntry.getStateByKey(kernelCoreInterconnectionState.instanceInfo)
+        const masterInterconnection = storeEntry.getStateByKey(kernelCoreInterconnectionState.masterInterconnection)
 
         const reasons: string[] = []
-        if (!instanceInfo.standalone) reasons.push('非独立运行模式')
-        if (instanceInfo.instanceMode !== InstanceMode.MASTER) reasons.push(`当前实例模式为${instanceInfo.instanceMode},非MASTER`)
+        if (!getStandalone()) reasons.push('非独立运行模式')
+        if (getInstanceMode() !== InstanceMode.MASTER) reasons.push(`当前实例模式为${getInstanceMode()},非MASTER`)
         if (!instanceInfo.enableSlave) reasons.push('未启用Slave功能')
         if (masterInterconnection.serverConnectionStatus !== ServerConnectionStatus.DISCONNECTED) reasons.push(`当前连接状态为${masterInterconnection.serverConnectionStatus},非DISCONNECTED`)
         if (reasons.length > 0) {
@@ -237,7 +238,7 @@ export class MasterInterconnectionActor extends Actor {
     }
 
     private remoteCommandExecuted = (commandId: string) => {
-        const masterInterconnection = storeEntry.state(kernelCoreInterconnectionState.masterInterconnection)
+        const masterInterconnection = storeEntry.getStateByKey(kernelCoreInterconnectionState.masterInterconnection)
         const wsClient = this.getWsClient();
         if (masterInterconnection.slaveConnection
             && masterInterconnection.serverConnectionStatus === ServerConnectionStatus.CONNECTED

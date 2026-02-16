@@ -18,6 +18,7 @@ import {slaveInterconnectionActions} from "../slices/slaveInterconnection";
 import {Subject} from "rxjs";
 import {statesNeedToSync} from "../../foundations/statesNeedToSync";
 import {nanoid} from "nanoid/non-secure";
+import {getInstanceMode} from "../../foundations/accessory";
 
 
 export class SlaveInterconnectionActor extends Actor {
@@ -32,7 +33,7 @@ export class SlaveInterconnectionActor extends Actor {
 
             const localStateToSync: Record<string, Record<string, { updateAt: number }>> = {}
             statesNeedToSync.forEach(stateKey => {
-                const state = storeEntry.state(stateKey) as Record<string, any>
+                const state = storeEntry.getStateByKey(stateKey) as Record<string, any>
                 localStateToSync[stateKey] = {}
                 Object.keys(state).forEach((key) => {
                     const property = state[key] as { updateAt?: number }
@@ -67,7 +68,7 @@ export class SlaveInterconnectionActor extends Actor {
                 requestId: command.payload.requestId ?? 'unknown',
                 sessionId: command.payload.sessionId ?? 'unknown',
             }
-            const slaveInterconnection = storeEntry.state(kernelCoreInterconnectionState.slaveInterconnection)
+            const slaveInterconnection = storeEntry.getStateByKey(kernelCoreInterconnectionState.slaveInterconnection)
             const wsClient = this.getWsClient();
             if (slaveInterconnection.serverConnectionStatus === ServerConnectionStatus.CONNECTED && wsClient.isConnected()) {
                 await wsClient.sendMessage(MasterServerMessageType.REMOTE_COMMAND, remoteCommand, null)
@@ -113,11 +114,11 @@ export class SlaveInterconnectionActor extends Actor {
 
     private async connectToMasterServer(command: Command<any>) {
         logger.log([moduleName, LOG_TAGS.Actor, "slave"], `Slave准备开始连接服务器:第${++this.connectCount}次`)
-        const instanceInfo = storeEntry.state(kernelCoreInterconnectionState.instanceInfo)
-        const slaveInterconnection = storeEntry.state(kernelCoreInterconnectionState.slaveInterconnection)
+        const instanceInfo = storeEntry.getStateByKey(kernelCoreInterconnectionState.instanceInfo)
+        const slaveInterconnection = storeEntry.getStateByKey(kernelCoreInterconnectionState.slaveInterconnection)
 
         const reasons: string[] = []
-        if (instanceInfo.instanceMode !== InstanceMode.SLAVE) reasons.push(`当前实例模式为${instanceInfo.instanceMode},非SLAVE`)
+        if (getInstanceMode() !== InstanceMode.SLAVE) reasons.push(`当前实例模式为${getInstanceMode()},非SLAVE`)
         if (!instanceInfo.masterInfo) reasons.push('Master目标不存在')
         if (instanceInfo.masterInfo && instanceInfo.masterInfo.serverAddress.length === 0) reasons.push('Master服务地址不存在')
         if (slaveInterconnection.serverConnectionStatus !== ServerConnectionStatus.DISCONNECTED) reasons.push(`当前连接状态为${slaveInterconnection.serverConnectionStatus},非DISCONNECTED`)

@@ -20,6 +20,6 @@ export const systemParametersConfig: ModuleSliceConfig<SystemParametersState> = 
     name: slice.name,
     reducer: slice.reducer,
     statePersistToStorage: true,
-    //如果stateSyncToSlave=true,state的属性需集成{updateAt:number}才能被同步
+    //如果stateSyncToSlave=true,state的属性需继承{updateAt:number}才能被同步
     stateSyncToSlave: true
 }

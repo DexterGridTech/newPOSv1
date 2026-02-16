@@ -9,7 +9,9 @@ export interface StoreEntry {
     setStore: (store: EnhancedStore) => void
     getStore: () => EnhancedStore | null
 
-    state<K extends keyof RootState>(stateKey: K): RootState[K]
+    getStateByKey<K extends keyof RootState>(stateKey: K): RootState[K]
+    getState(): RootState
+
     dispatchAction:(action: PayloadAction) => void
 }
 
@@ -24,7 +26,7 @@ class StoreEntryImpl implements StoreEntry {
         return this.store
     }
 
-    state<K extends keyof RootState>(stateKey: K): RootState[K] {
+    getStateByKey<K extends keyof RootState>(stateKey: K): RootState[K] {
         if (!this.store) {
             throw new Error('Store is not initialized yet')
         }
@@ -34,7 +36,7 @@ class StoreEntryImpl implements StoreEntry {
         }
         return state[stateKey]
     }
-    wholeState(): RootState {
+    getState(): RootState {
         if (!this.store) {
             throw new Error('Store is not initialized yet')
         }

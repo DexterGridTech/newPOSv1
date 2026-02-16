@@ -92,7 +92,7 @@ export const slice = createSlice({
                 const currentRequest = state[key]
                 const newRequest = action.payload[key]
                 if (currentRequest && newRequest) {
-                    logger.log([moduleName, LOG_TAGS.Reducer, kernelCoreBaseState.requestStatus], `requestId existed : ${key}`)
+                    // logger.log([moduleName, LOG_TAGS.Reducer, kernelCoreBaseState.requestStatus], `requestId existed : ${key}`)
                     Object.keys(newRequest.commandsStatus).forEach(k => {
                         currentRequest.commandsStatus[k] = newRequest.commandsStatus[k]
                         logger.log([moduleName, LOG_TAGS.Reducer, kernelCoreBaseState.requestStatus], 'commandsStatus changed', newRequest.commandsStatus[k])
@@ -110,7 +110,7 @@ export const requestStatusConfig: ModuleSliceConfig<RequestStatusState> = {
     name: slice.name,
     reducer: slice.reducer,
     statePersistToStorage: false,
-    //如果stateSyncToSlave=true,state的属性需集成{updateAt:number}才能被同步
+    //如果stateSyncToSlave=true,state的属性需继承{updateAt:number}才能被同步
     stateSyncToSlave: true
 }
 
