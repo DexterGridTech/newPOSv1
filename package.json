@@ -40,6 +40,7 @@
     "kernel-core-base": "corepack yarn workspace @impos2/kernel-core-base dev",
     "kernel-core-interconnection-master": "corepack yarn workspace @impos2/kernel-core-interconnection master",
     "kernel-core-interconnection-slave": "corepack yarn workspace @impos2/kernel-core-interconnection slave",
+    "kernel-core-navigation": "corepack yarn workspace @impos2/kernel-core-navigation dev",
     "----------": "----------------------------------------",
     "ui:module-device-activate": "yarn workspace @impos2/ui-module-device-activate web",
     "ui:module-user-login": "corepack yarn workspace @impos2/ui-module-user-login web",

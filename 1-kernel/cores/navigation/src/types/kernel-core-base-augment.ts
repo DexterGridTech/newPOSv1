@@ -1,3 +1,4 @@
+
 import {KernelCoreNavigationStateMap} from "./moduleState";
 
 declare module '@impos2/kernel-core-base' {
