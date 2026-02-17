@@ -7,3 +7,8 @@ export enum DisplayMode {
     PRIMARY = 'primary',
     SECONDARY = 'secondary'
 }
+
+export enum WorkSpace {
+    Main = 'main',
+    Branch = 'branch'
+}

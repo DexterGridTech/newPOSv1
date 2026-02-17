@@ -3,13 +3,13 @@ import {ScreenMode} from "../types";
 
 
 export const getScreenMode=(): ScreenMode =>{
-    return ApplicationManager.getInstance().screenMode!
+    return ApplicationManager.getInstance().environment?.screenMode!
 }
 export const getDeviceId=(): string =>{
-    return ApplicationManager.getInstance().deviceId!
+    return ApplicationManager.getInstance().environment?.deviceId!
 }
 export const getProduction=(): boolean =>{
-    return ApplicationManager.getInstance().production!
+    return ApplicationManager.getInstance().environment?.production!
 }
 
 

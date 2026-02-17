@@ -1,4 +1,4 @@
-import {DisplayMode, InstanceMode, kernelCoreInterconnectionState} from "../types";
+import {DisplayMode, InstanceMode, kernelCoreInterconnectionState, WorkSpace} from "../types";
 import {storeEntry} from "@impos2/kernel-core-base";
 
 
@@ -10,6 +10,9 @@ export const getDisplayMode = (): DisplayMode => {
 }
 export const getStandalone = (): boolean => {
     return storeEntry.getStateByKey(kernelCoreInterconnectionState.instanceInfo).standalone
+}
+export const getWorkspace = (): WorkSpace => {
+    return storeEntry.getStateByKey(kernelCoreInterconnectionState.instanceInfo).workspace
 }
 
 

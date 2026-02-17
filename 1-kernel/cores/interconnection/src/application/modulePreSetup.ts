@@ -7,21 +7,29 @@ import {
     ExecutionType,
     INTERNAL,
     LOG_TAGS,
-    logger, RootState,
-    storeEntry
+    logger,
+    RootState
 } from "@impos2/kernel-core-base";
-import {DisplayMode, InstanceInfoState, InstanceMode, kernelCoreInterconnectionState, MasterInfo} from "../types";
+import {
+    DisplayMode,
+    InstanceInfoState,
+    InstanceMode,
+    kernelCoreInterconnectionState,
+    MasterInfo,
+    WorkSpace
+} from "../types";
 import {defaultMasterInfo, defaultSlaveInfo} from "../foundations/masterServer";
 import {kernelCoreInterconnectionCommands} from "../features/commands";
 import {moduleName} from "../moduleName";
 import {statesNeedToSync} from "../foundations/statesNeedToSync";
-import {getInstanceMode} from "../foundations/accessory";
+import {getInstanceMode, getWorkspace} from "../foundations/accessory";
 
 
 export const kernelCoreInterconnectionModulePreSetup = async (config: ApplicationConfig, allModules: AppModule[]) => {
     config.preInitiatedState[kernelCoreInterconnectionState.instanceInfo]
         = preInitiateInstanceInfo(config)
 
+    ActorSystem.getInstance().registerCommandConverter(commandWithWorkspaceConverter)
     ActorSystem.getInstance().registerCommandConverter(remoteCommandConverter)
 
     setStateNeedToSync(allModules)
@@ -34,6 +42,12 @@ const setStateNeedToSync = (allModules: AppModule[]) => {
                 statesNeedToSync.add(slice.name as keyof RootState)
         })
     })
+}
+const commandWithWorkspaceConverter: CommandConverter = {
+    convertCommand: (command: Command<any>) => {
+        command.extra.workspace=getWorkspace()
+        return command
+    }
 }
 
 const remoteCommandConverter: CommandConverter = {
@@ -67,6 +81,9 @@ const preInitiateInstanceInfo = (config: ApplicationConfig) => {
     const enableSlave = environment.displayCount > 1 && standalone
     const instanceMode = standalone ? InstanceMode.MASTER : InstanceMode.SLAVE
     const displayMode = standalone ? DisplayMode.PRIMARY : DisplayMode.SECONDARY
+    const workspace = (instanceMode === InstanceMode.SLAVE && displayMode === DisplayMode.PRIMARY) ? WorkSpace.Branch : WorkSpace.Main
+
+
     defaultMasterInfo.name = `Master-${environment.deviceId}`
     defaultMasterInfo.deviceId = environment.deviceId
     defaultSlaveInfo.name = `Slave-${environment.deviceId}`
@@ -76,6 +93,7 @@ const preInitiateInstanceInfo = (config: ApplicationConfig) => {
     const instanceInfoState: InstanceInfoState = {
         instanceMode: instanceMode,
         displayMode: displayMode,
+        workspace: workspace,
         standalone: standalone,
         enableSlave: enableSlave,
         masterInfo: masterInfo,

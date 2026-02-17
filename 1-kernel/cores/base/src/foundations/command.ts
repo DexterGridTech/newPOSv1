@@ -32,6 +32,7 @@ export abstract class Command<P> {
     readonly payload: P;
     requestId?: string;
     sessionId?: string;
+    extra:Record<string,any> = {};
     private _executePath: ExecutePath[] | null = null;
 
     printId() {
