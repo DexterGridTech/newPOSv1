@@ -1,6 +1,7 @@
 import {createSlice, PayloadAction, Reducer, SliceCaseReducers, ValidateSliceCaseReducers} from "@reduxjs/toolkit";
 import {Command, ModuleSliceConfig, storeEntry} from "@impos2/kernel-core-base";
 import {WorkSpace} from "../types/shared/instance";
+import {getWorkspace} from "./accessory";
 
 // ---- 类型定义 ----
 
@@ -164,6 +165,14 @@ export function getWorkspaceStateByKey<State>(
             `command: ${command.commandName}, baseKey: ${baseKey}`
         )
     }
+    const fullKey = `${baseKey}.${workspace}`
+    return storeEntry.getStateByKey(fullKey as any) as State
+}
+
+// ---- getWorkspaceState ----
+
+export function getWorkspaceState<State>(baseKey: string): State {
+    const workspace = getWorkspace()
     const fullKey = `${baseKey}.${workspace}`
     return storeEntry.getStateByKey(fullKey as any) as State
 }
