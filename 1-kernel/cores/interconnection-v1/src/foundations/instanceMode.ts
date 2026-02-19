@@ -4,17 +4,13 @@ import {InstanceMode} from "../types/shared/instance";
 import {getInstanceMode} from "./accessory";
 import {SyncType} from "../types/shared/syncType";
 
+// ---- 已移至 types/foundations/instanceModeStateKeys.ts 以打破循环引用 ----
+export {createModuleInstanceModeStateKeys} from "../types/foundations/instanceModeStateKeys";
+export type {CreateModuleInstanceModeStateType} from "../types/foundations/instanceModeStateKeys";
+
 // ---- 类型定义 ----
 
 type InstanceModeValues = `${InstanceMode}`
-
-type InstanceModeStateKeys<M extends string, T extends readonly string[]> = {
-    [K in T[number]]: `${M}.${K}`
-}
-
-export type CreateModuleInstanceModeStateType<T extends Record<string, any>> = {
-    [K in keyof T as `${K & string}.${InstanceModeValues}`]: T[K]
-}
 
 export interface InstanceModeSliceResult<
     State,
@@ -46,18 +42,6 @@ export interface InstanceModeModuleSliceConfig<State> {
     persistToStorage: PerInstanceMode<boolean>
     syncType: PerInstanceMode<SyncType>
     persistBlacklist?: PerInstanceMode<string[] | undefined>
-}
-
-// ---- createModuleInstanceModeStateKeys ----
-
-export function createModuleInstanceModeStateKeys<M extends string, T extends readonly string[]>(
-    moduleName: M,
-    keys: T
-): InstanceModeStateKeys<M, T> {
-    return keys.reduce((acc, key) => {
-        acc[key] = `${moduleName}.${key}`;
-        return acc;
-    }, {} as any);
 }
 
 // ---- createInstanceModeSlice ----

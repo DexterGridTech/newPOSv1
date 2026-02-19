@@ -4,7 +4,7 @@ import {
     InstanceInterconnectionState,
 } from "./state";
 import {RequestStatusState} from "./state/requestStatus";
-import {CreateModuleInstanceModeStateType} from "../foundations";
+import {CreateModuleInstanceModeStateType} from "./foundations/instanceModeStateKeys";
 
 export interface KernelCoreInterconnectionState {
     [kernelCoreInterconnectionState.instanceInfo]: InstanceInfoState

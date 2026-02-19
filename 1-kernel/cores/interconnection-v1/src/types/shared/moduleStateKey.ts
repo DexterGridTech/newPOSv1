@@ -1,6 +1,6 @@
 import {moduleName} from "../../moduleName";
 import {createModuleStateKeys} from "@impos2/kernel-core-base-v1";
-import {createModuleInstanceModeStateKeys} from "../../foundations";
+import {createModuleInstanceModeStateKeys} from "../foundations/instanceModeStateKeys";
 
 /**
  * 核心状态常量定义

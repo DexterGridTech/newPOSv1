@@ -1,14 +1,7 @@
-import {ApplicationConfig, AppModule, InitLogger} from "@impos2/kernel-core-base";
-import {registerScreenPart} from "../foundations/screens";
+import {AppModule, InitLogger} from "@impos2/kernel-core-base-v1";
+import {registerScreenPart} from "./screens";
 
-
-export const kernelCoreNavigationModulePreSetup = async (config: ApplicationConfig, allModules: AppModule[]) => {
-
-    logModulesAndScreenParts(allModules)
-    registerScreenParts(allModules)
-}
-
-const logModulesAndScreenParts = (allModules: AppModule[]) => {
+export const registerScreenParts = (allModules: AppModule[]) => {
     const initLogger = new InitLogger()
     initLogger.logStep(3.1, 'Navigation Pre-Setup: Modules & ScreenParts')
 
@@ -26,9 +19,7 @@ const logModulesAndScreenParts = (allModules: AppModule[]) => {
 
     initLogger.logSuccess(`Found ${allModules.length} modules, ${totalScreenParts} screenParts registered`)
     initLogger.logStepEnd()
-}
 
-const registerScreenParts = (allModules: AppModule[]) => {
     allModules.forEach(module => {
         if (module.screenParts) {
             Object.values(module.screenParts).forEach(screenPart => {
