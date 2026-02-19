@@ -2,7 +2,7 @@ import {ActorSystem, INTERNAL, kernelCoreBaseParameters} from "@impos2/kernel-co
 import {dispatchInstanceModeAction} from "./instanceMode";
 import {requestStatusActions} from "../features/slices/requestStatus";
 
-export const registerActorSystem = () => {
+export const registerActorLifecycleListener = () => {
 
     ActorSystem.getInstance().registerLifecycleListener({
         onCommandStart: (actor, command) => {

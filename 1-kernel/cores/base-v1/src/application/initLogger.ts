@@ -4,6 +4,13 @@
  * 初始化日志工具类
  */
 export class InitLogger {
+    private static instance: InitLogger | null = null;
+
+    static getInstance(): InitLogger {
+        if (!InitLogger.instance) InitLogger.instance = new InitLogger();
+        return InitLogger.instance;
+    }
+
     private static readonly COLORS = {
         RESET: '\x1b[0m',
         BRIGHT: '\x1b[1m',

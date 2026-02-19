@@ -40,7 +40,7 @@ export class ApplicationManager {
     async generateStore(config: ApplicationConfig) {
         this.environment = config.environment;
 
-        const initLogger = new InitLogger();
+        const initLogger = InitLogger.getInstance();
 
         // 打印横幅
         initLogger.logBanner();

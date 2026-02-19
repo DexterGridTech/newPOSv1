@@ -15,7 +15,7 @@ const appConfig: ApplicationConfig = {
         deviceId: "123",
         production: false,
         screenMode: ScreenMode.DESKTOP,
-        displayCount: 2,
+        displayCount: 1,
         displayIndex: 0
     },
     preInitiatedState: {},
