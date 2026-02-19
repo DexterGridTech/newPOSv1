@@ -16,8 +16,9 @@ export class ErrorMessagesActor extends Actor {
                     const definedErrorMessage = getDefinedErrorMessageByKey(key)
                     if (!definedErrorMessage) {
                         keysNotFound.push(key);
+                    } else {
+                        keysFound.push(key);
                     }
-                    keysFound.push(key);
                 })
                 if (keysFound.length > 0) {
                     const updateState: Record<string, ValueWithUpdateAt<string> | undefined | null> = {}

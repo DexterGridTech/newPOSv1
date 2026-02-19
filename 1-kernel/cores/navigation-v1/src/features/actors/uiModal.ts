@@ -8,7 +8,7 @@ export class UiModalActor extends Actor {
         async (command): Promise<Record<string, any>> => {
             dispatchWorkspaceAction(uiVariablesActions.openModal({
                 displayMode: getDisplayMode(),
-                model: command.payload.model
+                modal: command.payload.modal
             }), command)
             return {};
         });
@@ -16,7 +16,7 @@ export class UiModalActor extends Actor {
         async (command): Promise<Record<string, any>> => {
             dispatchWorkspaceAction(uiVariablesActions.closeModal({
                 displayMode: getDisplayMode(),
-                modelId: command.payload.modelId
+                modalId: command.payload.modalId
             }), command)
             return {};
         });

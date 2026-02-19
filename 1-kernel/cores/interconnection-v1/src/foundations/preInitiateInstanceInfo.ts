@@ -9,7 +9,7 @@ export const preInitiateInstanceInfo = (config: ApplicationConfig) => {
     const enableSlave = environment.displayCount > 1 && standalone
     const instanceMode = standalone ? InstanceMode.MASTER : InstanceMode.SLAVE
     const displayMode = standalone ? DisplayMode.PRIMARY : DisplayMode.SECONDARY
-    const workspace = (instanceMode === InstanceMode.SLAVE && displayMode === DisplayMode.PRIMARY) ? WorkSpace.BRANCH : WorkSpace.MAIN
+    const workspace = WorkSpace.MAIN
 
 
     defaultMasterInfo.deviceId = environment.deviceId

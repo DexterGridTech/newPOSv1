@@ -3,7 +3,7 @@ import {commandBus, Command} from "./command";
 import {AppError} from "./error";
 import {LOG_TAGS} from "../types";
 import {logger} from "./logger";
-import {DefinedErrorMessage, ErrorCategory, ErrorSeverity} from "./errorMessage";
+import {DefinedErrorMessage, ErrorCategory, ErrorSeverity} from "./errorMessages";
 
 
 /**

@@ -1,3 +1,3 @@
 
-export const INTERNAL='INTERNAL'
+export const INTERNAL = 'INTERNAL'
 

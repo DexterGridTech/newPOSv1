@@ -16,15 +16,16 @@ export class SystemParametersActor extends Actor {
                     const definedSystemParameter = getSystemParameterByKey(key)
                     if (!definedSystemParameter) {
                         keysNotFound.push(key);
+                    } else {
+                        keysFound.push(key);
                     }
-                    keysFound.push(key);
                 })
                 if (keysFound.length > 0) {
-                    const updatedState: Record<string, ValueWithUpdateAt<any> | undefined | null> = {};
+                    const updateState: Record<string, ValueWithUpdateAt<any> | undefined | null> = {};
                     keysFound.forEach(key => {
-                        updatedState[key] = command.payload[key];
+                        updateState[key] = command.payload[key];
                     })
-                    storeEntry.dispatchAction(systemParametersActions.batchUpdateState(updatedState))
+                    storeEntry.dispatchAction(systemParametersActions.batchUpdateState(updateState))
                 }
                 if (keysNotFound.length > 0) {
                     throw new AppError(kernelCoreBaseErrorMessages.systemParameterKeyNotExists, {keysNotFound: keysNotFound}, command)

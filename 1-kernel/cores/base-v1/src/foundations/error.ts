@@ -1,4 +1,4 @@
-import {DefinedErrorMessage, ErrorCategory, ErrorSeverity} from "./errorMessage";
+import {DefinedErrorMessage, ErrorCategory, ErrorSeverity} from "./errorMessages";
 import type {IAppError} from "../types/shared/error";
 
 interface ICommandLike {

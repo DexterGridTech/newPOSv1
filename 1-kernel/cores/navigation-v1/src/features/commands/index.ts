@@ -4,7 +4,9 @@ import {ScreenPart} from "../../types/foundations/screen";
 
 export const kernelCoreNavigationCommands = createModuleCommands(moduleName, {
     //数据同步
-    openModal: defineCommand<{ model: ScreenPart<any> }>(),
-    closeModal: defineCommand<{ modelId: string }>(),
+    openModal: defineCommand<{ modal: ScreenPart<any> }>(),
+    closeModal: defineCommand<{ modalId: string }>(),
+    setUiVariables: defineCommand<Record<string, any>>(),
+    clearUiVariables: defineCommand<string[]>(),
 })
 

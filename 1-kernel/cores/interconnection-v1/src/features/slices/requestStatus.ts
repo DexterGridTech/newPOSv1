@@ -86,8 +86,8 @@ export const slice = createInstanceModeSlice(
                     commandStatus.error = appError
                     commandStatus.status = 'error'
                 }
+                updateRequestStatus(request)
             }
-            updateRequestStatus(request)
         },
         batchUpdateState: (state, action) => {
             batchUpdateState(state, action)

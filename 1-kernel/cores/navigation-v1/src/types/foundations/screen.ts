@@ -24,7 +24,7 @@ export interface ScreenPartRegistration extends ScreenPart<any> {
     readyToEnter?: () => boolean
 }
 
-export const createModelScreen =
+export const createModalScreen =
     <T>(screenPart: ScreenPart<T>, id: string, props: T) => {
         return {...screenPart, id, props}
     }

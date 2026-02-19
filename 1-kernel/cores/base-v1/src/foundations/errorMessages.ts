@@ -1,5 +1,5 @@
 import {kernelCoreBaseState} from "../types/shared/moduleStateKey";
-import  {KeyValue} from "../types/foundations/keyValue";
+import {KeyValue} from "../types/foundations/keyValue";
 import {ErrorCategory, ErrorSeverity} from "../types/shared/error";
 
 const allErrorMessages: Record<string, DefinedErrorMessage> = {}
@@ -14,7 +14,7 @@ export const registerModuleErrorMessages = (_moduleName: string, errorMessages: 
 export const getDefinedErrorMessageByKey = (key: string) => {
     return allErrorMessages[key]
 }
-export class DefinedErrorMessage extends KeyValue< string > {
+export class DefinedErrorMessage extends KeyValue<string> {
     readonly category: ErrorCategory;
     readonly severity: ErrorSeverity;
     constructor(

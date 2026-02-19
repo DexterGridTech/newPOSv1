@@ -1,12 +1,13 @@
 import {useSelector} from 'react-redux';
 import {createSelector} from "@reduxjs/toolkit";
-import {RootState, storeEntry, ValueWithUpdateAt} from "@impos2/kernel-core-base-v1";
-import {getWorkspace, kernelCoreInterconnectionState} from "@impos2/kernel-core-interconnection-v1";
+import {RootState, ValueWithUpdateAt} from "@impos2/kernel-core-base-v1";
+import {kernelCoreInterconnectionState} from "@impos2/kernel-core-interconnection-v1";
 import {kernelCoreNavigationState} from "../types/shared/moduleStateKey";
 import {UiVariablesState} from "../types/state/uiVariables";
-import {uiVariablesActions} from "../features/slices/uiVariables";
+import {kernelCoreNavigationCommands} from "../features/commands";
+import {nanoid} from "nanoid";
 
-export interface UIVariable<T> {
+export interface UiVariable<T> {
     key: string,
     defaultValue: T
 }
@@ -32,13 +33,13 @@ function getOrCreateSelector<T>(variableKey: string, defaultValue: T, stateKey: 
  * 非 hook 的 selector，可在 hook 外部直接调用
  */
 export function selectUiVariable<T>(state: RootState, key: string, defaultValue: T): T {
-    const workspace = (state[kernelCoreInterconnectionState.instanceInfo as keyof RootState] as any)?.workspace
+    const workspace = (state[kernelCoreInterconnectionState.instanceInfo as keyof RootState] as any)?.workspace ?? 'main'
     const stateKey = `${kernelCoreNavigationState.uiVariables}.${workspace}`
     const selector = getOrCreateSelector<T>(key, defaultValue, stateKey)
     return selector(state) as T
 }
 
-export function useEditableUiVariable<T>(variable: UIVariable<T>): {
+export function useEditableUiVariable<T>(variable: UiVariable<T>): {
     value: T;
     setValue: (value: T) => void;
 } {
@@ -47,13 +48,7 @@ export function useEditableUiVariable<T>(variable: UIVariable<T>): {
     )
 
     const setValue = (value: T) => {
-        const currentWorkspace = getWorkspace()
-        const fullSliceName = `${kernelCoreNavigationState.uiVariables}.${currentWorkspace}`
-        const action = uiVariablesActions.updateUiVariable({[variable.key]: value})
-        storeEntry.dispatchAction({
-            ...action,
-            type: `${fullSliceName}/updateUiVariable`
-        })
+        kernelCoreNavigationCommands.setUiVariables({[variable.key]: value}).execute(nanoid(8))
     }
 
     return {

@@ -1,12 +1,12 @@
 export interface SlaveInfo {
-    deviceId:string
-    embedded:boolean
-    addedAt:number
+    deviceId: string
+    embedded: boolean
+    addedAt: number
 }
 
 
 export interface SlaveConnection {
-    deviceId:string
-    connectedAt:number
-    disconnectedAt?:number
+    deviceId: string
+    connectedAt: number
+    disconnectedAt?: number
 }

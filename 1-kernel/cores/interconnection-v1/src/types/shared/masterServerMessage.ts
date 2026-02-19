@@ -5,14 +5,14 @@ export const MasterServerMessageType = {
 } as const;
 
 export interface SyncStateWrapper {
-    key:string
-    stateChanged:Record<string, any>
+    key: string
+    stateChanged: Record<string, any>
 }
 export interface RemoteCommand {
-    commandId:string;
+    commandId: string;
     commandName: string;
     payload: any;
     requestId: string;
     sessionId: string;
-    extra:Record<string, any>
+    extra: Record<string, any>
 }
