@@ -8,7 +8,7 @@ import {MasterInfo} from "../../types";
 const initialState: InstanceInfoState = {
     instanceMode: InstanceMode.MASTER,
     displayMode: DisplayMode.PRIMARY,
-    workspace: WorkSpace.Main,
+    workspace: WorkSpace.MAIN,
     standalone: false,
     enableSlave: false
 }
@@ -19,17 +19,17 @@ const slice = createSlice({
         setInstanceMode: (state, action: PayloadAction<InstanceMode>) => {
             state.instanceMode = action.payload
             if(state.instanceMode===InstanceMode.SLAVE&&state.displayMode===DisplayMode.PRIMARY){
-                state.workspace=WorkSpace.Branch
+                state.workspace=WorkSpace.BRANCH
             }else{
-                state.workspace=WorkSpace.Main
+                state.workspace=WorkSpace.MAIN
             }
         },
         setDisplayMode: (state, action: PayloadAction<DisplayMode>) => {
             state.displayMode = action.payload
             if(state.instanceMode===InstanceMode.SLAVE&&state.displayMode===DisplayMode.PRIMARY){
-                state.workspace=WorkSpace.Branch
+                state.workspace=WorkSpace.BRANCH
             }else{
-                state.workspace=WorkSpace.Main
+                state.workspace=WorkSpace.MAIN
             }
         },
         enableSlave: (state, action: PayloadAction<boolean>) => {

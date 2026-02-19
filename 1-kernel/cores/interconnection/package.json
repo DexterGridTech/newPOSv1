@@ -20,7 +20,7 @@
   "dependencies": {
     "@impos2/kernel-core-base": "*",
     "@reduxjs/toolkit": "^2.11.2",
-    "axios": "^1.13.2",
+    "axios": "^1.13.5",
     "date-fns": "^4.1.0",
     "deep-object-diff": "^1.1.9",
     "lodash": "^4.17.21",

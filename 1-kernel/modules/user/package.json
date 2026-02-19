@@ -18,7 +18,7 @@
   "dependencies": {
     "@impos2/kernel-base": "*",
     "@reduxjs/toolkit": "^2.11.2",
-    "axios": "^1.13.2",
+    "axios": "^1.13.5",
     "deep-diff": "^1.0.2",
     "ky": "^1.13.0",
     "lodash": "^4.17.21",

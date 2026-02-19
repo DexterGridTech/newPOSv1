@@ -2569,11 +2569,29 @@ __metadata:
     "@types/lodash": ^4.17.20
     "@types/node": ^24.10.0
     "@types/redux-persist": ^4.3.1
-    axios: ^1.13.2
+    axios: ^1.13.5
     date-fns: ^4.1.0
     deep-diff: ^1.0.2
     deep-object-diff: ^1.1.9
     lodash: ^4.17.21
+    madge: ^8.0.0
+    nanoid: ^5.1.6
+    redux-observable: ^3.0.0-rc.3
+    redux-persist: ^6.0.0
+    rxjs: ^7.8.2
+    ts-node: ^10.9.2
+    typescript: ^5.9.3
+  languageName: unknown
+  linkType: soft
+
+"@impos2/kernel-core-base-v1@*, @impos2/kernel-core-base-v1@workspace:1-kernel/cores/base-v1":
+  version: 0.0.0-use.local
+  resolution: "@impos2/kernel-core-base-v1@workspace:1-kernel/cores/base-v1"
+  dependencies:
+    "@reduxjs/toolkit": ^2.11.2
+    "@types/node": ^25.0.9
+    axios: ^1.13.5
+    date-fns: ^4.1.0
     madge: ^8.0.0
     nanoid: ^5.1.6
     redux-observable: ^3.0.0-rc.3
@@ -2592,7 +2610,30 @@ __metadata:
     "@types/deep-diff": ^1.0.5
     "@types/lodash": ^4.17.20
     "@types/node": ^25.0.9
-    axios: ^1.13.2
+    axios: ^1.13.5
+    date-fns: ^4.1.0
+    deep-object-diff: ^1.1.9
+    lodash: ^4.17.21
+    madge: ^8.0.0
+    nanoid: ^5.1.6
+    redux-observable: ^3.0.0-rc.3
+    redux-persist: ^6.0.0
+    rxjs: ^7.8.2
+    ts-node: ^10.9.2
+    typescript: ^5.9.3
+  languageName: unknown
+  linkType: soft
+
+"@impos2/kernel-core-interconnection-v1@workspace:1-kernel/cores/interconnection-v1":
+  version: 0.0.0-use.local
+  resolution: "@impos2/kernel-core-interconnection-v1@workspace:1-kernel/cores/interconnection-v1"
+  dependencies:
+    "@impos2/kernel-core-base-v1": "*"
+    "@reduxjs/toolkit": ^2.11.2
+    "@types/deep-diff": ^1.0.5
+    "@types/lodash": ^4.17.20
+    "@types/node": ^25.0.9
+    axios: ^1.13.5
     date-fns: ^4.1.0
     deep-object-diff: ^1.1.9
     lodash: ^4.17.21
@@ -2615,7 +2656,7 @@ __metadata:
     "@types/deep-diff": ^1.0.5
     "@types/lodash": ^4.17.20
     "@types/node": ^25.0.9
-    axios: ^1.13.2
+    axios: ^1.13.5
     date-fns: ^4.1.0
     deep-object-diff: ^1.1.9
     lodash: ^4.17.21
@@ -2639,12 +2680,13 @@ __metadata:
     "@types/deep-diff": ^1.0.5
     "@types/lodash": ^4.17.20
     "@types/node": ^25.0.9
-    axios: ^1.13.2
+    axios: ^1.13.5
     date-fns: ^4.1.0
     deep-object-diff: ^1.1.9
     lodash: ^4.17.21
     madge: ^8.0.0
     nanoid: ^5.1.6
+    react-redux: ^9.1.0
     redux-observable: ^3.0.0-rc.3
     redux-persist: ^6.0.0
     rxjs: ^7.8.2
@@ -2662,7 +2704,7 @@ __metadata:
     "@types/deep-diff": ^1.0.5
     "@types/lodash": ^4.17.20
     "@types/node": ^24.10.0
-    axios: ^1.13.2
+    axios: ^1.13.5
     deep-diff: ^1.0.2
     ky: ^1.13.0
     lodash: ^4.17.21
@@ -2713,6 +2755,20 @@ __metadata:
     tsx: ^4.21.0
     typescript: ^5.9.3
     ws: ^8.19.0
+  languageName: unknown
+  linkType: soft
+
+"@impos2/master-ws-server-dual@workspace:0-mock-server/master-ws-server-dual":
+  version: 0.0.0-use.local
+  resolution: "@impos2/master-ws-server-dual@workspace:0-mock-server/master-ws-server-dual"
+  dependencies:
+    "@types/node": ^24.10.0
+    "@types/ws": ^8.5.13
+    date-fns: ^4.1.0
+    nanoid: ^3.3.7
+    tsx: ^4.21.0
+    typescript: ^5.9.3
+    ws: ^8.18.0
   languageName: unknown
   linkType: soft
 
@@ -5302,14 +5358,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.13.2":
-  version: 1.13.4
-  resolution: "axios@npm:1.13.4"
+"axios@npm:^1.13.5":
+  version: 1.13.5
+  resolution: "axios@npm:1.13.5"
   dependencies:
-    follow-redirects: ^1.15.6
-    form-data: ^4.0.4
+    follow-redirects: ^1.15.11
+    form-data: ^4.0.5
     proxy-from-env: ^1.1.0
-  checksum: 1d1f360cf54c8a4b602d4d5af1b13f04612be3876a7958e9cd49c5869448399d75978ce4a099839d55ccb9f9aff9d49a312db879dba9d76fac994479fd1ad11c
+  checksum: 985024c4a32f837053f198f02a308fd6f8bfb4053a2f21e39e37992bc6d06917f008679c36b3e7f0f0c9060c85ffe37c61e58d2ac662595d68dc1b89cef78de8
   languageName: node
   linkType: hard
 
@@ -8096,7 +8152,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.15.6":
+"follow-redirects@npm:^1.15.11":
   version: 1.15.11
   resolution: "follow-redirects@npm:1.15.11"
   peerDependenciesMeta:
@@ -8122,7 +8178,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"form-data@npm:^4.0.4":
+"form-data@npm:^4.0.5":
   version: 4.0.5
   resolution: "form-data@npm:4.0.5"
   dependencies:

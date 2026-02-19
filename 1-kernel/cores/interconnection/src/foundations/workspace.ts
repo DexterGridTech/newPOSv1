@@ -36,12 +36,15 @@ interface WorkspaceSliceResult<
     }
 }
 
+/** 支持统一设置(boolean)或按 workspace 分别设置 */
+type PerWorkspace<T> = T | Record<WorkSpaceValues, T>
+
 export interface WorkspaceModuleSliceConfig<State> {
     name: string
     reducers: Record<WorkSpaceValues, Reducer<State>>
-    statePersistToStorage: boolean
-    stateSyncToSlave: boolean
-    persistBlacklist?: string[]
+    statePersistToStorage: PerWorkspace<boolean>
+    stateSyncToSlave: PerWorkspace<boolean>
+    persistBlacklist?: PerWorkspace<string[] | undefined>
 }
 
 // ---- createModuleWorkspaceStateKeys ----
@@ -98,6 +101,12 @@ export function createWorkspaceSlice<
 
 // ---- toModuleSliceConfigs ----
 
+function resolvePerWorkspace<T>(value: PerWorkspace<T>, ws: WorkSpaceValues): T {
+    return typeof value === 'object' && value !== null && !Array.isArray(value)
+        ? (value as Record<WorkSpaceValues, T>)[ws]
+        : value as T
+}
+
 export function toModuleSliceConfigs<State>(
     config: WorkspaceModuleSliceConfig<State>
 ): Record<string, ModuleSliceConfig<State>> {
@@ -106,12 +115,13 @@ export function toModuleSliceConfigs<State>(
 
     for (const ws of workspaceValues) {
         const sliceName = `${config.name}.${ws}`
+        const persistBlacklist = resolvePerWorkspace(config.persistBlacklist ?? undefined, ws)
         result[sliceName] = {
             name: sliceName,
             reducer: config.reducers[ws],
-            statePersistToStorage: config.statePersistToStorage,
-            stateSyncToSlave: config.stateSyncToSlave,
-            persistBlacklist: config.persistBlacklist
+            statePersistToStorage: resolvePerWorkspace(config.statePersistToStorage, ws),
+            stateSyncToSlave: resolvePerWorkspace(config.stateSyncToSlave, ws),
+            ...(persistBlacklist ? {persistBlacklist} : {})
         }
     }
     return result
@@ -154,7 +164,7 @@ export function dispatchWorkspaceAction(
 
 // ---- getWorkspaceStateByKey ----
 
-export function getWorkspaceStateByKey<State>(
+export function getWorkspaceStateByCommand<State>(
     baseKey: string,
     command: Command<any>
 ): State {
