@@ -1,11 +1,10 @@
 import {useSelector} from 'react-redux';
 import {createSelector} from "@reduxjs/toolkit";
-import {RootState, ValueWithUpdateAt} from "@impos2/kernel-core-base-v1";
+import {RootState, shortId, ValueWithUpdateAt} from "@impos2/kernel-core-base-v1";
 import {kernelCoreInterconnectionState} from "@impos2/kernel-core-interconnection-v1";
 import {kernelCoreNavigationState} from "../types/shared/moduleStateKey";
 import {UiVariablesState} from "../types/state/uiVariables";
 import {kernelCoreNavigationCommands} from "../features/commands";
-import {nanoid} from "nanoid";
 
 export interface UiVariable<T> {
     key: string,
@@ -48,7 +47,7 @@ export function useEditableUiVariable<T>(variable: UiVariable<T>): {
     )
 
     const setValue = (value: T) => {
-        kernelCoreNavigationCommands.setUiVariables({[variable.key]: value}).execute(nanoid(8))
+        kernelCoreNavigationCommands.setUiVariables({[variable.key]: value}).execute(shortId())
     }
 
     return {

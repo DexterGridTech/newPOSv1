@@ -2,6 +2,7 @@ import {Command, CommandConverter, LOG_TAGS, logger} from "@impos2/kernel-core-b
 import {getInstanceMode, getWorkspace} from "./accessory";
 import {kernelCoreInterconnectionCommands} from "../features/commands";
 import {moduleName} from "../moduleName";
+import {InstanceMode, WorkSpace} from "../types";
 
 export const remoteCommandConverter: CommandConverter = {
     convertCommand: (command: Command<any>) => {
@@ -25,7 +26,12 @@ export const commandWithExtra: CommandConverter = {
             command.extra.workspace = getWorkspace()
         }
         if (!command.extra.instanceMode) {
-            command.extra.instanceMode = getInstanceMode()
+            if (command.extra.workspace === WorkSpace.MAIN) {
+                //如果操作的是main，且未指定InstanceMode，默认使用master，slave的话就会使用远程方法
+                command.extra.instanceMode = InstanceMode.MASTER
+            } else {
+                command.extra.instanceMode = getInstanceMode()
+            }
         }
         return command
     }
