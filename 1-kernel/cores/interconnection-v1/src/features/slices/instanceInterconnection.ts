@@ -31,11 +31,13 @@ const slice = createSlice({
             state.disconnectedAt = Date.now()
             state.connectionError = action.payload.connectionError
             state.startToSync = false
-            state.connectionHistory.push({
-                connectedAt: state.connectedAt!,
-                disconnectedAt: state.disconnectedAt!,
-                connectionError: state.connectionError!
-            })
+            if (state.connectedAt) {
+                state.connectionHistory.push({
+                    connectedAt: state.connectedAt,
+                    disconnectedAt: state.disconnectedAt!,
+                    connectionError: state.connectionError!
+                })
+            }
         },
         startToSync: (state) => {
             state.startToSync = true

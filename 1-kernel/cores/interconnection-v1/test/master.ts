@@ -1,15 +1,18 @@
+
 import {
     ApplicationConfig,
     ApplicationManager,
-    kernelCoreBaseCommands, ScreenMode, storeEntry,
+    kernelCoreBaseCommands,
+    ScreenMode,
+    storeEntry,
     // @ts-ignore
-} from "@impos2/kernel-core-base";
+} from "@impos2/kernel-core-base-v1";
 import {kernelCoreInterconnectionModule, kernelCoreInterconnectionState} from "../src/index";
 
 
 const appConfig: ApplicationConfig = {
     environment: {
-        deviceId:"123",
+        deviceId: "123",
         production: false,
         screenMode: ScreenMode.DESKTOP,
         displayCount: 2,

@@ -10,13 +10,12 @@ export const syncStateToRemote = async (key: string, stateChanged: Record<string
             key: key,
             stateChanged: stateChanged,
         }
-        logger.log([moduleName, LOG_TAGS.System, "syncStateToRemote"], "state sync--> ", syncState)
+        logger.log([moduleName, LOG_TAGS.System, "syncStateToRemote"], `sync state ${key}`, syncState)
         try {
             wsClient.sendMessage(MasterServerMessageType.SYNC_STATE, syncState)
-        } catch {
-            (error: Error | any) => {
-                logger.error([moduleName, LOG_TAGS.System, "syncStateToRemote"], "state sync error--> ", error)
-            }
+        } catch (error: any) {
+            logger.error([moduleName, LOG_TAGS.System, "syncStateToRemote"], `state sync error:${error.message}`, error)
+            throw error
         }
     }
 }

@@ -6,7 +6,7 @@ export const MasterServerMessageType = {
 
 export interface SyncStateWrapper {
     key:string
-    stateChanged:Record<string, { oldValue: any; newValue: any }>
+    stateChanged:Record<string, any>
 }
 export interface RemoteCommand {
     commandId:string;

@@ -12,18 +12,12 @@ export const kernelCoreInterconnectionCommands = createModuleCommands(moduleName
     setMasterInfo: defineCommand<void>(),
     clearMasterInfo: defineCommand<void>(),
 
-    //master 连接
-    startMasterServer: defineCommand<void>(),
-    masterConnectedToServer: defineCommand<void>(),
-    slaveConnected: defineCommand<string>(),
-    slaveDisconnected: defineCommand<void>(),
-    masterDisconnectedFromServer: defineCommand<string>(),
-
-
-    //slave 连接
-    connectMasterServer: defineCommand<void>(),
-    slaveConnectedToServer: defineCommand<void>(),
-    slaveDisconnectedFromServer: defineCommand<string>(),
+    //连接管理（统一 master/slave）
+    startConnection: defineCommand<void>(),
+    connectedToServer: defineCommand<void>(),
+    disconnectedFromServer: defineCommand<string>(),
+    peerConnected: defineCommand<string>(),
+    peerDisconnected: defineCommand<void>(),
 
     //远程方法
     sendToRemoteExecute: defineCommand<Command<any>>(),

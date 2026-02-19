@@ -130,9 +130,8 @@ export class DualWebSocketClient {
             throw lastError ?? {type: ConnectionErrorType.ALL_SERVERS_FAILED, message: '所有服务器连接失败'};
         } catch (error) {
             this.isConnecting = false;
-            this.cleanup();
-            this.setState(ConnectionState.DISCONNECTED);
             const ce = error as ConnectionError;
+            // 不在此处 cleanup/setState，由 CONNECT_FAILED 内部 handler 统一处理
             this.emit(ConnectionEventType.CONNECT_FAILED, {error: ce, timestamp: Date.now()} as ConnectFailedEvent);
             throw ce;
         }

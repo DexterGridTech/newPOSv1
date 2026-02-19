@@ -37,6 +37,13 @@ export const kernelCoreInterconnectionErrorMessages = {
         'slave.not.connected',
         "副设备未与服务器连接"
     ),
+    remoteNotConnected: new DefinedErrorMessage(
+        ErrorCategory.VALIDATION,
+        ErrorSeverity.HIGH,
+        "远端设备未连接",
+        'remote.not.connected',
+        "远端设备未连接"
+    ),
     remoteCommandSendError: new DefinedErrorMessage(
         ErrorCategory.VALIDATION,
         ErrorSeverity.HIGH,

@@ -121,7 +121,7 @@ export const createStateSyncMiddleware = (): Middleware => {
 
             // 如果有变化，立即同步
             if (Object.keys(changesToSync).length > 0) {
-                logger.log([moduleName, LOG_TAGS.System, "stateSyncMiddleware"], "同步状态变化:", changesToSync)
+                // logger.log([moduleName, LOG_TAGS.System, "stateSyncMiddleware"], "同步状态变化:", changesToSync)
 
                 const syncPromises = Object.keys(changesToSync).map(stateKey =>
                     syncStateToRemote(stateKey, changesToSync[stateKey])

@@ -10,17 +10,15 @@ export class InitializeActor extends Actor {
         async (command): Promise<Record<string, any>> => {
             logger.log([moduleName, LOG_TAGS.Actor, "InitializeActor"], 'Initializing kernel core interconnection...')
             const instanceInfo = storeEntry.getStateByKey(kernelCoreInterconnectionState.instanceInfo)
-            if (getInstanceMode() === InstanceMode.MASTER
-                && instanceInfo.enableSlave) {
+            const isMaster = getInstanceMode() === InstanceMode.MASTER
+            const shouldConnect = isMaster ? instanceInfo.enableSlave : !!instanceInfo.masterInfo
+            if (shouldConnect) {
+                const delay = isMaster
+                    ? kernelCoreInterconnectionParameters.masterServerBootstrapDelayAfterStartup.value
+                    : kernelCoreInterconnectionParameters.slaveConnectDelayAfterStartup.value
                 setTimeout(() => {
-                    kernelCoreInterconnectionCommands.startMasterServer().executeInternally()
-                }, kernelCoreInterconnectionParameters.masterServerBootstrapDelayAfterStartup.value)
-            }
-            if (getInstanceMode() === InstanceMode.SLAVE
-                && instanceInfo.masterInfo) {
-                setTimeout(() => {
-                    kernelCoreInterconnectionCommands.connectMasterServer().executeInternally()
-                }, kernelCoreInterconnectionParameters.slaveConnectDelayAfterStartup.value)
+                    kernelCoreInterconnectionCommands.startConnection().executeInternally()
+                }, delay)
             }
             return Promise.resolve({});
         });

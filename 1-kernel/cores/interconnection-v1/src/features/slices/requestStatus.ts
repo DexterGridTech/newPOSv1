@@ -62,7 +62,7 @@ export const slice = createInstanceModeSlice(
             command: Command<any>,
             result?: Record<string, any>
         }>) => {
-            logger.log([moduleName, LOG_TAGS.Reducer, "requestStatus"], `保持命令结束=>${action.payload.command.printId()}`)
+            logger.log([moduleName, LOG_TAGS.Reducer, "requestStatus"], `保存命令结束=>${action.payload.command.printId()}`)
             const {actor, command, result} = action.payload
             const request = state[command.requestId!]
             if (request) {
@@ -91,7 +91,7 @@ export const slice = createInstanceModeSlice(
         },
         batchUpdateState: (state, action) => {
             batchUpdateState(state, action)
-            logger.log([moduleName, LOG_TAGS.Reducer, kernelCoreInterconnectionInstanceState.requestStatus], 'batch update state', action.payload)
+            logger.log([moduleName, LOG_TAGS.Reducer, "requestStatus"], action.type, action.payload)
         }
     }
 )

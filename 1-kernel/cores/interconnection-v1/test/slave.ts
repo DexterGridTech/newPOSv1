@@ -1,11 +1,13 @@
 import {
     ApplicationConfig,
     ApplicationManager,
-    kernelCoreBaseCommands, kernelCoreBaseState, ScreenMode, storeEntry,
+    kernelCoreBaseCommands,
+    kernelCoreBaseState,
+    ScreenMode,
     // @ts-ignore
-} from "@impos2/kernel-core-base";
+} from "@impos2/kernel-core-base-v1";
 import {
-    kernelCoreInterconnectionCommands,
+    kernelCoreInterconnectionInstanceState,
     kernelCoreInterconnectionModule,
     kernelCoreInterconnectionState
 } from "../src/index";
@@ -13,7 +15,7 @@ import {
 
 const appConfig: ApplicationConfig = {
     environment: {
-        deviceId:"123",
+        deviceId: "123",
         production: false,
         screenMode: ScreenMode.DESKTOP,
         displayCount: 2,
@@ -24,23 +26,23 @@ const appConfig: ApplicationConfig = {
 }
 
 async function initializeApp() {
-    const {store}=await ApplicationManager.getInstance().generateStore(appConfig)
+    const {store} = await ApplicationManager.getInstance().generateStore(appConfig)
     // 执行命令
     kernelCoreBaseCommands.initialize().executeInternally()
 
-    setTimeout(() => {
-        const requestId = "123"
-        // 订阅 store 变化，打印 requestStatus
-        store.subscribe(() => {
-            const state = store.getState()
-            const requestStatus = state[kernelCoreBaseState.requestStatus][requestId]
-            console.log('requestStatus 变化:', requestStatus)
-        })
-        console.log('-------------------')
-        // 执行命令
-        kernelCoreInterconnectionCommands.test().execute(requestId)
-        console.log('===================')
-    },10000)
+    // setTimeout(() => {
+    //     const requestId = "456"
+    //     // 订阅 store 变化，打印 requestStatus
+    //     store.subscribe(() => {
+    //         const state = store.getState()
+    //         const requestStatus = state[`${kernelCoreInterconnectionInstanceState.requestStatus}.slave`][requestId]
+    //         console.log('requestStatus 变化:', requestStatus)
+    //     })
+    //     console.log('-------------------')
+    //     // 执行命令
+    //     // kernelCoreInterconnectionCommands.test().execute(requestId)
+    //     console.log('===================')
+    // }, 10000)
 }
 
 initializeApp().catch(error => {
