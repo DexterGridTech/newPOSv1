@@ -1,6 +1,6 @@
 import {configureStore, EnhancedStore, Middleware, PayloadAction, Reducer} from "@reduxjs/toolkit";
 import {Persistor, persistReducer, persistStore} from "redux-persist";
-import {Environment, RootState, ScreenMode, storeEntry} from "../types";
+import {Environment, RootState, storeEntry} from "../types";
 import {ModuleDependencyResolver} from "./moduleDependencyResolver";
 import {ApplicationConfig} from "./types";
 import {setEnvironment} from "../foundations/environment";
@@ -8,9 +8,10 @@ import {
     ActorSystem,
     registerModuleCommands,
     registerModuleErrorMessages,
-    registerModuleSystemParameter, screenPartRegisters
+    registerModuleSystemParameter,
+    screenPartRegisters, stateStorage
 } from "../foundations";
-import {getStateStorage, getStateStoragePrefix} from "../foundations/stateStorage";
+import {getStateStoragePrefix} from "../foundations/adapters/stateStorage";
 import {combineEpics, createEpicMiddleware} from "redux-observable";
 import {InitLogger} from "./initLogger";
 
@@ -170,7 +171,6 @@ export class ApplicationManager {
                     if (persisted) {
                         persistedCount++;
                         modulePersisted++;
-                        const stateStorage = getStateStorage();
                         const stateStoragePrefix = getStateStoragePrefix();
                         const storageKey = `${stateStoragePrefix}-${sliceConfig.name}`;
                         const persistConfig = {

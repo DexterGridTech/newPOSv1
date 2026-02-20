@@ -7,7 +7,7 @@ import axios, {CancelTokenSource} from 'axios';
 import {ApiManager} from './ApiManager';
 import {HttpMethod, RequestWrapper, ResponseWrapper} from '../../types/shared/http';
 import { moduleName } from '../../moduleName';
-import {logger} from "../logger";
+import {logger} from "../adapters/logger";
 import {LOG_TAGS} from "../../types";
 
 /**

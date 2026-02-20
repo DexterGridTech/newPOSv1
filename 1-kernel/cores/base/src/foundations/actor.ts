@@ -2,7 +2,7 @@ import {moduleName} from "../moduleName";
 import {commandBus, Command} from "./command";
 import {AppError} from "./error";
 import {LOG_TAGS} from "../types";
-import {logger} from "./logger";
+import {logger} from "./adapters/logger";
 import {DefinedErrorMessage, ErrorCategory, ErrorSeverity} from "./errorMessages";
 
 

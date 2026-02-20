@@ -1,5 +1,6 @@
 import {DefinedErrorMessage, ErrorCategory, ErrorSeverity} from "./errorMessages";
 import type {IAppError} from "../types/shared/error";
+import {APIErrorCode, ResponseWrapper} from "../types";
 
 interface ICommandLike {
     id?: string;
@@ -60,27 +61,29 @@ export class AppError extends Error implements IAppError {
     }
 }
 
-// export class APIError extends AppError {
-//     constructor(responseWrapper: ResponseWrapper<any>, extraMessage?: string, command?: ICommandLike) {
-//         let definedErrorInfo: DefinedErrorInfo
-//         if (Object.values(APIErrorCode).includes(responseWrapper.code as APIErrorCode)) {
-//             definedErrorInfo = {
-//                 category: ErrorCategory.NETWORK,
-//                 severity: ErrorSeverity.MEDIUM,
-//                 key: "API_NETWORK_ERROR",
-//                 defaultMessage: "网络错误:" + responseWrapper.message
-//             }
-//         } else {
-//             definedErrorInfo = {
-//                 category: ErrorCategory.BUSINESS,
-//                 severity: ErrorSeverity.LOW,
-//                 key: "SERVER_BUSINESS_ERROR",
-//                 defaultMessage: responseWrapper.message ?? "业务逻辑错误"
-//             }
-//         }
-//         super(definedErrorInfo, extraMessage, command);
-//         // 保持正确的原型链
-//         Object.setPrototypeOf(this, new.target.prototype);
-//         Error.captureStackTrace(this, this.constructor);
-//     }
-// }
+export class APIError extends AppError {
+    constructor(responseWrapper: ResponseWrapper<any>, extraMessage?: string, command?: ICommandLike) {
+        let definedErrorInfo: DefinedErrorMessage
+        if (Object.values(APIErrorCode).includes(responseWrapper.code as APIErrorCode)) {
+            definedErrorInfo = new DefinedErrorMessage(
+                ErrorCategory.NETWORK,
+                ErrorSeverity.MEDIUM,
+                "网络错误",
+                'server.network.error',
+                `网络错误 ${responseWrapper.message}`
+            )
+        } else {
+            definedErrorInfo = new DefinedErrorMessage(
+                ErrorCategory.BUSINESS,
+                ErrorSeverity.LOW,
+                "业务逻辑错误",
+                'server.business.error',
+                `${responseWrapper.message}`
+            )
+        }
+        super(definedErrorInfo, extraMessage, command);
+        // 保持正确的原型链
+        Object.setPrototypeOf(this, new.target.prototype);
+        Error.captureStackTrace(this, this.constructor);
+    }
+}

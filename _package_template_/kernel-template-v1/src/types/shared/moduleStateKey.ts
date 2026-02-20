@@ -1,9 +1,9 @@
 import {moduleName} from "../../moduleName";
-import {createModuleStateKeys} from "@impos2/kernel-core-base-v1";
+import {createModuleStateKeys} from "@impos2/kernel-core-base";
 import {
     createModuleInstanceModeStateKeys,
     createModuleWorkspaceStateKeys
-} from "@impos2/kernel-core-interconnection-v1";
+} from "@impos2/kernel-core-interconnection";
 
 
 /**

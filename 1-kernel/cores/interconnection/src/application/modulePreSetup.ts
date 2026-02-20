@@ -8,16 +8,19 @@ import {preInitiateInstanceInfo} from "../foundations/preInitiateInstanceInfo";
 export const kernelCoreInterconnectionModulePreSetup = async (config: ApplicationConfig, allModules: AppModule[]) => {
     const initLogger = InitLogger.getInstance()
 
+    initLogger.logNames(['register ActorLifecycleListener'])
     registerActorLifecycleListener()
-    initLogger.logNames(['registerActorLifecycleListener'])
 
+    initLogger.logNames(['preInitiate InstanceInfo'])
     preInitiateInstanceInfo(config)
-    initLogger.logNames(['preInitiateInstanceInfo'])
 
+    initLogger.logNames(['ActorSystem registerCommandConverter commandWithExtra'])
     ActorSystem.getInstance().registerCommandConverter(commandWithExtra)
-    ActorSystem.getInstance().registerCommandConverter(remoteCommandConverter)
-    initLogger.logNames(['commandWithExtra', 'remoteCommandConverter'])
 
+    initLogger.logNames(['ActorSystem registerCommandConverter remoteCommandConverter'])
+    ActorSystem.getInstance().registerCommandConverter(remoteCommandConverter)
+
+    initLogger.logNames(['register states synchronization'])
     setStateNeedToSync(allModules)
 }
 

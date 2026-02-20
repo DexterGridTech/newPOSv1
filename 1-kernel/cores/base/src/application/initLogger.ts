@@ -63,7 +63,8 @@ export class InitLogger {
     }
 
     logModule(module: any, index: number, total: number): void {
-        const moduleHeader = `│  ├─ [${index + 1}/${total}] ${module.name} v${module.version}`;
+        const priority = module.preSetupPriority != null ? ` (p:${module.preSetupPriority})` : '';
+        const moduleHeader = `│  ├─ [${index + 1}/${total}] ${module.name}${priority} v${module.version}`;
         console.log(this.colorize(moduleHeader, 'MAGENTA', 'BRIGHT'));
 
         const actorCount = Object.keys(module.actors || {}).length;
@@ -97,6 +98,7 @@ export class InitLogger {
         const totalCommands = allModules.reduce((sum, m) => sum + Object.keys(m.commands || {}).length, 0);
         const totalSlices = allModules.reduce((sum, m) => sum + Object.keys(m.slices || {}).length, 0);
         const totalEpics = allModules.reduce((sum, m) => sum + Object.keys(m.epics || {}).length, 0);
+        const totalScreenParts = allModules.reduce((sum, m) => sum + Object.keys(m.screenParts || {}).length, 0);
 
         // 直接使用固定格式，手动对齐
         const summary = `
@@ -108,6 +110,7 @@ export class InitLogger {
 ║  ✓ Total Commands:     ${String(totalCommands).padEnd(46)}║
 ║  ✓ Total Slices:       ${String(totalSlices).padEnd(46)}║
 ║  ✓ Total Epics:        ${String(totalEpics).padEnd(46)}║
+║  ✓ Total ScreenParts:  ${String(totalScreenParts).padEnd(46)}║
 ║  ⏱️  Time Elapsed:      ${String(elapsed + 'ms').padEnd(46)}║
 ╚═══════════════════════════════════════════════════════════════════════╝
         `;

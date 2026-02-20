@@ -5,7 +5,7 @@
 import {
     CreateModuleInstanceModeStateType,
     CreateModuleWorkspaceStateType
-} from "@impos2/kernel-core-interconnection-v1";
+} from "@impos2/kernel-core-interconnection";
 
 export interface KernelXXXState {
 }

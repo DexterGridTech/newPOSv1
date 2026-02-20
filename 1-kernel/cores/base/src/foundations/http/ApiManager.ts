@@ -23,7 +23,7 @@ import {
     ServerConfig
 } from '../../types/shared/http';
 import {LOG_TAGS} from "../../types";
-import {logger} from "../logger";
+import {logger} from "../adapters/logger";
 
 /**
  * API 管理器类

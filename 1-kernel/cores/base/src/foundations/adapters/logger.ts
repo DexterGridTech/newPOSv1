@@ -1,42 +1,43 @@
-import {getEnvironment} from "./environment";
+import {getEnvironment} from "../environment";
 
-export const logger = {
+export interface Logger {
+    debug: (tags: string[], message: string, data?: any) => void
+    log: (tags: string[], message: string, data?: any) => void
+    warn: (tags: string[], message: string, data?: any) => void
+    error: (tags: string[], message: string, data?: any) => void
+}
+
+export const logger:Logger = {
     debug: (tags: string[], message: string, data?: any) => {
-        const tag = `[${tags.join('.')}]`
         if (!getEnvironment()?.production) {
+            const tag = `[${tags.join('.')}]`
             console.debug(tag, message, data ?? '')
         }
         loggers.forEach(logger => logger.debug(tags, message, data))
     },
     log: (tags: string[], message: string, data?: any) => {
-        const tag = `[${tags.join('.')}]`
         if (!getEnvironment()?.production) {
+            const tag = `[${tags.join('.')}]`
             console.log(tag, message, data ?? '')
         }
         loggers.forEach(logger => logger.log(tags, message, data))
     },
     warn: (tags: string[], message: string, data?: any) => {
-        const tag = `[${tags.join('.')}]`
         if (!getEnvironment()?.production) {
+            const tag = `[${tags.join('.')}]`
             console.warn(tag, message, data ?? '')
         }
         loggers.forEach(logger => logger.warn(tags, message, data))
     },
     error: (tags: string[], message: string, data?: any) => {
-        const tag = `[${tags.join('.')}]`
         if (!getEnvironment()?.production) {
+            const tag = `[${tags.join('.')}]`
             console.error(tag, message, data ?? '')
         }
         loggers.forEach(logger => logger.error(tags, message, data))
     },
 }
 
-const loggers: ILogger[] = []
-export const registerLogger = (logger: ILogger) => loggers.push(logger)
+const loggers: Logger[] = []
+export const registerLogger = (logger: Logger) => loggers.push(logger)
 
-export interface ILogger {
-    debug: (tags: string[], message: string, data?: any) => void
-    log: (tags: string[], message: string, data?: any) => void
-    warn: (tags: string[], message: string, data?: any) => void
-    error: (tags: string[], message: string, data?: any) => void
-}

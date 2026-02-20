@@ -1,4 +1,4 @@
-import {DefinedErrorMessage, ErrorCategory, ErrorSeverity} from "@impos2/kernel-core-base-v1";
+import {DefinedErrorMessage, ErrorCategory, ErrorSeverity} from "@impos2/kernel-core-base";
 
 
 export const kernelXXXErrorMessages = {

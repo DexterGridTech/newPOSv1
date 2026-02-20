@@ -2748,21 +2748,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/master-ws-server@workspace:0-mock-server/master-ws-server":
-  version: 0.0.0-use.local
-  resolution: "@impos2/master-ws-server@workspace:0-mock-server/master-ws-server"
-  dependencies:
-    "@types/node": ^24.10.0
-    "@types/ws": ^8.5.13
-    date-fns: ^4.1.0
-    nanoid: ^3.3.7
-    ts-node: ^10.9.2
-    tsx: ^4.21.0
-    typescript: ^5.9.3
-    ws: ^8.18.0
-  languageName: unknown
-  linkType: soft
-
 "@impos2/ui-core-base-2@*, @impos2/ui-core-base-2@workspace:2-ui/cores/base-2":
   version: 0.0.0-use.local
   resolution: "@impos2/ui-core-base-2@workspace:2-ui/cores/base-2"
@@ -2780,6 +2765,24 @@ __metadata:
     react-native-vector-icons: ^10.2.0
     react-native-web: ^0.21.0
     react-redux: ^9.1.0
+    typescript: ^5.9.3
+  languageName: unknown
+  linkType: soft
+
+"@impos2/ui-core-base@workspace:2-ui/cores/base":
+  version: 0.0.0-use.local
+  resolution: "@impos2/ui-core-base@workspace:2-ui/cores/base"
+  dependencies:
+    "@reduxjs/toolkit": ^2.11.2
+    "@types/node": ^25.0.9
+    axios: ^1.13.5
+    date-fns: ^4.1.0
+    madge: ^8.0.0
+    nanoid: ^5.1.6
+    redux-observable: ^3.0.0-rc.3
+    redux-persist: ^6.0.0
+    rxjs: ^7.8.2
+    ts-node: ^10.9.2
     typescript: ^5.9.3
   languageName: unknown
   linkType: soft
