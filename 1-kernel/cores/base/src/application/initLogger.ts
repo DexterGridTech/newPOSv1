@@ -34,13 +34,13 @@ export class InitLogger {
 
     logBanner(): void {
         const banner = `
-╔═══════════════════════════════════════════════════════════════════════╗
-║                                                                       ║
-║         NewPOS System With Refined Architecture                       ║
-║         Designed By Dexter assisted by ClaudeCode                     ║
-║         Application Initializing...                                   ║
-║                                                                       ║
-╚═══════════════════════════════════════════════════════════════════════╝
+╔═════════════════════════════════════════════════════════╗
+║                                                         ║
+║    NewPOS System With Refined Architecture              ║
+║    Designed By Dexter assisted by ClaudeCode            ║
+║    Application Initializing...                          ║
+║                                                         ║
+╚═════════════════════════════════════════════════════════╝
         `;
         console.log(this.colorize(banner, 'YELLOW', 'BRIGHT'));
         this.startTime = Date.now();

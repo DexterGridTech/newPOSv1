@@ -5,6 +5,7 @@
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/1-kernel/cores/interconnection/idea" />
       <excludeFolder url="file://$MODULE_DIR$/_package_template_" />
+      <excludeFolder url="file://$MODULE_DIR$/_old_" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
