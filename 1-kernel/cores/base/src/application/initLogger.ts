@@ -73,13 +73,15 @@ export class InitLogger {
         const epicCount = Object.keys(module.epics || {}).length;
         const errorCount = Object.keys(module.errorMessages || {}).length;
         const paramCount = Object.keys(module.parameters || {}).length;
+        const screenPartCount = Object.keys(module.screenParts || {}).length;
 
         console.log(this.colorize(`│  │  ├─ Actors: ${actorCount}`, actorCount > 0 ? 'CYAN' : 'WHITE'));
         console.log(this.colorize(`│  │  ├─ Commands: ${commandCount}`, commandCount > 0 ? 'CYAN' : 'WHITE'));
         console.log(this.colorize(`│  │  ├─ Slices: ${sliceCount}`, sliceCount > 0 ? 'CYAN' : 'WHITE'));
         console.log(this.colorize(`│  │  ├─ Epics: ${epicCount}`, epicCount > 0 ? 'CYAN' : 'WHITE'));
         console.log(this.colorize(`│  │  ├─ ErrorMessages: ${errorCount}`, errorCount > 0 ? 'CYAN' : 'WHITE'));
-        console.log(this.colorize(`│  │  └─ Parameters: ${paramCount}`, paramCount > 0 ? 'CYAN' : 'WHITE'));
+        console.log(this.colorize(`│  │  ├─ Parameters: ${paramCount}`, paramCount > 0 ? 'CYAN' : 'WHITE'));
+        console.log(this.colorize(`│  │  └─ ScreenParts: ${screenPartCount}`, screenPartCount > 0 ? 'CYAN' : 'WHITE'));
     }
 
     logNames(names: string[]): void {

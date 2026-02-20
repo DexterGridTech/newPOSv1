@@ -1,4 +1,6 @@
 import {getScreenMode, ScreenMode, ScreenPart, ScreenPartRegistration} from "@impos2/kernel-core-base";
+import {ComponentType} from "react";
+import {AlertInfo} from "../types";
 
 /**
  * ScreenPart 注册信息存储
@@ -22,6 +24,11 @@ export function registerScreenPart(registration: ScreenPartRegistration) {
         registry.set(registration.partKey, registration)
     })
 }
+export function getScreenPartComponentType(key: string): ComponentType<any> | undefined {
+    const screenMode = getScreenMode()
+    return screenRegistryMap[screenMode].get(key)?.componentType
+}
+
 
 
 /**
@@ -63,3 +70,24 @@ export function getScreenPartsByContainerKey(containerKey: string): ScreenPartRe
         .filter(part => part.containerKey === containerKey)
         .sort((a, b) => (a.indexInContainer ?? 0) - (b.indexInContainer ?? 0))
 }
+
+
+export const createModelScreen =
+    <T>(screenPart: ScreenPart<any>, id: string, props: T) => {
+        return {...screenPart, id, props}
+    }
+
+export const defaultAlertPartKey = "alert"
+
+export const createAlert =
+    (id: string, props: AlertInfo) => {
+        return {
+            id,
+            props,
+            partKey: defaultAlertPartKey,
+            name: "Alert",
+            title:"Alert",
+            description:"Alert",
+            screenMode: [ScreenMode.DESKTOP, ScreenMode.MOBILE]
+        }
+    }

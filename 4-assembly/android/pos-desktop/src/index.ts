@@ -8,8 +8,8 @@ import {assemblyAndroidDesktopParameters} from "./supports/parameters";
 import {assemblyAndroidDesktopEpics} from "./features/epics";
 import {assemblyAndroidDesktopMiddlewares} from "./features/middlewares";
 import {AppModule} from "@impos2/kernel-core-base";
-import {kernelCoreNavigationModule} from "@impos2/kernel-core-navigation";
 import {adapterAndroidModule} from "@impos2/adapter-android";
+import {assemblyAndroidDesktopScreenParts} from "./ui";
 
 export const assemblyAndroidDesktopModule: AppModule = {
     name: moduleName,
@@ -23,6 +23,7 @@ export const assemblyAndroidDesktopModule: AppModule = {
     parameters: assemblyAndroidDesktopParameters,
     dependencies: [adapterAndroidModule],
     modulePreSetup: assemblyAndroidDesktopModulePreSetup,
+    screenParts: assemblyAndroidDesktopScreenParts,
     preSetupPriority: 0
 }
 

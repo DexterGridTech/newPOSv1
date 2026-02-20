@@ -1,6 +1,6 @@
 import {ScreenMode, ScreenPart} from "@impos2/kernel-core-base";
 
-export interface Modal<T> {
+export interface ModalScreen<T> {
     id: string,
     screenPartKey: string,
     open: boolean
@@ -21,18 +21,3 @@ export interface AlertInfo {
     confirmCommandName?: string
     confirmCommandPayload?: any
 }
-
-export const defaultAlertScreenPartKey = "application.default.alert"
-
-export const createAlert =
-    (id: string, props: AlertInfo) => {
-        return {
-            id,
-            props,
-            partKey: defaultAlertScreenPartKey,
-            name: "Alert",
-            title:"Alert",
-            description:"Alert",
-            screenMode: [ScreenMode.DESKTOP, ScreenMode.MOBILE]
-        }
-    }

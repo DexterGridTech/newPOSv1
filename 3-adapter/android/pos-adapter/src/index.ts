@@ -8,8 +8,8 @@ import {adapterAndroidParameters} from "./supports/parameters";
 import {adapterAndroidEpics} from "./features/epics";
 import {adapterAndroidMiddlewares} from "./features/middlewares";
 import {AppModule} from "@impos2/kernel-core-base";
-import {kernelCoreNavigationModule} from "@impos2/kernel-core-navigation";
 import {uiCoreBaseModule} from "@impos2/ui-core-base";
+import {adapterAndroidScreenParts} from "./ui";
 
 export const adapterAndroidModule: AppModule = {
     name: moduleName,
@@ -23,6 +23,7 @@ export const adapterAndroidModule: AppModule = {
     parameters: adapterAndroidParameters,
     dependencies: [uiCoreBaseModule],
     modulePreSetup: adapterAndroidModulePreSetup,
+    screenParts:adapterAndroidScreenParts,
     preSetupPriority: 0
 }
 

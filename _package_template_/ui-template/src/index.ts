@@ -9,6 +9,7 @@ import {uiXXXEpics} from "./features/epics";
 import {uiXXXMiddlewares} from "./features/middlewares";
 import {AppModule} from "@impos2/kernel-core-base";
 import {kernelCoreNavigationModule} from "@impos2/kernel-core-navigation";
+import {uiXXXScreenParts} from "./ui";
 
 export const uiXXXModule: AppModule = {
     name: moduleName,
@@ -22,6 +23,7 @@ export const uiXXXModule: AppModule = {
     parameters: uiXXXParameters,
     dependencies: [kernelCoreNavigationModule],
     modulePreSetup: uiXXXModulePreSetup,
+    screenParts:uiXXXScreenParts,
     preSetupPriority: 0
 }
 
