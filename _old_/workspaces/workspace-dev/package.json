@@ -1,0 +1,30 @@
+{
+  "name": "@impos2/workspace-dev",
+  "version": "1.0.0",
+  "description": "POS Kernel base - Dev Workspace",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "react-native": "./src/index.ts",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "build-for-product": "rm -rf dist && tsc",
+    "dev": "ts-node src/index.ts",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit",
+    "check:circular": "madge --circular --extensions ts src"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@impos2/kernel-base": "*"
+  },
+  "devDependencies": {
+    "@types/deep-diff": "^1.0.5",
+    "@types/lodash": "^4.17.20",
+    "@types/node": "^24.10.0",
+    "madge": "^8.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}

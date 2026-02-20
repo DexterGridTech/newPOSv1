@@ -8,6 +8,7 @@ import {uiCoreBaseParameters} from "./supports/parameters";
 import {uiCoreBaseEpics} from "./features/epics";
 import {uiCoreBaseMiddlewares} from "./features/middlewares";
 import {AppModule} from "@impos2/kernel-core-base";
+import {kernelCoreNavigationModule} from "@impos2/kernel-core-navigation";
 
 export const uiCoreBaseModule: AppModule = {
     name: moduleName,
@@ -19,7 +20,7 @@ export const uiCoreBaseModule: AppModule = {
     actors: uiCoreBaseActors,
     errorMessages: uiCoreBaseErrorMessages,
     parameters: uiCoreBaseParameters,
-    dependencies: [],
+    dependencies: [kernelCoreNavigationModule],
     modulePreSetup: uiCoreBaseModulePreSetup,
     preSetupPriority: 0
 }

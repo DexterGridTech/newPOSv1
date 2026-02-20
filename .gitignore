@@ -170,3 +170,4 @@ pnpm-lock.yaml
 *.rej
 .cache/
 /.claude/
+/_old_/
