@@ -1,38 +1,17 @@
-/**
- * ID生成器
- */
+import { generate, createTranslator } from 'short-uuid';
 
-import { customAlphabet } from 'nanoid';
-
-/**
- * 生成UUID格式的ID
- */
-const nanoid = customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', 21);
-
-/**
- * 生成唯一ID
- */
 export function generateId(): string {
-  return nanoid();
+  return generate();
 }
 
-/**
- * 生成token
- */
 export function generateToken(): string {
-  return customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', 32)();
+  return createTranslator('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz').generate();
 }
 
-/**
- * 生成激活码
- */
 export function generateActiveCode(): string {
-  return customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 12)();
+  return generate().slice(0, 12).toUpperCase();
 }
 
-/**
- * 生成解绑码
- */
 export function generateDeactiveCode(): string {
-  return customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 12)();
+  return generate().slice(0, 12).toUpperCase();
 }

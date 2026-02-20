@@ -1,0 +1,38 @@
+import {moduleName} from "./moduleName";
+import {adapterAndroidSlice} from "./features/slices";
+import {adapterAndroidActors} from "./features/actors";
+import {adapterAndroidCommands} from "./features/commands";
+import {adapterAndroidModulePreSetup} from "./application/modulePreSetup";
+import {adapterAndroidErrorMessages} from "./supports/errors";
+import {adapterAndroidParameters} from "./supports/parameters";
+import {adapterAndroidEpics} from "./features/epics";
+import {adapterAndroidMiddlewares} from "./features/middlewares";
+import {AppModule} from "@impos2/kernel-core-base";
+import {kernelCoreNavigationModule} from "@impos2/kernel-core-navigation";
+import {uiCoreBaseModule} from "@impos2/ui-core-base";
+
+export const adapterAndroidModule: AppModule = {
+    name: moduleName,
+    version: '0.0.1',
+    slices: adapterAndroidSlice,
+    middlewares: adapterAndroidMiddlewares,
+    epics: adapterAndroidEpics,
+    commands: adapterAndroidCommands,
+    actors: adapterAndroidActors,
+    errorMessages: adapterAndroidErrorMessages,
+    parameters: adapterAndroidParameters,
+    dependencies: [uiCoreBaseModule],
+    modulePreSetup: adapterAndroidModulePreSetup,
+    preSetupPriority: 0
+}
+
+
+export * from "./types";
+export * from "./foundations";
+export * from "./supports";
+export * from "./hooks";
+export {adapterAndroidSlice} from "./features/slices";
+export {adapterAndroidCommands} from "./features/commands";
+export {adapterAndroidErrorMessages} from "./supports/errors";
+export {adapterAndroidParameters} from "./supports/parameters";
+export {adapterAndroidApis} from "./supports";

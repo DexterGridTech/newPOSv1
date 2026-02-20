@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "date-fns": "^4.1.0",
-    "nanoid": "^3.3.7",
+    "short-uuid": "^6.0.3",
     "ws": "^8.18.0"
   },
   "devDependencies": {

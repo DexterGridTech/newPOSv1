@@ -1,7 +1,7 @@
 import http from 'http';
 import url from 'url';
 import WebSocket, {WebSocketServer} from 'ws';
-import {nanoid} from 'nanoid';
+import shortUUID from 'short-uuid';
 import {format} from 'date-fns';
 import {DeviceConnectionManager} from './DeviceConnectionManager';
 import {RetryQueue} from './RetryQueue';
@@ -94,7 +94,7 @@ export class MasterSlaveWebSocketServer {
           return;
         }
 
-        const token = nanoid(32);
+        const token = shortUUID.generate();
         const result = this.deviceManager.preRegisterDevice(reg, token);
 
         if (result.success) {
@@ -242,7 +242,7 @@ export class MasterSlaveWebSocketServer {
   private notifyMaster(masterDeviceId: string, type: string, data: any) {
     const master = this.deviceManager.getMaster(masterDeviceId);
     if (master) {
-      this.trySend(master.socket, {from: '__system', id: nanoid(), type, data});
+      this.trySend(master.socket, {from: '__system', id: shortUUID.generate(), type, data});
     }
   }
 
@@ -273,7 +273,7 @@ export class MasterSlaveWebSocketServer {
 
   private sendHeartbeat() {
     const msg: MessageWrapper = {
-      from: '__system', id: nanoid(),
+      from: '__system', id: shortUUID.generate(),
       type: SYSTEM_NOTIFICATION.HEARTBEAT,
       data: {timestamp: Date.now()}
     };

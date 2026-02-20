@@ -1,5 +1,5 @@
 import {Subject} from "rxjs";
-import {nanoid} from "nanoid";
+import {shortId} from "./idGenerator";
 import {INTERNAL} from "../types/shared/command";
 
 export const commandBus = new Subject<Command<any>>();
@@ -26,7 +26,7 @@ export const getCommandByName = (commandName: string, payload: any) => {
 
 export abstract class Command<P> {
     abstract readonly commandName: string;
-    id = nanoid(8);
+    id = shortId();
     readonly timestamp = Date.now();
     readonly payload: P;
     requestId?: string;

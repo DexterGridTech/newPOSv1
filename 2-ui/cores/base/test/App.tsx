@@ -17,7 +17,9 @@ export const DevApp: React.FC = () => {
     }, []);
 
     if (!storeReady) {
-        return <div>Loading store...</div>;
+        return <View>
+            <Text>Loading</Text>
+        </View>
     }
 
     return (

@@ -1,0 +1,12 @@
+pluginManagement { includeBuild("../../../../node_modules/@react-native/gradle-plugin") }
+plugins { id("com.facebook.react.settings") }
+// Monorepo 中禁用 autolinking，手动配置依赖
+// extensions.configure(com.facebook.react.ReactSettingsExtension) { ex -> ex.autolinkLibrariesFromCommand() }
+rootProject.name = 'PosDesktop'
+include ':app'
+includeBuild('../../../../node_modules/@react-native/gradle-plugin')
+
+// 引入 pos-adapter 的 TurboModule 库
+def posAdapterTurboModuleDir = file("../../../../3-adapter/android/pos-adapter/android/turbomodule-lib")
+include ':pos-adapter-turbomodule'
+project(':pos-adapter-turbomodule').projectDir = posAdapterTurboModuleDir

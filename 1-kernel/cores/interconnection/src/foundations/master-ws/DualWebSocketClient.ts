@@ -1,6 +1,5 @@
-import {nanoid} from 'nanoid/non-secure';
 import axios from 'axios';
-import {logger} from "@impos2/kernel-core-base";
+import {logger, shortId} from "@impos2/kernel-core-base";
 import {moduleName} from '../../moduleName';
 import {
     MessageWrapper, DeviceRegistration, RegistrationResponse,
@@ -243,7 +242,7 @@ export class DualWebSocketClient {
             this.hasReceivedFirstHeartbeat = true;
             this.sendRaw({
                 from: this.config!.deviceRegistration.deviceId,
-                id: nanoid(), type: SYSTEM_NOTIFICATION.HEARTBEAT_ACK,
+                id: shortId(), type: SYSTEM_NOTIFICATION.HEARTBEAT_ACK,
                 data: msg.data
             });
             return;
@@ -258,7 +257,7 @@ export class DualWebSocketClient {
         if (!this.config) throw new Error('客户端未配置');
         const msg: MessageWrapper = {
             from: this.config.deviceRegistration.deviceId,
-            id: nanoid(), type, data
+            id: shortId(), type, data
         };
         if (this.isWsOpen()) {
             this.sendRaw(msg);

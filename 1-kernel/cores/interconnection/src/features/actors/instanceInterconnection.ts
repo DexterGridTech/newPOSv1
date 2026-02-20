@@ -21,7 +21,7 @@ import {
     WSMessageEvent
 } from "../../foundations";
 import {Subject} from "rxjs";
-import {nanoid} from "nanoid/non-secure";
+import {shortId} from "@impos2/kernel-core-base";
 import {statesToSyncFromMasterToSlave, statesToSyncFromSlaveToMaster} from "../../foundations/statesNeedToSync";
 import {syncStateToRemote} from "../../foundations/syncStateToRemote";
 import {instanceInterconnectionActions} from "../slices/instanceInterconnection";
@@ -67,7 +67,7 @@ export class InstanceInterconnectionActor extends Actor {
                 const summary = collectLocalStateSummary(statesToSyncFromMasterToSlave)
                 kernelCoreInterconnectionCommands.synStateAtConnected(summary)
                     .withExtra({instanceMode: InstanceMode.MASTER})
-                    .execute(nanoid(8))
+                    .execute(shortId())
             }
             return {}
         })
@@ -97,7 +97,7 @@ export class InstanceInterconnectionActor extends Actor {
             const summary = collectLocalStateSummary(statesToSyncFromSlaveToMaster)
             kernelCoreInterconnectionCommands.synStateAtConnected(summary)
                 .withExtra({instanceMode: InstanceMode.SLAVE})
-                .execute(nanoid(8))
+                .execute(shortId())
             return {}
         })
 
