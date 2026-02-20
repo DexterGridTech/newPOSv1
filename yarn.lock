@@ -2537,9 +2537,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/kernel-core-base@*, @impos2/kernel-core-base@workspace:1-kernel/cores/base":
+"@impos2/kernel-core-base@*, @impos2/kernel-core-base@workspace:1-kernel/1.1-cores/base":
   version: 0.0.0-use.local
-  resolution: "@impos2/kernel-core-base@workspace:1-kernel/cores/base"
+  resolution: "@impos2/kernel-core-base@workspace:1-kernel/1.1-cores/base"
   dependencies:
     "@reduxjs/toolkit": ^2.11.2
     "@types/node": ^25.0.9
@@ -2554,9 +2554,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/kernel-core-interconnection@*, @impos2/kernel-core-interconnection@workspace:1-kernel/cores/interconnection":
+"@impos2/kernel-core-interconnection@*, @impos2/kernel-core-interconnection@workspace:1-kernel/1.1-cores/interconnection":
   version: 0.0.0-use.local
-  resolution: "@impos2/kernel-core-interconnection@workspace:1-kernel/cores/interconnection"
+  resolution: "@impos2/kernel-core-interconnection@workspace:1-kernel/1.1-cores/interconnection"
   dependencies:
     "@impos2/kernel-core-base": "*"
     "@reduxjs/toolkit": ^2.11.2
@@ -2576,9 +2576,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/kernel-core-navigation@*, @impos2/kernel-core-navigation@workspace:1-kernel/cores/navigation":
+"@impos2/kernel-core-navigation@*, @impos2/kernel-core-navigation@workspace:1-kernel/1.1-cores/navigation":
   version: 0.0.0-use.local
-  resolution: "@impos2/kernel-core-navigation@workspace:1-kernel/cores/navigation"
+  resolution: "@impos2/kernel-core-navigation@workspace:1-kernel/1.1-cores/navigation"
   dependencies:
     "@impos2/kernel-core-base": "*"
     "@impos2/kernel-core-interconnection": "*"
@@ -2642,9 +2642,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/kernel-terminal@workspace:1-kernel/modules/terminal":
+"@impos2/kernel-terminal@workspace:1-kernel/1.2-modules/terminal":
   version: 0.0.0-use.local
-  resolution: "@impos2/kernel-terminal@workspace:1-kernel/modules/terminal"
+  resolution: "@impos2/kernel-terminal@workspace:1-kernel/1.2-modules/terminal"
   dependencies:
     "@impos2/kernel-core-base": "*"
     "@impos2/kernel-core-interconnection": "*"
@@ -2676,9 +2676,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/ui-core-base@workspace:2-ui/cores/base":
+"@impos2/ui-core-base@workspace:2-ui/2.1-cores/base":
   version: 0.0.0-use.local
-  resolution: "@impos2/ui-core-base@workspace:2-ui/cores/base"
+  resolution: "@impos2/ui-core-base@workspace:2-ui/2.1-cores/base"
   dependencies:
     "@impos2/kernel-core-base": "*"
     "@impos2/kernel-core-interconnection": "*"

@@ -1,10 +1,6 @@
 {
   "extends": "@react-native/typescript-config/tsconfig.json",
   "compilerOptions": {
-    "baseUrl": "./",
-    "paths": {
-      "@impos2/kernel-base": ["../../../1-kernel/base/src"]
-    },
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
