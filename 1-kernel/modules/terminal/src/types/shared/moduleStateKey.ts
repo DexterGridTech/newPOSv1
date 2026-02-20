@@ -1,5 +1,5 @@
 import {moduleName} from "../../moduleName";
-import {createModuleStateKeys} from "@impos2/kernel-core-base-v1";
+import {createModuleStateKeys} from "@impos2/kernel-core-base";
 
 /**
  * 核心状态常量定义

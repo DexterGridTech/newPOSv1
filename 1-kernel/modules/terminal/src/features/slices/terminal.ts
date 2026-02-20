@@ -2,8 +2,8 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {moduleName} from "../../moduleName";
 import {TerminalState} from "../../types/state/terminalState";
 import {kernelTerminalState} from "../../types/shared/moduleStateKey";
-import {batchUpdateState, LOG_TAGS, logger, ModuleSliceConfig, ValueWithUpdateAt} from "@impos2/kernel-core-base-v1";
-import {SyncType} from "@impos2/kernel-core-interconnection-v1";
+import {batchUpdateState, LOG_TAGS, logger, ModuleSliceConfig, ValueWithUpdateAt} from "@impos2/kernel-core-base";
+import {SyncType} from "@impos2/kernel-core-interconnection";
 import {Unit} from "../../types/shared/unit";
 
 const initialState: TerminalState = {}

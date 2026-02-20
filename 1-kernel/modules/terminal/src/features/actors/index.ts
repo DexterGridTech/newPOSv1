@@ -1,5 +1,5 @@
 import {moduleName} from "../../moduleName";
-import {createActors} from "@impos2/kernel-core-base-v1";
+import {createActors} from "@impos2/kernel-core-base";
 import {InitializeActor} from "./initialize";
 
 

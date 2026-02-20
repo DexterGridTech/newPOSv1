@@ -17,9 +17,9 @@
     "check:circular": "madge --circular --extensions ts --warning src/"
   },
   "dependencies": {
-    "@impos2/kernel-core-base-v1": "*",
-    "@impos2/kernel-core-interconnection-v1": "*",
-    "@impos2/kernel-core-navigation-v1": "*",
+    "@impos2/kernel-core-base": "*",
+    "@impos2/kernel-core-interconnection": "*",
+    "@impos2/kernel-core-navigation": "*",
     "@reduxjs/toolkit": "^2.11.2",
     "axios": "^1.13.5",
     "date-fns": "^4.1.0",

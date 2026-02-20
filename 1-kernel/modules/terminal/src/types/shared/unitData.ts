@@ -1,4 +1,4 @@
-import {ValueWithUpdateAt} from "@impos2/kernel-core-base-v1";
+import {ValueWithUpdateAt} from "@impos2/kernel-core-base";
 
 export enum UnitType {
     ENTITY = 'ENTITY',

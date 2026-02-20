@@ -7,9 +7,9 @@ import {kernelTerminalErrorMessages} from "./supports/errors";
 import {kernelTerminalParameters} from "./supports/parameters";
 import {kernelTerminalEpics} from "./features/epics";
 import {kernelTerminalMiddlewares} from "./features/middlewares";
-import {AppModule, kernelCoreBaseModule} from "@impos2/kernel-core-base-v1";
-import {kernelCoreInterconnectionModule} from "@impos2/kernel-core-interconnection-v1";
-import {kernelCoreNavigationModule} from "@impos2/kernel-core-navigation-v1";
+import {AppModule, kernelCoreBaseModule} from "@impos2/kernel-core-base";
+import {kernelCoreInterconnectionModule} from "@impos2/kernel-core-interconnection";
+import {kernelCoreNavigationModule} from "@impos2/kernel-core-navigation";
 
 export const kernelTerminalModule: AppModule = {
     name: moduleName,

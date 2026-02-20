@@ -6,7 +6,7 @@ import {
     kernelCoreBaseModule,
     ScreenMode
     // @ts-ignore
-} from "@impos2/kernel-core-base-v1";
+} from "@impos2/kernel-core-base";
 import {kernelTerminalModule} from "../src";
 
 

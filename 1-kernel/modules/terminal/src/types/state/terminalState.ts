@@ -1,5 +1,5 @@
 import {Unit} from "../shared/unit";
-import {ValueWithUpdateAt} from "@impos2/kernel-core-base-v1";
+import {ValueWithUpdateAt} from "@impos2/kernel-core-base";
 
 export interface TerminalState {
     terminal?: ValueWithUpdateAt<Unit>

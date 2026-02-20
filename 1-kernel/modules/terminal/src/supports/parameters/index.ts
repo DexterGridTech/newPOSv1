@@ -1,4 +1,4 @@
-import {DefinedSystemParameter} from "@impos2/kernel-core-base-v1";
+import {DefinedSystemParameter} from "@impos2/kernel-core-base";
 
 
 export const kernelTerminalParameters = {
