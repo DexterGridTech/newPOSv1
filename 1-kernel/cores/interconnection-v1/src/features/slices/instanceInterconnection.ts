@@ -1,8 +1,9 @@
-import {ModuleSliceConfig} from "@impos2/kernel-core-base-v1";
+import {LOG_TAGS, logger, ModuleSliceConfig} from "@impos2/kernel-core-base-v1";
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {kernelCoreInterconnectionState} from "../../types/shared/moduleStateKey";
 import {InstanceInterconnectionState, ServerConnectionStatus} from "../../types";
 import {SyncType} from "../../types/shared/syncType";
+import {moduleName} from "../../moduleName";
 
 const initialState: InstanceInterconnectionState = {
     serverConnectionStatus: ServerConnectionStatus.DISCONNECTED,
@@ -17,16 +18,19 @@ const slice = createSlice({
     initialState,
     reducers: {
         connecting: (state) => {
+            logger.log([moduleName, LOG_TAGS.Reducer, "instanceInterconnection"], 'connecting')
             state.serverConnectionStatus = ServerConnectionStatus.CONNECTING
             state.connectedAt = null
             state.disconnectedAt = null
             state.connectionError = null
         },
         connected: (state) => {
+            logger.log([moduleName, LOG_TAGS.Reducer, "instanceInterconnection"], 'connected')
             state.serverConnectionStatus = ServerConnectionStatus.CONNECTED
             state.connectedAt = Date.now()
         },
         disconnected: (state, action: PayloadAction<{ connectionError: string }>) => {
+            logger.log([moduleName, LOG_TAGS.Reducer, "instanceInterconnection"], 'disconnected')
             state.serverConnectionStatus = ServerConnectionStatus.DISCONNECTED
             state.disconnectedAt = Date.now()
             state.connectionError = action.payload.connectionError
@@ -40,15 +44,18 @@ const slice = createSlice({
             }
         },
         startToSync: (state) => {
+            logger.log([moduleName, LOG_TAGS.Reducer, "instanceInterconnection"], 'startToSync')
             state.startToSync = true
         },
         slaveConnected: (state, action: PayloadAction<string>) => {
+            logger.log([moduleName, LOG_TAGS.Reducer, "instanceInterconnection"], 'slaveConnected',action.payload)
             state.master.slaveConnection = {
                 deviceId: action.payload,
                 connectedAt: Date.now()
             }
         },
         slaveDisconnected: (state) => {
+            logger.log([moduleName, LOG_TAGS.Reducer, "instanceInterconnection"], 'slaveDisconnected')
             if (state.master.slaveConnection) {
                 state.master.slaveConnection = {
                     ...state.master.slaveConnection!,

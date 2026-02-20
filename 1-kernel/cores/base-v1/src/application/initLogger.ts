@@ -63,7 +63,7 @@ export class InitLogger {
     }
 
     logModule(module: any, index: number, total: number): void {
-        const moduleHeader = `│  ├─ [${index + 1}/${total}] ${module.name}`;
+        const moduleHeader = `│  ├─ [${index + 1}/${total}] ${module.name} v${module.version}`;
         console.log(this.colorize(moduleHeader, 'MAGENTA', 'BRIGHT'));
 
         const actorCount = Object.keys(module.actors || {}).length;

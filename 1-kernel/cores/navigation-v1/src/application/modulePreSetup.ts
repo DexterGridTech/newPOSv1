@@ -1,8 +1,10 @@
-import {registerScreenParts} from "../foundations/registerScreenParts";
-import {ApplicationConfig, AppModule} from "@impos2/kernel-core-base-v1";
+import {addScreenPartRegister, ApplicationConfig, AppModule} from "@impos2/kernel-core-base-v1";
+import {registerScreenPart} from "../foundations/screens";
 
 
 export const kernelCoreNavigationModulePreSetup = async (config: ApplicationConfig, allModules: AppModule[]) => {
-    registerScreenParts(allModules)
+    addScreenPartRegister({
+        registerScreenPart
+    })
 }
 

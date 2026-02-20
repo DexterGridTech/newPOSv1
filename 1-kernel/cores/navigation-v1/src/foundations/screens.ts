@@ -1,5 +1,4 @@
-import {getScreenMode, ScreenMode} from "@impos2/kernel-core-base-v1";
-import {ScreenPart, ScreenPartRegistration} from "../types/foundations/screen";
+import {getScreenMode, ScreenMode, ScreenPart, ScreenPartRegistration} from "@impos2/kernel-core-base-v1";
 
 /**
  * ScreenPart 注册信息存储

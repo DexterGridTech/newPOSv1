@@ -5,7 +5,7 @@ import {createModuleWorkspaceStateKeys} from "@impos2/kernel-core-interconnectio
  * 核心状态常量定义
  * 零依赖，供其他模块使用
  */
-export const kernelCoreNavigationState = createModuleWorkspaceStateKeys(
+export const kernelCoreNavigationWorkspaceState = createModuleWorkspaceStateKeys(
     moduleName,
     [
         'uiVariables'

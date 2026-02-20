@@ -7,7 +7,7 @@ import {kernelXXXErrorMessages} from "./supports/errors";
 import {kernelXXXParameters} from "./supports/parameters";
 import {kernelXXXEpics} from "./features/epics";
 import {kernelXXXMiddlewares} from "./features/middlewares";
-import {AppModule} from "@impos2/kernel-core-base";
+import {AppModule} from "@impos2/kernel-core-base-v1";
 
 export const kernelXXXModule: AppModule = {
     name: moduleName,

@@ -2,7 +2,7 @@ import {useSelector} from 'react-redux';
 import {createSelector} from "@reduxjs/toolkit";
 import {RootState, shortId, ValueWithUpdateAt} from "@impos2/kernel-core-base-v1";
 import {kernelCoreInterconnectionState} from "@impos2/kernel-core-interconnection-v1";
-import {kernelCoreNavigationState} from "../types/shared/moduleStateKey";
+import {kernelCoreNavigationWorkspaceState} from "../types/shared/moduleStateKey";
 import {UiVariablesState} from "../types/state/uiVariables";
 import {kernelCoreNavigationCommands} from "../features/commands";
 
@@ -33,7 +33,7 @@ function getOrCreateSelector<T>(variableKey: string, defaultValue: T, stateKey: 
  */
 export function selectUiVariable<T>(state: RootState, key: string, defaultValue: T): T {
     const workspace = (state[kernelCoreInterconnectionState.instanceInfo as keyof RootState] as any)?.workspace ?? 'main'
-    const stateKey = `${kernelCoreNavigationState.uiVariables}.${workspace}`
+    const stateKey = `${kernelCoreNavigationWorkspaceState.uiVariables}.${workspace}`
     const selector = getOrCreateSelector<T>(key, defaultValue, stateKey)
     return selector(state) as T
 }

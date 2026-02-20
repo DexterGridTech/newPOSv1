@@ -1,8 +1,7 @@
 import {useSelector} from "react-redux";
 import {getFirstReadyScreenPartByContainerKey} from "../foundations/screens";
-import {ScreenPart} from "../types/foundations/screen";
 import {selectUiVariable, UiVariable} from "./useUiVariable";
-import {RootState, ScreenMode} from "@impos2/kernel-core-base-v1";
+import {RootState, ScreenMode, ScreenPart} from "@impos2/kernel-core-base-v1";
 
 const getCurrenReadyScreenPart = (containerKey: string, defaultValue: ScreenPart<any>, fromIndex?: number) =>
     getFirstReadyScreenPartByContainerKey(containerKey, fromIndex ?? -1) ?? defaultValue

@@ -21,7 +21,7 @@ export const kernelCoreBaseModule: AppModule = {
     parameters: kernelCoreBaseParameters,
     dependencies: [],
     modulePreSetup: kernelCoreBaseModulePreSetup,
-    preSetupPriority: 0//无加载优先级需求
+    preSetupPriority: 1//kernel core 模块使用1-100
 }
 
 

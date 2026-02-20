@@ -42,6 +42,8 @@
     "kernel-core-interconnection-slave-v1": "corepack yarn workspace @impos2/kernel-core-interconnection-v1 slave",
     "kernel-core-navigation-v1": "corepack yarn workspace @impos2/kernel-core-navigation-v1 dev",
     "----------": "----------------------------------------",
+    "kernel-module-terminal": "corepack yarn workspace @impos2/kernel-terminal dev",
+    "-------------": "----------------------------------------",
     "ui:module-device-activate": "yarn workspace @impos2/ui-module-device-activate web",
     "ui:module-user-login": "corepack yarn workspace @impos2/ui-module-user-login web",
     "ui:module-system-admin": "corepack yarn workspace @impos2/ui-module-system-admin web",

@@ -2670,7 +2670,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/kernel-core-navigation-v1@workspace:1-kernel/cores/navigation-v1":
+"@impos2/kernel-core-navigation-v1@*, @impos2/kernel-core-navigation-v1@workspace:1-kernel/cores/navigation-v1":
   version: 0.0.0-use.local
   resolution: "@impos2/kernel-core-navigation-v1@workspace:1-kernel/cores/navigation-v1"
   dependencies:
@@ -2780,6 +2780,27 @@ __metadata:
     tsx: ^4.21.0
     typescript: ^5.9.3
     ws: ^8.19.0
+  languageName: unknown
+  linkType: soft
+
+"@impos2/kernel-terminal@workspace:1-kernel/modules/terminal":
+  version: 0.0.0-use.local
+  resolution: "@impos2/kernel-terminal@workspace:1-kernel/modules/terminal"
+  dependencies:
+    "@impos2/kernel-core-base-v1": "*"
+    "@impos2/kernel-core-interconnection-v1": "*"
+    "@impos2/kernel-core-navigation-v1": "*"
+    "@reduxjs/toolkit": ^2.11.2
+    "@types/node": ^25.0.9
+    axios: ^1.13.5
+    date-fns: ^4.1.0
+    madge: ^8.0.0
+    nanoid: ^5.1.6
+    redux-observable: ^3.0.0-rc.3
+    redux-persist: ^6.0.0
+    rxjs: ^7.8.2
+    ts-node: ^10.9.2
+    typescript: ^5.9.3
   languageName: unknown
   linkType: soft
 

@@ -21,7 +21,7 @@ export const kernelCoreInterconnectionModule: AppModule = {
     parameters: kernelCoreInterconnectionParameters,
     dependencies: [kernelCoreBaseModule],
     modulePreSetup: kernelCoreInterconnectionModulePreSetup,
-    preSetupPriority: 1000//需要再适配层加载完再加载，因为要使用适配层的server
+    preSetupPriority: 2//kernel core 模块使用1-100
 }
 
 

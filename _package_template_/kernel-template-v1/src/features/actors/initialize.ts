@@ -1,5 +1,5 @@
 import {moduleName} from "../../moduleName";
-import {Actor, kernelCoreBaseCommands, LOG_TAGS, logger} from "@impos2/kernel-core-base";
+import {Actor, kernelCoreBaseCommands, LOG_TAGS, logger} from "@impos2/kernel-core-base-v1";
 
 export class InitializeActor extends Actor {
     initialize = Actor.defineCommandHandler(kernelCoreBaseCommands.initialize,

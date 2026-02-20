@@ -9,7 +9,10 @@ export const batchUpdateState = (state: any, action: PayloadAction<Record<string
         if (newValue === undefined || newValue === null) {
             delete state[key]
         } else if (isValidSyncValue(newValue)) {
-            state[key] = newValue
+            const localValue = state[key]
+            if (!localValue || !isValidSyncValue(localValue) || localValue.updateAt < newValue.updateAt) {
+                state[key] = newValue
+            }
         }
     })
 }

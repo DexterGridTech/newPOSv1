@@ -5,11 +5,10 @@ import {
     WorkspaceModuleSliceConfig
 } from '@impos2/kernel-core-interconnection-v1'
 import {UiVariablesState} from "../../types/state/uiVariables";
-import {kernelCoreNavigationState} from "../../types/shared/moduleStateKey";
+import {kernelCoreNavigationWorkspaceState} from "../../types/shared/moduleStateKey";
 import {PayloadAction} from "@reduxjs/toolkit";
-import {batchUpdateState, LOG_TAGS, logger} from "@impos2/kernel-core-base-v1";
+import {batchUpdateState, LOG_TAGS, logger, ScreenPart} from "@impos2/kernel-core-base-v1";
 import {moduleName} from "../../moduleName";
-import {ScreenPart} from "../../types/foundations/screen";
 
 const initialState: UiVariablesState = {
     primaryModals: {
@@ -22,10 +21,11 @@ const initialState: UiVariablesState = {
     },
 }
 const slice = createWorkspaceSlice(
-    kernelCoreNavigationState.uiVariables,
+    kernelCoreNavigationWorkspaceState.uiVariables,
     initialState,
     {
         openModal: (state, action: PayloadAction<{ modal: ScreenPart<any>, displayMode: DisplayMode }>) => {
+            logger.log([moduleName, LOG_TAGS.Reducer, "uiVariables"], 'openModal',action.payload)
             const {modal, displayMode} = action.payload;
             if (!modal.id) {
                 return;
@@ -43,23 +43,27 @@ const slice = createWorkspaceSlice(
             modals.updateAt = Date.now();
         },
         closeModal: (state, action: PayloadAction<{ modalId: string, displayMode: DisplayMode }>) => {
+            logger.log([moduleName, LOG_TAGS.Reducer, "uiVariables"], 'closeModal',action.payload)
             const {modalId, displayMode} = action.payload;
             const modals = displayMode === DisplayMode.PRIMARY ? state.primaryModals : state.secondaryModals;
             modals.value = modals.value.filter(m => m.id !== modalId);
         },
         updateUiVariables: (state, action: PayloadAction<Record<string, any>>) => {
+            logger.log([moduleName, LOG_TAGS.Reducer, "uiVariables"], 'updateUiVariables',action.payload)
             Object.keys(action.payload).forEach(key => {
                 state[key] = {value: action.payload[key], updateAt: Date.now()}
             })
         },
         clearUiVariables: (state, action: PayloadAction<string[]>) => {
+            logger.log([moduleName, LOG_TAGS.Reducer, "uiVariables"], 'clearUiVariables',action.payload)
             action.payload.forEach((key) => {
                 state[key] = {value: null, updateAt: Date.now()}
             })
         },
         batchUpdateState: (state, action) => {
+            logger.log([moduleName, LOG_TAGS.Reducer, "uiVariables"], 'batchUpdateState',action.payload)
             batchUpdateState(state, action)
-            logger.log([moduleName, LOG_TAGS.Reducer, kernelCoreNavigationState.uiVariables], 'batch update state', action.payload)
+            logger.log([moduleName, LOG_TAGS.Reducer, kernelCoreNavigationWorkspaceState.uiVariables], 'batch update state', action.payload)
         }
     }
 )

@@ -1,27 +1,10 @@
-import {ScreenMode} from "@impos2/kernel-core-base-v1";
-import {ComponentType} from "react";
+import {ScreenMode, ScreenPart} from "@impos2/kernel-core-base-v1";
 
-export interface ScreenPart<T> {
-    name: string,
-    title: string,
-    description: string,
-    partKey: string
-    screenMode: ScreenMode[]
-    id?: string | null
-    containerKey?: string | null
-    props?: T | null
-    indexInContainer?: number | null
-}
 export interface Modal<T> {
     id: string,
     screenPartKey: string,
     open: boolean
     props?: T
-}
-
-export interface ScreenPartRegistration extends ScreenPart<any> {
-    componentType: ComponentType<any>
-    readyToEnter?: () => boolean
 }
 
 export const createModalScreen =

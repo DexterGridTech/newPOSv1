@@ -10,8 +10,8 @@ const slice = createSlice({
     reducers: {
         //stateSyncToSlave: true的时候，必须有batchUpdateState方法
         batchUpdateState: (state, action) => {
+            logger.log([moduleName, LOG_TAGS.Reducer, "errorMessages"], 'batch update state',action.payload)
             batchUpdateState(state, action)
-            logger.log([moduleName, LOG_TAGS.Reducer, kernelCoreBaseState.errorMessages], 'batch update state', action.payload)
         }
     }
 })

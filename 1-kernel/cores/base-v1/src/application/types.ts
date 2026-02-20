@@ -1,6 +1,6 @@
 import {Environment, ModuleSliceConfig, RootState} from "../types";
 import {Epic} from "redux-observable";
-import {Actor, DefinedErrorMessage, DefinedSystemParameter} from "../foundations";
+import {Actor, DefinedErrorMessage, DefinedSystemParameter, ScreenPartRegistration} from "../foundations";
 import {Middleware, PayloadAction, StoreEnhancer} from "@reduxjs/toolkit";
 
 export type DeepPartial<T> = {
@@ -26,6 +26,7 @@ export interface AppModule {
     commands: Record<string, any>
     errorMessages: Record<string, DefinedErrorMessage>
     parameters: Record<string, DefinedSystemParameter<any>>
+    screenParts?: Record<string, ScreenPartRegistration>
     dependencies: AppModule[]
     modulePreSetup?: (config: ApplicationConfig, allModules: AppModule[]) => Promise<void>
     preSetupPriority?: number
