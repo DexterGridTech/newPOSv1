@@ -42,10 +42,10 @@ class AppTurboModule(reactContext: ReactApplicationContext) :
     fun getDisplayInfo(promise: Promise) {
         val activity = currentActivity as? MainActivity
             ?: return promise.reject("NO_ACTIVITY", "MainActivity not available")
-        val map = com.facebook.react.bridge.Arguments.createMap().apply {
-            putBoolean("isSecondaryActive", activity.multiDisplayManager.isSecondaryActive)
-        }
-        promise.resolve(map)
+        promise.resolve(com.facebook.react.bridge.Arguments.createMap().apply {
+            putBoolean("isSecondaryActive",
+                if (activity::multiDisplayManager.isInitialized) activity.multiDisplayManager.isSecondaryActive else false)
+        })
     }
 
     companion object {

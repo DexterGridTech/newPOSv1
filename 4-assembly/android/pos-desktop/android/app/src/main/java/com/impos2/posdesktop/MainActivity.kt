@@ -70,14 +70,13 @@ class MainActivity : ReactActivity() {
     override fun onDestroy() {
         super.onDestroy()
         if (::screenControlManager.isInitialized) screenControlManager.destroy()
-        multiDisplayManager.destroy()
+        if (::multiDisplayManager.isInitialized) multiDisplayManager.destroy()
     }
 
     /** JS 层加载完成后调用，只处理第一次（主屏），副屏的调用忽略 */
     fun onAppLoadComplete() {
         if (!loadCompleted.compareAndSet(false, true)) return
         SplashScreen.hide(this)
-        window.decorView.postDelayed({ screenControlManager.enableFullscreen() }, 100)
         multiDisplayManager.startSecondaryIfAvailable()
     }
 

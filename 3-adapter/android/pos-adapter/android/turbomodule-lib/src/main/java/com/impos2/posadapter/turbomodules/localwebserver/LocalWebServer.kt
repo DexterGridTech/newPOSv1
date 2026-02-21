@@ -58,7 +58,7 @@ class LocalWebServer(
 ) {
     private val executor = java.util.concurrent.ThreadPoolExecutor(
         2, 16, 60L, java.util.concurrent.TimeUnit.SECONDS,
-        java.util.concurrent.SynchronousQueue()
+        java.util.concurrent.LinkedBlockingQueue(128)
     )
     private var serverSocket: ServerSocket? = null
     @Volatile var isRunning = false
@@ -210,12 +210,12 @@ class LocalWebServer(
         if (peer != null && peer.socket.isOpen) {
             peer.socket.send(raw)
         } else {
-            retryQueues.getOrPut(masterId) { mutableListOf() }.add(raw)
+            retryQueues.computeIfAbsent(masterId) { java.util.concurrent.CopyOnWriteArrayList() }.add(raw)
             Log.d(TAG, "peer offline, queued msg for $masterId")
         }
     }
 
-    private val retryQueues = ConcurrentHashMap<String, MutableList<String>>()
+    private val retryQueues = ConcurrentHashMap<String, java.util.concurrent.CopyOnWriteArrayList<String>>()
 
     private fun onDeviceConnected(info: DeviceInfo, session: WsSession) {
         Log.i(TAG, "[${info.type}] connected: ${info.deviceId}")
@@ -287,7 +287,11 @@ class LocalWebServer(
             val mask = if (masked) ByteArray(4) { ins.read().toByte() } else null
             val data = ByteArray(payloadLen.toInt())
             var read = 0
-            while (read < data.size) read += ins.read(data, read, data.size - read)
+            while (read < data.size) {
+                val n = ins.read(data, read, data.size - read)
+                if (n < 0) return null
+                read += n
+            }
             if (mask != null) data.forEachIndexed { i, _ -> data[i] = (data[i].toInt() xor mask[i % 4].toInt()).toByte() }
             String(data, Charsets.UTF_8)
         } catch (_: Exception) { null }

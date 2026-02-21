@@ -9,7 +9,7 @@ class AppRestartManager(private val activity: MainActivity) {
 
     fun restart() {
         mainHandler.post {
-            activity.multiDisplayManager.destroy()
+            try { activity.multiDisplayManager.destroy() } catch (_: Exception) {}
             activity.provideReactInstanceManager().recreateReactContextInBackground()
         }
     }

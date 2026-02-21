@@ -19,7 +19,7 @@ class ScreenControlTurboModule(reactContext: ReactApplicationContext) :
         val activity = currentActivity as? MainActivity
             ?: return promise.reject("ERROR", "Activity is null")
         activity.runOnUiThread {
-            try { block(activity) } catch (e: Exception) { promise.reject("ERROR", e.message) }
+            try { block(activity) } catch (e: Exception) { promise.reject("ERROR", e.message ?: "Unknown error") }
         }
     }
 

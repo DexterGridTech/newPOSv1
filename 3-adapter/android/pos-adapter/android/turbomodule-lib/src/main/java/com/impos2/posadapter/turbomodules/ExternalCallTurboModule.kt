@@ -26,7 +26,7 @@ class ExternalCallTurboModule(reactContext: ReactApplicationContext) :
     companion object {
         const val NAME = "ExternalCallTurboModule"
         private const val EVENT_CALL_RESULT = "onExternalCallResult"
-        private val EXECUTOR = Executors.newCachedThreadPool()
+        private val EXECUTOR = Executors.newFixedThreadPool(8)
     }
 
     // 正在进行的任务 requestId -> Future
@@ -184,7 +184,7 @@ class ExternalCallTurboModule(reactContext: ReactApplicationContext) :
                         put("action", action)
                         params?.keys()?.forEach { k -> put(k, params[k]) }
                     }.toString())
-                    binder!!.transact(1, data, reply, 0)
+                    binder?.transact(1, data, reply, 0)
                     val responseStr = reply.readString()
                     data.recycle(); reply.recycle()
                     binderResult = if (responseStr != null) {
@@ -238,23 +238,22 @@ class ExternalCallTurboModule(reactContext: ReactApplicationContext) :
         return try {
             val port = File(target)
             if (!port.exists()) return errorResponse(4001, "Serial port not found: $target")
-            val fos = FileOutputStream(port)
-            val fis = FileInputStream(port)
-            // Write
-            fos.write(hexToBytes(data))
-            fos.flush()
-            // Read response with timeout
-            val buf = ByteArray(1024)
-            val deadline = System.currentTimeMillis() + timeout
-            var read = 0
-            while (System.currentTimeMillis() < deadline) {
-                if (fis.available() > 0) { read = fis.read(buf); break }
-                Thread.sleep(10)
+            FileOutputStream(port).use { fos ->
+                FileInputStream(port).use { fis ->
+                    fos.write(hexToBytes(data))
+                    fos.flush()
+                    val buf = ByteArray(1024)
+                    val deadline = System.currentTimeMillis() + timeout
+                    var read = 0
+                    while (System.currentTimeMillis() < deadline) {
+                        if (fis.available() > 0) { read = fis.read(buf); break }
+                        Thread.sleep(10)
+                    }
+                    val response = if (read > 0) bytesToHex(buf, read) else ""
+                    val map = Arguments.createMap().apply { putString("hex", response) }
+                    successResponse(map, "OK")
+                }
             }
-            fos.close(); fis.close()
-            val response = if (read > 0) bytesToHex(buf, read) else ""
-            val map = Arguments.createMap().apply { putString("hex", response) }
-            successResponse(map, "OK")
         } catch (e: Exception) {
             errorResponse(5001, "Serial error: ${e.message}")
         }
@@ -272,27 +271,27 @@ class ExternalCallTurboModule(reactContext: ReactApplicationContext) :
                 ?: return errorResponse(4001, "Cannot open USB device")
             val iface = device.getInterface(0)
             connection.claimInterface(iface, true)
-            val outEp = (0 until iface.endpointCount)
-                .map { iface.getEndpoint(it) }
-                .firstOrNull { it.direction == android.hardware.usb.UsbConstants.USB_DIR_OUT }
-                ?: return errorResponse(2002, "No OUT endpoint")
-            val inEp = (0 until iface.endpointCount)
-                .map { iface.getEndpoint(it) }
-                .firstOrNull { it.direction == android.hardware.usb.UsbConstants.USB_DIR_IN }
-
-            val sendData = hexToBytes(params?.optString("data") ?: "")
-            connection.bulkTransfer(outEp, sendData, sendData.size, timeout.toInt())
-
-            val response = if (inEp != null) {
-                val buf = ByteArray(inEp.maxPacketSize)
-                val len = connection.bulkTransfer(inEp, buf, buf.size, timeout.toInt())
-                if (len > 0) bytesToHex(buf, len) else ""
-            } else ""
-
-            connection.releaseInterface(iface)
-            connection.close()
-            val map = Arguments.createMap().apply { putString("hex", response) }
-            successResponse(map, "OK")
+            try {
+                val outEp = (0 until iface.endpointCount)
+                    .map { iface.getEndpoint(it) }
+                    .firstOrNull { it.direction == android.hardware.usb.UsbConstants.USB_DIR_OUT }
+                    ?: return errorResponse(2002, "No OUT endpoint")
+                val inEp = (0 until iface.endpointCount)
+                    .map { iface.getEndpoint(it) }
+                    .firstOrNull { it.direction == android.hardware.usb.UsbConstants.USB_DIR_IN }
+                val sendData = hexToBytes(params?.optString("data") ?: "")
+                connection.bulkTransfer(outEp, sendData, sendData.size, timeout.toInt())
+                val response = if (inEp != null) {
+                    val buf = ByteArray(inEp.maxPacketSize)
+                    val len = connection.bulkTransfer(inEp, buf, buf.size, timeout.toInt())
+                    if (len > 0) bytesToHex(buf, len) else ""
+                } else ""
+                val map = Arguments.createMap().apply { putString("hex", response) }
+                successResponse(map, "OK")
+            } finally {
+                connection.releaseInterface(iface)
+                connection.close()
+            }
         } catch (e: Exception) {
             errorResponse(5001, "USB error: ${e.message}")
         }

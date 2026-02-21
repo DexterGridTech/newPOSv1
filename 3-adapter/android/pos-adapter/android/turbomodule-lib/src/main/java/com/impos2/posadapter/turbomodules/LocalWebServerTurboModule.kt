@@ -116,18 +116,16 @@ class LocalWebServerTurboModule(reactContext: ReactApplicationContext) :
         if (bound) return
         LocalWebServerService.start(reactApplicationContext)
         val intent = Intent(reactApplicationContext, LocalWebServerService::class.java)
-        // 重试绑定，等待 Service onCreate 完成（最多 3 秒）
+        reactApplicationContext.bindService(intent, conn, Context.BIND_AUTO_CREATE)
         val deadline = System.currentTimeMillis() + 3000
-        while (!bound && System.currentTimeMillis() < deadline) {
-            reactApplicationContext.bindService(intent, conn, Context.BIND_AUTO_CREATE)
-            Thread.sleep(100)
-        }
+        while (!bound && System.currentTimeMillis() < deadline) Thread.sleep(50)
     }
 
     override fun onCatalystInstanceDestroy() {
         super.onCatalystInstanceDestroy()
         if (bound) { reactApplicationContext.unbindService(conn); bound = false }
         executor.shutdown()
+        executor.awaitTermination(2, java.util.concurrent.TimeUnit.SECONDS)
     }
 
     @ReactMethod fun addListener(eventName: String) {}
