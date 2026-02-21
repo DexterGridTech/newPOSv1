@@ -43,8 +43,7 @@ class AppTurboModule(reactContext: ReactApplicationContext) :
         val activity = currentActivity as? MainActivity
             ?: return promise.reject("NO_ACTIVITY", "MainActivity not available")
         promise.resolve(com.facebook.react.bridge.Arguments.createMap().apply {
-            putBoolean("isSecondaryActive",
-                if (activity::multiDisplayManager.isInitialized) activity.multiDisplayManager.isSecondaryActive else false)
+            putBoolean("isSecondaryActive", activity.isSecondaryDisplayActive)
         })
     }
 

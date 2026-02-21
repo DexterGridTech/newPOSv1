@@ -35,17 +35,18 @@ class MultiDisplayManager(
 
     val isSecondaryActive get() = secondaryPresentation?.isShowing == true
 
+    private val secondaryPackages: List<ReactPackage> = listOf(
+        MainReactPackage(),
+        PosAdapterTurboPackage(),
+        MmkvPackage(),
+        AppTurboPackage(),
+    )
+
     private fun createSecondaryReactInstanceManager(): ReactInstanceManager {
-        val packages = mutableListOf<ReactPackage>(
-            MainReactPackage(),
-            PosAdapterTurboPackage(),
-            MmkvPackage(),
-            AppTurboPackage(),
-        )
         val builder = ReactInstanceManager.builder()
             .setApplication(activity.application)
             .setCurrentActivity(activity)
-            .addPackages(packages)
+            .addPackages(secondaryPackages)
             .setUseDeveloperSupport(BuildConfig.DEBUG)
             .setInitialLifecycleState(LifecycleState.RESUMED)
         if (BuildConfig.DEBUG) builder.setJSMainModulePath("index")

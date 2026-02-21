@@ -46,6 +46,10 @@ class MainActivity : ReactActivity() {
             window.setDecorFitsSystemWindows(false)
         }
         super.onCreate(savedInstanceState)
+        initManagers()
+    }
+
+    private fun initManagers() {
         screenControlManager = ScreenControlManager(this)
         screenControlManager.initialize()
         multiDisplayManager = MultiDisplayManager(this, provideReactInstanceManager())
@@ -87,4 +91,7 @@ class MainActivity : ReactActivity() {
 
     fun provideReactInstanceManager(): ReactInstanceManager =
         reactNativeHost.reactInstanceManager
+
+    val isSecondaryDisplayActive: Boolean
+        get() = if (::multiDisplayManager.isInitialized) multiDisplayManager.isSecondaryActive else false
 }

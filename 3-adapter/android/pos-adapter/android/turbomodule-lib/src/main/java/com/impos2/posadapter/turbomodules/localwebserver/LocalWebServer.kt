@@ -50,6 +50,37 @@ class WsSession(private val socket: Socket) {
     }
 }
 
+// ─── WsFrameReader ────────────────────────────────────────────────────────────
+
+class WsFrameReader(private val ins: InputStream) {
+    fun readFrame(): String? {
+        return try {
+            val b0 = ins.read(); if (b0 < 0) return null
+            val b1 = ins.read(); if (b1 < 0) return null
+            val opcode = b0 and 0x0F
+            if (opcode == 0x8) return null // close
+            val masked = (b1 and 0x80) != 0
+            var payloadLen = (b1 and 0x7F).toLong()
+            if (payloadLen == 126L) {
+                payloadLen = ((ins.read() shl 8) or ins.read()).toLong()
+            } else if (payloadLen == 127L) {
+                payloadLen = 0; repeat(8) { payloadLen = (payloadLen shl 8) or ins.read().toLong() }
+            }
+            if (payloadLen > Int.MAX_VALUE) return null
+            val mask = if (masked) ByteArray(4) { ins.read().toByte() } else null
+            val data = ByteArray(payloadLen.toInt())
+            var read = 0
+            while (read < data.size) {
+                val n = ins.read(data, read, data.size - read)
+                if (n < 0) return null
+                read += n
+            }
+            if (mask != null) data.forEachIndexed { i, _ -> data[i] = (data[i].toInt() xor mask[i % 4].toInt()).toByte() }
+            String(data, Charsets.UTF_8)
+        } catch (_: Exception) { null }
+    }
+}
+
 // ─── LocalWebServer ───────────────────────────────────────────────────────────
 
 class LocalWebServer(
@@ -79,6 +110,8 @@ class LocalWebServer(
     fun stop() {
         isRunning = false
         try { serverSocket?.close() } catch (_: Exception) {}
+        executor.shutdown()
+        executor.awaitTermination(3, java.util.concurrent.TimeUnit.SECONDS)
         deviceManager.close()
     }
 
@@ -179,9 +212,9 @@ class LocalWebServer(
     private fun handleWsSession(session: WsSession, socket: Socket) {
         var deviceInfo: DeviceInfo? = null
         try {
-            val ins = socket.getInputStream()
+            val frameReader = WsFrameReader(socket.getInputStream())
             while (session.isOpen) {
-                val text = readWsFrame(ins) ?: break
+                val text = frameReader.readFrame() ?: break
 
                 if (deviceInfo == null) {
                     // 首条消息是纯 token 字符串
@@ -269,33 +302,7 @@ class LocalWebServer(
         }
     }
 
-    // ─── RFC 6455 帧解析 ──────────────────────────────────────────────────────
-
-    private fun readWsFrame(ins: InputStream): String? {
-        return try {
-            val b0 = ins.read(); if (b0 < 0) return null
-            val b1 = ins.read(); if (b1 < 0) return null
-            val opcode = b0 and 0x0F
-            if (opcode == 0x8) return null // close
-            val masked = (b1 and 0x80) != 0
-            var payloadLen = (b1 and 0x7F).toLong()
-            if (payloadLen == 126L) {
-                payloadLen = ((ins.read() shl 8) or ins.read()).toLong()
-            } else if (payloadLen == 127L) {
-                payloadLen = 0; repeat(8) { payloadLen = (payloadLen shl 8) or ins.read().toLong() }
-            }
-            val mask = if (masked) ByteArray(4) { ins.read().toByte() } else null
-            val data = ByteArray(payloadLen.toInt())
-            var read = 0
-            while (read < data.size) {
-                val n = ins.read(data, read, data.size - read)
-                if (n < 0) return null
-                read += n
-            }
-            if (mask != null) data.forEachIndexed { i, _ -> data[i] = (data[i].toInt() xor mask[i % 4].toInt()).toByte() }
-            String(data, Charsets.UTF_8)
-        } catch (_: Exception) { null }
-    }
+    // ─── RFC 6455 帧解析已提取为 WsFrameReader 类 ─────────────────────────────
 
     private fun statsJson(): String {
         val s = deviceManager.getStats()

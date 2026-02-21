@@ -4,6 +4,7 @@ import android.app.Activity
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
@@ -16,6 +17,10 @@ class ScreenManager(
     private var isFullscreenEnabled = false
     private val mainHandler = Handler(Looper.getMainLooper())
     private var restoreRunnable: Runnable? = null
+
+    companion object {
+        private const val TAG = "ScreenManager"
+    }
 
     fun enableFullscreen() {
         try {
@@ -38,7 +43,7 @@ class ScreenManager(
                 }
             }
             isFullscreenEnabled = true
-        } catch (_: Exception) {}
+        } catch (e: Exception) { Log.w(TAG, "enableFullscreen failed", e) }
     }
 
     fun disableFullscreen() {
@@ -61,7 +66,7 @@ class ScreenManager(
             restoreRunnable?.let { mainHandler.removeCallbacks(it) }
             restoreRunnable = null
             isFullscreenEnabled = false
-        } catch (_: Exception) {}
+        } catch (e: Exception) { Log.w(TAG, "disableFullscreen failed", e) }
     }
 
     private fun hideSystemBars() {

@@ -17,6 +17,7 @@ class AppTurboPackage : TurboReactPackage() {
         }
 
     override fun getReactModuleInfoProvider() = ReactModuleInfoProvider {
+        // ReactModuleInfo 参数：(name, className, canOverride, needsEagerInit, isCxxModule, isTurboModule)
         mapOf(
             AppTurboModule.NAME to ReactModuleInfo(
                 AppTurboModule.NAME, AppTurboModule::class.java.name,
