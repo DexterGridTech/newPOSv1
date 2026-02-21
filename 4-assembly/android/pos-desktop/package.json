@@ -15,7 +15,8 @@
   "dependencies": {
     "@impos2/adapter-android": "*",
     "react": "18.3.1",
-    "react-native": "0.76.6"
+    "react-native": "0.76.6",
+    "react-native-splash-screen": "^3.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

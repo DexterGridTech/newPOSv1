@@ -1,26 +1,34 @@
 import React, {useState} from 'react'
 import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native'
 import LoggerScreen from './LoggerScreen'
+import DeviceScreen from './DeviceScreen'
+import StateStorageScreen from './StateStorageScreen'
+import ExternalCallScreen from './ExternalCallScreen'
+import ScriptExecutionScreen from './ScriptExecutionScreen'
+import LocalWebServerScreen from './LocalWebServerScreen'
+import {C} from '../theme'
 
-// ─── Menu config ─────────────────────────────────────────────────────────────
+type MenuKey = 'logger' | 'device' | 'storage' | 'externalCall' | 'script' | 'lws'
 
-type MenuKey = 'logger'
-
-interface MenuItem {
-    key: MenuKey
-    label: string
-    tag: string
-}
+interface MenuItem { key: MenuKey; label: string; tag: string }
 
 const MENU: MenuItem[] = [
-    {key: 'logger', label: 'Logger', tag: 'LOG'},
+    {key: 'logger',       label: 'Logger',   tag: 'LOG'},
+    {key: 'device',       label: 'Device',   tag: 'DEV'},
+    {key: 'storage',      label: 'Storage',  tag: 'KV'},
+    {key: 'externalCall', label: 'ExtCall',  tag: 'EXT'},
+    {key: 'script',       label: 'Script',   tag: 'JS'},
+    {key: 'lws',          label: 'WebSrv',   tag: 'WS'},
 ]
 
 const SCREENS: Record<MenuKey, React.ComponentType> = {
-    logger: LoggerScreen,
+    logger:       LoggerScreen,
+    device:       DeviceScreen,
+    storage:      StateStorageScreen,
+    externalCall: ExternalCallScreen,
+    script:       ScriptExecutionScreen,
+    lws:          LocalWebServerScreen,
 }
-
-// ─── Component ───────────────────────────────────────────────────────────────
 
 export default function DevHome() {
     const [active, setActive] = useState<MenuKey>('logger')
@@ -29,7 +37,6 @@ export default function DevHome() {
     return (
         <SafeAreaView style={s.root}>
             <View style={s.layout}>
-                {/* Sidebar */}
                 <View style={s.sidebar}>
                     <View style={s.sidebarHeader}>
                         <Text style={s.sidebarTitle}>POS</Text>
@@ -53,8 +60,6 @@ export default function DevHome() {
                         ))}
                     </ScrollView>
                 </View>
-
-                {/* Content */}
                 <View style={s.content}>
                     <Screen />
                 </View>
@@ -63,23 +68,21 @@ export default function DevHome() {
     )
 }
 
-// ─── Styles ───────────────────────────────────────────────────────────────────
-
 const s = StyleSheet.create({
-    root:              {flex: 1, backgroundColor: '#0F172A'},
+    root:              {flex: 1, backgroundColor: C.bgPage},
     layout:            {flex: 1, flexDirection: 'row'},
-    sidebar:           {width: 100, backgroundColor: '#0B1120', borderRightWidth: 1, borderRightColor: '#1E293B'},
-    sidebarHeader:     {paddingHorizontal: 12, paddingVertical: 16, borderBottomWidth: 1, borderBottomColor: '#1E293B'},
-    sidebarTitle:      {fontSize: 14, fontWeight: '700', color: '#F8FAFC', letterSpacing: 1},
-    sidebarSub:        {fontSize: 9, color: '#475569', marginTop: 2, letterSpacing: 0.5},
+    sidebar:           {width: 100, backgroundColor: C.bgCard, borderRightWidth: 1, borderRightColor: C.border},
+    sidebarHeader:     {paddingHorizontal: 12, paddingVertical: 16, borderBottomWidth: 1, borderBottomColor: C.border},
+    sidebarTitle:      {fontSize: 14, fontWeight: '700', color: C.textPrimary, letterSpacing: 1},
+    sidebarSub:        {fontSize: 9, color: C.textMuted, marginTop: 2, letterSpacing: 0.5},
     menu:              {flex: 1, paddingTop: 8},
     menuItem:          {paddingHorizontal: 10, paddingVertical: 10, marginHorizontal: 6, marginBottom: 2, borderRadius: 8, alignItems: 'center'},
-    menuItemActive:    {backgroundColor: '#1E293B'},
-    menuTag:           {width: 36, height: 22, borderRadius: 4, backgroundColor: '#1E293B', alignItems: 'center', justifyContent: 'center', marginBottom: 4},
-    menuTagActive:     {backgroundColor: '#22C55E22'},
-    menuTagText:       {fontSize: 9, fontWeight: '700', color: '#475569', letterSpacing: 0.5},
-    menuTagTextActive: {color: '#22C55E'},
-    menuLabel:         {fontSize: 11, color: '#475569', textAlign: 'center'},
-    menuLabelActive:   {color: '#F8FAFC', fontWeight: '500'},
+    menuItemActive:    {backgroundColor: C.bgSub},
+    menuTag:           {width: 36, height: 22, borderRadius: 4, backgroundColor: C.bgSub, alignItems: 'center', justifyContent: 'center', marginBottom: 4},
+    menuTagActive:     {backgroundColor: C.accentBg},
+    menuTagText:       {fontSize: 9, fontWeight: '700', color: C.textMuted, letterSpacing: 0.5},
+    menuTagTextActive: {color: C.accent},
+    menuLabel:         {fontSize: 11, color: C.textMuted, textAlign: 'center'},
+    menuLabelActive:   {color: C.textPrimary, fontWeight: '500'},
     content:           {flex: 1},
 })

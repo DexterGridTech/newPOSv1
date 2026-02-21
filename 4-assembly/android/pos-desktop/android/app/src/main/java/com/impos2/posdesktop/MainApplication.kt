@@ -12,6 +12,7 @@ import com.facebook.react.shell.MainReactPackage
 import com.facebook.react.soloader.OpenSourceMergedSoMapping
 import com.facebook.soloader.SoLoader
 import com.impos2.posadapter.turbomodules.PosAdapterTurboPackage
+import com.reactnativemmkv.MmkvPackage
 
 class MainApplication : Application(), ReactApplication {
 
@@ -20,6 +21,8 @@ class MainApplication : Application(), ReactApplication {
             override fun getPackages(): List<ReactPackage> = listOf(
                 MainReactPackage(),
                 PosAdapterTurboPackage(),
+                MmkvPackage(),
+                AppTurboPackage(),
             )
 
             override fun getJSMainModuleName(): String = "index"

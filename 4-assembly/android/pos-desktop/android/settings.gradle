@@ -10,3 +10,13 @@ includeBuild('../../../../node_modules/@react-native/gradle-plugin')
 def posAdapterTurboModuleDir = file("../../../../3-adapter/android/pos-adapter/android/turbomodule-lib")
 include ':pos-adapter-turbomodule'
 project(':pos-adapter-turbomodule').projectDir = posAdapterTurboModuleDir
+
+// 引入 react-native-mmkv
+def mmkvDir = file("../../../../node_modules/react-native-mmkv/android")
+include ':react-native-mmkv'
+project(':react-native-mmkv').projectDir = mmkvDir
+
+// 引入 react-native-splash-screen
+def splashScreenDir = file("../../../../node_modules/react-native-splash-screen/android")
+include ':react-native-splash-screen'
+project(':react-native-splash-screen').projectDir = splashScreenDir

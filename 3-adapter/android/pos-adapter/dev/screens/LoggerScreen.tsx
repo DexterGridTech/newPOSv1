@@ -10,6 +10,7 @@ import {
     FlatList,
 } from 'react-native'
 import {loggerAdapter, LogFile} from '../../src/foundations/logger'
+import {C} from '../theme'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -31,10 +32,10 @@ interface LogEntry {
 const LEVELS: LogLevel[] = ['debug', 'log', 'warn', 'error']
 
 const LEVEL_COLOR: Record<LogLevel, string> = {
-    debug: '#64748B',
-    log:   '#22C55E',
-    warn:  '#F59E0B',
-    error: '#EF4444',
+    debug: C.logDebug,
+    log:   C.logLog,
+    warn:  C.logWarn,
+    error: C.logError,
 }
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -277,7 +278,7 @@ function Field({label, value, onChangeText, placeholder, multiline}: {
                 value={value}
                 onChangeText={onChangeText}
                 placeholder={placeholder}
-                placeholderTextColor="#475569"
+                placeholderTextColor="#94A3B8"
                 multiline={multiline}
             />
         </View>
@@ -287,7 +288,7 @@ function Field({label, value, onChangeText, placeholder, multiline}: {
 function ActionBtn({label, onPress, danger}: {label: string; onPress: () => void; danger?: boolean}) {
     return (
         <TouchableOpacity style={[s.actionBtn, danger && s.actionBtnDanger]} onPress={onPress}>
-            <Text style={[s.actionBtnText, danger && {color: '#EF4444'}]}>{label}</Text>
+            <Text style={[s.actionBtnText, danger && {color: C.danger}]}>{label}</Text>
         </TouchableOpacity>
     )
 }
@@ -295,46 +296,46 @@ function ActionBtn({label, onPress, danger}: {label: string; onPress: () => void
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
 const s = StyleSheet.create({
-    root:            {flex: 1, backgroundColor: '#0F172A'},
-    header:          {flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#1E293B'},
-    headerTitle:     {fontSize: 16, fontWeight: '600', color: '#F8FAFC', letterSpacing: 0.5},
-    tabs:            {flexDirection: 'row', backgroundColor: '#1E293B', borderRadius: 8, padding: 2},
+    root:            {flex: 1, backgroundColor: C.bgPage},
+    header:          {flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: C.border},
+    headerTitle:     {fontSize: 16, fontWeight: '600', color: C.textPrimary, letterSpacing: 0.5},
+    tabs:            {flexDirection: 'row', backgroundColor: C.bgSub, borderRadius: 8, padding: 2},
     tab:             {paddingHorizontal: 14, paddingVertical: 6, borderRadius: 6},
-    tabActive:       {backgroundColor: '#334155'},
-    tabText:         {fontSize: 13, color: '#64748B'},
-    tabTextActive:   {color: '#F8FAFC', fontWeight: '500'},
+    tabActive:       {backgroundColor: C.bgCard},
+    tabText:         {fontSize: 13, color: C.textMuted},
+    tabTextActive:   {color: C.textPrimary, fontWeight: '500'},
     panel:           {flex: 1, padding: 16},
     row:             {flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 12},
-    levelBtn:        {paddingHorizontal: 14, paddingVertical: 7, borderRadius: 6, borderWidth: 1, borderColor: '#334155'},
+    levelBtn:        {paddingHorizontal: 14, paddingVertical: 7, borderRadius: 6, borderWidth: 1, borderColor: C.border, backgroundColor: C.bgCard},
     levelText:       {fontSize: 12, fontWeight: '600', letterSpacing: 0.5},
     field:           {marginBottom: 10},
-    fieldLabel:      {fontSize: 11, color: '#64748B', marginBottom: 4, letterSpacing: 0.5, textTransform: 'uppercase'},
-    input:           {backgroundColor: '#1E293B', borderWidth: 1, borderColor: '#334155', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 10, color: '#F8FAFC', fontSize: 13, height: 42},
-    sendBtn:         {backgroundColor: '#22C55E', borderRadius: 8, paddingVertical: 12, alignItems: 'center', marginTop: 4, marginBottom: 16},
-    sendText:        {color: '#0F172A', fontWeight: '700', fontSize: 14},
+    fieldLabel:      {fontSize: 11, color: C.textSecondary, marginBottom: 4, letterSpacing: 0.5, textTransform: 'uppercase'},
+    input:           {backgroundColor: C.bgCard, borderWidth: 1, borderColor: C.border, borderRadius: 8, paddingHorizontal: 12, paddingVertical: 10, color: C.textPrimary, fontSize: 13, height: 42},
+    sendBtn:         {backgroundColor: C.accent, borderRadius: 8, paddingVertical: 12, alignItems: 'center', marginTop: 4, marginBottom: 16},
+    sendText:        {color: C.textInverse, fontWeight: '700', fontSize: 14},
     history:         {maxHeight: 240},
-    historyItem:     {flexDirection: 'row', alignItems: 'center', paddingVertical: 6, borderBottomWidth: 1, borderBottomColor: '#1E293B', gap: 6},
+    historyItem:     {flexDirection: 'row', alignItems: 'center', paddingVertical: 6, borderBottomWidth: 1, borderBottomColor: C.bgSub, gap: 6},
     dot:             {width: 6, height: 6, borderRadius: 3},
-    historyLevel:    {fontSize: 11, fontWeight: '600', color: '#64748B', width: 36},
-    historyTag:      {fontSize: 11, color: '#475569', width: 80},
-    historyMsg:      {fontSize: 12, color: '#94A3B8', flex: 1},
-    actionBtn:       {paddingHorizontal: 14, paddingVertical: 8, backgroundColor: '#1E293B', borderRadius: 8, borderWidth: 1, borderColor: '#334155'},
-    actionBtnDanger: {borderColor: '#EF444433'},
-    actionBtnText:   {fontSize: 12, color: '#94A3B8', fontWeight: '500'},
-    dirPath:         {fontSize: 11, color: '#22C55E', backgroundColor: '#1E293B', padding: 10, borderRadius: 6, marginBottom: 10, fontFamily: 'monospace'},
-    statusText:      {fontSize: 12, color: '#F59E0B', marginBottom: 10},
-    fileRow:         {flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#1E293B', borderRadius: 8, padding: 12, marginBottom: 8},
+    historyLevel:    {fontSize: 11, fontWeight: '600', color: C.textSecondary, width: 36},
+    historyTag:      {fontSize: 11, color: C.textMuted, width: 80},
+    historyMsg:      {fontSize: 12, color: C.textSecondary, flex: 1},
+    actionBtn:       {paddingHorizontal: 14, paddingVertical: 8, backgroundColor: C.bgCard, borderRadius: 8, borderWidth: 1, borderColor: C.border},
+    actionBtnDanger: {borderColor: C.dangerBg},
+    actionBtnText:   {fontSize: 12, color: C.textSecondary, fontWeight: '500'},
+    dirPath:         {fontSize: 11, color: C.accentText, backgroundColor: '#F0FDF4', padding: 10, borderRadius: 6, marginBottom: 10, fontFamily: 'monospace'},
+    statusText:      {fontSize: 12, color: C.warn, marginBottom: 10},
+    fileRow:         {flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: C.bgCard, borderRadius: 8, padding: 12, marginBottom: 8, borderWidth: 1, borderColor: C.border},
     fileInfo:        {flex: 1},
-    fileName:        {fontSize: 13, color: '#F8FAFC', fontFamily: 'monospace'},
-    fileMeta:        {fontSize: 11, color: '#64748B', marginTop: 2},
+    fileName:        {fontSize: 13, color: C.textPrimary, fontFamily: 'monospace'},
+    fileMeta:        {fontSize: 11, color: C.textMuted, marginTop: 2},
     fileActions:     {flexDirection: 'row', gap: 8},
-    fileBtn:         {paddingHorizontal: 10, paddingVertical: 5, backgroundColor: '#334155', borderRadius: 6},
-    fileBtnDanger:   {backgroundColor: '#EF444411'},
-    fileBtnText:     {fontSize: 12, color: '#94A3B8'},
-    contentBox:      {backgroundColor: '#1E293B', borderRadius: 8, marginTop: 12, overflow: 'hidden'},
-    contentHeader:   {flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 12, borderBottomWidth: 1, borderBottomColor: '#334155'},
-    contentTitle:    {fontSize: 13, color: '#F8FAFC', fontWeight: '600'},
-    closeBtn:        {fontSize: 12, color: '#64748B'},
+    fileBtn:         {paddingHorizontal: 10, paddingVertical: 5, backgroundColor: C.bgSub, borderRadius: 6},
+    fileBtnDanger:   {backgroundColor: C.dangerBg},
+    fileBtnText:     {fontSize: 12, color: C.textSecondary},
+    contentBox:      {backgroundColor: C.bgCard, borderRadius: 8, marginTop: 12, overflow: 'hidden', borderWidth: 1, borderColor: C.border},
+    contentHeader:   {flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 12, borderBottomWidth: 1, borderBottomColor: C.bgSub},
+    contentTitle:    {fontSize: 13, color: C.textPrimary, fontWeight: '600'},
+    closeBtn:        {fontSize: 12, color: C.textMuted},
     contentScroll:   {maxHeight: 300},
-    contentText:     {fontSize: 11, color: '#94A3B8', padding: 12, fontFamily: 'monospace', lineHeight: 18},
+    contentText:     {fontSize: 11, color: C.textSecondary, padding: 12, fontFamily: 'monospace', lineHeight: 18},
 })

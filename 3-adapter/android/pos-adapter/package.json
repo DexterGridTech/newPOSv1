@@ -46,5 +46,8 @@
   },
   "react-native": {
     "android": false
+  },
+  "dependencies": {
+    "react-native-mmkv": "2.12.2"
   }
 }

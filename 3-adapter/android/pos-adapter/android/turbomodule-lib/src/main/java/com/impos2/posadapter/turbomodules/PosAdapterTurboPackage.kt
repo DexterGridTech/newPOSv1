@@ -10,15 +10,34 @@ class PosAdapterTurboPackage : TurboReactPackage() {
 
     override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? =
         when (name) {
-            LoggerTurboModule.NAME -> LoggerTurboModule(reactContext)
+            LoggerTurboModule.NAME       -> LoggerTurboModule(reactContext)
+            DeviceTurboModule.NAME       -> DeviceTurboModule(reactContext)
+            ExternalCallTurboModule.NAME -> ExternalCallTurboModule(reactContext)
+            ScriptsTurboModule.NAME          -> ScriptsTurboModule(reactContext)
+            LocalWebServerTurboModule.NAME   -> LocalWebServerTurboModule(reactContext)
             else -> null
         }
 
     override fun getReactModuleInfoProvider() = ReactModuleInfoProvider {
         mapOf(
             LoggerTurboModule.NAME to ReactModuleInfo(
-                LoggerTurboModule.NAME,
-                LoggerTurboModule::class.java.name,
+                LoggerTurboModule.NAME, LoggerTurboModule::class.java.name,
+                false, false, false, true
+            ),
+            DeviceTurboModule.NAME to ReactModuleInfo(
+                DeviceTurboModule.NAME, DeviceTurboModule::class.java.name,
+                false, false, false, true
+            ),
+            ExternalCallTurboModule.NAME to ReactModuleInfo(
+                ExternalCallTurboModule.NAME, ExternalCallTurboModule::class.java.name,
+                false, false, false, true
+            ),
+            ScriptsTurboModule.NAME to ReactModuleInfo(
+                ScriptsTurboModule.NAME, ScriptsTurboModule::class.java.name,
+                false, false, false, true
+            ),
+            LocalWebServerTurboModule.NAME to ReactModuleInfo(
+                LocalWebServerTurboModule.NAME, LocalWebServerTurboModule::class.java.name,
                 false, false, false, true
             )
         )
