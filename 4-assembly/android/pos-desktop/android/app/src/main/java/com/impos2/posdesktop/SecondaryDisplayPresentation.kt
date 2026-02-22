@@ -5,8 +5,8 @@ import android.app.Presentation
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.provider.Settings
 import android.view.Display
+import com.impos2.posadapter.turbomodules.device.DeviceManager
 import android.view.ViewGroup
 import android.view.WindowManager
 import com.facebook.react.ReactInstanceEventListener
@@ -39,7 +39,7 @@ class SecondaryDisplayPresentation(
         reactRootView = rootView
         setContentView(rootView)
 
-        val deviceId = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID) ?: ""
+        val deviceId = DeviceManager.getInstance(activity.applicationContext).getOrGenerateDeviceId()
         val launchOptions = Bundle().apply {
             putString("deviceId", deviceId)
             putString("screenMode", "desktop")

@@ -1,19 +1,22 @@
-import {ApplicationConfig, ApplicationManager, ScreenMode} from "@impos2/kernel-core-base";
+import {ApplicationConfig, ApplicationManager} from "@impos2/kernel-core-base";
 import {assemblyAndroidDesktopModule} from "./index.ts";
+import {AppProps} from "./types/shared/appProps.ts";
+import reactotron from "./foundations/reactotronConfig.ts";
 
-const appConfig: ApplicationConfig = {
-    environment: {
-        deviceId:"123",
-        production: false,
-        screenMode: ScreenMode.DESKTOP,
-        displayCount: 1,
-        displayIndex: 0
-    },
-    preInitiatedState: {},
-    module: assemblyAndroidDesktopModule,
-}
+
 // 导出 Promise 供 App 组件等待
-export const storePromise = ApplicationManager.getInstance().generateStore(appConfig).then(result => {
-    console.log("生成devStore");
-    return result;
-});
+export const storePromise = async (props: AppProps) => {
+    const appConfig: ApplicationConfig = {
+        environment: {
+            deviceId: props.deviceId,
+            production: !__DEV__,
+            screenMode: props.screenMode,
+            displayCount: props.displayCount,
+            displayIndex: props.displayIndex,
+        },
+        preInitiatedState: {},
+        module: assemblyAndroidDesktopModule,
+        reactotronEnhancer: __DEV__ ? reactotron.createEnhancer!() : undefined
+    }
+    return ApplicationManager.getInstance().generateStore(appConfig)
+}

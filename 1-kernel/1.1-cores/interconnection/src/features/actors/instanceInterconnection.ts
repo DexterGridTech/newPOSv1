@@ -9,14 +9,14 @@ import {
     ServerConnectionStatus,
 } from "../../types";
 import {kernelCoreInterconnectionErrorMessages, kernelCoreInterconnectionParameters} from "../../supports";
-import {defaultMasterInfo, defaultSlaveInfo, masterServer} from "../../foundations/masterServer";
+import {defaultMasterInfo, defaultSlaveInfo} from "../../foundations/masterServer";
 import {instanceInfoActions} from "../slices/instanceInfo";
 import {getInstanceMode, getStandalone} from "../../foundations/accessory";
 import {
     ConnectedEvent,
     ConnectionEventType,
     DisconnectedEvent,
-    DualWebSocketClient,
+    DualWebSocketClient, localWebServer,
     SYSTEM_NOTIFICATION,
     WSMessageEvent
 } from "../../foundations";
@@ -246,7 +246,12 @@ export class InstanceInterconnectionActor extends Actor {
         if (isMaster()) {
             let addresses
             try {
-                addresses = await masterServer.startServer()
+                addresses = await localWebServer.startLocalWebServer({
+                    port: 8888,
+                    basePath: '/localServer',
+                    heartbeatInterval: 30000,
+                    heartbeatTimeout: 60000,
+                })
             } catch (error: any) {
                 storeEntry.dispatchAction(instanceInfoActions.setMasterInfo(null))
                 throw new AppError(kernelCoreInterconnectionErrorMessages.masterServerCannotStart, {message: error.message}, command)

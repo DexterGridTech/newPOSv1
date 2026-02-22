@@ -9,6 +9,7 @@ import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.ReactInstanceManager
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
 import com.facebook.react.defaults.DefaultReactActivityDelegate
+import com.impos2.posadapter.turbomodules.device.DeviceManager
 import com.impos2.posdesktop.screen.ScreenControlManager
 import java.util.concurrent.atomic.AtomicBoolean
 import org.devio.rn.splashscreen.SplashScreen
@@ -25,8 +26,7 @@ class MainActivity : ReactActivity() {
     override fun createReactActivityDelegate(): ReactActivityDelegate =
         object : DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled) {
             override fun getLaunchOptions(): Bundle = Bundle().apply {
-                putString("deviceId", android.provider.Settings.Secure.getString(
-                    contentResolver, android.provider.Settings.Secure.ANDROID_ID) ?: "")
+                putString("deviceId", DeviceManager.getInstance(applicationContext).getOrGenerateDeviceId())
                 putString("screenMode", "desktop")
                 val dm = getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
                 putInt("displayCount", dm.displays.size)

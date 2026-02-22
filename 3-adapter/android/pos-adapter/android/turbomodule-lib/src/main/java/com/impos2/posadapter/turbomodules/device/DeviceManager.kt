@@ -16,6 +16,7 @@ import android.view.Display
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.WritableMap
+import java.security.SecureRandom
 
 class DeviceManager private constructor(private val context: Context) {
 
@@ -33,15 +34,42 @@ class DeviceManager private constructor(private val context: Context) {
                 line.trim().split("\\s+".toRegex()).drop(1).take(7).map { it.toLong() }.toLongArray()
             } catch (_: Exception) { LongArray(7) }
         }
+
+        private const val PREFS_NAME = "device_prefs"
+        private const val KEY_DEVICE_ID = "device_id"
+        // 字符集：0-9 + A-Z 排除 I/O（共34个字符）
+        private const val CHARSET = "0123456789ABCDEFGHJKLMNPQRSTUVWXYZ"
+        private const val DEVICE_ID_LENGTH = 10
     }
 
     @Volatile private var lastCpuStat: LongArray = readProcStat()
     @Volatile private var lastCpuTime: Long = System.currentTimeMillis()
 
+    // ─── DeviceID Generation ──────────────────────────────────────────────────
+
+    fun getOrGenerateDeviceId(): String {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        var deviceId = prefs.getString(KEY_DEVICE_ID, null)
+
+        if (deviceId.isNullOrEmpty()) {
+            deviceId = generateDeviceId()
+            prefs.edit().putString(KEY_DEVICE_ID, deviceId).apply()
+        }
+
+        return deviceId
+    }
+
+    private fun generateDeviceId(): String {
+        val random = SecureRandom()
+        return (1..DEVICE_ID_LENGTH)
+            .map { CHARSET[random.nextInt(CHARSET.length)] }
+            .joinToString("")
+    }
+
     // ─── DeviceInfo ───────────────────────────────────────────────────────────
 
     fun getDeviceInfo(): WritableMap = Arguments.createMap().apply {
-        putString("id", Build.ID)
+        putString("id", getOrGenerateDeviceId())
         putString("manufacturer", Build.MANUFACTURER)
         putString("os", "Android")
         putString("osVersion", Build.VERSION.RELEASE)

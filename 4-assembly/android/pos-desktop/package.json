@@ -35,6 +35,9 @@
     "jest": "^29.6.3",
     "prettier": "2.8.8",
     "react-test-renderer": "18.3.1",
+    "reactotron-core-client": "^2.9.9",
+    "reactotron-react-native": "^5.1.18",
+    "reactotron-redux": "^3.2.1",
     "typescript": "^5.9.3"
   },
   "engines": {

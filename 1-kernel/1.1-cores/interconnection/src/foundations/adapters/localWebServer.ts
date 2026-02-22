@@ -1,5 +1,6 @@
 import {LocalWebServerConfig, LocalWebServerInfo, ServerStats} from "../../types/foundations/localWebServer";
 import {ServerAddress} from "../../types";
+import {testServerAddresses} from "../masterServer";
 
 export interface LocalWebServer {
 
@@ -32,7 +33,7 @@ export interface LocalWebServer {
 export const localWebServer: LocalWebServer = {
     startLocalWebServer(config?: Partial<LocalWebServerConfig>): Promise<ServerAddress[]> {
         if (!registeredLocalWebServer) {
-            throw new Error('Local web server adapter not registered')
+            return Promise.resolve(testServerAddresses)
         }
         return registeredLocalWebServer.startLocalWebServer(config);
     },
