@@ -7,8 +7,8 @@ import {PersistGate} from "redux-persist/integration/react";
 import {kernelCoreBaseCommands} from "@impos2/kernel-core-base";
 import {storePromise} from "./src/store.ts";
 import LoadingScreen from "./src/ui/screens/LoadingScreen.tsx";
-import RootScreen from "./src/ui/screens/RootScreen.tsx";
 import {AppProps} from "./src/types/shared/appProps.ts";
+import RootScreen from "@impos2/ui-integration-desktop/src/ui/screens/RootScreen.tsx";
 
 const {AppTurboModule} = NativeModules;
 

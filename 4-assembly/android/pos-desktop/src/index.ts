@@ -10,6 +10,7 @@ import {assemblyAndroidDesktopMiddlewares} from "./features/middlewares";
 import {AppModule} from "@impos2/kernel-core-base";
 import {adapterAndroidModule} from "@impos2/adapter-android";
 import {assemblyAndroidDesktopScreenParts} from "./ui";
+import {uiIntegrationDesktopModule} from "@impos2/ui-integration-desktop";
 
 export const assemblyAndroidDesktopModule: AppModule = {
     name: moduleName,
@@ -21,7 +22,7 @@ export const assemblyAndroidDesktopModule: AppModule = {
     actors: assemblyAndroidDesktopActors,
     errorMessages: assemblyAndroidDesktopErrorMessages,
     parameters: assemblyAndroidDesktopParameters,
-    dependencies: [adapterAndroidModule],
+    dependencies: [adapterAndroidModule,uiIntegrationDesktopModule],
     modulePreSetup: assemblyAndroidDesktopModulePreSetup,
     screenParts: assemblyAndroidDesktopScreenParts,
     preSetupPriority: 0
