@@ -2648,7 +2648,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/kernel-terminal@workspace:1-kernel/1.2-modules/terminal":
+"@impos2/kernel-terminal@*, @impos2/kernel-terminal@workspace:1-kernel/1.2-modules/terminal":
   version: 0.0.0-use.local
   resolution: "@impos2/kernel-terminal@workspace:1-kernel/1.2-modules/terminal"
   dependencies:
@@ -2712,6 +2712,30 @@ __metadata:
     "@impos2/kernel-core-base": "*"
     "@impos2/kernel-core-interconnection": "*"
     "@impos2/kernel-core-navigation": "*"
+    "@reduxjs/toolkit": ^2.11.2
+    "@types/react": ~18.3.12
+    expo: ~54.0.31
+    expo-status-bar: ~3.0.9
+    react: 18.3.1
+    react-dom: 18.3.1
+    react-native: 0.76.6
+    react-native-web: ^0.21.0
+    react-redux: ^9.1.0
+    redux-persist: ^6.0.0
+    reselect: ^5.1.0
+    typescript: ^5.9.3
+  languageName: unknown
+  linkType: soft
+
+"@impos2/ui-device-activate@workspace:2-ui/2.2-modules/device-activate":
+  version: 0.0.0-use.local
+  resolution: "@impos2/ui-device-activate@workspace:2-ui/2.2-modules/device-activate"
+  dependencies:
+    "@impos2/kernel-core-base": "*"
+    "@impos2/kernel-core-interconnection": "*"
+    "@impos2/kernel-core-navigation": "*"
+    "@impos2/kernel-terminal": "*"
+    "@impos2/ui-core-base": "*"
     "@reduxjs/toolkit": ^2.11.2
     "@types/react": ~18.3.12
     expo: ~54.0.31
