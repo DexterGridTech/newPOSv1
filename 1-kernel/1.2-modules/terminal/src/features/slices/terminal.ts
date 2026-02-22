@@ -2,7 +2,13 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {moduleName} from "../../moduleName";
 import {TerminalState} from "../../types/state/terminalState";
 import {kernelTerminalState} from "../../types/shared/moduleStateKey";
-import {batchUpdateState, LOG_TAGS, logger, ModuleSliceConfig, ValueWithUpdateAt} from "@impos2/kernel-core-base";
+import {
+    batchUpdateState,
+    DeviceInfo,
+    LOG_TAGS,
+    logger,
+    ModuleSliceConfig,
+} from "@impos2/kernel-core-base";
 import {SyncType} from "@impos2/kernel-core-interconnection";
 import {Unit} from "../../types/shared/unit";
 
@@ -11,6 +17,10 @@ const slice = createSlice({
     name: kernelTerminalState.terminal,
     initialState,
     reducers: {
+        setDeviceInfo: (state, action: PayloadAction<DeviceInfo>) => {
+            logger.log([moduleName, LOG_TAGS.Reducer, "terminal"], 'setDeviceInfo', action.payload)
+            state.deviceInfo = {value: action.payload, updateAt: Date.now()}
+        },
         setTerminal: (state, action: PayloadAction<{
             terminal: Unit,
             model: Unit,

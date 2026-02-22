@@ -6,7 +6,7 @@ export enum UnitType {
     TERMINAL = 'TERMINAL'
 }
 
-export interface UnitData extends ValueWithUpdateAt<any>{
+export interface UnitData<T> extends ValueWithUpdateAt<T>{
     id: string;
     name: string;
     path: string;
@@ -15,12 +15,12 @@ export interface UnitData extends ValueWithUpdateAt<any>{
     group: string;
     unitId: string;
     unitType: UnitType;
-    extra?: { [key: string]: string };
+    extra?: any;
 }
 
 
 export interface UnitDataChangedSet {
     group: string;
-    updated: UnitData[];
+    updated: UnitData<any>[];
     deleted: string[];
 }

@@ -9,5 +9,11 @@ export const kernelTerminalState = createModuleStateKeys(
     moduleName,
     [
         'terminal',
+        'terminalConnection',
     ] as const
 );
+
+export const kernelTerminalUnitDataState = {
+    errorMessages: 'errorMessages',
+    systemParameters: 'systemParameters',
+}as const

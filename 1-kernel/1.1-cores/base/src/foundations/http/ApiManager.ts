@@ -7,7 +7,7 @@ import axios, {AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, Can
 import {RequestQueue} from './RequestQueueManager';
 import { moduleName } from '../../moduleName';
 import {
-    APIErrorCode,
+    APIResponseCode,
     ApiServerAddress,
     ERROR_MESSAGES,
     ErrorHandlingStrategy,
@@ -291,7 +291,7 @@ export class ApiManager {
             const currentTime = Date.now();
             return {
                 response: {
-                    code: APIErrorCode.SERVER_NOT_FOUND,
+                    code: APIResponseCode.SERVER_NOT_FOUND,
                     message: ERROR_MESSAGES.SERVER_NOT_INITIALIZED(serverName)
                 },
                 record: {
@@ -302,7 +302,7 @@ export class ApiManager {
                     endTime: currentTime,
                     responseTime: 0,
                     success: false,
-                    errorCode: APIErrorCode.SERVER_NOT_FOUND,
+                    errorCode: APIResponseCode.SERVER_NOT_FOUND,
                     errorMessage: ERROR_MESSAGES.SERVER_NOT_INITIALIZED(serverName)
                 }
             };
@@ -316,7 +316,7 @@ export class ApiManager {
             const currentTime = Date.now();
             return {
                 response: {
-                    code: APIErrorCode.AXIOS_INSTANCE_NOT_FOUND,
+                    code: APIResponseCode.AXIOS_INSTANCE_NOT_FOUND,
                     message: ERROR_MESSAGES.INSTANCE_NOT_FOUND(instanceKey)
                 },
                 record: {
@@ -327,7 +327,7 @@ export class ApiManager {
                     endTime: currentTime,
                     responseTime: 0,
                     success: false,
-                    errorCode: APIErrorCode.AXIOS_INSTANCE_NOT_FOUND,
+                    errorCode: APIResponseCode.AXIOS_INSTANCE_NOT_FOUND,
                     errorMessage: ERROR_MESSAGES.INSTANCE_NOT_FOUND(instanceKey)
                 }
             };
@@ -394,7 +394,7 @@ export class ApiManager {
                 const errorMessage = (error as any)?.message || '请求已取消';
                 return {
                     response: {
-                        code: APIErrorCode.REQUEST_CANCELLED,
+                        code: APIResponseCode.REQUEST_CANCELLED,
                         message: errorMessage
                     },
                     record: {
@@ -405,7 +405,7 @@ export class ApiManager {
                         endTime,
                         responseTime,
                         success: false,
-                        errorCode: APIErrorCode.REQUEST_CANCELLED,
+                        errorCode: APIResponseCode.REQUEST_CANCELLED,
                         errorMessage: errorMessage
                     }
                 };
@@ -420,7 +420,7 @@ export class ApiManager {
                 const axiosError = error as AxiosError;
                 return {
                     response: {
-                        code: axiosError.code || APIErrorCode.NETWORK_ERROR,
+                        code: axiosError.code || APIResponseCode.NETWORK_ERROR,
                         message: axiosError.message || '网络请求失败',
                         extra: {
                             serverName,
@@ -437,7 +437,7 @@ export class ApiManager {
                         endTime,
                         responseTime,
                         success: false,
-                        errorCode: axiosError.code || APIErrorCode.NETWORK_ERROR,
+                        errorCode: axiosError.code || APIResponseCode.NETWORK_ERROR,
                         errorMessage: axiosError.message || '网络请求失败',
                         status: axiosError.response?.status,
                         statusText: axiosError.response?.statusText
@@ -447,7 +447,7 @@ export class ApiManager {
 
             return {
                 response: {
-                    code: APIErrorCode.UNKNOWN_ERROR,
+                    code: APIResponseCode.UNKNOWN_ERROR,
                     message: error instanceof Error ? error.message : '未知错误'
                 },
                 record: {
@@ -458,7 +458,7 @@ export class ApiManager {
                     endTime,
                     responseTime,
                     success: false,
-                    errorCode: APIErrorCode.UNKNOWN_ERROR,
+                    errorCode: APIResponseCode.UNKNOWN_ERROR,
                     errorMessage: error instanceof Error ? error.message : '未知错误'
                 }
             };
@@ -478,7 +478,7 @@ export class ApiManager {
         const config = this.serverMap.get(serverName);
         if (!config) {
             return {
-                code: APIErrorCode.SERVER_NOT_FOUND,
+                code: APIResponseCode.SERVER_NOT_FOUND,
                 message: ERROR_MESSAGES.SERVER_NOT_INITIALIZED(serverName),
                 extra: {
                     serverName,
@@ -504,7 +504,7 @@ export class ApiManager {
         } catch (error) {
             if (error instanceof Error && error.message === 'Rate limit exceeded') {
                 return {
-                    code: APIErrorCode.RATE_LIMIT_EXCEEDED,
+                    code: APIResponseCode.RATE_LIMIT_EXCEEDED,
                     message: '请求频率超过限制',
                     extra: {
                         serverName,
@@ -595,7 +595,7 @@ export class ApiManager {
         // 所有尝试都失败了
         const totalResponseTime = Date.now() - requestStartTime;
         return {
-            code: APIErrorCode.ALL_SERVERS_FAILED,
+            code: APIResponseCode.ALL_SERVERS_FAILED,
             message: ERROR_MESSAGES.ALL_SERVERS_FAILED(serverName),
             extra: {
                 serverName,
@@ -613,7 +613,7 @@ export class ApiManager {
      * 判断是否为网络错误
      */
     private isNetworkError(code: string): boolean {
-        return NETWORK_ERROR_CODES.has(code) || code === APIErrorCode.NETWORK_ERROR;
+        return NETWORK_ERROR_CODES.has(code) || code === APIResponseCode.NETWORK_ERROR;
     }
 
     /**

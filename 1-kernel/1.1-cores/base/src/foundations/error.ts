@@ -1,6 +1,6 @@
 import {DefinedErrorMessage, ErrorCategory, ErrorSeverity} from "./errorMessages";
 import type {IAppError} from "../types/shared/error";
-import {APIErrorCode, ResponseWrapper} from "../types";
+import {APIResponseCode, ResponseWrapper} from "../types";
 
 interface ICommandLike {
     id?: string;
@@ -64,7 +64,7 @@ export class AppError extends Error implements IAppError {
 export class APIError extends AppError {
     constructor(responseWrapper: ResponseWrapper<any>, extraMessage?: string, command?: ICommandLike) {
         let definedErrorInfo: DefinedErrorMessage
-        if (Object.values(APIErrorCode).includes(responseWrapper.code as APIErrorCode)) {
+        if (Object.values(APIResponseCode).includes(responseWrapper.code as APIResponseCode)) {
             definedErrorInfo = new DefinedErrorMessage(
                 ErrorCategory.NETWORK,
                 ErrorSeverity.MEDIUM,

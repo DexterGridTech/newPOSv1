@@ -1,6 +1,6 @@
 import {ApiManager, ApplicationConfig, AppModule, InitLogger} from "@impos2/kernel-core-base";
 import {InternalAxiosRequestConfig} from "axios";
-import {kernelTokenGetter} from "../foundations/kernelServer";
+import {kernelTokenGetter} from "../foundations/kernelTokenGetter";
 import {SERVER_NAME_KERNEL_API} from "../foundations";
 
 

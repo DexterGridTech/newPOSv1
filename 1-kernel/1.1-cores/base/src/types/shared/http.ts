@@ -23,7 +23,7 @@ export enum HttpMethod {
 /**
  * 错误代码
  */
-export enum APIErrorCode {
+export enum APIResponseCode {
     SUCCESS = 'SUCCESS',
     SERVER_NOT_FOUND = 'SERVER_NOT_FOUND',
     AXIOS_INSTANCE_NOT_FOUND = 'AXIOS_INSTANCE_NOT_FOUND',
@@ -151,7 +151,7 @@ export interface ResponseExtra {
  * 响应封装类型
  */
 export interface ResponseWrapper<T> {
-    code: APIErrorCode | string;
+    code: APIResponseCode | string;
     message?: string;
     data?: T;
     extra?: ResponseExtra;
