@@ -2,6 +2,7 @@ import React, {useCallback} from 'react';
 import {Text, View, StyleSheet, Dimensions} from 'react-native';
 import {useLifecycle} from "../../hooks";
 import {ScreenMode, ScreenPartRegistration} from "@impos2/kernel-core-base";
+import {InstanceMode, Workspace} from "@impos2/kernel-core-interconnection";
 
 /**
  * 空页面组件 - 企业级设计
@@ -140,5 +141,7 @@ export const emptyScreenPart: ScreenPartRegistration = {
     description: '默认的空白页面组件',
     partKey: 'empty',
     screenMode: [ScreenMode.DESKTOP, ScreenMode.MOBILE],
+    instanceMode: [InstanceMode.MASTER, InstanceMode.SLAVE],
+    workspace: [Workspace.MAIN, Workspace.BRANCH],
     componentType: EmptyScreen
 };

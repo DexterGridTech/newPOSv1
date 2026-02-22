@@ -1,7 +1,7 @@
 import {
     createWorkspaceSlice,
     DisplayMode, SyncType,
-    WorkSpace,
+    Workspace,
     WorkspaceModuleSliceConfig
 } from '@impos2/kernel-core-interconnection'
 import {UiVariablesState} from "../../types/state/uiVariables";
@@ -75,7 +75,7 @@ export const uiVariablesSliceConfig: WorkspaceModuleSliceConfig<UiVariablesState
     reducers: slice.reducers,
     persistToStorage: true,
     syncType: {
-        [WorkSpace.MAIN]: SyncType.MASTER_TO_SLAVE,
-        [WorkSpace.BRANCH]: SyncType.SLAVE_TO_MASTER
+        [Workspace.MAIN]: SyncType.MASTER_TO_SLAVE,
+        [Workspace.BRANCH]: SyncType.SLAVE_TO_MASTER
     }
 }

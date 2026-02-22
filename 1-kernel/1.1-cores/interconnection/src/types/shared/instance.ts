@@ -8,7 +8,7 @@ export enum DisplayMode {
     SECONDARY = 'secondary'
 }
 
-export enum WorkSpace {
+export enum Workspace {
     MAIN = 'main',
     BRANCH = 'branch'
 }

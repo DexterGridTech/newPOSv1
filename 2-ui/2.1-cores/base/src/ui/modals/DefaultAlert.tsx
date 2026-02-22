@@ -15,6 +15,7 @@ import {
     ScreenMode,
     ScreenPartRegistration
 } from "@impos2/kernel-core-base";
+import {InstanceMode, Workspace} from "@impos2/kernel-core-interconnection";
 
 /**
  * Alert 弹窗组件 - 企业级设计
@@ -551,5 +552,7 @@ export const defaultAlertPart: ScreenPartRegistration = {
     description: '默认的系统提示弹窗组件',
     partKey: defaultAlertPartKey,
     screenMode: [ScreenMode.DESKTOP, ScreenMode.MOBILE],
+    instanceMode: [InstanceMode.MASTER, InstanceMode.SLAVE],
+    workspace: [Workspace.MAIN, Workspace.BRANCH],
     componentType: DefaultAlert
 };

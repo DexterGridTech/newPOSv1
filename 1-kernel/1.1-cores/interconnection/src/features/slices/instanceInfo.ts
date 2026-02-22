@@ -1,7 +1,7 @@
 import {LOG_TAGS, logger, ModuleSliceConfig} from "@impos2/kernel-core-base";
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {InstanceInfoState} from "../../types/state/instanceInfo";
-import {DisplayMode, InstanceMode, WorkSpace} from "../../types/shared/instance";
+import {DisplayMode, InstanceMode, Workspace} from "../../types/shared/instance";
 import {kernelCoreInterconnectionState} from "../../types/shared/moduleStateKey";
 import {MasterInfo} from "../../types";
 import {SyncType} from "../../types/shared/syncType";
@@ -10,7 +10,7 @@ import {moduleName} from "../../moduleName";
 const initialState: InstanceInfoState = {
     instanceMode: InstanceMode.MASTER,
     displayMode: DisplayMode.PRIMARY,
-    workspace: WorkSpace.MAIN,
+    workspace: Workspace.MAIN,
     standalone: false,
     enableSlave: false
 }
@@ -23,18 +23,18 @@ const slice = createSlice({
 
             state.instanceMode = action.payload
             if(state.instanceMode===InstanceMode.SLAVE&&state.displayMode===DisplayMode.PRIMARY){
-                state.workspace=WorkSpace.BRANCH
+                state.workspace=Workspace.BRANCH
             }else{
-                state.workspace=WorkSpace.MAIN
+                state.workspace=Workspace.MAIN
             }
         },
         setDisplayMode: (state, action: PayloadAction<DisplayMode>) => {
             logger.log([moduleName, LOG_TAGS.Reducer, "instanceInfo"], 'setDisplayMode',action.payload)
             state.displayMode = action.payload
             if(state.instanceMode===InstanceMode.SLAVE&&state.displayMode===DisplayMode.PRIMARY){
-                state.workspace=WorkSpace.BRANCH
+                state.workspace=Workspace.BRANCH
             }else{
-                state.workspace=WorkSpace.MAIN
+                state.workspace=Workspace.MAIN
             }
         },
         enableSlave: (state, action: PayloadAction<boolean>) => {

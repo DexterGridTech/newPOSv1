@@ -1,5 +1,5 @@
 import {ApplicationConfig} from "@impos2/kernel-core-base";
-import {DisplayMode, InstanceMode, kernelCoreInterconnectionState, MasterInfo, WorkSpace} from "../types";
+import {DisplayMode, InstanceMode, kernelCoreInterconnectionState, MasterInfo, Workspace} from "../types";
 import {defaultMasterInfo, defaultSlaveInfo} from "./masterServer";
 
 
@@ -9,7 +9,7 @@ export const preInitiateInstanceInfo = (config: ApplicationConfig) => {
     const enableSlave = environment.displayCount > 1 && standalone
     const instanceMode = standalone ? InstanceMode.MASTER : InstanceMode.SLAVE
     const displayMode = standalone ? DisplayMode.PRIMARY : DisplayMode.SECONDARY
-    const workspace = WorkSpace.MAIN
+    const workspace = Workspace.MAIN
 
 
     defaultMasterInfo.deviceId = environment.deviceId

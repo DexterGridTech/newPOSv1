@@ -1,12 +1,12 @@
 import {createSlice, PayloadAction, Reducer, SliceCaseReducers, ValidateSliceCaseReducers} from "@reduxjs/toolkit";
 import {Command, ModuleSliceConfig, storeEntry} from "@impos2/kernel-core-base";
-import {WorkSpace} from "../types/shared/instance";
+import {Workspace} from "../types/shared/instance";
 import {getWorkspace} from "./accessory";
 import {SyncType} from "../types/shared/syncType";
 
 // ---- 类型定义 ----
 
-type WorkSpaceValues = `${WorkSpace}`
+type WorkSpaceValues = `${Workspace}`
 
 type WorkspaceStateKeys<M extends string, T extends readonly string[]> = {
     [K in T[number]]: `${M}.${K}`
@@ -71,7 +71,7 @@ export function createWorkspaceSlice<
     initialState: State,
     reducers: ValidateSliceCaseReducers<State, CR>
 ): WorkspaceSliceResult<State, CR, Name> {
-    const workspaceValues = Object.values(WorkSpace) as WorkSpaceValues[]
+    const workspaceValues = Object.values(Workspace) as WorkSpaceValues[]
 
     const referenceSlice = createSlice({
         name: `${name}.${workspaceValues[0]}`,
@@ -112,7 +112,7 @@ export function toModuleSliceConfigs<State>(
     config: WorkspaceModuleSliceConfig<State>
 ): Record<string, ModuleSliceConfig<State>> {
     const result: Record<string, ModuleSliceConfig<State>> = {}
-    const workspaceValues = Object.values(WorkSpace) as WorkSpaceValues[]
+    const workspaceValues = Object.values(Workspace) as WorkSpaceValues[]
 
     for (const ws of workspaceValues) {
         const sliceName = `${config.name}.${ws}`
@@ -134,7 +134,7 @@ export function dispatchWorkspaceAction(
     action: PayloadAction<any>,
     command: Command<any>
 ): void {
-    const workspace = command.extra?.workspace as WorkSpace | undefined
+    const workspace = command.extra?.workspace as Workspace | undefined
     if (!workspace) {
         throw new Error(
             `[dispatchWorkspaceAction] command.extra.workspace 不存在。` +
@@ -169,7 +169,7 @@ export function getWorkspaceStateByCommand<State>(
     baseKey: string,
     command: Command<any>
 ): State {
-    const workspace = command.extra?.workspace as WorkSpace | undefined
+    const workspace = command.extra?.workspace as Workspace | undefined
     if (!workspace) {
         throw new Error(
             `[getWorkspaceStateByKey] command.extra.workspace 不存在。` +

@@ -2,7 +2,7 @@ import {createModuleCommands, defineCommand, ScreenPart} from "@impos2/kernel-co
 import {moduleName} from "../../moduleName";
 
 export const kernelCoreNavigationCommands = createModuleCommands(moduleName, {
-    //数据同步
+    navigateTo: defineCommand<{ target:ScreenPart<any> }>(),
     openModal: defineCommand<{ modal: ScreenPart<any> }>(),
     closeModal: defineCommand<{ modalId: string }>(),
     setUiVariables: defineCommand<Record<string, any>>(),

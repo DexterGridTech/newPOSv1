@@ -6,6 +6,13 @@ import type {Store} from '@reduxjs/toolkit';
 import type {Persistor} from 'redux-persist';
 import {Text, View} from "react-native";
 import {kernelCoreBaseCommands} from "@impos2/kernel-core-base";
+import {
+    FancyContainerV2, FancyKeyboardOverlayV2, FancyKeyboardProviderV2,
+    ModalContainer,
+    StackContainer,
+    uiBaseCoreUiVariables,
+    uiCoreBaseCommands
+} from "@impos2/ui-core-base";
 
 export const DevApp: React.FC = () => {
     const [storeReady, setStoreReady] = useState<{ store: Store; persistor: Persistor } | null>(null);
@@ -23,11 +30,30 @@ export const DevApp: React.FC = () => {
     return (
         <Provider store={storeReady.store}>
             <PersistGate persistor={storeReady.persistor} onBeforeLift={() => {
-                kernelCoreBaseCommands.initialize().executeInternally()
+                kernelCoreBaseCommands.initialize().executeInternally();
+                uiCoreBaseCommands.screenLongPressed().executeInternally();
             }}>
-                <View>
-                    <Text>DevApp</Text>
-                </View>
+                <FancyKeyboardProviderV2
+                    animationDuration={300}
+                    animationEasing="easeInOut"
+                >
+                    <FancyContainerV2>
+                        {/* 你的页面内容 */}
+                        <View
+                            key={"primary-container"}
+                            style={{
+                                flex: 1
+                            }}
+                        >
+                            <StackContainer containerPart={uiBaseCoreUiVariables.rootScreenContainer}>
+                            </StackContainer>
+                        </View>
+                        <ModalContainer/>
+                    </FancyContainerV2>
+
+                    {/* 必须添加键盘遮罩层 */}
+                    <FancyKeyboardOverlayV2/>
+                </FancyKeyboardProviderV2>
             </PersistGate>
         </Provider>
     );

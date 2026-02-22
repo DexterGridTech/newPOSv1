@@ -1,6 +1,7 @@
 import {getScreenMode, ScreenMode, ScreenPart, ScreenPartRegistration} from "@impos2/kernel-core-base";
 import {ComponentType} from "react";
 import {AlertInfo} from "../types";
+import {getInstanceMode, getWorkspace} from "@impos2/kernel-core-interconnection";
 
 /**
  * ScreenPart 注册信息存储
@@ -24,11 +25,11 @@ export function registerScreenPart(registration: ScreenPartRegistration) {
         registry.set(registration.partKey, registration)
     })
 }
+
 export function getScreenPartComponentType(key: string): ComponentType<any> | undefined {
     const screenMode = getScreenMode()
     return screenRegistryMap[screenMode].get(key)?.componentType
 }
-
 
 
 /**
@@ -41,11 +42,15 @@ export function getScreenPartReadyToEnter(key: string): (() => boolean) | undefi
 
 export function getFirstReadyScreenPartByContainerKey(containerKey: string, fromIndex: number): ScreenPart<any> | undefined {
     const screenMode = getScreenMode()
+    const instanceMode = getInstanceMode()
+    const workspace = getWorkspace()
     const registration = Array.from(screenRegistryMap[screenMode].values())
         .filter(part =>
             part.containerKey === containerKey &&
             part.indexInContainer != null &&
-            part.indexInContainer > fromIndex
+            part.indexInContainer > fromIndex &&
+            part.workspace.includes(workspace) &&
+            part.instanceMode.includes(instanceMode)
         )
         .sort((a, b) => (a.indexInContainer ?? 0) - (b.indexInContainer ?? 0))
         .find(part => part.readyToEnter?.() ?? true)
@@ -55,7 +60,7 @@ export function getFirstReadyScreenPartByContainerKey(containerKey: string, from
     }
 
     // 将 ScreenPartRegistration 转换为 ScreenPart（去除 componentType）
-    const { componentType, ...screenPart } = registration
+    const {componentType, ...screenPart} = registration
     return screenPart
 }
 
@@ -66,8 +71,13 @@ export function getFirstReadyScreenPartByContainerKey(containerKey: string, from
  */
 export function getScreenPartsByContainerKey(containerKey: string): ScreenPartRegistration[] {
     const screenMode = getScreenMode()
+    const instanceMode = getInstanceMode()
+    const workspace = getWorkspace()
     return Array.from(screenRegistryMap[screenMode].values())
-        .filter(part => part.containerKey === containerKey)
+        .filter(part =>
+            part.containerKey === containerKey&&
+            part.workspace.includes(workspace) &&
+            part.instanceMode.includes(instanceMode))
         .sort((a, b) => (a.indexInContainer ?? 0) - (b.indexInContainer ?? 0))
 }
 
@@ -86,8 +96,7 @@ export const createAlert =
             props,
             partKey: defaultAlertPartKey,
             name: "Alert",
-            title:"Alert",
-            description:"Alert",
-            screenMode: [ScreenMode.DESKTOP, ScreenMode.MOBILE]
+            title: "Alert",
+            description: "Alert",
         }
     }

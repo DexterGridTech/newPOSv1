@@ -1,4 +1,7 @@
-import { ScreenPartRegistration} from "@impos2/kernel-core-base";
+import {adminLoginModalPart} from "./modals";
+import {adminPanelModalPart} from "./modals/AdminPanelModal";
 
-export const uiAdminScreenParts:Record<string, ScreenPartRegistration> = {
+export const uiAdminScreenParts = {
+    adminLoginModal: adminLoginModalPart,
+    adminPanelModal: adminPanelModalPart,
 }

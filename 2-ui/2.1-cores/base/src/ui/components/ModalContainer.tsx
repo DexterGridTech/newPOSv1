@@ -33,92 +33,56 @@ export const ModalContainer: React.FC = React.memo(() => {
      * 监听 state 中的 models 变化，更新本地 children
      */
     useEffect(() => {
-        // 获取 state 中的 Modal IDs
         const stateIds = new Set(stateModels.map(m => m.id).filter(Boolean) as string[]);
 
-        // 获取本地 children 中的 Modal IDs
-        const localIds = new Set(localChildren.map(c => c.model.id).filter(Boolean) as string[]);
+        setLocalChildren(prev => {
+            const localIds = new Set(prev.map(c => c.model.id).filter(Boolean) as string[]);
 
-        // 1. 找出新增的 Modal（在 state 中有，但本地没有）
-        const addedIds: string[] = [];
-        stateIds.forEach(id => {
-            if (!localIds.has(id)) {
-                addedIds.push(id);
-            }
-        });
-
-        // 2. 找出删除的 Modal（本地有，但 state 中没有）
-        const removedIds: string[] = [];
-        localIds.forEach(id => {
-            if (!stateIds.has(id)) {
-                removedIds.push(id);
-            }
-        });
-
-        // 3. 处理新增的 Modal
-        if (addedIds.length > 0) {
+            // 新增
             const newChildren: ModalChild[] = [];
-
-            addedIds.forEach(id => {
-                const model = stateModels.find(m => m.id === id);
-                if (model && model.screenPartKey) {
-                    const ComponentType = getScreenPartComponentType(model.screenPartKey);
-                    if (ComponentType) {
-                        newChildren.push({
-                            ComponentType,
-                            model,
-                        });
+            stateIds.forEach(id => {
+                if (!localIds.has(id)) {
+                    const model = stateModels.find(m => m.id === id);
+                    if (model?.screenPartKey) {
+                        const ComponentType = getScreenPartComponentType(model.screenPartKey);
+                        if (ComponentType) {
+                            logger.log([moduleName, LOG_TAGS.UI], `添加modal窗口: ${model.screenPartKey}`);
+                            newChildren.push({ComponentType, model});
+                        }
                     }
                 }
             });
 
-            if (newChildren.length > 0) {
-                newChildren.forEach(child=>{
-                    logger.log([moduleName,LOG_TAGS.UI],`添加modal窗口: ${child.model.screenPartKey}`)
-                })
+            // 关闭动画
+            const removedIds: string[] = [];
+            localIds.forEach(id => {
+                if (!stateIds.has(id)) removedIds.push(id);
+            });
 
-                setLocalChildren(prev => [...prev, ...newChildren]);
-            }
-        }
-
-        // 4. 处理删除的 Modal
-        if (removedIds.length > 0) {
-            // 先设置 open=false，触发关闭动画
-            setLocalChildren(prev =>
-                prev.map(child => {
+            let next = prev;
+            if (removedIds.length > 0) {
+                next = prev.map(child => {
                     if (removedIds.includes(child.model.id as string)) {
-                        logger.log([moduleName,LOG_TAGS.UI],`关闭modal窗口: ${child.model.screenPartKey}`)
-                        return {
-                            ...child,
-                            model: {
-                                ...child.model,
-                                open: false,
-                            },
-                        };
+                        logger.log([moduleName, LOG_TAGS.UI], `关闭modal窗口: ${child.model.screenPartKey}`);
+                        return {...child, model: {...child.model, open: false}};
                     }
                     return child;
-                })
-            );
+                });
 
-            // 1 秒后从本地 children 中移除
-            removedIds.forEach(id => {
-                // 清除之前的定时器（如果有）
-                const existingTimer = removeTimersRef.current.get(id);
-                if (existingTimer) {
-                    clearTimeout(existingTimer);
-                }
+                removedIds.forEach(id => {
+                    const existingTimer = removeTimersRef.current.get(id);
+                    if (existingTimer) clearTimeout(existingTimer);
+                    const timer = setTimeout(() => {
+                        setLocalChildren(p => p.filter(c => c.model.id !== id));
+                        removeTimersRef.current.delete(id);
+                    }, 1000);
+                    removeTimersRef.current.set(id, timer);
+                });
+            }
 
-                // 设置新的定时器
-                const timer = setTimeout(() => {
-                    setLocalChildren(prev =>
-                        prev.filter(child => child.model.id !== id)
-                    );
-                    removeTimersRef.current.delete(id);
-                }, 1000);
-
-                removeTimersRef.current.set(id, timer);
-            });
-        }
+            if (newChildren.length === 0 && removedIds.length === 0) return prev;
+            return [...next, ...newChildren];
+        });
     }, [stateModels]);
 
     /**

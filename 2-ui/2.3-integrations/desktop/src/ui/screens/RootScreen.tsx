@@ -1,5 +1,5 @@
 import React, {useEffect, useRef} from 'react';
-import {StyleSheet, View,} from 'react-native';
+import {View,} from 'react-native';
 import {moduleName} from "../../moduleName";
 import {formattedTime} from "@impos2/kernel-core-base";
 import {
@@ -8,9 +8,10 @@ import {
     FancyKeyboardProviderV2,
     ModalContainer,
     StackContainer,
+    uiBaseCoreUiVariables,
+    uiCoreBaseCommands,
     useLongPress
 } from "@impos2/ui-core-base";
-import {uiIntegrationDesktopUiVariables} from "../variables";
 
 
 export interface AppProps {
@@ -30,9 +31,7 @@ const RootScreen: React.FC<AppProps> = ({onLoadComplete}) => {
 
     const longPressHandlers = useLongPress({
         onLongPress: () => {
-
-            console.log("---------")
-            // new LongPressCommand("primary-container").executeInternally();
+            uiCoreBaseCommands.screenLongPressed().executeInternally();
         },
         delay: 2000
     });
@@ -51,7 +50,7 @@ const RootScreen: React.FC<AppProps> = ({onLoadComplete}) => {
                         flex: 1
                     }}
                 >
-                    <StackContainer containerPart={uiIntegrationDesktopUiVariables.rootScreenContainer}>
+                    <StackContainer containerPart={uiBaseCoreUiVariables.rootScreenContainer}>
                     </StackContainer>
                 </View>
                 <ModalContainer/>
@@ -62,33 +61,5 @@ const RootScreen: React.FC<AppProps> = ({onLoadComplete}) => {
         </FancyKeyboardProviderV2>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#ffffff',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    content: {
-        alignItems: 'center',
-    },
-    text: {
-        marginTop: 20,
-        fontSize: 16,
-        color: '#666666',
-    },
-    button: {
-        marginTop: 20,
-        paddingHorizontal: 24,
-        paddingVertical: 10,
-        backgroundColor: '#764ba2',
-        borderRadius: 8,
-    },
-    buttonText: {
-        color: '#ffffff',
-        fontSize: 16,
-    },
-});
 
 export default RootScreen;
