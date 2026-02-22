@@ -10,6 +10,7 @@ import {uiAdminMiddlewares} from "./features/middlewares";
 import {AppModule} from "@impos2/kernel-core-base";
 import {kernelCoreNavigationModule} from "@impos2/kernel-core-navigation";
 import {uiAdminScreenParts} from "./ui";
+import {uiCoreBaseModule} from "@impos2/ui-core-base";
 
 export const uiAdminModule: AppModule = {
     name: moduleName,
@@ -21,7 +22,7 @@ export const uiAdminModule: AppModule = {
     actors: uiAdminActors,
     errorMessages: uiAdminErrorMessages,
     parameters: uiAdminParameters,
-    dependencies: [kernelCoreNavigationModule],
+    dependencies: [uiCoreBaseModule],
     modulePreSetup: uiAdminModulePreSetup,
     screenParts:uiAdminScreenParts,
     preSetupPriority: 0

@@ -44,6 +44,8 @@ export function getFirstReadyScreenPartByContainerKey(containerKey: string, from
     const screenMode = getScreenMode()
     const instanceMode = getInstanceMode()
     const workspace = getWorkspace()
+    // console.log('===>>', containerKey, fromIndex, screenMode, instanceMode, workspace)
+    // console.log('--->>', screenRegistryMap)
     const registration = Array.from(screenRegistryMap[screenMode].values())
         .filter(part =>
             part.containerKey === containerKey &&
@@ -55,6 +57,7 @@ export function getFirstReadyScreenPartByContainerKey(containerKey: string, from
         .sort((a, b) => (a.indexInContainer ?? 0) - (b.indexInContainer ?? 0))
         .find(part => part.readyToEnter?.() ?? true)
 
+    // console.log('registration--->>', registration)
     if (!registration) {
         return undefined
     }

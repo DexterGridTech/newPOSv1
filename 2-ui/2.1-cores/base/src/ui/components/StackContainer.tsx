@@ -81,7 +81,6 @@ export const StackContainer: React.FC<StackContainerProps> = React.memo(({
             logger.warn([moduleName, LOG_TAGS.UI, 'StackContainer'], 'Invalid child', {child});
             return EmptyScreen;
         }
-
         const component = getScreenPartComponentType(child.partKey);
 
         if (!component) {

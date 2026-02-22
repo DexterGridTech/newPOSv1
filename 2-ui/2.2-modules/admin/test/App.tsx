@@ -4,10 +4,12 @@ import {storePromise} from './store';
 import {PersistGate} from "redux-persist/integration/react";
 import type {Store} from '@reduxjs/toolkit';
 import type {Persistor} from 'redux-persist';
-import {Text, View} from "react-native";
+import {View} from "react-native";
 import {kernelCoreBaseCommands} from "@impos2/kernel-core-base";
 import {
-    FancyContainerV2, FancyKeyboardOverlayV2, FancyKeyboardProviderV2,
+    FancyContainerV2,
+    FancyKeyboardOverlayV2,
+    FancyKeyboardProviderV2,
     ModalContainer,
     StackContainer,
     uiBaseCoreUiVariables,

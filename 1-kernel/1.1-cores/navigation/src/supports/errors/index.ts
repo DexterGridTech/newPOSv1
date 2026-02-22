@@ -7,6 +7,6 @@ export const kernelCoreNavigationErrorMessages = {
         ErrorSeverity.HIGH,
         "导航错误",
         'navigation.error',
-        "导航错误:${reasons.join(',')}"
+        "导航错误:${reasons}"
     )
 };

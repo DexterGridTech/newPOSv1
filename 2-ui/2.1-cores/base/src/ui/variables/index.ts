@@ -1,5 +1,5 @@
-import {UiVariable} from "@impos2/kernel-core-navigation";
+import {emptyScreenPart} from "../screens";
 
-export const uiBaseCoreUiVariables:Record<string, UiVariable<any>> = {
-    rootScreenContainer:{key:"rootScreenContainer",defaultValue:null}
+export const uiBaseCoreUiVariables = {
+    rootScreenContainer: {key: "rootScreenContainer", defaultValue: emptyScreenPart}
 }

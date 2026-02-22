@@ -8,14 +8,6 @@ const getCurrenReadyScreenPart = (containerKey: string, defaultValue: ScreenPart
 
 export const useChildScreenPart = (variable: UiVariable<ScreenPart<any>>) => {
     return useSelector((state: RootState) =>
-            selectUiVariable<ScreenPart<any>>(state, variable.key, emptyScreenPart))
-        ?? getCurrenReadyScreenPart(variable.key, variable.defaultValue)
-}
-
-
-const emptyScreenPart: ScreenPart<any> = {
-    name: "empty",
-    title: "empty",
-    description: "empty",
-    partKey: "empty",
+        selectUiVariable<ScreenPart<any>>(state, variable.key, getCurrenReadyScreenPart(variable.key, variable.defaultValue))
+    )
 }

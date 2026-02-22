@@ -1,6 +1,6 @@
-import {UiVariable} from "@impos2/kernel-core-navigation";
+import {emptyScreenPart} from "@impos2/ui-core-base";
 
-export const uiAdminVariables:Record<string, UiVariable<any>> = {
+export const uiAdminVariables = {
     adminPassword: {key: 'system.admin.password', defaultValue: ''},
-    systemAdminPanel: {key: 'system.admin.panel', defaultValue: ''},
+    systemAdminPanel: {key: 'system.admin.panel', defaultValue: emptyScreenPart},
 }

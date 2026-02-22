@@ -7,7 +7,7 @@ export const kernelCoreInterconnectionErrorMessages = {
         ErrorSeverity.HIGH,
         "Master服务器启动未通过与校验",
         'master.server.precheck.failed',
-        "主设备服务器启动未通过与校验:${reasons.join(',')}"
+        "主设备服务器启动未通过与校验:${reasons}"
     ),
     masterServerCannotStart: new DefinedErrorMessage(
         ErrorCategory.SYSTEM,
@@ -28,7 +28,7 @@ export const kernelCoreInterconnectionErrorMessages = {
         ErrorSeverity.HIGH,
         "Slave服务器启动未通过与校验",
         'slave.server.precheck.failed',
-        "副设备连接服务器未通过与校验:${reasons.join(',')}"
+        "副设备连接服务器未通过与校验:${reasons}"
     ),
     slaveNotConnected: new DefinedErrorMessage(
         ErrorCategory.VALIDATION,

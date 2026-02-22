@@ -77,14 +77,7 @@ export const AdminPanelModal: React.FC<ModalScreen<AdminPanelModalProps>> = Reac
      */
     const handleMenuSelect = useCallback((screenPart: ScreenPartRegistration) => {
         kernelCoreNavigationCommands.navigateTo({
-            target: {
-                partKey: screenPart.partKey,
-                name: screenPart.name,
-                title: screenPart.title,
-                description: screenPart.description,
-                containerKey: screenPart.containerKey,
-                indexInContainer: screenPart.indexInContainer,
-            }
+            target: screenPart
         }).executeInternally();
     }, []);
 

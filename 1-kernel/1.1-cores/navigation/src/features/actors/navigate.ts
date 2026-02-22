@@ -7,15 +7,13 @@ import {kernelCoreNavigationErrorMessages} from "../../supports";
 export class NavigateActor extends Actor {
     navigateTo = Actor.defineCommandHandler(kernelCoreNavigationCommands.navigateTo,
         async (command): Promise<Record<string, any>> => {
-            const {target} = command.payload;
-            const {partKey, containerKey} = target;
-            if (partKey && containerKey)
+            const {containerKey} = command.payload.target;
+            if (containerKey)
                 kernelCoreNavigationCommands.setUiVariables({
-                    [containerKey]: partKey
+                    [containerKey]: command.payload.target
                 }).executeInternally();
             else {
                 const reasons: string[] = []
-                if (!partKey) reasons.push(`partKey is required`)
                 if (!containerKey) reasons.push(`containerKey is required`)
                 throw new AppError(kernelCoreNavigationErrorMessages.navigationError, {reasons: reasons})
             }
