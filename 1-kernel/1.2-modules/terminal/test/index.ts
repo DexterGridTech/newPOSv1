@@ -8,9 +8,12 @@ import {
     // @ts-ignore
 } from "@impos2/kernel-core-base";
 import {kernelTerminalModule} from "../src";
+// @ts-ignore
+import {devServerSpace} from "@impos2/kernel-server-config";
 
 
 const appConfig: ApplicationConfig = {
+    serverSpace: devServerSpace,
     environment: {
         deviceId:"123",
         production: false,

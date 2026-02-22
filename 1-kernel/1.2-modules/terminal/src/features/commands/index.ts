@@ -8,6 +8,6 @@ export const kernelTerminalCommands = createModuleCommands(moduleName, {
     setOperatingEntity: defineCommand<Unit>(),
     setOperatingEntitySuccess: defineCommand<void>(),
     activateDeviceSuccess: defineCommand<void>(),
-    deActivateDeviceSuccess: defineCommand<void>()
+    deactivateDeviceSuccess: defineCommand<void>()
 })
 

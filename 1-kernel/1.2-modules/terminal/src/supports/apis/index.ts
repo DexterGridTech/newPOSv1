@@ -8,7 +8,7 @@ import {
 } from "../../types/foundations/api";
 import {Api, HttpMethod} from "@impos2/kernel-core-base";
 import {UnitDataChangedSet} from "../../types/shared/unitData";
-import {SERVER_NAME_KERNEL_API, SERVER_NAME_KERNEL_WS} from "../../foundations";
+import {SERVER_NAME_KERNEL_API, SERVER_NAME_KERNEL_WS} from "@impos2/kernel-server-config";
 
 
 export const kernelTerminalApis = {

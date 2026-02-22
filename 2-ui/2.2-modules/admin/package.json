@@ -24,6 +24,7 @@
     "@impos2/kernel-core-base": "*",
     "@impos2/kernel-core-interconnection": "*",
     "@impos2/kernel-core-navigation": "*",
+    "@impos2/kernel-server-config": "*",
     "@impos2/ui-core-base": "*",
     "@reduxjs/toolkit": "^2.11.2",
     "react": "18.3.1",

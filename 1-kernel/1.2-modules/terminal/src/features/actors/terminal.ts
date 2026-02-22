@@ -60,7 +60,7 @@ export class TerminalActor extends Actor {
             const result = await kernelTerminalApis.deactivateDevice.run({request: deactivateDeviceRequest})
             if (result.code === APIResponseCode.SUCCESS) {
 
-                kernelTerminalCommands.deActivateDeviceSuccess().executeFromParent(command)
+                kernelTerminalCommands.deactivateDeviceSuccess().executeFromParent(command)
 
                 return {
                 }

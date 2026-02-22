@@ -1,4 +1,4 @@
-import {Environment, ModuleSliceConfig, RootState} from "../types";
+import {Environment, ModuleSliceConfig, RootState, ServerSpace} from "../types";
 import {Epic} from "redux-observable";
 import {Actor, DefinedErrorMessage, DefinedSystemParameter, ScreenPartRegistration} from "../foundations";
 import {Middleware, PayloadAction, StoreEnhancer} from "@reduxjs/toolkit";
@@ -10,6 +10,7 @@ export type DeepPartial<T> = {
 };
 
 export interface ApplicationConfig {
+    serverSpace: ServerSpace
     environment: Environment
     preInitiatedState: DeepPartial<RootState>
     module: AppModule

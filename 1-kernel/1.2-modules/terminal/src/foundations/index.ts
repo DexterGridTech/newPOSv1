@@ -1,1 +1,1 @@
-export * from './serverName';
+export {}

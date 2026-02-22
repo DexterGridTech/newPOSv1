@@ -1,8 +1,10 @@
 // @ts-ignore
 import {ApplicationConfig, ApplicationManager, ScreenMode} from "@impos2/kernel-core-base";
 import {uiIntegrationDesktopModule} from "../src";
+import {devServerSpace} from "@impos2/kernel-server-config";
 
 const appConfig: ApplicationConfig = {
+    serverSpace: devServerSpace,
     environment: {
         deviceId:"123",
         production: false,

@@ -3,11 +3,21 @@ import {
     ApplicationManager,
     kernelCoreBaseCommands,
     kernelCoreBaseModule,
-    ScreenMode,
+    ScreenMode, ServerSpace,
 } from "../src/index"
+export const dev :ServerSpace={
+    selectedSpace:'dev',
+    spaces:[
+        {
+            name:'dev',
+            serverAddresses:[]
+        }
+    ]
+}
 
 
 const appConfig: ApplicationConfig = {
+    serverSpace: dev,
     environment: {
         deviceId: "123",
         production: false,

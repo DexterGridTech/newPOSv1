@@ -2,14 +2,18 @@ import {useCallback, useEffect, useRef, useState} from 'react';
 import {kernelCoreNavigationCommands, useEditableUiVariable} from "@impos2/kernel-core-navigation";
 import {uiAdminVariables} from "../ui";
 import {useRequestStatus} from "@impos2/kernel-core-interconnection";
-import {shortId} from "@impos2/kernel-core-base";
+import {LOG_TAGS, logger, shortId} from "@impos2/kernel-core-base";
 import {uiAdminCommands} from "../features/commands";
+import {moduleName} from "../moduleName";
 
-export const useAdminLogin = (config: { modalId: string }) => {
-    const {modalId} = config;
+interface UseAdminLoginOptions {
+    modalId: string;
+    onComplete?: () => void;
+}
 
+export const useAdminLogin = ({modalId, onComplete}: UseAdminLoginOptions) => {
     const [requestId, setRequestId] = useState<string | null>(null);
-    const handledRequestIdRef = useRef<string | null>(null);
+    const handledRef = useRef<string | null>(null);
 
     const {value: password, setValue: setPassword} = useEditableUiVariable(uiAdminVariables.adminPassword);
     const loginStatus = useRequestStatus(requestId);
@@ -19,15 +23,12 @@ export const useAdminLogin = (config: { modalId: string }) => {
     }, [modalId]);
 
     useEffect(() => {
-        if (
-            loginStatus?.status === 'complete' &&
-            requestId &&
-            handledRequestIdRef.current !== requestId
-        ) {
-            handledRequestIdRef.current = requestId;
-            handleClose();
+        if (loginStatus?.status === 'complete' && requestId && handledRef.current !== requestId) {
+            handledRef.current = requestId;
+            logger.log([moduleName, LOG_TAGS.Hook, 'useAdminLogin'], '管理员登录成功');
+            onComplete ? onComplete() : handleClose();
         }
-    }, [loginStatus?.status, requestId, handleClose]);
+    }, [loginStatus?.status, requestId, onComplete, handleClose]);
 
     const handlePasswordChange = useCallback((value: string) => {
         setPassword(value);

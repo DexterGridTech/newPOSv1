@@ -1,15 +1,15 @@
 import {configureStore, EnhancedStore, Middleware, PayloadAction, Reducer} from "@reduxjs/toolkit";
 import {Persistor, persistReducer, persistStore} from "redux-persist";
-import {Environment, RootState, storeEntry} from "../types";
+import {Environment, RootState, ServerSpace, storeEntry} from "../types";
 import {ModuleDependencyResolver} from "./moduleDependencyResolver";
 import {ApplicationConfig} from "./types";
 import {setEnvironment} from "../foundations/environment";
 import {
-    ActorSystem,
+    ActorSystem, ApiManager,
     registerModuleCommands,
     registerModuleErrorMessages,
     registerModuleSystemParameter,
-    screenPartRegisters, stateStorage
+    screenPartRegisters, setStateStoragePrefix, stateStorage
 } from "../foundations";
 import {getStateStoragePrefix} from "../foundations/adapters/stateStorage";
 import {combineEpics, createEpicMiddleware} from "redux-observable";
@@ -22,6 +22,7 @@ export class ApplicationManager {
     private persistor: Persistor | null = null;
     private moduleDependencyResolver = new ModuleDependencyResolver()
     environment: Environment | null = null;
+    serverSpace: ServerSpace | null = null;
 
     static getInstance(): ApplicationManager {
         if (!ApplicationManager.instance) {
@@ -76,8 +77,29 @@ export class ApplicationManager {
         }
         initLogger.logStepEnd();
 
-        // 步骤 4: 注册 Actors
-        initLogger.logStep(4, 'Registering Actors');
+        // 步骤 4: 初始化 API Server
+        initLogger.logStep(4, 'Initializing API Server');
+        let selectedServerSpace= (await stateStorage.getItem("SelectedServerSpace") as string)??'default';
+        selectedServerSpace= this.initApiServerAddress(config.serverSpace, selectedServerSpace);
+        this.serverSpace = config.serverSpace;
+        this.serverSpace.selectedSpace = selectedServerSpace;
+        await stateStorage.setItem("SelectedServerSpace", selectedServerSpace);
+        const selectedSpaceConfig = config.serverSpace.spaces.find(s => s.name === selectedServerSpace)!;
+        initLogger.logDetail('Selected Space', selectedServerSpace);
+        selectedSpaceConfig.serverAddresses.forEach(addr => {
+            initLogger.logDetail(`  ${addr.serverName}`, addr.addresses.map(a => a.baseURL).join(', '));
+        });
+
+        let dataVersion= (await stateStorage.getItem("DataVersion") as number)??0;
+        await stateStorage.setItem("DataVersion", dataVersion);
+        const storagePrefix = `${selectedServerSpace}-${dataVersion}`;
+        setStateStoragePrefix(storagePrefix);
+        initLogger.logDetail('Storage Prefix', storagePrefix);
+        initLogger.logSuccess(`API Server initialized`);
+        initLogger.logStepEnd();
+
+        // 步骤 5: 注册 Actors
+        initLogger.logStep(5, 'Registering Actors');
         let totalActors = 0;
         allModules.forEach(module => {
             const actorCount = Object.keys(module.actors).length;
@@ -93,8 +115,8 @@ export class ApplicationManager {
         initLogger.logSuccess(`Registered ${totalActors} actors`);
         initLogger.logStepEnd();
 
-        // 步骤 5: 注册 Commands
-        initLogger.logStep(5, 'Registering Commands');
+        // 步骤 6: 注册 Commands
+        initLogger.logStep(6, 'Registering Commands');
         let totalCommands = 0;
         allModules.forEach(module => {
             const commandCount = Object.keys(module.commands).length;
@@ -109,8 +131,8 @@ export class ApplicationManager {
         initLogger.logStepEnd();
 
 
-        // 步骤 6: 注册 Screen Parts
-        initLogger.logStep(6, 'Registering Screen Parts');
+        // 步骤 7: 注册 Screen Parts
+        initLogger.logStep(7, 'Registering Screen Parts');
         let totalScreenParts = 0;
         allModules.forEach(module => {
             const screenPartCount = Object.keys(module.screenParts || {}).length;
@@ -126,8 +148,8 @@ export class ApplicationManager {
         initLogger.logSuccess(`Registered ${totalScreenParts} screen parts`);
         initLogger.logStepEnd();
 
-        // 步骤 7: 注册 Error Messages
-        initLogger.logStep(7, 'Registering Error Messages');
+        // 步骤 8: 注册 Error Messages
+        initLogger.logStep(8, 'Registering Error Messages');
         let totalErrors = 0;
         allModules.forEach(module => {
             const errorCount = Object.keys(module.errorMessages).length;
@@ -141,8 +163,8 @@ export class ApplicationManager {
         initLogger.logSuccess(`Registered ${totalErrors} error messages`);
         initLogger.logStepEnd();
 
-        // 步骤 8: 注册 System Parameters
-        initLogger.logStep(8, 'Registering System Parameters');
+        // 步骤 9: 注册 System Parameters
+        initLogger.logStep(9, 'Registering System Parameters');
         let totalParams = 0;
         allModules.forEach(module => {
             const paramCount = Object.keys(module.parameters).length;
@@ -265,5 +287,22 @@ export class ApplicationManager {
         this.store = store;
         this.persistor = persistor;
         return {store, persistor};
+    }
+
+     initApiServerAddress(serverSpace: ServerSpace, selectedSpace?: string): string {
+        let selectedServerSpace = selectedSpace ? serverSpace.spaces.find(s => s.name === selectedSpace) : null;
+        if (!selectedServerSpace) {
+            selectedServerSpace = serverSpace.spaces.find(s => s.name === serverSpace.selectedSpace)
+        }
+        if (!selectedServerSpace) {
+            selectedServerSpace = serverSpace.spaces[0]
+        }
+        if (!selectedServerSpace) {
+            throw new Error('No server space found')
+        }
+        selectedServerSpace.serverAddresses.forEach(serverAddress => {
+            ApiManager.getInstance().initApiServerAddress(serverAddress);
+        })
+        return selectedServerSpace.name
     }
 }
