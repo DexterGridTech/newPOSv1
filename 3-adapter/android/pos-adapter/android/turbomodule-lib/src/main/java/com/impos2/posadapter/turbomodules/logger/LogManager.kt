@@ -82,8 +82,17 @@ class LogManager private constructor(private val context: Context) {
             ?.map { mapOf("fileName" to it.name, "filePath" to it.absolutePath, "fileSize" to it.length(), "lastModified" to it.lastModified()) }
             ?: emptyList()
 
-    fun getLogContent(fileName: String): String =
-        File(logDir, fileName).takeIf { it.exists() && it.isFile }?.readText() ?: ""
+    fun getLogContent(fileName: String, maxBytes: Long = 200 * 1024L): String {
+        val file = File(logDir, fileName).takeIf { it.exists() && it.isFile } ?: return ""
+        if (file.length() <= maxBytes) return file.readText()
+        // 只读取末尾 maxBytes 字节，保留最新日志
+        val buf = ByteArray(maxBytes.toInt())
+        file.inputStream().use { it.skip(file.length() - maxBytes); it.read(buf) }
+        val raw = String(buf)
+        // 从第一个换行符开始，避免截断首行
+        val idx = raw.indexOf('\n')
+        return if (idx >= 0) raw.substring(idx + 1) else raw
+    }
 
     fun deleteLogFile(fileName: String): Boolean =
         File(logDir, fileName).takeIf { it.exists() && it.isFile }?.delete() ?: false
