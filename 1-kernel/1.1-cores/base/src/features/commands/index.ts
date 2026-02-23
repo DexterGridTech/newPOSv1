@@ -12,5 +12,8 @@ export const kernelCoreBaseCommands =
         >>(),
 
         updateSystemParameters: defineCommand<Record<string, ValueWithUpdateAt<any> | undefined | null
-        >>()
+        >>(),
+
+        clearDataCache: defineCommand<void>(),
+        switchServerSpace: defineCommand<string>(),
     })

@@ -77,11 +77,11 @@ export class ApplicationManager {
 
         // 步骤 4: 初始化 API Server
         initLogger.logStep(4, 'Initializing API Server');
-        let selectedServerSpace= await stateStorage.getItem("SelectedServerSpace") as string;
+        let selectedServerSpace= await storeEntry.getSelectServerSpace() as string;
         selectedServerSpace= this.initApiServerAddress(config.serverSpace, selectedServerSpace);
         config.serverSpace.selectedSpace = selectedServerSpace;
         storeEntry.setServerSpace(config.serverSpace);
-        await stateStorage.setItem("SelectedServerSpace", selectedServerSpace);
+        await storeEntry.setSelectServerSpace(selectedServerSpace)
         const selectedSpaceConfig = config.serverSpace.spaces.find(s => s.name === selectedServerSpace)!;
         initLogger.logDetail('Selected Space', selectedServerSpace);
         selectedSpaceConfig.serverAddresses.forEach(addr => {
@@ -90,8 +90,8 @@ export class ApplicationManager {
             });
         });
 
-        let dataVersion= (await stateStorage.getItem(`DataVersion-${selectedServerSpace}`) as number)??0;
-        await stateStorage.setItem("DataVersion-${selectedServerSpace}", dataVersion);
+        let dataVersion= await storeEntry.getDataVersion();
+        await storeEntry.setDataVersion(dataVersion)
         const storagePrefix = `${selectedServerSpace}-${dataVersion}`;
         setStateStoragePrefix(storagePrefix);
         initLogger.logDetail('Storage Prefix', storagePrefix);

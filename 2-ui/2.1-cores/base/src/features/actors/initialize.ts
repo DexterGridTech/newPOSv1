@@ -4,7 +4,7 @@ import {Actor, kernelCoreBaseCommands, LOG_TAGS, logger} from "@impos2/kernel-co
 export class InitializeActor extends Actor {
     initialize = Actor.defineCommandHandler(kernelCoreBaseCommands.initialize,
         async (command): Promise<Record<string, any>> => {
-            logger.log([moduleName, LOG_TAGS.Actor, "InitializeActor"], 'Initializing kernel XXX...')
+            logger.log([moduleName, LOG_TAGS.Actor, "InitializeActor"], 'Initializing UI Core Base...')
             return {};
         });
 }

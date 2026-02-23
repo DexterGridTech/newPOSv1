@@ -84,6 +84,12 @@ class StoreEntryImpl implements StoreEntry {
     async setDataVersion(version: number) {
         await stateStorage.setItem(`DataVersion-${this.getServerSpace().selectedSpace}`, version)
     }
+    async setSelectServerSpace(selectedSpace: string) {
+        await stateStorage.setItem('SelectedServerSpace', selectedSpace)
+    }
+    async getSelectServerSpace() {
+        return stateStorage.getItem('SelectedServerSpace')
+    }
 }
 
 // 导出单例实例，供其他 package 扩展和使用
