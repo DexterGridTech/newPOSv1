@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {LogFile, logger, ScreenMode, ScreenPartRegistration} from "@impos2/kernel-core-base";
 import {uiAdminVariables} from "../variables";
@@ -36,6 +36,8 @@ export const LogFilesScreen: React.FC = () => {
         setContent(null);
         setFiles((await logger.getLogFiles()) ?? []);
     }), [wrap]);
+
+    useEffect(() => { loadFiles(); }, []);
 
     const viewFile = useCallback((f: LogFile) => wrap(async () => {
         setContent({name: f.fileName, text: (await logger.getLogContent(f.fileName)) ?? ''});
