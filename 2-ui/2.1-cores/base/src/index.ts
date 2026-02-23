@@ -23,8 +23,8 @@ export const uiCoreBaseModule: AppModule = {
     parameters: uiCoreBaseParameters,
     dependencies: [kernelCoreNavigationModule],
     modulePreSetup: uiCoreBaseModulePreSetup,
-    screenParts:uiCoreBaseScreenParts,
-    preSetupPriority: 0
+    screenParts: uiCoreBaseScreenParts,
+    preSetupPriority: 2101//ui core 模块使用2101-2199
 }
 
 

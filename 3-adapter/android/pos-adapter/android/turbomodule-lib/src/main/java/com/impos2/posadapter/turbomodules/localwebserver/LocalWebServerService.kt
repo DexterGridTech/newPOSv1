@@ -61,7 +61,10 @@ class LocalWebServerService : Service() {
                 port = prefs.getInt("port", 8888),
                 basePath = prefs.getString("basePath", "/localServer")!!,
                 heartbeatInterval = prefs.getLong("heartbeatInterval", 30_000L),
-                heartbeatTimeout = prefs.getLong("heartbeatTimeout", 60_000L),
+                defaultRuntimeConfig = RuntimeConfig(
+                    heartbeatTimeout = prefs.getLong("heartbeatTimeout", 60_000L),
+                    retryCacheTimeout = prefs.getLong("retryCacheTimeout", 30_000L),
+                ),
             )
             scheduler.submit { startServer(cfg) }
         }
@@ -119,6 +122,7 @@ class LocalWebServerService : Service() {
         heartbeatFuture = scheduler.scheduleAtFixedRate({
             server?.sendHeartbeat()
             server?.checkHeartbeatTimeouts()
+            server?.checkRetryQueueTimeouts()
         }, cfg.heartbeatInterval, cfg.heartbeatInterval, TimeUnit.MILLISECONDS)
 
         cleanupFuture = scheduler.scheduleAtFixedRate({
@@ -157,7 +161,8 @@ class LocalWebServerService : Service() {
             putInt("port", cfg.port)
             putString("basePath", cfg.basePath)
             putLong("heartbeatInterval", cfg.heartbeatInterval)
-            putLong("heartbeatTimeout", cfg.heartbeatTimeout)
+            putLong("heartbeatTimeout", cfg.defaultRuntimeConfig.heartbeatTimeout)
+            putLong("retryCacheTimeout", cfg.defaultRuntimeConfig.retryCacheTimeout)
             apply()
         }
     }

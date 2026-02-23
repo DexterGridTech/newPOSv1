@@ -1,8 +1,8 @@
 import {ServerAddress} from "../types";
 
 export const testServerAddresses: ServerAddress[] = [
-    {name: 'local', address: 'http://localhost:8888/masterServer'},
-    {name: 'test', address: 'http://localhost:8888/mockMasterServer'},
+    {name: 'defaultLocal', address: 'http://localhost:8888/localServer'},
+    {name: 'mockServer', address: 'http://localhost:8888/mockMasterServer'},
 ]
 
 export const defaultMasterInfo = {

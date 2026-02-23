@@ -15,6 +15,8 @@ const {AppTurboModule} = NativeModules;
 const App = (props: AppProps) => {
     const [storeReady, setStoreReady] = useState<{ store: Store; persistor: Persistor } | null>(null);
     const handleAppLoadComplete = useCallback(() => {
+        console.log('==================');
+        kernelCoreBaseCommands.initialize().executeInternally()
         AppTurboModule.onAppLoadComplete?.().catch((error:Error|any) => {
             console.error('App load complete error',error);
         });
@@ -32,15 +34,12 @@ const App = (props: AppProps) => {
     const rootScreen = <RootScreen onLoadComplete={handleAppLoadComplete}/>;
 
     if (props.displayIndex > 0) {
-        kernelCoreBaseCommands.initialize().executeInternally();
         return <Provider store={storeReady.store}>{rootScreen}</Provider>;
     }
 
     return (
         <Provider store={storeReady.store}>
-            <PersistGate persistor={storeReady.persistor} onBeforeLift={() => {
-                kernelCoreBaseCommands.initialize().executeInternally()
-            }}>
+            <PersistGate persistor={storeReady.persistor}>
                 {rootScreen}
             </PersistGate>
         </Provider>

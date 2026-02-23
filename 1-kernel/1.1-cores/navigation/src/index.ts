@@ -20,9 +20,9 @@ export const kernelCoreNavigationModule: AppModule = {
     actors: kernelCoreNavigationActors,
     errorMessages: kernelCoreNavigationErrorMessages,
     parameters: kernelCoreNavigationParameters,
-    dependencies: [kernelCoreBaseModule,kernelCoreInterconnectionModule],
+    dependencies: [kernelCoreBaseModule, kernelCoreInterconnectionModule],
     modulePreSetup: kernelCoreNavigationModulePreSetup,
-    preSetupPriority: 3//kernel core 模块使用1-100
+    preSetupPriority: 1103//kernel core 模块使用1101-1199
 }
 
 

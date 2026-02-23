@@ -24,7 +24,7 @@ export const adapterAndroidModule: AppModule = {
     dependencies: [uiCoreBaseModule],
     modulePreSetup: adapterAndroidModulePreSetup,
     screenParts:adapterAndroidScreenParts,
-    preSetupPriority: 0
+    preSetupPriority: 3001//adapter 模块使用3001-3999
 }
 
 

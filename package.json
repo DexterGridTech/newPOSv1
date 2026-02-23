@@ -43,7 +43,7 @@
     "-------------": "----------------------------------------",
     "ui:core-base": "yarn workspace @impos2/ui-core-base web",
     "ui:module-admin": "yarn workspace @impos2/ui-admin web",
-    "ui:device-activate": "yarn workspace @impos2/ui-device-activate web",
+    "ui:module-device-activate": "yarn workspace @impos2/ui-device-activate web",
     "ui:integrate-desktop": "yarn workspace @impos2/ui-integration-desktop web",
     "--------": "---------------------------------------",
     "adapter:android:start": "corepack yarn workspace @impos2/adapter-android start:clean",

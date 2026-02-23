@@ -16,12 +16,12 @@ import {
     ConnectedEvent,
     ConnectionEventType,
     DisconnectedEvent,
-    DualWebSocketClient, localWebServer,
+    DualWebSocketClient,
+    localWebServer,
     SYSTEM_NOTIFICATION,
     WSMessageEvent
 } from "../../foundations";
 import {Subject} from "rxjs";
-import {shortId} from "@impos2/kernel-core-base";
 import {statesToSyncFromMasterToSlave, statesToSyncFromSlaveToMaster} from "../../foundations/statesNeedToSync";
 import {syncStateToRemote} from "../../foundations/syncStateToRemote";
 import {instanceInterconnectionActions} from "../slices/instanceInterconnection";
@@ -67,7 +67,7 @@ export class InstanceInterconnectionActor extends Actor {
                 const summary = collectLocalStateSummary(statesToSyncFromMasterToSlave)
                 kernelCoreInterconnectionCommands.synStateAtConnected(summary)
                     .withExtra({instanceMode: InstanceMode.MASTER})
-                    .execute(shortId())
+                    .executeInternally()
             }
             return {}
         })
@@ -80,7 +80,7 @@ export class InstanceInterconnectionActor extends Actor {
                 storeEntry.dispatchAction(instanceInterconnectionActions.slaveDisconnected())
             }
             const interval = kernelCoreInterconnectionParameters.masterServerReconnectInterval.value
-            logger.log([moduleName, LOG_TAGS.Actor], `与服务器已断开,${interval}毫秒后重连`)
+            logger.log([moduleName, LOG_TAGS.Actor, getInstanceMode()], `与服务器已断开,${interval}毫秒后重连`)
             setTimeout(() => {
                 kernelCoreInterconnectionCommands.startConnection().executeInternally()
             }, interval)
@@ -93,11 +93,11 @@ export class InstanceInterconnectionActor extends Actor {
         kernelCoreInterconnectionCommands.peerConnected,
         async (command): Promise<Record<string, any>> => {
             storeEntry.dispatchAction(instanceInterconnectionActions.slaveConnected(command.payload))
-            logger.log([moduleName, LOG_TAGS.Actor], `对端已连接: ${command.payload}`)
+            logger.log([moduleName, LOG_TAGS.Actor, getInstanceMode()], `对端已连接: ${command.payload}`)
             const summary = collectLocalStateSummary(statesToSyncFromSlaveToMaster)
             kernelCoreInterconnectionCommands.synStateAtConnected(summary)
                 .withExtra({instanceMode: InstanceMode.SLAVE})
-                .execute(shortId())
+                .executeInternally()
             return {}
         })
 
@@ -105,7 +105,7 @@ export class InstanceInterconnectionActor extends Actor {
         kernelCoreInterconnectionCommands.peerDisconnected,
         async (): Promise<Record<string, any>> => {
             storeEntry.dispatchAction(instanceInterconnectionActions.slaveDisconnected())
-            logger.log([moduleName, LOG_TAGS.Actor], `对端已断开`)
+            logger.log([moduleName, LOG_TAGS.Actor, getInstanceMode()], `对端已断开`)
             return {}
         })
 
@@ -137,7 +137,9 @@ export class InstanceInterconnectionActor extends Actor {
                 const stateKeyStr = stateKey as string
                 if (!local) {
                     diff[stateKeyStr] = {}
-                    Object.keys(remote).forEach(k => { diff[stateKeyStr][k] = null })
+                    Object.keys(remote).forEach(k => {
+                        diff[stateKeyStr][k] = null
+                    })
                     return
                 }
 
@@ -161,7 +163,7 @@ export class InstanceInterconnectionActor extends Actor {
                 })
             })
 
-            // logger.log([moduleName, LOG_TAGS.Actor], `状态同步差异数据:`, diff)
+            // logger.log([moduleName, LOG_TAGS.Actor,getInstanceMode()], `状态同步差异数据:`, diff)
             await Promise.all(
                 Object.keys(diff).map(key => syncStateToRemote(key, diff[key]))
             )
@@ -267,18 +269,25 @@ export class InstanceInterconnectionActor extends Actor {
         const wsClient = this.getWsClient()
         const registration = isMaster()
             ? {type: InstanceMode.MASTER, deviceId: defaultMasterInfo.deviceId}
-            : {type: InstanceMode.SLAVE, deviceId: defaultSlaveInfo.deviceId, masterDeviceId: instanceInfo.masterInfo!.deviceId}
+            : {
+                type: InstanceMode.SLAVE,
+                deviceId: defaultSlaveInfo.deviceId,
+                masterDeviceId: instanceInfo.masterInfo!.deviceId
+            }
         const serverUrls = isMaster()
             ? defaultMasterInfo.serverAddress.map(s => s.address)
             : instanceInfo.masterInfo!.serverAddress.map(s => s.address)
 
         try {
-            await wsClient.connect({
+            const connectConfig = {
                 deviceRegistration: registration,
                 serverUrls,
                 connectionTimeout: kernelCoreInterconnectionParameters.masterServerConnectionTimeout.value,
                 heartbeatTimeout: kernelCoreInterconnectionParameters.masterServerHeartbeatTimeout.value,
-            })
+            }
+            logger.log([moduleName, LOG_TAGS.Actor, tag], "连接参数:", connectConfig)
+
+            await wsClient.connect(connectConfig)
         } catch (error: any) {
             throw new AppError(kernelCoreInterconnectionErrorMessages.masterServerConnectionError, {message: error.message}, command)
         }
@@ -357,16 +366,16 @@ export class InstanceInterconnectionActor extends Actor {
         try {
             const actionType = key + '/batchUpdateState'
             storeEntry.dispatchAction({type: actionType, payload: stateChanged})
-            logger.log([moduleName, LOG_TAGS.Actor], '状态同步完成:', actionType)
+            logger.log([moduleName, LOG_TAGS.Actor, getInstanceMode()], '状态同步完成:', actionType)
         } catch (e: any) {
-            logger.error([moduleName, LOG_TAGS.Actor], `状态同步错误:${e.message} with key ${key}`, stateChanged)
+            logger.error([moduleName, LOG_TAGS.Actor, getInstanceMode()], `状态同步错误:${e.message} with key ${key}`, stateChanged)
         }
     }
 
     private executeRemoteCommand(remoteCommand: RemoteCommand) {
         const command = getCommandByName(remoteCommand.commandName, remoteCommand.payload)
         command.id = remoteCommand.commandId
-        logger.log([moduleName, LOG_TAGS.Actor], `执行远程方法${remoteCommand.commandName}`)
+        logger.log([moduleName, LOG_TAGS.Actor, getInstanceMode()], `执行远程方法${remoteCommand.commandName}`)
         command.withExtra(remoteCommand.extra).execute(remoteCommand.requestId, remoteCommand.sessionId)
         this.remoteCommandExecuted(command.id)
     }
@@ -377,7 +386,7 @@ export class InstanceInterconnectionActor extends Actor {
             try {
                 wsClient.sendMessage(MasterServerMessageType.REMOTE_COMMAND_EXECUTED, commandId)
             } catch (error: any) {
-                logger.error([moduleName, LOG_TAGS.Actor], `send remoteCommandExecuted error:${error.message}`)
+                logger.error([moduleName, LOG_TAGS.Actor, getInstanceMode()], `send remoteCommandExecuted error:${error.message}`)
             }
         }
     }

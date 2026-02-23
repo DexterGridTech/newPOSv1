@@ -1,6 +1,6 @@
 import {configureStore, EnhancedStore, Middleware, PayloadAction, Reducer} from "@reduxjs/toolkit";
 import {Persistor, persistReducer, persistStore} from "redux-persist";
-import {Environment, RootState, ServerSpace, storeEntry} from "../types";
+import {RootState, ServerSpace, storeEntry} from "../types";
 import {ModuleDependencyResolver} from "./moduleDependencyResolver";
 import {ApplicationConfig} from "./types";
 import {setEnvironment} from "../foundations/environment";
@@ -21,8 +21,6 @@ export class ApplicationManager {
     private store: EnhancedStore<RootState> | null = null;
     private persistor: Persistor | null = null;
     private moduleDependencyResolver = new ModuleDependencyResolver()
-    environment: Environment | null = null;
-    serverSpace: ServerSpace | null = null;
 
     static getInstance(): ApplicationManager {
         if (!ApplicationManager.instance) {
@@ -40,7 +38,7 @@ export class ApplicationManager {
     }
 
     async generateStore(config: ApplicationConfig) {
-        this.environment = config.environment;
+        storeEntry.setEnvironment(config.environment);
 
         const initLogger = InitLogger.getInstance();
 
@@ -79,19 +77,21 @@ export class ApplicationManager {
 
         // 步骤 4: 初始化 API Server
         initLogger.logStep(4, 'Initializing API Server');
-        let selectedServerSpace= (await stateStorage.getItem("SelectedServerSpace") as string)??'default';
+        let selectedServerSpace= await stateStorage.getItem("SelectedServerSpace") as string;
         selectedServerSpace= this.initApiServerAddress(config.serverSpace, selectedServerSpace);
-        this.serverSpace = config.serverSpace;
-        this.serverSpace.selectedSpace = selectedServerSpace;
+        config.serverSpace.selectedSpace = selectedServerSpace;
+        storeEntry.setServerSpace(config.serverSpace);
         await stateStorage.setItem("SelectedServerSpace", selectedServerSpace);
         const selectedSpaceConfig = config.serverSpace.spaces.find(s => s.name === selectedServerSpace)!;
         initLogger.logDetail('Selected Space', selectedServerSpace);
         selectedSpaceConfig.serverAddresses.forEach(addr => {
-            initLogger.logDetail(`  ${addr.serverName}`, addr.addresses.map(a => a.baseURL).join(', '));
+            addr.addresses.forEach(a => {
+                initLogger.logDetail(`  ${addr.serverName}`, a.baseURL);
+            });
         });
 
-        let dataVersion= (await stateStorage.getItem("DataVersion") as number)??0;
-        await stateStorage.setItem("DataVersion", dataVersion);
+        let dataVersion= (await stateStorage.getItem(`DataVersion-${selectedServerSpace}`) as number)??0;
+        await stateStorage.setItem("DataVersion-${selectedServerSpace}", dataVersion);
         const storagePrefix = `${selectedServerSpace}-${dataVersion}`;
         setStateStoragePrefix(storagePrefix);
         initLogger.logDetail('Storage Prefix', storagePrefix);
@@ -193,10 +193,9 @@ export class ApplicationManager {
                     if (persisted) {
                         persistedCount++;
                         modulePersisted++;
-                        const stateStoragePrefix = getStateStoragePrefix();
-                        const storageKey = `${stateStoragePrefix}-${sliceConfig.name}`;
                         const persistConfig = {
-                            key: storageKey,
+                            keyPrefix: getStateStoragePrefix(),
+                            key: sliceConfig.name,
                             storage: stateStorage,
                             blacklist: sliceConfig.persistBlacklist || [],
                         };

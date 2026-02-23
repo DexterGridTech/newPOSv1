@@ -14,27 +14,27 @@ export const appControl: AppControl = {
     isAppLocked(): Promise<boolean> {
         if (registeredAppControl)
             return registeredAppControl.isAppLocked()
-        throw new Error("App control not registered")
+        return Promise.resolve(false)
     },
     isFullScreen(): Promise<boolean> {
         if (registeredAppControl)
             return registeredAppControl.isFullScreen()
-        throw new Error("App control not registered")
+        return Promise.resolve(false)
     },
     setAppLocked(isAppLocked: boolean): Promise<void> {
         if (registeredAppControl)
             return registeredAppControl.setAppLocked(isAppLocked)
-        throw new Error("App control not registered")
+        return Promise.resolve()
     },
     setFullScreen(isFullScreen: boolean): Promise<void> {
         if (registeredAppControl)
             return registeredAppControl.setFullScreen(isFullScreen)
-        throw new Error("App control not registered")
+        return Promise.resolve()
     },
     restartApp(): Promise<void> {
         if (registeredAppControl)
             return registeredAppControl.restartApp()
-        throw new Error("App control not registered")
+        return Promise.resolve()
     }
 }
 

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {logger, shortId} from "@impos2/kernel-core-base";
+import {LOG_TAGS, logger, shortId} from "@impos2/kernel-core-base";
 import {moduleName} from '../../moduleName';
 import {
     MessageWrapper, DeviceRegistration, RegistrationResponse,
@@ -9,7 +9,6 @@ import {
     DisconnectedEvent, WSMessageEvent, WSErrorEvent,
 } from './types';
 
-const LOG_TAG = 'DualWSClient';
 
 const DEFAULT_CONFIG = {
     connectionTimeout: 10000,
@@ -59,16 +58,17 @@ export class DualWebSocketClient {
         if (!DualWebSocketClient.instance) {
             DualWebSocketClient.instance = new DualWebSocketClient();
             const inst = DualWebSocketClient.instance;
+
             inst.on(ConnectionEventType.CONNECT_FAILED, (e: ConnectFailedEvent) => {
-                logger.error([moduleName, LOG_TAG], e.error.message);
+                logger.error([moduleName, LOG_TAGS.WebSocket,"DualWSClient"], `${inst.currentServerUrl},连接失败:${e.error.message}`);
                 inst.disconnect('连接失败');
             });
             inst.on(ConnectionEventType.ERROR, (e: WSErrorEvent) => {
-                logger.error([moduleName, LOG_TAG], e.error.message);
+                logger.error([moduleName, LOG_TAGS.WebSocket,"DualWSClient"], `${inst.currentServerUrl},WS连接错误:${e.error.message}`);
                 inst.disconnect('连接ERROR');
             });
             inst.on(ConnectionEventType.HEARTBEAT_TIMEOUT, () => {
-                logger.error([moduleName, LOG_TAG], '心跳超时');
+                logger.error([moduleName, LOG_TAGS.WebSocket,"DualWSClient"], `${inst.currentServerUrl},心跳超时`);
                 inst.disconnect('心跳超时');
             });
         }
@@ -93,7 +93,7 @@ export class DualWebSocketClient {
     private emit(eventType: ConnectionEventType, ...args: any[]): void {
         this.listeners.get(eventType)?.forEach(cb => {
             try { cb(...args); } catch (e) {
-                logger.error([moduleName, LOG_TAG], `事件回调错误 [${eventType}]:`, e);
+                logger.error([moduleName, LOG_TAGS.WebSocket,"DualWSClient"], `事件回调错误 [${eventType}]:`, e);
             }
         });
     }
@@ -156,9 +156,10 @@ export class DualWebSocketClient {
     private connectWebSocket(serverUrl: string, token: string): Promise<void> {
         return new Promise((resolve, reject) => {
             let settled = false;
-            const url = new URL(serverUrl);
-            const wsProtocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
-            this.ws = new WebSocket(`${wsProtocol}//${url.host}${url.pathname}/ws?token=${token}`);
+            const isHttps = serverUrl.startsWith('https://');
+            const wsProtocol = isHttps ? 'wss:' : 'ws:';
+            const hostAndPath = serverUrl.replace(/^https?:\/\//, '');
+            this.ws = new WebSocket(`${wsProtocol}//${hostAndPath}/ws?token=${token}`);
 
             const timer = setTimeout(() => {
                 if (!settled) {
@@ -217,7 +218,7 @@ export class DualWebSocketClient {
                     const msg: MessageWrapper = JSON.parse(event.data);
                     this.handleMessage(msg);
                 } catch (e) {
-                    logger.error([moduleName, LOG_TAG], '消息解析错误:', e);
+                    logger.error([moduleName, LOG_TAGS.WebSocket,"DualWSClient"], '消息解析错误:', e);
                 }
             };
 

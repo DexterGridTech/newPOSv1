@@ -1,4 +1,4 @@
-import {LocalWebServerConfig, LocalWebServerInfo, ServerStats} from "../../types/foundations/localWebServer";
+import {LocalWebServerConfig, LocalWebServerInfo, LocalWebServerStatus, ServerStats} from "../../types/foundations/localWebServer";
 import {ServerAddress} from "../../types";
 import {testServerAddresses} from "../masterServer";
 
@@ -38,21 +38,19 @@ export const localWebServer: LocalWebServer = {
         return registeredLocalWebServer.startLocalWebServer(config);
     },
     stopLocalWebServer(): Promise<void> {
-        if (!registeredLocalWebServer) {
-            throw new Error('Local web server adapter not registered')
-        }
+        if (!registeredLocalWebServer) return Promise.resolve();
         return registeredLocalWebServer.stopLocalWebServer();
     },
     getLocalWebServerStats(): Promise<ServerStats> {
-        if (!registeredLocalWebServer) {
-            throw new Error('Local web server adapter not registered')
-        }
+        if (!registeredLocalWebServer) return Promise.resolve({masterCount: 0, slaveCount: 0, pendingCount: 0, uptime: 0});
         return registeredLocalWebServer.getLocalWebServerStats();
     },
     getLocalWebServerStatus(): Promise<LocalWebServerInfo> {
-        if (!registeredLocalWebServer) {
-            throw new Error('Local web server adapter not registered')
-        }
+        if (!registeredLocalWebServer) return Promise.resolve({
+            status: LocalWebServerStatus.STOPPED,
+            addresses: [],
+            config: {port: 0, basePath: '', heartbeatInterval: 0, heartbeatTimeout: 0},
+        });
         return registeredLocalWebServer.getLocalWebServerStatus();
     }
 }

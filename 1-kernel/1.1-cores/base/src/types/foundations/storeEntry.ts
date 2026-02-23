@@ -4,6 +4,9 @@
  */
 import {EnhancedStore, PayloadAction} from "@reduxjs/toolkit";
 import {RootState} from "../moduleState";
+import {Environment} from "../shared/environment";
+import {ServerSpace} from "./serverSpace";
+import {stateStorage} from "../../foundations";
 
 export interface StoreEntry {
     setStore: (store: EnhancedStore) => void
@@ -13,10 +16,18 @@ export interface StoreEntry {
     getState(): RootState
 
     dispatchAction:(action: PayloadAction) => void
+
+    setEnvironment: (env: Environment) => void
+    getEnvironment: () => Environment
+
+    setServerSpace: (serverSpace: ServerSpace) => void
+    getServerSpace: () => ServerSpace
 }
 
 class StoreEntryImpl implements StoreEntry {
     private store: EnhancedStore | null = null;
+    private environment: Environment | null = null;
+    private serverSpace: ServerSpace | null = null;
 
     setStore(store: EnhancedStore) {
         this.store = store
@@ -47,6 +58,31 @@ class StoreEntryImpl implements StoreEntry {
             throw new Error('Store is not initialized yet')
         }
         this.store.dispatch(action)
+    }
+
+    setEnvironment(env: Environment) {
+        this.environment = env
+    }
+
+    getEnvironment(): Environment {
+        if (!this.environment) throw new Error('Environment not initialized')
+        return this.environment
+    }
+
+    setServerSpace(serverSpace: ServerSpace) {
+        this.serverSpace = serverSpace
+    }
+
+    getServerSpace(): ServerSpace {
+        if (!this.serverSpace) throw new Error('ServerSpace not initialized')
+        return this.serverSpace
+    }
+
+    async getDataVersion(): Promise<number> {
+        return (await stateStorage.getItem(`DataVersion-${this.getServerSpace().selectedSpace}`) as number)??0
+    }
+    async setDataVersion(version: number) {
+        await stateStorage.setItem(`DataVersion-${this.getServerSpace().selectedSpace}`, version)
     }
 }
 

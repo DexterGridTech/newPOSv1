@@ -1,3 +1,5 @@
+import {async} from "rxjs";
+
 export interface Storage {
     getItem(key: string, ...args: Array<any>): Promise<any>;
 

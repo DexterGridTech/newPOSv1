@@ -12,6 +12,7 @@ export class InitializeActor extends Actor {
             const instanceInfo = storeEntry.getStateByKey(kernelCoreInterconnectionState.instanceInfo)
             const isMaster = getInstanceMode() === InstanceMode.MASTER
             const shouldConnect = isMaster ? instanceInfo.enableSlave : !!instanceInfo.masterInfo
+            logger.log([moduleName, LOG_TAGS.Actor, "InitializeActor"], `isMaster:${isMaster},Should connect: ${shouldConnect},masterInfo:${JSON.stringify(instanceInfo.masterInfo)}`)
             if (shouldConnect) {
                 const delay = isMaster
                     ? kernelCoreInterconnectionParameters.masterServerBootstrapDelayAfterStartup.value

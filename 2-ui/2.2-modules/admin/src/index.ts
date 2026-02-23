@@ -8,7 +8,6 @@ import {uiAdminParameters} from "./supports/parameters";
 import {uiAdminEpics} from "./features/epics";
 import {uiAdminMiddlewares} from "./features/middlewares";
 import {AppModule} from "@impos2/kernel-core-base";
-import {kernelCoreNavigationModule} from "@impos2/kernel-core-navigation";
 import {uiAdminScreenParts} from "./ui";
 import {uiCoreBaseModule} from "@impos2/ui-core-base";
 
@@ -24,8 +23,8 @@ export const uiAdminModule: AppModule = {
     parameters: uiAdminParameters,
     dependencies: [uiCoreBaseModule],
     modulePreSetup: uiAdminModulePreSetup,
-    screenParts:uiAdminScreenParts,
-    preSetupPriority: 0
+    screenParts: uiAdminScreenParts,
+    preSetupPriority: 2201//ui module 模块使用2201-2299
 }
 
 

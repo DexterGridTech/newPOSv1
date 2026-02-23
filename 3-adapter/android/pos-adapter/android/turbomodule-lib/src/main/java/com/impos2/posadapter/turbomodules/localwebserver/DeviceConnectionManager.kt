@@ -1,18 +1,19 @@
 package com.impos2.posadapter.turbomodules.localwebserver
 
-import org.json.JSONObject
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledFuture
-import java.util.concurrent.TimeUnit
 
 // ─── 数据类型 ─────────────────────────────────────────────────────────────────
+
+data class RuntimeConfig(
+    val heartbeatTimeout: Long = 60_000L,
+    val retryCacheTimeout: Long = 30_000L,
+)
 
 data class ServerConfig(
     val port: Int = 8888,
     val basePath: String = "/localServer",
     val heartbeatInterval: Long = 30_000L,
-    val heartbeatTimeout: Long = 60_000L,
+    val defaultRuntimeConfig: RuntimeConfig = RuntimeConfig(),
 )
 
 enum class DeviceType { MASTER, SLAVE }
@@ -20,8 +21,9 @@ enum class DeviceType { MASTER, SLAVE }
 data class DeviceInfo(
     val type: DeviceType,
     val deviceId: String,
-    val masterDeviceId: String,   // master 时等于自身 deviceId
+    val masterDeviceId: String,
     val token: String,
+    val runtimeConfig: RuntimeConfig? = null,
     val connectedAt: Long = System.currentTimeMillis(),
 )
 
@@ -32,24 +34,16 @@ data class ServerStats(
     val uptime: Long,
 )
 
-// ─── 设备连接管理器（完全复刻 mock server DeviceConnectionManager 逻辑）────────
+// ─── DeviceConnectionManager ──────────────────────────────────────────────────
 
 class DeviceConnectionManager(private val config: ServerConfig) {
 
     private val TOKEN_EXPIRE_MS = 5 * 60 * 1000L
 
-    /** token -> DeviceInfo */
     private val pending = ConcurrentHashMap<String, DeviceInfo>()
-
-    /** masterDeviceId -> DevicePair */
     private val pairs = ConcurrentHashMap<String, DevicePair>()
-
-    /** socket key -> deviceId */
     private val socketToDevice = ConcurrentHashMap<String, String>()
-
-    /** slave deviceId -> masterDeviceId */
     private val slaveToMaster = ConcurrentHashMap<String, String>()
-
     private val startTime = System.currentTimeMillis()
 
     data class ConnectedDevice(
@@ -61,6 +55,7 @@ class DeviceConnectionManager(private val config: ServerConfig) {
     data class DevicePair(
         @Volatile var master: ConnectedDevice? = null,
         @Volatile var slave: ConnectedDevice? = null,
+        val runtimeConfig: RuntimeConfig,
     )
 
     @Synchronized
@@ -82,9 +77,12 @@ class DeviceConnectionManager(private val config: ServerConfig) {
         val connected = ConnectedDevice(socket, info)
 
         if (info.type == DeviceType.MASTER) {
-            val pair = pairs.getOrPut(info.deviceId) { DevicePair() }
-            if (pair.master != null) return null to "Master already connected"
+            val existing = pairs[info.deviceId]
+            if (existing?.master != null) return null to "Master already connected"
+            val rc = info.runtimeConfig ?: config.defaultRuntimeConfig
+            val pair = existing ?: DevicePair(runtimeConfig = rc)
             pair.master = connected
+            pairs[info.deviceId] = pair
         } else {
             val pair = pairs[info.masterDeviceId] ?: return null to "Master disconnected"
             if (pair.master == null) return null to "Master disconnected"
@@ -95,6 +93,9 @@ class DeviceConnectionManager(private val config: ServerConfig) {
         socketToDevice[socket.key] = info.deviceId
         return info to null
     }
+
+    fun getRuntimeConfig(masterDeviceId: String): RuntimeConfig =
+        pairs[masterDeviceId]?.runtimeConfig ?: config.defaultRuntimeConfig
 
     fun findBySocket(socketKey: String): Triple<DeviceType, String, String>? {
         val deviceId = socketToDevice[socketKey] ?: return null
@@ -114,7 +115,7 @@ class DeviceConnectionManager(private val config: ServerConfig) {
     fun getSlave(masterDeviceId: String) = pairs[masterDeviceId]?.slave
 
     fun updateHeartbeat(socketKey: String) {
-        val (type, deviceId, masterId) = findBySocket(socketKey) ?: return
+        val (type, _, masterId) = findBySocket(socketKey) ?: return
         val pair = pairs[masterId] ?: return
         val target = if (type == DeviceType.MASTER) pair.master else pair.slave
         target?.lastHeartbeat = System.currentTimeMillis()
@@ -146,12 +147,13 @@ class DeviceConnectionManager(private val config: ServerConfig) {
         val now = System.currentTimeMillis()
         val result = mutableListOf<Triple<DeviceType, String, String>>()
         for ((masterId, pair) in pairs) {
+            val timeout = pair.runtimeConfig.heartbeatTimeout
             pair.master?.let {
-                if (now - it.lastHeartbeat > config.heartbeatTimeout)
+                if (now - it.lastHeartbeat > timeout)
                     result.add(Triple(DeviceType.MASTER, it.info.deviceId, masterId))
             }
             pair.slave?.let {
-                if (now - it.lastHeartbeat > config.heartbeatTimeout)
+                if (now - it.lastHeartbeat > timeout)
                     result.add(Triple(DeviceType.SLAVE, it.info.deviceId, masterId))
             }
         }

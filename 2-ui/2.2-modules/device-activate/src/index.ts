@@ -8,7 +8,6 @@ import {uiDeviceActivateParameters} from "./supports/parameters";
 import {uiDeviceActivateEpics} from "./features/epics";
 import {uiDeviceActivateMiddlewares} from "./features/middlewares";
 import {AppModule} from "@impos2/kernel-core-base";
-import {kernelCoreNavigationModule} from "@impos2/kernel-core-navigation";
 import {uiDeviceActivateScreenParts} from "./ui";
 import {kernelTerminalModule} from "@impos2/kernel-terminal";
 import {uiCoreBaseModule} from "@impos2/ui-core-base";
@@ -23,10 +22,10 @@ export const uiDeviceActivateModule: AppModule = {
     actors: uiDeviceActivateActors,
     errorMessages: uiDeviceActivateErrorMessages,
     parameters: uiDeviceActivateParameters,
-    dependencies: [kernelTerminalModule,uiCoreBaseModule],
+    dependencies: [kernelTerminalModule, uiCoreBaseModule],
     modulePreSetup: uiDeviceActivateModulePreSetup,
-    screenParts:uiDeviceActivateScreenParts,
-    preSetupPriority: 0
+    screenParts: uiDeviceActivateScreenParts,
+    preSetupPriority: 2202//ui module 模块使用2201-2299
 }
 
 

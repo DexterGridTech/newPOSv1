@@ -7,6 +7,7 @@ import android.content.ServiceConnection
 import android.os.IBinder
 import com.facebook.react.bridge.*
 import com.impos2.posadapter.turbomodules.localwebserver.LocalWebServerService
+import com.impos2.posadapter.turbomodules.localwebserver.RuntimeConfig
 import com.impos2.posadapter.turbomodules.localwebserver.ServerConfig
 import java.util.concurrent.Executors
 
@@ -41,7 +42,10 @@ class LocalWebServerTurboModule(reactContext: ReactApplicationContext) :
                 port = if (cfg.hasKey("port")) cfg.getInt("port") else 8888,
                 basePath = cfg.getString("basePath") ?: "/localServer",
                 heartbeatInterval = if (cfg.hasKey("heartbeatInterval")) cfg.getInt("heartbeatInterval").toLong() else 30_000L,
-                heartbeatTimeout = if (cfg.hasKey("heartbeatTimeout")) cfg.getInt("heartbeatTimeout").toLong() else 60_000L,
+                defaultRuntimeConfig = RuntimeConfig(
+                    heartbeatTimeout = if (cfg.hasKey("heartbeatTimeout")) cfg.getInt("heartbeatTimeout").toLong() else 60_000L,
+                    retryCacheTimeout = if (cfg.hasKey("retryCacheTimeout")) cfg.getInt("retryCacheTimeout").toLong() else 30_000L,
+                ),
             )
             val err = svc.startServer(config)
             if (err != null) { promise.reject("START_ERROR", err); return@submit }
@@ -107,7 +111,7 @@ class LocalWebServerTurboModule(reactContext: ReactApplicationContext) :
                 putInt("port", svc.config.port)
                 putString("basePath", svc.config.basePath)
                 putDouble("heartbeatInterval", svc.config.heartbeatInterval.toDouble())
-                putDouble("heartbeatTimeout", svc.config.heartbeatTimeout.toDouble())
+                putDouble("heartbeatTimeout", svc.config.defaultRuntimeConfig.heartbeatTimeout.toDouble())
             })
             if (svc.lastError != null) putString("error", svc.lastError) else putNull("error")
         }
