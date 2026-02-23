@@ -6,7 +6,7 @@ import {EnhancedStore, PayloadAction} from "@reduxjs/toolkit";
 import {RootState} from "../moduleState";
 import {Environment} from "../shared/environment";
 import {ServerSpace} from "./serverSpace";
-import {stateStorage} from "../../foundations";
+import {stateStorage} from "../../foundations/adapters/stateStorage";
 
 export interface StoreEntry {
     setStore: (store: EnhancedStore) => void

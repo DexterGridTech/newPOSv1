@@ -11,6 +11,7 @@ import {AppModule} from "@impos2/kernel-core-base";
 import {uiIntegrationDesktopScreenParts} from "./ui";
 import {uiCoreBaseModule} from "@impos2/ui-core-base";
 import {uiAdminModule} from "@impos2/ui-admin";
+import {uiDeviceActivateModule} from "@impos2/ui-device-activate";
 
 export const uiIntegrationDesktopModule: AppModule = {
     name: moduleName,
@@ -22,7 +23,7 @@ export const uiIntegrationDesktopModule: AppModule = {
     actors: uiIntegrationDesktopActors,
     errorMessages: uiIntegrationDesktopErrorMessages,
     parameters: uiIntegrationDesktopParameters,
-    dependencies: [uiCoreBaseModule, uiAdminModule],
+    dependencies: [uiCoreBaseModule, uiAdminModule,uiDeviceActivateModule],
     modulePreSetup: uiIntegrationDesktopModulePreSetup,
     screenParts: uiIntegrationDesktopScreenParts,
     preSetupPriority: 2301//ui integration 模块使用2301-2399

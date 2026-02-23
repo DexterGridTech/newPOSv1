@@ -3,7 +3,7 @@ import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native
 import {ScreenMode, ScreenPartRegistration} from "@impos2/kernel-core-base";
 import {InstanceMode, Workspace} from "@impos2/kernel-core-interconnection";
 import {uiAdminVariables} from "../variables";
-import {useAppControl, UseAppControlOptions} from "../../hooks/useAppControl";
+import {useAppControl} from "../../hooks/useAppControl";
 
 // ─── Design Tokens ───────────────────────────────────────────────────────────
 const C = {
@@ -72,14 +72,14 @@ const ActionRow: React.FC<{
 );
 
 // ─── Component ───────────────────────────────────────────────────────────────
-export const AppControlScreen: React.FC<UseAppControlOptions> = (props) => {
+export const AppControlScreen: React.FC = (props) => {
     const {
         isFullScreen, isLocked,
         selectedSpace, spaceNames,
         isBound,
         handleToggleFullScreen, handleToggleLock, handleRestartApp,
         handleSwitchSpace, handleClearCache, handleUnbindDevice,
-    } = useAppControl(props);
+    } = useAppControl();
 
     return (
         <ScrollView style={s.root} contentContainerStyle={s.content} showsVerticalScrollIndicator={false}>

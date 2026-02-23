@@ -1,8 +1,7 @@
-import {Actor, logger} from "../../foundations";
+import {Actor, logger, appControl} from "../../foundations";
 import {kernelCoreBaseCommands} from "../commands";
 import {moduleName} from "../../moduleName";
 import {LOG_TAGS, storeEntry} from "../../types";
-import {appControl} from "@impos2/kernel-core-navigation";
 
 export class AppControlActor extends Actor {
     clearDataCache = Actor.defineCommandHandler(kernelCoreBaseCommands.clearDataCache,
