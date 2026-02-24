@@ -274,9 +274,10 @@ export class InstanceInterconnectionActor extends Actor {
                 deviceId: defaultSlaveInfo.deviceId,
                 masterDeviceId: instanceInfo.masterInfo!.deviceId
             }
+        //本机要通过localhost连接
         const serverUrls = isMaster()
-            ? defaultMasterInfo.serverAddress.map(s => s.address)
-            : instanceInfo.masterInfo!.serverAddress.map(s => s.address)
+            ? [...defaultMasterInfo.serverAddress.map(s => s.address), "http://localhost:8888/localServer"]
+            : [...instanceInfo.masterInfo!.serverAddress.map(s => s.address), "http://localhost:8888/localServer"]
 
         try {
             const connectConfig = {

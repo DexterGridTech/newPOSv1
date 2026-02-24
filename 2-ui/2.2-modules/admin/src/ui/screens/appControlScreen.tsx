@@ -76,9 +76,8 @@ export const AppControlScreen: React.FC = (props) => {
     const {
         isFullScreen, isLocked,
         selectedSpace, spaceNames,
-        isBound,
         handleToggleFullScreen, handleToggleLock, handleRestartApp,
-        handleSwitchSpace, handleClearCache, handleUnbindDevice,
+        handleSwitchSpace, handleClearCache,
     } = useAppControl();
 
     return (
@@ -128,18 +127,9 @@ export const AppControlScreen: React.FC = (props) => {
             {/* 数据管理 */}
             <Section title="数据管理">
                 <ActionRow
-                    label="清空缓存" desc="清除本地缓存数据，需重新加载"
+                    label="清空数据" desc="清除本地所有数据（如设备已激活，后台的绑定关系还在，但需重新激活）"
                     btnLabel="清空" onPress={handleClearCache}
                 />
-                {isBound && (
-                    <>
-                        <View style={s.divider}/>
-                        <ActionRow
-                            label="设备绑定" desc="当前设备已绑定终端"
-                            btnLabel="解绑设备" onPress={handleUnbindDevice} danger
-                        />
-                    </>
-                )}
             </Section>
 
             {/* 应用管理 */}

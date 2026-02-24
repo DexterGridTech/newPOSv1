@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from "react";
-import {ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import {DeviceInfo, ScreenMode, ScreenPartRegistration, SystemStatus, device} from "@impos2/kernel-core-base";
+import React, {memo, useCallback, useEffect, useState} from "react";
+import {ActivityIndicator, FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {DeviceInfo, InstalledApp, ScreenMode, ScreenPartRegistration, SystemStatus, device} from "@impos2/kernel-core-base";
 import {uiAdminVariables} from "../variables";
 import {InstanceMode, Workspace} from "@impos2/kernel-core-interconnection";
 
@@ -63,6 +63,20 @@ const BarRow: React.FC<{ label: string; value: number; unit?: string; warn?: num
     );
 };
 
+// ─── App Item (memo 避免 FlatList 滚动时重复渲染) ──────────────────────────
+const AppItem = memo<{ item: InstalledApp; isLast: boolean }>(({item, isLast}) => (
+    <>
+        <View style={s.row}>
+            <View style={{flex: 1}}>
+                <Text style={s.rowValue2}>{item.appName}</Text>
+                <Text style={s.subText}>{item.packageName}  ·  v{item.versionName}</Text>
+            </View>
+            {item.isSystemApp && <Badge text="系统" color={C.accent} bg={C.accentBg}/>}
+        </View>
+        {!isLast && <View style={s.divider}/>}
+    </>
+));
+
 // ─── Peripheral Tabs ─────────────────────────────────────────────────────────
 type PeripheralTab = 'usb' | 'bluetooth' | 'serial' | 'apps';
 
@@ -75,6 +89,12 @@ const PeripheralSection: React.FC<{ status: SystemStatus }> = ({status}) => {
         {key: 'serial', label: '串口', count: status.serialDevices.length},
         {key: 'apps', label: '应用', count: status.installedApps.length},
     ];
+
+    const renderAppItem = useCallback(({item, index}: { item: InstalledApp; index: number }) => (
+        <AppItem item={item} isLast={index === status.installedApps.length - 1}/>
+    ), [status.installedApps.length]);
+
+    const keyExtractor = useCallback((item: InstalledApp) => item.packageName, []);
 
     return (
         <Section title="外设">
@@ -151,19 +171,18 @@ const PeripheralSection: React.FC<{ status: SystemStatus }> = ({status}) => {
                         ))
                 )}
                 {tab === 'apps' && (
-                    status.installedApps.length === 0 ? <EmptyHint/> :
-                        status.installedApps.map((a, i) => (
-                            <React.Fragment key={a.packageName}>
-                                {i > 0 && <View style={s.divider}/>}
-                                <View style={s.row}>
-                                    <View style={{flex: 1}}>
-                                        <Text style={s.rowValue2}>{a.appName}</Text>
-                                        <Text style={s.subText}>{a.packageName}  ·  v{a.versionName}</Text>
-                                    </View>
-                                    {a.isSystemApp && <Badge text="系统" color={C.accent} bg={C.accentBg}/>}
-                                </View>
-                            </React.Fragment>
-                        ))
+                    status.installedApps.length === 0
+                        ? <EmptyHint/>
+                        : <FlatList
+                            data={status.installedApps}
+                            keyExtractor={keyExtractor}
+                            renderItem={renderAppItem}
+                            scrollEnabled={false}
+                            initialNumToRender={20}
+                            maxToRenderPerBatch={20}
+                            windowSize={5}
+                            removeClippedSubviews={true}
+                        />
                 )}
             </View>
         </Section>

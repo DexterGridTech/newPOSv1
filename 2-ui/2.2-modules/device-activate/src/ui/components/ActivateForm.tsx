@@ -3,8 +3,37 @@ import {ActivityIndicator, Dimensions, StyleSheet, Text, TouchableOpacity, View,
 import {useDeviceActivate} from "../../hooks";
 import {FancyInputV2, useLifecycle} from "@impos2/ui-core-base";
 
+const ActivatedView: React.FC = () => (
+    <View style={styles.container}>
+        <View style={styles.backgroundDecoration}>
+            <View style={styles.gridPattern}/>
+        </View>
+        <View style={styles.card}>
+            <View style={styles.activatedIconWrapper}>
+                <View style={styles.activatedIconOuter}>
+                    <View style={styles.activatedIconInner}>
+                        <Text style={styles.activatedCheckmark}>✓</Text>
+                    </View>
+                </View>
+            </View>
+            <Text style={styles.activatedTitle}>设备已激活</Text>
+            <Text style={styles.activatedSubtitle}>此设备已完成激活，可以正常使用</Text>
+            <View style={styles.activatedDivider}/>
+            <View style={styles.activatedInfoRow}>
+                <View style={styles.activatedDot}/>
+                <Text style={styles.activatedInfoText}>设备状态正常</Text>
+            </View>
+            <View style={styles.activatedInfoRow}>
+                <View style={styles.activatedDot}/>
+                <Text style={styles.activatedInfoText}>所有功能已解锁</Text>
+            </View>
+        </View>
+    </View>
+);
+
 export const ActivateForm: React.FC = () => {
     const {
+        isActivated,
         activationCode,
         activateStatus,
         handleActivationCodeChange,
@@ -21,6 +50,10 @@ export const ActivateForm: React.FC = () => {
         componentName: 'ActivateForm',
         onClearance: cleanup,
     });
+
+    if (isActivated) {
+        return <ActivatedView/>;
+    }
 
     return (
         <View style={styles.container}>
@@ -343,6 +376,73 @@ const styles = StyleSheet.create({
         fontWeight: '400',
         color: COLORS.textSecondary,
         textAlign: 'center',
+        lineHeight: 20,
+    },
+    // 已激活状态样式
+    activatedIconWrapper: {
+        alignItems: 'center',
+        marginBottom: 32,
+    },
+    activatedIconOuter: {
+        width: 96,
+        height: 96,
+        borderRadius: 48,
+        backgroundColor: '#ECFDF5',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 2,
+        borderColor: '#059669',
+    },
+    activatedIconInner: {
+        width: 64,
+        height: 64,
+        borderRadius: 32,
+        backgroundColor: '#059669',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    activatedCheckmark: {
+        fontSize: 32,
+        color: '#FFFFFF',
+        fontWeight: '700',
+    },
+    activatedTitle: {
+        fontSize: 26,
+        fontWeight: '600',
+        color: COLORS.text,
+        textAlign: 'center',
+        marginBottom: 10,
+        letterSpacing: -0.5,
+    },
+    activatedSubtitle: {
+        fontSize: 15,
+        fontWeight: '400',
+        color: COLORS.textSecondary,
+        textAlign: 'center',
+        lineHeight: 22,
+        marginBottom: 32,
+    },
+    activatedDivider: {
+        height: 1,
+        backgroundColor: COLORS.border,
+        marginBottom: 24,
+    },
+    activatedInfoRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 12,
+    },
+    activatedDot: {
+        width: 8,
+        height: 8,
+        borderRadius: 4,
+        backgroundColor: '#059669',
+        marginRight: 12,
+    },
+    activatedInfoText: {
+        fontSize: 14,
+        fontWeight: '500',
+        color: COLORS.textSecondary,
         lineHeight: 20,
     },
 });

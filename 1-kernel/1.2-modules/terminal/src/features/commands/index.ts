@@ -5,7 +5,7 @@ import {UnitDataChangedSet} from "../../types";
 
 export const kernelTerminalCommands = createModuleCommands(moduleName, {
     activateDevice: defineCommand<string>(),
-    deactivateDevice: defineCommand<void>(),
+    deactivateDevice: defineCommand<string>(),
     setOperatingEntity: defineCommand<Unit>(),
     setOperatingEntitySuccess: defineCommand<void>(),
     activateDeviceSuccess: defineCommand<void>(),

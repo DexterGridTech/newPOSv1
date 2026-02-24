@@ -2,8 +2,13 @@ package com.impos2.posdesktop
 
 import android.content.Context
 import android.hardware.display.DisplayManager
+import android.os.Build
 import android.os.Bundle
 import android.view.KeyEvent
+import android.view.View
+import android.view.WindowInsets
+import android.view.WindowInsetsController
+import android.view.WindowManager
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.ReactInstanceManager
@@ -36,17 +41,46 @@ class MainActivity : ReactActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         SplashScreen.show(this, R.style.SplashScreenTheme, true)
-        // 在 super.onCreate 前提前设置全屏 flag，避免 SplashScreen 闪烁
-        @Suppress("DEPRECATION")
-        window.setFlags(
-            android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN
-        )
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
-            window.setDecorFitsSystemWindows(false)
-        }
+        applySplashScreenFullscreen()
         super.onCreate(savedInstanceState)
         initManagers()
+    }
+
+    private fun applySplashScreenFullscreen() {
+        // 先对 Activity window 设置全屏
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.setDecorFitsSystemWindows(false)
+        } else {
+            @Suppress("DEPRECATION")
+            window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        }
+        // SplashScreen.show() 内部用 runOnUiThread 异步创建 Dialog
+        // 需要 postDelayed 等 Dialog 创建完成后再反射设置全屏
+        window.decorView.postDelayed({
+            try {
+                val field = org.devio.rn.splashscreen.SplashScreen::class.java.getDeclaredField("mSplashDialog")
+                field.isAccessible = true
+                val dialog = field.get(null) as? android.app.Dialog ?: return@postDelayed
+                val win = dialog.window ?: return@postDelayed
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    win.setDecorFitsSystemWindows(false)
+                    win.insetsController?.let {
+                        it.hide(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
+                        it.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                    }
+                } else {
+                    @Suppress("DEPRECATION")
+                    win.decorView.systemUiVisibility = (
+                        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        or View.SYSTEM_UI_FLAG_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    )
+                }
+            } catch (_: Exception) {}
+        }, 50L)
     }
 
     private fun initManagers() {

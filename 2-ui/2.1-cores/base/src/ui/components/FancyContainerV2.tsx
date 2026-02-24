@@ -1,6 +1,6 @@
-import React, {useEffect, useRef} from 'react';
-import {Animated, StyleSheet} from 'react-native';
-import {useFancyKeyboardV2} from '../../hooks/useFancyKeyboardV2';
+import React, {useEffect, useRef, useContext} from 'react';
+import {Animated, StyleSheet, Platform} from 'react-native';
+import {FancyKeyboardDisplayContextV2} from '../../contexts/FancyKeyboardContextV2';
 
 interface FancyContainerV2Props {
     children: React.ReactNode;
@@ -11,27 +11,20 @@ interface FancyContainerV2Props {
  * 负责管理内容区域的位移动画
  */
 export const FancyContainerV2: React.FC<FancyContainerV2Props> = ({children}) => {
-    const {containerOffset, animationConfig} = useFancyKeyboardV2();
+    const display = useContext(FancyKeyboardDisplayContextV2);
+    const containerOffset = display?.containerOffset ?? 0;
     const translateY = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
-        // 统一使用 timing 动画，使用 useNativeDriver
         Animated.timing(translateY, {
             toValue: containerOffset,
-            duration: animationConfig.duration,
-            useNativeDriver: true,
+            duration: 300,
+            useNativeDriver: Platform.OS !== 'web',
         }).start();
-    }, [containerOffset, animationConfig.duration, translateY]);
+    }, [containerOffset, translateY]);
 
     return (
-        <Animated.View
-            style={[
-                styles.container,
-                {
-                    transform: [{translateY}],
-                },
-            ]}
-        >
+        <Animated.View style={[styles.container, {transform: [{translateY}]}]}>
             {children}
         </Animated.View>
     );

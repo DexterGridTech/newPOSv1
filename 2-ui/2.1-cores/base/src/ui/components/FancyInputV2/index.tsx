@@ -1,6 +1,6 @@
-import React from 'react';
+import React, {memo, useContext} from 'react';
 import {View, Text, Pressable, StyleSheet, ViewStyle, TextStyle, Animated, Platform, Dimensions} from 'react-native';
-import {useFancyKeyboardV2} from '../../../hooks/useFancyKeyboardV2';
+import {FancyKeyboardActionsContextV2, FancyKeyboardDisplayContextV2} from '../../../contexts/FancyKeyboardContextV2';
 
 /**
  * FancyInputV2 Props
@@ -24,7 +24,7 @@ export interface FancyInputV2Props {
  * FancyInputV2 组件
  * 使用 View + Text 模拟输入框，配合自定义软键盘 V2
  */
-export const FancyInputV2: React.FC<FancyInputV2Props> = ({
+export const FancyInputV2: React.FC<FancyInputV2Props> = memo(({
     value,
     onChangeText,
     keyboardType = 'full',
@@ -40,7 +40,12 @@ export const FancyInputV2: React.FC<FancyInputV2Props> = ({
 }) => {
     const containerRef = React.useRef<View>(null);
     const inputIdRef = React.useRef<string>(Math.random().toString(36).substr(2, 9));
-    const {showKeyboard, activeInput, updateInputPosition} = useFancyKeyboardV2();
+    // 订阅 split contexts：actions 稳定不变，display 只在 activeInput 变化时触发重渲染
+    const actions = useContext(FancyKeyboardActionsContextV2);
+    const display = useContext(FancyKeyboardDisplayContextV2);
+    const showKeyboard = actions?.showKeyboard;
+    const updateInputPosition = actions?.updateInputPosition;
+    const activeInput = display?.activeInput ?? null;
 
     // 动画值：用于字体缩放
     const scaleAnim = React.useRef(new Animated.Value(1)).current;
@@ -48,124 +53,65 @@ export const FancyInputV2: React.FC<FancyInputV2Props> = ({
     // 用于防止重复点击
     const isProcessingRef = React.useRef(false);
 
-    // 使用 ref 存储稳定的回调，避免依赖数组过大
+    // 使用 ref 存储稳定的回调和 value，避免 handlePress 依赖 value 导致频繁重建
     const onChangeTextRef = React.useRef(onChangeText);
     const onSubmitRef = React.useRef(onSubmit);
+    const valueRef = React.useRef(value);
 
     React.useEffect(() => {
         onChangeTextRef.current = onChangeText;
         onSubmitRef.current = onSubmit;
-    }, [onChangeText, onSubmit]);
+        valueRef.current = value;
+    }, [onChangeText, onSubmit, value]);
 
     // 判断当前输入框是否激活
     const isActive = activeInput?.id === inputIdRef.current;
 
-    // 按下动画：字体放大到 1.1 倍
     const handlePressIn = React.useCallback(() => {
         if (!editable) return;
-        Animated.spring(scaleAnim, {
-            toValue: 1.1,
-            useNativeDriver: true,
-            friction: 5,
-            tension: 100,
-        }).start();
-    }, [editable, scaleAnim]);
+        Animated.spring(scaleAnim, {toValue: 1.1, useNativeDriver: true, friction: 5, tension: 100}).start();
+    }, [editable]);
 
-    // 松开动画：字体恢复到原始大小
     const handlePressOut = React.useCallback(() => {
         if (!editable) return;
-        Animated.spring(scaleAnim, {
-            toValue: 1,
-            useNativeDriver: true,
-            friction: 5,
-            tension: 100,
-        }).start();
-    }, [editable, scaleAnim]);
+        Animated.spring(scaleAnim, {toValue: 1, useNativeDriver: true, friction: 5, tension: 100}).start();
+    }, [editable]);
 
-    // 处理点击事件
+    // 处理点击事件（不依赖 value，通过 valueRef 读取最新值，避免每次输入都重建回调）
     const handlePress = React.useCallback(() => {
-        if (!editable) return;
+        if (!editable || !showKeyboard) return;
 
-        // 防止重复点击
-        if (isProcessingRef.current) {
-            console.log('[FancyInputV2] Click ignored - already processing');
-            return;
-        }
-
+        if (isProcessingRef.current) return;
         isProcessingRef.current = true;
 
-        // 设置超时保护，确保标志位会被重置
         const resetTimeout = setTimeout(() => {
             isProcessingRef.current = false;
         }, 1000);
 
-        if (containerRef.current) {
-            // 在 Web 环境中，使用 getBoundingClientRect 获取真实位置
-            if (Platform.OS === 'web') {
-                // 在 Web 环境下，containerRef.current 是一个 React Native 的 View 组件
-                // 我们需要获取它的底层 DOM 元素
-                // @ts-ignore - React Native Web 会将 ref 映射到 DOM 元素
-                const domNode = containerRef.current;
+        const currentValue = valueRef.current;
 
-                // 使用 setTimeout 确保 DOM 已经渲染
+        if (containerRef.current) {
+            if (Platform.OS === 'web') {
+                const domNode = containerRef.current;
                 setTimeout(() => {
                     try {
                         // @ts-ignore
                         const rect = domNode.getBoundingClientRect?.();
-                        if (rect) {
-                            showKeyboard(
-                                {
-                                    id: inputIdRef.current,
-                                    value,
-                                    editingValue: value,
-                                    position: {x: rect.left, y: rect.top, width: rect.width, height: rect.height},
-                                    initialPosition: {x: rect.left, y: rect.top, width: rect.width, height: rect.height},
-                                    onChangeText: onChangeTextRef.current,
-                                    onSubmit: onSubmitRef.current,
-                                    promptText,
-                                    maxLength,
-                                    secureTextEntry,
-                                },
-                                keyboardType
-                            );
-                        } else {
-                            // 如果无法获取 rect，使用屏幕中间偏下的位置作为后备
-                            const screenHeight = Dimensions.get('window').height;
-                            const defaultY = screenHeight * 0.6;
-                            showKeyboard(
-                                {
-                                    id: inputIdRef.current,
-                                    value,
-                                    editingValue: value,
-                                    position: {x: 0, y: defaultY, width: 300, height: 50},
-                                    initialPosition: {x: 0, y: defaultY, width: 300, height: 50},
-                                    onChangeText: onChangeTextRef.current,
-                                    onSubmit: onSubmitRef.current,
-                                    promptText,
-                                    maxLength,
-                                    secureTextEntry,
-                                },
-                                keyboardType
-                            );
-                        }
-                    } catch (error) {
-                        console.error('[FancyInputV2] Error getting position:', error);
-                        // 出错时使用后备位置
-                        const screenHeight = Dimensions.get('window').height;
-                        const defaultY = screenHeight * 0.6;
+                        const pos = rect
+                            ? {x: rect.left, y: rect.top, width: rect.width, height: rect.height}
+                            : (() => {
+                                const defaultY = Dimensions.get('window').height * 0.6;
+                                return {x: 0, y: defaultY, width: 300, height: 50};
+                            })();
                         showKeyboard(
-                            {
-                                id: inputIdRef.current,
-                                value,
-                                editingValue: value,
-                                position: {x: 0, y: defaultY, width: 300, height: 50},
-                                initialPosition: {x: 0, y: defaultY, width: 300, height: 50},
-                                onChangeText,
-                                onSubmit,
-                                promptText,
-                                maxLength,
-                                secureTextEntry,
-                            },
+                            {id: inputIdRef.current, value: currentValue, editingValue: currentValue, position: pos, initialPosition: pos, onChangeText: onChangeTextRef.current, onSubmit: onSubmitRef.current, promptText, maxLength, secureTextEntry},
+                            keyboardType
+                        );
+                    } catch {
+                        const defaultY = Dimensions.get('window').height * 0.6;
+                        const pos = {x: 0, y: defaultY, width: 300, height: 50};
+                        showKeyboard(
+                            {id: inputIdRef.current, value: currentValue, editingValue: currentValue, position: pos, initialPosition: pos, onChangeText: onChangeTextRef.current, onSubmit: onSubmitRef.current, promptText, maxLength, secureTextEntry},
                             keyboardType
                         );
                     } finally {
@@ -174,28 +120,13 @@ export const FancyInputV2: React.FC<FancyInputV2Props> = ({
                     }
                 }, 0);
             } else {
-                // 原生环境：使用 measure 获取准确位置
-                // 添加超时保护，如果 measure 回调没有执行，使用默认位置
                 let measureExecuted = false;
-
                 const fallbackTimeout = setTimeout(() => {
                     if (!measureExecuted) {
-                        console.warn('[FancyInputV2] measure callback not executed, using fallback');
-                        const screenHeight = Dimensions.get('window').height;
-                        const defaultY = screenHeight * 0.6;
+                        const defaultY = Dimensions.get('window').height * 0.6;
+                        const pos = {x: 0, y: defaultY, width: 300, height: 50};
                         showKeyboard(
-                            {
-                                id: inputIdRef.current,
-                                value,
-                                editingValue: value,
-                                position: {x: 0, y: defaultY, width: 300, height: 50},
-                                initialPosition: {x: 0, y: defaultY, width: 300, height: 50},
-                                onChangeText,
-                                onSubmit,
-                                promptText,
-                                maxLength,
-                                secureTextEntry,
-                            },
+                            {id: inputIdRef.current, value: currentValue, editingValue: currentValue, position: pos, initialPosition: pos, onChangeText: onChangeTextRef.current, onSubmit: onSubmitRef.current, promptText, maxLength, secureTextEntry},
                             keyboardType
                         );
                         clearTimeout(resetTimeout);
@@ -206,43 +137,24 @@ export const FancyInputV2: React.FC<FancyInputV2Props> = ({
                 containerRef.current.measure((x, y, width, height, pageX, pageY) => {
                     measureExecuted = true;
                     clearTimeout(fallbackTimeout);
-
-                    // 添加容错处理
-                    const safePageX = pageX || 0;
-                    const safePageY = pageY || 0;
-                    const safeWidth = width || 300;
-                    const safeHeight = height || 50;
-
+                    const pos = {x: pageX || 0, y: pageY || 0, width: width || 300, height: height || 50};
                     showKeyboard(
-                        {
-                            id: inputIdRef.current,
-                            value,
-                            editingValue: value,
-                            position: {x: safePageX, y: safePageY, width: safeWidth, height: safeHeight},
-                            initialPosition: {x: safePageX, y: safePageY, width: safeWidth, height: safeHeight},
-                            onChangeText: onChangeTextRef.current,
-                            onSubmit: onSubmitRef.current,
-                            promptText,
-                            maxLength,
-                            secureTextEntry,
-                        },
+                        {id: inputIdRef.current, value: currentValue, editingValue: currentValue, position: pos, initialPosition: pos, onChangeText: onChangeTextRef.current, onSubmit: onSubmitRef.current, promptText, maxLength, secureTextEntry},
                         keyboardType
                     );
-
                     clearTimeout(resetTimeout);
                     isProcessingRef.current = false;
                 });
             }
         } else {
-            // 如果 ref 不存在，直接重置标志位
             clearTimeout(resetTimeout);
             isProcessingRef.current = false;
         }
-    }, [editable, value, keyboardType, showKeyboard, promptText, maxLength, secureTextEntry]);
+    }, [editable, keyboardType, showKeyboard, promptText, maxLength, secureTextEntry]);
 
     // 监听布局变化
     const handleLayout = React.useCallback(() => {
-        if (isActive && containerRef.current && Platform.OS !== 'web') {
+        if (isActive && containerRef.current && Platform.OS !== 'web' && updateInputPosition) {
             // 只在原生环境更新位置，Web 环境不需要
             containerRef.current.measure((x, y, width, height, pageX, pageY) => {
                 const safePageX = pageX || 0;
@@ -287,7 +199,7 @@ export const FancyInputV2: React.FC<FancyInputV2Props> = ({
             </Pressable>
         </View>
     );
-};
+});
 
 const styles = StyleSheet.create({
     wrapper: {

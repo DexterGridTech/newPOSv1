@@ -7,6 +7,6 @@
     "skipLibCheck": true,
     "resolveJsonModule": true
   },
-  "include": ["*.ts", "*.tsx", "src/**/*", "dev/**/*"],
+  "include": ["*.ts", "*.tsx", "src/**/*"],
   "exclude": ["node_modules", "android"]
 }

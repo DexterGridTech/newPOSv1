@@ -59,6 +59,7 @@ export class TerminalActor extends Actor {
             logger.log([moduleName, LOG_TAGS.Actor, "TerminalActor"], 'deactivateDevice', command.payload)
             const deactivateDeviceRequest: DeactivateDeviceRequest = {
                 deviceId: getDeviceId(),
+                deactiveCode: command.payload
             }
             const result = await kernelTerminalApis.deactivateDevice.run({request: deactivateDeviceRequest})
             if (result.code === APIResponseCode.SUCCESS) {

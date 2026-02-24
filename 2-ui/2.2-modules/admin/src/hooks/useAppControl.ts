@@ -5,13 +5,8 @@ import {appControl} from "@impos2/kernel-core-base";
 import {useSelector} from "react-redux";
 
 
-type S = RootState & KernelTerminalState
 
 export const useAppControl = () => {
-
-    const isBound = useSelector((state: RootState) =>
-        !!((state as S)[kernelTerminalState.terminal] as TerminalState | undefined)?.terminal?.value
-    );
 
     const serverSpace = storeEntry.getServerSpace();
     const spaceNames = serverSpace.spaces.map(s => s.name);
@@ -62,16 +57,11 @@ export const useAppControl = () => {
         ///
         kernelCoreBaseCommands.clearDataCache().executeInternally();
     }, []);
-    const handleUnbindDevice = useCallback(() => {
-        ///
-        kernelTerminalCommands.deactivateDevice().executeInternally();
-    }, []);
 
     return {
         isFullScreen, isLocked,
         selectedSpace, spaceNames,
-        isBound,
         handleToggleFullScreen, handleToggleLock, handleRestartApp,
-        handleSwitchSpace, handleClearCache, handleUnbindDevice,
+        handleSwitchSpace, handleClearCache,
     };
 };

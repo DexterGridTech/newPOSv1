@@ -1,92 +1,67 @@
-import React, {useRef, useEffect} from 'react';
-import {View, Text, StyleSheet, Animated, Platform} from 'react-native';
-import {ActiveInputInfoV2} from '../../../contexts/FancyKeyboardContextV2';
+import React, {useRef, useEffect, useContext, memo} from 'react';
+import {View, Text, StyleSheet, Animated} from 'react-native';
+import {FancyKeyboardEditingContextV2} from '../../../contexts/FancyKeyboardContextV2';
 
 interface EditingContentProps {
-    activeInput: ActiveInputInfoV2 | null;
     shouldShake: boolean;
+    isVisible: boolean;
 }
 
 /**
- * EditingContent 组件
- * 显示正在编辑的内容，带闪烁光标和抖动动画
+ * EditingContent 只订阅 FancyKeyboardEditingContextV2
+ * 每次按键只有此组件重渲染，键盘按键区域不受影响
  */
-export const EditingContent: React.FC<EditingContentProps> = ({activeInput, shouldShake}) => {
-    // 光标闪烁动画
+export const EditingContent: React.FC<EditingContentProps> = memo(({shouldShake, isVisible}) => {
+    const editing = useContext(FancyKeyboardEditingContextV2);
     const cursorOpacity = useRef(new Animated.Value(1)).current;
-    // 抖动动画
     const shakeAnim = useRef(new Animated.Value(0)).current;
-    // 防止重复抖动
-    const isShakingRef = useRef(false);
+    const blinkRef = useRef<Animated.CompositeAnimation | null>(null);
 
     useEffect(() => {
-        if (activeInput) {
-            // 启动光标闪烁动画
-            const blinkAnimation = Animated.loop(
+        if (isVisible) {
+            blinkRef.current = Animated.loop(
                 Animated.sequence([
-                    Animated.timing(cursorOpacity, {
-                        toValue: 0,
-                        duration: 500,
-                        useNativeDriver: Platform.OS !== 'web',
-                    }),
-                    Animated.timing(cursorOpacity, {
-                        toValue: 1,
-                        duration: 500,
-                        useNativeDriver: Platform.OS !== 'web',
-                    }),
+                    Animated.timing(cursorOpacity, {toValue: 0, duration: 500, useNativeDriver: true}),
+                    Animated.timing(cursorOpacity, {toValue: 1, duration: 500, useNativeDriver: true}),
                 ])
             );
-            blinkAnimation.start();
-
-            return () => {
-                blinkAnimation.stop();
-            };
+            blinkRef.current.start();
+        } else {
+            blinkRef.current?.stop();
+            cursorOpacity.setValue(1);
         }
-    }, [activeInput]); // 移除 cursorOpacity 依赖
+        return () => { blinkRef.current?.stop(); };
+    }, [isVisible]);
 
-    // 监听 shouldShake 触发抖动
     useEffect(() => {
-        if (shouldShake && !isShakingRef.current) {
-            isShakingRef.current = true;
-            const useNative = Platform.OS !== 'web';
-            Animated.sequence([
-                Animated.timing(shakeAnim, {toValue: 10, duration: 50, useNativeDriver: useNative}),
-                Animated.timing(shakeAnim, {toValue: -10, duration: 50, useNativeDriver: useNative}),
-                Animated.timing(shakeAnim, {toValue: 10, duration: 50, useNativeDriver: useNative}),
-                Animated.timing(shakeAnim, {toValue: 0, duration: 50, useNativeDriver: useNative}),
-            ]).start(() => {
-                isShakingRef.current = false;
-            });
-        }
-    }, [shouldShake]); // 移除 shakeAnim 依赖
+        if (!shouldShake) return;
+        Animated.sequence([
+            Animated.timing(shakeAnim, {toValue: 10, duration: 50, useNativeDriver: true}),
+            Animated.timing(shakeAnim, {toValue: -10, duration: 50, useNativeDriver: true}),
+            Animated.timing(shakeAnim, {toValue: 10, duration: 50, useNativeDriver: true}),
+            Animated.timing(shakeAnim, {toValue: 0, duration: 50, useNativeDriver: true}),
+        ]).start();
+    }, [shouldShake]);
 
-    if (!activeInput) {
-        return null;
-    }
+    if (!editing || !isVisible) return null;
 
-    const {editingValue, promptText, secureTextEntry} = activeInput;
-
-    // 显示的文本
+    const {editingValue, promptText, secureTextEntry} = editing;
     const displayText = secureTextEntry ? '•'.repeat(editingValue.length) : editingValue;
 
     return (
         <View style={styles.container}>
-            {/* 提示文本 - 绝对定位在左侧 */}
             {promptText && (
                 <View style={styles.promptContainer}>
                     <Text style={styles.promptText}>{promptText}</Text>
                 </View>
             )}
-
-            {/* 编辑内容 - 屏幕居中，带抖动动画 */}
             <Animated.View style={[styles.contentContainer, {transform: [{translateX: shakeAnim}]}]}>
                 <Text style={styles.editingText}>{displayText}</Text>
-                {/* 闪烁光标 */}
-                <Animated.View style={[styles.cursor, {opacity: cursorOpacity}]} />
+                <Animated.View style={[styles.cursor, {opacity: cursorOpacity}]}/>
             </Animated.View>
         </View>
     );
-};
+});
 
 const styles = StyleSheet.create({
     container: {
@@ -98,33 +73,9 @@ const styles = StyleSheet.create({
         borderBottomColor: '#E2E8F0',
         position: 'relative',
     },
-    promptContainer: {
-        position: 'absolute',
-        left: 24,
-        top: 0,
-        bottom: 0,
-        justifyContent: 'center',
-    },
-    promptText: {
-        fontSize: 18,
-        fontWeight: '600',
-        color: '#64748B',
-    },
-    contentContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    editingText: {
-        fontSize: 28,
-        fontWeight: '700',
-        color: '#020617',
-        letterSpacing: 1,
-    },
-    cursor: {
-        width: 2,
-        height: 32,
-        backgroundColor: '#020617',
-        marginLeft: 2,
-    },
+    promptContainer: {position: 'absolute', left: 24, top: 0, bottom: 0, justifyContent: 'center'},
+    promptText: {fontSize: 18, fontWeight: '600', color: '#64748B'},
+    contentContainer: {flexDirection: 'row', alignItems: 'center', justifyContent: 'center'},
+    editingText: {fontSize: 28, fontWeight: '700', color: '#020617', letterSpacing: 1},
+    cursor: {width: 2, height: 32, backgroundColor: '#020617', marginLeft: 2},
 });

@@ -7,6 +7,7 @@ export interface ActivateDeviceRequest {
 }
 export interface DeactivateDeviceRequest {
     deviceId: string
+    deactiveCode: string
 }
 export interface ActivateDeviceResponse {
     terminal: Unit,

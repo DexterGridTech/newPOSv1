@@ -1,40 +1,26 @@
-import React, {createContext, useCallback, useState, ReactNode, useMemo} from 'react';
+import React, {createContext, useCallback, useState, ReactNode, useMemo, useRef} from 'react';
 import {Dimensions} from 'react-native';
 
-/**
- * 激活的输入框信息 V2
- */
+const {height: screenHeight} = Dimensions.get('window');
+
 export interface ActiveInputInfoV2 {
     id: string;
     value: string;
-    editingValue: string; // 正在编辑的值
+    editingValue: string;
     position: {x: number; y: number; width: number; height: number};
     initialPosition: {x: number; y: number; width: number; height: number};
     onChangeText: (text: string) => void;
     onSubmit?: () => void;
-    promptText?: string; // 提示文本
-    maxLength?: number; // 最大长度
-    secureTextEntry?: boolean; // 是否密码模式
+    promptText?: string;
+    maxLength?: number;
+    secureTextEntry?: boolean;
 }
 
-/**
- * 键盘状态 V2
- */
-export interface FancyKeyboardStateV2 {
-    isVisible: boolean;
-    keyboardType: 'full' | 'number';
-    activeInput: ActiveInputInfoV2 | null;
-    containerOffset: number;
-    animationConfig: {
-        duration: number;
-        easing: string;
-    };
-}
+// ─── 拆分为三个 Context ───────────────────────────────────────────────────────
+// 1. 稳定 Context：actions + 不频繁变化的状态（isVisible/keyboardType/containerOffset）
+// 2. 编辑 Context：editingValue 高频变化，只让 EditingContent 订阅
 
-/**
- * 键盘上下文值 V2
- */
-export interface FancyKeyboardContextValueV2 extends FancyKeyboardStateV2 {
+export interface FancyKeyboardActionsV2 {
     showKeyboard: (inputInfo: ActiveInputInfoV2, keyboardType: 'full' | 'number') => void;
     hideKeyboard: () => void;
     updateEditingValue: (value: string) => void;
@@ -42,205 +28,175 @@ export interface FancyKeyboardContextValueV2 extends FancyKeyboardStateV2 {
     cancelInput: () => void;
     updateInputPosition: (position: {x: number; y: number; width: number; height: number}) => void;
     shakeConfirmButton: () => void;
+}
+
+export interface FancyKeyboardDisplayStateV2 {
+    isVisible: boolean;
+    keyboardType: 'full' | 'number';
+    activeInput: ActiveInputInfoV2 | null;
+    containerOffset: number;
     shouldShakeConfirmButton: boolean;
 }
 
-/**
- * Provider Props V2
- */
-export interface FancyKeyboardProviderV2Props {
-    children: ReactNode;
-    animationDuration?: number;
-    animationEasing?: string;
-    keyboardHeight?: number;
+// editingValue 单独一个 context，只有 EditingContent 订阅
+export interface FancyKeyboardEditingV2 {
+    editingValue: string;
+    promptText?: string;
+    secureTextEntry?: boolean;
+    maxLength?: number;
+    hasChanges: boolean;
 }
 
-// 创建 Context
+export const FancyKeyboardActionsContextV2 = createContext<FancyKeyboardActionsV2 | undefined>(undefined);
+export const FancyKeyboardDisplayContextV2 = createContext<FancyKeyboardDisplayStateV2 | undefined>(undefined);
+export const FancyKeyboardEditingContextV2 = createContext<FancyKeyboardEditingV2 | undefined>(undefined);
+
+// 保留旧 context 名兼容 useFancyKeyboardV2 hook
+export interface FancyKeyboardContextValueV2 extends FancyKeyboardDisplayStateV2, FancyKeyboardActionsV2 {}
 export const FancyKeyboardContextV2 = createContext<FancyKeyboardContextValueV2 | undefined>(undefined);
 
-/**
- * FancyKeyboardProviderV2 组件
- */
+export interface FancyKeyboardProviderV2Props {
+    children: ReactNode;
+}
+
 export const FancyKeyboardProviderV2: React.FC<FancyKeyboardProviderV2Props> = ({
     children,
-    animationDuration = 150,
-    animationEasing = 'easeInOut',
-    keyboardHeight,
 }) => {
-    const screenHeight = Dimensions.get('window').height;
-
-    const [state, setState] = useState<FancyKeyboardStateV2>({
+    // 显示状态（isVisible/keyboardType/activeInput/containerOffset）
+    const [displayState, setDisplayState] = useState<FancyKeyboardDisplayStateV2>({
         isVisible: false,
         keyboardType: 'full',
         activeInput: null,
         containerOffset: 0,
-        animationConfig: {
-            duration: animationDuration,
-            easing: animationEasing,
-        },
+        shouldShakeConfirmButton: false,
     });
 
-    const [shouldShakeConfirmButton, setShouldShakeConfirmButton] = useState(false);
+    // editingValue 单独 state，避免每次按键触发 displayState 更新
+    const [editingState, setEditingState] = useState<FancyKeyboardEditingV2>({
+        editingValue: '',
+        promptText: undefined,
+        secureTextEntry: false,
+        maxLength: undefined,
+        hasChanges: false,
+    });
 
-    /**
-     * 计算容器偏移量
-     */
-    const calculateContainerOffset = useCallback(
-        (inputPosition: {y: number; height: number}): number => {
-            const keyboardHeight = (screenHeight * 2) / 5;
-            const editingContentHeight = 80; // editingContent 固定高度
-            const totalKeyboardHeight = keyboardHeight + editingContentHeight;
-            const keyboardTop = screenHeight - totalKeyboardHeight;
-            const inputBottom = inputPosition.y + inputPosition.height;
+    // 用 ref 持有 activeInput 的原始 value，用于 hasChanges 计算
+    const originalValueRef = useRef<string>('');
 
-            const bufferZone = 50;
-            const safeZoneTop = keyboardTop - bufferZone;
-
-            if (inputBottom > safeZoneTop) {
-                const targetY = screenHeight / 3;
-                const offset = -(inputPosition.y - targetY);
-                return offset;
-            }
-
-            return 0;
-        },
-        [screenHeight]
-    );
-
-    /**
-     * 显示键盘
-     */
     const showKeyboard = useCallback(
         (inputInfo: ActiveInputInfoV2, keyboardType: 'full' | 'number') => {
-            const offset = calculateContainerOffset(inputInfo.position);
+            // 内联偏移计算，calculateContainerOffset 依赖数组为空永远稳定，无需单独 useCallback
+            const kbHeight = (screenHeight * 2) / 5;
+            const keyboardTop = screenHeight - kbHeight - 80;
+            const inputBottom = inputInfo.position.y + inputInfo.position.height;
+            const offset = inputBottom > keyboardTop - 50
+                ? -(inputInfo.position.y - screenHeight / 3)
+                : 0;
+            originalValueRef.current = inputInfo.value;
 
-            setState((prev) => {
-                if (prev.isVisible && prev.keyboardType === keyboardType) {
-                    return {
-                        ...prev,
-                        activeInput: inputInfo,
-                        containerOffset: offset,
-                    };
-                }
+            setDisplayState((prev) => ({
+                ...prev,
+                keyboardType,
+                activeInput: inputInfo,
+                containerOffset: offset,
+                isVisible: true,
+            }));
 
-                return {
-                    ...prev,
-                    keyboardType,
-                    activeInput: inputInfo,
-                    containerOffset: offset,
-                    isVisible: true,
-                    animationConfig: prev.animationConfig,
-                };
+            setEditingState({
+                editingValue: inputInfo.editingValue,
+                promptText: inputInfo.promptText,
+                secureTextEntry: inputInfo.secureTextEntry,
+                maxLength: inputInfo.maxLength,
+                hasChanges: false,
             });
         },
-        [calculateContainerOffset]
+        [] // 所有依赖均为模块级常量或 ref，无需列出
     );
 
-    /**
-     * 隐藏键盘
-     */
     const hideKeyboard = useCallback(() => {
-        setState((prev) => ({
+        setDisplayState((prev) => ({
             ...prev,
             isVisible: false,
             containerOffset: 0,
             activeInput: null,
         }));
+        setEditingState({editingValue: '', promptText: undefined, secureTextEntry: false, maxLength: undefined, hasChanges: false});
     }, []);
 
-    /**
-     * 更新编辑中的值
-     */
+    // 高频调用：只更新 editingState，不碰 displayState
     const updateEditingValue = useCallback((value: string) => {
-        setState((prev) => {
-            if (prev.activeInput) {
-                return {
-                    ...prev,
-                    activeInput: {...prev.activeInput, editingValue: value},
-                };
-            }
-            return prev;
-        });
+        setEditingState((prev) => ({
+            ...prev,
+            editingValue: value,
+            hasChanges: value !== originalValueRef.current,
+        }));
     }, []);
 
-    /**
-     * 确认输入
-     */
-    const confirmInput = useCallback(() => {
-        // 先保存当前的 activeInput 信息
-        setState((prev) => {
-            if (prev.activeInput) {
-                // 在 setState 外部调用回调，避免在渲染过程中触发其他组件的 setState
-                const {onChangeText, editingValue, onSubmit} = prev.activeInput;
+    // ref 跟踪最新 editingValue，供 confirmInput 读取（必须在 confirmInput 之前声明）
+    const editingValueRef = useRef('');
+    editingValueRef.current = editingState.editingValue;
 
-                // 使用 setTimeout 确保在下一个事件循环中执行
-                setTimeout(() => {
-                    onChangeText(editingValue);
-                    if (onSubmit) {
-                        onSubmit();
-                    }
+    // confirmInput 回调 timer ref，防止组件卸载后仍触发
+    const confirmTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const confirmInput = useCallback(() => {
+        setDisplayState((prev) => {
+            if (prev.activeInput) {
+                const {onChangeText, onSubmit} = prev.activeInput;
+                const currentEditing = editingValueRef.current;
+                if (confirmTimerRef.current) clearTimeout(confirmTimerRef.current);
+                confirmTimerRef.current = setTimeout(() => {
+                    onChangeText(currentEditing);
+                    onSubmit?.();
                 }, 0);
             }
-
-            return {
-                ...prev,
-                isVisible: false,
-                containerOffset: 0,
-                activeInput: null,
-            };
+            return {...prev, isVisible: false, containerOffset: 0, activeInput: null};
         });
+        setEditingState({editingValue: '', promptText: undefined, secureTextEntry: false, maxLength: undefined, hasChanges: false});
     }, []);
 
-    /**
-     * 取消输入
-     */
-    const cancelInput = useCallback(() => {
-        hideKeyboard();
-    }, [hideKeyboard]);
+    // cancelInput 即 hideKeyboard，无需额外包装
+    const cancelInput = hideKeyboard;
 
-    /**
-     * 更新输入框位置
-     */
     const updateInputPosition = useCallback((position: {x: number; y: number; width: number; height: number}) => {
-        setState((prev) => {
-            if (prev.activeInput) {
-                return {
-                    ...prev,
-                    activeInput: {...prev.activeInput, position},
-                };
-            }
-            return prev;
+        setDisplayState((prev) => {
+            if (!prev.activeInput) return prev;
+            return {...prev, activeInput: {...prev.activeInput, position}};
         });
     }, []);
 
-    /**
-     * 抖动确定按钮
-     */
+    // shakeConfirmButton timer ref，防止泄漏
+    const shakeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
     const shakeConfirmButton = useCallback(() => {
-        setShouldShakeConfirmButton(true);
-        setTimeout(() => {
-            setShouldShakeConfirmButton(false);
+        if (shakeTimerRef.current) clearTimeout(shakeTimerRef.current);
+        setDisplayState((prev) => ({...prev, shouldShakeConfirmButton: true}));
+        shakeTimerRef.current = setTimeout(() => {
+            setDisplayState((prev) => ({...prev, shouldShakeConfirmButton: false}));
         }, 500);
     }, []);
 
-    const contextValue: FancyKeyboardContextValueV2 = useMemo(
-        () => ({
-            ...state,
-            showKeyboard,
-            hideKeyboard,
-            updateEditingValue,
-            confirmInput,
-            cancelInput,
-            updateInputPosition,
-            shakeConfirmButton,
-            shouldShakeConfirmButton,
-        }),
-        [state, showKeyboard, hideKeyboard, updateEditingValue, confirmInput, cancelInput, updateInputPosition, shakeConfirmButton, shouldShakeConfirmButton]
+    // cancelInput === hideKeyboard（同一引用），无需单独列入依赖
+    const actions = useMemo<FancyKeyboardActionsV2>(
+        () => ({showKeyboard, hideKeyboard, updateEditingValue, confirmInput, cancelInput, updateInputPosition, shakeConfirmButton}),
+        [showKeyboard, hideKeyboard, updateEditingValue, confirmInput, updateInputPosition, shakeConfirmButton]
+    );
+
+    // 兼容旧 hook 的合并 context
+    const legacyContextValue = useMemo<FancyKeyboardContextValueV2>(
+        () => ({...displayState, ...actions}),
+        [displayState, actions]
     );
 
     return (
-        <FancyKeyboardContextV2.Provider value={contextValue}>
-            {children}
+        <FancyKeyboardContextV2.Provider value={legacyContextValue}>
+            <FancyKeyboardActionsContextV2.Provider value={actions}>
+                <FancyKeyboardDisplayContextV2.Provider value={displayState}>
+                    <FancyKeyboardEditingContextV2.Provider value={editingState}>
+                        {children}
+                    </FancyKeyboardEditingContextV2.Provider>
+                </FancyKeyboardDisplayContextV2.Provider>
+            </FancyKeyboardActionsContextV2.Provider>
         </FancyKeyboardContextV2.Provider>
     );
 };

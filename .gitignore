@@ -17,15 +17,15 @@ build/
 *.tsbuildinfo
 
 # TypeScript compilation outputs
-# Ignore compiled files in src/ and test/ directories
+# Ignore compiled files in src/ and dev/ directories
 **/src/**/*.js
 **/src/**/*.d.ts
 **/src/**/*.d.ts.map
 **/src/**/*.js.map
-**/test/**/*.js
-**/test/**/*.d.ts
-**/test/**/*.d.ts.map
-**/test/**/*.js.map
+**/dev/**/*.js
+**/dev/**/*.d.ts
+**/dev/**/*.d.ts.map
+**/dev/**/*.js.map
 
 # Ignore compiled files in package root
 0-mock-server/**/vite.config.js

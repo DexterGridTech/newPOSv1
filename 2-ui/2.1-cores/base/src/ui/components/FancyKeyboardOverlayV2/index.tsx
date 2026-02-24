@@ -1,223 +1,182 @@
-import React, {useRef, useEffect} from 'react';
-import {View, StyleSheet, Dimensions, Animated, TouchableOpacity, Text, Platform} from 'react-native';
-import {useFancyKeyboardV2} from '../../../hooks/useFancyKeyboardV2';
+import React, {useRef, useEffect, useContext, useCallback, memo} from 'react';
+import {View, StyleSheet, Dimensions, Animated, Platform} from 'react-native';
+import {
+    FancyKeyboardDisplayContextV2,
+    FancyKeyboardActionsContextV2,
+    FancyKeyboardEditingContextV2,
+    FancyKeyboardActionsV2,
+} from '../../../contexts/FancyKeyboardContextV2';
 import {FancyFullKeyBoardV2} from '../FancyFullKeyBoardV2';
 import {FancyNumberKeyBoardV2} from '../FancyNumberKeyBoardV2';
 import {BackdropV2} from './BackdropV2';
 import {EditingContent} from './EditingContent';
 
 const {height: screenHeight} = Dimensions.get('window');
+const KEYBOARD_HEIGHT = (screenHeight * 2) / 5;
+const TOTAL_HEIGHT = KEYBOARD_HEIGHT + 80;
 
-/**
- * FancyKeyboardOverlayV2 组件
- * 包含 EditingContent、键盘、确定/取消按钮
- */
+// ─── KeyboardArea ─────────────────────────────────────────────────────────────
+// 订阅 editing context，将 hasChanges 的重渲染隔离在此组件内
+// Overlay 主体不再因每次按键而重渲染
+const KeyboardArea = memo<{
+    keyboardType: 'full' | 'number';
+    shouldShakeConfirmButton: boolean;
+    actions: FancyKeyboardActionsV2;
+    onShakeEditingContent: () => void;
+    hasChangesRef: React.MutableRefObject<boolean>;
+}>(({keyboardType, shouldShakeConfirmButton, actions, onShakeEditingContent, hasChangesRef}) => {
+    const editing = useContext(FancyKeyboardEditingContextV2);
+
+    // 用 ref 持有最新 editing，handleKeyPress 不因 editingValue 变化重建
+    const editingRef = useRef(editing);
+    editingRef.current = editing;
+
+    // 同步 hasChanges 到外部 ref，供 backdrop 使用
+    hasChangesRef.current = editing?.hasChanges ?? false;
+
+    const handleKeyPress = useCallback((key: string) => {
+        const cur = editingRef.current;
+        const editingValue = cur?.editingValue ?? '';
+        const maxLength = cur?.maxLength;
+
+        if (key === 'DELETE' || key === 'backspace') {
+            if (editingValue.length > 0) actions.updateEditingValue(editingValue.slice(0, -1));
+        } else if (key === 'CONFIRM' || key === 'enter') {
+            actions.confirmInput();
+        } else {
+            if (maxLength !== undefined && editingValue.length >= maxLength) {
+                onShakeEditingContent();
+                return;
+            }
+            actions.updateEditingValue(editingValue + key);
+        }
+    }, [actions, onShakeEditingContent]);
+
+    const hasChanges = editing?.hasChanges ?? false;
+
+    return (
+        <View style={{flex: 1, backgroundColor: '#F1F5F9'}}>
+            {keyboardType === 'full' ? (
+                <FancyFullKeyBoardV2
+                    onKeyPress={handleKeyPress}
+                    onCancel={actions.cancelInput}
+                    onConfirm={actions.confirmInput}
+                    shouldShake={shouldShakeConfirmButton}
+                    hasChanges={hasChanges}
+                />
+            ) : (
+                <FancyNumberKeyBoardV2
+                    onKeyPress={handleKeyPress}
+                    onCancel={actions.cancelInput}
+                    onConfirm={actions.confirmInput}
+                    shouldShake={shouldShakeConfirmButton}
+                    hasChanges={hasChanges}
+                />
+            )}
+        </View>
+    );
+});
+
+// ─── FancyKeyboardOverlayV2 ───────────────────────────────────────────────────
+// 只订阅 display context，不订阅 editing context
+// 每次按键不会触发此组件重渲染
 export const FancyKeyboardOverlayV2: React.FC = () => {
-    const {
-        isVisible,
-        keyboardType,
-        activeInput,
-        containerOffset,
-        updateEditingValue,
-        confirmInput,
-        cancelInput,
-        shakeConfirmButton,
-        shouldShakeConfirmButton,
-    } = useFancyKeyboardV2();
+    const display = useContext(FancyKeyboardDisplayContextV2);
+    const actions = useContext(FancyKeyboardActionsContextV2);
 
-    // 键盘动画
+    const isVisible = display?.isVisible ?? false;
+    const keyboardType = display?.keyboardType ?? 'full';
+    const activeInput = display?.activeInput ?? null;
+    const containerOffset = display?.containerOffset ?? 0;
+    const shouldShakeConfirmButton = display?.shouldShakeConfirmButton ?? false;
+
     const keyboardTranslateY = useRef(new Animated.Value(screenHeight)).current;
-    // 遮罩透明度动画
     const backdropOpacity = useRef(new Animated.Value(0)).current;
-    // EditingContent 抖动状态
     const [shouldShakeEditingContent, setShouldShakeEditingContent] = React.useState(false);
+    const shakeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    // hasChanges 由 KeyboardArea 同步写入，backdrop 按需读取
+    const hasChangesRef = useRef(false);
+
+    const backdropTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     useEffect(() => {
-
         if (isVisible) {
-            // 在 Web 环境使用更简单的动画
             if (Platform.OS === 'web') {
-                // Web: 使用 timing 动画代替 spring，不使用 useNativeDriver
-                Animated.timing(keyboardTranslateY, {
-                    toValue: 0,
-                    duration: 300,
-                    useNativeDriver: false,
-                }).start(() => {
-                    Animated.timing(backdropOpacity, {
-                        toValue: 1,
-                        duration: 200,
-                        useNativeDriver: false,
-                    }).start();
+                Animated.timing(keyboardTranslateY, {toValue: 0, duration: 300, useNativeDriver: false}).start(() => {
+                    Animated.timing(backdropOpacity, {toValue: 1, duration: 200, useNativeDriver: false}).start();
                 });
             } else {
-                // 原生: 使用 spring 动画
-                const keyboardAnimation = Animated.spring(keyboardTranslateY, {
-                    toValue: 0,
-                    useNativeDriver: true,
-                    tension: 50,
-                    friction: 8,
-                });
-
-                keyboardAnimation.start();
-
-                // 延迟启动遮罩动画，等待键盘位移完成
-                setTimeout(() => {
-                    Animated.timing(backdropOpacity, {
-                        toValue: 1,
-                        duration: 200,
-                        useNativeDriver: true,
-                    }).start();
+                Animated.spring(keyboardTranslateY, {toValue: 0, useNativeDriver: true, tension: 50, friction: 8}).start();
+                backdropTimerRef.current = setTimeout(() => {
+                    Animated.timing(backdropOpacity, {toValue: 1, duration: 200, useNativeDriver: true}).start();
                 }, 350);
             }
         } else {
-            // 隐藏时，遮罩立刻消失，然后键盘下滑
-            Animated.timing(backdropOpacity, {
-                toValue: 0,
-                duration: 0,
-                useNativeDriver: Platform.OS !== 'web',
-            }).start(() => {
-                // 遮罩消失后，键盘下滑
-                Animated.timing(keyboardTranslateY, {
-                    toValue: screenHeight,
-                    duration: 200,
-                    useNativeDriver: Platform.OS !== 'web',
-                }).start();
+            if (backdropTimerRef.current) clearTimeout(backdropTimerRef.current);
+            Animated.timing(backdropOpacity, {toValue: 0, duration: 0, useNativeDriver: Platform.OS !== 'web'}).start(() => {
+                Animated.timing(keyboardTranslateY, {toValue: screenHeight, duration: 200, useNativeDriver: Platform.OS !== 'web'}).start();
             });
         }
-    }, [isVisible, keyboardTranslateY, backdropOpacity]);
+        return () => { if (backdropTimerRef.current) clearTimeout(backdropTimerRef.current); };
+    }, [isVisible]);
 
-    // 处理按键
-    const handleKeyPress = (key: string) => {
-        if (!activeInput) return;
+    // 清理 shake timer
+    useEffect(() => () => { if (shakeTimerRef.current) clearTimeout(shakeTimerRef.current); }, []);
 
-        const {editingValue, maxLength} = activeInput;
+    const handleShakeEditingContent = useCallback(() => {
+        setShouldShakeEditingContent(true);
+        if (shakeTimerRef.current) clearTimeout(shakeTimerRef.current);
+        shakeTimerRef.current = setTimeout(() => setShouldShakeEditingContent(false), 200);
+    }, []);
 
-        if (key === 'DELETE' || key === 'backspace') {
-            // 删除键
-            if (editingValue.length > 0) {
-                updateEditingValue(editingValue.slice(0, -1));
-            }
-        } else if (key === 'CONFIRM' || key === 'enter') {
-            // 确认键（键盘内部的确认按钮或上方的确定按钮）
-            confirmInput();
+    const handleBackdropPress = useCallback(() => {
+        if (!actions) return;
+        if (hasChangesRef.current) {
+            actions.shakeConfirmButton();
         } else {
-            // 普通字符输入
-            // 检查最大长度
-            if (maxLength && editingValue.length >= maxLength) {
-                // 触发 EditingContent 抖动
-                setShouldShakeEditingContent(true);
-                setTimeout(() => setShouldShakeEditingContent(false), 200);
-                return;
-            }
-            updateEditingValue(editingValue + key);
+            actions.cancelInput();
         }
-    };
+    }, [actions]);
 
-    const keyboardHeight = (screenHeight * 2) / 5;
-    const editingContentHeight = 80;
-    const totalHeight = keyboardHeight + editingContentHeight;
-
-    // 判断是否有变化
-    const hasChanges = activeInput ? activeInput.value !== activeInput.editingValue : false;
-
-    // 处理遮罩点击
-    const handleBackdropPress = () => {
-        if (hasChanges) {
-            // 有变化：抖动确定按钮提示用户
-            shakeConfirmButton();
-        } else {
-            // 无变化：直接关闭键盘
-            cancelInput();
-        }
-    };
+    if (!actions) return null;
 
     return (
-        <View
-            style={[
-                styles.overlay,
-                {
-                    pointerEvents: isVisible ? 'auto' : 'none',
-                },
-            ]}
-        >
-            {/* 遮罩 */}
+        <View style={[styles.overlay, {pointerEvents: isVisible ? 'auto' : 'none'}]}>
             <BackdropV2
                 onPress={handleBackdropPress}
                 activeInput={activeInput}
                 containerOffset={containerOffset}
                 opacity={backdropOpacity}
             />
-
-            {/* 键盘容器 */}
             <Animated.View
                 style={[
                     styles.keyboardContainer,
-                    {
-                        height: totalHeight,
-                    },
+                    {height: TOTAL_HEIGHT},
                     Platform.OS === 'web'
-                        ? {
-                              // Web 环境：直接使用 bottom 动画
-                              bottom: keyboardTranslateY.interpolate({
-                                  inputRange: [0, screenHeight],
-                                  outputRange: [0, -screenHeight],
-                              }),
-                          }
-                        : {
-                              // 原生环境：使用 transform
-                              transform: [{translateY: keyboardTranslateY}],
-                          },
+                        ? {bottom: keyboardTranslateY.interpolate({inputRange: [0, screenHeight], outputRange: [0, -screenHeight]})}
+                        : {transform: [{translateY: keyboardTranslateY}]},
                 ]}
             >
-                {/* EditingContent 区域 */}
-                <EditingContent activeInput={activeInput} shouldShake={shouldShakeEditingContent} />
-
-                {/* 键盘区域 */}
-                <View style={[styles.keyboardArea, {height: keyboardHeight}]}>
-                    {/* 两个键盘都渲染，通过 display 控制显示，避免切换时重新初始化 */}
-                    <View style={{display: keyboardType === 'full' ? 'flex' : 'none', flex: 1, opacity: isVisible ? 1 : 0}}>
-                        <FancyFullKeyBoardV2
-                            onKeyPress={handleKeyPress}
-                            onCancel={cancelInput}
-                            onConfirm={confirmInput}
-                            shouldShake={shouldShakeConfirmButton}
-                            hasChanges={hasChanges}
-                        />
-                    </View>
-                    <View style={{display: keyboardType === 'number' ? 'flex' : 'none', flex: 1, opacity: isVisible ? 1 : 0}}>
-                        <FancyNumberKeyBoardV2
-                            onKeyPress={handleKeyPress}
-                            onCancel={cancelInput}
-                            onConfirm={confirmInput}
-                            shouldShake={shouldShakeConfirmButton}
-                            hasChanges={hasChanges}
-                        />
-                    </View>
-                </View>
+                <EditingContent shouldShake={shouldShakeEditingContent} isVisible={isVisible}/>
+                <KeyboardArea
+                    keyboardType={keyboardType}
+                    shouldShakeConfirmButton={shouldShakeConfirmButton}
+                    actions={actions}
+                    onShakeEditingContent={handleShakeEditingContent}
+                    hasChangesRef={hasChangesRef}
+                />
             </Animated.View>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    overlay: {
-        ...StyleSheet.absoluteFillObject,
-        zIndex: 9999,
-    },
+    overlay: {...StyleSheet.absoluteFillObject, zIndex: 9999},
     keyboardContainer: {
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
+        position: 'absolute', bottom: 0, left: 0, right: 0,
         backgroundColor: '#FFFFFF',
-        shadowColor: '#000',
-        shadowOffset: {width: 0, height: -2},
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-        elevation: 10,
-        zIndex: 10000, // 确保键盘在最上层
-    },
-    keyboardArea: {
-        backgroundColor: '#E5E7EB',
+        shadowColor: '#000', shadowOffset: {width: 0, height: -2},
+        shadowOpacity: 0.1, shadowRadius: 8, elevation: 10, zIndex: 10000,
     },
 });

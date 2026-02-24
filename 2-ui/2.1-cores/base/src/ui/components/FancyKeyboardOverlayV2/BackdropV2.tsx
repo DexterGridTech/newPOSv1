@@ -1,6 +1,8 @@
-import React from 'react';
+import React, {memo, useCallback, useRef} from 'react';
 import {Pressable, StyleSheet, View, Dimensions, Animated, Platform} from 'react-native';
 import {ActiveInputInfoV2} from '../../../contexts/FancyKeyboardContextV2';
+
+const {height: screenHeight, width: screenWidth} = Dimensions.get('window');
 
 interface BackdropV2Props {
     onPress: () => void;
@@ -13,68 +15,46 @@ interface BackdropV2Props {
  * 半透明遮罩组件 V2
  * 通过多层 View 叠加实现：输入框区域全透明，其他区域半透明
  */
-export const BackdropV2: React.FC<BackdropV2Props> = ({onPress, activeInput, containerOffset, opacity}) => {
-    const screenHeight = Dimensions.get('window').height;
-    const screenWidth = Dimensions.get('window').width;
-    const [isInteractionEnabled, setIsInteractionEnabled] = React.useState(false);
+export const BackdropV2: React.FC<BackdropV2Props> = memo(({onPress, activeInput, containerOffset, opacity}) => {
+    // 用 ref 替代 state，避免 500ms 后 setIsInteractionEnabled(true) 触发 Pressable 重渲染
+    const isInteractionEnabledRef = useRef(false);
 
-    // 简化逻辑：延迟启用交互，等待动画完成
     React.useEffect(() => {
         if (activeInput) {
-            // 延迟启用交互，等待动画完成（500ms = 动画时长 + 缓冲）
-            const timer = setTimeout(() => {
-                setIsInteractionEnabled(true);
-            }, 500);
-
+            const timer = setTimeout(() => { isInteractionEnabledRef.current = true; }, 500);
             return () => {
                 clearTimeout(timer);
-                setIsInteractionEnabled(false);
+                isInteractionEnabledRef.current = false;
             };
         } else {
-            setIsInteractionEnabled(false);
+            isInteractionEnabledRef.current = false;
         }
     }, [activeInput]);
 
-    const handlePress = (event: any) => {
-        // 在 Web 环境下，阻止事件传播
-        if (Platform.OS === 'web' && event) {
-            event.stopPropagation();
-        }
-
-        if (!isInteractionEnabled) {
-            return;
-        }
-
+    // handlePress 不依赖任何 state，永远稳定，Pressable 不会因此重渲染
+    const handlePress = useCallback((event: any) => {
+        if (Platform.OS === 'web' && event) event.stopPropagation();
+        if (!isInteractionEnabledRef.current) return;
         onPress();
-    };
+    }, [onPress]);
+
+    // 将 opacity (0-1) 转换为 backgroundColor 的 rgba（Web 环境）
+    const backgroundColor = opacity.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.5)'],
+    });
 
     // 如果没有激活输入框，显示简单的全屏遮罩
     if (!activeInput) {
-        // 将 opacity (0-1) 转换为 backgroundColor 的 rgba
-        const backgroundColor = opacity.interpolate({
-            inputRange: [0, 1],
-            outputRange: ['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.5)'],
-        });
-
         return (
-            <View
-                style={[
-                    styles.backdrop,
-                    {
-                        pointerEvents: 'box-none',
-                    },
-                ]}
-            >
-                <Pressable
-                    style={StyleSheet.absoluteFillObject}
-                    onPress={handlePress}
-                >
+            <View style={[styles.backdrop, {pointerEvents: 'box-none'}]}>
+                <Pressable style={StyleSheet.absoluteFillObject} onPress={handlePress}>
                     <Animated.View
                         style={[
                             StyleSheet.absoluteFillObject,
-                            {
-                                backgroundColor: backgroundColor,
-                            }
+                            Platform.OS === 'web'
+                                ? {backgroundColor}
+                                : {backgroundColor: 'rgba(0, 0, 0, 0.5)', opacity},
                         ]}
                     />
                 </Pressable>
@@ -83,128 +63,46 @@ export const BackdropV2: React.FC<BackdropV2Props> = ({onPress, activeInput, con
     }
 
     const {position, initialPosition} = activeInput;
-    // 计算输入框移动后的目标位置
-    const isFirstRender = position.y === initialPosition.y;
+    // 用 initialPosition + containerOffset 计算目标位置，避免依赖 position.y 是否已更新的不确定性
+    const targetY = initialPosition.y + containerOffset;
 
-    let targetY: number;
-    if (isFirstRender) {
-        // 首次渲染，计算目标位置
-        targetY = initialPosition.y + containerOffset;
-    } else {
-        // 已经移动，使用实际位置
-        targetY = position.y;
-    }
-
-    // 挖空区域：上下与输入框高度一致，左右多出 10px
     const padding = 10;
-    const inputTop = targetY; // 上方遮罩到输入框顶部，不加 padding
-    const inputBottom = targetY + position.height; // 下方遮罩从输入框底部开始，不加 padding
+    const inputTop = targetY;
+    const inputBottom = targetY + position.height;
     const inputLeft = position.x - padding;
     const inputRight = position.x + position.width + padding;
 
-    // 将 opacity (0-1) 转换为 backgroundColor 的 rgba（用于 Web 环境）
-    const backgroundColor = opacity.interpolate({
-        inputRange: [0, 1],
-        outputRange: ['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.5)'],
-    });
+    const overlayStyle = Platform.OS === 'web'
+        ? {backgroundColor}
+        : {backgroundColor: 'rgba(0, 0, 0, 0.5)', opacity};
 
     return (
-        <View
-            style={[
-                styles.backdrop,
-                {
-                    pointerEvents: 'box-none',
-                },
-            ]}
-        >
-            <Pressable
-                style={StyleSheet.absoluteFillObject}
-                onPress={handlePress}
-            >
-                {/* 使用 4 个 Animated.View 围绕输入框，形成"挖空"效果 */}
-
-                {/* 输入框上方的遮罩 */}
+        <View style={[styles.backdrop, {pointerEvents: 'box-none'}]}>
+            <Pressable style={StyleSheet.absoluteFillObject} onPress={handlePress}>
+                {/* 输入框上方 */}
                 {inputTop > 0 && (
-                    <Animated.View
-                        style={[
-                            {
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                width: screenWidth,
-                                height: inputTop,
-                            },
-                            Platform.OS === 'web'
-                                ? {backgroundColor: backgroundColor}
-                                : {backgroundColor: 'rgba(0, 0, 0, 0.5)', opacity: opacity},
-                        ]}
-                    />
+                    <Animated.View style={[{position: 'absolute', top: 0, left: 0, width: screenWidth, height: inputTop}, overlayStyle]}/>
                 )}
-
-                {/* 输入框左侧的遮罩 */}
+                {/* 输入框左侧 */}
                 {inputLeft > 0 && (
-                    <Animated.View
-                        style={[
-                            {
-                                position: 'absolute',
-                                top: inputTop,
-                                left: 0,
-                                width: inputLeft,
-                                height: position.height, // 与输入框高度一致
-                            },
-                            Platform.OS === 'web'
-                                ? {backgroundColor: backgroundColor}
-                                : {backgroundColor: 'rgba(0, 0, 0, 0.5)', opacity: opacity},
-                        ]}
-                    />
+                    <Animated.View style={[{position: 'absolute', top: inputTop, left: 0, width: inputLeft, height: position.height}, overlayStyle]}/>
                 )}
-
-                {/* 输入框右侧的遮罩 */}
+                {/* 输入框右侧 */}
                 {inputRight < screenWidth && (
-                    <Animated.View
-                        style={[
-                            {
-                                position: 'absolute',
-                                top: inputTop,
-                                left: inputRight,
-                                width: screenWidth - inputRight,
-                                height: position.height, // 与输入框高度一致
-                            },
-                            Platform.OS === 'web'
-                                ? {backgroundColor: backgroundColor}
-                                : {backgroundColor: 'rgba(0, 0, 0, 0.5)', opacity: opacity},
-                        ]}
-                    />
+                    <Animated.View style={[{position: 'absolute', top: inputTop, left: inputRight, width: screenWidth - inputRight, height: position.height}, overlayStyle]}/>
                 )}
-
-                {/* 输入框下方的遮罩 */}
+                {/* 输入框下方 */}
                 {inputBottom < screenHeight && (
-                    <Animated.View
-                        style={[
-                            {
-                                position: 'absolute',
-                                top: inputBottom,
-                                left: 0,
-                                width: screenWidth,
-                                height: screenHeight - inputBottom,
-                            },
-                            Platform.OS === 'web'
-                                ? {backgroundColor: backgroundColor}
-                                : {backgroundColor: 'rgba(0, 0, 0, 0.5)', opacity: opacity},
-                        ]}
-                    />
+                    <Animated.View style={[{position: 'absolute', top: inputBottom, left: 0, width: screenWidth, height: screenHeight - inputBottom}, overlayStyle]}/>
                 )}
             </Pressable>
         </View>
     );
-};
+});
 
 const styles = StyleSheet.create({
     backdrop: {
         ...StyleSheet.absoluteFillObject,
-        zIndex: 9998, // 在键盘下方，但在内容上方
-    },
-    overlay: {
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', // 半透明黑色，透明度 0.5
+        zIndex: 9998,
     },
 });

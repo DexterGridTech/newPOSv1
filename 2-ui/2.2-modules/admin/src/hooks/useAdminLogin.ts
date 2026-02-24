@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {kernelCoreNavigationCommands, useEditableUiVariable} from "@impos2/kernel-core-navigation";
-import {uiAdminVariables} from "../ui";
+import {uiAdminVariables} from "../ui/variables";
 import {useRequestStatus} from "@impos2/kernel-core-interconnection";
 import {LOG_TAGS, logger, shortId} from "@impos2/kernel-core-base";
 import {uiAdminCommands} from "../features/commands";

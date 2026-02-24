@@ -1,5 +1,14 @@
-import React, {useCallback, useEffect, useRef} from 'react';
+import React, {memo, useCallback, useEffect, useRef} from 'react';
 import {View, TouchableOpacity, Text, StyleSheet, Animated, Platform, Dimensions} from 'react-native';
+
+const {width: screenWidth} = Dimensions.get('window');
+
+// 键盘主体最大宽度：大屏居中，小屏自适应
+const KEYBOARD_MAX_WIDTH = 460;
+const KEYBOARD_WIDTH = Math.min(screenWidth * 0.88, KEYBOARD_MAX_WIDTH);
+const ACTION_WIDTH = 84;
+const GAP = 8;
+const PADDING = 10;
 
 interface FancyNumberKeyBoardV2Props {
     onKeyPress: (key: string) => void;
@@ -9,141 +18,100 @@ interface FancyNumberKeyBoardV2Props {
     hasChanges?: boolean;
 }
 
-/**
- * 数字键盘组件 V2 - 专业 POS 风格
- * 特点：
- * 1. 4x4 布局，充分利用 263px 高度
- * 2. 右侧整合取消/确定按钮
- * 3. 经典计算器布局
- * 4. 横屏平板优化
- */
-export const FancyNumberKeyBoardV2: React.FC<FancyNumberKeyBoardV2Props> = (
-    ({onKeyPress, onCancel, onConfirm, shouldShake = false, hasChanges = false}) => {
-        // 确定按钮抖动动画
-        const shakeAnim = useRef(new Animated.Value(0)).current;
-
-        useEffect(() => {
-            if (shouldShake) {
-                const useNative = Platform.OS !== 'web';
-                // 抖动动画：左右摇摆
-                Animated.sequence([
-                    Animated.timing(shakeAnim, {
-                        toValue: 10,
-                        duration: 50,
-                        useNativeDriver: useNative,
-                    }),
-                    Animated.timing(shakeAnim, {
-                        toValue: -10,
-                        duration: 50,
-                        useNativeDriver: useNative,
-                    }),
-                    Animated.timing(shakeAnim, {
-                        toValue: 10,
-                        duration: 50,
-                        useNativeDriver: useNative,
-                    }),
-                    Animated.timing(shakeAnim, {
-                        toValue: -10,
-                        duration: 50,
-                        useNativeDriver: useNative,
-                    }),
-                    Animated.timing(shakeAnim, {
-                        toValue: 0,
-                        duration: 50,
-                        useNativeDriver: useNative,
-                    }),
-                ]).start();
-            }
-        }, [shouldShake]); // 移除 shakeAnim 依赖
-
-        const handleKeyPress = useCallback(
-            (value: string) => {
-                onKeyPress(value);
-            },
-            [onKeyPress]
-        );
-
+const NumKey = memo<{label: string; value: string; onKeyPress: (v: string) => void; style?: any; textStyle?: any}>(
+    ({label, value, onKeyPress, style, textStyle}) => {
+        const handlePress = useCallback(() => onKeyPress(value), [onKeyPress, value]);
         return (
-            <View style={styles.container}>
-                {/* 左侧：数字键盘主体 */}
-                <View style={styles.keyboardMain}>
-                    {/* 第一行: 1 2 3 */}
-                    <View style={styles.row}>
-                        <TouchableOpacity style={styles.key} onPress={() => handleKeyPress('1')} activeOpacity={0.6}>
-                            <Text style={styles.keyText}>1</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.key} onPress={() => handleKeyPress('2')} activeOpacity={0.6}>
-                            <Text style={styles.keyText}>2</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.key} onPress={() => handleKeyPress('3')} activeOpacity={0.6}>
-                            <Text style={styles.keyText}>3</Text>
-                        </TouchableOpacity>
-                    </View>
+            <TouchableOpacity style={[styles.key, style]} onPress={handlePress} activeOpacity={0.55}>
+                <Text style={[styles.keyText, textStyle]}>{label}</Text>
+            </TouchableOpacity>
+        );
+    }
+);
 
-                    {/* 第二行: 4 5 6 */}
-                    <View style={styles.row}>
-                        <TouchableOpacity style={styles.key} onPress={() => handleKeyPress('4')} activeOpacity={0.6}>
-                            <Text style={styles.keyText}>4</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.key} onPress={() => handleKeyPress('5')} activeOpacity={0.6}>
-                            <Text style={styles.keyText}>5</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.key} onPress={() => handleKeyPress('6')} activeOpacity={0.6}>
-                            <Text style={styles.keyText}>6</Text>
-                        </TouchableOpacity>
-                    </View>
+const ActionButtons = memo<{
+    hasChanges: boolean;
+    shouldShake: boolean;
+    onCancel: () => void;
+    onConfirm: () => void;
+}>(({hasChanges, shouldShake, onCancel, onConfirm}) => {
+    const shakeAnim = useRef(new Animated.Value(0)).current;
 
-                    {/* 第三行: 7 8 9 */}
-                    <View style={styles.row}>
-                        <TouchableOpacity style={styles.key} onPress={() => handleKeyPress('7')} activeOpacity={0.6}>
-                            <Text style={styles.keyText}>7</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.key} onPress={() => handleKeyPress('8')} activeOpacity={0.6}>
-                            <Text style={styles.keyText}>8</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.key} onPress={() => handleKeyPress('9')} activeOpacity={0.6}>
-                            <Text style={styles.keyText}>9</Text>
-                        </TouchableOpacity>
-                    </View>
+    useEffect(() => {
+        if (shouldShake) {
+            const useNative = Platform.OS !== 'web';
+            Animated.sequence([
+                Animated.timing(shakeAnim, {toValue: 8, duration: 50, useNativeDriver: useNative}),
+                Animated.timing(shakeAnim, {toValue: -8, duration: 50, useNativeDriver: useNative}),
+                Animated.timing(shakeAnim, {toValue: 8, duration: 50, useNativeDriver: useNative}),
+                Animated.timing(shakeAnim, {toValue: -8, duration: 50, useNativeDriver: useNative}),
+                Animated.timing(shakeAnim, {toValue: 0, duration: 50, useNativeDriver: useNative}),
+            ]).start();
+        }
+    }, [shouldShake]);
 
-                    {/* 第四行: . 0 删除 */}
-                    <View style={styles.row}>
-                        <TouchableOpacity style={styles.key} onPress={() => handleKeyPress('.')} activeOpacity={0.6}>
-                            <Text style={styles.keyText}>.</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.key} onPress={() => handleKeyPress('0')} activeOpacity={0.6}>
-                            <Text style={styles.keyText}>0</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={[styles.key, styles.deleteKey]}
-                            onPress={() => handleKeyPress('DELETE')}
-                            activeOpacity={0.6}
-                        >
-                            <Text style={styles.deleteKeyText}>⌫</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
+    if (!hasChanges) {
+        return (
+            <TouchableOpacity style={styles.closeButton} onPress={onCancel} activeOpacity={0.7}>
+                <Text style={styles.closeButtonText}>关闭</Text>
+            </TouchableOpacity>
+        );
+    }
+    return (
+        <>
+            <TouchableOpacity style={styles.cancelButton} onPress={onCancel} activeOpacity={0.7}>
+                <Text style={styles.cancelButtonText}>取消</Text>
+            </TouchableOpacity>
+            <Animated.View style={{flex: 1, transform: [{translateX: shakeAnim}]}}>
+                <TouchableOpacity style={[styles.confirmButton, StyleSheet.absoluteFillObject]} onPress={onConfirm} activeOpacity={0.7}>
+                    <Text style={styles.confirmButtonText}>确认</Text>
+                </TouchableOpacity>
+            </Animated.View>
+        </>
+    );
+});
 
-                {/* 右侧：取消/确定按钮 */}
-                <View style={styles.actionButtons}>
-                    {hasChanges ? (
-                        // 有变化：显示取消和确定按钮
-                        <>
-                            <TouchableOpacity style={styles.cancelButton} onPress={onCancel} activeOpacity={0.7}>
-                                <Text style={styles.cancelButtonText}>取消</Text>
-                            </TouchableOpacity>
-                            <Animated.View style={{flex: 1, transform: [{translateX: shakeAnim}]}}>
-                                <TouchableOpacity style={styles.confirmButton} onPress={onConfirm} activeOpacity={0.7}>
-                                    <Text style={styles.confirmButtonText}>确定</Text>
-                                </TouchableOpacity>
-                            </Animated.View>
-                        </>
-                    ) : (
-                        // 无变化：只显示关闭按钮，占据整个区域
-                        <TouchableOpacity style={styles.closeButtonFull} onPress={onCancel} activeOpacity={0.7}>
-                            <Text style={styles.closeButtonText}>关闭</Text>
-                        </TouchableOpacity>
-                    )}
+export const FancyNumberKeyBoardV2: React.FC<FancyNumberKeyBoardV2Props> = memo(
+    ({onKeyPress, onCancel, onConfirm, shouldShake = false, hasChanges = false}) => {
+        return (
+            <View style={styles.wrapper}>
+                <View style={styles.card}>
+                    <View style={styles.keyboardMain}>
+                        <View style={styles.row}>
+                            <NumKey label="1" value="1" onKeyPress={onKeyPress}/>
+                            <NumKey label="2" value="2" onKeyPress={onKeyPress}/>
+                            <NumKey label="3" value="3" onKeyPress={onKeyPress}/>
+                        </View>
+                        <View style={styles.row}>
+                            <NumKey label="4" value="4" onKeyPress={onKeyPress}/>
+                            <NumKey label="5" value="5" onKeyPress={onKeyPress}/>
+                            <NumKey label="6" value="6" onKeyPress={onKeyPress}/>
+                        </View>
+                        <View style={styles.row}>
+                            <NumKey label="7" value="7" onKeyPress={onKeyPress}/>
+                            <NumKey label="8" value="8" onKeyPress={onKeyPress}/>
+                            <NumKey label="9" value="9" onKeyPress={onKeyPress}/>
+                        </View>
+                        <View style={styles.row}>
+                            <NumKey label="." value="." onKeyPress={onKeyPress}/>
+                            <NumKey label="0" value="0" onKeyPress={onKeyPress}/>
+                            <NumKey
+                                label="⌫"
+                                value="DELETE"
+                                onKeyPress={onKeyPress}
+                                style={styles.deleteKey}
+                                textStyle={styles.deleteKeyText}
+                            />
+                        </View>
+                    </View>
+                    <View style={styles.actionButtons}>
+                        <ActionButtons
+                            hasChanges={hasChanges}
+                            shouldShake={shouldShake}
+                            onCancel={onCancel}
+                            onConfirm={onConfirm}
+                        />
+                    </View>
                 </View>
             </View>
         );
@@ -151,101 +119,107 @@ export const FancyNumberKeyBoardV2: React.FC<FancyNumberKeyBoardV2Props> = (
 );
 
 const styles = StyleSheet.create({
-    container: {
+    // 全宽背景，水平居中
+    wrapper: {
+        flex: 1,
+        alignItems: 'center',
+        backgroundColor: '#F1F5F9',
+    },
+    // 固定宽度卡片，两侧自动留白，高度撑满父容器
+    card: {
+        width: KEYBOARD_WIDTH,
         flex: 1,
         flexDirection: 'row',
-        backgroundColor: '#E5E7EB',
-        padding: 6,
-        gap: 6,
+        gap: GAP,
+        padding: PADDING,
+        backgroundColor: '#F1F5F9',
+        borderRadius: 16,
     },
     keyboardMain: {
         flex: 1,
-        gap: 3, // 添加行与行之间的间隔（左右间隔的一半）
+        gap: GAP,
     },
     row: {
         flexDirection: 'row',
-        gap: 6,
-        flex: 1, // 改为 flex: 1，让每行平均分配高度
+        gap: GAP,
+        flex: 1,
     },
     key: {
         flex: 1,
         backgroundColor: '#FFFFFF',
-        borderRadius: 8,
+        borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: {width: 0, height: 1},
-        shadowOpacity: 0.1,
-        shadowRadius: 1,
-        elevation: 2,
-        borderWidth: 1,
-        borderColor: '#D1D5DB',
+        shadowColor: '#94A3B8',
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.18,
+        shadowRadius: 3,
+        elevation: 3,
     },
     keyText: {
-        fontSize: 32,
-        fontWeight: '700',
-        color: '#1F2937',
+        fontSize: 26,
+        fontWeight: '600',
+        color: '#1E293B',
     },
     deleteKey: {
-        backgroundColor: '#6B7280',
+        backgroundColor: '#E2E8F0',
     },
     deleteKeyText: {
-        fontSize: 28,
+        fontSize: 22,
         fontWeight: '700',
-        color: '#FFFFFF',
+        color: '#475569',
     },
     actionButtons: {
-        width: 100,
-        gap: 6,
+        width: ACTION_WIDTH,
+        gap: GAP,
     },
     cancelButton: {
         flex: 1,
-        backgroundColor: '#EF4444',
-        borderRadius: 8,
+        backgroundColor: '#FEE2E2',
+        borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
-        shadowColor: '#000',
+        shadowColor: '#EF4444',
         shadowOffset: {width: 0, height: 2},
-        shadowOpacity: 0.2,
-        shadowRadius: 2,
-        elevation: 3,
+        shadowOpacity: 0.15,
+        shadowRadius: 3,
+        elevation: 2,
     },
     cancelButtonText: {
-        fontSize: 18,
+        fontSize: 15,
         fontWeight: '700',
-        color: '#FFFFFF',
+        color: '#EF4444',
     },
-    closeButtonFull: {
+    closeButton: {
         flex: 1,
-        backgroundColor: '#FCA5A5', // 淡红色
-        borderRadius: 8,
+        backgroundColor: '#E2E8F0',
+        borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
-        shadowColor: '#000',
+        shadowColor: '#94A3B8',
         shadowOffset: {width: 0, height: 2},
-        shadowOpacity: 0.2,
-        shadowRadius: 2,
-        elevation: 3,
+        shadowOpacity: 0.15,
+        shadowRadius: 3,
+        elevation: 2,
     },
     closeButtonText: {
-        fontSize: 18,
+        fontSize: 15,
         fontWeight: '700',
-        color: '#FFFFFF',
+        color: '#64748B',
     },
     confirmButton: {
-        flex: 1,
         backgroundColor: '#10B981',
-        borderRadius: 8,
+        borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: {width: 0, height: 2},
-        shadowOpacity: 0.2,
-        shadowRadius: 2,
-        elevation: 3,
+        shadowColor: '#10B981',
+        shadowOffset: {width: 0, height: 3},
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+        elevation: 4,
     },
     confirmButtonText: {
-        fontSize: 18,
+        fontSize: 15,
         fontWeight: '700',
         color: '#FFFFFF',
     },
