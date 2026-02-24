@@ -3,7 +3,8 @@ import {kernelCoreNavigationCommands, useEditableUiVariable} from "@impos2/kerne
 import {uiDeviceActivateVariables} from "../ui";
 import {useRequestStatus} from "@impos2/kernel-core-interconnection";
 import {kernelTerminalCommands} from "@impos2/kernel-terminal";
-import {shortId} from "@impos2/kernel-core-base";
+import {LOG_TAGS, logger, shortId} from "@impos2/kernel-core-base";
+import {moduleName} from "../moduleName";
 
 interface UseDeviceActivateOptions {
     onComplete?: () => void;
@@ -21,6 +22,7 @@ export const useDeviceActivate = ({onComplete}: UseDeviceActivateOptions = {}) =
     useEffect(() => {
         if (activateStatus?.status === 'complete' && requestId && handledRef.current !== requestId) {
             handledRef.current = requestId;
+            logger.log([moduleName,LOG_TAGS.Hook,"useDeviceActivate"],"设备激活成功",activateStatus.results)
             onComplete?.();
         }
     }, [activateStatus?.status, requestId, onComplete]);

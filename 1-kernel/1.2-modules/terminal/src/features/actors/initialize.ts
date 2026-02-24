@@ -1,6 +1,7 @@
 import {moduleName} from "../../moduleName";
 import {Actor, device, kernelCoreBaseCommands, LOG_TAGS, logger, storeEntry} from "@impos2/kernel-core-base";
 import {terminalActions} from "../slices/terminal";
+import {kernelTerminalCommands} from "../commands";
 
 export class InitializeActor extends Actor {
     initialize = Actor.defineCommandHandler(kernelCoreBaseCommands.initialize,
@@ -8,6 +9,8 @@ export class InitializeActor extends Actor {
             logger.log([moduleName, LOG_TAGS.Actor, "InitializeActor"], 'Initializing kernel Terminal...')
             const deviceInfo = await device.getDeviceInfo()
             storeEntry.dispatchAction(terminalActions.setDeviceInfo(deviceInfo))
+
+            kernelTerminalCommands.connectKernelWS().executeInternally()
             return {};
         });
 }

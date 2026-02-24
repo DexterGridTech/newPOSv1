@@ -21,7 +21,7 @@ export const dev :ServerSpace={
 const appConfig: ApplicationConfig = {
     serverSpace: dev,
     environment: {
-        deviceId: "123",
+        deviceId:"test id",
         production: false,
         screenMode: ScreenMode.DESKTOP,
         displayCount: 2,

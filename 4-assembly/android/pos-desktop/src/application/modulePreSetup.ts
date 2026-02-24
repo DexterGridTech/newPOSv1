@@ -1,5 +1,5 @@
 import {ApplicationConfig, AppModule, InitLogger} from "@impos2/kernel-core-base";
-import {registerAppControl} from "@impos2/kernel-core-navigation";
+import {registerAppControl} from "@impos2/kernel-core-base";
 import {appControlAdapter} from "../foundations";
 
 export const assemblyAndroidDesktopModulePreSetup = async (config: ApplicationConfig, allModules: AppModule[]) => {

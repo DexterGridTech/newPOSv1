@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {kernelCoreBaseCommands, RootState, storeEntry} from "@impos2/kernel-core-base";
 import {kernelTerminalCommands, kernelTerminalState, KernelTerminalState, TerminalState} from "@impos2/kernel-terminal";
-import {appControl} from "@impos2/kernel-core-navigation";
+import {appControl} from "@impos2/kernel-core-base";
 import {useSelector} from "react-redux";
 
 
