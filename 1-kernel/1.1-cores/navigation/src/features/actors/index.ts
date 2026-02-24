@@ -7,6 +7,6 @@ import {UiVariableActor} from "./uiVariable";
 
 export const kernelCoreNavigationActors = createActors(moduleName, {
     initializeActor: InitializeActor,
-    uiModalActor:NavigateActor,
+    navigateActor:NavigateActor,
     uiVariableActor:UiVariableActor
 });

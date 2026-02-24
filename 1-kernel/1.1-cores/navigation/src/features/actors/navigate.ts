@@ -13,9 +13,7 @@ export class NavigateActor extends Actor {
                     [containerKey]: command.payload.target
                 }).executeInternally();
             else {
-                const reasons: string[] = []
-                if (!containerKey) reasons.push(`containerKey is required`)
-                throw new AppError(kernelCoreNavigationErrorMessages.navigationError, {reasons: reasons})
+                throw new AppError(kernelCoreNavigationErrorMessages.navigationError, {reasons: ['containerKey is required']})
             }
             return {};
         });

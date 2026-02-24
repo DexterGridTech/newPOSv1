@@ -12,9 +12,10 @@ const App = () => {
     const [storeReady, setStoreReady] = useState<{ store: Store; persistor: Persistor } | null>(null);
 
     useEffect(() => {
-        storePromise.then(result => {
+        storePromise().then(result => {
             setStoreReady(result);
         });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     if (!storeReady) {

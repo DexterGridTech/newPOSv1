@@ -6,9 +6,9 @@ import {Provider} from "react-redux";
 import {PersistGate} from "redux-persist/integration/react";
 import {kernelCoreBaseCommands} from "@impos2/kernel-core-base";
 import {storePromise} from "./src/store.ts";
-import LoadingScreen from "./src/ui/screens/LoadingScreen.tsx";
+import {LoadingScreen} from "@impos2/ui-core-base";
 import {AppProps} from "./src/types/shared/appProps.ts";
-import RootScreen from "@impos2/ui-integration-desktop/src/ui/screens/RootScreen.tsx";
+import {RootScreen} from "@impos2/ui-integration-desktop";
 
 const {AppTurboModule} = NativeModules;
 
@@ -25,6 +25,7 @@ const App = (props: AppProps) => {
         storePromise(props).then(result => {
             setStoreReady(result);
         });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     if (!storeReady) {

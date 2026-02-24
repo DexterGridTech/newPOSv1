@@ -1,5 +1,5 @@
 import {NativeModules} from 'react-native'
-import {AppControl} from '@impos2/kernel-core-navigation'
+import {AppControl} from '@impos2/kernel-core-base'
 
 const {ScreenControlModule, AppTurboModule} = NativeModules
 

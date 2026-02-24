@@ -178,8 +178,8 @@ export class ApplicationManager {
         initLogger.logSuccess(`Registered ${totalParams} system parameters`);
         initLogger.logStepEnd();
 
-        // 步骤 9: 构建 Reducers
-        initLogger.logStep(9, 'Building Reducers');
+        // 步骤 10: 构建 Reducers
+        initLogger.logStep(10, 'Building Reducers');
         const rootReducer: Record<string, Reducer> = {};
         let persistedCount = 0;
         allModules.forEach(module => {
@@ -213,8 +213,8 @@ export class ApplicationManager {
         initLogger.logSuccess(`Built ${reducerCount} reducers (${persistedCount} persisted)`);
         initLogger.logStepEnd();
 
-        // 步骤 10: 配置 Middleware
-        initLogger.logStep(10, 'Configuring Middleware');
+        // 步骤 11: 配置 Middleware
+        initLogger.logStep(11, 'Configuring Middleware');
         const epicMiddleware = createEpicMiddleware<PayloadAction, PayloadAction, RootState>();
         const moduleMiddlewares: { middleware: Middleware, priority: number, name: string }[] = [];
         allModules.forEach(module => {
@@ -235,8 +235,8 @@ export class ApplicationManager {
         initLogger.logSuccess('Middleware configured');
         initLogger.logStepEnd();
 
-        // 步骤 11: 创建 Redux Store
-        initLogger.logStep(11, 'Creating Redux Store');
+        // 步骤 12: 创建 Redux Store
+        initLogger.logStep(12, 'Creating Redux Store');
         initLogger.logDetail('Reactotron', config.reactotronEnhancer ? 'Enabled' : 'Disabled');
         const storeOptions: any = {
             reducer: rootReducer,
@@ -257,8 +257,8 @@ export class ApplicationManager {
         initLogger.logSuccess('Redux Store created');
         initLogger.logStepEnd();
 
-        // 步骤 12: 注册 Epics
-        initLogger.logStep(12, 'Registering Epics');
+        // 步骤 13: 注册 Epics
+        initLogger.logStep(13, 'Registering Epics');
         let totalEpics = 0;
         allModules.forEach(module => {
             const epicCount = Object.keys(module.epics).length;
@@ -274,8 +274,8 @@ export class ApplicationManager {
         initLogger.logSuccess(`Registered ${totalEpics} epics and running`);
         initLogger.logStepEnd();
 
-        // 步骤 13: 创建 Persistor
-        initLogger.logStep(13, 'Creating Persistor');
+        // 步骤 14: 创建 Persistor
+        initLogger.logStep(14, 'Creating Persistor');
         const persistor = persistStore(store);
         initLogger.logSuccess('Persistor created');
         initLogger.logStepEnd();
