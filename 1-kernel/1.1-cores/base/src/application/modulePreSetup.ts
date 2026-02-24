@@ -13,7 +13,7 @@ export const kernelCoreBaseModulePreSetup = async (config: ApplicationConfig, al
             if (config.headers) {
                 config.headers['Content-Type'] = `application/json`;
             }
-            logger.log([moduleName, LOG_TAGS.System, "kernelServer"], '[请求拦截器] 发送请求:', config.url);
+            logger.log([moduleName, LOG_TAGS.System, "kernelServer"], `[请求拦截器] 发送请求:${config.baseURL}${config.url}`, config.data);
             return config;
         },
         onRequestError: (error) => {
@@ -23,7 +23,7 @@ export const kernelCoreBaseModulePreSetup = async (config: ApplicationConfig, al
     });
     ApiManager.getInstance().addResponseInterceptor({
         onResponse: (response) => {
-            logger.log([moduleName, LOG_TAGS.System, "kernelServer"], '[响应拦截器] 收到响应:', response.status);
+            logger.log([moduleName, LOG_TAGS.System, "kernelServer"], `[响应拦截器] 收到响应:${response.request.url} status:${response.status} data:`,response.data);
             return response;
         },
         onResponseError: (error) => {

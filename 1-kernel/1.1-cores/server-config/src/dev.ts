@@ -66,7 +66,7 @@ export const devServerSpace :ServerSpace={
                         },
                         {
                             addressName: "主线路2",
-                            baseURL: "http://172.20.10.2:9999/kernel-server",
+                            baseURL: "http://192.168.0.172:9999/kernel-server",
                             timeout: 3000
                         },
                         {
@@ -95,7 +95,7 @@ export const devServerSpace :ServerSpace={
                         },
                         {
                             addressName: "主线路2",
-                            baseURL: "ws://172.20.10.2:9999/kernel-server",
+                            baseURL: "ws://192.168.0.172:9999/kernel-server",
                             timeout: 3000
                         }
                     ]

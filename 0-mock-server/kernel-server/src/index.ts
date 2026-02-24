@@ -19,15 +19,15 @@ function startServer() {
     const app = createApp();
 
     // 启动服务器
-    const server = app.listen(CONFIG.PORT, () => {
+    const server = app.listen(CONFIG.PORT, CONFIG.HOST, () => {
       console.log('='.repeat(60));
       console.log('IMPOS2 Kernel Server Started');
       console.log('='.repeat(60));
-      console.log(`Server running on port: ${CONFIG.PORT}`);
-      console.log(`API Base URL: http://localhost:${CONFIG.PORT}${CONFIG.ROUTES.API}`);
-      console.log(`WebSocket URL: ws://localhost:${CONFIG.PORT}${CONFIG.ROUTES.WS}`);
-      console.log(`Manager API: http://localhost:${CONFIG.PORT}${CONFIG.ROUTES.MANAGER}`);
-      console.log(`Web Manager: http://localhost:${CONFIG.PORT}${CONFIG.ROUTES.WEB}/manager`);
+      console.log(`Server running on ${CONFIG.HOST}:${CONFIG.PORT}`);
+      console.log(`API Base URL: http://${CONFIG.HOST}:${CONFIG.PORT}${CONFIG.ROUTES.API}`);
+      console.log(`WebSocket URL: ws://${CONFIG.HOST}:${CONFIG.PORT}${CONFIG.ROUTES.WS}`);
+      console.log(`Manager API: http://${CONFIG.HOST}:${CONFIG.PORT}${CONFIG.ROUTES.MANAGER}`);
+      console.log(`Web Manager: http://${CONFIG.HOST}:${CONFIG.PORT}${CONFIG.ROUTES.WEB}/manager`);
       console.log('='.repeat(60));
     });
 

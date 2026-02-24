@@ -7,7 +7,7 @@ import {
 import {UiVariablesState} from "../../types/state/uiVariables";
 import {kernelCoreNavigationWorkspaceState} from "../../types/shared/moduleStateKey";
 import {PayloadAction} from "@reduxjs/toolkit";
-import {batchUpdateState, LOG_TAGS, logger, ScreenPart} from "@impos2/kernel-core-base";
+import {batchUpdateState, LOG_TAGS, logger, PERSIST_KEY, ScreenPart} from "@impos2/kernel-core-base";
 import {moduleName} from "../../moduleName";
 
 const initialState: UiVariablesState = {
@@ -51,12 +51,14 @@ const slice = createWorkspaceSlice(
         updateUiVariables: (state, action: PayloadAction<Record<string, any>>) => {
             logger.log([moduleName, LOG_TAGS.Reducer, "uiVariables"], 'updateUiVariables',action.payload)
             Object.keys(action.payload).forEach(key => {
+                if (key === PERSIST_KEY) return
                 state[key] = {value: action.payload[key], updatedAt: Date.now()}
             })
         },
         clearUiVariables: (state, action: PayloadAction<string[]>) => {
             logger.log([moduleName, LOG_TAGS.Reducer, "uiVariables"], 'clearUiVariables',action.payload)
             action.payload.forEach((key) => {
+                if (key === PERSIST_KEY) return
                 state[key] = {value: null, updatedAt: Date.now()}
             })
         },

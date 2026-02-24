@@ -14,27 +14,27 @@ let db: Database.Database | null = null;
  * 初始化默认数据
  */
 function initDefaultData(database: Database.Database): void {
-  // 检查是否已存在 GetDeviceStateCommand
+  // 检查是否已存在 sendStateToServer
   const existingCommand = database.prepare(
     'SELECT id FROM command_item WHERE type = ?'
-  ).get('GetDeviceStateCommand');
+  ).get('kernel.terminal.sendStateToServer');
 
   if (!existingCommand) {
-    // 插入 GetDeviceStateCommand
+    // 插入 sendStateToServer
     const now = Date.now();
     database.prepare(`
       INSERT INTO command_item (id, name, type, valid, default_payload, created_at, updated_at)
       VALUES (?, ?, ?, ?, ?, ?, ?)
     `).run(
-      'GetDeviceStateCommand',
+      'sendStateToServer',
       '获取设备状态',
-      'GetDeviceStateCommand',
+      'kernel.terminal.sendStateToServer',
       1,
       '{}',
       now,
       now
     );
-    console.log('Default CommandItem "GetDeviceStateCommand" created');
+    console.log('Default CommandItem "sendStateToServer" created');
   }
 }
 

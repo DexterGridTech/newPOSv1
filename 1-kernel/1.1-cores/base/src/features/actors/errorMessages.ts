@@ -25,7 +25,6 @@ export class ErrorMessagesActor extends Actor {
                     keysFound.forEach(key => {
                         updateState[key] = command.payload[key]
                     })
-                    console.log("===>",updateState)
                     storeEntry.dispatchAction(errorMessagesActions.batchUpdateState(updateState))
                 }
                 if (keysNotFound.length > 0) {

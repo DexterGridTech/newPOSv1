@@ -6,6 +6,9 @@ export const CONFIG = {
   // 服务器端口
   PORT: 9999,
 
+  // 监听地址，0.0.0.0 允许局域网访问
+  HOST: '0.0.0.0',
+
   // 数据库路径
   DB_PATH: './data/kernel.db',
 

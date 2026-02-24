@@ -1,1 +1,1 @@
-export const moduleName = 'kernel.Terminal'
+export const moduleName = 'kernel.terminal'

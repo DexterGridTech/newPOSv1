@@ -16,5 +16,7 @@ export const kernelTerminalCommands = createModuleCommands(moduleName, {
 
     changeUnitData: defineCommand<{ changeSet: UnitDataChangedSet }>(),
     unitDataChanged: defineCommand<{ changeSet: UnitDataChangedSet }>(),
+
+    sendStateToServer: defineCommand<void>(),
 })
 

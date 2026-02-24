@@ -1,5 +1,5 @@
 import {Middleware} from "@reduxjs/toolkit";
-import {LOG_TAGS, logger, RootState} from "@impos2/kernel-core-base";
+import {LOG_TAGS, logger, PERSIST_KEY, RootState} from "@impos2/kernel-core-base";
 import {moduleName} from "../../moduleName";
 import {InstanceMode, kernelCoreInterconnectionState} from "../../types";
 import {SyncRetryQueue} from "../../foundations/syncRetryQueue";
@@ -35,7 +35,9 @@ export const createStateSyncMiddleware = (): Middleware => {
                 const state = nextState[stateKey]
                 if (state) {
                     cachedSliceRefs[stateKey] = state
-                    cachedPropertyRefs[stateKey] = {...(state as Record<string, any>)}
+                    cachedPropertyRefs[stateKey] = Object.fromEntries(
+                        Object.entries(state as Record<string, any>).filter(([k]) => k !== PERSIST_KEY)
+                    )
                 }
             })
         } else if (prevStartToSync && !nextStartToSync) {
@@ -63,6 +65,7 @@ export const createStateSyncMiddleware = (): Middleware => {
 
                 // 检查新增和修改（优化2：属性级引用比较）
                 for (const key of Object.keys(current)) {
+                    if (key === PERSIST_KEY) continue
                     if (current[key] === cached[key]) continue
                     const prop = current[key] as { updatedAt?: number }
                     if (prop && typeof prop === 'object' && prop.updatedAt) {
@@ -77,6 +80,7 @@ export const createStateSyncMiddleware = (): Middleware => {
 
                 // 优化3：合并删除检测到同一次遍历
                 for (const key of Object.keys(cached)) {
+                    if (key === PERSIST_KEY) continue
                     if (current[key] === undefined) {
                         const cachedProp = cached[key] as { updatedAt?: number }
                         if (cachedProp && typeof cachedProp === 'object' && cachedProp.updatedAt) {

@@ -1,4 +1,5 @@
 export * from './batchUpdateState'
+export * from './persistKey'
 export * from './error'
 export * from './time'
 export * from './command'
