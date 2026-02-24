@@ -11,8 +11,8 @@
   "scripts": {
     "build": "tsc --noEmit",
     "build-for-product": "rm -rf dist && tsc",
-    "master": "tsx test/master.ts",
-    "slave": "tsx test/slave.ts",
+    "master": "tsx dev/master.ts",
+    "slave": "tsx dev/slave.ts",
     "clean": "rm -rf dist",
     "type-check": "tsc --noEmit",
     "check:circular": "madge --circular --extensions ts --warning src/"
