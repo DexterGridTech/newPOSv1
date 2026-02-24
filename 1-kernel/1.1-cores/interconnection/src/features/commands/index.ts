@@ -23,7 +23,7 @@ export const kernelCoreInterconnectionCommands = createModuleCommands(moduleName
     sendToRemoteExecute: defineCommand<Command<any>>(),
 
     //数据同步
-    synStateAtConnected: defineCommand<Record<string, Record<string, {updateAt: number}>>>(),
+    synStateAtConnected: defineCommand<Record<string, Record<string, {updatedAt: number}>>>(),
 
 })
 

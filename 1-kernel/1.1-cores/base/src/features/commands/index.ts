@@ -1,6 +1,6 @@
 import {createModuleCommands, defineCommand} from "../../foundations";
 import {moduleName} from "../../moduleName";
-import {ValueWithUpdateAt} from "../../types";
+import {ValueWithUpdatedAt} from "../../types";
 
 
 export const kernelCoreBaseCommands =
@@ -8,10 +8,10 @@ export const kernelCoreBaseCommands =
 
         initialize: defineCommand<void>(),
 
-        updateErrorMessages: defineCommand<Record<string, ValueWithUpdateAt<string> | undefined | null
+        updateErrorMessages: defineCommand<Record<string, ValueWithUpdatedAt<string> | undefined | null
         >>(),
 
-        updateSystemParameters: defineCommand<Record<string, ValueWithUpdateAt<any> | undefined | null
+        updateSystemParameters: defineCommand<Record<string, ValueWithUpdatedAt<any> | undefined | null
         >>(),
 
         clearDataCache: defineCommand<void>(),

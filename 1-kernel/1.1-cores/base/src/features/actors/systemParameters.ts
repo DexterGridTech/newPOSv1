@@ -1,6 +1,6 @@
 import {AppError, getSystemParameterByKey, Actor, logger} from "../../foundations";
 import {kernelCoreBaseCommands} from "../commands";
-import {LOG_TAGS, storeEntry, ValueWithUpdateAt} from "../../types";
+import {LOG_TAGS, storeEntry, ValueWithUpdatedAt} from "../../types";
 import {kernelCoreBaseErrorMessages} from "../../supports/errors";
 import {systemParametersActions} from "../slices/systemParameters";
 import {moduleName} from "../../moduleName";
@@ -21,7 +21,7 @@ export class SystemParametersActor extends Actor {
                     }
                 })
                 if (keysFound.length > 0) {
-                    const updateState: Record<string, ValueWithUpdateAt<any> | undefined | null> = {};
+                    const updateState: Record<string, ValueWithUpdatedAt<any> | undefined | null> = {};
                     keysFound.forEach(key => {
                         updateState[key] = command.payload[key];
                     })

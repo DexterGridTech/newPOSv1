@@ -1,6 +1,6 @@
 import {useSelector} from 'react-redux';
 import {createSelector} from "@reduxjs/toolkit";
-import {RootState, shortId, ValueWithUpdateAt} from "@impos2/kernel-core-base";
+import {RootState, shortId, ValueWithUpdatedAt} from "@impos2/kernel-core-base";
 import {kernelCoreInterconnectionState} from "@impos2/kernel-core-interconnection";
 import {kernelCoreNavigationWorkspaceState} from "../types/shared/moduleStateKey";
 import {UiVariablesState} from "../types/state/uiVariables";
@@ -19,7 +19,7 @@ function getOrCreateSelector<T>(variableKey: string, defaultValue: T, stateKey: 
         const selector = createSelector(
             [(s: RootState) => s[stateKey as keyof RootState] as UiVariablesState],
             (uiVariablesState): T => {
-                const entry = uiVariablesState?.[variableKey] as ValueWithUpdateAt<T> | undefined
+                const entry = uiVariablesState?.[variableKey] as ValueWithUpdatedAt<T> | undefined
                 return entry?.value ?? defaultValue
             }
         )

@@ -28,15 +28,15 @@ import {instanceInterconnectionActions} from "../slices/instanceInterconnection"
 
 const isMaster = () => getInstanceMode() === InstanceMode.MASTER
 
-/** 收集本地需要同步的状态摘要（仅含 updateAt） */
+/** 收集本地需要同步的状态摘要（仅含 updatedAt） */
 const collectLocalStateSummary = (stateKeys: Set<keyof any>) => {
-    const result: Record<string, Record<string, { updateAt: number }>> = {}
+    const result: Record<string, Record<string, { updatedAt: number }>> = {}
     stateKeys.forEach(stateKey => {
         const state = storeEntry.getStateByKey(stateKey as any) as Record<string, any>
-        const summary: Record<string, { updateAt: number }> = {}
+        const summary: Record<string, { updatedAt: number }> = {}
         Object.keys(state).forEach(key => {
-            const prop = state[key] as { updateAt?: number }
-            if (prop?.updateAt) summary[key] = {updateAt: prop.updateAt}
+            const prop = state[key] as { updatedAt?: number }
+            if (prop?.updatedAt) summary[key] = {updatedAt: prop.updatedAt}
         })
         result[stateKey as string] = summary
     })
@@ -125,7 +125,7 @@ export class InstanceInterconnectionActor extends Actor {
 
             // 根据当前角色选择需要同步的状态集
             const statesNeedToSync = isMaster() ? statesToSyncFromMasterToSlave : statesToSyncFromSlaveToMaster
-            const remoteState = command.payload as Record<string, Record<string, { updateAt: number }>>
+            const remoteState = command.payload as Record<string, Record<string, { updatedAt: number }>>
             const localFullState = storeEntry.getState()
             const diff: Record<string, Record<string, any>> = {}
 
@@ -143,12 +143,12 @@ export class InstanceInterconnectionActor extends Actor {
                     return
                 }
 
-                // remote 有的 key：比较 updateAt
+                // remote 有的 key：比较 updatedAt
                 Object.keys(remote).forEach(k => {
-                    const localProp = local[k] as { updateAt?: number }
-                    if (!localProp?.updateAt) {
+                    const localProp = local[k] as { updatedAt?: number }
+                    if (!localProp?.updatedAt) {
                         (diff[stateKeyStr] ??= {})[k] = null
-                    } else if (localProp.updateAt > remote[k].updateAt) {
+                    } else if (localProp.updatedAt > remote[k].updatedAt) {
                         (diff[stateKeyStr] ??= {})[k] = localProp
                     }
                 })
@@ -156,7 +156,7 @@ export class InstanceInterconnectionActor extends Actor {
                 Object.keys(local).forEach(k => {
                     if (!remote[k]) {
                         const localProp = local[k]
-                        if (localProp?.updateAt) {
+                        if (localProp?.updatedAt) {
                             (diff[stateKeyStr] ??= {})[k] = localProp
                         }
                     }

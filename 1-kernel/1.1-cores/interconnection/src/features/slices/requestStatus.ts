@@ -13,7 +13,7 @@ const updateRequestStatus = (request: RequestStatus) => {
     const hasError = commandStatuses.some(cs => cs.status === 'error')
     const allComplete = commandStatuses.every(cs => cs.status === 'complete')
     request.status = hasError ? 'error' : allComplete ? 'complete' : 'started'
-    request.updateAt = commandStatuses.reduce((latest, cs) => {
+    request.updatedAt = commandStatuses.reduce((latest, cs) => {
         const time = cs.completeAt ?? cs.errorAt ?? 0
         return time > latest ? time : latest
     }, 0)
@@ -51,11 +51,11 @@ export const slice = createInstanceModeSlice(
 
             Object.keys(state).filter(requestId => {
                 const request = state[requestId]
-                return (Date.now() - request.updateAt) > requestCleanOutTime
+                return (Date.now() - request.updatedAt) > requestCleanOutTime
             }).forEach(requestIdToDelete => {
                 delete state[requestIdToDelete]
             })
-            request.updateAt = Date.now()
+            request.updatedAt = Date.now()
         },
         commandComplete: (state, action: PayloadAction<{
             actor: string,

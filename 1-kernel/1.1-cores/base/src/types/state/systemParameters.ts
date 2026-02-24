@@ -1,4 +1,4 @@
-import {ValueWithUpdateAt} from "../shared/valueWithUpdateAt";
+import {ValueWithUpdatedAt} from "../shared/valueWithUpdatedAt";
 
-export interface SystemParametersState extends Record<string, ValueWithUpdateAt<any>>{
+export interface SystemParametersState extends Record<string, ValueWithUpdatedAt<any>>{
 }

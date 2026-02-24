@@ -1,4 +1,4 @@
-import {ValueWithUpdateAt} from "@impos2/kernel-core-base";
+import {ValueWithUpdatedAt} from "@impos2/kernel-core-base";
 
 export enum UnitType {
     ENTITY = 'ENTITY',
@@ -6,7 +6,7 @@ export enum UnitType {
     TERMINAL = 'TERMINAL'
 }
 
-export interface UnitData<T> extends ValueWithUpdateAt<T>{
+export interface UnitData<T> extends ValueWithUpdatedAt<T>{
     id: string;
     name: string;
     path: string;

@@ -212,7 +212,7 @@ export interface SystemStatus {
     /** 已安装应用列表 */
     installedApps: InstalledApp[];
     /** 采集时间戳 */
-    updateAt: number;
+    updatedAt: number;
 }
 
 

@@ -33,7 +33,7 @@ const selectMergedRequestStatus = createSelector(
         const hasError = commandStatuses.some(cs => cs.status === 'error')
         const allComplete = commandStatuses.every(cs => cs.status === 'complete')
         const status: RequestStatusType = hasError ? 'error' : allComplete ? 'complete' : 'started'
-        const updateAt = commandStatuses.reduce((latest, cs) => {
+        const updatedAt = commandStatuses.reduce((latest, cs) => {
             const time = cs.completeAt ?? cs.errorAt ?? 0
             return time > latest ? time : latest
         }, 0)
@@ -55,7 +55,7 @@ const selectMergedRequestStatus = createSelector(
             requestId,
             status,
             startAt: Math.min(masterRequest?.startAt ?? Infinity, slaveRequest?.startAt ?? Infinity),
-            updateAt,
+            updatedAt,
             results,
             errors
         }
@@ -70,7 +70,7 @@ export interface SimpleRequestStatus {
     requestId: string
     status: RequestStatusType
     startAt: number
-    updateAt: number
+    updatedAt: number
     results?: Record<string, any>
     errors?: Record<string, IAppError>
 }

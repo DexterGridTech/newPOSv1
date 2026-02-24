@@ -2,18 +2,25 @@ import {
     Actor,
     APIError,
     APIResponseCode,
-    getDeviceId,
+    getDeviceId, kernelCoreBaseCommands, kernelCoreBaseState,
     LOG_TAGS,
     logger,
     storeEntry,
-    ValueWithUpdateAt
+    ValueWithUpdatedAt
 } from "@impos2/kernel-core-base";
 import {kernelTerminalCommands} from "../commands";
 import {moduleName} from "../../moduleName";
 import {GetUnitDataByGroupRequest} from "../../types/foundations/api";
 import {kernelTerminalApis} from "../../supports";
-import {UnitDataChangedSet, UnitDataState, unitDataStateKeys} from "../../types";
+import {
+    kernelTerminalState,
+    kernelTerminalUnitDataState,
+    UnitDataChangedSet,
+    UnitDataState,
+    unitDataStateKeys
+} from "../../types";
 import {PayloadAction} from "@reduxjs/toolkit";
+import {getPathValuesFromUnitData} from "../../foundations/unitData";
 
 export class UnitDataActor extends Actor {
     kernelWSConnected = Actor.defineCommandHandler(kernelTerminalCommands.kernelWSConnected,
@@ -26,11 +33,10 @@ export class UnitDataActor extends Actor {
                     deviceId: deviceId,
                     group: key,
                     data: Object.keys(unitDataState).map(k => {
-                        const value = unitDataState[k] as ValueWithUpdateAt<any>
-                        return {id: k, updatedAt: value.updateAt}
+                        const value = unitDataState[k] as ValueWithUpdatedAt<any>
+                        return {id: k, updatedAt: value.updatedAt}
                     })
                 }
-                console.log("======>",getUnitDataByGroupRequest)
                 const result = await kernelTerminalApis.getUnitDataByGroup.run({request: getUnitDataByGroupRequest})
                 if (result.code === APIResponseCode.SUCCESS) {
                     kernelTerminalCommands.changeUnitData({changeSet:result.data!}).executeInternally()
@@ -55,6 +61,30 @@ export class UnitDataActor extends Actor {
             }
             storeEntry.dispatchAction(action)
             kernelTerminalCommands.unitDataChanged({changeSet: changeSet}).executeFromParent(command)
+            return {};
+        });
+    unitDataChanged = Actor.defineCommandHandler(kernelTerminalCommands.unitDataChanged,
+        async (command): Promise<Record<string, any>> => {
+            if(command.payload.changeSet.group===kernelTerminalUnitDataState.errorMessages){
+                const errorMessagesState = storeEntry.getStateByKey(kernelTerminalUnitDataState.errorMessages)
+                const terminalState=storeEntry.getStateByKey(kernelTerminalState.terminal)
+                const operatingEntity=terminalState.operatingEntity?.value!
+                const model=terminalState.model?.value!
+                const pathValues = getPathValuesFromUnitData(
+                    operatingEntity, model, errorMessagesState
+                )
+                kernelCoreBaseCommands.updateErrorMessages(pathValues).executeInternally()
+            }
+            if(command.payload.changeSet.group===kernelTerminalUnitDataState.systemParameters){
+                const systemParametersState = storeEntry.getStateByKey(kernelTerminalUnitDataState.systemParameters)
+                const terminalState=storeEntry.getStateByKey(kernelTerminalState.terminal)
+                const operatingEntity=terminalState.operatingEntity?.value!
+                const model=terminalState.model?.value!
+                const pathValues = getPathValuesFromUnitData(
+                    operatingEntity, model, systemParametersState
+                )
+                kernelCoreBaseCommands.updateSystemParameters(pathValues).executeInternally()
+            }
             return {};
         });
 }

@@ -64,11 +64,11 @@ export const createStateSyncMiddleware = (): Middleware => {
                 // 检查新增和修改（优化2：属性级引用比较）
                 for (const key of Object.keys(current)) {
                     if (current[key] === cached[key]) continue
-                    const prop = current[key] as { updateAt?: number }
-                    if (prop && typeof prop === 'object' && prop.updateAt) {
-                        if (typeof prop.updateAt !== 'number' || isNaN(prop.updateAt)) {
+                    const prop = current[key] as { updatedAt?: number }
+                    if (prop && typeof prop === 'object' && prop.updatedAt) {
+                        if (typeof prop.updatedAt !== 'number' || isNaN(prop.updatedAt)) {
                             logger.warn([moduleName, LOG_TAGS.System, "stateSyncMiddleware"],
-                                `属性 ${String(stateKey)}.${key} 的 updateAt 不是有效数字:`, prop.updateAt)
+                                `属性 ${String(stateKey)}.${key} 的 updatedAt 不是有效数字:`, prop.updatedAt)
                             continue
                         }
                         sliceChanges[key] = prop
@@ -78,8 +78,8 @@ export const createStateSyncMiddleware = (): Middleware => {
                 // 优化3：合并删除检测到同一次遍历
                 for (const key of Object.keys(cached)) {
                     if (current[key] === undefined) {
-                        const cachedProp = cached[key] as { updateAt?: number }
-                        if (cachedProp && typeof cachedProp === 'object' && cachedProp.updateAt) {
+                        const cachedProp = cached[key] as { updatedAt?: number }
+                        if (cachedProp && typeof cachedProp === 'object' && cachedProp.updatedAt) {
                             sliceChanges[key] = null
                         }
                     }

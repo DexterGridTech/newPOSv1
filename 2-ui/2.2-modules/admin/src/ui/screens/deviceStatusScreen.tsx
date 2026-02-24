@@ -200,7 +200,7 @@ export const DeviceStatusScreen: React.FC = () => {
         );
     }
 
-    const ts = systemStatus ? new Date(systemStatus.updateAt).toLocaleString('zh-CN') : '—';
+    const ts = systemStatus ? new Date(systemStatus.updatedAt).toLocaleString('zh-CN') : '—';
 
     return (
         <ScrollView style={s.root} contentContainerStyle={s.content} showsVerticalScrollIndicator={false}>

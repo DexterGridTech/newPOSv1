@@ -71,7 +71,7 @@ export const device: Device = {
             serialDevices: [],
             networks: [],
             installedApps: [],
-            updateAt: Date.now()
+            updatedAt: Date.now()
         })
     },
     addPowerStatusChangeListener(listener: (event: PowerStatusChangeEvent) => void): () => void {

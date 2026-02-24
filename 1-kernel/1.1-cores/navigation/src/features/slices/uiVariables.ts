@@ -13,11 +13,11 @@ import {moduleName} from "../../moduleName";
 const initialState: UiVariablesState = {
     primaryModals: {
         value: [],
-        updateAt: 0
+        updatedAt: 0
     },
     secondaryModals: {
         value: [],
-        updateAt: 0
+        updatedAt: 0
     },
 }
 const slice = createWorkspaceSlice(
@@ -40,7 +40,7 @@ const slice = createWorkspaceSlice(
                 props: modal.props,
                 open: true,
             });
-            modals.updateAt = Date.now();
+            modals.updatedAt = Date.now();
         },
         closeModal: (state, action: PayloadAction<{ modalId: string, displayMode: DisplayMode }>) => {
             logger.log([moduleName, LOG_TAGS.Reducer, "uiVariables"], 'closeModal',action.payload)
@@ -51,13 +51,13 @@ const slice = createWorkspaceSlice(
         updateUiVariables: (state, action: PayloadAction<Record<string, any>>) => {
             logger.log([moduleName, LOG_TAGS.Reducer, "uiVariables"], 'updateUiVariables',action.payload)
             Object.keys(action.payload).forEach(key => {
-                state[key] = {value: action.payload[key], updateAt: Date.now()}
+                state[key] = {value: action.payload[key], updatedAt: Date.now()}
             })
         },
         clearUiVariables: (state, action: PayloadAction<string[]>) => {
             logger.log([moduleName, LOG_TAGS.Reducer, "uiVariables"], 'clearUiVariables',action.payload)
             action.payload.forEach((key) => {
-                state[key] = {value: null, updateAt: Date.now()}
+                state[key] = {value: null, updatedAt: Date.now()}
             })
         },
         batchUpdateState: (state, action) => {

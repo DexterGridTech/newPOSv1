@@ -178,7 +178,7 @@ class DeviceManager private constructor(private val context: Context) {
         putArray("serialDevices", getSerialDevices())
         putArray("networks", getNetworks())
         putArray("installedApps", getInstalledApps())
-        putDouble("updateAt", System.currentTimeMillis().toDouble())
+        putDouble("updatedAt", System.currentTimeMillis().toDouble())
     }
 
     private fun getCpuUsage(): WritableMap {

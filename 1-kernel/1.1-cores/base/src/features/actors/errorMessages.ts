@@ -1,6 +1,6 @@
 import {Actor, AppError, getDefinedErrorMessageByKey, logger} from "../../foundations";
 import {kernelCoreBaseCommands} from "../commands";
-import {LOG_TAGS, storeEntry, ValueWithUpdateAt} from "../../types";
+import {LOG_TAGS, storeEntry, ValueWithUpdatedAt} from "../../types";
 import {kernelCoreBaseErrorMessages} from "../../supports/errors";
 import {errorMessagesActions} from "../slices/errorMessages";
 import {moduleName} from "../../moduleName";
@@ -21,10 +21,11 @@ export class ErrorMessagesActor extends Actor {
                     }
                 })
                 if (keysFound.length > 0) {
-                    const updateState: Record<string, ValueWithUpdateAt<string> | undefined | null> = {}
+                    const updateState: Record<string, ValueWithUpdatedAt<string> | undefined | null> = {}
                     keysFound.forEach(key => {
                         updateState[key] = command.payload[key]
                     })
+                    console.log("===>",updateState)
                     storeEntry.dispatchAction(errorMessagesActions.batchUpdateState(updateState))
                 }
                 if (keysNotFound.length > 0) {
