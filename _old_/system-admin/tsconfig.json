@@ -1,7 +1,0 @@
-{
-  "extends": "../../2-ui/tsconfig.base.json",
-  "exclude": [
-    "test",
-    "node_modules"
-  ]
-}
