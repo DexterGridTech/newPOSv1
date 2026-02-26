@@ -1,0 +1,27 @@
+{
+  "buildFiles": [
+    "/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter/android/turbomodule-lib/src/main/cpp/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/dexter/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter/android/turbomodule-lib/.cxx/Debug/3j3l3f2d/arm64-v8a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/dexter/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter/android/turbomodule-lib/.cxx/Debug/3j3l3f2d/arm64-v8a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "quickjs_bridge::@6890427a1f51a3e7e1df": {
+      "artifactName": "quickjs_bridge",
+      "abi": "arm64-v8a",
+      "output": "/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter/android/turbomodule-lib/build/intermediates/cxx/Debug/3j3l3f2d/obj/arm64-v8a/libquickjs_bridge.so",
+      "runtimeFiles": []
+    }
+  }
+}

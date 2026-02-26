@@ -1,10 +1,8 @@
 import React, {useState, useCallback} from 'react'
 import {View, Text, ScrollView, TouchableOpacity, TextInput, StyleSheet} from 'react-native'
-import {NativeModules} from 'react-native'
 import {scriptExecutionAdapter} from '../../src/foundations/scriptExecution'
+import NativeScriptsTurboModule from '../../src/supports/apis/NativeScriptsTurboModule'
 import {C} from '../theme'
-
-const {ScriptsTurboModule} = NativeModules
 
 type LogEntry = {id: string; script: string; success: boolean; result: string; duration: number}
 
@@ -70,12 +68,12 @@ export default function ScriptExecutionScreen() {
     }, [script, params, globals, timeout])
 
     const handleGetStats = useCallback(async () => {
-        const s = await ScriptsTurboModule.getStats()
+        const s = await NativeScriptsTurboModule.getStats()
         setStats(s)
     }, [])
 
     const handleClearStats = useCallback(async () => {
-        await ScriptsTurboModule.clearStats()
+        await NativeScriptsTurboModule.clearStats()
         setStats(null)
         setLog([])
     }, [])

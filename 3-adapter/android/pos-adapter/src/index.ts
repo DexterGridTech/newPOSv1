@@ -8,6 +8,7 @@ import {adapterAndroidParameters} from "./supports/parameters";
 import {adapterAndroidEpics} from "./features/epics";
 import {adapterAndroidMiddlewares} from "./features/middlewares";
 import {AppModule} from "@impos2/kernel-core-base";
+import {uiCoreBaseModule} from "@impos2/ui-core-base";
 
 export const adapterAndroidModule: AppModule = {
     name: moduleName,
@@ -19,7 +20,7 @@ export const adapterAndroidModule: AppModule = {
     actors: adapterAndroidActors,
     errorMessages: adapterAndroidErrorMessages,
     parameters: adapterAndroidParameters,
-    dependencies: [],
+    dependencies: [uiCoreBaseModule],
     modulePreSetup: adapterAndroidModulePreSetup,
     preSetupPriority: 3001//adapter 模块使用3001-3999
 }

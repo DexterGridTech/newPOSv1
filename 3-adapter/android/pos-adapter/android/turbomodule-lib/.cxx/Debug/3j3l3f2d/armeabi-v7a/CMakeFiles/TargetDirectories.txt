@@ -1,0 +1,3 @@
+/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter/android/turbomodule-lib/.cxx/Debug/3j3l3f2d/armeabi-v7a/CMakeFiles/quickjs_bridge.dir
+/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter/android/turbomodule-lib/.cxx/Debug/3j3l3f2d/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter/android/turbomodule-lib/.cxx/Debug/3j3l3f2d/armeabi-v7a/CMakeFiles/rebuild_cache.dir

@@ -67,7 +67,7 @@ const ActionButtons = memo<{
             </TouchableOpacity>
             <Animated.View style={{flex: 1, transform: [{translateX: shakeAnim}]}}>
                 <TouchableOpacity style={[styles.confirmButton, StyleSheet.absoluteFillObject]} onPress={onConfirm} activeOpacity={0.7}>
-                    <Text style={styles.confirmButtonText}>确定</Text>
+                    <Text style={styles.confirmButtonText}>确认</Text>
                 </TouchableOpacity>
             </Animated.View>
         </>
@@ -140,24 +140,50 @@ export const FancyFullKeyBoardV2: React.FC<FancyFullKeyBoardV2Props> = memo(
     }
 );
 
+// ─── Design Tokens（与 FancyNumberKeyBoardV2 保持一致）────────────────────────
+const T = {
+    bg: '#E8ECF0',
+    keyBg: '#FFFFFF',
+    keyText: '#1A2332',
+    keyRadius: 8,
+    keyElevation: 2,
+    fnKeyBg: '#64748B',
+    fnKeyText: '#FFFFFF',
+    activeKeyBg: '#2563EB',
+    activeKeyText: '#FFFFFF',
+    deleteBg: '#CBD5E1',
+    deleteText: '#334155',
+    confirmBg: '#16A34A',
+    confirmText: '#FFFFFF',
+    cancelBg: '#DC2626',
+    cancelText: '#FFFFFF',
+    closeBg: '#94A3B8',
+    closeText: '#FFFFFF',
+    fontKey: 18 as const,
+    fontFn: 16 as const,
+    fontAction: 17 as const,
+    fontWeight600: '600' as const,
+    fontWeight700: '700' as const,
+};
+
 const styles = StyleSheet.create({
-    container: {flex: 1, flexDirection: 'row', backgroundColor: '#E5E7EB', padding: 6, gap: 6},
-    keyboardMain: {flex: 1, gap: 3},
-    row: {flexDirection: 'row', gap: 6, flex: 1},
-    key: {flex: 1, backgroundColor: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center', shadowColor: '#000', shadowOffset: {width: 0, height: 1}, shadowOpacity: 0.1, shadowRadius: 1, elevation: 2, borderWidth: 1, borderColor: '#D1D5DB'},
-    keyText: {fontSize: 20, fontWeight: '600', color: '#1F2937'},
-    functionKey: {backgroundColor: '#6B7280'},
-    functionKeyText: {fontSize: 18, fontWeight: '700', color: '#FFFFFF'},
+    container: {flex: 1, flexDirection: 'row', backgroundColor: T.bg, padding: 6, gap: 6},
+    keyboardMain: {flex: 1, gap: 4},
+    row: {flexDirection: 'row', gap: 5, flex: 1},
+    key: {flex: 1, backgroundColor: T.keyBg, borderRadius: T.keyRadius, justifyContent: 'center', alignItems: 'center', elevation: T.keyElevation},
+    keyText: {fontSize: T.fontKey, fontWeight: T.fontWeight600, color: T.keyText},
+    functionKey: {backgroundColor: T.fnKeyBg},
+    functionKeyText: {fontSize: T.fontFn, fontWeight: T.fontWeight700, color: T.fnKeyText},
     spaceKey: {flex: 6},
-    activeShift: {backgroundColor: '#3B82F6'},
-    activeShiftText: {color: '#FFFFFF'},
-    activeSymbol: {backgroundColor: '#3B82F6'},
-    activeSymbolText: {color: '#FFFFFF'},
+    activeShift: {backgroundColor: T.activeKeyBg},
+    activeShiftText: {color: T.activeKeyText},
+    activeSymbol: {backgroundColor: T.activeKeyBg},
+    activeSymbolText: {color: T.activeKeyText},
     actionButtons: {width: 100, gap: 6},
-    cancelButton: {flex: 1, backgroundColor: '#EF4444', borderRadius: 8, justifyContent: 'center', alignItems: 'center', shadowColor: '#000', shadowOffset: {width: 0, height: 2}, shadowOpacity: 0.2, shadowRadius: 2, elevation: 3},
-    cancelButtonText: {fontSize: 18, fontWeight: '700', color: '#FFFFFF'},
-    closeButtonFull: {flex: 1, backgroundColor: '#FCA5A5', borderRadius: 8, justifyContent: 'center', alignItems: 'center', shadowColor: '#000', shadowOffset: {width: 0, height: 2}, shadowOpacity: 0.2, shadowRadius: 2, elevation: 3},
-    closeButtonText: {fontSize: 18, fontWeight: '700', color: '#FFFFFF'},
-    confirmButton: {flex: 1, backgroundColor: '#10B981', borderRadius: 8, justifyContent: 'center', alignItems: 'center', shadowColor: '#000', shadowOffset: {width: 0, height: 2}, shadowOpacity: 0.2, shadowRadius: 2, elevation: 3},
-    confirmButtonText: {fontSize: 18, fontWeight: '700', color: '#FFFFFF'},
+    cancelButton: {flex: 1, backgroundColor: T.cancelBg, borderRadius: T.keyRadius, justifyContent: 'center', alignItems: 'center', elevation: 3},
+    cancelButtonText: {fontSize: T.fontAction, fontWeight: T.fontWeight700, color: T.cancelText},
+    closeButtonFull: {flex: 1, backgroundColor: T.closeBg, borderRadius: T.keyRadius, justifyContent: 'center', alignItems: 'center', elevation: 2},
+    closeButtonText: {fontSize: T.fontAction, fontWeight: T.fontWeight700, color: T.closeText},
+    confirmButton: {flex: 1, backgroundColor: T.confirmBg, borderRadius: T.keyRadius, justifyContent: 'center', alignItems: 'center', elevation: 4},
+    confirmButtonText: {fontSize: T.fontAction, fontWeight: T.fontWeight700, color: T.confirmText},
 });

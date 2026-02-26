@@ -19,6 +19,7 @@
     "@impos2/kernel-core-base": "*",
     "@impos2/kernel-core-interconnection": "*",
     "@impos2/kernel-core-navigation": "*",
+    "@impos2/ui-core-base": "*",
     "react": "18.3.1",
     "react-native": "0.76.6"
   },

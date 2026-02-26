@@ -33,8 +33,6 @@ export const DevApp: React.FC = () => {
                 kernelCoreBaseCommands.initialize().executeInternally()
             }}>
                 <FancyKeyboardProviderV2
-                    animationDuration={300}
-                    animationEasing="easeInOut"
                 >
                     <FancyContainerV2>
                         {/* 你的页面内容 */}

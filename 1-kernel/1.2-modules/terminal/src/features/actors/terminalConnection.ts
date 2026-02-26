@@ -3,6 +3,7 @@ import {kernelTerminalCommands} from "../commands";
 import {moduleName} from "../../moduleName";
 import {
     KernelConnectedEvent,
+    KernelConnectFailedEvent,
     KernelConnectionEventType,
     KernelConnectionState,
     KernelDisconnectedEvent,
@@ -75,7 +76,7 @@ export class TerminalConnectionActor extends Actor {
                 autoHeartbeatResponse: true,
             });
         } catch (error: any) {
-            throw new AppError(kernelTerminalErrorMessages.kernelWSServerConnectionError, error.message)
+            logger.warn([moduleName, LOG_TAGS.Actor, "TerminalConnectionActor"], '连接失败，等待重试', error.message)
         }
     }
 
@@ -131,6 +132,9 @@ export class TerminalConnectionActor extends Actor {
         });
         wsClient.on(KernelConnectionEventType.DISCONNECTED, (event: KernelDisconnectedEvent) => {
             kernelTerminalCommands.kernelWSDisconnected(event.reason || "异常关闭").executeInternally()
+        });
+        wsClient.on(KernelConnectionEventType.CONNECT_FAILED, (event: KernelConnectFailedEvent) => {
+            kernelTerminalCommands.kernelWSDisconnected(event.error?.message || "连接失败").executeInternally()
         });
         this.wsInitiated = true
     }

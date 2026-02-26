@@ -38,8 +38,6 @@ const RootScreen: React.FC<AppProps> = ({onLoadComplete}) => {
 
     return (
         <FancyKeyboardProviderV2
-            animationDuration={300}
-            animationEasing="easeInOut"
         >
             <FancyContainerV2>
                 {/* 你的页面内容 */}

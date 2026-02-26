@@ -209,6 +209,10 @@ export class ApplicationManager {
                 initLogger.logNames(sliceNames);
             }
         });
+        // 兜底：Redux 不接受空 reducer 对象，至少需要一个 reducer
+        if (Object.keys(rootReducer).length === 0) {
+            rootReducer['_placeholder'] = (state = null) => state;
+        }
         const reducerCount = Object.keys(rootReducer).length;
         initLogger.logSuccess(`Built ${reducerCount} reducers (${persistedCount} persisted)`);
         initLogger.logStepEnd();

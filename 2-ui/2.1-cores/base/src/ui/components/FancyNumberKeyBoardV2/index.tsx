@@ -118,21 +118,48 @@ export const FancyNumberKeyBoardV2: React.FC<FancyNumberKeyBoardV2Props> = memo(
     }
 );
 
+// ─── Design Tokens ───────────────────────────────────────────────────────────
+const T = {
+    // 底盘
+    bg: '#E8ECF0',
+    // 普通数字键
+    keyBg: '#FFFFFF',
+    keyText: '#1A2332',
+    keyRadius: 10,
+    keyElevation: 2,
+    // 删除键
+    deleteBg: '#CBD5E1',
+    deleteText: '#334155',
+    // 确认键
+    confirmBg: '#16A34A',
+    confirmText: '#FFFFFF',
+    // 取消键
+    cancelBg: '#DC2626',
+    cancelText: '#FFFFFF',
+    // 关闭键
+    closeBg: '#94A3B8',
+    closeText: '#FFFFFF',
+    // 字体
+    fontNum: 28 as const,
+    fontAction: 16 as const,
+    fontDelete: 22 as const,
+    fontWeight600: '600' as const,
+    fontWeight700: '700' as const,
+};
+
 const styles = StyleSheet.create({
-    // 全宽背景，水平居中
     wrapper: {
         flex: 1,
         alignItems: 'center',
-        backgroundColor: '#F1F5F9',
+        backgroundColor: T.bg,
     },
-    // 固定宽度卡片，两侧自动留白，高度撑满父容器
     card: {
         width: KEYBOARD_WIDTH,
         flex: 1,
         flexDirection: 'row',
         gap: GAP,
         padding: PADDING,
-        backgroundColor: '#F1F5F9',
+        backgroundColor: T.bg,
         borderRadius: 16,
     },
     keyboardMain: {
@@ -146,28 +173,24 @@ const styles = StyleSheet.create({
     },
     key: {
         flex: 1,
-        backgroundColor: '#FFFFFF',
-        borderRadius: 10,
+        backgroundColor: T.keyBg,
+        borderRadius: T.keyRadius,
         justifyContent: 'center',
         alignItems: 'center',
-        shadowColor: '#94A3B8',
-        shadowOffset: {width: 0, height: 2},
-        shadowOpacity: 0.18,
-        shadowRadius: 3,
-        elevation: 3,
+        elevation: T.keyElevation,
     },
     keyText: {
-        fontSize: 26,
-        fontWeight: '600',
-        color: '#1E293B',
+        fontSize: T.fontNum,
+        fontWeight: T.fontWeight600,
+        color: T.keyText,
     },
     deleteKey: {
-        backgroundColor: '#E2E8F0',
+        backgroundColor: T.deleteBg,
     },
     deleteKeyText: {
-        fontSize: 22,
-        fontWeight: '700',
-        color: '#475569',
+        fontSize: T.fontDelete,
+        fontWeight: T.fontWeight700,
+        color: T.deleteText,
     },
     actionButtons: {
         width: ACTION_WIDTH,
@@ -175,52 +198,40 @@ const styles = StyleSheet.create({
     },
     cancelButton: {
         flex: 1,
-        backgroundColor: '#FEE2E2',
-        borderRadius: 10,
+        backgroundColor: T.cancelBg,
+        borderRadius: T.keyRadius,
         justifyContent: 'center',
         alignItems: 'center',
-        shadowColor: '#EF4444',
-        shadowOffset: {width: 0, height: 2},
-        shadowOpacity: 0.15,
-        shadowRadius: 3,
-        elevation: 2,
+        elevation: 3,
     },
     cancelButtonText: {
-        fontSize: 15,
-        fontWeight: '700',
-        color: '#EF4444',
+        fontSize: T.fontAction,
+        fontWeight: T.fontWeight700,
+        color: T.cancelText,
     },
     closeButton: {
         flex: 1,
-        backgroundColor: '#E2E8F0',
-        borderRadius: 10,
+        backgroundColor: T.closeBg,
+        borderRadius: T.keyRadius,
         justifyContent: 'center',
         alignItems: 'center',
-        shadowColor: '#94A3B8',
-        shadowOffset: {width: 0, height: 2},
-        shadowOpacity: 0.15,
-        shadowRadius: 3,
         elevation: 2,
     },
     closeButtonText: {
-        fontSize: 15,
-        fontWeight: '700',
-        color: '#64748B',
+        fontSize: T.fontAction,
+        fontWeight: T.fontWeight700,
+        color: T.closeText,
     },
     confirmButton: {
-        backgroundColor: '#10B981',
-        borderRadius: 10,
+        backgroundColor: T.confirmBg,
+        borderRadius: T.keyRadius,
         justifyContent: 'center',
         alignItems: 'center',
-        shadowColor: '#10B981',
-        shadowOffset: {width: 0, height: 3},
-        shadowOpacity: 0.3,
-        shadowRadius: 4,
         elevation: 4,
     },
     confirmButtonText: {
-        fontSize: 15,
-        fontWeight: '700',
-        color: '#FFFFFF',
+        fontSize: T.fontAction,
+        fontWeight: T.fontWeight700,
+        color: T.confirmText,
     },
 });

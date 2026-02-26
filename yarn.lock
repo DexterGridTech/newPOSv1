@@ -2507,6 +2507,7 @@ __metadata:
     "@impos2/kernel-core-base": "*"
     "@impos2/kernel-core-interconnection": "*"
     "@impos2/kernel-core-navigation": "*"
+    "@impos2/ui-core-base": "*"
     react: 18.3.1
     react-native: 0.76.6
   languageName: unknown
@@ -2590,15 +2591,27 @@ __metadata:
     "@impos2/kernel-core-base": "*"
     "@impos2/kernel-core-interconnection": "*"
     "@reduxjs/toolkit": ^2.11.2
-    "@types/deep-diff": ^1.0.5
-    "@types/lodash": ^4.17.20
+    "@types/node": ^25.0.9
+    madge: ^8.0.0
+    react-redux: ^9.1.0
+    redux-observable: ^3.0.0-rc.3
+    redux-persist: ^6.0.0
+    rxjs: ^7.8.2
+    ts-node: ^10.9.2
+    typescript: ^5.9.3
+  languageName: unknown
+  linkType: soft
+
+"@impos2/kernel-core-task@workspace:1-kernel/1.1-cores/task":
+  version: 0.0.0-use.local
+  resolution: "@impos2/kernel-core-task@workspace:1-kernel/1.1-cores/task"
+  dependencies:
+    "@impos2/kernel-core-base": "*"
+    "@reduxjs/toolkit": ^2.11.2
     "@types/node": ^25.0.9
     axios: ^1.13.5
     date-fns: ^4.1.0
-    deep-object-diff: ^1.1.9
-    lodash: ^4.17.21
     madge: ^8.0.0
-    react-redux: ^9.1.0
     redux-observable: ^3.0.0-rc.3
     redux-persist: ^6.0.0
     rxjs: ^7.8.2
@@ -2612,19 +2625,8 @@ __metadata:
   resolution: "@impos2/kernel-server-config@workspace:1-kernel/1.1-cores/server-config"
   dependencies:
     "@impos2/kernel-core-base": "*"
-    "@reduxjs/toolkit": ^2.11.2
-    "@types/deep-diff": ^1.0.5
-    "@types/lodash": ^4.17.20
     "@types/node": ^25.0.9
-    axios: ^1.13.5
-    date-fns: ^4.1.0
-    deep-object-diff: ^1.1.9
-    lodash: ^4.17.21
     madge: ^8.0.0
-    react-redux: ^9.1.0
-    redux-observable: ^3.0.0-rc.3
-    redux-persist: ^6.0.0
-    rxjs: ^7.8.2
     ts-node: ^10.9.2
     typescript: ^5.9.3
   languageName: unknown
@@ -2720,14 +2722,15 @@ __metadata:
     "@types/react": ~18.3.12
     expo: ~54.0.31
     expo-status-bar: ~3.0.9
-    react: 18.3.1
     react-dom: 18.3.1
-    react-native: 0.76.6
     react-native-web: ^0.21.0
-    react-redux: ^9.1.0
     redux-persist: ^6.0.0
     reselect: ^5.1.0
     typescript: ^5.9.3
+  peerDependencies:
+    react: 18.3.1
+    react-native: 0.76.6
+    react-redux: ^9.1.0
   languageName: unknown
   linkType: soft
 
@@ -2742,14 +2745,15 @@ __metadata:
     "@types/react": ~18.3.12
     expo: ~54.0.31
     expo-status-bar: ~3.0.9
-    react: 18.3.1
     react-dom: 18.3.1
-    react-native: 0.76.6
     react-native-web: ^0.21.0
-    react-redux: ^9.1.0
     redux-persist: ^6.0.0
     reselect: ^5.1.0
     typescript: ^5.9.3
+  peerDependencies:
+    react: 18.3.1
+    react-native: 0.76.6
+    react-redux: ^9.1.0
   languageName: unknown
   linkType: soft
 
@@ -2767,14 +2771,15 @@ __metadata:
     "@types/react": ~18.3.12
     expo: ~54.0.31
     expo-status-bar: ~3.0.9
-    react: 18.3.1
     react-dom: 18.3.1
-    react-native: 0.76.6
     react-native-web: ^0.21.0
-    react-redux: ^9.1.0
     redux-persist: ^6.0.0
     reselect: ^5.1.0
     typescript: ^5.9.3
+  peerDependencies:
+    react: 18.3.1
+    react-native: 0.76.6
+    react-redux: ^9.1.0
   languageName: unknown
   linkType: soft
 
@@ -2791,14 +2796,15 @@ __metadata:
     "@types/react": ~18.3.12
     expo: ~54.0.31
     expo-status-bar: ~3.0.9
-    react: 18.3.1
     react-dom: 18.3.1
-    react-native: 0.76.6
     react-native-web: ^0.21.0
-    react-redux: ^9.1.0
     redux-persist: ^6.0.0
     reselect: ^5.1.0
     typescript: ^5.9.3
+  peerDependencies:
+    react: 18.3.1
+    react-native: 0.76.6
+    react-redux: ^9.1.0
   languageName: unknown
   linkType: soft
 
