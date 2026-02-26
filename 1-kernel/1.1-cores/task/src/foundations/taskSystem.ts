@@ -7,6 +7,7 @@ import {
 import { AdapterManager } from './adapterManager';
 import { StreamTaskExecutor } from './streamTaskExecutor';
 import {CommandTaskAdapter} from "./taskAdapter";
+import {ExternalCallTaskAdapter} from "./taskAdapter";
 
 /**
  * TaskSystem 核心入口（单例，无异常+循环执行版本）
@@ -21,6 +22,7 @@ export class TaskSystem {
 
     private constructor() {
         this.registerAdapter(new CommandTaskAdapter());
+        this.registerAdapter(new ExternalCallTaskAdapter());
     }
 
     /**
@@ -109,7 +111,12 @@ export class TaskSystem {
                         error: (e) => { this.runningTasks.delete(requestId); subscriber.error(e); },
                         complete: () => { this.runningTasks.delete(requestId); subscriber.complete(); },
                     });
-                    return () => sub.unsubscribe();
+                    return () => {
+                        sub.unsubscribe();
+                        // 外部 unsubscribe 时，同步触发内部取消，避免内部流程继续运行
+                        const cancelFn = this.runningTasks.get(requestId);
+                        if (cancelFn) cancelFn();
+                    };
                 });
             }
         };

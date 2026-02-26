@@ -23,7 +23,11 @@ export class CommandTaskAdapter implements TaskAdapter {
             try {
                 command = getCommandByName(commandName, payload);
             } catch (e: any) {
-                subscriber.error(e);
+                subscriber.next({
+                    status: 'error',
+                    errors: [{ code: 'COMMAND_NOT_FOUND', message: e?.message ?? String(e), retryable: false }]
+                } as unknown as CommandRequestStatus);
+                subscriber.complete();
                 return;
             }
 
@@ -32,7 +36,11 @@ export class CommandTaskAdapter implements TaskAdapter {
 
             const store = storeEntry.getStore();
             if (!store) {
-                subscriber.error(new Error('Store not initialized'));
+                subscriber.next({
+                    status: 'error',
+                    errors: [{ code: 'STORE_NOT_INITIALIZED', message: 'Store not initialized', retryable: false }]
+                } as unknown as CommandRequestStatus);
+                subscriber.complete();
                 return;
             }
 

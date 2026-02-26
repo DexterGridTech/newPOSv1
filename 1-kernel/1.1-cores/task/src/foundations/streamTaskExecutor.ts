@@ -208,10 +208,17 @@ export class StreamTaskExecutor {
         const progress$ = new Subject<ProgressData>();
         const { requestId, taskKey, cancel$ } = executionContext;
 
+        // 问题3 fix：标志位防止超时与节点完成在同一 tick 竞争
+        let nodeCompleted = false;
+
         // Issue-E fix：节点级取消信号，超时或任务取消时同时触发，终止节点内部所有子流程
         const combinedCancel$ = new Subject<void>();
         // 任务取消或节点超时都会触发 combinedCancel$
-        cancel$.subscribe(() => { if (!combinedCancel$.closed) combinedCancel$.next(); });
+        // 问题1 fix：保存订阅引用，combinedCancel$ complete 时清理，避免循环场景下累积泄漏
+        const cancelSub = cancel$.subscribe(() => {
+            if (!combinedCancel$.closed) combinedCancel$.next();
+        });
+        combinedCancel$.subscribe({ complete: () => cancelSub.unsubscribe() });
 
         const baseProgress: ProgressData = {
             requestId,
@@ -267,7 +274,7 @@ export class StreamTaskExecutor {
                             combinedCancel$
                         ).pipe(
                             tap((flowProgress) => progress$.next(flowProgress)),
-                            finalize(() => progress$.complete())
+                            finalize(() => { nodeCompleted = true; progress$.complete(); })
                         ).subscribe();
                     } else {
                         this.executeAtomicNode(
@@ -278,7 +285,7 @@ export class StreamTaskExecutor {
                             combinedCancel$
                         ).pipe(
                             tap((atomicProgress) => progress$.next(atomicProgress)),
-                            finalize(() => progress$.complete())
+                            finalize(() => { nodeCompleted = true; progress$.complete(); })
                         ).subscribe();
                     }
                 }),
@@ -360,10 +367,11 @@ export class StreamTaskExecutor {
         }
 
         // Issue-E fix：超时时触发 combinedCancel$，终止节点内所有子流程
+        // 问题3 fix：用 nodeCompleted 标志替代 progress$.closed，避免同一 tick 竞态
         timer(node.timeout).pipe(
             takeUntil(combinedCancel$)
         ).subscribe(() => {
-            if (!progress$.closed) {
+            if (!nodeCompleted) {
                 // Issue-D fix：超时时 nodeCounter++ 保证进度推进
                 executionContext.nodeCounter++;
                 progress$.next({
@@ -399,11 +407,14 @@ export class StreamTaskExecutor {
     ): Observable<ProgressData> {
         const progress$ = new Subject<ProgressData>();
         let retryCount = 0;
+        // 问题2 fix：跟踪当前执行订阅，retry 前先取消上一次，避免并发订阅泄漏
+        let currentExecSub: Subscription | null = null;
 
         const execute = () => {
+            currentExecSub?.unsubscribe();
             const adapter = this.adapterManager.getAdapter(node.type);
 
-            adapter.execute(processedArgs, executionContext).pipe(
+            currentExecSub = adapter.execute(processedArgs, executionContext).pipe(
                 // Issue-F fix：用 switchMap 替代 tap 内嵌套 subscribe
                 // 好处：resultScript 的异常可被外层 catchError 捕获；takeUntil 统一控制整条链
                 switchMap((rawResult) => {
@@ -442,10 +453,6 @@ export class StreamTaskExecutor {
 
                     executionContext.context[node.key] = resultScriptResult.data;
                     executionContext.nodeCounter++;
-
-                    if (node.key === 'scan_barcode' && resultScriptResult.data?.barcode) {
-                        executionContext.context.lastBarcode = resultScriptResult.data.barcode;
-                    }
 
                     progress$.next({
                         ...baseProgress,

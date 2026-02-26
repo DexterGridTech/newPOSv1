@@ -6,6 +6,8 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
 
+import com.impos2.posadapter.turbomodules.connector.ConnectorTurboModule
+
 class PosAdapterTurboPackage : TurboReactPackage() {
 
     override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? =
@@ -13,8 +15,9 @@ class PosAdapterTurboPackage : TurboReactPackage() {
             LoggerTurboModule.NAME       -> LoggerTurboModule(reactContext)
             DeviceTurboModule.NAME       -> DeviceTurboModule(reactContext)
             ExternalCallTurboModule.NAME -> ExternalCallTurboModule(reactContext)
-            ScriptsTurboModule.NAME          -> ScriptsTurboModule(reactContext)
-            LocalWebServerTurboModule.NAME   -> LocalWebServerTurboModule(reactContext)
+            ScriptsTurboModule.NAME      -> ScriptsTurboModule(reactContext)
+            LocalWebServerTurboModule.NAME -> LocalWebServerTurboModule(reactContext)
+            ConnectorTurboModule.NAME    -> ConnectorTurboModule(reactContext)
             else -> null
         }
 
@@ -38,6 +41,10 @@ class PosAdapterTurboPackage : TurboReactPackage() {
             ),
             LocalWebServerTurboModule.NAME to ReactModuleInfo(
                 LocalWebServerTurboModule.NAME, LocalWebServerTurboModule::class.java.name,
+                false, false, false, true
+            ),
+            ConnectorTurboModule.NAME to ReactModuleInfo(
+                ConnectorTurboModule.NAME, ConnectorTurboModule::class.java.name,
                 false, false, false, true
             )
         )
