@@ -2607,6 +2607,7 @@ __metadata:
   resolution: "@impos2/kernel-core-task@workspace:1-kernel/1.1-cores/task"
   dependencies:
     "@impos2/kernel-core-base": "*"
+    "@impos2/kernel-core-interconnection": "*"
     "@reduxjs/toolkit": ^2.11.2
     "@types/node": ^25.0.9
     axios: ^1.13.5

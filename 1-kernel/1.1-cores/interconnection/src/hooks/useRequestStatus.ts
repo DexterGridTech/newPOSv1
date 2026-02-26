@@ -15,9 +15,9 @@ const selectSlaveState = (state: RootState): RequestStatusState =>
 
 const selectRequestId = (_: RootState, requestId?: string | null) => requestId
 
-const selectMergedRequestStatus = createSelector(
+export const selectMergedRequestStatus = createSelector(
     [selectMasterState, selectSlaveState, selectRequestId],
-    (masterState, slaveState, requestId): SimpleRequestStatus | null => {
+    (masterState, slaveState, requestId): CommandRequestStatus | null => {
         if (!requestId) return null
 
         const masterRequest = masterState?.[requestId]
@@ -62,11 +62,11 @@ const selectMergedRequestStatus = createSelector(
     }
 )
 
-export function useRequestStatus(requestId?: string | null): SimpleRequestStatus | null {
+export function useRequestStatus(requestId?: string | null): CommandRequestStatus | null {
     return useSelector((state: RootState) => selectMergedRequestStatus(state, requestId))
 }
 
-export interface SimpleRequestStatus {
+export interface CommandRequestStatus {
     requestId: string
     status: RequestStatusType
     startAt: number

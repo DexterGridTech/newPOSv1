@@ -3,10 +3,10 @@ import {
     TaskDefinition,
     ProgressData,
     TaskAdapter,
-    TaskType
 } from '../types';
 import { AdapterManager } from './adapterManager';
 import { StreamTaskExecutor } from './streamTaskExecutor';
+import {CommandTaskAdapter} from "./taskAdapter";
 
 /**
  * TaskSystem 核心入口（单例，无异常+循环执行版本）
@@ -19,7 +19,9 @@ export class TaskSystem {
     // requestId → cancel 句柄，用于支持 cancel(requestId)
     private runningTasks = new Map<string, () => void>();
 
-    private constructor() {}
+    private constructor() {
+        this.registerAdapter(new CommandTaskAdapter());
+    }
 
     /**
      * 获取单例实例

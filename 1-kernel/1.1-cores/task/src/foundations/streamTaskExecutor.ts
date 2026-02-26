@@ -54,9 +54,7 @@ export class StreamTaskExecutor {
             taskKey: taskDef.key,
             context: {
                 ...initialContext,
-                purchasedProducts: [],
                 loopCount: 0,
-                lastBarcode: ''
             },
             cancel$,
             state: 'INIT',
@@ -91,7 +89,6 @@ export class StreamTaskExecutor {
             executionContext.nodeCounter = 0;
             executionContext.hasError = false;
             executionContext.context.loopCount += 1;
-            executionContext.context.lastBarcode = '';
 
             // 每次 loop 重新创建超时 timer
             loopTimeoutSub = timer(taskDef.timeout).pipe(
@@ -149,8 +146,6 @@ export class StreamTaskExecutor {
                             timestamp: Date.now(),
                             payload: {
                                 loopCount: executionContext.context.loopCount,
-                                purchasedProducts: executionContext.context.purchasedProducts,
-                                totalPurchased: executionContext.context.purchasedProducts.length
                             }
                         });
 
@@ -188,8 +183,6 @@ export class StreamTaskExecutor {
                 context: { ...executionContext.context },
                 payload: {
                     totalLoopCount: executionContext.context.loopCount,
-                    totalPurchased: executionContext.context.purchasedProducts.length,
-                    purchasedProducts: executionContext.context.purchasedProducts
                 }
             });
             progress$.complete();

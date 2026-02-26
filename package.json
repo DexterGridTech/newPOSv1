@@ -39,6 +39,7 @@
     "kernel:core-interconnection-master": "corepack yarn workspace @impos2/kernel-core-interconnection master",
     "kernel:core-interconnection-slave": "corepack yarn workspace @impos2/kernel-core-interconnection slave",
     "kernel:core-navigation": "corepack yarn workspace @impos2/kernel-core-navigation dev",
+    "kernel:core-task": "corepack yarn workspace @impos2/kernel-core-task dev",
     "kernel:module-terminal": "corepack yarn workspace @impos2/kernel-terminal dev",
     "-------------": "----------------------------------------",
     "ui:core-base": "yarn workspace @impos2/ui-core-base web",

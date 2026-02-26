@@ -1,2 +1,2 @@
-export {useRequestStatus} from './useRequestStatus'
-export type {SimpleRequestStatus} from './useRequestStatus'
+export {useRequestStatus, selectMergedRequestStatus} from './useRequestStatus'
+export type {CommandRequestStatus} from './useRequestStatus'

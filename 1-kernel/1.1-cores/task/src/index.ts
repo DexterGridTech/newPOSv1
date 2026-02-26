@@ -7,7 +7,8 @@ import {kernelCoreTaskErrorMessages} from "./supports/errors";
 import {kernelCoreTaskParameters} from "./supports/parameters";
 import {kernelCoreTaskEpics} from "./features/epics";
 import {kernelCoreTaskMiddlewares} from "./features/middlewares";
-import {AppModule} from "@impos2/kernel-core-base";
+import {AppModule, kernelCoreBaseModule} from "@impos2/kernel-core-base";
+import {kernelCoreInterconnectionModule} from "@impos2/kernel-core-interconnection";
 
 export const kernelCoreTaskModule: AppModule = {
     name: moduleName,
@@ -19,7 +20,7 @@ export const kernelCoreTaskModule: AppModule = {
     actors: kernelCoreTaskActors,
     errorMessages: kernelCoreTaskErrorMessages,
     parameters: kernelCoreTaskParameters,
-    dependencies: [],
+    dependencies: [kernelCoreBaseModule, kernelCoreInterconnectionModule],
     modulePreSetup: kernelCoreTaskModulePreSetup,
     preSetupPriority: 0
 }
