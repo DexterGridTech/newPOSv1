@@ -14,7 +14,7 @@ export type ProgressType =
     | 'NODE_RETRY'       // 节点重试
     | 'CONDITION_CHECK'  // 条件检查
     | 'COMPENSATION'     // 补偿执行
-    | 'TASK_COMPLETE'    // 任务完成
+    | 'TASK_COMPLETE'    // 单次任务完成
     | 'TASK_CANCEL';     // 任务取消
 
 /** 任务状态枚举 */
@@ -123,4 +123,12 @@ export interface TaskExecutionContext {
 export interface TaskAdapter {
     type: TaskType;
     execute: (args: any, context: TaskExecutionContext) => Observable<any>;
+}
+
+/** 任务会话：executeTask 的返回值，持有进度流和取消句柄 */
+export interface TaskSession {
+    // 进度数据流
+    progress$: Observable<ProgressData>;
+    // 取消当前会话（触发内部 cancel$，通知所有适配器和子流程）
+    cancel: () => void;
 }

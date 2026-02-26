@@ -1,8 +1,8 @@
+import { TaskAdapter, TaskType } from '../types';
 import {Observable} from "rxjs";
-import {TaskAdapter,TaskType} from "../types";
 
 /**
- * 原子任务适配器管理器
+ * 原子任务适配器管理器（永不抛出异常）
  */
 export class AdapterManager {
     private adapters = new Map<TaskType, TaskAdapter>();

@@ -18,13 +18,48 @@ export interface ScriptsExecution {
 
 export const scriptsExecution: ScriptsExecution = {
     executeScript<T = any>(options: ScriptExecutionOptions<T>): Promise<T> {
-        if (!registeredScriptsExecution) {
-            throw new Error('Scripts execution adapter not registered')
-        }
         return registeredScriptsExecution.executeScript(options);
     }
 }
-let registeredScriptsExecution: ScriptsExecution | undefined;
+
+/**
+ * 默认实现：基于 new Function，适用于 Node.js / Web 开发调试环境。
+ * Android 适配器加载后会通过 registerScriptsExecution 覆盖此实现。
+ *
+ * 脚本约定：
+ *   - 通过 `params` 访问传入参数
+ *   - 通过变量名直接访问 globals
+ *   - 通过函数名直接调用 nativeFunctions
+ *   - 需显式 return 返回值
+ */
+let registeredScriptsExecution: ScriptsExecution = {
+    executeScript<T = any>(options: ScriptExecutionOptions<T>): Promise<T> {
+        const { script, params = {}, globals = {}, nativeFunctions = {}, timeout = 5000 } = options;
+        return new Promise<T>((resolve, reject) => {
+            let settled = false;
+            const timer = setTimeout(() => {
+                if (!settled) {
+                    settled = true;
+                    reject(new ScriptExecutionError(`Script execution timed out (${timeout}ms)`, script));
+                }
+            }, timeout);
+            try {
+                const globalKeys = Object.keys(globals);
+                const nativeKeys = Object.keys(nativeFunctions);
+                const allKeys = ['params', ...globalKeys, ...nativeKeys];
+                const allValues = [params, ...globalKeys.map(k => globals[k]), ...nativeKeys.map(k => nativeFunctions[k])];
+                // eslint-disable-next-line no-new-func
+                const fn = new Function(...allKeys, script);
+                Promise.resolve(fn(...allValues)).then(
+                    (val) => { if (!settled) { settled = true; clearTimeout(timer); resolve(val as T); } },
+                    (err) => { if (!settled) { settled = true; clearTimeout(timer); reject(new ScriptExecutionError(err?.message ?? String(err), script, err)); } }
+                );
+            } catch (err: any) {
+                if (!settled) { settled = true; clearTimeout(timer); reject(new ScriptExecutionError(err?.message ?? String(err), script, err)); }
+            }
+        });
+    }
+};
 
 export function registerScriptsExecution(impl: ScriptsExecution) {
     registeredScriptsExecution = impl;
