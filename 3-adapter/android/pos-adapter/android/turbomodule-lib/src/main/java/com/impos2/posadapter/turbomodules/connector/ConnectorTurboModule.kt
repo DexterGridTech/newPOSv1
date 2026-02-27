@@ -1,11 +1,21 @@
 package com.impos2.posadapter.turbomodules.connector
 
+import android.app.PendingIntent
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.hardware.usb.UsbDevice
+import android.hardware.usb.UsbManager
+import android.os.Build
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
+import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.impos2.posadapter.turbomodules.connector.channels.IntentPassiveChannel
+import com.impos2.posadapter.turbomodules.connector.channels.KeyboardPassiveChannel
 import org.json.JSONObject
 
 /**
@@ -15,23 +25,61 @@ import org.json.JSONObject
  *   2. Stream 订阅推送：subscribe() / unsubscribe()
  *   3. Passive 被动接收：由 IntentPassiveChannel 自动推送 EVENT_PASSIVE
  */
+@ReactModule(name = ConnectorTurboModule.NAME)
 class ConnectorTurboModule(reactContext: ReactApplicationContext) :
     ReactContextBaseJavaModule(reactContext) {
 
     companion object {
         const val NAME = "ConnectorTurboModule"
-        /** Stream 模式推送事件名，TS 层通过 NativeEventEmitter 监听 */
         const val EVENT_STREAM  = "connector.stream"
-        /** Passive 模式推送事件名，TS 层通过 NativeEventEmitter 监听 */
         const val EVENT_PASSIVE = "connector.passive"
+        private const val ACTION_USB_PERMISSION = "com.impos2.posadapter.USB_PERMISSION"
     }
 
     private val registry = ChannelRegistry(reactContext)
     private val passiveChannel = IntentPassiveChannel(reactContext)
+    val keyboardChannel = KeyboardPassiveChannel()
 
     init {
-        // 模块初始化时自动启动被动接收通道
         passiveChannel.start { event -> sendEvent(EVENT_PASSIVE, event.toWritableMap()) }
+        keyboardChannel.start { event -> sendEvent(EVENT_PASSIVE, event.toWritableMap()) }
+    }
+
+    /**
+     * 请求 USB 权限，授权后执行 onGranted，拒绝后执行 onDenied
+     */
+    private fun requestUsbPermission(
+        device: UsbDevice,
+        onGranted: () -> Unit,
+        onDenied: () -> Unit
+    ) {
+        val ctx = reactApplicationContext
+        val usbManager = ctx.getSystemService(Context.USB_SERVICE) as UsbManager
+
+        if (usbManager.hasPermission(device)) {
+            onGranted()
+            return
+        }
+
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                ctx.unregisterReceiver(this)
+                val granted = intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)
+                if (granted) onGranted() else onDenied()
+            }
+        }
+
+        val flags = PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+
+        val pi = PendingIntent.getBroadcast(ctx, 0, Intent(ACTION_USB_PERMISSION), flags)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ctx.registerReceiver(receiver, IntentFilter(ACTION_USB_PERMISSION), Context.RECEIVER_NOT_EXPORTED)
+        } else {
+            ctx.registerReceiver(receiver, IntentFilter(ACTION_USB_PERMISSION))
+        }
+
+        usbManager.requestPermission(device, pi)
     }
 
     override fun getName() = NAME
@@ -49,7 +97,7 @@ class ConnectorTurboModule(reactContext: ReactApplicationContext) :
         } catch (e: Exception) {
             promise.resolve(
                 com.impos2.posadapter.turbomodules.connector.channels.errorMap(
-                    9999, "call error: ${e.message}"
+                    ConnectorCode.UNKNOWN, "call error: ${e.message}"
                 )
             )
         }
@@ -61,10 +109,35 @@ class ConnectorTurboModule(reactContext: ReactApplicationContext) :
     fun subscribe(channelJson: String, promise: Promise) {
         try {
             val desc = ChannelDescriptor.fromJson(JSONObject(channelJson))
-            val channelId = registry.openStreamChannel(desc) { event ->
-                sendEvent(EVENT_STREAM, event.toWritableMap())
+
+            if (desc.type == ChannelType.USB) {
+                val usbManager = reactApplicationContext
+                    .getSystemService(Context.USB_SERVICE) as UsbManager
+                val device = usbManager.deviceList[desc.target]
+                    ?: return promise.reject("SUBSCRIBE_ERROR", "USB device not found: ${desc.target}")
+
+                requestUsbPermission(
+                    device,
+                    onGranted = {
+                        try {
+                            val channelId = registry.openStreamChannel(desc) { event ->
+                                sendEvent(EVENT_STREAM, event.toWritableMap())
+                            }
+                            promise.resolve(channelId)
+                        } catch (e: Exception) {
+                            promise.reject("SUBSCRIBE_ERROR", e.message ?: "subscribe failed")
+                        }
+                    },
+                    onDenied = {
+                        promise.reject("USB_PERMISSION_DENIED", "USB permission denied by user: ${desc.target}")
+                    }
+                )
+            } else {
+                val channelId = registry.openStreamChannel(desc) { event ->
+                    sendEvent(EVENT_STREAM, event.toWritableMap())
+                }
+                promise.resolve(channelId)
             }
-            promise.resolve(channelId)
         } catch (e: Exception) {
             promise.reject("SUBSCRIBE_ERROR", e.message ?: "subscribe failed")
         }
@@ -167,6 +240,7 @@ class ConnectorTurboModule(reactContext: ReactApplicationContext) :
     override fun onCatalystInstanceDestroy() {
         super.onCatalystInstanceDestroy()
         passiveChannel.stop()
+        keyboardChannel.stop()
         registry.closeAll()
     }
 }

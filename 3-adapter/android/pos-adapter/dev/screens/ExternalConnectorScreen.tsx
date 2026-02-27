@@ -69,6 +69,7 @@ const STREAM_PRESETS: Record<ChannelType, {target: string}> = {
 export default function ExternalConnectorScreen() {
     const [tab, setTab] = useState<TabKey>('rr')
     const [log, setLog] = useState<LogEntry[]>([])
+    const [sharedTarget, setSharedTarget] = useState<string | null>(null)
 
     const addLog = useCallback((entry: Omit<LogEntry, 'id' | 'ts'>) => {
         setLog(prev => [{...entry, id: String(Date.now() + Math.random()), ts: Date.now()}, ...prev].slice(0, 100))
@@ -101,9 +102,9 @@ export default function ExternalConnectorScreen() {
             <View style={s.body}>
                 {/* 左侧：配置区 */}
                 <View style={s.configPanel}>
-                    {tab === 'rr'      && <RRPanel      addLog={addLog} />}
-                    {tab === 'stream'  && <StreamPanel  addLog={addLog} />}
-                    {tab === 'passive' && <PassivePanel addLog={addLog} />}
+                    {tab === 'rr'      && <RRPanel      addLog={addLog} sharedTarget={sharedTarget} onTargetSelect={setSharedTarget} />}
+                    {tab === 'stream'  && <StreamPanel  addLog={addLog} sharedTarget={sharedTarget} />}
+                    {tab === 'passive' && <PassivePanel addLog={addLog} sharedTarget={sharedTarget} />}
                 </View>
 
                 {/* 右侧：日志区 */}
@@ -124,9 +125,17 @@ export default function ExternalConnectorScreen() {
 
 // ─── Request-Response 面板 ────────────────────────────────────────────────────
 
-function RRPanel({addLog}: {addLog: (e: Omit<LogEntry, 'id' | 'ts'>) => void}) {
+function RRPanel({addLog, sharedTarget, onTargetSelect}: {
+    addLog: (e: Omit<LogEntry, 'id' | 'ts'>) => void
+    sharedTarget: string | null
+    onTargetSelect: (t: string) => void
+}) {
     const [channelType, setChannelType] = useState<ChannelType>('INTENT')
     const [target, setTarget]   = useState(RR_PRESETS.INTENT.target)
+
+    React.useEffect(() => {
+        if (sharedTarget !== null) setTarget(sharedTarget)
+    }, [sharedTarget])
     const [action, setAction]   = useState(RR_PRESETS.INTENT.action)
     const [params, setParams]   = useState(RR_PRESETS.INTENT.params)
     const [timeout, setTimeout_] = useState('5000')
@@ -256,7 +265,7 @@ function RRPanel({addLog}: {addLog: (e: Omit<LogEntry, 'id' | 'ts'>) => void}) {
                     {targets.length === 0
                         ? <Text style={s.logBodyPreview}>（无可用 target）</Text>
                         : targets.map((t, i) => (
-                            <TouchableOpacity key={i} onPress={() => setTarget(t)}>
+                            <TouchableOpacity key={i} onPress={() => onTargetSelect(t)}>
                                 <Text style={[s.logBodyPreview, {color: C.info}]}>{t}</Text>
                             </TouchableOpacity>
                         ))
@@ -269,9 +278,16 @@ function RRPanel({addLog}: {addLog: (e: Omit<LogEntry, 'id' | 'ts'>) => void}) {
 
 // ─── Stream 面板 ──────────────────────────────────────────────────────────────
 
-function StreamPanel({addLog}: {addLog: (e: Omit<LogEntry, 'id' | 'ts'>) => void}) {
+function StreamPanel({addLog, sharedTarget}: {
+    addLog: (e: Omit<LogEntry, 'id' | 'ts'>) => void
+    sharedTarget: string | null
+}) {
     const [channelType, setChannelType] = useState<ChannelType>('USB')
     const [target, setTarget]   = useState(STREAM_PRESETS.USB.target)
+
+    React.useEffect(() => {
+        if (sharedTarget !== null) setTarget(sharedTarget)
+    }, [sharedTarget])
     const [options, setOptions] = useState('{}')
     const [channelId, setChannelId] = useState<string | null>(null)
     const [subscribing, setSubscribing] = useState(false)
@@ -404,8 +420,15 @@ function StreamPanel({addLog}: {addLog: (e: Omit<LogEntry, 'id' | 'ts'>) => void
 
 // ─── Passive 面板 ─────────────────────────────────────────────────────────────
 
-function PassivePanel({addLog}: {addLog: (e: Omit<LogEntry, 'id' | 'ts'>) => void}) {
+function PassivePanel({addLog, sharedTarget}: {
+    addLog: (e: Omit<LogEntry, 'id' | 'ts'>) => void
+    sharedTarget: string | null
+}) {
     const [target, setTarget]   = useState('')
+
+    React.useEffect(() => {
+        if (sharedTarget !== null) setTarget(sharedTarget)
+    }, [sharedTarget])
     const [listening, setListening] = useState(false)
     const [eventCount, setEventCount] = useState(0)
     const removeRef = useRef<(() => void) | null>(null)

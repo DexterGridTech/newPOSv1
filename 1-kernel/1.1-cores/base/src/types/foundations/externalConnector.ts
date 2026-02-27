@@ -7,6 +7,7 @@ export type ChannelType =
     | 'BLUETOOTH'
     | 'NETWORK'
     | 'SDK'
+    | 'HID'
 
 /** 交互模式 */
 export type InteractionMode = 'request-response' | 'stream' | 'passive'

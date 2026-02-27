@@ -100,6 +100,14 @@ class MainActivity : ReactActivity() {
         if (hasFocus && ::screenControlManager.isInitialized) screenControlManager.enableFullscreen()
     }
 
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        val module = reactInstanceManager
+            .currentReactContext
+            ?.getNativeModule(com.impos2.posadapter.turbomodules.connector.ConnectorTurboModule::class.java)
+        if (module?.keyboardChannel?.onKeyEvent(event) == true) return true
+        return super.dispatchKeyEvent(event)
+    }
+
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
         if (::screenControlManager.isInitialized && screenControlManager.onKeyDown(keyCode)) return true
         return super.onKeyDown(keyCode, event)

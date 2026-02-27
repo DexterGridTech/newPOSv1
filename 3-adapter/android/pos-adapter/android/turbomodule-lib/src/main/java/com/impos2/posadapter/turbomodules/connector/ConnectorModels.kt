@@ -4,7 +4,12 @@ package com.impos2.posadapter.turbomodules.connector
  * 通道类型
  */
 enum class ChannelType {
-    INTENT, AIDL, USB, SERIAL, BLUETOOTH, NETWORK, SDK
+    INTENT, AIDL, USB, SERIAL, BLUETOOTH, NETWORK, SDK, HID
+}
+
+object ConnectorCode {
+    const val UNKNOWN        = 9999
+    const val NOT_REGISTERED = 9998
 }
 
 /**

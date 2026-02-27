@@ -23,6 +23,7 @@ class ChannelRegistry(private val context: ReactApplicationContext) {
             ChannelType.BLUETOOTH -> BluetoothChannel(context)
             ChannelType.NETWORK   -> NetworkChannel(context)
             ChannelType.SDK       -> SdkChannel(context)
+            else -> throw IllegalArgumentException("${desc.type} 不支持 request-response 模式")
         }
 
     fun openStreamChannel(
