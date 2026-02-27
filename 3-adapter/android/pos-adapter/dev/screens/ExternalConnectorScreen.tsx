@@ -133,12 +133,15 @@ function RRPanel({addLog}: {addLog: (e: Omit<LogEntry, 'id' | 'ts'>) => void}) {
     const [options, setOptions] = useState('{}')
     const [loading, setLoading] = useState(false)
     const [available, setAvailable] = useState<boolean | null>(null)
+    const [targets, setTargets] = useState<string[] | null>(null)
 
     const applyPreset = useCallback((t: ChannelType) => {
         setChannelType(t)
         setTarget(RR_PRESETS[t].target)
         setAction(RR_PRESETS[t].action)
         setParams(RR_PRESETS[t].params)
+        setTargets(null)
+        setAvailable(null)
     }, [])
 
     const buildChannel = (): ChannelDescriptor => ({
@@ -178,6 +181,19 @@ function RRPanel({addLog}: {addLog: (e: Omit<LogEntry, 'id' | 'ts'>) => void}) {
             addLog({mode: 'rr', channelType, success: false, label: 'isAvailable ERROR', body: e?.message ?? String(e)})
         }
     }, [channelType, target, options])
+
+    const handleGetTargets = useCallback(async () => {
+        try {
+            const list = await externalConnectorAdapter.getAvailableTargets(channelType)
+            setTargets(list)
+            addLog({mode: 'rr', channelType, success: true,
+                label: `getAvailableTargets: ${channelType}`,
+                body: list.length > 0 ? list.join('\n') : '(空)'})
+        } catch (e: any) {
+            setTargets([])
+            addLog({mode: 'rr', channelType, success: false, label: 'getAvailableTargets ERROR', body: e?.message ?? String(e)})
+        }
+    }, [channelType])
 
     return (
         <ScrollView contentContainerStyle={{paddingBottom: 32}} keyboardShouldPersistTaps="handled">
@@ -219,6 +235,9 @@ function RRPanel({addLog}: {addLog: (e: Omit<LogEntry, 'id' | 'ts'>) => void}) {
                 <TouchableOpacity style={[s.btn, {backgroundColor: C.info}]} onPress={handleCheck}>
                     <Text style={s.btnText}>CHECK</Text>
                 </TouchableOpacity>
+                <TouchableOpacity style={[s.btn, {backgroundColor: '#7C3AED'}]} onPress={handleGetTargets}>
+                    <Text style={s.btnText}>TARGETS</Text>
+                </TouchableOpacity>
             </View>
 
             {available !== null && (
@@ -226,6 +245,22 @@ function RRPanel({addLog}: {addLog: (e: Omit<LogEntry, 'id' | 'ts'>) => void}) {
                     <Text style={[s.resultText, {color: available ? C.accent : C.danger}]}>
                         {available ? '✓ 通道可用' : '✗ 通道不可用'}
                     </Text>
+                </View>
+            )}
+
+            {targets !== null && (
+                <View style={[s.resultBox, {borderColor: '#7C3AED', marginTop: 6}]}>
+                    <Text style={[s.resultText, {color: '#7C3AED', marginBottom: 4}]}>
+                        {channelType} 可用 Targets ({targets.length})
+                    </Text>
+                    {targets.length === 0
+                        ? <Text style={s.logBodyPreview}>（无可用 target）</Text>
+                        : targets.map((t, i) => (
+                            <TouchableOpacity key={i} onPress={() => setTarget(t)}>
+                                <Text style={[s.logBodyPreview, {color: C.info}]}>{t}</Text>
+                            </TouchableOpacity>
+                        ))
+                    }
                 </View>
             )}
         </ScrollView>

@@ -79,6 +79,46 @@ class ConnectorTurboModule(reactContext: ReactApplicationContext) :
     // ── 工具方法 ──────────────────────────────────────────────────────────────
 
     @ReactMethod
+    fun getAvailableTargets(type: String, promise: Promise) {
+        android.os.AsyncTask.THREAD_POOL_EXECUTOR.execute {
+            try {
+                val result = com.facebook.react.bridge.Arguments.createArray()
+                when (runCatching { ChannelType.valueOf(type) }.getOrNull()) {
+                    ChannelType.USB -> {
+                        val usbManager = reactApplicationContext
+                            .getSystemService(android.content.Context.USB_SERVICE)
+                            as android.hardware.usb.UsbManager
+                        usbManager.deviceList.keys.forEach { result.pushString(it) }
+                    }
+                    ChannelType.SERIAL -> {
+                        listOf("/dev/ttyS0", "/dev/ttyS1", "/dev/ttyUSB0", "/dev/ttyUSB1").forEach {
+                            if (java.io.File(it).exists()) result.pushString(it)
+                        }
+                    }
+                    ChannelType.BLUETOOTH -> {
+                        val bt = android.bluetooth.BluetoothAdapter.getDefaultAdapter()
+                        if (bt != null && bt.isEnabled) {
+                            bt.bondedDevices?.forEach { device ->
+                                result.pushString(device.address)
+                            }
+                        }
+                    }
+                    ChannelType.INTENT -> {
+                        val pm = reactApplicationContext.packageManager
+                        pm.getInstalledPackages(0).forEach { pkg ->
+                            result.pushString(pkg.packageName)
+                        }
+                    }
+                    else -> { /* AIDL / NETWORK / SDK 无法枚举，返回空 */ }
+                }
+                promise.resolve(result)
+            } catch (e: Exception) {
+                promise.resolve(com.facebook.react.bridge.Arguments.createArray())
+            }
+        }
+    }
+
+    @ReactMethod
     fun isAvailable(channelJson: String, promise: Promise) {
         // 部分操作（USB deviceList、BT getDefaultAdapter）在某些设备上是阻塞调用，移到后台线程
         android.os.AsyncTask.THREAD_POOL_EXECUTOR.execute {

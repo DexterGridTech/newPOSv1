@@ -1,7 +1,6 @@
 export * from './logger'
 export * from './device'
 export * from './stateStorage'
-export * from './externalCall'
 export * from './scriptExecution'
 export * from './localWebServer'
 export * from './externalConnector'

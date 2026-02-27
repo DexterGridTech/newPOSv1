@@ -13,6 +13,7 @@ import {
 export const kernelCoreTaskState =  createModuleStateKeys(
     moduleName,
     [
+        'taskDefinitions'
     ] as const
 );
 export const kernelCoreTaskInstanceState= createModuleInstanceModeStateKeys(

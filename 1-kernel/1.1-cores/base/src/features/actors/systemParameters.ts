@@ -1,7 +1,6 @@
-import {AppError, getSystemParameterByKey, Actor, logger} from "../../foundations";
+import {Actor, getSystemParameterByKey, logger} from "../../foundations";
 import {kernelCoreBaseCommands} from "../commands";
 import {LOG_TAGS, storeEntry, ValueWithUpdatedAt} from "../../types";
-import {kernelCoreBaseErrorMessages} from "../../supports/errors";
 import {systemParametersActions} from "../slices/systemParameters";
 import {moduleName} from "../../moduleName";
 
@@ -28,7 +27,7 @@ export class SystemParametersActor extends Actor {
                     storeEntry.dispatchAction(systemParametersActions.batchUpdateState(updateState))
                 }
                 if (keysNotFound.length > 0) {
-                    throw new AppError(kernelCoreBaseErrorMessages.systemParameterKeyNotExists, {keysNotFound: keysNotFound}, command)
+                    logger.warn([moduleName, LOG_TAGS.Actor, "SystemParametersActor"], 'keysNotFound', keysNotFound)
                 }
                 return Promise.resolve({});
             });

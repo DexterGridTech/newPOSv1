@@ -6,8 +6,11 @@ import {
     CreateModuleInstanceModeStateType,
     CreateModuleWorkspaceStateType
 } from "@impos2/kernel-core-interconnection";
+import {kernelCoreTaskState} from "./shared/moduleStateKey";
+import {TaskDefinitionState} from "./state";
 
 export interface KernelCoreTaskState {
+    [kernelCoreTaskState.taskDefinitions]:TaskDefinitionState
 }
 
 export type KernelCoreTaskWorkspaceState = CreateModuleWorkspaceStateType<{

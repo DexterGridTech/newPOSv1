@@ -14,7 +14,6 @@ class PosAdapterTurboPackage : TurboReactPackage() {
         when (name) {
             LoggerTurboModule.NAME       -> LoggerTurboModule(reactContext)
             DeviceTurboModule.NAME       -> DeviceTurboModule(reactContext)
-            ExternalCallTurboModule.NAME -> ExternalCallTurboModule(reactContext)
             ScriptsTurboModule.NAME      -> ScriptsTurboModule(reactContext)
             LocalWebServerTurboModule.NAME -> LocalWebServerTurboModule(reactContext)
             ConnectorTurboModule.NAME    -> ConnectorTurboModule(reactContext)
@@ -29,10 +28,6 @@ class PosAdapterTurboPackage : TurboReactPackage() {
             ),
             DeviceTurboModule.NAME to ReactModuleInfo(
                 DeviceTurboModule.NAME, DeviceTurboModule::class.java.name,
-                false, false, false, true
-            ),
-            ExternalCallTurboModule.NAME to ReactModuleInfo(
-                ExternalCallTurboModule.NAME, ExternalCallTurboModule::class.java.name,
                 false, false, false, true
             ),
             ScriptsTurboModule.NAME to ReactModuleInfo(

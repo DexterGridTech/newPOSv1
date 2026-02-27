@@ -1,4 +1,5 @@
 import {
+    ChannelType,
     ChannelDescriptor,
     ConnectorEvent,
     ConnectorResponse,
@@ -46,6 +47,11 @@ export interface ExternalConnector {
      * 检查通道是否可用
      */
     isAvailable(channel: ChannelDescriptor): Promise<boolean>
+
+    /**
+     * 获取指定类型下所有可用的 target 列表
+     */
+    getAvailableTargets(type: ChannelType): Promise<string[]>
 }
 
 let registeredExternalConnector: ExternalConnector | null = null
@@ -78,6 +84,10 @@ export const externalConnector: ExternalConnector = {
     isAvailable(channel) {
         if (!registeredExternalConnector) return Promise.resolve(false)
         return registeredExternalConnector.isAvailable(channel)
+    },
+    getAvailableTargets(type) {
+        if (!registeredExternalConnector) return Promise.resolve([])
+        return registeredExternalConnector.getAvailableTargets(type)
     },
 }
 

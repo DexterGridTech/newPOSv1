@@ -1,7 +1,6 @@
-import {Actor, AppError, getDefinedErrorMessageByKey, logger} from "../../foundations";
+import {Actor, getDefinedErrorMessageByKey, logger} from "../../foundations";
 import {kernelCoreBaseCommands} from "../commands";
 import {LOG_TAGS, storeEntry, ValueWithUpdatedAt} from "../../types";
-import {kernelCoreBaseErrorMessages} from "../../supports/errors";
 import {errorMessagesActions} from "../slices/errorMessages";
 import {moduleName} from "../../moduleName";
 
@@ -28,7 +27,7 @@ export class ErrorMessagesActor extends Actor {
                     storeEntry.dispatchAction(errorMessagesActions.batchUpdateState(updateState))
                 }
                 if (keysNotFound.length > 0) {
-                    throw new AppError(kernelCoreBaseErrorMessages.errorMessageKeyNotExists, {keysNotFound: keysNotFound}, command)
+                    logger.warn([moduleName, LOG_TAGS.Actor, "ErrorMessagesActor"], 'keysNotFound', keysNotFound)
                 }
                 return Promise.resolve({});
             });

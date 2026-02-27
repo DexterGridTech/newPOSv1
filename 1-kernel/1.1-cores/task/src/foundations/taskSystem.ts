@@ -7,7 +7,6 @@ import {
 import { AdapterManager } from './adapterManager';
 import { StreamTaskExecutor } from './streamTaskExecutor';
 import {CommandTaskAdapter} from "./taskAdapter";
-import {ExternalCallTaskAdapter} from "./taskAdapter";
 
 /**
  * TaskSystem 核心入口（单例，无异常+循环执行版本）
@@ -22,7 +21,6 @@ export class TaskSystem {
 
     private constructor() {
         this.registerAdapter(new CommandTaskAdapter());
-        this.registerAdapter(new ExternalCallTaskAdapter());
     }
 
     /**
@@ -64,13 +62,18 @@ export class TaskSystem {
         this.adapterManager.registerAdapter(adapter);
     }
 
+    getTaskDefinition(key: string): TaskDefinition | undefined {
+
+        return this.taskRegistry.get(key);
+    }
+
     /**
      * 获取任务执行入口（核心流式入口，支持循环执行）
      */
     task(key: string): {
         run: (requestId: string, initialContext?: Record<string, any>, loop?: boolean) => Observable<ProgressData>
     } {
-        const taskDef = this.taskRegistry.get(key);
+        const taskDef = this.getTaskDefinition(key);
         if (!taskDef) {
             return {
                 run: (requestId: string, initialContext?: Record<string, any>, loop = true) => {

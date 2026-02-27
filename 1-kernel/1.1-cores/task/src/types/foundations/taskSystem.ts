@@ -1,7 +1,7 @@
 import { Observable, Subject } from 'rxjs';
 
 /** 任务类型枚举 */
-export type TaskType = 'externalCall' | 'command' | 'flow';
+export type TaskType = 'command' | 'flow';
 
 /** 过程数据类型枚举（核心，替代日志/异常） */
 export type ProgressType =
@@ -56,6 +56,8 @@ export interface TaskNode {
 
 /** 归一化任务定义（无父子区分，全节点化） */
 export interface TaskDefinition {
+    id?: string;
+    testContext?: Record<string, any>;
     // 任务唯一标识
     key: string;
     // 任务名称

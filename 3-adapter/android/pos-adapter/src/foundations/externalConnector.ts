@@ -1,6 +1,7 @@
 import { NativeModules, NativeEventEmitter } from 'react-native'
 import {
     ExternalConnector,
+    ChannelType,
     ChannelDescriptor,
     ConnectorEvent,
     ConnectorResponse,
@@ -74,6 +75,10 @@ export const externalConnectorAdapter: ExternalConnector = {
 
     isAvailable(channel: ChannelDescriptor): Promise<boolean> {
         return getNativeModule().isAvailable(JSON.stringify(channel))
+    },
+
+    getAvailableTargets(type: ChannelType): Promise<string[]> {
+        return getNativeModule().getAvailableTargets(type)
     },
 }
 
