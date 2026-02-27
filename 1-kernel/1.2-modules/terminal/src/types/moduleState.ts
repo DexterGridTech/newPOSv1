@@ -11,4 +11,5 @@ export interface  KernelTerminalState  {
     [kernelTerminalState.terminalConnection]: TerminalConnectionState
     [kernelTerminalUnitDataState.systemParameters]: UnitDataState
     [kernelTerminalUnitDataState.errorMessages]: UnitDataState
+    [kernelTerminalUnitDataState.taskDefinitions]: UnitDataState
 }

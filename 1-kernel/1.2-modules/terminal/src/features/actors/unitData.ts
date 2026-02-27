@@ -22,6 +22,7 @@ import {
 } from "../../types";
 import {PayloadAction} from "@reduxjs/toolkit";
 import {getPathValuesFromUnitData} from "../../foundations/unitData";
+import {kernelCoreTaskCommands} from "@impos2/kernel-core-task";
 
 export class UnitDataActor extends Actor {
     kernelWSConnected = Actor.defineCommandHandler(kernelTerminalCommands.kernelWSConnected,
@@ -85,6 +86,16 @@ export class UnitDataActor extends Actor {
                     operatingEntity, model, systemParametersState
                 )
                 kernelCoreBaseCommands.updateSystemParameters(pathValues).executeInternally()
+            }
+            if (command.payload.changeSet.group === kernelTerminalUnitDataState.taskDefinitions) {
+                const taskDefinitionsState = storeEntry.getStateByKey(kernelTerminalUnitDataState.taskDefinitions)
+                const terminalState = storeEntry.getStateByKey(kernelTerminalState.terminal)
+                const operatingEntity = terminalState.operatingEntity?.value!
+                const model = terminalState.model?.value!
+                const pathValues = getPathValuesFromUnitData(
+                    operatingEntity, model, taskDefinitionsState
+                )
+                kernelCoreTaskCommands.updateTaskDefinitions(pathValues).executeInternally()
             }
             return {};
         });

@@ -18,5 +18,6 @@ export const kernelTerminalUnitDataState = createUnitDataStateKeys(
     [
         'errorMessages',
         'systemParameters',
+        'taskDefinitions',
     ] as const
 );
