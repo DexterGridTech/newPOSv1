@@ -1,12 +1,16 @@
 package com.impos2.posadapter.turbomodules.connector.channels
 
+import android.app.Activity
+import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.hardware.usb.UsbConstants
 import android.hardware.usb.UsbManager
 import android.bluetooth.BluetoothAdapter
+import android.os.Build
 import android.os.IBinder
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
@@ -31,15 +35,85 @@ private val EXECUTOR = Executors.newCachedThreadPool()
 
 class IntentChannel(private val context: ReactApplicationContext) : RequestResponseChannel {
     override fun call(action: String, params: JSONObject, timeout: Long, promise: Promise) {
-        try {
-            val intent = Intent(action).apply {
-                params.keys().forEach { k -> putExtra(k, params.optString(k)) }
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        val waitResult = params.optBoolean("waitResult", false)
+        if (!waitResult) {
+            try {
+                val intent = Intent(action).apply {
+                    params.keys().forEach { k -> if (k != "waitResult") putExtra(k, params.optString(k)) }
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                context.startActivity(intent)
+                promise.resolve(successMap(null, "Intent sent"))
+            } catch (e: Exception) {
+                promise.resolve(errorMap(2001, "Activity not found: ${e.message}"))
             }
-            context.startActivity(intent)
-            promise.resolve(successMap(null, "Intent sent"))
-        } catch (e: Exception) {
-            promise.resolve(errorMap(2001, "Activity not found: ${e.message}"))
+        } else {
+            // waitResult 模式：通过 ResultBridgeActivity 桥接 startActivityForResult
+            EXECUTOR.submit {
+                val latch = CountDownLatch(1)
+                var result: WritableMap = errorMap(5001, "Intent result timeout")
+                val resultAction = "com.impos2.posadapter.connector.INTENT_RESULT_${UUID.randomUUID()}"
+
+                val receiver = object : BroadcastReceiver() {
+                    override fun onReceive(ctx: Context, intent: Intent) {
+                        runCatching {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                context.unregisterReceiver(this)
+                            } else {
+                                context.unregisterReceiver(this)
+                            }
+                        }
+                        val resultCode = intent.getIntExtra("resultCode", Activity.RESULT_CANCELED)
+                        val dataStr = intent.getStringExtra("data")
+                        val dataMap = if (dataStr != null)
+                            runCatching { jsonToWritableMap(JSONObject(dataStr)) }.getOrNull()
+                        else null
+                        result = if (resultCode == Activity.RESULT_OK)
+                            successMap(dataMap, "OK")
+                        else {
+                            // RESULT_CANCELED 时也透传 data，让调用方能读取 error 字段
+                            Arguments.createMap().apply {
+                                putBoolean("success", false)
+                                putInt("code", 4001)
+                                putString("message", "Activity result canceled or no data")
+                                putDouble("timestamp", System.currentTimeMillis().toDouble())
+                                putDouble("duration", 0.0)
+                                if (dataMap != null) putMap("data", dataMap) else putNull("data")
+                            }
+                        }
+                        latch.countDown()
+                    }
+                }
+
+                val filter = IntentFilter(resultAction)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    context.registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED)
+                } else {
+                    context.registerReceiver(receiver, filter)
+                }
+
+                try {
+                    val bridgeIntent = Intent(context, ResultBridgeActivity::class.java).apply {
+                        putExtra(ResultBridgeActivity.EXTRA_TARGET_ACTION, action)
+                        putExtra(ResultBridgeActivity.EXTRA_RESULT_BROADCAST, resultAction)
+                        params.keys().forEach { k ->
+                            if (k != "waitResult") putExtra(k, params.optString(k))
+                        }
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                    context.startActivity(bridgeIntent)
+                } catch (e: Exception) {
+                    runCatching { context.unregisterReceiver(receiver) }
+                    promise.resolve(errorMap(2001, "Cannot start ResultBridgeActivity: ${e.message}"))
+                    return@submit
+                }
+
+                val completed = latch.await(timeout, TimeUnit.MILLISECONDS)
+                if (!completed) {
+                    runCatching { context.unregisterReceiver(receiver) }
+                }
+                promise.resolve(result)
+            }
         }
     }
 }
