@@ -1,0 +1,40 @@
+{
+  "name": "@impos2/assembly-electron-desktop",
+  "version": "1.0.0",
+  "description": "整合层：POS Desktop Electron 集成包",
+  "main": ".vite/build/main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@impos2/adapter-electron": "*",
+    "@impos2/kernel-server-config": "*",
+    "@impos2/ui-integration-desktop": "*",
+    "electron-squirrel-startup": "^1.0.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-native-web": "~0.19.13"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^7.11.1",
+    "@electron-forge/maker-deb": "^7.11.1",
+    "@electron-forge/maker-rpm": "^7.11.1",
+    "@electron-forge/maker-squirrel": "^7.11.1",
+    "@electron-forge/maker-zip": "^7.11.1",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.11.1",
+    "@electron-forge/plugin-fuses": "^7.11.1",
+    "@electron-forge/plugin-vite": "^7.11.1",
+    "@electron/fuses": "^1.8.0",
+    "@types/electron-squirrel-startup": "^1.0.2",
+    "@types/react": "~18.3.12",
+    "@types/react-dom": "~18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "electron": "^40.6.1",
+    "typescript": "^5.9.3",
+    "vite": "^5.4.21"
+  }
+}

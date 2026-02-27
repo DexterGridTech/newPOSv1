@@ -15,11 +15,13 @@
     "2-ui/2.3-integrations/*",
     "3-adapter/*",
     "3-adapter/android/*",
+    "3-adapter/electron/*",
     "4-assembly/*",
-    "4-assembly/android/*"
+    "4-assembly/android/*",
+    "4-assembly/electron/*"
   ],
   "scripts": {
-    "setup": "corepack yarn install",
+    "setup": "HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890 corepack yarn install",
     "build:clean": "turbo run build --force",
     "build": "turbo run build",
     "build-for-product": "turbo run build-for-product",
@@ -48,8 +50,10 @@
     "ui:integrate-desktop": "yarn workspace @impos2/ui-integration-desktop web",
     "--------": "---------------------------------------",
     "adapter:android:start": "corepack yarn workspace @impos2/adapter-android start:clean",
+    "adapter:electron:start": "corepack yarn workspace @impos2/adapter-electron start",
     "-----------": "---------------------------------------",
     "assembly:android-desktop:start": "corepack yarn workspace @impos2/assembly-android-desktop start:clean",
+    "assembly:electron-desktop:start": "corepack yarn workspace @impos2/assembly-electron-desktop start",
     "------------": "---------------------------------------",
     "dev": "turbo run dev",
     "test": "turbo run test",
