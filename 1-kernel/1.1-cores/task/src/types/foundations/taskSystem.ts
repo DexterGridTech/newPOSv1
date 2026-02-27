@@ -1,7 +1,7 @@
-import { Observable, Subject } from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 
 /** 任务类型枚举 */
-export type TaskType = 'command' | 'flow';
+export type TaskType = 'command' | 'flow' | 'externalCall' | 'externalOn' | 'externalSubscribe';
 
 /** 过程数据类型枚举（核心，替代日志/异常） */
 export type ProgressType =

@@ -6,7 +6,8 @@ import {
 } from '../types';
 import { AdapterManager } from './adapterManager';
 import { StreamTaskExecutor } from './streamTaskExecutor';
-import {CommandTaskAdapter} from "./taskAdapter";
+import {CommandTaskAdapter, ExternalCallTaskAdapter, ExternalSubscribeTaskAdapter, ExternalOnTaskAdapter} from "./taskAdapter";
+import {getTaskDefinitionFromState} from "./accessory";
 
 /**
  * TaskSystem 核心入口（单例，无异常+循环执行版本）
@@ -21,6 +22,9 @@ export class TaskSystem {
 
     private constructor() {
         this.registerAdapter(new CommandTaskAdapter());
+        this.registerAdapter(new ExternalCallTaskAdapter());
+        this.registerAdapter(new ExternalSubscribeTaskAdapter());
+        this.registerAdapter(new ExternalOnTaskAdapter());
     }
 
     /**
@@ -63,8 +67,7 @@ export class TaskSystem {
     }
 
     getTaskDefinition(key: string): TaskDefinition | undefined {
-
-        return this.taskRegistry.get(key);
+        return getTaskDefinitionFromState(key)??this.taskRegistry.get(key);
     }
 
     /**

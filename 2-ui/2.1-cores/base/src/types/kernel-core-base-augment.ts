@@ -3,7 +3,7 @@ import {uiCoreBaseState,uiCoreBaseWorkspaceState,uiCoreBaseInstanceState} from "
 declare module '@impos2/kernel-core-base' {
     // 扩展 RootState 接口
 
-    export interface RootStateBase extends uiCoreBaseState,uiCoreBaseWorkspaceState,uiCoreBaseInstanceState {
+    export interface RootState extends uiCoreBaseState,uiCoreBaseWorkspaceState,uiCoreBaseInstanceState {
 
     }
 }

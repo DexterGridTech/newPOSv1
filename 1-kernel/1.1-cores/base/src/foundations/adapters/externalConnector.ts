@@ -3,6 +3,7 @@ import {
     ChannelDescriptor,
     ConnectorEvent,
     ConnectorResponse,
+    ConnectorCode,
 } from '../../types/foundations/externalConnector'
 
 export interface ExternalConnector {
@@ -61,7 +62,7 @@ export const externalConnector: ExternalConnector = {
         if (!registeredExternalConnector) {
             return Promise.resolve({
                 success: false,
-                code: 9999,
+                code: ConnectorCode.NOT_REGISTERED,
                 message: 'ExternalConnector not registered',
                 duration: 0,
                 timestamp: Date.now(),

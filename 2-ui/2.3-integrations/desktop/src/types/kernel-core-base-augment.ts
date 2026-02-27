@@ -3,7 +3,7 @@ import {uiIntegrationDesktopState,uiIntegrationDesktopWorkspaceState,uiIntegrati
 declare module '@impos2/kernel-core-base' {
     // 扩展 RootState 接口
 
-    export interface RootStateBase extends uiIntegrationDesktopState,uiIntegrationDesktopWorkspaceState,uiIntegrationDesktopInstanceState {
+    export interface RootState extends uiIntegrationDesktopState,uiIntegrationDesktopWorkspaceState,uiIntegrationDesktopInstanceState {
 
     }
 }

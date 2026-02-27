@@ -3,7 +3,7 @@ import {KernelCoreTaskState,KernelCoreTaskWorkspaceState,KernelCoreTaskInstanceS
 declare module '@impos2/kernel-core-base' {
     // 扩展 RootState 接口
 
-    export interface RootStateBase extends KernelCoreTaskState,KernelCoreTaskWorkspaceState,KernelCoreTaskInstanceState {
+    export interface RootState extends KernelCoreTaskState,KernelCoreTaskWorkspaceState,KernelCoreTaskInstanceState {
 
     }
 }
