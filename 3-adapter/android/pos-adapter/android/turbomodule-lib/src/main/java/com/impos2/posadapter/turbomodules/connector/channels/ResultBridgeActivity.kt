@@ -20,6 +20,7 @@ class ResultBridgeActivity : Activity() {
     companion object {
         const val EXTRA_TARGET_ACTION = "targetAction"
         const val EXTRA_RESULT_BROADCAST = "resultBroadcastAction"
+        const val EXTRA_SYSTEM_INTENT = "systemIntent"
         private const val REQUEST_CODE = 1001
     }
 
@@ -37,17 +38,27 @@ class ResultBridgeActivity : Activity() {
         }
 
         try {
+            val isSystemIntent = intent.getStringExtra(EXTRA_SYSTEM_INTENT) == "true"
             val targetIntent = Intent(targetAction).apply {
-                setPackage(packageName)
+                if (!isSystemIntent) {
+                    setPackage(packageName)
+                }
                 intent.extras?.keySet()?.forEach { k ->
-                    if (k != EXTRA_TARGET_ACTION && k != EXTRA_RESULT_BROADCAST) {
-                        intent.extras?.get(k)?.let { v -> putExtra(k, v.toString()) }
+                    if (k != EXTRA_TARGET_ACTION && k != EXTRA_RESULT_BROADCAST && k != EXTRA_SYSTEM_INTENT) {
+                        val value = intent.extras?.get(k)
+                        when (k) {
+                            "type" -> if (value is String) setType(value)
+                            "category" -> if (value is String) addCategory(value)
+                            else -> putExtra(k, value.toString())
+                        }
                     }
                 }
             }
-            // 解析为显式 Intent，绕过 OEM Camera 服务对隐式 Intent 的拦截
-            packageManager.resolveActivity(targetIntent, PackageManager.MATCH_DEFAULT_ONLY)?.activityInfo?.let {
-                targetIntent.component = ComponentName(it.packageName, it.name)
+            // 仅对非系统 Intent 解析为显式 Intent
+            if (!isSystemIntent) {
+                packageManager.resolveActivity(targetIntent, PackageManager.MATCH_DEFAULT_ONLY)?.activityInfo?.let {
+                    targetIntent.component = ComponentName(it.packageName, it.name)
+                }
             }
             startActivityForResult(targetIntent, REQUEST_CODE)
         } catch (e: Exception) {
@@ -62,6 +73,11 @@ class ResultBridgeActivity : Activity() {
             val jsonData = if (data != null) {
                 runCatching {
                     val obj = JSONObject()
+                    // 优先获取 URI（文件选择器等系统 Intent 返回）
+                    data.data?.let { uri ->
+                        obj.put("uri", uri.toString())
+                    }
+                    // 再获取 extras
                     data.extras?.keySet()?.forEach { k ->
                         obj.put(k, data.extras?.get(k)?.toString() ?: "")
                     }

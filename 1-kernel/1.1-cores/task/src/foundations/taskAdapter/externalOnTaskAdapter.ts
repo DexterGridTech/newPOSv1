@@ -1,6 +1,9 @@
 import { Observable } from 'rxjs'
-import { externalConnector, ConnectorEvent } from '@impos2/kernel-core-base'
+import { externalConnector, ConnectorEvent, LOG_TAGS, logger } from '@impos2/kernel-core-base'
 import { TaskAdapter, TaskExecutionContext, TaskType } from '../../types'
+import {moduleName} from "../../moduleName";
+
+const TAG = [moduleName, LOG_TAGS.Task, 'ExternalOnTaskAdapter']
 
 export interface ExternalOnTaskArgs {
     eventType: string
@@ -14,6 +17,8 @@ export class ExternalOnTaskAdapter implements TaskAdapter {
     execute(args: ExternalOnTaskArgs, context: TaskExecutionContext): Observable<any> {
         return new Observable(subscriber => {
             const { eventType, targetFilter } = args
+            const t0 = Date.now()
+            logger.log(TAG, `execute start: eventType=${eventType}`)
 
             // 幂等保护，防止 cancelSub 回调和 teardown 双重调用
             let removed = false
@@ -28,8 +33,10 @@ export class ExternalOnTaskAdapter implements TaskAdapter {
                     const filters = Array.isArray(targetFilter) ? targetFilter : [targetFilter]
                     if (!filters.includes(event.target)) return
                 }
+                logger.log(TAG, `event received: eventType=${eventType} +${Date.now() - t0}ms`)
                 if (!subscriber.closed) subscriber.next(event)
             })
+            logger.log(TAG, `listener registered: eventType=${eventType}`)
 
             const cancelSub = context.cancel$.subscribe(() => {
                 safeRemove()

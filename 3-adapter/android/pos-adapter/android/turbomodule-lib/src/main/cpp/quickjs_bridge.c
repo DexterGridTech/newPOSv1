@@ -540,7 +540,195 @@ Java_com_impos2_posadapter_turbomodules_QuickJsEngine_interrupt(
     if (bridge) atomic_store(&bridge->interrupt_flag, 1);
 }
 
-// ─── destroyContext ───────────────────────────────────────────────────────────
+// ─── compileScript ────────────────────────────────────────────────────────────
+// 编译脚本为字节码，返回 jbyteArray；失败返回 null
+
+JNIEXPORT jbyteArray JNICALL
+Java_com_impos2_posadapter_turbomodules_QuickJsEngine_compileScript(
+    JNIEnv *env, jobject thiz, jstring j_script)
+{
+    char *script_str = dup_jstring(env, j_script);
+    char *wrapped = wrap_script(script_str ? script_str : "");
+    free(script_str);
+    if (!wrapped) return NULL;
+
+    JSRuntime *rt = JS_NewRuntime();
+    JSContext *ctx = JS_NewContext(rt);
+
+    // JS_EVAL_FLAG_COMPILE_ONLY：只编译，不执行
+    JSValue fn = JS_Eval(ctx, wrapped, strlen(wrapped), "<script>",
+                         JS_EVAL_TYPE_GLOBAL | JS_EVAL_FLAG_COMPILE_ONLY);
+    free(wrapped);
+
+    if (JS_IsException(fn)) {
+        JS_FreeValue(ctx, fn);
+        JS_FreeContext(ctx);
+        JS_FreeRuntime(rt);
+        return NULL;
+    }
+
+    size_t bytecode_len = 0;
+    uint8_t *bytecode = JS_WriteObject(ctx, &bytecode_len, fn,
+                                       JS_WRITE_OBJ_BYTECODE);
+    JS_FreeValue(ctx, fn);
+
+    jbyteArray result = NULL;
+    if (bytecode && bytecode_len > 0) {
+        result = (*env)->NewByteArray(env, (jsize)bytecode_len);
+        if (result) {
+            (*env)->SetByteArrayRegion(env, result, 0, (jsize)bytecode_len,
+                                       (const jbyte *)bytecode);
+        }
+        js_free(ctx, bytecode);
+    }
+
+    JS_FreeContext(ctx);
+    JS_FreeRuntime(rt);
+    return result;
+}
+
+// ─── createContextFromBytecode ────────────────────────────────────────────────
+// 从字节码创建执行上下文，跳过编译步骤
+
+JNIEXPORT jlong JNICALL
+Java_com_impos2_posadapter_turbomodules_QuickJsEngine_createContextFromBytecode(
+    JNIEnv *env, jobject thiz,
+    jstring j_execution_id, jbyteArray j_bytecode,
+    jstring j_params_json, jstring j_globals_json,
+    jobjectArray j_native_func_names)
+{
+    BridgeContext *bridge = (BridgeContext *)calloc(1, sizeof(BridgeContext));
+    if (!bridge) return 0;
+
+    bridge->execution_id = dup_jstring(env, j_execution_id);
+    atomic_init(&bridge->interrupt_flag, 0);
+
+    bridge->native_func_count = j_native_func_names
+        ? (int)(*env)->GetArrayLength(env, j_native_func_names) : 0;
+    if (bridge->native_func_count > 0) {
+        bridge->native_func_names = (char **)calloc(
+            bridge->native_func_count, sizeof(char *));
+        for (int i = 0; i < bridge->native_func_count; i++) {
+            jstring js = (jstring)(*env)->GetObjectArrayElement(
+                env, j_native_func_names, i);
+            bridge->native_func_names[i] = dup_jstring(env, js);
+            (*env)->DeleteLocalRef(env, js);
+        }
+    }
+
+    JSRuntime *rt = JS_NewRuntime();
+    JS_SetMemoryLimit(rt, 32 * 1024 * 1024);
+    JS_SetMaxStackSize(rt, 512 * 1024);
+    JS_SetInterruptHandler(rt, interrupt_handler, bridge);
+
+    JSContext *ctx = JS_NewContext(rt);
+    JS_SetContextOpaque(ctx, bridge);
+    bridge->rt  = rt;
+    bridge->ctx = ctx;
+    bridge->top_result_val = JS_UNDEFINED;
+
+    // 注入 params
+    char *params_json = dup_jstring(env, j_params_json);
+    JSValue params_val = JS_ParseJSON(ctx,
+        params_json ? params_json : "{}",
+        params_json ? strlen(params_json) : 2, "<params>");
+    free(params_json);
+    if (JS_IsException(params_val)) params_val = JS_NewObject(ctx);
+
+    {
+        JSValue global = JS_GetGlobalObject(ctx);
+        JS_SetPropertyStr(ctx, global, "params", JS_DupValue(ctx, params_val));
+        JS_FreeValue(ctx, global);
+    }
+
+    // 注入 globals
+    char *globals_json = dup_jstring(env, j_globals_json);
+    if (globals_json && strlen(globals_json) > 2) {
+        JSValue globals_val = JS_ParseJSON(ctx, globals_json,
+            strlen(globals_json), "<globals>");
+        if (!JS_IsException(globals_val) && JS_IsObject(globals_val)) {
+            JSPropertyEnum *props;
+            uint32_t prop_count;
+            if (JS_GetOwnPropertyNames(ctx, &props, &prop_count,
+                    globals_val, JS_GPN_STRING_MASK) == 0) {
+                JSValue global = JS_GetGlobalObject(ctx);
+                for (uint32_t i = 0; i < prop_count; i++) {
+                    JSValue v = JS_GetProperty(ctx, globals_val, props[i].atom);
+                    const char *key = JS_AtomToCString(ctx, props[i].atom);
+                    if (key) JS_SetPropertyStr(ctx, global, key, v);
+                    else JS_FreeValue(ctx, v);
+                    JS_FreeCString(ctx, key);
+                    JS_FreeAtom(ctx, props[i].atom);
+                }
+                JS_FreeValue(ctx, global);
+                js_free(ctx, props);
+            }
+        }
+        JS_FreeValue(ctx, globals_val);
+    }
+    free(globals_json);
+
+    // 注册 nativeFunction
+    {
+        JSValue global = JS_GetGlobalObject(ctx);
+        for (int i = 0; i < bridge->native_func_count; i++) {
+            JSValue fn = JS_NewCFunctionMagic(ctx, native_func_bridge,
+                bridge->native_func_names[i], 0, JS_CFUNC_generic_magic, i);
+            JS_SetPropertyStr(ctx, global, bridge->native_func_names[i], fn);
+        }
+        JS_FreeValue(ctx, global);
+    }
+
+    // 从字节码读取函数对象
+    jsize bytecode_len = (*env)->GetArrayLength(env, j_bytecode);
+    jbyte *bytecode_buf = (*env)->GetByteArrayElements(env, j_bytecode, NULL);
+
+    JSValue fn_val = JS_ReadObject(ctx, (const uint8_t *)bytecode_buf,
+                                   (size_t)bytecode_len, JS_READ_OBJ_BYTECODE);
+    (*env)->ReleaseByteArrayElements(env, j_bytecode, bytecode_buf, JNI_ABORT);
+
+    if (JS_IsException(fn_val)) {
+        JSValue exc = JS_GetException(ctx);
+        const char *msg = JS_ToCString(ctx, exc);
+        bridge->error_msg = strdup(msg ? msg : "bytecode load error");
+        JS_FreeCString(ctx, msg);
+        JS_FreeValue(ctx, exc);
+        bridge->is_settled = PUMP_ERROR;
+        JS_FreeValue(ctx, params_val);
+        return (jlong)(uintptr_t)bridge;
+    }
+
+    // JS_ReadObject 加载的是脚本字节码，用 JS_EvalFunction 执行（它会消耗 fn_val 的所有权）
+    // 执行后得到 IIFE 返回的函数对象，再 JS_Call 调用它传入 params
+    JSValue iife_fn = JS_EvalFunction(ctx, fn_val); // fn_val 所有权转移，无需 FreeValue
+    if (JS_IsException(iife_fn)) {
+        JSValue exc = JS_GetException(ctx);
+        const char *msg = JS_ToCString(ctx, exc);
+        bridge->error_msg = strdup(msg ? msg : "bytecode eval error");
+        JS_FreeCString(ctx, msg);
+        JS_FreeValue(ctx, exc);
+        bridge->is_settled = PUMP_ERROR;
+        JS_FreeValue(ctx, params_val);
+        return (jlong)(uintptr_t)bridge;
+    }
+    JSValue result = JS_Call(ctx, iife_fn, JS_UNDEFINED, 1, &params_val);
+    JS_FreeValue(ctx, iife_fn);
+    JS_FreeValue(ctx, params_val);
+
+    if (JS_IsException(result)) {
+        JSValue exc = JS_GetException(ctx);
+        const char *msg = JS_ToCString(ctx, exc);
+        bridge->error_msg = strdup(msg ? msg : "runtime error");
+        JS_FreeCString(ctx, msg);
+        JS_FreeValue(ctx, exc);
+        bridge->is_settled = PUMP_ERROR;
+    } else {
+        bridge->top_result_val = result;
+        if (!JS_IsObject(result)) bridge->is_settled = PUMP_SETTLED;
+    }
+
+    return (jlong)(uintptr_t)bridge;
+}
 
 JNIEXPORT void JNICALL
 Java_com_impos2_posadapter_turbomodules_QuickJsEngine_destroyContext(

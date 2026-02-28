@@ -20,6 +20,7 @@ class ScriptsTurboModule(reactContext: ReactApplicationContext) :
     }
 
     private val activeContexts = ConcurrentHashMap<String, ScriptExecutionContext>()
+    private val bytecodeCache = ConcurrentHashMap<String, ByteArray>()
     private val moduleScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private val total   = AtomicInteger(0)
@@ -57,10 +58,14 @@ class ScriptsTurboModule(reactContext: ReactApplicationContext) :
         val startTime = System.currentTimeMillis()
 
         moduleScope.launch {
+            val bytecode = bytecodeCache.getOrPut(script) {
+                QuickJsEngine().compileScript(script) ?: ByteArray(0)
+            }.takeIf { it.isNotEmpty() }
+
             val ctx = ScriptExecutionContext(executionId, reactApplicationContext, EVENT_NATIVE_CALL)
             activeContexts[executionId] = ctx
             try {
-                val result = ctx.execute(script, paramsJson, globalsJson, funcNames, timeout)
+                val result = ctx.execute(script, paramsJson, globalsJson, funcNames, timeout, bytecode)
                 val elapsed = (System.currentTimeMillis() - startTime).toInt()
                 recordStats(elapsed, true)
                 promise.resolve(result)

@@ -40,6 +40,16 @@ class QuickJsEngine : Closeable {
 
     external fun destroyContext(handle: Long)
 
+    external fun compileScript(script: String): ByteArray?
+
+    external fun createContextFromBytecode(
+        executionId: String,
+        bytecode: ByteArray,
+        paramsJson: String,
+        globalsJson: String,
+        nativeFuncNames: Array<String>,
+    ): Long
+
     fun pumpState(handle: Long): PumpState = when (pumpEventLoop(handle)) {
         1  -> PumpState.SETTLED
         -1 -> PumpState.ERROR

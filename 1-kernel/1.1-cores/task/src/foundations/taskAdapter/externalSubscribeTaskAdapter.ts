@@ -1,6 +1,9 @@
 import { Observable } from 'rxjs'
-import { externalConnector, ChannelDescriptor, ConnectorEvent, ConnectorCode } from '@impos2/kernel-core-base'
+import { externalConnector, ChannelDescriptor, ConnectorEvent, ConnectorCode, LOG_TAGS, logger } from '@impos2/kernel-core-base'
 import { TaskAdapter, TaskExecutionContext, TaskType } from '../../types'
+import {moduleName} from "../../moduleName";
+
+const TAG = [moduleName, LOG_TAGS.Task, 'ExternalSubscribeTaskAdapter']
 
 export interface ExternalSubscribeTaskArgs {
     channel: ChannelDescriptor
@@ -12,6 +15,8 @@ export class ExternalSubscribeTaskAdapter implements TaskAdapter {
     execute(args: ExternalSubscribeTaskArgs, context: TaskExecutionContext): Observable<any> {
         return new Observable(subscriber => {
             const { channel } = args
+            const t0 = Date.now()
+            logger.log(TAG, `execute start: channel=${JSON.stringify(channel)}`)
             let channelId = ''
             let cancelled = false
 
@@ -49,6 +54,7 @@ export class ExternalSubscribeTaskAdapter implements TaskAdapter {
                         return
                     }
                     channelId = id
+                    logger.log(TAG, `subscribed: channelId=${id} +${Date.now() - t0}ms`)
                     if (cancelled) safeUnsubscribe()
                 })
                 .catch(err => {

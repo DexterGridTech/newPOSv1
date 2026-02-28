@@ -31,8 +31,12 @@ class ScriptExecutionContext(
         globalsJson: String,
         nativeFuncNames: Array<String>,
         timeoutMs: Int,
+        bytecode: ByteArray? = null,
     ): String = withContext(Dispatchers.IO) {
-        val handle = engine.createContext(executionId, script, paramsJson, globalsJson, nativeFuncNames)
+        val handle = if (bytecode != null)
+            engine.createContextFromBytecode(executionId, bytecode, paramsJson, globalsJson, nativeFuncNames)
+        else
+            engine.createContext(executionId, script, paramsJson, globalsJson, nativeFuncNames)
         if (handle == 0L) {
             throw ScriptExecutionException(ScriptErrorCode.UNKNOWN, "Failed to create QuickJS context")
         }

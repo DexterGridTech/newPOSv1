@@ -9,7 +9,7 @@ import {C} from '../theme'
 import {Subscription} from 'rxjs'
 
 type LoopMode = 'once' | 'loop'
-type ProgressEntry = ProgressData & {_id: string; _isLatest: boolean}
+type ProgressEntry = ProgressData & {_id: string}
 
 const MONOSPACE = Platform.select({ios: 'Courier New', android: 'monospace'}) as string
 const MAX_ENTRIES = 100
@@ -165,6 +165,7 @@ export default function TaskTestScreen() {
     const cancelRef = useRef<(() => void) | null>(null)
     const subRef    = useRef<Subscription | null>(null)
     const listRef   = useRef<FlatList<ProgressEntry>>(null)
+    const scrollTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
     const selectedDef = TEST_TASK_DEFINITIONS.find(d => d.key === selectedKey)
 
@@ -175,11 +176,9 @@ export default function TaskTestScreen() {
 
     const pushEntry = useCallback((data: ProgressData) => {
         console.log('[TaskTest]', data.type, JSON.stringify(data))
-        setEntries(prev => {
-            const updated = prev.map(e => ({...e, _isLatest: false}))
-            return [...updated, {...data, _id: nextId(), _isLatest: true}].slice(-MAX_ENTRIES)
-        })
-        setTimeout(() => listRef.current?.scrollToEnd({animated: true}), 50)
+        setEntries(prev => [...prev, {...data, _id: nextId()}].slice(-MAX_ENTRIES))
+        if (scrollTimer.current) clearTimeout(scrollTimer.current)
+        scrollTimer.current = setTimeout(() => listRef.current?.scrollToEnd({animated: false}), 100)
     }, [])
 
     const handleRun = useCallback(() => {
@@ -320,10 +319,10 @@ export default function TaskTestScreen() {
 
 // ─── Progress 行 ──────────────────────────────────────────────────────────────
 
-function ProgressRow({entry}: {entry: ProgressEntry}) {
+const ProgressRow = React.memo(function ProgressRow({entry}: {entry: ProgressEntry}) {
     const [expanded, setExpanded] = useState(false)
     const color   = TYPE_COLOR[entry.type] ?? C.textSecondary
-    const bgColor = entry._isLatest ? (TYPE_BG[entry.type] ?? C.bgSub) : C.bgCard
+    const bgColor = TYPE_BG[entry.type] ?? C.bgSub
     const time    = new Date(entry.timestamp).toTimeString().slice(0, 8)
 
     return (
@@ -380,7 +379,7 @@ function ProgressRow({entry}: {entry: ProgressEntry}) {
             )}
         </TouchableOpacity>
     )
-}
+})
 
 const p = StyleSheet.create({
     row:          {borderLeftWidth: 3, borderRadius: 6, padding: 8, marginHorizontal: 8,

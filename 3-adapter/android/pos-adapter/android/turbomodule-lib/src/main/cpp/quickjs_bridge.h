@@ -92,6 +92,17 @@ JNIEXPORT void JNICALL
 Java_com_impos2_posadapter_turbomodules_QuickJsEngine_destroyContext(
     JNIEnv *env, jobject thiz, jlong handle);
 
+JNIEXPORT jbyteArray JNICALL
+Java_com_impos2_posadapter_turbomodules_QuickJsEngine_compileScript(
+    JNIEnv *env, jobject thiz, jstring script);
+
+JNIEXPORT jlong JNICALL
+Java_com_impos2_posadapter_turbomodules_QuickJsEngine_createContextFromBytecode(
+    JNIEnv *env, jobject thiz,
+    jstring execution_id, jbyteArray bytecode,
+    jstring params_json, jstring globals_json,
+    jobjectArray native_func_names);
+
 #ifdef __cplusplus
 }
 #endif

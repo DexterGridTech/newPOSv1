@@ -9,5 +9,6 @@ export enum LOG_TAGS {
     WebSocket = 'WebSocket',
     Adapter = 'Adapter',
     Hook = 'Hook',
+    Task = 'Task',
     UI = 'UI',
 }

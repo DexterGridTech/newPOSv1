@@ -49,11 +49,12 @@ export class StreamTaskExecutor {
         const progress$ = new Subject<ProgressData>();
         const cancel$ = new Subject<void>();
 
+        const initialContextSnapshot = { ...initialContext };
         const executionContext: TaskExecutionContext = {
             requestId,
             taskKey: taskDef.key,
             context: {
-                ...initialContext,
+                ...initialContextSnapshot,
                 loopCount: 0,
             },
             cancel$,
@@ -88,7 +89,10 @@ export class StreamTaskExecutor {
 
             executionContext.nodeCounter = 0;
             executionContext.hasError = false;
-            executionContext.context.loopCount += 1;
+            executionContext.context = {
+                ...initialContextSnapshot,
+                loopCount: (executionContext.context.loopCount ?? 0) + 1,
+            };
 
             // 每次 loop 重新创建超时 timer
             loopTimeoutSub = timer(taskDef.timeout).pipe(
@@ -130,7 +134,7 @@ export class StreamTaskExecutor {
                     }
 
                     // 用 nodeCounter 判断完成，nodeIndex 是起始索引不代表完成数
-                    if (progress.type === 'NODE_COMPLETE' &&
+                    if ((progress.type === 'NODE_COMPLETE' || progress.type === 'NODE_SKIP' || progress.type === 'NODE_ERROR') &&
                         executionContext.nodeCounter >= executionContext.totalNodes) {
                         loopTimeoutSub?.unsubscribe();
 
@@ -462,6 +466,7 @@ export class StreamTaskExecutor {
                         payload: resultScriptResult.data,
                         timestamp: Date.now()
                     });
+                    combinedCancel$.next(); // 终止 adapter 订阅，防止 stream 类型 adapter 继续发出事件
                     progress$.complete();
                 }),
                 catchError((err) => {
@@ -615,13 +620,10 @@ export class StreamTaskExecutor {
      * 递归统计节点数（用于进度计算）
      */
     private countNodes(node: TaskNode): number {
-        let count = 1;
         if (node.type === 'flow' && node.nodes) {
-            node.nodes.forEach(child => {
-                count += this.countNodes(child);
-            });
+            return node.nodes.reduce((sum, child) => sum + this.countNodes(child), 0);
         }
-        return count;
+        return 1;
     }
 }
 

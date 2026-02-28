@@ -5,3 +5,7 @@
 0	301	1772078757603535040	CMakeFiles/quickjs_bridge.dir/quickjs/libregexp.c.o	1707a18552de2603
 0	6723	1772078764012130941	CMakeFiles/quickjs_bridge.dir/quickjs/quickjs.c.o	8cdcc2842e2af85a
 6723	6761	1772078764060430947	/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter/android/turbomodule-lib/build/intermediates/cxx/Debug/1s371019/obj/arm64-v8a/libquickjs_bridge.so	b3b35b96c6bb8ae1
+0	305	1772259229998243885	CMakeFiles/quickjs_bridge.dir/quickjs_bridge.c.o	b30f0d4445a3b155
+305	471	1772259230149539594	/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter/android/turbomodule-lib/build/intermediates/cxx/Debug/1s371019/obj/arm64-v8a/libquickjs_bridge.so	b3b35b96c6bb8ae1
+0	218	1772259347369423844	CMakeFiles/quickjs_bridge.dir/quickjs_bridge.c.o	b30f0d4445a3b155
+218	323	1772259347468013621	/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter/android/turbomodule-lib/build/intermediates/cxx/Debug/1s371019/obj/arm64-v8a/libquickjs_bridge.so	b3b35b96c6bb8ae1
