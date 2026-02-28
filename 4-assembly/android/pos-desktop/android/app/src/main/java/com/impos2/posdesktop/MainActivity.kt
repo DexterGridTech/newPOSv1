@@ -101,10 +101,11 @@ class MainActivity : ReactActivity() {
     }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
-        val module = reactInstanceManager
-            .currentReactContext
-            ?.getNativeModule(com.impos2.posadapter.turbomodules.connector.ConnectorTurboModule::class.java)
-        if (module?.keyboardChannel?.onKeyEvent(event) == true) return true
+        // TODO: keyboardChannel 已移除，需要重新实现键盘事件处理
+        // val module = reactInstanceManager
+        //     .currentReactContext
+        //     ?.getNativeModule(com.impos2.posadapter.turbomodules.connector.ConnectorTurboModule::class.java)
+        // if (module?.keyboardChannel?.onKeyEvent(event) == true) return true
         return super.dispatchKeyEvent(event)
     }
 

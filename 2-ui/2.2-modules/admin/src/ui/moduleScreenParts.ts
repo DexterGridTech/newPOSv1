@@ -4,6 +4,7 @@ import {deviceStatusScreenPart, logFilesScreenPart} from "./screens";
 import {localServerStatusScreenPart} from "./screens/localServerStatusScreen";
 import {appControlScreenPart} from "./screens/appControlScreen";
 import {terminalConnectionScreenPart} from "./screens/terminalConnectionScreen";
+import {switchInstanceModeScreenPart} from "./screens/switchInstanceMode";
 
 export const uiAdminScreenParts = {
     adminLoginModal: adminLoginModalPart,
@@ -12,5 +13,6 @@ export const uiAdminScreenParts = {
     logFilesScreen: logFilesScreenPart,
     localServerStatusScreen: localServerStatusScreenPart,
     appControlScreen: appControlScreenPart,
-    terminalConnectionScreen: terminalConnectionScreenPart
+    terminalConnectionScreen: terminalConnectionScreenPart,
+    switchInstanceModeScreen: switchInstanceModeScreenPart
 }

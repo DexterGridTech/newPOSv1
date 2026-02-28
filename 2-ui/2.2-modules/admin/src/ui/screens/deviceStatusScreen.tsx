@@ -396,8 +396,8 @@ export const deviceStatusScreenPart: ScreenPartRegistration = {
     partKey: 'system.admin.device.status',
     containerKey: uiAdminVariables.systemAdminPanel.key,
     screenMode: [ScreenMode.DESKTOP, ScreenMode.MOBILE],
-    instanceMode: [InstanceMode.MASTER],
-    workspace: [Workspace.MAIN],
+    instanceMode: [InstanceMode.MASTER, InstanceMode.SLAVE],
+    workspace: [Workspace.MAIN,Workspace.BRANCH],
     componentType: DeviceStatusScreen,
     indexInContainer: 0,
 };

@@ -4,14 +4,13 @@ import {uiAdminCommands} from "../commands";
 import {createModelScreen, kernelCoreNavigationCommands} from "@impos2/kernel-core-navigation";
 import {uiAdminScreenParts} from "../../ui";
 import {uiAdminErrorMessages} from "../../supports";
-import {getInstanceMode, InstanceMode} from "@impos2/kernel-core-interconnection";
+import {getStandalone} from "@impos2/kernel-core-interconnection";
 
 export class AdminActor extends Actor {
     screenLongPressed = Actor.defineCommandHandler(uiCoreBaseCommands.screenLongPressed,
         async (command): Promise<Record<string, any>> => {
-            const instanceMode = getInstanceMode()
-            //只有主屏可以唤起管理员功能
-            if (instanceMode !== InstanceMode.MASTER)
+            const standalone = getStandalone()
+            if (!standalone)
                 return {};
             const adminPanelModel =
                 createModelScreen(uiAdminScreenParts.adminLoginModal, shortId(), {})

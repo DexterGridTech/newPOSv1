@@ -13,6 +13,7 @@ import com.facebook.react.soloader.OpenSourceMergedSoMapping
 import com.facebook.soloader.SoLoader
 import com.impos2.posadapter.turbomodules.PosAdapterTurboPackage
 import com.reactnativemmkv.MmkvPackage
+import com.horcrux.svg.SvgPackage
 
 class MainApplication : Application(), ReactApplication {
 
@@ -22,6 +23,7 @@ class MainApplication : Application(), ReactApplication {
                 MainReactPackage(),
                 PosAdapterTurboPackage(),
                 MmkvPackage(),
+                SvgPackage(),
                 AppTurboPackage(),
             )
 

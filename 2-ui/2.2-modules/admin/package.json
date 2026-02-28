@@ -27,6 +27,7 @@
     "@impos2/kernel-server-config": "*",
     "@impos2/ui-core-base": "*",
     "@reduxjs/toolkit": "^2.11.2",
+    "react-native-qrcode-svg": "^6.3.21",
     "redux-persist": "^6.0.0",
     "reselect": "^5.1.0"
   },

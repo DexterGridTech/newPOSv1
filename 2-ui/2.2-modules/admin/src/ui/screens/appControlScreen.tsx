@@ -179,8 +179,8 @@ export const appControlScreenPart: ScreenPartRegistration = {
     partKey: 'system.admin.app.control',
     containerKey: uiAdminVariables.systemAdminPanel.key,
     screenMode: [ScreenMode.DESKTOP, ScreenMode.MOBILE],
-    instanceMode: [InstanceMode.MASTER],
-    workspace: [Workspace.MAIN],
+    instanceMode: [InstanceMode.MASTER, InstanceMode.SLAVE],
+    workspace: [Workspace.MAIN,Workspace.BRANCH],
     componentType: AppControlScreen,
     indexInContainer: 0,
 };

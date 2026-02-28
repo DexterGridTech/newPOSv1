@@ -74,4 +74,5 @@ dependencies {
     implementation(project(':react-native-splash-screen')) {
         exclude group: 'com.android.support', module: 'support-compat'
     }
+    implementation project(':react-native-svg')
 }

@@ -305,7 +305,7 @@ export const adminPanelModalPart: ScreenPartRegistration = {
     description: '管理员控制面板，提供系统管理和配置功能',
     partKey: adminPanelModalPartKey,
     screenMode: [ScreenMode.DESKTOP, ScreenMode.MOBILE],
-    instanceMode: [InstanceMode.MASTER,],
-    workspace: [Workspace.MAIN],
+    instanceMode: [InstanceMode.MASTER, InstanceMode.SLAVE],
+    workspace: [Workspace.MAIN,Workspace.BRANCH],
     componentType: AdminPanelModal
 };

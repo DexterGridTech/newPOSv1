@@ -18,7 +18,8 @@
     "@impos2/ui-integration-desktop": "*",
     "react": "18.3.1",
     "react-native": "0.76.6",
-    "react-native-splash-screen": "^3.3.0"
+    "react-native-splash-screen": "^3.3.0",
+    "react-native-svg": "*"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

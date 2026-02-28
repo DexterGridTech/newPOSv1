@@ -1,5 +1,6 @@
 import {Command, createModuleCommands, defineCommand} from "@impos2/kernel-core-base";
 import {moduleName} from "../../moduleName";
+import {MasterInfo} from "../../types";
 
 export const kernelCoreInterconnectionCommands = createModuleCommands(moduleName, {
     //instance 管理
@@ -9,7 +10,7 @@ export const kernelCoreInterconnectionCommands = createModuleCommands(moduleName
     setDisplayToSecondary: defineCommand<void>(),
     setEnableSlave: defineCommand<void>(),
     setDisableSlave: defineCommand<void>(),
-    setMasterInfo: defineCommand<void>(),
+    setMasterInfo: defineCommand<MasterInfo>(),
     clearMasterInfo: defineCommand<void>(),
 
     //连接管理（统一 master/slave）

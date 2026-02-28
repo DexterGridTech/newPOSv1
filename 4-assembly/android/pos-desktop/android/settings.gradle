@@ -20,3 +20,8 @@ project(':react-native-mmkv').projectDir = mmkvDir
 def splashScreenDir = file("../../../../node_modules/react-native-splash-screen/android")
 include ':react-native-splash-screen'
 project(':react-native-splash-screen').projectDir = splashScreenDir
+
+// 引入 react-native-svg
+def svgDir = file("../../../../node_modules/react-native-svg/android")
+include ':react-native-svg'
+project(':react-native-svg').projectDir = svgDir

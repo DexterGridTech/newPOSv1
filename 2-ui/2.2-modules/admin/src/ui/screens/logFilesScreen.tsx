@@ -160,8 +160,8 @@ export const logFilesScreenPart: ScreenPartRegistration = {
     partKey: 'system.admin.log.files',
     containerKey: uiAdminVariables.systemAdminPanel.key,
     screenMode: [ScreenMode.DESKTOP, ScreenMode.MOBILE],
-    instanceMode: [InstanceMode.MASTER],
-    workspace: [Workspace.MAIN],
+    instanceMode: [InstanceMode.MASTER, InstanceMode.SLAVE],
+    workspace: [Workspace.MAIN,Workspace.BRANCH],
     componentType: LogFilesScreen,
     indexInContainer: 0,
 };

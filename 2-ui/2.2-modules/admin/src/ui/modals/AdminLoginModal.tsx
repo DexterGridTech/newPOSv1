@@ -446,7 +446,7 @@ export const adminLoginModalPart: ScreenPartRegistration = {
     description: '管理员身份验证登录弹窗',
     partKey: adminLoginModalPartKey,
     screenMode: [ScreenMode.DESKTOP, ScreenMode.MOBILE],
-    instanceMode: [InstanceMode.MASTER],
-    workspace: [Workspace.MAIN],
+    instanceMode: [InstanceMode.MASTER, InstanceMode.SLAVE],
+    workspace: [Workspace.MAIN,Workspace.BRANCH],
     componentType: AdminLoginModal
 };
