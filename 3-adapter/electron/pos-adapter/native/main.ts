@@ -1,6 +1,7 @@
 import { app, BrowserWindow, ipcMain, session } from 'electron'
 import path from 'node:path'
 import started from 'electron-squirrel-startup'
+import installExtension, { REDUX_DEVTOOLS } from 'electron-devtools-installer'
 
 if (started) app.quit()
 
@@ -26,7 +27,11 @@ const createWindow = () => {
     mainWindow.webContents.openDevTools()
 }
 
-app.on('ready', () => {
+app.on('ready', async () => {
+    if (process.env.NODE_ENV === 'development') {
+        await installExtension(REDUX_DEVTOOLS).catch(console.error)
+    }
+
     session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
         callback({
             responseHeaders: {

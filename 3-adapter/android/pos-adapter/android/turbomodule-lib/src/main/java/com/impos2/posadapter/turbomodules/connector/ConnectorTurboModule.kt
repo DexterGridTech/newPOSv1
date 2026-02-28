@@ -8,15 +8,17 @@ import android.content.IntentFilter
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
 import android.os.Build
+import android.view.KeyEvent
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.modules.core.DeviceEventManagerModule
+import com.impos2.posadapter.turbomodules.connector.channels.HidStreamChannel
 import com.impos2.posadapter.turbomodules.connector.channels.IntentPassiveChannel
-import com.impos2.posadapter.turbomodules.connector.channels.KeyboardPassiveChannel
 import org.json.JSONObject
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * ConnectorTurboModule：统一对外连接器
@@ -38,11 +40,25 @@ class ConnectorTurboModule(reactContext: ReactApplicationContext) :
 
     private val registry = ChannelRegistry(reactContext)
     private val passiveChannel = IntentPassiveChannel(reactContext)
-    val keyboardChannel = KeyboardPassiveChannel()
+
+    // 活跃的 HID stream 通道，供 onKeyEvent 路由
+    private val activeHidChannels = ConcurrentHashMap<String, HidStreamChannel>()
 
     init {
         passiveChannel.start { event -> sendEvent(EVENT_PASSIVE, event.toWritableMap()) }
-        keyboardChannel.start { event -> sendEvent(EVENT_PASSIVE, event.toWritableMap()) }
+    }
+
+    /**
+     * 由 MainActivity.dispatchKeyEvent 调用，转发按键事件到所有活跃的 HidStreamChannel。
+     * @return true = 事件已被某个 HID 通道消费
+     */
+    fun onKeyEvent(event: KeyEvent): Boolean {
+        if (activeHidChannels.isEmpty()) return false
+        var consumed = false
+        activeHidChannels.values.forEach { ch ->
+            if (ch.onKeyEvent(event)) consumed = true
+        }
+        return consumed
     }
 
     /**
@@ -110,33 +126,45 @@ class ConnectorTurboModule(reactContext: ReactApplicationContext) :
         try {
             val desc = ChannelDescriptor.fromJson(JSONObject(channelJson))
 
-            if (desc.type == ChannelType.USB) {
-                val usbManager = reactApplicationContext
-                    .getSystemService(Context.USB_SERVICE) as UsbManager
-                val device = usbManager.deviceList[desc.target]
-                    ?: return promise.reject("SUBSCRIBE_ERROR", "USB device not found: ${desc.target}")
-
-                requestUsbPermission(
-                    device,
-                    onGranted = {
-                        try {
-                            val channelId = registry.openStreamChannel(desc) { event ->
-                                sendEvent(EVENT_STREAM, event.toWritableMap())
-                            }
-                            promise.resolve(channelId)
-                        } catch (e: Exception) {
-                            promise.reject("SUBSCRIBE_ERROR", e.message ?: "subscribe failed")
-                        }
-                    },
-                    onDenied = {
-                        promise.reject("USB_PERMISSION_DENIED", "USB permission denied by user: ${desc.target}")
+            when (desc.type) {
+                ChannelType.HID -> {
+                    val channelId = java.util.UUID.randomUUID().toString()
+                    val ch = HidStreamChannel(desc) { event ->
+                        sendEvent(EVENT_STREAM, event.copy(channelId = channelId).toWritableMap())
                     }
-                )
-            } else {
-                val channelId = registry.openStreamChannel(desc) { event ->
-                    sendEvent(EVENT_STREAM, event.toWritableMap())
+                    ch.open()
+                    activeHidChannels[channelId] = ch
+                    promise.resolve(channelId)
                 }
-                promise.resolve(channelId)
+                ChannelType.USB -> {
+                    val usbManager = reactApplicationContext
+                        .getSystemService(Context.USB_SERVICE) as UsbManager
+                    val device = usbManager.deviceList[desc.target]
+                        ?: return promise.reject("SUBSCRIBE_ERROR", "USB device not found: ${desc.target}")
+
+                    requestUsbPermission(
+                        device,
+                        onGranted = {
+                            try {
+                                val channelId = registry.openStreamChannel(desc) { event ->
+                                    sendEvent(EVENT_STREAM, event.toWritableMap())
+                                }
+                                promise.resolve(channelId)
+                            } catch (e: Exception) {
+                                promise.reject("SUBSCRIBE_ERROR", e.message ?: "subscribe failed")
+                            }
+                        },
+                        onDenied = {
+                            promise.reject("USB_PERMISSION_DENIED", "USB permission denied by user: ${desc.target}")
+                        }
+                    )
+                }
+                else -> {
+                    val channelId = registry.openStreamChannel(desc) { event ->
+                        sendEvent(EVENT_STREAM, event.toWritableMap())
+                    }
+                    promise.resolve(channelId)
+                }
             }
         } catch (e: Exception) {
             promise.reject("SUBSCRIBE_ERROR", e.message ?: "subscribe failed")
@@ -145,6 +173,7 @@ class ConnectorTurboModule(reactContext: ReactApplicationContext) :
 
     @ReactMethod
     fun unsubscribe(channelId: String, promise: Promise) {
+        activeHidChannels.remove(channelId)?.close()
         registry.closeStreamChannel(channelId)
         promise.resolve(null)
     }
@@ -240,7 +269,8 @@ class ConnectorTurboModule(reactContext: ReactApplicationContext) :
     override fun onCatalystInstanceDestroy() {
         super.onCatalystInstanceDestroy()
         passiveChannel.stop()
-        keyboardChannel.stop()
+        activeHidChannels.values.forEach { it.close() }
+        activeHidChannels.clear()
         registry.closeAll()
     }
 }

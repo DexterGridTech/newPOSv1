@@ -9,8 +9,13 @@
             android:exported="false" />
         <activity
             android:name="com.impos2.posadapter.turbomodules.connector.channels.CameraScanActivity"
-            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
             android:screenOrientation="portrait"
-            android:exported="false" />
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.impos2.posadapter.action.CAMERA_SCAN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
     </application>
 </manifest>

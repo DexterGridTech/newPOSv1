@@ -8,6 +8,7 @@
   "workspaces": [
     "0-mock-server/*",
     "0-mock-server/kernel-server/web",
+    "1-kernel/*",
     "1-kernel/1.1-cores/*",
     "1-kernel/1.2-modules/*",
     "2-ui/2.1-cores/*",

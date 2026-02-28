@@ -6,10 +6,11 @@ import StateStorageScreen from './StateStorageScreen'
 import ScriptExecutionScreen from './ScriptExecutionScreen'
 import LocalWebServerScreen from './LocalWebServerScreen'
 import TaskSystemScreen from './TaskSystemScreen'
+import TaskTestScreen from './TaskTestScreen'
 import ExternalConnectorScreen from './ExternalConnectorScreen'
 import {C} from '../theme'
 
-type MenuKey = 'logger' | 'device' | 'storage' | 'script' | 'lws' | 'task' | 'connector'
+type MenuKey = 'logger' | 'device' | 'storage' | 'script' | 'lws' | 'task' | 'connector' | 'taskTest'
 
 interface MenuItem { key: MenuKey; label: string; tag: string }
 
@@ -21,6 +22,7 @@ const MENU: MenuItem[] = [
     {key: 'script',    label: 'Script',    tag: 'JS'},
     {key: 'lws',       label: 'WebSrv',    tag: 'WS'},
     {key: 'task',      label: 'Task',      tag: 'TSK'},
+    {key: 'taskTest',  label: 'TaskTest',  tag: 'TT'},
 ]
 
 const SCREENS: Record<MenuKey, React.ComponentType> = {
@@ -31,6 +33,7 @@ const SCREENS: Record<MenuKey, React.ComponentType> = {
     script:    ScriptExecutionScreen,
     lws:       LocalWebServerScreen,
     task:      TaskSystemScreen,
+    taskTest:  TaskTestScreen,
 }
 
 export default function DevHome() {

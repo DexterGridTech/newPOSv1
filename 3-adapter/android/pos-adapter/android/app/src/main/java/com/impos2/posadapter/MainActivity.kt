@@ -18,7 +18,7 @@ class MainActivity : ReactActivity() {
         val module = reactInstanceManager
             ?.currentReactContext
             ?.getNativeModule(com.impos2.posadapter.turbomodules.connector.ConnectorTurboModule::class.java)
-        if (module?.keyboardChannel?.onKeyEvent(event) == true) return true
+        if (module?.onKeyEvent(event) == true) return true
         return super.dispatchKeyEvent(event)
     }
 }

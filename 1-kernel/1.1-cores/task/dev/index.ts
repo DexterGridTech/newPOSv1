@@ -47,7 +47,7 @@ async function initializeApp() {
         }, false)
 
         const subscription = task$.pipe(
-            // tap((progress) => console.log('progress:', progress))
+            tap((progress) => console.log('progress:', progress))
         ).subscribe({
             next: (progress) => {
                 const ctx = progress.context

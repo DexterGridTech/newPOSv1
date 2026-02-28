@@ -7,9 +7,11 @@ import {uiCoreBaseErrorMessages} from "./supports/errors";
 import {uiCoreBaseParameters} from "./supports/parameters";
 import {uiCoreBaseEpics} from "./features/epics";
 import {uiCoreBaseMiddlewares} from "./features/middlewares";
-import {AppModule} from "@impos2/kernel-core-base";
+import {AppModule, kernelCoreBaseModule} from "@impos2/kernel-core-base";
 import {kernelCoreNavigationModule} from "@impos2/kernel-core-navigation";
 import {uiCoreBaseScreenParts} from "./ui";
+import {kernelCoreTaskModule} from "@impos2/kernel-core-task";
+import {kernelCoreInterconnectionModule} from "@impos2/kernel-core-interconnection";
 
 export const uiCoreBaseModule: AppModule = {
     name: moduleName,
@@ -21,7 +23,7 @@ export const uiCoreBaseModule: AppModule = {
     actors: uiCoreBaseActors,
     errorMessages: uiCoreBaseErrorMessages,
     parameters: uiCoreBaseParameters,
-    dependencies: [kernelCoreNavigationModule],
+    dependencies: [kernelCoreInterconnectionModule,kernelCoreNavigationModule,kernelCoreTaskModule],
     modulePreSetup: uiCoreBaseModulePreSetup,
     screenParts: uiCoreBaseScreenParts,
     preSetupPriority: 2101//ui core 模块使用2101-2199

@@ -12,6 +12,10 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
@@ -35,6 +39,7 @@ class CameraScanActivity : AppCompatActivity() {
         const val EXTRA_SCAN_RESULT = "SCAN_RESULT"
         const val EXTRA_SCAN_FORMAT = "SCAN_RESULT_FORMAT"
         const val EXTRA_ERROR       = "error"
+        private const val REQ_CAMERA = 2001
     }
 
     private lateinit var previewView: PreviewView
@@ -46,6 +51,12 @@ class CameraScanActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // 全屏（AppCompat 兼容方式）
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        WindowInsetsControllerCompat(window, window.decorView).apply {
+            hide(WindowInsetsCompat.Type.systemBars())
+            systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
         cameraExecutor = Executors.newSingleThreadExecutor()
         setContentView(buildLayout())
 
@@ -54,7 +65,7 @@ class CameraScanActivity : AppCompatActivity() {
         ) {
             startCamera()
         } else {
-            finishWithError("CAMERA_PERMISSION_DENIED")
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), REQ_CAMERA)
         }
     }
 
@@ -183,8 +194,13 @@ class CameraScanActivity : AppCompatActivity() {
             .build()
             .also { it.setAnalyzer(cameraExecutor) { proxy -> analyzeFrame(proxy, scanner) } }
 
+        val cameraSelector = when {
+            cameraProvider.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA)  -> CameraSelector.DEFAULT_BACK_CAMERA
+            cameraProvider.hasCamera(CameraSelector.DEFAULT_FRONT_CAMERA) -> CameraSelector.DEFAULT_FRONT_CAMERA
+            else -> CameraSelector.Builder().addCameraFilter { it.take(1) }.build()
+        }
         cameraProvider.unbindAll()
-        cameraProvider.bindToLifecycle(this, CameraSelector.DEFAULT_BACK_CAMERA, preview, analysis)
+        cameraProvider.bindToLifecycle(this, cameraSelector, preview, analysis)
     }
 
     @ExperimentalGetImage
@@ -238,6 +254,14 @@ class CameraScanActivity : AppCompatActivity() {
     private fun finishWithError(error: String) {
         setResult(RESULT_CANCELED, Intent().putExtra(EXTRA_ERROR, error))
         finish()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQ_CAMERA) {
+            if (grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) startCamera()
+            else finishWithError("CAMERA_PERMISSION_DENIED")
+        }
     }
 
     override fun onDestroy() {
