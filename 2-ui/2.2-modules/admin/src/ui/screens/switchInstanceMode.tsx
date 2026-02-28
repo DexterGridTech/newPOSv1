@@ -73,6 +73,7 @@ export const SwitchInstanceModeScreen: React.FC = () => {
         handleSetSlave,
         handleEnableSlave,
         handleStartConnection,
+        handleAddMaster,
     } = useSwitchInstanceMode();
 
     const qrValue = masterInfo ? JSON.stringify(masterInfo) : null;
@@ -188,7 +189,7 @@ export const SwitchInstanceModeScreen: React.FC = () => {
                             <Text style={s.rowLabel}>添加 Master 设备</Text>
                             <Text style={s.rowDesc}>扫描 Master 设备的二维码进行连接</Text>
                         </View>
-                        <Btn label="添加" onPress={() => {/* 后续实现 */}}/>
+                        <Btn label="添加" onPress={handleAddMaster}/>
                     </View>
                 </Section>
             )}
