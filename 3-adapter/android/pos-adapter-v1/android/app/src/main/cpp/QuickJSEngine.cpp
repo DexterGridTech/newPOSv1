@@ -352,5 +352,45 @@ JSValue QuickJSEngine::convertJSIValueToQuickJS(const jsi::Value& value) {
     return JS_UNDEFINED;
 }
 
+jsi::Value QuickJSEngine::convertQuickJSValueToJSI(JSValue value) {
+    if (!nativeFunctions_.empty() && nativeFunctions_[0]->runtime) {
+        jsi::Runtime& rt = *nativeFunctions_[0]->runtime;
+
+        if (JS_IsUndefined(value)) {
+            return jsi::Value::undefined();
+        }
+        if (JS_IsNull(value)) {
+            return jsi::Value::null();
+        }
+        if (JS_IsBool(value)) {
+            return jsi::Value(JS_ToBool(context_, value) == 1);
+        }
+        if (JS_IsNumber(value)) {
+            double num;
+            JS_ToFloat64(context_, &num, value);
+            return jsi::Value(num);
+        }
+        if (JS_IsString(value)) {
+            const char* str = JS_ToCString(context_, value);
+            jsi::Value result = jsi::String::createFromUtf8(rt, str);
+            JS_FreeCString(context_, str);
+            return result;
+        }
+        if (JS_IsObject(value)) {
+            // Convert to JSON string, then parse in JSI
+            JSValue json = JS_JSONStringify(context_, value, JS_UNDEFINED, JS_UNDEFINED);
+            const char* jsonStr = JS_ToCString(context_, json);
+            jsi::Value result = rt.global().getPropertyAsFunction(rt, "JSON")
+                .getPropertyAsObject(rt, "parse")
+                .asFunction(rt)
+                .call(rt, jsi::String::createFromUtf8(rt, jsonStr));
+            JS_FreeCString(context_, jsonStr);
+            JS_FreeValue(context_, json);
+            return result;
+        }
+    }
+    return jsi::Value::undefined();
+}
+
 } // namespace react
 } // namespace facebook
