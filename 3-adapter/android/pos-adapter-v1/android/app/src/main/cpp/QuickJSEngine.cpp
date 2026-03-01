@@ -392,5 +392,77 @@ jsi::Value QuickJSEngine::convertQuickJSValueToJSI(JSValue value) {
     return jsi::Value::undefined();
 }
 
+// Static callback for QuickJS
+static JSValue nativeFunctionCallback(
+    JSContext* ctx,
+    JSValueConst this_val,
+    int argc,
+    JSValueConst* argv,
+    int magic,
+    JSValue* func_data
+) {
+    auto* engine = static_cast<QuickJSEngine*>(JS_GetContextOpaque(ctx));
+    if (!engine || magic >= engine->nativeFunctions_.size()) {
+        return JS_EXCEPTION;
+    }
+
+    auto& funcData = engine->nativeFunctions_[magic];
+
+    // Convert arguments from QuickJS to JSI
+    std::vector<jsi::Value> args;
+    args.reserve(argc);
+    for (int i = 0; i < argc; i++) {
+        args.push_back(engine->convertQuickJSValueToJSI(argv[i]));
+    }
+
+    // Call JSI function
+    jsi::Value result = funcData->func(
+        *funcData->runtime,
+        args.data(),
+        args.size()
+    );
+
+    // Convert result back to QuickJS
+    return engine->convertJSIValueToQuickJS(result);
+}
+
+void QuickJSEngine::registerNativeFunction(
+    const std::string& name,
+    std::function<jsi::Value(jsi::Runtime&, const jsi::Value*, size_t)> func,
+    jsi::Runtime* runtime
+) {
+    if (!context_) {
+        LOGE("Context not created");
+        return;
+    }
+
+    // Store function data
+    auto funcData = std::make_unique<NativeFunctionData>();
+    funcData->func = std::move(func);
+    funcData->runtime = runtime;
+    int magic = nativeFunctions_.size();
+    nativeFunctions_.push_back(std::move(funcData));
+
+    // Set context opaque for callback access
+    JS_SetContextOpaque(context_, this);
+
+    // Create QuickJS function
+    JSValue jsFunc = JS_NewCFunctionMagic(
+        context_,
+        nativeFunctionCallback,
+        name.c_str(),
+        0,  // length (variable args)
+        JS_CFUNC_generic_magic,
+        magic
+    );
+
+    // Set as global function
+    JSValue global = JS_GetGlobalObject(context_);
+    JS_SetPropertyStr(context_, global, name.c_str(), jsFunc);
+    JS_FreeValue(context_, global);
+
+    LOGI("Registered native function: %s", name.c_str());
+}
+
 } // namespace react
 } // namespace facebook
