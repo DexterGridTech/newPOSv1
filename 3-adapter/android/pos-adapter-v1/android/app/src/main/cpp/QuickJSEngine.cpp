@@ -410,16 +410,15 @@ jsi::Value QuickJSEngine::convertQuickJSValueToJSI(JSValue value) {
 }
 
 // Static callback for QuickJS
-static JSValue nativeFunctionCallback(
+JSValue QuickJSEngine::nativeFunctionCallback(
     JSContext* ctx,
     JSValueConst this_val,
     int argc,
     JSValueConst* argv,
-    int magic,
-    JSValue* func_data
+    int magic
 ) {
     auto* engine = static_cast<QuickJSEngine*>(JS_GetContextOpaque(ctx));
-    if (!engine || magic >= engine->nativeFunctions_.size()) {
+    if (!engine || magic >= static_cast<int>(engine->nativeFunctions_.size())) {
         JS_ThrowInternalError(ctx, "Invalid native function index");
         return JS_EXCEPTION;
     }

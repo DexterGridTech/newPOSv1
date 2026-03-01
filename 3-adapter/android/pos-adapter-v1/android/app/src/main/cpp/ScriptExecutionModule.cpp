@@ -1,5 +1,4 @@
 #include "ScriptExecutionModule.h"
-#include <openssl/sha.h>
 #include <sstream>
 #include <iomanip>
 #include <android/log.h>
@@ -7,6 +6,19 @@
 #define LOG_TAG "ScriptExecutionModule"
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
+
+// Simple hash function (FNV-1a) as alternative to SHA256
+static std::string computeSimpleHash(const std::string& str) {
+    uint64_t hash = 14695981039346656037ULL; // FNV offset basis
+    for (char c : str) {
+        hash ^= static_cast<uint64_t>(c);
+        hash *= 1099511628211ULL; // FNV prime
+    }
+
+    std::stringstream ss;
+    ss << std::hex << std::setw(16) << std::setfill('0') << hash;
+    return ss.str();
+}
 
 namespace facebook {
 namespace react {
@@ -65,18 +77,7 @@ void ScriptExecutionModule::releaseEngine(QuickJSEngine* engine) {
 }
 
 std::string ScriptExecutionModule::computeScriptHash(const std::string& script) {
-    unsigned char hash[SHA256_DIGEST_LENGTH];
-    SHA256(reinterpret_cast<const unsigned char*>(script.c_str()),
-           script.length(),
-           hash);
-
-    std::stringstream ss;
-    for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
-        ss << std::hex << std::setw(2) << std::setfill('0')
-           << static_cast<int>(hash[i]);
-    }
-
-    return ss.str();
+    return computeSimpleHash(script);
 }
 
 void ScriptExecutionModule::evictLRUCache() {

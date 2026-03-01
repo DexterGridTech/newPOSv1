@@ -10,6 +10,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(ReactAndroid REQUIRED CONFIG)
 find_package(fbjni REQUIRED CONFIG)
 
+# Find OpenSSL (optional, will use alternative if not found)
+find_library(CRYPTO_LIB crypto)
+
 # Add QuickJS source files
 file(GLOB QUICKJS_SRC
     "${CMAKE_CURRENT_SOURCE_DIR}/quickjs/*.c"
@@ -32,9 +35,13 @@ target_link_libraries(scriptexecution_module
     ReactAndroid::jsi
     ReactAndroid::reactnative
     fbjni::fbjni
-    crypto  # OpenSSL for SHA256
     log
 )
+
+# Link OpenSSL if available
+if(CRYPTO_LIB)
+    target_link_libraries(scriptexecution_module ${CRYPTO_LIB})
+endif()
 
 # Create main library
 add_library(${CMAKE_PROJECT_NAME} SHARED

@@ -69,6 +69,13 @@ private:
 
     // Helper methods
     static int interruptHandler(JSRuntime* rt, void* opaque);
+    static JSValue nativeFunctionCallback(
+        JSContext* ctx,
+        JSValueConst this_val,
+        int argc,
+        JSValueConst* argv,
+        int magic
+    );
     JSValue convertJSIValueToQuickJS(const jsi::Value& value);
     jsi::Value convertQuickJSValueToJSI(JSValue value);
     void extractError();

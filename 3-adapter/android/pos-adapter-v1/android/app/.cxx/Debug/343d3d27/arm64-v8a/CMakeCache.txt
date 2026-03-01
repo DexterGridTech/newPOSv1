@@ -248,6 +248,9 @@ CMAKE_TOOLCHAIN_FILE:UNINITIALIZED=/Users/dexter/Library/Android/sdk/ndk/27.1.12
 // Studio IDE projects all commands are done without /nologo.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
+//Path to a library.
+CRYPTO_LIB:FILEPATH=CRYPTO_LIB-NOTFOUND
+
 //No help, variable specified on the command line.
 PROJECT_BUILD_DIR:UNINITIALIZED=/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/build
 
