@@ -217,5 +217,28 @@ jsi::Value ScriptExecutionModule::executeScript(
     return jsi::String::createFromUtf8(rt, resultJson);
 }
 
+jsi::Object ScriptExecutionModule::getStats(jsi::Runtime& rt) {
+    jsi::Object stats(rt);
+
+    uint64_t total = totalExecutions_.load();
+    uint64_t hits = cacheHits_.load();
+    uint64_t misses = cacheMisses_.load();
+
+    stats.setProperty(rt, "totalExecutions", jsi::Value(static_cast<double>(total)));
+    stats.setProperty(rt, "cacheHits", jsi::Value(static_cast<double>(hits)));
+    stats.setProperty(rt, "cacheMisses", jsi::Value(static_cast<double>(misses)));
+
+    double hitRate = total > 0 ? (static_cast<double>(hits) / total) : 0.0;
+    stats.setProperty(rt, "cacheHitRate", jsi::Value(hitRate));
+
+    return stats;
+}
+
+void ScriptExecutionModule::clearCache(jsi::Runtime& rt) {
+    std::lock_guard<std::mutex> lock(cacheMutex_);
+    bytecodeCache_.clear();
+    LOGI("Bytecode cache cleared");
+}
+
 } // namespace react
 } // namespace facebook
