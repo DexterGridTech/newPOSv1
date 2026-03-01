@@ -114,5 +114,48 @@ int QuickJSEngine::interruptHandler(JSRuntime* rt, void* opaque) {
     return 0;  // Continue execution
 }
 
+std::vector<uint8_t> QuickJSEngine::compileScript(const std::string& script) {
+    if (!context_) {
+        LOGE("Context not created");
+        return {};
+    }
+
+    // Compile script to bytecode
+    JSValue func = JS_Eval(
+        context_,
+        script.c_str(),
+        script.length(),
+        "<script>",
+        JS_EVAL_FLAG_COMPILE_ONLY
+    );
+
+    if (JS_IsException(func)) {
+        LOGE("Script compilation failed");
+        extractError();
+        JS_FreeValue(context_, func);
+        return {};
+    }
+
+    // Serialize to bytecode
+    size_t size;
+    uint8_t* buf = JS_WriteObject(context_, &size, func, JS_WRITE_OBJ_BYTECODE);
+
+    if (!buf) {
+        LOGE("Failed to serialize bytecode");
+        JS_FreeValue(context_, func);
+        return {};
+    }
+
+    // Copy to vector
+    std::vector<uint8_t> bytecode(buf, buf + size);
+
+    // Free resources
+    js_free(context_, buf);
+    JS_FreeValue(context_, func);
+
+    LOGI("Script compiled to bytecode (%zu bytes)", size);
+    return bytecode;
+}
+
 } // namespace react
 } // namespace facebook
