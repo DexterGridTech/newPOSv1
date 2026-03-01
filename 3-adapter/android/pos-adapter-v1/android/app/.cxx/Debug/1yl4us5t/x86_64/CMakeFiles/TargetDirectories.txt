@@ -1,0 +1,9 @@
+/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/.cxx/Debug/1yl4us5t/x86_64/CMakeFiles/appmodules.dir
+/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/.cxx/Debug/1yl4us5t/x86_64/CMakeFiles/edit_cache.dir
+/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/.cxx/Debug/1yl4us5t/x86_64/CMakeFiles/rebuild_cache.dir
+/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/.cxx/Debug/1yl4us5t/x86_64/NitroModulesSpec_autolinked_build/CMakeFiles/react_codegen_NitroModulesSpec.dir
+/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/.cxx/Debug/1yl4us5t/x86_64/NitroModulesSpec_autolinked_build/CMakeFiles/edit_cache.dir
+/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/.cxx/Debug/1yl4us5t/x86_64/NitroModulesSpec_autolinked_build/CMakeFiles/rebuild_cache.dir
+/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/.cxx/Debug/1yl4us5t/x86_64/codegen_app_build/CMakeFiles/react_codegen_PosAdapterRn84Spec.dir
+/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/.cxx/Debug/1yl4us5t/x86_64/codegen_app_build/CMakeFiles/edit_cache.dir
+/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/.cxx/Debug/1yl4us5t/x86_64/codegen_app_build/CMakeFiles/rebuild_cache.dir

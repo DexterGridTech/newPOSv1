@@ -29,6 +29,9 @@ public:
     jsi::Object getStats(jsi::Runtime& rt);
     void clearCache(jsi::Runtime& rt);
 
+    // Initialize method map (called from JSI binding)
+    void initMethodMap();
+
 private:
     // Bytecode cache
     struct CacheEntry {

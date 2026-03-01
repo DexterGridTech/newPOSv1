@@ -58,6 +58,7 @@ private:
     // Timeout handling
     std::chrono::steady_clock::time_point startTime_;
     uint32_t timeoutMs_;
+    std::atomic<bool> interrupted_{false};
 
     // Native function storage
     struct NativeFunctionData {

@@ -17,6 +17,7 @@ export interface Logger {
     deleteLogFile: (fileName: string) => Promise<boolean>
     clearAllLogs: () => Promise<boolean>
     getLogDirPath: () => Promise<string>
+    sendLogFileToServer: (date: Date, serverURL: string,params:any) => Promise<boolean>
 }
 
 export const logger: Logger = {
@@ -41,6 +42,7 @@ export const logger: Logger = {
     deleteLogFile: (fileName) => delegate('deleteLogFile', fileName),
     clearAllLogs: () => delegate('clearAllLogs'),
     getLogDirPath: () => delegate('getLogDirPath'),
+    sendLogFileToServer: (date, serverURL,params) => delegate('sendLogFileToServer', date, serverURL,params)
 }
 
 const delegate = (method: keyof Logger, ...args: any[]): Promise<any> => {

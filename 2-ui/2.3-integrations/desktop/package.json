@@ -28,19 +28,19 @@
     "@impos2/ui-core-base": "*",
     "@reduxjs/toolkit": "^2.11.2",
     "redux-persist": "^6.0.0",
-    "reselect": "^5.1.0"
+    "reselect": "^5.1.1"
   },
   "peerDependencies": {
-    "react": "18.3.1",
-    "react-native": "0.76.6",
-    "react-redux": "^9.1.0"
+    "react": "19.2.4",
+    "react-native": "0.84.1",
+    "react-redux": "^9.2.0"
   },
   "devDependencies": {
-    "@types/react": "~18.3.12",
-    "expo": "~54.0.31",
-    "expo-status-bar": "~3.0.9",
-    "react-dom": "18.3.1",
-    "react-native-web": "^0.21.0",
+    "@types/react": "^19.2.14",
+    "expo": "~55.0.4",
+    "expo-status-bar": "~2.2.3",
+    "react-dom": "19.2.4",
+    "react-native-web": "^0.21.2",
     "typescript": "^5.9.3"
   }
 }

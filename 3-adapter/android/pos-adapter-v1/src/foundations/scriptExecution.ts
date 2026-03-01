@@ -50,19 +50,19 @@ export const scriptExecution: ScriptsExecution = {
                 error
             )
         }
-    }
-}
+    },
 
-export async function getExecutionStats() {
-    const stats = await NativeScriptsTurboModule.getStats()
-    return {
-        totalExecutions: stats.totalExecutions,
-        cacheHits: stats.cacheHits,
-        cacheMisses: stats.cacheMisses,
-        cacheHitRate: stats.cacheHitRate
-    }
-}
+    async getExecutionStats() {
+        const stats = await NativeScriptsTurboModule.getStats()
+        return {
+            totalExecutions: stats.totalExecutions,
+            cacheHits: stats.cacheHits,
+            cacheMisses: stats.cacheMisses,
+            cacheHitRate: stats.cacheHitRate
+        }
+    },
 
-export async function clearCache() {
-    await NativeScriptsTurboModule.clearCache()
+    async clearCache() {
+        await NativeScriptsTurboModule.clearCache()
+    }
 }

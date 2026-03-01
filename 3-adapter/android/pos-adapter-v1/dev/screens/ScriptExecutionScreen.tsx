@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import {View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet} from 'react-native'
-import {scriptExecution, getExecutionStats, clearCache} from '../../src/foundations/scriptExecution'
+import {scriptExecution} from '../../src/foundations/scriptExecution'
 
 const PRESET_SCRIPTS = [
     {
@@ -64,30 +64,44 @@ export default function ScriptExecutionScreen() {
         try {
             const startTime = Date.now()
 
-            const execResult = await scriptExecution.executeScript({
-                script,
-                params: JSON.parse(params || '{}'),
-                globals: JSON.parse(globals || '{}'),
-                nativeFunctions: nativeFunctions.split(',').map(f => f.trim()).filter(Boolean).reduce((acc, name) => {
-                    acc[name] = () => ({value: 42})
-                    return acc
-                }, {} as Record<string, any>),
-                timeout: parseInt(timeout, 10)
+            // Register native functions to global scope
+            const nativeFuncNames = nativeFunctions.split(',').map(f => f.trim()).filter(Boolean)
+            const nativeFuncMap: Record<string, any> = {}
+
+            nativeFuncNames.forEach(name => {
+                const func = () => ({value: 42})
+                ;(global as any)[name] = func
+                nativeFuncMap[name] = func
             })
 
-            const duration = Date.now() - startTime
+            try {
+                const execResult = await scriptExecution.executeScript({
+                    script,
+                    params: JSON.parse(params || '{}'),
+                    globals: JSON.parse(globals || '{}'),
+                    nativeFunctions: nativeFuncMap,
+                    timeout: parseInt(timeout, 10)
+                })
 
-            setResult(JSON.stringify({success: true, result: execResult}, null, 2))
+                const duration = Date.now() - startTime
 
-            setHistory(prev => [{
-                timestamp: new Date().toISOString(),
-                duration,
-                success: true,
-                result: execResult
-            }, ...prev].slice(0, 20))
+                setResult(JSON.stringify({success: true, result: execResult}, null, 2))
 
-            const newStats = await getExecutionStats()
-            setStats(newStats)
+                setHistory(prev => [{
+                    timestamp: new Date().toISOString(),
+                    duration,
+                    success: true,
+                    result: execResult
+                }, ...prev].slice(0, 20))
+
+                const newStats = await scriptExecution.getExecutionStats()
+                setStats(newStats)
+            } finally {
+                // Clean up global functions
+                nativeFuncNames.forEach(name => {
+                    delete (global as any)[name]
+                })
+            }
         } catch (error: any) {
             setResult(JSON.stringify({
                 success: false,
@@ -109,8 +123,8 @@ export default function ScriptExecutionScreen() {
     }
 
     const handleClearCache = async () => {
-        await clearCache()
-        const newStats = await getExecutionStats()
+        await scriptExecution.clearCache()
+        const newStats = await scriptExecution.getExecutionStats()
         setStats(newStats)
     }
 

@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.22.1)
 project(pos-adapter-v1)
 
 # Set C++ standard
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Find React Native
@@ -29,14 +29,12 @@ target_include_directories(scriptexecution_module PUBLIC
 )
 
 target_link_libraries(scriptexecution_module
-    jsi
-    reactnative
-    fbjni
+    ReactAndroid::jsi
+    ReactAndroid::reactnative
+    fbjni::fbjni
     crypto  # OpenSSL for SHA256
     log
 )
-
-target_compile_reactnative_options(scriptexecution_module PRIVATE)
 
 # Create main library
 add_library(${CMAKE_PROJECT_NAME} SHARED
@@ -45,11 +43,9 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
 
 target_link_libraries(${CMAKE_PROJECT_NAME}
     scriptexecution_module
-    jsi
-    reactnative
-    fbjni
+    ReactAndroid::jsi
+    ReactAndroid::reactnative
+    fbjni::fbjni
     android
     log
 )
-
-target_compile_reactnative_options(${CMAKE_PROJECT_NAME} PRIVATE)

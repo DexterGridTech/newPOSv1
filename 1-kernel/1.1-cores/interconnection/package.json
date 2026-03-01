@@ -20,10 +20,10 @@
   "dependencies": {
     "@impos2/kernel-core-base": "*",
     "@reduxjs/toolkit": "^2.11.2",
-    "axios": "^1.13.5",
+    "axios": "^1.13.6",
     "date-fns": "^4.1.0",
     "deep-object-diff": "^1.1.9",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "redux-observable": "^3.0.0-rc.3",
     "redux-persist": "^6.0.0",
     "rxjs": "^7.8.2"

@@ -42,8 +42,8 @@ static jsi::Value __hostFunction_ScriptExecutionModule_clearCache(
     return jsi::Value::undefined();
 }
 
-ScriptExecutionModule::ScriptExecutionModule(std::shared_ptr<CallInvoker> jsInvoker)
-    : TurboModule("NativeScriptsTurboModule", jsInvoker) {
+// Initialize method map for TurboModule
+void ScriptExecutionModule::initMethodMap() {
     methodMap_["executeScript"] = MethodMetadata{5, __hostFunction_ScriptExecutionModule_executeScript};
     methodMap_["getStats"] = MethodMetadata{0, __hostFunction_ScriptExecutionModule_getStats};
     methodMap_["clearCache"] = MethodMetadata{0, __hostFunction_ScriptExecutionModule_clearCache};

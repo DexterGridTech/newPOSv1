@@ -20,7 +20,7 @@
     "@impos2/kernel-core-base": "*",
     "@impos2/kernel-core-interconnection": "*",
     "@reduxjs/toolkit": "^2.11.2",
-    "axios": "^1.13.5",
+    "axios": "^1.13.6",
     "date-fns": "^4.1.0",
     "redux-observable": "^3.0.0-rc.3",
     "redux-persist": "^6.0.0",

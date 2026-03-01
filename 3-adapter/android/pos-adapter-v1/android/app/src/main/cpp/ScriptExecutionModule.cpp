@@ -23,6 +23,9 @@ ScriptExecutionModule::ScriptExecutionModule(std::shared_ptr<CallInvoker> jsInvo
         }
     }
     LOGI("ScriptExecutionModule initialized with %zu engines", enginePool_.size());
+
+    // Initialize method map for TurboModule
+    initMethodMap();
 }
 
 ScriptExecutionModule::~ScriptExecutionModule() {

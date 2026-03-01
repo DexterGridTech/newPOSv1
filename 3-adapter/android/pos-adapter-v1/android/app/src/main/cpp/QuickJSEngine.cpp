@@ -82,6 +82,9 @@ void QuickJSEngine::reset() {
     errorMessage_.clear();
     stackTrace_.clear();
 
+    // Clear interrupt flag
+    interrupted_ = false;
+
     // Clear native functions
     nativeFunctions_.clear();
 
@@ -90,17 +93,24 @@ void QuickJSEngine::reset() {
 
 void QuickJSEngine::setTimeout(uint32_t ms) {
     timeoutMs_ = ms;
+    interrupted_ = false;
     startTime_ = std::chrono::steady_clock::now();
 }
 
 void QuickJSEngine::interrupt() {
-    if (runtime_) {
-        JS_SetInterruptHandler(runtime_, [](JSRuntime*, void*) { return 1; }, nullptr);
-    }
+    interrupted_ = true;
 }
 
 int QuickJSEngine::interruptHandler(JSRuntime* rt, void* opaque) {
     auto* engine = static_cast<QuickJSEngine*>(opaque);
+
+    // Check manual interrupt flag
+    if (engine->interrupted_) {
+        LOGE("Script execution manually interrupted");
+        return 1;
+    }
+
+    // Check timeout
     auto now = std::chrono::steady_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
         now - engine->startTime_
@@ -338,6 +348,13 @@ JSValue QuickJSEngine::convertJSIValueToQuickJS(const jsi::Value& value) {
     if (value.isNumber()) {
         return JS_NewFloat64(context_, value.getNumber());
     }
+
+    // Check if we have a runtime available for string/object conversion
+    if (nativeFunctions_.empty() || !nativeFunctions_[0]->runtime) {
+        LOGE("No runtime available for type conversion");
+        return JS_UNDEFINED;
+    }
+
     if (value.isString()) {
         std::string str = value.getString(*nativeFunctions_[0]->runtime).utf8(*nativeFunctions_[0]->runtime);
         return JS_NewString(context_, str.c_str());
@@ -403,6 +420,7 @@ static JSValue nativeFunctionCallback(
 ) {
     auto* engine = static_cast<QuickJSEngine*>(JS_GetContextOpaque(ctx));
     if (!engine || magic >= engine->nativeFunctions_.size()) {
+        JS_ThrowInternalError(ctx, "Invalid native function index");
         return JS_EXCEPTION;
     }
 
