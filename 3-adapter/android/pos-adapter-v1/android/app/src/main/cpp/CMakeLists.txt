@@ -29,12 +29,14 @@ target_include_directories(scriptexecution_module PUBLIC
 )
 
 target_link_libraries(scriptexecution_module
-    ReactAndroid::jsi
-    ReactAndroid::reactnativejni
-    ReactAndroid::turbomodulejsijni
+    jsi
+    reactnative
+    fbjni
     crypto  # OpenSSL for SHA256
     log
 )
+
+target_compile_reactnative_options(scriptexecution_module PRIVATE)
 
 # Create main library
 add_library(${CMAKE_PROJECT_NAME} SHARED
@@ -43,9 +45,11 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
 
 target_link_libraries(${CMAKE_PROJECT_NAME}
     scriptexecution_module
-    ReactAndroid::jsi
-    ReactAndroid::reactnativejni
-    fbjni::fbjni
+    jsi
+    reactnative
+    fbjni
     android
     log
 )
+
+target_compile_reactnative_options(${CMAKE_PROJECT_NAME} PRIVATE)
