@@ -1,4 +1,4 @@
-import {ScriptsExecution, ScriptExecutionOptions, ScriptExecutionError} from '@mono/kernel-core-base'
+import {ScriptsExecution, ScriptExecutionOptions, ScriptExecutionError} from '@impos2/kernel-core-base'
 import NativeScriptsTurboModule from '../specs/NativeScriptsTurboModule'
 
 export const scriptExecution: ScriptsExecution = {
