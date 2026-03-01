@@ -325,5 +325,32 @@ void QuickJSEngine::setGlobalVariable(const std::string& name, const std::string
     LOGI("Set global variable: %s", name.c_str());
 }
 
+JSValue QuickJSEngine::convertJSIValueToQuickJS(const jsi::Value& value) {
+    if (value.isUndefined()) {
+        return JS_UNDEFINED;
+    }
+    if (value.isNull()) {
+        return JS_NULL;
+    }
+    if (value.isBool()) {
+        return JS_NewBool(context_, value.getBool());
+    }
+    if (value.isNumber()) {
+        return JS_NewFloat64(context_, value.getNumber());
+    }
+    if (value.isString()) {
+        std::string str = value.getString(*nativeFunctions_[0]->runtime).utf8(*nativeFunctions_[0]->runtime);
+        return JS_NewString(context_, str.c_str());
+    }
+    if (value.isObject()) {
+        // Convert object to JSON string, then parse in QuickJS
+        auto obj = value.getObject(*nativeFunctions_[0]->runtime);
+        std::string json = jsi::Value(*nativeFunctions_[0]->runtime, obj)
+            .toString(*nativeFunctions_[0]->runtime).utf8(*nativeFunctions_[0]->runtime);
+        return JS_ParseJSON(context_, json.c_str(), json.length(), "<jsi>");
+    }
+    return JS_UNDEFINED;
+}
+
 } // namespace react
 } // namespace facebook
