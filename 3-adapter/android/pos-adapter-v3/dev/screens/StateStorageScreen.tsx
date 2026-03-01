@@ -1,6 +1,6 @@
 import React, {useState, useCallback, useEffect} from 'react'
 import {View, Text, TextInput, Pressable, FlatList, StyleSheet, ScrollView, Alert} from 'react-native'
-import {stateStorageAdapter} from '../../src/foundations/stateStorage'
+import {stateStorageAdapter} from "../../src/foundations/stateStorage"
 
 
 const C = {

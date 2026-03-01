@@ -36,6 +36,30 @@ if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   file(TOUCH_NOCREATE "/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v3/android/app/.cxx/Debug/1yl4us5t/x86/CMakeFiles/cmake.verify_globs")
 endif()
 
+# react_codegen_SRCS at /Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/react-native-nitro-modules/android/build/generated/source/codegen/jni/CMakeLists.txt:9 (file)
+file(GLOB NEW_GLOB LIST_DIRECTORIES true "/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/react-native-nitro-modules/android/build/generated/source/codegen/jni/*.cpp")
+set(OLD_GLOB
+  "/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/react-native-nitro-modules/android/build/generated/source/codegen/jni/NitroModulesSpec-generated.cpp"
+  )
+if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
+  message("-- GLOB mismatch!")
+  file(TOUCH_NOCREATE "/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v3/android/app/.cxx/Debug/1yl4us5t/x86/CMakeFiles/cmake.verify_globs")
+endif()
+
+# react_codegen_SRCS at /Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/react-native-nitro-modules/android/build/generated/source/codegen/jni/CMakeLists.txt:9 (file)
+file(GLOB NEW_GLOB LIST_DIRECTORIES true "/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/react-native-nitro-modules/android/build/generated/source/codegen/jni/react/renderer/components/NitroModulesSpec/*.cpp")
+set(OLD_GLOB
+  "/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/react-native-nitro-modules/android/build/generated/source/codegen/jni/react/renderer/components/NitroModulesSpec/ComponentDescriptors.cpp"
+  "/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/react-native-nitro-modules/android/build/generated/source/codegen/jni/react/renderer/components/NitroModulesSpec/EventEmitters.cpp"
+  "/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/react-native-nitro-modules/android/build/generated/source/codegen/jni/react/renderer/components/NitroModulesSpec/Props.cpp"
+  "/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/react-native-nitro-modules/android/build/generated/source/codegen/jni/react/renderer/components/NitroModulesSpec/ShadowNodes.cpp"
+  "/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/react-native-nitro-modules/android/build/generated/source/codegen/jni/react/renderer/components/NitroModulesSpec/States.cpp"
+  )
+if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
+  message("-- GLOB mismatch!")
+  file(TOUCH_NOCREATE "/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v3/android/app/.cxx/Debug/1yl4us5t/x86/CMakeFiles/cmake.verify_globs")
+endif()
+
 # override_cpp_SRC at /Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/react-native/ReactAndroid/cmake-utils/ReactNative-application.cmake:50 (file)
 # input_SRC at /Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/react-native/ReactAndroid/cmake-utils/ReactNative-application.cmake:55 (file)
 file(GLOB NEW_GLOB LIST_DIRECTORIES true "/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/react-native/ReactAndroid/cmake-utils/default-app-setup/*.cpp")

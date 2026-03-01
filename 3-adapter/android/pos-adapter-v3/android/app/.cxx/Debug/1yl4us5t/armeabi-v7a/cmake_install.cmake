@@ -44,6 +44,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
+  include("/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v3/android/app/.cxx/Debug/1yl4us5t/armeabi-v7a/NitroModulesSpec_autolinked_build/cmake_install.cmake")
   include("/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v3/android/app/.cxx/Debug/1yl4us5t/armeabi-v7a/codegen_app_build/cmake_install.cmake")
 
 endif()
