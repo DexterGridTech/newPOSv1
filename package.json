@@ -50,10 +50,6 @@
     "ui:module-device-activate": "yarn workspace @impos2/ui-device-activate web",
     "ui:integrate-desktop": "yarn workspace @impos2/ui-integration-desktop web",
     "--------": "---------------------------------------",
-    "adapter:android-rn84:start": "corepack yarn workspace @impos2/adapter-android-rn84 start:clean",
-    "adapter:android-rn84:android": "corepack yarn workspace @impos2/adapter-android-rn84 android",
-    "adapter:android-rn84v2:start": "corepack yarn workspace @impos2/adapter-android-rn84v2 start:clean",
-    "adapter:android-rn84v2:android": "corepack yarn workspace @impos2/adapter-android-rn84v2 android",
     "adapter:android-rn84v3:start": "corepack yarn workspace @impos2/adapter-android-rn84v3 start:clean",
     "adapter:android-rn84v3:android": "corepack yarn workspace @impos2/adapter-android-rn84v3 android",
     "-----------": "---------------------------------------",
@@ -78,7 +74,10 @@
     "ts-node": "^10.9.2",
     "@types/node": "^25.0.9",
     "node-localstorage": "^3.0.5",
-    "react": "19.2.4",
+    "react": "19.2.3",
+    "react-native-renderer": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-test-renderer": "19.2.3",
     "react-native": "0.84.1",
     "@react-native/metro-config": "0.84.1",
     "@react-native/babel-preset": "0.84.1",
@@ -86,6 +85,8 @@
     "@react-native/typescript-config": "0.84.1",
     "react-native-safe-area-context": "^5.7.0",
     "react-native-device-info": "^15.0.2",
+    "react-native-nitro-modules": "^0.34.1",
+    "react-native-mmkv": "^4.0.0",
     "@types/react": "^19.2.14",
     "jsc-android": "^250231.0.0",
     "better-sqlite3": "^12.6.2",
@@ -98,6 +99,8 @@
     "monaco-editor": "^0.52.2"
   },
   "dependencies": {
+    "react-native-mmkv": "^4.0.0",
+    "react-native-nitro-modules": "^0.34.1",
     "react-native-svg": "^15.15.3"
   }
 }

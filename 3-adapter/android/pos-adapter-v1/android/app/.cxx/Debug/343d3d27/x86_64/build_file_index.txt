@@ -1,1 +1,0 @@
-/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/CMakeLists.txt

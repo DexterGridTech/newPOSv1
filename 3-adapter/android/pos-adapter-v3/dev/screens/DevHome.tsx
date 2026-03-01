@@ -3,11 +3,10 @@ import {Pressable, ScrollView, StyleSheet, Text, View} from 'react-native'
 import DeviceScreen from './DeviceScreen'
 import LoggerScreen from './LoggerScreen'
 import {StateStorageScreen} from './StateStorageScreen'
-// ScriptExecutionScreen temporarily disabled for testing
-// import ScriptExecutionScreen from './ScriptExecutionScreen'
+import ScriptExecutionScreen from './ScriptExecutionScreen'
 import {C} from '../theme'
 
-type MenuKey = 'device' | 'logger' | 'storage' // | 'script'
+type MenuKey = 'device' | 'logger' | 'storage' | 'script'
 
 interface MenuItem { key: MenuKey; label: string; tag: string }
 
@@ -15,14 +14,14 @@ const MENU: MenuItem[] = [
     {key: 'device', label: 'Device', tag: 'DEV'},
     {key: 'logger', label: 'Logger', tag: 'LOG'},
     {key: 'storage', label: 'Storage', tag: 'STO'},
-    // {key: 'script', label: 'Script', tag: 'SCR'},  // temporarily disabled
+    {key: 'script', label: 'Script', tag: 'SCR'},
 ]
 
 const SCREENS: Record<MenuKey, React.ComponentType> = {
     device: DeviceScreen,
     logger: LoggerScreen,
     storage: StateStorageScreen,
-    // script: ScriptExecutionScreen,  // temporarily disabled
+    script: ScriptExecutionScreen,
 }
 
 export default function DevHome() {
