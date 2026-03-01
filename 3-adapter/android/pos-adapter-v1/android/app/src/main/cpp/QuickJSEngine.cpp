@@ -273,5 +273,29 @@ bool QuickJSEngine::hasError() const {
     return hasError_;
 }
 
+std::string QuickJSEngine::getResult() {
+    if (!context_ || JS_IsUndefined(resultValue_)) {
+        return "null";
+    }
+
+    // Convert result to JSON string
+    JSValue json = JS_JSONStringify(context_, resultValue_, JS_UNDEFINED, JS_UNDEFINED);
+
+    if (JS_IsException(json)) {
+        LOGE("Failed to stringify result");
+        return "null";
+    }
+
+    const char* str = JS_ToCString(context_, json);
+    std::string result = str ? str : "null";
+
+    if (str) {
+        JS_FreeCString(context_, str);
+    }
+    JS_FreeValue(context_, json);
+
+    return result;
+}
+
 } // namespace react
 } // namespace facebook
