@@ -88,5 +88,31 @@ void QuickJSEngine::reset() {
     LOGI("QuickJS engine reset for reuse");
 }
 
+void QuickJSEngine::setTimeout(uint32_t ms) {
+    timeoutMs_ = ms;
+    startTime_ = std::chrono::steady_clock::now();
+}
+
+void QuickJSEngine::interrupt() {
+    if (runtime_) {
+        JS_SetInterruptHandler(runtime_, [](JSRuntime*, void*) { return 1; }, nullptr);
+    }
+}
+
+int QuickJSEngine::interruptHandler(JSRuntime* rt, void* opaque) {
+    auto* engine = static_cast<QuickJSEngine*>(opaque);
+    auto now = std::chrono::steady_clock::now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
+        now - engine->startTime_
+    ).count();
+
+    if (elapsed >= engine->timeoutMs_) {
+        LOGE("Script execution timeout after %lld ms", elapsed);
+        return 1;  // Interrupt execution
+    }
+
+    return 0;  // Continue execution
+}
+
 } // namespace react
 } // namespace facebook
