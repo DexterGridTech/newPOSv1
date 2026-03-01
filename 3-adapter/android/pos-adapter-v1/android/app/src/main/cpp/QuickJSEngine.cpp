@@ -228,5 +228,50 @@ bool QuickJSEngine::executeScript(const std::string& script) {
     return true;
 }
 
+void QuickJSEngine::extractError() {
+    hasError_ = true;
+
+    JSValue exception = JS_GetException(context_);
+
+    // Get error message
+    const char* str = JS_ToCString(context_, exception);
+    if (str) {
+        errorMessage_ = str;
+        JS_FreeCString(context_, str);
+    } else {
+        errorMessage_ = "Unknown error";
+    }
+
+    // Get stack trace
+    JSValue stack = JS_GetPropertyStr(context_, exception, "stack");
+    if (!JS_IsUndefined(stack)) {
+        const char* stackStr = JS_ToCString(context_, stack);
+        if (stackStr) {
+            stackTrace_ = stackStr;
+            JS_FreeCString(context_, stackStr);
+        }
+        JS_FreeValue(context_, stack);
+    }
+
+    JS_FreeValue(context_, exception);
+
+    LOGE("Error: %s", errorMessage_.c_str());
+    if (!stackTrace_.empty()) {
+        LOGE("Stack: %s", stackTrace_.c_str());
+    }
+}
+
+std::string QuickJSEngine::getError() {
+    return errorMessage_;
+}
+
+std::string QuickJSEngine::getStackTrace() {
+    return stackTrace_;
+}
+
+bool QuickJSEngine::hasError() const {
+    return hasError_;
+}
+
 } // namespace react
 } // namespace facebook
