@@ -106,5 +106,36 @@ void ScriptExecutionModule::updateCacheEntry(const std::string& hash) {
     }
 }
 
+jsi::Value ScriptExecutionModule::executeScript(
+    jsi::Runtime& rt,
+    const jsi::String& script,
+    const jsi::String& paramsJson,
+    const jsi::String& globalsJson,
+    const jsi::Array& nativeFuncNames,
+    double timeout
+) {
+    totalExecutions_++;
+
+    std::string scriptStr = script.utf8(rt);
+    std::string paramsStr = paramsJson.utf8(rt);
+    std::string globalsStr = globalsJson.utf8(rt);
+
+    // Compute script hash for caching
+    std::string hash = computeScriptHash(scriptStr);
+
+    // Acquire engine from pool
+    QuickJSEngine* engine = acquireEngine();
+    if (!engine) {
+        return jsi::String::createFromUtf8(rt,
+            R"({"success":false,"error":"ENGINE_POOL_EXHAUSTED","message":"No available engines"})");
+    }
+
+    // Set timeout
+    engine->setTimeout(static_cast<uint32_t>(timeout));
+
+    // Continue in next step...
+    return jsi::Value::undefined();
+}
+
 } // namespace react
 } // namespace facebook
