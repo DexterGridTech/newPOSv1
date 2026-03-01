@@ -120,21 +120,101 @@ jsi::Value ScriptExecutionModule::executeScript(
     std::string paramsStr = paramsJson.utf8(rt);
     std::string globalsStr = globalsJson.utf8(rt);
 
-    // Compute script hash for caching
     std::string hash = computeScriptHash(scriptStr);
 
-    // Acquire engine from pool
     QuickJSEngine* engine = acquireEngine();
     if (!engine) {
         return jsi::String::createFromUtf8(rt,
-            R"({"success":false,"error":"ENGINE_POOL_EXHAUSTED","message":"No available engines"})");
+            R"({"success":false,"error":"ENGINE_POOL_EXHAUSTED"})");
     }
 
-    // Set timeout
     engine->setTimeout(static_cast<uint32_t>(timeout));
 
-    // Continue in next step...
-    return jsi::Value::undefined();
+    // Register native functions
+    size_t funcCount = nativeFuncNames.size(rt);
+    for (size_t i = 0; i < funcCount; i++) {
+        std::string funcName = nativeFuncNames.getValueAtIndex(rt, i).getString(rt).utf8(rt);
+
+        // Create JSI HostFunction wrapper
+        auto hostFunc = [funcName](
+            jsi::Runtime& runtime,
+            const jsi::Value& thisVal,
+            const jsi::Value* args,
+            size_t count
+        ) -> jsi::Value {
+            // Call native function via global registry
+            auto func = runtime.global().getPropertyAsFunction(runtime, funcName.c_str());
+            return func.call(runtime, args, count);
+        };
+
+        engine->registerNativeFunction(funcName,
+            [hostFunc](jsi::Runtime& rt, const jsi::Value* args, size_t count) {
+                return hostFunc(rt, jsi::Value::undefined(), args, count);
+            },
+            &rt);
+    }
+
+    // Set global variables
+    if (!globalsStr.empty() && globalsStr != "{}") {
+        // Parse globals JSON and set each variable
+        // Simplified: assume globals is {"key": "value"} format
+        engine->setGlobalVariable("__globals", globalsStr);
+    }
+
+    // Set params
+    if (!paramsStr.empty() && paramsStr != "{}") {
+        engine->setGlobalVariable("params", paramsStr);
+    }
+
+    // Check cache
+    bool success = false;
+    {
+        std::lock_guard<std::mutex> lock(cacheMutex_);
+        auto it = bytecodeCache_.find(hash);
+
+        if (it != bytecodeCache_.end()) {
+            // Cache hit
+            cacheHits_++;
+            updateCacheEntry(hash);
+            success = engine->executeFromBytecode(it->second.bytecode);
+            LOGI("Cache hit for script %s", hash.substr(0, 8).c_str());
+        } else {
+            // Cache miss - compile and cache
+            cacheMisses_++;
+            auto bytecode = engine->compileScript(scriptStr);
+
+            if (!bytecode.empty()) {
+                // Store in cache
+                evictLRUCache();
+                CacheEntry entry;
+                entry.bytecode = bytecode;
+                entry.lastUsed = std::chrono::steady_clock::now().time_since_epoch().count();
+                entry.useCount = 1;
+                bytecodeCache_[hash] = std::move(entry);
+
+                // Execute
+                success = engine->executeFromBytecode(bytecode);
+                LOGI("Cache miss, compiled and cached script %s", hash.substr(0, 8).c_str());
+            }
+        }
+    }
+
+    // Get result
+    std::string resultJson;
+    if (success && !engine->hasError()) {
+        std::string result = engine->getResult();
+        resultJson = R"({"success":true,"result":)" + result + "}";
+    } else {
+        std::string error = engine->getError();
+        std::string stack = engine->getStackTrace();
+        resultJson = R"({"success":false,"error":"EXECUTION_ERROR","message":")" +
+                     error + R"(","stack":")" + stack + R"("})";
+    }
+
+    // Release engine back to pool
+    releaseEngine(engine);
+
+    return jsi::String::createFromUtf8(rt, resultJson);
 }
 
 } // namespace react
