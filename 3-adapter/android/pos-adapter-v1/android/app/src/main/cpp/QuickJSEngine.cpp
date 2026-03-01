@@ -297,5 +297,33 @@ std::string QuickJSEngine::getResult() {
     return result;
 }
 
+void QuickJSEngine::setGlobalVariable(const std::string& name, const std::string& jsonValue) {
+    if (!context_) {
+        LOGE("Context not created");
+        return;
+    }
+
+    // Parse JSON value
+    JSValue value = JS_ParseJSON(
+        context_,
+        jsonValue.c_str(),
+        jsonValue.length(),
+        "<json>"
+    );
+
+    if (JS_IsException(value)) {
+        LOGE("Failed to parse JSON for variable %s", name.c_str());
+        extractError();
+        return;
+    }
+
+    // Set as global variable
+    JSValue global = JS_GetGlobalObject(context_);
+    JS_SetPropertyStr(context_, global, name.c_str(), value);
+    JS_FreeValue(context_, global);
+
+    LOGI("Set global variable: %s", name.c_str());
+}
+
 } // namespace react
 } // namespace facebook
