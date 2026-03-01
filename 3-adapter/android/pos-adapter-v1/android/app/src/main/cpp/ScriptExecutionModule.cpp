@@ -31,5 +31,35 @@ ScriptExecutionModule::~ScriptExecutionModule() {
     LOGI("ScriptExecutionModule destroyed");
 }
 
+QuickJSEngine* ScriptExecutionModule::acquireEngine() {
+    std::lock_guard<std::mutex> lock(poolMutex_);
+
+    if (enginePool_.empty()) {
+        LOGE("Engine pool exhausted");
+        return nullptr;
+    }
+
+    // Take engine from pool
+    auto engine = std::move(enginePool_.back());
+    enginePool_.pop_back();
+
+    LOGI("Acquired engine, %zu remaining in pool", enginePool_.size());
+    return engine.release();
+}
+
+void ScriptExecutionModule::releaseEngine(QuickJSEngine* engine) {
+    if (!engine) return;
+
+    std::lock_guard<std::mutex> lock(poolMutex_);
+
+    // Reset engine for reuse
+    engine->reset();
+
+    // Return to pool
+    enginePool_.push_back(std::unique_ptr<QuickJSEngine>(engine));
+
+    LOGI("Released engine, %zu in pool", enginePool_.size());
+}
+
 } // namespace react
 } // namespace facebook
