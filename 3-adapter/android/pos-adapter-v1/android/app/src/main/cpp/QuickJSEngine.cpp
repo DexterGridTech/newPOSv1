@@ -157,5 +157,76 @@ std::vector<uint8_t> QuickJSEngine::compileScript(const std::string& script) {
     return bytecode;
 }
 
+bool QuickJSEngine::executeFromBytecode(const std::vector<uint8_t>& bytecode) {
+    if (!context_) {
+        LOGE("Context not created");
+        return false;
+    }
+
+    // Deserialize bytecode
+    JSValue func = JS_ReadObject(
+        context_,
+        bytecode.data(),
+        bytecode.size(),
+        JS_READ_OBJ_BYTECODE
+    );
+
+    if (JS_IsException(func)) {
+        LOGE("Failed to deserialize bytecode");
+        extractError();
+        return false;
+    }
+
+    // Execute function
+    JSValue result = JS_EvalFunction(context_, func);
+
+    if (JS_IsException(result)) {
+        LOGE("Script execution failed");
+        extractError();
+        JS_FreeValue(context_, result);
+        return false;
+    }
+
+    // Store result
+    if (!JS_IsUndefined(resultValue_)) {
+        JS_FreeValue(context_, resultValue_);
+    }
+    resultValue_ = result;
+
+    LOGI("Script executed successfully from bytecode");
+    return true;
+}
+
+bool QuickJSEngine::executeScript(const std::string& script) {
+    if (!context_) {
+        LOGE("Context not created");
+        return false;
+    }
+
+    // Execute script directly
+    JSValue result = JS_Eval(
+        context_,
+        script.c_str(),
+        script.length(),
+        "<script>",
+        JS_EVAL_TYPE_GLOBAL
+    );
+
+    if (JS_IsException(result)) {
+        LOGE("Script execution failed");
+        extractError();
+        return false;
+    }
+
+    // Store result
+    if (!JS_IsUndefined(resultValue_)) {
+        JS_FreeValue(context_, resultValue_);
+    }
+    resultValue_ = result;
+
+    LOGI("Script executed successfully");
+    return true;
+}
+
 } // namespace react
 } // namespace facebook
