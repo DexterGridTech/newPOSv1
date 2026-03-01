@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "codegen_app_build",
+		"source" : "/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v3/android/app/build/generated/source/codegen/jni"
+	}
+}

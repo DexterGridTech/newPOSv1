@@ -1,7 +1,8 @@
 #include <jni.h>
 #include <fbjni/fbjni.h>
 #include <ReactCommon/CallInvokerHolder.h>
-#include "ScriptExecutionModule.h"
+// ScriptExecution temporarily disabled for testing
+// #include "ScriptExecutionModule.h"
 
 using namespace facebook;
 

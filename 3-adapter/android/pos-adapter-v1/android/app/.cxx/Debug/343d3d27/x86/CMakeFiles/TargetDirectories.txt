@@ -1,4 +1,3 @@
-/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/.cxx/Debug/343d3d27/x86/CMakeFiles/scriptexecution_module.dir
 /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/.cxx/Debug/343d3d27/x86/CMakeFiles/pos-adapter-v1.dir
 /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/.cxx/Debug/343d3d27/x86/CMakeFiles/edit_cache.dir
 /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/.cxx/Debug/343d3d27/x86/CMakeFiles/rebuild_cache.dir

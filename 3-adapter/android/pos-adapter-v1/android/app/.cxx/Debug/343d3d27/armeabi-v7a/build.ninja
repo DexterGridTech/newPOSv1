@@ -41,156 +41,19 @@ include CMakeFiles/rules.ninja
 
 cmake_ninja_workdir = /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/.cxx/Debug/343d3d27/armeabi-v7a/
 # =============================================================================
-# Object build statements for STATIC_LIBRARY target scriptexecution_module
-
-
-#############################################
-# Order-only phony target for scriptexecution_module
-
-build cmake_object_order_depends_target_scriptexecution_module: phony || CMakeFiles/scriptexecution_module.dir
-
-build CMakeFiles/scriptexecution_module.dir/QuickJSEngine.cpp.o: CXX_COMPILER__scriptexecution_module_Debug /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/QuickJSEngine.cpp || cmake_object_order_depends_target_scriptexecution_module
-  DEP_FILE = CMakeFiles/scriptexecution_module.dir/QuickJSEngine.cpp.o.d
-  FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D__BIONIC_NO_PAGE_SIZE_MACRO -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -std=gnu++20
-  INCLUDES = -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/quickjs -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/jsi/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/reactnative/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/6cb94eb4240b26bae55579cb79d8f81a/transformed/fbjni-0.7.0/prefab/modules/fbjni/include
-  OBJECT_DIR = CMakeFiles/scriptexecution_module.dir
-  OBJECT_FILE_DIR = CMakeFiles/scriptexecution_module.dir
-
-build CMakeFiles/scriptexecution_module.dir/ScriptExecutionModule.cpp.o: CXX_COMPILER__scriptexecution_module_Debug /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/ScriptExecutionModule.cpp || cmake_object_order_depends_target_scriptexecution_module
-  DEP_FILE = CMakeFiles/scriptexecution_module.dir/ScriptExecutionModule.cpp.o.d
-  FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D__BIONIC_NO_PAGE_SIZE_MACRO -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -std=gnu++20
-  INCLUDES = -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/quickjs -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/jsi/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/reactnative/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/6cb94eb4240b26bae55579cb79d8f81a/transformed/fbjni-0.7.0/prefab/modules/fbjni/include
-  OBJECT_DIR = CMakeFiles/scriptexecution_module.dir
-  OBJECT_FILE_DIR = CMakeFiles/scriptexecution_module.dir
-
-build CMakeFiles/scriptexecution_module.dir/ScriptExecutionModuleJSI.cpp.o: CXX_COMPILER__scriptexecution_module_Debug /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/ScriptExecutionModuleJSI.cpp || cmake_object_order_depends_target_scriptexecution_module
-  DEP_FILE = CMakeFiles/scriptexecution_module.dir/ScriptExecutionModuleJSI.cpp.o.d
-  FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D__BIONIC_NO_PAGE_SIZE_MACRO -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -std=gnu++20
-  INCLUDES = -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/quickjs -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/jsi/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/reactnative/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/6cb94eb4240b26bae55579cb79d8f81a/transformed/fbjni-0.7.0/prefab/modules/fbjni/include
-  OBJECT_DIR = CMakeFiles/scriptexecution_module.dir
-  OBJECT_FILE_DIR = CMakeFiles/scriptexecution_module.dir
-
-build CMakeFiles/scriptexecution_module.dir/quickjs/api-test.c.o: C_COMPILER__scriptexecution_module_Debug /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/quickjs/api-test.c || cmake_object_order_depends_target_scriptexecution_module
-  DEP_FILE = CMakeFiles/scriptexecution_module.dir/quickjs/api-test.c.o.d
-  FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D__BIONIC_NO_PAGE_SIZE_MACRO -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -fno-limit-debug-info  -fPIC
-  INCLUDES = -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/quickjs -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/jsi/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/reactnative/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/6cb94eb4240b26bae55579cb79d8f81a/transformed/fbjni-0.7.0/prefab/modules/fbjni/include
-  OBJECT_DIR = CMakeFiles/scriptexecution_module.dir
-  OBJECT_FILE_DIR = CMakeFiles/scriptexecution_module.dir/quickjs
-
-build CMakeFiles/scriptexecution_module.dir/quickjs/ctest.c.o: C_COMPILER__scriptexecution_module_Debug /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/quickjs/ctest.c || cmake_object_order_depends_target_scriptexecution_module
-  DEP_FILE = CMakeFiles/scriptexecution_module.dir/quickjs/ctest.c.o.d
-  FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D__BIONIC_NO_PAGE_SIZE_MACRO -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -fno-limit-debug-info  -fPIC
-  INCLUDES = -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/quickjs -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/jsi/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/reactnative/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/6cb94eb4240b26bae55579cb79d8f81a/transformed/fbjni-0.7.0/prefab/modules/fbjni/include
-  OBJECT_DIR = CMakeFiles/scriptexecution_module.dir
-  OBJECT_FILE_DIR = CMakeFiles/scriptexecution_module.dir/quickjs
-
-build CMakeFiles/scriptexecution_module.dir/quickjs/dtoa.c.o: C_COMPILER__scriptexecution_module_Debug /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/quickjs/dtoa.c || cmake_object_order_depends_target_scriptexecution_module
-  DEP_FILE = CMakeFiles/scriptexecution_module.dir/quickjs/dtoa.c.o.d
-  FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D__BIONIC_NO_PAGE_SIZE_MACRO -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -fno-limit-debug-info  -fPIC
-  INCLUDES = -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/quickjs -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/jsi/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/reactnative/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/6cb94eb4240b26bae55579cb79d8f81a/transformed/fbjni-0.7.0/prefab/modules/fbjni/include
-  OBJECT_DIR = CMakeFiles/scriptexecution_module.dir
-  OBJECT_FILE_DIR = CMakeFiles/scriptexecution_module.dir/quickjs
-
-build CMakeFiles/scriptexecution_module.dir/quickjs/fuzz.c.o: C_COMPILER__scriptexecution_module_Debug /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/quickjs/fuzz.c || cmake_object_order_depends_target_scriptexecution_module
-  DEP_FILE = CMakeFiles/scriptexecution_module.dir/quickjs/fuzz.c.o.d
-  FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D__BIONIC_NO_PAGE_SIZE_MACRO -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -fno-limit-debug-info  -fPIC
-  INCLUDES = -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/quickjs -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/jsi/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/reactnative/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/6cb94eb4240b26bae55579cb79d8f81a/transformed/fbjni-0.7.0/prefab/modules/fbjni/include
-  OBJECT_DIR = CMakeFiles/scriptexecution_module.dir
-  OBJECT_FILE_DIR = CMakeFiles/scriptexecution_module.dir/quickjs
-
-build CMakeFiles/scriptexecution_module.dir/quickjs/libregexp.c.o: C_COMPILER__scriptexecution_module_Debug /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/quickjs/libregexp.c || cmake_object_order_depends_target_scriptexecution_module
-  DEP_FILE = CMakeFiles/scriptexecution_module.dir/quickjs/libregexp.c.o.d
-  FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D__BIONIC_NO_PAGE_SIZE_MACRO -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -fno-limit-debug-info  -fPIC
-  INCLUDES = -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/quickjs -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/jsi/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/reactnative/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/6cb94eb4240b26bae55579cb79d8f81a/transformed/fbjni-0.7.0/prefab/modules/fbjni/include
-  OBJECT_DIR = CMakeFiles/scriptexecution_module.dir
-  OBJECT_FILE_DIR = CMakeFiles/scriptexecution_module.dir/quickjs
-
-build CMakeFiles/scriptexecution_module.dir/quickjs/libunicode.c.o: C_COMPILER__scriptexecution_module_Debug /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/quickjs/libunicode.c || cmake_object_order_depends_target_scriptexecution_module
-  DEP_FILE = CMakeFiles/scriptexecution_module.dir/quickjs/libunicode.c.o.d
-  FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D__BIONIC_NO_PAGE_SIZE_MACRO -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -fno-limit-debug-info  -fPIC
-  INCLUDES = -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/quickjs -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/jsi/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/reactnative/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/6cb94eb4240b26bae55579cb79d8f81a/transformed/fbjni-0.7.0/prefab/modules/fbjni/include
-  OBJECT_DIR = CMakeFiles/scriptexecution_module.dir
-  OBJECT_FILE_DIR = CMakeFiles/scriptexecution_module.dir/quickjs
-
-build CMakeFiles/scriptexecution_module.dir/quickjs/qjs-wasi-reactor.c.o: C_COMPILER__scriptexecution_module_Debug /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/quickjs/qjs-wasi-reactor.c || cmake_object_order_depends_target_scriptexecution_module
-  DEP_FILE = CMakeFiles/scriptexecution_module.dir/quickjs/qjs-wasi-reactor.c.o.d
-  FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D__BIONIC_NO_PAGE_SIZE_MACRO -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -fno-limit-debug-info  -fPIC
-  INCLUDES = -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/quickjs -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/jsi/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/reactnative/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/6cb94eb4240b26bae55579cb79d8f81a/transformed/fbjni-0.7.0/prefab/modules/fbjni/include
-  OBJECT_DIR = CMakeFiles/scriptexecution_module.dir
-  OBJECT_FILE_DIR = CMakeFiles/scriptexecution_module.dir/quickjs
-
-build CMakeFiles/scriptexecution_module.dir/quickjs/qjs.c.o: C_COMPILER__scriptexecution_module_Debug /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/quickjs/qjs.c || cmake_object_order_depends_target_scriptexecution_module
-  DEP_FILE = CMakeFiles/scriptexecution_module.dir/quickjs/qjs.c.o.d
-  FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D__BIONIC_NO_PAGE_SIZE_MACRO -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -fno-limit-debug-info  -fPIC
-  INCLUDES = -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/quickjs -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/jsi/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/reactnative/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/6cb94eb4240b26bae55579cb79d8f81a/transformed/fbjni-0.7.0/prefab/modules/fbjni/include
-  OBJECT_DIR = CMakeFiles/scriptexecution_module.dir
-  OBJECT_FILE_DIR = CMakeFiles/scriptexecution_module.dir/quickjs
-
-build CMakeFiles/scriptexecution_module.dir/quickjs/qjsc.c.o: C_COMPILER__scriptexecution_module_Debug /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/quickjs/qjsc.c || cmake_object_order_depends_target_scriptexecution_module
-  DEP_FILE = CMakeFiles/scriptexecution_module.dir/quickjs/qjsc.c.o.d
-  FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D__BIONIC_NO_PAGE_SIZE_MACRO -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -fno-limit-debug-info  -fPIC
-  INCLUDES = -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/quickjs -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/jsi/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/reactnative/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/6cb94eb4240b26bae55579cb79d8f81a/transformed/fbjni-0.7.0/prefab/modules/fbjni/include
-  OBJECT_DIR = CMakeFiles/scriptexecution_module.dir
-  OBJECT_FILE_DIR = CMakeFiles/scriptexecution_module.dir/quickjs
-
-build CMakeFiles/scriptexecution_module.dir/quickjs/quickjs-libc.c.o: C_COMPILER__scriptexecution_module_Debug /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/quickjs/quickjs-libc.c || cmake_object_order_depends_target_scriptexecution_module
-  DEP_FILE = CMakeFiles/scriptexecution_module.dir/quickjs/quickjs-libc.c.o.d
-  FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D__BIONIC_NO_PAGE_SIZE_MACRO -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -fno-limit-debug-info  -fPIC
-  INCLUDES = -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/quickjs -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/jsi/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/reactnative/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/6cb94eb4240b26bae55579cb79d8f81a/transformed/fbjni-0.7.0/prefab/modules/fbjni/include
-  OBJECT_DIR = CMakeFiles/scriptexecution_module.dir
-  OBJECT_FILE_DIR = CMakeFiles/scriptexecution_module.dir/quickjs
-
-build CMakeFiles/scriptexecution_module.dir/quickjs/quickjs.c.o: C_COMPILER__scriptexecution_module_Debug /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/quickjs/quickjs.c || cmake_object_order_depends_target_scriptexecution_module
-  DEP_FILE = CMakeFiles/scriptexecution_module.dir/quickjs/quickjs.c.o.d
-  FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D__BIONIC_NO_PAGE_SIZE_MACRO -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -fno-limit-debug-info  -fPIC
-  INCLUDES = -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/quickjs -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/jsi/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/reactnative/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/6cb94eb4240b26bae55579cb79d8f81a/transformed/fbjni-0.7.0/prefab/modules/fbjni/include
-  OBJECT_DIR = CMakeFiles/scriptexecution_module.dir
-  OBJECT_FILE_DIR = CMakeFiles/scriptexecution_module.dir/quickjs
-
-build CMakeFiles/scriptexecution_module.dir/quickjs/run-test262.c.o: C_COMPILER__scriptexecution_module_Debug /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/quickjs/run-test262.c || cmake_object_order_depends_target_scriptexecution_module
-  DEP_FILE = CMakeFiles/scriptexecution_module.dir/quickjs/run-test262.c.o.d
-  FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D__BIONIC_NO_PAGE_SIZE_MACRO -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -fno-limit-debug-info  -fPIC
-  INCLUDES = -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/quickjs -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/jsi/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/reactnative/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/6cb94eb4240b26bae55579cb79d8f81a/transformed/fbjni-0.7.0/prefab/modules/fbjni/include
-  OBJECT_DIR = CMakeFiles/scriptexecution_module.dir
-  OBJECT_FILE_DIR = CMakeFiles/scriptexecution_module.dir/quickjs
-
-build CMakeFiles/scriptexecution_module.dir/quickjs/unicode_gen.c.o: C_COMPILER__scriptexecution_module_Debug /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/quickjs/unicode_gen.c || cmake_object_order_depends_target_scriptexecution_module
-  DEP_FILE = CMakeFiles/scriptexecution_module.dir/quickjs/unicode_gen.c.o.d
-  FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D__BIONIC_NO_PAGE_SIZE_MACRO -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -fno-limit-debug-info  -fPIC
-  INCLUDES = -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/quickjs -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/jsi/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/reactnative/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/6cb94eb4240b26bae55579cb79d8f81a/transformed/fbjni-0.7.0/prefab/modules/fbjni/include
-  OBJECT_DIR = CMakeFiles/scriptexecution_module.dir
-  OBJECT_FILE_DIR = CMakeFiles/scriptexecution_module.dir/quickjs
-
-
-# =============================================================================
-# Link build statements for STATIC_LIBRARY target scriptexecution_module
-
-
-#############################################
-# Link the static library libscriptexecution_module.a
-
-build libscriptexecution_module.a: CXX_STATIC_LIBRARY_LINKER__scriptexecution_module_Debug CMakeFiles/scriptexecution_module.dir/QuickJSEngine.cpp.o CMakeFiles/scriptexecution_module.dir/ScriptExecutionModule.cpp.o CMakeFiles/scriptexecution_module.dir/ScriptExecutionModuleJSI.cpp.o CMakeFiles/scriptexecution_module.dir/quickjs/api-test.c.o CMakeFiles/scriptexecution_module.dir/quickjs/ctest.c.o CMakeFiles/scriptexecution_module.dir/quickjs/dtoa.c.o CMakeFiles/scriptexecution_module.dir/quickjs/fuzz.c.o CMakeFiles/scriptexecution_module.dir/quickjs/libregexp.c.o CMakeFiles/scriptexecution_module.dir/quickjs/libunicode.c.o CMakeFiles/scriptexecution_module.dir/quickjs/qjs-wasi-reactor.c.o CMakeFiles/scriptexecution_module.dir/quickjs/qjs.c.o CMakeFiles/scriptexecution_module.dir/quickjs/qjsc.c.o CMakeFiles/scriptexecution_module.dir/quickjs/quickjs-libc.c.o CMakeFiles/scriptexecution_module.dir/quickjs/quickjs.c.o CMakeFiles/scriptexecution_module.dir/quickjs/run-test262.c.o CMakeFiles/scriptexecution_module.dir/quickjs/unicode_gen.c.o || /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/jsi/libs/android.armeabi-v7a/libjsi.so /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/reactnative/libs/android.armeabi-v7a/libreactnative.so /Users/dexter/.gradle/caches/9.0.0/transforms/6cb94eb4240b26bae55579cb79d8f81a/transformed/fbjni-0.7.0/prefab/modules/fbjni/libs/android.armeabi-v7a/libfbjni.so
-  LANGUAGE_COMPILE_FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D__BIONIC_NO_PAGE_SIZE_MACRO -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security   -fno-limit-debug-info
-  OBJECT_DIR = CMakeFiles/scriptexecution_module.dir
-  POST_BUILD = :
-  PRE_LINK = :
-  TARGET_FILE = libscriptexecution_module.a
-  TARGET_PDB = scriptexecution_module.a.dbg
-
-# =============================================================================
 # Object build statements for SHARED_LIBRARY target pos-adapter-v1
 
 
 #############################################
 # Order-only phony target for pos-adapter-v1
 
-build cmake_object_order_depends_target_pos-adapter-v1: phony || cmake_object_order_depends_target_scriptexecution_module
+build cmake_object_order_depends_target_pos-adapter-v1: phony || CMakeFiles/pos-adapter-v1.dir
 
 build CMakeFiles/pos-adapter-v1.dir/cpp-adapter.cpp.o: CXX_COMPILER__pos-adapter-v1_Debug /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/cpp-adapter.cpp || cmake_object_order_depends_target_pos-adapter-v1
   DEFINES = -Dpos_adapter_v1_EXPORTS
   DEP_FILE = CMakeFiles/pos-adapter-v1.dir/cpp-adapter.cpp.o.d
   FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D__BIONIC_NO_PAGE_SIZE_MACRO -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -std=gnu++20
-  INCLUDES = -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp -I/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp/quickjs -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/jsi/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/reactnative/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/6cb94eb4240b26bae55579cb79d8f81a/transformed/fbjni-0.7.0/prefab/modules/fbjni/include
+  INCLUDES = -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/jsi/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/reactnative/include -isystem /Users/dexter/.gradle/caches/9.0.0/transforms/6cb94eb4240b26bae55579cb79d8f81a/transformed/fbjni-0.7.0/prefab/modules/fbjni/include
   OBJECT_DIR = CMakeFiles/pos-adapter-v1.dir
   OBJECT_FILE_DIR = CMakeFiles/pos-adapter-v1.dir
 
@@ -202,10 +65,10 @@ build CMakeFiles/pos-adapter-v1.dir/cpp-adapter.cpp.o: CXX_COMPILER__pos-adapter
 #############################################
 # Link the shared library /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/build/intermediates/cxx/Debug/343d3d27/obj/armeabi-v7a/libpos-adapter-v1.so
 
-build /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/build/intermediates/cxx/Debug/343d3d27/obj/armeabi-v7a/libpos-adapter-v1.so: CXX_SHARED_LIBRARY_LINKER__pos-adapter-v1_Debug CMakeFiles/pos-adapter-v1.dir/cpp-adapter.cpp.o | libscriptexecution_module.a /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/jsi/libs/android.armeabi-v7a/libjsi.so /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/reactnative/libs/android.armeabi-v7a/libreactnative.so /Users/dexter/.gradle/caches/9.0.0/transforms/6cb94eb4240b26bae55579cb79d8f81a/transformed/fbjni-0.7.0/prefab/modules/fbjni/libs/android.armeabi-v7a/libfbjni.so || libscriptexecution_module.a
+build /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/build/intermediates/cxx/Debug/343d3d27/obj/armeabi-v7a/libpos-adapter-v1.so: CXX_SHARED_LIBRARY_LINKER__pos-adapter-v1_Debug CMakeFiles/pos-adapter-v1.dir/cpp-adapter.cpp.o | /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/jsi/libs/android.armeabi-v7a/libjsi.so /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/reactnative/libs/android.armeabi-v7a/libreactnative.so /Users/dexter/.gradle/caches/9.0.0/transforms/6cb94eb4240b26bae55579cb79d8f81a/transformed/fbjni-0.7.0/prefab/modules/fbjni/libs/android.armeabi-v7a/libfbjni.so
   LANGUAGE_COMPILE_FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D__BIONIC_NO_PAGE_SIZE_MACRO -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security   -fno-limit-debug-info
   LINK_FLAGS = -Wl,--build-id=sha1 -Wl,--no-rosegment -Wl,--no-undefined-version -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments
-  LINK_LIBRARIES = libscriptexecution_module.a  /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/jsi/libs/android.armeabi-v7a/libjsi.so  /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/reactnative/libs/android.armeabi-v7a/libreactnative.so  /Users/dexter/.gradle/caches/9.0.0/transforms/6cb94eb4240b26bae55579cb79d8f81a/transformed/fbjni-0.7.0/prefab/modules/fbjni/libs/android.armeabi-v7a/libfbjni.so  -landroid  -llog  -latomic -lm
+  LINK_LIBRARIES = /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/jsi/libs/android.armeabi-v7a/libjsi.so  /Users/dexter/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/reactnative/libs/android.armeabi-v7a/libreactnative.so  /Users/dexter/.gradle/caches/9.0.0/transforms/6cb94eb4240b26bae55579cb79d8f81a/transformed/fbjni-0.7.0/prefab/modules/fbjni/libs/android.armeabi-v7a/libfbjni.so  -landroid  -llog  -latomic -lm
   OBJECT_DIR = CMakeFiles/pos-adapter-v1.dir
   POST_BUILD = :
   PRE_LINK = :
@@ -245,8 +108,6 @@ build libpos-adapter-v1.so: phony /Users/dexter/Documents/workspace/idea/newPOSv
 
 build pos-adapter-v1: phony /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/build/intermediates/cxx/Debug/343d3d27/obj/armeabi-v7a/libpos-adapter-v1.so
 
-build scriptexecution_module: phony libscriptexecution_module.a
-
 # =============================================================================
 # Folder targets.
 
@@ -255,7 +116,7 @@ build scriptexecution_module: phony libscriptexecution_module.a
 #############################################
 # Folder: /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/.cxx/Debug/343d3d27/armeabi-v7a
 
-build all: phony libscriptexecution_module.a /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/build/intermediates/cxx/Debug/343d3d27/obj/armeabi-v7a/libpos-adapter-v1.so
+build all: phony /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/build/intermediates/cxx/Debug/343d3d27/obj/armeabi-v7a/libpos-adapter-v1.so
 
 # =============================================================================
 # Built-in targets

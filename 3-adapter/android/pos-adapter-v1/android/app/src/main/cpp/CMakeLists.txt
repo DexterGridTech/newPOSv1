@@ -23,43 +23,44 @@ if(NOT TARGET fbjni::fbjni)
     find_package(fbjni REQUIRED CONFIG)
 endif()
 
+# ScriptExecution module temporarily disabled for testing
 # Find OpenSSL (optional, will use alternative if not found)
-find_library(CRYPTO_LIB crypto)
+# find_library(CRYPTO_LIB crypto)
 
 # Add QuickJS source files
-file(GLOB QUICKJS_SRC
-    "${CMAKE_CURRENT_SOURCE_DIR}/quickjs/*.c"
-)
+# file(GLOB QUICKJS_SRC
+#     "${CMAKE_CURRENT_SOURCE_DIR}/quickjs/*.c"
+# )
 
 # Add ScriptExecution module as a reusable library
-add_library(scriptexecution_module STATIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/QuickJSEngine.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/ScriptExecutionModule.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/ScriptExecutionModuleJSI.cpp
-    ${QUICKJS_SRC}
-)
+# add_library(scriptexecution_module STATIC
+#     ${CMAKE_CURRENT_SOURCE_DIR}/QuickJSEngine.cpp
+#     ${CMAKE_CURRENT_SOURCE_DIR}/ScriptExecutionModule.cpp
+#     ${CMAKE_CURRENT_SOURCE_DIR}/ScriptExecutionModuleJSI.cpp
+#     ${QUICKJS_SRC}
+# )
 
 # Set an alias for easier reference
-add_library(impos2::scriptexecution ALIAS scriptexecution_module)
+# add_library(impos2::scriptexecution ALIAS scriptexecution_module)
 
 # Public include directories (available to consumers)
-target_include_directories(scriptexecution_module PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/quickjs>
-    $<INSTALL_INTERFACE:include>
-)
+# target_include_directories(scriptexecution_module PUBLIC
+#     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+#     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/quickjs>
+#     $<INSTALL_INTERFACE:include>
+# )
 
-target_link_libraries(scriptexecution_module PUBLIC
-    ReactAndroid::jsi
-    ReactAndroid::reactnative
-    fbjni::fbjni
-    log
-)
+# target_link_libraries(scriptexecution_module PUBLIC
+#     ReactAndroid::jsi
+#     ReactAndroid::reactnative
+#     fbjni::fbjni
+#     log
+# )
 
 # Link OpenSSL if available
-if(CRYPTO_LIB)
-    target_link_libraries(scriptexecution_module PRIVATE ${CRYPTO_LIB})
-endif()
+# if(CRYPTO_LIB)
+#     target_link_libraries(scriptexecution_module PRIVATE ${CRYPTO_LIB})
+# endif()
 
 # Only create the main library if this is the main project
 if(NOT IMPOS2_ADAPTER_AS_SUBPROJECT)
@@ -69,7 +70,7 @@ if(NOT IMPOS2_ADAPTER_AS_SUBPROJECT)
     )
 
     target_link_libraries(${CMAKE_PROJECT_NAME}
-        scriptexecution_module
+        # scriptexecution_module  # temporarily disabled
         ReactAndroid::jsi
         ReactAndroid::reactnative
         fbjni::fbjni
@@ -79,12 +80,12 @@ if(NOT IMPOS2_ADAPTER_AS_SUBPROJECT)
 endif()
 
 # Export targets for use by other projects
-if(IMPOS2_ADAPTER_AS_SUBPROJECT)
-    # Make scriptexecution_module available to parent project
-    set(SCRIPTEXECUTION_MODULE_TARGET scriptexecution_module PARENT_SCOPE)
-    set(SCRIPTEXECUTION_MODULE_INCLUDE_DIRS
-        ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_CURRENT_SOURCE_DIR}/quickjs
-        PARENT_SCOPE
-    )
-endif()
+# if(IMPOS2_ADAPTER_AS_SUBPROJECT)
+#     # Make scriptexecution_module available to parent project
+#     set(SCRIPTEXECUTION_MODULE_TARGET scriptexecution_module PARENT_SCOPE)
+#     set(SCRIPTEXECUTION_MODULE_INCLUDE_DIRS
+#         ${CMAKE_CURRENT_SOURCE_DIR}
+#         ${CMAKE_CURRENT_SOURCE_DIR}/quickjs
+#         PARENT_SCOPE
+#     )
+# endif()

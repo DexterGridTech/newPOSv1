@@ -1,0 +1,2 @@
+/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v3/android/app/build/generated/source/codegen/jni/CMakeLists.txt
+/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/react-native/ReactAndroid/cmake-utils/default-app-setup/CMakeLists.txt

@@ -1,0 +1,37 @@
+export const C = {
+    // 背景
+    bgPage:     '#F8FAFC',
+    bgCard:     '#FFFFFF',
+    bgSub:      '#F1F5F9',
+    bgInput:    '#F8FAFC',
+
+    // 边框
+    border:     '#E2E8F0',
+
+    // 文字
+    textPrimary:   '#0F172A',
+    textSecondary: '#64748B',
+    textMuted:     '#94A3B8',
+    textInverse:   '#FFFFFF',
+
+    // 强调
+    accent:     '#16A34A',
+    accentBg:   '#DCFCE7',
+    accentText: '#16A34A',
+
+    // 状态
+    danger:     '#DC2626',
+    dangerBg:   '#FEE2E2',
+    warn:       '#D97706',
+    warnBg:     '#FEF3C7',
+    info:       '#2563EB',
+    infoBg:     '#DBEAFE',
+    success:    '#22C55E',
+    successBg:  '#DCFCE7',
+
+    // 进度条
+    progressBg: '#E2E8F0',
+    progressSuccess: '#22C55E',
+    progressWarn: '#F59E0B',
+    progressDanger: '#EF4444',
+}
