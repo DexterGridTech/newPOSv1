@@ -76,5 +76,35 @@ std::string ScriptExecutionModule::computeScriptHash(const std::string& script) 
     return ss.str();
 }
 
+void ScriptExecutionModule::evictLRUCache() {
+    if (bytecodeCache_.size() < MAX_CACHE_SIZE) {
+        return;
+    }
+
+    // Find LRU entry
+    std::string lruKey;
+    uint64_t oldestTime = UINT64_MAX;
+
+    for (const auto& [key, entry] : bytecodeCache_) {
+        if (entry.lastUsed < oldestTime) {
+            oldestTime = entry.lastUsed;
+            lruKey = key;
+        }
+    }
+
+    if (!lruKey.empty()) {
+        bytecodeCache_.erase(lruKey);
+        LOGI("Evicted LRU cache entry: %s", lruKey.substr(0, 8).c_str());
+    }
+}
+
+void ScriptExecutionModule::updateCacheEntry(const std::string& hash) {
+    auto it = bytecodeCache_.find(hash);
+    if (it != bytecodeCache_.end()) {
+        it->second.lastUsed = std::chrono::steady_clock::now().time_since_epoch().count();
+        it->second.useCount++;
+    }
+}
+
 } // namespace react
 } // namespace facebook
