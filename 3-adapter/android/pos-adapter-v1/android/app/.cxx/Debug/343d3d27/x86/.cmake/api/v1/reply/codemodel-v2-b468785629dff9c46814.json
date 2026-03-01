@@ -41,14 +41,14 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "pos-adapter-v1::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-pos-adapter-v1-Debug-3df84558c5b88b8476c8.json",
+					"jsonFile" : "target-pos-adapter-v1-Debug-19b7f8efc9e2b1eeb8f8.json",
 					"name" : "pos-adapter-v1",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "scriptexecution_module::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-scriptexecution_module-Debug-e4c6d99faac7a6c05df7.json",
+					"jsonFile" : "target-scriptexecution_module-Debug-00417f6b3c04e2cbe6b6.json",
 					"name" : "scriptexecution_module",
 					"projectIndex" : 0
 				}

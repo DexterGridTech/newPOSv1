@@ -41,14 +41,14 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "pos-adapter-v1::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-pos-adapter-v1-Debug-68c2142089cd328be336.json",
+					"jsonFile" : "target-pos-adapter-v1-Debug-8cc4d2f7305dbb1554f7.json",
 					"name" : "pos-adapter-v1",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "scriptexecution_module::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-scriptexecution_module-Debug-531cd009c32844e7aa11.json",
+					"jsonFile" : "target-scriptexecution_module-Debug-00417f6b3c04e2cbe6b6.json",
 					"name" : "scriptexecution_module",
 					"projectIndex" : 0
 				}
@@ -58,7 +58,7 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/.cxx/Debug/343d3d27/armeabi-v7a",
+		"build" : "/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/.cxx/Debug/343d3d27/x86_64",
 		"source" : "/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v1/android/app/src/main/cpp"
 	},
 	"version" : 
