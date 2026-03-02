@@ -14,13 +14,14 @@
 8. JS 代码使用 TS 开发，强类型管控
 9. 创建、修改 UI 界面时，所使用的组件、属性等，必须要考虑 react native 裸工程是否 100% 兼容
 10. 所有问题，改完之后告诉我就可以了，不需要启动程序验证
-11. 使用 ui-ux-pro-max-skill 来做 UI 设计
-12. 如果有文档输出，请输出到根目录 ai-result 中
-13. adb 的路径在`/Users/dexter/Library/Android/sdk/platform-tools/adb`
-14. 使用 TurboModule 作为 JS 代码和原生代码之间的通信通道
-15. 使用 Hermes 作为 JS 代码的引擎
-16. 2-ui、3-adapter 目录中的 package.json 要注意，每个包中都有 dev 目录用于开发调试，和 src 目录用于导出给其他包依赖。本包程序单独启动时，不启动 src 的 index。同时确保作为依赖导出的时候，dev 目录不会被导出
-17. 任何配置文件中不允许出现绝对路径
+11. 开发过程中，claude只负责代码修改，不负责程序的安装和启动，用户手动安装启动程序并把日志结果告诉Claude
+12. 使用 ui-ux-pro-max-skill 来做 UI 设计
+13. 如果有文档输出，请输出到根目录 ai-result 中
+14. adb 的路径在`/Users/dexter/Library/Android/sdk/platform-tools/adb`
+15. 使用 TurboModule 作为 JS 代码和原生代码之间的通信通道
+16. 使用 Hermes 作为 JS 代码的引擎
+17. 2-ui、3-adapter 目录中的 package.json 要注意，每个包中都有 dev 目录用于开发调试，和 src 目录用于导出给其他包依赖。本包程序单独启动时，不启动 src 的 index。同时确保作为依赖导出的时候，dev 目录不会被导出
+18. 任何配置文件中不允许出现绝对路径
 
 # 背景
 

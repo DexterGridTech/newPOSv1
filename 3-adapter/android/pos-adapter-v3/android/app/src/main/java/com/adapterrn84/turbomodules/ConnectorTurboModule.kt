@@ -105,6 +105,12 @@ class ConnectorTurboModule(reactContext: ReactApplicationContext) :
         super.invalidate()
     }
 
+    /**
+     * 获取 ConnectorManager 实例
+     * 用于 MainActivity 访问 EventDispatcher 和 PermissionCoordinator
+     */
+    fun getConnectorManager(): ConnectorManager = connectorManager
+
     private fun parseParams(json: String): Map<String, String> {
         val result = mutableMapOf<String, String>()
         try {
