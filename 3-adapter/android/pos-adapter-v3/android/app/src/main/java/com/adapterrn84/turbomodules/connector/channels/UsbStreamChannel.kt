@@ -34,27 +34,15 @@ class UsbStreamChannel(
         scope.launch {
             try {
                 val usbManager = context.getSystemService(Context.USB_SERVICE) as UsbManager
-                
-                // Parse target
-                val parts = descriptor.target.split(":")
-                if (parts.size != 2) {
-                    onError("Invalid USB target format. Expected: vendorId:productId")
-                    return@launch
-                }
-                
-                val vendorId = parts[0].toInt()
-                val productId = parts[1].toInt()
-                
-                // Find device
-                val device = usbManager.deviceList.values.find {
-                    it.vendorId == vendorId && it.productId == productId
-                }
-                
+
+                // Get device by name (target is device name like "/dev/bus/usb/001/002")
+                val device = usbManager.deviceList[descriptor.target]
+
                 if (device == null) {
-                    onError("USB device not found: $vendorId:$productId")
+                    onError("USB device not found: ${descriptor.target}")
                     return@launch
                 }
-                
+
                 // Request permission if needed
                 if (!usbManager.hasPermission(device)) {
                     val permissionGranted = requestUsbPermission(usbManager, device, 5000)

@@ -4,6 +4,7 @@ import com.adapterrn84.NativeConnectorTurboModuleSpec
 import com.adapterrn84.turbomodules.connector.*
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.bridge.Arguments
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -14,10 +15,22 @@ class ConnectorTurboModule(reactContext: ReactApplicationContext) :
 
     companion object {
         const val NAME = "ConnectorTurboModule"
+
+        // 静态持有实例，供 MainActivity 访问
+        @Volatile
+        private var instance: ConnectorTurboModule? = null
+
+        fun getInstance(): ConnectorTurboModule? = instance
     }
 
     private val connectorManager = ConnectorManager(reactApplicationContext)
     private val moduleScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+
+    init {
+        // 注册实例到静态持有者
+        instance = this
+        android.util.Log.d(NAME, "ConnectorTurboModule instance registered")
+    }
 
     override fun getName(): String = NAME
 
@@ -85,9 +98,11 @@ class ConnectorTurboModule(reactContext: ReactApplicationContext) :
             try {
                 val channelType = ChannelType.fromString(type)
                 val targets = connectorManager.getAvailableTargets(channelType)
-                promise.resolve(targets.toTypedArray())
+                val array = Arguments.createArray()
+                targets.forEach { array.pushString(it) }
+                promise.resolve(array)
             } catch (e: Exception) {
-                promise.resolve(emptyArray<String>())
+                promise.resolve(Arguments.createArray())
             }
         }
     }
@@ -101,6 +116,9 @@ class ConnectorTurboModule(reactContext: ReactApplicationContext) :
     }
 
     override fun invalidate() {
+        // 清理实例引用
+        instance = null
+        android.util.Log.d(NAME, "ConnectorTurboModule instance unregistered")
         connectorManager.cleanup()
         super.invalidate()
     }
@@ -110,6 +128,25 @@ class ConnectorTurboModule(reactContext: ReactApplicationContext) :
      * 用于 MainActivity 访问 EventDispatcher 和 PermissionCoordinator
      */
     fun getConnectorManager(): ConnectorManager = connectorManager
+
+    /**
+     * 处理按键事件（用于 HID 通道）
+     * @return true 表示事件已被消费，不应传递给系统；false 表示不处理，应传递给系统
+     */
+    fun onKeyEvent(event: android.view.KeyEvent): Boolean {
+        val activeHidChannels = connectorManager.getChannelRegistry().getActiveHidChannels()
+        android.util.Log.d("ConnectorTurboModule", "onKeyEvent: activeHidChannels.size=${activeHidChannels.size}")
+        if (activeHidChannels.isEmpty()) return false
+
+        var consumed = false
+        activeHidChannels.values.forEach { ch ->
+            val result = ch.onKeyEvent(event)
+            android.util.Log.d("ConnectorTurboModule", "channel.onKeyEvent returned $result")
+            if (result) consumed = true
+        }
+        android.util.Log.d("ConnectorTurboModule", "final consumed=$consumed")
+        return consumed
+    }
 
     private fun parseParams(json: String): Map<String, String> {
         val result = mutableMapOf<String, String>()

@@ -1,12 +1,15 @@
 import React, {useState} from 'react'
-import {Pressable, ScrollView, StyleSheet, Text, View} from 'react-native'
+import {TouchableOpacity, ScrollView, StyleSheet, Text, View} from 'react-native'
 import DeviceScreen from './DeviceScreen'
 import LoggerScreen from './LoggerScreen'
 import {StateStorageScreen} from './StateStorageScreen'
 import ScriptExecutionScreen from './ScriptExecutionScreen'
+import ExternalConnectorScreen from './ExternalConnectorScreen'
+import LocalWebServerScreen from './LocalWebServerScreen'
+import TaskTestScreen from './TaskTestScreen'
 import {C} from '../theme'
 
-type MenuKey = 'device' | 'logger' | 'storage' | 'script'
+type MenuKey = 'device' | 'logger' | 'storage' | 'script' | 'connector' | 'webserver' | 'task'
 
 interface MenuItem { key: MenuKey; label: string; tag: string }
 
@@ -15,6 +18,9 @@ const MENU: MenuItem[] = [
     {key: 'logger', label: 'Logger', tag: 'LOG'},
     {key: 'storage', label: 'Storage', tag: 'STO'},
     {key: 'script', label: 'Script', tag: 'SCR'},
+    {key: 'connector', label: 'Connector', tag: 'CON'},
+    {key: 'webserver', label: 'WebServer', tag: 'WEB'},
+    {key: 'task', label: 'TaskTest', tag: 'TSK'},
 ]
 
 const SCREENS: Record<MenuKey, React.ComponentType> = {
@@ -22,6 +28,9 @@ const SCREENS: Record<MenuKey, React.ComponentType> = {
     logger: LoggerScreen,
     storage: StateStorageScreen,
     script: ScriptExecutionScreen,
+    connector: ExternalConnectorScreen,
+    webserver: LocalWebServerScreen,
+    task: TaskTestScreen,
 }
 
 export default function DevHome() {
@@ -38,9 +47,13 @@ export default function DevHome() {
                     </View>
                     <ScrollView style={s.menu}>
                         {MENU.map(item => (
-                            <Pressable
+                            <TouchableOpacity
                                 key={item.key}
-                                style={[s.menuItem, active === item.key && s.menuItemActive]}
+                                style={[
+                                    s.menuItem,
+                                    active === item.key && s.menuItemActive,
+                                ]}
+                                activeOpacity={1}
                                 onPress={() => setActive(item.key)}>
                                 <View style={[s.menuTag, active === item.key && s.menuTagActive]}>
                                     <Text style={[s.menuTagText, active === item.key && s.menuTagTextActive]}>
@@ -50,7 +63,7 @@ export default function DevHome() {
                                 <Text style={[s.menuLabel, active === item.key && s.menuLabelActive]}>
                                     {item.label}
                                 </Text>
-                            </Pressable>
+                            </TouchableOpacity>
                         ))}
                     </ScrollView>
                 </View>

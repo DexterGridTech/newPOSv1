@@ -2,306 +2,329 @@ package com.adapterrn84.turbomodules.connector.channels
 
 import android.Manifest
 import android.animation.ObjectAnimator
-import android.app.Activity
+import android.animation.ValueAnimator
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
-import android.view.animation.LinearInterpolator
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.*
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ExperimentalGetImage
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.ImageProxy
+import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.google.mlkit.vision.barcode.BarcodeScanning
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicBoolean
 
 class CameraScanActivity : AppCompatActivity() {
 
     companion object {
-        const val EXTRA_SCAN_MODE = "scan_mode"
-        const val SCAN_RESULT = "scan_result"
-        const val SCAN_RESULT_FORMAT = "scan_result_format"
-        
-        const val QR_CODE_MODE = "qr_code"
-        const val BARCODE_MODE = "barcode"
-        
-        private const val REQUEST_CAMERA_PERMISSION = 1001
+        const val SCAN_RESULT        = "SCAN_RESULT"
+        const val SCAN_RESULT_FORMAT = "SCAN_RESULT_FORMAT"
+        const val EXTRA_ERROR        = "error"
+        private const val REQ_CAMERA = 2001
+        private const val TAG        = "CameraScanActivity"
     }
 
     private lateinit var previewView: PreviewView
     private lateinit var overlayView: ScanOverlayView
-    private lateinit var scanLineView: View
-    private lateinit var hintText: TextView
-    private lateinit var cancelButton: Button
-    
+    private lateinit var scanLine: View
     private lateinit var cameraExecutor: ExecutorService
-    private var camera: Camera? = null
-    private var isScanning = true
+    private val detected = AtomicBoolean(false)
+    private var scanLineAnimator: ObjectAnimator? = null
+    private var resultBroadcastAction: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
-        // Check camera permission
-        if (!hasCameraPermission()) {
-            requestCameraPermission()
-            return
+        Log.d(TAG, "onCreate")
+        resultBroadcastAction = intent.getStringExtra("resultBroadcastAction")
+        Log.d(TAG, "resultBroadcastAction=$resultBroadcastAction")
+
+        // 全屏（AppCompat 兼容方式）
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        WindowInsetsControllerCompat(window, window.decorView).apply {
+            hide(WindowInsetsCompat.Type.systemBars())
+            systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
-        
-        setupUI()
-        startCamera()
-    }
 
-    private fun hasCameraPermission(): Boolean {
-        return ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.CAMERA
-        ) == PackageManager.PERMISSION_GRANTED
-    }
+        cameraExecutor = Executors.newSingleThreadExecutor()
+        setContentView(buildLayout())
 
-    private fun requestCameraPermission() {
-        ActivityCompat.requestPermissions(
-            this,
-            arrayOf(Manifest.permission.CAMERA),
-            REQUEST_CAMERA_PERMISSION
-        )
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        
-        if (requestCode == REQUEST_CAMERA_PERMISSION) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                setupUI()
-                startCamera()
-            } else {
-                setResult(RESULT_CANCELED, Intent().apply {
-                    putExtra("error", "CAMERA_PERMISSION_DENIED")
-                })
-                finish()
-            }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+            == PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.d(TAG, "camera permission granted, starting camera")
+            startCamera()
+        } else {
+            Log.d(TAG, "requesting camera permission")
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), REQ_CAMERA)
         }
     }
 
-    private fun setupUI() {
-        val rootLayout = FrameLayout(this).apply {
-            layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-            )
-            setBackgroundColor(Color.BLACK)
-        }
+    private fun buildLayout(): FrameLayout {
+        val root = FrameLayout(this)
 
-        // Camera preview
         previewView = PreviewView(this).apply {
             layoutParams = FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
                 FrameLayout.LayoutParams.MATCH_PARENT
             )
         }
-        rootLayout.addView(previewView)
+        root.addView(previewView)
 
-        // Overlay with scan frame
         overlayView = ScanOverlayView(this).apply {
             layoutParams = FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
                 FrameLayout.LayoutParams.MATCH_PARENT
             )
         }
-        rootLayout.addView(overlayView)
+        root.addView(overlayView)
 
-        // Scan line animation
-        scanLineView = View(this).apply {
-            layoutParams = FrameLayout.LayoutParams(
-                dpToPx(260),
-                dpToPx(2)
-            ).apply {
-                gravity = Gravity.CENTER_HORIZONTAL
-                topMargin = (resources.displayMetrics.heightPixels - dpToPx(260)) / 2
-            }
-            setBackgroundColor(Color.WHITE)
+        scanLine = View(this).apply {
+            setBackgroundColor(0xFFFFFFFF.toInt())
+            layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, 3)
         }
-        rootLayout.addView(scanLineView)
+        root.addView(scanLine)
 
-        // Hint text
-        hintText = TextView(this).apply {
-            layoutParams = FrameLayout.LayoutParams(
+        val hint = TextView(this).apply {
+            text = "将条码/二维码对准扫描框"
+            setTextColor(0xFFFFFFFF.toInt())
+            textSize = 14f
+            val lp = FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.WRAP_CONTENT,
-                FrameLayout.LayoutParams.WRAP_CONTENT
-            ).apply {
-                gravity = Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
-                bottomMargin = dpToPx(100)
-            }
-            text = "将二维码/条形码放入框内"
-            setTextColor(Color.WHITE)
-            textSize = 16f
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                Gravity.CENTER_HORIZONTAL or Gravity.TOP
+            )
+            lp.topMargin = (resources.displayMetrics.heightPixels * 0.25f).toInt()
+            layoutParams = lp
         }
-        rootLayout.addView(hintText)
+        root.addView(hint)
 
-        // Cancel button
-        cancelButton = Button(this).apply {
-            layoutParams = FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.WRAP_CONTENT,
-                FrameLayout.LayoutParams.WRAP_CONTENT
-            ).apply {
-                gravity = Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
-                bottomMargin = dpToPx(40)
-            }
+        val cancelBtn = Button(this).apply {
             text = "取消"
-            setOnClickListener {
-                setResult(RESULT_CANCELED)
-                finish()
-            }
+            setTextColor(0xFFFFFFFF.toInt())
+            setBackgroundColor(0x66000000.toInt())
+            val lp = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
+            )
+            lp.bottomMargin = (48 * resources.displayMetrics.density).toInt()
+            layoutParams = lp
+            setOnClickListener { sendErrorBroadcast("CANCELED"); finish() }
         }
-        rootLayout.addView(cancelButton)
+        root.addView(cancelBtn)
 
-        setContentView(rootLayout)
+        overlayView.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            startScanLineAnimation()
+        }
 
-        // Start scan line animation
-        startScanLineAnimation()
+        return root
     }
 
     private fun startScanLineAnimation() {
-        val scanFrameHeight = dpToPx(260)
-        val startY = (resources.displayMetrics.heightPixels - scanFrameHeight) / 2
-        val endY = startY + scanFrameHeight
+        val frame = overlayView.frameRect
+        if (frame.isEmpty) return
+        scanLine.x = frame.left
+        scanLine.y = frame.top
+        (scanLine.layoutParams as FrameLayout.LayoutParams).width = frame.width().toInt()
+        scanLine.requestLayout()
 
-        ObjectAnimator.ofFloat(scanLineView, "y", startY.toFloat(), endY.toFloat()).apply {
-            duration = 2000
-            repeatCount = ObjectAnimator.INFINITE
-            repeatMode = ObjectAnimator.RESTART
-            interpolator = LinearInterpolator()
+        scanLineAnimator?.cancel()
+        scanLineAnimator = ObjectAnimator.ofFloat(scanLine, "y", frame.top, frame.bottom - 3f).apply {
+            duration = 1500
+            repeatCount = ValueAnimator.INFINITE
+            repeatMode = ValueAnimator.RESTART
             start()
         }
     }
 
     private fun startCamera() {
-        cameraExecutor = Executors.newSingleThreadExecutor()
-
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
-        cameraProviderFuture.addListener({
+        Log.d(TAG, "startCamera")
+        val future = ProcessCameraProvider.getInstance(this)
+        future.addListener({
             try {
-                val cameraProvider = cameraProviderFuture.get()
-                bindCameraUseCases(cameraProvider)
+                bindCamera(future.get())
             } catch (e: Exception) {
-                setResult(RESULT_CANCELED, Intent().apply {
-                    putExtra("error", "CAMERA_OPEN_FAILED")
-                })
-                finish()
+                Log.e(TAG, "camera open failed", e)
+                finishWithError("CAMERA_OPEN_FAILED")
             }
         }, ContextCompat.getMainExecutor(this))
     }
 
-    private fun bindCameraUseCases(cameraProvider: ProcessCameraProvider) {
-        // Preview use case
+    private fun bindCamera(cameraProvider: ProcessCameraProvider) {
+        Log.d(TAG, "bindCamera")
         val preview = Preview.Builder().build().also {
             it.setSurfaceProvider(previewView.surfaceProvider)
         }
 
-        // Image analysis use case
-        val imageAnalysis = ImageAnalysis.Builder()
+        val scanMode = intent.getStringExtra("SCAN_MODE")
+        Log.d(TAG, "SCAN_MODE=$scanMode")
+        val formats = parseScanMode(scanMode)
+        val options = if (formats.isNotEmpty())
+            BarcodeScannerOptions.Builder()
+                .setBarcodeFormats(formats[0], *formats.drop(1).toIntArray())
+                .build()
+        else
+            BarcodeScannerOptions.Builder()
+                .setBarcodeFormats(Barcode.FORMAT_ALL_FORMATS)
+                .build()
+
+        val scanner = BarcodeScanning.getClient(options)
+
+        val analysis = ImageAnalysis.Builder()
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .build()
-            .also {
-                it.setAnalyzer(cameraExecutor, BarcodeAnalyzer())
-            }
+            .also { it.setAnalyzer(cameraExecutor) { proxy -> analyzeFrame(proxy, scanner) } }
 
-        // Select camera (prefer back camera)
-        val cameraSelector = CameraSelector.Builder()
-            .requireLensFacing(CameraSelector.LENS_FACING_BACK)
-            .build()
+        val availableCameras = cameraProvider.availableCameraInfos
+        Log.d(TAG, "availableCameras count=${availableCameras.size}")
+
+        val cameraIndexStr = intent.getStringExtra("CAMERA_INDEX")
+        val cameraSelector = if (cameraIndexStr != null) {
+            // 调用方通过 CAMERA_INDEX 指定摄像头
+            val idx = cameraIndexStr.toIntOrNull() ?: 0
+            if (idx < availableCameras.size) {
+                val lensFacing = availableCameras[idx].lensFacing
+                Log.d(TAG, "using CAMERA_INDEX=$idx, lensFacing=$lensFacing")
+                CameraSelector.Builder().requireLensFacing(lensFacing).build()
+            } else {
+                Log.e(TAG, "CAMERA_INDEX=$idx out of range (count=${availableCameras.size})")
+                finishWithError("CAMERA_INDEX_OUT_OF_RANGE")
+                return
+            }
+        } else {
+            when {
+                cameraProvider.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA)  -> CameraSelector.DEFAULT_BACK_CAMERA
+                cameraProvider.hasCamera(CameraSelector.DEFAULT_FRONT_CAMERA) -> CameraSelector.DEFAULT_FRONT_CAMERA
+                availableCameras.isNotEmpty() -> {
+                    val lensFacing = availableCameras[0].lensFacing
+                    Log.d(TAG, "using non-standard camera[0], lensFacing=$lensFacing")
+                    CameraSelector.Builder().requireLensFacing(lensFacing).build()
+                }
+                else -> {
+                    Log.e(TAG, "no camera available")
+                    finishWithError("NO_CAMERA")
+                    return
+                }
+            }
+        }
 
         try {
             cameraProvider.unbindAll()
-            camera = cameraProvider.bindToLifecycle(
-                this,
-                cameraSelector,
-                preview,
-                imageAnalysis
-            )
+            cameraProvider.bindToLifecycle(this, cameraSelector, preview, analysis)
+            Log.d(TAG, "camera bound successfully")
         } catch (e: Exception) {
-            setResult(RESULT_CANCELED, Intent().apply {
-                putExtra("error", "CAMERA_OPEN_FAILED")
+            Log.e(TAG, "bindToLifecycle failed", e)
+            finishWithError("CAMERA_BIND_FAILED")
+        }
+    }
+
+    @ExperimentalGetImage
+    private fun analyzeFrame(proxy: ImageProxy, scanner: com.google.mlkit.vision.barcode.BarcodeScanner) {
+        if (detected.get()) { proxy.close(); return }
+        val mediaImage = proxy.image ?: run { proxy.close(); return }
+        val image = InputImage.fromMediaImage(mediaImage, proxy.imageInfo.rotationDegrees)
+        scanner.process(image)
+            .addOnSuccessListener { barcodes ->
+                val barcode = barcodes.firstOrNull { !it.rawValue.isNullOrEmpty() }
+                if (barcode != null && detected.compareAndSet(false, true)) {
+                    Log.d(TAG, "barcode detected: ${barcode.rawValue}")
+                    val resultJson = org.json.JSONObject().apply {
+                        put(SCAN_RESULT, barcode.rawValue ?: "")
+                        put(SCAN_RESULT_FORMAT, formatName(barcode.format))
+                    }.toString()
+                    sendResultBroadcast(resultJson)
+                    finish()
+                }
+            }
+            .addOnCompleteListener { proxy.close() }
+    }
+
+    private fun parseScanMode(mode: String?): List<Int> = when (mode) {
+        "QR_CODE_MODE" -> listOf(Barcode.FORMAT_QR_CODE)
+        "BARCODE_MODE" -> listOf(
+            Barcode.FORMAT_EAN_13, Barcode.FORMAT_EAN_8,
+            Barcode.FORMAT_CODE_128, Barcode.FORMAT_CODE_39,
+            Barcode.FORMAT_UPC_A, Barcode.FORMAT_UPC_E
+        )
+        else -> emptyList()
+    }
+
+    private fun formatName(format: Int): String = when (format) {
+        Barcode.FORMAT_QR_CODE     -> "QR_CODE"
+        Barcode.FORMAT_EAN_13      -> "EAN_13"
+        Barcode.FORMAT_EAN_8       -> "EAN_8"
+        Barcode.FORMAT_CODE_128    -> "CODE_128"
+        Barcode.FORMAT_CODE_39     -> "CODE_39"
+        Barcode.FORMAT_UPC_A       -> "UPC_A"
+        Barcode.FORMAT_UPC_E       -> "UPC_E"
+        Barcode.FORMAT_DATA_MATRIX -> "DATA_MATRIX"
+        Barcode.FORMAT_PDF417      -> "PDF417"
+        Barcode.FORMAT_AZTEC       -> "AZTEC"
+        else                       -> "UNKNOWN"
+    }
+
+    private fun sendResultBroadcast(resultJson: String) {
+        resultBroadcastAction?.let { action ->
+            Log.d(TAG, "sendResultBroadcast: action=$action")
+            sendBroadcast(Intent(action).apply {
+                setPackage(packageName)
+                putExtra("resultData", resultJson)
             })
-            finish()
-        }
+        } ?: Log.w(TAG, "sendResultBroadcast: no resultBroadcastAction")
     }
 
-    private inner class BarcodeAnalyzer : ImageAnalysis.Analyzer {
-        private val scanner = BarcodeScanning.getClient()
-
-        override fun analyze(imageProxy: ImageProxy) {
-            if (!isScanning) {
-                imageProxy.close()
-                return
-            }
-
-            val mediaImage = imageProxy.image
-            if (mediaImage != null) {
-                val image = InputImage.fromMediaImage(
-                    mediaImage,
-                    imageProxy.imageInfo.rotationDegrees
-                )
-
-                scanner.process(image)
-                    .addOnSuccessListener { barcodes ->
-                        if (isScanning && barcodes.isNotEmpty()) {
-                            handleScanResult(barcodes[0])
-                        }
-                    }
-                    .addOnCompleteListener {
-                        imageProxy.close()
-                    }
-            } else {
-                imageProxy.close()
-            }
-        }
+    private fun sendErrorBroadcast(error: String) {
+        resultBroadcastAction?.let { action ->
+            Log.d(TAG, "sendErrorBroadcast: action=$action error=$error")
+            sendBroadcast(Intent(action).apply {
+                setPackage(packageName)
+                putExtra("error", error)
+            })
+        } ?: Log.w(TAG, "sendErrorBroadcast: no resultBroadcastAction")
     }
 
-    private fun handleScanResult(barcode: Barcode) {
-        isScanning = false
-
-        val result = barcode.rawValue ?: ""
-        val format = when (barcode.format) {
-            Barcode.FORMAT_QR_CODE -> "QR_CODE"
-            Barcode.FORMAT_EAN_13 -> "EAN_13"
-            Barcode.FORMAT_EAN_8 -> "EAN_8"
-            Barcode.FORMAT_CODE_128 -> "CODE_128"
-            Barcode.FORMAT_CODE_39 -> "CODE_39"
-            Barcode.FORMAT_UPC_A -> "UPC_A"
-            Barcode.FORMAT_UPC_E -> "UPC_E"
-            else -> "UNKNOWN"
-        }
-
-        setResult(RESULT_OK, Intent().apply {
-            putExtra(SCAN_RESULT, result)
-            putExtra(SCAN_RESULT_FORMAT, format)
-        })
+    private fun finishWithError(error: String) {
+        Log.e(TAG, "finishWithError: $error")
+        sendErrorBroadcast(error)
         finish()
     }
 
-    private fun dpToPx(dp: Int): Int {
-        return (dp * resources.displayMetrics.density).toInt()
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQ_CAMERA) {
+            if (grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "camera permission granted")
+                startCamera()
+            } else {
+                Log.w(TAG, "camera permission denied")
+                finishWithError("CAMERA_PERMISSION_DENIED")
+            }
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        if (::cameraExecutor.isInitialized) {
-            cameraExecutor.shutdown()
-        }
+        Log.d(TAG, "onDestroy")
+        scanLineAnimator?.cancel()
+        if (::cameraExecutor.isInitialized) cameraExecutor.shutdown()
     }
 }

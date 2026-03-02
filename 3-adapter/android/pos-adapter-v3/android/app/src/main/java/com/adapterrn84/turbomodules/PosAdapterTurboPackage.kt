@@ -9,6 +9,7 @@ import com.adapterrn84.NativeLoggerTurboModuleSpec
 import com.adapterrn84.NativeDeviceTurboModuleSpec
 import com.adapterrn84.NativeScriptsTurboModuleSpec
 import com.adapterrn84.NativeConnectorTurboModuleSpec
+import com.adapterrn84.NativeLocalWebServerTurboModuleSpec
 
 class PosAdapterTurboPackage : BaseReactPackage() {
 
@@ -18,6 +19,7 @@ class PosAdapterTurboPackage : BaseReactPackage() {
             NativeDeviceTurboModuleSpec.NAME  -> DeviceTurboModule(reactContext)
             NativeScriptsTurboModuleSpec.NAME -> ScriptsTurboModule(reactContext)
             NativeConnectorTurboModuleSpec.NAME -> ConnectorTurboModule(reactContext)
+            NativeLocalWebServerTurboModuleSpec.NAME -> LocalWebServerTurboModule(reactContext)
             else -> null
         }
 
@@ -44,6 +46,11 @@ class PosAdapterTurboPackage : BaseReactPackage() {
             NativeConnectorTurboModuleSpec.NAME to ReactModuleInfo(
                 NativeConnectorTurboModuleSpec.NAME,
                 ConnectorTurboModule::class.java.name,
+                false, false, false, true
+            ),
+            NativeLocalWebServerTurboModuleSpec.NAME to ReactModuleInfo(
+                NativeLocalWebServerTurboModuleSpec.NAME,
+                LocalWebServerTurboModule::class.java.name,
                 false, false, false, true
             )
         )

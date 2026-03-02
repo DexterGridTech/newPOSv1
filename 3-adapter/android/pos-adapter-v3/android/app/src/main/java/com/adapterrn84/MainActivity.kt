@@ -6,9 +6,18 @@ import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
 import com.facebook.react.defaults.DefaultReactActivityDelegate
-import com.adapterrn84.turbomodules.ConnectorTurboModule
+import com.adapterrn84.turbomodules.connector.ActivityLifecycleDelegate
 
+/**
+ * 适配层的 MainActivity
+ *
+ * 使用 ActivityLifecycleDelegate 处理 ExternalConnector 相关的生命周期事件
+ * 整合层可以参考此实现,在自己的 MainActivity 中使用相同的委托类
+ */
 class MainActivity : ReactActivity() {
+
+  // ExternalConnector 生命周期委托
+  private val connectorDelegate = ActivityLifecycleDelegate()
 
   /**
    * Returns the name of the main component registered from JavaScript. This is used to schedule
@@ -25,7 +34,6 @@ class MainActivity : ReactActivity() {
 
   /**
    * 处理权限请求结果
-   * 将结果转发给 PermissionCoordinator
    */
   override fun onRequestPermissionsResult(
       requestCode: Int,
@@ -33,45 +41,22 @@ class MainActivity : ReactActivity() {
       grantResults: IntArray
   ) {
       super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-      try {
-          val reactContext = reactInstanceManager.currentReactContext
-          val connectorModule = reactContext?.getNativeModule(ConnectorTurboModule::class.java)
-          connectorModule?.getConnectorManager()?.getPermissionCoordinator()
-              ?.onPermissionResult(requestCode, permissions, grantResults)
-      } catch (_: Exception) {
-          // ReactContext may not be ready
-      }
+      connectorDelegate.handlePermissionResult(requestCode, permissions, grantResults)
   }
 
   /**
    * 处理 Activity Result
-   * 将结果转发给 EventDispatcher（用于相机扫码等）
    */
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
       super.onActivityResult(requestCode, resultCode, data)
-      try {
-          val reactContext = reactInstanceManager.currentReactContext
-          val connectorModule = reactContext?.getNativeModule(ConnectorTurboModule::class.java)
-          connectorModule?.getConnectorManager()?.getEventDispatcher()
-              ?.dispatchActivityResult(requestCode, resultCode, data)
-      } catch (_: Exception) {
-          // ReactContext may not be ready
-      }
+      connectorDelegate.handleActivityResult(requestCode, resultCode, data)
   }
 
   /**
    * 处理按键事件
-   * 将按键事件转发给 EventDispatcher（用于 HID 通道）
    */
   override fun dispatchKeyEvent(event: KeyEvent): Boolean {
-      try {
-          val reactContext = reactInstanceManager.currentReactContext
-          val connectorModule = reactContext?.getNativeModule(ConnectorTurboModule::class.java)
-          connectorModule?.getConnectorManager()?.getEventDispatcher()
-              ?.dispatchKeyEvent(event.keyCode, event)
-      } catch (_: Exception) {
-          // ReactContext may not be ready
-      }
+      if (connectorDelegate.handleKeyEvent(event)) return true
       return super.dispatchKeyEvent(event)
   }
 }

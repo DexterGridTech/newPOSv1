@@ -275,15 +275,6 @@ appmodules_SOURCE_DIR:STATIC=/Users/dexter/Documents/workspace/idea/newPOSv1/3-a
 //The directory containing a CMake configuration file for fbjni.
 fbjni_DIR:PATH=/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v3/android/app/.cxx/Debug/343d3d27/prefab/x86/prefab/lib/i686-linux-android/cmake/fbjni
 
-//Value Computed by CMake
-quickjs_bridge_BINARY_DIR:STATIC=/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v3/android/app/.cxx/Debug/343d3d27/x86
-
-//Value Computed by CMake
-quickjs_bridge_IS_TOP_LEVEL:STATIC=ON
-
-//Value Computed by CMake
-quickjs_bridge_SOURCE_DIR:STATIC=/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v3/android/app/src/main/cpp
-
 
 ########################
 # INTERNAL cache entries

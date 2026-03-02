@@ -1,5 +1,7 @@
 import {ApplicationConfig, AppModule, InitLogger, registerDevice, registerLogger, registerStateStorage, registerScriptsExecution, registerExternalConnector} from "@impos2/kernel-core-base";
 import {deviceAdapter, loggerAdapter, stateStorageAdapter, scriptExecutionAdapter, externalConnectorAdapter} from "../foundations";
+import {localWebServerAdapter} from "../foundations/localWebServer.ts";
+import {registerLocalWebServer} from "@impos2/kernel-core-interconnection";
 // import {registerLocalWebServer} from "@impos2/kernel-core-interconnection";
 
 
@@ -12,5 +14,5 @@ export const adapterAndroidModulePreSetup = async (config: ApplicationConfig, al
     registerStateStorage(stateStorageAdapter)
     registerScriptsExecution(scriptExecutionAdapter)
     registerExternalConnector(externalConnectorAdapter)
-    // registerLocalWebServer(localWebServerAdapter)
+    registerLocalWebServer(localWebServerAdapter)
 }

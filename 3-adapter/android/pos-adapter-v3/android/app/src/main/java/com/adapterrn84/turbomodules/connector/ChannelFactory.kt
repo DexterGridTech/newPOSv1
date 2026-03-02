@@ -1,5 +1,6 @@
 package com.adapterrn84.turbomodules.connector
 
+import com.adapterrn84.turbomodules.connector.channels.*
 import com.facebook.react.bridge.ReactApplicationContext
 import kotlinx.coroutines.CoroutineScope
 

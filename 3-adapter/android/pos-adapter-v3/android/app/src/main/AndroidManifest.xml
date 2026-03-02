@@ -2,6 +2,10 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- 前台服务权限（LocalWebServer 使用）-->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+
     <!-- 相机权限 -->
     <uses-permission android:name="android.permission.CAMERA" />
 
@@ -22,7 +26,9 @@
       android:allowBackup="false"
       android:theme="@style/AppTheme"
       android:usesCleartextTraffic="${usesCleartextTraffic}"
-      android:supportsRtl="true">
+      android:supportsRtl="true"
+      android:hardwareAccelerated="true"
+      android:largeHeap="true">
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"
@@ -39,13 +45,25 @@
       <!-- 相机扫码 Activity -->
       <activity
         android:name=".turbomodules.connector.channels.CameraScanActivity"
-        android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-        android:exported="false" />
+        android:theme="@style/AppTheme"
+        android:exported="false">
+        <intent-filter>
+          <action android:name="com.impos2.posadapter.action.CAMERA_SCAN" />
+          <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter>
+      </activity>
 
       <!-- Intent 结果桥接 Activity -->
       <activity
         android:name=".turbomodules.connector.channels.ResultBridgeActivity"
         android:theme="@android:style/Theme.Translucent.NoTitleBar"
         android:exported="false" />
+
+      <!-- LocalWebServer 前台服务 -->
+      <service
+        android:name=".turbomodules.localwebserver.LocalWebServerService"
+        android:enabled="true"
+        android:exported="false"
+        android:foregroundServiceType="dataSync" />
     </application>
 </manifest>

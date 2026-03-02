@@ -9,7 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 
 /**
  * HID 流通道（键盘/扫码枪）
- * 
+ *
  * 扫码枪模式：
  * - 按键缓冲：每次按键存入 buffer
  * - 100ms 提交延迟：使用 Handler.postDelayed 实现
@@ -22,7 +22,7 @@ class HidStreamChannel(
     private val descriptor: ChannelDescriptor,
     private val scope: CoroutineScope,
     private val eventDispatcher: EventDispatcher
-) : StreamChannel, EventDispatcher.HidEventHandler {
+) : StreamChannel {
 
     companion object {
         private const val SUBMIT_DELAY_MS = 100L
@@ -35,73 +35,91 @@ class HidStreamChannel(
 
     override fun open(onData: (ConnectorEvent) -> Unit, onError: (String) -> Unit) {
         onDataCallback = onData
-        
-        // Register to EventDispatcher
-        eventDispatcher.registerHidHandler(descriptor.target, this)
     }
 
     override fun close() {
         onDataCallback = null
-        
+
         // Cancel pending submit
         submitRunnable?.let { handler.removeCallbacks(it) }
         submitRunnable = null
-        
-        // Unregister from EventDispatcher
-        eventDispatcher.unregisterHidHandler(descriptor.target, this)
-        
+
         // Clear buffer
         buffer.clear()
     }
 
-    override suspend fun onKeyEvent(keyCode: Int, event: KeyEvent) {
-        // Only process ACTION_DOWN events
+    /**
+     * 由 ConnectorTurboModule.onKeyEvent() 调用
+     * @return true = 事件已消费；false = 不处理
+     */
+    fun onKeyEvent(event: KeyEvent): Boolean {
+        val keyCode = event.keyCode
+        android.util.Log.d("HidStreamChannel", "onKeyEvent: keyCode=$keyCode, action=${event.action}")
+
+        // 系统按键不拦截
+        if (isSystemKey(keyCode)) {
+            android.util.Log.d("HidStreamChannel", "System key, not intercepting")
+            return false
+        }
+
+        // 拦截所有 action 的事件，防止 ACTION_UP 等触发系统行为
         if (event.action != KeyEvent.ACTION_DOWN) {
-            return
+            android.util.Log.d("HidStreamChannel", "Not ACTION_DOWN, intercepting anyway")
+            return true
         }
 
-        // Handle ENTER key - submit immediately
-        if (keyCode == KeyEvent.KEYCODE_ENTER) {
-            submitBuffer()
-            return
-        }
-
-        // Convert keyCode to character
-        val char = event.getUnicodeChar()
-        if (char > 0) {
-            // Add character to buffer
-            buffer.append(char.toChar())
-            
-            // Reset submit timer
-            submitRunnable?.let { handler.removeCallbacks(it) }
-            submitRunnable = Runnable {
+        return when (keyCode) {
+            KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER -> {
+                android.util.Log.d("HidStreamChannel", "ENTER key, submitting buffer")
+                submitRunnable?.let { handler.removeCallbacks(it) }
                 submitBuffer()
-            }.also {
-                handler.postDelayed(it, SUBMIT_DELAY_MS)
+                true
+            }
+            else -> {
+                val char = event.unicodeChar
+                android.util.Log.d("HidStreamChannel", "char=$char")
+                if (char == 0) {
+                    true
+                } else {
+                    buffer.append(char.toChar())
+                    android.util.Log.d("HidStreamChannel", "buffer=${buffer.toString()}")
+                    submitRunnable?.let { handler.removeCallbacks(it) }
+                    submitRunnable = Runnable {
+                        submitBuffer()
+                    }.also {
+                        handler.postDelayed(it, SUBMIT_DELAY_MS)
+                    }
+                    true
+                }
             }
         }
     }
 
+    /**
+     * 判断是否为系统按键(不应被拦截的按键)
+     * 只保留真正的系统级按键,其他所有按键都拦截以避免触发 UI 变化
+     */
+    private fun isSystemKey(keyCode: Int): Boolean = keyCode in setOf(
+        KeyEvent.KEYCODE_BACK,
+        KeyEvent.KEYCODE_HOME,
+        KeyEvent.KEYCODE_VOLUME_UP,
+        KeyEvent.KEYCODE_VOLUME_DOWN,
+        KeyEvent.KEYCODE_VOLUME_MUTE,
+        KeyEvent.KEYCODE_POWER
+    )
+
     private fun submitBuffer() {
-        if (buffer.isEmpty()) {
-            return
-        }
-
-        val data = buffer.toString()
+        val text = buffer.toString().trim()
         buffer.clear()
+        if (text.isEmpty()) return
 
-        // Cancel pending submit
-        submitRunnable?.let { handler.removeCallbacks(it) }
-        submitRunnable = null
-
-        // Send event
         val event = ConnectorEvent(
             channelId = "",
             type = descriptor.type.name,
             target = descriptor.target,
-            data = data,
+            data = text,
             timestamp = System.currentTimeMillis(),
-            raw = null
+            raw = text
         )
 
         onDataCallback?.invoke(event)

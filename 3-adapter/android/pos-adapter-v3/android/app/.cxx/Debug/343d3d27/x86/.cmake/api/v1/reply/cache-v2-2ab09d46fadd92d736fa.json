@@ -1408,42 +1408,6 @@
 			],
 			"type" : "PATH",
 			"value" : "/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v3/android/app/.cxx/Debug/343d3d27/prefab/x86/prefab/lib/i686-linux-android/cmake/fbjni"
-		},
-		{
-			"name" : "quickjs_bridge_BINARY_DIR",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "Value Computed by CMake"
-				}
-			],
-			"type" : "STATIC",
-			"value" : "/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v3/android/app/.cxx/Debug/343d3d27/x86"
-		},
-		{
-			"name" : "quickjs_bridge_IS_TOP_LEVEL",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "Value Computed by CMake"
-				}
-			],
-			"type" : "STATIC",
-			"value" : "ON"
-		},
-		{
-			"name" : "quickjs_bridge_SOURCE_DIR",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "Value Computed by CMake"
-				}
-			],
-			"type" : "STATIC",
-			"value" : "/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter-v3/android/app/src/main/cpp"
 		}
 	],
 	"kind" : "cache",

@@ -23,33 +23,18 @@ class UsbChannel(
 
     override suspend fun execute(action: String, params: Map<String, String>, timeout: Long): ConnectorResult<String> {
         val startTime = System.currentTimeMillis()
-        
+
         return try {
             val usbManager = context.getSystemService(Context.USB_SERVICE) as UsbManager
-            
-            // Parse target: "vendorId:productId"
-            val parts = descriptor.target.split(":")
-            if (parts.size != 2) {
-                return ConnectorResult.Failure(
+
+            // Get device by name (target is device name like "/dev/bus/usb/001/002")
+            val device = usbManager.deviceList[descriptor.target]
+                ?: return ConnectorResult.Failure(
                     ConnectorErrorCode.UNKNOWN,
-                    "Invalid USB target format. Expected: vendorId:productId",
+                    "USB device not found: ${descriptor.target}",
                     null,
                     System.currentTimeMillis() - startTime
                 )
-            }
-            
-            val vendorId = parts[0].toInt()
-            val productId = parts[1].toInt()
-            
-            // Find device
-            val device = usbManager.deviceList.values.find {
-                it.vendorId == vendorId && it.productId == productId
-            } ?: return ConnectorResult.Failure(
-                ConnectorErrorCode.UNKNOWN,
-                "USB device not found: $vendorId:$productId",
-                null,
-                System.currentTimeMillis() - startTime
-            )
             
             // Request permission if needed
             if (!usbManager.hasPermission(device)) {

@@ -115,6 +115,13 @@ class EventDispatcher(
     }
 
     /**
+     * 检查是否有活跃的 HID 通道
+     */
+    fun hasActiveHidChannels(): Boolean {
+        return hidChannels.isNotEmpty()
+    }
+
+    /**
      * 注册 Activity Result 回调
      */
     fun registerActivityResultCallback(requestCode: Int, callback: ActivityResultCallback) {

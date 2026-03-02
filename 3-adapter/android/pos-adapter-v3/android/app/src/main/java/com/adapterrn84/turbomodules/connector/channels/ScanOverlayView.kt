@@ -32,6 +32,14 @@ class ScanOverlayView(context: Context) : View(context) {
     private val scanFrameSize = dpToPx(260f)
     private val cornerLength = dpToPx(20f)
 
+    /** 扫描框的实际坐标（layout 完成后有效） */
+    val frameRect: RectF
+        get() {
+            val left = (width - scanFrameSize) / 2
+            val top  = (height - scanFrameSize) / 2
+            return RectF(left, top, left + scanFrameSize, top + scanFrameSize)
+        }
+
     init {
         // Enable software layer for PorterDuff.Mode.CLEAR to work
         setLayerType(LAYER_TYPE_SOFTWARE, null)

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import DevHome from './screens/DevHome';
 import type {Store} from "@reduxjs/toolkit";
 import type {Persistor} from "redux-persist";
-import {Text, View} from "react-native";
+import {Text, View, LogBox} from "react-native";
 import {Provider} from "react-redux";
 import {PersistGate} from "redux-persist/integration/react";
 import {kernelCoreBaseCommands} from "@impos2/kernel-core-base";
@@ -12,6 +12,9 @@ const App = () => {
     const [storeReady, setStoreReady] = useState<{ store: Store; persistor: Persistor } | null>(null);
 
     useEffect(() => {
+        // 禁用键盘导航相关的警告
+        LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+
         storePromise().then(result => {
             setStoreReady(result);
         });
@@ -29,8 +32,7 @@ const App = () => {
             <PersistGate persistor={storeReady.persistor} onBeforeLift={() => {
                 kernelCoreBaseCommands.initialize().executeInternally()
             }}>
-                <DevHome>
-                </DevHome>
+                <DevHome />
             </PersistGate>
         </Provider>
     );

@@ -1,5 +1,6 @@
 package com.adapterrn84.turbomodules.connector
 
+import com.adapterrn84.turbomodules.connector.channels.HidStreamChannel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -17,6 +18,9 @@ class ChannelRegistry(
     )
 
     private val channels = ConcurrentHashMap<String, ChannelEntry>()
+
+    // 活跃的 HID 流通道（用于按键事件路由）
+    private val activeHidChannels = ConcurrentHashMap<String, HidStreamChannel>()
 
     fun register(channel: StreamChannel): String {
         val channelId = UUID.randomUUID().toString()
@@ -44,6 +48,12 @@ class ChannelRegistry(
         }
 
         channels[channelId] = ChannelEntry(channel, job)
+
+        // 如果是 HID 通道，添加到 activeHidChannels
+        if (channel is HidStreamChannel) {
+            activeHidChannels[channelId] = channel
+        }
+
         return channelId
     }
 
@@ -52,6 +62,7 @@ class ChannelRegistry(
             entry.job.cancel()
             entry.channel.close()
         }
+        activeHidChannels.remove(channelId)
     }
 
     fun closeAll() {
@@ -60,5 +71,11 @@ class ChannelRegistry(
             entry.channel.close()
         }
         channels.clear()
+        activeHidChannels.clear()
     }
+
+    /**
+     * 获取活跃的 HID 通道（用于 MainActivity 按键事件路由）
+     */
+    fun getActiveHidChannels(): Map<String, HidStreamChannel> = activeHidChannels
 }

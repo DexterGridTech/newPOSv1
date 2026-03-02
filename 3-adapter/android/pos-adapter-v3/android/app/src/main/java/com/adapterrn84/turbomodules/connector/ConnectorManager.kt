@@ -1,5 +1,8 @@
 package com.adapterrn84.turbomodules.connector
 
+import android.bluetooth.BluetoothAdapter
+import android.content.Context
+import android.hardware.usb.UsbManager
 import com.facebook.react.bridge.ReactApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -8,6 +11,7 @@ import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
+import java.io.File
 
 class ConnectorManager(private val context: ReactApplicationContext) {
 
@@ -83,21 +87,66 @@ class ConnectorManager(private val context: ReactApplicationContext) {
     suspend fun isAvailable(descriptor: ChannelDescriptor): Boolean {
         return try {
             permissionCoordinator.ensurePermissions(descriptor.type)
-            // TODO: 实现具体的可用性检查
-            true
+            when (descriptor.type) {
+                ChannelType.USB -> {
+                    val usbManager = context.getSystemService(Context.USB_SERVICE) as UsbManager
+                    usbManager.deviceList.containsKey(descriptor.target)
+                }
+                ChannelType.SERIAL -> File(descriptor.target).exists()
+                ChannelType.BLUETOOTH -> {
+                    val bt = BluetoothAdapter.getDefaultAdapter()
+                    bt != null && bt.isEnabled
+                }
+                ChannelType.INTENT -> {
+                    val pm = context.packageManager
+                    pm.getLaunchIntentForPackage(descriptor.target) != null
+                }
+                else -> true // AIDL, NETWORK, SDK, HID 默认可用
+            }
         } catch (e: Exception) {
             false
         }
     }
 
     fun getAvailableTargets(type: ChannelType): List<String> {
-        // TODO: 实现具体的设备枚举
-        return emptyList()
+        return try {
+            when (type) {
+                ChannelType.USB -> {
+                    val usbManager = context.getSystemService(Context.USB_SERVICE) as UsbManager
+                    usbManager.deviceList.keys.toList()
+                }
+                ChannelType.SERIAL -> {
+                    listOf("/dev/ttyS0", "/dev/ttyS1", "/dev/ttyUSB0", "/dev/ttyUSB1")
+                        .filter { File(it).exists() }
+                }
+                ChannelType.BLUETOOTH -> {
+                    val bt = BluetoothAdapter.getDefaultAdapter()
+                    if (bt != null && bt.isEnabled) {
+                        bt.bondedDevices?.map { it.address } ?: emptyList()
+                    } else {
+                        emptyList()
+                    }
+                }
+                ChannelType.INTENT -> {
+                    val pm = context.packageManager
+                    pm.getInstalledPackages(0).map { it.packageName }
+                }
+                ChannelType.HID -> {
+                    // HID 设备（扫码枪/键盘）返回默认 target
+                    listOf("scanner", "keyboard")
+                }
+                else -> emptyList() // AIDL, NETWORK, SDK 无法枚举
+            }
+        } catch (e: Exception) {
+            emptyList()
+        }
     }
 
     fun getEventDispatcher(): EventDispatcher = eventDispatcher
 
     fun getPermissionCoordinator(): PermissionCoordinator = permissionCoordinator
+
+    fun getChannelRegistry(): ChannelRegistry = channelRegistry
 
     fun cleanup() {
         channelRegistry.closeAll()

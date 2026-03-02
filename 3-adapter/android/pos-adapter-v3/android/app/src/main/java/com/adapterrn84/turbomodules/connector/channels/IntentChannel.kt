@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import androidx.core.content.ContextCompat
 import com.adapterrn84.turbomodules.connector.*
 import com.facebook.react.bridge.ReactApplicationContext
 import java.util.concurrent.CountDownLatch
@@ -74,7 +75,7 @@ class IntentChannel(
             }
         }
 
-        context.registerReceiver(receiver, IntentFilter(resultBroadcastAction))
+        ContextCompat.registerReceiver(context, receiver, IntentFilter(resultBroadcastAction), ContextCompat.RECEIVER_NOT_EXPORTED)
 
         try {
             val bridgeIntent = Intent(context, ResultBridgeActivity::class.java).apply {

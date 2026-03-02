@@ -27,7 +27,7 @@ class ResultBridgeActivity : Activity() {
             // Copy all extras except our control parameters
             intent.extras?.let { extras ->
                 for (key in extras.keySet()) {
-                    if (key != "targetAction" && key != "resultBroadcastAction") {
+                    if (key != "targetAction") {
                         val value = extras.get(key)
                         when (value) {
                             is String -> targetIntent.putExtra(key, value)
@@ -65,29 +65,22 @@ class ResultBridgeActivity : Activity() {
 
         if (requestCode == REQUEST_CODE) {
             try {
-                val result = JSONObject()
-                result.put("resultCode", resultCode)
-
-                data?.let { intent ->
-                    intent.data?.let { uri ->
-                        result.put("uri", uri.toString())
-                    }
-
-                    intent.extras?.let { extras ->
-                        val extrasJson = JSONObject()
+                if (resultCode == RESULT_OK) {
+                    val result = JSONObject()
+                    data?.data?.let { result.put("uri", it.toString()) }
+                    data?.extras?.let { extras ->
                         for (key in extras.keySet()) {
                             val value = extras.get(key)
                             when (value) {
-                                is String, is Int, is Boolean, is Long, is Double -> {
-                                    extrasJson.put(key, value)
-                                }
+                                is String, is Int, is Boolean, is Long, is Double -> result.put(key, value)
                             }
                         }
-                        result.put("extras", extrasJson)
                     }
+                    sendResult(result.toString())
+                } else {
+                    val error = data?.getStringExtra("error") ?: "CANCELED"
+                    sendError(error)
                 }
-
-                sendResult(result.toString())
             } catch (e: Exception) {
                 sendError(e.message ?: "Failed to process result")
             }
