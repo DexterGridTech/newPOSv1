@@ -21,7 +21,7 @@ class UsbChannel(
         private const val ACTION_USB_PERMISSION = "com.impos2.USB_PERMISSION"
     }
 
-    override fun execute(action: String, params: Map<String, String>, timeout: Long): ConnectorResult<String> {
+    override suspend fun execute(action: String, params: Map<String, String>, timeout: Long): ConnectorResult<String> {
         val startTime = System.currentTimeMillis()
         
         return try {

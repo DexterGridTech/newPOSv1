@@ -12,7 +12,7 @@ class NetworkChannel(
     private val descriptor: ChannelDescriptor
 ) : RequestResponseChannel {
 
-    override fun execute(action: String, params: Map<String, String>, timeout: Long): ConnectorResult<String> {
+    override suspend fun execute(action: String, params: Map<String, String>, timeout: Long): ConnectorResult<String> {
         val startTime = System.currentTimeMillis()
         
         return try {

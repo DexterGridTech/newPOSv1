@@ -15,7 +15,7 @@ class BluetoothChannel(
         private val SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
     }
 
-    override fun execute(action: String, params: Map<String, String>, timeout: Long): ConnectorResult<String> {
+    override suspend fun execute(action: String, params: Map<String, String>, timeout: Long): ConnectorResult<String> {
         val startTime = System.currentTimeMillis()
         
         return try {
@@ -94,7 +94,7 @@ class BluetoothChannel(
             } finally {
                 socket.close()
             }
-            
+
         } catch (e: Exception) {
             val duration = System.currentTimeMillis() - startTime
             ConnectorResult.Failure(
@@ -104,5 +104,9 @@ class BluetoothChannel(
                 duration
             )
         }
+    }
+
+    override fun close() {
+        // BluetoothChannel is stateless, socket is closed in execute() finally block
     }
 }

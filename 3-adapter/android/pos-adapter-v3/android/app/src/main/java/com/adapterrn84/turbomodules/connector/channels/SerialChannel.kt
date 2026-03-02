@@ -8,7 +8,7 @@ class SerialChannel(
     private val descriptor: ChannelDescriptor
 ) : RequestResponseChannel {
 
-    override fun execute(action: String, params: Map<String, String>, timeout: Long): ConnectorResult<String> {
+    override suspend fun execute(action: String, params: Map<String, String>, timeout: Long): ConnectorResult<String> {
         val startTime = System.currentTimeMillis()
         
         return try {
@@ -89,5 +89,9 @@ class SerialChannel(
         } catch (e: Exception) {
             // Ignore stty errors, may not have permission
         }
+    }
+
+    override fun close() {
+        // SerialChannel is stateless, streams are closed in execute() finally block
     }
 }

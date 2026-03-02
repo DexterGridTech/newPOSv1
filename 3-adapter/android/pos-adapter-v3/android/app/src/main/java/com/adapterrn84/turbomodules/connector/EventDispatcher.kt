@@ -8,6 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * 统一事件分发器
@@ -18,7 +19,7 @@ class EventDispatcher(
     private val scope: CoroutineScope
 ) {
     // HID 通道注册表
-    private val hidChannels = ConcurrentHashMap<String, MutableList<HidEventHandler>>()
+    private val hidChannels = ConcurrentHashMap<String, CopyOnWriteArrayList<HidEventHandler>>()
 
     // Activity Result 回调
     private val activityResultCallbacks = ConcurrentHashMap<Int, ActivityResultCallback>()
@@ -85,7 +86,7 @@ class EventDispatcher(
      * 注册 HID 事件处理器
      */
     fun registerHidHandler(target: String, handler: HidEventHandler) {
-        hidChannels.getOrPut(target) { mutableListOf() }.add(handler)
+        hidChannels.getOrPut(target) { CopyOnWriteArrayList() }.add(handler)
     }
 
     /**
