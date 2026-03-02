@@ -1,6 +1,5 @@
 package com.adapterrn84.turbomodules.connector
 
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 
 interface RequestResponseChannel {
@@ -14,8 +13,8 @@ interface RequestResponseChannel {
 }
 
 interface StreamChannel {
-    fun open(): Flow<ConnectorEvent>
-    suspend fun close()
+    fun open(onData: (ConnectorEvent) -> Unit, onError: (String) -> Unit)
+    fun close()
 }
 
 interface PassiveChannel {

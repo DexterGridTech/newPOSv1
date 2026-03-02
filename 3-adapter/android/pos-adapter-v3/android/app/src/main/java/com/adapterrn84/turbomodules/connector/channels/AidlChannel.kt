@@ -133,4 +133,8 @@ class AidlChannel(
             )
         }
     }
+
+    override fun close() {
+        // AidlChannel is stateless, no cleanup needed
+    }
 }

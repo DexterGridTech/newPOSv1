@@ -36,8 +36,12 @@ class ConnectorManager(private val context: ReactApplicationContext) {
             // 创建通道并执行
             val channel = channelFactory.createRequestResponseChannel(descriptor)
 
-            withTimeout(remainingTimeout) {
-                channel.execute(action, params, remainingTimeout)
+            try {
+                withTimeout(remainingTimeout) {
+                    channel.execute(action, params, remainingTimeout)
+                }
+            } finally {
+                channel.close()
             }
         } catch (e: TimeoutCancellationException) {
             val duration = System.currentTimeMillis() - startTime

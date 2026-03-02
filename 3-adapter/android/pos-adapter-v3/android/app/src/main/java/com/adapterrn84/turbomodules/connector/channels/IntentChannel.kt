@@ -145,4 +145,8 @@ class IntentChannel(
 
         return intent
     }
+
+    override fun close() {
+        // IntentChannel is stateless, no cleanup needed
+    }
 }

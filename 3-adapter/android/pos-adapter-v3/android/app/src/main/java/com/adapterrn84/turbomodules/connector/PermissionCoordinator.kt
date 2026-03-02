@@ -66,6 +66,7 @@ class PermissionCoordinator(private val context: ReactApplicationContext) {
         val granted = try {
             withTimeout(30000) { deferred.await() }
         } catch (e: Exception) {
+            permissionRequests.remove(permission)
             false
         }
 

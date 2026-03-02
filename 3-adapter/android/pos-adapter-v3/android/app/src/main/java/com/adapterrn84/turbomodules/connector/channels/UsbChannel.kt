@@ -187,4 +187,8 @@ class UsbChannel(
             context.unregisterReceiver(receiver)
         }
     }
+
+    override fun close() {
+        // UsbChannel is stateless, connection is closed in execute() finally block
+    }
 }

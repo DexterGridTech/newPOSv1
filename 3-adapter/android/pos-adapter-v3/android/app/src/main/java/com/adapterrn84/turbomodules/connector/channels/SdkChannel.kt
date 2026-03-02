@@ -72,4 +72,8 @@ class SdkChannel(
             )
         }
     }
+
+    override fun close() {
+        // SdkChannel is stateless, no cleanup needed
+    }
 }

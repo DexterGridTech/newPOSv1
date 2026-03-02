@@ -75,4 +75,8 @@ class NetworkChannel(
             )
         }
     }
+
+    override fun close() {
+        // NetworkChannel is stateless, no cleanup needed
+    }
 }
