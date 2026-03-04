@@ -7,12 +7,14 @@ import {TaskSystem, ProgressData} from '@impos2/kernel-core-task'
 import {TEST_TASK_DEFINITIONS} from '../testTask'
 import {C} from '../theme'
 import {Subscription} from 'rxjs'
+import {useResponsive} from '../hooks/useResponsive'
 
 type LoopMode = 'once' | 'loop'
 type ProgressEntry = ProgressData & {_id: string}
 
 const MONOSPACE = Platform.select({ios: 'Courier New', android: 'monospace'}) as string
 const MAX_ENTRIES = 100
+const PROGRESS_ITEM_HEIGHT = 120
 let _idCounter = 0
 const nextId = () => String(++_idCounter)
 
@@ -161,6 +163,8 @@ export default function TaskTestScreen() {
     const [running, setRunning]         = useState(false)
     const [entries, setEntries]         = useState<ProgressEntry[]>([])
     const [strModal, setStrModal]       = useState<string | null>(null)
+    const [showDetail, setShowDetail]   = useState(false)
+    const {isSmall} = useResponsive()
 
     const cancelRef = useRef<(() => void) | null>(null)
     const subRef    = useRef<Subscription | null>(null)
@@ -216,6 +220,11 @@ export default function TaskTestScreen() {
             <View style={s.header}>
                 <Text style={s.headerTitle}>Task Test</Text>
                 <View style={s.headerRight}>
+                    {isSmall && (
+                        <TouchableOpacity onPress={() => setShowDetail(!showDetail)} style={s.detailBtn}>
+                            <Text style={s.detailBtnText}>{showDetail ? 'STREAM' : 'DETAIL'}</Text>
+                        </TouchableOpacity>
+                    )}
                     {running && <View style={s.runningDot} />}
                     <Text style={[s.headerStatus, {color: running ? C.accent : C.textMuted}]}>
                         {running ? 'RUNNING' : 'IDLE'}
@@ -223,82 +232,95 @@ export default function TaskTestScreen() {
                 </View>
             </View>
 
-            <View style={s.body}>
-                {/* 左侧：TaskDefinition 选择 + 详情 */}
-                <View style={s.controlPanel}>
-                    <View style={s.dropdownSection}>
-                        <Text style={s.label}>TaskDefinition</Text>
-                        <Dropdown
-                            value={selectedKey}
-                            options={dropdownOptions}
-                            onChange={setSelectedKey}
-                            disabled={running}
+            <View style={[s.body, isSmall && {flexDirection: 'column'}]}>
+                {/* TaskDefinition 选择 + 详情 */}
+                {(!isSmall || showDetail) && (
+                    <View style={[s.controlPanel, isSmall && {width: '100%', borderRightWidth: 0, borderBottomWidth: 1, borderBottomColor: C.border}]}>
+                        <View style={s.dropdownSection}>
+                            <Text style={s.label}>TaskDefinition</Text>
+                            <Dropdown
+                                value={selectedKey}
+                                options={dropdownOptions}
+                                onChange={setSelectedKey}
+                                disabled={running}
+                            />
+                        </View>
+                        <ScrollView style={{flex: 1}} contentContainerStyle={{paddingBottom: 24}}>
+                            <Text style={s.label}>详情</Text>
+                            <View style={s.jsonBox}>
+                                {selectedDef
+                                    ? <JsonNode v={selectedDef} depth={0} onShowString={setStrModal} />
+                                    : <Text style={s.emptyDetail}>未选择</Text>
+                                }
+                            </View>
+                        </ScrollView>
+                    </View>
+                )}
+
+                {/* 控制栏 + Progress Stream */}
+                {(!isSmall || !showDetail) && (
+                    <View style={[s.streamPanel, isSmall && {flex: 1}]}>
+                        {/* 控制栏 */}
+                        <View style={s.ctrlBar}>
+                            <View style={s.modeRow}>
+                                {(['once', 'loop'] as LoopMode[]).map(m => (
+                                    <TouchableOpacity
+                                        key={m}
+                                        style={[s.modeChip, loopMode === m && s.modeChipActive]}
+                                        onPress={() => !running && setLoopMode(m)}
+                                        disabled={running}>
+                                        <Text style={[s.modeChipText, loopMode === m && s.modeChipTextActive]}>
+                                            {m === 'once' ? '单次' : '循环'}
+                                        </Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                            <View style={s.btnRow}>
+                                <TouchableOpacity
+                                    style={[s.btn, {backgroundColor: running ? C.textMuted : C.accent}]}
+                                    onPress={handleRun}
+                                    disabled={running || !selectedDef}>
+                                    <Text style={s.btnText}>▶ RUN</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[s.btn, {backgroundColor: running ? C.danger : C.textMuted}]}
+                                    onPress={handleStop}
+                                    disabled={!running}>
+                                    <Text style={s.btnText}>■ STOP</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+
+                        {/* Stream 标题 */}
+                        <View style={s.streamHeader}>
+                            <Text style={s.streamTitle}>Progress Stream ({entries.length})</Text>
+                            <TouchableOpacity onPress={handleClear} disabled={running}>
+                                <Text style={[s.clearText, running && {color: C.textMuted}]}>清空</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        <FlatList
+                            ref={listRef}
+                            data={entries}
+                            keyExtractor={e => e._id}
+                            renderItem={({item}) => <ProgressRow entry={item} />}
+                            ListEmptyComponent={
+                                <Text style={s.emptyText}>点击 RUN 开始执行，progressData 将实时显示在这里</Text>
+                            }
+                            contentContainerStyle={{paddingBottom: 16}}
+                            style={s.streamList}
+                            getItemLayout={(data, index) => ({
+                                length: PROGRESS_ITEM_HEIGHT,
+                                offset: PROGRESS_ITEM_HEIGHT * index,
+                                index,
+                            })}
+                            removeClippedSubviews={true}
+                            maxToRenderPerBatch={10}
+                            windowSize={5}
+                            initialNumToRender={10}
                         />
                     </View>
-                    <ScrollView style={{flex: 1}} contentContainerStyle={{paddingBottom: 24}}>
-                        <Text style={s.label}>详情</Text>
-                        <View style={s.jsonBox}>
-                            {selectedDef
-                                ? <JsonNode v={selectedDef} depth={0} onShowString={setStrModal} />
-                                : <Text style={s.emptyDetail}>未选择</Text>
-                            }
-                        </View>
-                    </ScrollView>
-                </View>
-
-                {/* 右侧：控制栏 + Progress Stream */}
-                <View style={s.streamPanel}>
-                    {/* 控制栏 */}
-                    <View style={s.ctrlBar}>
-                        <View style={s.modeRow}>
-                            {(['once', 'loop'] as LoopMode[]).map(m => (
-                                <TouchableOpacity
-                                    key={m}
-                                    style={[s.modeChip, loopMode === m && s.modeChipActive]}
-                                    onPress={() => !running && setLoopMode(m)}
-                                    disabled={running}>
-                                    <Text style={[s.modeChipText, loopMode === m && s.modeChipTextActive]}>
-                                        {m === 'once' ? '单次' : '循环'}
-                                    </Text>
-                                </TouchableOpacity>
-                            ))}
-                        </View>
-                        <View style={s.btnRow}>
-                            <TouchableOpacity
-                                style={[s.btn, {backgroundColor: running ? C.textMuted : C.accent}]}
-                                onPress={handleRun}
-                                disabled={running || !selectedDef}>
-                                <Text style={s.btnText}>▶ RUN</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={[s.btn, {backgroundColor: running ? C.danger : C.textMuted}]}
-                                onPress={handleStop}
-                                disabled={!running}>
-                                <Text style={s.btnText}>■ STOP</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-
-                    {/* Stream 标题 */}
-                    <View style={s.streamHeader}>
-                        <Text style={s.streamTitle}>Progress Stream ({entries.length})</Text>
-                        <TouchableOpacity onPress={handleClear} disabled={running}>
-                            <Text style={[s.clearText, running && {color: C.textMuted}]}>清空</Text>
-                        </TouchableOpacity>
-                    </View>
-
-                    <FlatList
-                        ref={listRef}
-                        data={entries}
-                        keyExtractor={e => e._id}
-                        renderItem={({item}) => <ProgressRow entry={item} />}
-                        ListEmptyComponent={
-                            <Text style={s.emptyText}>点击 RUN 开始执行，progressData 将实时显示在这里</Text>
-                        }
-                        contentContainerStyle={{paddingBottom: 16}}
-                        style={s.streamList}
-                    />
-                </View>
+                )}
             </View>
 
             <Modal visible={strModal !== null} transparent animationType="fade" onRequestClose={() => setStrModal(null)}>
@@ -413,6 +435,8 @@ const s = StyleSheet.create({
     headerRight:  {flexDirection: 'row', alignItems: 'center', gap: 6},
     runningDot:   {width: 7, height: 7, borderRadius: 4, backgroundColor: C.accent},
     headerStatus: {fontSize: 11, fontWeight: '700', letterSpacing: 0.5},
+    detailBtn:    {paddingHorizontal: 10, paddingVertical: 4, borderRadius: 4, backgroundColor: C.info, marginRight: 6},
+    detailBtnText:{fontSize: 11, color: C.textInverse, fontWeight: '600'},
 
     body:         {flex: 1, flexDirection: 'row'},
 

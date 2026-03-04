@@ -3,6 +3,7 @@ import {View, Text, ScrollView, TouchableOpacity, StyleSheet} from 'react-native
 import {localWebServerAdapter} from '../../src/foundations/localWebServer'
 import {LocalWebServerStatus} from '@impos2/kernel-core-interconnection'
 import {C} from '../theme'
+import {useResponsive} from '../hooks/useResponsive'
 
 type StatusInfo = {status: LocalWebServerStatus; addresses: {name: string; address: string}[]; error?: string}
 type StatsInfo = {masterCount: number; slaveCount: number; pendingCount: number; uptime: number}
@@ -12,6 +13,7 @@ export default function LocalWebServerScreen() {
     const [stats, setStats]           = useState<StatsInfo | null>(null)
     const [loading, setLoading]       = useState<string | null>(null)
     const [lastErr, setLastErr]       = useState<string | null>(null)
+    const {isSmall} = useResponsive()
 
     const run = useCallback(async (key: string, fn: () => Promise<void>) => {
         setLoading(key); setLastErr(null)
@@ -54,7 +56,7 @@ export default function LocalWebServerScreen() {
             <ScrollView style={s.panel} contentContainerStyle={{paddingBottom: 32}}>
 
                 {/* Actions */}
-                <View style={s.btnRow}>
+                <View style={[s.btnRow, isSmall && {flexDirection: 'column'}]}>
                     {[
                         {key: 'start',  label: 'START',  color: C.accent,  fn: handleStart},
                         {key: 'stop',   label: 'STOP',   color: C.danger,  fn: handleStop},

@@ -3,6 +3,7 @@ import {View, Text, ScrollView, TouchableOpacity, TextInput, StyleSheet} from 'r
 import {scriptExecutionAdapter} from '../../src/foundations/scriptExecution'
 import NativeScriptsTurboModule from '../../src/supports/apis/NativeScriptsTurboModule'
 import {C} from '../theme'
+import {useResponsive} from '../hooks/useResponsive'
 
 type LogEntry = {id: string; script: string; success: boolean; result: string; duration: number}
 
@@ -37,6 +38,7 @@ export default function ScriptExecutionScreen() {
     const [log, setLog]         = useState<LogEntry[]>([])
     const [stats, setStats]     = useState<any>(null)
     const [loading, setLoading] = useState(false)
+    const {isSmall} = useResponsive()
 
     const addLog = (entry: Omit<LogEntry, 'id'>) =>
         setLog(prev => [{...entry, id: String(Date.now())}, ...prev].slice(0, 30))
@@ -107,13 +109,13 @@ export default function ScriptExecutionScreen() {
                     placeholderTextColor={C.textMuted} placeholder="return ..." multiline />
 
                 {/* Params / Globals */}
-                <View style={s.row}>
+                <View style={[s.row, isSmall && {flexDirection: 'column'}]}>
                     <View style={{flex: 1}}>
                         <Text style={s.label}>Params (JSON)</Text>
                         <TextInput style={[s.input, s.inputSmall]} value={params} onChangeText={setParams}
                             placeholderTextColor={C.textMuted} placeholder="{}" multiline />
                     </View>
-                    <View style={{width: 8}} />
+                    {!isSmall && <View style={{width: 8}} />}
                     <View style={{flex: 1}}>
                         <Text style={s.label}>Globals (JSON)</Text>
                         <TextInput style={[s.input, s.inputSmall]} value={globals} onChangeText={setGlobals}

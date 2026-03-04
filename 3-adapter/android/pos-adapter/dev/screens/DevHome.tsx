@@ -9,6 +9,7 @@ import TaskSystemScreen from './TaskSystemScreen'
 import TaskTestScreen from './TaskTestScreen'
 import ExternalConnectorScreen from './ExternalConnectorScreen'
 import {C} from '../theme'
+import {useResponsive} from '../hooks/useResponsive'
 
 type MenuKey = 'logger' | 'device' | 'storage' | 'script' | 'lws' | 'task' | 'connector' | 'taskTest'
 
@@ -38,35 +39,52 @@ const SCREENS: Record<MenuKey, React.ComponentType> = {
 
 export default function DevHome() {
     const [active, setActive] = useState<MenuKey>('logger')
+    const {isSmall} = useResponsive()
     const Screen = SCREENS[active]
 
     return (
         <SafeAreaView style={s.root}>
             <View style={s.layout}>
-                <View style={s.sidebar}>
-                    <View style={s.sidebarHeader}>
-                        <Text style={s.sidebarTitle}>POS</Text>
-                        <Text style={s.sidebarSub}>Adapter Dev</Text>
+                {!isSmall && (
+                    <View style={s.sidebar}>
+                        <View style={s.sidebarHeader}>
+                            <Text style={s.sidebarTitle}>POS</Text>
+                            <Text style={s.sidebarSub}>Adapter Dev</Text>
+                        </View>
+                        <ScrollView style={s.menu}>
+                            {MENU.map(item => (
+                                <TouchableOpacity
+                                    key={item.key}
+                                    style={[s.menuItem, active === item.key && s.menuItemActive]}
+                                    onPress={() => setActive(item.key)}>
+                                    <View style={[s.menuTag, active === item.key && s.menuTagActive]}>
+                                        <Text style={[s.menuTagText, active === item.key && s.menuTagTextActive]}>
+                                            {item.tag}
+                                        </Text>
+                                    </View>
+                                    <Text style={[s.menuLabel, active === item.key && s.menuLabelActive]}>
+                                        {item.label}
+                                    </Text>
+                                </TouchableOpacity>
+                            ))}
+                        </ScrollView>
                     </View>
-                    <ScrollView style={s.menu}>
-                        {MENU.map(item => (
-                            <TouchableOpacity
-                                key={item.key}
-                                style={[s.menuItem, active === item.key && s.menuItemActive]}
-                                onPress={() => setActive(item.key)}>
-                                <View style={[s.menuTag, active === item.key && s.menuTagActive]}>
-                                    <Text style={[s.menuTagText, active === item.key && s.menuTagTextActive]}>
+                )}
+                <View style={s.content}>
+                    {isSmall && (
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={s.topNav}>
+                            {MENU.map(item => (
+                                <TouchableOpacity
+                                    key={item.key}
+                                    style={[s.topNavItem, active === item.key && s.topNavItemActive]}
+                                    onPress={() => setActive(item.key)}>
+                                    <Text style={[s.topNavTag, active === item.key && s.topNavTagActive]}>
                                         {item.tag}
                                     </Text>
-                                </View>
-                                <Text style={[s.menuLabel, active === item.key && s.menuLabelActive]}>
-                                    {item.label}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
-                    </ScrollView>
-                </View>
-                <View style={s.content}>
+                                </TouchableOpacity>
+                            ))}
+                        </ScrollView>
+                    )}
                     <Screen />
                 </View>
             </View>
@@ -91,4 +109,9 @@ const s = StyleSheet.create({
     menuLabel:         {fontSize: 11, color: C.textMuted, textAlign: 'center'},
     menuLabelActive:   {color: C.textPrimary, fontWeight: '500'},
     content:           {flex: 1},
+    topNav:            {flexDirection: 'row', backgroundColor: C.bgCard, borderBottomWidth: 1, borderBottomColor: C.border, paddingHorizontal: 8, paddingVertical: 6},
+    topNavItem:        {paddingHorizontal: 12, paddingVertical: 6, marginHorizontal: 2, borderRadius: 6, backgroundColor: C.bgSub},
+    topNavItemActive:  {backgroundColor: C.accentBg},
+    topNavTag:         {fontSize: 11, fontWeight: '700', color: C.textMuted, letterSpacing: 0.5},
+    topNavTagActive:   {color: C.accent},
 })

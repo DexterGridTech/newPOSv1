@@ -2,6 +2,7 @@ import React, {useState, useCallback} from 'react'
 import {View, Text, ScrollView, TouchableOpacity, TextInput, StyleSheet, FlatList} from 'react-native'
 import {stateStorageAdapter} from '../../src/foundations/stateStorage'
 import {C} from '../theme'
+import {useResponsive} from '../hooks/useResponsive'
 
 type LogEntry = {id: string; type: 'get' | 'set' | 'remove' | 'error'; key: string; value?: string}
 
@@ -10,6 +11,7 @@ export default function StateStorageScreen() {
     const [value, setValue] = useState('')
     const [result, setResult] = useState<string | null>(null)
     const [log, setLog] = useState<LogEntry[]>([])
+    const {isSmall} = useResponsive()
 
     const addLog = (entry: Omit<LogEntry, 'id'>) =>
         setLog(prev => [{...entry, id: String(Date.now())}, ...prev].slice(0, 50))
@@ -62,7 +64,7 @@ export default function StateStorageScreen() {
                     <Text style={s.label}>Value (JSON)</Text>
                     <TextInput style={[s.input, s.inputMulti]} value={value} onChangeText={setValue}
                         placeholder="输入 value（支持 JSON）" placeholderTextColor="#475569" multiline />
-                    <View style={s.btnRow}>
+                    <View style={[s.btnRow, isSmall && {flexDirection: 'column'}]}>
                         <TouchableOpacity style={[s.btn, s.btnGet]} onPress={handleGet}>
                             <Text style={s.btnText}>GET</Text>
                         </TouchableOpacity>

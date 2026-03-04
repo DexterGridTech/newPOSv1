@@ -6,6 +6,7 @@ import {
 import {externalConnectorAdapter} from '../../src/foundations/externalConnector'
 import {ChannelType, InteractionMode, ChannelDescriptor, ConnectorEvent} from '@impos2/kernel-core-base'
 import {C} from '../theme'
+import {useResponsive} from '../hooks/useResponsive'
 
 // ─── 类型 ─────────────────────────────────────────────────────────────────────
 
@@ -64,12 +65,18 @@ const STREAM_PRESETS: Record<ChannelType, {target: string}> = {
     SDK:       {target: 'com.sdk.Scanner'},
 }
 
+// ─── 常量 ─────────────────────────────────────────────────────────────────────
+
+const LOG_ITEM_HEIGHT = 80
+
 // ─── 主组件 ───────────────────────────────────────────────────────────────────
 
 export default function ExternalConnectorScreen() {
     const [tab, setTab] = useState<TabKey>('rr')
     const [log, setLog] = useState<LogEntry[]>([])
     const [sharedTarget, setSharedTarget] = useState<string | null>(null)
+    const [showLog, setShowLog] = useState(false)
+    const {isSmall} = useResponsive()
 
     const addLog = useCallback((entry: Omit<LogEntry, 'id' | 'ts'>) => {
         setLog(prev => [{...entry, id: String(Date.now() + Math.random()), ts: Date.now()}, ...prev].slice(0, 100))
@@ -81,9 +88,16 @@ export default function ExternalConnectorScreen() {
         <View style={s.root}>
             <View style={s.header}>
                 <Text style={s.headerTitle}>ExternalConnector</Text>
-                <TouchableOpacity onPress={clearLog} style={s.clearBtn}>
-                    <Text style={s.clearBtnText}>CLEAR</Text>
-                </TouchableOpacity>
+                <View style={{flexDirection: 'row', gap: 8}}>
+                    {isSmall && (
+                        <TouchableOpacity onPress={() => setShowLog(!showLog)} style={s.toggleBtn}>
+                            <Text style={s.toggleBtnText}>{showLog ? 'CONFIG' : `LOG(${log.length})`}</Text>
+                        </TouchableOpacity>
+                    )}
+                    <TouchableOpacity onPress={clearLog} style={s.clearBtn}>
+                        <Text style={s.clearBtnText}>CLEAR</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
 
             {/* Tab 切换 */}
@@ -99,25 +113,38 @@ export default function ExternalConnectorScreen() {
                 ))}
             </View>
 
-            <View style={s.body}>
-                {/* 左侧：配置区 */}
-                <View style={s.configPanel}>
-                    {tab === 'rr'      && <RRPanel      addLog={addLog} sharedTarget={sharedTarget} onTargetSelect={setSharedTarget} />}
-                    {tab === 'stream'  && <StreamPanel  addLog={addLog} sharedTarget={sharedTarget} />}
-                    {tab === 'passive' && <PassivePanel addLog={addLog} sharedTarget={sharedTarget} />}
-                </View>
+            <View style={[s.body, isSmall && {flexDirection: 'column'}]}>
+                {/* 配置区 */}
+                {(!isSmall || !showLog) && (
+                    <View style={[s.configPanel, isSmall && {flex: 1, borderRightWidth: 0, borderBottomWidth: 1, borderBottomColor: C.border}]}>
+                        {tab === 'rr'      && <RRPanel      addLog={addLog} sharedTarget={sharedTarget} onTargetSelect={setSharedTarget} />}
+                        {tab === 'stream'  && <StreamPanel  addLog={addLog} sharedTarget={sharedTarget} />}
+                        {tab === 'passive' && <PassivePanel addLog={addLog} sharedTarget={sharedTarget} />}
+                    </View>
+                )}
 
-                {/* 右侧：日志区 */}
-                <View style={s.logPanel}>
-                    <Text style={s.logTitle}>事件日志 ({log.length})</Text>
-                    <FlatList
-                        data={log}
-                        keyExtractor={i => i.id}
-                        renderItem={({item}) => <LogRow item={item} />}
-                        ListEmptyComponent={<Text style={s.emptyText}>暂无记录</Text>}
-                        style={s.logList}
-                    />
-                </View>
+                {/* 日志区 */}
+                {(!isSmall || showLog) && (
+                    <View style={[s.logPanel, isSmall && {width: '100%', flex: 1}]}>
+                        <Text style={s.logTitle}>事件日志 ({log.length})</Text>
+                        <FlatList
+                            data={log}
+                            keyExtractor={i => i.id}
+                            renderItem={({item}) => <LogRow item={item} />}
+                            ListEmptyComponent={<Text style={s.emptyText}>暂无记录</Text>}
+                            style={s.logList}
+                            getItemLayout={(data, index) => ({
+                                length: LOG_ITEM_HEIGHT,
+                                offset: LOG_ITEM_HEIGHT * index,
+                                index,
+                            })}
+                            removeClippedSubviews={true}
+                            maxToRenderPerBatch={10}
+                            windowSize={5}
+                            initialNumToRender={10}
+                        />
+                    </View>
+                )}
             </View>
         </View>
     )
@@ -551,6 +578,8 @@ const s = StyleSheet.create({
     headerTitle:  {flex: 1, fontSize: 16, fontWeight: '600', color: C.textPrimary, letterSpacing: 0.5},
     clearBtn:     {paddingHorizontal: 10, paddingVertical: 4, borderRadius: 4, borderWidth: 1, borderColor: C.border},
     clearBtnText: {fontSize: 11, color: C.textMuted, fontWeight: '600'},
+    toggleBtn:    {paddingHorizontal: 10, paddingVertical: 4, borderRadius: 4, backgroundColor: C.accent},
+    toggleBtnText:{fontSize: 11, color: C.textInverse, fontWeight: '600'},
 
     // Tab 栏
     tabBar:       {flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: C.border, backgroundColor: C.bgCard},

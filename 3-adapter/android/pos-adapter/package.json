@@ -4,6 +4,9 @@
   "description": "适配层：POS Android原生能力+Adapter接口实现",
   "main": "src/index.ts",
   "types": "src/index.ts",
+  "react-native": {
+    "android": false
+  },
   "scripts": {
     "start": "react-native start",
     "start:clean": "react-native start --reset-cache",
@@ -45,9 +48,6 @@
   },
   "engines": {
     "node": ">=18"
-  },
-  "react-native": {
-    "android": false
   },
   "dependencies": {
     "react-native-mmkv": "2.12.2"
