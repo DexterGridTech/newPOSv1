@@ -56,6 +56,7 @@ build/
 **/android/.gradle/
 **/android/local.properties
 **/android/.cxx/
+**/.cxx/
 **/android/captures/
 *.apk
 *.aab

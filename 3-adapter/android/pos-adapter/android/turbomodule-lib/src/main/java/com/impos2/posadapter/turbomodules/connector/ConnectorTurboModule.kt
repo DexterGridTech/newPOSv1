@@ -19,6 +19,7 @@ import com.impos2.posadapter.turbomodules.connector.channels.HidStreamChannel
 import com.impos2.posadapter.turbomodules.connector.channels.IntentPassiveChannel
 import org.json.JSONObject
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.Executors
 
 /**
  * ConnectorTurboModule：统一对外连接器
@@ -40,6 +41,7 @@ class ConnectorTurboModule(reactContext: ReactApplicationContext) :
 
     private val registry = ChannelRegistry(reactContext)
     private val passiveChannel = IntentPassiveChannel(reactContext)
+    private val ioExecutor = Executors.newCachedThreadPool()
 
     // 活跃的 HID stream 通道，供 onKeyEvent 路由
     private val activeHidChannels = ConcurrentHashMap<String, HidStreamChannel>()
@@ -182,7 +184,7 @@ class ConnectorTurboModule(reactContext: ReactApplicationContext) :
 
     @ReactMethod
     fun getAvailableTargets(type: String, promise: Promise) {
-        android.os.AsyncTask.THREAD_POOL_EXECUTOR.execute {
+        ioExecutor.execute {
             try {
                 val result = com.facebook.react.bridge.Arguments.createArray()
                 when (runCatching { ChannelType.valueOf(type) }.getOrNull()) {
@@ -223,7 +225,7 @@ class ConnectorTurboModule(reactContext: ReactApplicationContext) :
     @ReactMethod
     fun isAvailable(channelJson: String, promise: Promise) {
         // 部分操作（USB deviceList、BT getDefaultAdapter）在某些设备上是阻塞调用，移到后台线程
-        android.os.AsyncTask.THREAD_POOL_EXECUTOR.execute {
+        ioExecutor.execute {
             try {
                 val desc = ChannelDescriptor.fromJson(JSONObject(channelJson))
                 val available = when (desc.type) {
@@ -272,5 +274,6 @@ class ConnectorTurboModule(reactContext: ReactApplicationContext) :
         activeHidChannels.values.forEach { it.close() }
         activeHidChannels.clear()
         registry.closeAll()
+        ioExecutor.shutdown()
     }
 }

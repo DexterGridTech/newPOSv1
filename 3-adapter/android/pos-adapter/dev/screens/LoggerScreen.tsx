@@ -79,21 +79,20 @@ function WritePanel() {
         const parsedData = data.trim()
             ? (() => { try { return JSON.parse(data) } catch { return data } })()
             : undefined
+        const buildEntry = (result: LogEntry['result']): LogEntry => ({
+            id: String(Date.now()),
+            level,
+            tags,
+            message,
+            data,
+            result,
+            ts: Date.now(),
+        })
         try {
             loggerAdapter[level](tags.split('.'), message, parsedData)
-            setHistory(h => [{
-                id: String(Date.now()),
-                level, tags, message, data,
-                result: 'ok',
-                ts: Date.now(),
-            }, ...h].slice(0, 50))
+            setHistory(h => [buildEntry('ok'), ...h].slice(0, 50))
         } catch (e) {
-            setHistory(h => [{
-                id: String(Date.now()),
-                level, tags, message, data,
-                result: 'error',
-                ts: Date.now(),
-            }, ...h].slice(0, 50))
+            setHistory(h => [buildEntry('error'), ...h].slice(0, 50))
         }
     }, [level, tags, message, data])
 

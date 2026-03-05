@@ -22,7 +22,6 @@ export const adapterElectronModule: AppModule = {
     parameters: adapterElectronParameters,
     dependencies: [uiCoreBaseModule],
     modulePreSetup: adapterElectronModulePreSetup,
-    preSetupPriority: 3002, // adapter 模块使用 3001-3999
 }
 
 export * from './types'

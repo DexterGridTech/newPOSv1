@@ -30,5 +30,4 @@ export interface AppModule {
     screenParts?: Record<string, ScreenPartRegistration>
     dependencies: AppModule[]
     modulePreSetup?: (config: ApplicationConfig, allModules: AppModule[]) => Promise<void>
-    preSetupPriority?: number
 }

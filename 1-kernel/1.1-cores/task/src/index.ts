@@ -22,7 +22,6 @@ export const kernelCoreTaskModule: AppModule = {
     parameters: kernelCoreTaskParameters,
     dependencies: [kernelCoreBaseModule, kernelCoreInterconnectionModule],
     modulePreSetup: kernelCoreTaskModulePreSetup,
-    preSetupPriority: 0
 }
 
 

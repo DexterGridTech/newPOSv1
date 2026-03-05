@@ -8,7 +8,7 @@ export class ModuleDependencyResolver {
     /**
      * 解析模块依赖,返回拉平且去重后的模块列表
      * @param modules 输入的模块列表
-     * @returns 拉平且去重后的模块列表，按 priority 升序排序（priority 越小越靠前，未定义的排最后）
+     * @returns 拉平且去重后的模块列表（严格依赖优先，A dependsOn B 则 B 一定在 A 前）
      */
     resolveModules(modules: AppModule[]): AppModule[] {
         const resolvedModules: AppModule[] = [];
@@ -20,20 +20,7 @@ export class ModuleDependencyResolver {
             this.traverseModule(module, resolvedModules, visitedModules, visitingModules);
         });
 
-        // 根据 priority 排序，priority 越小越靠前，未定义 priority 的排在最后
-        return resolvedModules.sort((a, b) => {
-            const priorityA = a.preSetupPriority;
-            const priorityB = b.preSetupPriority;
-
-            // 都未定义 priority，保持原序
-            if (priorityA === undefined && priorityB === undefined) return 0;
-            // 如果 a 未定义 priority，排在后面
-            if (priorityA === undefined) return 1;
-            // 如果 b 未定义 priority，排在后面
-            if (priorityB === undefined) return -1;
-            // 都定义了，按升序排序
-            return priorityA - priorityB;
-        });
+        return resolvedModules;
     }
 
     /**

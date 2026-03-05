@@ -26,7 +26,6 @@ export const uiIntegrationDesktopModule: AppModule = {
     dependencies: [uiCoreBaseModule, uiAdminModule,uiDeviceActivateModule],
     modulePreSetup: uiIntegrationDesktopModulePreSetup,
     screenParts: uiIntegrationDesktopScreenParts,
-    preSetupPriority: 2301//ui integration 模块使用2301-2399
 }
 
 

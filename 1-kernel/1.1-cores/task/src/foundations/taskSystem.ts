@@ -115,36 +115,30 @@ export class TaskSystem {
 
         return {
             run: (requestId: string, initialContext: Record<string, any> = {}, loop = true) => {
-                console.log(`[${requestId}] TaskSystem.run called, loop=${loop}`);
+                logger.log([moduleName, LOG_TAGS.Task, "TaskSystem"], `任务开始执行 requestId=${requestId}, loop=${loop}`);
                 const session = this.executor.executeTask(taskDef, requestId, initialContext, loop);
                 // 注册 cancel 句柄，流结束（complete/error）时自动清理
                 this.runningTasks.set(requestId, session.cancel);
-                console.log(`[${requestId}] registered in runningTasks, size=${this.runningTasks.size}`);
                 return new Observable<ProgressData>((subscriber) => {
                     const sub = session.progress$.subscribe({
-                        next: (v) => {
-                            console.log(`[${requestId}] progress event: type=${v.type}, state=${v.state}`);
-                            subscriber.next(v);
-                        },
+                        next: (v) => subscriber.next(v),
                         error: (e) => {
-                            console.log(`[${requestId}] progress error, deleting from runningTasks`);
                             this.runningTasks.delete(requestId);
+                            logger.error([moduleName, LOG_TAGS.Task, "TaskSystem"], `任务执行异常 requestId=${requestId}`, e);
                             subscriber.error(e);
                         },
                         complete: () => {
-                            console.log(`[${requestId}] progress complete, deleting from runningTasks, size before=${this.runningTasks.size}`);
                             this.runningTasks.delete(requestId);
-                            console.log(`[${requestId}] runningTasks size after=${this.runningTasks.size}`);
+                            logger.log([moduleName, LOG_TAGS.Task, "TaskSystem"], `任务执行完成 requestId=${requestId}`);
                             subscriber.complete();
                         },
                     });
                     return () => {
-                        console.log(`[${requestId}] Observable teardown, calling cancel if exists`);
                         sub.unsubscribe();
                         // 外部 unsubscribe 时，同步触发内部取消，避免内部流程继续运行
                         const cancelFn = this.runningTasks.get(requestId);
                         if (cancelFn) {
-                            console.log(`[${requestId}] calling cancelFn`);
+                            logger.warn([moduleName, LOG_TAGS.Task, "TaskSystem"], `任务被外部取消 requestId=${requestId}`);
                             cancelFn();
                         }
                     };
@@ -160,6 +154,7 @@ export class TaskSystem {
     cancel(requestId: string): void {
         const cancelFn = this.runningTasks.get(requestId);
         if (cancelFn) {
+            logger.warn([moduleName, LOG_TAGS.Task, "TaskSystem"], `任务取消请求 requestId=${requestId}`);
             cancelFn();
             // cancel 句柄触发后，流会推送 TASK_CANCEL 并 complete，complete 回调会自动清理
         }

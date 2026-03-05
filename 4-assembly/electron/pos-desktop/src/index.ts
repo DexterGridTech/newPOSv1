@@ -25,7 +25,6 @@ export const assemblyElectronDesktopModule: AppModule = {
     dependencies: [adapterElectronModule, uiIntegrationDesktopModule],
     modulePreSetup: assemblyElectronDesktopModulePreSetup,
     screenParts: assemblyElectronDesktopScreenParts,
-    preSetupPriority: 4002, // assembly 模块使用 4001-4999
 }
 
 export * from './types'

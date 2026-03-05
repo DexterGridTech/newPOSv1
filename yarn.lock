@@ -3067,8 +3067,8 @@ __metadata:
     prettier: 2.8.8
     react: 18.3.1
     react-native: 0.76.6
-    react-native-splash-screen: ^3.3.0
-    react-native-svg: "*"
+    react-native-splash-screen: 3.3.0
+    react-native-svg: 15.15.3
     react-test-renderer: 18.3.1
     reactotron-core-client: ^2.9.9
     reactotron-react-native: ^5.1.18
@@ -15114,7 +15114,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-splash-screen@npm:^3.3.0":
+"react-native-splash-screen@npm:3.3.0":
   version: 3.3.0
   resolution: "react-native-splash-screen@npm:3.3.0"
   peerDependencies:
@@ -15123,7 +15123,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-svg@npm:*, react-native-svg@npm:^15.15.3":
+"react-native-svg@npm:15.15.3, react-native-svg@npm:^15.15.3":
   version: 15.15.3
   resolution: "react-native-svg@npm:15.15.3"
   dependencies:

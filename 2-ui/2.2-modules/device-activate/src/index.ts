@@ -25,7 +25,6 @@ export const uiDeviceActivateModule: AppModule = {
     dependencies: [kernelTerminalModule, uiCoreBaseModule],
     modulePreSetup: uiDeviceActivateModulePreSetup,
     screenParts: uiDeviceActivateScreenParts,
-    preSetupPriority: 2202//ui module 模块使用2201-2299
 }
 
 

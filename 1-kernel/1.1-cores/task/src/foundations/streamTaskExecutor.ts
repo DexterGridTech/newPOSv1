@@ -173,7 +173,6 @@ export class StreamTaskExecutor {
 
         // cancel$ 只在这里订阅一次，统一处理取消逻辑
         cancel$.subscribe(() => {
-            console.log(`[${requestId}] cancel$ triggered in StreamTaskExecutor`);
             loopTimeoutSub?.unsubscribe();
             executionContext.state = 'CANCELLED';
             progress$.next({
@@ -191,7 +190,6 @@ export class StreamTaskExecutor {
                     totalLoopCount: executionContext.context.loopCount,
                 }
             });
-            console.log(`[${requestId}] TASK_CANCEL event sent, calling progress$.complete()`);
             progress$.complete();
         });
 
@@ -623,4 +621,3 @@ export class StreamTaskExecutor {
         return 1;
     }
 }
-

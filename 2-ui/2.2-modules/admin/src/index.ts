@@ -24,7 +24,6 @@ export const uiAdminModule: AppModule = {
     dependencies: [uiCoreBaseModule],
     modulePreSetup: uiAdminModulePreSetup,
     screenParts: uiAdminScreenParts,
-    preSetupPriority: 2201//ui module 模块使用2201-2299
 }
 
 

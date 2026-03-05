@@ -5,13 +5,29 @@
  * 为安卓虚拟机设置端口转发，将主机端口映射到虚拟机
  */
 
-import { spawn, exec } from 'child_process';
+import { exec } from 'child_process';
 import { promisify } from 'util';
+import path from 'path';
 
 const execAsync = promisify(exec);
 
-// ADB 路径配置
-const ADB_PATH = '/Users/dexter/Library/Android/sdk/platform-tools/adb';
+function resolveAdbExecutable() {
+  const androidHome = process.env.ANDROID_HOME?.trim();
+  if (androidHome) {
+    return path.join(androidHome, 'platform-tools', 'adb');
+  }
+  return 'adb';
+}
+
+const ADB_EXECUTABLE = resolveAdbExecutable();
+const ADB_SOURCE = process.env.ANDROID_HOME?.trim()
+  ? `ANDROID_HOME (${process.env.ANDROID_HOME})`
+  : 'PATH';
+
+function adbCommand(args) {
+  const escapedAdb = ADB_EXECUTABLE.includes(' ') ? `"${ADB_EXECUTABLE}"` : ADB_EXECUTABLE;
+  return `${escapedAdb} ${args}`;
+}
 
 // 需要映射的端口列表
 const PORTS_TO_FORWARD = [
@@ -24,12 +40,13 @@ const PORTS_TO_FORWARD = [
  */
 async function checkAdb() {
   try {
-    const { stdout } = await execAsync(`${ADB_PATH} version`);
+    const { stdout } = await execAsync(adbCommand('version'));
     console.log('✓ ADB 可用');
+    console.log(`使用来源: ${ADB_SOURCE}`);
     console.log(stdout.split('\n')[0]);
     return true;
   } catch (error) {
-    console.error('✗ ADB 不可用，请检查路径:', ADB_PATH);
+    console.error('✗ ADB 不可用。请检查 ANDROID_HOME 或确保 adb 已加入 PATH。');
     return false;
   }
 }
@@ -39,7 +56,7 @@ async function checkAdb() {
  */
 async function getDevices() {
   try {
-    const { stdout } = await execAsync(`${ADB_PATH} devices`);
+    const { stdout } = await execAsync(adbCommand('devices'));
     const lines = stdout.split('\n').slice(1).filter(line => line.trim());
     const devices = lines
       .map(line => {
@@ -60,7 +77,7 @@ async function getDevices() {
  */
 async function setupPortForwarding(deviceId, port) {
   try {
-    const command = `${ADB_PATH} -s ${deviceId} reverse tcp:${port.device} tcp:${port.host}`;
+    const command = adbCommand(`-s ${deviceId} reverse tcp:${port.device} tcp:${port.host}`);
     await execAsync(command);
     console.log(`  ✓ ${port.description}: ${port.host} -> ${port.device}`);
     return true;
@@ -75,7 +92,7 @@ async function setupPortForwarding(deviceId, port) {
  */
 async function listPortForwarding(deviceId) {
   try {
-    const { stdout } = await execAsync(`${ADB_PATH} -s ${deviceId} reverse --list`);
+    const { stdout } = await execAsync(adbCommand(`-s ${deviceId} reverse --list`));
     if (stdout.trim()) {
       console.log('\n当前端口转发规则:');
       console.log(stdout);
@@ -92,7 +109,7 @@ async function listPortForwarding(deviceId) {
  */
 async function clearPortForwarding(deviceId) {
   try {
-    await execAsync(`${ADB_PATH} -s ${deviceId} reverse --remove-all`);
+    await execAsync(adbCommand(`-s ${deviceId} reverse --remove-all`));
     console.log('✓ 已清除所有端口转发规则');
     return true;
   } catch (error) {

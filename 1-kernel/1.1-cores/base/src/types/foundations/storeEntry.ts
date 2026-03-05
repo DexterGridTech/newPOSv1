@@ -42,7 +42,7 @@ class StoreEntryImpl implements StoreEntry {
             throw new Error('Store is not initialized yet')
         }
         const state = this.store.getState() as RootState
-        if (!state[stateKey]) {
+        if (!(stateKey in state)) {
             throw new Error(`State key '${stateKey}' does not exist`)
         }
         return state[stateKey]
@@ -94,4 +94,3 @@ class StoreEntryImpl implements StoreEntry {
 
 // 导出单例实例，供其他 package 扩展和使用
 export const storeEntry = new StoreEntryImpl()
-

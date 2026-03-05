@@ -1,7 +1,0 @@
-# ninja log v5
-0	86	1772537072582678097	CMakeFiles/quickjs_bridge.dir/quickjs_bridge.c.o	5303287ce2aac910
-0	138	1772537072634791209	CMakeFiles/quickjs_bridge.dir/quickjs/dtoa.c.o	de33b6ade26bda8c
-0	210	1772537072705663820	CMakeFiles/quickjs_bridge.dir/quickjs/libunicode.c.o	68816aa1a13913ff
-0	286	1772537072781607901	CMakeFiles/quickjs_bridge.dir/quickjs/libregexp.c.o	2d632c0c2abae811
-0	7584	1772537080061002861	CMakeFiles/quickjs_bridge.dir/quickjs/quickjs.c.o	7b1adabea53e93f6
-7584	7624	1772537080117289482	/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/pos-adapter/android/turbomodule-lib/build/intermediates/cxx/Debug/1s371019/obj/armeabi-v7a/libquickjs_bridge.so	c6223ccdb1cc671c

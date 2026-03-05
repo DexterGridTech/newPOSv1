@@ -21,7 +21,6 @@ export const kernelCoreInterconnectionModule: AppModule = {
     parameters: kernelCoreInterconnectionParameters,
     dependencies: [kernelCoreBaseModule],
     modulePreSetup: kernelCoreInterconnectionModulePreSetup,
-    preSetupPriority: 1102//kernel core 模块使用1101-1199
 }
 
 

@@ -25,7 +25,6 @@ export const assemblyAndroidDesktopModule: AppModule = {
     dependencies: [adapterAndroidModule,uiIntegrationDesktopModule],
     modulePreSetup: assemblyAndroidDesktopModulePreSetup,
     screenParts: assemblyAndroidDesktopScreenParts,
-    preSetupPriority: 4001//assembly 模块使用4001-4999
 }
 
 

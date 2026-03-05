@@ -31,7 +31,7 @@ const TABS: {key: TabKey; label: string; tag: string}[] = [
     {key: 'passive', label: 'Passive',  tag: 'PSV'},
 ]
 
-const CHANNEL_TYPES: ChannelType[] = ['INTENT', 'AIDL', 'USB', 'SERIAL', 'BLUETOOTH', 'NETWORK', 'SDK']
+const CHANNEL_TYPES: ChannelType[] = ['INTENT', 'AIDL', 'USB', 'SERIAL', 'BLUETOOTH', 'NETWORK', 'SDK', 'HID']
 
 const TYPE_COLOR: Record<ChannelType, string> = {
     INTENT:    C.info,
@@ -41,6 +41,7 @@ const TYPE_COLOR: Record<ChannelType, string> = {
     BLUETOOTH: '#DB2777',
     NETWORK:   '#059669',
     SDK:       '#7C3AED',
+    HID:       '#6366F1',
 }
 
 // RR 模式各通道的默认预设
@@ -52,6 +53,7 @@ const RR_PRESETS: Record<ChannelType, {target: string; action: string; params: s
     BLUETOOTH: {target: 'AA:BB:CC:DD:EE:FF',        action: 'AA:BB:CC:DD:EE:FF',             params: '{"data":"0100","uuid":"00001101-0000-1000-8000-00805F9B34FB"}'},
     NETWORK:   {target: 'http://192.168.1.1/api',   action: 'http://192.168.1.1/api',        params: '{"httpMethod":"GET"}'},
     SDK:       {target: 'com.sdk.Printer',          action: 'com.sdk.Printer#printText',     params: '{"text":"Hello"}'},
+    HID:       {target: '/dev/hidraw0',             action: '/dev/hidraw0',                   params: '{"reportId":0,"data":"010203"}'},
 }
 
 // Stream 模式各通道的默认预设
@@ -63,6 +65,7 @@ const STREAM_PRESETS: Record<ChannelType, {target: string}> = {
     BLUETOOTH: {target: 'AA:BB:CC:DD:EE:FF'},
     NETWORK:   {target: 'ws://192.168.1.1/ws'},
     SDK:       {target: 'com.sdk.Scanner'},
+    HID:       {target: '/dev/hidraw0'},
 }
 
 // ─── 常量 ─────────────────────────────────────────────────────────────────────

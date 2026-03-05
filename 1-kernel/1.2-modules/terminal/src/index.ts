@@ -23,7 +23,6 @@ export const kernelTerminalModule: AppModule = {
     parameters: kernelTerminalParameters,
     dependencies: [kernelCoreBaseModule, kernelCoreInterconnectionModule, kernelCoreNavigationModule],
     modulePreSetup: kernelTerminalModulePreSetup,
-    preSetupPriority: 1201//kernel module 模块使用1201-1299
 }
 
 

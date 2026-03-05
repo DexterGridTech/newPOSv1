@@ -26,7 +26,6 @@ export const uiCoreBaseModule: AppModule = {
     dependencies: [kernelCoreInterconnectionModule,kernelCoreNavigationModule,kernelCoreTaskModule],
     modulePreSetup: uiCoreBaseModulePreSetup,
     screenParts: uiCoreBaseScreenParts,
-    preSetupPriority: 2101//ui core 模块使用2101-2199
 }
 
 
