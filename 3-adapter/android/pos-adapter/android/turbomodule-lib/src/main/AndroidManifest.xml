@@ -6,11 +6,12 @@
         <activity
             android:name="com.impos2.posadapter.turbomodules.connector.channels.ResultBridgeActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:excludeFromRecents="true"
             android:exported="false" />
         <activity
             android:name="com.impos2.posadapter.turbomodules.connector.channels.CameraScanActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar"
-            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.impos2.posadapter.action.CAMERA_SCAN" />

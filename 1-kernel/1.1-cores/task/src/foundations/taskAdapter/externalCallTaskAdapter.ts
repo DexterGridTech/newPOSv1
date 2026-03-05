@@ -19,26 +19,33 @@ export class ExternalCallTaskAdapter implements TaskAdapter {
         return new Observable(subscriber => {
             const { channel, action, params, timeout } = args
             const t0 = Date.now()
-            logger.log(TAG, `execute start: ${action} channel=${JSON.stringify(channel)}`)
+            logger.log(TAG, `[${context.requestId}] execute start: ${action}`)
 
-            // 先注册 cancel，再发起调用，避免极小窗口期内 cancel 丢失
             const cancelSub = context.cancel$.subscribe(() => {
+                logger.log(TAG, `[${context.requestId}] cancel$ triggered, subscriber.closed=${subscriber.closed}`)
                 cancelSub.unsubscribe()
-                // 注意：cancel 仅终止结果推送，不中止底层硬件/网络调用
-                if (!subscriber.closed) subscriber.complete()
+                if (!subscriber.closed) {
+                    logger.log(TAG, `[${context.requestId}] calling subscriber.complete()`)
+                    subscriber.complete()
+                }
             })
 
             externalConnector.call(channel, action, params, timeout)
                 .then(res => {
+                    logger.log(TAG, `[${context.requestId}] Promise resolved, subscriber.closed=${subscriber.closed}, result=${JSON.stringify(res)}`)
+                    cancelSub.unsubscribe()
                     if (!subscriber.closed) {
-                        logger.log(TAG, `execute done: ${action} +${Date.now() - t0}ms`)
+                        logger.log(TAG, `[${context.requestId}] calling subscriber.next() and complete()`)
                         subscriber.next(res)
                         subscriber.complete()
+                    } else {
+                        logger.log(TAG, `[${context.requestId}] subscriber already closed, ignoring result`)
                     }
                 })
                 .catch(err => {
+                    logger.log(TAG, `[${context.requestId}] Promise rejected, subscriber.closed=${subscriber.closed}, error=${err?.message ?? err}`)
+                    cancelSub.unsubscribe()
                     if (!subscriber.closed) {
-                        logger.log(TAG, `execute error: ${action} +${Date.now() - t0}ms ${err?.message ?? err}`)
                         subscriber.next({
                             success: false,
                             code: ConnectorCode.UNKNOWN,
@@ -50,7 +57,10 @@ export class ExternalCallTaskAdapter implements TaskAdapter {
                     }
                 })
 
-            return () => cancelSub.unsubscribe()
+            return () => {
+                logger.log(TAG, `[${context.requestId}] teardown called`)
+                cancelSub.unsubscribe()
+            }
         })
     }
 }

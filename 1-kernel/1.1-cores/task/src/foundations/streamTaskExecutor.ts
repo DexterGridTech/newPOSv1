@@ -148,6 +148,7 @@ export class StreamTaskExecutor {
                             state: finalState,
                             progress: 100,
                             timestamp: Date.now(),
+                            context: { ...executionContext.context },
                             payload: {
                                 loopCount: executionContext.context.loopCount,
                             }
@@ -172,6 +173,7 @@ export class StreamTaskExecutor {
 
         // cancel$ 只在这里订阅一次，统一处理取消逻辑
         cancel$.subscribe(() => {
+            console.log(`[${requestId}] cancel$ triggered in StreamTaskExecutor`);
             loopTimeoutSub?.unsubscribe();
             executionContext.state = 'CANCELLED';
             progress$.next({
@@ -189,6 +191,7 @@ export class StreamTaskExecutor {
                     totalLoopCount: executionContext.context.loopCount,
                 }
             });
+            console.log(`[${requestId}] TASK_CANCEL event sent, calling progress$.complete()`);
             progress$.complete();
         });
 
@@ -528,6 +531,8 @@ export class StreamTaskExecutor {
             retryable: false
         };
 
+        executionContext.nodeCounter++;
+
         progress$.next({
             ...baseProgress,
             type: 'NODE_ERROR',
@@ -538,8 +543,7 @@ export class StreamTaskExecutor {
 
         switch (node.strategy.errorStrategy) {
             case 'skip':
-                executionContext.nodeCounter++;
-                progress$.complete();
+                // 不要在这里 complete，让 executeLoop 判断
                 break;
 
             case 'compensate': {
@@ -552,8 +556,6 @@ export class StreamTaskExecutor {
                         timestamp: Date.now()
                     });
 
-                    // 补偿节点复用父节点的 combinedCancel$（通过 executionContext.cancel$ 传递）
-                    // 补偿节点执行成功/失败时，其内部已经 nodeCounter++，这里不再重复递增
                     this.executeNode(
                         compNode,
                         executionContext,
@@ -563,17 +565,12 @@ export class StreamTaskExecutor {
                         tap((compProgress) => progress$.next(compProgress)),
                         finalize(() => progress$.complete())
                     ).subscribe();
-                } else {
-                    // 无补偿节点：降级为 skip
-                    executionContext.nodeCounter++;
-                    progress$.complete();
                 }
                 break;
             }
 
             default:
-                executionContext.nodeCounter++;
-                progress$.complete();
+                // 不要在这里 complete，让 executeLoop 判断
                 break;
         }
     }

@@ -22,15 +22,30 @@ class ResultBridgeActivity : Activity() {
         const val EXTRA_RESULT_BROADCAST = "resultBroadcastAction"
         const val EXTRA_SYSTEM_INTENT = "systemIntent"
         private const val REQUEST_CODE = 1001
+        private const val KEY_HAS_LAUNCHED = "has_launched"
     }
 
     private var resultBroadcastAction: String? = null
+    private var hasLaunched = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        android.util.Log.d("ResultBridge", "onCreate")
+
+        if (savedInstanceState != null) {
+            hasLaunched = savedInstanceState.getBoolean(KEY_HAS_LAUNCHED, false)
+            resultBroadcastAction = savedInstanceState.getString(EXTRA_RESULT_BROADCAST)
+        }
+
+        if (hasLaunched) {
+            android.util.Log.d("ResultBridge", "已经启动过，跳过重复启动")
+            return
+        }
 
         val targetAction = intent.getStringExtra(EXTRA_TARGET_ACTION)
-        resultBroadcastAction = intent.getStringExtra(EXTRA_RESULT_BROADCAST)
+        if (resultBroadcastAction == null) {
+            resultBroadcastAction = intent.getStringExtra(EXTRA_RESULT_BROADCAST)
+        }
 
         if (targetAction == null || resultBroadcastAction == null) {
             finish()
@@ -60,8 +75,11 @@ class ResultBridgeActivity : Activity() {
                     targetIntent.component = ComponentName(it.packageName, it.name)
                 }
             }
+            android.util.Log.d("ResultBridge", "准备startActivityForResult")
             startActivityForResult(targetIntent, REQUEST_CODE)
+            hasLaunched = true
         } catch (e: Exception) {
+            android.util.Log.e("ResultBridge", "启动Activity失败", e)
             sendResult(Activity.RESULT_CANCELED, null)
             finish()
         }
@@ -69,24 +87,37 @@ class ResultBridgeActivity : Activity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        android.util.Log.d("ResultBridge", "onActivityResult: requestCode=$requestCode, resultCode=$resultCode")
         if (requestCode == REQUEST_CODE) {
             val jsonData = if (data != null) {
                 runCatching {
                     val obj = JSONObject()
-                    // 优先获取 URI（文件选择器等系统 Intent 返回）
                     data.data?.let { uri ->
                         obj.put("uri", uri.toString())
                     }
-                    // 再获取 extras
                     data.extras?.keySet()?.forEach { k ->
                         obj.put(k, data.extras?.get(k)?.toString() ?: "")
                     }
                     obj.toString()
                 }.getOrNull()
             } else null
+            android.util.Log.d("ResultBridge", "发送结果并finish")
             sendResult(resultCode, jsonData)
             finish()
+            overridePendingTransition(0, 0)
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(KEY_HAS_LAUNCHED, hasLaunched)
+        resultBroadcastAction?.let { outState.putString(EXTRA_RESULT_BROADCAST, it) }
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        hasLaunched = savedInstanceState.getBoolean(KEY_HAS_LAUNCHED, false)
+        resultBroadcastAction = savedInstanceState.getString(EXTRA_RESULT_BROADCAST)
     }
 
     private fun sendResult(resultCode: Int, data: String?) {
@@ -97,5 +128,10 @@ class ResultBridgeActivity : Activity() {
             if (data != null) putExtra("data", data)
         }
         sendBroadcast(intent)
+    }
+
+    override fun onDestroy() {
+        android.util.Log.d("ResultBridge", "onDestroy被调用")
+        super.onDestroy()
     }
 }

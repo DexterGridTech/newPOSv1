@@ -8,6 +8,8 @@ export const kernelCoreTaskCommands = createModuleCommands(moduleName,{
     close:defineCommand<{ placeId:string }>(),
     run:defineCommand<{key:string}>(),
 
+    executeTask:defineCommand<{taskKey:string,initContext:any}>(),
+
 
     updateTaskDefinitions: defineCommand<Record<string, ValueWithUpdatedAt<TaskDefinition> | undefined | null
     >>(),

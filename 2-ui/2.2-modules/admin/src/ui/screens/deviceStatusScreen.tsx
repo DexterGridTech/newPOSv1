@@ -262,7 +262,7 @@ export const DeviceStatusScreen: React.FC = () => {
                                 <View style={s.displayInfo}>
                                     <Text style={s.displayType}>{d.displayType}</Text>
                                     <Text style={s.displaySpec}>
-                                        {d.width}×{d.height}px · {d.physicalWidth}×{d.physicalHeight}cm · {d.refreshRate}Hz
+                                        {d.width}×{d.height}px · {d.physicalWidth}×{d.physicalHeight}mm · {d.refreshRate}Hz
                                         {d.touchSupport ? ' · 触控' : ''}
                                     </Text>
                                 </View>

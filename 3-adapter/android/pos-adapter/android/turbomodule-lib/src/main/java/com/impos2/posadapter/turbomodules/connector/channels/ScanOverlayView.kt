@@ -20,7 +20,7 @@ class ScanOverlayView @JvmOverloads constructor(
 ) : View(context, attrs) {
 
     companion object {
-        private const val FRAME_SIZE_DP    = 260f
+        private const val FRAME_SIZE_RATIO = 0.65f // 屏幕短边的 65%
         private const val CORNER_ARM_DP    = 20f
         private const val CORNER_STROKE_DP = 3f
         private const val MASK_ALPHA       = 0x99 // ~60% 透明度
@@ -49,7 +49,8 @@ class ScanOverlayView @JvmOverloads constructor(
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        val size = FRAME_SIZE_DP * density
+        val shortEdge = minOf(w, h).toFloat()
+        val size = shortEdge * FRAME_SIZE_RATIO
         val cx = w / 2f
         val cy = h / 2f
         frameRect.set(cx - size / 2, cy - size / 2, cx + size / 2, cy + size / 2)

@@ -8,6 +8,9 @@ import { AdapterManager } from './adapterManager';
 import { StreamTaskExecutor } from './streamTaskExecutor';
 import {CommandTaskAdapter, ExternalCallTaskAdapter, ExternalSubscribeTaskAdapter, ExternalOnTaskAdapter} from "./taskAdapter";
 import {getTaskDefinitionFromState} from "./accessory";
+import {LOG_TAGS, logger} from "@impos2/kernel-core-base";
+import {moduleName} from "../moduleName";
+import {singleReadBarCodeFromCamera} from "./taskDefinitions";
 
 /**
  * TaskSystem 核心入口（单例，无异常+循环执行版本）
@@ -33,6 +36,9 @@ export class TaskSystem {
     public static getInstance(): TaskSystem {
         if (!TaskSystem.instance) {
             TaskSystem.instance = new TaskSystem();
+            TaskSystem.instance.registerTasks([
+                singleReadBarCodeFromCamera
+            ])
         }
         return TaskSystem.instance;
     }
@@ -78,6 +84,7 @@ export class TaskSystem {
     } {
         const taskDef = this.getTaskDefinition(key);
         if (!taskDef) {
+            logger.error([moduleName,LOG_TAGS.Task,"TaskSystem"],`任务${key}未注册`)
             return {
                 run: (requestId: string, initialContext?: Record<string, any>, loop = true) => {
                     return new Observable((subscriber) => {
@@ -108,20 +115,38 @@ export class TaskSystem {
 
         return {
             run: (requestId: string, initialContext: Record<string, any> = {}, loop = true) => {
+                console.log(`[${requestId}] TaskSystem.run called, loop=${loop}`);
                 const session = this.executor.executeTask(taskDef, requestId, initialContext, loop);
                 // 注册 cancel 句柄，流结束（complete/error）时自动清理
                 this.runningTasks.set(requestId, session.cancel);
+                console.log(`[${requestId}] registered in runningTasks, size=${this.runningTasks.size}`);
                 return new Observable<ProgressData>((subscriber) => {
                     const sub = session.progress$.subscribe({
-                        next: (v) => subscriber.next(v),
-                        error: (e) => { this.runningTasks.delete(requestId); subscriber.error(e); },
-                        complete: () => { this.runningTasks.delete(requestId); subscriber.complete(); },
+                        next: (v) => {
+                            console.log(`[${requestId}] progress event: type=${v.type}, state=${v.state}`);
+                            subscriber.next(v);
+                        },
+                        error: (e) => {
+                            console.log(`[${requestId}] progress error, deleting from runningTasks`);
+                            this.runningTasks.delete(requestId);
+                            subscriber.error(e);
+                        },
+                        complete: () => {
+                            console.log(`[${requestId}] progress complete, deleting from runningTasks, size before=${this.runningTasks.size}`);
+                            this.runningTasks.delete(requestId);
+                            console.log(`[${requestId}] runningTasks size after=${this.runningTasks.size}`);
+                            subscriber.complete();
+                        },
                     });
                     return () => {
+                        console.log(`[${requestId}] Observable teardown, calling cancel if exists`);
                         sub.unsubscribe();
                         // 外部 unsubscribe 时，同步触发内部取消，避免内部流程继续运行
                         const cancelFn = this.runningTasks.get(requestId);
-                        if (cancelFn) cancelFn();
+                        if (cancelFn) {
+                            console.log(`[${requestId}] calling cancelFn`);
+                            cancelFn();
+                        }
                     };
                 });
             }

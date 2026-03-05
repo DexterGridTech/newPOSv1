@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
@@ -58,7 +59,12 @@ class CameraScanActivity : AppCompatActivity() {
             systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
         cameraExecutor = Executors.newSingleThreadExecutor()
-        setContentView(buildLayout())
+        val rootView = buildLayout()
+        setContentView(rootView)
+
+        // 强制请求焦点
+        rootView.isFocusableInTouchMode = true
+        rootView.requestFocus()
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
             == PackageManager.PERMISSION_GRANTED
@@ -66,6 +72,40 @@ class CameraScanActivity : AppCompatActivity() {
             startCamera()
         } else {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), REQ_CAMERA)
+        }
+    }
+
+    override fun dispatchTouchEvent(ev: android.view.MotionEvent): Boolean {
+        if (ev.action == android.view.MotionEvent.ACTION_DOWN) {
+            android.util.Log.d("CameraScan", "触摸事件: x=${ev.x}, y=${ev.y}, 屏幕高度=${resources.displayMetrics.heightPixels}")
+        }
+        return super.dispatchTouchEvent(ev)
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        android.util.Log.d("CameraScan", "onWindowFocusChanged: hasFocus=$hasFocus")
+        if (hasFocus) {
+            window.decorView.requestFocus()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        window.decorView.post {
+            window.decorView.isFocusableInTouchMode = true
+            window.decorView.requestFocus()
+            android.util.Log.d(
+                "CameraScan",
+                "onResume focus restore: hasWindowFocus=${window.decorView.hasWindowFocus()}, hasFocus=${window.decorView.hasFocus()}"
+            )
+        }
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        overlayView.post {
+            startScanLineAnimation()
         }
     }
 
@@ -89,6 +129,8 @@ class CameraScanActivity : AppCompatActivity() {
                 FrameLayout.LayoutParams.MATCH_PARENT,
                 FrameLayout.LayoutParams.MATCH_PARENT
             )
+            isClickable = false
+            isFocusable = false
         }
         root.addView(overlayView)
 
@@ -120,15 +162,31 @@ class CameraScanActivity : AppCompatActivity() {
         val cancelBtn = Button(this).apply {
             text = "取消"
             setTextColor(0xFFFFFFFF.toInt())
-            setBackgroundColor(0x66000000.toInt())
+            setBackgroundColor(0xCC000000.toInt())
+            isClickable = true
+            isFocusable = true
+            setPadding(
+                (32 * resources.displayMetrics.density).toInt(),
+                (16 * resources.displayMetrics.density).toInt(),
+                (32 * resources.displayMetrics.density).toInt(),
+                (16 * resources.displayMetrics.density).toInt()
+            )
             val lp = FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.WRAP_CONTENT,
                 FrameLayout.LayoutParams.WRAP_CONTENT,
                 Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
             )
-            lp.bottomMargin = (48 * resources.displayMetrics.density).toInt()
+            lp.bottomMargin = (80 * resources.displayMetrics.density).toInt()
             layoutParams = lp
-            setOnClickListener { setResult(RESULT_CANCELED); finish() }
+            setOnClickListener {
+                android.util.Log.d("CameraScan", "取消按钮被点击, detected=${detected.get()}")
+                if (!detected.getAndSet(true)) {
+                    android.util.Log.d("CameraScan", "执行取消操作")
+                    finishWithError("CANCELED")
+                } else {
+                    android.util.Log.d("CameraScan", "取消操作被忽略(已检测到)")
+                }
+            }
         }
         root.addView(cancelBtn)
 
@@ -213,8 +271,15 @@ class CameraScanActivity : AppCompatActivity() {
         val image = InputImage.fromMediaImage(mediaImage, proxy.imageInfo.rotationDegrees)
         scanner.process(image)
             .addOnSuccessListener { barcodes ->
+                android.util.Log.d("CameraScan", "扫码回调触发, isFinishing=$isFinishing")
+                if (isFinishing) {
+                    android.util.Log.d("CameraScan", "Activity正在finishing，忽略扫码结果")
+                    proxy.close()
+                    return@addOnSuccessListener
+                }
                 val barcode = barcodes.firstOrNull { !it.rawValue.isNullOrEmpty() }
                 if (barcode != null && detected.compareAndSet(false, true)) {
+                    android.util.Log.d("CameraScan", "扫码成功，设置RESULT_OK")
                     setResult(RESULT_OK, Intent().apply {
                         putExtra(EXTRA_SCAN_RESULT, barcode.rawValue ?: "")
                         putExtra(EXTRA_SCAN_FORMAT, formatName(barcode.format))
@@ -252,8 +317,11 @@ class CameraScanActivity : AppCompatActivity() {
     }
 
     private fun finishWithError(error: String) {
+        android.util.Log.d("CameraScan", "finishWithError被调用: $error, RESULT_CANCELED=$RESULT_CANCELED")
         setResult(RESULT_CANCELED, Intent().putExtra(EXTRA_ERROR, error))
+        android.util.Log.d("CameraScan", "准备finish()")
         finish()
+        android.util.Log.d("CameraScan", "finish()已调用")
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -265,6 +333,7 @@ class CameraScanActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
+        android.util.Log.d("CameraScan", "onDestroy被调用")
         super.onDestroy()
         scanLineAnimator?.cancel()
         cameraExecutor.shutdown()
