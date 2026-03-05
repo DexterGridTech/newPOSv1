@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo} from "react";
+import React, {useCallback, useMemo, useState, useEffect} from "react";
 import {Animated, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {moduleName} from '../../moduleName';
 import {
@@ -11,6 +11,7 @@ import {StackContainer, useLifecycle, useModalAnimation} from "@impos2/ui-core-b
 import {uiAdminVariables} from "../variables";
 import {ScreenMode, ScreenPartRegistration} from "@impos2/kernel-core-base";
 import {InstanceMode, Workspace} from "@impos2/kernel-core-interconnection";
+import {getResponsiveLayout} from "../responsive";
 
 /**
  * 管理员面板 Modal 组件 - 企业级设计
@@ -36,6 +37,15 @@ export interface AdminPanelModalProps {
 }
 
 export const AdminPanelModal: React.FC<ModalScreen<AdminPanelModalProps>> = React.memo((model) => {
+
+    const [layout, setLayout] = useState(getResponsiveLayout());
+
+    useEffect(() => {
+        const subscription = Dimensions.addEventListener('change', () => {
+            setLayout(getResponsiveLayout());
+        });
+        return () => subscription?.remove();
+    }, []);
 
     // 使用通用的 Modal 动画 Hook
     const {scaleAnim, opacityAnim, isVisible} = useModalAnimation(model.open, model.id, {
@@ -94,24 +104,23 @@ export const AdminPanelModal: React.FC<ModalScreen<AdminPanelModalProps>> = Reac
     return (
         <View style={styles.modalOverlay}>
             <Animated.View style={[styles.backdropAnimated, {opacity: opacityAnim}]}>
-                <View
-                    style={styles.backdrop}
-                    accessibilityLabel="背景遮罩"
-                />
+                <View style={styles.backdrop} accessibilityLabel="背景遮罩"/>
             </Animated.View>
 
             <Animated.View
                 style={[
                     styles.dialogContainer,
                     {
+                        width: layout.modalWidth,
+                        height: layout.modalHeight,
                         transform: [{scale: scaleAnim}],
                         opacity: opacityAnim,
                     },
                 ]}
             >
                 {/* Title Bar */}
-                <View style={styles.titleBar}>
-                    <Text style={styles.titleText}>管理员面板</Text>
+                <View style={[styles.titleBar, {paddingHorizontal: layout.padding}]}>
+                    <Text style={[styles.titleText, {fontSize: layout.titleSize}]}>管理员面板</Text>
                     <TouchableOpacity
                         style={styles.closeButton}
                         onPress={handleClose}
@@ -125,37 +134,55 @@ export const AdminPanelModal: React.FC<ModalScreen<AdminPanelModalProps>> = Reac
 
                 {/* Main Content Area */}
                 <View style={styles.mainContent}>
-                    {/* Left Sidebar - Dynamic Menu */}
-                    <View style={styles.sidebar}>
-                        <ScrollView style={styles.menuScrollView}>
-                            {menuItems.map((item) => {
-                                const isActive = currentChild?.partKey === item.partKey;
-                                return (
-                                    <TouchableOpacity
-                                        key={item.partKey}
-                                        style={[
-                                            styles.menuItem,
-                                            isActive && styles.menuItemActive
-                                        ]}
-                                        onPress={() => handleMenuSelect(item)}
-                                        activeOpacity={0.7}
-                                        accessibilityLabel={item.title}
-                                        accessibilityRole="button"
-                                    >
-                                        <Text style={[
-                                            styles.menuItemText,
-                                            isActive && styles.menuItemTextActive
-                                        ]}>
-                                            {item.title}
-                                        </Text>
-                                    </TouchableOpacity>
-                                );
-                            })}
-                        </ScrollView>
-                    </View>
+                    {/* Left Sidebar - 手机端隐藏 */}
+                    {!layout.isMobile && (
+                        <View style={[styles.sidebar, {width: layout.sidebarWidth}]}>
+                            <ScrollView style={styles.menuScrollView}>
+                                {menuItems.map((item) => {
+                                    const isActive = currentChild?.partKey === item.partKey;
+                                    return (
+                                        <TouchableOpacity
+                                            key={item.partKey}
+                                            style={[styles.menuItem, isActive && styles.menuItemActive]}
+                                            onPress={() => handleMenuSelect(item)}
+                                            activeOpacity={0.7}
+                                            accessibilityLabel={item.title}
+                                            accessibilityRole="button"
+                                        >
+                                            <Text style={[styles.menuItemText, isActive && styles.menuItemTextActive]}>
+                                                {item.title}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    );
+                                })}
+                            </ScrollView>
+                        </View>
+                    )}
 
-                    {/* Right Content Area - StackContainer */}
+                    {/* Right Content Area */}
                     <View style={styles.contentArea}>
+                        {/* 手机端顶部菜单 */}
+                        {layout.isMobile && (
+                            <View style={styles.mobileMenu}>
+                                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{paddingHorizontal: layout.padding}}>
+                                    {menuItems.map((item) => {
+                                        const isActive = currentChild?.partKey === item.partKey;
+                                        return (
+                                            <TouchableOpacity
+                                                key={item.partKey}
+                                                style={[styles.mobileMenuItem, isActive && styles.mobileMenuItemActive]}
+                                                onPress={() => handleMenuSelect(item)}
+                                                activeOpacity={0.7}
+                                            >
+                                                <Text style={[styles.mobileMenuItemText, isActive && styles.mobileMenuItemTextActive]}>
+                                                    {item.title}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        );
+                                    })}
+                                </ScrollView>
+                            </View>
+                        )}
                         <StackContainer containerPart={uiAdminVariables.systemAdminPanel}/>
                     </View>
                 </View>
@@ -183,46 +210,15 @@ const COLORS = {
     menuActiveText: '#FFFFFF',
 };
 
-const {width, height} = Dimensions.get('window');
-
 const styles = StyleSheet.create({
-    modalOverlay: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    backdrop: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        zIndex: 1,
-    },
-    backdropAnimated: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: COLORS.overlay,
-    },
+    modalOverlay: {position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center'},
+    backdrop: {position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1},
+    backdropAnimated: {position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: COLORS.overlay},
     dialogContainer: {
         backgroundColor: COLORS.surface,
         borderRadius: 16,
-        width: Math.min(width - 48, 900),
-        height: Math.min(height - 96, 600),
-        maxWidth: 900,
-        maxHeight: 600,
         shadowColor: COLORS.primary,
-        shadowOffset: {
-            width: 0,
-            height: 4,
-        },
+        shadowOffset: {width: 0, height: 4},
         shadowOpacity: 0.15,
         shadowRadius: 12,
         elevation: 8,
@@ -231,69 +227,23 @@ const styles = StyleSheet.create({
         zIndex: 2,
         overflow: 'hidden',
     },
-    titleBar: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 24,
-        paddingVertical: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: COLORS.border,
-        backgroundColor: COLORS.surface,
-    },
-    titleText: {
-        fontSize: 20,
-        fontWeight: '600',
-        color: COLORS.text,
-        letterSpacing: -0.3,
-    },
-    closeButton: {
-        width: 32,
-        height: 32,
-        borderRadius: 16,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: COLORS.menuBg,
-    },
-    closeButtonText: {
-        fontSize: 18,
-        color: COLORS.textSecondary,
-        fontWeight: '600',
-    },
-    mainContent: {
-        flex: 1,
-        flexDirection: 'row',
-    },
-    sidebar: {
-        width: 200,
-        backgroundColor: COLORS.menuBg,
-        borderRightWidth: 1,
-        borderRightColor: COLORS.border,
-    },
-    menuScrollView: {
-        flex: 1,
-    },
-    menuItem: {
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        borderBottomWidth: 1,
-        borderBottomColor: COLORS.border,
-    },
-    menuItemActive: {
-        backgroundColor: COLORS.menuActive,
-    },
-    menuItemText: {
-        fontSize: 15,
-        fontWeight: '500',
-        color: COLORS.text,
-    },
-    menuItemTextActive: {
-        color: COLORS.menuActiveText,
-    },
-    contentArea: {
-        flex: 1,
-        backgroundColor: COLORS.surface,
-    },
+    titleBar: {flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 16, borderBottomWidth: 1, borderBottomColor: COLORS.border, backgroundColor: COLORS.surface},
+    titleText: {fontWeight: '600', color: COLORS.text, letterSpacing: -0.3},
+    closeButton: {width: 32, height: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center', backgroundColor: COLORS.menuBg},
+    closeButtonText: {fontSize: 18, color: COLORS.textSecondary, fontWeight: '600'},
+    mainContent: {flex: 1, flexDirection: 'row'},
+    sidebar: {backgroundColor: COLORS.menuBg, borderRightWidth: 1, borderRightColor: COLORS.border},
+    menuScrollView: {flex: 1},
+    menuItem: {paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: COLORS.border},
+    menuItemActive: {backgroundColor: COLORS.menuActive},
+    menuItemText: {fontSize: 15, fontWeight: '500', color: COLORS.text},
+    menuItemTextActive: {color: COLORS.menuActiveText},
+    contentArea: {flex: 1, backgroundColor: COLORS.surface},
+    mobileMenu: {borderBottomWidth: 1, borderBottomColor: COLORS.border, paddingVertical: 8},
+    mobileMenuItem: {paddingHorizontal: 16, paddingVertical: 8, marginRight: 8, borderRadius: 8, backgroundColor: COLORS.menuBg},
+    mobileMenuItemActive: {backgroundColor: COLORS.menuActive},
+    mobileMenuItemText: {fontSize: 13, fontWeight: '500', color: COLORS.text},
+    mobileMenuItemTextActive: {color: COLORS.menuActiveText},
 });
 
 // 导出 ScreenPartRegistration

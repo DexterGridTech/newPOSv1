@@ -1,11 +1,15 @@
-import React, {memo, useCallback, useEffect, useRef} from 'react';
+import React, {memo, useCallback, useEffect, useRef, useState} from 'react';
 import {View, TouchableOpacity, Text, StyleSheet, Animated, Platform, Dimensions} from 'react-native';
 
-const {width: screenWidth} = Dimensions.get('window');
+const getKeyboardWidth = () => {
+    const {width, height} = Dimensions.get('window');
+    const shortEdge = Math.min(width, height);
+    const isTablet = shortEdge >= 600;
+    const maxWidth = isTablet ? 500 : 460;
+    return Math.min(width * 0.88, maxWidth);
+};
 
-// 键盘主体最大宽度：大屏居中，小屏自适应
-const KEYBOARD_MAX_WIDTH = 460;
-const KEYBOARD_WIDTH = Math.min(screenWidth * 0.88, KEYBOARD_MAX_WIDTH);
+const KEYBOARD_WIDTH = getKeyboardWidth();
 const ACTION_WIDTH = 84;
 const GAP = 8;
 const PADDING = 10;
@@ -73,9 +77,18 @@ const ActionButtons = memo<{
 
 export const FancyNumberKeyBoardV2: React.FC<FancyNumberKeyBoardV2Props> = memo(
     ({onKeyPress, onCancel, onConfirm, shouldShake = false, hasChanges = false}) => {
+        const [keyboardWidth, setKeyboardWidth] = useState(getKeyboardWidth());
+
+        useEffect(() => {
+            const subscription = Dimensions.addEventListener('change', () => {
+                setKeyboardWidth(getKeyboardWidth());
+            });
+            return () => subscription?.remove();
+        }, []);
+
         return (
             <View style={styles.wrapper}>
-                <View style={styles.card}>
+                <View style={[styles.card, {width: keyboardWidth}]}>
                     <View style={styles.keyboardMain}>
                         <View style={styles.row}>
                             <NumKey label="1" value="1" onKeyPress={onKeyPress}/>
@@ -154,7 +167,6 @@ const styles = StyleSheet.create({
         backgroundColor: T.bg,
     },
     card: {
-        width: KEYBOARD_WIDTH,
         flex: 1,
         flexDirection: 'row',
         gap: GAP,

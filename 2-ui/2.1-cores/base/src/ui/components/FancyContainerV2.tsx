@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useContext} from 'react';
-import {Animated, StyleSheet, Platform} from 'react-native';
+import {Animated, StyleSheet, Platform, Dimensions} from 'react-native';
 import {FancyKeyboardDisplayContextV2} from '../../contexts/FancyKeyboardContextV2';
 
 interface FancyContainerV2Props {

@@ -1,4 +1,4 @@
-import React, {memo, useCallback, useRef} from 'react';
+import React, {memo, useCallback, useRef, useState, useEffect} from 'react';
 import {Pressable, StyleSheet, View, Dimensions, Animated, Platform} from 'react-native';
 import {ActiveInputInfoV2} from '../../../contexts/FancyKeyboardContextV2';
 
@@ -16,23 +16,32 @@ interface BackdropV2Props {
  * 通过多层 View 叠加实现：输入框区域全透明，其他区域半透明
  */
 export const BackdropV2: React.FC<BackdropV2Props> = memo(({onPress, activeInput, containerOffset, opacity}) => {
+    const [screenSize, setScreenSize] = useState(() => {
+        const {width, height} = Dimensions.get('window');
+        return {width, height};
+    });
+
+    useEffect(() => {
+        const subscription = Dimensions.addEventListener('change', ({window}) => {
+            setScreenSize({width: window.width, height: window.height});
+        });
+        return () => subscription?.remove();
+    }, []);
+
     // 用 ref 替代 state，避免 500ms 后 setIsInteractionEnabled(true) 触发 Pressable 重渲染
     const isInteractionEnabledRef = useRef(false);
 
     React.useEffect(() => {
+        isInteractionEnabledRef.current = false;
         if (activeInput) {
             const timer = setTimeout(() => { isInteractionEnabledRef.current = true; }, 500);
-            return () => {
-                clearTimeout(timer);
-                isInteractionEnabledRef.current = false;
-            };
-        } else {
-            isInteractionEnabledRef.current = false;
+            return () => clearTimeout(timer);
         }
     }, [activeInput]);
 
     // handlePress 不依赖任何 state，永远稳定，Pressable 不会因此重渲染
     const handlePress = useCallback((event: any) => {
+        console.log('[Backdrop] handlePress', {isInteractionEnabled: isInteractionEnabledRef.current});
         if (Platform.OS === 'web' && event) event.stopPropagation();
         if (!isInteractionEnabledRef.current) return;
         onPress();
@@ -78,24 +87,30 @@ export const BackdropV2: React.FC<BackdropV2Props> = memo(({onPress, activeInput
 
     return (
         <View style={[styles.backdrop, {pointerEvents: 'box-none'}]}>
-            <Pressable style={StyleSheet.absoluteFillObject} onPress={handlePress}>
-                {/* 输入框上方 */}
-                {inputTop > 0 && (
-                    <Animated.View style={[{position: 'absolute', top: 0, left: 0, width: screenWidth, height: inputTop}, overlayStyle]}/>
-                )}
-                {/* 输入框左侧 */}
-                {inputLeft > 0 && (
-                    <Animated.View style={[{position: 'absolute', top: inputTop, left: 0, width: inputLeft, height: position.height}, overlayStyle]}/>
-                )}
-                {/* 输入框右侧 */}
-                {inputRight < screenWidth && (
-                    <Animated.View style={[{position: 'absolute', top: inputTop, left: inputRight, width: screenWidth - inputRight, height: position.height}, overlayStyle]}/>
-                )}
-                {/* 输入框下方 */}
-                {inputBottom < screenHeight && (
-                    <Animated.View style={[{position: 'absolute', top: inputBottom, left: 0, width: screenWidth, height: screenHeight - inputBottom}, overlayStyle]}/>
-                )}
-            </Pressable>
+            {/* 输入框上方 */}
+            {inputTop > 0 && (
+                <Pressable style={{position: 'absolute', top: 0, left: 0, width: screenSize.width, height: inputTop}} onPress={handlePress}>
+                    <Animated.View style={[StyleSheet.absoluteFillObject, overlayStyle]}/>
+                </Pressable>
+            )}
+            {/* 输入框左侧 */}
+            {inputLeft > 0 && (
+                <Pressable style={{position: 'absolute', top: inputTop, left: 0, width: inputLeft, height: position.height}} onPress={handlePress}>
+                    <Animated.View style={[StyleSheet.absoluteFillObject, overlayStyle]}/>
+                </Pressable>
+            )}
+            {/* 输入框右侧 */}
+            {inputRight < screenSize.width && (
+                <Pressable style={{position: 'absolute', top: inputTop, left: inputRight, width: screenSize.width - inputRight, height: position.height}} onPress={handlePress}>
+                    <Animated.View style={[StyleSheet.absoluteFillObject, overlayStyle]}/>
+                </Pressable>
+            )}
+            {/* 输入框下方 */}
+            {inputBottom < screenSize.height && (
+                <Pressable style={{position: 'absolute', top: inputBottom, left: 0, width: screenSize.width, height: screenSize.height - inputBottom}} onPress={handlePress}>
+                    <Animated.View style={[StyleSheet.absoluteFillObject, overlayStyle]}/>
+                </Pressable>
+            )}
         </View>
     );
 });

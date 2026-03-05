@@ -1,8 +1,9 @@
 import React, {memo, useCallback, useEffect, useState} from "react";
-import {ActivityIndicator, FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {ActivityIndicator, FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View, Dimensions} from "react-native";
 import {DeviceInfo, InstalledApp, ScreenMode, ScreenPartRegistration, SystemStatus, device} from "@impos2/kernel-core-base";
 import {uiAdminVariables} from "../variables";
 import {InstanceMode, Workspace} from "@impos2/kernel-core-interconnection";
+import {getResponsiveLayout} from "../responsive";
 
 // ─── Design Tokens ───────────────────────────────────────────────────────────
 const C = {
@@ -200,6 +201,14 @@ export const DeviceStatusScreen: React.FC = () => {
     const [deviceInfo, setDeviceInfo] = useState<DeviceInfo | null>(null);
     const [systemStatus, setSystemStatus] = useState<SystemStatus | null>(null);
     const [loading, setLoading] = useState(true);
+    const [layout, setLayout] = useState(getResponsiveLayout());
+
+    useEffect(() => {
+        const subscription = Dimensions.addEventListener('change', () => {
+            setLayout(getResponsiveLayout());
+        });
+        return () => subscription?.remove();
+    }, []);
 
     useEffect(() => {
         Promise.all([device.getDeviceInfo(), device.getSystemStatus()])
@@ -222,11 +231,11 @@ export const DeviceStatusScreen: React.FC = () => {
     const ts = systemStatus ? new Date(systemStatus.updatedAt).toLocaleString('zh-CN') : '—';
 
     return (
-        <ScrollView style={s.root} contentContainerStyle={s.content} showsVerticalScrollIndicator={false}>
+        <ScrollView style={s.root} contentContainerStyle={[s.content, {padding: layout.padding}]} showsVerticalScrollIndicator={false}>
 
             {/* Header */}
-            <View style={s.header}>
-                <Text style={s.headerTitle}>系统状态</Text>
+            <View style={[s.header, {marginBottom: layout.gap}]}>
+                <Text style={[s.headerTitle, {fontSize: layout.titleSize}]}>系统状态</Text>
                 <Text style={s.headerSub}>采集时间：{ts}</Text>
             </View>
 
@@ -324,12 +333,12 @@ export const DeviceStatusScreen: React.FC = () => {
 // ─── Styles ──────────────────────────────────────────────────────────────────
 const s = StyleSheet.create({
     root: {flex: 1, backgroundColor: C.bg},
-    content: {padding: 20, paddingBottom: 40},
+    content: {paddingBottom: 40},
     center: {flex: 1, justifyContent: 'center', alignItems: 'center', gap: 12},
     loadingText: {fontSize: 14, color: C.textSub},
 
-    header: {marginBottom: 20},
-    headerTitle: {fontSize: 22, fontWeight: '700', color: C.text, letterSpacing: -0.3},
+    header: {},
+    headerTitle: {fontWeight: '700', color: C.text, letterSpacing: -0.3},
     headerSub: {fontSize: 12, color: C.textMuted, marginTop: 4},
 
     section: {marginBottom: 16},

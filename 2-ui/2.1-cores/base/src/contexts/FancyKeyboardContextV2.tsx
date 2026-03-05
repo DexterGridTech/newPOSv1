@@ -1,7 +1,16 @@
-import React, {createContext, useCallback, useState, ReactNode, useMemo, useRef} from 'react';
+import React, {createContext, useCallback, useState, ReactNode, useMemo, useRef, useEffect} from 'react';
 import {Dimensions} from 'react-native';
 
-const {height: screenHeight} = Dimensions.get('window');
+const getKeyboardHeight = () => {
+    const {width, height} = Dimensions.get('window');
+    const isLandscape = width > height;
+    const shortEdge = Math.min(width, height);
+    const isTablet = shortEdge >= 600;
+    if (isLandscape) {
+        return isTablet ? height * 0.5 : height * 0.55;
+    }
+    return isTablet ? height * 0.35 : height * 0.4;
+};
 
 export interface ActiveInputInfoV2 {
     id: string;
@@ -62,6 +71,8 @@ export interface FancyKeyboardProviderV2Props {
 export const FancyKeyboardProviderV2: React.FC<FancyKeyboardProviderV2Props> = ({
     children,
 }) => {
+    const [screenHeight, setScreenHeight] = useState(() => Dimensions.get('window').height);
+
     // 显示状态（isVisible/keyboardType/activeInput/containerOffset）
     const [displayState, setDisplayState] = useState<FancyKeyboardDisplayStateV2>({
         isVisible: false,
@@ -70,6 +81,27 @@ export const FancyKeyboardProviderV2: React.FC<FancyKeyboardProviderV2Props> = (
         containerOffset: 0,
         shouldShakeConfirmButton: false,
     });
+
+    useEffect(() => {
+        const subscription = Dimensions.addEventListener('change', ({window}) => {
+            setScreenHeight(window.height);
+
+            // 屏幕旋转时，如果键盘打开且有 activeInput，重新计算 containerOffset
+            setDisplayState((prev) => {
+                if (!prev.isVisible || !prev.activeInput) return prev;
+
+                const kbHeight = getKeyboardHeight();
+                const keyboardTop = window.height - kbHeight - 80;
+                const inputBottom = prev.activeInput.position.y + prev.activeInput.position.height;
+                const offset = inputBottom > keyboardTop - 50
+                    ? -(prev.activeInput.position.y - window.height / 3)
+                    : 0;
+
+                return {...prev, containerOffset: offset};
+            });
+        });
+        return () => subscription?.remove();
+    }, []);
 
     // editingValue 单独 state，避免每次按键触发 displayState 更新
     const [editingState, setEditingState] = useState<FancyKeyboardEditingV2>({
@@ -85,13 +117,15 @@ export const FancyKeyboardProviderV2: React.FC<FancyKeyboardProviderV2Props> = (
 
     const showKeyboard = useCallback(
         (inputInfo: ActiveInputInfoV2, keyboardType: 'full' | 'number') => {
-            // 内联偏移计算，calculateContainerOffset 依赖数组为空永远稳定，无需单独 useCallback
-            const kbHeight = (screenHeight * 2) / 5;
-            const keyboardTop = screenHeight - kbHeight - 80;
+            const {width, height} = Dimensions.get('window');
+            const kbHeight = getKeyboardHeight();
+            const currentScreenHeight = Dimensions.get('window').height;
+            const keyboardTop = currentScreenHeight - kbHeight - 80;
             const inputBottom = inputInfo.position.y + inputInfo.position.height;
             const offset = inputBottom > keyboardTop - 50
-                ? -(inputInfo.position.y - screenHeight / 3)
+                ? -(inputInfo.position.y - currentScreenHeight / 3)
                 : 0;
+
             originalValueRef.current = inputInfo.value;
 
             setDisplayState((prev) => ({
@@ -110,7 +144,7 @@ export const FancyKeyboardProviderV2: React.FC<FancyKeyboardProviderV2Props> = (
                 hasChanges: false,
             });
         },
-        [] // 所有依赖均为模块级常量或 ref，无需列出
+        []
     );
 
     const hideKeyboard = useCallback(() => {

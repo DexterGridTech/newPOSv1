@@ -81,7 +81,9 @@ export const FancyInputV2: React.FC<FancyInputV2Props> = memo(({
     const handlePress = React.useCallback(() => {
         if (!editable || !showKeyboard) return;
 
-        if (isProcessingRef.current) return;
+        if (isProcessingRef.current) {
+            return;
+        }
         isProcessingRef.current = true;
 
         const resetTimeout = setTimeout(() => {

@@ -1,8 +1,17 @@
 import React, {useState, useCallback, useEffect, useRef, memo} from 'react';
 import {View, TouchableOpacity, Text, StyleSheet, Animated, Platform, Dimensions} from 'react-native';
 
-const {height: screenHeight} = Dimensions.get('window');
-const iconFontSize = Math.max(24, Math.min(36, screenHeight * 0.035));
+const getIconFontSize = () => {
+    const {height} = Dimensions.get('window');
+    return Math.max(24, Math.min(36, height * 0.035));
+};
+
+const getActionButtonWidth = () => {
+    const {width, height} = Dimensions.get('window');
+    const shortEdge = Math.min(width, height);
+    const isTablet = shortEdge >= 600;
+    return isTablet ? 100 : 60;
+};
 
 const SYMBOL_LAYOUT = {
     row1: ['1','2','3','4','5','6','7','8','9','0'],
@@ -78,6 +87,16 @@ export const FancyFullKeyBoardV2: React.FC<FancyFullKeyBoardV2Props> = memo(
     ({onKeyPress, onCancel, onConfirm, shouldShake = false, hasChanges = false}) => {
         const [isUpperCase, setIsUpperCase] = useState(false);
         const [isSymbolMode, setIsSymbolMode] = useState(false);
+        const [iconFontSize, setIconFontSize] = useState(getIconFontSize());
+        const [actionButtonWidth, setActionButtonWidth] = useState(getActionButtonWidth());
+
+        useEffect(() => {
+            const subscription = Dimensions.addEventListener('change', () => {
+                setIconFontSize(getIconFontSize());
+                setActionButtonWidth(getActionButtonWidth());
+            });
+            return () => subscription?.remove();
+        }, []);
 
         // 用 ref 持有最新 isUpperCase，handleKeyPress 不因大小写切换而重建
         const isUpperCaseRef = useRef(isUpperCase);
@@ -132,7 +151,7 @@ export const FancyFullKeyBoardV2: React.FC<FancyFullKeyBoardV2Props> = memo(
                         )}
                     </View>
                 </View>
-                <View style={styles.actionButtons}>
+                <View style={[styles.actionButtons, {width: actionButtonWidth}]}>
                     <ActionButtons hasChanges={hasChanges} shouldShake={shouldShake} onCancel={onCancel} onConfirm={onConfirm}/>
                 </View>
             </View>

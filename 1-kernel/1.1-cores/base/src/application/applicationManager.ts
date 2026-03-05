@@ -38,6 +38,9 @@ export class ApplicationManager {
     }
 
     async generateStore(config: ApplicationConfig) {
+        if(this.store&&this.persistor)
+            return {store:this.store, persistor:this.persistor};
+
         storeEntry.setEnvironment(config.environment);
 
         const initLogger = InitLogger.getInstance();

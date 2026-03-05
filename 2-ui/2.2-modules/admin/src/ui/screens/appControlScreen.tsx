@@ -1,9 +1,10 @@
-import React from "react";
-import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import React, {useState, useEffect} from "react";
+import {ScrollView, StyleSheet, Text, TouchableOpacity, View, Dimensions} from "react-native";
 import {ScreenMode, ScreenPartRegistration} from "@impos2/kernel-core-base";
 import {InstanceMode, Workspace} from "@impos2/kernel-core-interconnection";
 import {uiAdminVariables} from "../variables";
 import {useAppControl} from "../../hooks/useAppControl";
+import {getResponsiveLayout} from "../responsive";
 
 // ─── Design Tokens ───────────────────────────────────────────────────────────
 const C = {
@@ -73,6 +74,15 @@ const ActionRow: React.FC<{
 
 // ─── Component ───────────────────────────────────────────────────────────────
 export const AppControlScreen: React.FC = (props) => {
+    const [layout, setLayout] = useState(getResponsiveLayout());
+
+    useEffect(() => {
+        const subscription = Dimensions.addEventListener('change', () => {
+            setLayout(getResponsiveLayout());
+        });
+        return () => subscription?.remove();
+    }, []);
+
     const {
         isFullScreen, isLocked,
         selectedSpace, spaceNames,
@@ -81,9 +91,9 @@ export const AppControlScreen: React.FC = (props) => {
     } = useAppControl();
 
     return (
-        <ScrollView style={s.root} contentContainerStyle={s.content} showsVerticalScrollIndicator={false}>
+        <ScrollView style={s.root} contentContainerStyle={[s.content, {padding: layout.padding}]} showsVerticalScrollIndicator={false}>
 
-            <Text style={s.headerTitle}>APP 控制</Text>
+            <Text style={[s.headerTitle, {fontSize: layout.titleSize, marginBottom: layout.gap}]}>APP 控制</Text>
 
             {/* 屏幕控制 */}
             <Section title="屏幕控制">
@@ -147,8 +157,8 @@ export const AppControlScreen: React.FC = (props) => {
 // ─── Styles ──────────────────────────────────────────────────────────────────
 const s = StyleSheet.create({
     root: {flex: 1, backgroundColor: C.bg},
-    content: {padding: 20, paddingBottom: 40},
-    headerTitle: {fontSize: 22, fontWeight: '700', color: C.text, letterSpacing: -0.3, marginBottom: 20},
+    content: {paddingBottom: 40},
+    headerTitle: {fontWeight: '700', color: C.text, letterSpacing: -0.3},
 
     section: {marginBottom: 16},
     sectionTitle: {fontSize: 11, fontWeight: '600', color: C.textMuted, letterSpacing: 0.8, textTransform: 'uppercase', marginBottom: 8, marginLeft: 2},

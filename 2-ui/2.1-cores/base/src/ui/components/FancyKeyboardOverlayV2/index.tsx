@@ -1,4 +1,4 @@
-import React, {useRef, useEffect, useContext, useCallback, memo} from 'react';
+import React, {useRef, useEffect, useContext, useCallback, memo, useState} from 'react';
 import {View, StyleSheet, Dimensions, Animated, Platform} from 'react-native';
 import {
     FancyKeyboardDisplayContextV2,
@@ -11,9 +11,17 @@ import {FancyNumberKeyBoardV2} from '../FancyNumberKeyBoardV2';
 import {BackdropV2} from './BackdropV2';
 import {EditingContent} from './EditingContent';
 
-const {height: screenHeight} = Dimensions.get('window');
-const KEYBOARD_HEIGHT = (screenHeight * 2) / 5;
-const TOTAL_HEIGHT = KEYBOARD_HEIGHT + 80;
+const getKeyboardHeight = () => {
+    const {width, height} = Dimensions.get('window');
+    const isLandscape = width > height;
+    const shortEdge = Math.min(width, height);
+    const isTablet = shortEdge >= 600;
+
+    if (isLandscape) {
+        return isTablet ? height * 0.5 : height * 0.55;
+    }
+    return isTablet ? height * 0.35 : height * 0.4;
+};
 
 // ─── KeyboardArea ─────────────────────────────────────────────────────────────
 // 订阅 editing context，将 hasChanges 的重渲染隔离在此组件内
@@ -84,13 +92,32 @@ export const FancyKeyboardOverlayV2: React.FC = () => {
     const display = useContext(FancyKeyboardDisplayContextV2);
     const actions = useContext(FancyKeyboardActionsContextV2);
 
+    const [dimensions, setDimensions] = useState(() => {
+        const keyboardHeight = getKeyboardHeight();
+        return {
+            screenHeight: Dimensions.get('window').height,
+            totalHeight: keyboardHeight + 80,
+        };
+    });
+
+    useEffect(() => {
+        const subscription = Dimensions.addEventListener('change', () => {
+            const keyboardHeight = getKeyboardHeight();
+            setDimensions({
+                screenHeight: Dimensions.get('window').height,
+                totalHeight: keyboardHeight + 80,
+            });
+        });
+        return () => subscription?.remove();
+    }, []);
+
     const isVisible = display?.isVisible ?? false;
     const keyboardType = display?.keyboardType ?? 'full';
     const activeInput = display?.activeInput ?? null;
     const containerOffset = display?.containerOffset ?? 0;
     const shouldShakeConfirmButton = display?.shouldShakeConfirmButton ?? false;
 
-    const keyboardTranslateY = useRef(new Animated.Value(screenHeight)).current;
+    const keyboardTranslateY = useRef(new Animated.Value(dimensions.screenHeight)).current;
     const backdropOpacity = useRef(new Animated.Value(0)).current;
     const [shouldShakeEditingContent, setShouldShakeEditingContent] = React.useState(false);
     const shakeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -115,11 +142,11 @@ export const FancyKeyboardOverlayV2: React.FC = () => {
         } else {
             if (backdropTimerRef.current) clearTimeout(backdropTimerRef.current);
             Animated.timing(backdropOpacity, {toValue: 0, duration: 0, useNativeDriver: Platform.OS !== 'web'}).start(() => {
-                Animated.timing(keyboardTranslateY, {toValue: screenHeight, duration: 200, useNativeDriver: Platform.OS !== 'web'}).start();
+                Animated.timing(keyboardTranslateY, {toValue: dimensions.screenHeight, duration: 200, useNativeDriver: Platform.OS !== 'web'}).start();
             });
         }
         return () => { if (backdropTimerRef.current) clearTimeout(backdropTimerRef.current); };
-    }, [isVisible]);
+    }, [isVisible, dimensions.screenHeight]);
 
     // 清理 shake timer
     useEffect(() => () => { if (shakeTimerRef.current) clearTimeout(shakeTimerRef.current); }, []);
@@ -152,9 +179,9 @@ export const FancyKeyboardOverlayV2: React.FC = () => {
             <Animated.View
                 style={[
                     styles.keyboardContainer,
-                    {height: TOTAL_HEIGHT},
+                    {height: dimensions.totalHeight},
                     Platform.OS === 'web'
-                        ? {bottom: keyboardTranslateY.interpolate({inputRange: [0, screenHeight], outputRange: [0, -screenHeight]})}
+                        ? {bottom: keyboardTranslateY.interpolate({inputRange: [0, dimensions.screenHeight], outputRange: [0, -dimensions.screenHeight]})}
                         : {transform: [{translateY: keyboardTranslateY}]},
                 ]}
             >
