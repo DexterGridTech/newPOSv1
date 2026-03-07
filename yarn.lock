@@ -3132,12 +3132,10 @@ __metadata:
     "@impos2/kernel-core-base": "*"
     "@reduxjs/toolkit": ^2.11.2
     "@types/deep-diff": ^1.0.5
-    "@types/lodash": ^4.17.20
     "@types/node": ^25.0.9
     axios: ^1.13.5
     date-fns: ^4.1.0
     deep-object-diff: ^1.1.9
-    lodash: ^4.17.21
     madge: ^8.0.0
     redux-observable: ^3.0.0-rc.3
     redux-persist: ^6.0.0
@@ -3291,7 +3289,6 @@ __metadata:
     react-native-qrcode-svg: ^6.3.21
     react-native-web: ^0.21.0
     redux-persist: ^6.0.0
-    reselect: ^5.1.0
     typescript: ^5.9.3
   peerDependencies:
     react: 18.3.1
@@ -3314,7 +3311,6 @@ __metadata:
     react-dom: 18.3.1
     react-native-web: ^0.21.0
     redux-persist: ^6.0.0
-    reselect: ^5.1.0
     typescript: ^5.9.3
   peerDependencies:
     react: 18.3.1
@@ -3330,6 +3326,7 @@ __metadata:
     "@impos2/kernel-core-base": "*"
     "@impos2/kernel-core-interconnection": "*"
     "@impos2/kernel-core-navigation": "*"
+    "@impos2/kernel-core-task": "*"
     "@impos2/kernel-server-config": "*"
     "@impos2/kernel-terminal": "*"
     "@impos2/ui-core-base": "*"
@@ -3340,7 +3337,6 @@ __metadata:
     react-dom: 18.3.1
     react-native-web: ^0.21.0
     redux-persist: ^6.0.0
-    reselect: ^5.1.0
     typescript: ^5.9.3
   peerDependencies:
     react: 18.3.1
@@ -3358,6 +3354,7 @@ __metadata:
     "@impos2/kernel-core-navigation": "*"
     "@impos2/ui-admin": "*"
     "@impos2/ui-core-base": "*"
+    "@impos2/ui-workbench": "*"
     "@reduxjs/toolkit": ^2.11.2
     "@types/react": ~18.3.12
     expo: ~54.0.31
@@ -3365,12 +3362,35 @@ __metadata:
     react-dom: 18.3.1
     react-native-web: ^0.21.0
     redux-persist: ^6.0.0
-    reselect: ^5.1.0
     typescript: ^5.9.3
   peerDependencies:
     react: 18.3.1
     react-native: 0.76.6
     react-redux: ^9.1.0
+  languageName: unknown
+  linkType: soft
+
+"@impos2/ui-workbench@*, @impos2/ui-workbench@workspace:2-ui/2.2-modules/workbench":
+  version: 0.0.0-use.local
+  resolution: "@impos2/ui-workbench@workspace:2-ui/2.2-modules/workbench"
+  dependencies:
+    "@impos2/kernel-core-base": "*"
+    "@impos2/kernel-core-interconnection": "*"
+    "@impos2/kernel-core-navigation": "*"
+    "@impos2/kernel-core-task": "*"
+    "@impos2/kernel-server-config": "*"
+    "@impos2/ui-core-base": "*"
+    "@reduxjs/toolkit": ^2.11.2
+    "@types/react": ~18.3.12
+    expo: ~54.0.31
+    expo-status-bar: ~3.0.9
+    react: 18.3.1
+    react-dom: 18.3.1
+    react-native: 0.76.6
+    react-native-web: ^0.21.0
+    react-redux: ^9.1.0
+    redux-persist: ^6.0.0
+    typescript: ^5.9.3
   languageName: unknown
   linkType: soft
 
@@ -5210,13 +5230,6 @@ __metadata:
   dependencies:
     "@types/node": "*"
   checksum: e009a2bfb50e90ca9b7c6e8f648f8464067271fd99116f881073fa6fa76dc8d0133181dd65e6614d5fb1220d671d67b0124aef7d97dc02d7e342ab143a47779d
-  languageName: node
-  linkType: hard
-
-"@types/lodash@npm:^4.17.20":
-  version: 4.17.23
-  resolution: "@types/lodash@npm:4.17.23"
-  checksum: 38638641526759688656b9930c0a2714536bdc2b84d5a2d4dc4b7825ba39a74ceedcc9971a9c7511189dad987426135b647616e4f49f2d67893617bdb7c85f84
   languageName: node
   linkType: hard
 
@@ -12503,7 +12516,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:^4.17.21":
+"lodash@npm:^4.17.15, lodash@npm:^4.17.20, lodash@npm:^4.17.21, lodash@npm:^4.17.4":
   version: 4.17.23
   resolution: "lodash@npm:4.17.23"
   checksum: 7daad39758a72872e94651630fbb54ba76868f904211089721a64516ce865506a759d9ad3d8ff22a2a49a50a09db5d27c36f22762d21766e47e3ba918d6d7bab

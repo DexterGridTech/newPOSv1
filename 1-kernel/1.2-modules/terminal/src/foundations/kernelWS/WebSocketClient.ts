@@ -4,7 +4,6 @@
  * 单例模式,与 MasterWebSocketClient 完全隔离
  */
 
-import {now} from 'lodash';
 import {
   IKernelWebSocketClient,
   KernelWebSocketClientConfig,
@@ -338,7 +337,7 @@ export class KernelWebSocketClient implements IKernelWebSocketClient {
     }
 
     // 加入缓存
-    this.processedMessageCache.set(messageId, now());
+    this.processedMessageCache.set(messageId, Date.now());
 
     // 检查缓存大小,超过限制时触发清理
     if (this.processedMessageCache.size > MESSAGE_DEDUP_CONFIG.MAX_CACHE_SIZE) {
@@ -377,7 +376,7 @@ export class KernelWebSocketClient implements IKernelWebSocketClient {
     try {
       this.connectionManager.sendMessage({
         type: KernelMessageType.HEARTBEAT_RESPONSE,
-        data: { timestamp: now() },
+        data: { timestamp: Date.now() },
       });
     } catch (error) {
       logger.error([moduleName, LOG_TAGS.WebSocket, "WebSocketClient"], '[KernelWS] Failed to send heartbeat response:', error);
@@ -547,7 +546,7 @@ export class KernelWebSocketClient implements IKernelWebSocketClient {
    * 清理过期的消息缓存
    */
   private cleanupExpiredMessages(): void {
-    const currentTime = now();
+    const currentTime = Date.now();
     const expiredKeys: string[] = [];
 
     // 检查过期消息

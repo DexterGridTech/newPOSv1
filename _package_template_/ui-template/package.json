@@ -24,12 +24,16 @@
     "@impos2/kernel-core-base": "*",
     "@impos2/kernel-core-interconnection": "*",
     "@impos2/kernel-core-navigation": "*",
+    "@impos2/kernel-core-task": "*",
+    "@impos2/kernel-server-config": "*",
+    "@impos2/ui-core-base":  "*",
     "@reduxjs/toolkit": "^2.11.2",
+    "redux-persist": "^6.0.0",
+  },
+  "peerDependencies": {
     "react": "18.3.1",
     "react-native": "0.76.6",
-    "react-redux": "^9.1.0",
-    "redux-persist": "^6.0.0",
-    "reselect": "^5.1.0"
+    "react-redux": "^9.1.0"
   },
   "devDependencies": {
     "@types/react": "~18.3.12",
