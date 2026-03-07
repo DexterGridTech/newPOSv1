@@ -3354,7 +3354,33 @@ __metadata:
     "@impos2/kernel-core-navigation": "*"
     "@impos2/ui-admin": "*"
     "@impos2/ui-core-base": "*"
+    "@impos2/ui-operator": "*"
     "@impos2/ui-workbench": "*"
+    "@reduxjs/toolkit": ^2.11.2
+    "@types/react": ~18.3.12
+    expo: ~54.0.31
+    expo-status-bar: ~3.0.9
+    react-dom: 18.3.1
+    react-native-web: ^0.21.0
+    redux-persist: ^6.0.0
+    typescript: ^5.9.3
+  peerDependencies:
+    react: 18.3.1
+    react-native: 0.76.6
+    react-redux: ^9.1.0
+  languageName: unknown
+  linkType: soft
+
+"@impos2/ui-operator@*, @impos2/ui-operator@workspace:2-ui/2.2-modules/operator":
+  version: 0.0.0-use.local
+  resolution: "@impos2/ui-operator@workspace:2-ui/2.2-modules/operator"
+  dependencies:
+    "@impos2/kernel-core-base": "*"
+    "@impos2/kernel-core-interconnection": "*"
+    "@impos2/kernel-core-navigation": "*"
+    "@impos2/kernel-core-task": "*"
+    "@impos2/kernel-server-config": "*"
+    "@impos2/ui-core-base": "*"
     "@reduxjs/toolkit": ^2.11.2
     "@types/react": ~18.3.12
     expo: ~54.0.31

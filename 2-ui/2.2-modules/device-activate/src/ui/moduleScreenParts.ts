@@ -1,6 +1,6 @@
 import { ScreenPartRegistration} from "@impos2/kernel-core-base";
-import {activateDesktopScreenPart} from "./screens/ActivateDesktopScreen";
+import {activateDeviceScreenPart} from "./screens/ActivateDeviceScreen";
 
 export const uiDeviceActivateScreenParts:Record<string, ScreenPartRegistration> = {
-    activateDesktopScreen:activateDesktopScreenPart
+    activateDesktopScreen:activateDeviceScreenPart
 }

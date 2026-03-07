@@ -26,6 +26,7 @@
     "@impos2/kernel-core-navigation": "*",
     "@impos2/ui-admin": "*",
     "@impos2/ui-core-base": "*",
+    "@impos2/ui-operator": "*",
     "@impos2/ui-workbench": "*",
     "@reduxjs/toolkit": "^2.11.2",
     "redux-persist": "^6.0.0"

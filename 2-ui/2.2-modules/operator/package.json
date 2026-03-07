@@ -1,7 +1,7 @@
 {
-  "name": "@impos2/ui-XXX",
+  "name": "@impos2/ui-operator",
   "version": "1.0.0",
-  "description": "POS UI XXX",
+  "description": "POS UI Operator",
   "author": "DexterYang",
   "private": true,
   "react-native": "./src/index.ts",
@@ -26,7 +26,7 @@
     "@impos2/kernel-core-navigation": "*",
     "@impos2/kernel-core-task": "*",
     "@impos2/kernel-server-config": "*",
-    "@impos2/ui-core-base":  "*",
+    "@impos2/ui-core-base": "*",
     "@reduxjs/toolkit": "^2.11.2",
     "redux-persist": "^6.0.0"
   },

@@ -4,9 +4,9 @@ import {uiBaseCoreUiVariables, useLifecycle} from "@impos2/ui-core-base";
 import {ScreenMode, ScreenPartRegistration} from "@impos2/kernel-core-base";
 import {InstanceMode, Workspace} from "@impos2/kernel-core-interconnection";
 
-export const ActivateDesktopScreen: React.FC = () => {
+export const ActivateDeviceScreen: React.FC = () => {
     useLifecycle({
-        componentName: 'ActivateDesktopScreen',
+        componentName: 'ActivateDeviceScreen',
         onInitiated: useCallback(() => {
         }, []),
         onClearance: useCallback(() => {
@@ -18,15 +18,15 @@ export const ActivateDesktopScreen: React.FC = () => {
     );
 };
 
-export const activateDesktopScreenPart: ScreenPartRegistration = {
-    name: 'activateDesktopScreen',
+export const activateDeviceScreenPart: ScreenPartRegistration = {
+    name: 'activateDeviceScreen',
     title: '设备激活',
-    description: '设备激活页面（桌面版）',
+    description: '设备激活页面（桌面/移动版）',
     partKey: 'activate',
     containerKey: uiBaseCoreUiVariables.rootScreenContainer.key,
-    screenMode: [ScreenMode.DESKTOP],
+    screenMode: [ScreenMode.DESKTOP,ScreenMode.MOBILE],
     workspace:[Workspace.MAIN],
     instanceMode:[InstanceMode.MASTER],
-    componentType: ActivateDesktopScreen,
+    componentType: ActivateDeviceScreen,
     indexInContainer: 1,
 }

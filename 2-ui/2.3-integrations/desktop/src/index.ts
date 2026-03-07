@@ -12,6 +12,8 @@ import {uiIntegrationDesktopScreenParts} from "./ui";
 import {uiCoreBaseModule} from "@impos2/ui-core-base";
 import {uiAdminModule} from "@impos2/ui-admin";
 import {uiDeviceActivateModule} from "@impos2/ui-device-activate";
+import {uiWorkbenchModule} from "@impos2/ui-workbench";
+import {uiOperatorModule} from "@impos2/ui-operator";
 
 export const uiIntegrationDesktopModule: AppModule = {
     name: moduleName,
@@ -23,7 +25,13 @@ export const uiIntegrationDesktopModule: AppModule = {
     actors: uiIntegrationDesktopActors,
     errorMessages: uiIntegrationDesktopErrorMessages,
     parameters: uiIntegrationDesktopParameters,
-    dependencies: [uiCoreBaseModule, uiAdminModule,uiDeviceActivateModule],
+    dependencies: [
+        uiCoreBaseModule,
+        uiAdminModule,
+        uiDeviceActivateModule,
+        uiOperatorModule,
+        uiWorkbenchModule,
+    ],
     modulePreSetup: uiIntegrationDesktopModulePreSetup,
     screenParts: uiIntegrationDesktopScreenParts,
 }
