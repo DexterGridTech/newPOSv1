@@ -2,68 +2,120 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/splash_gradient_background">
+    android:background="@drawable/splash_gradient_background"
+    android:clipChildren="false"
+    android:clipToPadding="false">
+
+    <View
+        android:id="@+id/splash_bg_breathe"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/splash_gradient_background"
+        android:alpha="0.56" />
+
+    <View
+        android:id="@+id/splash_arc_back_view"
+        android:layout_width="560dp"
+        android:layout_height="560dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="-130dp"
+        android:layout_marginEnd="-180dp"
+        android:background="@drawable/splash_arc_back" />
+
+    <View
+        android:id="@+id/splash_arc_front_view"
+        android:layout_width="700dp"
+        android:layout_height="700dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="-300dp"
+        android:layout_marginTop="120dp"
+        android:background="@drawable/splash_arc_front" />
+
+    <FrameLayout
+        android:layout_width="240dp"
+        android:layout_height="240dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="84dp">
+
+        <View
+            android:id="@+id/splash_orbit_ring_view"
+            android:layout_width="210dp"
+            android:layout_height="210dp"
+            android:layout_gravity="center"
+            android:background="@drawable/splash_orbit_ring" />
+
+        <View
+            android:id="@+id/splash_sweep_glow_view"
+            android:layout_width="220dp"
+            android:layout_height="14dp"
+            android:layout_gravity="center"
+            android:background="@drawable/splash_sweep_glow" />
+
+        <View
+            android:id="@+id/splash_sphere_primary_view"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_gravity="top|end"
+            android:layout_marginTop="34dp"
+            android:layout_marginEnd="38dp"
+            android:background="@drawable/splash_sphere_primary" />
+
+        <View
+            android:id="@+id/splash_sphere_secondary_view"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_gravity="bottom|start"
+            android:layout_marginStart="52dp"
+            android:layout_marginBottom="50dp"
+            android:background="@drawable/splash_sphere_secondary" />
+
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="290dp"
         android:gravity="center"
         android:orientation="vertical">
 
-        <FrameLayout
-            android:layout_width="140dp"
-            android:layout_height="140dp">
-
-            <ImageView
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_gravity="center"
-                android:src="@drawable/splash_loading_ring"
-                android:alpha="0.6" />
-
-            <ProgressBar
-                style="?android:attr/progressBarStyleLarge"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center"
-                android:indeterminateTint="#FFFFFF" />
-
-        </FrameLayout>
-
         <TextView
+            android:id="@+id/splash_brand_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:text="IMPos2 Desktop"
-            android:textColor="#FFFFFF"
-            android:textSize="28sp"
-            android:textStyle="bold"
-            android:shadowColor="#80000000"
-            android:shadowDx="2"
-            android:shadowDy="2"
-            android:shadowRadius="4" />
+            android:fontFamily="sans-serif-medium"
+            android:letterSpacing="0.08"
+            android:text="@string/splash_brand_name"
+            android:textColor="@color/splash_text_secondary"
+            android:textSize="20sp" />
 
         <TextView
+            android:id="@+id/splash_system_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="正在加载..."
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:alpha="0.9" />
+            android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif-black"
+            android:letterSpacing="0.22"
+            android:text="@string/splash_system_name"
+            android:textColor="@color/splash_text_primary"
+            android:textSize="34sp" />
 
     </LinearLayout>
 
     <TextView
+        android:id="@+id/splash_loading_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="40dp"
-        android:text="Version 1.0"
-        android:textColor="#FFFFFF"
-        android:textSize="12sp"
-        android:alpha="0.7" />
+        android:layout_marginBottom="54dp"
+        android:fontFamily="sans-serif"
+        android:letterSpacing="0.2"
+        android:text="@string/splash_loading"
+        android:textColor="@color/splash_text_loading"
+        android:textSize="14sp" />
 
 </RelativeLayout>

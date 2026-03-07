@@ -12,7 +12,7 @@ const slice = createSlice({
     reducers: {
         //stateSyncToSlave: true的时候，必须有batchUpdateState方法
         batchUpdateState: (state: TaskDefinitionState, action: PayloadAction<Record<string, ValueWithUpdatedAt<TaskDefinition>| undefined | null>>) => {
-            logger.log([moduleName, LOG_TAGS.Reducer, "taskDefinitions"], 'batch update state',action.payload)
+            // logger.log([moduleName, LOG_TAGS.Reducer, "taskDefinitions"], 'batch update state',action.payload)
             batchUpdateState(state, action)
 
         }

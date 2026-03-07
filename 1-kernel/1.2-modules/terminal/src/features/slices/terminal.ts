@@ -18,7 +18,7 @@ const slice = createSlice({
     initialState,
     reducers: {
         setDeviceInfo: (state, action: PayloadAction<DeviceInfo>) => {
-            logger.log([moduleName, LOG_TAGS.Reducer, "terminal"], 'setDeviceInfo', action.payload)
+            // logger.log([moduleName, LOG_TAGS.Reducer, "terminal"], 'setDeviceInfo', action.payload)
             state.deviceInfo = {value: action.payload, updatedAt: Date.now()}
         },
         setTerminal: (state, action: PayloadAction<{
@@ -27,7 +27,7 @@ const slice = createSlice({
             hostEntity: Unit,
             token: string
         }>) => {
-            logger.log([moduleName, LOG_TAGS.Reducer, "terminal"], 'setTerminal', action.payload)
+            // logger.log([moduleName, LOG_TAGS.Reducer, "terminal"], 'setTerminal', action.payload)
             const {terminal, model, hostEntity, token} = action.payload
             state.terminal = {value: terminal, updatedAt: Date.now()}
             state.model = {value: model, updatedAt: Date.now()}
@@ -35,13 +35,12 @@ const slice = createSlice({
             state.token = {value: token, updatedAt: Date.now()}
         },
         setOperatingEntity: (state, action: PayloadAction<Unit>) => {
-            logger.log([moduleName, LOG_TAGS.Reducer, "terminal"], 'setOperatingEntity', action.payload)
+            // logger.log([moduleName, LOG_TAGS.Reducer, "terminal"], 'setOperatingEntity', action.payload)
             state.operatingEntity = {value: action.payload, updatedAt: Date.now()}
         },
         batchUpdateState: (state, action) => {
-            batchUpdateState(state, action)
-            logger.log([moduleName, LOG_TAGS.Reducer, "terminal"], 'batch update state', action.payload)
-        }
+            // logger.log([moduleName, LOG_TAGS.Reducer, "terminal"], 'batch update state', action.payload)
+            batchUpdateState(state, action)}
     }
 })
 

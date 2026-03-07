@@ -4,7 +4,7 @@ import { Provider } from 'react-redux'
 import type { Store } from '@reduxjs/toolkit'
 import type { Persistor } from 'redux-persist'
 import { PersistGate } from 'redux-persist/integration/react'
-import { kernelCoreBaseCommands } from '@impos2/kernel-core-base'
+import {ApplicationManager, kernelCoreBaseCommands} from '@impos2/kernel-core-base'
 import { storePromise } from './store'
 import DevHome from './screens/DevHome'
 
@@ -26,7 +26,7 @@ const App = () => {
     return (
         <Provider store={storeReady.store}>
             <PersistGate persistor={storeReady.persistor} onBeforeLift={() => {
-                kernelCoreBaseCommands.initialize().executeInternally()
+                ApplicationManager.getInstance().init()
             }}>
                 <DevHome />
             </PersistGate>

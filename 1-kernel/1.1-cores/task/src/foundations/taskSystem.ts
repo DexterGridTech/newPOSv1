@@ -16,8 +16,12 @@ import {singleReadBarCodeFromCamera} from "./taskDefinitions";
  * TaskSystem 核心入口（单例，无异常+循环执行版本）
  */
 export class TaskSystem {
+    private operatingSystem:{
+        os:string,
+        osVersion:string,
+    }|null=null;
     private static instance: TaskSystem;
-    private taskRegistry = new Map<string, TaskDefinition>();
+    private taskRegistry = new Map<string, TaskDefinition[]>();
     private adapterManager = new AdapterManager();
     private executor = new StreamTaskExecutor(this.adapterManager);
     // requestId → cancel 句柄，用于支持 cancel(requestId)
@@ -28,6 +32,13 @@ export class TaskSystem {
         this.registerAdapter(new ExternalCallTaskAdapter());
         this.registerAdapter(new ExternalSubscribeTaskAdapter());
         this.registerAdapter(new ExternalOnTaskAdapter());
+    }
+
+    public setOperatingSystem(os:string,osVersion:string){
+        this.operatingSystem={
+            os,
+            osVersion
+        }
     }
 
     /**
@@ -48,7 +59,18 @@ export class TaskSystem {
      */
     registerTask(taskDef: TaskDefinition): void {
         if (!taskDef.enabled) return;
-        this.taskRegistry.set(taskDef.key, taskDef);
+        const existing = this.taskRegistry.get(taskDef.key) || [];
+        if (taskDef.id) {
+            const index = existing.findIndex(t => t.id === taskDef.id);
+            if (index !== -1) {
+                existing[index] = taskDef;
+            } else {
+                existing.push(taskDef);
+            }
+        } else {
+            existing.push(taskDef);
+        }
+        this.taskRegistry.set(taskDef.key, existing);
     }
 
     /**
@@ -59,13 +81,6 @@ export class TaskSystem {
     }
 
     /**
-     * 移除任务
-     */
-    unregisterTask(key: string): void {
-        this.taskRegistry.delete(key);
-    }
-
-    /**
      * 注册自定义适配器
      */
     registerAdapter(adapter: TaskAdapter): void {
@@ -73,7 +88,23 @@ export class TaskSystem {
     }
 
     getTaskDefinition(key: string): TaskDefinition | undefined {
-        return getTaskDefinitionFromState(key)??this.taskRegistry.get(key);
+        const fromState = getTaskDefinitionFromState(key);
+        if (fromState) return fromState;
+
+        const defs = this.taskRegistry.get(key);
+        if (!defs || defs.length === 0) return undefined;
+
+        if (this.operatingSystem) {
+            const matched = defs.find(d =>
+                d.operatingSystems?.some(os =>
+                    os.os === this.operatingSystem!.os &&
+                    os.osVersion === this.operatingSystem!.osVersion
+                )
+            );
+            if (matched) return matched;
+        }
+
+        return defs.find(d => !d.operatingSystems || d.operatingSystems.length === 0) || undefined;
     }
 
     /**

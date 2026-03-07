@@ -1,5 +1,5 @@
 import React, {useRef, useEffect, useContext, memo} from 'react';
-import {View, Text, StyleSheet, Animated} from 'react-native';
+import {View, Text, StyleSheet, Animated, Platform} from 'react-native';
 import {FancyKeyboardEditingContextV2} from '../../../contexts/FancyKeyboardContextV2';
 
 interface EditingContentProps {
@@ -50,7 +50,7 @@ export const EditingContent: React.FC<EditingContentProps> = memo(({shouldShake,
 
     return (
         <View style={styles.container}>
-            {promptText && (
+            {promptText && Platform.OS === 'web' && (
                 <View style={styles.promptContainer}>
                     <Text style={styles.promptText}>{promptText}</Text>
                 </View>

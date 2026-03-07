@@ -25,7 +25,7 @@ const slice = createWorkspaceSlice(
     initialState,
     {
         openModal: (state, action: PayloadAction<{ modal: ScreenPart<any>, displayMode: DisplayMode }>) => {
-            logger.log([moduleName, LOG_TAGS.Reducer, "uiVariables"], 'openModal',action.payload)
+            // logger.log([moduleName, LOG_TAGS.Reducer, "uiVariables"], 'openModal',action.payload)
             const {modal, displayMode} = action.payload;
             if (!modal.id) {
                 return;
@@ -43,29 +43,28 @@ const slice = createWorkspaceSlice(
             modals.updatedAt = Date.now();
         },
         closeModal: (state, action: PayloadAction<{ modalId: string, displayMode: DisplayMode }>) => {
-            logger.log([moduleName, LOG_TAGS.Reducer, "uiVariables"], 'closeModal',action.payload)
+            // logger.log([moduleName, LOG_TAGS.Reducer, "uiVariables"], 'closeModal',action.payload)
             const {modalId, displayMode} = action.payload;
             const modals = displayMode === DisplayMode.PRIMARY ? state.primaryModals : state.secondaryModals;
             modals.value = modals.value.filter(m => m.id !== modalId);
         },
         updateUiVariables: (state, action: PayloadAction<Record<string, any>>) => {
-            logger.log([moduleName, LOG_TAGS.Reducer, "uiVariables"], 'updateUiVariables',action.payload)
+            // logger.log([moduleName, LOG_TAGS.Reducer, "uiVariables"], 'updateUiVariables',action.payload)
             Object.keys(action.payload).forEach(key => {
                 if (key === PERSIST_KEY) return
                 state[key] = {value: action.payload[key], updatedAt: Date.now()}
             })
         },
         clearUiVariables: (state, action: PayloadAction<string[]>) => {
-            logger.log([moduleName, LOG_TAGS.Reducer, "uiVariables"], 'clearUiVariables',action.payload)
+            // logger.log([moduleName, LOG_TAGS.Reducer, "uiVariables"], 'clearUiVariables',action.payload)
             action.payload.forEach((key) => {
                 if (key === PERSIST_KEY) return
                 state[key] = {value: null, updatedAt: Date.now()}
             })
         },
         batchUpdateState: (state, action) => {
-            logger.log([moduleName, LOG_TAGS.Reducer, "uiVariables"], 'batchUpdateState',action.payload)
+            // logger.log([moduleName, LOG_TAGS.Reducer, "uiVariables"], 'batchUpdateState',action.payload)
             batchUpdateState(state, action)
-            logger.log([moduleName, LOG_TAGS.Reducer, kernelCoreNavigationWorkspaceState.uiVariables], 'batch update state', action.payload)
         }
     }
 )

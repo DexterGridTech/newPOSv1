@@ -1,6 +1,6 @@
 import {configureStore, EnhancedStore, Middleware, PayloadAction, Reducer} from "@reduxjs/toolkit";
 import {Persistor, persistReducer, persistStore} from "redux-persist";
-import {RootState, ServerSpace, storeEntry} from "../types";
+import {INTERNAL, RootState, ServerSpace, storeEntry} from "../types";
 import {ModuleDependencyResolver} from "./moduleDependencyResolver";
 import {ApplicationConfig} from "./types";
 import {setEnvironment} from "../foundations/environment";
@@ -14,12 +14,14 @@ import {
 import {getStateStoragePrefix} from "../foundations/adapters/stateStorage";
 import {combineEpics, createEpicMiddleware} from "redux-observable";
 import {InitLogger} from "./initLogger";
+import {kernelCoreBaseCommands} from "../features/commands";
 
 
 export class ApplicationManager {
     private static instance: ApplicationManager | null = null;
     private store: EnhancedStore<RootState> | null = null;
     private persistor: Persistor | null = null;
+    private initialized: boolean = false;
     private moduleDependencyResolver = new ModuleDependencyResolver()
 
     static getInstance(): ApplicationManager {
@@ -27,6 +29,12 @@ export class ApplicationManager {
             ApplicationManager.instance = new ApplicationManager();
         }
         return ApplicationManager.instance;
+    }
+
+    init(){
+        if(this.initialized) return;
+        kernelCoreBaseCommands.initialize().executeInternally()
+        this.initialized=true;
     }
 
     getStore(): EnhancedStore<RootState> | null {

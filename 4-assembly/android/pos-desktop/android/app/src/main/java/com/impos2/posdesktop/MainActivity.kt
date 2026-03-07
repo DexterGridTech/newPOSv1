@@ -9,6 +9,7 @@ import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import android.view.WindowManager
+import android.view.animation.AnimationUtils
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.ReactInstanceManager
@@ -79,8 +80,28 @@ class MainActivity : ReactActivity() {
                         or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     )
                 }
+                startSplashAnimations(dialog)
             } catch (_: Exception) {}
         }, 50L)
+    }
+
+    private fun startSplashAnimations(dialog: android.app.Dialog) {
+        val root = dialog.findViewById<View>(android.R.id.content) ?: return
+        val animationMap = listOf(
+            R.id.splash_bg_breathe to R.anim.splash_breathe,
+            R.id.splash_arc_back_view to R.anim.splash_float_slow,
+            R.id.splash_arc_front_view to R.anim.splash_float_reverse,
+            R.id.splash_orbit_ring_view to R.anim.splash_rotate_orbit,
+            R.id.splash_sweep_glow_view to R.anim.splash_sweep,
+            R.id.splash_sphere_primary_view to R.anim.splash_float_slow,
+            R.id.splash_sphere_secondary_view to R.anim.splash_float_reverse,
+            R.id.splash_brand_text to R.anim.splash_text_top_in,
+            R.id.splash_system_text to R.anim.splash_text_middle_in,
+            R.id.splash_loading_text to R.anim.splash_text_bottom_in,
+        )
+        animationMap.forEach { (viewId, animId) ->
+            root.findViewById<View>(viewId)?.startAnimation(AnimationUtils.loadAnimation(this, animId))
+        }
     }
 
     private fun initManagers() {

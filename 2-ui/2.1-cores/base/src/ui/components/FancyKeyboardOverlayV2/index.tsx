@@ -12,15 +12,8 @@ import {BackdropV2} from './BackdropV2';
 import {EditingContent} from './EditingContent';
 
 const getKeyboardHeight = () => {
-    const {width, height} = Dimensions.get('window');
-    const isLandscape = width > height;
-    const shortEdge = Math.min(width, height);
-    const isTablet = shortEdge >= 600;
-
-    if (isLandscape) {
-        return isTablet ? height * 0.5 : height * 0.55;
-    }
-    return isTablet ? height * 0.35 : height * 0.4;
+    const {height} = Dimensions.get('window');
+    return height / 3;
 };
 
 // ─── KeyboardArea ─────────────────────────────────────────────────────────────

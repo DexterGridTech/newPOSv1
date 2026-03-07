@@ -19,7 +19,7 @@ const slice = createSlice({
     initialState,
     reducers: {
         setInstanceMode: (state, action: PayloadAction<InstanceMode>) => {
-            logger.log([moduleName, LOG_TAGS.Reducer, "instanceInfo"], 'setInstanceMode',action.payload)
+            // logger.log([moduleName, LOG_TAGS.Reducer, "instanceInfo"], 'setInstanceMode',action.payload)
 
             state.instanceMode = action.payload
             if(state.instanceMode===InstanceMode.SLAVE&&state.displayMode===DisplayMode.PRIMARY){
@@ -29,7 +29,7 @@ const slice = createSlice({
             }
         },
         setDisplayMode: (state, action: PayloadAction<DisplayMode>) => {
-            logger.log([moduleName, LOG_TAGS.Reducer, "instanceInfo"], 'setDisplayMode',action.payload)
+            // logger.log([moduleName, LOG_TAGS.Reducer, "instanceInfo"], 'setDisplayMode',action.payload)
             state.displayMode = action.payload
             if(state.instanceMode===InstanceMode.SLAVE&&state.displayMode===DisplayMode.PRIMARY){
                 state.workspace=Workspace.BRANCH
@@ -38,11 +38,11 @@ const slice = createSlice({
             }
         },
         enableSlave: (state, action: PayloadAction<boolean>) => {
-            logger.log([moduleName, LOG_TAGS.Reducer, "instanceInfo"], 'enableSlave',action.payload)
+            // logger.log([moduleName, LOG_TAGS.Reducer, "instanceInfo"], 'enableSlave',action.payload)
             state.enableSlave = action.payload
         },
         setMasterInfo: (state, action: PayloadAction<MasterInfo | null>) => {
-            logger.log([moduleName, LOG_TAGS.Reducer, "instanceInfo"], 'setMasterInfo',action.payload)
+            // logger.log([moduleName, LOG_TAGS.Reducer, "instanceInfo"], 'setMasterInfo',action.payload)
             state.masterInfo = action.payload
         }
     }

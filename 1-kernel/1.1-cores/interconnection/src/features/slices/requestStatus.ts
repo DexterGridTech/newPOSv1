@@ -27,7 +27,7 @@ export const slice = createInstanceModeSlice(
             command: Command<any>,
             requestCleanOutTime: number
         }>) => {
-            logger.log([moduleName, LOG_TAGS.Reducer, "requestStatus"], `保存命令开始=>${action.payload.command.printId()}`)
+            // logger.log([moduleName, LOG_TAGS.Reducer, "requestStatus"], `保存命令开始=>${action.payload.command.printId()}`)
             const {actor, command, requestCleanOutTime} = action.payload
             const requestId = command.requestId!
             const request = state[requestId] ?? {
@@ -62,7 +62,7 @@ export const slice = createInstanceModeSlice(
             command: Command<any>,
             result?: Record<string, any>
         }>) => {
-            logger.log([moduleName, LOG_TAGS.Reducer, "requestStatus"], `保存命令结束=>${action.payload.command.printId()}`)
+            // logger.log([moduleName, LOG_TAGS.Reducer, "requestStatus"], `保存命令结束=>${action.payload.command.printId()}`)
             const {actor, command, result} = action.payload
             const request = state[command.requestId!]
             if (request) {
@@ -76,7 +76,7 @@ export const slice = createInstanceModeSlice(
             }
         },
         commandError: (state, action: PayloadAction<{ actor: string, command: Command<any>, appError: AppError }>) => {
-            logger.log([moduleName, LOG_TAGS.Reducer, "requestStatus"], `保存命令错误=>${action.payload.command.printId()}`)
+            // logger.log([moduleName, LOG_TAGS.Reducer, "requestStatus"], `保存命令错误=>${action.payload.command.printId()}`)
             const {actor, command, appError} = action.payload
             const request = state[command.requestId!]
             if (request) {
@@ -90,8 +90,8 @@ export const slice = createInstanceModeSlice(
             }
         },
         batchUpdateState: (state, action) => {
+            // logger.log([moduleName, LOG_TAGS.Reducer, "requestStatus"], action.type, action.payload)
             batchUpdateState(state, action)
-            logger.log([moduleName, LOG_TAGS.Reducer, "requestStatus"], action.type, action.payload)
         }
     }
 )

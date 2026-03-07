@@ -5,7 +5,7 @@ import {PersistGate} from "redux-persist/integration/react";
 import type {Store} from '@reduxjs/toolkit';
 import type {Persistor} from 'redux-persist';
 import {Text, View} from "react-native";
-import {kernelCoreBaseCommands} from "@impos2/kernel-core-base";
+import {ApplicationManager} from "@impos2/kernel-core-base";
 
 export const DevApp: React.FC = () => {
     const [storeReady, setStoreReady] = useState<{ store: Store; persistor: Persistor } | null>(null);
@@ -25,7 +25,7 @@ export const DevApp: React.FC = () => {
     return (
         <Provider store={storeReady.store}>
             <PersistGate persistor={storeReady.persistor} onBeforeLift={() => {
-                kernelCoreBaseCommands.initialize().executeInternally()
+                ApplicationManager.getInstance().init()
             }}>
                 <View>
                     <Text>DevApp</Text>

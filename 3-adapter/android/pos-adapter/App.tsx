@@ -5,7 +5,7 @@ import type {Persistor} from "redux-persist";
 import {Text, View} from "react-native";
 import {Provider} from "react-redux";
 import {PersistGate} from "redux-persist/integration/react";
-import {kernelCoreBaseCommands} from "@impos2/kernel-core-base";
+import {ApplicationManager, kernelCoreBaseCommands} from "@impos2/kernel-core-base";
 import {storePromise} from "./dev/store.ts";
 
 const App = () => {
@@ -27,7 +27,7 @@ const App = () => {
     return (
         <Provider store={storeReady.store}>
             <PersistGate persistor={storeReady.persistor} onBeforeLift={() => {
-                kernelCoreBaseCommands.initialize().executeInternally()
+                ApplicationManager.getInstance().init()
             }}>
                 <DevHome>
                 </DevHome>

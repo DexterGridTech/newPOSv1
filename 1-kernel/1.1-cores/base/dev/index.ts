@@ -30,9 +30,8 @@ const appConfig: ApplicationConfig = {
 }
 
 async function initializeApp() {
-    const {store} = await ApplicationManager.getInstance().generateStore(appConfig)
-    // 执行命令
-    kernelCoreBaseCommands.initialize().execute("123")
+    await ApplicationManager.getInstance().generateStore(appConfig)
+    ApplicationManager.getInstance().init()
 }
 
 initializeApp().catch(error => {

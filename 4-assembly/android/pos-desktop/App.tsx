@@ -4,7 +4,7 @@ import type {Persistor} from "redux-persist";
 import {NativeModules} from 'react-native';
 import {Provider} from "react-redux";
 import {PersistGate} from "redux-persist/integration/react";
-import {kernelCoreBaseCommands} from "@impos2/kernel-core-base";
+import {ApplicationManager, kernelCoreBaseCommands} from "@impos2/kernel-core-base";
 import {storePromise} from "./src/store.ts";
 import {LoadingScreen} from "@impos2/ui-core-base";
 import {AppProps} from "./src/types/shared/appProps.ts";
@@ -15,8 +15,7 @@ const {AppTurboModule} = NativeModules;
 const App = (props: AppProps) => {
     const [storeReady, setStoreReady] = useState<{ store: Store; persistor: Persistor } | null>(null);
     const handleAppLoadComplete = useCallback(() => {
-        console.log('==================');
-        kernelCoreBaseCommands.initialize().executeInternally()
+        ApplicationManager.getInstance().init()
         AppTurboModule.onAppLoadComplete?.().catch((error:Error|any) => {
             console.error('App load complete error',error);
         });

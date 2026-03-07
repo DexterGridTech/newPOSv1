@@ -32,16 +32,8 @@ const appConfig: ApplicationConfig = {
 }
 
 async function initializeApp() {
-    const {store} = await ApplicationManager.getInstance().generateStore(appConfig)
-
-    // 执行命令
-    kernelCoreBaseCommands.initialize().executeInternally()
-    console.log('----------------')
-
-    setTimeout(() => {
-        console.log('===================')
-        console.log(JSON.stringify(storeEntry.getState()))
-    }, 4000)
+    await ApplicationManager.getInstance().generateStore(appConfig)
+    ApplicationManager.getInstance().init()
 }
 
 initializeApp().catch(error => {

@@ -14,19 +14,19 @@ const slice = createSlice({
     initialState,
     reducers: {
         connecting: (state) => {
-            logger.log([moduleName, LOG_TAGS.Reducer, "instanceInterconnection"], 'connecting')
+            // logger.log([moduleName, LOG_TAGS.Reducer, "instanceInterconnection"], 'connecting')
             state.serverConnectionStatus = ServerConnectionStatus.CONNECTING
             state.connectedAt = null
             state.disconnectedAt = null
             state.connectionError = null
         },
         connected: (state) => {
-            logger.log([moduleName, LOG_TAGS.Reducer, "instanceInterconnection"], 'connected')
+            // logger.log([moduleName, LOG_TAGS.Reducer, "instanceInterconnection"], 'connected')
             state.serverConnectionStatus = ServerConnectionStatus.CONNECTED
             state.connectedAt = Date.now()
         },
         disconnected: (state, action: PayloadAction<{ connectionError: string }>) => {
-            logger.log([moduleName, LOG_TAGS.Reducer, "instanceInterconnection"], 'disconnected')
+            // logger.log([moduleName, LOG_TAGS.Reducer, "instanceInterconnection"], 'disconnected')
             state.serverConnectionStatus = ServerConnectionStatus.DISCONNECTED
             state.disconnectedAt = Date.now()
             state.connectionError = action.payload.connectionError

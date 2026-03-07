@@ -4,7 +4,7 @@ import {storePromise} from './store';
 import {PersistGate} from "redux-persist/integration/react";
 import type {Store} from '@reduxjs/toolkit';
 import type {Persistor} from 'redux-persist';
-import {kernelCoreBaseCommands} from "@impos2/kernel-core-base";
+import {ApplicationManager, kernelCoreBaseCommands} from "@impos2/kernel-core-base";
 import RootScreen from "../src/ui/screens/RootScreen";
 
 export const DevApp: React.FC = () => {
@@ -23,7 +23,7 @@ export const DevApp: React.FC = () => {
     return (
         <Provider store={storeReady.store}>
             <PersistGate persistor={storeReady.persistor} onBeforeLift={() => {
-                kernelCoreBaseCommands.initialize().executeInternally()
+                ApplicationManager.getInstance().init()
             }}>
                 <RootScreen onLoadComplete={ () => {
                     console.log("---------------onLoadComplete---------------")

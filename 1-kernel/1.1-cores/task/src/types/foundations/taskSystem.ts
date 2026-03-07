@@ -68,6 +68,12 @@ export interface TaskDefinition {
     timeout: number;
     // 是否启用
     enabled: boolean;
+
+    operatingSystems?:{
+        os:string,
+        osVersion:string,
+    }[]|null;
+
 }
 
 /** 过程数据核心结构（流式推送的唯一载体，包含所有错误） */

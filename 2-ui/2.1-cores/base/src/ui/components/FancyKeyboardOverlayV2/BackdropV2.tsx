@@ -41,7 +41,6 @@ export const BackdropV2: React.FC<BackdropV2Props> = memo(({onPress, activeInput
 
     // handlePress 不依赖任何 state，永远稳定，Pressable 不会因此重渲染
     const handlePress = useCallback((event: any) => {
-        console.log('[Backdrop] handlePress', {isInteractionEnabled: isInteractionEnabledRef.current});
         if (Platform.OS === 'web' && event) event.stopPropagation();
         if (!isInteractionEnabledRef.current) return;
         onPress();

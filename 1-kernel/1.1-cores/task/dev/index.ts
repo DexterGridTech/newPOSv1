@@ -33,7 +33,8 @@ const appConfig: ApplicationConfig = {
 }
 
 async function initializeApp() {
-    const {store} = await ApplicationManager.getInstance().generateStore(appConfig)
+    await ApplicationManager.getInstance().generateStore(appConfig)
+    ApplicationManager.getInstance().init()
 
     setTimeout(() => {
         console.log('===================')
