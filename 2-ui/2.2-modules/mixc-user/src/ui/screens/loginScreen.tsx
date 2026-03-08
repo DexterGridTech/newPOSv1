@@ -1,8 +1,8 @@
 import React, {useCallback} from 'react';
-import {StackContainer, uiBaseCoreUiVariables, useLifecycle} from "@impos2/ui-core-base";
+import {LoginForm} from '../components/LoginForm';
+import {uiBaseCoreUiVariables, useLifecycle} from "@impos2/ui-core-base";
 import {ScreenMode, ScreenPartRegistration} from "@impos2/kernel-core-base";
 import {InstanceMode, Workspace} from "@impos2/kernel-core-interconnection";
-import {Text, View} from "react-native";
 
 export const LoginScreen: React.FC = () => {
     useLifecycle({
@@ -14,9 +14,7 @@ export const LoginScreen: React.FC = () => {
     });
 
     return (
-        <View>
-            <Text>Login</Text>
-        </View>
+        <LoginForm/>
     );
 };
 

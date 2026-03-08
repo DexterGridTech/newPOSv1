@@ -3413,6 +3413,7 @@ __metadata:
     expo: ~54.0.31
     expo-status-bar: ~3.0.9
     react-dom: 18.3.1
+    react-native-qrcode-svg: ^6.3.21
     react-native-web: ^0.21.0
     redux-persist: ^6.0.0
     typescript: ^5.9.3
