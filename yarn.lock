@@ -3044,16 +3044,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/assembly-android-desktop@workspace:4-assembly/android/pos-desktop":
+"@impos2/assembly-android-mixc-retail@workspace:4-assembly/android/mixc-retail":
   version: 0.0.0-use.local
-  resolution: "@impos2/assembly-android-desktop@workspace:4-assembly/android/pos-desktop"
+  resolution: "@impos2/assembly-android-mixc-retail@workspace:4-assembly/android/mixc-retail"
   dependencies:
     "@babel/core": ^7.25.2
     "@babel/preset-env": ^7.25.3
     "@babel/runtime": ^7.25.0
     "@impos2/adapter-android": "*"
     "@impos2/kernel-server-config": "*"
-    "@impos2/ui-integration-desktop": "*"
+    "@impos2/ui-integration-mixc-retail": "*"
     "@react-native-community/cli": 15.0.1
     "@react-native-community/cli-platform-android": 15.0.1
     "@react-native/babel-preset": 0.76.6
@@ -3077,9 +3077,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/assembly-electron-desktop@workspace:4-assembly/electron/pos-desktop":
+"@impos2/assembly-electron-mixc-retail@workspace:4-assembly/electron/mixc-retail":
   version: 0.0.0-use.local
-  resolution: "@impos2/assembly-electron-desktop@workspace:4-assembly/electron/pos-desktop"
+  resolution: "@impos2/assembly-electron-mixc-retail@workspace:4-assembly/electron/mixc-retail"
   dependencies:
     "@electron-forge/cli": ^7.11.1
     "@electron-forge/maker-deb": ^7.11.1
@@ -3092,7 +3092,7 @@ __metadata:
     "@electron/fuses": ^1.8.0
     "@impos2/adapter-electron": "*"
     "@impos2/kernel-server-config": "*"
-    "@impos2/ui-integration-desktop": "*"
+    "@impos2/ui-integration-mixc-retail": "*"
     "@types/electron-squirrel-startup": ^1.0.2
     "@types/react": ~18.3.12
     "@types/react-dom": ~18.3.1
@@ -3182,6 +3182,27 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@impos2/kernel-core-terminal@*, @impos2/kernel-core-terminal@workspace:1-kernel/1.1-cores/terminal":
+  version: 0.0.0-use.local
+  resolution: "@impos2/kernel-core-terminal@workspace:1-kernel/1.1-cores/terminal"
+  dependencies:
+    "@impos2/kernel-core-base": "*"
+    "@impos2/kernel-core-interconnection": "*"
+    "@impos2/kernel-core-navigation": "*"
+    "@impos2/kernel-server-config": "*"
+    "@reduxjs/toolkit": ^2.11.2
+    "@types/node": ^25.0.9
+    axios: ^1.13.5
+    date-fns: ^4.1.0
+    madge: ^8.0.0
+    redux-observable: ^3.0.0-rc.3
+    redux-persist: ^6.0.0
+    rxjs: ^7.8.2
+    ts-node: ^10.9.2
+    typescript: ^5.9.3
+  languageName: unknown
+  linkType: soft
+
 "@impos2/kernel-server-config@*, @impos2/kernel-server-config@workspace:1-kernel/server-config":
   version: 0.0.0-use.local
   resolution: "@impos2/kernel-server-config@workspace:1-kernel/server-config"
@@ -3236,27 +3257,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/kernel-terminal@*, @impos2/kernel-terminal@workspace:1-kernel/1.2-modules/terminal":
-  version: 0.0.0-use.local
-  resolution: "@impos2/kernel-terminal@workspace:1-kernel/1.2-modules/terminal"
-  dependencies:
-    "@impos2/kernel-core-base": "*"
-    "@impos2/kernel-core-interconnection": "*"
-    "@impos2/kernel-core-navigation": "*"
-    "@impos2/kernel-server-config": "*"
-    "@reduxjs/toolkit": ^2.11.2
-    "@types/node": ^25.0.9
-    axios: ^1.13.5
-    date-fns: ^4.1.0
-    madge: ^8.0.0
-    redux-observable: ^3.0.0-rc.3
-    redux-persist: ^6.0.0
-    rxjs: ^7.8.2
-    ts-node: ^10.9.2
-    typescript: ^5.9.3
-  languageName: unknown
-  linkType: soft
-
 "@impos2/master-ws-server-dual@workspace:0-mock-server/master-ws-server-dual":
   version: 0.0.0-use.local
   resolution: "@impos2/master-ws-server-dual@workspace:0-mock-server/master-ws-server-dual"
@@ -3271,9 +3271,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/ui-admin@*, @impos2/ui-admin@workspace:2-ui/2.2-modules/admin":
+"@impos2/ui-core-admin@*, @impos2/ui-core-admin@workspace:2-ui/2.1-cores/admin":
   version: 0.0.0-use.local
-  resolution: "@impos2/ui-admin@workspace:2-ui/2.2-modules/admin"
+  resolution: "@impos2/ui-core-admin@workspace:2-ui/2.1-cores/admin"
   dependencies:
     "@impos2/kernel-core-base": "*"
     "@impos2/kernel-core-interconnection": "*"
@@ -3319,66 +3319,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/ui-device-activate@workspace:2-ui/2.2-modules/device-activate":
+"@impos2/ui-core-terminal@*, @impos2/ui-core-terminal@workspace:2-ui/2.1-cores/terminal":
   version: 0.0.0-use.local
-  resolution: "@impos2/ui-device-activate@workspace:2-ui/2.2-modules/device-activate"
+  resolution: "@impos2/ui-core-terminal@workspace:2-ui/2.1-cores/terminal"
   dependencies:
     "@impos2/kernel-core-base": "*"
     "@impos2/kernel-core-interconnection": "*"
     "@impos2/kernel-core-navigation": "*"
     "@impos2/kernel-core-task": "*"
-    "@impos2/kernel-server-config": "*"
-    "@impos2/kernel-terminal": "*"
-    "@impos2/ui-core-base": "*"
-    "@reduxjs/toolkit": ^2.11.2
-    "@types/react": ~18.3.12
-    expo: ~54.0.31
-    expo-status-bar: ~3.0.9
-    react-dom: 18.3.1
-    react-native-web: ^0.21.0
-    redux-persist: ^6.0.0
-    typescript: ^5.9.3
-  peerDependencies:
-    react: 18.3.1
-    react-native: 0.76.6
-    react-redux: ^9.1.0
-  languageName: unknown
-  linkType: soft
-
-"@impos2/ui-integration-desktop@*, @impos2/ui-integration-desktop@workspace:2-ui/2.3-integrations/desktop":
-  version: 0.0.0-use.local
-  resolution: "@impos2/ui-integration-desktop@workspace:2-ui/2.3-integrations/desktop"
-  dependencies:
-    "@impos2/kernel-core-base": "*"
-    "@impos2/kernel-core-interconnection": "*"
-    "@impos2/kernel-core-navigation": "*"
-    "@impos2/ui-admin": "*"
-    "@impos2/ui-core-base": "*"
-    "@impos2/ui-operator": "*"
-    "@impos2/ui-workbench": "*"
-    "@reduxjs/toolkit": ^2.11.2
-    "@types/react": ~18.3.12
-    expo: ~54.0.31
-    expo-status-bar: ~3.0.9
-    react-dom: 18.3.1
-    react-native-web: ^0.21.0
-    redux-persist: ^6.0.0
-    typescript: ^5.9.3
-  peerDependencies:
-    react: 18.3.1
-    react-native: 0.76.6
-    react-redux: ^9.1.0
-  languageName: unknown
-  linkType: soft
-
-"@impos2/ui-operator@*, @impos2/ui-operator@workspace:2-ui/2.2-modules/operator":
-  version: 0.0.0-use.local
-  resolution: "@impos2/ui-operator@workspace:2-ui/2.2-modules/operator"
-  dependencies:
-    "@impos2/kernel-core-base": "*"
-    "@impos2/kernel-core-interconnection": "*"
-    "@impos2/kernel-core-navigation": "*"
-    "@impos2/kernel-core-task": "*"
+    "@impos2/kernel-core-terminal": "*"
     "@impos2/kernel-server-config": "*"
     "@impos2/ui-core-base": "*"
     "@reduxjs/toolkit": ^2.11.2
@@ -3396,9 +3345,61 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/ui-workbench@*, @impos2/ui-workbench@workspace:2-ui/2.2-modules/workbench":
+"@impos2/ui-integration-mixc-retail@*, @impos2/ui-integration-mixc-retail@workspace:2-ui/2.3-integrations/mixc-retail":
   version: 0.0.0-use.local
-  resolution: "@impos2/ui-workbench@workspace:2-ui/2.2-modules/workbench"
+  resolution: "@impos2/ui-integration-mixc-retail@workspace:2-ui/2.3-integrations/mixc-retail"
+  dependencies:
+    "@impos2/kernel-core-base": "*"
+    "@impos2/kernel-core-interconnection": "*"
+    "@impos2/kernel-core-navigation": "*"
+    "@impos2/ui-core-admin": "*"
+    "@impos2/ui-core-base": "*"
+    "@impos2/ui-core-terminal": "*"
+    "@impos2/ui-mixc-operator": "*"
+    "@impos2/ui-mixc-workbench": "*"
+    "@reduxjs/toolkit": ^2.11.2
+    "@types/react": ~18.3.12
+    expo: ~54.0.31
+    expo-status-bar: ~3.0.9
+    react-dom: 18.3.1
+    react-native-web: ^0.21.0
+    redux-persist: ^6.0.0
+    typescript: ^5.9.3
+  peerDependencies:
+    react: 18.3.1
+    react-native: 0.76.6
+    react-redux: ^9.1.0
+  languageName: unknown
+  linkType: soft
+
+"@impos2/ui-mixc-operator@*, @impos2/ui-mixc-operator@workspace:2-ui/2.2-modules/mixc-operator":
+  version: 0.0.0-use.local
+  resolution: "@impos2/ui-mixc-operator@workspace:2-ui/2.2-modules/mixc-operator"
+  dependencies:
+    "@impos2/kernel-core-base": "*"
+    "@impos2/kernel-core-interconnection": "*"
+    "@impos2/kernel-core-navigation": "*"
+    "@impos2/kernel-core-task": "*"
+    "@impos2/kernel-server-config": "*"
+    "@impos2/ui-core-base": "*"
+    "@reduxjs/toolkit": ^2.11.2
+    "@types/react": ~18.3.12
+    expo: ~54.0.31
+    expo-status-bar: ~3.0.9
+    react-dom: 18.3.1
+    react-native-web: ^0.21.0
+    redux-persist: ^6.0.0
+    typescript: ^5.9.3
+  peerDependencies:
+    react: 18.3.1
+    react-native: 0.76.6
+    react-redux: ^9.1.0
+  languageName: unknown
+  linkType: soft
+
+"@impos2/ui-mixc-workbench@*, @impos2/ui-mixc-workbench@workspace:2-ui/2.2-modules/mixc-workbench":
+  version: 0.0.0-use.local
+  resolution: "@impos2/ui-mixc-workbench@workspace:2-ui/2.2-modules/mixc-workbench"
   dependencies:
     "@impos2/kernel-core-base": "*"
     "@impos2/kernel-core-interconnection": "*"
