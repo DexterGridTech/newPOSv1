@@ -9,6 +9,7 @@ import {adapterAndroidEpics} from "./features/epics";
 import {adapterAndroidMiddlewares} from "./features/middlewares";
 import {AppModule} from "@impos2/kernel-core-base";
 import {uiCoreBaseModule} from "@impos2/ui-core-base";
+import {adapterTaskDefinitions} from "./foundations/taskDefinitions";
 
 export const adapterAndroidModule: AppModule = {
     name: moduleName,
@@ -22,6 +23,7 @@ export const adapterAndroidModule: AppModule = {
     parameters: adapterAndroidParameters,
     dependencies: [uiCoreBaseModule],
     modulePreSetup: adapterAndroidModulePreSetup,
+    taskDefinitions:adapterTaskDefinitions
 }
 
 

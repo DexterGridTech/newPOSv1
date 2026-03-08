@@ -1,17 +1,17 @@
-import {useCallback, useEffect, useRef, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {Alert} from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '@impos2/kernel-core-base';
 import {
-    kernelCoreInterconnectionCommands,
-    KernelCoreInterconnectionState,
-    kernelCoreInterconnectionState,
     InstanceMode,
-    ServerConnectionStatus,
+    kernelCoreInterconnectionCommands,
+    kernelCoreInterconnectionState,
+    KernelCoreInterconnectionState,
     MasterInfo,
+    ServerConnectionStatus,
     useRequestStatus,
 } from '@impos2/kernel-core-interconnection';
-import {kernelCoreTaskCommands, singleReadBarCodeFromCamera} from '@impos2/kernel-core-task';
+import {baseTaskDefinitionKey, kernelCoreTaskCommands} from '@impos2/kernel-core-task';
 
 type S = RootState & KernelCoreInterconnectionState
 
@@ -78,7 +78,7 @@ export const useSwitchInstanceMode = () => {
         const requestId = `addMaster_${Date.now()}`
         setScanRequestId(requestId)
         kernelCoreTaskCommands.executeTask({
-            taskKey: singleReadBarCodeFromCamera.key,
+            taskKey: baseTaskDefinitionKey.singleReadBarcodeFromCamara,
             initContext: {}
         }).execute(requestId)
     }, [scanRequestId])

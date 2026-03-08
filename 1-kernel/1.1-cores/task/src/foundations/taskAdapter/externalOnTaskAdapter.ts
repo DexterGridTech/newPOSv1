@@ -1,6 +1,6 @@
-import { Observable } from 'rxjs'
-import { externalConnector, ConnectorEvent, LOG_TAGS, logger } from '@impos2/kernel-core-base'
-import { TaskAdapter, TaskExecutionContext, TaskType } from '../../types'
+import {Observable} from 'rxjs'
+import {ConnectorEvent, externalConnector, LOG_TAGS, logger, TaskType} from '@impos2/kernel-core-base'
+import {TaskAdapter, TaskExecutionContext} from '../../types'
 import {moduleName} from "../../moduleName";
 
 const TAG = [moduleName, LOG_TAGS.Task, 'ExternalOnTaskAdapter']
@@ -16,7 +16,7 @@ export class ExternalOnTaskAdapter implements TaskAdapter {
 
     execute(args: ExternalOnTaskArgs, context: TaskExecutionContext): Observable<any> {
         return new Observable(subscriber => {
-            const { eventType, targetFilter } = args
+            const {eventType, targetFilter} = args
             const t0 = Date.now()
             logger.log(TAG, `execute start: eventType=${eventType}`)
 

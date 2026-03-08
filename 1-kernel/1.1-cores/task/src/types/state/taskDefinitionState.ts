@@ -1,5 +1,4 @@
-import {ValueWithUpdatedAt} from "@impos2/kernel-core-base";
-import {TaskDefinition} from "../foundations";
+import {ValueWithUpdatedAt,TaskDefinition} from "@impos2/kernel-core-base";
 
 export interface TaskDefinitionState extends Record<string, ValueWithUpdatedAt<TaskDefinition>>{
 

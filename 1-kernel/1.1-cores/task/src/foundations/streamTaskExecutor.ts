@@ -1,25 +1,15 @@
-import { Observable, Subject, of, EMPTY, timer, Subscription } from 'rxjs';
+import {EMPTY, Observable, of, Subject, Subscription, timer} from 'rxjs';
+import {catchError, concatMap, finalize, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {ProgressData, TaskExecutionContext, TaskSession,} from '../types';
+
 import {
-    tap,
-    catchError,
-    concatMap,
-    switchMap,
-    finalize,
-    takeUntil
-} from 'rxjs/operators';
-import {
-    TaskDefinition,
-    ProgressData,
-    TaskExecutionContext,
-    TaskNode,
-    TaskState,
-    TaskSession,
-} from '../types';
-import { AdapterManager } from './adapterManager';
-import {
+    executeConditionScriptAsObservable,
     executeScriptAsObservable,
-    executeConditionScriptAsObservable
-} from '@impos2/kernel-core-base';
+    TaskDefinition,
+    TaskNode,
+    TaskState
+} from "@impos2/kernel-core-base";
+import {AdapterManager} from './adapterManager';
 
 /**
  * 全流式任务执行器（无异常+循环执行版本）
@@ -30,7 +20,8 @@ import {
  * 4. 流式处理：所有状态通过ProgressData推送，业务侧纯响应式处理
  */
 export class StreamTaskExecutor {
-    constructor(private adapterManager: AdapterManager) {}
+    constructor(private adapterManager: AdapterManager) {
+    }
 
     /**
      * 执行任务（核心入口方法）
@@ -49,7 +40,7 @@ export class StreamTaskExecutor {
         const progress$ = new Subject<ProgressData>();
         const cancel$ = new Subject<void>();
 
-        const initialContextSnapshot = { ...initialContext };
+        const initialContextSnapshot = {...initialContext};
         const executionContext: TaskExecutionContext = {
             requestId,
             taskKey: taskDef.key,
@@ -75,7 +66,7 @@ export class StreamTaskExecutor {
             totalNodes: executionContext.totalNodes,
             progress: 0,
             timestamp: Date.now(),
-            context: { ...executionContext.context }
+            context: {...executionContext.context}
         };
         progress$.next(initProgress);
 
@@ -115,7 +106,7 @@ export class StreamTaskExecutor {
                             retryable: true
                         },
                         timestamp: Date.now(),
-                        context: { ...executionContext.context }
+                        context: {...executionContext.context}
                     });
                 }
             });
@@ -148,7 +139,7 @@ export class StreamTaskExecutor {
                             state: finalState,
                             progress: 100,
                             timestamp: Date.now(),
-                            context: { ...executionContext.context },
+                            context: {...executionContext.context},
                             payload: {
                                 loopCount: executionContext.context.loopCount,
                             }
@@ -185,7 +176,7 @@ export class StreamTaskExecutor {
                 totalNodes: executionContext.totalNodes,
                 progress: Math.round((executionContext.nodeCounter / executionContext.totalNodes) * 100),
                 timestamp: Date.now(),
-                context: { ...executionContext.context },
+                context: {...executionContext.context},
                 payload: {
                     totalLoopCount: executionContext.context.loopCount,
                 }
@@ -211,7 +202,7 @@ export class StreamTaskExecutor {
         nodeIndex: number
     ): Observable<ProgressData> {
         const progress$ = new Subject<ProgressData>();
-        const { requestId, taskKey, cancel$ } = executionContext;
+        const {requestId, taskKey, cancel$} = executionContext;
 
         // 问题3 fix：标志位防止超时与节点完成在同一 tick 竞争
         let nodeCompleted = false;
@@ -223,7 +214,7 @@ export class StreamTaskExecutor {
         const cancelSub = cancel$.subscribe(() => {
             if (!combinedCancel$.closed) combinedCancel$.next();
         });
-        combinedCancel$.subscribe({ complete: () => cancelSub.unsubscribe() });
+        combinedCancel$.subscribe({complete: () => cancelSub.unsubscribe()});
 
         const baseProgress: ProgressData = {
             requestId,
@@ -235,11 +226,11 @@ export class StreamTaskExecutor {
             totalNodes: executionContext.totalNodes,
             progress: Math.round((nodeIndex / executionContext.totalNodes) * 100),
             timestamp: Date.now(),
-            context: { ...executionContext.context },
+            context: {...executionContext.context},
             payload: inputPayload
         };
 
-        progress$.next({ ...baseProgress, type: 'NODE_START' });
+        progress$.next({...baseProgress, type: 'NODE_START'});
 
         const runMainFlow = () => {
             executeScriptAsObservable(
@@ -266,7 +257,7 @@ export class StreamTaskExecutor {
                     progress$.next({
                         ...baseProgress,
                         type: 'NODE_PROGRESS',
-                        payload: { step: 'args_process_complete', data: scriptResult.data },
+                        payload: {step: 'args_process_complete', data: scriptResult.data},
                         timestamp: Date.now()
                     });
 
@@ -279,7 +270,10 @@ export class StreamTaskExecutor {
                             combinedCancel$
                         ).pipe(
                             tap((flowProgress) => progress$.next(flowProgress)),
-                            finalize(() => { nodeCompleted = true; progress$.complete(); })
+                            finalize(() => {
+                                nodeCompleted = true;
+                                progress$.complete();
+                            })
                         ).subscribe();
                     } else {
                         this.executeAtomicNode(
@@ -290,7 +284,10 @@ export class StreamTaskExecutor {
                             combinedCancel$
                         ).pipe(
                             tap((atomicProgress) => progress$.next(atomicProgress)),
-                            finalize(() => { nodeCompleted = true; progress$.complete(); })
+                            finalize(() => {
+                                nodeCompleted = true;
+                                progress$.complete();
+                            })
                         ).subscribe();
                     }
                 }),
@@ -326,7 +323,7 @@ export class StreamTaskExecutor {
                     progress$.next({
                         ...baseProgress,
                         type: 'CONDITION_CHECK',
-                        payload: { conditionResult, inputPayload },
+                        payload: {conditionResult, inputPayload},
                         timestamp: Date.now()
                     });
 
@@ -430,7 +427,7 @@ export class StreamTaskExecutor {
                     progress$.next({
                         ...baseProgress,
                         type: 'NODE_PROGRESS',
-                        payload: { step: 'atom_execute_complete', data: rawResult },
+                        payload: {step: 'atom_execute_complete', data: rawResult},
                         timestamp: Date.now()
                     });
 
@@ -489,7 +486,7 @@ export class StreamTaskExecutor {
                         progress$.next({
                             ...baseProgress,
                             type: 'NODE_RETRY',
-                            payload: { retryCount, maxRetries: node.strategy.retry.times },
+                            payload: {retryCount, maxRetries: node.strategy.retry.times},
                             error: errorObj,
                             timestamp: Date.now()
                         });
@@ -550,14 +547,14 @@ export class StreamTaskExecutor {
                     progress$.next({
                         ...baseProgress,
                         type: 'COMPENSATION',
-                        payload: { compensationNode: compNode.key },
+                        payload: {compensationNode: compNode.key},
                         timestamp: Date.now()
                     });
 
                     this.executeNode(
                         compNode,
                         executionContext,
-                        { error: errorObj, context: executionContext.context },
+                        {error: errorObj, context: executionContext.context},
                         baseProgress.nodeIndex + 1
                     ).pipe(
                         tap((compProgress) => progress$.next(compProgress)),

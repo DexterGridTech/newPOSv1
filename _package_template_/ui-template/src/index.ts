@@ -23,8 +23,7 @@ export const uiXXXModule: AppModule = {
     parameters: uiXXXParameters,
     dependencies: [kernelCoreNavigationModule],
     modulePreSetup: uiXXXModulePreSetup,
-    screenParts:uiXXXScreenParts,
-    preSetupPriority: 0
+    screenParts:uiXXXScreenParts
 }
 
 

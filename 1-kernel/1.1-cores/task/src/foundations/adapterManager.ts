@@ -1,4 +1,5 @@
-import { TaskAdapter, TaskType } from '../types';
+import {TaskAdapter,} from '../types';
+import {TaskType} from "@impos2/kernel-core-base";
 import {Observable} from "rxjs";
 
 /**

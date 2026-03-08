@@ -1,10 +1,12 @@
 // @ts-ignore
 import {ApplicationConfig, ApplicationManager, ScreenMode} from "@impos2/kernel-core-base";
 import {uiOperatorModule} from "../src";
+import {devServerSpace} from "@impos2/kernel-server-config";
 
 const appConfig: ApplicationConfig = {
+    serverSpace: devServerSpace,
     environment: {
-        deviceId:"123",
+        deviceId:"test id",
         production: false,
         screenMode: ScreenMode.DESKTOP,
         displayCount: 1,

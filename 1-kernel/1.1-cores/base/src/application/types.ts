@@ -2,6 +2,7 @@ import {Environment, ModuleSliceConfig, RootState, ServerSpace} from "../types";
 import {Epic} from "redux-observable";
 import {Actor, DefinedErrorMessage, DefinedSystemParameter, ScreenPartRegistration} from "../foundations";
 import {Middleware, PayloadAction, StoreEnhancer} from "@reduxjs/toolkit";
+import {TaskDefinition} from "../foundations/taskSystem";
 
 export type DeepPartial<T> = {
     [P in keyof T]?: T[P] extends Array<infer U>
@@ -28,6 +29,7 @@ export interface AppModule {
     errorMessages: Record<string, DefinedErrorMessage>
     parameters: Record<string, DefinedSystemParameter<any>>
     screenParts?: Record<string, ScreenPartRegistration>
+    taskDefinitions?: Record<string, TaskDefinition[]>
     dependencies: AppModule[]
     modulePreSetup?: (config: ApplicationConfig, allModules: AppModule[]) => Promise<void>
 }

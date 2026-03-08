@@ -2,8 +2,7 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {moduleName} from "../../moduleName";
 import {TaskDefinitionState} from "../../types/state/taskDefinitionState";
 import {kernelCoreTaskState} from "../../types/shared/moduleStateKey";
-import {batchUpdateState, LOG_TAGS, logger, ModuleSliceConfig, ValueWithUpdatedAt} from "@impos2/kernel-core-base";
-import { TaskDefinition } from "../../types";
+import {batchUpdateState, LOG_TAGS, logger, TaskDefinition,ModuleSliceConfig, ValueWithUpdatedAt} from "@impos2/kernel-core-base";
 
 const initialState: TaskDefinitionState = {}
 const slice = createSlice({

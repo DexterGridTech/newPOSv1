@@ -23,8 +23,7 @@ export const uiWorkbenchModule: AppModule = {
     parameters: uiWorkbenchParameters,
     dependencies: [kernelCoreNavigationModule],
     modulePreSetup: uiWorkbenchModulePreSetup,
-    screenParts:uiWorkbenchScreenParts,
-    preSetupPriority: 0
+    screenParts:uiWorkbenchScreenParts
 }
 
 

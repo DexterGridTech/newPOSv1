@@ -1,6 +1,6 @@
-import { Observable } from 'rxjs'
-import { externalConnector, ChannelDescriptor, ConnectorCode, LOG_TAGS, logger } from '@impos2/kernel-core-base'
-import { TaskAdapter, TaskExecutionContext, TaskType } from '../../types'
+import {Observable} from 'rxjs'
+import {ChannelDescriptor, ConnectorCode, externalConnector, LOG_TAGS, logger, TaskType} from '@impos2/kernel-core-base'
+import {TaskAdapter, TaskExecutionContext,} from '../../types'
 import {moduleName} from "../../moduleName";
 
 const TAG = [moduleName, LOG_TAGS.Task, 'ExternalCallTaskAdapter']
@@ -17,7 +17,7 @@ export class ExternalCallTaskAdapter implements TaskAdapter {
 
     execute(args: ExternalCallTaskArgs, context: TaskExecutionContext): Observable<any> {
         return new Observable(subscriber => {
-            const { channel, action, params, timeout } = args
+            const {channel, action, params, timeout} = args
             const t0 = Date.now()
             logger.log(TAG, `[${context.requestId}] execute start: ${action}`)
 

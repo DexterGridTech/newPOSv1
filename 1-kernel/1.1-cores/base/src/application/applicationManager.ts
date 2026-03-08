@@ -9,7 +9,7 @@ import {
     registerModuleCommands,
     registerModuleErrorMessages,
     registerModuleSystemParameter,
-    screenPartRegisters, setStateStoragePrefix, stateStorage
+    screenPartRegisters, setStateStoragePrefix, stateStorage, taskDefinitionRegisters
 } from "../foundations";
 import {getStateStoragePrefix} from "../foundations/adapters/stateStorage";
 import {combineEpics, createEpicMiddleware} from "redux-observable";
@@ -159,8 +159,25 @@ export class ApplicationManager {
         initLogger.logSuccess(`Registered ${totalScreenParts} screen parts`);
         initLogger.logStepEnd();
 
-        // 步骤 8: 注册 Error Messages
-        initLogger.logStep(8, 'Registering Error Messages');
+        // 步骤 8: 注册 Task Definitions
+        initLogger.logStep(8, 'Registering Task Definitions');
+        let totalTaskDefinitions = 0;
+        allModules.forEach(module => {
+            const taskDefs = Object.values(module.taskDefinitions || {}).flat();
+            if (taskDefs.length > 0) {
+                initLogger.logDetail(`${module.name}`, taskDefs.length);
+                initLogger.logNames(taskDefs.map(td => td.key));
+                totalTaskDefinitions += taskDefs.length;
+                taskDefs.forEach(taskDef => {
+                    taskDefinitionRegisters.forEach(register => register.registerTaskDefinition(taskDef));
+                });
+            }
+        });
+        initLogger.logSuccess(`Registered ${totalTaskDefinitions} task definitions`);
+        initLogger.logStepEnd();
+
+        // 步骤 9: 注册 Error Messages
+        initLogger.logStep(9, 'Registering Error Messages');
         let totalErrors = 0;
         allModules.forEach(module => {
             const errorCount = Object.keys(module.errorMessages).length;
@@ -174,8 +191,8 @@ export class ApplicationManager {
         initLogger.logSuccess(`Registered ${totalErrors} error messages`);
         initLogger.logStepEnd();
 
-        // 步骤 9: 注册 System Parameters
-        initLogger.logStep(9, 'Registering System Parameters');
+        // 步骤 10: 注册 System Parameters
+        initLogger.logStep(10, 'Registering System Parameters');
         let totalParams = 0;
         allModules.forEach(module => {
             const paramCount = Object.keys(module.parameters).length;
@@ -189,8 +206,8 @@ export class ApplicationManager {
         initLogger.logSuccess(`Registered ${totalParams} system parameters`);
         initLogger.logStepEnd();
 
-        // 步骤 10: 构建 Reducers
-        initLogger.logStep(10, 'Building Reducers');
+        // 步骤 11: 构建 Reducers
+        initLogger.logStep(11, 'Building Reducers');
         const rootReducer: Record<string, Reducer> = {};
         let persistedCount = 0;
         allModules.forEach(module => {
@@ -228,8 +245,8 @@ export class ApplicationManager {
         initLogger.logSuccess(`Built ${reducerCount} reducers (${persistedCount} persisted)`);
         initLogger.logStepEnd();
 
-        // 步骤 11: 配置 Middleware
-        initLogger.logStep(11, 'Configuring Middleware');
+        // 步骤 12: 配置 Middleware
+        initLogger.logStep(12, 'Configuring Middleware');
         const epicMiddleware = createEpicMiddleware<PayloadAction, PayloadAction, RootState>();
         const moduleMiddlewares: { middleware: Middleware, priority: number, name: string }[] = [];
         allModules.forEach(module => {
@@ -250,8 +267,8 @@ export class ApplicationManager {
         initLogger.logSuccess('Middleware configured');
         initLogger.logStepEnd();
 
-        // 步骤 12: 创建 Redux Store
-        initLogger.logStep(12, 'Creating Redux Store');
+        // 步骤 13: 创建 Redux Store
+        initLogger.logStep(13, 'Creating Redux Store');
         initLogger.logDetail('Reactotron', config.reactotronEnhancer ? 'Enabled' : 'Disabled');
         const storeOptions: any = {
             reducer: rootReducer,
@@ -272,8 +289,8 @@ export class ApplicationManager {
         initLogger.logSuccess('Redux Store created');
         initLogger.logStepEnd();
 
-        // 步骤 13: 注册 Epics
-        initLogger.logStep(13, 'Registering Epics');
+        // 步骤 14: 注册 Epics
+        initLogger.logStep(14, 'Registering Epics');
         let totalEpics = 0;
         allModules.forEach(module => {
             const epicCount = Object.keys(module.epics).length;
@@ -289,8 +306,8 @@ export class ApplicationManager {
         initLogger.logSuccess(`Registered ${totalEpics} epics and running`);
         initLogger.logStepEnd();
 
-        // 步骤 14: 创建 Persistor
-        initLogger.logStep(14, 'Creating Persistor');
+        // 步骤 15: 创建 Persistor
+        initLogger.logStep(15, 'Creating Persistor');
         const persistor = persistStore(store);
         initLogger.logSuccess('Persistor created');
         initLogger.logStepEnd();

@@ -1,25 +1,25 @@
-import { Observable } from 'rxjs';
+import {Observable} from 'rxjs';
+import {ProgressData, TaskAdapter,} from '../types';
+import {LOG_TAGS, logger, TaskDefinition,} from "@impos2/kernel-core-base";
+import {AdapterManager} from './adapterManager';
+import {StreamTaskExecutor} from './streamTaskExecutor';
 import {
-    TaskDefinition,
-    ProgressData,
-    TaskAdapter,
-} from '../types';
-import { AdapterManager } from './adapterManager';
-import { StreamTaskExecutor } from './streamTaskExecutor';
-import {CommandTaskAdapter, ExternalCallTaskAdapter, ExternalSubscribeTaskAdapter, ExternalOnTaskAdapter} from "./taskAdapter";
+    CommandTaskAdapter,
+    ExternalCallTaskAdapter,
+    ExternalOnTaskAdapter,
+    ExternalSubscribeTaskAdapter
+} from "./taskAdapter";
 import {getTaskDefinitionFromState} from "./accessory";
-import {LOG_TAGS, logger} from "@impos2/kernel-core-base";
 import {moduleName} from "../moduleName";
-import {singleReadBarCodeFromCamera} from "./taskDefinitions";
 
 /**
  * TaskSystem 核心入口（单例，无异常+循环执行版本）
  */
 export class TaskSystem {
-    private operatingSystem:{
-        os:string,
-        osVersion:string,
-    }|null=null;
+    private operatingSystem: {
+        os: string,
+        osVersion: string,
+    } | null = null;
     private static instance: TaskSystem;
     private taskRegistry = new Map<string, TaskDefinition[]>();
     private adapterManager = new AdapterManager();
@@ -34,8 +34,8 @@ export class TaskSystem {
         this.registerAdapter(new ExternalOnTaskAdapter());
     }
 
-    public setOperatingSystem(os:string,osVersion:string){
-        this.operatingSystem={
+    public setOperatingSystem(os: string, osVersion: string) {
+        this.operatingSystem = {
             os,
             osVersion
         }
@@ -47,9 +47,6 @@ export class TaskSystem {
     public static getInstance(): TaskSystem {
         if (!TaskSystem.instance) {
             TaskSystem.instance = new TaskSystem();
-            TaskSystem.instance.registerTasks([
-                singleReadBarCodeFromCamera
-            ])
         }
         return TaskSystem.instance;
     }
@@ -115,7 +112,7 @@ export class TaskSystem {
     } {
         const taskDef = this.getTaskDefinition(key);
         if (!taskDef) {
-            logger.error([moduleName,LOG_TAGS.Task,"TaskSystem"],`任务${key}未注册`)
+            logger.error([moduleName, LOG_TAGS.Task, "TaskSystem"], `任务${key}未注册`)
             return {
                 run: (requestId: string, initialContext?: Record<string, any>, loop = true) => {
                     return new Observable((subscriber) => {

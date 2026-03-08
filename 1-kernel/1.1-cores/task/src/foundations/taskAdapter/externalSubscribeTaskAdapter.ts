@@ -1,6 +1,14 @@
-import { Observable } from 'rxjs'
-import { externalConnector, ChannelDescriptor, ConnectorEvent, ConnectorCode, LOG_TAGS, logger } from '@impos2/kernel-core-base'
-import { TaskAdapter, TaskExecutionContext, TaskType } from '../../types'
+import {Observable} from 'rxjs'
+import {
+    ChannelDescriptor,
+    ConnectorCode,
+    ConnectorEvent,
+    externalConnector,
+    LOG_TAGS,
+    logger,
+    TaskType
+} from '@impos2/kernel-core-base'
+import {TaskAdapter, TaskExecutionContext,} from '../../types'
 import {moduleName} from "../../moduleName";
 
 const TAG = [moduleName, LOG_TAGS.Task, 'ExternalSubscribeTaskAdapter']
@@ -14,7 +22,7 @@ export class ExternalSubscribeTaskAdapter implements TaskAdapter {
 
     execute(args: ExternalSubscribeTaskArgs, context: TaskExecutionContext): Observable<any> {
         return new Observable(subscriber => {
-            const { channel } = args
+            const {channel} = args
             const t0 = Date.now()
             logger.log(TAG, `execute start: channel=${JSON.stringify(channel)}`)
             let channelId = ''
@@ -48,7 +56,13 @@ export class ExternalSubscribeTaskAdapter implements TaskAdapter {
                     if (!id) {
                         cancelSub.unsubscribe()
                         if (!subscriber.closed) {
-                            subscriber.next({ success: false, code: ConnectorCode.NOT_REGISTERED, message: 'ExternalConnector not registered', duration: 0, timestamp: Date.now() })
+                            subscriber.next({
+                                success: false,
+                                code: ConnectorCode.NOT_REGISTERED,
+                                message: 'ExternalConnector not registered',
+                                duration: 0,
+                                timestamp: Date.now()
+                            })
                             subscriber.complete()
                         }
                         return
@@ -60,7 +74,13 @@ export class ExternalSubscribeTaskAdapter implements TaskAdapter {
                 .catch(err => {
                     cancelSub.unsubscribe()
                     if (!subscriber.closed) {
-                        subscriber.next({ success: false, code: ConnectorCode.UNKNOWN, message: err?.message ?? String(err), duration: 0, timestamp: Date.now() })
+                        subscriber.next({
+                            success: false,
+                            code: ConnectorCode.UNKNOWN,
+                            message: err?.message ?? String(err),
+                            duration: 0,
+                            timestamp: Date.now()
+                        })
                         subscriber.complete()
                     }
                 })

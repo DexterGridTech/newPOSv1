@@ -20,11 +20,11 @@ export interface ScreenPartRegistration extends ScreenPart<any> {
     instanceMode:InstanceMode[]
     workspace:Workspace[]
 }
-export interface screenPartRegister{
+export interface ScreenPartRegister {
     registerScreenPart:(screenPart: ScreenPartRegistration)=>void
 }
 
-export const screenPartRegisters:screenPartRegister[]=[]
-export const addScreenPartRegister = (register:screenPartRegister) => {
+export const screenPartRegisters:ScreenPartRegister[]=[]
+export const addScreenPartRegister = (register:ScreenPartRegister) => {
     screenPartRegisters.push(register)
 }

@@ -20,8 +20,7 @@ export const kernelXXXModule: AppModule = {
     errorMessages: kernelXXXErrorMessages,
     parameters: kernelXXXParameters,
     dependencies: [],
-    modulePreSetup: kernelXXXModulePreSetup,
-    preSetupPriority: 0
+    modulePreSetup: kernelXXXModulePreSetup
 }
 
 

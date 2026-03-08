@@ -1,7 +1,9 @@
-import {TaskDefinition} from '@impos2/kernel-core-task'
+import { TaskDefinition } from "@impos2/kernel-core-base";
+import {baseTaskDefinitionKey} from "@impos2/kernel-core-task";
+
 
 export const singleReadBarCodeFromCamera: TaskDefinition = {
-    key: 'SINGLE_READ_BARCODE_FROM_CAMERA',
+    key:baseTaskDefinitionKey.singleReadBarcodeFromCamara,
     name: '摄像头单次扫码',
     timeout: 30000,
     enabled: true,

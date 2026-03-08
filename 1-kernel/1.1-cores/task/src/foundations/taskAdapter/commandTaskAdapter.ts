@@ -1,8 +1,7 @@
 import {Observable} from 'rxjs';
-import {getCommandByName, LOG_TAGS, logger, shortId, storeEntry} from '@impos2/kernel-core-base';
-import {selectMergedRequestStatus, CommandRequestStatus} from '@impos2/kernel-core-interconnection';
-import {RootState} from '@impos2/kernel-core-base';
-import {TaskAdapter, TaskExecutionContext, TaskType} from '../../types';
+import {getCommandByName, LOG_TAGS, logger, RootState, shortId, storeEntry, TaskType} from '@impos2/kernel-core-base';
+import {CommandRequestStatus, selectMergedRequestStatus} from '@impos2/kernel-core-interconnection';
+import {TaskAdapter, TaskExecutionContext} from '../../types';
 import {moduleName} from "../../moduleName";
 
 const TAG = [moduleName, LOG_TAGS.Task, 'CommandTaskAdapter'];
@@ -30,7 +29,7 @@ export class CommandTaskAdapter implements TaskAdapter {
             } catch (e: any) {
                 subscriber.next({
                     status: 'error',
-                    errors: [{ code: 'COMMAND_NOT_FOUND', message: e?.message ?? String(e), retryable: false }]
+                    errors: [{code: 'COMMAND_NOT_FOUND', message: e?.message ?? String(e), retryable: false}]
                 } as unknown as CommandRequestStatus);
                 subscriber.complete();
                 return;
@@ -43,7 +42,7 @@ export class CommandTaskAdapter implements TaskAdapter {
             if (!store) {
                 subscriber.next({
                     status: 'error',
-                    errors: [{ code: 'STORE_NOT_INITIALIZED', message: 'Store not initialized', retryable: false }]
+                    errors: [{code: 'STORE_NOT_INITIALIZED', message: 'Store not initialized', retryable: false}]
                 } as unknown as CommandRequestStatus);
                 subscriber.complete();
                 return;

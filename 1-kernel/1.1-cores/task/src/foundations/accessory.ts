@@ -1,6 +1,6 @@
-import {storeEntry} from "@impos2/kernel-core-base";
+import {storeEntry,TaskDefinition} from "@impos2/kernel-core-base";
 import {kernelCoreTaskState} from "../types/shared/moduleStateKey";
-import {TaskDefinition, TaskDefinitionState} from "../types";
+import {TaskDefinitionState} from "../types";
 
 
 export const getTaskDefinitionFromState = (key: string): TaskDefinition | undefined => {
