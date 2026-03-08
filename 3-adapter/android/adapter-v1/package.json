@@ -1,7 +1,7 @@
 {
-  "name": "@impos2/adapter-android",
+  "name": "@impos2/adapter-android-v1",
   "version": "1.0.0",
-  "description": "适配层：POS Android原生能力+Adapter接口实现",
+  "description": "适配层：POS Android原生能力+Adapter接口实现 V1",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "react-native": {

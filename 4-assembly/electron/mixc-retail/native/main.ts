@@ -9,6 +9,9 @@ const createWindow = () => {
     const mainWindow = new BrowserWindow({
         width: 1280,
         height: 800,
+        minWidth: 1280,
+        minHeight: 800,
+        fullscreen: true,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             contextIsolation: true,
@@ -27,7 +30,8 @@ const createWindow = () => {
 
 app.on('ready', async () => {
     if (process.env.NODE_ENV === 'development') {
-        await installExtension(REDUX_DEVTOOLS).catch(console.error)
+        await installExtension(REDUX_DEVTOOLS, {loadExtensionOptions: {allowFileAccess: true}})
+            .catch(() => {})
     }
 
     session.defaultSession.webRequest.onHeadersReceived((details, callback) => {

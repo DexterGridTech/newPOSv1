@@ -1,7 +1,7 @@
 {
-  "name": "@impos2/adapter-electron",
+  "name": "@impos2/adapter-electron-v1",
   "version": "1.0.0",
-  "description": "适配层：POS Electron原生能力+Adapter接口实现",
+  "description": "适配层：POS Electron原生能力+Adapter接口实现 V1",
   "main": ".vite/build/main.js",
   "exports": {
     ".": "./src/index.ts"

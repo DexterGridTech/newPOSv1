@@ -8,7 +8,7 @@ import {assemblyAndroidMixcRetailParameters} from "./supports/parameters";
 import {assemblyAndroidMixcRetailEpics} from "./features/epics";
 import {assemblyAndroidMixcRetailMiddlewares} from "./features/middlewares";
 import {AppModule} from "@impos2/kernel-core-base";
-import {adapterAndroidModule} from "@impos2/adapter-android";
+import {adapterAndroidModule} from "@impos2/adapter-android-v1";
 import {assemblyAndroidMixcRetailScreenParts} from "./ui";
 import {uiIntegrationMixcRetailModule} from "@impos2/ui-integration-mixc-retail";
 

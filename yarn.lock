@@ -2974,9 +2974,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@impos2/adapter-android@*, @impos2/adapter-android@workspace:3-adapter/android/pos-adapter":
+"@impos2/adapter-android-v1@*, @impos2/adapter-android-v1@workspace:3-adapter/android/adapter-v1":
   version: 0.0.0-use.local
-  resolution: "@impos2/adapter-android@workspace:3-adapter/android/pos-adapter"
+  resolution: "@impos2/adapter-android-v1@workspace:3-adapter/android/adapter-v1"
   dependencies:
     "@babel/core": ^7.25.2
     "@babel/preset-env": ^7.25.3
@@ -3007,9 +3007,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/adapter-electron@*, @impos2/adapter-electron@workspace:3-adapter/electron/pos-adapter":
+"@impos2/adapter-electron-v1@*, @impos2/adapter-electron-v1@workspace:3-adapter/electron/adapter-v1":
   version: 0.0.0-use.local
-  resolution: "@impos2/adapter-electron@workspace:3-adapter/electron/pos-adapter"
+  resolution: "@impos2/adapter-electron-v1@workspace:3-adapter/electron/adapter-v1"
   dependencies:
     "@electron-forge/cli": ^7.11.1
     "@electron-forge/maker-deb": ^7.11.1
@@ -3051,7 +3051,7 @@ __metadata:
     "@babel/core": ^7.25.2
     "@babel/preset-env": ^7.25.3
     "@babel/runtime": ^7.25.0
-    "@impos2/adapter-android": "*"
+    "@impos2/adapter-android-v1": "*"
     "@impos2/kernel-server-config": "*"
     "@impos2/ui-integration-mixc-retail": "*"
     "@react-native-community/cli": 15.0.1
@@ -3081,6 +3081,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@impos2/assembly-electron-mixc-retail@workspace:4-assembly/electron/mixc-retail"
   dependencies:
+    "@babel/core": ^7.29.0
+    "@babel/plugin-transform-flow-strip-types": ^7.27.1
     "@electron-forge/cli": ^7.11.1
     "@electron-forge/maker-deb": ^7.11.1
     "@electron-forge/maker-rpm": ^7.11.1
@@ -3090,7 +3092,7 @@ __metadata:
     "@electron-forge/plugin-fuses": ^7.11.1
     "@electron-forge/plugin-vite": ^7.11.1
     "@electron/fuses": ^1.8.0
-    "@impos2/adapter-electron": "*"
+    "@impos2/adapter-electron-v1": "*"
     "@impos2/kernel-server-config": "*"
     "@impos2/ui-integration-mixc-retail": "*"
     "@types/electron-squirrel-startup": ^1.0.2
@@ -3190,6 +3192,27 @@ __metadata:
     "@impos2/kernel-core-interconnection": "*"
     "@impos2/kernel-core-navigation": "*"
     "@impos2/kernel-server-config": "*"
+    "@reduxjs/toolkit": ^2.11.2
+    "@types/node": ^25.0.9
+    axios: ^1.13.5
+    date-fns: ^4.1.0
+    madge: ^8.0.0
+    redux-observable: ^3.0.0-rc.3
+    redux-persist: ^6.0.0
+    rxjs: ^7.8.2
+    ts-node: ^10.9.2
+    typescript: ^5.9.3
+  languageName: unknown
+  linkType: soft
+
+"@impos2/kernel-mixc-operator@*, @impos2/kernel-mixc-operator@workspace:1-kernel/1.2-modules/mixc-operator":
+  version: 0.0.0-use.local
+  resolution: "@impos2/kernel-mixc-operator@workspace:1-kernel/1.2-modules/mixc-operator"
+  dependencies:
+    "@impos2/kernel-core-base": "*"
+    "@impos2/kernel-core-interconnection": "*"
+    "@impos2/kernel-core-navigation": "*"
+    "@impos2/kernel-core-task": "*"
     "@reduxjs/toolkit": ^2.11.2
     "@types/node": ^25.0.9
     axios: ^1.13.5
@@ -3380,6 +3403,7 @@ __metadata:
     "@impos2/kernel-core-interconnection": "*"
     "@impos2/kernel-core-navigation": "*"
     "@impos2/kernel-core-task": "*"
+    "@impos2/kernel-mixc-operator": "*"
     "@impos2/kernel-server-config": "*"
     "@impos2/ui-core-base": "*"
     "@reduxjs/toolkit": ^2.11.2

@@ -169,30 +169,37 @@ export const FancyKeyboardOverlayV2: React.FC = () => {
                 containerOffset={containerOffset}
                 opacity={backdropOpacity}
             />
-            <Animated.View
-                style={[
-                    styles.keyboardContainer,
-                    {height: dimensions.totalHeight},
-                    Platform.OS === 'web'
-                        ? {bottom: keyboardTranslateY.interpolate({inputRange: [0, dimensions.screenHeight], outputRange: [0, -dimensions.screenHeight]})}
-                        : {transform: [{translateY: keyboardTranslateY}]},
-                ]}
-            >
-                <EditingContent shouldShake={shouldShakeEditingContent} isVisible={isVisible}/>
-                <KeyboardArea
-                    keyboardType={keyboardType}
-                    shouldShakeConfirmButton={shouldShakeConfirmButton}
-                    actions={actions}
-                    onShakeEditingContent={handleShakeEditingContent}
-                    hasChangesRef={hasChangesRef}
-                />
-            </Animated.View>
+            {(isVisible || Platform.OS !== 'web') && (
+                <Animated.View
+                    style={[
+                        styles.keyboardContainer,
+                        {height: dimensions.totalHeight},
+                        Platform.OS === 'web'
+                            ? {bottom: keyboardTranslateY.interpolate({inputRange: [0, dimensions.screenHeight], outputRange: [0, -dimensions.totalHeight]})}
+                            : {transform: [{translateY: keyboardTranslateY}]},
+                    ]}
+                >
+                    <EditingContent shouldShake={shouldShakeEditingContent} isVisible={isVisible}/>
+                    <KeyboardArea
+                        keyboardType={keyboardType}
+                        shouldShakeConfirmButton={shouldShakeConfirmButton}
+                        actions={actions}
+                        onShakeEditingContent={handleShakeEditingContent}
+                        hasChangesRef={hasChangesRef}
+                    />
+                </Animated.View>
+            )}
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    overlay: {...StyleSheet.absoluteFillObject, zIndex: 9999},
+    overlay: {
+        ...StyleSheet.absoluteFillObject,
+        zIndex: 9999,
+        overflow: 'hidden',
+        ...(Platform.OS === 'web' ? {overflowX: 'hidden', overflowY: 'hidden'} : {}),
+    },
     keyboardContainer: {
         position: 'absolute', bottom: 0, left: 0, right: 0,
         backgroundColor: '#FFFFFF',

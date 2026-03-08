@@ -69,7 +69,7 @@ dependencies {
     } else {
         implementation jscFlavor
     }
-    implementation project(':pos-adapter-turbomodule')
+    implementation project(':adapter-v1-turbomodule')
     implementation project(':react-native-mmkv')
     implementation(project(':react-native-splash-screen')) {
         exclude group: 'com.android.support', module: 'support-compat'

@@ -8,8 +8,8 @@ import { assemblyElectronDesktopParameters } from './supports/parameters'
 import { assemblyElectronDesktopEpics } from './features/epics'
 import { assemblyElectronDesktopMiddlewares } from './features/middlewares'
 import { AppModule } from '@impos2/kernel-core-base'
-import { adapterElectronModule } from '@impos2/adapter-electron'
-import { uiIntegrationDesktopModule } from '@impos2/ui-integration-mixc-retail'
+import { adapterElectronModule } from '@impos2/adapter-electron-v1'
+import { uiIntegrationMixcRetailModule } from '@impos2/ui-integration-mixc-retail'
 import { assemblyElectronDesktopScreenParts } from './ui'
 
 export const assemblyElectronDesktopModule: AppModule = {
@@ -22,7 +22,7 @@ export const assemblyElectronDesktopModule: AppModule = {
     actors: assemblyElectronDesktopActors,
     errorMessages: assemblyElectronDesktopErrorMessages,
     parameters: assemblyElectronDesktopParameters,
-    dependencies: [adapterElectronModule, uiIntegrationDesktopModule],
+    dependencies: [adapterElectronModule, uiIntegrationMixcRetailModule],
     modulePreSetup: assemblyElectronDesktopModulePreSetup,
     screenParts: assemblyElectronDesktopScreenParts,
 }

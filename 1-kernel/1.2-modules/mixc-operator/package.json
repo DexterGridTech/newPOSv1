@@ -1,7 +1,7 @@
 {
-  "name": "@impos2/kernel-xxx",
+  "name": "@impos2/kernel-mixc-operator",
   "version": "1.0.0",
-  "description": "POS Kernel xxx",
+  "description": "POS Kernel Mixc Operator Module",
   "author": "DexterYang",
   "license": "ISC",
   "exports": {

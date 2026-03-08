@@ -13,7 +13,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@impos2/adapter-android": "*",
+    "@impos2/adapter-android-v1": "*",
     "@impos2/kernel-server-config": "*",
     "@impos2/ui-integration-mixc-retail": "*",
     "react": "18.3.1",
