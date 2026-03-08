@@ -1,14 +1,14 @@
 import {terminalConfig} from "./terminal";
 import {generateUnitDataSliceConfig} from "./unitData";
-import {kernelTerminalUnitDataState} from "../../types/shared/moduleStateKey";
+import {kernelCoreTerminalUnitDataState} from "../../types/shared/moduleStateKey";
 import {terminalConnectionConfig} from "./terminalConnection";
 
 
-export const kernelTerminalSlice = {
+export const kernelCoreTerminalSlice = {
     terminal: terminalConfig,
     terminalConnection:terminalConnectionConfig,
-    [kernelTerminalUnitDataState.errorMessages]:
-        generateUnitDataSliceConfig(kernelTerminalUnitDataState.errorMessages),
-    [kernelTerminalUnitDataState.systemParameters]:
-        generateUnitDataSliceConfig(kernelTerminalUnitDataState.systemParameters)
+    [kernelCoreTerminalUnitDataState.errorMessages]:
+        generateUnitDataSliceConfig(kernelCoreTerminalUnitDataState.errorMessages),
+    [kernelCoreTerminalUnitDataState.systemParameters]:
+        generateUnitDataSliceConfig(kernelCoreTerminalUnitDataState.systemParameters)
 }

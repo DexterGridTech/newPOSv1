@@ -12,7 +12,7 @@ import {uiIntegrationMixcRetailScreenParts} from "./ui";
 import {uiCoreBaseModule} from "@impos2/ui-core-base";
 import {uiCoreAdminModule} from "@impos2/ui-core-admin";
 import {uiMixcWorkbenchModule} from "@impos2/ui-mixc-workbench";
-import {uiMixcOperatorModule} from "@impos2/ui-mixc-operator";
+import {uiMixcUserModule} from "@impos2/ui-mixc-user";
 import {uiCoreTerminalModule} from "@impos2/ui-core-terminal";
 
 export const uiIntegrationMixcRetailModule: AppModule = {
@@ -30,7 +30,7 @@ export const uiIntegrationMixcRetailModule: AppModule = {
         uiCoreAdminModule,
         uiCoreTerminalModule,
         uiMixcWorkbenchModule,
-        uiMixcOperatorModule,
+        uiMixcUserModule,
     ],
     modulePreSetup: uiIntegrationMixcRetailModulePreSetup,
     screenParts: uiIntegrationMixcRetailScreenParts,

@@ -1,10 +1,10 @@
 {
-  "name": "impos2new",
+  "name": "newposv1",
   "version": "1.0.0",
   "private": true,
   "type": "module",
   "packageManager": "yarn@3.6.4",
-  "description": "impos2 - Enterprise POS System with Layered Architecture",
+  "description": "newPos - Enterprise POS System with Layered Architecture",
   "workspaces": [
     "0-mock-server/*",
     "0-mock-server/kernel-server/web",

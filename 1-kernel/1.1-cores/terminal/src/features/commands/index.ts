@@ -3,7 +3,7 @@ import {moduleName} from "../../moduleName";
 import {Unit} from "../../types/shared/unit";
 import {UnitDataChangedSet} from "../../types";
 
-export const kernelTerminalCommands = createModuleCommands(moduleName, {
+export const kernelCoreTerminalCommands = createModuleCommands(moduleName, {
     activateDevice: defineCommand<string>(),
     deactivateDevice: defineCommand<string>(),
     setOperatingEntity: defineCommand<Unit>(),

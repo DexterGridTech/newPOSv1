@@ -3,14 +3,14 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {moduleName} from "../../moduleName";
 import {TerminalConnectionState} from "../../types";
 import {ServerConnectionStatus, SyncType} from "@impos2/kernel-core-interconnection";
-import {kernelTerminalState} from "../../types/shared/moduleStateKey";
+import {kernelCoreTerminalState} from "../../types/shared/moduleStateKey";
 
 const initialState: TerminalConnectionState = {
     serverConnectionStatus: ServerConnectionStatus.DISCONNECTED,
     connectionHistory: [],
 }
 const slice = createSlice({
-    name: kernelTerminalState.terminalConnection,
+    name: kernelCoreTerminalState.terminalConnection,
     initialState,
     reducers: {
         connecting: (state) => {

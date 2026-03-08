@@ -6,6 +6,16 @@ const getIconFontSize = () => {
     return Math.max(24, Math.min(36, height * 0.035));
 };
 
+const getKeyFontSize = () => {
+    const {height} = Dimensions.get('window');
+    return Math.max(16, Math.min(24, height * 0.024));
+};
+
+const getFunctionFontSize = () => {
+    const {height} = Dimensions.get('window');
+    return Math.max(14, Math.min(20, height * 0.021));
+};
+
 const getActionButtonWidth = () => {
     const {width, height} = Dimensions.get('window');
     const shortEdge = Math.min(width, height);
@@ -88,11 +98,15 @@ export const FancyFullKeyBoardV2: React.FC<FancyFullKeyBoardV2Props> = memo(
         const [isUpperCase, setIsUpperCase] = useState(false);
         const [isSymbolMode, setIsSymbolMode] = useState(false);
         const [iconFontSize, setIconFontSize] = useState(getIconFontSize());
+        const [keyFontSize, setKeyFontSize] = useState(getKeyFontSize());
+        const [functionFontSize, setFunctionFontSize] = useState(getFunctionFontSize());
         const [actionButtonWidth, setActionButtonWidth] = useState(getActionButtonWidth());
 
         useEffect(() => {
             const subscription = Dimensions.addEventListener('change', () => {
                 setIconFontSize(getIconFontSize());
+                setKeyFontSize(getKeyFontSize());
+                setFunctionFontSize(getFunctionFontSize());
                 setActionButtonWidth(getActionButtonWidth());
             });
             return () => subscription?.remove();
@@ -123,7 +137,7 @@ export const FancyFullKeyBoardV2: React.FC<FancyFullKeyBoardV2Props> = memo(
 
         const renderRow = (keys: string[], rowId: string) =>
             keys.map((key, index) => (
-                <KeyButton key={`${rowId}-${index}`} label={key} value={key} onKeyPress={handleKeyPress}/>
+                <KeyButton key={`${rowId}-${index}`} label={key} value={key} onKeyPress={handleKeyPress} textStyle={{fontSize: keyFontSize}}/>
             ));
 
         return (
@@ -135,17 +149,17 @@ export const FancyFullKeyBoardV2: React.FC<FancyFullKeyBoardV2Props> = memo(
                     <View style={styles.row}>
                         {isSymbolMode ? (
                             <>
-                                <KeyButton label="ABC" value="SYMBOL" onKeyPress={handleKeyPress} style={styles.functionKey} textStyle={styles.functionKeyText}/>
+                                <KeyButton label="ABC" value="SYMBOL" onKeyPress={handleKeyPress} style={styles.functionKey} textStyle={[styles.functionKeyText, {fontSize: functionFontSize}]}/>
                                 {SYMBOL_LAYOUT.row4.slice(0, 8).map((key, i) => (
-                                    <KeyButton key={`r4-${i}`} label={key} value={key} onKeyPress={handleKeyPress}/>
+                                    <KeyButton key={`r4-${i}`} label={key} value={key} onKeyPress={handleKeyPress} textStyle={{fontSize: keyFontSize}}/>
                                 ))}
                                 <KeyButton label="⌫" value="DELETE" onKeyPress={handleKeyPress} style={styles.functionKey} textStyle={[styles.functionKeyText, {fontSize: iconFontSize}]}/>
                             </>
                         ) : (
                             <>
                                 <KeyButton label="⇧" value="SHIFT" onKeyPress={handleKeyPress} style={[styles.functionKey, isUpperCase && styles.activeShift]} textStyle={[styles.functionKeyText, isUpperCase && styles.activeShiftText, {fontSize: iconFontSize}]}/>
-                                <KeyButton label="123#" value="SYMBOL" onKeyPress={handleKeyPress} style={[styles.functionKey, isSymbolMode && styles.activeSymbol]} textStyle={[styles.functionKeyText, isSymbolMode && styles.activeSymbolText]}/>
-                                <KeyButton label="空格" value=" " onKeyPress={handleKeyPress} style={styles.spaceKey}/>
+                                <KeyButton label="123#" value="SYMBOL" onKeyPress={handleKeyPress} style={[styles.functionKey, isSymbolMode && styles.activeSymbol]} textStyle={[styles.functionKeyText, isSymbolMode && styles.activeSymbolText, {fontSize: functionFontSize}]}/>
+                                <KeyButton label="空格" value=" " onKeyPress={handleKeyPress} style={styles.spaceKey} textStyle={{fontSize: keyFontSize}}/>
                                 <KeyButton label="⌫" value="DELETE" onKeyPress={handleKeyPress} style={styles.functionKey} textStyle={[styles.functionKeyText, {fontSize: iconFontSize}]}/>
                             </>
                         )}

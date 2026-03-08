@@ -3205,14 +3205,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/kernel-mixc-operator@*, @impos2/kernel-mixc-operator@workspace:1-kernel/1.2-modules/mixc-operator":
+"@impos2/kernel-mixc-user@*, @impos2/kernel-mixc-user@workspace:1-kernel/1.2-modules/mixc-user":
   version: 0.0.0-use.local
-  resolution: "@impos2/kernel-mixc-operator@workspace:1-kernel/1.2-modules/mixc-operator"
+  resolution: "@impos2/kernel-mixc-user@workspace:1-kernel/1.2-modules/mixc-user"
   dependencies:
     "@impos2/kernel-core-base": "*"
     "@impos2/kernel-core-interconnection": "*"
     "@impos2/kernel-core-navigation": "*"
     "@impos2/kernel-core-task": "*"
+    "@impos2/kernel-core-terminal": "*"
     "@reduxjs/toolkit": ^2.11.2
     "@types/node": ^25.0.9
     axios: ^1.13.5
@@ -3378,7 +3379,7 @@ __metadata:
     "@impos2/ui-core-admin": "*"
     "@impos2/ui-core-base": "*"
     "@impos2/ui-core-terminal": "*"
-    "@impos2/ui-mixc-operator": "*"
+    "@impos2/ui-mixc-user": "*"
     "@impos2/ui-mixc-workbench": "*"
     "@reduxjs/toolkit": ^2.11.2
     "@types/react": ~18.3.12
@@ -3395,15 +3396,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/ui-mixc-operator@*, @impos2/ui-mixc-operator@workspace:2-ui/2.2-modules/mixc-operator":
+"@impos2/ui-mixc-user@*, @impos2/ui-mixc-user@workspace:2-ui/2.2-modules/mixc-user":
   version: 0.0.0-use.local
-  resolution: "@impos2/ui-mixc-operator@workspace:2-ui/2.2-modules/mixc-operator"
+  resolution: "@impos2/ui-mixc-user@workspace:2-ui/2.2-modules/mixc-user"
   dependencies:
     "@impos2/kernel-core-base": "*"
     "@impos2/kernel-core-interconnection": "*"
     "@impos2/kernel-core-navigation": "*"
     "@impos2/kernel-core-task": "*"
-    "@impos2/kernel-mixc-operator": "*"
+    "@impos2/kernel-core-terminal": "*"
+    "@impos2/kernel-mixc-user": "*"
     "@impos2/kernel-server-config": "*"
     "@impos2/ui-core-base": "*"
     "@reduxjs/toolkit": ^2.11.2
@@ -10907,17 +10909,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"impos2new@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "impos2new@workspace:."
-  dependencies:
-    inquirer: ^8.2.6
-    react-native-svg: ^15.15.3
-    turbo: latest
-    typescript: ^5.9.3
-  languageName: unknown
-  linkType: soft
-
 "imurmurhash@npm:^0.1.4":
   version: 0.1.4
   resolution: "imurmurhash@npm:0.1.4"
@@ -13758,6 +13749,17 @@ __metadata:
   checksum: 8430d7d80ad69b1add2992ee2992a363db6c1a26a54740963bc99a004c5acb1d2a67049397062eab2caa3a312b4da89a0b85de3bdf82d7d472a6baa166311fe6
   languageName: node
   linkType: hard
+
+"newposv1@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "newposv1@workspace:."
+  dependencies:
+    inquirer: ^8.2.6
+    react-native-svg: ^15.15.3
+    turbo: latest
+    typescript: ^5.9.3
+  languageName: unknown
+  linkType: soft
 
 "nice-try@npm:^1.0.4":
   version: 1.0.5

@@ -9,6 +9,21 @@ const getKeyboardWidth = () => {
     return Math.min(width * 0.88, maxWidth);
 };
 
+const getNumFontSize = () => {
+    const {height} = Dimensions.get('window');
+    return Math.max(24, Math.min(36, height * 0.037));
+};
+
+const getActionFontSize = () => {
+    const {height} = Dimensions.get('window');
+    return Math.max(14, Math.min(20, height * 0.021));
+};
+
+const getDeleteFontSize = () => {
+    const {height} = Dimensions.get('window');
+    return Math.max(20, Math.min(28, height * 0.029));
+};
+
 const KEYBOARD_WIDTH = getKeyboardWidth();
 const ACTION_WIDTH = 84;
 const GAP = 8;
@@ -38,7 +53,8 @@ const ActionButtons = memo<{
     shouldShake: boolean;
     onCancel: () => void;
     onConfirm: () => void;
-}>(({hasChanges, shouldShake, onCancel, onConfirm}) => {
+    actionFontSize: number;
+}>(({hasChanges, shouldShake, onCancel, onConfirm, actionFontSize}) => {
     const shakeAnim = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
@@ -57,18 +73,18 @@ const ActionButtons = memo<{
     if (!hasChanges) {
         return (
             <TouchableOpacity style={styles.closeButton} onPress={onCancel} activeOpacity={0.7}>
-                <Text style={styles.closeButtonText}>关闭</Text>
+                <Text style={[styles.closeButtonText, {fontSize: actionFontSize}]}>关闭</Text>
             </TouchableOpacity>
         );
     }
     return (
         <>
             <TouchableOpacity style={styles.cancelButton} onPress={onCancel} activeOpacity={0.7}>
-                <Text style={styles.cancelButtonText}>取消</Text>
+                <Text style={[styles.cancelButtonText, {fontSize: actionFontSize}]}>取消</Text>
             </TouchableOpacity>
             <Animated.View style={{flex: 1, transform: [{translateX: shakeAnim}]}}>
                 <TouchableOpacity style={[styles.confirmButton, StyleSheet.absoluteFillObject]} onPress={onConfirm} activeOpacity={0.7}>
-                    <Text style={styles.confirmButtonText}>确认</Text>
+                    <Text style={[styles.confirmButtonText, {fontSize: actionFontSize}]}>确认</Text>
                 </TouchableOpacity>
             </Animated.View>
         </>
@@ -78,10 +94,16 @@ const ActionButtons = memo<{
 export const FancyNumberKeyBoardV2: React.FC<FancyNumberKeyBoardV2Props> = memo(
     ({onKeyPress, onCancel, onConfirm, shouldShake = false, hasChanges = false}) => {
         const [keyboardWidth, setKeyboardWidth] = useState(getKeyboardWidth());
+        const [numFontSize, setNumFontSize] = useState(getNumFontSize());
+        const [actionFontSize, setActionFontSize] = useState(getActionFontSize());
+        const [deleteFontSize, setDeleteFontSize] = useState(getDeleteFontSize());
 
         useEffect(() => {
             const subscription = Dimensions.addEventListener('change', () => {
                 setKeyboardWidth(getKeyboardWidth());
+                setNumFontSize(getNumFontSize());
+                setActionFontSize(getActionFontSize());
+                setDeleteFontSize(getDeleteFontSize());
             });
             return () => subscription?.remove();
         }, []);
@@ -91,29 +113,29 @@ export const FancyNumberKeyBoardV2: React.FC<FancyNumberKeyBoardV2Props> = memo(
                 <View style={[styles.card, {width: keyboardWidth}]}>
                     <View style={styles.keyboardMain}>
                         <View style={styles.row}>
-                            <NumKey label="1" value="1" onKeyPress={onKeyPress}/>
-                            <NumKey label="2" value="2" onKeyPress={onKeyPress}/>
-                            <NumKey label="3" value="3" onKeyPress={onKeyPress}/>
+                            <NumKey label="1" value="1" onKeyPress={onKeyPress} textStyle={{fontSize: numFontSize}}/>
+                            <NumKey label="2" value="2" onKeyPress={onKeyPress} textStyle={{fontSize: numFontSize}}/>
+                            <NumKey label="3" value="3" onKeyPress={onKeyPress} textStyle={{fontSize: numFontSize}}/>
                         </View>
                         <View style={styles.row}>
-                            <NumKey label="4" value="4" onKeyPress={onKeyPress}/>
-                            <NumKey label="5" value="5" onKeyPress={onKeyPress}/>
-                            <NumKey label="6" value="6" onKeyPress={onKeyPress}/>
+                            <NumKey label="4" value="4" onKeyPress={onKeyPress} textStyle={{fontSize: numFontSize}}/>
+                            <NumKey label="5" value="5" onKeyPress={onKeyPress} textStyle={{fontSize: numFontSize}}/>
+                            <NumKey label="6" value="6" onKeyPress={onKeyPress} textStyle={{fontSize: numFontSize}}/>
                         </View>
                         <View style={styles.row}>
-                            <NumKey label="7" value="7" onKeyPress={onKeyPress}/>
-                            <NumKey label="8" value="8" onKeyPress={onKeyPress}/>
-                            <NumKey label="9" value="9" onKeyPress={onKeyPress}/>
+                            <NumKey label="7" value="7" onKeyPress={onKeyPress} textStyle={{fontSize: numFontSize}}/>
+                            <NumKey label="8" value="8" onKeyPress={onKeyPress} textStyle={{fontSize: numFontSize}}/>
+                            <NumKey label="9" value="9" onKeyPress={onKeyPress} textStyle={{fontSize: numFontSize}}/>
                         </View>
                         <View style={styles.row}>
-                            <NumKey label="." value="." onKeyPress={onKeyPress}/>
-                            <NumKey label="0" value="0" onKeyPress={onKeyPress}/>
+                            <NumKey label="." value="." onKeyPress={onKeyPress} textStyle={{fontSize: numFontSize}}/>
+                            <NumKey label="0" value="0" onKeyPress={onKeyPress} textStyle={{fontSize: numFontSize}}/>
                             <NumKey
                                 label="⌫"
                                 value="DELETE"
                                 onKeyPress={onKeyPress}
                                 style={styles.deleteKey}
-                                textStyle={styles.deleteKeyText}
+                                textStyle={[styles.deleteKeyText, {fontSize: deleteFontSize}]}
                             />
                         </View>
                     </View>
@@ -123,6 +145,7 @@ export const FancyNumberKeyBoardV2: React.FC<FancyNumberKeyBoardV2Props> = memo(
                             shouldShake={shouldShake}
                             onCancel={onCancel}
                             onConfirm={onConfirm}
+                            actionFontSize={actionFontSize}
                         />
                     </View>
                 </View>

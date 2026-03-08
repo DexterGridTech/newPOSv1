@@ -6,7 +6,7 @@ import {createUnitDataStateKeys} from "./createUnitDataStateKeys";
  * 核心状态常量定义
  * 零依赖，供其他模块使用
  */
-export const kernelTerminalState = createModuleStateKeys(
+export const kernelCoreTerminalState = createModuleStateKeys(
     moduleName,
     [
         'terminal',
@@ -14,7 +14,7 @@ export const kernelTerminalState = createModuleStateKeys(
     ] as const
 );
 
-export const kernelTerminalUnitDataState = createUnitDataStateKeys(
+export const kernelCoreTerminalUnitDataState = createUnitDataStateKeys(
     [
         'errorMessages',
         'systemParameters',

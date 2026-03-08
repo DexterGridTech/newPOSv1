@@ -27,7 +27,7 @@
     "@impos2/ui-core-admin": "*",
     "@impos2/ui-core-base": "*",
     "@impos2/ui-core-terminal": "*",
-    "@impos2/ui-mixc-operator": "*",
+    "@impos2/ui-mixc-user": "*",
     "@impos2/ui-mixc-workbench": "*",
     "@reduxjs/toolkit": "^2.11.2",
     "redux-persist": "^6.0.0"

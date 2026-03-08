@@ -9,13 +9,13 @@ import {
     storeEntry,
     ValueWithUpdatedAt
 } from "@impos2/kernel-core-base";
-import {kernelTerminalCommands} from "../commands";
+import {kernelCoreTerminalCommands} from "../commands";
 import {moduleName} from "../../moduleName";
 import {GetUnitDataByGroupRequest} from "../../types/foundations/api";
-import {kernelTerminalApis} from "../../supports";
+import {kernelCoreTerminalApis} from "../../supports";
 import {
-    kernelTerminalState,
-    kernelTerminalUnitDataState,
+    kernelCoreTerminalState,
+    kernelCoreTerminalUnitDataState,
     UnitDataChangedSet,
     UnitDataState,
     unitDataStateKeys
@@ -25,7 +25,7 @@ import {getPathValuesFromUnitData} from "../../foundations/unitData";
 import {kernelCoreTaskCommands} from "@impos2/kernel-core-task";
 
 export class UnitDataActor extends Actor {
-    kernelWSConnected = Actor.defineCommandHandler(kernelTerminalCommands.kernelWSConnected,
+    kernelWSConnected = Actor.defineCommandHandler(kernelCoreTerminalCommands.kernelWSConnected,
         async (command): Promise<Record<string, any>> => {
             logger.log([moduleName, LOG_TAGS.Actor, "UnitDataActor"], 'kernelWSConnected')
             const deviceId = getDeviceId()
@@ -39,16 +39,16 @@ export class UnitDataActor extends Actor {
                         return {id: k, updatedAt: value.updatedAt}
                     })
                 }
-                const result = await kernelTerminalApis.getUnitDataByGroup.run({request: getUnitDataByGroupRequest})
+                const result = await kernelCoreTerminalApis.getUnitDataByGroup.run({request: getUnitDataByGroupRequest})
                 if (result.code === APIResponseCode.SUCCESS) {
-                    kernelTerminalCommands.changeUnitData({changeSet: result.data!}).executeInternally()
+                    kernelCoreTerminalCommands.changeUnitData({changeSet: result.data!}).executeInternally()
                 } else {
                     throw new APIError(result)
                 }
             }
             return {};
         });
-    changeUnitData = Actor.defineCommandHandler(kernelTerminalCommands.changeUnitData,
+    changeUnitData = Actor.defineCommandHandler(kernelCoreTerminalCommands.changeUnitData,
         async (command): Promise<Record<string, any>> => {
             logger.log([moduleName, LOG_TAGS.Actor, "UnitDataActor"], 'changeUnitData')
             const changeSet = command.payload.changeSet
@@ -62,14 +62,14 @@ export class UnitDataActor extends Actor {
                 payload: changeSet
             }
             storeEntry.dispatchAction(action)
-            kernelTerminalCommands.unitDataChanged({changeSet: changeSet}).executeFromParent(command)
+            kernelCoreTerminalCommands.unitDataChanged({changeSet: changeSet}).executeFromParent(command)
             return {};
         });
-    unitDataChanged = Actor.defineCommandHandler(kernelTerminalCommands.unitDataChanged,
+    unitDataChanged = Actor.defineCommandHandler(kernelCoreTerminalCommands.unitDataChanged,
         async (command): Promise<Record<string, any>> => {
-            if (command.payload.changeSet.group === kernelTerminalUnitDataState.errorMessages) {
-                const errorMessagesState = storeEntry.getStateByKey(kernelTerminalUnitDataState.errorMessages)
-                const terminalState = storeEntry.getStateByKey(kernelTerminalState.terminal)
+            if (command.payload.changeSet.group === kernelCoreTerminalUnitDataState.errorMessages) {
+                const errorMessagesState = storeEntry.getStateByKey(kernelCoreTerminalUnitDataState.errorMessages)
+                const terminalState = storeEntry.getStateByKey(kernelCoreTerminalState.terminal)
                 const operatingEntity = terminalState.operatingEntity?.value!
                 const model = terminalState.model?.value!
                 const pathValues = getPathValuesFromUnitData(
@@ -77,9 +77,9 @@ export class UnitDataActor extends Actor {
                 )
                 kernelCoreBaseCommands.updateErrorMessages(pathValues).executeInternally()
             }
-            if (command.payload.changeSet.group === kernelTerminalUnitDataState.systemParameters) {
-                const systemParametersState = storeEntry.getStateByKey(kernelTerminalUnitDataState.systemParameters)
-                const terminalState = storeEntry.getStateByKey(kernelTerminalState.terminal)
+            if (command.payload.changeSet.group === kernelCoreTerminalUnitDataState.systemParameters) {
+                const systemParametersState = storeEntry.getStateByKey(kernelCoreTerminalUnitDataState.systemParameters)
+                const terminalState = storeEntry.getStateByKey(kernelCoreTerminalState.terminal)
                 const operatingEntity = terminalState.operatingEntity?.value!
                 const model = terminalState.model?.value!
                 const pathValues = getPathValuesFromUnitData(
@@ -87,9 +87,9 @@ export class UnitDataActor extends Actor {
                 )
                 kernelCoreBaseCommands.updateSystemParameters(pathValues).executeInternally()
             }
-            if (command.payload.changeSet.group === kernelTerminalUnitDataState.taskDefinitions) {
-                const taskDefinitionsState = storeEntry.getStateByKey(kernelTerminalUnitDataState.taskDefinitions)
-                const terminalState = storeEntry.getStateByKey(kernelTerminalState.terminal)
+            if (command.payload.changeSet.group === kernelCoreTerminalUnitDataState.taskDefinitions) {
+                const taskDefinitionsState = storeEntry.getStateByKey(kernelCoreTerminalUnitDataState.taskDefinitions)
+                const terminalState = storeEntry.getStateByKey(kernelCoreTerminalState.terminal)
                 const operatingEntity = terminalState.operatingEntity?.value!
                 const model = terminalState.model?.value!
                 const pathValues = getPathValuesFromUnitData(

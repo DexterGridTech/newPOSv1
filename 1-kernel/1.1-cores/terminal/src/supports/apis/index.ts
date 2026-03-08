@@ -11,7 +11,7 @@ import {UnitDataChangedSet} from "../../types/shared/unitData";
 import {SERVER_NAME_KERNEL_API, SERVER_NAME_KERNEL_WS} from "@impos2/kernel-server-config";
 
 
-export const kernelTerminalApis = {
+export const kernelCoreTerminalApis = {
     activateDevice: new Api<ActivateDeviceRequest, ActivateDeviceResponse>(
         SERVER_NAME_KERNEL_API,
         '/api/device/activate',

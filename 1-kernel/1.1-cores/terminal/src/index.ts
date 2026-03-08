@@ -1,12 +1,12 @@
 import {moduleName} from "./moduleName";
-import {kernelTerminalSlice} from "./features/slices";
-import {kernelTerminalActors} from "./features/actors";
-import {kernelTerminalCommands} from "./features/commands";
+import {kernelCoreTerminalSlice} from "./features/slices";
+import {kernelCoreTerminalActors} from "./features/actors";
+import {kernelCoreTerminalCommands} from "./features/commands";
 import {kernelCoreTerminalPreSetup} from "./application/modulePreSetup";
-import {kernelTerminalErrorMessages} from "./supports/errors";
-import {kernelTerminalParameters} from "./supports/parameters";
-import {kernelTerminalEpics} from "./features/epics";
-import {kernelTerminalMiddlewares} from "./features/middlewares";
+import {kernelCoreTerminalErrorMessages} from "./supports/errors";
+import {kernelCoreTerminalParameters} from "./supports/parameters";
+import {kernelCoreTerminalEpics} from "./features/epics";
+import {kernelCoreTerminalMiddlewares} from "./features/middlewares";
 import {AppModule, kernelCoreBaseModule} from "@impos2/kernel-core-base";
 import {kernelCoreInterconnectionModule} from "@impos2/kernel-core-interconnection";
 import {kernelCoreNavigationModule} from "@impos2/kernel-core-navigation";
@@ -14,13 +14,13 @@ import {kernelCoreNavigationModule} from "@impos2/kernel-core-navigation";
 export const kernelCoreTerminalModule: AppModule = {
     name: moduleName,
     version: '0.0.1',
-    slices: kernelTerminalSlice,
-    middlewares: kernelTerminalMiddlewares,
-    epics: kernelTerminalEpics,
-    commands: kernelTerminalCommands,
-    actors: kernelTerminalActors,
-    errorMessages: kernelTerminalErrorMessages,
-    parameters: kernelTerminalParameters,
+    slices: kernelCoreTerminalSlice,
+    middlewares: kernelCoreTerminalMiddlewares,
+    epics: kernelCoreTerminalEpics,
+    commands: kernelCoreTerminalCommands,
+    actors: kernelCoreTerminalActors,
+    errorMessages: kernelCoreTerminalErrorMessages,
+    parameters: kernelCoreTerminalParameters,
     dependencies: [kernelCoreBaseModule, kernelCoreInterconnectionModule, kernelCoreNavigationModule],
     modulePreSetup: kernelCoreTerminalPreSetup,
 }
@@ -30,8 +30,8 @@ export * from "./types";
 export * from "./foundations";
 export * from "./supports";
 export * from "./hooks";
-export {kernelTerminalSlice} from "./features/slices";
-export {kernelTerminalCommands} from "./features/commands";
-export {kernelTerminalErrorMessages} from "./supports/errors";
-export {kernelTerminalParameters} from "./supports/parameters";
-export {kernelTerminalApis} from "./supports";
+export {kernelCoreTerminalSlice} from "./features/slices";
+export {kernelCoreTerminalCommands} from "./features/commands";
+export {kernelCoreTerminalErrorMessages} from "./supports/errors";
+export {kernelCoreTerminalParameters} from "./supports/parameters";
+export {kernelCoreTerminalApis} from "./supports";

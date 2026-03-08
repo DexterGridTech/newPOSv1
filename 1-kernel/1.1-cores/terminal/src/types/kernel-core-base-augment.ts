@@ -1,9 +1,8 @@
-import {KernelTerminalState} from "./moduleState";
-import {kernelTerminalUnitDataState} from "./shared";
+import {KernelCoreTerminalState} from "./moduleState";
 
 declare module '@impos2/kernel-core-base' {
     // 扩展 RootState 接口
-    export interface RootState extends KernelTerminalState{
+    export interface RootState extends KernelCoreTerminalState{
 
     }
 }

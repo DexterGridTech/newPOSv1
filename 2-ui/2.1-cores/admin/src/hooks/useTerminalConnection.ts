@@ -1,26 +1,26 @@
 import {useSelector} from "react-redux";
 import {RootState} from "@impos2/kernel-core-base";
-import {kernelTerminalState, TerminalConnectionState} from "@impos2/kernel-core-terminal";
+import {kernelCoreTerminalState, TerminalConnectionState} from "@impos2/kernel-core-terminal";
 
 type S = RootState & {
-    [kernelTerminalState.terminalConnection]: TerminalConnectionState
+    [kernelCoreTerminalState.terminalConnection]: TerminalConnectionState
 }
 
 export const useTerminalConnection = () => {
     const serverConnectionStatus = useSelector((state: RootState) =>
-        (state as S)[kernelTerminalState.terminalConnection]?.serverConnectionStatus
+        (state as S)[kernelCoreTerminalState.terminalConnection]?.serverConnectionStatus
     );
     const connectedAt = useSelector((state: RootState) =>
-        (state as S)[kernelTerminalState.terminalConnection]?.connectedAt
+        (state as S)[kernelCoreTerminalState.terminalConnection]?.connectedAt
     );
     const disconnectedAt = useSelector((state: RootState) =>
-        (state as S)[kernelTerminalState.terminalConnection]?.disconnectedAt
+        (state as S)[kernelCoreTerminalState.terminalConnection]?.disconnectedAt
     );
     const connectionError = useSelector((state: RootState) =>
-        (state as S)[kernelTerminalState.terminalConnection]?.connectionError
+        (state as S)[kernelCoreTerminalState.terminalConnection]?.connectionError
     );
     const connectionHistory = useSelector((state: RootState) =>
-        (state as S)[kernelTerminalState.terminalConnection]?.connectionHistory ?? []
+        (state as S)[kernelCoreTerminalState.terminalConnection]?.connectionHistory ?? []
     );
     return {serverConnectionStatus, connectedAt, disconnectedAt, connectionError, connectionHistory};
 };

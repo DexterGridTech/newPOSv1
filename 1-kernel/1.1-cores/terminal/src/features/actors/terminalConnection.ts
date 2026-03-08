@@ -1,5 +1,5 @@
 import {Actor, AppError, getCommandByName, LOG_TAGS, logger, storeEntry} from "@impos2/kernel-core-base";
-import {kernelTerminalCommands} from "../commands";
+import {kernelCoreTerminalCommands} from "../commands";
 import {moduleName} from "../../moduleName";
 import {
     KernelConnectedEvent,
@@ -9,16 +9,16 @@ import {
     KernelDisconnectedEvent,
     KernelMessageEvent,
     KernelMessageType,
-    kernelTerminalState,
+    kernelCoreTerminalState,
     RemoteCommandConfirmRequest
 } from "../../types";
 import {getInstanceMode, InstanceMode} from "@impos2/kernel-core-interconnection";
 import {KernelWebSocketClient} from "../../foundations/kernelWS";
 import {
     kernelDeviceWS,
-    kernelTerminalApis,
-    kernelTerminalErrorMessages,
-    kernelTerminalParameters
+    kernelCoreTerminalApis,
+    kernelCoreTerminalErrorMessages,
+    kernelCoreTerminalParameters
 } from "../../supports";
 import {terminalConnectionActions} from "../slices/terminalConnection";
 import {RemoteCommandFromKernel} from "../../types/shared/remoteCommand";
@@ -26,33 +26,33 @@ import {RemoteCommandFromKernel} from "../../types/shared/remoteCommand";
 export class TerminalConnectionActor extends Actor {
     private connectCount = 0
 
-    setOperatingEntitySuccess = Actor.defineCommandHandler(kernelTerminalCommands.setOperatingEntitySuccess,
+    setOperatingEntitySuccess = Actor.defineCommandHandler(kernelCoreTerminalCommands.setOperatingEntitySuccess,
         async (command): Promise<Record<string, any>> => {
             logger.log([moduleName, LOG_TAGS.Actor, "TerminalConnectionActor"], 'setOperatingEntitySuccess', command.payload)
-            kernelTerminalCommands.connectKernelWS().executeInternally()
+            kernelCoreTerminalCommands.connectKernelWS().executeInternally()
             return {};
         });
-    connectKernelWS = Actor.defineCommandHandler(kernelTerminalCommands.connectKernelWS,
+    connectKernelWS = Actor.defineCommandHandler(kernelCoreTerminalCommands.connectKernelWS,
         async (command): Promise<Record<string, any>> => {
             logger.log([moduleName, LOG_TAGS.Actor, "TerminalConnectionActor"], 'connectKernelWS', command.payload)
             await this.checkAndConnectKernelWS()
             return {};
         });
-    kernelWSDisconnected = Actor.defineCommandHandler(kernelTerminalCommands.kernelWSDisconnected,
+    kernelWSDisconnected = Actor.defineCommandHandler(kernelCoreTerminalCommands.kernelWSDisconnected,
         async (command): Promise<Record<string, any>> => {
             logger.log([moduleName, LOG_TAGS.Actor, "TerminalConnectionActor"], 'kernelWSDisconnected')
             storeEntry.dispatchAction(terminalConnectionActions.disconnected({connectionError: command.payload}))
 
-            const interval = kernelTerminalParameters.reconnectInterval.value
+            const interval = kernelCoreTerminalParameters.reconnectInterval.value
             logger.log([moduleName, LOG_TAGS.Actor, getInstanceMode()], `与服务器已断开,${interval}毫秒后重连`)
             setTimeout(() => {
-                kernelTerminalCommands.connectKernelWS().executeInternally()
+                kernelCoreTerminalCommands.connectKernelWS().executeInternally()
             }, interval)
             return {};
         });
 
     async checkAndConnectKernelWS() {
-        const terminalState = storeEntry.getStateByKey(kernelTerminalState.terminal)
+        const terminalState = storeEntry.getStateByKey(kernelCoreTerminalState.terminal)
         if (!terminalState.operatingEntity?.value || !terminalState.token?.value || getInstanceMode() != InstanceMode.MASTER)
             return
         logger.log([moduleName, LOG_TAGS.Actor, "TerminalConnectionActor"], `准备连接kernel WS Server:第${++this.connectCount}次`)
@@ -70,9 +70,9 @@ export class TerminalConnectionActor extends Actor {
                 deviceId: deviceId,
                 token: token,
                 api: wsAPI, // Api类型，HttpMethod必须是WS
-                connectionTimeout: kernelTerminalParameters.connectionTimeout.value,
-                heartbeatInterval: kernelTerminalParameters.heartbeatInterval.value,
-                heartbeatTimeout: kernelTerminalParameters.heartbeatTimeout.value,
+                connectionTimeout: kernelCoreTerminalParameters.connectionTimeout.value,
+                heartbeatInterval: kernelCoreTerminalParameters.heartbeatInterval.value,
+                heartbeatTimeout: kernelCoreTerminalParameters.heartbeatTimeout.value,
                 autoHeartbeatResponse: true,
             });
         } catch (error: any) {
@@ -95,13 +95,13 @@ export class TerminalConnectionActor extends Actor {
         // 注册事件监听
         wsClient.on(KernelConnectionEventType.CONNECTED, (event: KernelConnectedEvent) => {
             storeEntry.dispatchAction(terminalConnectionActions.connected())
-            kernelTerminalCommands.kernelWSConnected().executeInternally()
+            kernelCoreTerminalCommands.kernelWSConnected().executeInternally()
         });
 
         wsClient.on(KernelConnectionEventType.MESSAGE, (event: KernelMessageEvent) => {
             logger.log([moduleName, LOG_TAGS.Actor, "terminalStatus"], '收到Kernel消息:', JSON.stringify(event.message));
             if (event.message.type === KernelMessageType.UNIT_DATA_CHANGED) {
-                kernelTerminalCommands.changeUnitData({
+                kernelCoreTerminalCommands.changeUnitData({
                     changeSet: event.message.data
                 }).executeInternally()
             }
@@ -114,7 +114,7 @@ export class TerminalConnectionActor extends Actor {
                         logger.log([moduleName, LOG_TAGS.Actor, "TerminalConnectionActor"], '执行Kernel远程方法:', remoteCommand)
                         remoteCommand.execute(remoteCommandFromKernel.requestId, remoteCommandFromKernel.sessionId)
                         const request: RemoteCommandConfirmRequest = {commandId: remoteCommand.id}
-                        kernelTerminalApis.remoteCommandConfirm.run({request: request}).then(() => {
+                        kernelCoreTerminalApis.remoteCommandConfirm.run({request: request}).then(() => {
                             logger.log([moduleName, LOG_TAGS.Actor, 'terminalStatus'], '反馈Kernel', {
                                 type: remoteCommandFromKernel.type,
                                 message: '远程方法已执行',
@@ -126,15 +126,15 @@ export class TerminalConnectionActor extends Actor {
                     }
                 } catch (error: Error | any) {
                     logger.error([moduleName, LOG_TAGS.Actor, "terminalStatus"], '执行远程方法错误', error.message)
-                    throw new AppError(kernelTerminalErrorMessages.remoteCommandExecutionError, error.message)
+                    throw new AppError(kernelCoreTerminalErrorMessages.remoteCommandExecutionError, error.message)
                 }
             }
         });
         wsClient.on(KernelConnectionEventType.DISCONNECTED, (event: KernelDisconnectedEvent) => {
-            kernelTerminalCommands.kernelWSDisconnected(event.reason || "异常关闭").executeInternally()
+            kernelCoreTerminalCommands.kernelWSDisconnected(event.reason || "异常关闭").executeInternally()
         });
         wsClient.on(KernelConnectionEventType.CONNECT_FAILED, (event: KernelConnectFailedEvent) => {
-            kernelTerminalCommands.kernelWSDisconnected(event.error?.message || "连接失败").executeInternally()
+            kernelCoreTerminalCommands.kernelWSDisconnected(event.error?.message || "连接失败").executeInternally()
         });
         this.wsInitiated = true
     }

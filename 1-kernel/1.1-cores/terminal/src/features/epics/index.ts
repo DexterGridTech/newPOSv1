@@ -1,1 +1,1 @@
-export const kernelTerminalEpics = {}
+export const kernelCoreTerminalEpics = {}

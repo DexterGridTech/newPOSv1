@@ -6,7 +6,7 @@ import {UnitDataActor} from "./unitData";
 import {TerminalConnectionActor} from "./terminalConnection";
 
 
-export const kernelTerminalActors = createActors(moduleName, {
+export const kernelCoreTerminalActors = createActors(moduleName, {
     initializeActor: InitializeActor,
     terminalActor: TerminalActor,
     unitDataActor:UnitDataActor,

@@ -1,7 +1,7 @@
 import {DefinedErrorMessage, ErrorCategory, ErrorSeverity} from "@impos2/kernel-core-base";
 
 
-export const kernelTerminalErrorMessages = {
+export const kernelCoreTerminalErrorMessages = {
     kernelWSServerConnectionError: new DefinedErrorMessage(
         ErrorCategory.NETWORK,
         ErrorSeverity.HIGH,

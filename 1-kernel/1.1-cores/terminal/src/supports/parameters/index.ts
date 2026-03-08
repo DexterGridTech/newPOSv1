@@ -1,7 +1,7 @@
 import {DefinedSystemParameter} from "@impos2/kernel-core-base";
 
 
-export const kernelTerminalParameters = {
+export const kernelCoreTerminalParameters = {
     reconnectInterval: new DefinedSystemParameter(
         "kernel服务websocket重连间隔",
         "terminal.websocket.reconnect.interval",

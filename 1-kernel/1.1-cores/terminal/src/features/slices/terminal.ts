@@ -1,7 +1,7 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {moduleName} from "../../moduleName";
 import {TerminalState} from "../../types/state/terminalState";
-import {kernelTerminalState} from "../../types/shared/moduleStateKey";
+import {kernelCoreTerminalState} from "../../types/shared/moduleStateKey";
 import {
     batchUpdateState,
     DeviceInfo,
@@ -14,7 +14,7 @@ import {Unit} from "../../types/shared/unit";
 
 const initialState: TerminalState = {}
 const slice = createSlice({
-    name: kernelTerminalState.terminal,
+    name: kernelCoreTerminalState.terminal,
     initialState,
     reducers: {
         setDeviceInfo: (state, action: PayloadAction<DeviceInfo>) => {

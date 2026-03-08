@@ -1,4 +1,4 @@
-import {SERVER_NAME_KERNEL_API, SERVER_NAME_KERNEL_WS} from "./serverName";
+import {SERVER_NAME_KERNEL_API, SERVER_NAME_KERNEL_WS, SERVER_NAME_MIXC_OPERATOR_API} from "./serverName";
 import {ServerSpace} from "@impos2/kernel-core-base";
 
 export const productServerSpace :ServerSpace={
@@ -50,6 +50,28 @@ export const productServerSpace :ServerSpace={
                             timeout: 3000
                         }
                     ]
+                },
+                {
+                    serverName: SERVER_NAME_MIXC_OPERATOR_API,
+                    addresses: [
+                        {
+                            addressName: "主线路1",
+                            baseURL: "http://127.0.0.1:10001/operator-server",
+                            timeout: 3000
+                        },
+                        {
+                            addressName: "主线路2",
+                            baseURL: "http://172.20.10.2:10001/operator-server",
+                            timeout: 3000
+                        },
+                        {
+                            addressName: "主线路3",
+                            baseURL: "http://localhost:10001/operator-server",
+                            timeout: 3000
+                        }
+                    ],
+                    retryCount: 3,
+                    retryInterval: 1000,
                 }
             ]
         }
