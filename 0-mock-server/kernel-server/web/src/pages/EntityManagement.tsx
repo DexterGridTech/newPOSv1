@@ -185,7 +185,7 @@ export function EntityManagement() {
       // 发送远程指令
       await api.sendCommand(selectedItem.data.id, {
         commandItemId: 'sendStateToServer',
-        type: 'kernel.terminal.sendStateToServer',
+        type: 'kernel.core.terminal.sendStateToServer',
         payload: '{}'  // 修改为JSON字符串
       });
     } catch (error: any) {

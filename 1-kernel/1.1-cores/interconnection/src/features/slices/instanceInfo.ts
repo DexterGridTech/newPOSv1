@@ -44,9 +44,6 @@ const slice = createSlice({
         setMasterInfo: (state, action: PayloadAction<MasterInfo | null>) => {
             // logger.log([moduleName, LOG_TAGS.Reducer, "instanceInfo"], 'setMasterInfo',action.payload)
             state.masterInfo = action.payload
-        },
-        setWorkspace: (state, action: PayloadAction<Workspace>) => {
-            state.workspace = action.payload
         }
     }
 })

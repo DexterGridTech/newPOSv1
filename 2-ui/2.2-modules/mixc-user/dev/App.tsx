@@ -42,7 +42,7 @@ export const DevApp: React.FC = () => {
                                 flex: 1
                             }}
                         >
-                            <StackContainer containerPart={uiBaseCoreUiVariables.rootScreenContainer}>
+                            <StackContainer containerPart={uiBaseCoreUiVariables.primaryRootContainer}>
                             </StackContainer>
                         </View>
                         <ModalContainer/>

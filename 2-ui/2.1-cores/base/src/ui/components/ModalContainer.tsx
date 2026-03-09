@@ -33,7 +33,7 @@ export const ModalContainer: React.FC = React.memo(() => {
      * 监听 state 中的 models 变化，更新本地 children
      */
     useEffect(() => {
-        const stateIds = new Set(stateModels.map(m => m.id).filter(Boolean) as string[]);
+        const stateIds = new Set((stateModels || []).map(m => m.id).filter(Boolean) as string[]);
 
         setLocalChildren(prev => {
             const localIds = new Set(prev.map(c => c.model.id).filter(Boolean) as string[]);

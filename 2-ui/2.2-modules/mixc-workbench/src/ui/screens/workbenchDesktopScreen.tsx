@@ -18,7 +18,6 @@ export const WorkbenchDesktopScreen: React.FC = () => {
     return (
         <View>
             <WorkbenchTitle/>
-            <WorkbenchDesktopScreen/>
             <StackContainer containerPart={uiMixcWorkbenchVariables.workbenchMainContainer}>
             </StackContainer>
         </View>
@@ -30,8 +29,8 @@ export const workbenchDesktopScreenPart: ScreenPartRegistration = {
     title: '操作台',
     description: '操作台页面（桌面版）',
     partKey: 'workbench',
-    containerKey: uiBaseCoreUiVariables.rootScreenContainer.key,
-    screenMode: [ScreenMode.DESKTOP],
+    containerKey: uiBaseCoreUiVariables.primaryRootContainer.key,
+    screenMode: [ScreenMode.DESKTOP,ScreenMode.MOBILE],
     workspace: [Workspace.MAIN],
     instanceMode: [InstanceMode.MASTER],
     componentType: WorkbenchDesktopScreen,

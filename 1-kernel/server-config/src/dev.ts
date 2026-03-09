@@ -1,4 +1,4 @@
-import {SERVER_NAME_KERNEL_API, SERVER_NAME_KERNEL_WS, SERVER_NAME_MIXC_OPERATOR_API} from "./serverName";
+import {SERVER_NAME_KERNEL_API, SERVER_NAME_KERNEL_WS, SERVER_NAME_MIXC_USER_API} from "./serverName";
 import {ServerSpace} from "@impos2/kernel-core-base";
 
 export const devServerSpace :ServerSpace={
@@ -17,7 +17,7 @@ export const devServerSpace :ServerSpace={
                         },
                         {
                             addressName: "主线路2",
-                            baseURL: "http://172.20.10.2:9999/kernel-server",
+                            baseURL: "http://192.168.0.172:9999/kernel-server",
                             timeout: 3000
                         },
                         {
@@ -46,13 +46,13 @@ export const devServerSpace :ServerSpace={
                         },
                         {
                             addressName: "主线路2",
-                            baseURL: "ws://172.20.10.2:9999/kernel-server",
+                            baseURL: "ws://192.168.0.172:9999/kernel-server",
                             timeout: 3000
                         }
                     ]
                 },
                 {
-                    serverName: SERVER_NAME_MIXC_OPERATOR_API,
+                    serverName: SERVER_NAME_MIXC_USER_API,
                     addresses: [
                         {
                             addressName: "主线路1",
@@ -123,7 +123,7 @@ export const devServerSpace :ServerSpace={
                     ]
                 },
                 {
-                    serverName: SERVER_NAME_MIXC_OPERATOR_API,
+                    serverName: SERVER_NAME_MIXC_USER_API,
                     addresses: [
                         {
                             addressName: "主线路1",

@@ -1,4 +1,4 @@
-import {SERVER_NAME_KERNEL_API, SERVER_NAME_KERNEL_WS, SERVER_NAME_MIXC_OPERATOR_API} from "./serverName";
+import {SERVER_NAME_KERNEL_API, SERVER_NAME_KERNEL_WS, SERVER_NAME_MIXC_USER_API} from "./serverName";
 import {ServerSpace} from "@impos2/kernel-core-base";
 
 export const productServerSpace :ServerSpace={
@@ -52,7 +52,7 @@ export const productServerSpace :ServerSpace={
                     ]
                 },
                 {
-                    serverName: SERVER_NAME_MIXC_OPERATOR_API,
+                    serverName: SERVER_NAME_MIXC_USER_API,
                     addresses: [
                         {
                             addressName: "主线路1",

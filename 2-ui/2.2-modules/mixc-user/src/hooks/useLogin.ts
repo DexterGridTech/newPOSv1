@@ -1,16 +1,29 @@
-import {useCallback, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
+import {useEditableUiVariable} from "@impos2/kernel-core-navigation";
+import {uiMixcUserVariables} from "../ui";
+import {LOG_TAGS, logger, shortId} from "@impos2/kernel-core-base";
+import {useRequestStatus} from "@impos2/kernel-core-interconnection";
+import {kernelMixcUserCommands} from "@impos2/kernel-mixc-user";
+import {moduleName} from "../moduleName";
 
 type LoginMode = 'password' | 'sms' | 'qrcode';
 
 export const useLogin = () => {
-    const [loginMode, setLoginMode] = useState<LoginMode>('password');
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [phone, setPhone] = useState('');
+    const {value: loginMode, setValue: setLoginMode} = useEditableUiVariable(uiMixcUserVariables.loginMode);
+    const {value: username, setValue: setUsername} = useEditableUiVariable(uiMixcUserVariables.username);
+    const {value: password, setValue: setPassword} = useEditableUiVariable(uiMixcUserVariables.password);
+    const {value: phone, setValue: setPhone} = useEditableUiVariable(uiMixcUserVariables.phone);
+    const {value: qrcodeUrl, setValue: setQrcodeUrl} = useEditableUiVariable(uiMixcUserVariables.qrcodeUrl);
     const [smsCode, setSmsCode] = useState('');
-    const [qrcodeUrl, setQrcodeUrl] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-
+    const [requestId, setRequestId] = useState<string | null>(null);
+    const handledRef = useRef<string | null>(null);
+    const loginStatus = useRequestStatus(requestId);
+    useEffect(() => {
+        if (loginStatus?.status === 'complete' && requestId && handledRef.current !== requestId) {
+            handledRef.current = requestId;
+            logger.log([moduleName, LOG_TAGS.Hook, 'useLogin'], '用户登录成功');
+        }
+    }, [loginStatus?.status, requestId]);
     const handleUsernameChange = useCallback((value: string) => {
         setUsername(value);
     }, []);
@@ -38,26 +51,21 @@ export const useLogin = () => {
     }, []);
 
     const handlePasswordLogin = useCallback(() => {
-        if (!username || !password || isLoading) return;
-        setIsLoading(true);
-        // TODO: 实现用户名密码登录逻辑
-        console.log('Password login:', {username, password});
-        setTimeout(() => setIsLoading(false), 1000);
-    }, [username, password, isLoading]);
+        if (loginStatus?.status === 'started') return;
+        const id = shortId();
+        setRequestId(id);
+        kernelMixcUserCommands.loginWithPassword({userName: username, password: password}).execute(id);
+    }, [loginStatus?.status, username, password]);
 
     const handleSmsLogin = useCallback(() => {
-        if (!phone || !smsCode || isLoading) return;
-        setIsLoading(true);
         // TODO: 实现手机号验证码登录逻辑
         console.log('SMS login:', {phone, smsCode});
-        setTimeout(() => setIsLoading(false), 1000);
-    }, [phone, smsCode, isLoading]);
+    }, [phone, smsCode]);
 
     const handleSendSms = useCallback(() => {
-        if (!phone || isLoading) return;
         // TODO: 实现发送验证码逻辑
         console.log('Send SMS to:', phone);
-    }, [phone, isLoading]);
+    }, [phone]);
 
     const cleanup = useCallback(() => {
         setUsername('');
@@ -74,7 +82,7 @@ export const useLogin = () => {
         phone,
         smsCode,
         qrcodeUrl,
-        isLoading,
+        loginStatus,
         handleModeChange,
         handleUsernameChange,
         handlePasswordChange,

@@ -9,9 +9,9 @@ import {
 } from "@impos2/kernel-core-base";
 import {moduleName} from "../../moduleName";
 import {kernelCoreInterconnectionParameters} from "../../supports";
-import {InstanceMode, kernelCoreInterconnectionState, Workspace} from "../../types";
+import {DisplayMode, InstanceMode, kernelCoreInterconnectionState, Workspace} from "../../types";
 import {kernelCoreInterconnectionCommands} from "../commands";
-import {getInstanceMode, getStandalone, getWorkspace} from "../../foundations/accessory";
+import {getDisplayMode, getInstanceMode, getStandalone, getWorkspace} from "../../foundations/accessory";
 
 export class InitializeActor extends Actor {
     initialize = Actor.defineCommandHandler(kernelCoreBaseCommands.initialize,
@@ -44,12 +44,12 @@ const powerStatusChangeListener = (event: PowerStatusChangeEvent) => {
     logger.log([moduleName, LOG_TAGS.Actor, "powerStatusChangeListener"], 'Power status changed', event)
     const instanceMode=getInstanceMode()
     const standalone=getStandalone()
-    const workspace=getWorkspace()
+    const displayMode=getDisplayMode()
     if(standalone&&instanceMode===InstanceMode.SLAVE){
-        if(event.powerConnected&&workspace===Workspace.BRANCH){
-            kernelCoreInterconnectionCommands.setWorkspace(Workspace.MAIN).executeInternally()
-        }else if (!event.powerConnected&&workspace===Workspace.MAIN){
-            kernelCoreInterconnectionCommands.setWorkspace(Workspace.BRANCH).executeInternally()
+        if(event.powerConnected&&displayMode===DisplayMode.PRIMARY){
+            kernelCoreInterconnectionCommands.setDisplayToSecondary().executeInternally()
+        }else if (!event.powerConnected&&displayMode===DisplayMode.SECONDARY){
+            kernelCoreInterconnectionCommands.setDisplayToPrimary().executeInternally()
         }
     }
 }

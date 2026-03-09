@@ -26,7 +26,7 @@ export const LoginForm: React.FC = () => {
         phone,
         smsCode,
         qrcodeUrl,
-        isLoading,
+        loginStatus,
         handleModeChange,
         handleUsernameChange,
         handlePasswordChange,
@@ -43,8 +43,8 @@ export const LoginForm: React.FC = () => {
         onClearance: cleanup,
     });
 
-    const canPasswordLogin = username.length > 0 && password.length > 0 && !isLoading;
-    const canSmsLogin = phone.length === 11 && smsCode.length === 6 && !isLoading;
+    const canPasswordLogin = username.length > 0 && password.length > 0 && (loginStatus?.status!='started');
+    const canSmsLogin = phone.length === 11 && smsCode.length === 6 && (loginStatus?.status!='started');
 
     return (
         <View style={styles.container}>
@@ -102,8 +102,8 @@ export const LoginForm: React.FC = () => {
                                     value={username}
                                     onChangeText={handleUsernameChange}
                                     keyboardType="full"
-                                    onSubmit={handlePasswordLogin}
-                                    editable={!isLoading}
+                                    // onSubmit={handlePasswordLogin}
+                                    editable={(loginStatus?.status!='started')}
                                     placeholder="请输入用户名"
                                     placeholderTextColor={COLORS.textTertiary}
                                     promptText="请输入用户名"
@@ -119,8 +119,8 @@ export const LoginForm: React.FC = () => {
                                     value={password}
                                     onChangeText={handlePasswordChange}
                                     keyboardType="full"
-                                    onSubmit={handlePasswordLogin}
-                                    editable={!isLoading}
+                                    // onSubmit={handlePasswordLogin}
+                                    editable={(loginStatus?.status!='started')}
                                     placeholder="请输入密码"
                                     placeholderTextColor={COLORS.textTertiary}
                                     promptText="请输入密码"
@@ -136,7 +136,7 @@ export const LoginForm: React.FC = () => {
                             disabled={!canPasswordLogin}
                             activeOpacity={0.85}
                         >
-                            {isLoading ? (
+                            {(loginStatus?.status==='started') ? (
                                 <ActivityIndicator size="small" color="#FFFFFF"/>
                             ) : (
                                 <Text style={styles.buttonText}>登录</Text>
@@ -156,7 +156,7 @@ export const LoginForm: React.FC = () => {
                                     onChangeText={handlePhoneChange}
                                     keyboardType="number"
                                     onSubmit={() => {}}
-                                    editable={!isLoading}
+                                    editable={(loginStatus?.status!='started')}
                                     placeholder="请输入手机号"
                                     placeholderTextColor={COLORS.textTertiary}
                                     promptText="请输入11位手机号"
@@ -175,7 +175,7 @@ export const LoginForm: React.FC = () => {
                                         onChangeText={handleSmsCodeChange}
                                         keyboardType="number"
                                         onSubmit={handleSmsLogin}
-                                        editable={!isLoading}
+                                        editable={(loginStatus?.status!='started')}
                                         placeholder="请输入验证码"
                                         placeholderTextColor={COLORS.textTertiary}
                                         promptText="请输入6位验证码"
@@ -186,7 +186,7 @@ export const LoginForm: React.FC = () => {
                                 <TouchableOpacity
                                     style={styles.smsButton}
                                     onPress={handleSendSms}
-                                    disabled={phone.length !== 11 || isLoading}
+                                    disabled={phone.length !== 11 || (loginStatus?.status!='started')}
                                 >
                                     <Text style={styles.smsButtonText}>发送验证码</Text>
                                 </TouchableOpacity>
@@ -199,7 +199,7 @@ export const LoginForm: React.FC = () => {
                             disabled={!canSmsLogin}
                             activeOpacity={0.85}
                         >
-                            {isLoading ? (
+                            {(loginStatus?.status==='started') ? (
                                 <ActivityIndicator size="small" color="#FFFFFF"/>
                             ) : (
                                 <Text style={styles.buttonText}>登录</Text>

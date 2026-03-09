@@ -10,5 +10,9 @@ export const kernelCoreTerminalSlice = {
     [kernelCoreTerminalUnitDataState.errorMessages]:
         generateUnitDataSliceConfig(kernelCoreTerminalUnitDataState.errorMessages),
     [kernelCoreTerminalUnitDataState.systemParameters]:
-        generateUnitDataSliceConfig(kernelCoreTerminalUnitDataState.systemParameters)
+        generateUnitDataSliceConfig(kernelCoreTerminalUnitDataState.systemParameters),
+    [kernelCoreTerminalUnitDataState.taskDefinitions]:
+        generateUnitDataSliceConfig(kernelCoreTerminalUnitDataState.taskDefinitions)
 }
+
+

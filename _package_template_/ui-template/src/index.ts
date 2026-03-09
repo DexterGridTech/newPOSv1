@@ -31,6 +31,7 @@ export * from "./types";
 export * from "./foundations";
 export * from "./supports";
 export * from "./hooks";
+export * from "./ui/moduleScreenParts";
 export {uiXXXSlice} from "./features/slices";
 export {uiXXXCommands} from "./features/commands";
 export {uiXXXErrorMessages} from "./supports/errors";

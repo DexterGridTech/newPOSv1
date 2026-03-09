@@ -26,6 +26,7 @@ class DeviceTurboModule(reactContext: ReactApplicationContext) :
     private var powerReceiver: BroadcastReceiver? = null
     private val handler = Handler(Looper.getMainLooper())
     private var debounceRunnable: Runnable? = null
+    private var lastPowerConnected: Boolean? = null
 
     override fun getName() = NAME
 
@@ -71,10 +72,15 @@ class DeviceTurboModule(reactContext: ReactApplicationContext) :
 
     private fun sendPowerEvent() {
         val power = deviceManager.getPowerStatus()
-        power.putDouble("timestamp", System.currentTimeMillis().toDouble())
-        reactApplicationContext
-            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
-            .emit(EVENT_POWER_STATUS_CHANGED, power)
+        val currentPowerConnected = power.getBoolean("powerConnected")
+
+        if (lastPowerConnected != currentPowerConnected) {
+            lastPowerConnected = currentPowerConnected
+            power.putDouble("timestamp", System.currentTimeMillis().toDouble())
+            reactApplicationContext
+                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+                .emit(EVENT_POWER_STATUS_CHANGED, power)
+        }
     }
 
     // NativeEventEmitter 需要

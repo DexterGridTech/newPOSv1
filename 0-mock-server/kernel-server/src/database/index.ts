@@ -17,7 +17,7 @@ function initDefaultData(database: Database.Database): void {
   // 检查是否已存在 sendStateToServer
   const existingCommand = database.prepare(
     'SELECT id FROM command_item WHERE type = ?'
-  ).get('kernel.terminal.sendStateToServer');
+  ).get('kernel.core.terminal.sendStateToServer');
 
   if (!existingCommand) {
     // 插入 sendStateToServer
@@ -28,7 +28,7 @@ function initDefaultData(database: Database.Database): void {
     `).run(
       'sendStateToServer',
       '获取设备状态',
-      'kernel.terminal.sendStateToServer',
+      'kernel.core.terminal.sendStateToServer',
       1,
       '{}',
       now,

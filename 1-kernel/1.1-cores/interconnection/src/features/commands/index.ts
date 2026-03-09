@@ -12,7 +12,6 @@ export const kernelCoreInterconnectionCommands = createModuleCommands(moduleName
     setDisableSlave: defineCommand<void>(),
     setMasterInfo: defineCommand<MasterInfo>(),
     clearMasterInfo: defineCommand<void>(),
-    setWorkspace: defineCommand<Workspace>(),
 
     //连接管理（统一 master/slave）
     startConnection: defineCommand<void>(),

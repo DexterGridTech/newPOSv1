@@ -171,7 +171,7 @@ export const secondaryWelComeScreenPart: ScreenPartRegistration = {
     title: '副屏欢迎界面',
     description: '副屏欢迎界面（桌面版）',
     partKey: 'secondaryWelCome',
-    containerKey: uiBaseCoreUiVariables.rootScreenContainer.key,
+    containerKey: uiBaseCoreUiVariables.secondaryRootContainer.key,
     screenMode: [ScreenMode.DESKTOP],
     workspace: [Workspace.MAIN],
     instanceMode: [InstanceMode.SLAVE],

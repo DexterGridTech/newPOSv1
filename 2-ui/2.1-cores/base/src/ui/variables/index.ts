@@ -1,5 +1,6 @@
 import {emptyScreenPart} from "../screens";
 
 export const uiBaseCoreUiVariables = {
-    rootScreenContainer: {key: "rootScreenContainer", defaultValue: emptyScreenPart}
+    primaryRootContainer: {key: "primary.root.container", defaultValue: emptyScreenPart},
+    secondaryRootContainer: {key: "secondary.root.container", defaultValue: emptyScreenPart}
 }

@@ -12,6 +12,8 @@ import {
     uiCoreBaseCommands,
     useLongPress
 } from "@impos2/ui-core-base";
+import {useSelector} from "react-redux";
+import {DisplayMode, selectDisplayMode} from "@impos2/kernel-core-interconnection";
 
 
 export interface AppProps {
@@ -20,11 +22,14 @@ export interface AppProps {
 
 const RootScreen: React.FC<AppProps> = ({onLoadComplete}) => {
     const isLoadedRef = useRef(false);
+    const displayMode = useSelector(selectDisplayMode);
 
     useEffect(() => {
+        console.log('[RootScreen] useEffect triggered, isLoadedRef:', isLoadedRef.current);
         if (!isLoadedRef.current) {
             isLoadedRef.current = true;
             console.log(`[${moduleName}] 所有组件加载完毕，可以正常显示 - ${formattedTime()}`);
+            console.log('[RootScreen] calling onLoadComplete');
             onLoadComplete?.();
         }
     }, [onLoadComplete]);
@@ -48,8 +53,13 @@ const RootScreen: React.FC<AppProps> = ({onLoadComplete}) => {
                         flex: 1
                     }}
                 >
-                    <StackContainer containerPart={uiBaseCoreUiVariables.rootScreenContainer}>
-                    </StackContainer>
+                    {displayMode === DisplayMode.PRIMARY ? (
+                        <StackContainer containerPart={uiBaseCoreUiVariables.primaryRootContainer}>
+                        </StackContainer>
+                    ) : (
+                        <StackContainer containerPart={uiBaseCoreUiVariables.secondaryRootContainer}>
+                        </StackContainer>
+                    )}
                 </View>
                 <ModalContainer/>
             </FancyContainerV2>

@@ -52,7 +52,9 @@ const slice = createWorkspaceSlice(
             // logger.log([moduleName, LOG_TAGS.Reducer, "uiVariables"], 'updateUiVariables',action.payload)
             Object.keys(action.payload).forEach(key => {
                 if (key === PERSIST_KEY) return
+                logger.log([moduleName, LOG_TAGS.Reducer, "uiVariables"], `Setting ${key}:`, action.payload[key])
                 state[key] = {value: action.payload[key], updatedAt: Date.now()}
+                logger.log([moduleName, LOG_TAGS.Reducer, "uiVariables"], `After setting, state[${key}]:`, state[key])
             })
         },
         clearUiVariables: (state, action: PayloadAction<string[]>) => {
