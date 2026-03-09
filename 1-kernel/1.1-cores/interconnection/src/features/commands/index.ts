@@ -1,6 +1,6 @@
 import {Command, createModuleCommands, defineCommand} from "@impos2/kernel-core-base";
 import {moduleName} from "../../moduleName";
-import {MasterInfo} from "../../types";
+import {MasterInfo, Workspace} from "../../types";
 
 export const kernelCoreInterconnectionCommands = createModuleCommands(moduleName, {
     //instance 管理
@@ -12,6 +12,7 @@ export const kernelCoreInterconnectionCommands = createModuleCommands(moduleName
     setDisableSlave: defineCommand<void>(),
     setMasterInfo: defineCommand<MasterInfo>(),
     clearMasterInfo: defineCommand<void>(),
+    setWorkspace: defineCommand<Workspace>(),
 
     //连接管理（统一 master/slave）
     startConnection: defineCommand<void>(),

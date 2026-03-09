@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<set xmlns:android="http://schemas.android.com/apk/res/android" android:fillAfter="true">
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fillAfter="true">
     <alpha
-        android:duration="680"
+        android:duration="1020"
         android:fromAlpha="0.0"
-        android:startOffset="180"
+        android:repeatCount="infinite"
+        android:repeatMode="reverse"
+        android:startOffset="270"
         android:toAlpha="1.0" />
     <translate
-        android:duration="680"
+        android:duration="1020"
         android:fromYDelta="16dp"
-        android:startOffset="180"
+        android:repeatCount="infinite"
+        android:repeatMode="reverse"
+        android:startOffset="270"
         android:toYDelta="0dp" />
 </set>

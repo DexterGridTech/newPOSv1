@@ -10,6 +10,7 @@ import {uiMixcUserMiddlewares} from "./features/middlewares";
 import {AppModule} from "@impos2/kernel-core-base";
 import {kernelCoreNavigationModule} from "@impos2/kernel-core-navigation";
 import {uiMixcUserScreenParts} from "./ui";
+import {kernelMixcUserModule} from "@impos2/kernel-mixc-user";
 
 export const uiMixcUserModule: AppModule = {
     name: moduleName,
@@ -21,7 +22,10 @@ export const uiMixcUserModule: AppModule = {
     actors: uiMixcUserActors,
     errorMessages: uiMixcUserErrorMessages,
     parameters: uiMixcUserParameters,
-    dependencies: [kernelCoreNavigationModule],
+    dependencies: [
+        kernelCoreNavigationModule,
+        kernelMixcUserModule
+    ],
     modulePreSetup: uiMixcUserModulePreSetup,
     screenParts:uiMixcUserScreenParts
 }

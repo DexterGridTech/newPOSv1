@@ -1,9 +1,17 @@
-import {Actor, kernelCoreBaseCommands, LOG_TAGS, logger, storeEntry} from "@impos2/kernel-core-base";
+import {
+    Actor,
+    device,
+    kernelCoreBaseCommands,
+    LOG_TAGS,
+    logger,
+    PowerStatusChangeEvent,
+    storeEntry
+} from "@impos2/kernel-core-base";
 import {moduleName} from "../../moduleName";
 import {kernelCoreInterconnectionParameters} from "../../supports";
-import {InstanceMode, kernelCoreInterconnectionState} from "../../types";
+import {InstanceMode, kernelCoreInterconnectionState, Workspace} from "../../types";
 import {kernelCoreInterconnectionCommands} from "../commands";
-import {getInstanceMode} from "../../foundations/accessory";
+import {getInstanceMode, getStandalone, getWorkspace} from "../../foundations/accessory";
 
 export class InitializeActor extends Actor {
     initialize = Actor.defineCommandHandler(kernelCoreBaseCommands.initialize,
@@ -21,7 +29,29 @@ export class InitializeActor extends Actor {
                     kernelCoreInterconnectionCommands.startConnection().executeInternally()
                 }, delay)
             }
+            device.addPowerStatusChangeListener(powerStatusChangeListener)
+            const systemStatus = await device.getSystemStatus()
+            powerStatusChangeListener({
+                ...systemStatus.power,
+                timestamp:Date.now()
+            })
+
             return Promise.resolve({});
         });
+
 }
+const powerStatusChangeListener = (event: PowerStatusChangeEvent) => {
+    logger.log([moduleName, LOG_TAGS.Actor, "powerStatusChangeListener"], 'Power status changed', event)
+    const instanceMode=getInstanceMode()
+    const standalone=getStandalone()
+    const workspace=getWorkspace()
+    if(standalone&&instanceMode===InstanceMode.SLAVE){
+        if(event.powerConnected&&workspace===Workspace.BRANCH){
+            kernelCoreInterconnectionCommands.setWorkspace(Workspace.MAIN).executeInternally()
+        }else if (!event.powerConnected&&workspace===Workspace.MAIN){
+            kernelCoreInterconnectionCommands.setWorkspace(Workspace.BRANCH).executeInternally()
+        }
+    }
+}
+
 

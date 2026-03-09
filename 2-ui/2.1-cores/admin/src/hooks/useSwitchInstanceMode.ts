@@ -41,6 +41,9 @@ export const useSwitchInstanceMode = () => {
                         try {
                             const masterInfo: MasterInfo = JSON.parse(barcodeStr)
                             kernelCoreInterconnectionCommands.setMasterInfo(masterInfo).executeInternally()
+                            setTimeout(() =>
+                                    kernelCoreInterconnectionCommands.startConnection().executeInternally(),
+                                1000)
                         } catch {
                             Alert.alert('错误', '二维码格式无效')
                         }

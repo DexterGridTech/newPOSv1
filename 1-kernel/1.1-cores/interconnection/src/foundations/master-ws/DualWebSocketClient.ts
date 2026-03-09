@@ -60,7 +60,8 @@ export class DualWebSocketClient {
             const inst = DualWebSocketClient.instance;
 
             inst.on(ConnectionEventType.CONNECT_FAILED, (e: ConnectFailedEvent) => {
-                logger.error([moduleName, LOG_TAGS.WebSocket,"DualWSClient"], `${inst.currentServerUrl},连接失败:${e.error.message}`);
+                const url = (e.error as any).serverUrl || inst.currentServerUrl || '未知服务器';
+                logger.error([moduleName, LOG_TAGS.WebSocket,"DualWSClient"], `${url},连接失败:${e.error.message}`);
                 inst.disconnect('连接失败');
             });
             inst.on(ConnectionEventType.ERROR, (e: WSErrorEvent) => {
@@ -101,26 +102,33 @@ export class DualWebSocketClient {
     // ==================== 连接 ====================
 
     async connect(config: DualClientConfig): Promise<void> {
+        logger.log([moduleName, LOG_TAGS.WebSocket,"DualWSClient"], `开始连接，服务器列表: ${config.serverUrls.join(', ')}`);
+
         if (this.isDestroyed) throw new Error('客户端已销毁');
         if (this.isConnecting) throw new Error('连接操作进行中');
         if (this.state !== ConnectionState.DISCONNECTED) throw new Error(`当前状态不允许连接: ${this.state}`);
 
         this.isConnecting = true;
         this.config = {...DEFAULT_CONFIG, ...config};
+        logger.log([moduleName, LOG_TAGS.WebSocket,"DualWSClient"], `配置已合并，超时设置: 连接=${this.config.connectionTimeout}ms, 心跳=${this.config.heartbeatTimeout}ms`);
 
         try {
             this.setState(ConnectionState.REGISTERING);
             let lastError: ConnectionError | null = null;
 
             for (const serverUrl of this.config.serverUrls) {
+                logger.log([moduleName, LOG_TAGS.WebSocket,"DualWSClient"], `尝试连接服务器: ${serverUrl}`);
                 try {
                     const token = await this.registerDevice(serverUrl);
                     this.currentServerUrl = serverUrl;
+                    logger.log([moduleName, LOG_TAGS.WebSocket,"DualWSClient"], `注册成功，token: ${token.substring(0, 10)}...`);
                     this.setState(ConnectionState.CONNECTING);
                     await this.connectWebSocket(serverUrl, token);
+                    logger.log([moduleName, LOG_TAGS.WebSocket,"DualWSClient"], `WebSocket连接成功: ${serverUrl}`);
                     return;
                 } catch (e) {
                     lastError = e as ConnectionError;
+                    logger.warn([moduleName, LOG_TAGS.WebSocket,"DualWSClient"], `服务器 ${serverUrl} 连接失败: ${lastError.message}`, lastError);
                     // 清理本次失败的 ws 资源，避免下次循环泄漏
                     this.cleanupWs();
                 }
@@ -130,6 +138,7 @@ export class DualWebSocketClient {
         } catch (error) {
             this.isConnecting = false;
             const ce = error as ConnectionError;
+            logger.error([moduleName, LOG_TAGS.WebSocket,"DualWSClient"], `连接流程失败: ${ce.message}`, ce);
             // 不在此处 cleanup/setState，由 CONNECT_FAILED 内部 handler 统一处理
             this.emit(ConnectionEventType.CONNECT_FAILED, {error: ce, timestamp: Date.now()} as ConnectFailedEvent);
             throw ce;
@@ -137,17 +146,29 @@ export class DualWebSocketClient {
     }
 
     private async registerDevice(serverUrl: string): Promise<string> {
+        const url = `${serverUrl}/register`;
+        logger.log([moduleName, LOG_TAGS.WebSocket,"DualWSClient"], `发起注册请求: ${url}`, this.config!.deviceRegistration);
+
         try {
             const {data} = await axios.post<RegistrationResponse>(
-                `${serverUrl}/register`,
+                url,
                 this.config!.deviceRegistration,
                 {timeout: this.config!.connectionTimeout}
             );
+            logger.log([moduleName, LOG_TAGS.WebSocket,"DualWSClient"], `注册响应:`, data);
+
             if (!data.success || !data.token) {
                 throw {type: ConnectionErrorType.REGISTRATION_FAILED, message: data.error || '注册失败', serverUrl};
             }
             return data.token;
         } catch (error: any) {
+            logger.error([moduleName, LOG_TAGS.WebSocket,"DualWSClient"], `注册失败 ${url}:`, {
+                message: error.message,
+                code: error.code,
+                response: error.response?.data,
+                status: error.response?.status,
+                config: {url: error.config?.url, method: error.config?.method}
+            });
             if (error.type === ConnectionErrorType.REGISTRATION_FAILED) throw error;
             throw {type: ConnectionErrorType.REGISTRATION_FAILED, message: error.message || 'HTTP注册失败', originalError: error, serverUrl} as ConnectionError;
         }
@@ -159,11 +180,15 @@ export class DualWebSocketClient {
             const isHttps = serverUrl.startsWith('https://');
             const wsProtocol = isHttps ? 'wss:' : 'ws:';
             const hostAndPath = serverUrl.replace(/^https?:\/\//, '');
-            this.ws = new WebSocket(`${wsProtocol}//${hostAndPath}/ws?token=${token}`);
+            const wsUrl = `${wsProtocol}//${hostAndPath}/ws?token=${token}`;
+
+            logger.log([moduleName, LOG_TAGS.WebSocket,"DualWSClient"], `创建WebSocket连接: ${wsUrl.replace(/token=.+/, 'token=***')}`);
+            this.ws = new WebSocket(wsUrl);
 
             const timer = setTimeout(() => {
                 if (!settled) {
                     settled = true;
+                    logger.error([moduleName, LOG_TAGS.WebSocket,"DualWSClient"], `WebSocket连接超时 (${this.config!.connectionTimeout}ms): ${serverUrl}`);
                     this.ws?.close();
                     reject({type: ConnectionErrorType.CONNECTION_TIMEOUT, message: `WebSocket连接超时`, serverUrl} as ConnectionError);
                 }
@@ -173,6 +198,7 @@ export class DualWebSocketClient {
                 if (settled) return;
                 settled = true;
                 clearTimeout(timer);
+                logger.log([moduleName, LOG_TAGS.WebSocket,"DualWSClient"], `WebSocket已打开: ${serverUrl}`);
                 this.isConnecting = false;
                 this.setState(ConnectionState.CONNECTED);
                 this.startHeartbeatCheck();
@@ -188,6 +214,7 @@ export class DualWebSocketClient {
 
             const onClose = (event: any) => {
                 clearTimeout(timer);
+                logger.warn([moduleName, LOG_TAGS.WebSocket,"DualWSClient"], `WebSocket关闭: ${serverUrl}, wasClean=${event.wasClean}, code=${event.code}, reason=${event.reason}`);
                 if (!settled) {
                     settled = true;
                     reject({type: ConnectionErrorType.WEBSOCKET_FAILED, message: '连接过程中断开', serverUrl} as ConnectionError);
@@ -201,6 +228,7 @@ export class DualWebSocketClient {
             };
 
             const onError = () => {
+                logger.error([moduleName, LOG_TAGS.WebSocket,"DualWSClient"], `WebSocket错误事件: ${serverUrl}, readyState=${this.ws?.readyState}`);
                 if (!settled) {
                     settled = true;
                     clearTimeout(timer);

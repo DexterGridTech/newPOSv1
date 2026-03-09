@@ -87,7 +87,9 @@ class MainActivity : ReactActivity() {
 
     private fun startSplashAnimations(dialog: android.app.Dialog) {
         val root = dialog.findViewById<View>(android.R.id.content) ?: return
-        val animationMap = listOf(
+        root.setLayerType(View.LAYER_TYPE_HARDWARE, null)
+
+        val allAnimations = listOf(
             R.id.splash_bg_breathe to R.anim.splash_breathe,
             R.id.splash_arc_back_view to R.anim.splash_float_slow,
             R.id.splash_arc_front_view to R.anim.splash_float_reverse,
@@ -99,8 +101,11 @@ class MainActivity : ReactActivity() {
             R.id.splash_system_text to R.anim.splash_text_middle_in,
             R.id.splash_loading_text to R.anim.splash_text_bottom_in,
         )
-        animationMap.forEach { (viewId, animId) ->
-            root.findViewById<View>(viewId)?.startAnimation(AnimationUtils.loadAnimation(this, animId))
+        allAnimations.forEach { (viewId, animId) ->
+            root.findViewById<View>(viewId)?.let { view ->
+                view.setLayerType(View.LAYER_TYPE_HARDWARE, null)
+                view.startAnimation(AnimationUtils.loadAnimation(this, animId))
+            }
         }
     }
 

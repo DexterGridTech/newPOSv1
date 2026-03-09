@@ -40,6 +40,11 @@ export class InstanceInfoActor extends Actor {
             storeEntry.dispatchAction(instanceInfoActions.setMasterInfo(command.payload))
             return {};
         })
+    setWorkspace = Actor.defineCommandHandler(kernelCoreInterconnectionCommands.setWorkspace,
+        async (command): Promise<Record<string, any>> => {
+            storeEntry.dispatchAction(instanceInfoActions.setWorkspace(command.payload))
+            return {};
+        })
     clearMasterInfo = Actor.defineCommandHandler(kernelCoreInterconnectionCommands.clearMasterInfo,
         async (command): Promise<Record<string, any>> => {
             storeEntry.dispatchAction(instanceInfoActions.setMasterInfo(null))
