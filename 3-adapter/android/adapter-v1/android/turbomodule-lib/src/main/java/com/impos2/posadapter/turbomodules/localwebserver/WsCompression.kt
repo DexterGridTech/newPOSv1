@@ -15,19 +15,12 @@ private const val TAG = "WsCompression"
  * 使用 gzip 压缩,减少网络传输数据量
  */
 object WsCompression {
-    /** 压缩阈值: 只压缩大于 1KB 的消息 */
-    private const val COMPRESSION_THRESHOLD = 1024
-
     /**
      * 压缩消息
      * @param json 原始 JSON 字符串
-     * @return 压缩后的 JSON 字符串(如果压缩失败或消息太小,返回原始字符串)
+     * @return 压缩后的 JSON 字符串(如果压缩失败,返回原始字符串)
      */
     fun compressMessage(json: String): String {
-        // 小消息不压缩
-        if (json.length < COMPRESSION_THRESHOLD) {
-            return json
-        }
 
         return try {
             // 使用 gzip 压缩
@@ -98,11 +91,6 @@ object WsCompression {
     fun shouldCompress(type: String, json: String): Boolean {
         // 系统消息不压缩(心跳等)
         if (type.startsWith("__system_")) {
-            return false
-        }
-
-        // 小消息不压缩
-        if (json.length < COMPRESSION_THRESHOLD) {
             return false
         }
 

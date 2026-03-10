@@ -1,16 +1,8 @@
-/**
- * WebSocket 消息压缩/解压工具
- * 使用 gzip 压缩,减少网络传输数据量
- */
-
 import { gzip, gunzip } from 'zlib';
 import { promisify } from 'util';
 
 const gzipAsync = promisify(gzip);
 const gunzipAsync = promisify(gunzip);
-
-/** 压缩阈值: 只压缩大于 1KB 的消息 */
-const COMPRESSION_THRESHOLD = 1024;
 
 /** 压缩消息格式 */
 interface CompressedMessage {
@@ -28,14 +20,9 @@ function isCompressedMessage(data: any): data is CompressedMessage {
 /**
  * 压缩消息
  * @param json 原始 JSON 字符串
- * @returns 压缩后的 JSON 字符串(如果压缩失败或消息太小,返回原始字符串)
+ * @returns 压缩后的 JSON 字符串(如果压缩失败,返回原始字符串)
  */
 export async function compressMessage(json: string): Promise<string> {
-  // 小消息不压缩
-  if (json.length < COMPRESSION_THRESHOLD) {
-    return json;
-  }
-
   try {
     // 使用 gzip 压缩
     const compressed = await gzipAsync(Buffer.from(json, 'utf-8'));
@@ -103,11 +90,6 @@ export async function decompressMessage(data: string): Promise<string> {
 export function shouldCompress(type: string, json: string): boolean {
   // 心跳消息不压缩
   if (type === 'HEARTBEAT' || type === 'HEARTBEAT_RESPONSE') {
-    return false;
-  }
-
-  // 小消息不压缩
-  if (json.length < COMPRESSION_THRESHOLD) {
     return false;
   }
 

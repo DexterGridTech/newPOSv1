@@ -8,7 +8,6 @@ import {
     StateChangeEvent, ConnectedEvent, ConnectFailedEvent,
     DisconnectedEvent, WSMessageEvent, WSErrorEvent,
 } from './types';
-import {compressMessage, decompressMessage} from './compression';
 
 
 const DEFAULT_CONFIG = {
@@ -244,9 +243,7 @@ export class DualWebSocketClient {
 
             const onMessage = (event: any) => {
                 try {
-                    // 先解压消息
-                    const decompressed = decompressMessage(event.data);
-                    const msg: MessageWrapper = JSON.parse(decompressed);
+                    const msg: MessageWrapper = JSON.parse(event.data);
                     this.handleMessage(msg);
                 } catch (e) {
                     logger.error([moduleName, LOG_TAGS.WebSocket,"DualWSClient"], '消息解析错误:', e);
@@ -305,9 +302,7 @@ export class DualWebSocketClient {
     private sendRaw(msg: MessageWrapper): void {
         if (this.isWsOpen()) {
             const json = JSON.stringify(msg);
-            // 压缩消息后发送
-            const compressed = compressMessage(json);
-            this.ws!.send(compressed);
+            this.ws!.send(json);
         }
     }
 

@@ -7,7 +7,6 @@ import { IncomingMessage } from 'http';
 import { DeviceRepository } from '../repositories/DeviceRepository';
 import { MessageWrapper, MessageType } from '../types';
 import { CONFIG } from '../config';
-import { compressMessage, decompressMessage } from '../utils/wsCompression';
 
 export class WebSocketService {
   private wss: WebSocketServer | null = null;
@@ -155,9 +154,7 @@ export class WebSocketService {
    */
   private async handleMessage(deviceId: string, data: Buffer): Promise<void> {
     try {
-      // 先解压消息
-      const decompressed = await decompressMessage(data.toString());
-      const message = JSON.parse(decompressed);
+      const message = JSON.parse(data.toString());
       console.log(`[WebSocket] Message received from device ${deviceId}:`, message);
 
       // 处理心跳响应
@@ -222,9 +219,7 @@ export class WebSocketService {
 
     try {
       const data = JSON.stringify(message);
-      // 压缩消息后发送
-      const compressed = await compressMessage(data);
-      ws.send(compressed);
+      ws.send(data);
 
       // 非心跳消息记录日志
       if (message.type !== MessageType.HEARTBEAT) {

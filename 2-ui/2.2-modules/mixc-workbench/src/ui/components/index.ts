@@ -1,1 +1,1 @@
-export {}
+export {WorkbenchTitle} from "./workbenchTitle";

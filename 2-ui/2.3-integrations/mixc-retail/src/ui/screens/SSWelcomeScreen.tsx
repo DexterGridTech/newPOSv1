@@ -170,7 +170,7 @@ export const ssWelComeScreenPart: ScreenPartRegistration = {
     name: 'ssWelComeScreen',
     title: '副屏欢迎界面',
     description: '副屏欢迎界面（桌面版）',
-    partKey: 'WelCome-slave-secondary',
+    partKey: 'mixc-welCome-slave-secondary',
     containerKey: uiBaseCoreUiVariables.secondaryRootContainer.key,
     screenMode: [ScreenMode.DESKTOP],
     workspace: [Workspace.MAIN],

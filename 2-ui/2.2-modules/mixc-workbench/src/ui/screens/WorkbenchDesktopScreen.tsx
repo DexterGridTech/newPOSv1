@@ -3,10 +3,17 @@ import {StackContainer, uiBaseCoreUiVariables, useLifecycle} from "@impos2/ui-co
 import {ScreenMode, ScreenPartRegistration} from "@impos2/kernel-core-base";
 import {InstanceMode, Workspace} from "@impos2/kernel-core-interconnection";
 import {WorkbenchTitle} from "../components/workbenchTitle";
-import {View} from "react-native";
+import {StyleSheet, View} from "react-native";
 import {uiMixcWorkbenchVariables} from "../variables";
+import {useWorkbenchTitle} from "../../hooks";
+import {WorkbenchNotification} from "../components/workbenchNotification";
 
 export const WorkbenchDesktopScreen: React.FC = () => {
+    const {
+        serverConnectionStatus,
+        handleTabChange,
+        handleMenuPress,
+    } = useWorkbenchTitle();
     useLifecycle({
         componentName: 'WorkbenchDesktopScreen',
         onInitiated: useCallback(() => {
@@ -16,14 +23,24 @@ export const WorkbenchDesktopScreen: React.FC = () => {
     });
 
     return (
-        <View>
-            <WorkbenchTitle/>
+        <View style={styles.container}>
+            <WorkbenchTitle
+                onTabChange={handleTabChange}
+                onMenuPress={handleMenuPress}
+                serverConnectionStatus={serverConnectionStatus}
+            />
+            <WorkbenchNotification/>
             <StackContainer containerPart={uiMixcWorkbenchVariables.workbenchMainContainer}>
             </StackContainer>
         </View>
     );
 };
-
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: "#F5F5F5",
+    },
+});
 export const mpWorkbenchDesktopScreenPart: ScreenPartRegistration = {
     name: 'mpWorkbenchDesktopScreen',
     title: '操作台',

@@ -8,19 +8,19 @@ type S = RootState & {
 
 export const useTerminalConnection = () => {
     const serverConnectionStatus = useSelector((state: RootState) =>
-        (state as S)[kernelCoreTerminalState.terminalConnection]?.serverConnectionStatus
+        (state as S)[kernelCoreTerminalState.terminalConnection]?.serverConnectionStatus?.value
     );
     const connectedAt = useSelector((state: RootState) =>
-        (state as S)[kernelCoreTerminalState.terminalConnection]?.connectedAt
+        (state as S)[kernelCoreTerminalState.terminalConnection]?.connectedAt?.value
     );
     const disconnectedAt = useSelector((state: RootState) =>
-        (state as S)[kernelCoreTerminalState.terminalConnection]?.disconnectedAt
+        (state as S)[kernelCoreTerminalState.terminalConnection]?.disconnectedAt?.value
     );
     const connectionError = useSelector((state: RootState) =>
-        (state as S)[kernelCoreTerminalState.terminalConnection]?.connectionError
+        (state as S)[kernelCoreTerminalState.terminalConnection]?.connectionError?.value
     );
     const connectionHistory = useSelector((state: RootState) =>
-        (state as S)[kernelCoreTerminalState.terminalConnection]?.connectionHistory ?? []
+        (state as S)[kernelCoreTerminalState.terminalConnection]?.connectionHistory?.value ?? []
     );
     return {serverConnectionStatus, connectedAt, disconnectedAt, connectionError, connectionHistory};
 };

@@ -12,7 +12,7 @@ import {
     useLongPress
 } from "@impos2/ui-core-base";
 import {useSelector} from "react-redux";
-import {DisplayMode, selectDisplayMode} from "@impos2/kernel-core-interconnection";
+import {DisplayMode, getStandalone, selectDisplayMode} from "@impos2/kernel-core-interconnection";
 import {AdminPopup} from "@impos2/ui-core-admin";
 
 
@@ -36,7 +36,9 @@ const RootScreen: React.FC<AppProps> = ({onLoadComplete}) => {
 
     const longPressHandlers = useLongPress({
         onLongPress: () => {
-            setShowAdminPopup(true);
+            const standalone=getStandalone()
+            if (standalone)
+                setShowAdminPopup(true);
         },
         delay: 2000
     });
