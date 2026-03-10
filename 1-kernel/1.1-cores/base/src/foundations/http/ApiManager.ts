@@ -243,7 +243,13 @@ export class ApiManager {
         if (!instance) {
             const newInstance = axios.create({
                 baseURL: address.baseURL,
-                timeout: address.timeout
+                timeout: address.timeout,
+                // 启用 gzip 压缩支持
+                headers: {
+                    'Accept-Encoding': 'gzip, deflate',
+                },
+                // 自动解压响应
+                decompress: true
             });
 
             // 应用请求拦截器

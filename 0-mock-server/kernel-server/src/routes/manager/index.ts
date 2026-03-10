@@ -378,7 +378,7 @@ router.delete('/command-items/:id', (req: Request, res: Response) => {
 
 // ==================== Command Routes ====================
 
-router.post('/devices/:deviceId/commands', (req: Request, res: Response) => {
+router.post('/devices/:deviceId/commands', async (req: Request, res: Response) => {
   try {
     const deviceId = req.params.deviceId;
 
@@ -406,7 +406,7 @@ router.post('/devices/:deviceId/commands', (req: Request, res: Response) => {
     }
 
     // 通过WebSocket发送指令（平铺commandItem属性，忽略defaultPayload）
-    const sendSuccess = wsService.pushRemoteCommand(deviceId, {
+    const sendSuccess = await wsService.pushRemoteCommand(deviceId, {
       commandId: command.id,
       commandItemId: commandItem.id,
       commandItemName: commandItem.name,

@@ -7,6 +7,7 @@ import { IncomingMessage } from 'http';
 import { DeviceRepository } from '../repositories/DeviceRepository';
 import { MessageWrapper, MessageType } from '../types';
 import { CONFIG } from '../config';
+import { compressMessage, decompressMessage } from '../utils/wsCompression';
 
 export class WebSocketService {
   private wss: WebSocketServer | null = null;
@@ -94,8 +95,8 @@ export class WebSocketService {
       this.broadcastDeviceOnlineStatus(deviceId, true);
 
       // 监听消息
-      ws.on('message', (data: Buffer) => {
-        this.handleMessage(deviceId, data);
+      ws.on('message', async (data: Buffer) => {
+        await this.handleMessage(deviceId, data);
       });
 
       // 监听断开
@@ -152,9 +153,11 @@ export class WebSocketService {
   /**
    * 处理客户端消息
    */
-  private handleMessage(deviceId: string, data: Buffer): void {
+  private async handleMessage(deviceId: string, data: Buffer): Promise<void> {
     try {
-      const message = JSON.parse(data.toString());
+      // 先解压消息
+      const decompressed = await decompressMessage(data.toString());
+      const message = JSON.parse(decompressed);
       console.log(`[WebSocket] Message received from device ${deviceId}:`, message);
 
       // 处理心跳响应
@@ -205,7 +208,7 @@ export class WebSocketService {
   /**
    * 发送消息到设备
    */
-  sendMessage(deviceId: string, message: MessageWrapper): boolean {
+  async sendMessage(deviceId: string, message: MessageWrapper): Promise<boolean> {
     const ws = this.connections.get(deviceId);
     if (!ws) {
       console.warn(`[WebSocket] No connection found for device ${deviceId}`);
@@ -219,7 +222,9 @@ export class WebSocketService {
 
     try {
       const data = JSON.stringify(message);
-      ws.send(data);
+      // 压缩消息后发送
+      const compressed = await compressMessage(data);
+      ws.send(compressed);
 
       // 非心跳消息记录日志
       if (message.type !== MessageType.HEARTBEAT) {
@@ -237,9 +242,9 @@ export class WebSocketService {
   /**
    * 推送单元数据变更
    */
-  pushUnitDataChange(deviceId: string, group: string, updated: any[], deleted: string[]): boolean {
+  async pushUnitDataChange(deviceId: string, group: string, updated: any[], deleted: string[]): Promise<boolean> {
     console.log(`[WebSocket] Pushing unit data change to device ${deviceId}, group: ${group}: ${updated.length} updated, ${deleted.length} deleted`);
-    return this.sendMessage(deviceId, {
+    return await this.sendMessage(deviceId, {
       type: MessageType.UNIT_DATA_CHANGED,
       data: { group, updated, deleted }
     });
@@ -248,9 +253,9 @@ export class WebSocketService {
   /**
    * 推送远程指令
    */
-  pushRemoteCommand(deviceId: string, command: any): boolean {
+  async pushRemoteCommand(deviceId: string, command: any): Promise<boolean> {
     console.log(`[WebSocket] Pushing remote command to device ${deviceId}:`, command);
-    return this.sendMessage(deviceId, {
+    return await this.sendMessage(deviceId, {
       type: MessageType.REMOTE_COMMAND,
       data: command
     });

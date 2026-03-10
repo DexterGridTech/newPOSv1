@@ -3,6 +3,7 @@
  */
 
 import express, { Express } from 'express';
+import compression from 'compression';
 import { corsMiddleware } from './middlewares/cors';
 import { errorHandler, notFoundHandler } from './middlewares/errorHandler';
 import { CONFIG } from './config';
@@ -22,6 +23,23 @@ const __dirname = path.dirname(__filename);
  */
 export function createApp(): Express {
   const app = express();
+
+  // gzip 压缩中间件 (必须在其他中间件之前)
+  app.use(compression({
+    // 压缩级别 (0-9, 默认 6)
+    level: 6,
+    // 只压缩大于 1KB 的响应
+    threshold: 1024,
+    // 压缩所有响应类型
+    filter: (req, res) => {
+      // 如果请求明确不接受压缩,则不压缩
+      if (req.headers['x-no-compression']) {
+        return false;
+      }
+      // 使用默认的压缩过滤器
+      return compression.filter(req, res);
+    }
+  }) as any);
 
   // 基础中间件
   app.use(express.json());

@@ -23,7 +23,9 @@ class WsSession(private val socket: Socket) {
     fun send(text: String) {
         if (!isOpen) return
         try {
-            val data = text.toByteArray(Charsets.UTF_8)
+            // 压缩消息
+            val compressed = WsCompression.compressMessage(text)
+            val data = compressed.toByteArray(Charsets.UTF_8)
             val len = data.size
             val frame = ByteArrayOutputStream()
             frame.write(0x81) // FIN + text opcode
@@ -249,11 +251,13 @@ class LocalWebServer(
             val frameReader = WsFrameReader(socket.getInputStream()) { session.sendPong(it) }
             while (session.isOpen) {
                 val text = frameReader.readFrame() ?: break
-                val json = try { JSONObject(text) } catch (_: Exception) { continue }
+                // 解压消息
+                val decompressed = WsCompression.decompressMessage(text)
+                val json = try { JSONObject(decompressed) } catch (_: Exception) { continue }
                 if (json.optString("type") == "__system_heartbeat_ack") {
                     deviceManager.updateHeartbeat(session.key); continue
                 }
-                routeMessage(session, json, text)
+                routeMessage(session, json, decompressed)
             }
         } catch (_: Exception) {
         } finally {

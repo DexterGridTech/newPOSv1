@@ -134,7 +134,7 @@ export class DataSyncService {
       const wsService = getWebSocketService();
       let pushedCount = 0;
 
-      affectedDevices.forEach(device => {
+      affectedDevices.forEach(async (device) => {
         if (wsService.isConnected(device.id) && device.operatingEntityId) {
           const message = {
             updated: changeType !== 'delete' && unitData ? [unitData] : [],
@@ -144,7 +144,7 @@ export class DataSyncService {
           // 获取 groupKey，如果是删除操作则使用空字符串
           const groupKey = unitData?.groupKey || '';
 
-          const success = wsService.pushUnitDataChange(device.id, groupKey, message.updated, message.deleted);
+          const success = await wsService.pushUnitDataChange(device.id, groupKey, message.updated, message.deleted);
           if (success) pushedCount++;
         }
       });
