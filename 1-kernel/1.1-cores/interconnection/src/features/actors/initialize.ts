@@ -40,7 +40,7 @@ export class InitializeActor extends Actor {
         });
 
 }
-const powerStatusChangeListener = (event: PowerStatusChangeEvent) => {
+export const powerStatusChangeListener = (event: PowerStatusChangeEvent) => {
     logger.log([moduleName, LOG_TAGS.Actor, "powerStatusChangeListener"], 'Power status changed', event)
     const instanceMode=getInstanceMode()
     const standalone=getStandalone()

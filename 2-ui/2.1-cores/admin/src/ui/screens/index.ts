@@ -1,2 +1,2 @@
-export * from './deviceStatusScreen'
-export * from './logFilesScreen'
+export * from './DeviceStatusScreen'
+export * from './LogFilesScreen'

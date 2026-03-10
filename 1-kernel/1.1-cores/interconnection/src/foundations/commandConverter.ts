@@ -27,11 +27,9 @@ export const commandWithExtra: CommandConverter = {
         }
         if (!command.extra.instanceMode) {
             if (command.extra.workspace === Workspace.MAIN && command.requestId !== INTERNAL) {
-                console.log("-----1")
                 //如果操作的是main，未指定InstanceMode，且非内部调用，默认使用master，slave的话就会使用远程方法
                 command.extra.instanceMode = InstanceMode.MASTER
             } else {
-                console.log("-----2")
                 command.extra.instanceMode = getInstanceMode()
             }
         }

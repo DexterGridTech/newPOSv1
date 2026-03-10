@@ -231,7 +231,8 @@ export const DeviceStatusScreen: React.FC = () => {
     const ts = systemStatus ? new Date(systemStatus.updatedAt).toLocaleString('zh-CN') : '—';
 
     return (
-        <ScrollView style={s.root} contentContainerStyle={[s.content, {padding: layout.padding}]} showsVerticalScrollIndicator={false}>
+        <View style={s.root}>
+            <View style={[s.content, {padding: layout.padding}]}>
 
             {/* Header */}
             <View style={[s.header, {marginBottom: layout.gap}]}>
@@ -326,7 +327,8 @@ export const DeviceStatusScreen: React.FC = () => {
             {/* ── 外设 ── */}
             {systemStatus && <PeripheralSection status={systemStatus}/>}
 
-        </ScrollView>
+            </View>
+        </View>
     );
 };
 
@@ -396,17 +398,3 @@ const s = StyleSheet.create({
     emptyHint: {paddingVertical: 24, alignItems: 'center'},
     emptyHintText: {fontSize: 13, color: C.textMuted},
 });
-
-// ─── Registration ─────────────────────────────────────────────────────────────
-export const deviceStatusScreenPart: ScreenPartRegistration = {
-    name: 'deviceStatusScreenPart',
-    title: '系统状态',
-    description: '当前系统信息',
-    partKey: 'system.admin.device.status',
-    containerKey: uiCoreAdminVariables.systemAdminPanel.key,
-    screenMode: [ScreenMode.DESKTOP, ScreenMode.MOBILE],
-    instanceMode: [InstanceMode.MASTER, InstanceMode.SLAVE],
-    workspace: [Workspace.MAIN,Workspace.BRANCH],
-    componentType: DeviceStatusScreen,
-    indexInContainer: 0,
-};

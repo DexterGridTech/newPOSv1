@@ -31,6 +31,7 @@ export * from "./types";
 export * from "./foundations";
 export * from "./supports";
 export * from "./hooks";
+export * from "./ui/modals/AdminPopup";
 export {uiCoreAdminSlice} from "./features/slices";
 export {uiCoreAdminCommands} from "./features/commands";
 export {uiCoreAdminErrorMessages} from "./supports/errors";

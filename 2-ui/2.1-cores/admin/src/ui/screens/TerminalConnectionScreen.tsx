@@ -83,7 +83,7 @@ export const TerminalConnectionScreen: React.FC = () => {
     const isDisconnected = status === ServerConnectionStatus.DISCONNECTED;
 
     return (
-        <ScrollView style={s.root} contentContainerStyle={s.content} showsVerticalScrollIndicator={false}>
+        <View style={s.root}><View style={s.content}>
 
             <View style={s.header}>
                 <View style={s.headerRow}>
@@ -151,7 +151,7 @@ export const TerminalConnectionScreen: React.FC = () => {
                 </Section>
             )}
 
-        </ScrollView>
+        </View></View>
     );
 };
 
@@ -185,17 +185,3 @@ const s = StyleSheet.create({
     historyItem: {paddingHorizontal: 16, paddingVertical: 10, gap: 4},
     historyRow: {flexDirection: 'row', alignItems: 'center', paddingVertical: 2},
 });
-
-// ─── Registration ─────────────────────────────────────────────────────────────
-export const terminalConnectionScreenPart: ScreenPartRegistration = {
-    name: 'terminalConnectionScreen',
-    title: '终端连接状态',
-    description: '终端连接状态',
-    partKey: 'system.admin.local.terminal.connection.status',
-    containerKey: uiCoreAdminVariables.systemAdminPanel.key,
-    screenMode: [ScreenMode.DESKTOP, ScreenMode.MOBILE],
-    instanceMode: [InstanceMode.MASTER, InstanceMode.SLAVE],
-    workspace: [Workspace.MAIN,Workspace.BRANCH],
-    componentType: TerminalConnectionScreen,
-    indexInContainer: 0,
-};

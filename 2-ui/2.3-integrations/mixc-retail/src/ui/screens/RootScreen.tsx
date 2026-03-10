@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {View,} from 'react-native';
 import {moduleName} from "../../moduleName";
 import {formattedTime} from "@impos2/kernel-core-base";
@@ -9,11 +9,11 @@ import {
     ModalContainer,
     StackContainer,
     uiBaseCoreUiVariables,
-    uiCoreBaseCommands,
     useLongPress
 } from "@impos2/ui-core-base";
 import {useSelector} from "react-redux";
 import {DisplayMode, selectDisplayMode} from "@impos2/kernel-core-interconnection";
+import {AdminPopup} from "@impos2/ui-core-admin";
 
 
 export interface AppProps {
@@ -23,6 +23,7 @@ export interface AppProps {
 const RootScreen: React.FC<AppProps> = ({onLoadComplete}) => {
     const isLoadedRef = useRef(false);
     const displayMode = useSelector(selectDisplayMode);
+    const [showAdminPopup, setShowAdminPopup] = useState(false);
 
     useEffect(() => {
         console.log('[RootScreen] useEffect triggered, isLoadedRef:', isLoadedRef.current);
@@ -36,7 +37,7 @@ const RootScreen: React.FC<AppProps> = ({onLoadComplete}) => {
 
     const longPressHandlers = useLongPress({
         onLongPress: () => {
-            uiCoreBaseCommands.screenLongPressed().executeInternally();
+            setShowAdminPopup(true);
         },
         delay: 2000
     });
@@ -62,8 +63,8 @@ const RootScreen: React.FC<AppProps> = ({onLoadComplete}) => {
                     )}
                 </View>
                 <ModalContainer/>
+                <AdminPopup visible={showAdminPopup} onClose={() => setShowAdminPopup(false)}/>
             </FancyContainerV2>
-
             {/* 必须添加键盘遮罩层 */}
             <FancyKeyboardOverlayV2/>
         </FancyKeyboardProviderV2>

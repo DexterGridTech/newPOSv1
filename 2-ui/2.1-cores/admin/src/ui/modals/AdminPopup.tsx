@@ -1,13 +1,24 @@
-import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, Modal, TouchableOpacity, Dimensions, ScrollView, ActivityIndicator, TextInput} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+    ActivityIndicator,
+    Dimensions,
+    Modal,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
+} from 'react-native';
+import QRCode from 'react-native-qrcode-svg';
+import {getDeviceId} from '@impos2/kernel-core-base';
 import {getResponsiveLayout} from '../responsive';
-import {DeviceStatusScreen} from '../screens/deviceStatusScreen';
-import {DeviceStatus} from '../components/DeviceStatus';
-import {TerminalConnectionScreen} from '../screens/terminalConnectionScreen';
-import {LocalServerStatusScreen} from '../screens/localServerStatusScreen';
-import {SwitchInstanceModeScreen} from '../screens/switchInstanceModeScreen';
-import {AppControlScreen} from '../screens/appControlScreen';
-import {LogFilesScreen} from '../screens/logFilesScreen';
+import {DeviceStatusScreen} from '../screens/DeviceStatusScreen';
+import {TerminalConnectionScreen} from '../screens/TerminalConnectionScreen';
+import {LocalServerStatusScreen} from '../screens/LocalServerStatusScreen';
+import {SwitchInstanceModeScreen} from '../screens/SwitchInstanceModeScreen';
+import {AppControlScreen} from '../screens/AppControlScreen';
+import {LogFilesScreen} from '../screens/LogFilesScreen';
 
 interface AdminPopupProps {
     visible: boolean;
@@ -44,7 +55,7 @@ const menuItems = [
     {key: 'server', title: '本地服务'},
 ];
 
-const ScreenWrapper: React.FC<{children: React.ReactNode}> = ({children}) => (
+const ScreenWrapper: React.FC<{ children: React.ReactNode }> = ({children}) => (
     <View style={{flex: 1}}>
         {children}
     </View>
@@ -61,6 +72,11 @@ const LoginScreen: React.FC<{
 }> = ({password, isLoading, error, onPasswordChange, onSubmit, onClose}) => {
     const isValidLength = password.length >= 1;
     const canSubmit = isValidLength && !isLoading;
+    const [deviceId, setDeviceId] = useState<string>('');
+
+    useEffect(() => {
+        setDeviceId(getDeviceId())
+    }, []);
 
     return (
         <View style={styles.loginContainer}>
@@ -72,9 +88,19 @@ const LoginScreen: React.FC<{
                 <Text style={styles.subtitle}>请输入管理员密码以继续</Text>
             </View>
 
+            {deviceId && (
+                <View style={styles.qrSection}>
+                    <View style={styles.qrContainer}>
+                        <QRCode value={deviceId} size={120}/>
+                    </View>
+                    <Text style={styles.deviceIdText}>设备 ID: {deviceId}</Text>
+                </View>
+            )}
+
             <View style={styles.inputSection}>
                 <Text style={styles.label}>管理员密码</Text>
-                <View style={[styles.inputWrapper, error && styles.inputWrapperError, isValidLength && !error && styles.inputWrapperSuccess]}>
+                <View
+                    style={[styles.inputWrapper, error && styles.inputWrapperError, isValidLength && !error && styles.inputWrapperSuccess]}>
                     <TextInput
                         value={password}
                         onChangeText={onPasswordChange}
@@ -102,7 +128,8 @@ const LoginScreen: React.FC<{
                     onPress={onSubmit}
                     disabled={!canSubmit}
                 >
-                    {isLoading ? <ActivityIndicator size="small" color="#FFF"/> : <Text style={[styles.buttonText, styles.confirmButtonText]}>确认登录</Text>}
+                    {isLoading ? <ActivityIndicator size="small" color="#FFF"/> :
+                        <Text style={[styles.buttonText, styles.confirmButtonText]}>确认登录</Text>}
                 </TouchableOpacity>
             </View>
         </View>
@@ -135,7 +162,8 @@ const PanelScreen: React.FC<{
                                     style={[styles.menuItem, selectedMenu === item.key && styles.menuItemActive]}
                                     onPress={() => onMenuSelect(item.key)}
                                 >
-                                    <Text style={[styles.menuItemText, selectedMenu === item.key && styles.menuItemTextActive]}>
+                                    <Text
+                                        style={[styles.menuItemText, selectedMenu === item.key && styles.menuItemTextActive]}>
                                         {item.title}
                                     </Text>
                                 </TouchableOpacity>
@@ -147,14 +175,16 @@ const PanelScreen: React.FC<{
                 <View style={styles.contentArea}>
                     {layout.isMobile && (
                         <View style={styles.mobileMenu}>
-                            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{paddingHorizontal: layout.padding}}>
+                            <ScrollView horizontal showsHorizontalScrollIndicator={false}
+                                        contentContainerStyle={{paddingHorizontal: layout.padding}}>
                                 {menuItems.map((item) => (
                                     <TouchableOpacity
                                         key={item.key}
                                         style={[styles.mobileMenuItem, selectedMenu === item.key && styles.mobileMenuItemActive]}
                                         onPress={() => onMenuSelect(item.key)}
                                     >
-                                        <Text style={[styles.mobileMenuItemText, selectedMenu === item.key && styles.mobileMenuItemTextActive]}>
+                                        <Text
+                                            style={[styles.mobileMenuItemText, selectedMenu === item.key && styles.mobileMenuItemTextActive]}>
                                             {item.title}
                                         </Text>
                                     </TouchableOpacity>
@@ -163,13 +193,16 @@ const PanelScreen: React.FC<{
                         </View>
                     )}
                     <View style={{flex: 1}}>
-                        <ScrollView style={{flex: 1}} contentContainerStyle={{flexGrow: 1}} showsVerticalScrollIndicator={false}>
-                            {selectedMenu === 'device' && <DeviceStatus />}
-                            {selectedMenu === 'terminal' && <TerminalConnectionScreen />}
-                            {selectedMenu === 'server' && <LocalServerStatusScreen />}
-                            {selectedMenu === 'instance' && <SwitchInstanceModeScreen />}
-                            {selectedMenu === 'control' && <AppControlScreen />}
-                            {selectedMenu === 'logs' && <LogFilesScreen />}
+                        <ScrollView
+                            style={{flex: 1}}
+                            showsVerticalScrollIndicator={true}
+                        >
+                            {selectedMenu === 'device' && <DeviceStatusScreen/>}
+                            {selectedMenu === 'terminal' && <TerminalConnectionScreen/>}
+                            {selectedMenu === 'server' && <LocalServerStatusScreen/>}
+                            {selectedMenu === 'instance' && <SwitchInstanceModeScreen/>}
+                            {selectedMenu === 'control' && <AppControlScreen/>}
+                            {selectedMenu === 'logs' && <LogFilesScreen/>}
                         </ScrollView>
                     </View>
                 </View>
@@ -221,28 +254,27 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({visible, onClose}) => {
 
     return (
         <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose} statusBarTranslucent>
-            <TouchableOpacity style={styles.overlay} activeOpacity={1} onPress={onClose}>
-                <TouchableOpacity activeOpacity={1} onPress={(e) => e.stopPropagation()}>
-                    {currentScreen === 'login' ? (
-                        <LoginScreen
-                            password={password}
-                            isLoading={isLoading}
-                            error={error}
-                            onPasswordChange={handlePasswordChange}
-                            onSubmit={handleSubmit}
-                            onClose={onClose}
-                        />
-                    ) : (
-                        <PanelScreen
-                            layout={layout}
-                            selectedMenu={selectedMenu}
-                            onMenuSelect={setSelectedMenu}
-                            onClose={onClose}
-                            onBackToLogin={() => setCurrentScreen('login')}
-                        />
-                    )}
-                </TouchableOpacity>
-            </TouchableOpacity>
+            <View style={styles.overlay}>
+                <TouchableOpacity style={StyleSheet.absoluteFill} activeOpacity={1} onPress={onClose}/>
+                {currentScreen === 'login' ? (
+                    <LoginScreen
+                        password={password}
+                        isLoading={isLoading}
+                        error={error}
+                        onPasswordChange={handlePasswordChange}
+                        onSubmit={handleSubmit}
+                        onClose={onClose}
+                    />
+                ) : (
+                    <PanelScreen
+                        layout={layout}
+                        selectedMenu={selectedMenu}
+                        onMenuSelect={setSelectedMenu}
+                        onClose={onClose}
+                        onBackToLogin={() => setCurrentScreen('login')}
+                    />
+                )}
+            </View>
         </Modal>
     );
 };
@@ -251,20 +283,64 @@ const {width} = Dimensions.get('window');
 
 const styles = StyleSheet.create({
     overlay: {flex: 1, backgroundColor: COLORS.overlay, justifyContent: 'center', alignItems: 'center'},
-    loginContainer: {backgroundColor: COLORS.surface, borderRadius: 16, width: Math.min(width - 48, 440), shadowColor: COLORS.primary, shadowOffset: {width: 0, height: 4}, shadowOpacity: 0.15, shadowRadius: 12, elevation: 8, borderWidth: 1, borderColor: COLORS.border},
+    loginContainer: {
+        backgroundColor: COLORS.surface,
+        borderRadius: 16,
+        width: Math.min(width - 48, 440),
+        shadowColor: COLORS.primary,
+        shadowOffset: {width: 0, height: 4},
+        shadowOpacity: 0.15,
+        shadowRadius: 12,
+        elevation: 8,
+        borderWidth: 1,
+        borderColor: COLORS.border
+    },
     header: {alignItems: 'center', paddingTop: 32, paddingHorizontal: 24, paddingBottom: 24},
-    logoBox: {width: 64, height: 64, backgroundColor: COLORS.primary, borderRadius: 12, justifyContent: 'center', alignItems: 'center', marginBottom: 16},
+    logoBox: {
+        width: 64,
+        height: 64,
+        backgroundColor: COLORS.primary,
+        borderRadius: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 16
+    },
     logoText: {fontSize: 28, fontWeight: '700', color: COLORS.surface, letterSpacing: 1},
     title: {fontSize: 24, fontWeight: '600', color: COLORS.text, letterSpacing: -0.3, marginBottom: 8},
     subtitle: {fontSize: 15, color: COLORS.textSecondary, fontWeight: '400'},
+    qrSection: {alignItems: 'center', paddingHorizontal: 24, paddingBottom: 20},
+    qrContainer: {
+        padding: 12,
+        backgroundColor: COLORS.surface,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: COLORS.border,
+        marginBottom: 12
+    },
+    deviceIdText: {fontSize: 12, color: COLORS.textSecondary, fontWeight: '500'},
     inputSection: {paddingHorizontal: 24, paddingBottom: 16},
     label: {fontSize: 14, fontWeight: '600', color: COLORS.text, marginBottom: 8},
-    inputWrapper: {flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: COLORS.border, borderRadius: 8, paddingHorizontal: 16, height: 48},
+    inputWrapper: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: COLORS.border,
+        borderRadius: 8,
+        paddingHorizontal: 16,
+        height: 48
+    },
     inputWrapperError: {borderColor: COLORS.error, backgroundColor: COLORS.errorBg},
     inputWrapperSuccess: {borderColor: COLORS.borderSuccess, backgroundColor: COLORS.successBg},
     input: {flex: 1, fontSize: 16, color: COLORS.text, padding: 0},
     successIndicator: {fontSize: 20, color: COLORS.success, marginLeft: 8},
-    errorContainer: {backgroundColor: COLORS.errorBg, borderRadius: 8, padding: 12, marginTop: 8, borderLeftWidth: 3, borderLeftColor: COLORS.error},
+    errorContainer: {
+        backgroundColor: COLORS.errorBg,
+        borderRadius: 8,
+        padding: 12,
+        marginTop: 8,
+        borderLeftWidth: 3,
+        borderLeftColor: COLORS.error
+    },
     errorText: {fontSize: 14, fontWeight: '500', color: COLORS.error},
     actionsContainer: {flexDirection: 'row', paddingHorizontal: 24, paddingBottom: 24, paddingTop: 8, gap: 12},
     button: {flex: 1, minHeight: 48, borderRadius: 8, justifyContent: 'center', alignItems: 'center'},
@@ -274,20 +350,51 @@ const styles = StyleSheet.create({
     buttonText: {fontSize: 15, fontWeight: '600'},
     cancelButtonText: {color: COLORS.textSecondary},
     confirmButtonText: {color: COLORS.surface},
-    panelContainer: {backgroundColor: COLORS.surface, borderRadius: 16, shadowColor: COLORS.primary, shadowOffset: {width: 0, height: 4}, shadowOpacity: 0.15, shadowRadius: 12, elevation: 8, borderWidth: 1, borderColor: COLORS.border, overflow: 'hidden'},
-    titleBar: {flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 16, borderBottomWidth: 1, borderBottomColor: COLORS.border},
+    panelContainer: {
+        backgroundColor: COLORS.surface,
+        borderRadius: 16,
+        shadowColor: COLORS.primary,
+        shadowOffset: {width: 0, height: 4},
+        shadowOpacity: 0.15,
+        shadowRadius: 12,
+        elevation: 8,
+        borderWidth: 1,
+        borderColor: COLORS.border,
+        overflow: 'hidden'
+    },
+    titleBar: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingVertical: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: COLORS.border
+    },
     titleText: {fontWeight: '600', color: COLORS.text, letterSpacing: -0.3},
-    closeButton: {width: 32, height: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center', backgroundColor: COLORS.menuBg},
+    closeButton: {
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: COLORS.menuBg
+    },
     closeButtonText: {fontSize: 18, color: COLORS.textSecondary, fontWeight: '600'},
-    mainContent: {flex: 1, flexDirection: 'row', overflow: 'hidden'},
+    mainContent: {flex: 1, flexDirection: 'row'},
     sidebar: {backgroundColor: COLORS.menuBg, borderRightWidth: 1, borderRightColor: COLORS.border},
     menuItem: {paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: COLORS.border},
     menuItemActive: {backgroundColor: COLORS.menuActive},
     menuItemText: {fontSize: 15, fontWeight: '500', color: COLORS.text},
     menuItemTextActive: {color: COLORS.surface},
-    contentArea: {flex: 1, backgroundColor: COLORS.surface, overflow: 'hidden'},
+    contentArea: {flex: 1, backgroundColor: COLORS.surface},
     mobileMenu: {borderBottomWidth: 1, borderBottomColor: COLORS.border, paddingVertical: 8},
-    mobileMenuItem: {paddingHorizontal: 16, paddingVertical: 8, marginRight: 8, borderRadius: 8, backgroundColor: COLORS.menuBg},
+    mobileMenuItem: {
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        marginRight: 8,
+        borderRadius: 8,
+        backgroundColor: COLORS.menuBg
+    },
     mobileMenuItemActive: {backgroundColor: COLORS.menuActive},
     mobileMenuItemText: {fontSize: 13, fontWeight: '500', color: COLORS.text},
     mobileMenuItemTextActive: {color: COLORS.surface},

@@ -83,7 +83,9 @@ export const useSwitchInstanceMode = () => {
         kernelCoreTaskCommands.executeTask({
             taskKey: baseTaskDefinitionKey.singleReadBarcodeFromCamara,
             initContext: {}
-        }).execute(requestId)
+        })
+            .withExtra({instanceMode: InstanceMode.SLAVE})
+            .execute(requestId)
     }, [scanRequestId])
 
     const instanceMode = instanceInfo?.instanceMode

@@ -121,7 +121,7 @@ export const LocalServerStatusScreen: React.FC = () => {
     }
 
     return (
-        <ScrollView style={s.root} contentContainerStyle={s.content} showsVerticalScrollIndicator={false}>
+        <View style={s.root}><View style={s.content}>
 
             {/* Header */}
             <View style={s.header}>
@@ -215,7 +215,7 @@ export const LocalServerStatusScreen: React.FC = () => {
                 </Section>
             )}
 
-        </ScrollView>
+        </View></View>
     );
 };
 
@@ -249,16 +249,3 @@ const s = StyleSheet.create({
     errorText: {fontSize: 13, color: C.err, fontFamily: 'monospace'},
 });
 
-// ─── Registration ─────────────────────────────────────────────────────────────
-export const localServerStatusScreenPart: ScreenPartRegistration = {
-    name: 'localServerStatusScreen',
-    title: '本地服务器状态',
-    description: '本地双机通讯服务器状态',
-    partKey: 'system.admin.local.server.status',
-    containerKey: uiCoreAdminVariables.systemAdminPanel.key,
-    screenMode: [ScreenMode.DESKTOP, ScreenMode.MOBILE],
-    instanceMode: [InstanceMode.MASTER, InstanceMode.SLAVE],
-    workspace: [Workspace.MAIN,Workspace.BRANCH],
-    componentType: LocalServerStatusScreen,
-    indexInContainer: 0,
-};

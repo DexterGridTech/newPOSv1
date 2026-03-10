@@ -16,7 +16,7 @@
 
 **Files:**
 - Create: `2-ui/2.1-cores/admin/src/ui/components/DeviceStatus.tsx`
-- Reference: `2-ui/2.1-cores/admin/src/ui/screens/deviceStatusScreen.tsx`
+- Reference: `2-ui/2.1-cores/admin/src/ui/screens/DeviceStatusScreen.tsx`
 
 - [ ] **Step 1: 创建组件目录（如果不存在）**
 
@@ -26,12 +26,12 @@
 mkdir -p 2-ui/2.1-cores/admin/src/ui/components
 ```
 
-- [ ] **Step 2: 复制 deviceStatusScreen.tsx 到新位置**
+- [ ] **Step 2: 复制 DeviceStatusScreen.tsx 到新位置**
 
 从项目根目录执行：
 
 ```bash
-cp 2-ui/2.1-cores/admin/src/ui/screens/deviceStatusScreen.tsx 2-ui/2.1-cores/admin/src/ui/components/DeviceStatus.tsx
+cp 2-ui/2.1-cores/admin/src/ui/screens/DeviceStatusScreen.tsx 2-ui/2.1-cores/admin/src/ui/components/DeviceStatus.tsx
 ```
 
 - [ ] **Step 3: 修改组件名称**

@@ -1,7 +1,8 @@
-import {Actor, storeEntry} from "@impos2/kernel-core-base";
+import {Actor, device, storeEntry} from "@impos2/kernel-core-base";
 import {kernelCoreInterconnectionCommands} from "../commands";
 import {instanceInfoActions} from "../slices/instanceInfo";
 import {DisplayMode, InstanceMode} from "../../types";
+import {powerStatusChangeListener} from "./initialize";
 
 
 export class InstanceInfoActor extends Actor {
@@ -13,6 +14,11 @@ export class InstanceInfoActor extends Actor {
     setInstanceToSlave = Actor.defineCommandHandler(kernelCoreInterconnectionCommands.setInstanceToSlave,
         async (command): Promise<Record<string, any>> => {
             storeEntry.dispatchAction(instanceInfoActions.setInstanceMode(InstanceMode.SLAVE))
+            const systemStatus = await device.getSystemStatus()
+            powerStatusChangeListener({
+                ...systemStatus.power,
+                timestamp:Date.now()
+            })
             return {};
         })
     setDisplayToPrimary = Actor.defineCommandHandler(kernelCoreInterconnectionCommands.setDisplayToPrimary,

@@ -1,1 +1,1 @@
-export * from "./AdminLoginModal"
+export * from "./AdminPopup"

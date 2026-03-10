@@ -2,9 +2,10 @@ import React from "react";
 import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import {ScreenMode, ScreenPartRegistration} from "@impos2/kernel-core-base";
-import {InstanceMode, Workspace} from "@impos2/kernel-core-interconnection";
+import {InstanceMode, Workspace, ServerConnectionStatus} from "@impos2/kernel-core-interconnection";
 import {uiCoreAdminVariables} from "../variables";
 import {useSwitchInstanceMode} from "../../hooks/useSwitchInstanceMode";
+import {useLocalServerStatus} from "../../hooks/useLocalServerStatus";
 
 // ─── Design Tokens ───────────────────────────────────────────────────────────
 const C = {
@@ -76,11 +77,26 @@ export const SwitchInstanceModeScreen: React.FC = () => {
         handleAddMaster,
     } = useSwitchInstanceMode();
 
+    const {connStatus} = useLocalServerStatus();
+
     const qrValue = masterInfo ? JSON.stringify(masterInfo) : null;
     const serverBtnLabel = isServerConnecting ? '连接中...' : isServerConnected ? '已启动' : '启动服务器';
 
+    // 连接状态显示
+    const getConnectionStatusBadge = () => {
+        switch (connStatus) {
+            case ServerConnectionStatus.CONNECTED:
+                return <Badge label="已连接" color={C.ok} bg={C.okBg}/>;
+            case ServerConnectionStatus.CONNECTING:
+                return <Badge label="连接中" color={C.warn} bg={C.warnBg}/>;
+            case ServerConnectionStatus.DISCONNECTED:
+            default:
+                return <Badge label="未连接" color={C.textMuted} bg={C.divider}/>;
+        }
+    };
+
     return (
-        <ScrollView style={s.root} contentContainerStyle={s.content} showsVerticalScrollIndicator={false}>
+        <View style={s.root}><View style={s.content}>
             <Text style={s.headerTitle}>主机模式</Text>
 
             {/* 当前模式 */}
@@ -146,36 +162,31 @@ export const SwitchInstanceModeScreen: React.FC = () => {
                                     disabled={isServerConnected || isServerConnecting}
                                 />
                             </View>
-                        </>
-                    )}
-                </Section>
-            )}
 
-            {/* MasterInfo 信息展示 */}
-            {masterInfo && (
-                <Section title="Master 信息">
-                    <View style={s.infoBlock}>
-                        <View style={s.infoRow}>
-                            <Text style={s.infoLabel}>设备 ID</Text>
-                            <Text style={s.infoValue}>{masterInfo.deviceId}</Text>
-                        </View>
-                        {masterInfo.serverAddress?.map((addr, i) => (
-                            <View key={i} style={s.infoRow}>
-                                <Text style={s.infoLabel}>{addr.name}</Text>
-                                <Text style={s.infoValue}>{addr.address}</Text>
-                            </View>
-                        ))}
-                    </View>
-
-                    {enableSlave && qrValue && (
-                        <>
-                            <Divider/>
-                            <View style={s.qrBlock}>
-                                <Text style={s.qrHint}>扫码连接此 Master 设备</Text>
-                                <View style={s.qrWrapper}>
-                                    <QRCode value={qrValue} size={180}/>
-                                </View>
-                            </View>
+                            {masterInfo && qrValue && (
+                                <>
+                                    <Divider/>
+                                    <View style={s.infoBlock}>
+                                        <View style={s.infoRow}>
+                                            <Text style={s.infoLabel}>设备 ID</Text>
+                                            <Text style={s.infoValue}>{masterInfo.deviceId}</Text>
+                                        </View>
+                                        {masterInfo.serverAddress?.map((addr, i) => (
+                                            <View key={i} style={s.infoRow}>
+                                                <Text style={s.infoLabel}>{addr.name}</Text>
+                                                <Text style={s.infoValue}>{addr.address}</Text>
+                                            </View>
+                                        ))}
+                                    </View>
+                                    <Divider/>
+                                    <View style={s.qrBlock}>
+                                        <Text style={s.qrHint}>扫码连接此 Master 设备</Text>
+                                        <View style={s.qrWrapper}>
+                                            <QRCode value={qrValue} size={180}/>
+                                        </View>
+                                    </View>
+                                </>
+                            )}
                         </>
                     )}
                 </Section>
@@ -183,17 +194,55 @@ export const SwitchInstanceModeScreen: React.FC = () => {
 
             {/* SLAVE 模式 */}
             {isSlave && (
-                <Section title="Master 设备">
-                    <View style={s.row}>
-                        <View style={s.rowLeft}>
-                            <Text style={s.rowLabel}>添加 Master 设备</Text>
-                            <Text style={s.rowDesc}>扫描 Master 设备的二维码进行连接</Text>
-                        </View>
-                        <Btn label="添加" onPress={handleAddMaster}/>
-                    </View>
-                </Section>
+                <>
+                    <Section title="Master 设备">
+                        {masterInfo ? (
+                            <>
+                                <View style={s.row}>
+                                    <View style={s.rowLeft}>
+                                        <Text style={s.rowLabel}>连接状态</Text>
+                                    </View>
+                                    {getConnectionStatusBadge()}
+                                </View>
+                                <Divider/>
+                                <View style={s.infoBlock}>
+                                    <View style={s.infoRow}>
+                                        <Text style={s.infoLabel}>设备 ID</Text>
+                                        <Text style={s.infoValue}>{masterInfo.deviceId}</Text>
+                                    </View>
+                                    {masterInfo.serverAddress?.map((addr, i) => (
+                                        <View key={i} style={s.infoRow}>
+                                            <Text style={s.infoLabel}>{addr.name}</Text>
+                                            <Text style={s.infoValue}>{addr.address}</Text>
+                                        </View>
+                                    ))}
+                                </View>
+                                {connStatus === ServerConnectionStatus.DISCONNECTED && (
+                                    <>
+                                        <Divider/>
+                                        <View style={s.row}>
+                                            <View style={s.rowLeft}>
+                                                <Text style={s.rowLabel}>重新连接</Text>
+                                                <Text style={s.rowDesc}>尝试连接到 Master 设备</Text>
+                                            </View>
+                                            <Btn label="连接" onPress={handleStartConnection}/>
+                                        </View>
+                                    </>
+                                )}
+                            </>
+                        ) : (
+                            <View style={s.row}>
+                                <View style={s.rowLeft}>
+                                    <Text style={s.rowLabel}>添加 Master 设备</Text>
+                                    <Text style={s.rowDesc}>扫描 Master 设备的二维码进行连接</Text>
+                                </View>
+                                <Btn label="添加" onPress={handleAddMaster}/>
+                            </View>
+                        )}
+                    </Section>
+                </>
             )}
-        </ScrollView>
+        </View></View>
     );
 };
 
@@ -235,17 +284,3 @@ const s = StyleSheet.create({
     qrHint: {fontSize: 12, color: C.textSub, marginBottom: 16},
     qrWrapper: {padding: 12, backgroundColor: C.surface, borderRadius: 12, borderWidth: 1, borderColor: C.border},
 });
-
-// ─── Registration ─────────────────────────────────────────────────────────────
-export const switchInstanceModeScreenPart: ScreenPartRegistration = {
-    name: 'switchInstanceModeScreenPart',
-    title: '切换主机模式',
-    description: '切换主机模式',
-    partKey: 'system.admin.switch.instance.mode',
-    containerKey: uiCoreAdminVariables.systemAdminPanel.key,
-    screenMode: [ScreenMode.DESKTOP, ScreenMode.MOBILE],
-    instanceMode: [InstanceMode.MASTER, InstanceMode.SLAVE],
-    workspace: [Workspace.MAIN,Workspace.BRANCH],
-    componentType: SwitchInstanceModeScreen,
-    indexInContainer: 0,
-};

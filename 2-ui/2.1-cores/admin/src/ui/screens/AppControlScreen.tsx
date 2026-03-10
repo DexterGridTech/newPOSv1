@@ -91,7 +91,8 @@ export const AppControlScreen: React.FC = (props) => {
     } = useAppControl();
 
     return (
-        <ScrollView style={s.root} contentContainerStyle={[s.content, {padding: layout.padding}]} showsVerticalScrollIndicator={false}>
+        <View style={s.root}>
+            <View style={[s.content, {padding: layout.padding}]}>
 
             <Text style={[s.headerTitle, {fontSize: layout.titleSize, marginBottom: layout.gap}]}>APP 控制</Text>
 
@@ -150,7 +151,7 @@ export const AppControlScreen: React.FC = (props) => {
                 />
             </Section>
 
-        </ScrollView>
+        </View></View>
     );
 };
 
@@ -181,16 +182,3 @@ const s = StyleSheet.create({
     btnTextDanger: {color: C.err},
 });
 
-// ─── Registration ─────────────────────────────────────────────────────────────
-export const appControlScreenPart: ScreenPartRegistration = {
-    name: 'appControlScreen',
-    title: 'APP控制',
-    description: '控制当前APP',
-    partKey: 'system.admin.app.control',
-    containerKey: uiCoreAdminVariables.systemAdminPanel.key,
-    screenMode: [ScreenMode.DESKTOP, ScreenMode.MOBILE],
-    instanceMode: [InstanceMode.MASTER, InstanceMode.SLAVE],
-    workspace: [Workspace.MAIN,Workspace.BRANCH],
-    componentType: AppControlScreen,
-    indexInContainer: 0,
-};

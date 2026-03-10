@@ -60,7 +60,7 @@ export const LogFilesScreen: React.FC = () => {
     }), [wrap]);
 
     return (
-        <ScrollView style={s.root} contentContainerStyle={s.content} showsVerticalScrollIndicator={false}>
+        <View style={s.root}><View style={s.content}>
             <View style={s.header}><Text style={s.headerTitle}>日志文件</Text></View>
             <View style={s.actions}>
                 <Btn label="刷新列表" onPress={loadFiles}/>
@@ -117,7 +117,7 @@ export const LogFilesScreen: React.FC = () => {
                     </View>
                 </View>
             )}
-        </ScrollView>
+        </View></View>
     );
 };
 
@@ -152,16 +152,3 @@ const s = StyleSheet.create({
     contentScroll: {maxHeight: 400},
     contentText: {fontSize: 11, color: C.textSub, padding: 16, fontFamily: 'monospace', lineHeight: 18},
 });
-
-export const logFilesScreenPart: ScreenPartRegistration = {
-    name: 'logFilesScreenPart',
-    title: '日志文件',
-    description: '当前系统日志文件',
-    partKey: 'system.admin.log.files',
-    containerKey: uiCoreAdminVariables.systemAdminPanel.key,
-    screenMode: [ScreenMode.DESKTOP, ScreenMode.MOBILE],
-    instanceMode: [InstanceMode.MASTER, InstanceMode.SLAVE],
-    workspace: [Workspace.MAIN,Workspace.BRANCH],
-    componentType: LogFilesScreen,
-    indexInContainer: 0,
-};
