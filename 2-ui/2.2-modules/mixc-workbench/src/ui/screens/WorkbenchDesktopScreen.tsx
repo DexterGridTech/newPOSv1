@@ -24,15 +24,28 @@ export const WorkbenchDesktopScreen: React.FC = () => {
     );
 };
 
-export const workbenchDesktopScreenPart: ScreenPartRegistration = {
-    name: 'workbenchDesktopScreen',
+export const mpWorkbenchDesktopScreenPart: ScreenPartRegistration = {
+    name: 'mpWorkbenchDesktopScreen',
     title: '操作台',
     description: '操作台页面（桌面版）',
-    partKey: 'workbench',
+    partKey: 'workbench-master-primary',
     containerKey: uiBaseCoreUiVariables.primaryRootContainer.key,
-    screenMode: [ScreenMode.DESKTOP,ScreenMode.MOBILE],
+    screenMode: [ScreenMode.DESKTOP],
     workspace: [Workspace.MAIN],
     instanceMode: [InstanceMode.MASTER],
+    componentType: WorkbenchDesktopScreen,
+    indexInContainer: 10,
+}
+
+export const spWorkbenchDesktopScreenPart: ScreenPartRegistration = {
+    name: 'spWorkbenchDesktopScreen',
+    title: '操作台（副屏）',
+    description: '操作台页面（副屏）',
+    partKey: 'workbench-slave-primary',
+    containerKey: uiBaseCoreUiVariables.primaryRootContainer.key,
+    screenMode: [ScreenMode.DESKTOP],
+    workspace: [Workspace.BRANCH],
+    instanceMode: [InstanceMode.SLAVE],
     componentType: WorkbenchDesktopScreen,
     indexInContainer: 10,
 }

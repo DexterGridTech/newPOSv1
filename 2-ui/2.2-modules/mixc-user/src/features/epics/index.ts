@@ -1,1 +1,5 @@
-export const uiMixcUserEpics = {}
+import {loginSecondaryMonitorEpic} from './loginSecondaryMonitor';
+
+export const uiMixcUserEpics = {
+    loginSecondaryMonitorEpic,
+};

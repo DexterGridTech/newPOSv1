@@ -1,5 +1,5 @@
-import {secondaryWelComeScreenPart} from "./screens";
+import {ssWelComeScreenPart} from "./screens";
 
 export const uiIntegrationMixcRetailScreenParts = {
-    secondaryWelComeScreen:secondaryWelComeScreenPart
+    ssWelComeScreen:ssWelComeScreenPart
 }

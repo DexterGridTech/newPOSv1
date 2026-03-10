@@ -5,9 +5,9 @@ import {ScreenMode, ScreenPartRegistration} from "@impos2/kernel-core-base";
 import {InstanceMode, Workspace} from "@impos2/kernel-core-interconnection";
 import {getUser} from "@impos2/kernel-mixc-user";
 
-export const LoginScreen: React.FC = () => {
+export const MPLoginScreen: React.FC = () => {
     useLifecycle({
-        componentName: 'LoginScreen',
+        componentName: 'MPLoginScreen',
         onInitiated: useCallback(() => {
         }, []),
         onClearance: useCallback(() => {
@@ -19,16 +19,16 @@ export const LoginScreen: React.FC = () => {
     );
 };
 
-export const loginScreenPart: ScreenPartRegistration = {
-    name: 'loginScreen',
+export const mpLoginScreenPart: ScreenPartRegistration = {
+    name: 'mpLoginScreen',
     title: '登录页',
     description: '登录页（桌面/移动版）',
-    partKey: 'login',
+    partKey: 'login-master-primary',
     containerKey: uiBaseCoreUiVariables.primaryRootContainer.key,
     screenMode: [ScreenMode.DESKTOP, ScreenMode.MOBILE],
     workspace: [Workspace.MAIN],
     instanceMode: [InstanceMode.MASTER],
-    componentType: LoginScreen,
+    componentType: MPLoginScreen,
     indexInContainer: 2,
     readyToEnter:()=>{
         const user=getUser()

@@ -1,1 +1,5 @@
-export const uiCoreTerminalEpics = {}
+import {activateDeviceSecondaryMonitorEpic} from './activateDeviceSecondaryMonitor';
+
+export const uiCoreTerminalEpics = {
+    activateDeviceSecondaryMonitorEpic,
+};

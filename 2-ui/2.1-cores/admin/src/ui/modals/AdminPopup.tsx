@@ -50,7 +50,7 @@ const menuItems = [
     {key: 'device', title: '设备状态'},
     {key: 'logs', title: '日志文件'},
     {key: 'instance', title: '实例模式'},
-    {key: 'control', title: '数据控制'},
+    {key: 'control', title: 'APP控制'},
     {key: 'terminal', title: '终端连接'},
     {key: 'server', title: '本地服务'},
 ];

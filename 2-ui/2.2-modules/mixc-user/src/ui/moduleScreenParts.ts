@@ -1,5 +1,7 @@
-import {loginScreenPart} from "./screens/loginScreen";
+import {mpLoginScreenPart} from "./screens/MPLoginScreen";
+import {spLoginScreenPart} from "./screens/SPLoginScreen";
 
 export const uiMixcUserScreenParts = {
-    loginScreen:loginScreenPart
+    mpLoginScreen:mpLoginScreenPart,
+    spLoginScreen:spLoginScreenPart
 }

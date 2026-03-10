@@ -57,14 +57,14 @@ const ShimmerLine: React.FC<{delay: number}> = ({delay}) => {
 };
 
 // ─── Component ───────────────────────────────────────────────────────────────
-export const SecondaryWelComeScreen: React.FC = () => {
+export const SSWelcomeScreen: React.FC = () => {
     const titleOpacity = useRef(new Animated.Value(0)).current;
     const titleY = useRef(new Animated.Value(20)).current;
     const subOpacity = useRef(new Animated.Value(0)).current;
     const dividerScale = useRef(new Animated.Value(0)).current;
 
     useLifecycle({
-        componentName: 'SecondaryWelComeScreen',
+        componentName: 'SSWelcomeScreen',
         onInitiated: useCallback(() => {}, []),
         onClearance: useCallback(() => {}, []),
     });
@@ -166,15 +166,15 @@ const s = StyleSheet.create({
 });
 
 // ─── Registration ─────────────────────────────────────────────────────────────
-export const secondaryWelComeScreenPart: ScreenPartRegistration = {
-    name: 'secondaryWelComeScreen',
+export const ssWelComeScreenPart: ScreenPartRegistration = {
+    name: 'ssWelComeScreen',
     title: '副屏欢迎界面',
     description: '副屏欢迎界面（桌面版）',
-    partKey: 'secondaryWelCome',
+    partKey: 'WelCome-slave-secondary',
     containerKey: uiBaseCoreUiVariables.secondaryRootContainer.key,
     screenMode: [ScreenMode.DESKTOP],
     workspace: [Workspace.MAIN],
     instanceMode: [InstanceMode.SLAVE],
-    componentType: SecondaryWelComeScreen,
-    indexInContainer: 1,
+    componentType: SSWelcomeScreen,
+    indexInContainer: 10,
 }

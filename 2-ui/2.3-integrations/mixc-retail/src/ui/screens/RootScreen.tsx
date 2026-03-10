@@ -30,7 +30,6 @@ const RootScreen: React.FC<AppProps> = ({onLoadComplete}) => {
         if (!isLoadedRef.current) {
             isLoadedRef.current = true;
             console.log(`[${moduleName}] 所有组件加载完毕，可以正常显示 - ${formattedTime()}`);
-            console.log('[RootScreen] calling onLoadComplete');
             onLoadComplete?.();
         }
     }, [onLoadComplete]);
@@ -47,13 +46,11 @@ const RootScreen: React.FC<AppProps> = ({onLoadComplete}) => {
         >
             <FancyContainerV2>
                 {/* 你的页面内容 */}
-                <View
-                    key={"primary-container"}
-                    {...longPressHandlers}
-                    style={{
-                        flex: 1
-                    }}
-                >
+                <View key={"primary-container"}
+                      {...longPressHandlers}
+                      style={{
+                          flex: 1
+                      }}>
                     {displayMode === DisplayMode.PRIMARY ? (
                         <StackContainer containerPart={uiBaseCoreUiVariables.primaryRootContainer}>
                         </StackContainer>

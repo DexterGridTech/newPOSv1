@@ -1,6 +1,6 @@
-import {workbenchDesktopScreenPart} from "./screens/workbenchDesktopScreen";
-import {ScreenPartRegistration} from "@impos2/kernel-core-base";
+import {spWorkbenchDesktopScreenPart, mpWorkbenchDesktopScreenPart} from "./screens/WorkbenchDesktopScreen";
 
 export const uiMixcWorkbenchScreenParts = {
-    workbenchDesktopScreen: workbenchDesktopScreenPart
+    mpWorkbenchDesktopScreen: mpWorkbenchDesktopScreenPart,
+    spWorkbenchDesktopScreen: spWorkbenchDesktopScreenPart
 }

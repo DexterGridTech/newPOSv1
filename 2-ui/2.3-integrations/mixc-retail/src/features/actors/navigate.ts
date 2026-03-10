@@ -10,13 +10,13 @@ export class NavigateActor extends Actor {
     activateDeviceSuccess = Actor.defineCommandHandler(kernelCoreTerminalCommands.activateDeviceSuccess,
         async (command): Promise<Record<string, any>> => {
             logger.log([moduleName, LOG_TAGS.Actor, "NavigateActor"], 'activateDeviceSuccess')
-            kernelCoreNavigationCommands.navigateTo({target:uiMixcUserScreenParts.loginScreen}).executeInternally()
+            kernelCoreNavigationCommands.navigateTo({target:uiMixcUserScreenParts.mpLoginScreen}).executeInternally()
             return {};
         });
     loginSuccess = Actor.defineCommandHandler(kernelMixcUserCommands.loginSuccess,
         async (command): Promise<Record<string, any>> => {
             logger.log([moduleName, LOG_TAGS.Actor, "NavigateActor"], 'loginSuccess')
-            kernelCoreNavigationCommands.navigateTo({target:uiMixcWorkbenchScreenParts.workbenchDesktopScreen}).executeInternally()
+            kernelCoreNavigationCommands.navigateTo({target:uiMixcWorkbenchScreenParts.mpWorkbenchDesktopScreen}).executeInternally()
             return {};
         });
 }
