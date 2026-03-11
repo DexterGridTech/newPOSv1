@@ -11,12 +11,13 @@ import android.os.BatteryManager
 import android.os.Build
 import android.os.Environment
 import android.os.StatFs
+import android.provider.Settings
 import android.util.DisplayMetrics
 import android.view.Display
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.WritableMap
-import java.security.SecureRandom
+import java.security.MessageDigest
 
 class DeviceManager private constructor(private val context: Context) {
 
@@ -60,10 +61,41 @@ class DeviceManager private constructor(private val context: Context) {
     }
 
     private fun generateDeviceId(): String {
-        val random = SecureRandom()
-        return (1..DEVICE_ID_LENGTH)
-            .map { CHARSET[random.nextInt(CHARSET.length)] }
-            .joinToString("")
+        // 使用 Android ID 作为基础，确保重装后 deviceId 不变
+        // Android ID 在设备恢复出厂设置前保持不变，应用重装后也不变
+        val androidId = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+            ?: "unknown_device"
+
+        // 将 Android ID 通过 SHA-256 哈希，然后转换为指定格式的字符串
+        return try {
+            val digest = MessageDigest.getInstance("SHA-256")
+            val hash = digest.digest(androidId.toByteArray())
+
+            // 将哈希值转换为 10 位字符串（使用 CHARSET 字符集）
+            val hashValue = hash.fold(0L) { acc, byte ->
+                (acc * 256 + (byte.toInt() and 0xFF)) % Long.MAX_VALUE
+            }
+
+            (0 until DEVICE_ID_LENGTH).map { index ->
+                val charsetSize = CHARSET.length
+                val position = ((hashValue shr (index * 5)) % charsetSize).toInt().let {
+                    if (it < 0) it + charsetSize else it
+                }
+                CHARSET[position]
+            }.joinToString("")
+        } catch (e: Exception) {
+            // 如果哈希失败，使用 Android ID 的前 10 位（转换为大写字母和数字）
+            androidId.take(DEVICE_ID_LENGTH)
+                .map { c ->
+                    when {
+                        c.isDigit() -> c
+                        c.isLetter() -> c.uppercaseChar()
+                        else -> CHARSET[c.code % CHARSET.length]
+                    }
+                }
+                .joinToString("")
+                .padEnd(DEVICE_ID_LENGTH, '0')
+        }
     }
 
     // ─── DeviceInfo ───────────────────────────────────────────────────────────

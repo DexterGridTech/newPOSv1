@@ -13,7 +13,7 @@ import {
     RemoteCommandConfirmRequest
 } from "../../types";
 import {getInstanceMode, InstanceMode} from "@impos2/kernel-core-interconnection";
-import {KernelWebSocketClient} from "../../foundations/kernelWS";
+import {KernelWebSocketClient} from "../../foundations/kernel-ws";
 import {
     kernelDeviceWS,
     kernelCoreTerminalApis,

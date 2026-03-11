@@ -39,6 +39,8 @@ export class StreamTaskExecutor {
     ): TaskSession {
         const progress$ = new Subject<ProgressData>();
         const cancel$ = new Subject<void>();
+        let cancelReason: 'manual' | 'timeout' = 'manual';
+        let taskTimeoutTriggered = false;
 
         const initialContextSnapshot = {...initialContext};
         const executionContext: TaskExecutionContext = {
@@ -89,7 +91,8 @@ export class StreamTaskExecutor {
             loopTimeoutSub = timer(taskDef.timeout).pipe(
                 takeUntil(cancel$)
             ).subscribe(() => {
-                if (executionContext.state !== 'CANCELLED') {
+                if (executionContext.state !== 'CANCELLED' && !taskTimeoutTriggered) {
+                    taskTimeoutTriggered = true;
                     // Issue-C fix：超时事件 nodeKey 用空字符串，避免误导为某个具体节点的错误
                     progress$.next({
                         requestId,
@@ -108,6 +111,9 @@ export class StreamTaskExecutor {
                         timestamp: Date.now(),
                         context: {...executionContext.context}
                     });
+                    // 任务级超时必须终止执行流，避免出现“超时后又完成”
+                    cancelReason = 'timeout';
+                    cancel$.next();
                 }
             });
 
@@ -179,6 +185,7 @@ export class StreamTaskExecutor {
                 context: {...executionContext.context},
                 payload: {
                     totalLoopCount: executionContext.context.loopCount,
+                    reason: cancelReason,
                 }
             });
             progress$.complete();

@@ -26,7 +26,6 @@ const RootScreen: React.FC<AppProps> = ({onLoadComplete}) => {
     const [showAdminPopup, setShowAdminPopup] = useState(false);
 
     useEffect(() => {
-        console.log('[RootScreen] useEffect triggered, isLoadedRef:', isLoadedRef.current);
         if (!isLoadedRef.current) {
             isLoadedRef.current = true;
             console.log(`[${moduleName}] 所有组件加载完毕，可以正常显示 - ${formattedTime()}`);
@@ -44,15 +43,10 @@ const RootScreen: React.FC<AppProps> = ({onLoadComplete}) => {
     });
 
     return (
-        <FancyKeyboardProviderV2
-        >
+        <FancyKeyboardProviderV2>
             <FancyContainerV2>
                 {/* 你的页面内容 */}
-                <View key={"primary-container"}
-                      {...longPressHandlers}
-                      style={{
-                          flex: 1
-                      }}>
+                <View key={"primary-container"} {...longPressHandlers} style={{flex: 1}}>
                     {displayMode === DisplayMode.PRIMARY ? (
                         <StackContainer containerPart={uiBaseCoreUiVariables.primaryRootContainer}>
                         </StackContainer>
