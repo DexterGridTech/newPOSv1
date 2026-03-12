@@ -7,12 +7,12 @@ import {
     CreateModuleWorkspaceStateType
 } from "@impos2/kernel-core-interconnection";
 
-export interface KernelXXXState {
+export interface Kernel{{PACKAGE_NAME_PASCAL}}State {
 }
 
-export type KernelXXXWorkspaceState = CreateModuleWorkspaceStateType<{
+export type Kernel{{PACKAGE_NAME_PASCAL}}WorkspaceState = CreateModuleWorkspaceStateType<{
 
 }>
-export type KernelXXXInstanceState = CreateModuleInstanceModeStateType<{
+export type Kernel{{PACKAGE_NAME_PASCAL}}InstanceState = CreateModuleInstanceModeStateType<{
 
 }>

@@ -10,6 +10,9 @@ import {uiMixcTradeMiddlewares} from "./features/middlewares";
 import {AppModule} from "@impos2/kernel-core-base";
 import {kernelCoreNavigationModule} from "@impos2/kernel-core-navigation";
 import {uiMixcTradeScreenParts} from "./ui";
+import {kernelMixcProductModule} from "@impos2/kernel-mixc-product";
+import {kernelMixcOrderBaseModule} from "@impos2/kernel-mixc-order-base";
+import {uiMixcWorkbenchModule} from "@impos2/ui-mixc-workbench";
 
 export const uiMixcTradeModule: AppModule = {
     name: moduleName,
@@ -21,7 +24,12 @@ export const uiMixcTradeModule: AppModule = {
     actors: uiMixcTradeActors,
     errorMessages: uiMixcTradeErrorMessages,
     parameters: uiMixcTradeParameters,
-    dependencies: [kernelCoreNavigationModule],
+    dependencies: [
+        kernelCoreNavigationModule,
+        kernelMixcProductModule,
+        kernelMixcOrderBaseModule,
+        uiMixcWorkbenchModule,
+    ],
     modulePreSetup: uiMixcTradeModulePreSetup,
     screenParts:uiMixcTradeScreenParts
 }

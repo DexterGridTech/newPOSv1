@@ -23,6 +23,7 @@
   ],
   "scripts": {
     "setup": "HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890 corepack yarn install",
+    "create-package": "node scripts/create-package.cjs",
     "build:clean": "turbo run build --force",
     "build": "turbo run build",
     "build-for-product": "turbo run build-for-product",

@@ -1,6 +1,6 @@
 // @ts-ignore
 import {ApplicationConfig, ApplicationManager, ScreenMode} from "@impos2/kernel-core-base";
-import {uiXXXModule} from "../src";
+import {ui{{PACKAGE_NAME_PASCAL}}Module} from "../src";
 import {devServerSpace} from "@impos2/kernel-server-config";
 
 const appConfig: ApplicationConfig = {
@@ -12,7 +12,7 @@ const appConfig: ApplicationConfig = {
         displayIndex: 0
     },
     preInitiatedState: {},
-    module: uiXXXModule,
+    module: ui{{PACKAGE_NAME_PASCAL}}Module,
     serverSpace:devServerSpace,
 }
 // 导出 Promise 供 App 组件等待

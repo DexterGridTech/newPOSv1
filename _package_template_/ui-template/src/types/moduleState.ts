@@ -7,12 +7,12 @@ import {
     CreateModuleWorkspaceStateType
 } from "@impos2/kernel-core-interconnection";
 
-export interface uiXXXState {
+export interface ui{{PACKAGE_NAME_PASCAL}}State {
 }
 
-export type uiXXXWorkspaceState = CreateModuleWorkspaceStateType<{
+export type ui{{PACKAGE_NAME_PASCAL}}WorkspaceState = CreateModuleWorkspaceStateType<{
 
 }>
-export type uiXXXInstanceState = CreateModuleInstanceModeStateType<{
+export type ui{{PACKAGE_NAME_PASCAL}}InstanceState = CreateModuleInstanceModeStateType<{
 
 }>

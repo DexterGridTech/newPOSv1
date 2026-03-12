@@ -9,11 +9,8 @@ import {useWorkbenchTitle} from "../../hooks";
 import {WorkbenchNotification} from "../components/workbenchNotification";
 
 export const WorkbenchDesktopScreen: React.FC = () => {
-    const {
-        serverConnectionStatus,
-        handleTabChange,
-        handleMenuPress,
-    } = useWorkbenchTitle();
+    const {handleMenuPress} = useWorkbenchTitle();
+
     useLifecycle({
         componentName: 'WorkbenchDesktopScreen',
         onInitiated: useCallback(() => {
@@ -25,9 +22,7 @@ export const WorkbenchDesktopScreen: React.FC = () => {
     return (
         <View style={styles.container}>
             <WorkbenchTitle
-                onTabChange={handleTabChange}
                 onMenuPress={handleMenuPress}
-                serverConnectionStatus={serverConnectionStatus}
             />
             <WorkbenchNotification/>
             <StackContainer containerPart={uiMixcWorkbenchVariables.workbenchMainContainer}>

@@ -10,6 +10,7 @@ import {uiMixcManagementMiddlewares} from "./features/middlewares";
 import {AppModule} from "@impos2/kernel-core-base";
 import {kernelCoreNavigationModule} from "@impos2/kernel-core-navigation";
 import {uiMixcManagementScreenParts} from "./ui";
+import {uiMixcWorkbenchModule} from "@impos2/ui-mixc-workbench";
 
 export const uiMixcManagementModule: AppModule = {
     name: moduleName,
@@ -21,7 +22,10 @@ export const uiMixcManagementModule: AppModule = {
     actors: uiMixcManagementActors,
     errorMessages: uiMixcManagementErrorMessages,
     parameters: uiMixcManagementParameters,
-    dependencies: [kernelCoreNavigationModule],
+    dependencies: [
+        kernelCoreNavigationModule,
+        uiMixcWorkbenchModule
+    ],
     modulePreSetup: uiMixcManagementModulePreSetup,
     screenParts:uiMixcManagementScreenParts
 }

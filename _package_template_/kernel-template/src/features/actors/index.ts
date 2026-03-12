@@ -3,6 +3,6 @@ import {createActors} from "@impos2/kernel-core-base";
 import {InitializeActor} from "./initialize";
 
 
-export const kernelXXXActors = createActors(moduleName, {
+export const kernel{{PACKAGE_NAME_PASCAL}}Actors = createActors(moduleName, {
     initializeActor: InitializeActor,
 });

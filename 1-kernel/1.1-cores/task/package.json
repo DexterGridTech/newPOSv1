@@ -23,7 +23,6 @@
     "axios": "^1.13.5",
     "date-fns": "^4.1.0",
     "redux-observable": "^3.0.0-rc.3",
-    "redux-persist": "^6.0.0",
     "rxjs": "^7.8.2"
   },
   "devDependencies": {

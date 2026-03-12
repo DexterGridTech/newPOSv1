@@ -1,1 +1,1 @@
-export const moduleName = 'ui.xxx'
+export const moduleName = '{{MODULE_NAME}}'

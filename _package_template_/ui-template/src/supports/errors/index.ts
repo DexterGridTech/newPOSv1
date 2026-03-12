@@ -1,5 +1,5 @@
 import {DefinedErrorMessage, ErrorCategory, ErrorSeverity} from "@impos2/kernel-core-base";
 
 
-export const uiXXXErrorMessages = {
+export const ui{{PACKAGE_NAME_PASCAL}}ErrorMessages = {
 };

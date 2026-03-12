@@ -28,8 +28,7 @@
     "@impos2/kernel-core-terminal": "*",
     "@impos2/kernel-server-config": "*",
     "@impos2/ui-core-base": "*",
-    "@reduxjs/toolkit": "^2.11.2",
-    "redux-persist": "^6.0.0"
+    "@reduxjs/toolkit": "^2.11.2"
   },
   "peerDependencies": {
     "react": "18.3.1",

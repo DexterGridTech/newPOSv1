@@ -3141,7 +3141,6 @@ __metadata:
     fflate: ^0.8.2
     madge: ^8.0.0
     redux-observable: ^3.0.0-rc.3
-    redux-persist: ^6.0.0
     rxjs: ^7.8.2
     ts-node: ^10.9.2
     typescript: ^5.9.3
@@ -3159,7 +3158,6 @@ __metadata:
     madge: ^8.0.0
     react-redux: ^9.1.0
     redux-observable: ^3.0.0-rc.3
-    redux-persist: ^6.0.0
     rxjs: ^7.8.2
     ts-node: ^10.9.2
     typescript: ^5.9.3
@@ -3178,7 +3176,6 @@ __metadata:
     date-fns: ^4.1.0
     madge: ^8.0.0
     redux-observable: ^3.0.0-rc.3
-    redux-persist: ^6.0.0
     rxjs: ^7.8.2
     ts-node: ^10.9.2
     typescript: ^5.9.3
@@ -3199,7 +3196,6 @@ __metadata:
     date-fns: ^4.1.0
     madge: ^8.0.0
     redux-observable: ^3.0.0-rc.3
-    redux-persist: ^6.0.0
     rxjs: ^7.8.2
     ts-node: ^10.9.2
     typescript: ^5.9.3
@@ -3221,7 +3217,6 @@ __metadata:
     date-fns: ^4.1.0
     madge: ^8.0.0
     redux-observable: ^3.0.0-rc.3
-    redux-persist: ^6.0.0
     rxjs: ^7.8.2
     ts-node: ^10.9.2
     typescript: ^5.9.3
@@ -3243,7 +3238,6 @@ __metadata:
     date-fns: ^4.1.0
     madge: ^8.0.0
     redux-observable: ^3.0.0-rc.3
-    redux-persist: ^6.0.0
     rxjs: ^7.8.2
     ts-node: ^10.9.2
     typescript: ^5.9.3
@@ -3265,7 +3259,6 @@ __metadata:
     date-fns: ^4.1.0
     madge: ^8.0.0
     redux-observable: ^3.0.0-rc.3
-    redux-persist: ^6.0.0
     rxjs: ^7.8.2
     ts-node: ^10.9.2
     typescript: ^5.9.3
@@ -3359,7 +3352,6 @@ __metadata:
     react-dom: 18.3.1
     react-native-qrcode-svg: ^6.3.21
     react-native-web: ^0.21.0
-    redux-persist: ^6.0.0
     typescript: ^5.9.3
   peerDependencies:
     react: 18.3.1
@@ -3381,7 +3373,6 @@ __metadata:
     expo-status-bar: ~3.0.9
     react-dom: 18.3.1
     react-native-web: ^0.21.0
-    redux-persist: ^6.0.0
     typescript: ^5.9.3
   peerDependencies:
     react: 18.3.1
@@ -3407,7 +3398,6 @@ __metadata:
     expo-status-bar: ~3.0.9
     react-dom: 18.3.1
     react-native-web: ^0.21.0
-    redux-persist: ^6.0.0
     typescript: ^5.9.3
   peerDependencies:
     react: 18.3.1
@@ -3426,6 +3416,9 @@ __metadata:
     "@impos2/ui-core-admin": "*"
     "@impos2/ui-core-base": "*"
     "@impos2/ui-core-terminal": "*"
+    "@impos2/ui-mixc-activity": "*"
+    "@impos2/ui-mixc-management": "*"
+    "@impos2/ui-mixc-trade": "*"
     "@impos2/ui-mixc-user": "*"
     "@impos2/ui-mixc-workbench": "*"
     "@reduxjs/toolkit": ^2.11.2
@@ -3434,7 +3427,6 @@ __metadata:
     expo-status-bar: ~3.0.9
     react-dom: 18.3.1
     react-native-web: ^0.21.0
-    redux-persist: ^6.0.0
     typescript: ^5.9.3
   peerDependencies:
     react: 18.3.1
@@ -3443,7 +3435,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/ui-mixc-activity@workspace:2-ui/2.2-modules/mixc-activity":
+"@impos2/ui-mixc-activity@*, @impos2/ui-mixc-activity@workspace:2-ui/2.2-modules/mixc-activity":
   version: 0.0.0-use.local
   resolution: "@impos2/ui-mixc-activity@workspace:2-ui/2.2-modules/mixc-activity"
   dependencies:
@@ -3460,7 +3452,6 @@ __metadata:
     expo-status-bar: ~3.0.9
     react-dom: 18.3.1
     react-native-web: ^0.21.0
-    redux-persist: ^6.0.0
     typescript: ^5.9.3
   peerDependencies:
     react: 18.3.1
@@ -3469,7 +3460,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/ui-mixc-management@workspace:2-ui/2.2-modules/mixc-management":
+"@impos2/ui-mixc-management@*, @impos2/ui-mixc-management@workspace:2-ui/2.2-modules/mixc-management":
   version: 0.0.0-use.local
   resolution: "@impos2/ui-mixc-management@workspace:2-ui/2.2-modules/mixc-management"
   dependencies:
@@ -3486,7 +3477,6 @@ __metadata:
     expo-status-bar: ~3.0.9
     react-dom: 18.3.1
     react-native-web: ^0.21.0
-    redux-persist: ^6.0.0
     typescript: ^5.9.3
   peerDependencies:
     react: 18.3.1
@@ -3495,7 +3485,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/ui-mixc-trade@workspace:2-ui/2.2-modules/mixc-trade":
+"@impos2/ui-mixc-trade@*, @impos2/ui-mixc-trade@workspace:2-ui/2.2-modules/mixc-trade":
   version: 0.0.0-use.local
   resolution: "@impos2/ui-mixc-trade@workspace:2-ui/2.2-modules/mixc-trade"
   dependencies:
@@ -3506,13 +3496,13 @@ __metadata:
     "@impos2/kernel-core-terminal": "*"
     "@impos2/kernel-server-config": "*"
     "@impos2/ui-core-base": "*"
+    "@impos2/ui-mixc-workbench": "*"
     "@reduxjs/toolkit": ^2.11.2
     "@types/react": ~18.3.12
     expo: ~54.0.31
     expo-status-bar: ~3.0.9
     react-dom: 18.3.1
     react-native-web: ^0.21.0
-    redux-persist: ^6.0.0
     typescript: ^5.9.3
   peerDependencies:
     react: 18.3.1
@@ -3540,7 +3530,6 @@ __metadata:
     react-dom: 18.3.1
     react-native-qrcode-svg: ^6.3.21
     react-native-web: ^0.21.0
-    redux-persist: ^6.0.0
     typescript: ^5.9.3
   peerDependencies:
     react: 18.3.1
@@ -3568,7 +3557,6 @@ __metadata:
     react-native: 0.76.6
     react-native-web: ^0.21.0
     react-redux: ^9.1.0
-    redux-persist: ^6.0.0
     typescript: ^5.9.3
   languageName: unknown
   linkType: soft

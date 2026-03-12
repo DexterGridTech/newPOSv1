@@ -1,3 +1,3 @@
-export const kernelXXXApis = {
+export const kernel{{PACKAGE_NAME_PASCAL}}Apis = {
 
 };

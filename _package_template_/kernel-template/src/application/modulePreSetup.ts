@@ -1,6 +1,6 @@
 import {ApplicationConfig, AppModule} from "@impos2/kernel-core-base";
 
 
-export const kernelXXXModulePreSetup = async (config: ApplicationConfig, allModules: AppModule[]) => {
+export const kernel{{PACKAGE_NAME_PASCAL}}ModulePreSetup = async (config: ApplicationConfig, allModules: AppModule[]) => {
 
 }

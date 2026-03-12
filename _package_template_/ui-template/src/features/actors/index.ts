@@ -3,6 +3,6 @@ import {createActors} from "@impos2/kernel-core-base";
 import {InitializeActor} from "./initialize";
 
 
-export const uiXXXActors = createActors(moduleName, {
+export const ui{{PACKAGE_NAME_PASCAL}}Actors = createActors(moduleName, {
     initializeActor: InitializeActor,
 });

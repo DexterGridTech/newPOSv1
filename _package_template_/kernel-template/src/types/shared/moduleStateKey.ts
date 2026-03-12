@@ -10,17 +10,17 @@ import {
  * 核心状态常量定义
  * 零依赖，供其他模块使用
  */
-export const kernelXXXState =  createModuleStateKeys(
+export const kernel{{PACKAGE_NAME_PASCAL}}State =  createModuleStateKeys(
     moduleName,
     [
     ] as const
 );
-export const kernelXXXInstanceState= createModuleInstanceModeStateKeys(
+export const kernel{{PACKAGE_NAME_PASCAL}}InstanceState= createModuleInstanceModeStateKeys(
     moduleName,
     [
     ] as const
 )
-export const kernelXXXWorkspaceState = createModuleWorkspaceStateKeys(
+export const kernel{{PACKAGE_NAME_PASCAL}}WorkspaceState = createModuleWorkspaceStateKeys(
     moduleName,
     [
     ] as const

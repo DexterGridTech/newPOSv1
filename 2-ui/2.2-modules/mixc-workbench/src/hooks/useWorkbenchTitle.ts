@@ -1,6 +1,6 @@
-import {useCallback, useMemo, useState} from "react";
+import {useCallback, useMemo} from "react";
 import {useSelector} from "react-redux";
-import {RootState} from "@impos2/kernel-core-base";
+import {RootState, ScreenPart} from "@impos2/kernel-core-base";
 import {kernelCoreTerminalState, TerminalConnectionState} from "@impos2/kernel-core-terminal";
 import {
     getInstanceMode,
@@ -9,16 +9,25 @@ import {
     kernelCoreInterconnectionState,
     ServerConnectionStatus
 } from "@impos2/kernel-core-interconnection";
-
-type TabType = "销售" | "店务" | "活动";
+import {getScreenPartsByContainerKey} from "@impos2/kernel-core-navigation";
+import {kernelCoreNavigationCommands} from "@impos2/kernel-core-navigation";
+import {uiMixcWorkbenchVariables} from "../ui/variables";
+import {useChildScreenPart} from "@impos2/kernel-core-navigation";
 
 type S = RootState & {
     [kernelCoreTerminalState.terminalConnection]: TerminalConnectionState
     [kernelCoreInterconnectionState.instanceInterconnection]: InstanceInterconnectionState
 }
 
+export interface TabItem {
+    partKey: string;
+    title: string;
+    screenPart: ScreenPart<any>;
+}
+
 export const useWorkbenchTitle = () => {
-    const [activeTab, setActiveTab] = useState<TabType>("销售");
+    // 获取当前激活的 ScreenPart
+    const currentScreenPart = useChildScreenPart(uiMixcWorkbenchVariables.workbenchMainContainer);
 
     const terminalConnectionStatus = useSelector((state: RootState) =>
         (state as S)[kernelCoreTerminalState.terminalConnection]?.serverConnectionStatus?.value
@@ -55,31 +64,35 @@ export const useWorkbenchTitle = () => {
         }
     }, [terminalConnectionStatus, instanceInterconnectionStatus]);
 
+    // 动态获取所有 tab
+    const tabs = useMemo<TabItem[]>(() => {
+        const screenParts = getScreenPartsByContainerKey(uiMixcWorkbenchVariables.workbenchMainContainer.key);
+        return screenParts.map(registration => {
+            const {componentType, ...screenPart} = registration;
+            return {
+                partKey: registration.partKey,
+                title: registration.title,
+                screenPart: screenPart
+            };
+        });
+    }, []);
+
     // Tab 切换处理
-    const handleTabChange = useCallback((tab: TabType) => {
-        setActiveTab(tab);
-        // TODO: 实现 Tab 切换的业务逻辑
-        // 例如: dispatch(navigateToTab(tab))
-        console.log(`切换到 Tab: ${tab}`);
+    const handleTabChange = useCallback((tab: TabItem) => {
+        kernelCoreNavigationCommands.navigateTo({target: tab.screenPart}).executeInternally();
     }, []);
 
     // 菜单按钮点击处理
     const handleMenuPress = useCallback(() => {
         // TODO: 实现菜单打开逻辑
-        // 例如: dispatch(openMenu())
         console.log("打开菜单");
     }, []);
 
-    // 获取当前时间
-    const getCurrentTime = useCallback(() => {
-        return new Date();
-    }, []);
-
     return {
-        activeTab,
+        tabs,
+        currentScreenPart,
         serverConnectionStatus,
         handleTabChange,
         handleMenuPress,
-        getCurrentTime,
     };
 };

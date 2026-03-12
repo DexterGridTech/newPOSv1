@@ -14,6 +14,9 @@ import {uiCoreAdminModule} from "@impos2/ui-core-admin";
 import {uiMixcWorkbenchModule} from "@impos2/ui-mixc-workbench";
 import {uiMixcUserModule} from "@impos2/ui-mixc-user";
 import {uiCoreTerminalModule} from "@impos2/ui-core-terminal";
+import {uiMixcTradeModule} from "@impos2/ui-mixc-trade";
+import {uiMixcActivityModule} from "@impos2/ui-mixc-activity";
+import {uiMixcManagementModule} from "@impos2/ui-mixc-management";
 
 export const uiIntegrationMixcRetailModule: AppModule = {
     name: moduleName,
@@ -31,6 +34,9 @@ export const uiIntegrationMixcRetailModule: AppModule = {
         uiCoreTerminalModule,
         uiMixcWorkbenchModule,
         uiMixcUserModule,
+        uiMixcTradeModule,
+        uiMixcActivityModule,
+        uiMixcManagementModule,
     ],
     modulePreSetup: uiIntegrationMixcRetailModulePreSetup,
     screenParts: uiIntegrationMixcRetailScreenParts,

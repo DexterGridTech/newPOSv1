@@ -1,1 +1,1 @@
-export const moduleName = 'kernel.xxx'
+export const moduleName = '{{MODULE_NAME}}'

@@ -2,19 +2,16 @@ import React, {useCallback, useState, useEffect, useMemo} from "react";
 import {useLifecycle} from "@impos2/ui-core-base";
 import {View, Text, TouchableOpacity, StyleSheet} from "react-native";
 import {ServerConnectionStatus} from "@impos2/kernel-core-interconnection";
-
-type TabType = "销售" | "店务" | "活动";
+import {useWorkbenchTitle, TabItem} from "../../hooks/useWorkbenchTitle";
 
 interface WorkbenchTitleProps {
-    onTabChange?: (tab: TabType) => void;
     onMenuPress?: () => void;
-    serverConnectionStatus?: ServerConnectionStatus;
 }
 
 const TabButton = React.memo<{
-    tab: TabType;
+    tab: TabItem;
     isActive: boolean;
-    onPress: (tab: TabType) => void;
+    onPress: (tab: TabItem) => void;
 }>(({tab, isActive, onPress}) => {
     const handlePress = useCallback(() => {
         onPress(tab);
@@ -27,19 +24,17 @@ const TabButton = React.memo<{
             activeOpacity={0.8}
         >
             <Text style={[styles.tabText, isActive && styles.tabTextActive]}>
-                {tab}
+                {tab.title}
             </Text>
         </TouchableOpacity>
     );
 });
 
 export const WorkbenchTitle: React.FC<WorkbenchTitleProps> = React.memo(({
-    onTabChange,
     onMenuPress,
-    serverConnectionStatus = ServerConnectionStatus.DISCONNECTED
 }) => {
-    const [activeTab, setActiveTab] = useState<TabType>("销售");
     const [currentTime, setCurrentTime] = useState("");
+    const {tabs, currentScreenPart, serverConnectionStatus, handleTabChange, handleMenuPress: handleMenuPressInternal} = useWorkbenchTitle();
 
     useLifecycle({
         componentName: 'WorkbenchTitle',
@@ -66,14 +61,10 @@ export const WorkbenchTitle: React.FC<WorkbenchTitleProps> = React.memo(({
         return () => clearInterval(timer);
     }, []);
 
-    const handleTabPress = useCallback((tab: TabType) => {
-        setActiveTab(tab);
-        onTabChange?.(tab);
-    }, [onTabChange]);
-
-    const handleMenuPressInternal = useCallback(() => {
+    const handleMenuPressCallback = useCallback(() => {
         onMenuPress?.();
-    }, [onMenuPress]);
+        handleMenuPressInternal();
+    }, [onMenuPress, handleMenuPressInternal]);
 
     const networkIcon = useMemo(() => {
         const isConnected = serverConnectionStatus === ServerConnectionStatus.CONNECTED;
@@ -92,12 +83,12 @@ export const WorkbenchTitle: React.FC<WorkbenchTitleProps> = React.memo(({
 
             {/* 中间 Tab 区域 */}
             <View style={styles.centerSection}>
-                {(["收单", "店务", "活动"] as TabType[]).map((tab) => (
+                {tabs.map((tab) => (
                     <TabButton
-                        key={tab}
+                        key={tab.partKey}
                         tab={tab}
-                        isActive={activeTab === tab}
-                        onPress={handleTabPress}
+                        isActive={currentScreenPart.partKey === tab.partKey}
+                        onPress={handleTabChange}
                     />
                 ))}
             </View>
@@ -114,7 +105,7 @@ export const WorkbenchTitle: React.FC<WorkbenchTitleProps> = React.memo(({
 
                 <TouchableOpacity
                     style={styles.menuButton}
-                    onPress={handleMenuPressInternal}
+                    onPress={handleMenuPressCallback}
                     activeOpacity={0.7}
                 >
                     <Text style={styles.menuIcon}>⋯</Text>

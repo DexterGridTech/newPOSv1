@@ -1,1 +1,1 @@
-export const kernelXXXEpics = {}
+export const kernel{{PACKAGE_NAME_PASCAL}}Epics = {}

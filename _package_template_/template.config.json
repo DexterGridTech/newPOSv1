@@ -1,0 +1,43 @@
+{
+  "variables": {
+    "PACKAGE_NAME": {
+      "description": "包名 (kebab-case)",
+      "example": "mixc-payment"
+    },
+    "PACKAGE_NAME_PASCAL": {
+      "description": "包名 (PascalCase)",
+      "example": "MixcPayment",
+      "transform": "kebabToPascal"
+    },
+    "PACKAGE_NAME_DOT": {
+      "description": "包名 (dot.case)",
+      "example": "mixc.payment",
+      "transform": "kebabToDot"
+    },
+    "PACKAGE_FULL_NAME": {
+      "description": "完整包名",
+      "example": "@impos2/kernel-mixc-payment",
+      "template": "@impos2/{{PACKAGE_TYPE}}-{{PACKAGE_NAME}}"
+    },
+    "MODULE_NAME": {
+      "description": "模块名",
+      "example": "kernel.mixc.payment",
+      "template": "{{PACKAGE_TYPE}}.{{PACKAGE_NAME_DOT}}"
+    },
+    "PACKAGE_DESCRIPTION": {
+      "description": "包描述",
+      "example": "POS Kernel MixcPayment Module",
+      "template": "POS {{PACKAGE_TYPE_DISPLAY}} {{PACKAGE_NAME_PASCAL}} Module"
+    }
+  },
+  "types": {
+    "kernel": {
+      "PACKAGE_TYPE": "kernel",
+      "PACKAGE_TYPE_DISPLAY": "Kernel"
+    },
+    "ui": {
+      "PACKAGE_TYPE": "ui",
+      "PACKAGE_TYPE_DISPLAY": "UI"
+    }
+  }
+}

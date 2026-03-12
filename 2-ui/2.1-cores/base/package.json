@@ -27,8 +27,7 @@
     "@impos2/kernel-core-base": "*",
     "@impos2/kernel-core-interconnection": "*",
     "@impos2/kernel-core-navigation": "*",
-    "@reduxjs/toolkit": "^2.11.2",
-    "redux-persist": "^6.0.0"
+    "@reduxjs/toolkit": "^2.11.2"
   },
   "peerDependencies": {
     "react": "18.3.1",

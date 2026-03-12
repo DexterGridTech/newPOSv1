@@ -1,4 +1,6 @@
-import {UiVariable} from "@impos2/kernel-core-navigation";
+import {mpMainScreenPart, spMainScreenPart} from "../screens/MainScreen";
 
-export const uiMixcActivityVariables:Record<string, UiVariable<any>> = {
+export const uiMixcActivityVariables = {
+    mpMainScreen: mpMainScreenPart,
+    spMainScreen: spMainScreenPart
 }

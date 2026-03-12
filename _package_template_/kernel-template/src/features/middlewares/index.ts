@@ -1,3 +1,3 @@
 import {Middleware} from "@reduxjs/toolkit";
 
-export const kernelXXXMiddlewares = {}
+export const kernel{{PACKAGE_NAME_PASCAL}}Middlewares = {}
