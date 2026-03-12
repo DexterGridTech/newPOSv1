@@ -12,6 +12,7 @@ export const kernelCoreInterconnectionState = createModuleStateKeys(
     [
         'instanceInfo',
         'instanceInterconnection',
+        'slaveStatus',
     ] as const
 );
 

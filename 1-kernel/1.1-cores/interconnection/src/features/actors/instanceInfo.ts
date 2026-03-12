@@ -3,6 +3,8 @@ import {kernelCoreInterconnectionCommands} from "../commands";
 import {instanceInfoActions} from "../slices/instanceInfo";
 import {DisplayMode, InstanceMode} from "../../types";
 import {powerStatusChangeListener} from "./initialize";
+import {getInstanceMode, getWorkspace} from "../../foundations";
+import {slaveStatusActions} from "../slices/slaveStatus";
 
 
 export class InstanceInfoActor extends Actor {
@@ -24,11 +26,21 @@ export class InstanceInfoActor extends Actor {
     setDisplayToPrimary = Actor.defineCommandHandler(kernelCoreInterconnectionCommands.setDisplayToPrimary,
         async (command): Promise<Record<string, any>> => {
             storeEntry.dispatchAction(instanceInfoActions.setDisplayMode(DisplayMode.PRIMARY))
+            if(getInstanceMode()===InstanceMode.SLAVE){
+                const workspace=getWorkspace()
+                storeEntry.dispatchAction(slaveStatusActions.setDisplayMode(DisplayMode.PRIMARY))
+                storeEntry.dispatchAction(slaveStatusActions.setWorkspace(workspace))
+            }
             return {};
         })
     setDisplayToSecondary = Actor.defineCommandHandler(kernelCoreInterconnectionCommands.setDisplayToSecondary,
         async (command): Promise<Record<string, any>> => {
             storeEntry.dispatchAction(instanceInfoActions.setDisplayMode(DisplayMode.SECONDARY))
+            if(getInstanceMode()===InstanceMode.SLAVE){
+                const workspace=getWorkspace()
+                storeEntry.dispatchAction(slaveStatusActions.setDisplayMode(DisplayMode.PRIMARY))
+                storeEntry.dispatchAction(slaveStatusActions.setWorkspace(workspace))
+            }
             return {};
         })
     setEnableSlave = Actor.defineCommandHandler(kernelCoreInterconnectionCommands.setEnableSlave,
