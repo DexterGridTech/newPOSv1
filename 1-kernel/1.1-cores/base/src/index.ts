@@ -28,6 +28,7 @@ export * from "./types";
 export * from "./foundations";
 export * from "./supports";
 export * from "./hooks";
+export * from "./selectors";
 export * from "./application/types";
 export * from "./application/applicationManager";
 export * from "./application/initLogger";

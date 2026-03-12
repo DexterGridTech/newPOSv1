@@ -1,6 +1,7 @@
 // @ts-ignore
 import {ApplicationConfig, ApplicationManager, ScreenMode} from "@impos2/kernel-core-base";
 import {uiXXXModule} from "../src";
+import {devServerSpace} from "@impos2/kernel-server-config";
 
 const appConfig: ApplicationConfig = {
     environment: {
@@ -12,6 +13,7 @@ const appConfig: ApplicationConfig = {
     },
     preInitiatedState: {},
     module: uiXXXModule,
+    serverSpace:devServerSpace,
 }
 // 导出 Promise 供 App 组件等待
 export const storePromise = ApplicationManager.getInstance().generateStore(appConfig).then(result => {

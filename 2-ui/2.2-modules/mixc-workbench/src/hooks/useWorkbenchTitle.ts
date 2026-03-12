@@ -10,7 +10,7 @@ import {
     ServerConnectionStatus
 } from "@impos2/kernel-core-interconnection";
 
-type TabType = "收单" | "店务" | "活动";
+type TabType = "销售" | "店务" | "活动";
 
 type S = RootState & {
     [kernelCoreTerminalState.terminalConnection]: TerminalConnectionState
@@ -18,7 +18,7 @@ type S = RootState & {
 }
 
 export const useWorkbenchTitle = () => {
-    const [activeTab, setActiveTab] = useState<TabType>("收单");
+    const [activeTab, setActiveTab] = useState<TabType>("销售");
 
     const terminalConnectionStatus = useSelector((state: RootState) =>
         (state as S)[kernelCoreTerminalState.terminalConnection]?.serverConnectionStatus?.value

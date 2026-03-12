@@ -3,7 +3,7 @@ import {useLifecycle} from "@impos2/ui-core-base";
 import {View, Text, TouchableOpacity, StyleSheet} from "react-native";
 import {ServerConnectionStatus} from "@impos2/kernel-core-interconnection";
 
-type TabType = "收单" | "店务" | "活动";
+type TabType = "销售" | "店务" | "活动";
 
 interface WorkbenchTitleProps {
     onTabChange?: (tab: TabType) => void;
@@ -38,7 +38,7 @@ export const WorkbenchTitle: React.FC<WorkbenchTitleProps> = React.memo(({
     onMenuPress,
     serverConnectionStatus = ServerConnectionStatus.DISCONNECTED
 }) => {
-    const [activeTab, setActiveTab] = useState<TabType>("收单");
+    const [activeTab, setActiveTab] = useState<TabType>("销售");
     const [currentTime, setCurrentTime] = useState("");
 
     useLifecycle({
