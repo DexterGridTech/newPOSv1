@@ -23,6 +23,10 @@ export interface ProductOrderBase {
     mainOrderCode: string
     subOrderCode: string
     productOrderCode: string
+    productCode: string
+    productName: string
+    price: number
+    quantity: number
     amount: number
     extra: Record<string, any>
 }

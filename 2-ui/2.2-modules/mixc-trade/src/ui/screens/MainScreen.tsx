@@ -1,9 +1,11 @@
 import React, {useCallback} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import {useLifecycle} from "@impos2/ui-core-base";
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {StackContainer, useLifecycle} from "@impos2/ui-core-base";
 import {ScreenMode, ScreenPartRegistration} from "@impos2/kernel-core-base";
 import {InstanceMode, Workspace} from "@impos2/kernel-core-interconnection";
 import {uiMixcWorkbenchVariables} from "@impos2/ui-mixc-workbench";
+import {uiMixcTradeVariables} from "../variables";
+import {CreateOrderButton} from "../components";
 
 // ─── Design Tokens ───────────────────────────────────────────────────────────
 const C = {
@@ -29,7 +31,19 @@ export const MainScreen: React.FC = () => {
 
     return (
         <View style={s.root}>
-            <Text>销售页面</Text>
+            <View id='trade-menu-container' style={s.menuContainer}>
+                <CreateOrderButton />
+                <ScrollView
+                    style={s.menuScroll}
+                    contentContainerStyle={s.menuScrollContent}
+                    showsVerticalScrollIndicator={false}
+                >
+
+                    <Text>销售菜单</Text>
+                </ScrollView>
+            </View>
+            <StackContainer containerPart={uiMixcTradeVariables.mixcTradePanelContainer}>
+            </StackContainer>
         </View>
     );
 };
@@ -38,9 +52,20 @@ export const MainScreen: React.FC = () => {
 const s = StyleSheet.create({
     root: {
         flex: 1,
+        flexDirection: 'row',
         backgroundColor: C.bg,
-        justifyContent: 'center',
-        alignItems: 'center',
+    },
+    menuContainer: {
+        width: 230,
+        backgroundColor: C.surface,
+        borderRightWidth: 1,
+        borderRightColor: C.border,
+    },
+    menuScroll: {
+        flex: 1,
+    },
+    menuScrollContent: {
+        flexGrow: 1,
     },
 });
 

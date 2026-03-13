@@ -13,6 +13,7 @@ import {uiMixcTradeScreenParts} from "./ui";
 import {kernelMixcProductModule} from "@impos2/kernel-mixc-product";
 import {kernelMixcOrderBaseModule} from "@impos2/kernel-mixc-order-base";
 import {uiMixcWorkbenchModule} from "@impos2/ui-mixc-workbench";
+import {kernelMixcOrderCreateTraditionalModule} from "@impos2/kernel-mixc-order-create-traditional";
 
 export const uiMixcTradeModule: AppModule = {
     name: moduleName,
@@ -28,6 +29,7 @@ export const uiMixcTradeModule: AppModule = {
         kernelCoreNavigationModule,
         kernelMixcProductModule,
         kernelMixcOrderBaseModule,
+        kernelMixcOrderCreateTraditionalModule,
         uiMixcWorkbenchModule,
     ],
     modulePreSetup: uiMixcTradeModulePreSetup,

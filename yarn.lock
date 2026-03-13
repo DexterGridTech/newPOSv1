@@ -3202,7 +3202,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/kernel-mixc-order-base@workspace:1-kernel/1.2-modules/mixc-order-base":
+"@impos2/kernel-mixc-order-base@*, @impos2/kernel-mixc-order-base@workspace:1-kernel/1.2-modules/mixc-order-base":
   version: 0.0.0-use.local
   resolution: "@impos2/kernel-mixc-order-base@workspace:1-kernel/1.2-modules/mixc-order-base"
   dependencies:
@@ -3215,6 +3215,26 @@ __metadata:
     "@types/node": ^25.0.9
     axios: ^1.13.5
     date-fns: ^4.1.0
+    madge: ^8.0.0
+    redux-observable: ^3.0.0-rc.3
+    rxjs: ^7.8.2
+    ts-node: ^10.9.2
+    typescript: ^5.9.3
+  languageName: unknown
+  linkType: soft
+
+"@impos2/kernel-mixc-order-create-traditional@workspace:1-kernel/1.2-modules/mixc-order-create-traditional":
+  version: 0.0.0-use.local
+  resolution: "@impos2/kernel-mixc-order-create-traditional@workspace:1-kernel/1.2-modules/mixc-order-create-traditional"
+  dependencies:
+    "@impos2/kernel-core-base": "*"
+    "@impos2/kernel-core-interconnection": "*"
+    "@impos2/kernel-core-navigation": "*"
+    "@impos2/kernel-core-task": "*"
+    "@impos2/kernel-core-terminal": "*"
+    "@impos2/kernel-mixc-order-base": "*"
+    "@reduxjs/toolkit": ^2.11.2
+    "@types/node": ^25.0.9
     madge: ^8.0.0
     redux-observable: ^3.0.0-rc.3
     rxjs: ^7.8.2
