@@ -47,9 +47,9 @@ export const powerStatusChangeListener = (event: PowerStatusChangeEvent) => {
     const displayMode=getDisplayMode()
     if(standalone&&instanceMode===InstanceMode.SLAVE){
         if(event.powerConnected&&displayMode===DisplayMode.PRIMARY){
-            kernelCoreInterconnectionCommands.setDisplayToSecondary().executeInternally()
+            kernelCoreInterconnectionCommands.shouldSwitchToSecondaryDisplay().executeInternally()
         }else if (!event.powerConnected&&displayMode===DisplayMode.SECONDARY){
-            kernelCoreInterconnectionCommands.setDisplayToPrimary().executeInternally()
+            kernelCoreInterconnectionCommands.shouldSwitchToPrimaryDisplay().executeInternally()
         }
     }
 }

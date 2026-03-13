@@ -3,6 +3,8 @@ import {moduleName} from "../../moduleName";
 import {MasterInfo, Workspace} from "../../types";
 
 export const kernelCoreInterconnectionCommands = createModuleCommands(moduleName, {
+    shouldSwitchToPrimaryDisplay: defineCommand<void>(),
+    shouldSwitchToSecondaryDisplay: defineCommand<void>(),
     //instance 管理
     setInstanceToMaster: defineCommand<void>(),
     setInstanceToSlave: defineCommand<void>(),

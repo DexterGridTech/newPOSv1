@@ -5,5 +5,5 @@ import {ssWelComeScreenPart} from "../ui";
 
 export const uiIntegrationMixcRetailModulePreSetup = async (config: ApplicationConfig, allModules: AppModule[]) => {
     //替换默认welcome screen
-    uiCoreBaseScreenParts.ssWelComeScreen=ssWelComeScreenPart
+    uiCoreBaseScreenParts.ssWelComeScreen = ssWelComeScreenPart;
 }
