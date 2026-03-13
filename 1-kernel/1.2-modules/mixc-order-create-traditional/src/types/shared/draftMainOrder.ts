@@ -4,4 +4,5 @@ export interface DraftProductOrder extends Partial<ProductOrderBase>{
     id:string
     selected:boolean
     displayName:string
+    valueStr:string
 }

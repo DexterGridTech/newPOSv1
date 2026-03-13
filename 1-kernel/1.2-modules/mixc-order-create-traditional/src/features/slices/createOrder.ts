@@ -9,72 +9,80 @@ import {batchUpdateState, shortId} from "@impos2/kernel-core-base";
 import {CreateOrderState} from "../../types/state/createOrderState";
 import {PayloadAction} from "@reduxjs/toolkit";
 import {Product} from "@impos2/kernel-mixc-product";
+import {updateValueStr} from "@impos2/kernel-mixc-order-base";
 
-const initialState: CreateOrderState = {
-    draftProductOrders: {
-        value: [],
-        updatedAt: 0
-    },
-    draftOrderAmount: {
-        value: 0,
-        updatedAt: 0
-    },
-}
+const initialState: CreateOrderState = {}
 const slice = createWorkspaceSlice(
     kernelMixcOrderCreateTraditionalWorkspaceState.createOrder,
     initialState,
     {
-        addProductOrder: (state, action:PayloadAction<Product>) => {
-            state.draftProductOrders.value.forEach(item => {
-                if(item.selected){
-                    item.selected = false
+        addProductOrder: (state, action: PayloadAction<Product>) => {
+            Object.keys(state).forEach(id => {
+                if (state[id].value.selected) {
+                    state[id].value.selected = false
+                    state[id].updatedAt = Date.now()
                 }
             })
-            state.draftProductOrders.value.push({
-                id:shortId(),
-                productCode: action.payload.productCode,
-                productName: action.payload.productName,
-                displayName: action.payload.displayName,
-                quantity: 1,
-                price:0,
-                amount:0,
-                selected: true,
-            })
-            state.draftProductOrders.updatedAt = Date.now()
+            const id = shortId()
+            state[id] = {
+                value: {
+                    id,
+                    productCode: action.payload.productCode,
+                    productName: action.payload.productName,
+                    displayName: action.payload.displayName,
+                    quantity: 1,
+                    price: 0,
+                    valueStr: '0',
+                    amount: 0,
+                    selected: true,
+                },
+                updatedAt: Date.now()
+            }
         },
-        selectProductOrder: (state, action:PayloadAction<{id:string}>) => {
-            state.draftProductOrders.value.forEach(item => {
-                if(item.id === action.payload.id){
-                    item.selected = !item.selected
-                }else {
-                    item.selected = false
+        selectProductOrder: (state, action: PayloadAction<{ id: string }>) => {
+            const targetId = action.payload.id
+            const now = Date.now()
+
+            Object.keys(state).forEach(id => {
+                const item = state[id]
+                const isTarget = id === targetId
+                const shouldSelect = isTarget && !item.value.selected
+
+                if (item.value.selected || isTarget) {
+                    item.value.selected = shouldSelect
+                    item.value.price = shouldSelect ? item.value.price : Number(item.value.valueStr)
+                    item.value.valueStr = shouldSelect ? item.value.price!.toString() : item.value.valueStr
+                    item.value.amount = shouldSelect ? item.value.amount : item.value.price! * item.value.quantity!
+                    item.updatedAt = now
                 }
             })
-            state.draftProductOrders.updatedAt = Date.now()
         },
-        removeProductOrder: (state, action:PayloadAction<{id:string}>) => {
-            state.draftProductOrders.value = state.draftProductOrders.value.filter(item => item.id !== action.payload.id)
-            state.draftProductOrders.updatedAt = Date.now()
+        removeProductOrder: (state, action: PayloadAction<{ id: string }>) => {
+            delete state[action.payload.id]
         },
-        increaseProductOrderQuantity: (state, action:PayloadAction<{id:string}>) => {
-            state.draftProductOrders.value.forEach(item => {
-                if(item.id === action.payload.id){
-                    item.quantity! += 1
-                }
-            })
-            state.draftProductOrders.updatedAt = Date.now()
+        increaseProductOrderQuantity: (state, action: PayloadAction<{ id: string }>) => {
+            const item = state[action.payload.id]
+            if (item && item.value.quantity! < 99) {
+                item.value.quantity! += 1
+                item.value.amount = item.value.price! * item.value.quantity!
+                item.updatedAt = Date.now()
+            }
         },
-        decreaseProductOrderQuantity: (state, action:PayloadAction<{id:string}>) => {
-            state.draftProductOrders.value.forEach(item => {
-                if(item.id === action.payload.id){
-                    item.quantity! -= 1
-                }
-            })
-            state.draftProductOrders.updatedAt = Date.now()
+        decreaseProductOrderQuantity: (state, action: PayloadAction<{ id: string }>) => {
+            const item = state[action.payload.id]
+            if (item && item.value.quantity! > 1) {
+                item.value.quantity! -= 1
+                item.value.amount = item.value.price! * item.value.quantity!
+                item.updatedAt = Date.now()
+            }
         },
-        clear:(state,action) => {
-            state.draftProductOrders = {value: [], updatedAt: Date.now()}
-            state.draftOrderAmount = {value: 0, updatedAt: Date.now()}
+        clear: () => ({}),
+        setValueStr: (state, action: PayloadAction<{ id: string, char: string }>) => {
+            const item = state[action.payload.id]
+            if (!item) return
+
+            item.value.valueStr = updateValueStr(item.value.valueStr || '0', action.payload.char)
+            item.updatedAt = Date.now()
         },
         batchUpdateState: (state, action) => {
             // logger.log([moduleName, LOG_TAGS.Reducer, "uiVariables"], 'batchUpdateState',action.payload)
