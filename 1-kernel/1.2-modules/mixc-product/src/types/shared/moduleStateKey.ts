@@ -19,7 +19,7 @@ export const kernelMixcProductState =  createModuleStateKeys(
 );
 export const kernelMixcProductUnitDataState = createUnitDataStateKeys(
     [
-        'contract',
+        'unitData_contract',
     ] as const
 );
 export const kernelMixcProductInstanceState= createModuleInstanceModeStateKeys(

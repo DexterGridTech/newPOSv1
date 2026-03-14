@@ -10,8 +10,8 @@ import {kernelMixcUserCommands} from "../commands";
 export class UnitDataActor extends Actor {
     unitDataChanged = Actor.defineCommandHandler(kernelCoreTerminalCommands.unitDataChanged,
         async (command): Promise<Record<string, any>> => {
-            if (command.payload.changeSet.group === kernelMixcUserUnitDataState.user) {
-                const userState = storeEntry.getStateByKey(kernelMixcUserUnitDataState.user)
+            if (command.payload.changeSet.group === kernelMixcUserUnitDataState.unitData_user) {
+                const userState = storeEntry.getStateByKey(kernelMixcUserUnitDataState.unitData_user)
                 const terminalState = storeEntry.getStateByKey(kernelCoreTerminalState.terminal)
                 const operatingEntity = terminalState.operatingEntity?.value!
                 const model = terminalState.model?.value!

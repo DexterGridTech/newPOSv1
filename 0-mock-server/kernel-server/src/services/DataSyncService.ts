@@ -76,7 +76,7 @@ export class DataSyncService {
   /**
    * 获取设备相关的所有单元数据
    */
-  private getDeviceRelatedUnitData(deviceId: string, groupKey?: string): UnitData[] {
+  private getDeviceRelatedUnitData(deviceId: string, group?: string): UnitData[] {
     const device = this.deviceRepository.findById(deviceId);
     if (!device) {
       throw new Error('Device not found');
@@ -106,7 +106,7 @@ export class DataSyncService {
     }
 
     // 查询这些单元下的所有单元数据
-    return this.unitDataRepository.findDataByUnitIds(relatedUnitIds, groupKey);
+    return this.unitDataRepository.findDataByUnitIds(relatedUnitIds, group);
   }
 
   /**
@@ -141,10 +141,10 @@ export class DataSyncService {
             deleted: changeType === 'delete' ? [unitDataId] : []
           };
 
-          // 获取 groupKey，如果是删除操作则使用空字符串
-          const groupKey = unitData?.groupKey || '';
+          // 获取 group，如果是删除操作则使用空字符串
+          const group = unitData?.group || '';
 
-          const success = await wsService.pushUnitDataChange(device.id, groupKey, message.updated, message.deleted);
+          const success = await wsService.pushUnitDataChange(device.id, group, message.updated, message.deleted);
           if (success) pushedCount++;
         }
       });
@@ -153,6 +153,17 @@ export class DataSyncService {
     } catch (error) {
       console.error(`[DataSync] Error pushing unit data change for ${unitDataId}:`, error);
     }
+  }
+
+  /**
+   * 通知单元数据变更（简化接口）
+   */
+  notifyUnitDataChanged(group: string, unitId: string): void {
+    // 查找该 unit 下该 group 的所有数据
+    const dataList = this.unitDataRepository.findDataByUnitIds([unitId], group);
+    dataList.forEach(data => {
+      this.onUnitDataChanged(data.id, 'update');
+    });
   }
 
   /**

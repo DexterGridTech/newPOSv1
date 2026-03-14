@@ -3,5 +3,7 @@ import {DraftProductOrder} from "../shared/draftMainOrder";
 
 
 export interface CreateOrderState {
-    [id: string]: ValueWithUpdatedAt<DraftProductOrder>
+    draftProductOrders: ValueWithUpdatedAt<DraftProductOrder[]>
+    selected: ValueWithUpdatedAt<string|null>
+    total: ValueWithUpdatedAt<number>
 }

@@ -1,7 +1,7 @@
 import {kernelCoreBaseState} from "../types/shared/moduleStateKey";
 import  {KeyValue} from "../types/foundations/keyValue";
 
-const allSystemParameters: Record<string, any> = {};
+const allSystemParameters: Record<string, DefinedSystemParameter<any>> = {};
 export const registerModuleSystemParameter = (_moduleName: string, systemParameters: DefinedSystemParameter<any>[]) => {
     systemParameters.forEach(systemParameter => {
         if (Object.keys(allSystemParameters).indexOf(systemParameter.key) != -1) {

@@ -3233,6 +3233,7 @@ __metadata:
     "@impos2/kernel-core-task": "*"
     "@impos2/kernel-core-terminal": "*"
     "@impos2/kernel-mixc-order-base": "*"
+    "@impos2/kernel-mixc-product": "*"
     "@reduxjs/toolkit": ^2.11.2
     "@types/node": ^25.0.9
     madge: ^8.0.0
@@ -3243,7 +3244,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/kernel-mixc-product@workspace:1-kernel/1.2-modules/mixc-product":
+"@impos2/kernel-mixc-product@*, @impos2/kernel-mixc-product@workspace:1-kernel/1.2-modules/mixc-product":
   version: 0.0.0-use.local
   resolution: "@impos2/kernel-mixc-product@workspace:1-kernel/1.2-modules/mixc-product"
   dependencies:

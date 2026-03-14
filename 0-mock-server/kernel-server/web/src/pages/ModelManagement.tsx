@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import { TreeView, TreeNode, Modal, StatusLight, JsonTooltip, DetailCard } from '../components/common';
-import { Unit, UnitDataTemplate, UnitData, UnitDataItem } from '../types';
+import { Unit, UnitData } from '../types';
 
 /**
  * 机型管理页面
@@ -12,16 +12,12 @@ export function ModelManagement() {
   const [models, setModels] = useState<Unit[]>([]);
   const [selectedNode, setSelectedNode] = useState<TreeNode | null>(null);
   const [selectedModel, setSelectedModel] = useState<Unit | null>(null);
-  const [templates, setTemplates] = useState<UnitDataTemplate[]>([]);
-  const [templateData, setTemplateData] = useState<Record<string, UnitData[]>>({});
-  const [expandedTemplates, setExpandedTemplates] = useState<Set<string>>(new Set());
+  const [unitData, setUnitData] = useState<UnitData[]>([]);
 
   // Modal states
   const [showModelModal, setShowModelModal] = useState(false);
-  const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [showDataModal, setShowDataModal] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
-  const [currentTemplateId, setCurrentTemplateId] = useState<string>('');
 
   useEffect(() => {
     loadModels();
@@ -29,7 +25,7 @@ export function ModelManagement() {
 
   useEffect(() => {
     if (selectedModel) {
-      loadTemplates(selectedModel.id);
+      loadUnitData(selectedModel.id);
     }
   }, [selectedModel]);
 
@@ -42,24 +38,12 @@ export function ModelManagement() {
     }
   };
 
-  const loadTemplates = async (unitId: string) => {
+  const loadUnitData = async (unitId: string) => {
     try {
-      const data = await api.getUnitTemplates(unitId);
-      setTemplates(data);
-      for (const template of data) {
-        loadTemplateData(template.id);
-      }
+      const data = await api.getUnitData(unitId);
+      setUnitData(data);
     } catch (error) {
-      console.error('加载模板失败:', error);
-    }
-  };
-
-  const loadTemplateData = async (templateId: string) => {
-    try {
-      const data = await api.getTemplateData(templateId);
-      setTemplateData((prev) => ({ ...prev, [templateId]: data }));
-    } catch (error) {
-      console.error('加载模板数据失败:', error);
+      console.error('加载单元数据失败:', error);
     }
   };
 
@@ -123,86 +107,36 @@ export function ModelManagement() {
   };
 
   // Template CRUD
-  const handleCreateTemplate = () => {
-    setEditingItem(null);
-    setShowTemplateModal(true);
-  };
-
-  const handleDeleteTemplate = async (id: string) => {
-    if (!confirm('确定要删除此模板吗?这将删除模板下的所有数据。')) return;
-    try {
-      await api.deleteUnitTemplate(id);
-      if (selectedModel) {
-        loadTemplates(selectedModel.id);
-      }
-    } catch (error: any) {
-      alert(error.message || '删除失败');
-    }
-  };
-
-  const handleSaveTemplate = async (formData: any) => {
-    if (!selectedModel) return;
-    try {
-      if (editingItem) {
-        await api.updateUnitTemplate(editingItem.id, formData);
-      } else {
-        // 添加unitType字段,机型的unitType为'model'
-        await api.createUnitTemplate(selectedModel.id, { ...formData, unitType: 'model' });
-      }
-      setShowTemplateModal(false);
-      loadTemplates(selectedModel.id);
-    } catch (error: any) {
-      alert(error.message || '保存失败');
-    }
-  };
-
-  // UnitData CRUD
-  const handleCreateData = (templateId: string) => {
-    setCurrentTemplateId(templateId);
+  const handleCreateData = () => {
     setEditingItem(null);
     setShowDataModal(true);
   };
 
-  const handleEditData = (data: UnitData, templateId: string) => {
-    setCurrentTemplateId(templateId);
-    setEditingItem(data);
-    setShowDataModal(true);
-  };
-
-  const handleDeleteData = async (id: string, templateId: string) => {
+  const handleDeleteData = async (id: string) => {
     if (!confirm('确定要删除此数据吗?')) return;
     try {
       await api.deleteUnitData(id);
-      loadTemplateData(templateId);
+      if (selectedModel) {
+        loadUnitData(selectedModel.id);
+      }
     } catch (error: any) {
       alert(error.message || '删除失败');
     }
   };
 
   const handleSaveData = async (formData: any) => {
+    if (!selectedModel) return;
     try {
       if (editingItem) {
         await api.updateUnitData(editingItem.id, formData);
       } else {
-        await api.createUnitData(currentTemplateId, formData);
+        await api.createUnitData(selectedModel.id, { ...formData, unitType: 'MODEL' });
       }
       setShowDataModal(false);
-      loadTemplateData(currentTemplateId);
+      loadUnitData(selectedModel.id);
     } catch (error: any) {
       alert(error.message || '保存失败');
     }
-  };
-
-  const toggleTemplate = (templateId: string) => {
-    setExpandedTemplates((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(templateId)) {
-        newSet.delete(templateId);
-      } else {
-        newSet.add(templateId);
-      }
-      return newSet;
-    });
   };
 
   return (
@@ -271,95 +205,45 @@ export function ModelManagement() {
               <div className="flex justify-between items-center mb-4">
                 <h4 className="font-medium text-gray-900">单元数据</h4>
                 <button
-                  onClick={handleCreateTemplate}
+                  onClick={handleCreateData}
                   className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
                 >
-                  新建模板
+                  新建数据
                 </button>
               </div>
 
               <div className="space-y-2">
-                {templates.map((template) => {
-                  const isExpanded = expandedTemplates.has(template.id);
-                  const data = templateData[template.id] || [];
-                  return (
-                    <div key={template.id} className="border border-gray-200 rounded">
-                      <div
-                        className="flex justify-between items-center p-3 cursor-pointer hover:bg-gray-50"
-                        onClick={() => toggleTemplate(template.id)}
-                      >
-                        <div className="flex items-center gap-2">
-                          <svg
-                            className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                          <span className="font-medium">{template.name}</span>
-                          <StatusLight status={template.valid} size="sm" />
-                        </div>
-                        <div className="flex gap-2">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleCreateData(template.id);
-                            }}
-                            className="text-blue-600 text-sm hover:text-blue-900"
-                          >
-                            添加数据
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteTemplate(template.id);
-                            }}
-                            className="text-red-600 text-sm hover:text-red-900"
-                          >
-                            删除模板
-                          </button>
-                        </div>
+                {unitData.length > 0 ? (
+                  unitData.map((item) => (
+                    <div key={item.id} className="flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-200">
+                      <div className="flex items-center gap-3 flex-1">
+                        <span className="font-mono text-xs bg-gray-200 px-2 py-1 rounded">[{item.group}]</span>
+                        <span className="font-medium">{item.name}</span>
+                        <span className="text-sm text-gray-600">{item.path}</span>
+                        <JsonTooltip data={item.value} />
                       </div>
-
-                      {isExpanded && (
-                        <div className="border-t border-gray-200 p-3 bg-gray-50">
-                          {data.length > 0 ? (
-                            <div className="space-y-2">
-                              {data.map((item) => (
-                                <div key={item.id} className="flex justify-between items-center p-2 bg-white rounded text-sm">
-                                  <div className="flex items-center gap-3 flex-1">
-                                    <span className="font-mono text-xs bg-gray-100 px-2 py-1 rounded">[{item.groupKey}]</span>
-                                    <span className="font-medium">{item.name}</span>
-                                    <StatusLight status={true} size="sm" />
-                                    <JsonTooltip data={item.value} />
-                                  </div>
-                                  <div className="flex gap-2">
-                                    <button
-                                      onClick={() => handleEditData(item, template.id)}
-                                      className="text-blue-600 hover:text-blue-900"
-                                    >
-                                      编辑
-                                    </button>
-                                    <button
-                                      onClick={() => handleDeleteData(item.id, template.id)}
-                                      className="text-red-600 hover:text-red-900"
-                                    >
-                                      删除
-                                    </button>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          ) : (
-                            <p className="text-center text-gray-500 py-4">暂无数据</p>
-                          )}
-                        </div>
-                      )}
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => {
+                            setEditingItem(item);
+                            setShowDataModal(true);
+                          }}
+                          className="text-blue-600 hover:text-blue-900 text-sm"
+                        >
+                          编辑
+                        </button>
+                        <button
+                          onClick={() => handleDeleteData(item.id)}
+                          className="text-red-600 hover:text-red-900 text-sm"
+                        >
+                          删除
+                        </button>
+                      </div>
                     </div>
-                  );
-                })}
-                {templates.length === 0 && <p className="text-center text-gray-500 py-8">暂无模板</p>}
+                  ))
+                ) : (
+                  <p className="text-center text-gray-500 py-8">暂无数据</p>
+                )}
               </div>
             </div>
           </>
@@ -371,24 +255,27 @@ export function ModelManagement() {
       </div>
 
       {/* Modals */}
-      {showModelModal && <ModelModal onClose={() => setShowModelModal(false)} onSave={handleSaveModel} model={editingItem} models={models} />}
-      {showTemplateModal && <TemplateModal onClose={() => setShowTemplateModal(false)} onSave={handleSaveTemplate} template={editingItem} />}
-      {showDataModal && <UnitDataModal onClose={() => setShowDataModal(false)} onSave={handleSaveData} data={editingItem} />}
+      {showModelModal && <ModelModal onClose={() => setShowModelModal(false)} onSave={handleSaveModel} model={editingItem} models={models} defaultParentId={selectedModel?.id || null} />}
+      {showDataModal && <UnitDataModal onClose={() => setShowDataModal(false)} onSave={handleSaveData} data={editingItem} unitId={selectedModel?.id} unitType="MODEL" />}
     </div>
   );
 }
 
 // Model Modal Component
-function ModelModal({ onClose, onSave, model, models }: any) {
+function ModelModal({ onClose, onSave, model, models, defaultParentId }: any) {
   const [formData, setFormData] = useState({
     name: model?.name || '',
     key: model?.key || '',
-    parentId: model?.parentId || '',
+    parentId: model?.parentId || defaultParentId || '',
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
+    const submitData = {
+      ...formData,
+      parentId: formData.parentId || null
+    };
+    onSave(submitData);
   };
 
   return (
@@ -442,95 +329,16 @@ function ModelModal({ onClose, onSave, model, models }: any) {
   );
 }
 
-// Template Modal Component
-function TemplateModal({ onClose, onSave, template }: any) {
-  const [formData, setFormData] = useState({
-    name: template?.name || '',
-    valid: template?.valid ?? true,
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSave(formData);
-  };
-
-  return (
-    <Modal isOpen={true} onClose={onClose} title={template ? '编辑模板' : '新建模板'}>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">模板名称 *</label>
-          <input
-            type="text"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-            required
-          />
-        </div>
-        <div className="flex items-center">
-          <input
-            type="checkbox"
-            id="model-template-valid"
-            checked={formData.valid}
-            onChange={(e) => setFormData({ ...formData, valid: e.target.checked })}
-            className="h-4 w-4 text-blue-600 rounded border-gray-300"
-          />
-          <label htmlFor="model-template-valid" className="ml-2 text-sm text-gray-700">
-            启用此模板
-          </label>
-        </div>
-        <div className="flex justify-end gap-2 pt-4">
-          <button type="button" onClick={onClose} className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50">
-            取消
-          </button>
-          <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-            保存
-          </button>
-        </div>
-      </form>
-    </Modal>
-  );
-}
-
-// UnitData Modal Component (reused from EntityManagement)
-function UnitDataModal({ onClose, onSave, data }: any) {
-  const [dataItems, setDataItems] = useState<UnitDataItem[]>([]);
-  const [selectedItemId, setSelectedItemId] = useState<string>(data?.unitDataItemId || '');
+// UnitData Modal Component
+function UnitDataModal({ onClose, onSave, data, unitId, unitType }: any) {
   const [formData, setFormData] = useState({
     name: data?.name || '',
     path: data?.path || '',
-    key: data?.key || '',
+    group: data?.group || '',
     value: data?.value || '',
-    groupKey: data?.groupKey || '',
+    unitType: unitType,
+    extra: data?.extra || '',
   });
-
-  useEffect(() => {
-    loadDataItems();
-  }, []);
-
-  const loadDataItems = async () => {
-    try {
-      const items = await api.getUnitDataItems();
-      setDataItems(items.filter((item: UnitDataItem) => item.valid));
-    } catch (error) {
-      console.error('加载数据项失败:', error);
-    }
-  };
-
-  // 当选择数据项时,自动填充字段
-  const handleSelectDataItem = (itemId: string) => {
-    setSelectedItemId(itemId);
-    const item = dataItems.find(i => i.id === itemId);
-    if (item) {
-      setFormData({
-        name: item.name,
-        path: item.path,
-        key: formData.key, // key可选,保留原值或为空
-        value: item.defaultValue || '',
-        groupKey: item.groupKey,
-      });
-    }
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -538,78 +346,75 @@ function UnitDataModal({ onClose, onSave, data }: any) {
   };
 
   return (
-    <Modal isOpen={true} onClose={onClose} title={data ? '编辑单元数据' : '新建单元数据'}>
+    <Modal isOpen={true} onClose={onClose} title={data ? '编辑数据' : '新建数据'}>
       <form onSubmit={handleSubmit} className="space-y-4">
-        {!data && (
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">选择数据项 *</label>
-            <select
-              value={selectedItemId}
-              onChange={(e) => handleSelectDataItem(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-              required
-            >
-              <option value="">请选择数据项</option>
-              {dataItems.map((item) => (
-                <option key={item.id} value={item.id}>
-                  [{item.groupKey}] {item.name} ({item.path})
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">名称</label>
+          <label className="block text-sm font-medium mb-1">名称</label>
           <input
             type="text"
+            className="w-full px-3 py-2 border rounded"
             value={formData.name}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
-            disabled
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            required
           />
         </div>
+
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">分组</label>
+          <label className="block text-sm font-medium mb-1">路径</label>
           <input
             type="text"
-            value={formData.groupKey}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
-            disabled
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Path</label>
-          <input
-            type="text"
+            className="w-full px-3 py-2 border rounded"
             value={formData.path}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
-            disabled
+            onChange={(e) => setFormData({ ...formData, path: e.target.value })}
+            required
           />
         </div>
+
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Key (可选)</label>
+          <label className="block text-sm font-medium mb-1">分组</label>
           <input
             type="text"
-            value={formData.key}
-            onChange={(e) => setFormData({ ...formData, key: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-            placeholder="留空使用默认值"
+            className="w-full px-3 py-2 border rounded"
+            value={formData.group}
+            onChange={(e) => setFormData({ ...formData, group: e.target.value })}
+            required
+            disabled={!!data}
           />
+          {data && <p className="text-sm text-gray-500 mt-1">分组创建后不可修改</p>}
         </div>
+
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">值 (JSON)</label>
+          <label className="block text-sm font-medium mb-1">值</label>
           <textarea
+            className="w-full px-3 py-2 border rounded"
+            rows={3}
             value={formData.value}
             onChange={(e) => setFormData({ ...formData, value: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg font-mono text-sm"
-            rows={4}
-            placeholder='例如: {"color": "blue"}'
           />
         </div>
-        <div className="flex justify-end gap-2 pt-4">
-          <button type="button" onClick={onClose} className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50">
+
+        <div>
+          <label className="block text-sm font-medium mb-1">额外信息</label>
+          <textarea
+            className="w-full px-3 py-2 border rounded"
+            rows={2}
+            value={formData.extra}
+            onChange={(e) => setFormData({ ...formData, extra: e.target.value })}
+          />
+        </div>
+
+        <div className="flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 border rounded hover:bg-gray-100"
+          >
             取消
           </button>
-          <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+          <button
+            type="submit"
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
             保存
           </button>
         </div>

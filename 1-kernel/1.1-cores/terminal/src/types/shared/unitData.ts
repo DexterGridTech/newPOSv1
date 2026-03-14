@@ -10,8 +10,6 @@ export interface UnitData<T> extends ValueWithUpdatedAt<T>{
     id: string;
     name: string;
     path: string;
-    key: string;
-    templateId: string;
     group: string;
     unitId: string;
     unitType: UnitType;

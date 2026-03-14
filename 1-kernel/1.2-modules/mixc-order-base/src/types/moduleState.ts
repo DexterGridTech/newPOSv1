@@ -12,7 +12,7 @@ import {UnitDataState} from "@impos2/kernel-core-terminal";
 
 export interface KernelMixcOrderBaseState {
     [kernelMixcOrderBaseState.order]:OrderState
-    [kernelMixcOrderBaseUnitDataState.order]:UnitDataState
+    [kernelMixcOrderBaseUnitDataState.unitData_order]:UnitDataState
 }
 
 export type KernelMixcOrderBaseWorkspaceState = CreateModuleWorkspaceStateType<{

@@ -19,7 +19,7 @@ export const kernelMixcUserState =  createModuleStateKeys(
 );
 export const kernelMixcUserUnitDataState = createUnitDataStateKeys(
     [
-        'user',
+        'unitData_user',
     ] as const
 );
 export const kernelMixcUserInstanceState= createModuleInstanceModeStateKeys(

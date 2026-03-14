@@ -172,154 +172,32 @@ router.delete('/devices/:id', (req: Request, res: Response) => {
   }
 });
 
-// ==================== UnitDataGroup Routes ====================
-
-router.get('/unit-data-groups', (req: Request, res: Response) => {
-  try {
-    const groups = unitDataService.findAllGroups();
-    res.json(success(groups));
-  } catch (err: any) {
-    res.json(error('INTERNAL_ERROR', err.message));
-  }
-});
-
-router.post('/unit-data-groups', (req: Request, res: Response) => {
-  try {
-    const group = unitDataService.createGroup(req.body);
-    res.json(success(group));
-  } catch (err: any) {
-    res.json(error('INVALID_REQUEST', err.message));
-  }
-});
-
-router.put('/unit-data-groups/:key', (req: Request, res: Response) => {
-  try {
-    const group = unitDataService.updateGroup(req.params.key, req.body);
-    res.json(success(group));
-  } catch (err: any) {
-    res.json(error('INVALID_REQUEST', err.message));
-  }
-});
-
-router.delete('/unit-data-groups/:key', (req: Request, res: Response) => {
-  try {
-    unitDataService.deleteGroup(req.params.key);
-    res.json(success());
-  } catch (err: any) {
-    res.json(error('INVALID_REQUEST', err.message));
-  }
-});
-
-// ==================== UnitDataItem Routes ====================
-
-router.get('/unit-data-items', (req: Request, res: Response) => {
-  try {
-    const group = req.query.group as string | undefined;
-    const items = unitDataService.findAllItems(group);
-    res.json(success(items));
-  } catch (err: any) {
-    res.json(error('INTERNAL_ERROR', err.message));
-  }
-});
-
-router.post('/unit-data-items', (req: Request, res: Response) => {
-  try {
-    const item = unitDataService.createItem(req.body);
-    res.json(success(item));
-  } catch (err: any) {
-    res.json(error('INVALID_REQUEST', err.message));
-  }
-});
-
-router.put('/unit-data-items/:id', (req: Request, res: Response) => {
-  try {
-    const item = unitDataService.updateItem(req.params.id, req.body);
-    res.json(success(item));
-  } catch (err: any) {
-    res.json(error('INVALID_REQUEST', err.message));
-  }
-});
-
-router.delete('/unit-data-items/:id', (req: Request, res: Response) => {
-  try {
-    unitDataService.deleteItem(req.params.id);
-    res.json(success());
-  } catch (err: any) {
-    res.json(error('INVALID_REQUEST', err.message));
-  }
-});
-
-// ==================== Template Routes ====================
-
-router.get('/units/:unitId/templates', (req: Request, res: Response) => {
-  try {
-    const templates = unitDataService.findTemplatesByUnitId(req.params.unitId);
-    res.json(success(templates));
-  } catch (err: any) {
-    res.json(error('INTERNAL_ERROR', err.message));
-  }
-});
-
-router.post('/units/:unitId/templates', (req: Request, res: Response) => {
-  try {
-    const data = { ...req.body, unitId: req.params.unitId };
-    const template = unitDataService.createTemplate(data);
-    res.json(success(template));
-  } catch (err: any) {
-    res.json(error('INVALID_REQUEST', err.message));
-  }
-});
-
-router.put('/templates/:id', (req: Request, res: Response) => {
-  try {
-    const template = unitDataService.updateTemplate(req.params.id, req.body);
-    res.json(success(template));
-  } catch (err: any) {
-    res.json(error('INVALID_REQUEST', err.message));
-  }
-});
-
-router.delete('/templates/:id', (req: Request, res: Response) => {
-  try {
-    unitDataService.deleteTemplate(req.params.id);
-    res.json(success());
-  } catch (err: any) {
-    res.json(error('INVALID_REQUEST', err.message));
-  }
-});
-
 // ==================== UnitData Routes ====================
 
-router.get('/templates/:templateId/data', (req: Request, res: Response) => {
+// 获取单元的所有数据
+router.get('/units/:unitId/data', (req: Request, res: Response) => {
   try {
-    const data = unitDataService.findDataByTemplateId(req.params.templateId);
+    const data = unitDataService.findDataByUnitId(req.params.unitId);
     res.json(success(data));
   } catch (err: any) {
     res.json(error('INTERNAL_ERROR', err.message));
   }
 });
 
-router.post('/templates/:templateId/data', (req: Request, res: Response) => {
+// 创建单元数据
+router.post('/units/:unitId/data', (req: Request, res: Response) => {
   try {
-    // 获取template信息,从中提取unitId和unitType
-    const template = unitDataService.findTemplateById(req.params.templateId);
-    if (!template) {
-      return res.json(error('INVALID_REQUEST', 'Template not found'));
-    }
-
-    const data = {
+    const unitData = unitDataService.createData({
       ...req.body,
-      templateId: req.params.templateId,
-      unitId: template.unitId,
-      unitType: template.unitType,
-    };
-    const unitData = unitDataService.createData(data);
+      unitId: req.params.unitId
+    });
     res.json(success(unitData));
   } catch (err: any) {
     res.json(error('INVALID_REQUEST', err.message));
   }
 });
 
+// 更新单元数据
 router.put('/unit-data/:id', (req: Request, res: Response) => {
   try {
     const data = unitDataService.updateData(req.params.id, req.body);
@@ -329,6 +207,7 @@ router.put('/unit-data/:id', (req: Request, res: Response) => {
   }
 });
 
+// 删除单元数据
 router.delete('/unit-data/:id', (req: Request, res: Response) => {
   try {
     unitDataService.deleteData(req.params.id);
@@ -337,6 +216,7 @@ router.delete('/unit-data/:id', (req: Request, res: Response) => {
     res.json(error('INVALID_REQUEST', err.message));
   }
 });
+
 
 // ==================== CommandItem Routes ====================
 

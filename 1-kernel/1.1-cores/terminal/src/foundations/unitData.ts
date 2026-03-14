@@ -3,16 +3,16 @@ import {Unit, UnitData, UnitDataState, UnitType} from "../types";
 export const getPathValuesFromUnitData = (
     model: Unit,
     operatingEntity: Unit,
-    unitDataSet: UnitDataState) => {
+    unitDataState: UnitDataState) => {
     const pathValues: { [path: string]: UnitData<any> } = {}
 
-    Object.keys(unitDataSet).forEach(id => {
+    Object.keys(unitDataState).forEach(id => {
         if(id==='_persist')
             return
-        const unitData = unitDataSet[id]
+        const unitData = unitDataState[id]
         const prePathValue = pathValues[unitData.path]
         if (prePathValue == null) {
-            pathValues[unitData.path] = unitData
+            pathValues[unitData.path] = {...unitData}
         } else {
             if (priorThen(
                 model,
@@ -20,7 +20,7 @@ export const getPathValuesFromUnitData = (
                 unitData,
                 prePathValue,
             )) {
-                pathValues[unitData.path] = unitData
+                pathValues[unitData.path] =  {...unitData}
             }
         }
     })

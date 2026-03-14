@@ -3,191 +3,80 @@
  */
 
 import { UnitDataRepository } from '../repositories/UnitDataRepository';
-import { UnitRepository } from '../repositories/UnitRepository';
 import { DataSyncService } from './DataSyncService';
-import {
-  UnitDataGroup, UnitDataItem, UnitDataTemplate, UnitData,
-  CreateUnitDataGroupRequest, UpdateUnitDataGroupRequest,
-  CreateUnitDataItemRequest, UpdateUnitDataItemRequest,
-  CreateUnitDataTemplateRequest, UpdateUnitDataTemplateRequest,
-  CreateUnitDataRequest, UpdateUnitDataRequest
-} from '../types';
-import { validateRequired, validateJSON } from '../utils/validator';
+import { UnitData, CreateUnitDataRequest, UpdateUnitDataRequest } from '../types';
+import { validateRequired } from '../utils/validator';
 
 export class UnitDataService {
-  private unitDataRepository: UnitDataRepository;
-  private unitRepository: UnitRepository;
+  private repository: UnitDataRepository;
   private dataSyncService: DataSyncService;
 
   constructor() {
-    this.unitDataRepository = new UnitDataRepository();
-    this.unitRepository = new UnitRepository();
+    this.repository = new UnitDataRepository();
     this.dataSyncService = new DataSyncService();
   }
 
-  // ==================== UnitDataGroup ====================
-
-  createGroup(data: CreateUnitDataGroupRequest): UnitDataGroup {
-    const error = validateRequired(data, ['key', 'name']);
-    if (error) throw new Error(error);
-
-    return this.unitDataRepository.createGroup(data);
-  }
-
-  findGroupByKey(key: string): UnitDataGroup | null {
-    return this.unitDataRepository.findGroupByKey(key);
-  }
-
-  findAllGroups(): UnitDataGroup[] {
-    return this.unitDataRepository.findAllGroups();
-  }
-
-  updateGroup(key: string, data: UpdateUnitDataGroupRequest): UnitDataGroup {
-    const group = this.unitDataRepository.findGroupByKey(key);
-    if (!group) throw new Error('Group not found');
-
-    return this.unitDataRepository.updateGroup(key, data);
-  }
-
-  deleteGroup(key: string): void {
-    this.unitDataRepository.deleteGroup(key);
-  }
-
-  // ==================== UnitDataItem ====================
-
-  createItem(data: CreateUnitDataItemRequest): UnitDataItem {
-    const error = validateRequired(data, ['name', 'path', 'groupKey']);
-    if (error) throw new Error(error);
-
-    // 验证defaultValue是否是合法JSON
-    if (data.defaultValue) {
-      const jsonError = validateJSON(data.defaultValue, 'defaultValue');
-      if (jsonError) throw new Error(jsonError);
-    }
-
-    return this.unitDataRepository.createItem(data);
-  }
-
-  findItemById(id: string): UnitDataItem | null {
-    return this.unitDataRepository.findItemById(id);
-  }
-
-  findAllItems(groupKey?: string): UnitDataItem[] {
-    return this.unitDataRepository.findAllItems(groupKey);
-  }
-
-  updateItem(id: string, data: UpdateUnitDataItemRequest): UnitDataItem {
-    const item = this.unitDataRepository.findItemById(id);
-    if (!item) throw new Error('Item not found');
-
-    if (data.defaultValue) {
-      const jsonError = validateJSON(data.defaultValue, 'defaultValue');
-      if (jsonError) throw new Error(jsonError);
-    }
-
-    return this.unitDataRepository.updateItem(id, data);
-  }
-
-  deleteItem(id: string): void {
-    this.unitDataRepository.deleteItem(id);
-  }
-
-  // ==================== UnitDataTemplate ====================
-
-  createTemplate(data: CreateUnitDataTemplateRequest): UnitDataTemplate {
-    const error = validateRequired(data, ['name', 'unitId', 'unitType']);
-    if (error) throw new Error(error);
-
-    // 验证unit存在
-    const unit = this.unitRepository.findById(data.unitId);
-    if (!unit) throw new Error('Unit not found');
-
-    return this.unitDataRepository.createTemplate(data);
-  }
-
-  findTemplateById(id: string): UnitDataTemplate | null {
-    return this.unitDataRepository.findTemplateById(id);
-  }
-
-  findTemplatesByUnitId(unitId: string): UnitDataTemplate[] {
-    return this.unitDataRepository.findTemplatesByUnitId(unitId);
-  }
-
-  updateTemplate(id: string, data: UpdateUnitDataTemplateRequest): UnitDataTemplate {
-    const template = this.unitDataRepository.findTemplateById(id);
-    if (!template) throw new Error('Template not found');
-
-    return this.unitDataRepository.updateTemplate(id, data);
-  }
-
-  deleteTemplate(id: string): void {
-    this.unitDataRepository.deleteTemplate(id);
-  }
-
-  // ==================== UnitData ====================
-
+  /**
+   * 创建单元数据
+   */
   createData(data: CreateUnitDataRequest): UnitData {
-    const error = validateRequired(data, ['name', 'path', 'templateId', 'groupKey', 'unitId', 'unitType']);
+    const error = validateRequired(data, ['name', 'path', 'group', 'unitId', 'unitType']);
     if (error) throw new Error(error);
 
-    // 验证value和extra是否是合法JSON
-    if (data.value) {
-      const jsonError = validateJSON(data.value, 'value');
-      if (jsonError) throw new Error(jsonError);
-    }
+    const unitData = this.repository.createData(data);
 
-    if (data.extra) {
-      const jsonError = validateJSON(data.extra, 'extra');
-      if (jsonError) throw new Error(jsonError);
-    }
-
-    const unitData = this.unitDataRepository.createData(data);
-
-    // 触发数据变更推送
-    this.dataSyncService.onUnitDataChanged(unitData.id, 'create');
+    // 触发数据同步
+    this.dataSyncService.notifyUnitDataChanged(data.group, data.unitId);
 
     return unitData;
   }
 
+  /**
+   * 根据ID查找单元数据
+   */
   findDataById(id: string): UnitData | null {
-    return this.unitDataRepository.findDataById(id);
+    return this.repository.findDataById(id);
   }
 
-  findDataByTemplateId(templateId: string): UnitData[] {
-    return this.unitDataRepository.findDataByTemplateId(templateId);
+  /**
+   * 根据unitId查找单元数据
+   */
+  findDataByUnitId(unitId: string): UnitData[] {
+    return this.repository.findDataByUnitId(unitId);
   }
 
+  /**
+   * 根据group和unitId查找单元数据
+   */
+  findDataByGroupAndUnitId(group: string, unitId: string): UnitData[] {
+    return this.repository.findDataByGroupAndUnitId(group, unitId);
+  }
+
+  /**
+   * 更新单元数据
+   */
   updateData(id: string, data: UpdateUnitDataRequest): UnitData {
-    const unitData = this.unitDataRepository.findDataById(id);
-    if (!unitData) throw new Error('UnitData not found');
+    const existing = this.repository.findDataById(id);
+    if (!existing) throw new Error('UnitData not found');
 
-    if (data.value) {
-      const jsonError = validateJSON(data.value, 'value');
-      if (jsonError) throw new Error(jsonError);
-    }
+    const updated = this.repository.updateData(id, data);
 
-    if (data.extra) {
-      const jsonError = validateJSON(data.extra, 'extra');
-      if (jsonError) throw new Error(jsonError);
-    }
-
-    const updated = this.unitDataRepository.updateData(id, data);
-
-    // 触发数据变更推送
-    this.dataSyncService.onUnitDataChanged(updated.id, 'update');
+    // 触发数据同步
+    this.dataSyncService.notifyUnitDataChanged(existing.group, existing.unitId);
 
     return updated;
   }
 
+  /**
+   * 删除单元数据
+   */
   deleteData(id: string): void {
-    // 先获取数据以便推送删除通知
-    const unitData = this.unitDataRepository.findDataById(id);
+    const existing = this.repository.findDataById(id);
+    if (!existing) throw new Error('UnitData not found');
 
-    this.unitDataRepository.deleteData(id);
+    this.repository.deleteData(id);
 
-    // 触发数据变更推送
-    if (unitData) {
-      this.dataSyncService.onUnitDataChanged(id, 'delete');
-    }
+    // 触发数据同步
+    this.dataSyncService.notifyUnitDataChanged(existing.group, existing.unitId);
   }
 }

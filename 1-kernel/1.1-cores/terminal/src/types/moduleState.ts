@@ -9,7 +9,7 @@ import {TerminalConnectionState} from "./state";
 export interface  KernelCoreTerminalState  {
     [kernelCoreTerminalState.terminal]: TerminalState
     [kernelCoreTerminalState.terminalConnection]: TerminalConnectionState
-    [kernelCoreTerminalUnitDataState.systemParameters]: UnitDataState
-    [kernelCoreTerminalUnitDataState.errorMessages]: UnitDataState
-    [kernelCoreTerminalUnitDataState.taskDefinitions]: UnitDataState
+    [kernelCoreTerminalUnitDataState.unitData_systemParameters]: UnitDataState
+    [kernelCoreTerminalUnitDataState.unitData_errorMessages]: UnitDataState
+    [kernelCoreTerminalUnitDataState.unitData_taskDefinitions]: UnitDataState
 }

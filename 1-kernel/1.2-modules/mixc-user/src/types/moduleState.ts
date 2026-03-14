@@ -12,7 +12,7 @@ import {UnitDataState} from "@impos2/kernel-core-terminal";
 
 export interface KernelMixcUserState {
     [kernelMixcUserState.user]: UserState
-    [kernelMixcUserUnitDataState.user]: UnitDataState
+    [kernelMixcUserUnitDataState.unitData_user]: UnitDataState
 }
 
 export type KernelMixcUserWorkspaceState = CreateModuleWorkspaceStateType<{

@@ -13,7 +13,7 @@ import {ContractState} from "./state/contract";
 
 export interface KernelMixcProductState {
     [kernelMixcProductState.contract]: ContractState
-    [kernelMixcProductUnitDataState.contract]: UnitDataState
+    [kernelMixcProductUnitDataState.unitData_contract]: UnitDataState
 }
 
 export type KernelMixcProductWorkspaceState = CreateModuleWorkspaceStateType<{

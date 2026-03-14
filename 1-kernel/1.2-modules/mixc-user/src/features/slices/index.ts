@@ -5,6 +5,6 @@ import {kernelMixcUserUnitDataState} from "../../types/shared/moduleStateKey";
 
 export const kernelMixcUserSlice = {
     userState:userConfig,
-    [kernelMixcUserUnitDataState.user]:
-        generateUnitDataSliceConfig(kernelMixcUserUnitDataState.user),
+    [kernelMixcUserUnitDataState.unitData_user]:
+        generateUnitDataSliceConfig(kernelMixcUserUnitDataState.unitData_user),
 }

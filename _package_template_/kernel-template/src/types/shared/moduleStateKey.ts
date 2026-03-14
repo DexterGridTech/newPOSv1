@@ -4,6 +4,7 @@ import {
     createModuleInstanceModeStateKeys,
     createModuleWorkspaceStateKeys
 } from "@impos2/kernel-core-interconnection";
+import {createUnitDataStateKeys} from "@impos2/kernel-core-terminal";
 
 
 /**
@@ -12,6 +13,10 @@ import {
  */
 export const kernel{{PACKAGE_NAME_PASCAL}}State =  createModuleStateKeys(
     moduleName,
+    [
+    ] as const
+);
+export const kernel{{PACKAGE_NAME_PASCAL}}UnitDataState = createUnitDataStateKeys(
     [
     ] as const
 );

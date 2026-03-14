@@ -16,8 +16,8 @@ export const kernelCoreTerminalState = createModuleStateKeys(
 
 export const kernelCoreTerminalUnitDataState = createUnitDataStateKeys(
     [
-        'errorMessages',
-        'systemParameters',
-        'taskDefinitions',
+        'unitData_errorMessages',
+        'unitData_systemParameters',
+        'unitData_taskDefinitions',
     ] as const
 );

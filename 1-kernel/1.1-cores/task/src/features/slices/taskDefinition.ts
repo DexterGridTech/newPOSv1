@@ -1,8 +1,7 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {moduleName} from "../../moduleName";
 import {TaskDefinitionState} from "../../types/state/taskDefinitionState";
 import {kernelCoreTaskState} from "../../types/shared/moduleStateKey";
-import {batchUpdateState, LOG_TAGS, logger, TaskDefinition,ModuleSliceConfig, ValueWithUpdatedAt} from "@impos2/kernel-core-base";
+import {batchUpdateState, ModuleSliceConfig, TaskDefinition, ValueWithUpdatedAt} from "@impos2/kernel-core-base";
 
 const initialState: TaskDefinitionState = {}
 const slice = createSlice({
@@ -10,8 +9,7 @@ const slice = createSlice({
     initialState,
     reducers: {
         //stateSyncToSlave: true的时候，必须有batchUpdateState方法
-        batchUpdateState: (state: TaskDefinitionState, action: PayloadAction<Record<string, ValueWithUpdatedAt<TaskDefinition>| undefined | null>>) => {
-            // logger.log([moduleName, LOG_TAGS.Reducer, "taskDefinitions"], 'batch update state',action.payload)
+        batchUpdateState: (state: TaskDefinitionState, action: PayloadAction<Record<string, ValueWithUpdatedAt<TaskDefinition> | undefined | null>>) => {
             batchUpdateState(state, action)
 
         }

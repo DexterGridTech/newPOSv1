@@ -13,10 +13,18 @@ export class SystemParametersActor extends Actor {
                 const keysFound: string[] = [];
                 Object.keys(command.payload).forEach(key => {
                     const definedSystemParameter = getSystemParameterByKey(key)
+                    const valueWithUpdatedValue = command.payload[key]
                     if (!definedSystemParameter) {
                         keysNotFound.push(key);
                     } else {
                         keysFound.push(key);
+                        if (valueWithUpdatedValue && valueWithUpdatedValue.value && typeof valueWithUpdatedValue.value === 'string') {
+                            try {
+                                valueWithUpdatedValue.value = JSON.parse(valueWithUpdatedValue.value);
+                            } catch (e) {
+                                logger.warn([moduleName, LOG_TAGS.Actor, "SystemParametersActor"], `Failed to parse value for key ${key}`, e);
+                            }
+                        }
                     }
                 })
                 if (keysFound.length > 0) {

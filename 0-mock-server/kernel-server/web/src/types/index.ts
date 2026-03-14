@@ -33,43 +33,12 @@ export interface Device {
   updatedAt: number;
 }
 
-export interface UnitDataGroup {
-  key: string;
-  name: string;
-  description: string | null;
-  valid: boolean;
-  updatedAt: number;
-}
-
-export interface UnitDataItem {
-  id: string;
-  name: string;
-  path: string;
-  defaultValue: string | null;
-  valid: boolean;
-  groupKey: string;
-  createdAt: number;
-  updatedAt: number;
-}
-
-export interface UnitDataTemplate {
-  id: string;
-  name: string;
-  unitId: string;
-  unitType: string;
-  valid: boolean;
-  createdAt: number;
-  updatedAt: number;
-}
-
 export interface UnitData {
   id: string;
   name: string;
   path: string;
-  key: string;
   value: string | null;
-  templateId: string;
-  groupKey: string;
+  group: string;
   unitId: string;
   unitType: string;
   extra: string | null;

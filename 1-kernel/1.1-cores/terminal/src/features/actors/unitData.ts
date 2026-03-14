@@ -5,7 +5,7 @@ import {
     getDeviceId,
     kernelCoreBaseCommands,
     LOG_TAGS,
-    logger,
+    logger, RootState,
     storeEntry,
     ValueWithUpdatedAt
 } from "@impos2/kernel-core-base";
@@ -57,6 +57,11 @@ export class UnitDataActor extends Actor {
                 logger.log([moduleName, LOG_TAGS.Actor, "UnitDataActor"], `Unit Data Group [${changeSet.group}] has no change from kernel server`)
                 return {};
             }
+            // 检查changeSet.group，如果不是RootState的key则返回
+            if (!(changeSet.group in storeEntry.getState())){
+                logger.error([moduleName, LOG_TAGS.Actor, "UnitDataActor"], `Unit Data Group [${changeSet.group}] is not valid`)
+                return {};
+            }
             const action: PayloadAction<UnitDataChangedSet> = {
                 type: `${changeSet.group}/updateUnitData`,
                 payload: changeSet
@@ -67,33 +72,33 @@ export class UnitDataActor extends Actor {
         });
     unitDataChanged = Actor.defineCommandHandler(kernelCoreTerminalCommands.unitDataChanged,
         async (command): Promise<Record<string, any>> => {
-            if (command.payload.changeSet.group === kernelCoreTerminalUnitDataState.errorMessages) {
-                const errorMessagesState = storeEntry.getStateByKey(kernelCoreTerminalUnitDataState.errorMessages)
+            if (command.payload.changeSet.group === kernelCoreTerminalUnitDataState.unitData_errorMessages) {
+                const unitData_errorMessagesState = storeEntry.getStateByKey(kernelCoreTerminalUnitDataState.unitData_errorMessages)
                 const terminalState = storeEntry.getStateByKey(kernelCoreTerminalState.terminal)
                 const operatingEntity = terminalState.operatingEntity?.value!
                 const model = terminalState.model?.value!
                 const pathValues = getPathValuesFromUnitData(
-                    operatingEntity, model, errorMessagesState
+                    operatingEntity, model, unitData_errorMessagesState
                 )
                 kernelCoreBaseCommands.updateErrorMessages(pathValues).executeInternally()
             }
-            if (command.payload.changeSet.group === kernelCoreTerminalUnitDataState.systemParameters) {
-                const systemParametersState = storeEntry.getStateByKey(kernelCoreTerminalUnitDataState.systemParameters)
+            if (command.payload.changeSet.group === kernelCoreTerminalUnitDataState.unitData_systemParameters) {
+                const unitData_systemParametersState = storeEntry.getStateByKey(kernelCoreTerminalUnitDataState.unitData_systemParameters)
                 const terminalState = storeEntry.getStateByKey(kernelCoreTerminalState.terminal)
                 const operatingEntity = terminalState.operatingEntity?.value!
                 const model = terminalState.model?.value!
                 const pathValues = getPathValuesFromUnitData(
-                    operatingEntity, model, systemParametersState
+                    operatingEntity, model, unitData_systemParametersState
                 )
                 kernelCoreBaseCommands.updateSystemParameters(pathValues).executeInternally()
             }
-            if (command.payload.changeSet.group === kernelCoreTerminalUnitDataState.taskDefinitions) {
-                const taskDefinitionsState = storeEntry.getStateByKey(kernelCoreTerminalUnitDataState.taskDefinitions)
+            if (command.payload.changeSet.group === kernelCoreTerminalUnitDataState.unitData_taskDefinitions) {
+                const unitData_taskDefinitionsState = storeEntry.getStateByKey(kernelCoreTerminalUnitDataState.unitData_taskDefinitions)
                 const terminalState = storeEntry.getStateByKey(kernelCoreTerminalState.terminal)
                 const operatingEntity = terminalState.operatingEntity?.value!
                 const model = terminalState.model?.value!
                 const pathValues = getPathValuesFromUnitData(
-                    operatingEntity, model, taskDefinitionsState
+                    operatingEntity, model, unitData_taskDefinitionsState
                 )
                 kernelCoreTaskCommands.updateTaskDefinitions(pathValues).executeInternally()
             }

@@ -2,7 +2,7 @@ import Reactotron from 'reactotron-react-native';
 import {reactotronRedux} from 'reactotron-redux';
 
 const reactotron = Reactotron
-    .configure({ name: 'IMPos2 Desktop V1', host: '192.168.0.172' })
+    .configure({ name: 'IMPos2 Desktop V1', host: 'localhost' })
     .useReactNative({ asyncStorage: false, networking: { ignoreUrls: /symbolicate/ }, editor: false, errors: {veto: () => false}, overlay: false })
     .use(reactotronRedux())
     .connect();
