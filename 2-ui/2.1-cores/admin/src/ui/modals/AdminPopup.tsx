@@ -8,7 +8,9 @@ import {
     Text,
     TextInput,
     TouchableOpacity,
-    View
+    View,
+    StatusBar,
+    Platform
 } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import {getDeviceId} from '@impos2/kernel-core-base';
@@ -232,6 +234,14 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({visible, onClose}) => {
             setPassword('');
             setError('');
             setIsLoading(false);
+        } else if (Platform.OS === 'android') {
+            // 确保 Modal 显示时保持全屏状态
+            StatusBar.setHidden(true);
+            // 隐藏导航栏
+            const timer = setTimeout(() => {
+                StatusBar.setHidden(true);
+            }, 100);
+            return () => clearTimeout(timer);
         }
     }, [visible]);
 
@@ -253,7 +263,14 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({visible, onClose}) => {
     };
 
     return (
-        <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose} statusBarTranslucent>
+        <Modal
+            visible={visible}
+            transparent
+            animationType="fade"
+            onRequestClose={onClose}
+            statusBarTranslucent
+            hardwareAccelerated
+        >
             <View style={styles.overlay}>
                 <TouchableOpacity style={StyleSheet.absoluteFill} activeOpacity={1} onPress={onClose}/>
                 {currentScreen === 'login' ? (
@@ -282,7 +299,16 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({visible, onClose}) => {
 const {width} = Dimensions.get('window');
 
 const styles = StyleSheet.create({
-    overlay: {flex: 1, backgroundColor: COLORS.overlay, justifyContent: 'center', alignItems: 'center'},
+    overlay: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: COLORS.overlay,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
     loginContainer: {
         backgroundColor: COLORS.surface,
         borderRadius: 16,
