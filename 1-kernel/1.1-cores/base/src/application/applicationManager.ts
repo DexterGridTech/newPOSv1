@@ -275,7 +275,8 @@ export class ApplicationManager {
             preloadedState: config.preInitiatedState,
             middleware: (getDefaultMiddleware: any) =>
                 getDefaultMiddleware({
-                    serializableCheck: false
+                    serializableCheck: false,
+                    immutableCheck: false
                 }).concat(middlewares)
         };
 

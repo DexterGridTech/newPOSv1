@@ -2,7 +2,7 @@ import React, {useCallback} from "react";
 import {useLifecycle} from "@impos2/ui-core-base";
 import {Text, View, Pressable, StyleSheet} from "react-native";
 import {useSelector} from "react-redux";
-import {DraftProductOrder, selectSelectedProductOrder} from "@impos2/kernel-mixc-order-create-traditional";
+import {DraftProductOrder, selectSelectedProductOrder, selectProductOrderSessionId} from "@impos2/kernel-mixc-order-create-traditional";
 import {kernelMixcOrderCreateTraditionalCommands} from "@impos2/kernel-mixc-order-create-traditional";
 import {shortId} from "@impos2/kernel-core-base";
 
@@ -12,6 +12,7 @@ interface ProductOrderItermProps {
 
 export const ProductOrderItem: React.FC<ProductOrderItermProps> = React.memo(({order}) => {
     const selectedProductOrderId = useSelector(selectSelectedProductOrder);
+    const sessionId = useSelector(selectProductOrderSessionId);
     const isSelected = selectedProductOrderId === order.id;
     const isAmountZero = (order.amount || 0) === 0;
 
@@ -22,20 +23,20 @@ export const ProductOrderItem: React.FC<ProductOrderItermProps> = React.memo(({o
     });
 
     const handleDecrease = useCallback(() => {
-        kernelMixcOrderCreateTraditionalCommands.decreaseProductOrderQuantity({productId: order.id}).execute(shortId());
-    }, [order.id]);
+        kernelMixcOrderCreateTraditionalCommands.decreaseProductOrderQuantity({productId: order.id}).execute(shortId(), sessionId);
+    }, [order.id, sessionId]);
 
     const handleIncrease = useCallback(() => {
-        kernelMixcOrderCreateTraditionalCommands.increaseProductOrderQuantity({productId: order.id}).execute(shortId());
-    }, [order.id]);
+        kernelMixcOrderCreateTraditionalCommands.increaseProductOrderQuantity({productId: order.id}).execute(shortId(), sessionId);
+    }, [order.id, sessionId]);
 
     const handleRemove = useCallback(() => {
-        kernelMixcOrderCreateTraditionalCommands.removeProductOrder({productId: order.id}).execute(shortId());
-    }, [order.id]);
+        kernelMixcOrderCreateTraditionalCommands.removeProductOrder({productId: order.id}).execute(shortId(), sessionId);
+    }, [order.id, sessionId]);
 
     const handleSelectPrice = useCallback(() => {
-        kernelMixcOrderCreateTraditionalCommands.selectProductOrder({productId: order.id}).execute(shortId());
-    }, [order.id]);
+        kernelMixcOrderCreateTraditionalCommands.selectProductOrder({productId: order.id}).execute(shortId(), sessionId);
+    }, [order.id, sessionId]);
 
     return (
         <View style={styles.row}>
@@ -66,7 +67,7 @@ export const ProductOrderItem: React.FC<ProductOrderItermProps> = React.memo(({o
                     {isSelected ? order.valueStr : (order.price || 0).toFixed(2)}
                 </Text>
             </Pressable>
-            <Text style={[styles.amount, isAmountZero && styles.amountZero]}>
+            <Text style={[styles.amount, isAmountZero && styles.amountZero, !isAmountZero && styles.amountNonZero]}>
                 {(order.amount || 0).toFixed(2)}
             </Text>
             <Pressable
@@ -155,6 +156,10 @@ const styles = StyleSheet.create({
     amountZero: {
         color: '#ADB5BD',
         fontStyle: 'italic',
+    },
+    amountNonZero: {
+        fontWeight: '700',
+        color: '#000000',
     },
     deleteButton: {
         flex: 1,

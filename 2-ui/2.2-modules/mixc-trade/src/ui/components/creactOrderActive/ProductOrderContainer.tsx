@@ -82,8 +82,9 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     title: {
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: '600',
+        color: '#212529',
         padding: 12,
         backgroundColor: '#F8F9FA',
         borderBottomWidth: 1,

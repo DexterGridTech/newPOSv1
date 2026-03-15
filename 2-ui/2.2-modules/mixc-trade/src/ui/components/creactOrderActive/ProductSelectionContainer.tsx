@@ -3,16 +3,17 @@ import {useLifecycle} from "@impos2/ui-core-base";
 import {View, FlatList, Text, StyleSheet} from "react-native";
 import {useSelector} from "react-redux";
 import {selectProducts, Product} from "@impos2/kernel-mixc-product";
-import {kernelMixcOrderCreateTraditionalCommands} from "@impos2/kernel-mixc-order-create-traditional";
+import {kernelMixcOrderCreateTraditionalCommands, selectProductOrderSessionId} from "@impos2/kernel-mixc-order-create-traditional";
 import {ProductSelectionItem} from "./ProductSelectionItem";
 import {shortId} from "@impos2/kernel-core-base";
 
 export const ProductSelectionContainer: React.FC = () => {
     const products = useSelector(selectProducts);
+    const sessionId = useSelector(selectProductOrderSessionId);
 
     const handleProductPress = useCallback((product: Product) => {
-        kernelMixcOrderCreateTraditionalCommands.addProductOrder(product).execute(shortId());
-    }, []);
+        kernelMixcOrderCreateTraditionalCommands.addProductOrder(product).execute(shortId(), sessionId);
+    }, [sessionId]);
 
     useLifecycle({
         componentName: 'ProductSelectionContainer',
@@ -47,8 +48,9 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     title: {
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: '600',
+        color: '#212529',
         padding: 12,
         backgroundColor: '#F8F9FA',
         borderBottomWidth: 1,

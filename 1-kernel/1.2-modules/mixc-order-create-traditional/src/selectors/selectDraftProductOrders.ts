@@ -22,6 +22,11 @@ export const selectSelectedProductOrder = createSelector(
 
 export const selectProductOrderTotalAmount = createSelector(
     [selectCreateOrderState],
-    (createOrderState) => createOrderState?.total?.value || []
+    (createOrderState) => createOrderState?.total?.value || 0
+);
+
+export const selectProductOrderSessionId = createSelector(
+    [selectCreateOrderState],
+    (createOrderState) => createOrderState?.sessionId?.value || ''
 );
 

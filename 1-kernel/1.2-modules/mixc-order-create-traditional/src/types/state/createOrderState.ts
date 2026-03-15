@@ -6,4 +6,5 @@ export interface CreateOrderState {
     draftProductOrders: ValueWithUpdatedAt<DraftProductOrder[]>
     selected: ValueWithUpdatedAt<string|null>
     total: ValueWithUpdatedAt<number>
+    sessionId: ValueWithUpdatedAt<string>
 }

@@ -23,5 +23,6 @@ export const uiMixcTradeInstanceState= createModuleInstanceModeStateKeys(
 export const uiMixcTradeWorkspaceState = createModuleWorkspaceStateKeys(
     moduleName,
     [
+        'orderCreation'
     ] as const
 )

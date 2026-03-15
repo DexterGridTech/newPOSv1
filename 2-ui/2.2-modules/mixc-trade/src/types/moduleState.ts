@@ -6,13 +6,15 @@ import {
     CreateModuleInstanceModeStateType,
     CreateModuleWorkspaceStateType
 } from "@impos2/kernel-core-interconnection";
+import {OrderCreationState} from "./state/orderCreation";
+import {uiMixcTradeWorkspaceState} from "./shared/moduleStateKey";
 
-export interface uiMixcTradeState {
+export interface UiMixcTradeState {
 }
 
-export type uiMixcTradeWorkspaceState = CreateModuleWorkspaceStateType<{
-
+export type UiMixcTradeWorkspaceState = CreateModuleWorkspaceStateType<{
+    [uiMixcTradeWorkspaceState.orderCreation]: OrderCreationState
 }>
-export type uiMixcTradeInstanceState = CreateModuleInstanceModeStateType<{
+export type UiMixcTradeInstanceState = CreateModuleInstanceModeStateType<{
 
 }>

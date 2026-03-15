@@ -2,11 +2,12 @@ import React, {useCallback} from "react";
 import {useLifecycle} from "@impos2/ui-core-base";
 import {Text, View, Pressable, StyleSheet} from "react-native";
 import {useSelector} from "react-redux";
-import {selectSelectedProductOrder, kernelMixcOrderCreateTraditionalCommands} from "@impos2/kernel-mixc-order-create-traditional";
+import {selectSelectedProductOrder, selectProductOrderSessionId, kernelMixcOrderCreateTraditionalCommands} from "@impos2/kernel-mixc-order-create-traditional";
 import {shortId} from "@impos2/kernel-core-base";
 
 export const PriceKeyboard: React.FC = () => {
     const selectedProductOrder = useSelector(selectSelectedProductOrder);
+    const sessionId = useSelector(selectProductOrderSessionId);
     const disabled = !selectedProductOrder || selectedProductOrder.length === 0;
 
     useLifecycle({
@@ -17,15 +18,15 @@ export const PriceKeyboard: React.FC = () => {
 
     const handleKeyPress = useCallback((char: string) => {
         console.log('Key pressed:', char);
-        kernelMixcOrderCreateTraditionalCommands.setProductPrice({char}).execute(shortId());
-    }, []);
+        kernelMixcOrderCreateTraditionalCommands.setProductPrice({char}).execute(shortId(), sessionId);
+    }, [sessionId]);
 
     const handleConfirm = useCallback(() => {
         console.log('Confirm pressed, selectedProductOrder:', selectedProductOrder);
         if (selectedProductOrder && selectedProductOrder.length > 0) {
-            kernelMixcOrderCreateTraditionalCommands.selectProductOrder({productId: selectedProductOrder}).execute(shortId());
+            kernelMixcOrderCreateTraditionalCommands.selectProductOrder({productId: selectedProductOrder}).execute(shortId(), sessionId);
         }
-    }, [selectedProductOrder]);
+    }, [selectedProductOrder, sessionId]);
 
     const handlePress1 = useCallback(() => handleKeyPress('1'), [handleKeyPress]);
     const handlePress2 = useCallback(() => handleKeyPress('2'), [handleKeyPress]);

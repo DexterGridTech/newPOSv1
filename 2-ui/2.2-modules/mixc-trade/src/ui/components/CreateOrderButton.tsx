@@ -1,14 +1,15 @@
 import React from 'react';
-import {Animated, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useCreateOrderButton} from '../../hooks/useCreateOrderButton';
+import {OrderCreationType} from "../../types/shared/orderCreationType";
 
 export const CreateOrderButton: React.FC = () => {
-    const {orderCreationType, flashAnim, handlePress} = useCreateOrderButton();
+    const {orderCreationType, handlePress} = useCreateOrderButton();
 
-    const isActive = orderCreationType === 'active';
+    const isActive = orderCreationType === OrderCreationType.Active;
 
     return (
-        <Animated.View style={[s.wrapper, {opacity: flashAnim}]}>
+        <View style={s.wrapper}>
             <TouchableOpacity
                 style={[s.button, isActive ? s.buttonActive : s.buttonPassive]}
                 onPress={handlePress}
@@ -20,7 +21,7 @@ export const CreateOrderButton: React.FC = () => {
                     {isActive ? '我要开单' : '码牌收单'}
                 </Text>
             </TouchableOpacity>
-        </Animated.View>
+        </View>
     );
 };
 

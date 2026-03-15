@@ -1,2 +1,4 @@
-
-export type OrderCreationType = 'active' | 'passive'
+export enum OrderCreationType {
+    Active = 'active',
+    Passive = 'passive'
+}

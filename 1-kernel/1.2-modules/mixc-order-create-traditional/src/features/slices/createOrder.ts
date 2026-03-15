@@ -19,7 +19,8 @@ const updateTotal = (state: CreateOrderState, now: number) => {
 const initialState: CreateOrderState = {
     draftProductOrders: { value: [], updatedAt: 0 },
     selected: { value: null, updatedAt: 0 },
-    total: { value: 0, updatedAt: 0 }
+    total: { value: 0, updatedAt: 0 },
+    sessionId: { value: shortId(), updatedAt: 0 }
 }
 const slice = createWorkspaceSlice(
     kernelMixcOrderCreateTraditionalWorkspaceState.createOrder,
@@ -96,6 +97,7 @@ const slice = createWorkspaceSlice(
             state.draftProductOrders = { value: [], updatedAt: now }
             state.selected = { value: null, updatedAt: now }
             state.total = { value: 0, updatedAt: now }
+            state.sessionId = { value: shortId(), updatedAt: now }
         },
         setValueStr: (state, action: PayloadAction<{ char: string }>) => {
             const selectedId = state.selected.value

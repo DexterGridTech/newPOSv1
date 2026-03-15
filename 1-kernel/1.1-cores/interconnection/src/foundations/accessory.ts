@@ -14,5 +14,8 @@ export const getStandalone = (): boolean => {
 export const getWorkspace = (): Workspace => {
     return storeEntry.getStateByKey(kernelCoreInterconnectionState.instanceInfo).workspace
 }
+export const getEnableSlave = (): boolean => {
+    return storeEntry.getStateByKey(kernelCoreInterconnectionState.instanceInfo).enableSlave
+}
 
 
