@@ -65,50 +65,28 @@ export const useLongPress = ({ onLongPress, delay = 1000 }: UseLongPressOptions)
         };
     }
 
-    // 原生端使用 Responder System
-    const handleStartShouldSetResponder = useCallback(() => {
-        return true;
-    }, []);
-
-    const handleMoveShouldSetResponder = useCallback(() => {
-        return false; // 移动时不接管 responder
-    }, []);
-
-    const handleStartShouldSetResponderCapture = useCallback(() => {
-        // 捕获阶段不启动定时器，避免干扰子组件（如输入框）
-        return false;
-    }, []);
-
-    const handleMoveShouldSetResponderCapture = useCallback(() => {
-        return false;
-    }, []);
-
-    const handleResponderGrant = useCallback((event: GestureResponderEvent) => {
-        if (!timerRef.current) {
-            startTimer();
-        }
+    // 原生端使用 touch 事件，避免根节点抢占 responder 导致 ScrollView/FlatList 无法滚动
+    const handleTouchStart = useCallback((_event: GestureResponderEvent) => {
+        startTimer();
     }, [startTimer]);
 
-    const handleResponderRelease = useCallback(() => {
+    const handleTouchEnd = useCallback(() => {
         clearTimer();
     }, [clearTimer]);
 
-    const handleResponderTerminate = useCallback(() => {
+    const handleTouchCancel = useCallback(() => {
         clearTimer();
     }, [clearTimer]);
 
-    const handleResponderEnd = useCallback(() => {
+    const handleTouchMove = useCallback(() => {
+        // 一旦发生移动则取消长按，避免与滚动手势冲突
         clearTimer();
     }, [clearTimer]);
 
     return {
-        onStartShouldSetResponder: handleStartShouldSetResponder,
-        onMoveShouldSetResponder: handleMoveShouldSetResponder,
-        onStartShouldSetResponderCapture: handleStartShouldSetResponderCapture,
-        onMoveShouldSetResponderCapture: handleMoveShouldSetResponderCapture,
-        onResponderGrant: handleResponderGrant,
-        onResponderRelease: handleResponderRelease,
-        onResponderTerminate: handleResponderTerminate,
-        onResponderEnd: handleResponderEnd,
+        onTouchStart: handleTouchStart,
+        onTouchEnd: handleTouchEnd,
+        onTouchCancel: handleTouchCancel,
+        onTouchMove: handleTouchMove,
     };
 };

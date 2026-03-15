@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { api } from '../services/api';
-import { TreeView, TreeNode, Modal, StatusLight, JsonTooltip, DetailCard } from '../components/common';
+import { TreeView, TreeNode, Modal, JsonTooltip, DetailCard } from '../components/common';
 import { Unit, UnitData } from '../types';
 
 /**
@@ -330,7 +330,7 @@ function ModelModal({ onClose, onSave, model, models, defaultParentId }: any) {
 }
 
 // UnitData Modal Component
-function UnitDataModal({ onClose, onSave, data, unitId, unitType }: any) {
+function UnitDataModal({ onClose, onSave, data, unitType }: any) {
   const [formData, setFormData] = useState({
     name: data?.name || '',
     path: data?.path || '',

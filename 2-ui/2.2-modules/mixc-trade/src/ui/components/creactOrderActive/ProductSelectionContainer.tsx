@@ -1,6 +1,6 @@
 import React, {useCallback} from "react";
 import {useLifecycle} from "@impos2/ui-core-base";
-import {FlatList, StyleSheet} from "react-native";
+import {View, FlatList, Text, StyleSheet} from "react-native";
 import {useSelector} from "react-redux";
 import {selectProducts, Product} from "@impos2/kernel-mixc-product";
 import {kernelMixcOrderCreateTraditionalCommands} from "@impos2/kernel-mixc-order-create-traditional";
@@ -23,21 +23,37 @@ export const ProductSelectionContainer: React.FC = () => {
     });
 
     return (
-        <FlatList
-            data={products}
-            keyExtractor={(item) => item.productCode}
-            numColumns={3}
-            renderItem={({item}) => (
-                <ProductSelectionItem product={item} onPress={handleProductPress}/>
-            )}
-            style={styles.list}
-            contentContainerStyle={styles.container}
-            columnWrapperStyle={styles.columnWrapper}
-        />
+        <View style={styles.wrapper}>
+            <Text style={styles.title}>商品列表：{products.length}个</Text>
+            <FlatList
+                data={products}
+                keyExtractor={(item) => item.productCode}
+                numColumns={3}
+                renderItem={({item}) => (
+                    <ProductSelectionItem product={item} onPress={handleProductPress}/>
+                )}
+                style={styles.list}
+                contentContainerStyle={styles.container}
+                columnWrapperStyle={styles.columnWrapper}
+                showsVerticalScrollIndicator={true}
+                persistentScrollbar={true}
+            />
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
+    wrapper: {
+        flex: 1,
+    },
+    title: {
+        fontSize: 18,
+        fontWeight: '600',
+        padding: 12,
+        backgroundColor: '#F8F9FA',
+        borderBottomWidth: 1,
+        borderBottomColor: '#E9ECEF',
+    },
     list: {
         flex: 1,
     },

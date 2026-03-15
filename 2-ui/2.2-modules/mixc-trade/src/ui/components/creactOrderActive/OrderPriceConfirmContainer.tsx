@@ -2,9 +2,9 @@ import React, {useCallback} from "react";
 import {useLifecycle} from "@impos2/ui-core-base";
 import {Text, View} from "react-native";
 
-export const ProductOrderContainer: React.FC = () => {
+export const OrderPriceConfirmContainer: React.FC = () => {
     useLifecycle({
-        componentName: 'ProductOrderContainer',
+        componentName: 'OrderPriceConfirmContainer',
         onInitiated: useCallback(() => {
         }, []),
         onClearance: useCallback(() => {
@@ -13,7 +13,7 @@ export const ProductOrderContainer: React.FC = () => {
     return (
         <View>
             <Text>
-                ProductOrderContainer
+                OrderPriceConfirmContainer
             </Text>
         </View>
     );

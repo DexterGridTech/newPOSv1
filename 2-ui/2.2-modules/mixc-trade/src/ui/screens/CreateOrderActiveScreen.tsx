@@ -4,12 +4,12 @@ import {StyleSheet, View} from "react-native";
 import {ScreenMode, ScreenPartRegistration} from "@impos2/kernel-core-base";
 import {InstanceMode, Workspace} from "@impos2/kernel-core-interconnection";
 import {uiMixcTradeVariables} from "../variables";
-import {ProductSelectionContainer} from "../components/ProductSelectionContainer";
-import {OrderPriceConfirmContainer} from "../components/OrderPriceConfirmContainer";
-import {ProductOrderContainer} from "../components/ProductOrderContainer";
-import {PriceKeyboard} from "../components/PriceKeyboard";
+import {ProductSelectionContainer} from "../components/creactOrderActive/ProductSelectionContainer";
+import {OrderPriceConfirmContainer} from "../components/creactOrderActive/OrderPriceConfirmContainer";
+import {ProductOrderContainer} from "../components/creactOrderActive/ProductOrderContainer";
+import {PriceKeyboard} from "../components/creactOrderActive/PriceKeyboard";
 
-const RIGHT_PANEL_WIDTH = 400;
+const RIGHT_PANEL_WIDTH = 340;
 
 export const CreateOrderActiveScreen: React.FC = () => {
     useLifecycle({
@@ -60,6 +60,7 @@ const s = StyleSheet.create({
     },
     bottomLeft: {
         flex: 1,
+        overflow: 'hidden',
     },
     topRight: {
         flex: 1,

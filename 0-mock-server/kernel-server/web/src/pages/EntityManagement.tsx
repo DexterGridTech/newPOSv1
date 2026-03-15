@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { api } from '../services/api';
-import { TreeView, TreeNode, Modal, StatusLight, JsonTooltip, DetailCard, JsonViewer } from '../components/common';
+import { TreeView, TreeNode, Modal, JsonTooltip, DetailCard, JsonViewer } from '../components/common';
 import { Unit, Device, UnitData } from '../types';
 
 /**
@@ -957,7 +957,7 @@ function DeactivateDeviceModal({ onClose, onConfirm, deactivateCode, setDeactiva
 }
 
 // UnitData Modal Component
-function UnitDataModal({ onClose, onSave, data, unitId, unitType }: any) {
+function UnitDataModal({ onClose, onSave, data, unitType }: any) {
   const [formData, setFormData] = useState({
     name: data?.name || '',
     path: data?.path || '',

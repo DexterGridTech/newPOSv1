@@ -8,7 +8,7 @@ interface ProductSelectionItemProps {
     onPress: (product: Product) => void
 }
 
-export const ProductSelectionItem: React.FC<ProductSelectionItemProps> = ({product, onPress}) => {
+export const ProductSelectionItem: React.FC<ProductSelectionItemProps> = React.memo(({product, onPress}) => {
     useLifecycle({
         componentName: 'ProductSelectionItem',
         onInitiated: useCallback(() => {
@@ -17,15 +17,20 @@ export const ProductSelectionItem: React.FC<ProductSelectionItemProps> = ({produ
         }, []),
     });
 
+    const handlePress = useCallback(() => {
+        onPress(product);
+    }, [product, onPress]);
+
     return (
         <Pressable
-            style={({pressed}) => [styles.container, pressed && {opacity: 0.7}]}
-            onPress={() => onPress(product)}
+            style={({pressed}) => [styles.container, pressed && styles.containerPressed]}
+            onPress={handlePress}
         >
-            <Text style={styles.text}>{product.displayName}</Text>
+            <Text style={styles.displayName}>{product.displayName}</Text>
+            <Text style={styles.productCode}>{product.productCode}</Text>
         </Pressable>
     );
-};
+});
 
 const styles = StyleSheet.create({
     container: {
@@ -38,10 +43,20 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         minHeight: 80,
     },
-    text: {
+    containerPressed: {
+        opacity: 0.7,
+    },
+    displayName: {
         color: '#FFFFFF',
         fontSize: 16,
         fontWeight: '600',
+        textAlign: 'center',
+    },
+    productCode: {
+        color: '#FFFFFF',
+        fontSize: 12,
+        marginTop: 4,
+        opacity: 0.8,
         textAlign: 'center',
     },
 });

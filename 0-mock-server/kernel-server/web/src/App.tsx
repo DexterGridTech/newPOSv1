@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { EntityManagement } from './pages/EntityManagement';
 import { ModelManagement } from './pages/ModelManagement';
-import { UnitDataManagement } from './pages/UnitDataManagement';
 import { CommandManagement } from './pages/CommandManagement';
 
 /**
@@ -13,8 +12,7 @@ function App() {
   const tabs = [
     { id: 0, label: '业务主体管理' },
     { id: 1, label: '机型管理' },
-    { id: 2, label: '单元数据管理' },
-    { id: 3, label: '指令管理' }
+    { id: 2, label: '指令管理' }
   ];
 
   return (
@@ -60,8 +58,7 @@ function App() {
         <div className="bg-white rounded-lg shadow p-6">
           {activeTab === 0 && <EntityManagement />}
           {activeTab === 1 && <ModelManagement />}
-          {activeTab === 2 && <UnitDataManagement />}
-          {activeTab === 3 && <CommandManagement />}
+          {activeTab === 2 && <CommandManagement />}
         </div>
       </main>
     </div>
