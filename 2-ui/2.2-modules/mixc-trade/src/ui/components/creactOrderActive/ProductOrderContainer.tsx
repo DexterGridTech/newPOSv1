@@ -2,12 +2,13 @@ import React, {useCallback, useRef, useEffect} from "react";
 import {useLifecycle} from "@impos2/ui-core-base";
 import {Text, View, FlatList, StyleSheet} from "react-native";
 import {useSelector} from "react-redux";
-import {selectDraftProductOrders, selectSelectedProductOrder} from "@impos2/kernel-mixc-order-create-traditional";
+import {selectDraftProductOrders, selectSelectedProductOrder, selectProductOrderSessionId} from "@impos2/kernel-mixc-order-create-traditional";
 import {ProductOrderItem} from "./ProductOrderItem";
 
 export const ProductOrderContainer: React.FC = () => {
     const orders = useSelector(selectDraftProductOrders);
     const selectedProductOrderId = useSelector(selectSelectedProductOrder);
+    const sessionId = useSelector(selectProductOrderSessionId);
     const flatListRef = useRef<FlatList>(null);
 
     useLifecycle({
@@ -27,7 +28,7 @@ export const ProductOrderContainer: React.FC = () => {
                 });
             }
         }
-    }, [selectedProductOrderId]);
+    }, [selectedProductOrderId, orders]);
 
     const getItemLayout = useCallback((data: any, index: number) => ({
         length: 73,
@@ -36,8 +37,8 @@ export const ProductOrderContainer: React.FC = () => {
     }), []);
 
     const renderItem = useCallback(({item}: {item: any}) => (
-        <ProductOrderItem order={item} />
-    ), []);
+        <ProductOrderItem order={item} isSelected={item.id === selectedProductOrderId} sessionId={sessionId} />
+    ), [selectedProductOrderId, sessionId]);
 
     return (
         <View style={styles.wrapper}>
@@ -61,6 +62,9 @@ export const ProductOrderContainer: React.FC = () => {
                     keyboardShouldPersistTaps="handled"
                     scrollEventThrottle={16}
                     removeClippedSubviews={true}
+                    maxToRenderPerBatch={10}
+                    windowSize={5}
+                    initialNumToRender={10}
                     contentContainerStyle={styles.listContent}
                     onScrollToIndexFailed={(info) => {
                         setTimeout(() => {

@@ -1,26 +1,17 @@
 import React, {useCallback} from "react";
-import {useLifecycle} from "@impos2/ui-core-base";
 import {Text, View, Pressable, StyleSheet} from "react-native";
-import {useSelector} from "react-redux";
-import {DraftProductOrder, selectSelectedProductOrder, selectProductOrderSessionId} from "@impos2/kernel-mixc-order-create-traditional";
+import {DraftProductOrder} from "@impos2/kernel-mixc-order-create-traditional";
 import {kernelMixcOrderCreateTraditionalCommands} from "@impos2/kernel-mixc-order-create-traditional";
 import {shortId} from "@impos2/kernel-core-base";
 
 interface ProductOrderItermProps {
     order: DraftProductOrder;
+    isSelected: boolean;
+    sessionId: string;
 }
 
-export const ProductOrderItem: React.FC<ProductOrderItermProps> = React.memo(({order}) => {
-    const selectedProductOrderId = useSelector(selectSelectedProductOrder);
-    const sessionId = useSelector(selectProductOrderSessionId);
-    const isSelected = selectedProductOrderId === order.id;
+export const ProductOrderItem: React.FC<ProductOrderItermProps> = React.memo(({order, isSelected, sessionId}) => {
     const isAmountZero = (order.amount || 0) === 0;
-
-    useLifecycle({
-        componentName: 'ProductOrderItem',
-        onInitiated: useCallback(() => {}, []),
-        onClearance: useCallback(() => {}, []),
-    });
 
     const handleDecrease = useCallback(() => {
         kernelMixcOrderCreateTraditionalCommands.decreaseProductOrderQuantity({productId: order.id}).execute(shortId(), sessionId);
@@ -135,6 +126,8 @@ const styles = StyleSheet.create({
         paddingVertical: 4,
         paddingHorizontal: 8,
         borderRadius: 4,
+        borderWidth: 1,
+        borderColor: '#DEE2E6',
         justifyContent: 'center',
         alignItems: 'flex-end',
     },

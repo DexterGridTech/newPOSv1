@@ -15,6 +15,10 @@ export const ProductSelectionContainer: React.FC = () => {
         kernelMixcOrderCreateTraditionalCommands.addProductOrder(product).execute(shortId(), sessionId);
     }, [sessionId]);
 
+    const renderItem = useCallback(({item}: {item: Product}) => (
+        <ProductSelectionItem product={item} onPress={handleProductPress}/>
+    ), [handleProductPress]);
+
     useLifecycle({
         componentName: 'ProductSelectionContainer',
         onInitiated: useCallback(() => {
@@ -30,14 +34,16 @@ export const ProductSelectionContainer: React.FC = () => {
                 data={products}
                 keyExtractor={(item) => item.productCode}
                 numColumns={3}
-                renderItem={({item}) => (
-                    <ProductSelectionItem product={item} onPress={handleProductPress}/>
-                )}
+                renderItem={renderItem}
                 style={styles.list}
                 contentContainerStyle={styles.container}
                 columnWrapperStyle={styles.columnWrapper}
                 showsVerticalScrollIndicator={true}
                 persistentScrollbar={true}
+                removeClippedSubviews={true}
+                maxToRenderPerBatch={9}
+                windowSize={5}
+                initialNumToRender={9}
             />
         </View>
     );

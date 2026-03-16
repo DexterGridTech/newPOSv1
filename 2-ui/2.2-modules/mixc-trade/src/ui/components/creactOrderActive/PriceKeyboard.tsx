@@ -1,5 +1,4 @@
 import React, {useCallback} from "react";
-import {useLifecycle} from "@impos2/ui-core-base";
 import {Text, View, Pressable, StyleSheet} from "react-native";
 import {useSelector} from "react-redux";
 import {selectSelectedProductOrder, selectProductOrderSessionId, kernelMixcOrderCreateTraditionalCommands} from "@impos2/kernel-mixc-order-create-traditional";
@@ -9,12 +8,6 @@ export const PriceKeyboard: React.FC = () => {
     const selectedProductOrder = useSelector(selectSelectedProductOrder);
     const sessionId = useSelector(selectProductOrderSessionId);
     const disabled = !selectedProductOrder || selectedProductOrder.length === 0;
-
-    useLifecycle({
-        componentName: 'PriceKeyboard',
-        onInitiated: useCallback(() => {}, []),
-        onClearance: useCallback(() => {}, []),
-    });
 
     const handleKeyPress = useCallback((char: string) => {
         console.log('Key pressed:', char);
@@ -28,45 +21,32 @@ export const PriceKeyboard: React.FC = () => {
         }
     }, [selectedProductOrder, sessionId]);
 
-    const handlePress1 = useCallback(() => handleKeyPress('1'), [handleKeyPress]);
-    const handlePress2 = useCallback(() => handleKeyPress('2'), [handleKeyPress]);
-    const handlePress3 = useCallback(() => handleKeyPress('3'), [handleKeyPress]);
-    const handlePress4 = useCallback(() => handleKeyPress('4'), [handleKeyPress]);
-    const handlePress5 = useCallback(() => handleKeyPress('5'), [handleKeyPress]);
-    const handlePress6 = useCallback(() => handleKeyPress('6'), [handleKeyPress]);
-    const handlePress7 = useCallback(() => handleKeyPress('7'), [handleKeyPress]);
-    const handlePress8 = useCallback(() => handleKeyPress('8'), [handleKeyPress]);
-    const handlePress9 = useCallback(() => handleKeyPress('9'), [handleKeyPress]);
-    const handlePress0 = useCallback(() => handleKeyPress('0'), [handleKeyPress]);
-    const handlePressDot = useCallback(() => handleKeyPress('.'), [handleKeyPress]);
-    const handlePressBackspace = useCallback(() => handleKeyPress('b'), [handleKeyPress]);
-
     return (
         <View style={styles.container}>
             <View style={styles.mainGrid}>
                 <View style={styles.leftGrid}>
                     <View style={styles.row}>
-                        <KeyButton label="1" onPress={handlePress1} disabled={disabled} />
-                        <KeyButton label="2" onPress={handlePress2} disabled={disabled} />
-                        <KeyButton label="3" onPress={handlePress3} disabled={disabled} />
+                        <KeyButton label="1" onPress={() => handleKeyPress('1')} disabled={disabled} />
+                        <KeyButton label="2" onPress={() => handleKeyPress('2')} disabled={disabled} />
+                        <KeyButton label="3" onPress={() => handleKeyPress('3')} disabled={disabled} />
                     </View>
                     <View style={styles.row}>
-                        <KeyButton label="4" onPress={handlePress4} disabled={disabled} />
-                        <KeyButton label="5" onPress={handlePress5} disabled={disabled} />
-                        <KeyButton label="6" onPress={handlePress6} disabled={disabled} />
+                        <KeyButton label="4" onPress={() => handleKeyPress('4')} disabled={disabled} />
+                        <KeyButton label="5" onPress={() => handleKeyPress('5')} disabled={disabled} />
+                        <KeyButton label="6" onPress={() => handleKeyPress('6')} disabled={disabled} />
                     </View>
                     <View style={styles.row}>
-                        <KeyButton label="7" onPress={handlePress7} disabled={disabled} />
-                        <KeyButton label="8" onPress={handlePress8} disabled={disabled} />
-                        <KeyButton label="9" onPress={handlePress9} disabled={disabled} />
+                        <KeyButton label="7" onPress={() => handleKeyPress('7')} disabled={disabled} />
+                        <KeyButton label="8" onPress={() => handleKeyPress('8')} disabled={disabled} />
+                        <KeyButton label="9" onPress={() => handleKeyPress('9')} disabled={disabled} />
                     </View>
                     <View style={styles.row}>
-                        <KeyButton label="0" onPress={handlePress0} disabled={disabled} />
-                        <KeyButton label="." onPress={handlePressDot} disabled={disabled} wide />
+                        <KeyButton label="0" onPress={() => handleKeyPress('0')} disabled={disabled} />
+                        <KeyButton label="." onPress={() => handleKeyPress('.')} disabled={disabled} wide />
                     </View>
                 </View>
                 <View style={styles.rightColumn}>
-                    <KeyButton label="退格" onPress={handlePressBackspace} disabled={disabled} />
+                    <KeyButton label="退格" onPress={() => handleKeyPress('b')} disabled={disabled} />
                     <KeyButton label="确认" onPress={handleConfirm} disabled={disabled} primary />
                 </View>
             </View>

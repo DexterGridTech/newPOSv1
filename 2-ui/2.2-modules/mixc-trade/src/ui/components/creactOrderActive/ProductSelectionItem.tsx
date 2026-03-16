@@ -1,5 +1,4 @@
 import React, {useCallback} from "react";
-import {useLifecycle} from "@impos2/ui-core-base";
 import {Text, Pressable, StyleSheet} from "react-native";
 import {Product} from "@impos2/kernel-mixc-product";
 
@@ -9,14 +8,6 @@ interface ProductSelectionItemProps {
 }
 
 export const ProductSelectionItem: React.FC<ProductSelectionItemProps> = React.memo(({product, onPress}) => {
-    useLifecycle({
-        componentName: 'ProductSelectionItem',
-        onInitiated: useCallback(() => {
-        }, []),
-        onClearance: useCallback(() => {
-        }, []),
-    });
-
     const handlePress = useCallback(() => {
         onPress(product);
     }, [product, onPress]);

@@ -1,91 +1,43 @@
 import { useRef, useCallback } from 'react';
-import { Platform } from 'react-native';
+import { GestureResponderEvent, Platform } from 'react-native';
 
 interface UseMultiplePressOptions {
     onMultiplePress: () => void;
 }
 
+const AREA_SIZE = 100; // 左上角区域大小
+const REQUIRED_PRESSES = 10; // 需要的点击次数
+const TIME_WINDOW = 3000; // 时间窗口3秒
+
 export const useMultiplePress = ({
     onMultiplePress,
 }: UseMultiplePressOptions) => {
-    const stageRef = useRef(0); // 0: 等待开始, 1: 等待2连击, 2: 等待3连击
-    const stageCountRef = useRef(0); // 当前阶段内的点击次数
-    const lastPressTimeRef = useRef(0);
-    const resetTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const pressTimesRef = useRef<number[]>([]);
 
-    const resetState = useCallback(() => {
-        stageRef.current = 0;
-        stageCountRef.current = 0;
-        lastPressTimeRef.current = 0;
-        if (resetTimerRef.current) {
-            clearTimeout(resetTimerRef.current);
-            resetTimerRef.current = null;
+    const handlePress = useCallback((event: GestureResponderEvent) => {
+        const { pageX, pageY } = event.nativeEvent;
+
+        // 检查是否在左上角区域内
+        if (pageX > AREA_SIZE || pageY > AREA_SIZE) {
+            return;
         }
-    }, []);
 
-    const handlePress = useCallback(() => {
         const now = Date.now();
-        const timeSinceLastPress = now - lastPressTimeRef.current;
 
-        // 清除之前的重置定时器
-        if (resetTimerRef.current) {
-            clearTimeout(resetTimerRef.current);
-            resetTimerRef.current = null;
+        // 过滤掉时间窗口外的点击
+        pressTimesRef.current = pressTimesRef.current.filter(
+            time => now - time < TIME_WINDOW
+        );
+
+        // 添加当前点击
+        pressTimesRef.current.push(now);
+
+        // 检查是否达到要求的点击次数
+        if (pressTimesRef.current.length >= REQUIRED_PRESSES) {
+            pressTimesRef.current = [];
+            onMultiplePress();
         }
-
-        if (stageRef.current === 0) {
-            // 初始状态：第一次点击
-            stageRef.current = 1;
-            stageCountRef.current = 1;
-            lastPressTimeRef.current = now;
-            resetTimerRef.current = setTimeout(resetState, 3000);
-        } else if (stageRef.current === 1) {
-            // 阶段1：等待2连击
-            if (timeSinceLastPress < 1000) {
-                // 快速连击（<1秒）
-                stageCountRef.current++;
-                lastPressTimeRef.current = now;
-
-                if (stageCountRef.current === 2) {
-                    // 完成2连击，进入阶段2
-                    stageRef.current = 2;
-                    stageCountRef.current = 0;
-                }
-                resetTimerRef.current = setTimeout(resetState, 3000);
-            } else if (timeSinceLastPress >= 1000 && timeSinceLastPress <= 3000) {
-                // 停顿后点击，重新开始阶段1
-                stageCountRef.current = 1;
-                lastPressTimeRef.current = now;
-                resetTimerRef.current = setTimeout(resetState, 3000);
-            } else {
-                // 超时
-                resetState();
-            }
-        } else if (stageRef.current === 2) {
-            // 阶段2：等待3连击
-            if (timeSinceLastPress < 1000) {
-                // 快速连击（<1秒）
-                stageCountRef.current++;
-                lastPressTimeRef.current = now;
-
-                if (stageCountRef.current === 3) {
-                    // 完成3连击，触发事件
-                    resetState();
-                    onMultiplePress();
-                } else {
-                    resetTimerRef.current = setTimeout(resetState, 3000);
-                }
-            } else if (timeSinceLastPress >= 1000 && timeSinceLastPress <= 3000) {
-                // 停顿后点击，开始3连击计数
-                stageCountRef.current = 1;
-                lastPressTimeRef.current = now;
-                resetTimerRef.current = setTimeout(resetState, 3000);
-            } else {
-                // 超时
-                resetState();
-            }
-        }
-    }, [onMultiplePress, resetState]);
+    }, [onMultiplePress]);
 
     // Web 端
     if (Platform.OS === 'web') {
