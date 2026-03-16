@@ -14,6 +14,7 @@ import {kernelMixcProductModule} from "@impos2/kernel-mixc-product";
 import {kernelMixcOrderBaseModule} from "@impos2/kernel-mixc-order-base";
 import {uiMixcWorkbenchModule} from "@impos2/ui-mixc-workbench";
 import {kernelMixcOrderCreateTraditionalModule} from "@impos2/kernel-mixc-order-create-traditional";
+import {kernelMixcOrderPayModule} from "@impos2/kernel-mixc-order-pay";
 
 export const uiMixcTradeModule: AppModule = {
     name: moduleName,
@@ -30,6 +31,7 @@ export const uiMixcTradeModule: AppModule = {
         kernelMixcProductModule,
         kernelMixcOrderBaseModule,
         kernelMixcOrderCreateTraditionalModule,
+        kernelMixcOrderPayModule,
         uiMixcWorkbenchModule,
     ],
     modulePreSetup: uiMixcTradeModulePreSetup,

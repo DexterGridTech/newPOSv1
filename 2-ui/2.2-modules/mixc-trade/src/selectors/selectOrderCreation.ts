@@ -14,3 +14,7 @@ export const selectOrderCreationType = createSelector(
     [selectOrderCreationState],
     (orderCreationState) => orderCreationState?.orderCreationType?.value
 );
+export const selectedPayingOrder = createSelector(
+    [selectOrderCreationState],
+    (orderCreationState) => orderCreationState?.selectedPayingOrder?.value
+);

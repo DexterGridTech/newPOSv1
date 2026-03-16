@@ -2,6 +2,7 @@ export interface MainOrderBase {
     mainOrderCode: string
     subOrders: SubOrderBase[]
     payments: PaymentBase[]
+    paymentWithdraws: PaymentWithdraw[]
     paymentRequests: PaymentRequestBase[]
     paymentShares: PaymentShare[]
     amount: number
@@ -11,8 +12,13 @@ export interface MainOrderBase {
     extra: Record<string, any>
 }
 
+export interface PaymentWithdraw {
+    paymentCode: string
+    paymentWithdrawStatus:PaymentWithdrawStatus
+    extra: Record<string, any>
+}
+
 export interface SubOrderBase {
-    mainOrderCode: string
     subOrderCode: string
     productOrders: ProductOrderBase[]
     amount: number
@@ -20,19 +26,15 @@ export interface SubOrderBase {
 }
 
 export interface ProductOrderBase {
-    mainOrderCode: string
-    subOrderCode: string
     productOrderCode: string
     productCode: string
     productName: string
     price: number
     quantity: number
     amount: number
-    extra: Record<string, any>
 }
 
 export interface PaymentBase {
-    mainOrderCode: string
     paymentCode: string;
     paymentRequestCode?: string;
     subPayments: PaymentBase[];
@@ -41,7 +43,6 @@ export interface PaymentBase {
 }
 
 export interface PaymentShare {
-    mainOrderCode: string
     productOrderCode: string;
     paymentCode: string;
     amount: number;
@@ -49,7 +50,6 @@ export interface PaymentShare {
 }
 
 export interface PaymentRequestBase {
-    mainOrderCode: string
     paymentRequestCode: string;
     amount: number;
     paymentRequestStatus: PaymentRequestBaseStatus
@@ -61,11 +61,23 @@ export enum MainOrderBaseStatus {
     COMPLETED = "COMPLETED",
     CANCELLED = "CANCELLED"
 }
+export enum PaymentBaseStatus {
+    CREATED = "CREATED",
+    PENDING = "PENDING",
+    COMPLETED = "COMPLETED",
+    CANCELLED = "CANCELLED",
+}
 
 export enum PaymentRequestBaseStatus {
     CREATED = "CREATED",
     COMPLETED = "COMPLETED",
     CANCELLED = "CANCELLED",
+    ERROR = "ERROR"
+}
+
+export enum PaymentWithdrawStatus {
+    CREATED = "CREATED",
+    COMPLETED = "COMPLETED",
     ERROR = "ERROR"
 }
 

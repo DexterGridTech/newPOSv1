@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {useEditableUiVariable} from "@impos2/kernel-core-navigation";
-import {uiMixcUserVariables} from "../ui";
+import {uiMixcUserVariables} from "../ui/variables";
 import {LOG_TAGS, logger, shortId} from "@impos2/kernel-core-base";
 import {useRequestStatus} from "@impos2/kernel-core-interconnection";
 import {kernelMixcUserCommands} from "@impos2/kernel-mixc-user";

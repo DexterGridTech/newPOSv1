@@ -31,6 +31,7 @@ const slice = createWorkspaceSlice(
             const id = shortId()
             state.draftProductOrders.value.push({
                 id,
+                productOrderCode:id,
                 productCode: action.payload.productCode,
                 productName: action.payload.productName,
                 displayName: action.payload.displayName,

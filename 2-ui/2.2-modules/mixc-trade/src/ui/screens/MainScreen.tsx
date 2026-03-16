@@ -6,6 +6,7 @@ import {InstanceMode, Workspace} from "@impos2/kernel-core-interconnection";
 import {uiMixcWorkbenchVariables} from "@impos2/ui-mixc-workbench";
 import {uiMixcTradeVariables} from "../variables";
 import {CreateOrderButton} from "../components";
+import {PayingOrderList} from "../components/payingOrder/PayingOrderList";
 
 // ─── Design Tokens ───────────────────────────────────────────────────────────
 const C = {
@@ -36,10 +37,25 @@ export const MainScreen: React.FC = () => {
                 <ScrollView
                     style={s.menuScroll}
                     contentContainerStyle={s.menuScrollContent}
-                    showsVerticalScrollIndicator={false}
+                    showsVerticalScrollIndicator={true}
+                    persistentScrollbar={true}
                 >
-
-                    <Text>销售菜单</Text>
+                    <PayingOrderList />
+                    <Text>销售菜单1</Text>
+                    <Text>销售菜单2</Text>
+                    <Text>销售菜单3</Text>
+                    <Text>销售菜单4</Text>
+                    <Text>销售菜单5</Text>
+                    <Text>销售菜单6</Text>
+                    <Text>销售菜单11</Text>
+                    <Text>销售菜单12</Text>
+                    <Text>销售菜单13</Text>
+                    <Text>销售菜单14</Text>
+                    <Text>销售菜单15</Text>
+                    <Text>销售菜单16</Text>
+                    <Text>销售菜单21</Text>
+                    <Text>销售菜单22</Text>
+                    <Text>销售菜单23</Text>
                 </ScrollView>
             </View>
             <StackContainer containerPart={uiMixcTradeVariables.mixcTradePanelContainer}>

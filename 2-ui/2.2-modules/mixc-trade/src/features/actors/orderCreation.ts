@@ -27,5 +27,11 @@ export class OrderCreationActor extends Actor {
             }).executeFromParent(command);
             return {};
         });
+    setSelectedPayingOrder = Actor.defineCommandHandler(uiMixcTradeCommands.setSelectedPayingOrder,
+        async (command): Promise<Record<string, any>> => {
+            logger.log([moduleName, LOG_TAGS.Actor, "OrderCreationActor"], 'set selected paying order')
+            dispatchWorkspaceAction(orderCreationActions.setSelectedPayingOrder(command.payload), command)
+            return {};
+        });
 }
 

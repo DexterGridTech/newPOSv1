@@ -26,6 +26,8 @@
     "@impos2/kernel-core-navigation": "*",
     "@impos2/kernel-core-task": "*",
     "@impos2/kernel-core-terminal": "*",
+    "@impos2/kernel-mixc-order-base": "*",
+    "@impos2/kernel-mixc-order-pay": "*",
     "@impos2/kernel-server-config": "*",
     "@impos2/ui-core-base": "*",
     "@impos2/ui-mixc-workbench": "*",

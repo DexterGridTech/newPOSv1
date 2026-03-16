@@ -12,11 +12,16 @@ import {OrderCreationType} from "../../types/shared/orderCreationType";
 
 const initialState: OrderCreationState = {
     orderCreationType: {value: OrderCreationType.Active, updatedAt: 0},
+    selectedPayingOrder: {value: null, updatedAt: 0}
 }
 const slice = createWorkspaceSlice(
     uiMixcTradeWorkspaceState.orderCreation,
     initialState,
     {
+        setSelectedPayingOrder: (state, action: PayloadAction<string|null>) => {
+            state.selectedPayingOrder.value = action.payload;
+            state.selectedPayingOrder.updatedAt = Date.now();
+        },
         setOrderCreationType: (state, action: PayloadAction<OrderCreationType>) => {
             state.orderCreationType.value = action.payload;
             state.orderCreationType.updatedAt = Date.now();
