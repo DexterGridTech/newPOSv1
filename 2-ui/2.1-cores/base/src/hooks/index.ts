@@ -1,4 +1,4 @@
-export * from './useLongPress'
+export * from './useMultiplePress'
 export * from './useModalAnimation'
 export * from './useLifecycle'
 export * from './useFancyKeyboard'

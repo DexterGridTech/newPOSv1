@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
     },
     amountValue: {
-        fontSize: 48,
+        fontSize: 36,
         fontWeight: '700',
         color: '#212529',
     },

@@ -9,7 +9,7 @@ import {
     ModalContainer,
     StackContainer,
     uiBaseCoreUiVariables,
-    useLongPress
+    useMultiplePress
 } from "@impos2/ui-core-base";
 import {useSelector} from "react-redux";
 import {DisplayMode, getStandalone, selectDisplayMode} from "@impos2/kernel-core-interconnection";
@@ -33,20 +33,20 @@ const RootScreen: React.FC<AppProps> = ({onLoadComplete}) => {
         }
     }, [onLoadComplete]);
 
-    const longPressHandlers = useLongPress({
-        onLongPress: () => {
+    const multiplePressHandlers = useMultiplePress({
+        onMultiplePress: () => {
+            console.log(`[${moduleName}] 多次点击事件触发 - ${formattedTime()}`);
             const standalone=getStandalone()
             if (standalone)
                 setShowAdminPopup(true);
-        },
-        delay: 2000
+        }
     });
 
     return (
         <FancyKeyboardProviderV2>
             <FancyContainerV2>
                 {/* 你的页面内容 */}
-                <View key={"primary-container"} {...longPressHandlers} style={{flex: 1}}>
+                <View key={"primary-container"} {...multiplePressHandlers} style={{flex: 1}}>
                     {displayMode === DisplayMode.PRIMARY ? (
                         <StackContainer containerPart={uiBaseCoreUiVariables.primaryRootContainer}>
                         </StackContainer>
