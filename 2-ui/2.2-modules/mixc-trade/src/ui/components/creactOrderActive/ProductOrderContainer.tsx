@@ -103,12 +103,12 @@ const styles = StyleSheet.create({
         borderBottomColor: '#DEE2E6',
     },
     headerName: {
-        flex: 2,
+        flex: 1,
         fontSize: 14,
         fontWeight: '600',
     },
     headerQuantity: {
-        flex: 2,
+        flex: 1,
         fontSize: 14,
         fontWeight: '600',
         textAlign: 'center',

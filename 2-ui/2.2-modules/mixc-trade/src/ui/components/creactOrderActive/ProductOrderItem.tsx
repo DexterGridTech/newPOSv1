@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
     nameContainer: {
-        flex: 2,
+        flex: 0.7,
         justifyContent: 'center',
     },
     productCode: {
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
         marginTop: 2,
     },
     quantityContainer: {
-        flex: 2,
+        flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     priceContainer: {
-        flex: 1,
+        flex: 0.5,
         backgroundColor: '#FFFFFF',
         paddingVertical: 4,
         paddingHorizontal: 8,
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     amount: {
-        flex: 1,
+        flex: 0.7,
         fontSize: 14,
         textAlign: 'right',
     },
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
         color: '#000000',
     },
     deleteButton: {
-        flex: 1,
+        flex: 0.5,
         alignItems: 'center',
     },
     deleteButtonPressed: {

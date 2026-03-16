@@ -1,5 +1,5 @@
 import React, {useCallback} from "react";
-import {StyleSheet, FlatList, View} from "react-native";
+import {StyleSheet, View} from "react-native";
 import {useSelector} from "react-redux";
 import {selectPayingOrders} from "@impos2/kernel-mixc-order-pay";
 import {PayingMainOrder} from "@impos2/kernel-mixc-order-pay";
@@ -22,30 +22,20 @@ export const PayingOrderList: React.FC = () => {
         kernelCoreNavigationCommands.navigateTo({target: payingOrderScreenPart}).execute(shortId());
     }, []);
 
-    const renderItem = useCallback(({item}: {item: PayingMainOrder}) => (
-        <PayingOrderItem
-            order={item}
-            onPress={handleOrderPress}
-            isSelected={item.mainOrderCode === selectedOrderCode && screenPart?.partKey === payingOrderScreenPart.partKey}
-        />
-    ), [handleOrderPress, selectedOrderCode, screenPart]);
-
     if (orders.length === 0) {
         return null;
     }
 
     return (
         <View style={s.root}>
-            <FlatList
-                data={orders}
-                keyExtractor={(item) => item.mainOrderCode || ''}
-                renderItem={renderItem}
-                showsVerticalScrollIndicator={true}
-                removeClippedSubviews={true}
-                maxToRenderPerBatch={5}
-                windowSize={3}
-                initialNumToRender={5}
-            />
+            {orders.map((item) => (
+                <PayingOrderItem
+                    key={item.mainOrderCode || ''}
+                    order={item}
+                    onPress={handleOrderPress}
+                    isSelected={item.mainOrderCode === selectedOrderCode && screenPart?.partKey === payingOrderScreenPart.partKey}
+                />
+            ))}
         </View>
     );
 };

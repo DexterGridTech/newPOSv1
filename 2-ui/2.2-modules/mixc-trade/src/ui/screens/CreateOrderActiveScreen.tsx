@@ -1,6 +1,6 @@
-import React, {useCallback, useMemo} from "react";
+import React, {useCallback, useMemo, useState, useEffect} from "react";
 import {useLifecycle} from "@impos2/ui-core-base";
-import {StyleSheet, View, useWindowDimensions} from "react-native";
+import {StyleSheet, View, useWindowDimensions, ActivityIndicator} from "react-native";
 import {ScreenMode, ScreenPartRegistration} from "@impos2/kernel-core-base";
 import {InstanceMode, Workspace} from "@impos2/kernel-core-interconnection";
 import {uiMixcTradeVariables} from "../variables";
@@ -11,9 +11,32 @@ import {PriceKeyboard} from "../components/creactOrderActive/PriceKeyboard";
 
 const RIGHT_PANEL_WIDTH = 340;
 
+const MountTracker: React.FC<{onMount: () => void; children: React.ReactNode}> = ({onMount, children}) => {
+    useEffect(() => {
+        onMount();
+    }, [onMount]);
+    return <>{children}</>;
+};
+
 export const CreateOrderActiveScreen: React.FC = () => {
     const { width, height } = useWindowDimensions();
     const isPortrait = useMemo(() => height > width, [width, height]);
+    const [mountedComponents, setMountedComponents] = useState(0);
+    const [mountedCount, setMountedCount] = useState(0);
+
+    useEffect(() => {
+        const timers = [
+            setTimeout(() => setMountedComponents(1), 100),
+            setTimeout(() => setMountedComponents(2), 200),
+            setTimeout(() => setMountedComponents(3), 300),
+            setTimeout(() => setMountedComponents(4), 400),
+        ];
+        return () => timers.forEach(clearTimeout);
+    }, []);
+
+    const handleMount = useCallback(() => {
+        setMountedCount(prev => prev + 1);
+    }, []);
 
     useLifecycle({
         componentName: 'CreateOrderActiveScreen',
@@ -25,18 +48,78 @@ export const CreateOrderActiveScreen: React.FC = () => {
 
     return (
         <View style={s.root}>
-            <View style={[s.item, isPortrait ? s.portraitItem1 : s.landscapeTopLeft]}>
-                <ProductSelectionContainer />
-            </View>
-            <View style={[s.item, isPortrait ? s.portraitItem2 : s.landscapeBottomLeft]}>
-                <ProductOrderContainer />
-            </View>
-            <View style={[s.item, isPortrait ? s.portraitItem3 : s.landscapeBottomRight]}>
-                <PriceKeyboard />
-            </View>
-            <View style={[s.item, isPortrait ? s.portraitItem4 : s.landscapeTopRight]}>
-                <OrderPriceConfirmContainer />
-            </View>
+            {mountedCount < 4 && (
+                <View style={s.loading}>
+                    <ActivityIndicator size="large" color="#4A90E2" />
+                </View>
+            )}
+            {isPortrait ? (
+                <>
+                    {mountedComponents >= 1 && (
+                        <View style={s.portraitItem}>
+                            <MountTracker onMount={handleMount}>
+                                <ProductSelectionContainer />
+                            </MountTracker>
+                        </View>
+                    )}
+                    {mountedComponents >= 2 && (
+                        <View style={s.portraitItem}>
+                            <MountTracker onMount={handleMount}>
+                                <ProductOrderContainer />
+                            </MountTracker>
+                        </View>
+                    )}
+                    {mountedComponents >= 3 && (
+                        <View style={s.portraitItem}>
+                            <MountTracker onMount={handleMount}>
+                                <PriceKeyboard />
+                            </MountTracker>
+                        </View>
+                    )}
+                    {mountedComponents >= 4 && (
+                        <View style={s.portraitItem}>
+                            <MountTracker onMount={handleMount}>
+                                <OrderPriceConfirmContainer />
+                            </MountTracker>
+                        </View>
+                    )}
+                </>
+            ) : (
+                <>
+                    <View style={s.leftColumn}>
+                        {mountedComponents >= 1 && (
+                            <View style={s.leftTop}>
+                                <MountTracker onMount={handleMount}>
+                                    <ProductSelectionContainer />
+                                </MountTracker>
+                            </View>
+                        )}
+                        {mountedComponents >= 2 && (
+                            <View style={s.leftBottom}>
+                                <MountTracker onMount={handleMount}>
+                                    <ProductOrderContainer />
+                                </MountTracker>
+                            </View>
+                        )}
+                    </View>
+                    <View style={s.rightColumn}>
+                        {mountedComponents >= 4 && (
+                            <View style={s.rightTop}>
+                                <MountTracker onMount={handleMount}>
+                                    <OrderPriceConfirmContainer />
+                                </MountTracker>
+                            </View>
+                        )}
+                        {mountedComponents >= 3 && (
+                            <View style={s.rightBottom}>
+                                <MountTracker onMount={handleMount}>
+                                    <PriceKeyboard />
+                                </MountTracker>
+                            </View>
+                        )}
+                    </View>
+                </>
+            )}
         </View>
     );
 };
@@ -44,61 +127,41 @@ export const CreateOrderActiveScreen: React.FC = () => {
 const s = StyleSheet.create({
     root: {
         flex: 1,
-        position: 'relative',
+        flexDirection: 'row',
     },
-    item: {
+    loading: {
         position: 'absolute',
-        overflow: 'hidden',
-    },
-    // 横屏布局
-    landscapeTopLeft: {
         top: 0,
         left: 0,
-        right: RIGHT_PANEL_WIDTH,
-        height: '50%',
-    },
-    landscapeBottomLeft: {
-        bottom: 0,
-        left: 0,
-        right: RIGHT_PANEL_WIDTH,
-        height: '50%',
-    },
-    landscapeTopRight: {
-        top: 0,
         right: 0,
+        bottom: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#FFFFFF',
+        zIndex: 999,
+    },
+    leftColumn: {
+        flex: 1,
+        flexDirection: 'column',
+    },
+    leftTop: {
+        flex: 1,
+    },
+    leftBottom: {
+        flex: 1,
+    },
+    rightColumn: {
         width: RIGHT_PANEL_WIDTH,
-        height: '50%',
+        flexDirection: 'column',
     },
-    landscapeBottomRight: {
-        bottom: 0,
-        right: 0,
-        width: RIGHT_PANEL_WIDTH,
-        height: '50%',
+    rightTop: {
+        flex: 1,
     },
-    // 竖屏布局
-    portraitItem1: {
-        top: 0,
-        left: 0,
-        right: 0,
-        height: '25%',
+    rightBottom: {
+        flex: 1,
     },
-    portraitItem2: {
-        top: '25%',
-        left: 0,
-        right: 0,
-        height: '25%',
-    },
-    portraitItem3: {
-        top: '50%',
-        left: 0,
-        right: 0,
-        height: '25%',
-    },
-    portraitItem4: {
-        bottom: 0,
-        left: 0,
-        right: 0,
-        height: '25%',
+    portraitItem: {
+        flex: 1,
     },
 });
 

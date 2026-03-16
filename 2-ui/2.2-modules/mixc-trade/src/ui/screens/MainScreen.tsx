@@ -1,5 +1,5 @@
-import React, {useCallback} from 'react';
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import React, {useCallback, useState, useEffect} from 'react';
+import {ScrollView, StyleSheet, Text, View, ActivityIndicator} from 'react-native';
 import {StackContainer, useLifecycle} from "@impos2/ui-core-base";
 import {ScreenMode, ScreenPartRegistration} from "@impos2/kernel-core-base";
 import {InstanceMode, Workspace} from "@impos2/kernel-core-interconnection";
@@ -20,7 +20,28 @@ const C = {
     accentBg: '#EFF6FF',
 } as const;
 
+const MountTracker: React.FC<{onMount: () => void; children: React.ReactNode}> = ({onMount, children}) => {
+    useEffect(() => {
+        onMount();
+    }, [onMount]);
+    return <>{children}</>;
+};
+
 export const MainScreen: React.FC = () => {
+    const [mountedComponents, setMountedComponents] = useState(0);
+    const [mountedCount, setMountedCount] = useState(0);
+
+    useEffect(() => {
+        const timers = [
+            setTimeout(() => setMountedComponents(1), 100),
+            setTimeout(() => setMountedComponents(2), 200),
+        ];
+        return () => timers.forEach(clearTimeout);
+    }, []);
+
+    const handleMount = useCallback(() => {
+        setMountedCount(prev => prev + 1);
+    }, []);
 
     useLifecycle({
         componentName: 'MainScreen',
@@ -32,34 +53,49 @@ export const MainScreen: React.FC = () => {
 
     return (
         <View style={s.root}>
-            <View id='trade-menu-container' style={s.menuContainer}>
-                <CreateOrderButton />
-                <ScrollView
-                    style={s.menuScroll}
-                    contentContainerStyle={s.menuScrollContent}
-                    showsVerticalScrollIndicator={true}
-                    persistentScrollbar={true}
-                >
-                    <PayingOrderList />
-                    <Text>销售菜单1</Text>
-                    <Text>销售菜单2</Text>
-                    <Text>销售菜单3</Text>
-                    <Text>销售菜单4</Text>
-                    <Text>销售菜单5</Text>
-                    <Text>销售菜单6</Text>
-                    <Text>销售菜单11</Text>
-                    <Text>销售菜单12</Text>
-                    <Text>销售菜单13</Text>
-                    <Text>销售菜单14</Text>
-                    <Text>销售菜单15</Text>
-                    <Text>销售菜单16</Text>
-                    <Text>销售菜单21</Text>
-                    <Text>销售菜单22</Text>
-                    <Text>销售菜单23</Text>
-                </ScrollView>
-            </View>
-            <StackContainer containerPart={uiMixcTradeVariables.mixcTradePanelContainer}>
-            </StackContainer>
+            {mountedCount < 2 && (
+                <View style={s.loading}>
+                    <ActivityIndicator size="large" color="#4A90E2" />
+                </View>
+            )}
+            {mountedComponents >= 1 && (
+                <View id='trade-menu-container' style={s.menuContainer}>
+                    <MountTracker onMount={handleMount}>
+                        <CreateOrderButton />
+                        <ScrollView
+                            style={s.menuScroll}
+                            contentContainerStyle={s.menuScrollContent}
+                            showsVerticalScrollIndicator={true}
+                            persistentScrollbar={true}
+                        >
+                            <PayingOrderList />
+                            <Text>销售菜单1</Text>
+                            <Text>销售菜单2</Text>
+                            <Text>销售菜单3</Text>
+                            <Text>销售菜单4</Text>
+                            <Text>销售菜单5</Text>
+                            <Text>销售菜单6</Text>
+                            <Text>销售菜单11</Text>
+                            <Text>销售菜单12</Text>
+                            <Text>销售菜单13</Text>
+                            <Text>销售菜单14</Text>
+                            <Text>销售菜单15</Text>
+                            <Text>销售菜单16</Text>
+                            <Text>销售菜单21</Text>
+                            <Text>销售菜单22</Text>
+                            <Text>销售菜单23</Text>
+                        </ScrollView>
+                    </MountTracker>
+                </View>
+            )}
+            {mountedComponents >= 2 && (
+                <View style={{flex: 1}}>
+                    <MountTracker onMount={handleMount}>
+                        <StackContainer containerPart={uiMixcTradeVariables.mixcTradePanelContainer}>
+                        </StackContainer>
+                    </MountTracker>
+                </View>
+            )}
         </View>
     );
 };
@@ -70,6 +106,17 @@ const s = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         backgroundColor: C.bg,
+    },
+    loading: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#FFFFFF',
+        zIndex: 999,
     },
     menuContainer: {
         width: 230,

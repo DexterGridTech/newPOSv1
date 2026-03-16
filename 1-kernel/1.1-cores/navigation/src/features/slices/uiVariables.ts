@@ -30,7 +30,15 @@ const slice = createWorkspaceSlice(
             if (!modal.id) {
                 return;
             }
-            const modals = displayMode === DisplayMode.PRIMARY ? state.primaryModals : state.secondaryModals;
+            let modals = displayMode === DisplayMode.PRIMARY ? state.primaryModals : state.secondaryModals;
+            if (!modals) {
+                modals = { value: [], updatedAt: 0 };
+                if (displayMode === DisplayMode.PRIMARY) {
+                    state.primaryModals = modals;
+                } else {
+                    state.secondaryModals = modals;
+                }
+            }
             if (modals.value.some(m => m.id === modal.id)) {
                 return;
             }
