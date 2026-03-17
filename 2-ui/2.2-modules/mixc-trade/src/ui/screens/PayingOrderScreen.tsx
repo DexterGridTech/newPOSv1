@@ -3,6 +3,9 @@ import {useLifecycle} from "@impos2/ui-core-base";
 import {StyleSheet, View, useWindowDimensions, ActivityIndicator} from "react-native";
 import {ScreenMode, ScreenPartRegistration} from "@impos2/kernel-core-base";
 import {InstanceMode, Workspace} from "@impos2/kernel-core-interconnection";
+import {useSelector} from "react-redux";
+import {selectPayingOrders} from "@impos2/kernel-mixc-order-pay";
+import {selectedPayingOrder} from "../../selectors/selectOrderCreation";
 import {uiMixcTradeVariables} from "../variables";
 import {PaymentFunctionList} from "../components/payingOrder/PaymentFunctionList";
 import {PaymentList} from "../components/payingOrder/PaymentList";
@@ -25,6 +28,13 @@ export const PayingOrderScreen: React.FC = () => {
     const isPortrait = useMemo(() => height > width, [width, height]);
     const [mountedComponents, setMountedComponents] = useState(0);
     const [mountedCount, setMountedCount] = useState(0);
+
+    const orders = useSelector(selectPayingOrders);
+    const selectedOrderCode = useSelector(selectedPayingOrder);
+    const currentOrder = useMemo(() =>
+        orders.find(order => order.mainOrderCode === selectedOrderCode),
+        [orders, selectedOrderCode]
+    );
 
     useEffect(() => {
         const count = isPortrait ? 5 : 2;
@@ -66,7 +76,7 @@ export const PayingOrderScreen: React.FC = () => {
                     {mountedComponents >= 2 && (
                         <View style={s.portraitItem}>
                             <MountTracker onMount={handleMount}>
-                                <OrderInfo />
+                                <OrderInfo order={currentOrder} />
                             </MountTracker>
                         </View>
                     )}
@@ -113,7 +123,7 @@ export const PayingOrderScreen: React.FC = () => {
                                     <MemberInfo />
                                 </View>
                                 <View style={s.rightMiddle}>
-                                    <OrderInfo />
+                                    <OrderInfo order={currentOrder} />
                                 </View>
                                 <View style={s.rightBottom}>
                                     <ActionPanel />

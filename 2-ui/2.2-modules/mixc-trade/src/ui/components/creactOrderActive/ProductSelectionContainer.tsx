@@ -29,7 +29,10 @@ export const ProductSelectionContainer: React.FC = () => {
 
     return (
         <View style={styles.wrapper}>
-            <Text style={styles.title}>商品列表：{products.length}个</Text>
+            <View style={styles.titleBar}>
+                <Text style={styles.title}>商品列表</Text>
+                <Text style={styles.countText}>共{products.length}个</Text>
+            </View>
             <FlatList
                 data={products}
                 keyExtractor={(item) => item.productCode}
@@ -53,14 +56,23 @@ const styles = StyleSheet.create({
     wrapper: {
         flex: 1,
     },
-    title: {
-        fontSize: 20,
-        fontWeight: '600',
-        color: '#212529',
+    titleBar: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
         padding: 12,
         backgroundColor: '#F8F9FA',
         borderBottomWidth: 1,
         borderBottomColor: '#E9ECEF',
+    },
+    title: {
+        fontSize: 20,
+        fontWeight: '600',
+        color: '#212529',
+    },
+    countText: {
+        fontSize: 14,
+        color: '#666',
     },
     list: {
         flex: 1,

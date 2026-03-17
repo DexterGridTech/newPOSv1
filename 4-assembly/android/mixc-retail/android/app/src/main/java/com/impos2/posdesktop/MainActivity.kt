@@ -1,5 +1,6 @@
 package com.impos2.posdesktop
 
+import android.app.ActivityManager
 import android.content.Context
 import android.hardware.display.DisplayManager
 import android.os.Build
@@ -27,6 +28,13 @@ class MainActivity : ReactActivity() {
     private lateinit var appRestartManager: AppRestartManager
     private val loadCompleted = AtomicBoolean(false)
 
+    companion object {
+        @Volatile
+        private var instance: MainActivity? = null
+
+        fun getInstance(): MainActivity? = instance
+    }
+
     override fun getMainComponentName(): String = "PosDesktop"
 
     override fun createReactActivityDelegate(): ReactActivityDelegate =
@@ -41,6 +49,7 @@ class MainActivity : ReactActivity() {
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        instance = this
         SplashScreen.show(this, R.style.SplashScreenTheme, true)
         applySplashScreenFullscreen()
         super.onCreate(savedInstanceState)
@@ -144,11 +153,14 @@ class MainActivity : ReactActivity() {
         super.onDestroy()
         if (::screenControlManager.isInitialized) screenControlManager.destroy()
         if (::multiDisplayManager.isInitialized) multiDisplayManager.destroy()
+        instance = null
     }
 
     /** JS 层加载完成后调用，只处理第一次（主屏），副屏的调用忽略 */
     fun onAppLoadComplete() {
         if (!loadCompleted.compareAndSet(false, true)) return
+
+        LoadingManager.hideLoading()
         SplashScreen.hide(this)
         multiDisplayManager.startSecondaryIfAvailable()
     }

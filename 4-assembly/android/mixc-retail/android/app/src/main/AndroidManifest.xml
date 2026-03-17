@@ -42,6 +42,12 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
       </activity>
+      <activity
+        android:name=".LoadingActivity"
+        android:theme="@style/LoadingTheme"
+        android:launchMode="singleTask"
+        android:excludeFromRecents="true"
+        android:exported="false" />
       <!-- LocalWebServer 前台服务 -->
       <service
         android:name="com.impos2.posadapter.turbomodules.localwebserver.LocalWebServerService"

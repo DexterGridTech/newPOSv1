@@ -14,10 +14,12 @@ import {createUnitDataStateKeys} from "@impos2/kernel-core-terminal";
 export const kernelMixcOrderPayState =  createModuleStateKeys(
     moduleName,
     [
+        'paymentFunction'
     ] as const
 );
 export const kernelMixcOrderPayUnitDataState = createUnitDataStateKeys(
     [
+        'unitData_paymentFunction'
     ] as const
 );
 export const kernelMixcOrderPayInstanceState= createModuleInstanceModeStateKeys(

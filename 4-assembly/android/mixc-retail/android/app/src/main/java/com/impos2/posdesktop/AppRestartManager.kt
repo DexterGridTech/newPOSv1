@@ -9,8 +9,12 @@ class AppRestartManager(private val activity: MainActivity) {
 
     fun restart() {
         mainHandler.post {
-            try { activity.multiDisplayManager.destroy() } catch (_: Exception) {}
-            activity.provideReactInstanceManager().recreateReactContextInBackground()
+            LoadingManager.showLoading(activity)
+
+            mainHandler.postDelayed({
+                try { activity.multiDisplayManager.destroy() } catch (_: Exception) {}
+                activity.provideReactInstanceManager().recreateReactContextInBackground()
+            }, 100)
         }
     }
 }

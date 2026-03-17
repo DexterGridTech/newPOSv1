@@ -12,7 +12,7 @@ class AppTurboModule(reactContext: ReactApplicationContext) :
 
     @ReactMethod
     fun restartApp(promise: Promise) {
-        val activity = currentActivity as? MainActivity
+        val activity = MainActivity.getInstance()
             ?: return promise.reject("NO_ACTIVITY", "MainActivity not available")
         activity.runOnUiThread {
             try {
@@ -26,7 +26,7 @@ class AppTurboModule(reactContext: ReactApplicationContext) :
 
     @ReactMethod
     fun onAppLoadComplete(promise: Promise) {
-        val activity = currentActivity as? MainActivity
+        val activity = MainActivity.getInstance()
             ?: return promise.reject("NO_ACTIVITY", "MainActivity not available")
         activity.runOnUiThread {
             try {
@@ -40,7 +40,7 @@ class AppTurboModule(reactContext: ReactApplicationContext) :
 
     @ReactMethod
     fun getDisplayInfo(promise: Promise) {
-        val activity = currentActivity as? MainActivity
+        val activity = MainActivity.getInstance()
             ?: return promise.reject("NO_ACTIVITY", "MainActivity not available")
         promise.resolve(com.facebook.react.bridge.Arguments.createMap().apply {
             putBoolean("isSecondaryActive", activity.isSecondaryDisplayActive)

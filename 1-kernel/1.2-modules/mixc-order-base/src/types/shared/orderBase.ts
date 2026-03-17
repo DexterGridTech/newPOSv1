@@ -29,6 +29,7 @@ export interface ProductOrderBase {
     productOrderCode: string
     productCode: string
     productName: string
+    displayName: string
     price: number
     quantity: number
     amount: number
