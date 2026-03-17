@@ -2,10 +2,16 @@ import React, {useCallback, useMemo} from "react";
 import {useLifecycle} from "@impos2/ui-core-base";
 import {StyleSheet, Text, View, FlatList, Platform} from "react-native";
 import {useSelector} from "react-redux";
-import {selectPaymentFunction, PaymentFunction} from "@impos2/kernel-mixc-order-pay";
+import {selectPaymentFunction, PaymentFunction, PayingMainOrder, kernelMixcOrderPayCommands} from "@impos2/kernel-mixc-order-pay";
 import {PaymentFunctionItem} from "./PaymentFunctionItem";
+import {shortId} from "@impos2/kernel-core-base";
+import {uiMixcTradeCommands} from "../../../features/commands";
 
-export const PaymentFunctionList: React.FC = () => {
+interface PaymentFunctionListProps {
+    currentOrder?: PayingMainOrder;
+}
+
+export const PaymentFunctionList: React.FC<PaymentFunctionListProps> = ({currentOrder}) => {
     const paymentFunctions = useSelector(selectPaymentFunction);
 
     const sortedPaymentFunctions = useMemo(() =>
@@ -14,8 +20,13 @@ export const PaymentFunctionList: React.FC = () => {
     );
 
     const handlePress = useCallback((paymentFunction: PaymentFunction) => {
-        console.log('PaymentFunction clicked:', paymentFunction);
-    }, []);
+        if (currentOrder) {
+            uiMixcTradeCommands.applyPaymentFunction({
+                payingOrder: currentOrder,
+                paymentFunction
+            }).execute(shortId(),currentOrder.mainOrderCode);
+        }
+    }, [currentOrder]);
 
     const renderItem = useCallback(({item}: {item: PaymentFunction}) => (
         <PaymentFunctionItem paymentFunction={item} onPress={handlePress}/>

@@ -83,7 +83,7 @@ export const PayingOrderScreen: React.FC = () => {
                     {mountedComponents >= 3 && (
                         <View style={s.portraitItem}>
                             <MountTracker onMount={handleMount}>
-                                <PaymentFunctionList />
+                                <PaymentFunctionList currentOrder={currentOrder} />
                             </MountTracker>
                         </View>
                     )}
@@ -108,7 +108,7 @@ export const PayingOrderScreen: React.FC = () => {
                         <View style={s.leftColumn}>
                             <MountTracker onMount={handleMount}>
                                 <View style={s.leftTop}>
-                                    <PaymentFunctionList />
+                                    <PaymentFunctionList currentOrder={currentOrder} />
                                 </View>
                                 <View style={s.leftBottom}>
                                     <PaymentList />
