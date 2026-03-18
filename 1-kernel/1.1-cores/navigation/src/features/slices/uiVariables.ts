@@ -28,18 +28,16 @@ const slice = createWorkspaceSlice(
             // logger.log([moduleName, LOG_TAGS.Reducer, "uiVariables"], 'openModal',action.payload)
             const {modal, displayMode} = action.payload;
             if (!modal.id) {
+                logger.error([moduleName, LOG_TAGS.Reducer, "uiVariables"], `openModal , modals id is null `,action.payload)
                 return;
             }
             let modals = displayMode === DisplayMode.PRIMARY ? state.primaryModals : state.secondaryModals;
             if (!modals) {
-                modals = { value: [], updatedAt: 0 };
-                if (displayMode === DisplayMode.PRIMARY) {
-                    state.primaryModals = modals;
-                } else {
-                    state.secondaryModals = modals;
-                }
+                logger.error([moduleName, LOG_TAGS.Reducer, "uiVariables"], `openModal , modals is null primaryModals:${state.primaryModals},secondaryModals:${state.secondaryModals}`,action.payload)
+                return;
             }
             if (modals.value.some(m => m.id === modal.id)) {
+                logger.error([moduleName, LOG_TAGS.Reducer, "uiVariables"], `openModal , modals id existed `,action.payload)
                 return;
             }
             modals.value.push({
@@ -48,13 +46,16 @@ const slice = createWorkspaceSlice(
                 props: modal.props,
                 open: true,
             });
+            // logger.log([moduleName, LOG_TAGS.Reducer, "uiVariables"], '------》openModal after',modals)
             modals.updatedAt = Date.now();
         },
         closeModal: (state, action: PayloadAction<{ modalId: string, displayMode: DisplayMode }>) => {
-            // logger.log([moduleName, LOG_TAGS.Reducer, "uiVariables"], 'closeModal',action.payload)
+            // logger.log([moduleName, LOG_TAGS.Reducer, "uiVariables"], '-----------------------》closeModal',action.payload)
             const {modalId, displayMode} = action.payload;
             const modals = displayMode === DisplayMode.PRIMARY ? state.primaryModals : state.secondaryModals;
             modals.value = modals.value.filter(m => m.id !== modalId);
+            // logger.log([moduleName, LOG_TAGS.Reducer, "uiVariables"], '=======================》closeModal',modals.value)
+            modals.updatedAt = Date.now();
         },
         updateUiVariables: (state, action: PayloadAction<Record<string, any>>) => {
             // logger.log([moduleName, LOG_TAGS.Reducer, "uiVariables"], 'updateUiVariables',action.payload)

@@ -326,13 +326,11 @@ export const DisplaySwitchConfirmModal: React.FC<ModalScreen<DisplaySwitchModalP
 // 创建 Animated Circle 组件
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
-export const displaySwitchConfirmModalPartKey = "display-switch-confirm";
-
 export const displaySwitchConfirmModalPart: ScreenPartRegistration = {
     name: 'displaySwitchConfirm',
     title: '显示切换确认',
     description: '显示切换确认弹窗',
-    partKey: displaySwitchConfirmModalPartKey,
+    partKey: "display-switch-confirm",
     screenMode: [ScreenMode.DESKTOP],
     instanceMode: [InstanceMode.SLAVE],
     workspace: [Workspace.MAIN, Workspace.BRANCH],

@@ -1,7 +1,9 @@
 import {Actor} from "@impos2/kernel-core-base";
 import {kernelCoreInterconnectionCommands} from "@impos2/kernel-core-interconnection";
 import {kernelCoreNavigationCommands} from "@impos2/kernel-core-navigation";
-import {displaySwitchConfirmModalPartKey} from "../../ui/modals/DisplaySwitchConfirmModal";
+import {
+    displaySwitchConfirmModalPart,
+} from "../../ui/modals/DisplaySwitchConfirmModal";
 
 export class SwitchDisplayActor extends Actor {
     shouldSwitchToSecondaryDisplay = Actor.defineCommandHandler(kernelCoreInterconnectionCommands.shouldSwitchToSecondaryDisplay,
@@ -9,10 +11,8 @@ export class SwitchDisplayActor extends Actor {
             // 打开确认弹窗
             kernelCoreNavigationCommands.openModal({
                 modal: {
+                    ...displaySwitchConfirmModalPart,
                     id: 'display-switch-secondary',
-                    partKey: displaySwitchConfirmModalPartKey,
-                    name: 'DisplaySwitchConfirm',
-                    title: '切换显示',
                     description: '切换到副屏确认',
                     props: {
                         displayType: 'secondary',
@@ -27,10 +27,8 @@ export class SwitchDisplayActor extends Actor {
             // 打开确认弹窗
             kernelCoreNavigationCommands.openModal({
                 modal: {
+                    ...displaySwitchConfirmModalPart,
                     id: 'display-switch-primary',
-                    partKey: displaySwitchConfirmModalPartKey,
-                    name: 'DisplaySwitchConfirm',
-                    title: '切换显示',
                     description: '切换到主屏确认',
                     props: {
                         displayType: 'primary',
