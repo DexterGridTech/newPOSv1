@@ -10,11 +10,12 @@ import {uiMixcTradeMiddlewares} from "./features/middlewares";
 import {AppModule} from "@impos2/kernel-core-base";
 import {kernelCoreNavigationModule} from "@impos2/kernel-core-navigation";
 import {uiMixcTradeScreenParts} from "./ui";
-import {kernelMixcProductModule} from "@impos2/kernel-mixc-product";
-import {kernelMixcOrderBaseModule} from "@impos2/kernel-mixc-order-base";
+import {kernelProductBaseModule} from "@impos2/kernel-product-base";
+import {kernelOrderBaseModule} from "@impos2/kernel-order-base";
 import {uiMixcWorkbenchModule} from "@impos2/ui-mixc-workbench";
-import {kernelMixcOrderCreateTraditionalModule} from "@impos2/kernel-mixc-order-create-traditional";
-import {kernelMixcOrderPayModule} from "@impos2/kernel-mixc-order-pay";
+import {kernelOrderCreateTraditionalModule} from "@impos2/kernel-order-create-traditional";
+import {kernelPayBaseModule} from "@impos2/kernel-pay-base";
+import {kernelProductFromContractModule} from "@impos2/kernel-product-from-contract";
 
 export const uiMixcTradeModule: AppModule = {
     name: moduleName,
@@ -28,10 +29,11 @@ export const uiMixcTradeModule: AppModule = {
     parameters: uiMixcTradeParameters,
     dependencies: [
         kernelCoreNavigationModule,
-        kernelMixcProductModule,
-        kernelMixcOrderBaseModule,
-        kernelMixcOrderCreateTraditionalModule,
-        kernelMixcOrderPayModule,
+        kernelProductBaseModule,
+        kernelProductFromContractModule,
+        kernelOrderBaseModule,
+        kernelOrderCreateTraditionalModule,
+        kernelPayBaseModule,
         uiMixcWorkbenchModule,
     ],
     modulePreSetup: uiMixcTradeModulePreSetup,

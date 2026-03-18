@@ -3202,9 +3202,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/kernel-mixc-order-base@*, @impos2/kernel-mixc-order-base@workspace:1-kernel/1.2-modules/mixc-order-base":
+"@impos2/kernel-order-base@*, @impos2/kernel-order-base@workspace:1-kernel/1.2-modules/order-base":
   version: 0.0.0-use.local
-  resolution: "@impos2/kernel-mixc-order-base@workspace:1-kernel/1.2-modules/mixc-order-base"
+  resolution: "@impos2/kernel-order-base@workspace:1-kernel/1.2-modules/order-base"
   dependencies:
     "@impos2/kernel-core-base": "*"
     "@impos2/kernel-core-interconnection": "*"
@@ -3223,17 +3223,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/kernel-mixc-order-create-traditional@workspace:1-kernel/1.2-modules/mixc-order-create-traditional":
+"@impos2/kernel-order-create-traditional@workspace:1-kernel/1.2-modules/order-create-traditional":
   version: 0.0.0-use.local
-  resolution: "@impos2/kernel-mixc-order-create-traditional@workspace:1-kernel/1.2-modules/mixc-order-create-traditional"
+  resolution: "@impos2/kernel-order-create-traditional@workspace:1-kernel/1.2-modules/order-create-traditional"
   dependencies:
     "@impos2/kernel-core-base": "*"
     "@impos2/kernel-core-interconnection": "*"
     "@impos2/kernel-core-navigation": "*"
     "@impos2/kernel-core-task": "*"
     "@impos2/kernel-core-terminal": "*"
-    "@impos2/kernel-mixc-order-base": "*"
-    "@impos2/kernel-mixc-product": "*"
+    "@impos2/kernel-order-base": "*"
+    "@impos2/kernel-product-base": "*"
     "@reduxjs/toolkit": ^2.11.2
     "@types/node": ^25.0.9
     madge: ^8.0.0
@@ -3244,16 +3244,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/kernel-mixc-order-pay@*, @impos2/kernel-mixc-order-pay@workspace:1-kernel/1.2-modules/mixc-order-pay":
+"@impos2/kernel-pay-base@*, @impos2/kernel-pay-base@workspace:1-kernel/1.2-modules/pay-base":
   version: 0.0.0-use.local
-  resolution: "@impos2/kernel-mixc-order-pay@workspace:1-kernel/1.2-modules/mixc-order-pay"
+  resolution: "@impos2/kernel-pay-base@workspace:1-kernel/1.2-modules/pay-base"
   dependencies:
     "@impos2/kernel-core-base": "*"
     "@impos2/kernel-core-interconnection": "*"
     "@impos2/kernel-core-navigation": "*"
     "@impos2/kernel-core-task": "*"
     "@impos2/kernel-core-terminal": "*"
-    "@impos2/kernel-mixc-order-base": "*"
+    "@impos2/kernel-order-base": "*"
     "@reduxjs/toolkit": ^2.11.2
     "@types/node": ^25.0.9
     madge: ^8.0.0
@@ -3264,9 +3264,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/kernel-mixc-product@*, @impos2/kernel-mixc-product@workspace:1-kernel/1.2-modules/mixc-product":
+"@impos2/kernel-product-base@*, @impos2/kernel-product-base@workspace:1-kernel/1.2-modules/product-base":
   version: 0.0.0-use.local
-  resolution: "@impos2/kernel-mixc-product@workspace:1-kernel/1.2-modules/mixc-product"
+  resolution: "@impos2/kernel-product-base@workspace:1-kernel/1.2-modules/product-base"
   dependencies:
     "@impos2/kernel-core-base": "*"
     "@impos2/kernel-core-interconnection": "*"
@@ -3285,15 +3285,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/kernel-mixc-user@*, @impos2/kernel-mixc-user@workspace:1-kernel/1.2-modules/mixc-user":
+"@impos2/kernel-product-from-contract@workspace:1-kernel/1.2-modules/product-from-contract":
   version: 0.0.0-use.local
-  resolution: "@impos2/kernel-mixc-user@workspace:1-kernel/1.2-modules/mixc-user"
+  resolution: "@impos2/kernel-product-from-contract@workspace:1-kernel/1.2-modules/product-from-contract"
   dependencies:
     "@impos2/kernel-core-base": "*"
     "@impos2/kernel-core-interconnection": "*"
     "@impos2/kernel-core-navigation": "*"
     "@impos2/kernel-core-task": "*"
     "@impos2/kernel-core-terminal": "*"
+    "@impos2/kernel-product-base": "*"
     "@reduxjs/toolkit": ^2.11.2
     "@types/node": ^25.0.9
     axios: ^1.13.5
@@ -3359,6 +3360,27 @@ __metadata:
     tsx: ^4.21.0
     typescript: ^5.9.3
     ws: ^8.19.0
+  languageName: unknown
+  linkType: soft
+
+"@impos2/kernel-user-base@*, @impos2/kernel-user-base@workspace:1-kernel/1.2-modules/user-base":
+  version: 0.0.0-use.local
+  resolution: "@impos2/kernel-user-base@workspace:1-kernel/1.2-modules/user-base"
+  dependencies:
+    "@impos2/kernel-core-base": "*"
+    "@impos2/kernel-core-interconnection": "*"
+    "@impos2/kernel-core-navigation": "*"
+    "@impos2/kernel-core-task": "*"
+    "@impos2/kernel-core-terminal": "*"
+    "@reduxjs/toolkit": ^2.11.2
+    "@types/node": ^25.0.9
+    axios: ^1.13.5
+    date-fns: ^4.1.0
+    madge: ^8.0.0
+    redux-observable: ^3.0.0-rc.3
+    rxjs: ^7.8.2
+    ts-node: ^10.9.2
+    typescript: ^5.9.3
   languageName: unknown
   linkType: soft
 
@@ -3535,8 +3557,8 @@ __metadata:
     "@impos2/kernel-core-navigation": "*"
     "@impos2/kernel-core-task": "*"
     "@impos2/kernel-core-terminal": "*"
-    "@impos2/kernel-mixc-order-base": "*"
-    "@impos2/kernel-mixc-order-pay": "*"
+    "@impos2/kernel-order-base": "*"
+    "@impos2/kernel-pay-base": "*"
     "@impos2/kernel-server-config": "*"
     "@impos2/ui-core-base": "*"
     "@impos2/ui-mixc-workbench": "*"
@@ -3563,8 +3585,8 @@ __metadata:
     "@impos2/kernel-core-navigation": "*"
     "@impos2/kernel-core-task": "*"
     "@impos2/kernel-core-terminal": "*"
-    "@impos2/kernel-mixc-user": "*"
     "@impos2/kernel-server-config": "*"
+    "@impos2/kernel-user-base": "*"
     "@impos2/ui-core-base": "*"
     "@reduxjs/toolkit": ^2.11.2
     "@types/react": ~18.3.12

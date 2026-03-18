@@ -3,14 +3,14 @@ import {useLifecycle} from "@impos2/ui-core-base";
 import {Text, View, Pressable, StyleSheet} from "react-native";
 import {useSelector} from "react-redux";
 import {
-    kernelMixcOrderCreateTraditionalCommands,
+    kernelOrderCreateTraditionalCommands,
     selectProductOrderTotalAmount,
     selectProductOrderSessionId, selectDraftProductOrders
-} from "@impos2/kernel-mixc-order-create-traditional";
+} from "@impos2/kernel-order-create-traditional";
 import {LOG_TAGS, logger, shortId} from "@impos2/kernel-core-base";
 import {uiMixcTradeCommands} from "../../../features/commands";
 import {selectSlaveConnected, getEnableSlave, useRequestStatus} from "@impos2/kernel-core-interconnection";
-import {kernelMixcOrderPayCommands} from "@impos2/kernel-mixc-order-pay";
+import {kernelPayBaseCommands} from "@impos2/kernel-pay-base";
 import {moduleName} from "../../../moduleName";
 import {kernelCoreNavigationCommands} from "@impos2/kernel-core-navigation";
 import {payingOrderScreenPart} from "../../screens/PayingOrderScreen";
@@ -29,7 +29,7 @@ export const OrderPriceConfirmContainer: React.FC = () => {
         if (settleStatus?.status === 'complete' && requestId && handledRef.current !== requestId) {
             handledRef.current = requestId;
             const payingMainOrderCode = settleStatus.results?.payingMainOrderCode;
-            kernelMixcOrderCreateTraditionalCommands.clearProductOrder().execute(shortId(),sessionId);
+            kernelOrderCreateTraditionalCommands.clearProductOrder().execute(shortId(),sessionId);
             uiMixcTradeCommands.setSelectedPayingOrder(payingMainOrderCode).execute(shortId(),sessionId);
             kernelCoreNavigationCommands.navigateTo({target:payingOrderScreenPart}).execute(shortId(),sessionId);
         } else if (settleStatus?.status === 'error' && requestId && handledRef.current !== requestId) {
@@ -53,14 +53,14 @@ export const OrderPriceConfirmContainer: React.FC = () => {
     }, []);
 
     const handleClear = useCallback(() => {
-        kernelMixcOrderCreateTraditionalCommands.clearProductOrder().execute(shortId(), sessionId);
+        kernelOrderCreateTraditionalCommands.clearProductOrder().execute(shortId(), sessionId);
     }, [sessionId]);
 
     const handleSettle = useCallback(() => {
         if (settleStatus?.status === 'started') return;
         const id = shortId();
         setRequestId(id);
-        kernelMixcOrderPayCommands.addPayingOrderFromDraft(draftProductOrders).execute(id, sessionId);
+        kernelPayBaseCommands.addPayingOrderFromDraft(draftProductOrders).execute(id, sessionId);
     }, [settleStatus?.status, draftProductOrders, sessionId]);
 
     return (

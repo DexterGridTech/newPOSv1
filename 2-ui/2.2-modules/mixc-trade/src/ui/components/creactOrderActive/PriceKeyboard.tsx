@@ -1,7 +1,7 @@
 import React, {useCallback} from "react";
 import {Text, View, Pressable, StyleSheet} from "react-native";
 import {useSelector} from "react-redux";
-import {selectSelectedProductOrder, selectProductOrderSessionId, kernelMixcOrderCreateTraditionalCommands} from "@impos2/kernel-mixc-order-create-traditional";
+import {selectSelectedProductOrder, selectProductOrderSessionId, kernelOrderCreateTraditionalCommands} from "@impos2/kernel-order-create-traditional";
 import {shortId} from "@impos2/kernel-core-base";
 
 export const PriceKeyboard: React.FC = () => {
@@ -11,13 +11,13 @@ export const PriceKeyboard: React.FC = () => {
 
     const handleKeyPress = useCallback((char: string) => {
         console.log('Key pressed:', char);
-        kernelMixcOrderCreateTraditionalCommands.setProductPrice({char}).execute(shortId(), sessionId);
+        kernelOrderCreateTraditionalCommands.setProductPrice({char}).execute(shortId(), sessionId);
     }, [sessionId]);
 
     const handleConfirm = useCallback(() => {
         console.log('Confirm pressed, selectedProductOrder:', selectedProductOrder);
         if (selectedProductOrder && selectedProductOrder.length > 0) {
-            kernelMixcOrderCreateTraditionalCommands.selectProductOrder({productId: selectedProductOrder}).execute(shortId(), sessionId);
+            kernelOrderCreateTraditionalCommands.selectProductOrder({productId: selectedProductOrder}).execute(shortId(), sessionId);
         }
     }, [selectedProductOrder, sessionId]);
 

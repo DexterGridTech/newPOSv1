@@ -26,8 +26,8 @@
     "@impos2/kernel-core-navigation": "*",
     "@impos2/kernel-core-task": "*",
     "@impos2/kernel-core-terminal": "*",
-    "@impos2/kernel-mixc-user": "*",
     "@impos2/kernel-server-config": "*",
+    "@impos2/kernel-user-base": "*",
     "@impos2/ui-core-base": "*",
     "@reduxjs/toolkit": "^2.11.2",
     "react-native-qrcode-svg": "^6.3.21"

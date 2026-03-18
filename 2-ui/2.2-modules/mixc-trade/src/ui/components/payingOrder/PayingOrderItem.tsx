@@ -1,6 +1,6 @@
 import React, {useCallback} from "react";
 import {StyleSheet, Text, Pressable} from "react-native";
-import {PayingMainOrder} from "@impos2/kernel-mixc-order-pay";
+import {PayingMainOrder} from "@impos2/kernel-pay-base";
 
 interface PayingOrderItemProps {
     order: PayingMainOrder;

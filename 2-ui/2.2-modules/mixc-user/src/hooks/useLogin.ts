@@ -3,7 +3,7 @@ import {useEditableUiVariable} from "@impos2/kernel-core-navigation";
 import {uiMixcUserVariables} from "../ui/variables";
 import {LOG_TAGS, logger, shortId} from "@impos2/kernel-core-base";
 import {useRequestStatus} from "@impos2/kernel-core-interconnection";
-import {kernelMixcUserCommands} from "@impos2/kernel-mixc-user";
+import {kernelUserBaseCommands} from "@impos2/kernel-user-base";
 import {moduleName} from "../moduleName";
 
 type LoginMode = 'password' | 'sms' | 'qrcode';
@@ -54,7 +54,7 @@ export const useLogin = () => {
         if (loginStatus?.status === 'started') return;
         const id = shortId();
         setRequestId(id);
-        kernelMixcUserCommands.loginWithPassword({userName: username, password: password}).execute(id);
+        kernelUserBaseCommands.loginWithPassword({userName: username, password: password}).execute(id);
     }, [loginStatus?.status, username, password]);
 
     const handleSmsLogin = useCallback(() => {

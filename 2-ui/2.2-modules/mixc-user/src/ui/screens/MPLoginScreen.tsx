@@ -3,7 +3,7 @@ import {LoginForm} from '../components/LoginForm';
 import {uiBaseCoreUiVariables, useLifecycle} from "@impos2/ui-core-base";
 import {ScreenMode, ScreenPartRegistration} from "@impos2/kernel-core-base";
 import {InstanceMode, Workspace} from "@impos2/kernel-core-interconnection";
-import {getUser} from "@impos2/kernel-mixc-user";
+import {getUser} from "@impos2/kernel-user-base";
 
 export const MPLoginScreen: React.FC = () => {
     useLifecycle({

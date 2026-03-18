@@ -1,10 +1,10 @@
 import React, {useCallback} from "react";
 import {Text, Pressable, StyleSheet} from "react-native";
-import {Product} from "@impos2/kernel-mixc-product";
+import {ProductBase} from "@impos2/kernel-product-base";
 
 interface ProductSelectionItemProps {
-    product: Product
-    onPress: (product: Product) => void
+    product: ProductBase
+    onPress: (product: ProductBase) => void
 }
 
 export const ProductSelectionItem: React.FC<ProductSelectionItemProps> = React.memo(({product, onPress}) => {
@@ -18,7 +18,7 @@ export const ProductSelectionItem: React.FC<ProductSelectionItemProps> = React.m
             onPress={handlePress}
         >
             <Text style={styles.displayName}>{product.displayName}</Text>
-            <Text style={styles.productCode}>{product.productCode}</Text>
+            <Text style={styles.saleTypeCode}>{product.saleTypeCode}</Text>
         </Pressable>
     );
 });
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         textAlign: 'center',
     },
-    productCode: {
+    saleTypeCode: {
         color: '#FFFFFF',
         fontSize: 12,
         marginTop: 4,

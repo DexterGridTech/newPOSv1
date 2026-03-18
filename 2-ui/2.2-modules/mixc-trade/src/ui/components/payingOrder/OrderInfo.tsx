@@ -1,7 +1,7 @@
 import React, {useCallback, useMemo} from "react";
 import {useLifecycle} from "@impos2/ui-core-base";
 import {StyleSheet, Text, View, FlatList, Platform} from "react-native";
-import {PayingMainOrder} from "@impos2/kernel-mixc-order-pay";
+import {PayingMainOrder} from "@impos2/kernel-pay-base";
 
 interface OrderInfoProps {
     order?: PayingMainOrder;
@@ -27,7 +27,7 @@ export const OrderInfo: React.FC<OrderInfoProps> = ({order}) => {
             <Text style={s.index}>{index + 1}</Text>
             <View style={s.productInfo}>
                 <Text style={s.productName}>{item.displayName}</Text>
-                <Text style={s.productCode}>{item.productCode}</Text>
+                <Text style={s.saleTypeCode}>{item.saleTypeCode}</Text>
             </View>
             <Text style={s.quantity}>x{item.quantity}</Text>
             <Text style={s.amount}>¥{item.amount.toFixed(2)}</Text>
@@ -113,7 +113,7 @@ const s = StyleSheet.create({
         color: '#333',
         fontWeight: '700',
     },
-    productCode: {
+    saleTypeCode: {
         fontSize: 12,
         color: '#999',
         marginTop: 2,

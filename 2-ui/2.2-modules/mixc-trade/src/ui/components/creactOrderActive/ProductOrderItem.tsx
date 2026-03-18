@@ -1,7 +1,7 @@
 import React, {useCallback} from "react";
 import {Text, View, Pressable, StyleSheet} from "react-native";
-import {DraftProductOrder} from "@impos2/kernel-mixc-order-create-traditional";
-import {kernelMixcOrderCreateTraditionalCommands} from "@impos2/kernel-mixc-order-create-traditional";
+import {DraftProductOrder} from "@impos2/kernel-order-create-traditional";
+import {kernelOrderCreateTraditionalCommands} from "@impos2/kernel-order-create-traditional";
 import {shortId} from "@impos2/kernel-core-base";
 
 interface ProductOrderItermProps {
@@ -14,26 +14,26 @@ export const ProductOrderItem: React.FC<ProductOrderItermProps> = React.memo(({o
     const isAmountZero = (order.amount || 0) === 0;
 
     const handleDecrease = useCallback(() => {
-        kernelMixcOrderCreateTraditionalCommands.decreaseProductOrderQuantity({productId: order.id}).execute(shortId(), sessionId);
+        kernelOrderCreateTraditionalCommands.decreaseProductOrderQuantity({productId: order.id}).execute(shortId(), sessionId);
     }, [order.id, sessionId]);
 
     const handleIncrease = useCallback(() => {
-        kernelMixcOrderCreateTraditionalCommands.increaseProductOrderQuantity({productId: order.id}).execute(shortId(), sessionId);
+        kernelOrderCreateTraditionalCommands.increaseProductOrderQuantity({productId: order.id}).execute(shortId(), sessionId);
     }, [order.id, sessionId]);
 
     const handleRemove = useCallback(() => {
-        kernelMixcOrderCreateTraditionalCommands.removeProductOrder({productId: order.id}).execute(shortId(), sessionId);
+        kernelOrderCreateTraditionalCommands.removeProductOrder({productId: order.id}).execute(shortId(), sessionId);
     }, [order.id, sessionId]);
 
     const handleSelectPrice = useCallback(() => {
-        kernelMixcOrderCreateTraditionalCommands.selectProductOrder({productId: order.id}).execute(shortId(), sessionId);
+        kernelOrderCreateTraditionalCommands.selectProductOrder({productId: order.id}).execute(shortId(), sessionId);
     }, [order.id, sessionId]);
 
     return (
         <View style={styles.row}>
             <View style={styles.nameContainer}>
                 <Text style={styles.name}>{order.displayName}</Text>
-                <Text style={styles.productCode}>{order.productCode}</Text>
+                <Text style={styles.saleTypeCode}>{order.saleTypeCode}</Text>
             </View>
             <View style={styles.quantityContainer}>
                 <Pressable
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
         flex: 0.7,
         justifyContent: 'center',
     },
-    productCode: {
+    saleTypeCode: {
         fontSize: 11,
         color: '#6C757D',
         marginTop: 2,

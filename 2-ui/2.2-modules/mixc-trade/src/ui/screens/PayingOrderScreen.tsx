@@ -4,7 +4,7 @@ import {StyleSheet, View, useWindowDimensions, ActivityIndicator} from "react-na
 import {ScreenMode, ScreenPartRegistration} from "@impos2/kernel-core-base";
 import {InstanceMode, Workspace} from "@impos2/kernel-core-interconnection";
 import {useSelector} from "react-redux";
-import {selectPayingOrders} from "@impos2/kernel-mixc-order-pay";
+import {selectPayingOrders} from "@impos2/kernel-pay-base";
 import {selectedPayingOrder} from "../../selectors/selectOrderCreation";
 import {uiMixcTradeVariables} from "../variables";
 import {PaymentFunctionList} from "../components/payingOrder/PaymentFunctionList";

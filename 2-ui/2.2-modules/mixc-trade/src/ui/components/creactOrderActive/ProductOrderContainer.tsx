@@ -2,7 +2,7 @@ import React, {useCallback, useRef, useEffect} from "react";
 import {useLifecycle} from "@impos2/ui-core-base";
 import {Text, View, FlatList, StyleSheet} from "react-native";
 import {useSelector} from "react-redux";
-import {selectDraftProductOrders, selectSelectedProductOrder, selectProductOrderSessionId} from "@impos2/kernel-mixc-order-create-traditional";
+import {selectDraftProductOrders, selectSelectedProductOrder, selectProductOrderSessionId} from "@impos2/kernel-order-create-traditional";
 import {ProductOrderItem} from "./ProductOrderItem";
 
 export const ProductOrderContainer: React.FC = () => {

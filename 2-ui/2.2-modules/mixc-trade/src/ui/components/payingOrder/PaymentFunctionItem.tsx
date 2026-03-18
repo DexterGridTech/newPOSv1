@@ -1,6 +1,6 @@
 import React from "react";
 import {TouchableOpacity, Text, StyleSheet} from "react-native";
-import {PaymentFunction} from "@impos2/kernel-mixc-order-pay";
+import {PaymentFunction} from "@impos2/kernel-pay-base";
 
 interface PaymentFunctionItemProps {
     paymentFunction: PaymentFunction;

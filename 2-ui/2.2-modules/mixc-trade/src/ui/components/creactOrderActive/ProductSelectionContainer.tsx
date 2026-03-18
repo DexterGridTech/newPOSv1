@@ -2,8 +2,8 @@ import React, {useCallback} from "react";
 import {useLifecycle} from "@impos2/ui-core-base";
 import {View, FlatList, Text, StyleSheet} from "react-native";
 import {useSelector} from "react-redux";
-import {selectProducts, Product} from "@impos2/kernel-mixc-product";
-import {kernelMixcOrderCreateTraditionalCommands, selectProductOrderSessionId} from "@impos2/kernel-mixc-order-create-traditional";
+import {selectProducts, ProductBase} from "@impos2/kernel-product-base";
+import {kernelOrderCreateTraditionalCommands, selectProductOrderSessionId} from "@impos2/kernel-order-create-traditional";
 import {ProductSelectionItem} from "./ProductSelectionItem";
 import {shortId} from "@impos2/kernel-core-base";
 
@@ -11,11 +11,11 @@ export const ProductSelectionContainer: React.FC = () => {
     const products = useSelector(selectProducts);
     const sessionId = useSelector(selectProductOrderSessionId);
 
-    const handleProductPress = useCallback((product: Product) => {
-        kernelMixcOrderCreateTraditionalCommands.addProductOrder(product).execute(shortId(), sessionId);
+    const handleProductPress = useCallback((product: ProductBase) => {
+        kernelOrderCreateTraditionalCommands.addProductOrder(product).execute(shortId(), sessionId);
     }, [sessionId]);
 
-    const renderItem = useCallback(({item}: {item: Product}) => (
+    const renderItem = useCallback(({item}: {item: ProductBase}) => (
         <ProductSelectionItem product={item} onPress={handleProductPress}/>
     ), [handleProductPress]);
 
@@ -35,7 +35,7 @@ export const ProductSelectionContainer: React.FC = () => {
             </View>
             <FlatList
                 data={products}
-                keyExtractor={(item) => item.productCode}
+                keyExtractor={(item) => item.saleTypeCode}
                 numColumns={3}
                 renderItem={renderItem}
                 style={styles.list}

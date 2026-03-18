@@ -1,8 +1,8 @@
 import React, {useCallback} from "react";
 import {StyleSheet, View} from "react-native";
 import {useSelector} from "react-redux";
-import {selectPayingOrders} from "@impos2/kernel-mixc-order-pay";
-import {PayingMainOrder} from "@impos2/kernel-mixc-order-pay";
+import {selectPayingOrders} from "@impos2/kernel-pay-base";
+import {PayingMainOrder} from "@impos2/kernel-pay-base";
 import {PayingOrderItem} from "./PayingOrderItem";
 import {uiMixcTradeCommands} from "../../../features/commands";
 import {kernelCoreNavigationCommands, useChildScreenPart} from "@impos2/kernel-core-navigation";
