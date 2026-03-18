@@ -44,7 +44,6 @@ const slice = createWorkspaceSlice(
                 id: modal.id,
                 screenPartKey: modal.partKey,
                 props: modal.props,
-                open: true,
             });
             // logger.log([moduleName, LOG_TAGS.Reducer, "uiVariables"], '------》openModal after',modals)
             modals.updatedAt = Date.now();

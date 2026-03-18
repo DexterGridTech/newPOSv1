@@ -2,7 +2,7 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {batchUpdateState, ModuleSliceConfig,} from "@impos2/kernel-core-base";
 import {SyncType} from "@impos2/kernel-core-interconnection";
 import {kernelProductBaseState} from "../../types/shared/moduleStateKey";
-import { ProductState} from "../../types/state/productState";
+import { ProductState} from "../../types/state/product";
 
 const initialState: ProductState = {
 }

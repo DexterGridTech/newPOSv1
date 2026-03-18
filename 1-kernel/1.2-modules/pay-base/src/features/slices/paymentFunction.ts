@@ -1,5 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {PaymentFunctionState} from "../../types/state/paymentFunctionState";
+import {PaymentFunctionState} from "../../types/state/paymentFunction";
 import {InstanceMode} from "@impos2/kernel-core-interconnection";
 import {kernelPayBaseState} from "../../types/shared/moduleStateKey";
 import {batchUpdateState, ModuleSliceConfig} from "@impos2/kernel-core-base";

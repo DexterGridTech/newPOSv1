@@ -41,17 +41,8 @@ export const DefaultAlert: React.FC<ModalScreen<AlertInfo>> = React.memo((modal)
     const scaleAnim = useRef(new Animated.Value(0.9)).current;
     const opacityAnim = useRef(new Animated.Value(0)).current;
 
-    // 组件状态
-    const [isVisible, setIsVisible] = React.useState(false);
-
     // 追踪组件挂载状态，防止内存泄漏
     const isMountedRef = useRef<boolean>(true);
-
-    // 追踪动画状态，避免重复触发
-    const isAnimatingRef = useRef<boolean>(false);
-
-    // 追踪上一次的 open 状态，初始化为 false 以确保首次打开时能触发动画
-    const prevOpenRef = useRef<boolean>(false);
 
     /**
      * 根据标题判断 Alert 类型
@@ -189,77 +180,25 @@ export const DefaultAlert: React.FC<ModalScreen<AlertInfo>> = React.memo((modal)
     }, [modal.props?.confirmCommandName, modal.props?.confirmCommandPayload, logAlertInfo, logError, closeAlert]);
 
     /**
-     * 动画效果管理
+     * 动画效果管理 - 组件挂载时播放打开动画
      */
     useEffect(() => {
-        // 检查组件是否已挂载
-        if (!isMountedRef.current) return;
+        logAlertInfo('open', { animationDuration: 200 });
 
-        // 检查是否正在动画中，避免重复触发
-        if (isAnimatingRef.current) {
-            logger.debug([moduleName, LOG_TAGS.UI, 'DefaultAlert'], 'Animation already in progress, skipping');
-            return;
-        }
-
-        const prevOpen = prevOpenRef.current;
-        const currentOpen = modal.open;
-
-        // 状态未变化，跳过
-        if (prevOpen === currentOpen) return;
-
-        if (currentOpen) {
-            // 打开动画
-            isAnimatingRef.current = true;
-            setIsVisible(true);
-            logAlertInfo('open', { animationDuration: 200 });
-
-            Animated.parallel([
-                Animated.spring(scaleAnim, {
-                    toValue: 1,
-                    tension: 50,
-                    friction: 7,
-                    useNativeDriver: true,
-                }),
-                Animated.timing(opacityAnim, {
-                    toValue: 1,
-                    duration: 200,
-                    useNativeDriver: true,
-                }),
-            ]).start(() => {
-                if (isMountedRef.current) {
-                    isAnimatingRef.current = false;
-                    logger.debug([moduleName, LOG_TAGS.UI, 'DefaultAlert'], 'Open animation completed');
-                }
-            });
-        } else if (isVisible) {
-            // 关闭动画
-            isAnimatingRef.current = true;
-            logAlertInfo('close', { animationDuration: 150 });
-
-            Animated.parallel([
-                Animated.timing(scaleAnim, {
-                    toValue: 0.9,
-                    duration: 150,
-                    useNativeDriver: true,
-                }),
-                Animated.timing(opacityAnim, {
-                    toValue: 0,
-                    duration: 150,
-                    useNativeDriver: true,
-                }),
-            ]).start(() => {
-                // 动画完成后卸载组件
-                if (isMountedRef.current) {
-                    setIsVisible(false);
-                    isAnimatingRef.current = false;
-                    logger.debug([moduleName, LOG_TAGS.UI, 'DefaultAlert'], 'Close animation completed');
-                }
-            });
-        }
-
-        // 更新 ref
-        prevOpenRef.current = currentOpen;
-    }, [modal.open, isVisible, scaleAnim, opacityAnim, logAlertInfo]);
+        Animated.parallel([
+            Animated.spring(scaleAnim, {
+                toValue: 1,
+                tension: 50,
+                friction: 7,
+                useNativeDriver: true,
+            }),
+            Animated.timing(opacityAnim, {
+                toValue: 1,
+                duration: 200,
+                useNativeDriver: true,
+            }),
+        ]).start();
+    }, []);
 
     /**
      * 组件挂载和卸载的生命周期管理
@@ -273,34 +212,17 @@ export const DefaultAlert: React.FC<ModalScreen<AlertInfo>> = React.memo((modal)
             timestamp: formattedTime()
         });
 
-        // 组件卸载时的清理函数
         return () => {
             isMountedRef.current = false;
-
-            // 停止所有正在进行的动画
             scaleAnim.stopAnimation();
             opacityAnim.stopAnimation();
 
-            logger.debug([moduleName, LOG_TAGS.UI, 'DefaultAlert'], 'Component unmounting', {
+            logger.debug([moduleName, LOG_TAGS.UI, 'DefaultAlert'], 'Component unmounted', {
                 modalId: modal.id,
-                wasVisible: isVisible,
                 timestamp: formattedTime()
             });
-
-            // 清理 refs
-            prevOpenRef.current = false;
-            isAnimatingRef.current = false;
-
-            logger.debug([moduleName, LOG_TAGS.UI, 'DefaultAlert'], 'Component unmounted and resources released');
         };
     }, [modal.id, scaleAnim, opacityAnim]);
-
-    /**
-     * 边界情况处理：组件不可见时不渲染
-     */
-    if (!isVisible) {
-        return null;
-    }
 
     /**
      * 边界情况处理：缺少必要的 props
@@ -398,10 +320,7 @@ export const DefaultAlert: React.FC<ModalScreen<AlertInfo>> = React.memo((modal)
         </View>
     );
 }, (prevProps, nextProps) => {
-    // 自定义比较函数，优化重渲染
-    // 注意：传入的是整个 ModalScreen 对象，不是单独的 props
     return prevProps.id === nextProps.id &&
-           prevProps.open === nextProps.open &&
            prevProps.screenPartKey === nextProps.screenPartKey &&
            prevProps.props?.title === nextProps.props?.title &&
            prevProps.props?.message === nextProps.props?.message &&

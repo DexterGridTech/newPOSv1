@@ -8,9 +8,10 @@ import {
     kernelPayBaseUnitDataState,
     kernelPayBaseWorkspaceState
 } from "./shared/moduleStateKey";
-import {PayingOrderState} from "./state/payingOrderState";
-import {PaymentFunctionState} from "./state/paymentFunctionState";
+import {PayingOrderState} from "./state/payingOrder";
+import {PaymentFunctionState} from "./state/paymentFunction";
 import {UnitDataState} from "@impos2/kernel-core-terminal";
+import {PaymentRequestStatus} from "./shared/paymentRequest";
 
 export interface KernelPayBaseState {
     [kernelPayBaseState.paymentFunction]:PaymentFunctionState
@@ -19,5 +20,6 @@ export interface KernelPayBaseState {
 
 export type KernelPayBaseWorkspaceState = CreateModuleWorkspaceStateType<{
     [kernelPayBaseWorkspaceState.payingOrder]: PayingOrderState
+    [kernelPayBaseWorkspaceState.paymentRequest]: PaymentRequestStatus
 }>
 export type KernelPayBaseInstanceState = CreateModuleInstanceModeStateType<{}>

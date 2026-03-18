@@ -4,6 +4,7 @@ const path = require('path');
 module.exports = mergeConfig(getDefaultConfig(__dirname), {
     watchFolders: [path.resolve(__dirname, '../../..')],
     resolver: {
+        platforms: ['android', 'ios', 'native'],
         nodeModulesPaths: [
             path.resolve(__dirname, 'node_modules'),
             path.resolve(__dirname, '../../../node_modules'),

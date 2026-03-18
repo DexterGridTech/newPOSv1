@@ -39,7 +39,6 @@ export class PayingOrderActor extends Actor {
                 ],
                 payments:[],
                 paymentWithdraws:[],
-                paymentRequests: [],
                 paymentShares:[],
                 mainOrderStatus:MainOrderBaseStatus.CREATED,
                 createdAt:Date.now(),

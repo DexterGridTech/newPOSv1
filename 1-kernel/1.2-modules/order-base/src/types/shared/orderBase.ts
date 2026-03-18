@@ -3,7 +3,6 @@ export interface MainOrderBase {
     subOrders: SubOrderBase[]
     payments: PaymentBase[]
     paymentWithdraws: PaymentWithdraw[]
-    paymentRequests: PaymentRequestBase[]
     paymentShares: PaymentShare[]
     amount: number
     mainOrderStatus: MainOrderBaseStatus
@@ -13,6 +12,7 @@ export interface MainOrderBase {
 }
 
 export interface PaymentWithdraw {
+    paymentWithdrawCode: string
     paymentCode: string
     paymentWithdrawStatus:PaymentWithdrawStatus
     extra: Record<string, any>
@@ -50,12 +50,6 @@ export interface PaymentShare {
     extra: Record<string, any>
 }
 
-export interface PaymentRequestBase {
-    paymentRequestCode: string;
-    amount: number;
-    paymentRequestStatus: PaymentRequestBaseStatus
-    extra: Record<string, any>
-}
 
 export enum MainOrderBaseStatus {
     CREATED = "CREATED",
@@ -69,15 +63,9 @@ export enum PaymentBaseStatus {
     CANCELLED = "CANCELLED",
 }
 
-export enum PaymentRequestBaseStatus {
-    CREATED = "CREATED",
-    COMPLETED = "COMPLETED",
-    CANCELLED = "CANCELLED",
-    ERROR = "ERROR"
-}
-
 export enum PaymentWithdrawStatus {
     CREATED = "CREATED",
+    PENDING = "PENDING",
     COMPLETED = "COMPLETED",
     ERROR = "ERROR"
 }

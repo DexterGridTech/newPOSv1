@@ -2,17 +2,19 @@ import React, {useCallback, useMemo} from "react";
 import {useLifecycle} from "@impos2/ui-core-base";
 import {StyleSheet, Text, View, FlatList, Platform} from "react-native";
 import {useSelector} from "react-redux";
-import {selectPaymentFunction, PaymentFunction, PayingMainOrder, kernelPayBaseCommands} from "@impos2/kernel-pay-base";
+import {selectPaymentFunctions, PaymentFunction, PayingMainOrder, kernelPayBaseCommands} from "@impos2/kernel-pay-base";
 import {PaymentFunctionItem} from "./PaymentFunctionItem";
 import {shortId} from "@impos2/kernel-core-base";
 import {uiMixcTradeCommands} from "../../../features/commands";
+import {createModalScreen, kernelCoreNavigationCommands} from "@impos2/kernel-core-navigation";
+import {paymentModalPart} from "../../modals/PaymentModal";
 
 interface PaymentFunctionListProps {
     currentOrder?: PayingMainOrder;
 }
 
 export const PaymentFunctionList: React.FC<PaymentFunctionListProps> = ({currentOrder}) => {
-    const paymentFunctions = useSelector(selectPaymentFunction);
+    const paymentFunctions = useSelector(selectPaymentFunctions);
 
     const sortedPaymentFunctions = useMemo(() =>
         [...paymentFunctions].sort((a, b) => a.displayIndex - b.displayIndex),
@@ -21,10 +23,19 @@ export const PaymentFunctionList: React.FC<PaymentFunctionListProps> = ({current
 
     const handlePress = useCallback((paymentFunction: PaymentFunction) => {
         if (currentOrder) {
-            uiMixcTradeCommands.applyPaymentFunction({
+            const paymentRequestCode = shortId();
+            kernelPayBaseCommands.applyPaymentFunction({
                 payingOrder: currentOrder,
-                paymentFunction
+                paymentFunction,
+                paymentRequestCode
             }).execute(shortId(),currentOrder.mainOrderCode);
+
+            kernelCoreNavigationCommands.openModal({
+                modal: createModalScreen(paymentModalPart, 'paymentModal', {
+                    title: `支付方式：${paymentFunction.displayName}`,
+                    paymentRequestCode: paymentRequestCode
+                })
+            }).executeInternally();
         }
     }, [currentOrder]);
 

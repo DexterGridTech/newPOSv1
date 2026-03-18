@@ -12,7 +12,9 @@ react {
     root = file("../../../../../")
     reactNativeDir = file("../../../../../node_modules/react-native")
     codegenDir = file("../../../../../node_modules/@react-native/codegen")
-    cliFile = file("../../../../../node_modules/react-native/cli.js")
+    cliFile = file("../../../../../node_modules/@react-native-community/cli/build/bin.js")
+    entryFile = file("../../../../../4-assembly/android/mixc-retail/index.js")
+    extraPackagerArgs = ["--config", file("../../metro.config.js").absolutePath]
 
     // autolinkLibrariesWithApp()
 }

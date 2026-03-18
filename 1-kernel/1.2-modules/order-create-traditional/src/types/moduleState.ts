@@ -4,7 +4,7 @@
  */
 import {CreateModuleInstanceModeStateType, CreateModuleWorkspaceStateType} from "@impos2/kernel-core-interconnection";
 import {kernelOrderCreateTraditionalWorkspaceState} from "./shared/moduleStateKey";
-import {CreateOrderState} from "./state/createOrderState";
+import {CreateOrderState} from "./state/createOrder";
 
 export interface KernelOrderCreateTraditionalState {
 }

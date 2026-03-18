@@ -90,7 +90,7 @@ const LoginScreen: React.FC<{
                 <Text style={styles.subtitle}>请输入管理员密码以继续</Text>
             </View>
 
-            {deviceId && (
+            {!!deviceId && (
                 <View style={styles.qrSection}>
                     <View style={styles.qrContainer}>
                         <QRCode value={deviceId} size={120}/>
@@ -114,7 +114,7 @@ const LoginScreen: React.FC<{
                     />
                     {isValidLength && !error && <Text style={styles.successIndicator}>✓</Text>}
                 </View>
-                {error && (
+                {!!error && (
                     <View style={styles.errorContainer}>
                         <Text style={styles.errorText}>{error}</Text>
                     </View>

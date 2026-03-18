@@ -6,6 +6,5 @@ export const uiMixcTradeCommands = createModuleCommands(moduleName,{
     setOrderCreationTypeToActive: defineCommand<void>(),
     setOrderCreationTypeToPassive: defineCommand<void>(),
     setSelectedPayingOrder: defineCommand<string>(),
-    applyPaymentFunction:defineCommand<{payingOrder:PayingMainOrder,paymentFunction:PaymentFunction}>(),
 })
 

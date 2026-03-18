@@ -17,5 +17,8 @@ export const getWorkspace = (): Workspace => {
 export const getEnableSlave = (): boolean => {
     return storeEntry.getStateByKey(kernelCoreInterconnectionState.instanceInfo).enableSlave
 }
+export const getWorkspaceStateKey = (stateKey: string): string => {
+    return `${stateKey}.${getWorkspace()}`
+}
 
 

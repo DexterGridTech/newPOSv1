@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import { RootState } from '@impos2/kernel-core-base';
 import { kernelCoreInterconnectionState } from '@impos2/kernel-core-interconnection';
-import { CreateOrderState } from '../types/state/createOrderState';
+import { CreateOrderState } from '../types/state/createOrder';
 import { kernelOrderCreateTraditionalWorkspaceState } from '../types/shared/moduleStateKey';
 
 const selectCreateOrderState = (state: RootState): CreateOrderState | undefined => {

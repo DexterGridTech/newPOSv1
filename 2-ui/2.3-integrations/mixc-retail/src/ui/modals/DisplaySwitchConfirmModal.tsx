@@ -50,10 +50,8 @@ export const DisplaySwitchConfirmModal: React.FC<ModalScreen<DisplaySwitchModalP
 
     // 倒计时状态
     const [countdown, setCountdown] = useState(3);
-    const [isVisible, setIsVisible] = useState(false);
 
     const isMountedRef = useRef<boolean>(true);
-    const prevOpenRef = useRef<boolean>(false);
     const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
 
     // 清理定时器
@@ -115,61 +113,26 @@ export const DisplaySwitchConfirmModal: React.FC<ModalScreen<DisplaySwitchModalP
         }, 1000);
     }, [clearCountdownTimer, handleConfirm, progressAnim, startPulseAnimation]);
 
-    // 打开/关闭动画
+    // 打开动画 - 组件挂载时播放
     useEffect(() => {
-        if (!isMountedRef.current) return;
-
-        const prevOpen = prevOpenRef.current;
-        const currentOpen = modal.open;
-
-        if (prevOpen === currentOpen) return;
-
-        if (currentOpen) {
-            // 打开动画 - 使用 spring 弹性效果
-            setIsVisible(true);
-
-            Animated.parallel([
-                Animated.spring(scaleAnim, {
-                    toValue: 1,
-                    tension: 65,
-                    friction: 8,
-                    useNativeDriver: true,
-                }),
-                Animated.timing(opacityAnim, {
-                    toValue: 1,
-                    duration: 250,
-                    useNativeDriver: true,
-                }),
-            ]).start(() => {
-                if (isMountedRef.current) {
-                    startCountdown();
-                }
-            });
-        } else if (isVisible) {
-            // 关闭动画 - 更快的退出
-            clearCountdownTimer();
-            pulseAnim.stopAnimation();
-
-            Animated.parallel([
-                Animated.timing(scaleAnim, {
-                    toValue: 0.85,
-                    duration: 180,
-                    useNativeDriver: true,
-                }),
-                Animated.timing(opacityAnim, {
-                    toValue: 0,
-                    duration: 180,
-                    useNativeDriver: true,
-                }),
-            ]).start(() => {
-                if (isMountedRef.current) {
-                    setIsVisible(false);
-                }
-            });
-        }
-
-        prevOpenRef.current = currentOpen;
-    }, [modal.open, isVisible, scaleAnim, opacityAnim, pulseAnim, startCountdown, clearCountdownTimer]);
+        Animated.parallel([
+            Animated.spring(scaleAnim, {
+                toValue: 1,
+                tension: 65,
+                friction: 8,
+                useNativeDriver: true,
+            }),
+            Animated.timing(opacityAnim, {
+                toValue: 1,
+                duration: 250,
+                useNativeDriver: true,
+            }),
+        ]).start(() => {
+            if (isMountedRef.current) {
+                startCountdown();
+            }
+        });
+    }, []);
 
     // 生命周期管理
     useLifecycle({
@@ -187,10 +150,6 @@ export const DisplaySwitchConfirmModal: React.FC<ModalScreen<DisplaySwitchModalP
             cleanup();
         }, [clearCountdownTimer, scaleAnim, opacityAnim, progressAnim, pulseAnim, cleanup]),
     });
-
-    if (!isVisible) {
-        return null;
-    }
 
     const isPrimary = displayType === 'primary';
     const title = isPrimary ? '切换到主屏' : '切换到副屏';

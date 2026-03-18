@@ -2,13 +2,40 @@
   "name": "@impos2/assembly-electron-mixc-retail",
   "version": "1.0.0",
   "description": "整合层：POS Mixc Retail Electron 集成包",
+  "author": {
+    "name": "IMPOS2",
+    "email": "dev@impos2.com"
+  },
+  "homepage": "https://impos2.com",
   "main": ".vite/build/main.js",
   "private": true,
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
+    "build----ignore": "ELECTRON_GET_USE_PROXY=true GLOBAL_AGENT_HTTPS_PROXY=http://127.0.0.1:7890 electron-builder --linux",
     "type-check": "tsc --noEmit"
+  },
+  "build": {
+    "appId": "com.impos2.mixc.retail",
+    "productName": "IMPOS2 Mixc Retail",
+    "artifactName": "impos2-mixc-retail-${version}-${arch}.${ext}",
+    "linux": {
+      "target": [
+        {
+          "target": "deb",
+          "arch": [
+            "arm64"
+          ]
+        },
+        "AppImage"
+      ],
+      "icon": "build/icon.png",
+      "category": "Utility"
+    },
+    "directories": {
+      "output": "dist"
+    }
   },
   "dependencies": {
     "@impos2/adapter-electron-v1": "*",
@@ -35,7 +62,8 @@
     "@types/react": "~18.3.12",
     "@types/react-dom": "~18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
-    "electron": "^40.6.1",
+    "electron": "40.6.1",
+    "electron-builder": "^26.8.1",
     "electron-devtools-installer": "^3.2.0",
     "typescript": "^5.9.3",
     "vite": "^5.4.21"

@@ -7,17 +7,15 @@ import {InstanceMode, Workspace} from "@impos2/kernel-core-interconnection";
 
 interface PaymentModalProps {
     title: string;
-    mainOrderCode: string;
-    paymentFunctionKey: string;
+    paymentRequestCode: string;
 }
 
 export const PaymentModal: React.FC<ModalScreen<PaymentModalProps>> = React.memo((modal) => {
-    const {title, mainOrderCode, paymentFunctionKey} = modal.props || {};
+    const {title, paymentRequestCode} = modal.props || {};
 
-    const {handleClose} = usePaymentModal({
+    const {handleCloseAndRemove, paymentRequest, payingOrder, paymentFunction} = usePaymentModal({
         modalId: modal.id,
-        mainOrderCode: mainOrderCode || '',
-        paymentFunctionKey: paymentFunctionKey || ''
+        paymentRequestCode: paymentRequestCode!,
     });
 
     return (
@@ -26,12 +24,14 @@ export const PaymentModal: React.FC<ModalScreen<PaymentModalProps>> = React.memo
             <View style={styles.container}>
                 <Text style={styles.title}>{title}</Text>
                 <View style={styles.content}>
-                    <Text style={styles.label}>订单编号：</Text>
-                    <Text style={styles.value}>{mainOrderCode}</Text>
-                    <Text style={styles.label}>支付方式：</Text>
-                    <Text style={styles.value}>{paymentFunctionKey}</Text>
+                    <Text style={styles.label}>待支付金额</Text>
+                    <Text style={styles.value}>{paymentRequest?.amount ?? '-'}</Text>
+                    <Text style={styles.label}>订单编号</Text>
+                    <Text style={styles.value}>{payingOrder?.mainOrderCode ?? '-'}</Text>
+                    <Text style={styles.label}>支付方式</Text>
+                    <Text style={styles.value}>{paymentFunction?.key ?? '-'}</Text>
                 </View>
-                <TouchableOpacity style={styles.button} onPress={handleClose}>
+                <TouchableOpacity style={styles.button} onPress={handleCloseAndRemove}>
                     <Text style={styles.buttonText}>关闭</Text>
                 </TouchableOpacity>
             </View>

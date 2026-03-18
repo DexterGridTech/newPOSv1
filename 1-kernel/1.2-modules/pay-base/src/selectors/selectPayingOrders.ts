@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import { RootState } from '@impos2/kernel-core-base';
 import { kernelCoreInterconnectionState } from '@impos2/kernel-core-interconnection';
-import { PayingOrderState } from '../types/state/payingOrderState';
+import { PayingOrderState } from '../types/state/payingOrder';
 import { kernelPayBaseWorkspaceState } from '../types/shared/moduleStateKey';
 import { PayingMainOrder } from '../types/shared/payingMainOrder';
 
@@ -22,3 +22,12 @@ export const selectPayingOrders = createSelector(
             .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
     }
 );
+
+export const selectPayingOrder = (mainOrderCode: string) =>
+    createSelector(
+        [selectPayingOrderState],
+        (payingOrderState): PayingMainOrder | undefined => {
+            if (!payingOrderState) return undefined;
+            return payingOrderState[mainOrderCode]?.value;
+        }
+    );

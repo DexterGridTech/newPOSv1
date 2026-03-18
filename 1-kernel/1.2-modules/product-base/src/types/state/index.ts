@@ -1,1 +1,1 @@
-export * from './productState'
+export * from './product'

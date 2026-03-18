@@ -6,7 +6,7 @@ import {
 } from '@impos2/kernel-core-interconnection'
 import {kernelOrderCreateTraditionalWorkspaceState} from "../../types/shared/moduleStateKey";
 import {batchUpdateState, shortId} from "@impos2/kernel-core-base";
-import {CreateOrderState} from "../../types/state/createOrderState";
+import {CreateOrderState} from "../../types/state/createOrder";
 import {PayloadAction} from "@reduxjs/toolkit";
 import {ProductBase} from "@impos2/kernel-product-base";
 import {updateValueStr} from "@impos2/kernel-order-base";

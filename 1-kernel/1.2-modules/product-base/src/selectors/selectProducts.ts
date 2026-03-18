@@ -1,6 +1,6 @@
 import {createSelector} from "@reduxjs/toolkit";
 import {kernelProductBaseState} from "../types/shared/moduleStateKey";
-import {ProductState} from "../types/state/productState";
+import {ProductState} from "../types/state/product";
 import {ProductBase} from "../types/shared/product";
 
 const selectProductState = (state: any): ProductState => {

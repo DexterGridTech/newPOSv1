@@ -30,6 +30,7 @@ export const kernelPayBaseInstanceState= createModuleInstanceModeStateKeys(
 export const kernelPayBaseWorkspaceState = createModuleWorkspaceStateKeys(
     moduleName,
     [
-        'payingOrder'
+        'payingOrder',
+        'paymentRequest'
     ] as const
 )

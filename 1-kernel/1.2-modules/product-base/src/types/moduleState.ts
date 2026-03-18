@@ -4,7 +4,7 @@
  */
 import {CreateModuleInstanceModeStateType, CreateModuleWorkspaceStateType} from "@impos2/kernel-core-interconnection";
 import {kernelProductBaseState} from "./shared/moduleStateKey";
-import {ProductState} from "./state/productState";
+import {ProductState} from "./state/product";
 
 export interface KernelProductBaseState {
     [kernelProductBaseState.product]: ProductState
