@@ -3,7 +3,6 @@ import {ScreenMode, ScreenPart} from "@impos2/kernel-core-base";
 export interface ModalScreen<T> {
     id: string,
     screenPartKey: string,
-    open: boolean
     props?: T
 }
 
