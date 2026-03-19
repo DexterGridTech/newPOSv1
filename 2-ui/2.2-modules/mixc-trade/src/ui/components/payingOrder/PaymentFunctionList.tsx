@@ -32,7 +32,7 @@ export const PaymentFunctionList: React.FC<PaymentFunctionListProps> = ({current
 
             kernelCoreNavigationCommands.openModal({
                 modal: createModalScreen(paymentModalPart, 'paymentModal', {
-                    title: `支付方式：${paymentFunction.displayName}`,
+                    title: `${paymentFunction.displayName}`,
                     paymentRequestCode: paymentRequestCode
                 })
             }).executeInternally();

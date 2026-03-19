@@ -8,7 +8,7 @@ import {kernelPayBaseWorkspaceState} from "../../types/shared/moduleStateKey";
 import {batchUpdateState} from "@impos2/kernel-core-base";
 import {PaymentRequestState} from "../../types/state/paymentRequest";
 import {PayloadAction} from "@reduxjs/toolkit";
-import {PaymentRequest} from "../../types";
+import {PaymentRequest, PaymentRequestStatus} from "../../types";
 
 
 const initialState: PaymentRequestState = {}
@@ -25,8 +25,8 @@ const slice = createWorkspaceSlice(
         removePaymentRequest: (state, action: PayloadAction<string>) => {
             delete state[action.payload]
         },
-        updatePaymentRequest: (state, action: PayloadAction<PaymentRequest>) => {
-            state[action.payload.paymentRequestCode].value = action.payload
+        updatePaymentRequestStatus: (state, action: PayloadAction<{ paymentRequestCode:string,paymentRequestStatus:PaymentRequestStatus }>) => {
+            state[action.payload.paymentRequestCode].value.paymentRequestStatus = action.payload.paymentRequestStatus
             state[action.payload.paymentRequestCode].updatedAt = Date.now()
         },
         batchUpdateState: (state, action) => {

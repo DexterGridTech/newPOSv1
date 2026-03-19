@@ -1,6 +1,7 @@
 import React from "react";
 import {ModalScreen} from "@impos2/kernel-core-navigation";
 import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {IAppError} from "@impos2/kernel-core-base";
 import {usePaymentModal} from "../../hooks/usePaymentModal";
 import {ScreenMode, ScreenPartRegistration} from "@impos2/kernel-core-base";
 import {InstanceMode, Workspace} from "@impos2/kernel-core-interconnection";
@@ -18,14 +19,25 @@ const usePaymentContent = (
     paymentRequestStatus: PaymentRequestStatus | undefined,
     paymentAmountType: PaymentAmountType | undefined,
     amount: number,
+    handleConfirmAmount: (amount: number) => void,
+    payStatusResult: 'started' | 'complete' | 'error' | undefined,
+    errors: Record<string, IAppError> | undefined,
 ) => {
     if (!paymentRequestStatus || !paymentAmountType) return null;
+
+    // payStatus complete/error 优先展示结果页
+    if (payStatusResult === 'complete') {
+        return <PaymentResult status={PaymentRequestStatus.COMPLETED} />;
+    }
+    if (payStatusResult === 'error') {
+        return <PaymentResult status={PaymentRequestStatus.ERROR} errors={errors} />;
+    }
 
     if (
         paymentRequestStatus === PaymentRequestStatus.CREATED &&
         paymentAmountType === PaymentAmountType.FIXED
     ) {
-        return <AmountConfirmKeyboard maxAmount={amount} />;
+        return <AmountConfirmKeyboard maxAmount={amount} onConfirm={handleConfirmAmount}/>;
     }
 
     if (
@@ -49,15 +61,20 @@ const usePaymentContent = (
 export const PaymentModal: React.FC<ModalScreen<PaymentModalProps>> = React.memo((modal) => {
     const {title, paymentRequestCode} = modal.props || {};
 
-    const {handleCloseAndRemove, paymentRequest, paymentFunction} = usePaymentModal({
+    const {handleCloseAndRemove, handleConfirmAmount, payStatus, paymentRequest, paymentFunction} = usePaymentModal({
         modalId: modal.id,
         paymentRequestCode: paymentRequestCode!,
     });
+
+    const isDone = payStatus?.status === 'complete' || payStatus?.status === 'error';
 
     const content = usePaymentContent(
         paymentRequest?.paymentRequestStatus,
         paymentFunction?.definition.paymentAmountType,
         paymentRequest?.amount ?? 0,
+        handleConfirmAmount,
+        payStatus?.status,
+        payStatus?.errors,
     );
 
     return (
@@ -75,9 +92,11 @@ export const PaymentModal: React.FC<ModalScreen<PaymentModalProps>> = React.memo
                 <View style={styles.content}>
                     {content}
                 </View>
-                <TouchableOpacity style={styles.button} onPress={handleCloseAndRemove}>
-                    <Text style={styles.buttonText}>关闭</Text>
-                </TouchableOpacity>
+                {isDone && (
+                    <TouchableOpacity style={styles.button} onPress={handleCloseAndRemove}>
+                        <Text style={styles.buttonText}>关闭</Text>
+                    </TouchableOpacity>
+                )}
             </View>
         </View>
     );

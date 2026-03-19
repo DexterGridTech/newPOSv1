@@ -60,7 +60,7 @@ export class StreamTaskExecutor {
         // Issue-A fix：快照初始 context，避免后续 loop 修改污染 TASK_INIT 的 context 引用
         const initProgress: ProgressData = {
             requestId,
-            taskKey: taskDef.key,
+            taskDefinitionKey: taskDef.key,
             nodeKey: taskDef.rootNode.key,
             type: 'TASK_INIT',
             state: 'INIT',
@@ -96,7 +96,7 @@ export class StreamTaskExecutor {
                     // Issue-C fix：超时事件 nodeKey 用空字符串，避免误导为某个具体节点的错误
                     progress$.next({
                         requestId,
-                        taskKey: taskDef.key,
+                        taskDefinitionKey: taskDef.key,
                         nodeKey: '',
                         type: 'NODE_ERROR',
                         state: 'PARTIAL_FAILED',
@@ -174,7 +174,7 @@ export class StreamTaskExecutor {
             executionContext.state = 'CANCELLED';
             progress$.next({
                 requestId,
-                taskKey: taskDef.key,
+                taskDefinitionKey: taskDef.key,
                 nodeKey: '',
                 type: 'TASK_CANCEL',
                 state: 'CANCELLED',
@@ -225,7 +225,7 @@ export class StreamTaskExecutor {
 
         const baseProgress: ProgressData = {
             requestId,
-            taskKey,
+            taskDefinitionKey: taskKey,
             nodeKey: node.key,
             type: 'NODE_START',
             state: executionContext.state,

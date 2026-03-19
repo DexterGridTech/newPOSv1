@@ -81,7 +81,7 @@ export const useSwitchInstanceMode = () => {
         const requestId = `addMaster_${Date.now()}`
         setScanRequestId(requestId)
         kernelCoreTaskCommands.executeTask({
-            taskKey: baseTaskDefinitionKey.singleReadBarcodeFromCamara,
+            taskDefinitionKey: baseTaskDefinitionKey.singleReadBarcodeFromCamara,
             initContext: {}
         })
             .withExtra({instanceMode: InstanceMode.SLAVE})

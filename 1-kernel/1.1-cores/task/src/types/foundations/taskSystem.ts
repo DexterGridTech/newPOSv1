@@ -6,7 +6,7 @@ export interface ProgressData {
     // 全局请求ID
     requestId: string;
     // 当前任务Key
-    taskKey: string;
+    taskDefinitionKey: string;
     // 当前节点Key
     nodeKey: string;
     // 过程数据类型

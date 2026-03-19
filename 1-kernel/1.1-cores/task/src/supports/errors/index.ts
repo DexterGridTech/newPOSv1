@@ -9,12 +9,25 @@ export const kernelCoreTaskErrorMessages = {
         "keyIsNotRight",
         "钥匙不对，无法开门"
     ),
-
     taskExecutionError: new DefinedErrorMessage(
         ErrorCategory.SYSTEM,
         ErrorSeverity.HIGH,
         "task execution error",
         "taskExecutionError",
-        "任务执行错误"
+        "任务执行错误:${error}"
+    ),
+    taskExecutionCancelled: new DefinedErrorMessage(
+        ErrorCategory.SYSTEM,
+        ErrorSeverity.HIGH,
+        "task execution cancelled",
+        "taskExecutionCancelled",
+        "任务执行取消"
+    ),
+    taskKeyIsNotFound: new DefinedErrorMessage(
+        ErrorCategory.SYSTEM,
+        ErrorSeverity.HIGH,
+        "task key is not found",
+        "taskKeyIsNotFound",
+        "任务不存在"
     )
 };

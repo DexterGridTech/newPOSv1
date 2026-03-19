@@ -107,35 +107,35 @@ export class TaskSystem {
     /**
      * 获取任务执行入口（核心流式入口，支持循环执行）
      */
-    task(key: string): {
+    task(taskDefinitionKey: string): {
         run: (requestId: string, initialContext?: Record<string, any>, loop?: boolean) => Observable<ProgressData>
     } {
-        const taskDef = this.getTaskDefinition(key);
+        const taskDef = this.getTaskDefinition(taskDefinitionKey);
         if (!taskDef) {
-            logger.error([moduleName, LOG_TAGS.Task, "TaskSystem"], `任务${key}未注册`)
+            logger.error([moduleName, LOG_TAGS.Task, "TaskSystem"], `任务${taskDefinitionKey}未注册`)
             return {
                 run: (requestId: string, initialContext?: Record<string, any>, loop = true) => {
                     return new Observable((subscriber) => {
-                        subscriber.next({
-                            requestId,
-                            taskKey: key,
-                            nodeKey: '',
-                            type: 'NODE_ERROR',
-                            state: 'PARTIAL_FAILED',
-                            nodeIndex: 0,
-                            totalNodes: 0,
-                            progress: 0,
-                            timestamp: Date.now(),
-                            error: {
-                                code: 'TASK_NOT_FOUND',
-                                message: `任务${key}未注册`,
-                                retryable: false
-                            },
-                            context: initialContext || {}
-                        });
-                        if (!loop) {
-                            subscriber.complete();
-                        }
+                        // subscriber.next({
+                        //     requestId,
+                        //     taskDefinitionKey: taskDefinitionKey,
+                        //     nodeKey: '',
+                        //     type: 'NODE_ERROR',
+                        //     state: 'PARTIAL_FAILED',
+                        //     nodeIndex: 0,
+                        //     totalNodes: 0,
+                        //     progress: 0,
+                        //     timestamp: Date.now(),
+                        //     error: {
+                        //         code: 'TASK_NOT_FOUND',
+                        //         message: `任务${taskDefinitionKey}未注册`,
+                        //         retryable: false
+                        //     },
+                        //     context: initialContext || {}
+                        // });
+                        // if (!loop) {
+                            subscriber.error(`任务${taskDefinitionKey}未注册`);
+                        // }
                     });
                 }
             };

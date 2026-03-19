@@ -1,8 +1,8 @@
 import {moduleName} from "../../moduleName";
-import {Actor, AppError, LOG_TAGS, logger, storeEntry, PERSIST_KEY} from "@impos2/kernel-core-base";
+import {Actor, AppError, LOG_TAGS, logger, PERSIST_KEY, storeEntry} from "@impos2/kernel-core-base";
 import {kernelPayBaseCommands} from "../commands";
 import {PaymentRequest, PaymentRequestState, PaymentRequestStatus} from "../../types";
-import {kernelPayBaseWorkspaceState} from "../../types/shared/moduleStateKey";
+import {kernelPayBaseState, kernelPayBaseWorkspaceState} from "../../types/shared/moduleStateKey";
 import {kernelPayBaseErrorMessages} from "../../supports";
 import {PaymentWithdrawStatus} from "@impos2/kernel-order-base";
 import {dispatchWorkspaceAction, getWorkspaceStateKey} from "@impos2/kernel-core-interconnection";
@@ -11,7 +11,7 @@ import {paymentRequestActions} from "../slices/paymentRequest";
 export class PaymentRequestActor extends Actor {
     applyPaymentFunction = Actor.defineCommandHandler(kernelPayBaseCommands.applyPaymentFunction,
         async (command): Promise<Record<string, any>> => {
-            logger.log([moduleName, LOG_TAGS.Actor, "PaymentRequestActor"], 'apply Payment Function',command.payload.paymentRequestCode)
+            logger.log([moduleName, LOG_TAGS.Actor, "PaymentRequestActor"], 'apply Payment Function', command.payload.paymentRequestCode)
             const {payingOrder, paymentFunction, paymentRequestCode} = command.payload;
 
             const paymentRequestState = storeEntry.getStateByKey(getWorkspaceStateKey(kernelPayBaseWorkspaceState.paymentRequest) as any) as PaymentRequestState
@@ -47,13 +47,48 @@ export class PaymentRequestActor extends Actor {
                 amount: amount, // 单位：分（整数）
                 extra: {},
             }
-            dispatchWorkspaceAction(paymentRequestActions.addPaymentRequest(paymentRequest),command)
+            dispatchWorkspaceAction(paymentRequestActions.addPaymentRequest(paymentRequest), command)
             return {};
         });
     removePaymentRequest = Actor.defineCommandHandler(kernelPayBaseCommands.removePaymentRequest,
         async (command): Promise<Record<string, any>> => {
             logger.log([moduleName, LOG_TAGS.Actor, "PaymentRequestActor"], 'remove Payment Request')
-            dispatchWorkspaceAction(paymentRequestActions.removePaymentRequest(command.payload.paymentRequestCode),command)
+            dispatchWorkspaceAction(paymentRequestActions.removePaymentRequest(command.payload.paymentRequestCode), command)
+            return {};
+        });
+    runPaymentRequest = Actor.defineCommandHandler(kernelPayBaseCommands.runPaymentRequest,
+        async (command): Promise<Record<string, any>> => {
+            logger.log([moduleName, LOG_TAGS.Actor, "PaymentRequestActor"], `run Payment Request ${command.payload.amount}`)
+            const paymentRequestState = storeEntry.getStateByKey(getWorkspaceStateKey(kernelPayBaseWorkspaceState.paymentRequest) as any) as PaymentRequestState
+            const paymentRequest = paymentRequestState[command.payload.paymentRequestCode]?.value
+            if (!paymentRequest) {
+                throw new AppError(kernelPayBaseErrorMessages.paymentRequestIsNotFound)
+            }
+            const payingOrderState = storeEntry.getStateByKey(getWorkspaceStateKey(kernelPayBaseWorkspaceState.payingOrder) as any) as PaymentRequestState
+            const payingOrder = payingOrderState[paymentRequest.mainOrderCode]?.value
+            if (!payingOrder) {
+                throw new AppError(kernelPayBaseErrorMessages.payingOrderIsNotFound)
+            }
+            const paymentFunctionState = storeEntry.getStateByKey(kernelPayBaseState.paymentFunction)
+            const paymentFunction = paymentFunctionState[paymentRequest.paymentFunctionKey]?.value
+            if (!paymentFunction) {
+                throw new AppError(kernelPayBaseErrorMessages.paymentFunctionIsNotFound)
+            }
+
+            dispatchWorkspaceAction(paymentRequestActions.updatePaymentRequestStatus({
+                paymentRequestCode: paymentRequest.paymentRequestCode,
+                paymentRequestStatus: PaymentRequestStatus.PENDING
+            }), command)
+
+            const taskInstanceMode = paymentFunction.definition.taskInstanceMode
+            kernelPayBaseCommands.executePaymentTask({
+                payingMainOrder: payingOrder,
+                paymentFunction: paymentFunction,
+                paymentRequest: paymentRequest,
+                amount: command.payload.amount
+            })
+                .withExtra({instanceMode: taskInstanceMode})
+                .executeFromParent(command)
             return {};
         });
 }

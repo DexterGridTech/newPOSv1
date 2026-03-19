@@ -1,13 +1,14 @@
 import React, {useCallback, useState} from "react";
 import {Pressable, StyleSheet, Text, View} from "react-native";
-import {updateMoneyString, centsToMoneyString, moneyStringToCents} from "@impos2/kernel-order-base";
+import {centsToMoneyString, moneyStringToCents, updateMoneyString} from "@impos2/kernel-order-base";
 
 interface AmountConfirmKeyboardProps {
     maxAmount: number;  // 单位：分（整数）
+    onConfirm: (amount: number) => void;  // amount 单位：分（整数）
 }
 
 // 内部 hook 管理用户输入的元字符串（moneyString），不涉及 redux state
-const useAmountKeyboard = (maxAmount: number) => {
+const useAmountKeyboard = (maxAmount: number, onConfirm: (amount: number) => void) => {
     // 初始值：maxAmount（分）→ 元字符串，centsToMoneyString 保证精度
     const [moneyString, setMoneyString] = useState(() => centsToMoneyString(maxAmount));
 
@@ -22,15 +23,17 @@ const useAmountKeyboard = (maxAmount: number) => {
     }, [maxAmount]);
 
     const handleConfirm = useCallback(() => {
-        // 暂时只打印，后续接入支付逻辑
-        console.log('收单金额（元）:', moneyString, '收单金额（分）:', moneyStringToCents(moneyString));
-    }, [moneyString]);
+        onConfirm(moneyStringToCents(moneyString));
+    }, [moneyString, onConfirm]);
 
-    return {moneyString, handleKeyPress, handleConfirm};
+    // 金额为 0 时禁用确认按钮
+    const isZero = moneyStringToCents(moneyString) === 0;
+
+    return {moneyString, isZero, handleKeyPress, handleConfirm};
 };
 
-export const AmountConfirmKeyboard: React.FC<AmountConfirmKeyboardProps> = React.memo(({maxAmount}) => {
-    const {moneyString, handleKeyPress, handleConfirm} = useAmountKeyboard(maxAmount);
+export const AmountConfirmKeyboard: React.FC<AmountConfirmKeyboardProps> = React.memo(({maxAmount, onConfirm}) => {
+    const {moneyString, isZero, handleKeyPress, handleConfirm} = useAmountKeyboard(maxAmount, onConfirm);
 
     return (
         <View style={styles.container}>
@@ -44,28 +47,28 @@ export const AmountConfirmKeyboard: React.FC<AmountConfirmKeyboardProps> = React
                 <View style={styles.mainGrid}>
                     <View style={styles.leftGrid}>
                         <View style={styles.row}>
-                            <KeyButton label="1" onPress={() => handleKeyPress('1')} />
-                            <KeyButton label="2" onPress={() => handleKeyPress('2')} />
-                            <KeyButton label="3" onPress={() => handleKeyPress('3')} />
+                            <KeyButton label="1" onPress={() => handleKeyPress('1')}/>
+                            <KeyButton label="2" onPress={() => handleKeyPress('2')}/>
+                            <KeyButton label="3" onPress={() => handleKeyPress('3')}/>
                         </View>
                         <View style={styles.row}>
-                            <KeyButton label="4" onPress={() => handleKeyPress('4')} />
-                            <KeyButton label="5" onPress={() => handleKeyPress('5')} />
-                            <KeyButton label="6" onPress={() => handleKeyPress('6')} />
+                            <KeyButton label="4" onPress={() => handleKeyPress('4')}/>
+                            <KeyButton label="5" onPress={() => handleKeyPress('5')}/>
+                            <KeyButton label="6" onPress={() => handleKeyPress('6')}/>
                         </View>
                         <View style={styles.row}>
-                            <KeyButton label="7" onPress={() => handleKeyPress('7')} />
-                            <KeyButton label="8" onPress={() => handleKeyPress('8')} />
-                            <KeyButton label="9" onPress={() => handleKeyPress('9')} />
+                            <KeyButton label="7" onPress={() => handleKeyPress('7')}/>
+                            <KeyButton label="8" onPress={() => handleKeyPress('8')}/>
+                            <KeyButton label="9" onPress={() => handleKeyPress('9')}/>
                         </View>
                         <View style={styles.row}>
-                            <KeyButton label="0" onPress={() => handleKeyPress('0')} />
-                            <KeyButton label="." onPress={() => handleKeyPress('.')} wide />
+                            <KeyButton label="0" onPress={() => handleKeyPress('0')}/>
+                            <KeyButton label="." onPress={() => handleKeyPress('.')} wide/>
                         </View>
                     </View>
                     <View style={styles.rightColumn}>
-                        <KeyButton label="退格" onPress={() => handleKeyPress('b')} />
-                        <KeyButton label="确认" onPress={handleConfirm} primary />
+                        <KeyButton label="退格" onPress={() => handleKeyPress('b')}/>
+                        <KeyButton label="确认" onPress={handleConfirm} primary disabled={isZero}/>
                     </View>
                 </View>
             </View>
@@ -78,19 +81,22 @@ interface KeyButtonProps {
     onPress: () => void;
     wide?: boolean;
     primary?: boolean;
+    disabled?: boolean;
 }
 
-const KeyButton: React.FC<KeyButtonProps> = ({label, onPress, wide = false, primary = false}) => (
+const KeyButton: React.FC<KeyButtonProps> = ({label, onPress, wide = false, primary = false, disabled = false}) => (
     <Pressable
         style={({pressed}) => [
             styles.key,
             wide && styles.keyWide,
             primary && styles.keyPrimary,
-            pressed && styles.keyPressed,
+            disabled && styles.keyDisabled,
+            pressed && !disabled && styles.keyPressed,
         ]}
-        onPress={onPress}
+        onPress={disabled ? undefined : onPress}
     >
-        <Text style={[styles.keyText, primary && styles.keyTextPrimary]}>{label}</Text>
+        <Text
+            style={[styles.keyText, primary && styles.keyTextPrimary, disabled && styles.keyTextDisabled]}>{label}</Text>
     </Pressable>
 );
 
@@ -157,6 +163,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#2563EB',
         borderColor: '#2563EB',
     },
+    keyDisabled: {
+        backgroundColor: '#CBD5E1',
+        borderColor: '#CBD5E1',
+    },
     keyPressed: {
         backgroundColor: '#E2E8F0',
         transform: [{scale: 0.96}],
@@ -168,5 +178,8 @@ const styles = StyleSheet.create({
     },
     keyTextPrimary: {
         color: '#FFFFFF',
+    },
+    keyTextDisabled: {
+        color: '#94A3B8',
     },
 });
