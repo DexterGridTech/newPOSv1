@@ -38,7 +38,7 @@ export class ProductOrderActor extends Actor {
     setProductPrice = Actor.defineCommandHandler(kernelOrderCreateTraditionalCommands.setProductPrice,
         async (command): Promise<Record<string, any>> => {
             logger.log([moduleName, LOG_TAGS.Actor, "ProductOrderActor"], 'set Product Price')
-            dispatchWorkspaceAction(createOrderActions.setValueStr({char: command.payload.char}), command)
+            dispatchWorkspaceAction(createOrderActions.setMoneyString({char: command.payload.char}), command)
             return {};
         });
     clearProductOrder = Actor.defineCommandHandler(kernelOrderCreateTraditionalCommands.clearProductOrder,

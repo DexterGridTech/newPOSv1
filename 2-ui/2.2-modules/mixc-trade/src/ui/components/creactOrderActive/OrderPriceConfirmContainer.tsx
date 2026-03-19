@@ -14,6 +14,7 @@ import {kernelPayBaseCommands} from "@impos2/kernel-pay-base";
 import {moduleName} from "../../../moduleName";
 import {kernelCoreNavigationCommands} from "@impos2/kernel-core-navigation";
 import {payingOrderScreenPart} from "../../screens/PayingOrderScreen";
+import {centsToMoneyString} from "@impos2/kernel-order-base";
 
 export const OrderPriceConfirmContainer: React.FC = () => {
     const totalAmount = useSelector(selectProductOrderTotalAmount) || 0;
@@ -98,7 +99,8 @@ export const OrderPriceConfirmContainer: React.FC = () => {
             </View>
 
             <View style={styles.amountSection}>
-                <Text style={styles.amountValue}>¥{totalAmount.toFixed(2)}</Text>
+                {/* totalAmount 单位为分，centsToMoneyString 转为元字符串展示 */}
+                <Text style={styles.amountValue}>¥{centsToMoneyString(totalAmount)}</Text>
             </View>
 
             <View style={styles.actionSection}>

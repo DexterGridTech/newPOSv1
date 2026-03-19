@@ -1,35 +1,79 @@
 import React from "react";
 import {ModalScreen} from "@impos2/kernel-core-navigation";
 import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import {usePaymentModal} from "../../hooks";
+import {usePaymentModal} from "../../hooks/usePaymentModal";
 import {ScreenMode, ScreenPartRegistration} from "@impos2/kernel-core-base";
 import {InstanceMode, Workspace} from "@impos2/kernel-core-interconnection";
+import {PaymentAmountType, PaymentRequestStatus} from "@impos2/kernel-pay-base";
+import {AmountConfirmKeyboard} from "../components/paymentProcess/AmountConfirmKeyboard";
+import {PaymentProcessing} from "../components/paymentProcess/PaymentProcessing";
+import {PaymentResult} from "../components/paymentProcess/PaymentResult";
 
 interface PaymentModalProps {
     title: string;
     paymentRequestCode: string;
 }
 
+const usePaymentContent = (
+    paymentRequestStatus: PaymentRequestStatus | undefined,
+    paymentAmountType: PaymentAmountType | undefined,
+    amount: number,
+) => {
+    if (!paymentRequestStatus || !paymentAmountType) return null;
+
+    if (
+        paymentRequestStatus === PaymentRequestStatus.CREATED &&
+        paymentAmountType === PaymentAmountType.FIXED
+    ) {
+        return <AmountConfirmKeyboard maxAmount={amount} />;
+    }
+
+    if (
+        (paymentRequestStatus === PaymentRequestStatus.CREATED &&
+            paymentAmountType === PaymentAmountType.DYNAMIC) ||
+        paymentRequestStatus === PaymentRequestStatus.PENDING
+    ) {
+        return <PaymentProcessing />;
+    }
+
+    if (
+        paymentRequestStatus === PaymentRequestStatus.COMPLETED ||
+        paymentRequestStatus === PaymentRequestStatus.ERROR
+    ) {
+        return <PaymentResult status={paymentRequestStatus} />;
+    }
+
+    return null;
+};
+
 export const PaymentModal: React.FC<ModalScreen<PaymentModalProps>> = React.memo((modal) => {
     const {title, paymentRequestCode} = modal.props || {};
 
-    const {handleCloseAndRemove, paymentRequest, payingOrder, paymentFunction} = usePaymentModal({
+    const {handleCloseAndRemove, paymentRequest, paymentFunction} = usePaymentModal({
         modalId: modal.id,
         paymentRequestCode: paymentRequestCode!,
     });
 
+    const content = usePaymentContent(
+        paymentRequest?.paymentRequestStatus,
+        paymentFunction?.definition.paymentAmountType,
+        paymentRequest?.amount ?? 0,
+    );
+
     return (
         <View style={styles.overlay}>
-            <View style={styles.backdrop}/>
+            <View style={styles.backdrop} />
             <View style={styles.container}>
-                <Text style={styles.title}>{title}</Text>
+                <View style={styles.header}>
+                    <View style={styles.headerAccent} />
+                    <View style={styles.headerTextGroup}>
+                        <Text style={styles.headerLabel}>收款</Text>
+                        <Text style={styles.title}>{title}</Text>
+                    </View>
+                </View>
+                <View style={styles.divider} />
                 <View style={styles.content}>
-                    <Text style={styles.label}>待支付金额</Text>
-                    <Text style={styles.value}>{paymentRequest?.amount ?? '-'}</Text>
-                    <Text style={styles.label}>订单编号</Text>
-                    <Text style={styles.value}>{payingOrder?.mainOrderCode ?? '-'}</Text>
-                    <Text style={styles.label}>支付方式</Text>
-                    <Text style={styles.value}>{paymentFunction?.key ?? '-'}</Text>
+                    {content}
                 </View>
                 <TouchableOpacity style={styles.button} onPress={handleCloseAndRemove}>
                     <Text style={styles.buttonText}>关闭</Text>
@@ -79,25 +123,41 @@ const styles = StyleSheet.create({
         shadowRadius: 8,
         elevation: 8,
     },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+        marginBottom: 16,
+    },
+    headerAccent: {
+        width: 4,
+        height: 36,
+        borderRadius: 2,
+        backgroundColor: '#2563EB',
+    },
+    headerTextGroup: {
+        gap: 2,
+    },
+    headerLabel: {
+        fontSize: 11,
+        fontWeight: '600',
+        color: '#2563EB',
+        letterSpacing: 1.2,
+        textTransform: 'uppercase',
+    },
     title: {
         fontSize: 20,
-        fontWeight: '600',
-        color: '#1E293B',
+        fontWeight: '700',
+        color: '#0F172A',
+        letterSpacing: -0.3,
+    },
+    divider: {
+        height: 1,
+        backgroundColor: '#E2E8F0',
         marginBottom: 16,
     },
     content: {
-        marginBottom: 24,
-    },
-    label: {
-        fontSize: 14,
-        color: '#64748B',
-        marginTop: 8,
-    },
-    value: {
-        fontSize: 16,
-        color: '#1E293B',
-        fontWeight: '500',
-        marginTop: 4,
+        marginBottom: 16,
     },
     button: {
         backgroundColor: '#2563EB',

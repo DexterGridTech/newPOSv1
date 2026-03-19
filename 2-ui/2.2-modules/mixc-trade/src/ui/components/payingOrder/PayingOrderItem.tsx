@@ -1,6 +1,7 @@
 import React, {useCallback} from "react";
 import {StyleSheet, Text, Pressable} from "react-native";
 import {PayingMainOrder} from "@impos2/kernel-pay-base";
+import {centsToMoneyString} from "@impos2/kernel-order-base";
 
 interface PayingOrderItemProps {
     order: PayingMainOrder;
@@ -22,7 +23,8 @@ export const PayingOrderItem: React.FC<PayingOrderItemProps> = React.memo(({orde
             ]}
             onPress={handlePress}
         >
-            <Text style={s.amount}>¥{(order.amount || 0).toFixed(2)}</Text>
+            {/* amount 单位为分，centsToMoneyString 转为元字符串展示 */}
+            <Text style={s.amount}>¥{centsToMoneyString(order.amount || 0)}</Text>
             <Text style={s.status}>{order.mainOrderStatus || ''}</Text>
         </Pressable>
     );

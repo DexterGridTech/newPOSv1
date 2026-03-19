@@ -25,6 +25,8 @@ export class PaymentRequestActor extends Actor {
             if (unfinishedPaymentRequest)
                 throw new AppError(kernelPayBaseErrorMessages.mainOrderHasUnfinishedPaymentRequest)
 
+            // 所有 amount 均为整数分，整数加减无精度问题
+            // 待支付金额（分）= 订单金额 - 已支付金额 + 已撤销金额
             let amount = 0;
             const totalPaid = (payingOrder.payments ?? []).reduce((sum, p) => sum + p.amount, 0);
             const withdrawnPaymentCodes = new Set(
@@ -42,7 +44,7 @@ export class PaymentRequestActor extends Actor {
                 paymentFunctionKey: paymentFunction.key,
                 paymentRequestCode: paymentRequestCode,
                 paymentRequestStatus: PaymentRequestStatus.CREATED,
-                amount: amount,
+                amount: amount, // 单位：分（整数）
                 extra: {},
             }
             dispatchWorkspaceAction(paymentRequestActions.addPaymentRequest(paymentRequest),command)

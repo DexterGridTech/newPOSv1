@@ -4,7 +4,7 @@ export interface MainOrderBase {
     payments: PaymentBase[]
     paymentWithdraws: PaymentWithdraw[]
     paymentShares: PaymentShare[]
-    amount: number
+    amount: number  // 单位：分（整数）
     mainOrderStatus: MainOrderBaseStatus
     createdAt: number
     endedAt: number
@@ -21,7 +21,7 @@ export interface PaymentWithdraw {
 export interface SubOrderBase {
     subOrderCode: string
     productOrders: ProductOrderBase[]
-    amount: number
+    amount: number  // 单位：分（整数）
     extra: Record<string, any>
 }
 
@@ -30,23 +30,23 @@ export interface ProductOrderBase {
     saleTypeCode: string
     productName: string
     displayName: string
-    price: number
+    price: number   // 单位：分（整数）
     quantity: number
-    amount: number
+    amount: number  // 单位：分（整数），= price * quantity
 }
 
 export interface PaymentBase {
     paymentCode: string;
     paymentRequestCode?: string;
     subPayments: PaymentBase[];
-    amount: number;
+    amount: number;  // 单位：分（整数）
     extra: Record<string, any>
 }
 
 export interface PaymentShare {
     productOrderCode: string;
     paymentCode: string;
-    amount: number;
+    amount: number;  // 单位：分（整数）
     extra: Record<string, any>
 }
 

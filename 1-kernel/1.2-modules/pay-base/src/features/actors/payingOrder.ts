@@ -19,22 +19,25 @@ export class PayingOrderActor extends Actor {
             const mainOrderCode=generateMainOrderCode()
             const subOrderCode=generateSubOrderCode(mainOrderCode)
 
-            const productOrders=command.payload
-                .filter(productOrder=>productOrder.amount!= 0)
-                .map((productOrder,index,all)=>({...productOrder,
-                    saleTypeCode:generateProductOrderCode(subOrderCode,all.length,index),
+            const productOrders = command.payload
+                .filter(productOrder => productOrder.amount !== 0)
+                .map((productOrder, index, all) => ({
+                    ...productOrder,
+                    saleTypeCode: generateProductOrderCode(subOrderCode, all.length, index),
                 }))
-            const amount=productOrders.reduce((total,productOrder)=>total+productOrder.amount,0)
+
+            // amount（分）整数累加，无浮点精度问题
+            const amount = productOrders.reduce((total, productOrder) => total + productOrder.amount, 0)
 
             const payingMainOrder: PayingMainOrder = {
-                mainOrderCode:mainOrderCode,
-                amount:amount,
-                subOrders:[
+                mainOrderCode: mainOrderCode,
+                amount: amount,         // 单位：分（整数）
+                subOrders: [
                     {
-                        subOrderCode:subOrderCode,
-                        productOrders:productOrders,
-                        amount:amount,
-                        extra:{}
+                        subOrderCode: subOrderCode,
+                        productOrders: productOrders,
+                        amount: amount, // 单位：分（整数）
+                        extra: {}
                     }
                 ],
                 payments:[],

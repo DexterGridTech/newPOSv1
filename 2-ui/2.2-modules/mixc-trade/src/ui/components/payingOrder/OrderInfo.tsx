@@ -2,6 +2,7 @@ import React, {useCallback, useMemo} from "react";
 import {useLifecycle} from "@impos2/ui-core-base";
 import {StyleSheet, Text, View, FlatList, Platform} from "react-native";
 import {PayingMainOrder} from "@impos2/kernel-pay-base";
+import {centsToMoneyString} from "@impos2/kernel-order-base";
 
 interface OrderInfoProps {
     order?: PayingMainOrder;
@@ -30,7 +31,8 @@ export const OrderInfo: React.FC<OrderInfoProps> = ({order}) => {
                 <Text style={s.saleTypeCode}>{item.saleTypeCode}</Text>
             </View>
             <Text style={s.quantity}>x{item.quantity}</Text>
-            <Text style={s.amount}>¥{item.amount.toFixed(2)}</Text>
+            {/* amount 单位为分，centsToMoneyString 转为元字符串展示 */}
+            <Text style={s.amount}>¥{centsToMoneyString(item.amount)}</Text>
         </View>
     ), []);
 
@@ -38,11 +40,12 @@ export const OrderInfo: React.FC<OrderInfoProps> = ({order}) => {
         <View style={s.footer}>
             <View style={s.footerRow}>
                 <Text style={s.totalLabel}>订单总金额</Text>
-                <Text style={s.totalAmount}>¥{totalAmount.toFixed(2)}</Text>
+                {/* totalAmount 单位为分，centsToMoneyString 转为元字符串展示 */}
+                <Text style={s.totalAmount}>¥{centsToMoneyString(totalAmount)}</Text>
             </View>
             <View style={s.footerRow}>
                 <Text style={s.pendingLabel}>待支付金额</Text>
-                <Text style={s.pendingAmount}>¥{totalAmount.toFixed(2)}</Text>
+                <Text style={s.pendingAmount}>¥{centsToMoneyString(totalAmount)}</Text>
             </View>
         </View>
     ), [totalAmount]);

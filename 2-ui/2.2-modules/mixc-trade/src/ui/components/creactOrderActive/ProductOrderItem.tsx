@@ -3,6 +3,7 @@ import {Text, View, Pressable, StyleSheet} from "react-native";
 import {DraftProductOrder} from "@impos2/kernel-order-create-traditional";
 import {kernelOrderCreateTraditionalCommands} from "@impos2/kernel-order-create-traditional";
 import {shortId} from "@impos2/kernel-core-base";
+import {centsToMoneyString} from "@impos2/kernel-order-base";
 
 interface ProductOrderItermProps {
     order: DraftProductOrder;
@@ -55,11 +56,13 @@ export const ProductOrderItem: React.FC<ProductOrderItermProps> = React.memo(({o
                 onPress={handleSelectPrice}
             >
                 <Text style={[styles.price, isSelected && styles.priceSelected]}>
-                    {isSelected ? order.valueStr : (order.price || 0).toFixed(2)}
+                    {/* 编辑中显示 moneyString（元字符串），否则 price（分）转元展示 */}
+                    {isSelected ? order.moneyString : centsToMoneyString(order.price || 0)}
                 </Text>
             </Pressable>
+            {/* amount 单位为分，centsToMoneyString 转为元字符串展示 */}
             <Text style={[styles.amount, isAmountZero && styles.amountZero, !isAmountZero && styles.amountNonZero]}>
-                {(order.amount || 0).toFixed(2)}
+                {centsToMoneyString(order.amount || 0)}
             </Text>
             <Pressable
                 style={({pressed}) => [styles.deleteButton, pressed && styles.deleteButtonPressed]}
