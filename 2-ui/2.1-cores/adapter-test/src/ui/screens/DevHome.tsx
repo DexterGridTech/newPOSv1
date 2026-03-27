@@ -5,13 +5,12 @@ import DeviceScreen from './DeviceScreen'
 import StateStorageScreen from './StateStorageScreen'
 import ScriptExecutionScreen from './ScriptExecutionScreen'
 import LocalWebServerScreen from './LocalWebServerScreen'
-import TaskSystemScreen from './TaskSystemScreen'
 import TaskTestScreen from './TaskTestScreen'
 import ExternalConnectorScreen from './ExternalConnectorScreen'
 import {C} from '../theme'
 import {useResponsive} from '../hooks/useResponsive'
 
-type MenuKey = 'logger' | 'device' | 'storage' | 'script' | 'lws' | 'task' | 'connector' | 'taskTest'
+type MenuKey = 'logger' | 'device' | 'storage' | 'script' | 'lws' | 'connector' | 'taskTest'
 
 interface MenuItem { key: MenuKey; label: string; tag: string }
 
@@ -22,8 +21,7 @@ const MENU: MenuItem[] = [
     {key: 'connector', label: 'Connector', tag: 'CON'},
     {key: 'script',    label: 'Script',    tag: 'JS'},
     {key: 'lws',       label: 'WebSrv',    tag: 'WS'},
-    {key: 'task',      label: 'Task',      tag: 'TSK'},
-    {key: 'taskTest',  label: 'TaskTest',  tag: 'TT'},
+    {key: 'taskTest',  label: 'Task',  tag: 'TSK'},
 ]
 
 const SCREENS: Record<MenuKey, React.ComponentType> = {
@@ -33,7 +31,6 @@ const SCREENS: Record<MenuKey, React.ComponentType> = {
     connector: ExternalConnectorScreen,
     script:    ScriptExecutionScreen,
     lws:       LocalWebServerScreen,
-    task:      TaskSystemScreen,
     taskTest:  TaskTestScreen,
 }
 

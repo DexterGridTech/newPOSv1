@@ -12,8 +12,12 @@ const App = () => {
     const [storeReady, setStoreReady] = useState<{ store: Store; persistor: Persistor } | null>(null)
 
     useEffect(() => {
+        console.log('Starting store initialization...')
         storePromise().then(result => {
+            console.log('Store initialized successfully:', result)
             setStoreReady(result)
+        }).catch(error => {
+            console.error('Store initialization failed:', error)
         })
     }, [])
 
@@ -33,7 +37,5 @@ const App = () => {
 }
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-    <React.StrictMode>
-        <App />
-    </React.StrictMode>
+    <App />
 )

@@ -35,7 +35,7 @@
         android:launchMode="singleTask"
         android:lockTaskMode="if_whitelisted"
         android:windowSoftInputMode="adjustPan"
-        android:theme="@style/AppTheme"
+        android:theme="@style/LaunchTheme"
         android:exported="true">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />

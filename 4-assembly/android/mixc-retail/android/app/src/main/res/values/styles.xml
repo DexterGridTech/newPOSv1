@@ -7,6 +7,14 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
+    <!-- MainActivity 启动主题，使用 splash 背景避免白屏 -->
+    <style name="LaunchTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_gradient_background</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
     <!-- SplashScreen Dialog 主题，带淡出动画 -->
     <style name="SplashScreenTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="android:windowFullscreen">true</item>
