@@ -1,0 +1,57 @@
+[package]
+name = "adapter-tauri-v1"
+version = "0.1.0"
+description = "POS Tauri Adapter V1 - Native backend"
+authors = ["impos2"]
+edition = "2021"
+
+[lib]
+name = "adapter_tauri_v1_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-log = "2"
+tauri-plugin-store = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["full"] }
+
+# device info
+sysinfo = "0.33"
+
+# script execution (QuickJS)
+rquickjs = { version = "0.8", features = ["full-async"] }
+
+# local web server
+axum = { version = "0.8", features = ["ws"] }
+tower = "0.5"
+tower-http = { version = "0.6", features = ["cors", "fs"] }
+
+# external connector
+reqwest = { version = "0.12", features = ["json", "stream"] }
+tokio-tungstenite = { version = "0.26", features = ["native-tls"] }
+futures-util = "0.3"
+uuid = { version = "1", features = ["v4"] }
+lazy_static = "1.4"
+
+# serial port (optional, graceful fallback if unavailable)
+serialport = { version = "4", optional = true }
+
+# HID (optional)
+hidapi = { version = "2", optional = true }
+
+[features]
+default = ["serial", "hid"]
+serial = ["dep:serialport"]
+hid = ["dep:hidapi"]
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = true

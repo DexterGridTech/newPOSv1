@@ -1,0 +1,10 @@
+import {createModuleCommands, defineCommand} from "@impos2/kernel-core-base";
+import {moduleName} from "../../moduleName";
+import {PayingMainOrder, PaymentFunction} from "@impos2/kernel-pay-base";
+
+export const uiMixcTradeCommands = createModuleCommands(moduleName,{
+    setOrderCreationTypeToActive: defineCommand<void>(),
+    setOrderCreationTypeToPassive: defineCommand<void>(),
+    setSelectedPayingOrder: defineCommand<string>(),
+})
+
