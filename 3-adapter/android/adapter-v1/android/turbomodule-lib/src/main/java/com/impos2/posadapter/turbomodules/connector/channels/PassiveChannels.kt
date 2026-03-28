@@ -24,7 +24,7 @@ class IntentPassiveChannel(
         if (receiver != null) stop()
 
         receiver = object : BroadcastReceiver() {
-            override fun onReceive(ctx: Context, intent: Intent) {
+            override fun onReceive(context: Context, intent: Intent) {
                 val action = intent.action ?: return
                 val data = mutableMapOf<String, Any?>()
                 intent.extras?.keySet()?.forEach { k ->

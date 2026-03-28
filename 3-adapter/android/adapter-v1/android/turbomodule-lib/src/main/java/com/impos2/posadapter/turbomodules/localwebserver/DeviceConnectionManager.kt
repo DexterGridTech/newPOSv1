@@ -1,6 +1,9 @@
 package com.impos2.posadapter.turbomodules.localwebserver
 
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.read
+import kotlin.concurrent.write
 
 // ─── 数据类型 ─────────────────────────────────────────────────────────────────
 
@@ -39,6 +42,7 @@ data class ServerStats(
 class DeviceConnectionManager(private val config: ServerConfig) {
 
     private val TOKEN_EXPIRE_MS = 5 * 60 * 1000L
+    private val lock = ReentrantReadWriteLock()
 
     private val pending = ConcurrentHashMap<String, DeviceInfo>()
     private val pairs = ConcurrentHashMap<String, DevicePair>()
@@ -58,8 +62,7 @@ class DeviceConnectionManager(private val config: ServerConfig) {
         val runtimeConfig: RuntimeConfig,
     )
 
-    @Synchronized
-    fun preRegister(info: DeviceInfo): String? {
+    fun preRegister(info: DeviceInfo): String? = lock.write {
         if (info.type == DeviceType.MASTER) {
             if (pairs[info.deviceId]?.master != null) return "Master already connected"
         } else {
@@ -71,8 +74,7 @@ class DeviceConnectionManager(private val config: ServerConfig) {
         return null
     }
 
-    @Synchronized
-    fun connect(socket: WsSession, token: String): Pair<DeviceInfo?, String?> {
+    fun connect(socket: WsSession, token: String): Pair<DeviceInfo?, String?> = lock.write {
         val info = pending.remove(token) ?: return null to "Invalid or expired token"
         val connected = ConnectedDevice(socket, info)
 
@@ -94,10 +96,11 @@ class DeviceConnectionManager(private val config: ServerConfig) {
         return info to null
     }
 
-    fun getRuntimeConfig(masterDeviceId: String): RuntimeConfig =
+    fun getRuntimeConfig(masterDeviceId: String): RuntimeConfig = lock.read {
         pairs[masterDeviceId]?.runtimeConfig ?: config.defaultRuntimeConfig
+    }
 
-    fun findBySocket(socketKey: String): Triple<DeviceType, String, String>? {
+    fun findBySocket(socketKey: String): Triple<DeviceType, String, String>? = lock.read {
         val deviceId = socketToDevice[socketKey] ?: return null
         val pair = pairs[deviceId]
         if (pair?.master?.socket?.key == socketKey)
@@ -121,9 +124,8 @@ class DeviceConnectionManager(private val config: ServerConfig) {
         target?.lastHeartbeat = System.currentTimeMillis()
     }
 
-    @Synchronized
-    fun disconnectMaster(masterDeviceId: String) {
-        val pair = pairs.remove(masterDeviceId) ?: return
+    fun disconnectMaster(masterDeviceId: String) = lock.write {
+        val pair = pairs.remove(masterDeviceId) ?: return@write
         pair.slave?.let {
             socketToDevice.remove(it.socket.key)
             slaveToMaster.remove(it.info.deviceId)
@@ -132,9 +134,8 @@ class DeviceConnectionManager(private val config: ServerConfig) {
         pair.master?.let { socketToDevice.remove(it.socket.key) }
     }
 
-    @Synchronized
-    fun disconnectSlave(masterDeviceId: String) {
-        val pair = pairs[masterDeviceId] ?: return
+    fun disconnectSlave(masterDeviceId: String) = lock.write {
+        val pair = pairs[masterDeviceId] ?: return@write
         pair.slave?.let {
             socketToDevice.remove(it.socket.key)
             slaveToMaster.remove(it.info.deviceId)

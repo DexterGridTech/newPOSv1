@@ -49,6 +49,7 @@ class CameraScanActivity : AppCompatActivity() {
     private lateinit var cameraExecutor: ExecutorService
     private val detected = AtomicBoolean(false)
     private var scanLineAnimator: ObjectAnimator? = null
+    private var cameraProvider: ProcessCameraProvider? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -230,7 +231,10 @@ class CameraScanActivity : AppCompatActivity() {
         }, ContextCompat.getMainExecutor(this))
     }
 
-    private fun bindCamera(cameraProvider: ProcessCameraProvider) {
+    private fun bindCamera(provider: ProcessCameraProvider) {
+        if (isFinishing || isDestroyed) return
+
+        cameraProvider = provider
         val preview = Preview.Builder().build().also {
             it.setSurfaceProvider(previewView.surfaceProvider)
         }
@@ -253,12 +257,12 @@ class CameraScanActivity : AppCompatActivity() {
             .also { it.setAnalyzer(cameraExecutor) { proxy -> analyzeFrame(proxy, scanner) } }
 
         val cameraSelector = when {
-            cameraProvider.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA)  -> CameraSelector.DEFAULT_BACK_CAMERA
-            cameraProvider.hasCamera(CameraSelector.DEFAULT_FRONT_CAMERA) -> CameraSelector.DEFAULT_FRONT_CAMERA
+            provider.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA)  -> CameraSelector.DEFAULT_BACK_CAMERA
+            provider.hasCamera(CameraSelector.DEFAULT_FRONT_CAMERA) -> CameraSelector.DEFAULT_FRONT_CAMERA
             else -> CameraSelector.Builder().addCameraFilter { it.take(1) }.build()
         }
-        cameraProvider.unbindAll()
-        cameraProvider.bindToLifecycle(this, cameraSelector, preview, analysis)
+        provider.unbindAll()
+        provider.bindToLifecycle(this, cameraSelector, preview, analysis)
     }
 
     @ExperimentalGetImage
@@ -336,6 +340,7 @@ class CameraScanActivity : AppCompatActivity() {
         android.util.Log.d("CameraScan", "onDestroy被调用")
         super.onDestroy()
         scanLineAnimator?.cancel()
+        cameraProvider?.unbindAll()
         cameraExecutor.shutdown()
     }
 }

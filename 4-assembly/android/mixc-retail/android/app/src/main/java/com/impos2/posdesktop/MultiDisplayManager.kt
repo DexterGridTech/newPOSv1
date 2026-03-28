@@ -27,6 +27,7 @@ class MultiDisplayManager(
     }
 
     fun destroy() {
+        secondaryReactInstanceManager?.onHostPause()
         secondaryPresentation?.dismiss()
         secondaryPresentation = null
         secondaryReactInstanceManager?.destroy()

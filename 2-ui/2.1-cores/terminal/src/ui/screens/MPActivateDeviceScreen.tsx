@@ -30,8 +30,4 @@ export const mpActivateDeviceScreenPart: ScreenPartRegistration = {
     instanceMode:[InstanceMode.MASTER],
     componentType: MPActivateDeviceScreen,
     indexInContainer: 1,
-    readyToEnter:()=>{
-        const terminal=getTerminal();
-        return !terminal;
-    }
 }

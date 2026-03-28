@@ -88,6 +88,12 @@ class ScriptExecutionContext(
                     engine.rejectNativeCall(handle, pendingCall.callId, msg)
                     // 继续 pump，让 QuickJS 处理 rejected Promise
                     continue
+                } catch (e: Exception) {
+                    // 处理其他异常（如 CancellationException）
+                    pendingNativeCalls.remove(pendingCall.callId)
+                    val msg = e.message ?: "nativeFunction error"
+                    engine.rejectNativeCall(handle, pendingCall.callId, msg)
+                    continue
                 }
                 pendingNativeCalls.remove(pendingCall.callId)
                 engine.resolveNativeCall(handle, pendingCall.callId, result)

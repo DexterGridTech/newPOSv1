@@ -18,6 +18,7 @@ class LogManager private constructor(private val context: Context) {
         private const val TAG = "LogManager"
         private const val LOG_DIR_NAME = "logs"
         private const val LOG_FILE_EXTENSION = ".log"
+        private const val ERROR_LOG_FILE_EXTENSION = ".err.log"
         private const val LOG_RETENTION_DAYS = 30
         private const val DATE_FORMAT = "yyyy-MM-dd"
         private const val TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS"
@@ -59,6 +60,9 @@ class LogManager private constructor(private val context: Context) {
                 writeMutex.withLock {
                     val entry = "[${timestampFormat.format(Date())}] [$level] [$tag] $message\n"
                     FileWriter(getCurrentLogFile(), true).use { it.append(entry) }
+                    if (level == "ERROR") {
+                        FileWriter(getCurrentErrorLogFile(), true).use { it.append(entry) }
+                    }
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "写入日志文件失败", e)
@@ -67,6 +71,8 @@ class LogManager private constructor(private val context: Context) {
     }
 
     private fun getCurrentLogFile() = File(logDir, "${dateFormat.format(Date())}$LOG_FILE_EXTENSION")
+
+    private fun getCurrentErrorLogFile() = File(logDir, "${dateFormat.format(Date())}$ERROR_LOG_FILE_EXTENSION")
 
     private fun cleanupOldLogs() {
         scope.launch {
@@ -77,7 +83,7 @@ class LogManager private constructor(private val context: Context) {
 
     fun getLogFiles(): List<Map<String, Any>> =
         logDir.listFiles()
-            ?.filter { it.isFile && it.name.endsWith(LOG_FILE_EXTENSION) }
+            ?.filter { it.isFile && (it.name.endsWith(LOG_FILE_EXTENSION) || it.name.endsWith(ERROR_LOG_FILE_EXTENSION)) }
             ?.sortedByDescending { it.lastModified() }
             ?.map { mapOf("fileName" to it.name, "filePath" to it.absolutePath, "fileSize" to it.length(), "lastModified" to it.lastModified()) }
             ?: emptyList()

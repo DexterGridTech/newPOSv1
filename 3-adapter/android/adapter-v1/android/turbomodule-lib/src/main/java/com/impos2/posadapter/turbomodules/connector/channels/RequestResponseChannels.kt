@@ -55,7 +55,7 @@ class IntentChannel(private val context: ReactApplicationContext) : RequestRespo
                 val resultAction = "com.impos2.posadapter.connector.INTENT_RESULT_${UUID.randomUUID()}"
 
                 val receiver = object : BroadcastReceiver() {
-                    override fun onReceive(ctx: Context, intent: Intent) {
+                    override fun onReceive(context: Context, intent: Intent) {
                         runCatching {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                 context.unregisterReceiver(this)
@@ -138,9 +138,9 @@ class AidlChannel(private val context: ReactApplicationContext) : RequestRespons
                 override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
                     // 超时后回调仍可能触发，此时直接解绑并忽略结果
                     if (timedOut) { connHolder[0]?.let { runCatching { context.unbindService(it) } }; return }
+                    val data = android.os.Parcel.obtain()
+                    val reply = android.os.Parcel.obtain()
                     try {
-                        val data = android.os.Parcel.obtain()
-                        val reply = android.os.Parcel.obtain()
                         data.writeInterfaceToken(pkg)
                         data.writeString(JSONObject().apply {
                             put("action", action)
@@ -148,12 +148,13 @@ class AidlChannel(private val context: ReactApplicationContext) : RequestRespons
                         }.toString())
                         binder?.transact(1, data, reply, 0)
                         val resp = reply.readString()
-                        data.recycle(); reply.recycle()
                         result = if (resp != null) successMap(jsonToWritableMap(JSONObject(resp)), "OK")
                                  else successMap(null, "OK")
                     } catch (e: Exception) {
                         result = errorMap(5001, "AIDL transact error: ${e.message}")
                     } finally {
+                        data.recycle()
+                        reply.recycle()
                         connHolder[0]?.let { runCatching { context.unbindService(it) } }
                         latch.countDown()
                     }
