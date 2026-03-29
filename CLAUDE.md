@@ -250,6 +250,90 @@ module.exports = mergeConfig(getDefaultConfig(__dirname), config);
 
 ---
 
+# RN 0.84 Bridgeless 模式 TurboModule 问题排查
+
+## 问题现象
+
+在 RN 0.84 Bridgeless 模式下，即使 TurboModule 正确注册（`AdapterPackage.getModule()` 被调用），JS 层仍然获取不到模块：
+- `TurboModuleRegistry.get('ModuleName')` 返回 `null`
+- `global.__turboModuleProxy` 是 `undefined`
+- `NativeModules.ModuleName` 也是 `null`
+
+## 根本原因
+
+**在 RN 0.84 Bridgeless 模式下，`__turboModuleProxy` 必须通过 Codegen 生成的 C++ JSI 绑定才能初始化。** 手动创建的 TurboModule（即使继承了 `TurboReactPackage` 和 `TurboModule`）不会自动获得 JSI 绑定。
+
+## 解决方案（4 步）
+
+### 1. 在 package.json 添加 codegenConfig
+
+```json
+{
+  "codegenConfig": {
+    "name": "YourModuleSpec",
+    "type": "modules",
+    "jsSrcsDir": "src/supports/apis",
+    "android": {
+      "javaPackageName": "com.yourapp.turbomodules"
+    }
+  }
+}
+```
+
+### 2. JS 端使用 Codegen 标准方式
+
+```typescript
+import type {TurboModule} from 'react-native'
+import {TurboModuleRegistry} from 'react-native'
+
+export interface Spec extends TurboModule {
+  myMethod(arg: string): Promise<string>
+}
+
+// 关键：只能有一个 TurboModuleRegistry 调用，使用 getEnforcing
+export default TurboModuleRegistry.getEnforcing<Spec>('YourModule');
+```
+
+### 3. 运行 Codegen 生成 Spec
+
+```bash
+cd android
+./gradlew generateCodegenArtifactsFromSchema
+```
+
+生成的文件位于：`app/build/generated/source/codegen/java/com/yourapp/turbomodules/NativeYourModuleSpec.java`
+
+### 4. Kotlin 模块继承生成的 Spec
+
+```kotlin
+@ReactModule(name = YourModule.NAME)
+class YourModule(reactContext: ReactApplicationContext) :
+    NativeYourModuleSpec(reactContext) {
+
+    companion object {
+        const val NAME = "YourModule"
+    }
+
+    override fun getName() = NAME
+
+    @ReactMethod
+    override fun myMethod(arg: String, promise: Promise) {
+        // 实现
+    }
+}
+```
+
+## 关键检查点
+
+- [ ] `package.json` 有 `codegenConfig` 配置
+- [ ] JS Spec 文件只有一个 `TurboModuleRegistry` 调用
+- [ ] 使用 `getEnforcing` 而不是 `get`
+- [ ] 运行了 `generateCodegenArtifactsFromSchema`
+- [ ] Kotlin 类继承 Codegen 生成的 Java Spec
+- [ ] 模块名在 JS 和 Native 端完全一致
+
+---
+
 # 三、当你生成代码时，必须遵循的最终承诺
 
 1. 绝不写出会导致 **TurboModuleRegistry.getEnforcing(…) could not be found** 的代码
