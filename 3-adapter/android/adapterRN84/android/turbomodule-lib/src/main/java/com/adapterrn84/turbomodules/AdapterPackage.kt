@@ -15,6 +15,7 @@ class AdapterPackage : TurboReactPackage() {
             DeviceTurboModule.NAME -> DeviceTurboModule(reactContext)
             LoggerTurboModule.NAME -> LoggerTurboModule(reactContext)
             ScriptsTurboModule.NAME -> ScriptsTurboModule(reactContext)
+            ConnectorTurboModule.NAME -> ConnectorTurboModule(reactContext)
             else -> null
         }
     }
@@ -35,6 +36,11 @@ class AdapterPackage : TurboReactPackage() {
             ScriptsTurboModule.NAME to ReactModuleInfo(
                 ScriptsTurboModule.NAME,
                 ScriptsTurboModule::class.java.name,
+                false, false, false, true
+            ),
+            ConnectorTurboModule.NAME to ReactModuleInfo(
+                ConnectorTurboModule.NAME,
+                ConnectorTurboModule::class.java.name,
                 false, false, false, true
             )
         )

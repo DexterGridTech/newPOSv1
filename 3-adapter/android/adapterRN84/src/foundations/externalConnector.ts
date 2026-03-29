@@ -1,3 +1,5 @@
+import {NativeEventEmitter} from 'react-native'
+import NativeConnectorTurboModule from '../supports/apis/NativeConnectorTurboModule'
 import {
     ExternalConnector,
     ChannelType,
@@ -6,40 +8,66 @@ import {
     ConnectorResponse,
 } from '@impos2/kernel-core-base'
 
-// Stub: ConnectorTurboModule 尚未实现
+const emitter = new NativeEventEmitter(NativeConnectorTurboModule)
+
+const streamSubs = new Map<string, {remove: () => void}>()
+
 export const externalConnectorAdapter: ExternalConnector = {
     call<T = any>(
-        _channel: ChannelDescriptor,
-        _action: string,
-        _params?: Record<string, any>,
-        _timeout?: number,
+        channel: ChannelDescriptor,
+        action: string,
+        params?: Record<string, any>,
+        timeout?: number,
     ): Promise<ConnectorResponse<T>> {
-        return Promise.resolve({success: false, data: null as any, error: 'stub'})
+        return NativeConnectorTurboModule.call(
+            JSON.stringify(channel),
+            action,
+            JSON.stringify(params ?? {}),
+            timeout ?? 30000,
+        )
     },
 
     subscribe(
-        _channel: ChannelDescriptor,
-        _onEvent: (event: ConnectorEvent) => void,
-        _onError?: (error: ConnectorEvent) => void,
+        channel: ChannelDescriptor,
+        onEvent: (event: ConnectorEvent) => void,
+        onError?: (error: ConnectorEvent) => void,
     ): Promise<string> {
-        return Promise.resolve('stub-channel-id')
+        return NativeConnectorTurboModule.subscribe(JSON.stringify(channel)).then((channelId: string) => {
+            const sub = emitter.addListener('connector.stream', (event: ConnectorEvent) => {
+                if (event.channelId !== channelId) return
+                if (event.data == null) {
+                    onError?.(event)
+                } else {
+                    onEvent(event)
+                }
+            })
+            streamSubs.set(channelId, sub)
+            return channelId
+        })
     },
 
-    unsubscribe(_channelId: string): Promise<void> {
-        return Promise.resolve()
+    unsubscribe(channelId: string): Promise<void> {
+        streamSubs.get(channelId)?.remove()
+        streamSubs.delete(channelId)
+        return NativeConnectorTurboModule.unsubscribe(channelId)
     },
 
-    on(_eventType: string, _handler: (event: ConnectorEvent) => void): () => void {
-        return () => {}
+    on(eventType: string, handler: (event: ConnectorEvent) => void): () => void {
+        const sub = emitter.addListener(eventType, handler)
+        return () => sub.remove()
     },
 
-    isAvailable(_channel: ChannelDescriptor): Promise<boolean> {
-        return Promise.resolve(false)
+    isAvailable(channel: ChannelDescriptor): Promise<boolean> {
+        return NativeConnectorTurboModule.isAvailable(JSON.stringify(channel))
     },
 
-    getAvailableTargets(_type: ChannelType): Promise<string[]> {
-        return Promise.resolve([])
+    getAvailableTargets(type: ChannelType): Promise<string[]> {
+        return NativeConnectorTurboModule.getAvailableTargets(type)
     },
 }
 
-export function cleanupExternalConnector(): void {}
+export function cleanupExternalConnector(): void {
+    streamSubs.forEach(sub => sub.remove())
+    streamSubs.clear()
+}
+
