@@ -13,6 +13,7 @@ class AdapterPackage : TurboReactPackage() {
         Log.d("AdapterPackage", "getModule called: $name")
         return when (name) {
             DeviceTurboModule.NAME -> DeviceTurboModule(reactContext)
+            LoggerTurboModule.NAME -> LoggerTurboModule(reactContext)
             else -> null
         }
     }
@@ -23,10 +24,12 @@ class AdapterPackage : TurboReactPackage() {
             DeviceTurboModule.NAME to ReactModuleInfo(
                 DeviceTurboModule.NAME,
                 DeviceTurboModule::class.java.name,
-                false, // canOverrideExistingModule
-                false, // needsEagerInit
-                false, // isCxxModule — Kotlin 模块，非 C++
-                true   // isTurboModule
+                false, false, false, true
+            ),
+            LoggerTurboModule.NAME to ReactModuleInfo(
+                LoggerTurboModule.NAME,
+                LoggerTurboModule::class.java.name,
+                false, false, false, true
             )
         )
     }
