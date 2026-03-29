@@ -39,4 +39,5 @@ dependencies {
     implementation 'com.facebook.react:react-android'
     implementation 'com.facebook.react:hermes-android'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
+    implementation 'wang.harlon.quickjs:wrapper-android:3.2.3'
 }

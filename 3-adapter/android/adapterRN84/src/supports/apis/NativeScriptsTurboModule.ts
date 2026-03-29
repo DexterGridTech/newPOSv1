@@ -20,5 +20,4 @@ export interface Spec extends TurboModule {
     removeListeners(count: number): void
 }
 
-// 使用 get 而非 getEnforcing，stub 阶段原生模块未注册时不崩溃
-export default TurboModuleRegistry.get<Spec>('ScriptsTurboModule') as Spec
+export default TurboModuleRegistry.getEnforcing<Spec>('ScriptsTurboModule')
