@@ -1,6 +1,7 @@
 package com.adapterrn84
 
 import android.app.Application
+import com.adapterrn84.turbomodules.AdapterPackage
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactHost
@@ -16,7 +17,7 @@ class MainApplication : Application(), ReactApplication {
       object : DefaultReactNativeHost(this) {
         override fun getPackages(): List<ReactPackage> =
             PackageList(this).packages.apply {
-              // 未能自动链接的包可在此手动添加
+              add(AdapterPackage())
             }
 
         override fun getJSMainModuleName(): String = "index"
