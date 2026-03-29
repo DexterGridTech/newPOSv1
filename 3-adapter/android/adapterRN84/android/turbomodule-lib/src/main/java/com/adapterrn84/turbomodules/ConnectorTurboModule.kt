@@ -8,6 +8,8 @@ import android.content.IntentFilter
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.view.KeyEvent
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
@@ -64,11 +66,22 @@ class ConnectorTurboModule(reactContext: ReactApplicationContext) :
             return
         }
 
+        val handler = Handler(Looper.getMainLooper())
+        var timeoutRunnable: Runnable? = null
+
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
-                ctx.unregisterReceiver(this)
-                val granted = intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)
-                if (granted) onGranted() else onDenied()
+                timeoutRunnable?.let { handler.removeCallbacks(it) }
+                try {
+                    val granted = intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)
+                    if (granted) onGranted() else onDenied()
+                } finally {
+                    try {
+                        ctx.unregisterReceiver(this)
+                    } catch (e: IllegalArgumentException) {
+                        // Already unregistered
+                    }
+                }
             }
         }
 
@@ -80,6 +93,16 @@ class ConnectorTurboModule(reactContext: ReactApplicationContext) :
         } else {
             ctx.registerReceiver(receiver, IntentFilter(ACTION_USB_PERMISSION))
         }
+
+        timeoutRunnable = Runnable {
+            try {
+                ctx.unregisterReceiver(receiver)
+                onDenied()
+            } catch (e: IllegalArgumentException) {
+                // Already unregistered
+            }
+        }
+        handler.postDelayed(timeoutRunnable!!, 30000)
 
         usbManager.requestPermission(device, pi)
     }

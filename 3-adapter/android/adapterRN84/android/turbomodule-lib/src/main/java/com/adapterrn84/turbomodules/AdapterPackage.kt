@@ -16,6 +16,7 @@ class AdapterPackage : TurboReactPackage() {
             LoggerTurboModule.NAME -> LoggerTurboModule(reactContext)
             ScriptsTurboModule.NAME -> ScriptsTurboModule(reactContext)
             ConnectorTurboModule.NAME -> ConnectorTurboModule(reactContext)
+            LocalWebServerTurboModule.NAME -> LocalWebServerTurboModule(reactContext)
             else -> null
         }
     }
@@ -41,6 +42,11 @@ class AdapterPackage : TurboReactPackage() {
             ConnectorTurboModule.NAME to ReactModuleInfo(
                 ConnectorTurboModule.NAME,
                 ConnectorTurboModule::class.java.name,
+                false, false, false, true
+            ),
+            LocalWebServerTurboModule.NAME to ReactModuleInfo(
+                LocalWebServerTurboModule.NAME,
+                LocalWebServerTurboModule::class.java.name,
                 false, false, false, true
             )
         )
