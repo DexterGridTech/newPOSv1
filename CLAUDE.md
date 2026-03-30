@@ -343,3 +343,250 @@ class YourModule(reactContext: ReactApplicationContext) :
 4. 所有 Native 模块可直接在开启 Fabric/Turbo 的 RN 裸工程中编译运行
 5. 若涉及配置修改，必须给出完整、可复制的配置片段
 6. 提供**一键清理缓存 + 重新构建**脚本
+
+---
+
+# 适配层与整合层集成规范
+
+## 背景
+
+- **适配层**（3-adapter）：使用 `peerDependencies` 声明依赖，导出 TurboModule 和 TS 接口
+- **整合层**（4-assembly）：使用 `file:` 依赖适配层，必须在 `dependencies` 中提供所有实际依赖
+
+## 核心原则
+
+### 1. 依赖声明规则
+
+**适配层 package.json**：
+```json
+{
+  "peerDependencies": {
+    "react": ">=19.0.0",
+    "react-native": ">=0.84.0",
+    "react-native-mmkv": "^4.3.0"
+  }
+}
+```
+
+**整合层 package.json**：
+```json
+{
+  "dependencies": {
+    "@impos2/adapter-android-rn84": "file:../../../3-adapter/android/adapterRN84",
+    "react": "19.2.3",
+    "react-native": "0.84.1",
+    "react-native-mmkv": "^4.3.0"
+  }
+}
+```
+
+**关键点**：
+- 适配层的 `peerDependencies` 必须在整合层的 `dependencies` 中全部提供
+- 整合层必须提供具体版本号，不能使用 `*`
+
+### 2. 间接依赖问题
+
+**问题**：UI 层或 Kernel 层使用了某个库（如 `react-native-svg`），但没有在整合层的 `dependencies` 中声明。
+
+**现象**：
+- 编译时 autolinking 无法识别该库
+- 运行时报错：`Can't find ViewManager 'RNSVGLinearGradient'`
+
+**解决方案**：
+```json
+{
+  "dependencies": {
+    "react-native-svg": "^15.15.3"  // 必须显式声明
+  }
+}
+```
+
+**检查方法**：
+1. 查看 `app/build/generated/autolinking/src/main/java/com/facebook/react/PackageList.java`
+2. 确认所有使用的原生库都在 `getPackages()` 中
+
+### 3. 多进程架构的依赖要求
+
+使用多进程方案（`android:process=":secondary"`）时：
+- 每个进程都会独立初始化 `MainApplication`
+- 每个进程都需要完整的依赖包
+- `PackageList` 必须包含所有原生模块
+
+**错误示例**：
+```json
+{
+  "dependencies": {
+    "@impos2/ui-integration-mixc-retail": "*"
+    // ❌ 缺少 react-native-svg（UI 层间接使用）
+  }
+}
+```
+
+**正确示例**：
+```json
+{
+  "dependencies": {
+    "@impos2/ui-integration-mixc-retail": "*",
+    "react-native-svg": "^15.15.3"  // ✅ 显式声明
+  }
+}
+```
+
+### 4. 检查清单
+
+整合层集成适配层时，必须确认：
+
+- [ ] 适配层的所有 `peerDependencies` 都在整合层 `dependencies` 中
+- [ ] UI 层和 Kernel 层使用的所有原生库都在整合层 `dependencies` 中显式声明
+- [ ] 运行 `yarn install` 后检查 `PackageList.java` 包含所有需要的包
+- [ ] 多进程方案中，确保每个进程都能访问到所有原生模块
+- [ ] 构建前执行 `./gradlew clean` 清理缓存
+
+### 5. 常见错误
+
+| 错误信息 | 原因 | 解决方案 |
+|---------|------|---------|
+| `Can't find ViewManager 'XXX'` | 原生库未在整合层声明 | 在 `dependencies` 中添加该库 |
+| `TurboModuleRegistry.getEnforcing('XXX') could not be found` | 缺少 Codegen 或模块未注册 | 检查 `codegenConfig` 和 `PackageList` |
+| `Module 'XXX' is not a TurboModule` | 使用了旧架构的库 | 升级到支持新架构的版本 |
+
+---
+
+# RN 0.84 多屏独立运行方案
+
+## 方案选择
+
+### 方案 1：多进程（推荐）
+
+**实现**：
+```xml
+<!-- AndroidManifest.xml -->
+<activity
+    android:name=".SecondaryActivity"
+    android:process=":secondary"
+    android:exported="false" />
+```
+
+**优点**：
+- ✅ 真正独立的 JS 运行时（两个进程）
+- ✅ DevTools 可分别连接
+- ✅ 完全隔离，一个屏幕崩溃不影响另一个
+- ✅ 可独立重启某个屏幕
+
+**注意事项**：
+- 每个进程都需要完整的依赖包
+- 内存占用会增加（两个 JS 运行时）
+
+### 方案 2：共享 ReactHost + 多 Surface
+
+**实现**：
+```kotlin
+val mainSurface = reactHost.createSurface(context, "App", mainOptions)
+val secondarySurface = reactHost.createSurface(context, "App", secondaryOptions)
+```
+
+**限制**：
+- ❌ 共享 JS 运行时，一个崩溃影响全部
+- ❌ DevTools 只能连接一个
+- ✅ 内存占用较小
+
+**结论**：新架构中 `getDefaultReactHost()` 返回单例，此方案无法实现真正独立。
+
+
+---
+
+# TurboModule Library 集成规范
+
+## 背景
+
+适配层（3-adapter）包含两部分：
+- **JS/TS 代码**：导出为 npm 包，通过 `file:` 依赖
+- **Android 原生库**：打包为 AAR，发布到本地 Maven 仓库
+
+## 核心流程
+
+### 1. 适配层构建与发布
+
+**目录结构**：
+```
+3-adapter/android/adapterRN84/
+├── android/
+│   ├── turbomodule-lib/          # 原生库
+│   │   ├── build.gradle
+│   │   └── src/main/java/...
+│   └── local-maven/              # 本地 Maven 仓库
+├── src/                          # JS/TS 代码
+└── package.json
+```
+
+**build.gradle 配置**：
+```gradle
+// turbomodule-lib/build.gradle
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        release(MavenPublication) {
+            groupId = 'com.impos2'
+            artifactId = 'adapter-rn84'
+            version = '1.0.0'
+            
+            afterEvaluate {
+                from components.release
+            }
+        }
+    }
+    repositories {
+        maven {
+            url = "../local-maven"
+        }
+    }
+}
+```
+
+**发布命令**：
+```bash
+cd android
+./gradlew :turbomodule-lib:publishToMavenLocal
+```
+
+**生成的 AAR 位置**：
+```
+android/local-maven/com/impos2/adapter-rn84/1.0.0/adapter-rn84-1.0.0.aar
+```
+
+### 2. 整合层引用
+
+**settings.gradle 配置**：
+```gradle
+dependencyResolutionManagement {
+    repositories {
+        maven {
+            url("$rootDir/../../3-adapter/android/adapterRN84/android/local-maven")
+        }
+    }
+}
+```
+
+**app/build.gradle 配置**：
+```gradle
+dependencies {
+    implementation("com.impos2:adapter-rn84:1.0.0")
+}
+```
+
+### 3. 关键检查点
+
+- [ ] 适配层每次修改原生代码后，必须重新发布 AAR
+- [ ] 整合层的 Maven 仓库路径必须正确指向适配层的 `local-maven`
+- [ ] AAR 的 groupId、artifactId、version 必须与引用一致
+- [ ] 不要使用绝对路径，使用 `$rootDir` 相对路径
+
+### 4. 常见错误
+
+| 错误 | 原因 | 解决方案 |
+|------|------|---------|
+| `Could not find com.impos2:adapter-rn84:1.0.0` | Maven 仓库路径错误或 AAR 未发布 | 检查路径，重新发布 AAR |
+| `Duplicate class found` | 同时依赖了 npm 包和 AAR | 确保只依赖 AAR，npm 包仅提供 JS/TS |
+| 原生代码修改不生效 | 未重新发布 AAR | 运行 `publishToMavenLocal` |
+
