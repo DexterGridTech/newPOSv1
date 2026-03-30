@@ -7,10 +7,14 @@ apply plugin: "com.facebook.react"
  * By default you don't need to apply any configuration, just uncomment the lines you need.
  */
 react {
+    def localNodeModules = file("../../node_modules")
+    def assemblyNodeModules = file("../../../../../4-assembly/android/mixc-retail-rn84/node_modules")
+    def nodeModulesDir = localNodeModules.exists() ? localNodeModules : assemblyNodeModules
+
     root = file("../../")
-    reactNativeDir = file("../../node_modules/react-native")
-    codegenDir = file("../../node_modules/@react-native/codegen")
-    cliFile = file("../../node_modules/react-native/cli.js")
+    reactNativeDir = new File(nodeModulesDir, "react-native")
+    codegenDir = new File(nodeModulesDir, "@react-native/codegen")
+    cliFile = new File(nodeModulesDir, "react-native/cli.js")
 
     autolinkLibrariesWithApp()
 }

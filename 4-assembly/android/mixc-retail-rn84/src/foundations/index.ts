@@ -1,1 +1,1 @@
-export * from './appControl'
+export * from './reactotronConfig';

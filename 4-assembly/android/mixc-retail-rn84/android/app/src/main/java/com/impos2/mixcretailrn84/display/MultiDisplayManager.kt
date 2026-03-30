@@ -5,6 +5,9 @@ import android.app.Presentation
 import android.content.Context
 import android.hardware.display.DisplayManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.view.Display
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -23,6 +26,7 @@ class SecondaryDisplayPresentation(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("THREAD_CHECK", "SecondaryDisplay onCreate thread = ${Thread.currentThread().name}")
         window?.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
 
         val deviceId = DeviceManager.getInstance(activity.applicationContext).getOrGenerateDeviceId()
@@ -70,8 +74,11 @@ class MultiDisplayManager(
         val secondary = displays.firstOrNull { it.displayId != Display.DEFAULT_DISPLAY } ?: return
         if (presentation?.isShowing == true) return
 
-        presentation = SecondaryDisplayPresentation(activity, secondary, reactHost, displays.size)
-        presentation?.show()
+        // 确保在 main 线程创建和显示 Presentation
+        Handler(Looper.getMainLooper()).post {
+            presentation = SecondaryDisplayPresentation(activity, secondary, reactHost, displays.size)
+            presentation?.show()
+        }
     }
 
     fun destroy() {

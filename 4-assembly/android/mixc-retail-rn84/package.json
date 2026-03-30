@@ -13,7 +13,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@impos2/adapter-android-rn84": "*",
+    "@impos2/adapter-android-rn84": "file:../../../3-adapter/android/adapterRN84",
     "@impos2/kernel-server-config": "*",
     "@impos2/ui-integration-mixc-retail": "*",
     "react": "19.2.3",
@@ -45,13 +45,5 @@
   },
   "reactotron": {
     "host": "localhost"
-  },
-  "codegenConfig": {
-    "name": "MixcRetailRN84Spec",
-    "type": "modules",
-    "jsSrcsDir": "src/supports/apis",
-    "android": {
-      "javaPackageName": "com.impos2.mixcretailrn84"
-    }
   }
 }

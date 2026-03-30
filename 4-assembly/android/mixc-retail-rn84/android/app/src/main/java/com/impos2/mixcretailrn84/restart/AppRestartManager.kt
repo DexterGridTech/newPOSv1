@@ -17,7 +17,7 @@ class AppRestartManager(private val activity: MainActivity) {
 
     fun restart() {
         mainHandler.post {
-            LoadingManager.showLoading(activity)
+            LoadingManager.showLoadingActivity(activity)
             mainHandler.postDelayed({
                 try {
                     activity.multiDisplayManager.destroy()
@@ -25,7 +25,7 @@ class AppRestartManager(private val activity: MainActivity) {
                     Log.e(TAG, "Failed to destroy multi-display", e)
                 }
                 try {
-                    activity.getReactHost().reload("user restart")
+                    activity.provideReactHost().reload("user restart")
                 } catch (e: Exception) {
                     Log.e(TAG, "Failed to reload ReactHost", e)
                     mainHandler.post {

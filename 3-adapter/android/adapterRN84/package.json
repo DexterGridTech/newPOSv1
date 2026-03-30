@@ -8,9 +8,10 @@
   "scripts": {
     "start": "react-native start",
     "start:clean": "react-native start --reset-cache",
-    "android": "react-native run-android",
-    "android:debug": "react-native run-android --mode=debug",
-    "android:release": "cd android && ./gradlew assembleRelease",
+    "publish:aar": "cd android && ./gradlew :turbomodule-lib:publishToMavenLocal",
+    "android": "npm run publish:aar && react-native run-android",
+    "android:debug": "npm run publish:aar && react-native run-android --mode=debug",
+    "android:release": "npm run publish:aar && cd android && ./gradlew assembleRelease",
     "clean": "rm -rf node_modules && cd android && ./gradlew clean",
     "type-check": "tsc --noEmit",
     "lint": "eslint .",
@@ -22,11 +23,9 @@
     "@impos2/kernel-core-navigation": "*",
     "@impos2/kernel-core-task": "*",
     "@impos2/ui-core-adapter-test": "*",
-    "@impos2/ui-core-base": "*"
-  },
-  "dependencies": {
-    "react": "19.2.3",
-    "react-native": "0.84.1",
+    "@impos2/ui-core-base": "*",
+    "react": ">=19.0.0",
+    "react-native": ">=0.84.0",
     "react-native-mmkv": "^4.3.0",
     "react-native-nitro-modules": "^0.35.2"
   },

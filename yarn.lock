@@ -2438,7 +2438,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@impos2/adapter-android-rn84@*, @impos2/adapter-android-rn84@workspace:3-adapter/android/adapterRN84":
+"@impos2/adapter-android-rn84@file:../../../3-adapter/android/adapterRN84::locator=%40impos2%2Fassembly-android-mixc-retail-rn84%40workspace%3A4-assembly%2Fandroid%2Fmixc-retail-rn84":
+  version: 1.0.0
+  resolution: "@impos2/adapter-android-rn84@file:../../../3-adapter/android/adapterRN84#../../../3-adapter/android/adapterRN84::hash=a1c102&locator=%40impos2%2Fassembly-android-mixc-retail-rn84%40workspace%3A4-assembly%2Fandroid%2Fmixc-retail-rn84"
+  peerDependencies:
+    "@impos2/kernel-core-base": "*"
+    "@impos2/kernel-core-interconnection": "*"
+    "@impos2/kernel-core-navigation": "*"
+    "@impos2/kernel-core-task": "*"
+    "@impos2/ui-core-adapter-test": "*"
+    "@impos2/ui-core-base": "*"
+    react: ">=19.0.0"
+    react-native: ">=0.84.0"
+    react-native-mmkv: ^4.3.0
+    react-native-nitro-modules: ^0.35.2
+  checksum: a72fc814d9ded98e333fa8fd5d21d0c5d2a216387ae5839a695ca38b2fa07fe774b3d4807d2198054b93758a83a5359b4601dece2e058aec59d24a236099f999
+  languageName: node
+  linkType: hard
+
+"@impos2/adapter-android-rn84@workspace:3-adapter/android/adapterRN84":
   version: 0.0.0-use.local
   resolution: "@impos2/adapter-android-rn84@workspace:3-adapter/android/adapterRN84"
   dependencies:
@@ -2457,10 +2475,6 @@ __metadata:
     eslint: ^8.19.0
     jest: ^29.6.3
     prettier: 2.8.8
-    react: 19.2.3
-    react-native: 0.84.1
-    react-native-mmkv: ^4.3.0
-    react-native-nitro-modules: ^0.35.2
     react-test-renderer: 19.2.3
     typescript: ^5.8.3
   peerDependencies:
@@ -2470,6 +2484,10 @@ __metadata:
     "@impos2/kernel-core-task": "*"
     "@impos2/ui-core-adapter-test": "*"
     "@impos2/ui-core-base": "*"
+    react: ">=19.0.0"
+    react-native: ">=0.84.0"
+    react-native-mmkv: ^4.3.0
+    react-native-nitro-modules: ^0.35.2
   languageName: unknown
   linkType: soft
 
@@ -2543,7 +2561,7 @@ __metadata:
     "@babel/core": ^7.25.2
     "@babel/preset-env": ^7.25.3
     "@babel/runtime": ^7.25.0
-    "@impos2/adapter-android-rn84": "*"
+    "@impos2/adapter-android-rn84": "file:../../../3-adapter/android/adapterRN84"
     "@impos2/kernel-server-config": "*"
     "@impos2/ui-integration-mixc-retail": "*"
     "@react-native-community/cli": 20.1.0

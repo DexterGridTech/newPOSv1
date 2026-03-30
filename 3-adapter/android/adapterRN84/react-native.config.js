@@ -1,11 +1,12 @@
 /**
- * adapterRN84 的原生部分通过 turbomodule-lib 独立模块提供，
- * 不通过 autolinking 机制注册，避免 CLI 误解析裸工程结构。
+ * adapterRN84 通过 autolinking 机制注册，让 RN CLI 自动处理 Codegen 和 C++ 编译
  */
 module.exports = {
   dependency: {
     platforms: {
-      android: null,
+      android: {
+        sourceDir: './android/turbomodule-lib',
+      },
       ios: null,
     },
   },

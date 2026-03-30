@@ -2,9 +2,10 @@ package com.impos2.mixcretailrn84
 
 import android.app.Application
 import com.adapterrn84.turbomodules.AdapterPackage
+import com.adapterrn84.turbomodules.appcontrol.AppControlModule
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
-import com.impos2.mixcretailrn84.appcontrol.AppControlPackage
+import com.impos2.mixcretailrn84.appcontrol.AppControlHandlerImpl
 import com.facebook.react.ReactHost
 import com.facebook.react.ReactNativeApplicationEntryPoint
 import com.facebook.react.ReactNativeHost
@@ -19,7 +20,6 @@ class MainApplication : Application(), ReactApplication {
             override fun getPackages(): List<ReactPackage> =
                 PackageList(this).packages.apply {
                     add(AdapterPackage())
-                    add(AppControlPackage())
                 }
 
             override fun getJSMainModuleName(): String = "index"
@@ -36,5 +36,6 @@ class MainApplication : Application(), ReactApplication {
     override fun onCreate() {
         super.onCreate()
         ReactNativeApplicationEntryPoint.loadReactNative(this)
+        AppControlModule.registerHandler(AppControlHandlerImpl(this))
     }
 }

@@ -54,5 +54,6 @@
         android:launchMode="singleTask"
         android:excludeFromRecents="true"
         android:exported="false" />
+
     </application>
 </manifest>

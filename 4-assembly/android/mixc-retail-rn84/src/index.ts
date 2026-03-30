@@ -2,7 +2,6 @@ import {moduleName} from "./moduleName";
 import {assemblyAndroidMixcRetailSlice} from "./features/slices";
 import {assemblyAndroidMixcRetailActors} from "./features/actors";
 import {assemblyAndroidMixcRetailCommands} from "./features/commands";
-import {assemblyAndroidMixcRetailModulePreSetup} from "./application/modulePreSetup";
 import {assemblyAndroidMixcRetailErrorMessages} from "./supports/errors";
 import {assemblyAndroidMixcRetailParameters} from "./supports/parameters";
 import {assemblyAndroidMixcRetailEpics} from "./features/epics";
@@ -23,7 +22,6 @@ export const assemblyAndroidMixcRetailModule: AppModule = {
     errorMessages: assemblyAndroidMixcRetailErrorMessages,
     parameters: assemblyAndroidMixcRetailParameters,
     dependencies: [adapterAndroidModule,uiIntegrationMixcRetailModule],
-    modulePreSetup: assemblyAndroidMixcRetailModulePreSetup,
     screenParts: assemblyAndroidMixcRetailScreenParts,
 }
 

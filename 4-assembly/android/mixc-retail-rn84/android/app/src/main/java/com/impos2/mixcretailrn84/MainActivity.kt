@@ -2,14 +2,12 @@ package com.impos2.mixcretailrn84
 
 import android.content.Context
 import android.hardware.display.DisplayManager
-import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.view.KeyEvent
-import android.view.View
-import android.view.WindowInsets
-import android.view.WindowInsetsController
-import android.view.WindowManager
-import android.view.animation.AnimationUtils
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.ReactInstanceManager
@@ -20,7 +18,6 @@ import com.impos2.mixcretailrn84.loading.LoadingManager
 import com.impos2.mixcretailrn84.restart.AppRestartManager
 import com.impos2.mixcretailrn84.screen.ScreenControlManager
 import com.adapterrn84.turbomodules.device.DeviceManager
-import org.devio.rn.splashscreen.SplashScreen
 import java.util.concurrent.atomic.AtomicBoolean
 
 class MainActivity : ReactActivity() {
@@ -34,8 +31,6 @@ class MainActivity : ReactActivity() {
         @Volatile
         var instance: MainActivity? = null
             private set
-
-        fun getInstance(): MainActivity? = instance
     }
 
     override fun getMainComponentName(): String = "MixcRetailRN84"
@@ -55,11 +50,17 @@ class MainActivity : ReactActivity() {
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d("THREAD_CHECK", "onCreate thread = ${Thread.currentThread().name}")
         instance = this
-        SplashScreen.show(this, R.style.SplashScreenTheme, true)
-        applySplashScreenFullscreen()
+        val splashScreen = installSplashScreen()
+        splashScreen.setKeepOnScreenCondition { !LoadingManager.isHideRequested() }
         super.onCreate(savedInstanceState)
-        initManagers()
+
+        // 延迟初始化，避免与 SplashScreen attach 冲突
+        Handler(Looper.getMainLooper()).post {
+            Log.d("THREAD_CHECK", "initManagers thread = ${Thread.currentThread().name}")
+            initManagers()
+        }
     }
 
     private fun initManagers() {
@@ -87,64 +88,6 @@ class MainActivity : ReactActivity() {
         return super.dispatchKeyEvent(event)
     }
 
-    private fun applySplashScreenFullscreen() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.setDecorFitsSystemWindows(false)
-        } else {
-            @Suppress("DEPRECATION")
-            window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
-        }
-        window.decorView.postDelayed({
-            try {
-                val field = org.devio.rn.splashscreen.SplashScreen::class.java.getDeclaredField("mSplashDialog")
-                field.isAccessible = true
-                val dialog = field.get(null) as? android.app.Dialog ?: return@postDelayed
-                val win = dialog.window ?: return@postDelayed
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    win.setDecorFitsSystemWindows(false)
-                    win.insetsController?.let {
-                        it.hide(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
-                        it.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-                    }
-                } else {
-                    @Suppress("DEPRECATION")
-                    win.decorView.systemUiVisibility = (
-                        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                        or View.SYSTEM_UI_FLAG_FULLSCREEN
-                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    )
-                }
-                startSplashAnimations(dialog)
-            } catch (_: Exception) {}
-        }, 50L)
-    }
-
-    private fun startSplashAnimations(dialog: android.app.Dialog) {
-        val root = dialog.findViewById<View>(android.R.id.content) ?: return
-        root.setLayerType(View.LAYER_TYPE_HARDWARE, null)
-        val allAnimations = listOf(
-            R.id.splash_bg_breathe to R.anim.splash_breathe,
-            R.id.splash_arc_back_view to R.anim.splash_float_slow,
-            R.id.splash_arc_front_view to R.anim.splash_float_reverse,
-            R.id.splash_orbit_ring_view to R.anim.splash_rotate_orbit,
-            R.id.splash_sweep_glow_view to R.anim.splash_sweep,
-            R.id.splash_sphere_primary_view to R.anim.splash_float_slow,
-            R.id.splash_sphere_secondary_view to R.anim.splash_float_reverse,
-            R.id.splash_brand_text to R.anim.splash_text_top_in,
-            R.id.splash_system_text to R.anim.splash_text_middle_in,
-            R.id.splash_loading_text to R.anim.splash_text_bottom_in,
-        )
-        allAnimations.forEach { (viewId, animId) ->
-            root.findViewById<View>(viewId)?.let { view ->
-                view.setLayerType(View.LAYER_TYPE_HARDWARE, null)
-                view.startAnimation(AnimationUtils.loadAnimation(this, animId))
-            }
-        }
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         if (::screenControlManager.isInitialized) screenControlManager.destroy()
@@ -160,7 +103,7 @@ class MainActivity : ReactActivity() {
     fun provideReactInstanceManager(): ReactInstanceManager =
         reactNativeHost.reactInstanceManager
 
-    fun getReactHost(): com.facebook.react.ReactHost = reactHost
+    fun provideReactHost(): com.facebook.react.ReactHost = reactHost
 
     val isSecondaryDisplayActive: Boolean
         get() = if (::multiDisplayManager.isInitialized) multiDisplayManager.isSecondaryActive else false

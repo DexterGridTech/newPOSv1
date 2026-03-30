@@ -1,6 +1,7 @@
 package com.adapterrn84.turbomodules
 
 import android.util.Log
+import com.adapterrn84.turbomodules.appcontrol.AppControlModule
 import com.facebook.react.TurboReactPackage
 import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactApplicationContext
@@ -12,6 +13,7 @@ class AdapterPackage : TurboReactPackage() {
     override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? {
         Log.d("AdapterPackage", "getModule called: $name")
         return when (name) {
+            AppControlModule.NAME -> AppControlModule(reactContext)
             DeviceTurboModule.NAME -> DeviceTurboModule(reactContext)
             LoggerTurboModule.NAME -> LoggerTurboModule(reactContext)
             ScriptsTurboModule.NAME -> ScriptsTurboModule(reactContext)
@@ -24,6 +26,11 @@ class AdapterPackage : TurboReactPackage() {
     override fun getReactModuleInfoProvider() = ReactModuleInfoProvider {
         Log.d("AdapterPackage", "getReactModuleInfoProvider called")
         mapOf(
+            AppControlModule.NAME to ReactModuleInfo(
+                AppControlModule.NAME,
+                AppControlModule::class.java.name,
+                false, false, false, true
+            ),
             DeviceTurboModule.NAME to ReactModuleInfo(
                 DeviceTurboModule.NAME,
                 DeviceTurboModule::class.java.name,

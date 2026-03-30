@@ -1,8 +1,16 @@
-pluginManagement { includeBuild("../node_modules/@react-native/gradle-plugin") }
+pluginManagement {
+    def rnGradlePlugin = file("../node_modules/@react-native/gradle-plugin").exists()
+        ? "../node_modules/@react-native/gradle-plugin"
+        : "../../../../4-assembly/android/mixc-retail-rn84/node_modules/@react-native/gradle-plugin"
+    includeBuild(rnGradlePlugin)
+}
 plugins { id("com.facebook.react.settings") }
 extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
 rootProject.name = 'adapterRN84'
 include ':app'
 include ':turbomodule-lib'
 
-includeBuild('../node_modules/@react-native/gradle-plugin')
+def rnGradlePlugin = file("../node_modules/@react-native/gradle-plugin").exists()
+    ? "../node_modules/@react-native/gradle-plugin"
+    : "../../../../4-assembly/android/mixc-retail-rn84/node_modules/@react-native/gradle-plugin"
+includeBuild(rnGradlePlugin)

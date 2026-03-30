@@ -2,25 +2,6 @@ apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
-// 在 Codegen 之前，将 adapterRN84 的 Spec 文件同步到本包的 Spec 目录
-def adapterSpecSrcDir = file("../../../../../3-adapter/android/adapterRN84/src/supports/apis")
-def localSpecDir = file("../../src/supports/apis")
-
-task syncAdapterSpecs(type: Copy) {
-    from(adapterSpecSrcDir) {
-        include "Native*TurboModule.ts"
-    }
-    into localSpecDir
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-}
-
-afterEvaluate {
-    def codegenTask = tasks.findByName("generateCodegenSchemaFromJavaScript")
-    if (codegenTask != null) {
-        codegenTask.dependsOn(syncAdapterSpecs)
-    }
-}
-
 react {
     // app/build.gradle 位于 android/app/，以下路径均相对于此
     root = file("../../")
@@ -78,8 +59,8 @@ android {
 
 dependencies {
     implementation("com.facebook.react:react-android")
+    implementation("androidx.core:core-splashscreen:1.0.1")
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     }
-    implementation project(':turbomodule-lib')
 }

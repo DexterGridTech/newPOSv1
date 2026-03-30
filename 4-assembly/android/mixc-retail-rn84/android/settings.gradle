@@ -1,12 +1,17 @@
 pluginManagement { includeBuild("../node_modules/@react-native/gradle-plugin") }
 plugins { id("com.facebook.react.settings") }
 extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+    repositories {
+        google()
+        mavenCentral()
+        mavenLocal()
+    }
+}
+
 rootProject.name = 'MixcRetailRN84'
 include ':app'
 includeBuild('../node_modules/@react-native/gradle-plugin')
 
-// 引入 adapterRN84 的 TurboModule 库
-// settings.gradle 位于 android/，往上4层到 newPOSv1/，再进入 3-adapter
-def adapterRN84TurboModuleDir = file("../../../../3-adapter/android/adapterRN84/android/turbomodule-lib")
-include ':turbomodule-lib'
-project(':turbomodule-lib').projectDir = adapterRN84TurboModuleDir
