@@ -2438,7 +2438,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@impos2/adapter-android-rn84@workspace:3-adapter/android/adapterRN84":
+"@impos2/adapter-android-rn84@*, @impos2/adapter-android-rn84@workspace:3-adapter/android/adapterRN84":
   version: 0.0.0-use.local
   resolution: "@impos2/adapter-android-rn84@workspace:3-adapter/android/adapterRN84"
   dependencies:
@@ -2533,6 +2533,37 @@ __metadata:
     "@impos2/kernel-core-task": "*"
     "@impos2/ui-core-adapter-test": "*"
     "@impos2/ui-core-base": "*"
+  languageName: unknown
+  linkType: soft
+
+"@impos2/assembly-android-mixc-retail-rn84@workspace:4-assembly/android/mixc-retail-rn84":
+  version: 0.0.0-use.local
+  resolution: "@impos2/assembly-android-mixc-retail-rn84@workspace:4-assembly/android/mixc-retail-rn84"
+  dependencies:
+    "@babel/core": ^7.25.2
+    "@babel/preset-env": ^7.25.3
+    "@babel/runtime": ^7.25.0
+    "@impos2/adapter-android-rn84": "*"
+    "@impos2/kernel-server-config": "*"
+    "@impos2/ui-integration-mixc-retail": "*"
+    "@react-native-community/cli": 20.1.0
+    "@react-native-community/cli-platform-android": 20.1.0
+    "@react-native/babel-preset": 0.84.1
+    "@react-native/eslint-config": 0.84.1
+    "@react-native/metro-config": 0.84.1
+    "@react-native/typescript-config": 0.84.1
+    "@types/react": ^19.2.0
+    eslint: ^8.19.0
+    prettier: 2.8.8
+    react: 19.2.3
+    react-native: 0.84.1
+    react-native-mmkv: ^4.3.0
+    react-native-nitro-modules: ^0.35.2
+    react-native-splash-screen: 3.3.0
+    reactotron-core-client: ^2.9.9
+    reactotron-react-native: ^5.1.18
+    reactotron-redux: ^3.2.1
+    typescript: ^5.8.3
   languageName: unknown
   linkType: soft
 

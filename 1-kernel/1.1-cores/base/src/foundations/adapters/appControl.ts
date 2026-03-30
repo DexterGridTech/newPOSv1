@@ -4,6 +4,7 @@ export interface AppControl {
     setFullScreen(isFullScreen: boolean): Promise<void>
     setAppLocked(isAppLocked: boolean): Promise<void>
     restartApp(): Promise<void>
+    onAppLoadComplete(displayIndex: number): Promise<void>
 }
 
 export const appControl: AppControl = {
@@ -12,6 +13,7 @@ export const appControl: AppControl = {
     setAppLocked: (v) => registeredAppControl ? registeredAppControl.setAppLocked(v) : Promise.resolve(),
     setFullScreen: (v) => registeredAppControl ? registeredAppControl.setFullScreen(v) : Promise.resolve(),
     restartApp: () => registeredAppControl ? registeredAppControl.restartApp() : Promise.resolve(),
+    onAppLoadComplete: (displayIndex) => registeredAppControl ? registeredAppControl.onAppLoadComplete(displayIndex) : Promise.resolve(),
 }
 
 let registeredAppControl: AppControl | null = null

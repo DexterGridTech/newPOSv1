@@ -272,7 +272,7 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({visible, onClose}) => {
             hardwareAccelerated
         >
             <View style={styles.overlay}>
-                <TouchableOpacity style={StyleSheet.absoluteFill} activeOpacity={1} onPress={onClose}/>
+                <View style={StyleSheet.absoluteFill}/>
                 {currentScreen === 'login' ? (
                     <LoginScreen
                         password={password}

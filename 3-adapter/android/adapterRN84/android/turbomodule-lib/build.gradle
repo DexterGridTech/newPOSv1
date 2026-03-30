@@ -35,6 +35,13 @@ react {
     libraryName = "AdapterRN84Spec"
 }
 
+afterEvaluate {
+    def syncTask = rootProject.findProject(':app')?.tasks?.findByName('syncAdapterSpecs')
+    if (syncTask != null) {
+        tasks.findByName('generateCodegenSchemaFromJavaScript')?.dependsOn(syncTask)
+    }
+}
+
 dependencies {
     implementation 'com.facebook.react:react-android'
     implementation 'com.facebook.react:hermes-android'

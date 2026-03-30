@@ -59,6 +59,8 @@
     "-----------": "---------------------------------------",
     "assembly:android-mixc-retail:metro": "corepack yarn workspace @impos2/assembly-android-mixc-retail start:clean",
     "assembly:android-mixc-retail:run": "corepack yarn workspace @impos2/assembly-android-mixc-retail android",
+    "assembly:android-mixc-retail-rn84:metro": "corepack yarn workspace @impos2/assembly-android-mixc-retail-rn84 start:clean",
+    "assembly:android-mixc-retail-rn84:run": "corepack yarn workspace @impos2/assembly-android-mixc-retail-rn84 android",
     "------------": "---------------------------------------",
     "dev": "turbo run dev",
     "test": "turbo run test",
