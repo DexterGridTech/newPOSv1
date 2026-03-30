@@ -65,7 +65,7 @@ class MainActivity : ReactActivity() {
 
     private fun initManagers() {
         screenControlManager = ScreenControlManager(this).also { it.initialize() }
-        multiDisplayManager = MultiDisplayManager(this, reactHost)
+        multiDisplayManager = MultiDisplayManager(this)
         appRestartManager = AppRestartManager(this)
     }
 

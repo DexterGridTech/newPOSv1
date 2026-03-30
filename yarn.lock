@@ -2440,7 +2440,7 @@ __metadata:
 
 "@impos2/adapter-android-rn84@file:../../../3-adapter/android/adapterRN84::locator=%40impos2%2Fassembly-android-mixc-retail-rn84%40workspace%3A4-assembly%2Fandroid%2Fmixc-retail-rn84":
   version: 1.0.0
-  resolution: "@impos2/adapter-android-rn84@file:../../../3-adapter/android/adapterRN84#../../../3-adapter/android/adapterRN84::hash=a1c102&locator=%40impos2%2Fassembly-android-mixc-retail-rn84%40workspace%3A4-assembly%2Fandroid%2Fmixc-retail-rn84"
+  resolution: "@impos2/adapter-android-rn84@file:../../../3-adapter/android/adapterRN84#../../../3-adapter/android/adapterRN84::hash=2b807e&locator=%40impos2%2Fassembly-android-mixc-retail-rn84%40workspace%3A4-assembly%2Fandroid%2Fmixc-retail-rn84"
   peerDependencies:
     "@impos2/kernel-core-base": "*"
     "@impos2/kernel-core-interconnection": "*"
@@ -2452,7 +2452,7 @@ __metadata:
     react-native: ">=0.84.0"
     react-native-mmkv: ^4.3.0
     react-native-nitro-modules: ^0.35.2
-  checksum: a72fc814d9ded98e333fa8fd5d21d0c5d2a216387ae5839a695ca38b2fa07fe774b3d4807d2198054b93758a83a5359b4601dece2e058aec59d24a236099f999
+  checksum: 1beb25eac9c1c0bbefe04bb164e69f4271dbc2728b862b327f321d6a34707ae93cb2184388f4dafc683e07267838cc76f897ebbc2a4af536c3bdd2279176c40c
   languageName: node
   linkType: hard
 
@@ -2578,6 +2578,7 @@ __metadata:
     react-native-mmkv: ^4.3.0
     react-native-nitro-modules: ^0.35.2
     react-native-splash-screen: 3.3.0
+    react-native-svg: ^15.15.3
     reactotron-core-client: ^2.9.9
     reactotron-react-native: ^5.1.18
     reactotron-redux: ^3.2.1

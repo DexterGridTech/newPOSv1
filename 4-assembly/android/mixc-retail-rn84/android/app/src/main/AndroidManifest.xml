@@ -55,5 +55,13 @@
         android:excludeFromRecents="true"
         android:exported="false" />
 
+      <activity
+        android:name=".SecondaryActivity"
+        android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
+        android:windowSoftInputMode="adjustPan"
+        android:theme="@style/AppTheme"
+        android:process=":secondary"
+        android:exported="false" />
+
     </application>
 </manifest>
