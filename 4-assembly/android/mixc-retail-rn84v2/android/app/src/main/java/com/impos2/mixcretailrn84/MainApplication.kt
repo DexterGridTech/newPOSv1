@@ -1,15 +1,13 @@
 package com.impos2.mixcretailrn84
 
 import android.app.Application
-import com.adapterrn84.turbomodules.AdapterPackage
-import com.adapterrn84.turbomodules.appcontrol.AppControlModule
-import com.facebook.react.PackageList
+import com.mixcretail.turbomodules.AdapterPackage
 import com.facebook.react.ReactApplication
-import com.impos2.mixcretailrn84.appcontrol.AppControlHandlerImpl
 import com.facebook.react.ReactHost
 import com.facebook.react.ReactNativeApplicationEntryPoint
 import com.facebook.react.ReactNativeHost
 import com.facebook.react.ReactPackage
+import com.facebook.react.shell.MainReactPackage
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
 
@@ -17,10 +15,16 @@ class MainApplication : Application(), ReactApplication {
 
     override val reactNativeHost: ReactNativeHost =
         object : DefaultReactNativeHost(this) {
-            override fun getPackages(): List<ReactPackage> =
-                PackageList(this).packages.apply {
-                    add(AdapterPackage())
-                }
+            override fun getPackages(): List<ReactPackage> {
+                return listOf(
+                    MainReactPackage(),
+                    AdapterPackage(),
+                    com.margelo.nitro.mmkv.NitroMmkvPackage(),
+                    com.margelo.nitro.NitroModulesPackage(),
+                    org.devio.rn.splashscreen.SplashScreenReactPackage(),
+                    com.horcrux.svg.SvgPackage()
+                )
+            }
 
             override fun getJSMainModuleName(): String = "index"
 
@@ -36,6 +40,5 @@ class MainApplication : Application(), ReactApplication {
     override fun onCreate() {
         super.onCreate()
         ReactNativeApplicationEntryPoint.loadReactNative(this)
-        AppControlModule.registerHandler(AppControlHandlerImpl(this))
     }
 }

@@ -7,7 +7,7 @@ import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
 import com.facebook.react.defaults.DefaultReactActivityDelegate
-import com.adapterrn84.turbomodules.device.DeviceManager
+import com.impos2.adapter.device.DeviceManager
 
 class SecondaryActivity : ReactActivity() {
 
@@ -16,10 +16,10 @@ class SecondaryActivity : ReactActivity() {
     override fun createReactActivityDelegate(): ReactActivityDelegate =
         object : DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled) {
             override fun getLaunchOptions(): Bundle {
-                val deviceId = DeviceManager.getInstance(applicationContext).getOrGenerateDeviceId()
+                val deviceInfo = DeviceManager.getInstance(applicationContext).getDeviceInfo()
                 val dm = getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
                 return Bundle().apply {
-                    putString("deviceId", deviceId)
+                    putString("deviceId", deviceInfo.id)
                     putString("screenMode", "desktop")
                     putInt("displayCount", dm.displays.size)
                     putInt("displayIndex", 1)

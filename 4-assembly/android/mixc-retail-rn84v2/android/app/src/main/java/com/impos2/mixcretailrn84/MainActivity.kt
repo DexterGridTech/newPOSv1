@@ -17,7 +17,7 @@ import com.impos2.mixcretailrn84.display.MultiDisplayManager
 import com.impos2.mixcretailrn84.loading.LoadingManager
 import com.impos2.mixcretailrn84.restart.AppRestartManager
 import com.impos2.mixcretailrn84.screen.ScreenControlManager
-import com.adapterrn84.turbomodules.device.DeviceManager
+import com.impos2.adapter.device.DeviceManager
 import java.util.concurrent.atomic.AtomicBoolean
 
 class MainActivity : ReactActivity() {
@@ -38,10 +38,10 @@ class MainActivity : ReactActivity() {
     override fun createReactActivityDelegate(): ReactActivityDelegate =
         object : DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled) {
             override fun getLaunchOptions(): Bundle {
-                val deviceId = DeviceManager.getInstance(applicationContext).getOrGenerateDeviceId()
+                val deviceInfo = DeviceManager.getInstance(applicationContext).getDeviceInfo()
                 val dm = getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
                 return Bundle().apply {
-                    putString("deviceId", deviceId)
+                    putString("deviceId", deviceInfo.id)
                     putString("screenMode", "desktop")
                     putInt("displayCount", dm.displays.size)
                     putInt("displayIndex", 0)

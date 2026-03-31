@@ -10,7 +10,8 @@ react {
     cliFile = file("../../node_modules/react-native/cli.js")
     entryFile = file("../../index.js")
 
-    autolinkLibrariesWithApp()
+    // 禁用 autolink，手动在 MainApplication 中指定 packages
+    // autolinkLibrariesWithApp()
 }
 
 def enableProguardInReleaseBuilds = false
@@ -61,6 +62,13 @@ dependencies {
     implementation("com.facebook.react:react-android")
     implementation("androidx.core:core-splashscreen:1.0.1")
     implementation("com.impos2:adapter-pure:1.0.0")
+
+    // 手动添加原生库依赖（因为禁用了 autolink）
+    implementation(project(":react-native-mmkv"))
+    implementation(project(":react-native-nitro-modules"))
+    implementation(project(":react-native-splash-screen"))
+    implementation(project(":react-native-svg"))
+
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     }

@@ -2440,7 +2440,7 @@ __metadata:
 
 "@impos2/adapter-android-rn84@file:../../../3-adapter/android/adapterRN84::locator=%40impos2%2Fassembly-android-mixc-retail-rn84%40workspace%3A4-assembly%2Fandroid%2Fmixc-retail-rn84":
   version: 1.0.0
-  resolution: "@impos2/adapter-android-rn84@file:../../../3-adapter/android/adapterRN84#../../../3-adapter/android/adapterRN84::hash=47a41a&locator=%40impos2%2Fassembly-android-mixc-retail-rn84%40workspace%3A4-assembly%2Fandroid%2Fmixc-retail-rn84"
+  resolution: "@impos2/adapter-android-rn84@file:../../../3-adapter/android/adapterRN84#../../../3-adapter/android/adapterRN84::hash=e4a1fc&locator=%40impos2%2Fassembly-android-mixc-retail-rn84%40workspace%3A4-assembly%2Fandroid%2Fmixc-retail-rn84"
   peerDependencies:
     "@impos2/kernel-core-base": "*"
     "@impos2/kernel-core-interconnection": "*"
@@ -2452,25 +2452,7 @@ __metadata:
     react-native: ">=0.84.0"
     react-native-mmkv: ^4.3.0
     react-native-nitro-modules: ^0.35.2
-  checksum: f993bdd01281e5bb64431e016b48012cd08ab21c77afbd53f01ef19ba3baf5055ca31577350f6a34cbb0024f52120979f6c544064e7a107d26d2220b253223a8
-  languageName: node
-  linkType: hard
-
-"@impos2/adapter-android-rn84@file:../../../3-adapter/android/adapterRN84::locator=%40impos2%2Fassembly-android-mixc-retail-rn84v2%40workspace%3A4-assembly%2Fandroid%2Fmixc-retail-rn84v2":
-  version: 1.0.0
-  resolution: "@impos2/adapter-android-rn84@file:../../../3-adapter/android/adapterRN84#../../../3-adapter/android/adapterRN84::hash=47a41a&locator=%40impos2%2Fassembly-android-mixc-retail-rn84v2%40workspace%3A4-assembly%2Fandroid%2Fmixc-retail-rn84v2"
-  peerDependencies:
-    "@impos2/kernel-core-base": "*"
-    "@impos2/kernel-core-interconnection": "*"
-    "@impos2/kernel-core-navigation": "*"
-    "@impos2/kernel-core-task": "*"
-    "@impos2/ui-core-adapter-test": "*"
-    "@impos2/ui-core-base": "*"
-    react: ">=19.0.0"
-    react-native: ">=0.84.0"
-    react-native-mmkv: ^4.3.0
-    react-native-nitro-modules: ^0.35.2
-  checksum: f993bdd01281e5bb64431e016b48012cd08ab21c77afbd53f01ef19ba3baf5055ca31577350f6a34cbb0024f52120979f6c544064e7a107d26d2220b253223a8
+  checksum: 40ec19b20e2a0ab1d61df91231c8ce709a219cff66b0d4eca451b7c54ded9d0da2a9b74f24a76b9425f4cb18e0db7d3236af024cf412385c4d0743bdc599b793
   languageName: node
   linkType: hard
 
@@ -2582,7 +2564,6 @@ __metadata:
     "@babel/core": ^7.25.2
     "@babel/preset-env": ^7.25.3
     "@babel/runtime": ^7.25.0
-    "@impos2/adapter-android-rn84": "file:../../../3-adapter/android/adapterRN84"
     "@impos2/kernel-server-config": "*"
     "@impos2/ui-integration-mixc-retail": "*"
     "@react-native-community/cli": 20.1.0
