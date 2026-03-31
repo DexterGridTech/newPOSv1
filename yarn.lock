@@ -1961,7 +1961,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint-community/regexpp@npm:^4.10.0, @eslint-community/regexpp@npm:^4.12.2, @eslint-community/regexpp@npm:^4.4.0, @eslint-community/regexpp@npm:^4.6.1":
+"@eslint-community/regexpp@npm:^4.10.0, @eslint-community/regexpp@npm:^4.12.2, @eslint-community/regexpp@npm:^4.6.1":
   version: 4.12.2
   resolution: "@eslint-community/regexpp@npm:4.12.2"
   checksum: 1770bc81f676a72f65c7200b5675ff7a349786521f30e66125faaf767fde1ba1c19c3790e16ba8508a62a3933afcfc806a893858b3b5906faf693d862b9e4120
@@ -2440,7 +2440,7 @@ __metadata:
 
 "@impos2/adapter-android-rn84@file:../../../3-adapter/android/adapterRN84::locator=%40impos2%2Fassembly-android-mixc-retail-rn84%40workspace%3A4-assembly%2Fandroid%2Fmixc-retail-rn84":
   version: 1.0.0
-  resolution: "@impos2/adapter-android-rn84@file:../../../3-adapter/android/adapterRN84#../../../3-adapter/android/adapterRN84::hash=2b807e&locator=%40impos2%2Fassembly-android-mixc-retail-rn84%40workspace%3A4-assembly%2Fandroid%2Fmixc-retail-rn84"
+  resolution: "@impos2/adapter-android-rn84@file:../../../3-adapter/android/adapterRN84#../../../3-adapter/android/adapterRN84::hash=47a41a&locator=%40impos2%2Fassembly-android-mixc-retail-rn84%40workspace%3A4-assembly%2Fandroid%2Fmixc-retail-rn84"
   peerDependencies:
     "@impos2/kernel-core-base": "*"
     "@impos2/kernel-core-interconnection": "*"
@@ -2452,7 +2452,25 @@ __metadata:
     react-native: ">=0.84.0"
     react-native-mmkv: ^4.3.0
     react-native-nitro-modules: ^0.35.2
-  checksum: 1beb25eac9c1c0bbefe04bb164e69f4271dbc2728b862b327f321d6a34707ae93cb2184388f4dafc683e07267838cc76f897ebbc2a4af536c3bdd2279176c40c
+  checksum: f993bdd01281e5bb64431e016b48012cd08ab21c77afbd53f01ef19ba3baf5055ca31577350f6a34cbb0024f52120979f6c544064e7a107d26d2220b253223a8
+  languageName: node
+  linkType: hard
+
+"@impos2/adapter-android-rn84@file:../../../3-adapter/android/adapterRN84::locator=%40impos2%2Fassembly-android-mixc-retail-rn84v2%40workspace%3A4-assembly%2Fandroid%2Fmixc-retail-rn84v2":
+  version: 1.0.0
+  resolution: "@impos2/adapter-android-rn84@file:../../../3-adapter/android/adapterRN84#../../../3-adapter/android/adapterRN84::hash=47a41a&locator=%40impos2%2Fassembly-android-mixc-retail-rn84v2%40workspace%3A4-assembly%2Fandroid%2Fmixc-retail-rn84v2"
+  peerDependencies:
+    "@impos2/kernel-core-base": "*"
+    "@impos2/kernel-core-interconnection": "*"
+    "@impos2/kernel-core-navigation": "*"
+    "@impos2/kernel-core-task": "*"
+    "@impos2/ui-core-adapter-test": "*"
+    "@impos2/ui-core-base": "*"
+    react: ">=19.0.0"
+    react-native: ">=0.84.0"
+    react-native-mmkv: ^4.3.0
+    react-native-nitro-modules: ^0.35.2
+  checksum: f993bdd01281e5bb64431e016b48012cd08ab21c77afbd53f01ef19ba3baf5055ca31577350f6a34cbb0024f52120979f6c544064e7a107d26d2220b253223a8
   languageName: node
   linkType: hard
 
@@ -2525,38 +2543,41 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/adapter-tauri-v1@workspace:3-adapter/tauri/adapter-v1":
-  version: 0.0.0-use.local
-  resolution: "@impos2/adapter-tauri-v1@workspace:3-adapter/tauri/adapter-v1"
-  dependencies:
-    "@tauri-apps/api": ^2.5.0
-    "@tauri-apps/cli": ^2.5.0
-    "@tauri-apps/plugin-log": ^2.5.0
-    "@tauri-apps/plugin-store": ^2.2.0
-    "@types/react": ~18.3.12
-    "@types/react-dom": ~18.3.1
-    "@typescript-eslint/eslint-plugin": ^5.62.0
-    "@typescript-eslint/parser": ^5.62.0
-    "@vitejs/plugin-react": ^4.3.4
-    eslint: ^8.57.1
-    react: 18.3.1
-    react-dom: 18.3.1
-    react-native-web: ~0.19.13
-    typescript: ^5.9.3
-    vite: ^5.4.21
-  peerDependencies:
-    "@impos2/kernel-core-base": "*"
-    "@impos2/kernel-core-interconnection": "*"
-    "@impos2/kernel-core-navigation": "*"
-    "@impos2/kernel-core-task": "*"
-    "@impos2/ui-core-adapter-test": "*"
-    "@impos2/ui-core-base": "*"
-  languageName: unknown
-  linkType: soft
-
 "@impos2/assembly-android-mixc-retail-rn84@workspace:4-assembly/android/mixc-retail-rn84":
   version: 0.0.0-use.local
   resolution: "@impos2/assembly-android-mixc-retail-rn84@workspace:4-assembly/android/mixc-retail-rn84"
+  dependencies:
+    "@babel/core": ^7.25.2
+    "@babel/preset-env": ^7.25.3
+    "@babel/runtime": ^7.25.0
+    "@impos2/adapter-android-rn84": "file:../../../3-adapter/android/adapterRN84"
+    "@impos2/kernel-server-config": "*"
+    "@impos2/ui-integration-mixc-retail": "*"
+    "@react-native-community/cli": 20.1.0
+    "@react-native-community/cli-platform-android": 20.1.0
+    "@react-native/babel-preset": 0.84.1
+    "@react-native/eslint-config": 0.84.1
+    "@react-native/metro-config": 0.84.1
+    "@react-native/typescript-config": 0.84.1
+    "@types/react": ^19.2.0
+    eslint: ^8.19.0
+    prettier: 2.8.8
+    react: 19.2.3
+    react-native: 0.84.1
+    react-native-mmkv: ^4.3.0
+    react-native-nitro-modules: ^0.35.2
+    react-native-splash-screen: 3.3.0
+    react-native-svg: ^15.15.3
+    reactotron-core-client: ^2.9.9
+    reactotron-react-native: ^5.1.18
+    reactotron-redux: ^3.2.1
+    typescript: ^5.8.3
+  languageName: unknown
+  linkType: soft
+
+"@impos2/assembly-android-mixc-retail-rn84v2@workspace:4-assembly/android/mixc-retail-rn84v2":
+  version: 0.0.0-use.local
+  resolution: "@impos2/assembly-android-mixc-retail-rn84v2@workspace:4-assembly/android/mixc-retail-rn84v2"
   dependencies:
     "@babel/core": ^7.25.2
     "@babel/preset-env": ^7.25.3
@@ -4864,152 +4885,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tauri-apps/api@npm:^2.5.0, @tauri-apps/api@npm:^2.8.0":
-  version: 2.10.1
-  resolution: "@tauri-apps/api@npm:2.10.1"
-  checksum: 9290551f952b71499d9aaf65b7d36f4582174fd2f1e8090261b4505fea5341489ec54eb47d20931002edd13ef2acd77fd20f1ef3898a666f0882dfae0adde9e4
-  languageName: node
-  linkType: hard
-
-"@tauri-apps/cli-darwin-arm64@npm:2.10.1":
-  version: 2.10.1
-  resolution: "@tauri-apps/cli-darwin-arm64@npm:2.10.1"
-  conditions: os=darwin & cpu=arm64
-  languageName: node
-  linkType: hard
-
-"@tauri-apps/cli-darwin-x64@npm:2.10.1":
-  version: 2.10.1
-  resolution: "@tauri-apps/cli-darwin-x64@npm:2.10.1"
-  conditions: os=darwin & cpu=x64
-  languageName: node
-  linkType: hard
-
-"@tauri-apps/cli-linux-arm-gnueabihf@npm:2.10.1":
-  version: 2.10.1
-  resolution: "@tauri-apps/cli-linux-arm-gnueabihf@npm:2.10.1"
-  conditions: os=linux & cpu=arm
-  languageName: node
-  linkType: hard
-
-"@tauri-apps/cli-linux-arm64-gnu@npm:2.10.1":
-  version: 2.10.1
-  resolution: "@tauri-apps/cli-linux-arm64-gnu@npm:2.10.1"
-  conditions: os=linux & cpu=arm64 & libc=glibc
-  languageName: node
-  linkType: hard
-
-"@tauri-apps/cli-linux-arm64-musl@npm:2.10.1":
-  version: 2.10.1
-  resolution: "@tauri-apps/cli-linux-arm64-musl@npm:2.10.1"
-  conditions: os=linux & cpu=arm64 & libc=musl
-  languageName: node
-  linkType: hard
-
-"@tauri-apps/cli-linux-riscv64-gnu@npm:2.10.1":
-  version: 2.10.1
-  resolution: "@tauri-apps/cli-linux-riscv64-gnu@npm:2.10.1"
-  conditions: os=linux & cpu=riscv64 & libc=glibc
-  languageName: node
-  linkType: hard
-
-"@tauri-apps/cli-linux-x64-gnu@npm:2.10.1":
-  version: 2.10.1
-  resolution: "@tauri-apps/cli-linux-x64-gnu@npm:2.10.1"
-  conditions: os=linux & cpu=x64 & libc=glibc
-  languageName: node
-  linkType: hard
-
-"@tauri-apps/cli-linux-x64-musl@npm:2.10.1":
-  version: 2.10.1
-  resolution: "@tauri-apps/cli-linux-x64-musl@npm:2.10.1"
-  conditions: os=linux & cpu=x64 & libc=musl
-  languageName: node
-  linkType: hard
-
-"@tauri-apps/cli-win32-arm64-msvc@npm:2.10.1":
-  version: 2.10.1
-  resolution: "@tauri-apps/cli-win32-arm64-msvc@npm:2.10.1"
-  conditions: os=win32 & cpu=arm64
-  languageName: node
-  linkType: hard
-
-"@tauri-apps/cli-win32-ia32-msvc@npm:2.10.1":
-  version: 2.10.1
-  resolution: "@tauri-apps/cli-win32-ia32-msvc@npm:2.10.1"
-  conditions: os=win32 & cpu=ia32
-  languageName: node
-  linkType: hard
-
-"@tauri-apps/cli-win32-x64-msvc@npm:2.10.1":
-  version: 2.10.1
-  resolution: "@tauri-apps/cli-win32-x64-msvc@npm:2.10.1"
-  conditions: os=win32 & cpu=x64
-  languageName: node
-  linkType: hard
-
-"@tauri-apps/cli@npm:^2.5.0":
-  version: 2.10.1
-  resolution: "@tauri-apps/cli@npm:2.10.1"
-  dependencies:
-    "@tauri-apps/cli-darwin-arm64": 2.10.1
-    "@tauri-apps/cli-darwin-x64": 2.10.1
-    "@tauri-apps/cli-linux-arm-gnueabihf": 2.10.1
-    "@tauri-apps/cli-linux-arm64-gnu": 2.10.1
-    "@tauri-apps/cli-linux-arm64-musl": 2.10.1
-    "@tauri-apps/cli-linux-riscv64-gnu": 2.10.1
-    "@tauri-apps/cli-linux-x64-gnu": 2.10.1
-    "@tauri-apps/cli-linux-x64-musl": 2.10.1
-    "@tauri-apps/cli-win32-arm64-msvc": 2.10.1
-    "@tauri-apps/cli-win32-ia32-msvc": 2.10.1
-    "@tauri-apps/cli-win32-x64-msvc": 2.10.1
-  dependenciesMeta:
-    "@tauri-apps/cli-darwin-arm64":
-      optional: true
-    "@tauri-apps/cli-darwin-x64":
-      optional: true
-    "@tauri-apps/cli-linux-arm-gnueabihf":
-      optional: true
-    "@tauri-apps/cli-linux-arm64-gnu":
-      optional: true
-    "@tauri-apps/cli-linux-arm64-musl":
-      optional: true
-    "@tauri-apps/cli-linux-riscv64-gnu":
-      optional: true
-    "@tauri-apps/cli-linux-x64-gnu":
-      optional: true
-    "@tauri-apps/cli-linux-x64-musl":
-      optional: true
-    "@tauri-apps/cli-win32-arm64-msvc":
-      optional: true
-    "@tauri-apps/cli-win32-ia32-msvc":
-      optional: true
-    "@tauri-apps/cli-win32-x64-msvc":
-      optional: true
-  bin:
-    tauri: tauri.js
-  checksum: aa369e715524adaa55b03aef619cd68963ade35f987ad83831477f52a874d0fe62318ce48bf2ff2770ac7d7447907ff3d1655956adc866b366dfbe6b1b782f83
-  languageName: node
-  linkType: hard
-
-"@tauri-apps/plugin-log@npm:^2.5.0":
-  version: 2.8.0
-  resolution: "@tauri-apps/plugin-log@npm:2.8.0"
-  dependencies:
-    "@tauri-apps/api": ^2.8.0
-  checksum: 7859341bb10690f24ee0b32115191e6a13b38e12dea56485520642d0039f391eda66952fbfc7aadbb3a51e841ce5adb6dfe6e284c5b089d2e8a1e754382e897d
-  languageName: node
-  linkType: hard
-
-"@tauri-apps/plugin-store@npm:^2.2.0":
-  version: 2.4.2
-  resolution: "@tauri-apps/plugin-store@npm:2.4.2"
-  dependencies:
-    "@tauri-apps/api": ^2.8.0
-  checksum: 02f23637b1a01dc493ad95b49a6f1b062981fe394ca5a3aa95f66ec502d43b6d4ac8c4476db7fead47be214ecc1a814460ba7d32b466c2d228e8df1aae38f26e
-  languageName: node
-  linkType: hard
-
 "@ts-graphviz/adapter@npm:^2.0.6":
   version: 2.0.6
   resolution: "@ts-graphviz/adapter@npm:2.0.6"
@@ -5368,7 +5243,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^18.3.0, @types/react-dom@npm:~18.3.1":
+"@types/react-dom@npm:^18.3.0":
   version: 18.3.7
   resolution: "@types/react-dom@npm:18.3.7"
   peerDependencies:
@@ -5523,30 +5398,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:^5.62.0":
-  version: 5.62.0
-  resolution: "@typescript-eslint/eslint-plugin@npm:5.62.0"
-  dependencies:
-    "@eslint-community/regexpp": ^4.4.0
-    "@typescript-eslint/scope-manager": 5.62.0
-    "@typescript-eslint/type-utils": 5.62.0
-    "@typescript-eslint/utils": 5.62.0
-    debug: ^4.3.4
-    graphemer: ^1.4.0
-    ignore: ^5.2.0
-    natural-compare-lite: ^1.4.0
-    semver: ^7.3.7
-    tsutils: ^3.21.0
-  peerDependencies:
-    "@typescript-eslint/parser": ^5.0.0
-    eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  checksum: fc104b389c768f9fa7d45a48c86d5c1ad522c1d0512943e782a56b1e3096b2cbcc1eea3fcc590647bf0658eef61aac35120a9c6daf979bf629ad2956deb516a1
-  languageName: node
-  linkType: hard
-
 "@typescript-eslint/eslint-plugin@npm:^7.1.1":
   version: 7.18.0
   resolution: "@typescript-eslint/eslint-plugin@npm:7.18.0"
@@ -5587,23 +5438,6 @@ __metadata:
     eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
     typescript: ">=4.8.4 <6.0.0"
   checksum: aa27503f4479f524f8bdd971ac6998176c2c4d0865e24fd131be75673fd1b9db5866b09d9884cb4a819ff8358e9715853f651913aa3082204c4b91a4a2508cc0
-  languageName: node
-  linkType: hard
-
-"@typescript-eslint/parser@npm:^5.62.0":
-  version: 5.62.0
-  resolution: "@typescript-eslint/parser@npm:5.62.0"
-  dependencies:
-    "@typescript-eslint/scope-manager": 5.62.0
-    "@typescript-eslint/types": 5.62.0
-    "@typescript-eslint/typescript-estree": 5.62.0
-    debug: ^4.3.4
-  peerDependencies:
-    eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  checksum: d168f4c7f21a7a63f47002e2d319bcbb6173597af5c60c1cf2de046b46c76b4930a093619e69faf2d30214c29ab27b54dcf1efc7046a6a6bd6f37f59a990e752
   languageName: node
   linkType: hard
 
@@ -5690,23 +5524,6 @@ __metadata:
   peerDependencies:
     typescript: ">=4.8.4 <6.0.0"
   checksum: 0b3473a9bfb19ba73c47646e025b3d7008fdf52c7276f510832091bbe3159b23a6aaaafa952154e0d46d5fa934e97064b073036229e66af04c3464b76989e5b0
-  languageName: node
-  linkType: hard
-
-"@typescript-eslint/type-utils@npm:5.62.0":
-  version: 5.62.0
-  resolution: "@typescript-eslint/type-utils@npm:5.62.0"
-  dependencies:
-    "@typescript-eslint/typescript-estree": 5.62.0
-    "@typescript-eslint/utils": 5.62.0
-    debug: ^4.3.4
-    tsutils: ^3.21.0
-  peerDependencies:
-    eslint: "*"
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  checksum: fc41eece5f315dfda14320be0da78d3a971d650ea41300be7196934b9715f3fe1120a80207551eb71d39568275dbbcf359bde540d1ca1439d8be15e9885d2739
   languageName: node
   linkType: hard
 
@@ -5820,24 +5637,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/utils@npm:5.62.0, @typescript-eslint/utils@npm:^5.10.0":
-  version: 5.62.0
-  resolution: "@typescript-eslint/utils@npm:5.62.0"
-  dependencies:
-    "@eslint-community/eslint-utils": ^4.2.0
-    "@types/json-schema": ^7.0.9
-    "@types/semver": ^7.3.12
-    "@typescript-eslint/scope-manager": 5.62.0
-    "@typescript-eslint/types": 5.62.0
-    "@typescript-eslint/typescript-estree": 5.62.0
-    eslint-scope: ^5.1.1
-    semver: ^7.3.7
-  peerDependencies:
-    eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-  checksum: ee9398c8c5db6d1da09463ca7bf36ed134361e20131ea354b2da16a5fdb6df9ba70c62a388d19f6eebb421af1786dbbd79ba95ddd6ab287324fc171c3e28d931
-  languageName: node
-  linkType: hard
-
 "@typescript-eslint/utils@npm:7.18.0":
   version: 7.18.0
   resolution: "@typescript-eslint/utils@npm:7.18.0"
@@ -5864,6 +5663,24 @@ __metadata:
     eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
     typescript: ">=4.8.4 <6.0.0"
   checksum: 9d6fec718f2d08f7c726f3c44cd2dbcf5814ca0067e0ace6a18c911dc083f7bbb679c73bd677e26809e0770c5e7ae8c7a00a833c0b48c4c42590e8b000095d42
+  languageName: node
+  linkType: hard
+
+"@typescript-eslint/utils@npm:^5.10.0":
+  version: 5.62.0
+  resolution: "@typescript-eslint/utils@npm:5.62.0"
+  dependencies:
+    "@eslint-community/eslint-utils": ^4.2.0
+    "@types/json-schema": ^7.0.9
+    "@types/semver": ^7.3.12
+    "@typescript-eslint/scope-manager": 5.62.0
+    "@typescript-eslint/types": 5.62.0
+    "@typescript-eslint/typescript-estree": 5.62.0
+    eslint-scope: ^5.1.1
+    semver: ^7.3.7
+  peerDependencies:
+    eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
+  checksum: ee9398c8c5db6d1da09463ca7bf36ed134361e20131ea354b2da16a5fdb6df9ba70c62a388d19f6eebb421af1786dbbd79ba95ddd6ab287324fc171c3e28d931
   languageName: node
   linkType: hard
 
@@ -5926,7 +5743,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitejs/plugin-react@npm:^4.2.1, @vitejs/plugin-react@npm:^4.3.4":
+"@vitejs/plugin-react@npm:^4.2.1":
   version: 4.7.0
   resolution: "@vitejs/plugin-react@npm:4.7.0"
   dependencies:
@@ -8704,7 +8521,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^8.19.0, eslint@npm:^8.57.1":
+"eslint@npm:^8.19.0":
   version: 8.57.1
   resolution: "eslint@npm:8.57.1"
   dependencies:
@@ -9103,13 +8920,6 @@ __metadata:
   version: 2.0.6
   resolution: "fast-levenshtein@npm:2.0.6"
   checksum: 92cfec0a8dfafd9c7a15fba8f2cc29cd0b62b85f056d99ce448bbcd9f708e18ab2764bda4dd5158364f4145a7c72788538994f0d1787b956ef0d1062b0f7c24c
-  languageName: node
-  linkType: hard
-
-"fast-loops@npm:^1.1.3":
-  version: 1.1.4
-  resolution: "fast-loops@npm:1.1.4"
-  checksum: 8031a20f465ef35ac4ad98258470250636112d34f7e4efcb4ef21f3ced99df95a1ef1f0d6943df729a1e3e12a9df9319f3019df8cc1a0e0ed5a118bd72e505f9
   languageName: node
   linkType: hard
 
@@ -10050,16 +9860,6 @@ __metadata:
   version: 1.3.8
   resolution: "ini@npm:1.3.8"
   checksum: dfd98b0ca3a4fc1e323e38a6c8eb8936e31a97a918d3b377649ea15bdb15d481207a0dda1021efbd86b464cae29a0d33c1d7dcaf6c5672bee17fa849bc50a1b3
-  languageName: node
-  linkType: hard
-
-"inline-style-prefixer@npm:^6.0.1":
-  version: 6.0.4
-  resolution: "inline-style-prefixer@npm:6.0.4"
-  dependencies:
-    css-in-js-utils: ^3.1.0
-    fast-loops: ^1.1.3
-  checksum: caf7a75d18acbedc7e3b8bfac17563082becd2df6b65accad964a6afdf490329b42315c37fe65ba0177cc10fd32809eb40d62aba23a0118c74d87d4fc58defa2
   languageName: node
   linkType: hard
 
@@ -12685,13 +12485,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"natural-compare-lite@npm:^1.4.0":
-  version: 1.4.0
-  resolution: "natural-compare-lite@npm:1.4.0"
-  checksum: 5222ac3986a2b78dd6069ac62cbb52a7bf8ffc90d972ab76dfe7b01892485d229530ed20d0c62e79a6b363a663b273db3bde195a1358ce9e5f779d4453887225
-  languageName: node
-  linkType: hard
-
 "natural-compare@npm:^1.4.0":
   version: 1.4.0
   resolution: "natural-compare@npm:1.4.0"
@@ -14010,25 +13803,6 @@ __metadata:
     react: ^18.0.0 || ^19.0.0
     react-dom: ^18.0.0 || ^19.0.0
   checksum: 3d8be3ee2bae2790949683d8002973882538a49d5182bdda2a38739d44f0a5918bf082427ad062c98b71d3585ab9664c406685ceafe2432bb99877188dc9782d
-  languageName: node
-  linkType: hard
-
-"react-native-web@npm:~0.19.13":
-  version: 0.19.13
-  resolution: "react-native-web@npm:0.19.13"
-  dependencies:
-    "@babel/runtime": ^7.18.6
-    "@react-native/normalize-colors": ^0.74.1
-    fbjs: ^3.0.4
-    inline-style-prefixer: ^6.0.1
-    memoize-one: ^6.0.0
-    nullthrows: ^1.1.1
-    postcss-value-parser: ^4.2.0
-    styleq: ^0.1.3
-  peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: 15077f88204cb980203b8e3784c092c8c25c972bf281db43fd4ccc9696b603380a49f5289fb9a742daddd8e7599baab5798a1f1c857bdd634add827bc39fd8d8
   languageName: node
   linkType: hard
 
@@ -16382,7 +16156,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^5.2.0, vite@npm:^5.4.21":
+"vite@npm:^5.2.0":
   version: 5.4.21
   resolution: "vite@npm:5.4.21"
   dependencies:

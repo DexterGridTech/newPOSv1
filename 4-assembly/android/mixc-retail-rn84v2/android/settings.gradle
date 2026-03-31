@@ -1,0 +1,25 @@
+pluginManagement { includeBuild("../node_modules/@react-native/gradle-plugin") }
+plugins { id("com.facebook.react.settings") }
+extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+    repositories {
+        google()
+        mavenCentral()
+        mavenLocal()
+    }
+}
+
+rootProject.name = 'MixcRetailRN84v2'
+include ':app'
+
+// ✅ 源码引用 adapterPure (使用 includeBuild 而不是 include)
+includeBuild('../../../../3-adapter/android/adapterPure') {
+    dependencySubstitution {
+        substitute(module('com.impos2:adapter-pure')).using(project(':adapter-lib'))
+    }
+}
+
+includeBuild('../node_modules/@react-native/gradle-plugin')
+
