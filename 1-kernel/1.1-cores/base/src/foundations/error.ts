@@ -9,6 +9,12 @@ interface ICommandLike {
     sessionId?: string;
 }
 
+type ErrorConstructorWithCaptureStackTrace = ErrorConstructor & {
+    captureStackTrace?: (targetObject: object, constructorOpt?: Function) => void;
+};
+
+const errorConstructor = Error as ErrorConstructorWithCaptureStackTrace;
+
 export const getErrorMessageText = {
     getErrorMessage: (definedError: DefinedErrorMessage, args?: any): string => {
         const message = definedError.value
@@ -44,9 +50,7 @@ export class AppError extends Error implements IAppError {
 
         // 保持正确的原型链
         Object.setPrototypeOf(this, new.target.prototype);
-        if (typeof Error.captureStackTrace === 'function') {
-            Error.captureStackTrace(this, this.constructor);
-        }
+        errorConstructor.captureStackTrace?.(this, this.constructor);
     }
 
     toJSON() {
@@ -84,6 +88,6 @@ export class APIError extends AppError {
         super(definedErrorInfo, extraMessage, command);
         // 保持正确的原型链
         Object.setPrototypeOf(this, new.target.prototype);
-        Error.captureStackTrace(this, this.constructor);
+        errorConstructor.captureStackTrace?.(this, this.constructor);
     }
 }

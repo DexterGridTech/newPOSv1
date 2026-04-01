@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="splash_bg_start">#E9D8C6</color>
-    <color name="splash_bg_center">#D9BEA4</color>
-    <color name="splash_bg_end">#C9A07F</color>
-
-    <color name="splash_arc_back_start">#66F8EBDD</color>
-    <color name="splash_arc_back_end">#12FFFFFF</color>
-    <color name="splash_arc_front_start">#73F5E2CF</color>
-    <color name="splash_arc_front_end">#10FFFFFF</color>
-
-    <color name="splash_orbit_stroke">#96FFF2E5</color>
-
-    <color name="splash_sphere_primary_start">#FFF8E6CE</color>
-    <color name="splash_sphere_primary_end">#FFC08B5E</color>
-    <color name="splash_sphere_secondary_start">#FFF7E9D8</color>
-    <color name="splash_sphere_secondary_end">#FFB9855E</color>
-
-    <color name="splash_text_primary">#FFFDF8F2</color>
-    <color name="splash_text_secondary">#FFF8EDE1</color>
-    <color name="splash_text_loading">#FFE8D3C2</color>
+    <color name="splash_bg_start">#11161D</color>
+    <color name="splash_bg_center">#161D26</color>
+    <color name="splash_bg_end">#1C2631</color>
+    <color name="splash_surface">#223142</color>
+    <color name="splash_surface_border">#3A536B</color>
+    <color name="splash_accent">#C8923B</color>
+    <color name="splash_accent_soft">#E4C07B</color>
+    <color name="splash_text_primary">#F4F7FA</color>
+    <color name="splash_text_secondary">#9AA9B8</color>
+    <color name="splash_text_loading">#9AA9B8</color>
+    <color name="splash_glow">#334C66</color>
+    <color name="splash_arc_back_start">#30465D</color>
+    <color name="splash_arc_back_end">#0F161D</color>
+    <color name="splash_arc_front_start">#5F7A96</color>
+    <color name="splash_arc_front_end">#13202B</color>
+    <color name="splash_orbit_stroke">#48637D</color>
+    <color name="splash_sphere_primary_start">#31465B</color>
+    <color name="splash_sphere_primary_end">#1B2835</color>
+    <color name="splash_sphere_secondary_start">#D0A45A</color>
+    <color name="splash_sphere_secondary_end">#8A632D</color>
+    <color name="bootsplash_background">#161d26</color>
 </resources>

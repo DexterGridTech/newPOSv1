@@ -4,11 +4,8 @@ const fs = require('fs');
 
 const localNodeModules = path.resolve(__dirname, 'node_modules');
 const rootNodeModules = path.resolve(__dirname, '../../../node_modules');
-
-// 用于重定向的锚点文件（本地 node_modules 内的真实文件）
 const REDIRECT_ANCHOR = path.join(localNodeModules, 'react-native', 'index.js');
 
-// 从模块名提取包名（处理 scoped 包和子路径）
 function getPackageName(moduleName) {
   if (moduleName.startsWith('@')) {
     const parts = moduleName.split('/');
@@ -17,7 +14,6 @@ function getPackageName(moduleName) {
   return moduleName.split('/')[0];
 }
 
-// 需要强制解析到本地版本的包名
 const REDIRECT_PACKAGES = new Set([
   'react',
   'react-native',
@@ -28,7 +24,6 @@ const REDIRECT_PACKAGES = new Set([
 
 function shouldRedirectToLocal(moduleName) {
   const pkgName = getPackageName(moduleName);
-  // 不重定向 @impos2 包，让它们从 workspace 解析
   if (pkgName.startsWith('@impos2')) {
     return false;
   }
@@ -40,14 +35,9 @@ function shouldRedirectToLocal(moduleName) {
 }
 
 const config = {
-  watchFolders: [
-    path.resolve(__dirname, '../../..'), // Monorepo 根目录
-  ],
+  watchFolders: [path.resolve(__dirname, '../../..')],
   resolver: {
-    nodeModulesPaths: [
-      localNodeModules,
-      rootNodeModules,
-    ],
+    nodeModulesPaths: [localNodeModules, rootNodeModules],
     resolverMainFields: ['react-native', 'browser', 'main'],
     unstable_enablePackageExports: true,
     resolveRequest: (context, moduleName, platform) => {

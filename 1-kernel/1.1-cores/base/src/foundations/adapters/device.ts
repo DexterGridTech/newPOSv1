@@ -76,7 +76,7 @@ export const device: Device = {
     },
     addPowerStatusChangeListener(listener: (event: PowerStatusChangeEvent) => void): () => void {
         if (registeredDevice)
-            registeredDevice.addPowerStatusChangeListener(listener)
+            return registeredDevice.addPowerStatusChangeListener(listener)
         return () => {
         }
     },

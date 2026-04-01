@@ -1,39 +1,11 @@
 pluginManagement { includeBuild("../node_modules/@react-native/gradle-plugin") }
 plugins { id("com.facebook.react.settings") }
-// 禁用 autolink，手动在 MainApplication 中指定 packages
-// extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
-
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
-    repositories {
-        google()
-        mavenCentral()
-        mavenLocal()
-    }
+extensions.configure(com.facebook.react.ReactSettingsExtension){ ex ->
+  ex.autolinkLibrariesFromCommand(["node", "node_modules/react-native/cli.js", "config"])
 }
 
 rootProject.name = 'MixcRetailRN84v2'
 include ':app'
-
-// 手动 include 原生库项目（因为禁用了 autolink）
-include ':react-native-mmkv'
-project(':react-native-mmkv').projectDir = file('../node_modules/react-native-mmkv/android')
-
-include ':react-native-nitro-modules'
-project(':react-native-nitro-modules').projectDir = file('../node_modules/react-native-nitro-modules/android')
-
-include ':react-native-splash-screen'
-project(':react-native-splash-screen').projectDir = file('../node_modules/react-native-splash-screen/android')
-
-include ':react-native-svg'
-project(':react-native-svg').projectDir = file('../node_modules/react-native-svg/android')
-
-// ✅ 源码引用 adapterPure (使用 includeBuild 而不是 include)
-includeBuild('../../../../3-adapter/android/adapterPure') {
-    dependencySubstitution {
-        substitute(module('com.impos2:adapter-pure')).using(project(':adapter-lib'))
-    }
-}
-
+include ':adapter-pure'
+project(':adapter-pure').projectDir = file('../../../../3-adapter/android/adapterPure/adapter-lib')
 includeBuild('../node_modules/@react-native/gradle-plugin')
-

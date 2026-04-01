@@ -4,14 +4,50 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- 外圆环 -->
     <path
-        android:fillColor="#00000000"
-        android:strokeColor="#FFFFFF"
-        android:strokeWidth="4"
-        android:pathData="M54,14 A40,40 0 1,1 54,94 A40,40 0 1,1 54,14Z" />
-    <!-- 内实心圆 -->
+        android:fillColor="@color/splash_glow"
+        android:fillAlpha="0.26"
+        android:pathData="M54,8A46,46 0 1,1 54,100A46,46 0 1,1 54,8Z" />
+
     <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M54,34 A20,20 0 1,1 54,74 A20,20 0 1,1 54,34Z" />
+        android:fillColor="@color/splash_surface"
+        android:pathData="M26,18h48a10,10 0 0,1 10,10v52a10,10 0 0,1 -10,10H26a10,10 0 0,1 -10,-10V28a10,10 0 0,1 10,-10z" />
+    <path
+        android:fillColor="@color/splash_surface_border"
+        android:pathData="M26,18h48a10,10 0 0,1 10,10v11H16V28a10,10 0 0,1 10,-10z" />
+
+    <path
+        android:fillColor="@color/splash_text_primary"
+        android:pathData="M30,28m-2.3,0a2.3,2.3 0 1,1 4.6,0a2.3,2.3 0 1,1 -4.6,0" />
+    <path
+        android:fillColor="@color/splash_text_primary"
+        android:pathData="M39,28m-2.3,0a2.3,2.3 0 1,1 4.6,0a2.3,2.3 0 1,1 -4.6,0" />
+
+    <path
+        android:fillColor="@color/splash_accent"
+        android:pathData="M64,15l7,7l-7,7h-3.4l5.1,-7l-5.1,-7z" />
+    <path
+        android:fillColor="@color/splash_accent_soft"
+        android:pathData="M70,15l7,7l-7,7h-3.4l5.1,-7l-5.1,-7z" />
+
+    <path
+        android:fillColor="@color/splash_text_primary"
+        android:pathData="M30,47h17a4,4 0 0,1 4,4v4a4,4 0 0,1 -4,4H30a4,4 0 0,1 -4,-4v-4a4,4 0 0,1 4,-4z" />
+    <path
+        android:fillColor="@color/splash_accent"
+        android:pathData="M56,47h17a4,4 0 0,1 4,4v4a4,4 0 0,1 -4,4H56a4,4 0 0,1 -4,-4v-4a4,4 0 0,1 4,-4z" />
+
+    <path
+        android:fillColor="@color/splash_text_primary"
+        android:pathData="M30,62h10a4,4 0 0,1 4,4v4a4,4 0 0,1 -4,4H30a4,4 0 0,1 -4,-4v-4a4,4 0 0,1 4,-4z" />
+    <path
+        android:fillColor="@color/splash_text_primary"
+        android:pathData="M47,62h10a4,4 0 0,1 4,4v4a4,4 0 0,1 -4,4H47a4,4 0 0,1 -4,-4v-4a4,4 0 0,1 4,-4z" />
+    <path
+        android:fillColor="@color/splash_text_primary"
+        android:pathData="M64,62h10a4,4 0 0,1 4,4v4a4,4 0 0,1 -4,4H64a4,4 0 0,1 -4,-4v-4a4,4 0 0,1 4,-4z" />
+
+    <path
+        android:fillColor="@color/splash_accent_soft"
+        android:pathData="M44,85h20a1.8,1.8 0 0,1 0,3.6H44a1.8,1.8 0 0,1 0,-3.6z" />
 </vector>
