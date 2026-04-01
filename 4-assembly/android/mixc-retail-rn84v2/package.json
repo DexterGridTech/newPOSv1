@@ -8,7 +8,7 @@
     "start:clean": "react-native start --reset-cache",
     "android": "react-native run-android",
     "android:debug": "react-native run-android --mode=debug",
-    "android:run": "zsh -lc 'source ~/.zshrc >/dev/null 2>&1 || true; if ! command -v adb >/dev/null 2>&1; then echo adb not found in PATH after loading ~/.zshrc; exit 1; fi; if ! adb devices | grep -qE \"(^|[[:space:]])device$\"; then echo no connected Android device or emulator found; exit 1; fi; adb reverse tcp:8081 tcp:8081 >/dev/null 2>&1 || true; cd android && ./gradlew :app:installDebug && adb shell am force-stop com.impos2.mixcretailrn84v2 >/dev/null 2>&1 || true && adb shell monkey -p com.impos2.mixcretailrn84v2 -c android.intent.category.LAUNCHER 1'",
+    "android:run": "bash ../../../scripts/run-rn84v2-android.sh",
     "clean": "rm -rf node_modules && cd android && ./gradlew clean",
     "type-check": "tsc --noEmit"
   },

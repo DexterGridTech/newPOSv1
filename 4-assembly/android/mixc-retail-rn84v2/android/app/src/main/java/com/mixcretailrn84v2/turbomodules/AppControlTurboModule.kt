@@ -5,7 +5,7 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.annotations.ReactModule
 import com.impos2.adapter.appcontrol.AppControlManager
 import com.impos2.mixcretailrn84v2.MainActivity
-import com.impos2.mixcretailrn84v2.loading.LoadingManager
+import com.impos2.mixcretailrn84v2.startup.StartupCoordinator
 
 @ReactModule(name = AppControlTurboModule.NAME)
 class AppControlTurboModule(reactContext: ReactApplicationContext) :
@@ -28,7 +28,8 @@ class AppControlTurboModule(reactContext: ReactApplicationContext) :
   override fun hideLoading(displayIndex: Double, promise: Promise) {
     runAction(promise) {
       if (displayIndex.toInt() == 0) {
-        LoadingManager.hideLoading()
+        val activity = MainActivity.instance ?: error("MainActivity not ready")
+        StartupCoordinator.onAppLoadComplete(activity, 0)
       }
       appControlManager.hideLoading(displayIndex.toInt())
     }

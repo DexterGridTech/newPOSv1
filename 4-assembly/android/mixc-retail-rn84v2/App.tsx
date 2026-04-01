@@ -3,7 +3,6 @@ import type {Store} from "@reduxjs/toolkit";
 import type {Persistor} from "redux-persist";
 import {Provider} from "react-redux";
 import {PersistGate} from "redux-persist/integration/react";
-import BootSplash from 'react-native-bootsplash';
 import {ApplicationManager, appControl} from "@impos2/kernel-core-base";
 import {storePromise} from "./src/store.ts";
 import {AppProps} from "./src/types/shared/appProps.ts";
@@ -14,22 +13,13 @@ const App = (props: AppProps) => {
     ensureModulePreSetup();
     const [storeReady, setStoreReady] = useState<{ store: Store; persistor: Persistor } | null>(null);
 
-    const hideBootSplash = useCallback(() => {
-        BootSplash.hide({fade: false}).catch((error: Error | any) => {
-            console.error('BootSplash hide error', error);
-        });
-    }, []);
-
     const handleAppLoadComplete = useCallback(() => {
         ApplicationManager.getInstance().init();
         appControl.onAppLoadComplete(props.displayIndex)
             .catch((error: Error | any) => {
                 console.error('App load complete error', error);
             })
-            .finally(() => {
-                hideBootSplash();
-            });
-    }, [hideBootSplash, props.displayIndex]);
+    }, [props.displayIndex]);
 
     useEffect(() => {
         storePromise(props)
@@ -38,9 +28,8 @@ const App = (props: AppProps) => {
             })
             .catch(error => {
                 console.error('storePromise error:', error);
-                hideBootSplash();
             });
-    }, [hideBootSplash, props]);
+    }, [props]);
 
     if (!storeReady) {
         return null;

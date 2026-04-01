@@ -20,5 +20,5 @@
     <color name="splash_sphere_primary_end">#1B2835</color>
     <color name="splash_sphere_secondary_start">#D0A45A</color>
     <color name="splash_sphere_secondary_end">#8A632D</color>
-    <color name="bootsplash_background">#161d26</color>
+    <color name="bootsplash_background">#ffffff</color>
 </resources>
