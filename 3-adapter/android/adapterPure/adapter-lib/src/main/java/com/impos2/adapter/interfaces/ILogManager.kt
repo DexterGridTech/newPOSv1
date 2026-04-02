@@ -1,5 +1,10 @@
 package com.impos2.adapter.interfaces
 
+/**
+ * 文件日志能力抽象。
+ *
+ * 除了简单写日志外，它还承担日志文件管理职责，方便测试页和排查工具直接读取历史日志。
+ */
 interface ILogManager {
   fun debug(tag: String, message: String)
   fun log(tag: String, message: String)

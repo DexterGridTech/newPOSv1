@@ -15,6 +15,18 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+/**
+ * 文件日志管理器。
+ *
+ * 这个类把控制台日志与落盘日志统一管理，目标是让 adapterPure 在真机问题排查时具备最基本的
+ * 可追踪性。当前它负责：
+ * - 统一写 debug/info/warn/error；
+ * - 按天切分日志文件；
+ * - 为 error 单独维护错误日志；
+ * - 读取、删除、清理历史日志文件。
+ *
+ * 实现上使用 IO 协程 + 互斥锁串行化写入，优先保证日志内容完整与文件不互相踩写。
+ */
 class LogManager private constructor(context: Context) : ILogManager {
 
   companion object {
@@ -35,6 +47,7 @@ class LogManager private constructor(context: Context) : ILogManager {
       }
   }
 
+  // 所有日志都落在应用私有目录下，便于跟随应用生命周期统一管理。
   private val logDir = File(context.filesDir, LOG_DIR_NAME)
   private val scope = CoroutineScope(Dispatchers.IO)
   private val writeMutex = Mutex()

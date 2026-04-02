@@ -290,7 +290,7 @@ export class KernelWebSocketClient implements IKernelWebSocketClient {
   /**
    * WebSocket 关闭处理
    */
-  private handleWebSocketClose(event: CloseEvent): void {
+  private handleWebSocketClose(event: {code?: number; reason?: string}): void {
     logger.log([moduleName, LOG_TAGS.WebSocket, "WebSocketClient"], `[KernelWS] WebSocket closed: ${event.code} ${event.reason}`);
 
     if (this.state !== KernelConnectionState.DISCONNECTING) {

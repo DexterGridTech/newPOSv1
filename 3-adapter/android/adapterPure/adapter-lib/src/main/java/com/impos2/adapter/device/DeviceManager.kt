@@ -36,6 +36,19 @@ import java.security.MessageDigest
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 
+/**
+ * 设备信息与系统状态管理器。
+ *
+ * 它负责对 Android 设备侧的信息采集做统一封装，包括：
+ * - 基础设备标识、型号、屏幕信息；
+ * - 网络、电源、电池等系统状态；
+ * - 电源变化监听与事件分发。
+ *
+ * 设计原则：
+ * - 统一从这里读设备态，避免上层到处直接碰系统 API；
+ * - 对高风险 API 做兜底，减少 ROM 差异导致的崩溃；
+ * - 为 TurboModule 与测试页提供稳定模型对象。
+ */
 class DeviceManager private constructor(private val context: Context) : IDeviceManager {
 
   companion object {
@@ -60,6 +73,7 @@ class DeviceManager private constructor(private val context: Context) : IDeviceM
     }
   }
 
+  // 电源状态监听器表。使用并发 map，保证注册/取消监听与系统回调并发时仍然安全。
   private val powerListeners = ConcurrentHashMap<String, (PowerStatusChangeEvent) -> Unit>()
 
   @Volatile

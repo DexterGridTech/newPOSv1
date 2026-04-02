@@ -15,10 +15,32 @@ import com.impos2.mixcretailrn84v2.startup.SecondaryProcessController
 import com.impos2.mixcretailrn84v2.startup.StartupAuditLogger
 import java.util.concurrent.atomic.AtomicBoolean
 
+/**
+ * 副屏 Activity。
+ *
+ * 它运行在独立进程 `:secondary` 中，用于承载第二套完全独立的 RN JS 运行时。
+ * 这个类的设计重点不是业务 UI，而是进程级生命周期控制：
+ * - 启动时向主进程回报“副屏已启动”；
+ * - 接收主进程下发的重启/退出请求；
+ * - 在受控关闭时发送 ACK；
+ * - 最后主动结束本进程，确保后续启动时拿到全新的运行环境。
+ */
 class SecondaryActivity : ReactActivity() {
 
+  /**
+   * 标记当前销毁是否由“受控重启”触发。
+   *
+   * 只有在收到主进程的 shutdown 广播后，这个标记才会被置为 true。这样 [onDestroy] 才知道
+   * 需要发送 ACK 并 `killProcess`，避免普通系统销毁场景误伤。
+   */
   private val shutdownRequested = AtomicBoolean(false)
 
+  /**
+   * 接收主进程发来的“请副屏退出”广播。
+   *
+   * 收到后不直接杀进程，而是先走 `finishAndRemoveTask()`，让 Activity 生命周期尽量完整结束，
+   * 之后在 [onDestroy] 再发送 ACK 与退出进程。
+   */
   private val restartReceiver = object : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
       if (shutdownRequested.compareAndSet(false, true)) {
@@ -28,17 +50,31 @@ class SecondaryActivity : ReactActivity() {
     }
   }
 
+  /**
+   * 与主屏共用同一个 RN 入口名，但因为 launch options 不同、进程不同，所以业务层可以区分
+   * 主副屏上下文。
+   */
   override fun getMainComponentName(): String = "MixcRetailRN84v2"
 
+  /**
+   * 创建副屏专用的启动参数，固定传 `displayIndex = 1`。
+   */
   override fun createReactActivityDelegate(): ReactActivityDelegate =
     object : DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled) {
       override fun getLaunchOptions(): Bundle = LaunchOptionsFactory.create(this@SecondaryActivity, 1)
     }
 
+  /**
+   * 副屏创建入口。
+   *
+   * 这里主要完成三件事：
+   * - 记录审计日志；
+   * - 通知主进程“副屏已经起来了”；
+   * - 注册重启广播接收器，等待后续受控退出。
+   */
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     StartupAuditLogger.logActivityCreated("SecondaryActivity", 1)
-    MainActivity.instance?.onSecondaryActivityCreated()
     SecondaryProcessController.markSecondaryStarted()
     val filter = SecondaryProcessController.createRestartRequestFilter()
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -49,9 +85,17 @@ class SecondaryActivity : ReactActivity() {
     }
   }
 
+  /**
+   * 副屏销毁时做受控收尾。
+   *
+   * 如果这是一次普通销毁，只做状态清理；
+   * 如果这是重启链路中的受控销毁，则还要：
+   * - 给主进程发 ACK；
+   * - 写审计日志；
+   * - 主动结束当前副进程，确保下次副屏启动拿到全新 JS 环境。
+   */
   override fun onDestroy() {
     runCatching { unregisterReceiver(restartReceiver) }
-    MainActivity.instance?.onSecondaryActivityDestroyed()
     SecondaryProcessController.markSecondaryStopped()
     if (shutdownRequested.get()) {
       sendBroadcast(SecondaryProcessController.createRestartAckIntent(this))

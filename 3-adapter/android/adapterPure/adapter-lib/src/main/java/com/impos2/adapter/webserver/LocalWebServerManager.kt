@@ -13,6 +13,18 @@ import com.impos2.adapter.interfaces.LocalWebServerInfo
 import com.impos2.adapter.interfaces.LocalWebServerStatus
 import com.impos2.adapter.interfaces.ServerAddress
 
+/**
+ * LocalWebServer 的应用层门面。
+ *
+ * 这个类不直接实现 WebServer，而是负责：
+ * - 启动并绑定 [LocalWebServerService]；
+ * - 把 Service 生命周期收敛成同步 manager 接口；
+ * - 对上层暴露稳定的 start/stop/status/stats 访问方式。
+ *
+ * 设计目的：
+ * - 让上层无需理解 Service 绑定、Binder 获取、等待连接等 Android 细节；
+ * - 把 WebServer 能力表现成普通 manager，便于在整合层和测试页复用。
+ */
 class LocalWebServerManager private constructor(private val context: Context) : ILocalWebServer {
 
   companion object {
@@ -26,6 +38,7 @@ class LocalWebServerManager private constructor(private val context: Context) : 
     }
   }
 
+  // 当前已绑定到的 Service 实例。只有绑定成功后才允许真正执行业务调用。
   @Volatile
   private var service: LocalWebServerService? = null
 
@@ -73,7 +86,8 @@ class LocalWebServerManager private constructor(private val context: Context) : 
 
   @Synchronized
   override fun stop() {
-    service?.stopServer()
+    val target = service ?: return
+    target.stopServer()
   }
 
   override fun getStatus(): LocalWebServerInfo {
@@ -88,13 +102,7 @@ class LocalWebServerManager private constructor(private val context: Context) : 
     }
 
     return LocalWebServerInfo(
-      status = when (target.status) {
-        "STARTING" -> LocalWebServerStatus.STARTING
-        "RUNNING" -> LocalWebServerStatus.RUNNING
-        "STOPPING" -> LocalWebServerStatus.STOPPING
-        "ERROR" -> LocalWebServerStatus.ERROR
-        else -> LocalWebServerStatus.STOPPED
-      },
+      status = target.state.toPublicStatus(),
       addresses = target.addresses.map { (name, address) ->
         ServerAddress(name = name, address = address)
       },
@@ -120,7 +128,7 @@ class LocalWebServerManager private constructor(private val context: Context) : 
   }
 
   private fun ensureBound() {
-    if (bound) return
+    if (bound && service != null) return
     val latch = CountDownLatch(1)
     bindLatch = latch
     LocalWebServerService.start(context)
@@ -132,8 +140,18 @@ class LocalWebServerManager private constructor(private val context: Context) : 
     }
     val completed = latch.await(3, TimeUnit.SECONDS)
     bindLatch = null
-    if (!completed || !bound) {
+    if (!completed || !bound || service == null) {
       throw IllegalStateException("LocalWebServerService bind timeout")
+    }
+  }
+
+  private fun LocalWebServerService.ServiceState.toPublicStatus(): LocalWebServerStatus {
+    return when (this) {
+      LocalWebServerService.ServiceState.STARTING -> LocalWebServerStatus.STARTING
+      LocalWebServerService.ServiceState.RUNNING -> LocalWebServerStatus.RUNNING
+      LocalWebServerService.ServiceState.STOPPING -> LocalWebServerStatus.STOPPING
+      LocalWebServerService.ServiceState.ERROR -> LocalWebServerStatus.ERROR
+      LocalWebServerService.ServiceState.STOPPED -> LocalWebServerStatus.STOPPED
     }
   }
 }

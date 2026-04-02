@@ -1,4 +1,4 @@
 #!/bin/sh
 
 DIR="$(cd "$(dirname "$0")" && pwd)"
-exec "$DIR/../adapterRN84/android/gradlew" -p "$DIR" "$@"
+exec java -classpath "$DIR/gradle/wrapper/gradle-wrapper.jar" org.gradle.wrapper.GradleWrapperMain -p "$DIR" "$@"

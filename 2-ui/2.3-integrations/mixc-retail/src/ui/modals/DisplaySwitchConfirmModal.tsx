@@ -52,7 +52,7 @@ export const DisplaySwitchConfirmModal: React.FC<ModalScreen<DisplaySwitchModalP
     const [countdown, setCountdown] = useState(3);
 
     const isMountedRef = useRef<boolean>(true);
-    const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const countdownTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
     // 清理定时器
     const clearCountdownTimer = useCallback(() => {

@@ -11,10 +11,14 @@ import com.impos2.adapter.interfaces.ScriptExecutionOptions
 import com.impos2.adapter.interfaces.ScriptExecutionResult
 import com.impos2.adapter.interfaces.ScriptStats
 import com.impos2.adapter.scripts.ScriptEngineManager
-import com.impos2.mixcretailrn84v2.turbomodules.NativeScriptsTurboModuleSpec
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CountDownLatch
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import java.util.concurrent.ThreadFactory
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicLong
 
 @ReactModule(name = ScriptsTurboModule.NAME)
 class ScriptsTurboModule(reactContext: ReactApplicationContext) :
@@ -34,8 +38,19 @@ class ScriptsTurboModule(reactContext: ReactApplicationContext) :
     @Volatile var errorMessage: String? = null,
   )
 
+  private data class ActiveScriptTask(
+    val taskId: String,
+    val startedAt: Long,
+    val promise: Promise,
+    val cancelled: AtomicBoolean = AtomicBoolean(false),
+  )
+
   private val scriptEngine by lazy { ScriptEngineManager.getInstance(reactApplicationContext) }
   private val pendingNativeCalls = ConcurrentHashMap<String, PendingNativeCall>()
+  private val activeTasks = ConcurrentHashMap<String, ActiveScriptTask>()
+  private val taskSequence = AtomicLong(0L)
+  private val scriptExecutor: ExecutorService = Executors.newSingleThreadExecutor(ScriptTaskThreadFactory())
+  @Volatile private var invalidated = false
 
   override fun getName(): String = NAME
 
@@ -45,27 +60,58 @@ class ScriptsTurboModule(reactContext: ReactApplicationContext) :
     globalsJson: String,
     nativeFuncNames: ReadableArray,
     timeout: Double,
-    promise: Promise
+    promise: Promise,
   ) {
+    if (invalidated) {
+      rejectPromise(promise, "EXECUTE_SCRIPT_ERROR", "ScriptsTurboModule invalidated")
+      return
+    }
+
+    val taskId = "task-${taskSequence.incrementAndGet()}"
+    val task = ActiveScriptTask(
+      taskId = taskId,
+      startedAt = System.currentTimeMillis(),
+      promise = promise,
+    )
+    activeTasks[taskId] = task
+
     runCatching {
       val names = Array(nativeFuncNames.size()) { index -> nativeFuncNames.getString(index).orEmpty() }
-      val result = scriptEngine.executeScript(
-        ScriptExecutionOptions(
-          script = script,
-          paramsJson = paramsJson,
-          globalsJson = globalsJson,
-          nativeFuncNames = names,
-          timeout = timeout.toInt(),
-          nativeFunctionInvoker = { funcName, argsJson, timeoutMs ->
-            invokeNativeFunction(funcName, argsJson, timeoutMs)
-          },
-        )
-      )
-      toWritableMap(result)
-    }.onSuccess {
-      promise.resolve(it)
-    }.onFailure {
-      promise.reject("EXECUTE_SCRIPT_ERROR", it.message, it)
+      scriptExecutor.execute {
+        if (task.cancelled.get() || invalidated) {
+          activeTasks.remove(taskId)
+          return@execute
+        }
+
+        runCatching {
+          val result = scriptEngine.executeScript(
+            ScriptExecutionOptions(
+              script = script,
+              paramsJson = paramsJson,
+              globalsJson = globalsJson,
+              nativeFuncNames = names,
+              timeout = timeout.toInt(),
+              nativeFunctionInvoker = { funcName, argsJson, timeoutMs ->
+                invokeNativeFunction(funcName, argsJson, timeoutMs)
+              },
+            ),
+          )
+          toWritableMap(result)
+        }.onSuccess { resultMap ->
+          if (!task.cancelled.get() && !invalidated) {
+            resolvePromise(task.promise, resultMap)
+          }
+        }.onFailure { error ->
+          if (!task.cancelled.get() && !invalidated) {
+            rejectPromise(task.promise, "EXECUTE_SCRIPT_ERROR", error.message, error)
+          }
+        }
+
+        activeTasks.remove(taskId)
+      }
+    }.onFailure { error ->
+      activeTasks.remove(taskId)
+      rejectPromise(promise, "EXECUTE_SCRIPT_ERROR", error.message, error)
     }
   }
 
@@ -74,7 +120,7 @@ class ScriptsTurboModule(reactContext: ReactApplicationContext) :
       this.resultJson = resultJson
       latch.countDown()
     }
-    promise.resolve(null)
+    resolvePromise(promise, null)
   }
 
   override fun rejectNativeCall(callId: String, errorMessage: String, promise: Promise) {
@@ -82,16 +128,16 @@ class ScriptsTurboModule(reactContext: ReactApplicationContext) :
       this.errorMessage = errorMessage
       latch.countDown()
     }
-    promise.resolve(null)
+    resolvePromise(promise, null)
   }
 
   override fun getStats(promise: Promise) {
     runCatching {
       toWritableMap(scriptEngine.getStats())
     }.onSuccess {
-      promise.resolve(it)
+      resolvePromise(promise, it)
     }.onFailure {
-      promise.reject("GET_SCRIPT_STATS_ERROR", it.message, it)
+      rejectPromise(promise, "GET_SCRIPT_STATS_ERROR", it.message, it)
     }
   }
 
@@ -103,7 +149,27 @@ class ScriptsTurboModule(reactContext: ReactApplicationContext) :
 
   override fun removeListeners(count: Double) = Unit
 
+  override fun invalidate() {
+    invalidated = true
+    activeTasks.values.forEach { task ->
+      task.cancelled.set(true)
+      rejectPromise(task.promise, "EXECUTE_SCRIPT_ERROR", "ScriptsTurboModule invalidated")
+    }
+    activeTasks.clear()
+    pendingNativeCalls.forEach { (_, pendingCall) ->
+      pendingCall.errorMessage = "ScriptsTurboModule invalidated"
+      pendingCall.latch.countDown()
+    }
+    pendingNativeCalls.clear()
+    scriptExecutor.shutdownNow()
+    super.invalidate()
+  }
+
   private fun invokeNativeFunction(funcName: String, argsJson: String, timeoutMs: Long): String {
+    if (invalidated) {
+      throw IllegalStateException("ScriptsTurboModule invalidated")
+    }
+
     val callId = "${System.currentTimeMillis()}:${System.nanoTime()}"
     val pendingCall = PendingNativeCall(
       funcName = funcName,
@@ -136,6 +202,27 @@ class ScriptsTurboModule(reactContext: ReactApplicationContext) :
       .emit(EVENT_NATIVE_CALL, params)
   }
 
+  private fun resolvePromise(promise: Promise, value: Any?) {
+    reactApplicationContext.runOnNativeModulesQueueThread {
+      promise.resolve(value)
+    }
+  }
+
+  private fun rejectPromise(
+    promise: Promise,
+    code: String,
+    message: String?,
+    throwable: Throwable? = null,
+  ) {
+    reactApplicationContext.runOnNativeModulesQueueThread {
+      if (throwable != null) {
+        promise.reject(code, message, throwable)
+      } else {
+        promise.reject(code, message)
+      }
+    }
+  }
+
   private fun toWritableMap(result: ScriptExecutionResult): WritableMap {
     return Arguments.createMap().apply {
       putBoolean("success", result.success)
@@ -155,6 +242,16 @@ class ScriptsTurboModule(reactContext: ReactApplicationContext) :
       putInt("success", stats.success)
       putInt("failure", stats.failure)
       putDouble("avgTimeMs", stats.avgTimeMs)
+    }
+  }
+
+  private class ScriptTaskThreadFactory : ThreadFactory {
+    private val sequence = AtomicLong(0L)
+
+    override fun newThread(runnable: Runnable): Thread {
+      return Thread(runnable, "rn84v2-scripts-${sequence.incrementAndGet()}").apply {
+        isDaemon = true
+      }
     }
   }
 }

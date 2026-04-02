@@ -1,5 +1,10 @@
 package com.impos2.adapter.interfaces
 
+/**
+ * 原生 KV 存储抽象。
+ *
+ * 这里定义的是 adapterPure 内部使用的最小存储能力集合，重点是稳定与简单，不引入上层框架语义。
+ */
 interface IStateStorage {
   fun initialize(rootDir: String = "")
   fun getString(key: String): String?

@@ -10,8 +10,31 @@ import android.util.Log
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicLong
 
+/**
+ * LocalWebServer 后台 Service。
+ *
+ * 真正的 WebServer 生命周期、前台通知、自动恢复、连接管理都在这里汇总。
+ * 之所以落到 Service，而不是直接放在 manager 内存对象里，是因为业务要求本地服务在宿主页面
+ * 波动时也尽量保持稳定，不依赖单个 Activity 生命周期。
+ *
+ * 当前职责：
+ * - 承载 [LocalWebServer] 实例；
+ * - 维护前台服务通知；
+ * - 记录启动/停止/自动恢复等运行态统计；
+ * - 在 stop 或异常恢复时清理 runtime 资源。
+ */
 class LocalWebServerService : Service() {
+
+    enum class ServiceState {
+        STOPPED,
+        STARTING,
+        RUNNING,
+        STOPPING,
+        ERROR,
+    }
 
     companion object {
         private const val TAG = "LocalWebServerService"
@@ -33,6 +56,7 @@ class LocalWebServerService : Service() {
     inner class LwsBinder : Binder() { fun get() = this@LocalWebServerService }
 
     private val binder = LwsBinder()
+    // 所有延迟恢复与异步状态维护都集中到单线程调度器，降低竞态复杂度。
     private val scheduler = Executors.newSingleThreadScheduledExecutor()
     private var heartbeatFuture: ScheduledFuture<*>? = null
     private var cleanupFuture: ScheduledFuture<*>? = null
@@ -41,9 +65,19 @@ class LocalWebServerService : Service() {
     private var deviceManager: DeviceConnectionManager? = null
     var config: ServerConfig = ServerConfig()
 
-    @Volatile var status = "STOPPED"
-    var addresses: List<Pair<String, String>> = emptyList()
-    var lastError: String? = null
+    @Volatile var state: ServiceState = ServiceState.STOPPED
+    @Volatile var addresses: List<Pair<String, String>> = emptyList()
+    @Volatile var lastError: String? = null
+    @Volatile var lastErrorAt: Long = 0L
+    @Volatile var lastStartedAt: Long = 0L
+    @Volatile var lastStoppedAt: Long = 0L
+
+    private val startCount = AtomicInteger(0)
+    private val stopCount = AtomicInteger(0)
+    private val bindCount = AtomicInteger(0)
+    private val autoRecoverCount = AtomicInteger(0)
+    private val notificationUpdateCount = AtomicInteger(0)
+    private val lastStatusChangeAt = AtomicLong(System.currentTimeMillis())
 
     override fun onCreate() {
         super.onCreate()
@@ -51,12 +85,15 @@ class LocalWebServerService : Service() {
         startForeground(NOTIFICATION_ID, buildNotification("等待启动..."))
     }
 
-    override fun onBind(intent: Intent): IBinder = binder
+    override fun onBind(intent: Intent): IBinder {
+        bindCount.incrementAndGet()
+        return binder
+    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // 被系统杀死重启后，尝试自动恢复
         val prefs = getSharedPreferences(PREFS, Context.MODE_PRIVATE)
         if (prefs.getBoolean("autoStart", false)) {
+            autoRecoverCount.incrementAndGet()
             val cfg = ServerConfig(
                 port = prefs.getInt("port", 8888),
                 basePath = prefs.getString("basePath", "/localServer")!!,
@@ -77,13 +114,31 @@ class LocalWebServerService : Service() {
         super.onDestroy()
     }
 
-    // ─── 公开接口（供 TurboModule 调用）──────────────────────────────────────
-
     @Synchronized
     fun startServer(cfg: ServerConfig): String? {
-        if (status == "RUNNING") return null
-        status = "STARTING"; lastError = null
+        when (state) {
+            ServiceState.RUNNING -> {
+                Log.i(TAG, "startServer ignored: already running")
+                return null
+            }
+            ServiceState.STARTING -> {
+                Log.i(TAG, "startServer ignored: server is starting")
+                return null
+            }
+            ServiceState.STOPPING -> {
+                val message = "server is stopping"
+                recordError(message)
+                Log.w(TAG, "startServer rejected: $message")
+                return message
+            }
+            ServiceState.STOPPED, ServiceState.ERROR -> Unit
+        }
+
+        updateState(ServiceState.STARTING)
+        clearError()
         return try {
+            cancelTimers()
+            stopRuntime(clearPrefs = false)
             config = cfg
             val dm = DeviceConnectionManager(cfg)
             val srv = LocalWebServer(cfg, dm)
@@ -91,26 +146,58 @@ class LocalWebServerService : Service() {
             deviceManager = dm
             server = srv
             addresses = srv.getAddresses()
-            status = "RUNNING"
+            lastStartedAt = System.currentTimeMillis()
+            startCount.incrementAndGet()
+            updateState(ServiceState.RUNNING)
             scheduleTimers(cfg)
             savePrefs(cfg)
             updateNotification("运行中 :${cfg.port}")
+            Log.i(TAG, "startServer success: port=${cfg.port}, basePath=${cfg.basePath}")
             null
         } catch (e: Exception) {
-            status = "ERROR"; lastError = e.message
+            stopRuntime(clearPrefs = false)
+            updateState(ServiceState.ERROR)
+            recordError(e.message ?: "start failed")
             Log.e(TAG, "start failed", e)
-            e.message
+            e.message ?: "start failed"
         }
     }
 
     @Synchronized
     fun stopServer() {
-        heartbeatFuture?.cancel(false); heartbeatFuture = null
-        cleanupFuture?.cancel(false); cleanupFuture = null
-        server?.stop(); server = null; deviceManager = null
-        addresses = emptyList(); status = "STOPPED"; lastError = null
-        clearPrefs()
-        updateNotification("已停止")
+        when (state) {
+            ServiceState.STOPPED -> {
+                cancelTimers()
+                stopRuntime(clearPrefs = true)
+                clearError()
+                lastStoppedAt = System.currentTimeMillis()
+                updateNotification("已停止")
+                Log.i(TAG, "stopServer ignored: already stopped")
+                return
+            }
+            ServiceState.STOPPING -> {
+                Log.i(TAG, "stopServer ignored: server is stopping")
+                return
+            }
+            ServiceState.STARTING, ServiceState.RUNNING, ServiceState.ERROR -> Unit
+        }
+
+        updateState(ServiceState.STOPPING)
+        try {
+            cancelTimers()
+            stopRuntime(clearPrefs = true)
+            clearError()
+            lastStoppedAt = System.currentTimeMillis()
+            stopCount.incrementAndGet()
+            updateState(ServiceState.STOPPED)
+            updateNotification("已停止")
+            Log.i(TAG, "stopServer success")
+        } catch (e: Exception) {
+            updateState(ServiceState.ERROR)
+            recordError(e.message ?: "stop failed")
+            Log.e(TAG, "stopServer failed", e)
+            updateNotification("停止异常")
+        }
     }
 
     fun getStats(): com.impos2.adapter.interfaces.ServerStats {
@@ -124,21 +211,99 @@ class LocalWebServerService : Service() {
         )
     }
 
-    // ─── 定时器 ───────────────────────────────────────────────────────────────
+    fun dumpState(): String {
+        val snapshot = server?.getDiagnosticsSnapshot().orEmpty()
+        return buildString {
+            append("state=")
+            append(state)
+            append(", addresses=")
+            append(addresses.size)
+            append(", lastError=")
+            append(lastError ?: "null")
+            append(", lastErrorAt=")
+            append(lastErrorAt)
+            append(", lastStartedAt=")
+            append(lastStartedAt)
+            append(", lastStoppedAt=")
+            append(lastStoppedAt)
+            append(", statusChangedAt=")
+            append(lastStatusChangeAt.get())
+            append(", starts=")
+            append(startCount.get())
+            append(", stops=")
+            append(stopCount.get())
+            append(", binds=")
+            append(bindCount.get())
+            append(", autoRecover=")
+            append(autoRecoverCount.get())
+            append(", notifications=")
+            append(notificationUpdateCount.get())
+            append(", server=")
+            append(snapshot)
+        }
+    }
 
     private fun scheduleTimers(cfg: ServerConfig) {
+        cancelTimers()
         heartbeatFuture = scheduler.scheduleAtFixedRate({
-            server?.sendHeartbeat()
-            server?.checkHeartbeatTimeouts()
-            server?.checkRetryQueueTimeouts()
+            try {
+                server?.sendHeartbeat()
+                server?.checkHeartbeatTimeouts()
+                server?.checkRetryQueueTimeouts()
+            } catch (e: Exception) {
+                recordError(e.message ?: "heartbeat task failed")
+                Log.e(TAG, "heartbeat task failed", e)
+            }
         }, cfg.heartbeatInterval, cfg.heartbeatInterval, TimeUnit.MILLISECONDS)
 
         cleanupFuture = scheduler.scheduleAtFixedRate({
-            deviceManager?.cleanExpiredPending()
+            try {
+                deviceManager?.cleanExpiredPending()
+            } catch (e: Exception) {
+                recordError(e.message ?: "cleanup task failed")
+                Log.e(TAG, "cleanup task failed", e)
+            }
         }, 60, 60, TimeUnit.SECONDS)
     }
 
-    // ─── 通知 ─────────────────────────────────────────────────────────────────
+    private fun cancelTimers() {
+        heartbeatFuture?.cancel(false)
+        heartbeatFuture = null
+        cleanupFuture?.cancel(false)
+        cleanupFuture = null
+    }
+
+    private fun stopRuntime(clearPrefs: Boolean) {
+        try {
+            server?.stop()
+        } catch (e: Exception) {
+            Log.w(TAG, "stopRuntime server.stop failed", e)
+            recordError(e.message ?: "server stop failed")
+        } finally {
+            server = null
+        }
+
+        deviceManager = null
+        addresses = emptyList()
+        if (clearPrefs) {
+            clearPrefs()
+        }
+    }
+
+    private fun updateState(next: ServiceState) {
+        state = next
+        lastStatusChangeAt.set(System.currentTimeMillis())
+    }
+
+    private fun recordError(message: String) {
+        lastError = message
+        lastErrorAt = System.currentTimeMillis()
+    }
+
+    private fun clearError() {
+        lastError = null
+        lastErrorAt = 0L
+    }
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -157,11 +322,10 @@ class LocalWebServerService : Service() {
             .build()
 
     private fun updateNotification(text: String) {
+        notificationUpdateCount.incrementAndGet()
         val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         nm.notify(NOTIFICATION_ID, buildNotification(text))
     }
-
-    // ─── SharedPrefs（自动恢复用）─────────────────────────────────────────────
 
     private fun savePrefs(cfg: ServerConfig) {
         getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().apply {

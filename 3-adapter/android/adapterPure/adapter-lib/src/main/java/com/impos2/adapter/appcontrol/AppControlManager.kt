@@ -15,6 +15,17 @@ import android.view.WindowInsetsController
 import android.view.WindowManager
 import java.lang.ref.WeakReference
 
+/**
+ * 宿主应用控制管理器。
+ *
+ * 这个类封装的是“和 Android 宿主界面/任务栈直接相关”的能力，例如：
+ * - 全屏；
+ * - 锁定任务；
+ * - 加载态占位；
+ * - 宿主页面退出或状态重放。
+ *
+ * 这些能力都具有很强的平台语义，不能散落在各个调用点里临时拼装，所以统一收口到这里。
+ */
 class AppControlManager private constructor(private val application: Application) :
   Application.ActivityLifecycleCallbacks {
 
@@ -29,6 +40,7 @@ class AppControlManager private constructor(private val application: Application
     }
   }
 
+  // 大部分系统 UI 操作都要求在主线程执行，因此统一通过主线程 handler 调度。
   private val mainHandler = Handler(Looper.getMainLooper())
   private var currentActivityRef: WeakReference<Activity>? = null
   private var loadingDialog: AlertDialog? = null
