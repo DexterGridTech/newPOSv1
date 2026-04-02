@@ -56,7 +56,7 @@ const RootScreen: React.FC<AppProps> = ({onLoadComplete}) => {
                     )}
                 </View>
                 <ModalContainer/>
-                <AdminPopup visible={showAdminPopup} onClose={() => setShowAdminPopup(false)}/>
+                {showAdminPopup ? <AdminPopup onClose={() => setShowAdminPopup(false)}/> : null}
             </FancyContainerV2>
             {/* 必须添加键盘遮罩层 */}
             <FancyKeyboardOverlayV2/>

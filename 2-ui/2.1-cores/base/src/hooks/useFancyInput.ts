@@ -7,7 +7,7 @@ import {ActiveInputInfo} from '../contexts/FancyKeyboardContext';
  * FancyInput Hook 返回值
  */
 export interface UseFancyInputReturn {
-    inputRef: React.RefObject<TextInput>;
+    inputRef: React.RefObject<TextInput | null>;
     handlePress: () => void;
     value: string;
     onChangeText: (text: string) => void;

@@ -1,286 +1,517 @@
-import React from "react";
-import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import QRCode from "react-native-qrcode-svg";
-import {ScreenMode, ScreenPartRegistration} from "@impos2/kernel-core-base";
-import {InstanceMode, Workspace, ServerConnectionStatus} from "@impos2/kernel-core-interconnection";
-import {uiCoreAdminVariables} from "../variables";
-import {useSwitchInstanceMode} from "../../hooks/useSwitchInstanceMode";
-import {useLocalServerStatus} from "../../hooks/useLocalServerStatus";
+import React from 'react';
+import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import QRCode from 'react-native-qrcode-svg';
+import {InstanceMode, ServerConnectionStatus} from '@impos2/kernel-core-interconnection';
+import {useLocalServerStatus} from '../../hooks/useLocalServerStatus';
+import {useSwitchInstanceMode} from '../../hooks/useSwitchInstanceMode';
 
-// ─── Design Tokens ───────────────────────────────────────────────────────────
 const C = {
-    bg: '#F0F2F5',
-    surface: '#FFFFFF',
-    border: '#E2E8F0',
-    text: '#0F172A',
-    textSub: '#64748B',
-    textMuted: '#94A3B8',
-    accent: '#0369A1',
-    accentBg: '#EFF6FF',
-    ok: '#16A34A',
-    okBg: '#F0FDF4',
-    warn: '#D97706',
-    warnBg: '#FFFBEB',
-    err: '#DC2626',
-    errBg: '#FEF2F2',
-    divider: '#F1F5F9',
+  surface: '#FFFFFF',
+  surfaceMuted: '#F7FAFC',
+  border: '#D9E3EE',
+  borderStrong: '#C6D4E4',
+  text: '#0F172A',
+  textSecondary: '#516173',
+  textMuted: '#7B8A9F',
+  accent: '#0B5FFF',
+  accentSoft: '#EAF1FF',
+  accentDeep: '#163A74',
+  ok: '#109669',
+  okSoft: '#EAF8F2',
+  warn: '#C47A10',
+  warnSoft: '#FFF7E8',
+  err: '#D14343',
+  errSoft: '#FDECEC',
+  divider: '#EDF2F7',
+  shadow: 'rgba(15, 23, 42, 0.06)',
 } as const;
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-const Section: React.FC<{ title: string; children: React.ReactNode }> = ({title, children}) => (
-    <View style={s.section}>
-        <Text style={s.sectionTitle}>{title}</Text>
-        <View style={s.card}>{children}</View>
+const StatusBadge: React.FC<{label: string; tone: 'ok' | 'warn' | 'err' | 'accent'}> = ({label, tone}) => {
+  const toneStyle = {
+    ok: {bg: C.okSoft, color: C.ok},
+    warn: {bg: C.warnSoft, color: C.warn},
+    err: {bg: C.errSoft, color: C.err},
+    accent: {bg: C.accentSoft, color: C.accentDeep},
+  }[tone];
+  return (
+    <View style={[s.badge, {backgroundColor: toneStyle.bg}]}> 
+      <Text style={[s.badgeText, {color: toneStyle.color}]}>{label}</Text>
     </View>
-);
-
-const Divider = () => <View style={s.divider}/>;
-
-const Badge: React.FC<{ label: string; color: string; bg: string }> = ({label, color, bg}) => (
-    <View style={[s.badge, {backgroundColor: bg}]}>
-        <Text style={[s.badgeText, {color}]}>{label}</Text>
-    </View>
-);
-
-const Btn: React.FC<{
-    label: string;
-    onPress: () => void;
-    danger?: boolean;
-    disabled?: boolean;
-}> = ({label, onPress, danger, disabled}) => (
-    <TouchableOpacity
-        style={[s.btn, danger ? s.btnDanger : s.btnNormal, disabled && s.btnDisabled]}
-        onPress={onPress}
-        activeOpacity={0.7}
-        disabled={disabled}
-    >
-        <Text style={[s.btnText, danger ? s.btnTextDanger : s.btnTextNormal, disabled && s.btnTextDisabled]}>
-            {label}
-        </Text>
-    </TouchableOpacity>
-);
-
-// ─── Component ───────────────────────────────────────────────────────────────
-export const SwitchInstanceModeScreen: React.FC = () => {
-    const {
-        standalone,
-        enableSlave,
-        masterInfo,
-        isMaster,
-        isSlave,
-        isServerConnected,
-        isServerConnecting,
-        handleSetMaster,
-        handleSetSlave,
-        handleEnableSlave,
-        handleStartConnection,
-        handleAddMaster,
-    } = useSwitchInstanceMode();
-
-    const {connStatus} = useLocalServerStatus();
-
-    const qrValue = masterInfo ? JSON.stringify(masterInfo) : null;
-    const serverBtnLabel = isServerConnecting ? '连接中...' : isServerConnected ? '已启动' : '启动服务器';
-
-    // 连接状态显示
-    const getConnectionStatusBadge = () => {
-        switch (connStatus) {
-            case ServerConnectionStatus.CONNECTED:
-                return <Badge label="已连接" color={C.ok} bg={C.okBg}/>;
-            case ServerConnectionStatus.CONNECTING:
-                return <Badge label="连接中" color={C.warn} bg={C.warnBg}/>;
-            case ServerConnectionStatus.DISCONNECTED:
-            default:
-                return <Badge label="未连接" color={C.textMuted} bg={C.divider}/>;
-        }
-    };
-
-    return (
-        <View style={s.root}><View style={s.content}>
-            <Text style={s.headerTitle}>主机模式</Text>
-
-            {/* 当前模式 */}
-            <Section title="当前模式">
-                <View style={s.row}>
-                    <View style={s.rowLeft}>
-                        <Text style={s.rowLabel}>实例模式</Text>
-                        <Badge
-                            label={isMaster ? 'MASTER' : 'SLAVE'}
-                            color={isMaster ? C.ok : C.warn}
-                            bg={isMaster ? C.okBg : C.warnBg}
-                        />
-                    </View>
-                    {standalone && (
-                        <View style={s.rowRight}>
-                            <Btn
-                                label="切换为 MASTER"
-                                onPress={handleSetMaster}
-                                disabled={isMaster}
-                            />
-                            <View style={{height: 8}}/>
-                            <Btn
-                                label="切换为 SLAVE"
-                                onPress={handleSetSlave}
-                                disabled={isSlave}
-                            />
-                        </View>
-                    )}
-                    {!standalone && (
-                        <Badge label="固定模式" color={C.textMuted} bg={C.divider}/>
-                    )}
-                </View>
-            </Section>
-
-            {/* MASTER 模式：Slave 功能 */}
-            {isMaster && (
-                <Section title="Slave 接入">
-                    <View style={s.row}>
-                        <View style={s.rowLeft}>
-                            <Text style={s.rowLabel}>允许 Slave 接入</Text>
-                            <Badge
-                                label={enableSlave ? '已开启' : '已关闭'}
-                                color={enableSlave ? C.ok : C.textMuted}
-                                bg={enableSlave ? C.okBg : C.divider}
-                            />
-                        </View>
-                        {!enableSlave && (
-                            <Btn label="开启" onPress={handleEnableSlave}/>
-                        )}
-                    </View>
-
-                    {enableSlave && (
-                        <>
-                            <Divider/>
-                            <View style={s.row}>
-                                <View style={s.rowLeft}>
-                                    <Text style={s.rowLabel}>服务器</Text>
-                                    <Text style={s.rowDesc}>启动后 Slave 设备可连接</Text>
-                                </View>
-                                <Btn
-                                    label={serverBtnLabel}
-                                    onPress={handleStartConnection}
-                                    disabled={isServerConnected || isServerConnecting}
-                                />
-                            </View>
-
-                            {masterInfo && qrValue && (
-                                <>
-                                    <Divider/>
-                                    <View style={s.infoBlock}>
-                                        <View style={s.infoRow}>
-                                            <Text style={s.infoLabel}>设备 ID</Text>
-                                            <Text style={s.infoValue}>{masterInfo.deviceId}</Text>
-                                        </View>
-                                        {masterInfo.serverAddress?.map((addr, i) => (
-                                            <View key={i} style={s.infoRow}>
-                                                <Text style={s.infoLabel}>{addr.name}</Text>
-                                                <Text style={s.infoValue}>{addr.address}</Text>
-                                            </View>
-                                        ))}
-                                    </View>
-                                    <Divider/>
-                                    <View style={s.qrBlock}>
-                                        <Text style={s.qrHint}>扫码连接此 Master 设备</Text>
-                                        <View style={s.qrWrapper}>
-                                            <QRCode value={qrValue} size={180}/>
-                                        </View>
-                                    </View>
-                                </>
-                            )}
-                        </>
-                    )}
-                </Section>
-            )}
-
-            {/* SLAVE 模式 */}
-            {isSlave && (
-                <>
-                    <Section title="Master 设备">
-                        {masterInfo ? (
-                            <>
-                                <View style={s.row}>
-                                    <View style={s.rowLeft}>
-                                        <Text style={s.rowLabel}>连接状态</Text>
-                                    </View>
-                                    {getConnectionStatusBadge()}
-                                </View>
-                                <Divider/>
-                                <View style={s.infoBlock}>
-                                    <View style={s.infoRow}>
-                                        <Text style={s.infoLabel}>设备 ID</Text>
-                                        <Text style={s.infoValue}>{masterInfo.deviceId}</Text>
-                                    </View>
-                                    {masterInfo.serverAddress?.map((addr, i) => (
-                                        <View key={i} style={s.infoRow}>
-                                            <Text style={s.infoLabel}>{addr.name}</Text>
-                                            <Text style={s.infoValue}>{addr.address}</Text>
-                                        </View>
-                                    ))}
-                                </View>
-                                {connStatus === ServerConnectionStatus.DISCONNECTED && (
-                                    <>
-                                        <Divider/>
-                                        <View style={s.row}>
-                                            <View style={s.rowLeft}>
-                                                <Text style={s.rowLabel}>重新连接</Text>
-                                                <Text style={s.rowDesc}>尝试连接到 Master 设备</Text>
-                                            </View>
-                                            <Btn label="连接" onPress={handleStartConnection}/>
-                                        </View>
-                                    </>
-                                )}
-                            </>
-                        ) : (
-                            <View style={s.row}>
-                                <View style={s.rowLeft}>
-                                    <Text style={s.rowLabel}>添加 Master 设备</Text>
-                                    <Text style={s.rowDesc}>扫描 Master 设备的二维码进行连接</Text>
-                                </View>
-                                <Btn label="添加" onPress={handleAddMaster}/>
-                            </View>
-                        )}
-                    </Section>
-                </>
-            )}
-        </View></View>
-    );
+  );
 };
 
-// ─── Styles ──────────────────────────────────────────────────────────────────
+const MetricCard: React.FC<{label: string; value: string; helper?: string; tone?: 'accent' | 'ok' | 'warn' | 'err'}> = ({
+  label,
+  value,
+  helper,
+  tone = 'accent',
+}) => {
+  const toneStyle = {
+    accent: {bg: C.accentSoft, valueColor: C.accentDeep},
+    ok: {bg: C.okSoft, valueColor: C.ok},
+    warn: {bg: C.warnSoft, valueColor: C.warn},
+    err: {bg: C.errSoft, valueColor: C.err},
+  }[tone];
+
+  return (
+    <View style={[s.metricCard, {backgroundColor: toneStyle.bg}]}> 
+      <Text style={s.metricLabel}>{label}</Text>
+      <Text style={[s.metricValue, {color: toneStyle.valueColor}]}>{value}</Text>
+      {helper ? <Text style={s.metricHelper}>{helper}</Text> : null}
+    </View>
+  );
+};
+
+const Section: React.FC<{title: string; description?: string; children: React.ReactNode}> = ({title, description, children}) => (
+  <View style={s.section}>
+    <View style={s.sectionHeader}>
+      <Text style={s.sectionTitle}>{title}</Text>
+      {description ? <Text style={s.sectionDescription}>{description}</Text> : null}
+    </View>
+    <View style={s.sectionCard}>{children}</View>
+  </View>
+);
+
+const Divider = () => <View style={s.divider} />;
+
+const Row: React.FC<{label: string; value?: string | null; mono?: boolean}> = ({label, value, mono}) => (
+  <View style={s.row}>
+    <Text style={s.rowLabel}>{label}</Text>
+    <Text style={[s.rowValue, mono ? s.mono : null]} numberOfLines={1} ellipsizeMode="tail">
+      {value ?? '—'}
+    </Text>
+  </View>
+);
+
+const ActionButton: React.FC<{
+  label: string;
+  onPress: () => void;
+  tone?: 'default' | 'primary' | 'danger';
+  disabled?: boolean;
+}> = ({label, onPress, tone = 'default', disabled}) => {
+  const toneStyle = {
+    default: {container: s.actionButton, text: s.actionButtonText},
+    primary: {container: [s.actionButton, s.actionButtonPrimary], text: [s.actionButtonText, s.actionButtonTextPrimary]},
+    danger: {container: [s.actionButton, s.actionButtonDanger], text: [s.actionButtonText, s.actionButtonTextDanger]},
+  }[tone];
+
+  return (
+    <TouchableOpacity
+      style={[toneStyle.container, disabled ? s.actionButtonDisabled : null]}
+      onPress={onPress}
+      activeOpacity={0.85}
+      disabled={disabled}>
+      <Text style={[toneStyle.text, disabled ? s.actionButtonTextDisabled : null]}>{label}</Text>
+    </TouchableOpacity>
+  );
+};
+
+export const SwitchInstanceModeScreen: React.FC = () => {
+  const {
+    standalone,
+    enableSlave,
+    masterInfo,
+    isMaster,
+    isSlave,
+    isServerConnected,
+    isServerConnecting,
+    handleSetMaster,
+    handleSetSlave,
+    handleEnableSlave,
+    handleStartConnection,
+    handleAddMaster,
+  } = useSwitchInstanceMode();
+
+  const {connStatus} = useLocalServerStatus();
+
+  const qrValue = masterInfo ? JSON.stringify(masterInfo) : null;
+  const serverBtnLabel = isServerConnecting ? '连接中...' : isServerConnected ? '已启动' : '启动服务器';
+
+  const connectionTone: 'ok' | 'warn' | 'err' =
+    connStatus === ServerConnectionStatus.CONNECTED
+      ? 'ok'
+      : connStatus === ServerConnectionStatus.CONNECTING
+        ? 'warn'
+        : 'err';
+
+  return (
+    <View style={s.root}>
+      <ScrollView style={{flex: 1}} contentContainerStyle={s.content}>
+        <View style={s.heroCard}>
+          <View style={s.heroHeader}>
+            <View>
+              <Text style={s.heroEyebrow}>实例控制台</Text>
+              <Text style={s.heroTitle}>主从模式管理</Text>
+              <Text style={s.heroDesc}>切换运行模式，配置主设备信息，并管理从设备连接流程。</Text>
+            </View>
+            <StatusBadge label={isMaster ? 'MASTER' : 'SLAVE'} tone={isMaster ? 'ok' : 'warn'} />
+          </View>
+
+          <View style={s.metricRow}>
+            <MetricCard label="当前模式" value={isMaster ? 'MASTER' : 'SLAVE'} helper="终端当前实例模式" tone={isMaster ? 'ok' : 'warn'} />
+            <MetricCard label="运行环境" value={standalone ? 'Standalone' : 'Managed'} helper="是否允许本地直接切换模式" tone="accent" />
+            <MetricCard label="Slave 能力" value={enableSlave ? '已启用' : '未启用'} helper="控制从设备能力入口" tone={enableSlave ? 'ok' : 'warn'} />
+            <MetricCard label="连接状态" value={connStatus === ServerConnectionStatus.CONNECTED ? '已连接' : connStatus === ServerConnectionStatus.CONNECTING ? '连接中' : '未连接'} helper="与主设备通信状态" tone={connectionTone} />
+          </View>
+        </View>
+
+        <Section title="模式切换" description="在允许本地切换的环境下，可直接切换主从实例模式。">
+          <View style={s.actionPanel}>
+            <View style={s.actionInfo}>
+              <Text style={s.actionTitle}>实例模式</Text>
+              <Text style={s.actionDesc}>当前终端运行在 {isMaster ? 'MASTER' : 'SLAVE'} 模式。</Text>
+            </View>
+            <View style={s.actionStack}>
+              <ActionButton label="切换为 MASTER" onPress={handleSetMaster} tone="primary" disabled={!standalone || isMaster} />
+              <ActionButton label="切换为 SLAVE" onPress={handleSetSlave} disabled={!standalone || isSlave} />
+            </View>
+          </View>
+          {!standalone ? (
+            <>
+              <Divider />
+              <View style={s.noticeRow}>
+                <Text style={s.noticeText}>当前环境不支持本地直接切换主从模式。</Text>
+              </View>
+            </>
+          ) : null}
+        </Section>
+
+        <Section title="从设备能力" description="主设备可决定是否开放从设备接入入口。">
+          <View style={s.actionPanel}>
+            <View style={s.actionInfo}>
+              <Text style={s.actionTitle}>Enable Slave</Text>
+              <Text style={s.actionDesc}>启用后，可作为主设备向从设备暴露连接信息。</Text>
+            </View>
+            <View style={s.inlineRight}>
+              <StatusBadge label={enableSlave ? '已启用' : '未启用'} tone={enableSlave ? 'ok' : 'warn'} />
+              {!enableSlave ? <ActionButton label="启用" onPress={handleEnableSlave} tone="primary" /> : null}
+            </View>
+          </View>
+        </Section>
+
+        {isMaster ? (
+          <>
+            <Section title="主设备连接服务" description="主设备负责暴露连接入口，并为从设备提供二维码信息。">
+              <View style={s.actionPanel}>
+                <View style={s.actionInfo}>
+                  <Text style={s.actionTitle}>本地连接服务</Text>
+                  <Text style={s.actionDesc}>启动后从设备可通过二维码中的地址信息连接到当前主设备。</Text>
+                </View>
+                <View style={s.inlineRight}>
+                  <StatusBadge label={serverBtnLabel} tone={isServerConnected ? 'ok' : isServerConnecting ? 'warn' : 'accent'} />
+                  {!isServerConnected ? (
+                    <ActionButton label={serverBtnLabel} onPress={handleStartConnection} tone="primary" disabled={isServerConnecting} />
+                  ) : null}
+                </View>
+              </View>
+            </Section>
+
+            {masterInfo && qrValue ? (
+              <Section title="主设备身份" description="从设备可扫描此二维码获取主设备连接信息。">
+                <Row label="设备 ID" value={masterInfo.deviceId} mono />
+                {masterInfo.serverAddress?.map((address, index) => (
+                  <React.Fragment key={`${address.name}-${index}`}>
+                    <Divider />
+                    <Row label={address.name} value={address.address} mono />
+                  </React.Fragment>
+                ))}
+                <Divider />
+                <View style={s.qrBlock}>
+                  <Text style={s.qrHint}>使用从设备扫描二维码以发起连接</Text>
+                  <View style={s.qrWrapper}>
+                    <QRCode value={qrValue} size={180} />
+                  </View>
+                </View>
+              </Section>
+            ) : null}
+          </>
+        ) : null}
+
+        {isSlave ? (
+          <Section title="Master 设备" description="查看当前已配置的主设备信息，并在必要时重新连接。">
+            {masterInfo ? (
+              <>
+                <View style={s.actionPanel}>
+                  <View style={s.actionInfo}>
+                    <Text style={s.actionTitle}>当前主设备</Text>
+                    <Text style={s.actionDesc}>可查看连接状态，并在断线后重新连接。</Text>
+                  </View>
+                  <View style={s.inlineRight}>
+                    <StatusBadge
+                      label={
+                        connStatus === ServerConnectionStatus.CONNECTED
+                          ? '已连接'
+                          : connStatus === ServerConnectionStatus.CONNECTING
+                            ? '连接中'
+                            : '未连接'
+                      }
+                      tone={connectionTone}
+                    />
+                    {connStatus === ServerConnectionStatus.DISCONNECTED ? (
+                      <ActionButton label="重新连接" onPress={handleStartConnection} tone="primary" />
+                    ) : null}
+                  </View>
+                </View>
+                <Divider />
+                <Row label="设备 ID" value={masterInfo.deviceId} mono />
+                {masterInfo.serverAddress?.map((address, index) => (
+                  <React.Fragment key={`${address.name}-${index}`}>
+                    <Divider />
+                    <Row label={address.name} value={address.address} mono />
+                  </React.Fragment>
+                ))}
+              </>
+            ) : (
+              <View style={s.actionPanel}>
+                <View style={s.actionInfo}>
+                  <Text style={s.actionTitle}>尚未配置 Master</Text>
+                  <Text style={s.actionDesc}>请先扫描主设备二维码，获取连接信息后再发起连接。</Text>
+                </View>
+                <ActionButton label="添加 Master" onPress={handleAddMaster} tone="primary" />
+              </View>
+            )}
+          </Section>
+        ) : null}
+      </ScrollView>
+    </View>
+  );
+};
+
 const s = StyleSheet.create({
-    root: {flex: 1, backgroundColor: C.bg},
-    content: {padding: 20, paddingBottom: 40},
-    headerTitle: {fontSize: 22, fontWeight: '700', color: C.text, letterSpacing: -0.3, marginBottom: 20},
+  root: {flex: 1, backgroundColor: 'transparent'},
+  content: {paddingHorizontal: 4, paddingTop: 4, paddingBottom: 28, gap: 12},
 
-    section: {marginBottom: 16},
-    sectionTitle: {fontSize: 11, fontWeight: '600', color: C.textMuted, letterSpacing: 0.8, textTransform: 'uppercase', marginBottom: 8, marginLeft: 2},
-    card: {backgroundColor: C.surface, borderRadius: 12, borderWidth: 1, borderColor: C.border, overflow: 'hidden'},
+  heroCard: {
+    backgroundColor: C.surface,
+    borderRadius: 22,
+    borderWidth: 1,
+    borderColor: C.border,
+    padding: 18,
+    gap: 16,
+    shadowColor: C.shadow,
+    shadowOffset: {width: 0, height: 12},
+    shadowOpacity: 1,
+    shadowRadius: 24,
+    elevation: 4,
+  },
+  heroHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    gap: 12,
+    flexWrap: 'wrap',
+  },
+  heroEyebrow: {
+    color: C.textMuted,
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 0.7,
+    textTransform: 'uppercase',
+    marginBottom: 6,
+  },
+  heroTitle: {
+    color: C.text,
+    fontSize: 24,
+    fontWeight: '800',
+    letterSpacing: -0.7,
+  },
+  heroDesc: {
+    color: C.textSecondary,
+    fontSize: 14,
+    lineHeight: 21,
+    marginTop: 8,
+  },
 
-    row: {flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12},
-    rowLeft: {flex: 1},
-    rowRight: {alignItems: 'flex-end'},
-    rowLabel: {fontSize: 14, color: C.text, fontWeight: '500', marginBottom: 4},
-    rowDesc: {fontSize: 12, color: C.textMuted, marginTop: 2},
-    divider: {height: 1, backgroundColor: C.divider, marginHorizontal: 16},
+  metricRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  metricCard: {
+    flexGrow: 1,
+    minWidth: 148,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
+    borderRadius: 18,
+  },
+  metricLabel: {
+    color: C.textMuted,
+    fontSize: 11,
+    fontWeight: '700',
+    marginBottom: 8,
+  },
+  metricValue: {
+    color: C.text,
+    fontSize: 22,
+    fontWeight: '800',
+    letterSpacing: -0.5,
+  },
+  metricHelper: {
+    color: C.textSecondary,
+    fontSize: 12,
+    marginTop: 6,
+  },
 
-    badge: {paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6, alignSelf: 'flex-start'},
-    badgeText: {fontSize: 11, fontWeight: '600'},
+  section: {
+    gap: 6,
+  },
+  sectionHeader: {
+    paddingHorizontal: 2,
+    gap: 4,
+  },
+  sectionTitle: {
+    color: C.text,
+    fontSize: 16,
+    fontWeight: '800',
+    letterSpacing: -0.3,
+  },
+  sectionDescription: {
+    color: C.textSecondary,
+    fontSize: 13,
+    lineHeight: 19,
+  },
+  sectionCard: {
+    backgroundColor: C.surface,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: C.border,
+    overflow: 'hidden',
+  },
 
-    btn: {paddingHorizontal: 14, paddingVertical: 7, borderRadius: 8},
-    btnNormal: {backgroundColor: C.accentBg},
-    btnDanger: {backgroundColor: C.errBg},
-    btnDisabled: {backgroundColor: C.divider},
-    btnText: {fontSize: 13, fontWeight: '600'},
-    btnTextNormal: {color: C.accent},
-    btnTextDanger: {color: C.err},
-    btnTextDisabled: {color: C.textMuted},
+  badge: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 999,
+  },
+  badgeText: {
+    fontSize: 11,
+    fontWeight: '700',
+  },
 
-    infoBlock: {paddingHorizontal: 16, paddingVertical: 12},
-    infoRow: {flexDirection: 'row', marginBottom: 6},
-    infoLabel: {fontSize: 12, color: C.textMuted, width: 72},
-    infoValue: {fontSize: 12, color: C.text, flex: 1},
+  actionPanel: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 14,
+    flexWrap: 'wrap',
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+  },
+  actionInfo: {
+    flex: 1,
+    minWidth: 220,
+    gap: 4,
+  },
+  actionTitle: {
+    color: C.text,
+    fontSize: 14,
+    fontWeight: '800',
+  },
+  actionDesc: {
+    color: C.textSecondary,
+    fontSize: 13,
+    lineHeight: 19,
+  },
+  actionStack: {
+    gap: 10,
+    minWidth: 180,
+  },
+  inlineRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    flexWrap: 'wrap',
+  },
+  noticeRow: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  noticeText: {
+    color: C.textMuted,
+    fontSize: 13,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: C.divider,
+    marginHorizontal: 16,
+  },
 
-    qrBlock: {alignItems: 'center', paddingVertical: 20},
-    qrHint: {fontSize: 12, color: C.textSub, marginBottom: 16},
-    qrWrapper: {padding: 12, backgroundColor: C.surface, borderRadius: 12, borderWidth: 1, borderColor: C.border},
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    gap: 12,
+  },
+  rowLabel: {
+    flex: 1,
+    fontSize: 13,
+    color: C.textSecondary,
+  },
+  rowValue: {
+    flex: 1.4,
+    textAlign: 'right',
+    fontSize: 13,
+    color: C.text,
+    fontWeight: '600',
+  },
+  mono: {
+    fontFamily: 'monospace',
+    fontSize: 12,
+  },
+
+  actionButton: {
+    minHeight: 42,
+    paddingHorizontal: 16,
+    borderRadius: 14,
+    backgroundColor: C.surfaceMuted,
+    borderWidth: 1,
+    borderColor: C.border,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  actionButtonPrimary: {
+    backgroundColor: C.accent,
+    borderColor: C.accent,
+  },
+  actionButtonDanger: {
+    backgroundColor: C.errSoft,
+    borderColor: '#F1C8C8',
+  },
+  actionButtonDisabled: {
+    backgroundColor: C.divider,
+    borderColor: C.divider,
+  },
+  actionButtonText: {
+    color: C.textSecondary,
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  actionButtonTextPrimary: {
+    color: C.surface,
+  },
+  actionButtonTextDanger: {
+    color: C.err,
+  },
+  actionButtonTextDisabled: {
+    color: C.textMuted,
+  },
+
+  qrBlock: {
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 18,
+    gap: 14,
+  },
+  qrHint: {
+    color: C.textSecondary,
+    fontSize: 13,
+  },
+  qrWrapper: {
+    padding: 14,
+    borderRadius: 18,
+    backgroundColor: C.surfaceMuted,
+    borderWidth: 1,
+    borderColor: C.border,
+  },
 });

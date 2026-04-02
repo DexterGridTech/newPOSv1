@@ -2,6 +2,7 @@ package com.impos2.mixcretailrn84v2.startup
 
 import android.content.Context
 import android.hardware.display.DisplayManager
+import android.os.Build
 import android.os.Bundle
 import com.impos2.adapter.device.DeviceManager
 
@@ -21,6 +22,7 @@ object LaunchOptionsFactory {
    * - `screenMode`: 预留给业务层的屏幕模式标识；
    * - `displayCount`: 当前系统检测到的屏幕数量；
    * - `displayIndex`: 当前 runtime 对应的屏幕索引，主屏为 0，副屏为 1。
+   * - `isEmulator`: 当前宿主是否运行在 Android 模拟器中，用于切换调试链路配置。
    */
   fun create(context: Context, displayIndex: Int): Bundle {
     val deviceInfo = DeviceManager.getInstance(context.applicationContext).getDeviceInfo()
@@ -30,6 +32,19 @@ object LaunchOptionsFactory {
       putString("screenMode", "desktop")
       putInt("displayCount", displayManager.displays.size)
       putInt("displayIndex", displayIndex)
+      putBoolean("isEmulator", isEmulator())
     }
+  }
+
+  private fun isEmulator(): Boolean {
+    return (
+      Build.FINGERPRINT.startsWith("generic") ||
+        Build.FINGERPRINT.lowercase().contains("emulator") ||
+        Build.MODEL.contains("Emulator") ||
+        Build.MODEL.contains("Android SDK built for") ||
+        Build.MANUFACTURER.contains("Genymotion") ||
+        Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic") ||
+        Build.PRODUCT == "google_sdk"
+      )
   }
 }

@@ -5,6 +5,7 @@ export interface Environment {
     screenMode: ScreenMode
     displayCount: number
     displayIndex: number
+    isEmulator?: boolean
 }
 
 export enum ScreenMode {

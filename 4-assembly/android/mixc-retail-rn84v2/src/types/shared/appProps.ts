@@ -5,4 +5,5 @@ export interface AppProps {
     screenMode: ScreenMode
     displayCount: number
     displayIndex: number
+    isEmulator: boolean
 }

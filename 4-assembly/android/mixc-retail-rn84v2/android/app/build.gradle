@@ -8,6 +8,7 @@ react {
   codegenDir = file("../../node_modules/@react-native/codegen")
   cliFile = file("../../node_modules/react-native/cli.js")
   entryFile = file("../../index.js")
+  hermesCommand = new File(rootProject.projectDir, "../../../../node_modules/hermes-compiler/hermesc/osx-bin/hermesc").getCanonicalPath()
   autolinkLibrariesWithApp()
 }
 
