@@ -1,5 +1,6 @@
 import React, {useState, useCallback, useEffect, useRef, memo} from 'react';
-import {View, TouchableOpacity, Text, StyleSheet, Animated, Platform, Dimensions} from 'react-native';
+import {View, Text, StyleSheet, Animated, Platform, Dimensions} from 'react-native';
+import {ResponderKeyButton} from '../FancyKeyboardOverlayV2/ResponderKeyButton';
 
 const getIconFontSize = () => {
     const {height} = Dimensions.get('window');
@@ -41,11 +42,17 @@ interface FancyFullKeyBoardV2Props {
 // 单个按键 memo：接收 value + onKeyPress，内部构造 onPress，onKeyPress 稳定时不重渲染
 const KeyButton = memo<{label: string; value: string; onKeyPress: (v: string) => void; style?: any; textStyle?: any}>(
     ({label, value, onKeyPress, style, textStyle}) => {
-        const handlePress = useCallback(() => onKeyPress(value), [onKeyPress, value]);
+        const handlePress = useCallback(() => {
+            onKeyPress(value);
+        }, [onKeyPress, value]);
         return (
-            <TouchableOpacity style={[styles.key, style]} onPress={handlePress} activeOpacity={0.6}>
-                <Text style={[styles.keyText, textStyle]}>{label}</Text>
-            </TouchableOpacity>
+            <ResponderKeyButton
+                style={[styles.key, style]}
+                pressedStyle={styles.keyPressed}
+                onPress={handlePress}
+                label={label}
+                textStyle={[styles.keyText, textStyle]}
+            />
         );
     }
 );
@@ -74,20 +81,32 @@ const ActionButtons = memo<{
 
     if (!hasChanges) {
         return (
-            <TouchableOpacity style={styles.closeButtonFull} onPress={onCancel} activeOpacity={0.7}>
-                <Text style={styles.closeButtonText}>关闭</Text>
-            </TouchableOpacity>
+            <ResponderKeyButton
+                style={styles.closeButtonFull}
+                pressedStyle={styles.actionButtonPressed}
+                onPress={onCancel}
+                label="关闭"
+                textStyle={styles.closeButtonText}
+            />
         );
     }
     return (
         <>
-            <TouchableOpacity style={styles.cancelButton} onPress={onCancel} activeOpacity={0.7}>
-                <Text style={styles.cancelButtonText}>取消</Text>
-            </TouchableOpacity>
+            <ResponderKeyButton
+                style={styles.cancelButton}
+                pressedStyle={styles.actionButtonPressed}
+                onPress={onCancel}
+                label="取消"
+                textStyle={styles.cancelButtonText}
+            />
             <Animated.View style={{flex: 1, transform: [{translateX: shakeAnim}]}}>
-                <TouchableOpacity style={[styles.confirmButton, StyleSheet.absoluteFillObject]} onPress={onConfirm} activeOpacity={0.7}>
-                    <Text style={styles.confirmButtonText}>确认</Text>
-                </TouchableOpacity>
+                <ResponderKeyButton
+                    style={[styles.confirmButton, StyleSheet.absoluteFillObject]}
+                    pressedStyle={styles.actionButtonPressed}
+                    onPress={onConfirm}
+                    label="确认"
+                    textStyle={styles.confirmButtonText}
+                />
             </Animated.View>
         </>
     );
@@ -204,6 +223,7 @@ const styles = StyleSheet.create({
     keyboardMain: {flex: 1, gap: 4},
     row: {flexDirection: 'row', gap: 5, flex: 1},
     key: {flex: 1, backgroundColor: T.keyBg, borderRadius: T.keyRadius, justifyContent: 'center', alignItems: 'center', elevation: T.keyElevation},
+    keyPressed: {opacity: 0.82, transform: [{scale: 0.985}]},
     keyText: {fontSize: T.fontKey, fontWeight: T.fontWeight600, color: T.keyText},
     functionKey: {backgroundColor: T.fnKeyBg},
     functionKeyText: {fontSize: T.fontFn, fontWeight: T.fontWeight700, color: T.fnKeyText},
@@ -213,6 +233,7 @@ const styles = StyleSheet.create({
     activeSymbol: {backgroundColor: T.activeKeyBg},
     activeSymbolText: {color: T.activeKeyText},
     actionButtons: {width: 100, gap: 6},
+    actionButtonPressed: {opacity: 0.88, transform: [{scale: 0.985}]},
     cancelButton: {flex: 1, backgroundColor: T.cancelBg, borderRadius: T.keyRadius, justifyContent: 'center', alignItems: 'center', elevation: 3},
     cancelButtonText: {fontSize: T.fontAction, fontWeight: T.fontWeight700, color: T.cancelText},
     closeButtonFull: {flex: 1, backgroundColor: T.closeBg, borderRadius: T.keyRadius, justifyContent: 'center', alignItems: 'center', elevation: 2},

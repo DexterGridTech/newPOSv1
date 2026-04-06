@@ -1,6 +1,6 @@
 import {ScreenMode} from "../types";
 import {ComponentType} from "react";
-import {InstanceMode, Workspace} from "@impos2/kernel-core-interconnection";
+import type {InstanceMode, Workspace} from "@impos2/kernel-core-interconnection";
 
 export interface ScreenPart<T> {
     name: string,

@@ -1,5 +1,6 @@
 import React, {memo, useCallback, useEffect, useRef, useState} from 'react';
-import {View, TouchableOpacity, Text, StyleSheet, Animated, Platform, Dimensions} from 'react-native';
+import {View, StyleSheet, Animated, Platform, Dimensions} from 'react-native';
+import {ResponderKeyButton} from '../FancyKeyboardOverlayV2/ResponderKeyButton';
 
 const getKeyboardWidth = () => {
     const {width, height} = Dimensions.get('window');
@@ -39,11 +40,17 @@ interface FancyNumberKeyBoardV2Props {
 
 const NumKey = memo<{label: string; value: string; onKeyPress: (v: string) => void; style?: any; textStyle?: any}>(
     ({label, value, onKeyPress, style, textStyle}) => {
-        const handlePress = useCallback(() => onKeyPress(value), [onKeyPress, value]);
+        const handlePress = useCallback(() => {
+            onKeyPress(value);
+        }, [onKeyPress, value]);
         return (
-            <TouchableOpacity style={[styles.key, style]} onPress={handlePress} activeOpacity={0.55}>
-                <Text style={[styles.keyText, textStyle]}>{label}</Text>
-            </TouchableOpacity>
+            <ResponderKeyButton
+                style={[styles.key, style]}
+                pressedStyle={styles.keyPressed}
+                onPress={handlePress}
+                label={label}
+                textStyle={[styles.keyText, textStyle]}
+            />
         );
     }
 );
@@ -72,20 +79,32 @@ const ActionButtons = memo<{
 
     if (!hasChanges) {
         return (
-            <TouchableOpacity style={styles.closeButton} onPress={onCancel} activeOpacity={0.7}>
-                <Text style={[styles.closeButtonText, {fontSize: actionFontSize}]}>关闭</Text>
-            </TouchableOpacity>
+            <ResponderKeyButton
+                style={styles.closeButton}
+                pressedStyle={styles.actionButtonPressed}
+                onPress={onCancel}
+                label="关闭"
+                textStyle={[styles.closeButtonText, {fontSize: actionFontSize}]}
+            />
         );
     }
     return (
         <>
-            <TouchableOpacity style={styles.cancelButton} onPress={onCancel} activeOpacity={0.7}>
-                <Text style={[styles.cancelButtonText, {fontSize: actionFontSize}]}>取消</Text>
-            </TouchableOpacity>
+            <ResponderKeyButton
+                style={styles.cancelButton}
+                pressedStyle={styles.actionButtonPressed}
+                onPress={onCancel}
+                label="取消"
+                textStyle={[styles.cancelButtonText, {fontSize: actionFontSize}]}
+            />
             <Animated.View style={{flex: 1, transform: [{translateX: shakeAnim}]}}>
-                <TouchableOpacity style={[styles.confirmButton, StyleSheet.absoluteFillObject]} onPress={onConfirm} activeOpacity={0.7}>
-                    <Text style={[styles.confirmButtonText, {fontSize: actionFontSize}]}>确认</Text>
-                </TouchableOpacity>
+                <ResponderKeyButton
+                    style={[styles.confirmButton, StyleSheet.absoluteFillObject]}
+                    pressedStyle={styles.actionButtonPressed}
+                    onPress={onConfirm}
+                    label="确认"
+                    textStyle={[styles.confirmButtonText, {fontSize: actionFontSize}]}
+                />
             </Animated.View>
         </>
     );
@@ -214,6 +233,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         elevation: T.keyElevation,
     },
+    keyPressed: {
+        opacity: 0.82,
+        transform: [{scale: 0.985}],
+    },
     keyText: {
         fontSize: T.fontNum,
         fontWeight: T.fontWeight600,
@@ -251,6 +274,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         elevation: 2,
+    },
+    actionButtonPressed: {
+        opacity: 0.86,
     },
     closeButtonText: {
         fontSize: T.fontAction,

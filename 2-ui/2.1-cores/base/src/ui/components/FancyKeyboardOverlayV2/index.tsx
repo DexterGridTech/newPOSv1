@@ -41,7 +41,9 @@ const KeyboardArea = memo<{
         const maxLength = cur?.maxLength;
 
         if (key === 'DELETE' || key === 'backspace') {
-            if (editingValue.length > 0) actions.updateEditingValue(editingValue.slice(0, -1));
+            if (editingValue.length > 0) {
+                actions.updateEditingValue((prev) => prev.slice(0, -1));
+            }
         } else if (key === 'CONFIRM' || key === 'enter') {
             actions.confirmInput();
         } else {
@@ -49,7 +51,7 @@ const KeyboardArea = memo<{
                 onShakeEditingContent();
                 return;
             }
-            actions.updateEditingValue(editingValue + key);
+            actions.updateEditingValue((prev) => prev + key);
         }
     }, [actions, onShakeEditingContent]);
 
@@ -198,7 +200,6 @@ const styles = StyleSheet.create({
         ...StyleSheet.absoluteFillObject,
         zIndex: 9999,
         overflow: 'hidden',
-        ...(Platform.OS === 'web' ? {overflowX: 'hidden', overflowY: 'hidden'} : {}),
     },
     keyboardContainer: {
         position: 'absolute', bottom: 0, left: 0, right: 0,

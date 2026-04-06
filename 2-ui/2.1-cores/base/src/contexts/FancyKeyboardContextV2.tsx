@@ -32,7 +32,7 @@ export interface ActiveInputInfoV2 {
 export interface FancyKeyboardActionsV2 {
     showKeyboard: (inputInfo: ActiveInputInfoV2, keyboardType: 'full' | 'number') => void;
     hideKeyboard: () => void;
-    updateEditingValue: (value: string) => void;
+    updateEditingValue: (valueOrUpdater: string | ((prev: string) => string)) => void;
     confirmInput: () => void;
     cancelInput: () => void;
     updateInputPosition: (position: {x: number; y: number; width: number; height: number}) => void;
@@ -158,11 +158,19 @@ export const FancyKeyboardProviderV2: React.FC<FancyKeyboardProviderV2Props> = (
     }, []);
 
     // 高频调用：只更新 editingState，不碰 displayState
-    const updateEditingValue = useCallback((value: string) => {
+    const updateEditingValue = useCallback((valueOrUpdater: string | ((prev: string) => string)) => {
         setEditingState((prev) => ({
-            ...prev,
-            editingValue: value,
-            hasChanges: value !== originalValueRef.current,
+            // 统一在同一份 prev.editingValue 上计算，避免快速输入时重复执行 updater 带来状态偏差。
+            ...(function () {
+                const nextValue = typeof valueOrUpdater === 'function'
+                    ? valueOrUpdater(prev.editingValue)
+                    : valueOrUpdater;
+                return {
+                    ...prev,
+                    editingValue: nextValue,
+                    hasChanges: nextValue !== originalValueRef.current,
+                };
+            })(),
         }));
     }, []);
 

@@ -1,7 +1,7 @@
 import http from 'http';
 import url from 'url';
 import WebSocket, {WebSocketServer} from 'ws';
-import shortUUID from 'short-uuid';
+import * as shortUuidNamespace from 'short-uuid';
 import {format} from 'date-fns';
 import {DeviceConnectionManager} from './DeviceConnectionManager';
 import {RetryQueue} from './RetryQueue';
@@ -11,6 +11,18 @@ import {
   MessageWrapper, DeviceType, DeviceRegistration,
   RegistrationResponse, SYSTEM_NOTIFICATION
 } from './types';
+
+type ShortUuidModule = {
+  generate?: () => string;
+};
+
+const shortUuidModule = (
+  (shortUuidNamespace as {default?: ShortUuidModule}).default
+  ?? (shortUuidNamespace as ShortUuidModule)
+) as ShortUuidModule;
+
+const generateShortUuid = shortUuidModule.generate?.bind(shortUuidModule)
+  ?? (() => globalThis.crypto?.randomUUID?.().replace(/-/g, '') ?? `${Date.now()}${Math.random().toString(36).slice(2)}`);
 
 export class MasterSlaveWebSocketServer {
   private httpServer: http.Server;
@@ -94,7 +106,7 @@ export class MasterSlaveWebSocketServer {
           return;
         }
 
-        const token = shortUUID.generate();
+        const token = generateShortUuid();
         const result = this.deviceManager.preRegisterDevice(reg, token);
 
         if (result.success) {
@@ -242,7 +254,7 @@ export class MasterSlaveWebSocketServer {
   private notifyMaster(masterDeviceId: string, type: string, data: any) {
     const master = this.deviceManager.getMaster(masterDeviceId);
     if (master) {
-      this.trySend(master.socket, {from: '__system', id: shortUUID.generate(), type, data});
+      this.trySend(master.socket, {from: '__system', id: generateShortUuid(), type, data});
     }
   }
 
@@ -273,7 +285,7 @@ export class MasterSlaveWebSocketServer {
 
   private sendHeartbeat() {
     const msg: MessageWrapper = {
-      from: '__system', id: shortUUID.generate(),
+      from: '__system', id: generateShortUuid(),
       type: SYSTEM_NOTIFICATION.HEARTBEAT,
       data: {timestamp: Date.now()}
     };

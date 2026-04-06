@@ -14,6 +14,7 @@ node_modules/
 # ============================================
 dist/
 build/
+out/
 *.tsbuildinfo
 
 # TypeScript compilation outputs
@@ -70,6 +71,18 @@ build/
 *.ipa
 *.dSYM.zip
 *.dSYM
+
+# Electron / Desktop packaging outputs
+**/out/
+**/.webpack/
+**/*.app/
+**/*.dmg
+**/*.exe
+**/*.AppImage
+**/*.deb
+**/*.rpm
+**/*.nsis.7z
+**/*.blockmap
 
 # ============================================
 # Metro Bundler
@@ -142,6 +155,9 @@ Desktop.ini
 # ============================================
 /ai-result/
 /ai-task/
+/output/browser/
+/.codex-tmp/
+/.superpowers/brainstorm/
 /tmp/
 /temp/
 

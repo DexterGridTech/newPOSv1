@@ -50,8 +50,8 @@ export const FancyInputV2: React.FC<FancyInputV2Props> = memo(({
     // 动画值：用于字体缩放
     const scaleAnim = React.useRef(new Animated.Value(1)).current;
 
-    // 用于防止重复点击
-    const isProcessingRef = React.useRef(false);
+    // 仅抑制极短时间内的重复触发，避免测量期间卡住后续正常点击。
+    const lastPressAtRef = React.useRef(0);
 
     // 使用 ref 存储稳定的回调和 value，避免 handlePress 依赖 value 导致频繁重建
     const onChangeTextRef = React.useRef(onChangeText);
@@ -81,14 +81,11 @@ export const FancyInputV2: React.FC<FancyInputV2Props> = memo(({
     const handlePress = React.useCallback(() => {
         if (!editable || !showKeyboard) return;
 
-        if (isProcessingRef.current) {
+        const now = Date.now();
+        if (now - lastPressAtRef.current < 120) {
             return;
         }
-        isProcessingRef.current = true;
-
-        const resetTimeout = setTimeout(() => {
-            isProcessingRef.current = false;
-        }, 1000);
+        lastPressAtRef.current = now;
 
         const currentValue = valueRef.current;
 
@@ -116,9 +113,6 @@ export const FancyInputV2: React.FC<FancyInputV2Props> = memo(({
                             {id: inputIdRef.current, value: currentValue, editingValue: currentValue, position: pos, initialPosition: pos, onChangeText: onChangeTextRef.current, onSubmit: onSubmitRef.current, promptText, maxLength, secureTextEntry},
                             keyboardType
                         );
-                    } finally {
-                        clearTimeout(resetTimeout);
-                        isProcessingRef.current = false;
                     }
                 }, 0);
             } else {
@@ -131,12 +125,10 @@ export const FancyInputV2: React.FC<FancyInputV2Props> = memo(({
                             {id: inputIdRef.current, value: currentValue, editingValue: currentValue, position: pos, initialPosition: pos, onChangeText: onChangeTextRef.current, onSubmit: onSubmitRef.current, promptText, maxLength, secureTextEntry},
                             keyboardType
                         );
-                        clearTimeout(resetTimeout);
-                        isProcessingRef.current = false;
                     }
-                }, 300);
+                }, 120);
 
-                containerRef.current.measure((x, y, width, height, pageX, pageY) => {
+                containerRef.current.measureInWindow((pageX, pageY, width, height) => {
                     measureExecuted = true;
                     clearTimeout(fallbackTimeout);
                     const pos = {x: pageX || 0, y: pageY || 0, width: width || 300, height: height || 50};
@@ -144,13 +136,8 @@ export const FancyInputV2: React.FC<FancyInputV2Props> = memo(({
                         {id: inputIdRef.current, value: currentValue, editingValue: currentValue, position: pos, initialPosition: pos, onChangeText: onChangeTextRef.current, onSubmit: onSubmitRef.current, promptText, maxLength, secureTextEntry},
                         keyboardType
                     );
-                    clearTimeout(resetTimeout);
-                    isProcessingRef.current = false;
                 });
             }
-        } else {
-            clearTimeout(resetTimeout);
-            isProcessingRef.current = false;
         }
     }, [editable, keyboardType, showKeyboard, promptText, maxLength, secureTextEntry]);
 
@@ -158,7 +145,7 @@ export const FancyInputV2: React.FC<FancyInputV2Props> = memo(({
     const handleLayout = React.useCallback(() => {
         if (isActive && containerRef.current && Platform.OS !== 'web' && updateInputPosition) {
             // 只在原生环境更新位置，Web 环境不需要
-            containerRef.current.measure((x, y, width, height, pageX, pageY) => {
+            containerRef.current.measureInWindow((pageX, pageY, width, height) => {
                 const safePageX = pageX || 0;
                 const safePageY = pageY || 0;
                 const safeWidth = width || 300;

@@ -1,4 +1,4 @@
-import {ApiServerAddress} from "@impos2/kernel-core-base";
+import {ApiServerAddress} from "../shared/http";
 
 export interface ServerSpace {
     selectedSpace: string;

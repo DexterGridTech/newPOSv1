@@ -16,6 +16,11 @@ import java.util.concurrent.atomic.AtomicBoolean
  */
 object StartupCoordinator {
 
+  private enum class StartupMode {
+    COLD_START,
+    RESTART,
+  }
+
   private const val OVERLAY_HIDE_DELAY_MS = 1500L
   private const val SECONDARY_START_DELAY_MS = 3000L
 
@@ -25,6 +30,7 @@ object StartupCoordinator {
    * 这里只关心 displayIndex=0 的 ready 信号，避免副屏 ready 反向干扰主屏启动编排。
    */
   private val primaryReady = AtomicBoolean(false)
+  private var startupMode: StartupMode = StartupMode.COLD_START
 
   private val mainHandler = Handler(Looper.getMainLooper())
   private var pendingOverlayHide: Runnable? = null
@@ -33,12 +39,19 @@ object StartupCoordinator {
   /**
    * 主屏 Activity 挂接时调用。
    *
-   * 会重置状态、清理旧的延迟任务，并立刻展示启动遮罩。
+   * 会重置状态、清理旧的延迟任务，并根据启动模式决定是否展示启动遮罩。
+   *
+   * - 冷启动：显示遮罩
+   * - 重启：跳过遮罩，直接等待主屏 JS ready 后继续后续编排
    */
   fun attachPrimary(activity: MainActivity) {
     primaryReady.set(false)
     cancelPendingActions()
-    StartupOverlayManager.show(activity)
+    if (startupMode == StartupMode.COLD_START) {
+      StartupOverlayManager.show(activity)
+    } else {
+      StartupOverlayManager.hide()
+    }
   }
 
   /**
@@ -57,24 +70,33 @@ object StartupCoordinator {
     }
     scheduleOverlayHide()
     scheduleSecondaryStart(activity)
+    startupMode = StartupMode.COLD_START
   }
 
   /**
    * 进入重启流程前调用。
    *
-   * 会把启动协调器恢复到“等待主屏重新 ready”的初始状态，并重新展示启动遮罩。
+   * 会把启动协调器恢复到“等待主屏重新 ready”的初始状态，但不会重新展示启动遮罩。
+   *
+   * 用户要求只有首次启动显示 loading 遮罩，因此重启时这里仅切换模式并重置状态，让下一轮
+   * `attachPrimary()` 跳过 overlay。
    */
   fun beginRestart(activity: MainActivity) {
+    startupMode = StartupMode.RESTART
     primaryReady.set(false)
     cancelPendingActions()
     activity.resetSecondaryLaunchState()
-    StartupOverlayManager.show(activity)
+    StartupOverlayManager.hide()
   }
 
   /**
    * 安排延迟关闭启动遮罩。
    */
   private fun scheduleOverlayHide() {
+    if (startupMode == StartupMode.RESTART) {
+      StartupOverlayManager.hide()
+      return
+    }
     pendingOverlayHide = Runnable {
       StartupOverlayManager.hide()
       pendingOverlayHide = null
