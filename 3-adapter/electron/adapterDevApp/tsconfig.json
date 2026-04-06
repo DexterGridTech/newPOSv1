@@ -1,0 +1,25 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "allowJs": false,
+    "lib": ["ES2022", "DOM"],
+    "module": "ESNext",
+    "baseUrl": ".",
+    "outDir": "dist",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "types": ["node"],
+    "skipLibCheck": true,
+    "paths": {
+      "@impos2/adapter-electron-v1": ["../adapterV1/src/renderer/index.ts"],
+      "@impos2/adapter-electron-v1/preload": ["../adapterV1/src/preload/index.ts"],
+      "@impos2/adapter-electron-v1/renderer": ["../adapterV1/src/renderer/index.ts"],
+      "@impos2/adapter-electron-v1/main": ["../adapterV1/src/main/index.ts"],
+      "@impos2/adapter-electron-v1/shared": ["../adapterV1/src/shared/index.ts"],
+      "@impos2/adapter-electron-v1/shared/contracts": ["../adapterV1/src/shared/contracts.ts"],
+      "@impos2/ui-core-adapter-test": ["../../../2-ui/2.1-cores/adapter-test/src/index.ts"]
+    }
+  },
+  "include": ["src/**/*", "electron/**/*", "*.ts"],
+  "exclude": ["node_modules", "dist", ".webpack"]
+}

@@ -1,0 +1,43 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "skipLibCheck": true
+  },
+  "files": [
+    "./electron/main/index.ts",
+    "./electron/preload/createBridge.ts",
+    "./electron/preload/primary.ts",
+    "./electron/preload/secondary.ts",
+    "./electron/renderer/bootstrap.tsx",
+    "./electron/renderer/primary.tsx",
+    "./electron/renderer/secondary.tsx",
+    "./src/index.ts",
+    "./src/RootApp.tsx",
+    "./src/store.ts",
+    "./src/moduleName.ts",
+    "./src/application/modulePreSetup.ts",
+    "./src/foundations/runtime.ts",
+    "./src/foundations/index.ts",
+    "./src/features/actors/index.ts",
+    "./src/features/actors/initialize.ts",
+    "./src/features/commands/index.ts",
+    "./src/features/epics/index.ts",
+    "./src/features/middlewares/index.ts",
+    "./src/features/slices/index.ts",
+    "./src/hooks/index.ts",
+    "./src/supports/index.ts",
+    "./src/supports/errors.ts",
+    "./src/supports/parameters.ts",
+    "./src/ui/index.ts",
+    "./src/ui/moduleScreenParts.ts",
+    "./src/types/index.ts",
+    "./src/types/kernel-core-base-augment.ts",
+    "./src/types/moduleState.ts",
+    "./src/types/foundations/index.ts",
+    "./src/types/state/index.ts",
+    "./src/types/shared/index.ts",
+    "./src/types/shared/appProps.ts",
+    "./src/types/shared/moduleStateKey.ts"
+  ]
+}

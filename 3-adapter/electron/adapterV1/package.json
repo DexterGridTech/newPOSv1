@@ -1,0 +1,44 @@
+{
+  "name": "@impos2/adapter-electron-v1",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Electron adapter v1 for IMPos2",
+  "author": "DexterYang",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/renderer/index.ts",
+      "default": "./src/renderer/index.ts"
+    },
+    "./main": "./src/main/index.ts",
+    "./preload": "./src/preload/index.ts",
+    "./renderer": "./src/renderer/index.ts",
+    "./shared": "./src/shared/index.ts",
+    "./shared/contracts": "./src/shared/contracts.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "clean": "rm -rf dist node_modules",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@impos2/kernel-core-base": "*",
+    "@impos2/kernel-core-interconnection": "*",
+    "@impos2/master-ws-server-dual": "*",
+    "better-sqlite3": "^12.8.0",
+    "serialport": "^13.0.0",
+    "ws": "^8.20.0"
+  },
+  "peerDependencies": {
+    "electron": ">=37.0.0",
+    "react": "19.2.0",
+    "react-native": "0.84.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^25.0.9",
+    "@types/ws": "^8.18.1",
+    "typescript": "^5.9.3"
+  }
+}
