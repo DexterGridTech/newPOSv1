@@ -16,6 +16,7 @@ export interface PaginatedResult<T> {
 }
 
 export interface OverviewStats {
+  sandboxId?: string
   terminalStats: { total: number; online: number; warning: number; error: number }
   taskStats: { total: number; running: number; completed: number; failed: number }
   sessionStats: { total: number; connected: number }
@@ -28,8 +29,19 @@ export interface SandboxItem {
   name: string
   description: string
   status: string
+  isSystemDefault: boolean
+  isCurrent: boolean
+  creationMode: string
+  sourceSandboxId?: string | null
   purpose: string
   resourceLimits: Record<string, unknown>
+  createdAt?: number
+  updatedAt: number
+}
+
+export interface RuntimeContext {
+  currentSandboxId: string
+  currentSandbox: SandboxItem | null
   updatedAt: number
 }
 
@@ -67,6 +79,9 @@ export interface ImportValidationResult {
 
 export interface TerminalItem {
   terminalId: string
+  tenantId?: string
+  brandId?: string
+  projectId?: string
   storeId: string
   profileId: string
   templateId: string
@@ -82,11 +97,107 @@ export interface TerminalItem {
 
 export interface ActivationCodeItem {
   code: string
+  tenantId?: string
+  brandId?: string
+  projectId?: string
   storeId: string
   profileId: string
+  templateId?: string | null
   status: string
   usedBy?: string | null
   expiresAt?: number | null
+}
+
+export interface TenantItem {
+  tenantId: string
+  tenantCode: string
+  tenantName: string
+  status: string
+  description: string
+  brandCount?: number
+  projectCount?: number
+  storeCount?: number
+  updatedAt: number
+}
+
+export interface BrandItem {
+  brandId: string
+  brandCode: string
+  brandName: string
+  status: string
+  description: string
+  projectCount?: number
+  storeCount?: number
+  authorizedTenantCount?: number
+  updatedAt: number
+}
+
+export interface TenantBrandAuthorizationItem {
+  authorizationId: string
+  tenantId: string
+  tenantName?: string
+  brandId: string
+  brandName?: string
+  status: string
+  description: string
+  updatedAt: number
+}
+
+export interface ProjectItem {
+  projectId: string
+  projectCode: string
+  projectName: string
+  status: string
+  description: string
+  region?: string | null
+  timezone?: string | null
+  storeCount?: number
+  terminalCount?: number
+  updatedAt: number
+}
+
+export interface StoreItem {
+  storeId: string
+  tenantId: string
+  tenantName?: string
+  brandId: string
+  brandName?: string
+  projectId: string
+  projectName?: string
+  storeCode: string
+  storeName: string
+  status: string
+  description: string
+  address?: string | null
+  contactName?: string | null
+  contactPhone?: string | null
+  terminalCount?: number
+  activationCodeCount?: number
+  updatedAt: number
+}
+
+export interface ProfileItem {
+  profileId: string
+  profileCode: string
+  name: string
+  description: string
+  capabilities: Record<string, unknown>
+  templateCount?: number
+  terminalCount?: number
+  updatedAt: number
+}
+
+export interface TerminalTemplateItem {
+  templateId: string
+  templateCode: string
+  name: string
+  description: string
+  profileId: string
+  presetConfig: Record<string, unknown>
+  presetTags: string[]
+  activationCodeCount?: number
+  terminalCount?: number
+  updatedAt: number
 }
 
 export interface TaskReleaseItem {

@@ -1,6 +1,6 @@
 {
   "name": "@impos2/assembly-android-mixc-retail-rn84v2",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "整合层：POS Mixc Retail 集成包 RN0.84.1 v2",
   "private": true,
   "scripts": {

@@ -9,10 +9,11 @@ import {assemblyAndroidMixcRetailMiddlewares} from "./features/middlewares";
 import {AppModule} from "@impos2/kernel-core-base";
 import {assemblyAndroidMixcRetailScreenParts} from "./ui";
 import {uiIntegrationMixcRetailModule} from "@impos2/ui-integration-mixc-retail";
+import {releaseInfo} from "./generated/releaseInfo";
 
 export const assemblyAndroidMixcRetailModule: AppModule = {
     name: moduleName,
-    version: '0.0.1',
+    version: releaseInfo.assemblyVersion,
     slices: assemblyAndroidMixcRetailSlice,
     middlewares: assemblyAndroidMixcRetailMiddlewares,
     epics: assemblyAndroidMixcRetailEpics,

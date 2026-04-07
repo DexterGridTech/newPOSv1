@@ -1,16 +1,18 @@
-import { desc, eq } from 'drizzle-orm'
+import { and, desc, eq } from 'drizzle-orm'
 import { db, sqlite } from '../../database/index.js'
 import { faultRulesTable, taskInstancesTable } from '../../database/schema.js'
-import { DEFAULT_SANDBOX_ID } from '../../shared/constants.js'
 import { createId, now, parseJson } from '../../shared/utils.js'
+import { getCurrentSandboxId } from '../sandbox/service.js'
 
-export const listFaultRules = () =>
-  db.select().from(faultRulesTable).orderBy(desc(faultRulesTable.updatedAt)).all().map((item) => ({
+export const listFaultRules = () => {
+  const sandboxId = getCurrentSandboxId()
+  return db.select().from(faultRulesTable).where(eq(faultRulesTable.sandboxId, sandboxId)).orderBy(desc(faultRulesTable.updatedAt)).all().map((item) => ({
     ...item,
     matcher: parseJson(item.matcherJson, {}),
     action: parseJson(item.actionJson, {}),
     enabled: Boolean(item.enabled),
   }))
+}
 
 export const createFaultRule = (input: {
   name: string
@@ -18,11 +20,12 @@ export const createFaultRule = (input: {
   matcher: Record<string, unknown>
   action: Record<string, unknown>
 }) => {
+  const sandboxId = getCurrentSandboxId()
   const timestamp = now()
   const faultRuleId = createId('fault')
   db.insert(faultRulesTable).values({
     faultRuleId,
-    sandboxId: DEFAULT_SANDBOX_ID,
+    sandboxId,
     name: input.name,
     targetType: input.targetType,
     matcherJson: JSON.stringify(input.matcher),
@@ -51,10 +54,10 @@ export const applyMockResult = (instanceId: string, input: { status: string; res
 }
 
 export const simulateFaultHit = (faultRuleId: string) => {
-  sqlite.prepare('UPDATE fault_rules SET hit_count = hit_count + 1, updated_at = ? WHERE fault_rule_id = ?').run(now(), faultRuleId)
+  const sandboxId = getCurrentSandboxId()
+  sqlite.prepare('UPDATE fault_rules SET hit_count = hit_count + 1, updated_at = ? WHERE fault_rule_id = ? AND sandbox_id = ?').run(now(), faultRuleId, sandboxId)
   return { faultRuleId }
 }
-
 
 export const updateFaultRule = (faultRuleId: string, input: {
   name?: string
@@ -63,8 +66,9 @@ export const updateFaultRule = (faultRuleId: string, input: {
   action?: Record<string, unknown>
   enabled?: boolean
 }) => {
+  const sandboxId = getCurrentSandboxId()
   const timestamp = now()
-  const current = sqlite.prepare('SELECT * FROM fault_rules WHERE fault_rule_id = ?').get(faultRuleId) as Record<string, unknown> | undefined
+  const current = sqlite.prepare('SELECT * FROM fault_rules WHERE fault_rule_id = ? AND sandbox_id = ?').get(faultRuleId, sandboxId) as Record<string, unknown> | undefined
   if (!current) {
     throw new Error('故障规则不存在')
   }
@@ -77,7 +81,7 @@ export const updateFaultRule = (faultRuleId: string, input: {
         action_json = ?,
         enabled = ?,
         updated_at = ?
-    WHERE fault_rule_id = ?
+    WHERE fault_rule_id = ? AND sandbox_id = ?
   `).run(
     input.name ?? current.name,
     input.targetType ?? current.target_type,
@@ -86,6 +90,7 @@ export const updateFaultRule = (faultRuleId: string, input: {
     input.enabled === undefined ? current.enabled : Number(input.enabled),
     timestamp,
     faultRuleId,
+    sandboxId,
   )
 
   return { faultRuleId, updatedAt: timestamp }

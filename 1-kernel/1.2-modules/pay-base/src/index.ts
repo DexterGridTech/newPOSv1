@@ -9,10 +9,11 @@ import {kernelPayBaseEpics} from "./features/epics";
 import {kernelPayBaseMiddlewares} from "./features/middlewares";
 import {AppModule} from "@impos2/kernel-core-base";
 import {kernelOrderBaseModule} from "@impos2/kernel-order-base";
+import {packageVersion} from './generated/packageVersion';
 
 export const kernelPayBaseModule: AppModule = {
     name: moduleName,
-    version: '0.0.1',
+    version: packageVersion,
     slices: kernelPayBaseSlice,
     middlewares: kernelPayBaseMiddlewares,
     epics: kernelPayBaseEpics,

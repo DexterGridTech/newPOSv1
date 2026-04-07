@@ -10,10 +10,11 @@ import {uiMixcWorkbenchMiddlewares} from "./features/middlewares";
 import {AppModule} from "@impos2/kernel-core-base";
 import {kernelCoreNavigationModule} from "@impos2/kernel-core-navigation";
 import {uiMixcWorkbenchScreenParts} from "./ui";
+import {packageVersion} from './generated/packageVersion';
 
 export const uiMixcWorkbenchModule: AppModule = {
     name: moduleName,
-    version: '0.0.1',
+    version: packageVersion,
     slices: uiMixcWorkbenchSlice,
     middlewares: uiMixcWorkbenchMiddlewares,
     epics: uiMixcWorkbenchEpics,

@@ -8,10 +8,11 @@ import {kernelOrderCreateTraditionalParameters} from "./supports/parameters";
 import {kernelOrderCreateTraditionalEpics} from "./features/epics";
 import {kernelOrderCreateTraditionalMiddlewares} from "./features/middlewares";
 import {AppModule} from "@impos2/kernel-core-base";
+import {packageVersion} from './generated/packageVersion';
 
 export const kernelOrderCreateTraditionalModule: AppModule = {
     name: moduleName,
-    version: '0.0.1',
+    version: packageVersion,
     slices: kernelOrderCreateTraditionalSlice,
     middlewares: kernelOrderCreateTraditionalMiddlewares,
     epics: kernelOrderCreateTraditionalEpics,

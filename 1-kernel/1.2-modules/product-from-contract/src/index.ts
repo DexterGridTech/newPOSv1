@@ -9,10 +9,11 @@ import {kernelProductFromContractEpics} from "./features/epics";
 import {kernelProductFromContractMiddlewares} from "./features/middlewares";
 import {AppModule} from "@impos2/kernel-core-base";
 import {kernelProductBaseModule} from "@impos2/kernel-product-base";
+import {packageVersion} from './generated/packageVersion';
 
 export const kernelProductFromContractModule: AppModule = {
     name: moduleName,
-    version: '0.0.1',
+    version: packageVersion,
     slices: kernelProductFromContractSlice,
     middlewares: kernelProductFromContractMiddlewares,
     epics: kernelProductFromContractEpics,

@@ -16,10 +16,11 @@ import {uiMixcWorkbenchModule} from "@impos2/ui-mixc-workbench";
 import {kernelOrderCreateTraditionalModule} from "@impos2/kernel-order-create-traditional";
 import {kernelPayBaseModule} from "@impos2/kernel-pay-base";
 import {kernelProductFromContractModule} from "@impos2/kernel-product-from-contract";
+import {packageVersion} from './generated/packageVersion';
 
 export const uiMixcTradeModule: AppModule = {
     name: moduleName,
-    version: '0.0.1',
+    version: packageVersion,
     slices: uiMixcTradeSlice,
     middlewares: uiMixcTradeMiddlewares,
     epics: uiMixcTradeEpics,

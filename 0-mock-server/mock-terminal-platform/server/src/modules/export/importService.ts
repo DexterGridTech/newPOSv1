@@ -1,7 +1,7 @@
 import { db } from '../../database/index.js'
-import { topicsTable, faultRulesTable } from '../../database/schema.js'
-import { DEFAULT_SANDBOX_ID } from '../../shared/constants.js'
+import { faultRulesTable, topicsTable } from '../../database/schema.js'
 import { createId, now } from '../../shared/utils.js'
+import { getCurrentSandboxId } from '../sandbox/service.js'
 
 const ensureNonEmptyString = (value: unknown, fieldName: string) => {
   if (typeof value !== 'string' || !value.trim()) {
@@ -38,6 +38,7 @@ export const validateImportPayload = (input: ImportPayload) => {
 }
 
 export const importMockTemplates = (input: ImportPayload) => {
+  const sandboxId = getCurrentSandboxId()
   validateImportPayload(input)
 
   const timestamp = now()
@@ -47,7 +48,7 @@ export const importMockTemplates = (input: ImportPayload) => {
   for (const topic of input.topics ?? []) {
     db.insert(topicsTable).values({
       topicId: createId('topic'),
-      sandboxId: DEFAULT_SANDBOX_ID,
+      sandboxId,
       key: topic.key,
       name: topic.name,
       payloadMode: topic.payloadMode ?? 'FLEXIBLE_JSON',
@@ -63,7 +64,7 @@ export const importMockTemplates = (input: ImportPayload) => {
   for (const rule of input.faultRules ?? []) {
     db.insert(faultRulesTable).values({
       faultRuleId: createId('fault'),
-      sandboxId: DEFAULT_SANDBOX_ID,
+      sandboxId,
       name: rule.name,
       targetType: rule.targetType,
       matcherJson: JSON.stringify(rule.matcher),

@@ -8,10 +8,11 @@ import {kernelCoreInterconnectionParameters} from "./supports/parameters";
 import {kernelCoreInterconnectionEpics} from "./features/epics";
 import {kernelCoreInterconnectionMiddlewares} from "./features/middlewares";
 import {AppModule, kernelCoreBaseModule} from "@impos2/kernel-core-base";
+import {packageVersion} from './generated/packageVersion';
 
 export const kernelCoreInterconnectionModule: AppModule = {
     name: moduleName,
-    version: '0.0.1',
+    version: packageVersion,
     slices: kernelCoreInterconnectionSlice,
     middlewares: kernelCoreInterconnectionMiddlewares,
     epics: kernelCoreInterconnectionEpics,

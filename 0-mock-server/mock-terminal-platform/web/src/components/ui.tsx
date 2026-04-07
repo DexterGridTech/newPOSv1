@@ -1,14 +1,15 @@
-import type { FormEvent, ReactNode } from 'react'
+import type { ChangeEvent, FormEvent, ReactNode } from 'react'
 
 export function AppShell(props: {
   title: string
   subtitle: string
-  sections: Array<{ key: string; label: string; badge?: string }>
+  sections: ReadonlyArray<{ key: string; label: string; badge?: string; children?: ReadonlyArray<{ key: string; label: string; badge?: string }> }>
   activeKey: string
   onChange: (key: string) => void
+  topbarExtra?: ReactNode
   children: ReactNode
 }) {
-  const { title, subtitle, sections, activeKey, onChange, children } = props
+  const { title, subtitle, sections, activeKey, onChange, topbarExtra, children } = props
   return (
     <div className="app-shell">
       <aside className="sidebar">
@@ -20,16 +21,35 @@ export function AppShell(props: {
           </div>
         </div>
         <nav className="nav-list">
-          {sections.map((section) => (
-            <button
-              key={section.key}
-              className={`nav-item ${activeKey === section.key ? 'active' : ''}`}
-              onClick={() => onChange(section.key)}
-            >
-              <span>{section.label}</span>
-              {section.badge ? <span className="nav-badge">{section.badge}</span> : null}
-            </button>
-          ))}
+          {sections.map((section) => {
+            const sectionActive = activeKey === section.key || section.children?.some((child) => child.key === activeKey)
+            return (
+            <div key={section.key} className="nav-group">
+              <button
+                type="button"
+                className={`nav-item ${sectionActive ? 'active' : ''}`}
+                onClick={() => onChange(section.key)}
+              >
+                <span>{section.label}</span>
+                {section.badge ? <span className="nav-badge">{section.badge}</span> : null}
+              </button>
+              {section.children?.length ? (
+                <div className="subnav-list">
+                  {section.children.map((child) => (
+                    <button
+                      type="button"
+                      key={child.key}
+                      className={`subnav-item ${activeKey === child.key ? 'active' : ''}`}
+                      onClick={() => onChange(child.key)}
+                    >
+                      <span>{child.label}</span>
+                      {child.badge ? <span className="nav-badge">{child.badge}</span> : null}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          )})}
         </nav>
       </aside>
       <main className="main-panel">
@@ -38,9 +58,12 @@ export function AppShell(props: {
             <h1>{title}</h1>
             <p>{subtitle}</p>
           </div>
-          <div className="topbar-meta">
-            <span className="chip">真实控制台风格</span>
-            <span className="chip emphasis">高自由度联调</span>
+          <div className="topbar-right">
+            {topbarExtra}
+            <div className="topbar-meta">
+              <span className="chip">真实控制台风格</span>
+              <span className="chip emphasis">高自由度联调</span>
+            </div>
           </div>
         </header>
         <section className="content-grid">{children}</section>
@@ -117,7 +140,7 @@ export function JsonBlock(props: { value: unknown }) {
 
 export function ActionButton(props: { label: string; onClick: () => void | Promise<void>; tone?: 'default' | 'primary' | 'danger' }) {
   return (
-    <button className={`action-button ${props.tone ?? 'default'}`} onClick={() => void props.onClick()}>
+    <button type="button" className={`action-button ${props.tone ?? 'default'}`} onClick={() => void props.onClick()}>
       {props.label}
     </button>
   )
@@ -155,9 +178,35 @@ export function TextInput(props: {
   )
 }
 
+export function SelectInput(props: {
+  label: string
+  value: string
+  onChange: (value: string) => void
+  options: Array<{ label: string; value: string; disabled?: boolean }>
+}) {
+  return (
+    <label className="field">
+      <span>{props.label}</span>
+      <select value={props.value} onChange={(event: ChangeEvent<HTMLSelectElement>) => props.onChange(event.target.value)}>
+        {props.options.map((option) => (
+          <option key={option.value} value={option.value} disabled={option.disabled}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+    </label>
+  )
+}
+
 export function FormGrid(props: { onSubmit?: (event: FormEvent<HTMLFormElement>) => void; children: ReactNode; columns?: 2 | 3 }) {
   return (
-    <form className={`form-grid columns-${props.columns ?? 2}`} onSubmit={props.onSubmit}>
+    <form
+      className={`form-grid columns-${props.columns ?? 2}`}
+      onSubmit={(event) => {
+        event.preventDefault()
+        props.onSubmit?.(event)
+      }}
+    >
       {props.children}
     </form>
   )
@@ -171,4 +220,8 @@ export function Pager(props: { page: number; totalPages: number; onPrev: () => v
       <ActionButton label="下一页" onClick={props.onNext} />
     </div>
   )
+}
+
+export function InlineBadge(props: { tone?: 'default' | 'primary' | 'success' | 'warning'; children: ReactNode }) {
+  return <span className={`inline-badge ${props.tone ?? 'default'}`}>{props.children}</span>
 }

@@ -17,10 +17,11 @@ import {uiCoreTerminalModule} from "@impos2/ui-core-terminal";
 import {uiMixcTradeModule} from "@impos2/ui-mixc-trade";
 import {uiMixcActivityModule} from "@impos2/ui-mixc-activity";
 import {uiMixcManagementModule} from "@impos2/ui-mixc-management";
+import {packageVersion} from './generated/packageVersion';
 
 export const uiIntegrationMixcRetailModule: AppModule = {
     name: moduleName,
-    version: '0.0.1',
+    version: packageVersion,
     slices: uiIntegrationMixcRetailSlice,
     middlewares: uiIntegrationMixcRetailMiddlewares,
     epics: uiIntegrationMixcRetailEpics,

@@ -1,48 +1,63 @@
-import { eq, desc } from 'drizzle-orm'
+import { and, desc, eq, inArray } from 'drizzle-orm'
 import { db, sqlite } from '../../database/index.js'
 import {
   activationCodesTable,
   credentialsTable,
   taskInstancesTable,
   taskReleasesTable,
+  storesTable,
   terminalProfilesTable,
   terminalTemplatesTable,
   terminalsTable,
 } from '../../database/schema.js'
-import { DEFAULT_SANDBOX_ID } from '../../shared/constants.js'
 import { createId, now, parseJson } from '../../shared/utils.js'
 import type { DeliveryStatus, ReleaseStatus, TaskType } from '../../shared/types.js'
+import { getCurrentSandboxId } from '../sandbox/service.js'
 
-export const listTerminals = () =>
-  db.select().from(terminalsTable).orderBy(desc(terminalsTable.updatedAt)).all().map((item) => ({
+export const listTerminals = () => {
+  const sandboxId = getCurrentSandboxId()
+  return db.select().from(terminalsTable).where(eq(terminalsTable.sandboxId, sandboxId)).orderBy(desc(terminalsTable.updatedAt)).all().map((item) => ({
     ...item,
     deviceInfo: parseJson(item.deviceInfoJson, {}),
   }))
+}
 
-export const listProfiles = () =>
-  db.select().from(terminalProfilesTable).orderBy(desc(terminalProfilesTable.updatedAt)).all().map((item) => ({
+export const listProfiles = () => {
+  const sandboxId = getCurrentSandboxId()
+  return db.select().from(terminalProfilesTable).where(eq(terminalProfilesTable.sandboxId, sandboxId)).orderBy(desc(terminalProfilesTable.updatedAt)).all().map((item) => ({
     ...item,
     capabilities: parseJson(item.capabilitiesJson, {}),
   }))
+}
 
-export const listTemplates = () =>
-  db.select().from(terminalTemplatesTable).orderBy(desc(terminalTemplatesTable.updatedAt)).all().map((item) => ({
+export const listTemplates = () => {
+  const sandboxId = getCurrentSandboxId()
+  return db.select().from(terminalTemplatesTable).where(eq(terminalTemplatesTable.sandboxId, sandboxId)).orderBy(desc(terminalTemplatesTable.updatedAt)).all().map((item) => ({
     ...item,
     presetConfig: parseJson(item.presetConfigJson, {}),
     presetTags: parseJson(item.presetTagsJson, []),
   }))
+}
 
-export const listActivationCodes = () =>
-  db.select().from(activationCodesTable).orderBy(desc(activationCodesTable.createdAt)).all()
+export const listActivationCodes = () => {
+  const sandboxId = getCurrentSandboxId()
+  return db.select().from(activationCodesTable).where(eq(activationCodesTable.sandboxId, sandboxId)).orderBy(desc(activationCodesTable.createdAt)).all()
+}
 
 export const activateTerminal = (input: {
   activationCode: string
   deviceFingerprint: string
   deviceInfo: Record<string, unknown>
 }) => {
-  const activation = db.select().from(activationCodesTable).where(eq(activationCodesTable.code, input.activationCode)).get()
+  const sandboxId = getCurrentSandboxId()
+  const activation = db.select().from(activationCodesTable).where(and(eq(activationCodesTable.code, input.activationCode), eq(activationCodesTable.sandboxId, sandboxId))).get()
   if (!activation || activation.status !== 'AVAILABLE') {
     throw new Error('激活码不可用')
+  }
+
+  const store = db.select().from(storesTable).where(and(eq(storesTable.storeId, activation.storeId), eq(storesTable.sandboxId, sandboxId))).get()
+  if (!store) {
+    throw new Error('激活码关联门店不存在')
   }
 
   const terminalId = createId('terminal')
@@ -51,9 +66,9 @@ export const activateTerminal = (input: {
   db.insert(terminalsTable).values({
     terminalId,
     sandboxId: activation.sandboxId,
-    projectId: 'mixc-retail',
     tenantId: activation.tenantId,
     brandId: activation.brandId,
+    projectId: activation.projectId,
     storeId: activation.storeId,
     profileId: activation.profileId,
     templateId: activation.templateId ?? 'terminal-template-retail-default',
@@ -74,7 +89,7 @@ export const activateTerminal = (input: {
 
   db.update(activationCodesTable)
     .set({ status: 'USED', usedBy: terminalId, usedAt: timestamp })
-    .where(eq(activationCodesTable.code, input.activationCode))
+    .where(and(eq(activationCodesTable.code, input.activationCode), eq(activationCodesTable.sandboxId, sandboxId)))
     .run()
 
   const token = createId('token')
@@ -123,20 +138,27 @@ export const refreshTerminalToken = (refreshToken: string) => {
   }
 }
 
-export const listTaskReleases = () =>
-  db.select().from(taskReleasesTable).orderBy(desc(taskReleasesTable.updatedAt)).all().map((item) => ({
+export const listTaskReleases = () => {
+  const sandboxId = getCurrentSandboxId()
+  return db.select().from(taskReleasesTable).where(eq(taskReleasesTable.sandboxId, sandboxId)).orderBy(desc(taskReleasesTable.updatedAt)).all().map((item) => ({
     ...item,
     targetSelector: parseJson(item.targetSelectorJson, {}),
     payload: parseJson(item.payloadJson, {}),
   }))
+}
 
-export const listTaskInstances = () =>
-  db.select().from(taskInstancesTable).orderBy(desc(taskInstancesTable.updatedAt)).all().map((item) => ({
+export const listTaskInstances = () => {
+  const sandboxId = getCurrentSandboxId()
+  const releases = db.select({ releaseId: taskReleasesTable.releaseId }).from(taskReleasesTable).where(eq(taskReleasesTable.sandboxId, sandboxId)).all()
+  const releaseIds = releases.map((item) => item.releaseId)
+  if (releaseIds.length === 0) return []
+  return db.select().from(taskInstancesTable).where(inArray(taskInstancesTable.releaseId, releaseIds)).orderBy(desc(taskInstancesTable.updatedAt)).all().map((item) => ({
     ...item,
     payload: parseJson(item.payloadJson, {}),
     result: parseJson(item.resultJson, null),
     error: parseJson(item.errorJson, null),
   }))
+}
 
 export const createTaskRelease = (input: {
   title: string
@@ -147,20 +169,21 @@ export const createTaskRelease = (input: {
   targetTerminalIds: string[]
   payload: Record<string, unknown>
 }) => {
+  const sandboxId = getCurrentSandboxId()
   const timestamp = now()
   const releaseId = createId('release')
 
   db.insert(taskReleasesTable).values({
     releaseId,
-    sandboxId: DEFAULT_SANDBOX_ID,
+    sandboxId,
     taskType: input.taskType,
     sourceType: input.sourceType,
     sourceId: input.sourceId,
     title: input.title,
-    targetSelectorJson: JSON.stringify({ type: 'TERMINALS', value: input.targetTerminalIds }),
+    targetSelectorJson: JSON.stringify({ type: 'TERMINALS', terminalIds: input.targetTerminalIds }),
     payloadJson: JSON.stringify(input.payload),
     priority: input.priority,
-    status: 'DISPATCHING',
+    status: 'APPROVED',
     approvalStatus: 'APPROVED',
     createdAt: timestamp,
     updatedAt: timestamp,
@@ -170,20 +193,24 @@ export const createTaskRelease = (input: {
 }
 
 export const createTaskInstancesForRelease = (releaseId: string) => {
-  const release = db.select().from(taskReleasesTable).where(eq(taskReleasesTable.releaseId, releaseId)).get()
+  const sandboxId = getCurrentSandboxId()
+  const release = db.select().from(taskReleasesTable).where(and(eq(taskReleasesTable.releaseId, releaseId), eq(taskReleasesTable.sandboxId, sandboxId))).get()
   if (!release) {
     throw new Error('任务发布单不存在')
   }
 
-  const selector = parseJson<{ value?: string[] }>(release.targetSelectorJson, {})
-  const terminalIds = selector.value ?? []
-  const timestamp = now()
+  const targetSelector = parseJson<{ terminalIds?: string[] }>(release.targetSelectorJson, {})
+  const targetTerminalIds = targetSelector.terminalIds ?? []
+  const terminals = targetTerminalIds.length
+    ? db.select().from(terminalsTable).where(and(eq(terminalsTable.sandboxId, sandboxId), inArray(terminalsTable.terminalId, targetTerminalIds))).all()
+    : []
 
-  for (const terminalId of terminalIds) {
+  const timestamp = now()
+  for (const terminal of terminals) {
     db.insert(taskInstancesTable).values({
       instanceId: createId('instance'),
       releaseId,
-      terminalId,
+      terminalId: terminal.terminalId,
       taskType: release.taskType,
       status: 'PENDING',
       deliveryStatus: 'PENDING',
@@ -197,36 +224,31 @@ export const createTaskInstancesForRelease = (releaseId: string) => {
     }).run()
   }
 
-  db.update(taskReleasesTable).set({ status: 'IN_PROGRESS', updatedAt: timestamp }).where(eq(taskReleasesTable.releaseId, releaseId)).run()
+  db.update(taskReleasesTable).set({ status: 'DISPATCHING', updatedAt: timestamp }).where(eq(taskReleasesTable.releaseId, releaseId)).run()
 
   return {
     releaseId,
-    acceptedTerminals: terminalIds,
-    rejectedTerminals: [],
+    totalInstances: terminals.length,
   }
 }
 
-export const updateDeliveryStatus = (instanceId: string, deliveryStatus: DeliveryStatus, error?: Record<string, unknown>) => {
+export const updateDeliveryStatus = (instanceId: string, deliveryStatus: DeliveryStatus, error?: unknown) => {
   const timestamp = now()
-  const nextStatus: ReleaseStatus | undefined = undefined
-
   db.update(taskInstancesTable)
     .set({
       deliveryStatus,
-      status: deliveryStatus === 'DELIVERED' ? 'DELIVERED' : deliveryStatus,
       errorJson: error ? JSON.stringify(error) : null,
-      deliveredAt: deliveryStatus === 'DELIVERED' ? timestamp : null,
+      deliveredAt: deliveryStatus === 'DELIVERED' || deliveryStatus === 'ACKED' ? timestamp : null,
       updatedAt: timestamp,
     })
     .where(eq(taskInstancesTable.instanceId, instanceId))
     .run()
 
-  return { instanceId, deliveryStatus, updatedAt: timestamp, nextStatus }
+  return { instanceId, deliveryStatus }
 }
 
-export const reportTaskResult = (instanceId: string, input: { status: string; result?: unknown; error?: unknown }) => {
+export const reportTaskResult = (instanceId: string, input: { status: ReleaseStatus; result?: unknown; error?: unknown }) => {
   const timestamp = now()
-
   db.update(taskInstancesTable)
     .set({
       status: input.status,
@@ -238,106 +260,7 @@ export const reportTaskResult = (instanceId: string, input: { status: string; re
     .where(eq(taskInstancesTable.instanceId, instanceId))
     .run()
 
-  const row = sqlite
-    .prepare('SELECT release_id FROM task_instances WHERE instance_id = ?')
-    .get(instanceId) as { release_id: string } | undefined
-
-  if (row) {
-    const stats = sqlite
-      .prepare("SELECT COUNT(*) as total, SUM(CASE WHEN status IN ('SUCCESS', 'FAILED') THEN 1 ELSE 0 END) as done, SUM(CASE WHEN status = 'FAILED' THEN 1 ELSE 0 END) as failed FROM task_instances WHERE release_id = ?")
-      .get(row.release_id) as { total: number; done: number; failed: number }
-
-    const status = stats.done === stats.total ? (stats.failed > 0 ? 'FAILED' : 'COMPLETED') : 'IN_PROGRESS'
-    db.update(taskReleasesTable).set({ status, updatedAt: timestamp }).where(eq(taskReleasesTable.releaseId, row.release_id)).run()
-  }
-
   return { instanceId, status: input.status }
-}
-
-export const batchCreateTerminals = (count: number) => {
-  const timestamp = now()
-  const createdIds: string[] = []
-
-  for (let index = 0; index < count; index += 1) {
-    const terminalId = createId('mockTerminal')
-    createdIds.push(terminalId)
-    db.insert(terminalsTable).values({
-      terminalId,
-      sandboxId: DEFAULT_SANDBOX_ID,
-      projectId: 'mixc-retail',
-      tenantId: 'tenant-mixc',
-      brandId: 'brand-mixc',
-      storeId: `store-mock-${(index % 3) + 1}`,
-      profileId: 'profile-rn84-retail',
-      templateId: 'terminal-template-retail-default',
-      lifecycleStatus: 'ACTIVE',
-      presenceStatus: index % 2 === 0 ? 'ONLINE' : 'OFFLINE',
-      healthStatus: 'HEALTHY',
-      currentAppVersion: '2.3.18',
-      currentBundleVersion: 'bundle-2026.04.06',
-      currentConfigVersion: 'config-2026.04.01',
-      deviceFingerprint: `fp-${terminalId}`,
-      deviceInfoJson: JSON.stringify({ model: 'Mock-POS', osVersion: 'Android 14', manufacturer: 'IMPOS2' }),
-      sourceMode: 'MOCK_OVERRIDE',
-      activatedAt: timestamp,
-      lastSeenAt: timestamp,
-      createdAt: timestamp,
-      updatedAt: timestamp,
-    }).run()
-  }
-
-  return { count, terminalIds: createdIds }
-}
-
-export const forceTerminalStatus = (terminalId: string, input: { lifecycleStatus?: string; presenceStatus?: string; healthStatus?: string }) => {
-  const timestamp = now()
-  sqlite.prepare(`
-    UPDATE terminal_instances
-    SET lifecycle_status = COALESCE(?, lifecycle_status),
-        presence_status = COALESCE(?, presence_status),
-        health_status = COALESCE(?, health_status),
-        source_mode = 'MOCK_OVERRIDE',
-        updated_at = ?
-    WHERE terminal_id = ?
-  `).run(input.lifecycleStatus ?? null, input.presenceStatus ?? null, input.healthStatus ?? null, timestamp, terminalId)
-
-  return { terminalId, updatedAt: timestamp }
-}
-
-
-export const createActivationCodes = (input: {
-  count?: number
-  tenantId?: string
-  brandId?: string
-  storeId?: string
-  profileId?: string
-  templateId?: string
-  expiresInDays?: number
-}) => {
-  const timestamp = now()
-  const count = Math.max(1, Math.min(Number(input.count ?? 5), 100))
-  const codes: string[] = []
-
-  for (let index = 0; index < count; index += 1) {
-    const code = `ACT-${Math.random().toString(36).slice(2, 6).toUpperCase()}-${Date.now().toString(36).slice(-4).toUpperCase()}-${index}`
-    codes.push(code)
-    db.insert(activationCodesTable).values({
-      code,
-      sandboxId: DEFAULT_SANDBOX_ID,
-      tenantId: input.tenantId ?? 'tenant-mixc',
-      brandId: input.brandId ?? 'brand-mixc',
-      storeId: input.storeId ?? 'store-dev-lab',
-      profileId: input.profileId ?? 'profile-rn84-retail',
-      templateId: input.templateId ?? 'terminal-template-retail-default',
-      status: 'AVAILABLE',
-      usedBy: null,
-      usedAt: null,
-      expiresAt: timestamp + (input.expiresInDays ?? 7) * 24 * 3600_000,
-      createdAt: timestamp,
-    }).run()
-  }
-
-  return { count, codes }
 }
 
 export const getTaskTrace = (instanceId: string) => {
@@ -347,12 +270,8 @@ export const getTaskTrace = (instanceId: string) => {
   }
 
   const release = sqlite.prepare('SELECT * FROM task_releases WHERE release_id = ?').get(instance.release_id) as Record<string, unknown> | undefined
-  const projections = sqlite.prepare(
-    'SELECT * FROM tdp_projections WHERE topic_key = ? AND scope_type = ? AND scope_key = ? ORDER BY updated_at DESC'
-  ).all('tcp.task.release', 'TERMINAL', instance.terminal_id) as Record<string, unknown>[]
-  const changes = sqlite.prepare(
-    'SELECT * FROM tdp_change_logs WHERE source_release_id = ? AND scope_key = ? ORDER BY created_at DESC'
-  ).all(instance.release_id, instance.terminal_id) as Record<string, unknown>[]
+  const projections = sqlite.prepare('SELECT * FROM tdp_projections WHERE scope_key = ? ORDER BY updated_at DESC').all(instance.terminal_id) as Array<Record<string, unknown>>
+  const changes = sqlite.prepare('SELECT * FROM tdp_change_logs WHERE scope_key = ? ORDER BY created_at DESC LIMIT 20').all(instance.terminal_id) as Array<Record<string, unknown>>
 
   return {
     instance: {
@@ -364,8 +283,8 @@ export const getTaskTrace = (instanceId: string) => {
     release: release
       ? {
           ...release,
-          targetSelector: parseJson(String(release.target_selector_json ?? ''), {}),
           payload: parseJson(String(release.payload_json ?? ''), {}),
+          targetSelector: parseJson(String(release.target_selector_json ?? ''), {}),
         }
       : null,
     dataPlane: {
@@ -373,4 +292,124 @@ export const getTaskTrace = (instanceId: string) => {
       changes: changes.map((item) => ({ ...item, payload: parseJson(String(item.payload_json ?? ''), {}) })),
     },
   }
+}
+
+export const batchCreateTerminals = (count: number) => {
+  const sandboxId = getCurrentSandboxId()
+  const timestamp = now()
+  const terminalIds: string[] = []
+
+  const profile = db.select().from(terminalProfilesTable).where(eq(terminalProfilesTable.sandboxId, sandboxId)).orderBy(desc(terminalProfilesTable.updatedAt)).get()
+  const template = db.select().from(terminalTemplatesTable).where(eq(terminalTemplatesTable.sandboxId, sandboxId)).orderBy(desc(terminalTemplatesTable.updatedAt)).get()
+  const stores = db.select().from(storesTable).where(eq(storesTable.sandboxId, sandboxId)).orderBy(desc(storesTable.updatedAt)).all()
+  if (!profile || !template) {
+    throw new Error('当前沙箱缺少终端机型或终端模板，无法批量造终端')
+  }
+  if (stores.length === 0) {
+    throw new Error('当前沙箱缺少门店数据，无法批量造终端')
+  }
+
+  for (let index = 0; index < count; index += 1) {
+    const terminalId = createId('terminal')
+    const store = stores[index % stores.length]
+    terminalIds.push(terminalId)
+    db.insert(terminalsTable).values({
+      terminalId,
+      sandboxId,
+      tenantId: store.tenantId,
+      brandId: store.brandId,
+      projectId: store.projectId,
+      storeId: store.storeId,
+      profileId: profile.profileId,
+      templateId: template.templateId,
+      lifecycleStatus: 'ACTIVE',
+      presenceStatus: 'ONLINE',
+      healthStatus: 'HEALTHY',
+      currentAppVersion: '2.3.18',
+      currentBundleVersion: 'bundle-2026.04.06',
+      currentConfigVersion: 'config-2026.04.06',
+      deviceFingerprint: `fp-${terminalId}`,
+      deviceInfoJson: JSON.stringify({ model: 'Mock-POS-X1', manufacturer: 'IMPOS2', osVersion: 'Android 14' }),
+      sourceMode: 'STANDARD',
+      activatedAt: timestamp,
+      lastSeenAt: timestamp,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    }).run()
+  }
+
+  return { count, terminalIds }
+}
+
+export const createActivationCodes = (input: {
+  count: number
+  storeId?: string
+  profileId?: string
+  templateId?: string
+  expiresInDays?: number
+}) => {
+  const sandboxId = getCurrentSandboxId()
+  const timestamp = now()
+  const profile = input.profileId
+    ? db.select().from(terminalProfilesTable).where(and(eq(terminalProfilesTable.profileId, input.profileId), eq(terminalProfilesTable.sandboxId, sandboxId))).get()
+    : db.select().from(terminalProfilesTable).where(eq(terminalProfilesTable.sandboxId, sandboxId)).orderBy(desc(terminalProfilesTable.updatedAt)).get()
+  const template = input.templateId
+    ? db.select().from(terminalTemplatesTable).where(and(eq(terminalTemplatesTable.templateId, input.templateId), eq(terminalTemplatesTable.sandboxId, sandboxId))).get()
+    : db.select().from(terminalTemplatesTable).where(eq(terminalTemplatesTable.sandboxId, sandboxId)).orderBy(desc(terminalTemplatesTable.updatedAt)).get()
+  const store = input.storeId
+    ? db.select().from(storesTable).where(and(eq(storesTable.storeId, input.storeId), eq(storesTable.sandboxId, sandboxId))).get()
+    : db.select().from(storesTable).where(eq(storesTable.sandboxId, sandboxId)).orderBy(desc(storesTable.updatedAt)).get()
+  if (!profile) {
+    throw new Error('当前沙箱缺少可用 Profile')
+  }
+  if (!store) {
+    throw new Error('门店不存在')
+  }
+
+  const codes: string[] = []
+  for (let index = 0; index < input.count; index += 1) {
+    let code = ''
+    do {
+      code = Array.from({ length: 12 }, () => Math.floor(Math.random() * 10)).join('')
+    } while (db.select().from(activationCodesTable).where(and(eq(activationCodesTable.code, code), eq(activationCodesTable.sandboxId, sandboxId))).get())
+    codes.push(code)
+    db.insert(activationCodesTable).values({
+      code,
+      sandboxId,
+      tenantId: store.tenantId,
+      brandId: store.brandId,
+      projectId: store.projectId,
+      storeId: store.storeId,
+      profileId: profile.profileId,
+      templateId: template?.templateId ?? null,
+      status: 'AVAILABLE',
+      usedBy: null,
+      usedAt: null,
+      expiresAt: timestamp + (input.expiresInDays ?? 7) * 24 * 3600_000,
+      createdAt: timestamp,
+    }).run()
+  }
+
+  return { count: input.count, codes }
+}
+
+export const forceTerminalStatus = (terminalId: string, input: { healthStatus?: string; presenceStatus?: string; lifecycleStatus?: string }) => {
+  const sandboxId = getCurrentSandboxId()
+  const terminal = db.select().from(terminalsTable).where(and(eq(terminalsTable.terminalId, terminalId), eq(terminalsTable.sandboxId, sandboxId))).get()
+  if (!terminal) {
+    throw new Error('终端不存在')
+  }
+
+  const timestamp = now()
+  db.update(terminalsTable)
+    .set({
+      healthStatus: input.healthStatus ?? terminal.healthStatus,
+      presenceStatus: input.presenceStatus ?? terminal.presenceStatus,
+      lifecycleStatus: input.lifecycleStatus ?? terminal.lifecycleStatus,
+      updatedAt: timestamp,
+    })
+    .where(eq(terminalsTable.terminalId, terminalId))
+    .run()
+
+  return { terminalId, updatedAt: timestamp }
 }

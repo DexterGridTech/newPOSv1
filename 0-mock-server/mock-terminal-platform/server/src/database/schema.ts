@@ -5,6 +5,9 @@ export const sandboxesTable = sqliteTable('sandboxes', {
   name: text('name').notNull(),
   description: text('description').notNull(),
   status: text('status').notNull(),
+  isSystemDefault: integer('is_system_default').notNull(),
+  creationMode: text('creation_mode').notNull(),
+  sourceSandboxId: text('source_sandbox_id'),
   seed: integer('seed'),
   ownerUserId: text('owner_user_id').notNull(),
   ownerTeamId: text('owner_team_id').notNull(),
@@ -15,19 +18,90 @@ export const sandboxesTable = sqliteTable('sandboxes', {
   updatedAt: integer('updated_at').notNull()
 })
 
+export const runtimeContextTable = sqliteTable('platform_runtime_context', {
+  contextKey: text('context_key').primaryKey(),
+  currentSandboxId: text('current_sandbox_id').notNull(),
+  updatedAt: integer('updated_at').notNull(),
+})
+
+export const tenantsTable = sqliteTable('tenants', {
+  tenantId: text('tenant_id').primaryKey(),
+  sandboxId: text('sandbox_id').notNull(),
+  tenantCode: text('tenant_code').notNull(),
+  tenantName: text('tenant_name').notNull(),
+  status: text('status').notNull(),
+  description: text('description').notNull(),
+  createdAt: integer('created_at').notNull(),
+  updatedAt: integer('updated_at').notNull()
+})
+
+export const brandsTable = sqliteTable('brands', {
+  brandId: text('brand_id').primaryKey(),
+  sandboxId: text('sandbox_id').notNull(),
+  brandCode: text('brand_code').notNull(),
+  brandName: text('brand_name').notNull(),
+  status: text('status').notNull(),
+  description: text('description').notNull(),
+  createdAt: integer('created_at').notNull(),
+  updatedAt: integer('updated_at').notNull()
+})
+
+export const tenantBrandAuthorizationsTable = sqliteTable('tenant_brand_authorizations', {
+  authorizationId: text('authorization_id').primaryKey(),
+  sandboxId: text('sandbox_id').notNull(),
+  tenantId: text('tenant_id').notNull(),
+  brandId: text('brand_id').notNull(),
+  status: text('status').notNull(),
+  description: text('description').notNull(),
+  createdAt: integer('created_at').notNull(),
+  updatedAt: integer('updated_at').notNull()
+})
+
+export const projectsTable = sqliteTable('projects', {
+  projectId: text('project_id').primaryKey(),
+  sandboxId: text('sandbox_id').notNull(),
+  projectCode: text('project_code').notNull(),
+  projectName: text('project_name').notNull(),
+  status: text('status').notNull(),
+  description: text('description').notNull(),
+  region: text('region'),
+  timezone: text('timezone'),
+  createdAt: integer('created_at').notNull(),
+  updatedAt: integer('updated_at').notNull()
+})
+
+export const storesTable = sqliteTable('stores', {
+  storeId: text('store_id').primaryKey(),
+  sandboxId: text('sandbox_id').notNull(),
+  tenantId: text('tenant_id').notNull(),
+  brandId: text('brand_id').notNull(),
+  projectId: text('project_id').notNull(),
+  storeCode: text('store_code').notNull(),
+  storeName: text('store_name').notNull(),
+  status: text('status').notNull(),
+  description: text('description').notNull(),
+  address: text('address'),
+  contactName: text('contact_name'),
+  contactPhone: text('contact_phone'),
+  createdAt: integer('created_at').notNull(),
+  updatedAt: integer('updated_at').notNull()
+})
+
 export const terminalProfilesTable = sqliteTable('terminal_profiles', {
   profileId: text('profile_id').primaryKey(),
+  sandboxId: text('sandbox_id').notNull(),
+  profileCode: text('profile_code').notNull(),
   name: text('name').notNull(),
   description: text('description').notNull(),
   capabilitiesJson: text('capabilities_json').notNull(),
-  defaultConfigTemplateId: text('default_config_template_id'),
-  defaultAppVersion: text('default_app_version'),
   createdAt: integer('created_at').notNull(),
   updatedAt: integer('updated_at').notNull()
 })
 
 export const terminalTemplatesTable = sqliteTable('terminal_templates', {
   templateId: text('template_id').primaryKey(),
+  sandboxId: text('sandbox_id').notNull(),
+  templateCode: text('template_code').notNull(),
   name: text('name').notNull(),
   description: text('description').notNull(),
   profileId: text('profile_id').notNull(),
@@ -40,9 +114,9 @@ export const terminalTemplatesTable = sqliteTable('terminal_templates', {
 export const terminalsTable = sqliteTable('terminal_instances', {
   terminalId: text('terminal_id').primaryKey(),
   sandboxId: text('sandbox_id').notNull(),
-  projectId: text('project_id').notNull(),
   tenantId: text('tenant_id').notNull(),
   brandId: text('brand_id').notNull(),
+  projectId: text('project_id').notNull(),
   storeId: text('store_id').notNull(),
   profileId: text('profile_id').notNull(),
   templateId: text('template_id').notNull(),
@@ -66,6 +140,7 @@ export const activationCodesTable = sqliteTable('activation_codes', {
   sandboxId: text('sandbox_id').notNull(),
   tenantId: text('tenant_id').notNull(),
   brandId: text('brand_id').notNull(),
+  projectId: text('project_id').notNull(),
   storeId: text('store_id').notNull(),
   profileId: text('profile_id').notNull(),
   templateId: text('template_id'),

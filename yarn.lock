@@ -3596,6 +3596,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@impos2/communication-test@workspace:0-mock-server/communication-test":
+  version: 0.0.0-use.local
+  resolution: "@impos2/communication-test@workspace:0-mock-server/communication-test"
+  dependencies:
+    "@types/cors": ^2.8.17
+    "@types/express": ^4.17.21
+    "@types/node": ^24.10.0
+    "@types/ws": ^8.5.13
+    cors: ^2.8.5
+    express: ^4.18.2
+    tsx: ^4.21.0
+    typescript: ^5.9.3
+    ws: ^8.19.0
+  languageName: unknown
+  linkType: soft
+
 "@impos2/kernel-core-base@*, @impos2/kernel-core-base@workspace:1-kernel/1.1-cores/base":
   version: 0.0.0-use.local
   resolution: "@impos2/kernel-core-base@workspace:1-kernel/1.1-cores/base"
@@ -3609,6 +3625,20 @@ __metadata:
     redux-persist: ^6.0.0
     rxjs: ^7.8.2
     ts-node: ^10.9.2
+    typescript: ^5.9.3
+  languageName: unknown
+  linkType: soft
+
+"@impos2/kernel-core-communication@workspace:1-kernel/1.1-cores/communication":
+  version: 0.0.0-use.local
+  resolution: "@impos2/kernel-core-communication@workspace:1-kernel/1.1-cores/communication"
+  dependencies:
+    "@impos2/kernel-core-base": "*"
+    "@types/node": ^25.0.9
+    axios: ^1.13.5
+    madge: ^8.0.0
+    ts-node: ^10.9.2
+    tsx: ^4.20.6
     typescript: ^5.9.3
   languageName: unknown
   linkType: soft
@@ -3676,6 +3706,27 @@ __metadata:
     "@impos2/kernel-core-interconnection": "*"
     "@impos2/kernel-core-navigation": "*"
     "@impos2/kernel-server-config": "*"
+    "@reduxjs/toolkit": ^2.11.2
+    "@types/node": ^25.0.9
+    axios: ^1.13.5
+    date-fns: ^4.1.0
+    madge: ^8.0.0
+    redux-observable: ^3.0.0-rc.3
+    rxjs: ^7.8.2
+    ts-node: ^10.9.2
+    typescript: ^5.9.3
+  languageName: unknown
+  linkType: soft
+
+"@impos2/kernel-mixc-user-login@workspace:1-kernel/1.2-modules/mixc-user-login":
+  version: 0.0.0-use.local
+  resolution: "@impos2/kernel-mixc-user-login@workspace:1-kernel/1.2-modules/mixc-user-login"
+  dependencies:
+    "@impos2/kernel-core-base": "*"
+    "@impos2/kernel-core-interconnection": "*"
+    "@impos2/kernel-core-navigation": "*"
+    "@impos2/kernel-core-task": "*"
+    "@impos2/kernel-core-terminal": "*"
     "@reduxjs/toolkit": ^2.11.2
     "@types/node": ^25.0.9
     axios: ^1.13.5

@@ -11,10 +11,11 @@ import {AppModule} from "@impos2/kernel-core-base";
 import {kernelCoreNavigationModule} from "@impos2/kernel-core-navigation";
 import {uiMixcActivityScreenParts} from "./ui";
 import {uiMixcWorkbenchModule} from "@impos2/ui-mixc-workbench";
+import {packageVersion} from './generated/packageVersion';
 
 export const uiMixcActivityModule: AppModule = {
     name: moduleName,
-    version: '0.0.1',
+    version: packageVersion,
     slices: uiMixcActivitySlice,
     middlewares: uiMixcActivityMiddlewares,
     epics: uiMixcActivityEpics,

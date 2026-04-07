@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { ok, created, fail } from '../../shared/http.js'
 import { parsePagination } from '../../shared/pagination.js'
-import { listAuditLogs, listSandboxes, getPlatformOverview } from '../sandbox/service.js'
+import { createSandbox, getRuntimeContext, listAuditLogs, listSandboxes, getPlatformOverview, switchCurrentSandbox, updateSandbox } from '../sandbox/service.js'
 import {
   activateTerminal,
   batchCreateTerminals,
@@ -41,12 +41,63 @@ import { appendAuditLog } from './audit.js'
 import { exportMockData, exportMockDataText } from '../export/service.js'
 import { importMockTemplates, validateImportPayload } from '../export/importService.js'
 import { faultTemplates, topicTemplates } from '../export/templateLibrary.js'
+import {
+  createBrand,
+  createProfile,
+  createProject,
+  createStore,
+  createTenantBrandAuthorization,
+  createTemplate,
+  createTenant,
+  listBrands,
+  listProfiles as listMasterProfiles,
+  listProjects,
+  listStores,
+  listTenantBrandAuthorizations,
+  listTemplates as listMasterTemplates,
+  listTenants,
+  updateBrand,
+  updateProfile,
+  updateProject,
+  updateStore,
+  updateTenantBrandAuthorization,
+  updateTemplate,
+  updateTenant,
+} from '../master-data/service.js'
 
 export const createRouter = () => {
   const router = Router()
 
   router.get('/api/v1/admin/overview', (_req, res) => ok(res, getPlatformOverview()))
+  router.get('/api/v1/admin/runtime-context', (_req, res) => ok(res, getRuntimeContext()))
+  router.put('/api/v1/admin/runtime-context/current-sandbox', (req, res) => {
+    try {
+      const result = switchCurrentSandbox(req.body.sandboxId)
+      appendAuditLog({ domain: 'SANDBOX', action: 'SWITCH_CURRENT_SANDBOX', targetId: req.body.sandboxId, detail: result })
+      return ok(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '切换沙箱失败', 400)
+    }
+  })
   router.get('/api/v1/admin/sandboxes', (_req, res) => ok(res, listSandboxes()))
+  router.post('/api/v1/admin/sandboxes', (req, res) => {
+    try {
+      const result = createSandbox(req.body)
+      appendAuditLog({ domain: 'SANDBOX', action: 'CREATE_SANDBOX', targetId: result.sandboxId, detail: req.body })
+      return created(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '创建沙箱失败', 400)
+    }
+  })
+  router.put('/api/v1/admin/sandboxes/:sandboxId', (req, res) => {
+    try {
+      const result = updateSandbox(req.params.sandboxId, req.body)
+      appendAuditLog({ domain: 'SANDBOX', action: 'UPDATE_SANDBOX', targetId: req.params.sandboxId, detail: req.body })
+      return ok(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '更新沙箱失败', 400)
+    }
+  })
   router.get('/api/v1/admin/audit-logs', (req, res) => ok(res, listAuditLogs(parsePagination(req.query))))
   router.get('/api/v1/admin/export', (_req, res) => ok(res, exportMockData()))
   router.get('/api/v1/admin/templates/topic-library', (_req, res) => ok(res, topicTemplates))
@@ -78,10 +129,147 @@ export const createRouter = () => {
   router.get('/api/v1/admin/profiles', (_req, res) => ok(res, listProfiles()))
   router.get('/api/v1/admin/templates', (_req, res) => ok(res, listTemplates()))
   router.get('/api/v1/admin/activation-codes', (_req, res) => ok(res, listActivationCodes()))
+  router.get('/api/v1/admin/master-data/tenants', (_req, res) => ok(res, listTenants()))
+  router.post('/api/v1/admin/master-data/tenants', (req, res) => {
+    try {
+      const result = createTenant(req.body)
+      appendAuditLog({ domain: 'MASTER_DATA', action: 'CREATE_TENANT', targetId: result.tenantId, detail: req.body })
+      return created(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '创建租户失败', 400)
+    }
+  })
+  router.put('/api/v1/admin/master-data/tenants/:tenantId', (req, res) => {
+    try {
+      const result = updateTenant(req.params.tenantId, req.body)
+      appendAuditLog({ domain: 'MASTER_DATA', action: 'UPDATE_TENANT', targetId: req.params.tenantId, detail: req.body })
+      return ok(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '更新租户失败', 400)
+    }
+  })
+  router.get('/api/v1/admin/master-data/brands', (_req, res) => ok(res, listBrands()))
+  router.get('/api/v1/admin/master-data/tenant-brand-authorizations', (_req, res) => ok(res, listTenantBrandAuthorizations()))
+  router.post('/api/v1/admin/master-data/tenant-brand-authorizations', (req, res) => {
+    try {
+      const result = createTenantBrandAuthorization(req.body)
+      appendAuditLog({ domain: 'MASTER_DATA', action: 'CREATE_TENANT_BRAND_AUTHORIZATION', targetId: result.authorizationId, detail: req.body })
+      return created(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '创建品牌授权失败', 400)
+    }
+  })
+  router.put('/api/v1/admin/master-data/tenant-brand-authorizations/:authorizationId', (req, res) => {
+    try {
+      const result = updateTenantBrandAuthorization(req.params.authorizationId, req.body)
+      appendAuditLog({ domain: 'MASTER_DATA', action: 'UPDATE_TENANT_BRAND_AUTHORIZATION', targetId: req.params.authorizationId, detail: req.body })
+      return ok(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '更新品牌授权失败', 400)
+    }
+  })
+  router.post('/api/v1/admin/master-data/brands', (req, res) => {
+    try {
+      const result = createBrand(req.body)
+      appendAuditLog({ domain: 'MASTER_DATA', action: 'CREATE_BRAND', targetId: result.brandId, detail: req.body })
+      return created(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '创建品牌失败', 400)
+    }
+  })
+  router.put('/api/v1/admin/master-data/brands/:brandId', (req, res) => {
+    try {
+      const result = updateBrand(req.params.brandId, req.body)
+      appendAuditLog({ domain: 'MASTER_DATA', action: 'UPDATE_BRAND', targetId: req.params.brandId, detail: req.body })
+      return ok(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '更新品牌失败', 400)
+    }
+  })
+  router.get('/api/v1/admin/master-data/projects', (_req, res) => ok(res, listProjects()))
+  router.post('/api/v1/admin/master-data/projects', (req, res) => {
+    try {
+      const result = createProject(req.body)
+      appendAuditLog({ domain: 'MASTER_DATA', action: 'CREATE_PROJECT', targetId: result.projectId, detail: req.body })
+      return created(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '创建项目失败', 400)
+    }
+  })
+  router.put('/api/v1/admin/master-data/projects/:projectId', (req, res) => {
+    try {
+      const result = updateProject(req.params.projectId, req.body)
+      appendAuditLog({ domain: 'MASTER_DATA', action: 'UPDATE_PROJECT', targetId: req.params.projectId, detail: req.body })
+      return ok(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '更新项目失败', 400)
+    }
+  })
+  router.get('/api/v1/admin/master-data/stores', (_req, res) => ok(res, listStores()))
+  router.post('/api/v1/admin/master-data/stores', (req, res) => {
+    try {
+      const result = createStore(req.body)
+      appendAuditLog({ domain: 'MASTER_DATA', action: 'CREATE_STORE', targetId: result.storeId, detail: req.body })
+      return created(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '创建门店失败', 400)
+    }
+  })
+  router.put('/api/v1/admin/master-data/stores/:storeId', (req, res) => {
+    try {
+      const result = updateStore(req.params.storeId, req.body)
+      appendAuditLog({ domain: 'MASTER_DATA', action: 'UPDATE_STORE', targetId: req.params.storeId, detail: req.body })
+      return ok(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '更新门店失败', 400)
+    }
+  })
+  router.get('/api/v1/admin/master-data/profiles', (_req, res) => ok(res, listMasterProfiles()))
+  router.post('/api/v1/admin/master-data/profiles', (req, res) => {
+    try {
+      const result = createProfile(req.body)
+      appendAuditLog({ domain: 'MASTER_DATA', action: 'CREATE_PROFILE', targetId: result.profileId, detail: req.body })
+      return created(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '创建终端 Profile 失败', 400)
+    }
+  })
+  router.put('/api/v1/admin/master-data/profiles/:profileId', (req, res) => {
+    try {
+      const result = updateProfile(req.params.profileId, req.body)
+      appendAuditLog({ domain: 'MASTER_DATA', action: 'UPDATE_PROFILE', targetId: req.params.profileId, detail: req.body })
+      return ok(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '更新终端 Profile 失败', 400)
+    }
+  })
+  router.get('/api/v1/admin/master-data/templates', (_req, res) => ok(res, listMasterTemplates()))
+  router.post('/api/v1/admin/master-data/templates', (req, res) => {
+    try {
+      const result = createTemplate(req.body)
+      appendAuditLog({ domain: 'MASTER_DATA', action: 'CREATE_TEMPLATE', targetId: result.templateId, detail: req.body })
+      return created(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '创建终端 Template 失败', 400)
+    }
+  })
+  router.put('/api/v1/admin/master-data/templates/:templateId', (req, res) => {
+    try {
+      const result = updateTemplate(req.params.templateId, req.body)
+      appendAuditLog({ domain: 'MASTER_DATA', action: 'UPDATE_TEMPLATE', targetId: req.params.templateId, detail: req.body })
+      return ok(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '更新终端 Template 失败', 400)
+    }
+  })
   router.post('/api/v1/admin/activation-codes/batch', (req, res) => {
-    const result = createActivationCodes(req.body)
-    appendAuditLog({ domain: 'TCP', action: 'CREATE_ACTIVATION_CODES', targetId: 'activation-codes', detail: result })
-    return created(res, result)
+    try {
+      const result = createActivationCodes(req.body)
+      appendAuditLog({ domain: 'TCP', action: 'CREATE_ACTIVATION_CODES', targetId: 'activation-codes', detail: result })
+      return created(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '生成激活码失败', 400)
+    }
   })
 
   router.post('/api/v1/terminals/activate', (req, res) => {
@@ -174,9 +362,13 @@ export const createRouter = () => {
     return ok(res, result)
   })
   router.post('/mock-admin/terminals/batch-create', (req, res) => {
-    const result = batchCreateTerminals(Number(req.body.count ?? 10))
-    appendAuditLog({ domain: 'TCP', action: 'BATCH_CREATE_TERMINALS', targetId: 'terminals', detail: result })
-    return ok(res, result)
+    try {
+      const result = batchCreateTerminals(Number(req.body.count ?? 10))
+      appendAuditLog({ domain: 'TCP', action: 'BATCH_CREATE_TERMINALS', targetId: 'terminals', detail: result })
+      return ok(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '批量创建终端失败', 400)
+    }
   })
   router.post('/mock-admin/terminals/:terminalId/force-status', (req, res) => {
     const result = forceTerminalStatus(req.params.terminalId, req.body)

@@ -11,10 +11,11 @@ import {AppModule} from "@impos2/kernel-core-base";
 import {uiCoreTerminalScreenParts} from "./ui";
 import {kernelCoreTerminalModule} from "@impos2/kernel-core-terminal";
 import {uiCoreBaseModule} from "@impos2/ui-core-base";
+import {packageVersion} from './generated/packageVersion';
 
 export const uiCoreTerminalModule: AppModule = {
     name: moduleName,
-    version: '0.0.1',
+    version: packageVersion,
     slices: uiCoreTerminalSlice,
     middlewares: uiCoreTerminalMiddlewares,
     epics: uiCoreTerminalEpics,

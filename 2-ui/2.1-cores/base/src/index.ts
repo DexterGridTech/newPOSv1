@@ -12,10 +12,11 @@ import {kernelCoreNavigationModule} from "@impos2/kernel-core-navigation";
 import {uiCoreBaseScreenParts} from "./ui";
 import {kernelCoreTaskModule} from "@impos2/kernel-core-task";
 import {kernelCoreInterconnectionModule} from "@impos2/kernel-core-interconnection";
+import {packageVersion} from './generated/packageVersion';
 
 export const uiCoreBaseModule: AppModule = {
     name: moduleName,
-    version: '0.0.1',
+    version: packageVersion,
     slices: uiCoreBaseSlice,
     middlewares: uiCoreBaseMiddlewares,
     epics: uiCoreBaseEpics,

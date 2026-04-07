@@ -1,7 +1,7 @@
 {
   "name": "@impos2/assembly-electron-mixc-retail-v1",
   "productName": "mixc-retail-v1",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Electron assembly for Mixc Retail V1",
   "main": ".webpack/main",
   "private": true,

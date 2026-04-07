@@ -10,10 +10,11 @@ import {uiCoreAdminMiddlewares} from "./features/middlewares";
 import {AppModule} from "@impos2/kernel-core-base";
 import {uiCoreAdminScreenParts} from "./ui";
 import {uiCoreBaseModule} from "@impos2/ui-core-base";
+import {packageVersion} from './generated/packageVersion';
 
 export const uiCoreAdminModule: AppModule = {
     name: moduleName,
-    version: '0.0.1',
+    version: packageVersion,
     slices: uiCoreAdminSlice,
     middlewares: uiCoreAdminMiddlewares,
     epics: uiCoreAdminEpics,

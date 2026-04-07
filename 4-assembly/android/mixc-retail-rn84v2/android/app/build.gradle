@@ -26,8 +26,8 @@ android {
     applicationId "com.impos2.mixcretailrn84v2"
     minSdkVersion rootProject.ext.minSdkVersion
     targetSdkVersion rootProject.ext.targetSdkVersion
-    versionCode 1
-    versionName "1.0"
+    versionCode 1000002
+    versionName "1.1.0"
   }
   signingConfigs {
     debug {

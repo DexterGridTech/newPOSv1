@@ -1,5 +1,6 @@
 import { sqlite } from '../../database/index.js'
 import { parseJson } from '../../shared/utils.js'
+import { getCurrentSandboxId } from '../sandbox/service.js'
 
 const normalizeRows = (rows: Array<Record<string, unknown>>) =>
   rows.map((item) => {
@@ -13,13 +14,15 @@ const normalizeRows = (rows: Array<Record<string, unknown>>) =>
   })
 
 export const exportMockData = () => {
-  const topics = normalizeRows(sqlite.prepare('SELECT * FROM tdp_topics ORDER BY updated_at DESC').all() as Array<Record<string, unknown>>)
-  const releases = normalizeRows(sqlite.prepare('SELECT * FROM task_releases ORDER BY updated_at DESC').all() as Array<Record<string, unknown>>)
-  const instances = normalizeRows(sqlite.prepare('SELECT * FROM task_instances ORDER BY updated_at DESC').all() as Array<Record<string, unknown>>)
-  const faults = normalizeRows(sqlite.prepare('SELECT * FROM fault_rules ORDER BY updated_at DESC').all() as Array<Record<string, unknown>>)
-  const audits = normalizeRows(sqlite.prepare('SELECT * FROM audit_logs ORDER BY created_at DESC LIMIT 500').all() as Array<Record<string, unknown>>)
+  const sandboxId = getCurrentSandboxId()
+  const topics = normalizeRows(sqlite.prepare('SELECT * FROM tdp_topics WHERE sandbox_id = ? ORDER BY updated_at DESC').all(sandboxId) as Array<Record<string, unknown>>)
+  const releases = normalizeRows(sqlite.prepare('SELECT * FROM task_releases WHERE sandbox_id = ? ORDER BY updated_at DESC').all(sandboxId) as Array<Record<string, unknown>>)
+  const instances = normalizeRows(sqlite.prepare('SELECT ti.* FROM task_instances ti JOIN task_releases tr ON tr.release_id = ti.release_id WHERE tr.sandbox_id = ? ORDER BY ti.updated_at DESC').all(sandboxId) as Array<Record<string, unknown>>)
+  const faults = normalizeRows(sqlite.prepare('SELECT * FROM fault_rules WHERE sandbox_id = ? ORDER BY updated_at DESC').all(sandboxId) as Array<Record<string, unknown>>)
+  const audits = normalizeRows(sqlite.prepare('SELECT * FROM audit_logs WHERE sandbox_id = ? ORDER BY created_at DESC LIMIT 500').all(sandboxId) as Array<Record<string, unknown>>)
 
   return {
+    sandboxId,
     exportedAt: Date.now(),
     topics,
     taskReleases: releases,

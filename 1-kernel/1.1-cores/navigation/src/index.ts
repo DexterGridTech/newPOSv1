@@ -9,10 +9,11 @@ import {kernelCoreNavigationEpics} from "./features/epics";
 import {kernelCoreNavigationMiddlewares} from "./features/middlewares";
 import {AppModule, kernelCoreBaseModule} from "@impos2/kernel-core-base";
 import {kernelCoreInterconnectionModule} from "@impos2/kernel-core-interconnection";
+import {packageVersion} from './generated/packageVersion';
 
 export const kernelCoreNavigationModule: AppModule = {
     name: moduleName,
-    version: '0.0.1',
+    version: packageVersion,
     slices: kernelCoreNavigationSlice,
     middlewares: kernelCoreNavigationMiddlewares,
     epics: kernelCoreNavigationEpics,

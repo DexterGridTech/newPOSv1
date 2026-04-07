@@ -10,10 +10,11 @@ import {uiCoreAdapterTestMiddlewares} from "./features/middlewares";
 import {AppModule} from "@impos2/kernel-core-base";
 import {uiCoreAdapterTestScreenParts} from "./ui";
 import {uiCoreBaseModule} from "@impos2/ui-core-base";
+import {packageVersion} from './generated/packageVersion';
 
 export const uiCoreAdapterTestModule: AppModule = {
     name: moduleName,
-    version: '0.0.1',
+    version: packageVersion,
     slices: uiCoreAdapterTestSlice,
     middlewares: uiCoreAdapterTestMiddlewares,
     epics: uiCoreAdapterTestEpics,

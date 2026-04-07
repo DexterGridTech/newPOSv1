@@ -12,10 +12,11 @@ import {kernelCoreNavigationModule} from "@impos2/kernel-core-navigation";
 import {kernelCoreInterconnectionModule} from "@impos2/kernel-core-interconnection";
 import {kernelCoreTaskModule} from "@impos2/kernel-core-task";
 import {kernelCoreTerminalModule} from "@impos2/kernel-core-terminal";
+import {packageVersion} from './generated/packageVersion';
 
 export const kernelUserBaseModule: AppModule = {
     name: moduleName,
-    version: '0.0.1',
+    version: packageVersion,
     slices: kernelUserBaseSlice,
     middlewares: kernelUserBaseMiddlewares,
     epics: kernelUserBaseEpics,

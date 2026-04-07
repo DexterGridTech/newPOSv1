@@ -8,10 +8,11 @@ import {kernelCoreBaseErrorMessages} from "./supports/errors";
 import {kernelCoreBaseParameters} from "./supports/parameters";
 import {kernelCoreBaseEpics} from "./features/epics";
 import {kernelCoreBaseMiddlewares} from "./features/middlewares";
+import {packageVersion} from './generated/packageVersion';
 
 export const kernelCoreBaseModule: AppModule = {
     name: moduleName,
-    version: '0.0.1',
+    version: packageVersion,
     slices: kernelCoreBaseSlice,
     middlewares: kernelCoreBaseMiddlewares,
     epics: kernelCoreBaseEpics,

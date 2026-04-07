@@ -10,10 +10,11 @@ import {moduleName} from './moduleName';
 import {assemblyElectronMixcRetailErrorMessages} from './supports/errors';
 import {assemblyElectronMixcRetailParameters} from './supports/parameters';
 import {assemblyElectronMixcRetailScreenParts} from './ui';
+import {releaseInfo} from './generated/releaseInfo';
 
 export const assemblyElectronMixcRetailModule: AppModule = {
   name: moduleName,
-  version: '0.0.1',
+  version: releaseInfo.assemblyVersion,
   slices: assemblyElectronMixcRetailSlice,
   middlewares: assemblyElectronMixcRetailMiddlewares,
   epics: assemblyElectronMixcRetailEpics,

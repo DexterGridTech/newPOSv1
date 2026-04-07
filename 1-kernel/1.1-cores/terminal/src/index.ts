@@ -10,10 +10,11 @@ import {kernelCoreTerminalMiddlewares} from "./features/middlewares";
 import {AppModule, kernelCoreBaseModule} from "@impos2/kernel-core-base";
 import {kernelCoreInterconnectionModule} from "@impos2/kernel-core-interconnection";
 import {kernelCoreNavigationModule} from "@impos2/kernel-core-navigation";
+import {packageVersion} from './generated/packageVersion';
 
 export const kernelCoreTerminalModule: AppModule = {
     name: moduleName,
-    version: '0.0.1',
+    version: packageVersion,
     slices: kernelCoreTerminalSlice,
     middlewares: kernelCoreTerminalMiddlewares,
     epics: kernelCoreTerminalEpics,

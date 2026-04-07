@@ -8,10 +8,11 @@ import {kernelProductBaseParameters} from "./supports/parameters";
 import {kernelProductBaseEpics} from "./features/epics";
 import {kernelProductBaseMiddlewares} from "./features/middlewares";
 import {AppModule} from "@impos2/kernel-core-base";
+import {packageVersion} from './generated/packageVersion';
 
 export const kernelProductBaseModule: AppModule = {
     name: moduleName,
-    version: '0.0.1',
+    version: packageVersion,
     slices: kernelProductBaseSlice,
     middlewares: kernelProductBaseMiddlewares,
     epics: kernelProductBaseEpics,
