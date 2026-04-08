@@ -50,6 +50,7 @@
     "kernel:module-terminal": "corepack yarn workspace @impos2/kernel-core-terminal dev",
     "-------------": "----------------------------------------",
     "ui:core-base": "yarn workspace @impos2/ui-core-base web",
+    "ui:core-runtime-base": "yarn workspace @impos2/ui-core-runtime-base web",
     "ui:core-admin": "yarn workspace @impos2/ui-core-admin web",
     "ui:core-terminal": "yarn workspace @impos2/ui-core-terminal web",
     "ui:module-mixc-user": "yarn workspace @impos2/ui-mixc-user web",

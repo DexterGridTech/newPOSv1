@@ -1,0 +1,34 @@
+{
+  "SelectedServerSpace": {
+    "v": 1,
+    "payload": "演示环境"
+  },
+  "DataVersion-演示环境": {
+    "v": 1,
+    "payload": 0
+  },
+  "演示环境-0kernel.core.base.systemParameters": {
+    "v": 1,
+    "payload": "{\"_persist\":\"{\\\"version\\\":-1,\\\"rehydrated\\\":true}\"}"
+  },
+  "演示环境-0kernel.core.base.errorMessages": {
+    "v": 1,
+    "payload": "{\"_persist\":\"{\\\"version\\\":-1,\\\"rehydrated\\\":true}\"}"
+  },
+  "演示环境-0kernel.core.tcpClient.tcpBinding": {
+    "v": 1,
+    "payload": "{\"platformId\":\"{\\\"value\\\":\\\"platform_pfi76h894g6p\\\",\\\"updatedAt\\\":1775648729864}\",\"tenantId\":\"{\\\"value\\\":\\\"tenant_0yx5sg4jho6h\\\",\\\"updatedAt\\\":1775648729864}\",\"brandId\":\"{\\\"value\\\":\\\"brand_brfwi1bi2o15\\\",\\\"updatedAt\\\":1775648729864}\",\"projectId\":\"{\\\"value\\\":\\\"project_1ib3rlizudrq\\\",\\\"updatedAt\\\":1775648729864}\",\"storeId\":\"{\\\"value\\\":\\\"store_t39t4n9uv4pw\\\",\\\"updatedAt\\\":1775648729864}\",\"profileId\":\"{\\\"value\\\":\\\"profile_82v4gja0n30u\\\",\\\"updatedAt\\\":1775648729864}\",\"templateId\":\"{\\\"value\\\":\\\"template_saww1xt0nq9n\\\",\\\"updatedAt\\\":1775648729864}\",\"_persist\":\"{\\\"version\\\":-1,\\\"rehydrated\\\":true}\"}"
+  },
+  "演示环境-0kernel.core.tdpClient.tdpSync": {
+    "v": 1,
+    "payload": "{\"lastCursor\":\"{\\\"value\\\":7,\\\"updatedAt\\\":1775648735157}\",\"lastAppliedRevision\":\"{\\\"value\\\":7,\\\"updatedAt\\\":1775648735157}\",\"_persist\":\"{\\\"version\\\":-1,\\\"rehydrated\\\":true}\"}"
+  },
+  "演示环境-0kernel.core.tcpClient.tcpCredential": {
+    "v": 1,
+    "payload": "{\"status\":\"{\\\"value\\\":\\\"READY\\\",\\\"updatedAt\\\":1775648729864}\",\"accessToken\":\"{\\\"value\\\":\\\"token_p6ocu4jseoli\\\",\\\"updatedAt\\\":1775648729864}\",\"refreshToken\":\"{\\\"value\\\":\\\"refresh_3qvb1g87eoli\\\",\\\"updatedAt\\\":1775648729864}\",\"expiresAt\":\"{\\\"value\\\":1775655929863,\\\"updatedAt\\\":1775648729864}\",\"refreshExpiresAt\":\"{\\\"value\\\":1778240729863,\\\"updatedAt\\\":1775648729864}\",\"updatedAt\":\"{\\\"value\\\":1775648729864,\\\"updatedAt\\\":1775648729864}\",\"_persist\":\"{\\\"version\\\":-1,\\\"rehydrated\\\":true}\"}"
+  },
+  "演示环境-0kernel.core.tcpClient.tcpIdentity": {
+    "v": 1,
+    "payload": "{\"activationStatus\":\"{\\\"value\\\":\\\"ACTIVATED\\\",\\\"updatedAt\\\":1775648729864}\",\"deviceInfo\":\"{\\\"value\\\":{\\\"id\\\":\\\"test id\\\",\\\"manufacturer\\\":\\\"test manufacturer\\\",\\\"os\\\":\\\"test os\\\",\\\"osVersion\\\":\\\"test os version\\\",\\\"cpu\\\":\\\"test cpu\\\",\\\"memory\\\":\\\"test memory\\\",\\\"disk\\\":\\\"test disk\\\",\\\"network\\\":\\\"test network\\\",\\\"displays\\\":[{\\\"id\\\":\\\"test display id\\\",\\\"displayType\\\":\\\"test display type\\\",\\\"refreshRate\\\":60,\\\"width\\\":1920,\\\"height\\\":1080,\\\"physicalWidth\\\":24,\\\"physicalHeight\\\":12,\\\"touchSupport\\\":true}]},\\\"updatedAt\\\":1775648729697}\",\"deviceFingerprint\":\"{\\\"value\\\":\\\"test id\\\",\\\"updatedAt\\\":1775648729697}\",\"terminalId\":\"{\\\"value\\\":\\\"terminal_u0g1mejseoli\\\",\\\"updatedAt\\\":1775648729863}\",\"activatedAt\":\"{\\\"value\\\":1775648729863,\\\"updatedAt\\\":1775648729864}\",\"_persist\":\"{\\\"version\\\":-1,\\\"rehydrated\\\":true}\"}"
+  }
+}

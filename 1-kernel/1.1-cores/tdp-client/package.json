@@ -1,0 +1,38 @@
+{
+  "name": "@impos2/kernel-core-tdp-client",
+  "version": "1.0.0",
+  "description": "POS Kernel core tdp client",
+  "author": "DexterYang",
+  "license": "ISC",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "react-native": "./src/index.ts",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "build-for-product": "rm -rf dist && tsc",
+    "dev": "tsx dev/index.ts",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit",
+    "check:circular": "madge --circular --extensions ts --warning src/"
+  },
+  "dependencies": {
+    "@impos2/kernel-core-base": "*",
+    "@impos2/kernel-core-communication": "*",
+    "@impos2/kernel-core-tcp-client": "*",
+    "@impos2/kernel-server-config": "*",
+    "@reduxjs/toolkit": "^2.11.2",
+    "react-redux": "^9.2.0",
+    "ws": "^8.19.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.9",
+    "@types/ws": "^8.5.13",
+    "madge": "^8.0.0",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,4 +1,9 @@
-import {SERVER_NAME_KERNEL_API, SERVER_NAME_KERNEL_WS, SERVER_NAME_MIXC_USER_API} from "./serverName";
+import {
+    SERVER_NAME_KERNEL_API,
+    SERVER_NAME_KERNEL_WS,
+    SERVER_NAME_MIXC_USER_API,
+    SERVER_NAME_MOCK_TERMINAL_PLATFORM_API
+} from "./serverName";
 import {ServerSpace} from "@impos2/kernel-core-base";
 
 export const productServerSpace :ServerSpace={
@@ -72,6 +77,23 @@ export const productServerSpace :ServerSpace={
                     ],
                     retryCount: 3,
                     retryInterval: 1000,
+                },
+                {
+                    serverName: SERVER_NAME_MOCK_TERMINAL_PLATFORM_API,
+                    addresses: [
+                        {
+                            addressName: "主线路1",
+                            baseURL: "http://127.0.0.1:5810",
+                            timeout: 3000
+                        },
+                        {
+                            addressName: "主线路2",
+                            baseURL: "http://localhost:5810",
+                            timeout: 3000
+                        }
+                    ],
+                    retryCount: 2,
+                    retryInterval: 500,
                 }
             ]
         }

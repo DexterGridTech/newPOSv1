@@ -25,14 +25,20 @@ import {
   createTopic,
   disconnectSession,
   dispatchTaskReleaseToDataPlane,
-  getTerminalChanges,
+  forceCloseSession,
+  getHighWatermarkForTerminal,
+  getTerminalChangesSince,
   getTerminalSnapshot,
   heartbeatSession,
   listChangeLogs,
+  listCommandOutbox,
   listProjections,
   listScopes,
   listSessions,
   listTopics,
+  sendEdgeDegradedToSession,
+  sendProtocolErrorToSession,
+  sendSessionRehomeRequired,
   upsertProjection,
 } from '../tdp/service.js'
 import { createFaultRule, applyMockResult, listFaultRules, simulateFaultHit, updateFaultRule } from '../fault/service.js'
@@ -43,24 +49,35 @@ import { importMockTemplates, validateImportPayload } from '../export/importServ
 import { faultTemplates, topicTemplates } from '../export/templateLibrary.js'
 import {
   createBrand,
+  createContract,
+  createPlatform,
   createProfile,
   createProject,
   createStore,
-  createTenantBrandAuthorization,
   createTemplate,
   createTenant,
+  deleteBrand,
+  deleteContract,
+  deletePlatform,
+  deleteProfile,
+  deleteProject,
+  deleteStore,
+  deleteTemplate,
+  deleteTenant,
   listBrands,
+  listContracts,
+  listPlatforms,
   listProfiles as listMasterProfiles,
   listProjects,
   listStores,
-  listTenantBrandAuthorizations,
   listTemplates as listMasterTemplates,
   listTenants,
   updateBrand,
+  updateContract,
+  updatePlatform,
   updateProfile,
   updateProject,
   updateStore,
-  updateTenantBrandAuthorization,
   updateTemplate,
   updateTenant,
 } from '../master-data/service.js'
@@ -129,6 +146,34 @@ export const createRouter = () => {
   router.get('/api/v1/admin/profiles', (_req, res) => ok(res, listProfiles()))
   router.get('/api/v1/admin/templates', (_req, res) => ok(res, listTemplates()))
   router.get('/api/v1/admin/activation-codes', (_req, res) => ok(res, listActivationCodes()))
+  router.get('/api/v1/admin/master-data/platforms', (_req, res) => ok(res, listPlatforms()))
+  router.post('/api/v1/admin/master-data/platforms', (req, res) => {
+    try {
+      const result = createPlatform(req.body)
+      appendAuditLog({ domain: 'MASTER_DATA', action: 'CREATE_PLATFORM', targetId: result.platformId, detail: req.body })
+      return created(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '创建平台失败', 400)
+    }
+  })
+  router.put('/api/v1/admin/master-data/platforms/:platformId', (req, res) => {
+    try {
+      const result = updatePlatform(req.params.platformId, req.body)
+      appendAuditLog({ domain: 'MASTER_DATA', action: 'UPDATE_PLATFORM', targetId: req.params.platformId, detail: req.body })
+      return ok(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '更新平台失败', 400)
+    }
+  })
+  router.delete('/api/v1/admin/master-data/platforms/:platformId', (req, res) => {
+    try {
+      const result = deletePlatform(req.params.platformId)
+      appendAuditLog({ domain: 'MASTER_DATA', action: 'DELETE_PLATFORM', targetId: req.params.platformId, detail: result })
+      return ok(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '删除平台失败', 400)
+    }
+  })
   router.get('/api/v1/admin/master-data/tenants', (_req, res) => ok(res, listTenants()))
   router.post('/api/v1/admin/master-data/tenants', (req, res) => {
     try {
@@ -148,26 +193,16 @@ export const createRouter = () => {
       return fail(res, error instanceof Error ? error.message : '更新租户失败', 400)
     }
   })
-  router.get('/api/v1/admin/master-data/brands', (_req, res) => ok(res, listBrands()))
-  router.get('/api/v1/admin/master-data/tenant-brand-authorizations', (_req, res) => ok(res, listTenantBrandAuthorizations()))
-  router.post('/api/v1/admin/master-data/tenant-brand-authorizations', (req, res) => {
+  router.delete('/api/v1/admin/master-data/tenants/:tenantId', (req, res) => {
     try {
-      const result = createTenantBrandAuthorization(req.body)
-      appendAuditLog({ domain: 'MASTER_DATA', action: 'CREATE_TENANT_BRAND_AUTHORIZATION', targetId: result.authorizationId, detail: req.body })
-      return created(res, result)
-    } catch (error) {
-      return fail(res, error instanceof Error ? error.message : '创建品牌授权失败', 400)
-    }
-  })
-  router.put('/api/v1/admin/master-data/tenant-brand-authorizations/:authorizationId', (req, res) => {
-    try {
-      const result = updateTenantBrandAuthorization(req.params.authorizationId, req.body)
-      appendAuditLog({ domain: 'MASTER_DATA', action: 'UPDATE_TENANT_BRAND_AUTHORIZATION', targetId: req.params.authorizationId, detail: req.body })
+      const result = deleteTenant(req.params.tenantId)
+      appendAuditLog({ domain: 'MASTER_DATA', action: 'DELETE_TENANT', targetId: req.params.tenantId, detail: result })
       return ok(res, result)
     } catch (error) {
-      return fail(res, error instanceof Error ? error.message : '更新品牌授权失败', 400)
+      return fail(res, error instanceof Error ? error.message : '删除租户失败', 400)
     }
   })
+  router.get('/api/v1/admin/master-data/brands', (_req, res) => ok(res, listBrands()))
   router.post('/api/v1/admin/master-data/brands', (req, res) => {
     try {
       const result = createBrand(req.body)
@@ -184,6 +219,15 @@ export const createRouter = () => {
       return ok(res, result)
     } catch (error) {
       return fail(res, error instanceof Error ? error.message : '更新品牌失败', 400)
+    }
+  })
+  router.delete('/api/v1/admin/master-data/brands/:brandId', (req, res) => {
+    try {
+      const result = deleteBrand(req.params.brandId)
+      appendAuditLog({ domain: 'MASTER_DATA', action: 'DELETE_BRAND', targetId: req.params.brandId, detail: result })
+      return ok(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '删除品牌失败', 400)
     }
   })
   router.get('/api/v1/admin/master-data/projects', (_req, res) => ok(res, listProjects()))
@@ -205,6 +249,15 @@ export const createRouter = () => {
       return fail(res, error instanceof Error ? error.message : '更新项目失败', 400)
     }
   })
+  router.delete('/api/v1/admin/master-data/projects/:projectId', (req, res) => {
+    try {
+      const result = deleteProject(req.params.projectId)
+      appendAuditLog({ domain: 'MASTER_DATA', action: 'DELETE_PROJECT', targetId: req.params.projectId, detail: result })
+      return ok(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '删除项目失败', 400)
+    }
+  })
   router.get('/api/v1/admin/master-data/stores', (_req, res) => ok(res, listStores()))
   router.post('/api/v1/admin/master-data/stores', (req, res) => {
     try {
@@ -222,6 +275,43 @@ export const createRouter = () => {
       return ok(res, result)
     } catch (error) {
       return fail(res, error instanceof Error ? error.message : '更新门店失败', 400)
+    }
+  })
+  router.delete('/api/v1/admin/master-data/stores/:storeId', (req, res) => {
+    try {
+      const result = deleteStore(req.params.storeId)
+      appendAuditLog({ domain: 'MASTER_DATA', action: 'DELETE_STORE', targetId: req.params.storeId, detail: result })
+      return ok(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '删除门店失败', 400)
+    }
+  })
+  router.get('/api/v1/admin/master-data/contracts', (_req, res) => ok(res, listContracts()))
+  router.post('/api/v1/admin/master-data/contracts', (req, res) => {
+    try {
+      const result = createContract(req.body)
+      appendAuditLog({ domain: 'MASTER_DATA', action: 'CREATE_CONTRACT', targetId: result.contractId, detail: req.body })
+      return created(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '创建合同失败', 400)
+    }
+  })
+  router.put('/api/v1/admin/master-data/contracts/:contractId', (req, res) => {
+    try {
+      const result = updateContract(req.params.contractId, req.body)
+      appendAuditLog({ domain: 'MASTER_DATA', action: 'UPDATE_CONTRACT', targetId: req.params.contractId, detail: req.body })
+      return ok(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '更新合同失败', 400)
+    }
+  })
+  router.delete('/api/v1/admin/master-data/contracts/:contractId', (req, res) => {
+    try {
+      const result = deleteContract(req.params.contractId)
+      appendAuditLog({ domain: 'MASTER_DATA', action: 'DELETE_CONTRACT', targetId: req.params.contractId, detail: result })
+      return ok(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '删除合同失败', 400)
     }
   })
   router.get('/api/v1/admin/master-data/profiles', (_req, res) => ok(res, listMasterProfiles()))
@@ -243,6 +333,15 @@ export const createRouter = () => {
       return fail(res, error instanceof Error ? error.message : '更新终端 Profile 失败', 400)
     }
   })
+  router.delete('/api/v1/admin/master-data/profiles/:profileId', (req, res) => {
+    try {
+      const result = deleteProfile(req.params.profileId)
+      appendAuditLog({ domain: 'MASTER_DATA', action: 'DELETE_PROFILE', targetId: req.params.profileId, detail: result })
+      return ok(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '删除终端 Profile 失败', 400)
+    }
+  })
   router.get('/api/v1/admin/master-data/templates', (_req, res) => ok(res, listMasterTemplates()))
   router.post('/api/v1/admin/master-data/templates', (req, res) => {
     try {
@@ -260,6 +359,15 @@ export const createRouter = () => {
       return ok(res, result)
     } catch (error) {
       return fail(res, error instanceof Error ? error.message : '更新终端 Template 失败', 400)
+    }
+  })
+  router.delete('/api/v1/admin/master-data/templates/:templateId', (req, res) => {
+    try {
+      const result = deleteTemplate(req.params.templateId)
+      appendAuditLog({ domain: 'MASTER_DATA', action: 'DELETE_TEMPLATE', targetId: req.params.templateId, detail: result })
+      return ok(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '删除终端 Template 失败', 400)
     }
   })
   router.post('/api/v1/admin/activation-codes/batch', (req, res) => {
@@ -337,6 +445,63 @@ export const createRouter = () => {
     appendAuditLog({ domain: 'TDP', action: 'DISCONNECT_SESSION', targetId: req.params.sessionId, detail: result, operator: 'terminal-client' })
     return ok(res, result)
   })
+  router.post('/api/v1/admin/tdp/sessions/:sessionId/edge-degraded', (req, res) => {
+    try {
+      const result = sendEdgeDegradedToSession({
+        sessionId: req.params.sessionId,
+        reason: req.body.reason,
+        nodeState: req.body.nodeState,
+        gracePeriodSeconds: req.body.gracePeriodSeconds,
+        alternativeEndpoints: req.body.alternativeEndpoints,
+      })
+      appendAuditLog({ domain: 'TDP', action: 'SEND_EDGE_DEGRADED', targetId: req.params.sessionId, detail: req.body })
+      return ok(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '发送 EDGE_DEGRADED 失败', 400)
+    }
+  })
+  router.post('/api/v1/admin/tdp/sessions/:sessionId/rehome', (req, res) => {
+    try {
+      const result = sendSessionRehomeRequired({
+        sessionId: req.params.sessionId,
+        reason: req.body.reason,
+        deadline: req.body.deadline,
+        alternativeEndpoints: req.body.alternativeEndpoints,
+      })
+      appendAuditLog({ domain: 'TDP', action: 'SEND_SESSION_REHOME_REQUIRED', targetId: req.params.sessionId, detail: req.body })
+      return ok(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '发送 SESSION_REHOME_REQUIRED 失败', 400)
+    }
+  })
+  router.post('/api/v1/admin/tdp/sessions/:sessionId/protocol-error', (req, res) => {
+    try {
+      const result = sendProtocolErrorToSession({
+        sessionId: req.params.sessionId,
+        code: req.body.code,
+        message: req.body.message,
+        details: req.body.details,
+        closeAfterSend: req.body.closeAfterSend,
+      })
+      appendAuditLog({ domain: 'TDP', action: 'SEND_PROTOCOL_ERROR', targetId: req.params.sessionId, detail: req.body })
+      return ok(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '发送协议错误失败', 400)
+    }
+  })
+  router.post('/api/v1/admin/tdp/sessions/:sessionId/force-close', (req, res) => {
+    try {
+      const result = forceCloseSession({
+        sessionId: req.params.sessionId,
+        code: req.body.code,
+        reason: req.body.reason,
+      })
+      appendAuditLog({ domain: 'TDP', action: 'FORCE_CLOSE_SESSION', targetId: req.params.sessionId, detail: req.body })
+      return ok(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '强制关闭 session 失败', 400)
+    }
+  })
 
   router.get('/api/v1/admin/tdp/topics', (_req, res) => ok(res, listTopics()))
   router.post('/api/v1/admin/tdp/topics', (req, res) => {
@@ -352,8 +517,22 @@ export const createRouter = () => {
   })
   router.get('/api/v1/admin/tdp/projections', (_req, res) => ok(res, listProjections()))
   router.get('/api/v1/admin/tdp/change-logs', (_req, res) => ok(res, listChangeLogs()))
+  router.get('/api/v1/admin/tdp/commands', (_req, res) => ok(res, listCommandOutbox()))
   router.get('/api/v1/tdp/terminals/:terminalId/snapshot', (req, res) => ok(res, getTerminalSnapshot(req.params.terminalId)))
-  router.get('/api/v1/tdp/terminals/:terminalId/changes', (req, res) => ok(res, getTerminalChanges(req.params.terminalId)))
+  router.get('/api/v1/tdp/terminals/:terminalId/changes', (req, res) => {
+    const cursor = Math.max(0, Number(req.query.cursor ?? 0))
+    const limit = Math.max(1, Math.min(100, Number(req.query.limit ?? 100)))
+    const changes = getTerminalChangesSince(req.params.terminalId, cursor, limit)
+    const nextCursor = changes.length ? changes[changes.length - 1].cursor : cursor
+    const highWatermark = getHighWatermarkForTerminal(req.params.terminalId)
+    return ok(res, {
+      terminalId: req.params.terminalId,
+      changes: changes.map(item => item.change),
+      nextCursor,
+      hasMore: nextCursor < highWatermark,
+      highWatermark,
+    })
+  })
 
   router.get('/mock-admin/scenes/templates', (_req, res) => ok(res, listSceneTemplates()))
   router.post('/mock-admin/scenes/:sceneTemplateId/run', (req, res) => {

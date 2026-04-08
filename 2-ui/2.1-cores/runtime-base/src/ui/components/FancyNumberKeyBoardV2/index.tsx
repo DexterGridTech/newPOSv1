@@ -1,0 +1,298 @@
+import React, {memo, useCallback, useEffect, useRef, useState} from 'react';
+import {View, StyleSheet, Animated, Platform, Dimensions} from 'react-native';
+import {ResponderKeyButton} from '../FancyKeyboardOverlayV2/ResponderKeyButton';
+
+const getKeyboardWidth = () => {
+    const {width, height} = Dimensions.get('window');
+    const shortEdge = Math.min(width, height);
+    const isTablet = shortEdge >= 600;
+    const maxWidth = isTablet ? 500 : 460;
+    return Math.min(width * 0.88, maxWidth);
+};
+
+const getNumFontSize = () => {
+    const {height} = Dimensions.get('window');
+    return Math.max(24, Math.min(36, height * 0.037));
+};
+
+const getActionFontSize = () => {
+    const {height} = Dimensions.get('window');
+    return Math.max(14, Math.min(20, height * 0.021));
+};
+
+const getDeleteFontSize = () => {
+    const {height} = Dimensions.get('window');
+    return Math.max(20, Math.min(28, height * 0.029));
+};
+
+const KEYBOARD_WIDTH = getKeyboardWidth();
+const ACTION_WIDTH = 84;
+const GAP = 8;
+const PADDING = 10;
+
+interface FancyNumberKeyBoardV2Props {
+    onKeyPress: (key: string) => void;
+    onCancel: () => void;
+    onConfirm: () => void;
+    shouldShake?: boolean;
+    hasChanges?: boolean;
+}
+
+const NumKey = memo<{label: string; value: string; onKeyPress: (v: string) => void; style?: any; textStyle?: any}>(
+    ({label, value, onKeyPress, style, textStyle}) => {
+        const handlePress = useCallback(() => {
+            onKeyPress(value);
+        }, [onKeyPress, value]);
+        return (
+            <ResponderKeyButton
+                style={[styles.key, style]}
+                pressedStyle={styles.keyPressed}
+                onPress={handlePress}
+                label={label}
+                textStyle={[styles.keyText, textStyle]}
+            />
+        );
+    }
+);
+
+const ActionButtons = memo<{
+    hasChanges: boolean;
+    shouldShake: boolean;
+    onCancel: () => void;
+    onConfirm: () => void;
+    actionFontSize: number;
+}>(({hasChanges, shouldShake, onCancel, onConfirm, actionFontSize}) => {
+    const shakeAnim = useRef(new Animated.Value(0)).current;
+
+    useEffect(() => {
+        if (shouldShake) {
+            const useNative = Platform.OS !== 'web';
+            Animated.sequence([
+                Animated.timing(shakeAnim, {toValue: 8, duration: 50, useNativeDriver: useNative}),
+                Animated.timing(shakeAnim, {toValue: -8, duration: 50, useNativeDriver: useNative}),
+                Animated.timing(shakeAnim, {toValue: 8, duration: 50, useNativeDriver: useNative}),
+                Animated.timing(shakeAnim, {toValue: -8, duration: 50, useNativeDriver: useNative}),
+                Animated.timing(shakeAnim, {toValue: 0, duration: 50, useNativeDriver: useNative}),
+            ]).start();
+        }
+    }, [shouldShake]);
+
+    if (!hasChanges) {
+        return (
+            <ResponderKeyButton
+                style={styles.closeButton}
+                pressedStyle={styles.actionButtonPressed}
+                onPress={onCancel}
+                label="关闭"
+                textStyle={[styles.closeButtonText, {fontSize: actionFontSize}]}
+            />
+        );
+    }
+    return (
+        <>
+            <ResponderKeyButton
+                style={styles.cancelButton}
+                pressedStyle={styles.actionButtonPressed}
+                onPress={onCancel}
+                label="取消"
+                textStyle={[styles.cancelButtonText, {fontSize: actionFontSize}]}
+            />
+            <Animated.View style={{flex: 1, transform: [{translateX: shakeAnim}]}}>
+                <ResponderKeyButton
+                    style={[styles.confirmButton, StyleSheet.absoluteFillObject]}
+                    pressedStyle={styles.actionButtonPressed}
+                    onPress={onConfirm}
+                    label="确认"
+                    textStyle={[styles.confirmButtonText, {fontSize: actionFontSize}]}
+                />
+            </Animated.View>
+        </>
+    );
+});
+
+export const FancyNumberKeyBoardV2: React.FC<FancyNumberKeyBoardV2Props> = memo(
+    ({onKeyPress, onCancel, onConfirm, shouldShake = false, hasChanges = false}) => {
+        const [keyboardWidth, setKeyboardWidth] = useState(getKeyboardWidth());
+        const [numFontSize, setNumFontSize] = useState(getNumFontSize());
+        const [actionFontSize, setActionFontSize] = useState(getActionFontSize());
+        const [deleteFontSize, setDeleteFontSize] = useState(getDeleteFontSize());
+
+        useEffect(() => {
+            const subscription = Dimensions.addEventListener('change', () => {
+                setKeyboardWidth(getKeyboardWidth());
+                setNumFontSize(getNumFontSize());
+                setActionFontSize(getActionFontSize());
+                setDeleteFontSize(getDeleteFontSize());
+            });
+            return () => subscription?.remove();
+        }, []);
+
+        return (
+            <View style={styles.wrapper}>
+                <View style={[styles.card, {width: keyboardWidth}]}>
+                    <View style={styles.keyboardMain}>
+                        <View style={styles.row}>
+                            <NumKey label="1" value="1" onKeyPress={onKeyPress} textStyle={{fontSize: numFontSize}}/>
+                            <NumKey label="2" value="2" onKeyPress={onKeyPress} textStyle={{fontSize: numFontSize}}/>
+                            <NumKey label="3" value="3" onKeyPress={onKeyPress} textStyle={{fontSize: numFontSize}}/>
+                        </View>
+                        <View style={styles.row}>
+                            <NumKey label="4" value="4" onKeyPress={onKeyPress} textStyle={{fontSize: numFontSize}}/>
+                            <NumKey label="5" value="5" onKeyPress={onKeyPress} textStyle={{fontSize: numFontSize}}/>
+                            <NumKey label="6" value="6" onKeyPress={onKeyPress} textStyle={{fontSize: numFontSize}}/>
+                        </View>
+                        <View style={styles.row}>
+                            <NumKey label="7" value="7" onKeyPress={onKeyPress} textStyle={{fontSize: numFontSize}}/>
+                            <NumKey label="8" value="8" onKeyPress={onKeyPress} textStyle={{fontSize: numFontSize}}/>
+                            <NumKey label="9" value="9" onKeyPress={onKeyPress} textStyle={{fontSize: numFontSize}}/>
+                        </View>
+                        <View style={styles.row}>
+                            <NumKey label="." value="." onKeyPress={onKeyPress} textStyle={{fontSize: numFontSize}}/>
+                            <NumKey label="0" value="0" onKeyPress={onKeyPress} textStyle={{fontSize: numFontSize}}/>
+                            <NumKey
+                                label="⌫"
+                                value="DELETE"
+                                onKeyPress={onKeyPress}
+                                style={styles.deleteKey}
+                                textStyle={[styles.deleteKeyText, {fontSize: deleteFontSize}]}
+                            />
+                        </View>
+                    </View>
+                    <View style={styles.actionButtons}>
+                        <ActionButtons
+                            hasChanges={hasChanges}
+                            shouldShake={shouldShake}
+                            onCancel={onCancel}
+                            onConfirm={onConfirm}
+                            actionFontSize={actionFontSize}
+                        />
+                    </View>
+                </View>
+            </View>
+        );
+    }
+);
+
+// ─── Design Tokens ───────────────────────────────────────────────────────────
+const T = {
+    // 底盘
+    bg: '#E8ECF0',
+    // 普通数字键
+    keyBg: '#FFFFFF',
+    keyText: '#1A2332',
+    keyRadius: 10,
+    keyElevation: 2,
+    // 删除键
+    deleteBg: '#CBD5E1',
+    deleteText: '#334155',
+    // 确认键
+    confirmBg: '#16A34A',
+    confirmText: '#FFFFFF',
+    // 取消键
+    cancelBg: '#DC2626',
+    cancelText: '#FFFFFF',
+    // 关闭键
+    closeBg: '#94A3B8',
+    closeText: '#FFFFFF',
+    // 字体
+    fontNum: 28 as const,
+    fontAction: 16 as const,
+    fontDelete: 22 as const,
+    fontWeight600: '600' as const,
+    fontWeight700: '700' as const,
+};
+
+const styles = StyleSheet.create({
+    wrapper: {
+        flex: 1,
+        alignItems: 'center',
+        backgroundColor: T.bg,
+    },
+    card: {
+        flex: 1,
+        flexDirection: 'row',
+        gap: GAP,
+        padding: PADDING,
+        backgroundColor: T.bg,
+        borderRadius: 16,
+    },
+    keyboardMain: {
+        flex: 1,
+        gap: GAP,
+    },
+    row: {
+        flexDirection: 'row',
+        gap: GAP,
+        flex: 1,
+    },
+    key: {
+        flex: 1,
+        backgroundColor: T.keyBg,
+        borderRadius: T.keyRadius,
+        justifyContent: 'center',
+        alignItems: 'center',
+        elevation: T.keyElevation,
+    },
+    keyPressed: {
+        opacity: 0.82,
+        transform: [{scale: 0.985}],
+    },
+    keyText: {
+        fontSize: T.fontNum,
+        fontWeight: T.fontWeight600,
+        color: T.keyText,
+    },
+    deleteKey: {
+        backgroundColor: T.deleteBg,
+    },
+    deleteKeyText: {
+        fontSize: T.fontDelete,
+        fontWeight: T.fontWeight700,
+        color: T.deleteText,
+    },
+    actionButtons: {
+        width: ACTION_WIDTH,
+        gap: GAP,
+    },
+    cancelButton: {
+        flex: 1,
+        backgroundColor: T.cancelBg,
+        borderRadius: T.keyRadius,
+        justifyContent: 'center',
+        alignItems: 'center',
+        elevation: 3,
+    },
+    cancelButtonText: {
+        fontSize: T.fontAction,
+        fontWeight: T.fontWeight700,
+        color: T.cancelText,
+    },
+    closeButton: {
+        flex: 1,
+        backgroundColor: T.closeBg,
+        borderRadius: T.keyRadius,
+        justifyContent: 'center',
+        alignItems: 'center',
+        elevation: 2,
+    },
+    actionButtonPressed: {
+        opacity: 0.86,
+    },
+    closeButtonText: {
+        fontSize: T.fontAction,
+        fontWeight: T.fontWeight700,
+        color: T.closeText,
+    },
+    confirmButton: {
+        backgroundColor: T.confirmBg,
+        borderRadius: T.keyRadius,
+        justifyContent: 'center',
+        alignItems: 'center',
+        elevation: 4,
+    },
+    confirmButtonText: {
+        fontSize: T.fontAction,
+        fontWeight: T.fontWeight700,
+        color: T.confirmText,
+    },
+});

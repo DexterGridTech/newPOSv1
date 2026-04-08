@@ -901,6 +901,237 @@ unwrapEnvelope: true
 
 这就是当前 `mixc-user-login` 打样包采用的方式。
 
+
+## WS 运行时注册指南
+
+### 一、为什么要注册 `SocketRuntimeAdapter`
+
+`communication` 包里的 WS 客户端核心是跨运行时设计：
+
+- `BaseSocketClient` 负责状态机、消息队列、心跳、重连、hooks、metrics
+- 具体“怎么创建 WebSocket 连接”由运行时决定
+
+因此，`communication` 不直接写死：
+
+- `new WebSocket(...)`
+- `ws` 包
+- React Native 全局 `WebSocket`
+
+而是通过 `SocketRuntimeAdapter` 在集成层注册。
+
+这意味着：
+
+- Node、Web、React Native、Electron 可以共用同一套 WS 核心逻辑
+- 平台差异留在集成层解决
+- 业务模块不需要每次手传 `SocketFactory`
+
+---
+
+### 二、当前可用 API
+
+现在可以直接从 `@impos2/kernel-core-communication` 使用：
+
+- `registerSocketRuntimeAdapter`
+- `getRegisteredSocketRuntimeAdapter`
+- `requireRegisteredSocketRuntimeAdapter`
+- `createRegisteredSocketFactory`
+- `createRegisteredSocketClient`
+- `createBasicSocketRuntimeAdapter`
+
+源码位置：
+
+- `src/foundations/adapters/wsRuntime.ts`
+
+---
+
+### 三、推荐在哪一层注册
+
+推荐在最终运行时所在的集成层注册，例如：
+
+- Android RN assembly 的启动阶段
+- Electron assembly 的启动阶段
+- Web debug 容器启动阶段
+- Node mock / server / test 启动阶段
+
+不推荐：
+
+- 在业务模块内部注册
+- 在 feature / actor 内注册
+- 在每次建 client 时重复注册
+
+推荐原则：
+
+- 每个运行时启动时注册一次
+- 后续所有 WS client 统一从注册器获取
+
+---
+
+### 四、最小注册示例
+
+#### 1. Browser / React Native 风格
+
+```ts
+import {
+  createBasicSocketRuntimeAdapter,
+  registerSocketRuntimeAdapter,
+  type SocketLike,
+} from '@impos2/kernel-core-communication'
+
+class DefaultWebSocketAdapter implements SocketLike {
+  private readonly socket: WebSocket
+
+  constructor(url: string) {
+    this.socket = new WebSocket(url)
+  }
+
+  send(data: string): void {
+    this.socket.send(data)
+  }
+
+  close(code?: number, reason?: string): void {
+    this.socket.close(code, reason)
+  }
+
+  addEventListener(event: 'open' | 'close' | 'error' | 'message', listener: (...args: any[]) => void): void {
+    this.socket.addEventListener(event as any, listener as any)
+  }
+
+  removeEventListener(event: 'open' | 'close' | 'error' | 'message', listener: (...args: any[]) => void): void {
+    this.socket.removeEventListener(event as any, listener as any)
+  }
+}
+
+registerSocketRuntimeAdapter(
+  createBasicSocketRuntimeAdapter({
+    runtimeName: 'react-native',
+    supportsHeaders: false,
+    socketCreator: (url: string) => new DefaultWebSocketAdapter(url),
+  }),
+)
+```
+
+说明：
+
+- Web 标准 `WebSocket` 不支持自定义 headers
+- React Native 的全局 `WebSocket` 也建议按“query/token 优先”使用
+- 所以这类运行时注册时建议：`supportsHeaders: false`
+
+---
+
+#### 2. Node 风格
+
+```ts
+import {
+  createBasicSocketRuntimeAdapter,
+  registerSocketRuntimeAdapter,
+  type SocketLike,
+} from '@impos2/kernel-core-communication'
+
+class NodeWebSocketAdapter implements SocketLike {
+  private readonly socket: WebSocket
+  private readonly listeners: Record<string, Set<(...args: any[]) => void>> = {
+    open: new Set(),
+    close: new Set(),
+    error: new Set(),
+    message: new Set(),
+  }
+
+  constructor(url: string) {
+    this.socket = new WebSocket(url)
+    this.socket.addEventListener('open', () => this.listeners.open.forEach(listener => listener()))
+    this.socket.addEventListener('close', event => this.listeners.close.forEach(listener => listener({reason: event.reason})))
+    this.socket.addEventListener('error', event => this.listeners.error.forEach(listener => listener(event)))
+    this.socket.addEventListener('message', event => this.listeners.message.forEach(listener => listener({data: String(event.data)})))
+  }
+
+  send(data: string): void {
+    this.socket.send(data)
+  }
+
+  close(code?: number, reason?: string): void {
+    this.socket.close(code, reason)
+  }
+
+  addEventListener(event: 'open' | 'close' | 'error' | 'message', listener: (...args: any[]) => void): void {
+    this.listeners[event].add(listener)
+  }
+
+  removeEventListener(event: 'open' | 'close' | 'error' | 'message', listener: (...args: any[]) => void): void {
+    this.listeners[event].delete(listener)
+  }
+}
+
+registerSocketRuntimeAdapter(
+  createBasicSocketRuntimeAdapter({
+    runtimeName: 'node',
+    supportsHeaders: true,
+    socketCreator: (url: string) => new NodeWebSocketAdapter(url),
+  }),
+)
+```
+
+说明：
+
+- Node 运行时建议使用显式 adapter
+- 不要把 Node 的具体 WS 实现写死进 `communication` 核心
+
+---
+
+### 五、注册后业务怎么拿 client
+
+推荐用：
+
+```ts
+import {
+  createRegisteredSocketClient,
+  ServerResolver,
+} from '@impos2/kernel-core-communication'
+
+const serverResolver = new ServerResolver()
+const socketClient = createRegisteredSocketClient(serverResolver, {
+  metricsRecorder,
+  traceExtractor,
+  hooks,
+})
+```
+
+这样可以保证：
+
+- 业务层不关心当前是 Node / Web / RN / Electron
+- 当前运行时差异都在 adapter 注册时解决
+
+---
+
+### 六、什么时候不要用注册器
+
+以下场景可以不走全局注册器：
+
+- 单元测试中想手动注入 mock factory
+- 某个特定 dev case 想临时替换 socket 行为
+- 一次性脚本只想显式控制 `SocketFactory`
+
+这时仍然可以直接：
+
+```ts
+new BaseSocketClient(serverResolver, customSocketFactory, options)
+```
+
+也就是说：
+
+- 注册器是推荐默认路径
+- 不是强制唯一入口
+
+---
+
+### 七、当前推荐规则
+
+1. `communication/ws` 负责通用 WS 核心能力
+2. `communication/foundations/adapters/wsRuntime.ts` 负责运行时注册
+3. 集成层负责注册 Node / Web / RN / Electron 的具体 adapter
+4. 业务层优先使用 `createRegisteredSocketClient()`
+5. 跨运行时握手统一优先使用 `query / token`，不要把自定义 headers 当成基础前提
+
+---
 ## 本轮新增验证结论
 
 - 已新增 `communication-test` 的 session/bootstrap 场景

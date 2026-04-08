@@ -6,6 +6,8 @@ import {
   brandsTable,
   changeLogsTable,
   faultRulesTable,
+  contractsTable,
+  platformsTable,
   projectsTable,
   projectionsTable,
   runtimeContextTable,
@@ -273,14 +275,29 @@ export const listAuditLogs = (pagination?: PaginationQuery) => {
 }
 
 const cloneBaselineData = (sourceSandboxId: string, targetSandboxId: string, timestamp: number) => {
+  const platforms = db.select().from(platformsTable).where(eq(platformsTable.sandboxId, sourceSandboxId)).all()
   const tenants = db.select().from(tenantsTable).where(eq(tenantsTable.sandboxId, sourceSandboxId)).all()
   const brands = db.select().from(brandsTable).where(eq(brandsTable.sandboxId, sourceSandboxId)).all()
   const projects = db.select().from(projectsTable).where(eq(projectsTable.sandboxId, sourceSandboxId)).all()
   const stores = db.select().from(storesTable).where(eq(storesTable.sandboxId, sourceSandboxId)).all()
+  const contracts = db.select().from(contractsTable).where(eq(contractsTable.sandboxId, sourceSandboxId)).all()
   const profiles = db.select().from(terminalProfilesTable).where(eq(terminalProfilesTable.sandboxId, sourceSandboxId)).all()
   const templates = db.select().from(terminalTemplatesTable).where(eq(terminalTemplatesTable.sandboxId, sourceSandboxId)).all()
   const topics = db.select().from(topicsTable).where(eq(topicsTable.sandboxId, sourceSandboxId)).all()
   const faultRules = db.select().from(faultRulesTable).where(eq(faultRulesTable.sandboxId, sourceSandboxId)).all()
+
+  const platformIdMap = new Map<string, string>()
+  for (const platform of platforms) {
+    const platformId = createId('platform')
+    platformIdMap.set(platform.platformId, platformId)
+    db.insert(platformsTable).values({
+      ...platform,
+      platformId,
+      sandboxId: targetSandboxId,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    }).run()
+  }
 
   const tenantIdMap = new Map<string, string>()
   for (const tenant of tenants) {
@@ -290,6 +307,7 @@ const cloneBaselineData = (sourceSandboxId: string, targetSandboxId: string, tim
       ...tenant,
       tenantId,
       sandboxId: targetSandboxId,
+      platformId: platformIdMap.get(tenant.platformId) ?? tenant.platformId,
       createdAt: timestamp,
       updatedAt: timestamp,
     }).run()
@@ -303,6 +321,7 @@ const cloneBaselineData = (sourceSandboxId: string, targetSandboxId: string, tim
       ...brand,
       brandId,
       sandboxId: targetSandboxId,
+      platformId: platformIdMap.get(brand.platformId) ?? brand.platformId,
       createdAt: timestamp,
       updatedAt: timestamp,
     }).run()
@@ -316,19 +335,39 @@ const cloneBaselineData = (sourceSandboxId: string, targetSandboxId: string, tim
       ...project,
       projectId,
       sandboxId: targetSandboxId,
+      platformId: platformIdMap.get(project.platformId) ?? project.platformId,
       createdAt: timestamp,
       updatedAt: timestamp,
     }).run()
   }
 
+  const storeIdMap = new Map<string, string>()
   for (const store of stores) {
+    const storeId = createId('store')
+    storeIdMap.set(store.storeId, storeId)
     db.insert(storesTable).values({
       ...store,
-      storeId: createId('store'),
+      storeId,
       sandboxId: targetSandboxId,
+      platformId: platformIdMap.get(store.platformId) ?? store.platformId,
       tenantId: tenantIdMap.get(store.tenantId) ?? store.tenantId,
       brandId: brandIdMap.get(store.brandId) ?? store.brandId,
       projectId: projectIdMap.get(store.projectId) ?? store.projectId,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    }).run()
+  }
+
+  for (const contract of contracts) {
+    db.insert(contractsTable).values({
+      ...contract,
+      contractId: createId('contract'),
+      sandboxId: targetSandboxId,
+      platformId: platformIdMap.get(contract.platformId) ?? contract.platformId,
+      projectId: projectIdMap.get(contract.projectId) ?? contract.projectId,
+      tenantId: tenantIdMap.get(contract.tenantId) ?? contract.tenantId,
+      brandId: brandIdMap.get(contract.brandId) ?? contract.brandId,
+      storeId: storeIdMap.get(contract.storeId) ?? contract.storeId,
       createdAt: timestamp,
       updatedAt: timestamp,
     }).run()

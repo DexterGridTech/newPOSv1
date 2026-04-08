@@ -24,9 +24,21 @@ export const runtimeContextTable = sqliteTable('platform_runtime_context', {
   updatedAt: integer('updated_at').notNull(),
 })
 
+export const platformsTable = sqliteTable('platforms', {
+  platformId: text('platform_id').primaryKey(),
+  sandboxId: text('sandbox_id').notNull(),
+  platformCode: text('platform_code').notNull(),
+  platformName: text('platform_name').notNull(),
+  status: text('status').notNull(),
+  description: text('description').notNull(),
+  createdAt: integer('created_at').notNull(),
+  updatedAt: integer('updated_at').notNull()
+})
+
 export const tenantsTable = sqliteTable('tenants', {
   tenantId: text('tenant_id').primaryKey(),
   sandboxId: text('sandbox_id').notNull(),
+  platformId: text('platform_id').notNull(),
   tenantCode: text('tenant_code').notNull(),
   tenantName: text('tenant_name').notNull(),
   status: text('status').notNull(),
@@ -38,19 +50,9 @@ export const tenantsTable = sqliteTable('tenants', {
 export const brandsTable = sqliteTable('brands', {
   brandId: text('brand_id').primaryKey(),
   sandboxId: text('sandbox_id').notNull(),
+  platformId: text('platform_id').notNull(),
   brandCode: text('brand_code').notNull(),
   brandName: text('brand_name').notNull(),
-  status: text('status').notNull(),
-  description: text('description').notNull(),
-  createdAt: integer('created_at').notNull(),
-  updatedAt: integer('updated_at').notNull()
-})
-
-export const tenantBrandAuthorizationsTable = sqliteTable('tenant_brand_authorizations', {
-  authorizationId: text('authorization_id').primaryKey(),
-  sandboxId: text('sandbox_id').notNull(),
-  tenantId: text('tenant_id').notNull(),
-  brandId: text('brand_id').notNull(),
   status: text('status').notNull(),
   description: text('description').notNull(),
   createdAt: integer('created_at').notNull(),
@@ -60,6 +62,7 @@ export const tenantBrandAuthorizationsTable = sqliteTable('tenant_brand_authoriz
 export const projectsTable = sqliteTable('projects', {
   projectId: text('project_id').primaryKey(),
   sandboxId: text('sandbox_id').notNull(),
+  platformId: text('platform_id').notNull(),
   projectCode: text('project_code').notNull(),
   projectName: text('project_name').notNull(),
   status: text('status').notNull(),
@@ -73,9 +76,11 @@ export const projectsTable = sqliteTable('projects', {
 export const storesTable = sqliteTable('stores', {
   storeId: text('store_id').primaryKey(),
   sandboxId: text('sandbox_id').notNull(),
+  platformId: text('platform_id').notNull(),
   tenantId: text('tenant_id').notNull(),
   brandId: text('brand_id').notNull(),
   projectId: text('project_id').notNull(),
+  unitCode: text('unit_code').notNull(),
   storeCode: text('store_code').notNull(),
   storeName: text('store_name').notNull(),
   status: text('status').notNull(),
@@ -83,6 +88,24 @@ export const storesTable = sqliteTable('stores', {
   address: text('address'),
   contactName: text('contact_name'),
   contactPhone: text('contact_phone'),
+  createdAt: integer('created_at').notNull(),
+  updatedAt: integer('updated_at').notNull()
+})
+
+export const contractsTable = sqliteTable('contracts', {
+  contractId: text('contract_id').primaryKey(),
+  sandboxId: text('sandbox_id').notNull(),
+  platformId: text('platform_id').notNull(),
+  projectId: text('project_id').notNull(),
+  tenantId: text('tenant_id').notNull(),
+  brandId: text('brand_id').notNull(),
+  storeId: text('store_id').notNull(),
+  contractCode: text('contract_code').notNull(),
+  unitCode: text('unit_code').notNull(),
+  startDate: text('start_date'),
+  endDate: text('end_date'),
+  status: text('status').notNull(),
+  description: text('description').notNull(),
   createdAt: integer('created_at').notNull(),
   updatedAt: integer('updated_at').notNull()
 })
@@ -114,6 +137,7 @@ export const terminalTemplatesTable = sqliteTable('terminal_templates', {
 export const terminalsTable = sqliteTable('terminal_instances', {
   terminalId: text('terminal_id').primaryKey(),
   sandboxId: text('sandbox_id').notNull(),
+  platformId: text('platform_id').notNull(),
   tenantId: text('tenant_id').notNull(),
   brandId: text('brand_id').notNull(),
   projectId: text('project_id').notNull(),
@@ -138,6 +162,7 @@ export const terminalsTable = sqliteTable('terminal_instances', {
 export const activationCodesTable = sqliteTable('activation_codes', {
   code: text('code').primaryKey(),
   sandboxId: text('sandbox_id').notNull(),
+  platformId: text('platform_id').notNull(),
   tenantId: text('tenant_id').notNull(),
   brandId: text('brand_id').notNull(),
   projectId: text('project_id').notNull(),
@@ -203,7 +228,10 @@ export const sessionsTable = sqliteTable('tdp_sessions', {
   status: text('status').notNull(),
   connectedAt: integer('connected_at').notNull(),
   disconnectedAt: integer('disconnected_at'),
-  lastHeartbeatAt: integer('last_heartbeat_at')
+  lastHeartbeatAt: integer('last_heartbeat_at'),
+  lastDeliveredRevision: integer('last_delivered_revision'),
+  lastAckedRevision: integer('last_acked_revision'),
+  lastAppliedRevision: integer('last_applied_revision'),
 })
 
 export const topicsTable = sqliteTable('tdp_topics', {
@@ -233,6 +261,7 @@ export const projectionsTable = sqliteTable('tdp_projections', {
 export const changeLogsTable = sqliteTable('tdp_change_logs', {
   changeId: text('change_id').primaryKey(),
   sandboxId: text('sandbox_id').notNull(),
+  cursor: integer('cursor').notNull(),
   topicKey: text('topic_key').notNull(),
   scopeType: text('scope_type').notNull(),
   scopeKey: text('scope_key').notNull(),
@@ -240,6 +269,21 @@ export const changeLogsTable = sqliteTable('tdp_change_logs', {
   payloadJson: text('payload_json').notNull(),
   sourceReleaseId: text('source_release_id'),
   createdAt: integer('created_at').notNull()
+})
+
+export const commandOutboxTable = sqliteTable('tdp_command_outbox', {
+  commandId: text('command_id').primaryKey(),
+  sandboxId: text('sandbox_id').notNull(),
+  terminalId: text('terminal_id').notNull(),
+  topicKey: text('topic_key').notNull(),
+  payloadJson: text('payload_json').notNull(),
+  status: text('status').notNull(),
+  sourceReleaseId: text('source_release_id'),
+  deliveredAt: integer('delivered_at'),
+  ackedAt: integer('acked_at'),
+  expiresAt: integer('expires_at'),
+  createdAt: integer('created_at').notNull(),
+  updatedAt: integer('updated_at').notNull(),
 })
 
 export const faultRulesTable = sqliteTable('fault_rules', {

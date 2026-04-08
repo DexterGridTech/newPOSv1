@@ -1,0 +1,161 @@
+- generic [ref=e580]:
+  - complementary [ref=e581]:
+    - generic [ref=e582]:
+      - generic [ref=e583]: MT
+      - generic [ref=e584]:
+        - generic [ref=e585]: Mock Terminal
+        - generic [ref=e586]: Platform Console
+    - navigation [ref=e587]:
+      - button "总览" [ref=e589] [cursor=pointer]:
+        - generic [ref=e590]: 总览
+      - generic [ref=e591]:
+        - button "TCP 控制面 5" [ref=e592] [cursor=pointer]:
+          - generic [ref=e593]: TCP 控制面
+          - generic [ref=e594]: "5"
+        - generic [ref=e595]:
+          - button "快捷控制台" [ref=e596] [cursor=pointer]:
+            - generic [ref=e597]: 快捷控制台
+          - button "手动控制台" [ref=e598] [cursor=pointer]:
+            - generic [ref=e599]: 手动控制台
+      - button "TDP 数据面" [ref=e601] [cursor=pointer]:
+        - generic [ref=e602]: TDP 数据面
+      - button "场景引擎" [ref=e604] [cursor=pointer]:
+        - generic [ref=e605]: 场景引擎
+      - button "故障注入" [ref=e607] [cursor=pointer]:
+        - generic [ref=e608]: 故障注入
+      - button "基础资料" [ref=e610] [cursor=pointer]:
+        - generic [ref=e611]: 基础资料
+  - main [ref=e612]:
+    - generic [ref=e613]:
+      - generic [ref=e614]:
+        - heading "Mock Terminal Platform" [level=1] [ref=e615]
+        - paragraph [ref=e616]: 面向 TCP / TDP 联调、场景演练与故障注入的高自由度后台控制台
+      - generic [ref=e617]:
+        - generic [ref=e618]:
+          - generic [ref=e619]:
+            - generic [ref=e620]: 当前沙箱
+            - strong [ref=e621]: test sandbox
+          - generic [ref=e622]:
+            - generic [ref=e623]: 切换沙箱
+            - combobox "切换沙箱" [ref=e624]:
+              - option "test sandbox" [selected]
+              - option "默认联调沙箱"
+          - button "新建沙箱" [ref=e625] [cursor=pointer]
+          - button "管理沙箱" [ref=e626] [cursor=pointer]
+        - generic [ref=e627]:
+          - generic [ref=e628]: 真实控制台风格
+          - generic [ref=e629]: 高自由度联调
+    - generic [ref=e630]:
+      - generic [ref=e631]:
+        - generic [ref=e632]:
+          - generic [ref=e633]:
+            - heading "运行状态" [level=2] [ref=e634]
+            - paragraph [ref=e635]: 核心资源概览、告警和联调态势
+          - generic [ref=e637]:
+            - button "刷新数据" [ref=e638] [cursor=pointer]
+            - button "预览导出数据" [ref=e639] [cursor=pointer]
+            - button "下载导出文件" [ref=e640] [cursor=pointer]
+        - generic [ref=e965]: 已删除平台
+        - generic [ref=e641]:
+          - generic [ref=e642]:
+            - generic [ref=e643]: 终端总量
+            - generic [ref=e644]: "7"
+          - generic [ref=e645]:
+            - generic [ref=e646]: 在线终端
+            - generic [ref=e647]: "0"
+          - generic [ref=e648]:
+            - generic [ref=e649]: 运行中任务
+            - generic [ref=e650]: "5"
+          - generic [ref=e651]:
+            - generic [ref=e652]: 活跃会话
+            - generic [ref=e653]: "0"
+          - generic [ref=e654]:
+            - generic [ref=e655]: 主题数量
+            - generic [ref=e656]: "0"
+          - generic [ref=e658]: 故障命中
+      - generic [ref=e659]:
+        - generic [ref=e661]:
+          - heading "基础资料中心" [level=2] [ref=e662]
+          - paragraph [ref=e663]: 建议按“平台 → 项目 / 租户 / 品牌 → 门店 → 合同 → 终端机型 → 终端模板”的顺序维护，先确定业务组织，再落执行对象
+        - generic [ref=e664]:
+          - generic [ref=e665]:
+            - generic [ref=e666]:
+              - generic [ref=e667]: 推荐顺序 1
+              - generic [ref=e668]: 先建平台。平台代表购物中心集团，是天然业务隔离器。
+            - generic [ref=e669]:
+              - generic [ref=e670]: 推荐顺序 2
+              - generic [ref=e671]: 再建项目、租户、品牌，这些都是上游同步来的平台内参考数据。
+          - generic [ref=e672]:
+            - generic [ref=e673]:
+              - generic [ref=e674]: 推荐顺序 3
+              - generic [ref=e675]: 再建门店。门店是项目 + 租户 + 品牌 + 铺位号的执行对象。
+            - generic [ref=e676]:
+              - generic [ref=e677]: 推荐顺序 4
+              - generic [ref=e678]: 最后建合同、终端机型、终端模板，供执行链路引用。
+          - generic [ref=e679]: "{ \"recommendedOrder\": [ \"平台\", \"项目\", \"租户\", \"品牌\", \"门店\", \"合同\", \"终端机型\", \"终端模板\" ] }"
+        - generic [ref=e680]:
+          - generic [ref=e681]:
+            - generic [ref=e682]: 当前平台上下文
+            - combobox "当前平台上下文" [ref=e683]:
+              - option "平台 platform_pfi76h894g6p" [selected]
+          - generic [ref=e684]: 当前正在维护：平台 platform_pfi76h894g6p
+        - generic [ref=e685]:
+          - button "1. 平台 1" [active] [ref=e966] [cursor=pointer]:
+            - generic [ref=e687]: 1. 平台
+            - generic [ref=e688]: "1"
+          - button "2. 项目 1" [ref=e967] [cursor=pointer]:
+            - generic [ref=e690]: 2. 项目
+            - generic [ref=e691]: "1"
+          - button "3. 租户 1" [ref=e968] [cursor=pointer]:
+            - generic [ref=e693]: 3. 租户
+            - generic [ref=e694]: "1"
+          - button "4. 品牌 1" [ref=e969] [cursor=pointer]:
+            - generic [ref=e696]: 4. 品牌
+            - generic [ref=e697]: "1"
+          - button "5. 门店 1" [ref=e970] [cursor=pointer]:
+            - generic [ref=e699]: 5. 门店
+            - generic [ref=e700]: "1"
+          - button "6. 合同 1" [ref=e971] [cursor=pointer]:
+            - generic [ref=e702]: 6. 合同
+            - generic [ref=e703]: "1"
+          - button "7. 终端机型 1" [ref=e704] [cursor=pointer]:
+            - generic [ref=e705]: 7. 终端机型
+            - generic [ref=e706]: "1"
+          - button "8. 终端模板 1" [ref=e707] [cursor=pointer]:
+            - generic [ref=e708]: 8. 终端模板
+            - generic [ref=e709]: "1"
+      - generic [ref=e1057]:
+        - generic [ref=e1059]:
+          - heading "平台" [level=2] [ref=e1060]
+          - paragraph [ref=e1061]: 第 1 步：维护购物中心集团。平台是项目、租户、品牌、门店、合同的天然隔离器
+        - generic [ref=e1062]:
+          - table [ref=e1064]:
+            - rowgroup [ref=e1065]:
+              - row "平台名 编码 项目数 门店数 操作" [ref=e1066]:
+                - columnheader "平台名" [ref=e1067]
+                - columnheader "编码" [ref=e1068]
+                - columnheader "项目数" [ref=e1069]
+                - columnheader "门店数" [ref=e1070]
+                - columnheader "操作" [ref=e1071]
+            - rowgroup [ref=e1072]:
+              - row "平台 platform_pfi76h894g6p PLATFORM_PLATFORM_PFI76H894G6P 1 1 详情 编辑 切换上下文 删除" [ref=e1073]:
+                - cell "平台 platform_pfi76h894g6p" [ref=e1074]
+                - cell "PLATFORM_PLATFORM_PFI76H894G6P" [ref=e1075]
+                - cell "1" [ref=e1076]
+                - cell "1" [ref=e1077]
+                - cell "详情 编辑 切换上下文 删除" [ref=e1078]:
+                  - generic [ref=e1079]:
+                    - button "详情" [ref=e1080] [cursor=pointer]
+                    - button "编辑" [ref=e1081] [cursor=pointer]
+                    - button "切换上下文" [ref=e1082] [cursor=pointer]
+                    - button "删除" [ref=e1083] [cursor=pointer]
+          - generic [ref=e1084]:
+            - generic [ref=e1085]:
+              - generic [ref=e1086]: 平台编码
+              - textbox "平台编码" [ref=e1087]:
+                - /placeholder: 如 WANDA_GROUP
+            - generic [ref=e1088]:
+              - generic [ref=e1089]: 平台名称
+              - textbox "平台名称" [ref=e1090]:
+                - /placeholder: 如 万达集团
+            - button "新增平台" [ref=e1091] [cursor=pointer]

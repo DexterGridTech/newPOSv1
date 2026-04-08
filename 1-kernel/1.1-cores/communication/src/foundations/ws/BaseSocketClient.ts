@@ -93,33 +93,50 @@ export class BaseSocketClient<TIncoming = unknown, TOutgoing = unknown> {
       return
     }
     this.activeMetric && (this.activeMetric.outboundMessageCount += 1)
-    this.socket.send(JSON.stringify(message))
+    const payload = this.options.codec?.serialize(message) ?? JSON.stringify(message)
+    this.socket.send(payload)
   }
 
   disconnect(reason?: string): void {
-    if (this.state === 'DISCONNECTED') {
-      return
-    }
-    const resolvedConnection = this.resolvedConnection
-    this.isManualDisconnecting = true
-    this.setState('DISCONNECTING')
-    this.heartbeatManager?.stop()
-    this.socket?.close(1000, reason)
-    this.socket = null
-    this.setState('DISCONNECTED')
-    this.finishMetric(true, reason)
-    if (resolvedConnection) {
-      this.options.hooks?.onDisconnected?.({
-        resolvedConnection,
-        reason,
-      })
-    }
-    this.resolvedConnection = null
-    this.eventManager.emit({type: 'DISCONNECTED', reason, timestamp: Date.now()})
+    this.closeSocket({
+      code: 1000,
+      reason,
+      manual: true,
+      emitDisconnectedEvent: true,
+    })
   }
 
   getQueuedMessages(): TOutgoing[] {
     return [...this.messageQueue]
+  }
+
+  private closeSocket(input: {
+    code?: number
+    reason?: string
+    manual: boolean
+    emitDisconnectedEvent: boolean
+  }): void {
+    if (this.state === 'DISCONNECTED') {
+      return
+    }
+    const resolvedConnection = this.resolvedConnection
+    this.isManualDisconnecting = input.manual
+    this.setState('DISCONNECTING')
+    this.heartbeatManager?.stop()
+    this.socket?.close(input.code ?? 1000, input.reason)
+    this.socket = null
+    this.setState('DISCONNECTED')
+    this.finishMetric(true, input.reason)
+    if (resolvedConnection) {
+      this.options.hooks?.onDisconnected?.({
+        resolvedConnection,
+        reason: input.reason,
+      })
+    }
+    this.resolvedConnection = null
+    if (input.emitDisconnectedEvent) {
+      this.eventManager.emit({type: 'DISCONNECTED', reason: input.reason, timestamp: Date.now()})
+    }
   }
 
   private attachSocket(socket: SocketLike): void {
@@ -168,7 +185,7 @@ export class BaseSocketClient<TIncoming = unknown, TOutgoing = unknown> {
       this.heartbeatManager?.touch()
       this.activeMetric && (this.activeMetric.inboundMessageCount += 1)
       try {
-        const message = JSON.parse(event.data) as TIncoming
+        const message = this.options.codec?.deserialize(event.data) ?? JSON.parse(event.data) as TIncoming
         if (this.resolvedConnection) {
           this.options.hooks?.onMessage?.({
             resolvedConnection: this.resolvedConnection,
@@ -199,7 +216,8 @@ export class BaseSocketClient<TIncoming = unknown, TOutgoing = unknown> {
     while (this.messageQueue.length) {
       const nextMessage = this.messageQueue.shift()!
       this.activeMetric && (this.activeMetric.outboundMessageCount += 1)
-      this.socket.send(JSON.stringify(nextMessage))
+      const payload = this.options.codec?.serialize(nextMessage) ?? JSON.stringify(nextMessage)
+      this.socket.send(payload)
     }
   }
 
@@ -244,7 +262,12 @@ export class BaseSocketClient<TIncoming = unknown, TOutgoing = unknown> {
         this.attachSocket(socket)
         this.heartbeatManager = new BaseHeartbeatManager(profile.meta.heartbeatTimeoutMs ?? 0, () => {
           this.eventManager.emit({type: 'HEARTBEAT_TIMEOUT', timestamp: Date.now()})
-          this.disconnect('heartbeat timeout')
+          this.closeSocket({
+            code: 4000,
+            reason: 'heartbeat timeout',
+            manual: false,
+            emitDisconnectedEvent: false,
+          })
         })
         this.heartbeatManager.start()
         return resolved
@@ -263,7 +286,8 @@ export class BaseSocketClient<TIncoming = unknown, TOutgoing = unknown> {
       return
     }
     const maxAttempts = this.activeProfile.meta.reconnectAttempts ?? 0
-    if (this.reconnectAttempt >= maxAttempts) {
+    const isInfiniteReconnect = maxAttempts < 0
+    if (!isInfiniteReconnect && this.reconnectAttempt >= maxAttempts) {
       return
     }
     this.reconnectAttempt += 1
@@ -275,8 +299,10 @@ export class BaseSocketClient<TIncoming = unknown, TOutgoing = unknown> {
     this.setState('CONNECTING')
     try {
       await this.openAcrossAddresses(this.activeProfile, this.activeInput)
+      this.reconnectAttempt = 0
     } catch (error) {
       this.eventManager.emit({type: 'ERROR', error: {reason, error}, timestamp: Date.now()})
+      void this.tryReconnect(reason)
     }
   }
 

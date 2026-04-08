@@ -66,6 +66,7 @@ export const activateTerminal = (input: {
   db.insert(terminalsTable).values({
     terminalId,
     sandboxId: activation.sandboxId,
+    platformId: activation.platformId,
     tenantId: activation.tenantId,
     brandId: activation.brandId,
     projectId: activation.projectId,
@@ -111,6 +112,16 @@ export const activateTerminal = (input: {
     token,
     refreshToken,
     expiresIn: 7200,
+    refreshExpiresIn: 30 * 24 * 3600,
+    binding: {
+      platformId: activation.platformId,
+      tenantId: activation.tenantId,
+      brandId: activation.brandId,
+      projectId: activation.projectId,
+      storeId: activation.storeId,
+      profileId: activation.profileId,
+      templateId: activation.templateId ?? 'terminal-template-retail-default',
+    },
   }
 }
 
@@ -316,6 +327,7 @@ export const batchCreateTerminals = (count: number) => {
     db.insert(terminalsTable).values({
       terminalId,
       sandboxId,
+      platformId: store.platformId,
       tenantId: store.tenantId,
       brandId: store.brandId,
       projectId: store.projectId,
@@ -376,6 +388,7 @@ export const createActivationCodes = (input: {
     db.insert(activationCodesTable).values({
       code,
       sandboxId,
+      platformId: store.platformId,
       tenantId: store.tenantId,
       brandId: store.brandId,
       projectId: store.projectId,

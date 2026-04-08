@@ -6,9 +6,12 @@ import type {
   AuditLogItem,
   BrandItem,
   ChangeLogItem,
+  CommandOutboxItem,
+  ContractItem,
   FaultRuleItem,
   ImportValidationResult,
   OverviewStats,
+  PlatformItem,
   ProfileItem,
   ProjectionItem,
   ProjectItem,
@@ -22,7 +25,6 @@ import type {
   TaskReleaseItem,
   TaskTrace,
   TenantItem,
-  TenantBrandAuthorizationItem,
   TemplateLibraryItem,
   TerminalItem,
   TerminalTemplateItem,
@@ -41,6 +43,7 @@ const sections = [
 const STORAGE_KEY = 'mock-terminal-platform:view-preferences'
 
 type SectionKey = 'overview' | 'tcp' | 'tcp-quick' | 'tcp-manual' | 'tdp' | 'scene' | 'fault' | 'master-data'
+type MasterTabKey = 'platforms' | 'projects' | 'tenants' | 'brands' | 'stores' | 'contracts' | 'profiles' | 'templates'
 
 function formatTime(value?: number | null) {
   if (!value) return '--'
@@ -95,15 +98,17 @@ export default function App() {
   const [scopeStats, setScopeStats] = useState<ScopeStats | null>(null)
   const [projections, setProjections] = useState<ProjectionItem[]>([])
   const [changeLogs, setChangeLogs] = useState<ChangeLogItem[]>([])
+  const [commandOutbox, setCommandOutbox] = useState<CommandOutboxItem[]>([])
   const [sceneTemplates, setSceneTemplates] = useState<SceneTemplateItem[]>([])
   const [faultRules, setFaultRules] = useState<FaultRuleItem[]>([])
+  const [platforms, setPlatforms] = useState<PlatformItem[]>([])
   const [tenants, setTenants] = useState<TenantItem[]>([])
   const [brands, setBrands] = useState<BrandItem[]>([])
   const [projects, setProjects] = useState<ProjectItem[]>([])
   const [stores, setStores] = useState<StoreItem[]>([])
+  const [contracts, setContracts] = useState<ContractItem[]>([])
   const [profiles, setProfiles] = useState<ProfileItem[]>([])
   const [manualTemplates, setManualTemplates] = useState<TerminalTemplateItem[]>([])
-  const [tenantBrandAuthorizations, setTenantBrandAuthorizations] = useState<TenantBrandAuthorizationItem[]>([])
   const [taskTrace, setTaskTrace] = useState<TaskTrace | null>(null)
   const [terminalSnapshot, setTerminalSnapshot] = useState<unknown>(null)
   const [terminalChanges, setTerminalChanges] = useState<unknown>(null)
@@ -139,8 +144,11 @@ export default function App() {
   const [sandboxDraftSourceId, setSandboxDraftSourceId] = useState('')
   const [sandboxDraftLimits, setSandboxDraftLimits] = useState('{"maxTerminals":200,"maxTasks":1000,"maxFaultRules":100,"maxStorageSize":"2GB"}')
   const [editingSandboxId, setEditingSandboxId] = useState('')
-  const [masterTab, setMasterTab] = useState<'projects' | 'tenants' | 'brands' | 'authorizations' | 'stores' | 'profiles' | 'templates'>('projects')
+  const [masterTab, setMasterTab] = useState<MasterTabKey>('platforms')
+  const [selectedMasterPlatformId, setSelectedMasterPlatformId] = useState('')
 
+  const [platformDraftCode, setPlatformDraftCode] = useState('')
+  const [platformDraftName, setPlatformDraftName] = useState('')
   const [tenantDraftCode, setTenantDraftCode] = useState('')
   const [tenantDraftName, setTenantDraftName] = useState('')
   const [brandDraftCode, setBrandDraftCode] = useState('')
@@ -150,16 +158,23 @@ export default function App() {
   const [storeDraftTenantId, setStoreDraftTenantId] = useState('')
   const [storeDraftBrandId, setStoreDraftBrandId] = useState('')
   const [storeDraftProjectId, setStoreDraftProjectId] = useState('')
+  const [storeDraftUnitCode, setStoreDraftUnitCode] = useState('')
   const [storeDraftCode, setStoreDraftCode] = useState('')
   const [storeDraftName, setStoreDraftName] = useState('')
+  const [contractDraftProjectId, setContractDraftProjectId] = useState('')
+  const [contractDraftTenantId, setContractDraftTenantId] = useState('')
+  const [contractDraftBrandId, setContractDraftBrandId] = useState('')
+  const [contractDraftStoreId, setContractDraftStoreId] = useState('')
+  const [contractDraftCode, setContractDraftCode] = useState('')
+  const [contractDraftUnitCode, setContractDraftUnitCode] = useState('')
+  const [contractDraftStartDate, setContractDraftStartDate] = useState('2026-01-01')
+  const [contractDraftEndDate, setContractDraftEndDate] = useState('2026-12-31')
   const [profileDraftCode, setProfileDraftCode] = useState('')
   const [profileDraftName, setProfileDraftName] = useState('')
   const [templateDraftCode, setTemplateDraftCode] = useState('')
   const [templateDraftProfileId, setTemplateDraftProfileId] = useState('')
   const [templateDraftName, setTemplateDraftName] = useState('')
-  const [masterFocus, setMasterFocus] = useState<{ tab: 'projects' | 'tenants' | 'brands' | 'authorizations' | 'stores' | 'profiles' | 'templates'; keyword: string } | null>(null)
-  const [brandAuthorizationTenantId, setBrandAuthorizationTenantId] = useState('')
-  const [brandAuthorizationBrandId, setBrandAuthorizationBrandId] = useState('')
+  const [masterFocus, setMasterFocus] = useState<{ tab: MasterTabKey; keyword: string } | null>(null)
   const [manualActivationStoreId, setManualActivationStoreId] = useState('')
   const [manualActivationProfileId, setManualActivationProfileId] = useState('')
   const [manualActivationTemplateId, setManualActivationTemplateId] = useState('')
@@ -171,7 +186,7 @@ export default function App() {
   const [manualTaskType, setManualTaskType] = useState<'CONFIG_PUBLISH' | 'APP_UPGRADE' | 'REMOTE_CONTROL'>('CONFIG_PUBLISH')
   const [manualTaskSourceId, setManualTaskSourceId] = useState('manual-source')
   const [manualTaskPayload, setManualTaskPayload] = useState('{"configVersion":"config-manual-001","mode":"full"}')
-  const [editingMasterEntity, setEditingMasterEntity] = useState<null | { type: 'tenant' | 'brand' | 'project' | 'store' | 'profile' | 'template'; id: string }>(null)
+  const [editingMasterEntity, setEditingMasterEntity] = useState<null | { type: 'platform' | 'tenant' | 'brand' | 'project' | 'store' | 'contract' | 'profile' | 'template'; id: string }>(null)
 
   useEffect(() => {
     localStorage.setItem(
@@ -206,15 +221,17 @@ export default function App() {
         nextScopeStats,
         nextProjections,
         nextChangeLogs,
+        nextCommandOutbox,
         nextSceneTemplates,
         nextFaultRules,
+        nextPlatforms,
         nextTenants,
         nextBrands,
         nextProjects,
         nextStores,
+        nextContracts,
         nextProfiles,
         nextManualTemplates,
-        nextTenantBrandAuthorizations,
       ] = await Promise.all([
         api.getOverview(),
         api.getRuntimeContext(),
@@ -231,15 +248,17 @@ export default function App() {
         api.getScopeStats(),
         api.getProjections(),
         api.getChangeLogs(),
+        api.getCommandOutbox(),
         api.getSceneTemplates(),
         api.getFaultRules(),
+        api.getPlatforms(),
         api.getTenants(),
         api.getBrands(),
         api.getProjects(),
         api.getStores(),
+        api.getContracts(),
         api.getMasterProfiles(),
         api.getMasterTemplates(),
-        api.getTenantBrandAuthorizations(),
       ])
 
       setOverview(nextOverview)
@@ -258,21 +277,26 @@ export default function App() {
       setScopeStats(nextScopeStats)
       setProjections(nextProjections)
       setChangeLogs(nextChangeLogs)
+      setCommandOutbox(nextCommandOutbox)
       setSceneTemplates(nextSceneTemplates)
       setFaultRules(nextFaultRules)
+      setPlatforms(nextPlatforms)
       setTenants(nextTenants)
       setBrands(nextBrands)
       setProjects(nextProjects)
       setStores(nextStores)
+      setContracts(nextContracts)
       setProfiles(nextProfiles)
       setManualTemplates(nextManualTemplates)
-      setTenantBrandAuthorizations(nextTenantBrandAuthorizations)
 
       if (!activationCodeInput && nextActivationCodes[0]?.code) {
         setActivationCodeInput(nextActivationCodes[0].code)
       }
       if (nextTerminals[0]?.terminalId) {
         setSessionTerminalId(nextTerminals[0].terminalId)
+      }
+      if (!selectedMasterPlatformId && nextPlatforms[0]?.platformId) {
+        setSelectedMasterPlatformId(nextPlatforms[0].platformId)
       }
       if (!storeDraftTenantId && nextTenants[0]?.tenantId) {
         setStoreDraftTenantId(nextTenants[0].tenantId)
@@ -283,11 +307,17 @@ export default function App() {
       if (!storeDraftProjectId && nextProjects[0]?.projectId) {
         setStoreDraftProjectId(nextProjects[0].projectId)
       }
-      if (!brandAuthorizationTenantId && nextTenants[0]?.tenantId) {
-        setBrandAuthorizationTenantId(nextTenants[0].tenantId)
+      if (!contractDraftProjectId && nextProjects[0]?.projectId) {
+        setContractDraftProjectId(nextProjects[0].projectId)
       }
-      if (!brandAuthorizationBrandId && nextBrands[0]?.brandId) {
-        setBrandAuthorizationBrandId(nextBrands[0].brandId)
+      if (!contractDraftTenantId && nextTenants[0]?.tenantId) {
+        setContractDraftTenantId(nextTenants[0].tenantId)
+      }
+      if (!contractDraftBrandId && nextBrands[0]?.brandId) {
+        setContractDraftBrandId(nextBrands[0].brandId)
+      }
+      if (!contractDraftStoreId && nextStores[0]?.storeId) {
+        setContractDraftStoreId(nextStores[0].storeId)
       }
       if (!templateDraftProfileId && nextProfiles[0]?.profileId) {
         setTemplateDraftProfileId(nextProfiles[0].profileId)
@@ -349,6 +379,53 @@ export default function App() {
   const selectedChangeLog = changeLogs[0]
   const selectedSession = sessions[0]
   const quickActionTerminals = filteredTerminals.length ? filteredTerminals : terminals
+  const currentMasterPlatformId = selectedMasterPlatformId || platforms[0]?.platformId || ''
+  const currentMasterPlatform = platforms.find((item) => item.platformId === currentMasterPlatformId) ?? null
+  const platformScopedTenants = currentMasterPlatformId ? tenants.filter((item) => item.platformId === currentMasterPlatformId) : tenants
+  const platformScopedBrands = currentMasterPlatformId ? brands.filter((item) => item.platformId === currentMasterPlatformId) : brands
+  const platformScopedProjects = currentMasterPlatformId ? projects.filter((item) => item.platformId === currentMasterPlatformId) : projects
+  const platformScopedStores = currentMasterPlatformId ? stores.filter((item) => item.platformId === currentMasterPlatformId) : stores
+  const platformScopedContracts = currentMasterPlatformId ? contracts.filter((item) => item.platformId === currentMasterPlatformId) : contracts
+
+  useEffect(() => {
+    const nextStoreProjectId = platformScopedProjects.find((item) => item.projectId === storeDraftProjectId)?.projectId ?? platformScopedProjects[0]?.projectId ?? ''
+    if (nextStoreProjectId !== storeDraftProjectId) {
+      setStoreDraftProjectId(nextStoreProjectId)
+    }
+    const nextContractProjectId = platformScopedProjects.find((item) => item.projectId === contractDraftProjectId)?.projectId ?? platformScopedProjects[0]?.projectId ?? ''
+    if (nextContractProjectId !== contractDraftProjectId) {
+      setContractDraftProjectId(nextContractProjectId)
+    }
+  }, [platformScopedProjects, storeDraftProjectId, contractDraftProjectId])
+
+  useEffect(() => {
+    const nextStoreTenantId = platformScopedTenants.find((item) => item.tenantId === storeDraftTenantId)?.tenantId ?? platformScopedTenants[0]?.tenantId ?? ''
+    if (nextStoreTenantId !== storeDraftTenantId) {
+      setStoreDraftTenantId(nextStoreTenantId)
+    }
+    const nextContractTenantId = platformScopedTenants.find((item) => item.tenantId === contractDraftTenantId)?.tenantId ?? platformScopedTenants[0]?.tenantId ?? ''
+    if (nextContractTenantId !== contractDraftTenantId) {
+      setContractDraftTenantId(nextContractTenantId)
+    }
+  }, [platformScopedTenants, storeDraftTenantId, contractDraftTenantId])
+
+  useEffect(() => {
+    const nextStoreBrandId = platformScopedBrands.find((item) => item.brandId === storeDraftBrandId)?.brandId ?? platformScopedBrands[0]?.brandId ?? ''
+    if (nextStoreBrandId !== storeDraftBrandId) {
+      setStoreDraftBrandId(nextStoreBrandId)
+    }
+    const nextContractBrandId = platformScopedBrands.find((item) => item.brandId === contractDraftBrandId)?.brandId ?? platformScopedBrands[0]?.brandId ?? ''
+    if (nextContractBrandId !== contractDraftBrandId) {
+      setContractDraftBrandId(nextContractBrandId)
+    }
+  }, [platformScopedBrands, storeDraftBrandId, contractDraftBrandId])
+
+  useEffect(() => {
+    const nextContractStoreId = platformScopedStores.find((item) => item.storeId === contractDraftStoreId)?.storeId ?? platformScopedStores[0]?.storeId ?? ''
+    if (nextContractStoreId !== contractDraftStoreId) {
+      setContractDraftStoreId(nextContractStoreId)
+    }
+  }, [platformScopedStores, contractDraftStoreId])
 
   useEffect(() => {
     if (!selectedInstance) return
@@ -373,18 +450,37 @@ export default function App() {
     window.open('/api/v1/admin/export/download', '_blank', 'noopener,noreferrer')
   }
 
+  const buildPlatformDetail = (platformId: string) => {
+    const platform = platforms.find((item) => item.platformId === platformId)
+    if (!platform) return null
+    const relatedProjects = projects.filter((item) => item.platformId === platformId)
+    const relatedTenants = tenants.filter((item) => item.platformId === platformId)
+    const relatedBrands = brands.filter((item) => item.platformId === platformId)
+    const relatedStores = stores.filter((item) => item.platformId === platformId)
+    const relatedContracts = contracts.filter((item) => item.platformId === platformId)
+
+    return {
+      platform,
+      relations: {
+        projects: relatedProjects.map((item) => ({ projectId: item.projectId, projectName: item.projectName })),
+        tenants: relatedTenants.map((item) => ({ tenantId: item.tenantId, tenantName: item.tenantName })),
+        brands: relatedBrands.map((item) => ({ brandId: item.brandId, brandName: item.brandName })),
+        stores: relatedStores.map((item) => ({ storeId: item.storeId, storeName: item.storeName, unitCode: item.unitCode })),
+        contracts: relatedContracts.map((item) => ({ contractId: item.contractId, contractCode: item.contractCode, storeName: item.storeName })),
+      },
+    }
+  }
+
   const buildTenantDetail = (tenantId: string) => {
     const tenant = tenants.find((item) => item.tenantId === tenantId)
     if (!tenant) return null
     const relatedStores = stores.filter((item) => item.tenantId === tenantId)
     const relatedBrandIds = [...new Set(relatedStores.map((item) => item.brandId))]
     const relatedProjectIds = [...new Set(relatedStores.map((item) => item.projectId))]
-    const relatedAuthorizations = tenantBrandAuthorizations.filter((item) => item.tenantId === tenantId)
 
     return {
       tenant,
       relations: {
-        authorizations: relatedAuthorizations.map((item) => ({ authorizationId: item.authorizationId, brandId: item.brandId, brandName: item.brandName, status: item.status })),
         brands: brands.filter((item) => relatedBrandIds.includes(item.brandId)).map((item) => ({ brandId: item.brandId, brandName: item.brandName })),
         projects: projects.filter((item) => relatedProjectIds.includes(item.projectId)).map((item) => ({ projectId: item.projectId, projectName: item.projectName })),
         stores: relatedStores.map((item) => ({ storeId: item.storeId, storeName: item.storeName })),
@@ -398,12 +494,10 @@ export default function App() {
     const relatedStores = stores.filter((item) => item.brandId === brandId)
     const relatedProjectIds = [...new Set(relatedStores.map((item) => item.projectId))]
     const relatedTenantIds = [...new Set(relatedStores.map((item) => item.tenantId))]
-    const relatedAuthorizations = tenantBrandAuthorizations.filter((item) => item.brandId === brandId)
 
     return {
       brand,
       relations: {
-        authorizations: relatedAuthorizations.map((item) => ({ authorizationId: item.authorizationId, tenantId: item.tenantId, tenantName: item.tenantName, status: item.status })),
         tenants: tenants.filter((item) => relatedTenantIds.includes(item.tenantId)).map((item) => ({ tenantId: item.tenantId, tenantName: item.tenantName })),
         projects: projects.filter((item) => relatedProjectIds.includes(item.projectId)).map((item) => ({ projectId: item.projectId, projectName: item.projectName })),
         stores: relatedStores.map((item) => ({ storeId: item.storeId, storeName: item.storeName })),
@@ -441,10 +535,12 @@ export default function App() {
 
     return {
       store,
+      platform: platforms.find((item) => item.platformId === store.platformId) ?? null,
       tenant: tenants.find((item) => item.tenantId === store.tenantId) ?? null,
       brand: brands.find((item) => item.brandId === store.brandId) ?? null,
       project: projects.find((item) => item.projectId === store.projectId) ?? null,
       relations: {
+        contracts: contracts.filter((item) => item.storeId === storeId).map((item) => ({ contractId: item.contractId, contractCode: item.contractCode, unitCode: item.unitCode })),
         activationCodes: relatedActivationCodes.map((item) => ({ code: item.code, status: item.status, templateId: item.templateId })),
         terminals: relatedTerminals.map((item) => ({ terminalId: item.terminalId, lifecycleStatus: item.lifecycleStatus, healthStatus: item.healthStatus })),
         taskInstances: relatedTaskInstances.map((item) => ({ instanceId: item.instanceId, terminalId: item.terminalId, status: item.status, deliveryStatus: item.deliveryStatus })),
@@ -452,11 +548,23 @@ export default function App() {
     }
   }
 
-  const selectedStoreDraftProject = projects.find((item) => item.projectId === storeDraftProjectId) ?? null
-  const selectedStoreDraftTenant = tenants.find((item) => item.tenantId === storeDraftTenantId) ?? null
-  const selectedStoreDraftBrand = brands.find((item) => item.brandId === storeDraftBrandId) ?? null
-  const selectedAuthorizationTenant = tenants.find((item) => item.tenantId === brandAuthorizationTenantId) ?? null
-  const selectedAuthorizationBrand = brands.find((item) => item.brandId === brandAuthorizationBrandId) ?? null
+  const buildContractDetail = (contractId: string) => {
+    const contract = contracts.find((item) => item.contractId === contractId)
+    if (!contract) return null
+    return {
+      contract,
+      platform: platforms.find((item) => item.platformId === contract.platformId) ?? null,
+      project: projects.find((item) => item.projectId === contract.projectId) ?? null,
+      tenant: tenants.find((item) => item.tenantId === contract.tenantId) ?? null,
+      brand: brands.find((item) => item.brandId === contract.brandId) ?? null,
+      store: stores.find((item) => item.storeId === contract.storeId) ?? null,
+    }
+  }
+
+  const selectedStoreDraftProject = platformScopedProjects.find((item) => item.projectId === storeDraftProjectId) ?? null
+  const selectedStoreDraftTenant = platformScopedTenants.find((item) => item.tenantId === storeDraftTenantId) ?? null
+  const selectedStoreDraftBrand = platformScopedBrands.find((item) => item.brandId === storeDraftBrandId) ?? null
+  const selectedContractDraftStore = platformScopedStores.find((item) => item.storeId === contractDraftStoreId) ?? null
 
   const buildProfileDetail = (profileId: string) => {
     const profile = profiles.find((item) => item.profileId === profileId)
@@ -568,6 +676,7 @@ export default function App() {
   const loadTenantForEdit = (tenantId: string) => {
     const tenant = tenants.find((item) => item.tenantId === tenantId)
     if (!tenant) return
+    setSelectedMasterPlatformId(tenant.platformId)
     setTenantDraftCode(tenant.tenantCode)
     setTenantDraftName(tenant.tenantName)
     setEditingMasterEntity({ type: 'tenant', id: tenantId })
@@ -577,6 +686,7 @@ export default function App() {
   const loadBrandForEdit = (brandId: string) => {
     const brand = brands.find((item) => item.brandId === brandId)
     if (!brand) return
+    setSelectedMasterPlatformId(brand.platformId)
     setBrandDraftCode(brand.brandCode)
     setBrandDraftName(brand.brandName)
     setEditingMasterEntity({ type: 'brand', id: brandId })
@@ -586,6 +696,7 @@ export default function App() {
   const loadProjectForEdit = (projectId: string) => {
     const project = projects.find((item) => item.projectId === projectId)
     if (!project) return
+    setSelectedMasterPlatformId(project.platformId)
     setProjectDraftCode(project.projectCode)
     setProjectDraftName(project.projectName)
     setEditingMasterEntity({ type: 'project', id: projectId })
@@ -595,13 +706,41 @@ export default function App() {
   const loadStoreForEdit = (storeId: string) => {
     const store = stores.find((item) => item.storeId === storeId)
     if (!store) return
+    setSelectedMasterPlatformId(store.platformId)
     setStoreDraftTenantId(store.tenantId)
     setStoreDraftBrandId(store.brandId)
     setStoreDraftProjectId(store.projectId)
+    setStoreDraftUnitCode(store.unitCode)
     setStoreDraftCode(store.storeCode)
     setStoreDraftName(store.storeName)
     setEditingMasterEntity({ type: 'store', id: storeId })
     setMasterTab('stores')
+  }
+
+  const loadPlatformForEdit = (platformId: string) => {
+    const platform = platforms.find((item) => item.platformId === platformId)
+    if (!platform) return
+    setSelectedMasterPlatformId(platform.platformId)
+    setPlatformDraftCode(platform.platformCode)
+    setPlatformDraftName(platform.platformName)
+    setEditingMasterEntity({ type: 'platform', id: platformId })
+    setMasterTab('platforms')
+  }
+
+  const loadContractForEdit = (contractId: string) => {
+    const contract = contracts.find((item) => item.contractId === contractId)
+    if (!contract) return
+    setSelectedMasterPlatformId(contract.platformId)
+    setContractDraftProjectId(contract.projectId)
+    setContractDraftTenantId(contract.tenantId)
+    setContractDraftBrandId(contract.brandId)
+    setContractDraftStoreId(contract.storeId)
+    setContractDraftCode(contract.contractCode)
+    setContractDraftUnitCode(contract.unitCode)
+    setContractDraftStartDate(contract.startDate ?? '')
+    setContractDraftEndDate(contract.endDate ?? '')
+    setEditingMasterEntity({ type: 'contract', id: contractId })
+    setMasterTab('contracts')
   }
 
   const loadProfileForEdit = (profileId: string) => {
@@ -653,6 +792,14 @@ export default function App() {
 
     const detailActions: Array<JSX.Element> = []
 
+    if (payload.platform && typeof payload.platform === 'object' && 'platformId' in (payload.platform as Record<string, unknown>)) {
+      const platform = payload.platform as PlatformItem
+      detailActions.push(<ActionButton key="edit-platform" label="编辑平台" onClick={() => { closeDetail(); loadPlatformForEdit(platform.platformId); jumpToMasterTab('platforms', platform.platformName) }} />)
+    }
+    if (payload.contract && typeof payload.contract === 'object' && 'contractId' in (payload.contract as Record<string, unknown>)) {
+      const contract = payload.contract as ContractItem
+      detailActions.push(<ActionButton key="edit-contract" label="编辑合同" onClick={() => { closeDetail(); loadContractForEdit(contract.contractId); jumpToMasterTab('contracts', contract.contractCode) }} />)
+    }
     if (payload.tenant && typeof payload.tenant === 'object' && 'tenantId' in (payload.tenant as Record<string, unknown>)) {
       const tenant = payload.tenant as TenantItem
       detailActions.push(<ActionButton key="edit-tenant" label="编辑租户" onClick={() => { closeDetail(); loadTenantForEdit(tenant.tenantId); jumpToMasterTab('tenants', tenant.tenantName) }} />)
@@ -803,30 +950,61 @@ export default function App() {
     }
   }
 
+  const clearEditingIfMatched = (type: NonNullable<typeof editingMasterEntity>['type'], id: string) => {
+    if (editingMasterEntity?.type === type && editingMasterEntity.id === id) {
+      setEditingMasterEntity(null)
+    }
+  }
+
+  const deleteMasterEntity = async (
+    type: NonNullable<typeof editingMasterEntity>['type'],
+    id: string,
+    action: () => Promise<unknown>,
+    successText: string,
+  ) => {
+    await runAction(async () => {
+      clearEditingIfMatched(type, id)
+      await action()
+    }, successText)
+  }
+
   const emptyTerminals = filteredTerminals.length === 0
   const emptyTasks = filteredTaskInstances.length === 0
   const emptyActivationCodes = filteredActivationCodes.length === 0
   const emptyReleases = filteredTaskReleases.length === 0
 
-  const jumpToMasterTab = (
-    tab: 'projects' | 'tenants' | 'brands' | 'authorizations' | 'stores' | 'profiles' | 'templates',
-    keyword: string,
-  ) => {
+  const jumpToMasterTab = (tab: MasterTabKey, keyword: string) => {
     setActiveKey('master-data')
     setMasterTab(tab)
     setMasterFocus({ tab, keyword })
   }
 
+  const jumpToPlatform = (platformId?: string | null) => {
+    if (!platformId) return
+    const platform = platforms.find((item) => item.platformId === platformId)
+    if (platform) setSelectedMasterPlatformId(platform.platformId)
+    jumpToMasterTab('platforms', platform?.platformName ?? platformId)
+  }
+
   const jumpToStore = (storeId?: string | null) => {
     if (!storeId) return
     const store = stores.find((item) => item.storeId === storeId)
+    if (store) setSelectedMasterPlatformId(store.platformId)
     jumpToMasterTab('stores', store?.storeName ?? store?.storeCode ?? storeId)
   }
 
   const jumpToProject = (projectId?: string | null) => {
     if (!projectId) return
     const project = projects.find((item) => item.projectId === projectId)
+    if (project) setSelectedMasterPlatformId(project.platformId)
     jumpToMasterTab('projects', project?.projectName ?? project?.projectCode ?? projectId)
+  }
+
+  const jumpToContract = (contractId?: string | null) => {
+    if (!contractId) return
+    const contract = contracts.find((item) => item.contractId === contractId)
+    if (contract) setSelectedMasterPlatformId(contract.platformId)
+    jumpToMasterTab('contracts', contract?.contractCode ?? contractId)
   }
 
   const jumpToProfile = (profileId?: string | null) => {
@@ -853,18 +1031,24 @@ export default function App() {
     setReleaseKeyword(releaseId)
   }
 
+  const focusedPlatforms = masterFocus?.tab === 'platforms'
+    ? platforms.filter((item) => `${item.platformName} ${item.platformCode}`.toLowerCase().includes(masterFocus.keyword.toLowerCase()))
+    : platforms
   const focusedTenants = masterFocus?.tab === 'tenants'
-    ? tenants.filter((item) => `${item.tenantName} ${item.tenantCode}`.toLowerCase().includes(masterFocus.keyword.toLowerCase()))
-    : tenants
+    ? platformScopedTenants.filter((item) => `${item.tenantName} ${item.tenantCode}`.toLowerCase().includes(masterFocus.keyword.toLowerCase()))
+    : platformScopedTenants
   const focusedBrands = masterFocus?.tab === 'brands'
-    ? brands.filter((item) => `${item.brandName} ${item.brandCode}`.toLowerCase().includes(masterFocus.keyword.toLowerCase()))
-    : brands
+    ? platformScopedBrands.filter((item) => `${item.brandName} ${item.brandCode}`.toLowerCase().includes(masterFocus.keyword.toLowerCase()))
+    : platformScopedBrands
   const focusedProjects = masterFocus?.tab === 'projects'
-    ? projects.filter((item) => `${item.projectName} ${item.projectCode}`.toLowerCase().includes(masterFocus.keyword.toLowerCase()))
-    : projects
+    ? platformScopedProjects.filter((item) => `${item.projectName} ${item.projectCode}`.toLowerCase().includes(masterFocus.keyword.toLowerCase()))
+    : platformScopedProjects
   const focusedStores = masterFocus?.tab === 'stores'
-    ? stores.filter((item) => `${item.storeName} ${item.storeCode} ${item.projectName ?? ''} ${item.brandName ?? ''}`.toLowerCase().includes(masterFocus.keyword.toLowerCase()))
-    : stores
+    ? platformScopedStores.filter((item) => `${item.storeName} ${item.storeCode} ${item.unitCode} ${item.projectName ?? ''} ${item.brandName ?? ''}`.toLowerCase().includes(masterFocus.keyword.toLowerCase()))
+    : platformScopedStores
+  const focusedContracts = masterFocus?.tab === 'contracts'
+    ? platformScopedContracts.filter((item) => `${item.contractCode} ${item.unitCode} ${item.storeName ?? ''} ${item.projectName ?? ''}`.toLowerCase().includes(masterFocus.keyword.toLowerCase()))
+    : platformScopedContracts
   const focusedProfiles = masterFocus?.tab === 'profiles'
     ? profiles.filter((item) => `${item.name} ${item.profileCode}`.toLowerCase().includes(masterFocus.keyword.toLowerCase()))
     : profiles
@@ -881,32 +1065,13 @@ export default function App() {
     releaseKeyword ? { label: '发布单', value: releaseKeyword, clear: () => setReleaseKeyword('') } : null,
     taskKeyword ? { label: '任务实例', value: taskKeyword, clear: () => setTaskKeyword('') } : null,
   ].filter(Boolean) as Array<{ label: string; value: string; clear: () => void }>
-  const authorizedBrandsForStoreTenant = brands.filter((brand) =>
-    tenantBrandAuthorizations.some((authorization) => authorization.tenantId === storeDraftTenantId && authorization.brandId === brand.brandId && authorization.status === 'ACTIVE'),
-  )
-  useEffect(() => {
-    if (!storeDraftTenantId) return
-    if (authorizedBrandsForStoreTenant.some((item) => item.brandId === storeDraftBrandId)) return
-    setStoreDraftBrandId(authorizedBrandsForStoreTenant[0]?.brandId ?? '')
-  }, [storeDraftTenantId, storeDraftBrandId, authorizedBrandsForStoreTenant])
-
-  useEffect(() => {
-    if (!brands.some((item) => item.brandId === brandAuthorizationBrandId)) {
-      setBrandAuthorizationBrandId(brands[0]?.brandId ?? '')
-    }
-  }, [brandAuthorizationBrandId, brands])
-
-  useEffect(() => {
-    if (!tenants.some((item) => item.tenantId === brandAuthorizationTenantId)) {
-      setBrandAuthorizationTenantId(tenants[0]?.tenantId ?? '')
-    }
-  }, [brandAuthorizationTenantId, tenants])
   const masterTabs = [
-    { key: 'projects', label: '项目', count: projects.length },
-    { key: 'tenants', label: '租户', count: tenants.length },
-    { key: 'brands', label: '品牌', count: brands.length },
-    { key: 'authorizations', label: '品牌授权', count: tenantBrandAuthorizations.length },
-    { key: 'stores', label: '门店', count: stores.length },
+    { key: 'platforms', label: '平台', count: platforms.length },
+    { key: 'projects', label: '项目', count: platformScopedProjects.length },
+    { key: 'tenants', label: '租户', count: platformScopedTenants.length },
+    { key: 'brands', label: '品牌', count: platformScopedBrands.length },
+    { key: 'stores', label: '门店', count: platformScopedStores.length },
+    { key: 'contracts', label: '合同', count: platformScopedContracts.length },
     { key: 'profiles', label: '终端机型', count: profiles.length },
     { key: 'templates', label: '终端模板', count: manualTemplates.length },
   ] as const
@@ -1536,7 +1701,7 @@ export default function App() {
 
           <Panel title="TDP 会话与主题" subtitle="连接态、协议版本、Topic 基础治理">
             <div className="two-column">
-              <DataTable columns={['Session', '终端', '状态', '客户端版本', '协议版本', '最近心跳', '详情']} rows={sessions.slice(0, 8).map((item) => [item.sessionId, item.terminalId, item.status, item.clientVersion, item.protocolVersion, formatTime(item.lastHeartbeatAt), <ActionButton key={item.sessionId} label="查看" onClick={() => openDetail(`Session ${item.sessionId}`, item)} />])} />
+              <DataTable columns={['Session', '终端', '状态', '客户端版本', '协议版本', '最近心跳', 'Delivered/Acked/Applied', 'HighWatermark', 'AckLag/ApplyLag', '详情']} rows={sessions.slice(0, 8).map((item) => [item.sessionId, item.terminalId, item.status, item.clientVersion, item.protocolVersion, formatTime(item.lastHeartbeatAt), `${item.lastDeliveredRevision ?? '--'} / ${item.lastAckedRevision ?? '--'} / ${item.lastAppliedRevision ?? '--'}`, item.highWatermark ?? '--', `${item.ackLag ?? '--'} / ${item.applyLag ?? '--'}`, <div key={item.sessionId} className="button-group"><ActionButton label="查看" onClick={() => openDetail(`Session ${item.sessionId}`, item)} /><ActionButton label="降级" onClick={() => runAction(() => api.sendEdgeDegraded(item.sessionId, { reason: 'maintenance_mode', nodeState: 'grace', gracePeriodSeconds: 300, alternativeEndpoints: [] }), `已向 ${item.sessionId} 发送 EDGE_DEGRADED`)} /><ActionButton label="迁移" tone="danger" onClick={() => runAction(() => api.sendSessionRehome(item.sessionId, { reason: 'node_draining', deadline: new Date(Date.now() + 60_000).toISOString(), alternativeEndpoints: [] }), `已向 ${item.sessionId} 发送 SESSION_REHOME_REQUIRED`)} /></div>])} />
               <DataTable columns={['Topic Key', '名称', 'Payload 模式', 'Scope', '保留时长', '详情']} rows={topics.slice(0, 10).map((item) => [item.key, item.name, item.payloadMode, item.scopeType, `${item.retentionHours}h`, <ActionButton key={item.key} label="查看" onClick={() => openDetail(`Topic ${item.key}`, item)} />])} />
             </div>
           </Panel>
@@ -1547,6 +1712,10 @@ export default function App() {
               <DataTable columns={['Topic', 'Scope', 'Key', 'Revision', '更新时间', '详情']} rows={projections.slice(0, 10).map((item) => [item.topicKey, item.scopeType, item.scopeKey, item.revision, formatTime(item.updatedAt), <ActionButton key={`${item.topicKey}-${item.scopeKey}-${item.revision}`} label="查看" onClick={() => openDetail(`Projection ${item.topicKey}:${item.scopeKey}`, item)} />])} />
               <DataTable columns={['Change', 'Topic', 'Revision', '来源发布单', '时间', '详情']} rows={changeLogs.slice(0, 10).map((item) => [item.changeId, item.topicKey, item.revision, item.sourceReleaseId ?? '--', formatTime(item.createdAt), <ActionButton key={item.changeId} label="查看" onClick={() => openDetail(`Change ${item.changeId}`, item)} />])} />
             </div>
+          </Panel>
+
+          <Panel title="Command Outbox" subtitle="`remote.control / print.command` 这类点对点命令单独投递，不进入 Projection / Change Log">
+            <DataTable columns={['Command', '终端', 'Topic', '状态', '来源发布单', 'Delivered', 'Acked', '详情']} rows={commandOutbox.slice(0, 10).map((item) => [item.commandId, item.terminalId, item.topicKey, item.status, item.sourceReleaseId ?? '--', formatTime(item.deliveredAt), formatTime(item.ackedAt), <ActionButton key={item.commandId} label="查看" onClick={() => openDetail(`Command ${item.commandId}`, item)} />])} />
           </Panel>
 
           <Panel title="当前选中快照" subtitle="便于核对 TCP 委托后的 TDP 投递上下文">
@@ -1591,21 +1760,33 @@ export default function App() {
 
       {activeKey === 'master-data' ? (
         <>
-          <Panel title="基础资料中心" subtitle="建议按“项目 → 租户 → 品牌 → 门店 → 终端机型 → 终端模板”的顺序维护，先建业务世界，再推进控制面对象">
+          <Panel title="基础资料中心" subtitle="建议按“平台 → 项目 / 租户 / 品牌 → 门店 → 合同 → 终端机型 → 终端模板”的顺序维护，先确定业务组织，再落执行对象">
             <div className="three-column inline-actions">
               <KeyValueList
                 items={[
-                  { label: '推荐顺序 1', value: '先建项目。项目代表真实经营场地，比如深圳湾万象城、广州天环广场。' },
-                  { label: '推荐顺序 2', value: '再建租户和品牌，然后在“品牌授权”页签里建立可用关系。' },
+                  { label: '推荐顺序 1', value: '先建平台。平台代表购物中心集团，是天然业务隔离器。' },
+                  { label: '推荐顺序 2', value: '再建项目、租户、品牌，这些都是上游同步来的平台内参考数据。' },
                 ]}
               />
               <KeyValueList
                 items={[
-                  { label: '推荐顺序 3', value: '再建门店，把项目 + 租户 + 品牌装配成真实门店。' },
-                  { label: '推荐顺序 4', value: '最后建终端机型和终端模板，供激活码和终端实例引用。' },
+                  { label: '推荐顺序 3', value: '再建门店。门店是项目 + 租户 + 品牌 + 铺位号的执行对象。' },
+                  { label: '推荐顺序 4', value: '最后建合同、终端机型、终端模板，供执行链路引用。' },
                 ]}
               />
-              <JsonBlock value={{ recommendedOrder: ['项目', '租户', '品牌', '品牌授权', '门店', '终端机型', '终端模板'] }} />
+              <JsonBlock value={{ recommendedOrder: ['平台', '项目', '租户', '品牌', '门店', '合同', '终端机型', '终端模板'] }} />
+            </div>
+            <div className="inline-actions">
+              <SelectInput
+                label="当前平台上下文"
+                value={currentMasterPlatformId}
+                onChange={(value) => {
+                  setSelectedMasterPlatformId(value)
+                  setMasterFocus(null)
+                }}
+                options={platforms.map((item) => ({ label: item.platformName, value: item.platformId }))}
+              />
+              <div className="feedback">{currentMasterPlatform ? `当前正在维护：${currentMasterPlatform.platformName}` : '请先创建平台'}</div>
             </div>
             <div className="master-tab-list">
               {masterTabs.map((tab) => (
@@ -1623,92 +1804,171 @@ export default function App() {
             ) : null}
           </Panel>
 
-          {masterTab === 'tenants' ? (
-            <Panel title="租户" subtitle="第 2 步：维护经营主体。租户作为独立主体存在，可通过品牌授权关系接入多个品牌">
+          {masterTab === 'platforms' ? (
+            <Panel title="平台" subtitle="第 1 步：维护购物中心集团。平台是项目、租户、品牌、门店、合同的天然隔离器">
               <div className="two-column">
-                <DataTable columns={['租户名', '编码', '品牌数', '项目数', '门店数', '操作']} rows={focusedTenants.map((item) => [item.tenantName, item.tenantCode, item.brandCount ?? 0, item.projectCount ?? 0, item.storeCount ?? 0, <div key={item.tenantId} className="button-group"><ActionButton label="详情" onClick={() => openDetail(`租户 ${item.tenantName}`, buildTenantDetail(item.tenantId) ?? item)} /><ActionButton label="编辑" onClick={() => loadTenantForEdit(item.tenantId)} /></div>])} />
+                <DataTable columns={['平台名', '编码', '项目数', '门店数', '操作']} rows={focusedPlatforms.map((item) => [item.platformName, item.platformCode, item.projectCount ?? 0, item.storeCount ?? 0, <div key={item.platformId} className="button-group"><ActionButton label="详情" onClick={() => openDetail(`平台 ${item.platformName}`, buildPlatformDetail(item.platformId) ?? item)} /><ActionButton label="编辑" onClick={() => loadPlatformForEdit(item.platformId)} /><ActionButton label="切换上下文" onClick={() => setSelectedMasterPlatformId(item.platformId)} /><ActionButton label="删除" tone="danger" onClick={() => deleteMasterEntity('platform', item.platformId, async () => { await api.deletePlatform(item.platformId); if (currentMasterPlatformId === item.platformId) setSelectedMasterPlatformId('') }, '已删除平台')} /></div>])} />
                 <FormGrid>
-                  <TextInput label="租户编码" value={tenantDraftCode} onChange={setTenantDraftCode} placeholder="如 TENANT_MIXC" />
-                  <TextInput label="租户名称" value={tenantDraftName} onChange={setTenantDraftName} placeholder="如 万象城租户" />
-                  <ActionButton label={editingMasterEntity?.type === 'tenant' ? '保存租户' : '新增租户'} tone="primary" onClick={() => runAction(async () => { if (!tenantDraftCode.trim() || !tenantDraftName.trim()) throw new Error('租户编码和名称不能为空'); if (editingMasterEntity?.type === 'tenant') { await api.updateTenant(editingMasterEntity.id, { tenantCode: tenantDraftCode, tenantName: tenantDraftName, status: 'ACTIVE', description: '基础资料中心更新' }) } else { await api.createTenant({ tenantCode: tenantDraftCode, tenantName: tenantDraftName, status: 'ACTIVE', description: '基础资料中心创建' }) } setTenantDraftCode(''); setTenantDraftName(''); setEditingMasterEntity(null) }, editingMasterEntity?.type === 'tenant' ? '已更新租户' : '已新增租户')} />
-                  {editingMasterEntity?.type === 'tenant' ? <ActionButton label="取消编辑" onClick={() => { setEditingMasterEntity(null); setTenantDraftCode(''); setTenantDraftName('') }} /> : null}
+                  <TextInput label="平台编码" value={platformDraftCode} onChange={setPlatformDraftCode} placeholder="如 WANDA_GROUP" />
+                  <TextInput label="平台名称" value={platformDraftName} onChange={setPlatformDraftName} placeholder="如 万达集团" />
+                  <ActionButton
+                    label={editingMasterEntity?.type === 'platform' ? '保存平台' : '新增平台'}
+                    tone="primary"
+                    onClick={() =>
+                      runAction(async () => {
+                        if (!platformDraftCode.trim() || !platformDraftName.trim()) throw new Error('平台编码和名称不能为空')
+                        if (editingMasterEntity?.type === 'platform') {
+                          await api.updatePlatform(editingMasterEntity.id, { platformCode: platformDraftCode, platformName: platformDraftName, status: 'ACTIVE', description: '基础资料中心更新' })
+                        } else {
+                          await api.createPlatform({ platformCode: platformDraftCode, platformName: platformDraftName, status: 'ACTIVE', description: '基础资料中心创建' })
+                        }
+                        setPlatformDraftCode('')
+                        setPlatformDraftName('')
+                        setEditingMasterEntity(null)
+                      }, editingMasterEntity?.type === 'platform' ? '已更新平台' : '已新增平台')
+                    }
+                  />
+                  {editingMasterEntity?.type === 'platform' ? <ActionButton label="取消编辑" onClick={() => { setEditingMasterEntity(null); setPlatformDraftCode(''); setPlatformDraftName('') }} /> : null}
                 </FormGrid>
               </div>
-              <div className="inline-actions">
-                <div className="feedback">品牌授权已收口到独立的“品牌授权”页签统一维护，这里只看租户主数据。</div>
-                <ActionButton label="去维护品牌授权" onClick={() => jumpToMasterTab('authorizations', '')} />
+            </Panel>
+          ) : null}
+
+          {masterTab === 'projects' ? (
+            <Panel title="项目" subtitle="第 2 步：维护购物中心项目。每个项目只归属于一个平台">
+              <div className="two-column">
+                <DataTable columns={['项目名', '编码', '所属平台', '门店数', '终端数', '操作']} rows={focusedProjects.map((item) => [item.projectName, item.projectCode, item.platformName ?? '--', item.storeCount ?? 0, item.terminalCount ?? 0, <div key={item.projectId} className="button-group"><ActionButton label="详情" onClick={() => openDetail(`项目 ${item.projectName}`, buildProjectDetail(item.projectId) ?? item)} /><ActionButton label="编辑" onClick={() => loadProjectForEdit(item.projectId)} /><ActionButton label="删除" tone="danger" onClick={() => deleteMasterEntity('project', item.projectId, () => api.deleteProject(item.projectId), '已删除项目')} /></div>])} />
+                <FormGrid>
+                  <TextInput label="项目编码" value={projectDraftCode} onChange={setProjectDraftCode} placeholder="如 SHENZHEN_BAY_MIXC" />
+                  <TextInput label="项目名称" value={projectDraftName} onChange={setProjectDraftName} placeholder="如 深圳湾万象城" />
+                  <ActionButton
+                    label={editingMasterEntity?.type === 'project' ? '保存项目' : '新增项目'}
+                    tone="primary"
+                    onClick={() =>
+                      runAction(async () => {
+                        if (!currentMasterPlatformId) throw new Error('请先选择平台')
+                        if (!projectDraftCode.trim() || !projectDraftName.trim()) throw new Error('请先填写完整项目信息')
+                        if (editingMasterEntity?.type === 'project') {
+                          await api.updateProject(editingMasterEntity.id, { platformId: currentMasterPlatformId, projectCode: projectDraftCode, projectName: projectDraftName, status: 'ACTIVE', description: '基础资料中心更新', region: 'CN', timezone: 'Asia/Shanghai' })
+                        } else {
+                          await api.createProject({ platformId: currentMasterPlatformId, projectCode: projectDraftCode, projectName: projectDraftName, status: 'ACTIVE', description: '基础资料中心创建', region: 'CN', timezone: 'Asia/Shanghai' })
+                        }
+                        setProjectDraftCode('')
+                        setProjectDraftName('')
+                        setEditingMasterEntity(null)
+                      }, editingMasterEntity?.type === 'project' ? '已更新项目' : '已新增项目')
+                    }
+                  />
+                  {editingMasterEntity?.type === 'project' ? <ActionButton label="取消编辑" onClick={() => { setEditingMasterEntity(null); setProjectDraftCode(''); setProjectDraftName('') }} /> : null}
+                </FormGrid>
+              </div>
+            </Panel>
+          ) : null}
+
+          {masterTab === 'tenants' ? (
+            <Panel title="租户" subtitle="第 3 步：维护经营主体。租户按平台隔离，同名租户可以存在于不同平台">
+              <div className="two-column">
+                <DataTable columns={['租户名', '编码', '所属平台', '项目数', '门店数', '操作']} rows={focusedTenants.map((item) => [item.tenantName, item.tenantCode, item.platformName ?? '--', item.projectCount ?? 0, item.storeCount ?? 0, <div key={item.tenantId} className="button-group"><ActionButton label="详情" onClick={() => openDetail(`租户 ${item.tenantName}`, buildTenantDetail(item.tenantId) ?? item)} /><ActionButton label="编辑" onClick={() => loadTenantForEdit(item.tenantId)} /><ActionButton label="删除" tone="danger" onClick={() => deleteMasterEntity('tenant', item.tenantId, () => api.deleteTenant(item.tenantId), '已删除租户')} /></div>])} />
+                <FormGrid>
+                  <TextInput label="租户编码" value={tenantDraftCode} onChange={setTenantDraftCode} placeholder="如 MCDONALD_SZ" />
+                  <TextInput label="租户名称" value={tenantDraftName} onChange={setTenantDraftName} placeholder="如 麦当劳深圳有限公司" />
+                  <ActionButton
+                    label={editingMasterEntity?.type === 'tenant' ? '保存租户' : '新增租户'}
+                    tone="primary"
+                    onClick={() =>
+                      runAction(async () => {
+                        if (!currentMasterPlatformId) throw new Error('请先选择平台')
+                        if (!tenantDraftCode.trim() || !tenantDraftName.trim()) throw new Error('租户编码和名称不能为空')
+                        if (editingMasterEntity?.type === 'tenant') {
+                          await api.updateTenant(editingMasterEntity.id, { platformId: currentMasterPlatformId, tenantCode: tenantDraftCode, tenantName: tenantDraftName, status: 'ACTIVE', description: '基础资料中心更新' })
+                        } else {
+                          await api.createTenant({ platformId: currentMasterPlatformId, tenantCode: tenantDraftCode, tenantName: tenantDraftName, status: 'ACTIVE', description: '基础资料中心创建' })
+                        }
+                        setTenantDraftCode('')
+                        setTenantDraftName('')
+                        setEditingMasterEntity(null)
+                      }, editingMasterEntity?.type === 'tenant' ? '已更新租户' : '已新增租户')
+                    }
+                  />
+                  {editingMasterEntity?.type === 'tenant' ? <ActionButton label="取消编辑" onClick={() => { setEditingMasterEntity(null); setTenantDraftCode(''); setTenantDraftName('') }} /> : null}
+                </FormGrid>
               </div>
             </Panel>
           ) : null}
 
           {masterTab === 'brands' ? (
-            <Panel title="品牌" subtitle="第 3 步：维护品牌主数据，并把品牌授权给可使用它的租户">
+            <Panel title="品牌" subtitle="第 4 步：维护品牌主数据。品牌按平台隔离，同名品牌可以存在于不同平台">
               <div className="two-column">
-                <DataTable columns={['品牌名', '编码', '授权租户数', '门店数', '操作']} rows={focusedBrands.map((item) => [item.brandName, item.brandCode, item.authorizedTenantCount ?? 0, item.storeCount ?? 0, <div key={item.brandId} className="button-group"><ActionButton label="详情" onClick={() => openDetail(`品牌 ${item.brandName}`, buildBrandDetail(item.brandId) ?? item)} /><ActionButton label="编辑" onClick={() => loadBrandForEdit(item.brandId)} /></div>])} />
+                <DataTable columns={['品牌名', '编码', '所属平台', '门店数', '项目数', '操作']} rows={focusedBrands.map((item) => [item.brandName, item.brandCode, item.platformName ?? '--', item.storeCount ?? 0, item.projectCount ?? 0, <div key={item.brandId} className="button-group"><ActionButton label="详情" onClick={() => openDetail(`品牌 ${item.brandName}`, buildBrandDetail(item.brandId) ?? item)} /><ActionButton label="编辑" onClick={() => loadBrandForEdit(item.brandId)} /><ActionButton label="删除" tone="danger" onClick={() => deleteMasterEntity('brand', item.brandId, () => api.deleteBrand(item.brandId), '已删除品牌')} /></div>])} />
                 <FormGrid>
-                  <TextInput label="品牌编码" value={brandDraftCode} onChange={setBrandDraftCode} placeholder="如 BRAND_MIXC" />
-                  <TextInput label="品牌名称" value={brandDraftName} onChange={setBrandDraftName} placeholder="如 万象城品牌" />
-                  <ActionButton label={editingMasterEntity?.type === 'brand' ? '保存品牌' : '新增品牌'} tone="primary" onClick={() => runAction(async () => { if (!brandDraftCode.trim() || !brandDraftName.trim()) throw new Error('请先填写完整品牌信息'); if (editingMasterEntity?.type === 'brand') { await api.updateBrand(editingMasterEntity.id, { brandCode: brandDraftCode, brandName: brandDraftName, status: 'ACTIVE', description: '基础资料中心更新' }) } else { await api.createBrand({ brandCode: brandDraftCode, brandName: brandDraftName, status: 'ACTIVE', description: '基础资料中心创建' }) } setBrandDraftCode(''); setBrandDraftName(''); setEditingMasterEntity(null) }, editingMasterEntity?.type === 'brand' ? '已更新品牌' : '已新增品牌')} />
+                  <TextInput label="品牌编码" value={brandDraftCode} onChange={setBrandDraftCode} placeholder="如 KFC" />
+                  <TextInput label="品牌名称" value={brandDraftName} onChange={setBrandDraftName} placeholder="如 肯德基" />
+                  <ActionButton
+                    label={editingMasterEntity?.type === 'brand' ? '保存品牌' : '新增品牌'}
+                    tone="primary"
+                    onClick={() =>
+                      runAction(async () => {
+                        if (!currentMasterPlatformId) throw new Error('请先选择平台')
+                        if (!brandDraftCode.trim() || !brandDraftName.trim()) throw new Error('请先填写完整品牌信息')
+                        if (editingMasterEntity?.type === 'brand') {
+                          await api.updateBrand(editingMasterEntity.id, { platformId: currentMasterPlatformId, brandCode: brandDraftCode, brandName: brandDraftName, status: 'ACTIVE', description: '基础资料中心更新' })
+                        } else {
+                          await api.createBrand({ platformId: currentMasterPlatformId, brandCode: brandDraftCode, brandName: brandDraftName, status: 'ACTIVE', description: '基础资料中心创建' })
+                        }
+                        setBrandDraftCode('')
+                        setBrandDraftName('')
+                        setEditingMasterEntity(null)
+                      }, editingMasterEntity?.type === 'brand' ? '已更新品牌' : '已新增品牌')
+                    }
+                  />
                   {editingMasterEntity?.type === 'brand' ? <ActionButton label="取消编辑" onClick={() => { setEditingMasterEntity(null); setBrandDraftCode(''); setBrandDraftName('') }} /> : null}
                 </FormGrid>
-              </div>
-              <div className="inline-actions">
-                <div className="feedback">品牌授权已收口到独立的“品牌授权”页签统一维护，这里只看品牌主数据。</div>
-                <ActionButton label="去维护品牌授权" onClick={() => jumpToMasterTab('authorizations', '')} />
               </div>
             </Panel>
           ) : null}
 
-          {masterTab === 'authorizations' ? (
-            <Panel title="品牌授权" subtitle="第 4 步：建立“哪个租户可以使用哪个品牌”的关系，门店创建会严格校验这层授权">
+          {masterTab === 'stores' ? (
+            <Panel title="门店" subtitle="第 5 步：把项目、租户、品牌和铺位号装配成真实门店。门店是终端落地的执行对象">
               <div className="two-column">
-                <DataTable
-                  columns={['租户', '品牌', '状态', '说明', '操作']}
-                  rows={tenantBrandAuthorizations.map((item) => [
-                    item.tenantName ?? item.tenantId,
-                    item.brandName ?? item.brandId,
-                    item.status,
-                    item.description || '--',
-                    <div key={item.authorizationId} className="button-group">
-                      <ActionButton
-                        label={item.status === 'ACTIVE' ? '停用' : '启用'}
-                        onClick={() =>
-                          runAction(
-                            () => api.updateTenantBrandAuthorization(item.authorizationId, { status: item.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE' }),
-                            `已更新授权 ${item.authorizationId}`,
-                          )
-                        }
-                      />
-                    </div>,
-                  ])}
-                />
+                <DataTable columns={['门店名', '门店编码', '铺位号', '项目', '品牌', '合同数', '操作']} rows={focusedStores.map((item) => [item.storeName, item.storeCode, item.unitCode, item.projectName ?? '--', item.brandName ?? '--', item.contractCount ?? 0, <div key={item.storeId} className="button-group"><ActionButton label="详情" onClick={() => openDetail(`门店 ${item.storeName}`, buildStoreDetail(item.storeId) ?? item)} /><ActionButton label="编辑" onClick={() => loadStoreForEdit(item.storeId)} /><ActionButton label="删除" tone="danger" onClick={() => deleteMasterEntity('store', item.storeId, () => api.deleteStore(item.storeId), '已删除门店')} /></div>])} />
                 <div>
-                  <FormGrid columns={3}>
-                    <SelectInput label="1. 选择租户" value={brandAuthorizationTenantId} onChange={setBrandAuthorizationTenantId} options={tenants.map((item) => ({ label: item.tenantName, value: item.tenantId }))} />
-                    <SelectInput label="2. 选择品牌" value={brandAuthorizationBrandId} onChange={setBrandAuthorizationBrandId} options={brands.map((item) => ({ label: item.brandName, value: item.brandId }))} />
+                  <FormGrid>
+                    <SelectInput label="所属项目" value={storeDraftProjectId} onChange={setStoreDraftProjectId} options={platformScopedProjects.map((item) => ({ label: item.projectName, value: item.projectId }))} />
+                    <SelectInput label="所属租户" value={storeDraftTenantId} onChange={setStoreDraftTenantId} options={platformScopedTenants.map((item) => ({ label: item.tenantName, value: item.tenantId }))} />
+                    <SelectInput label="所属品牌" value={storeDraftBrandId} onChange={setStoreDraftBrandId} options={platformScopedBrands.map((item) => ({ label: item.brandName, value: item.brandId }))} />
+                    <TextInput label="铺位号" value={storeDraftUnitCode} onChange={setStoreDraftUnitCode} placeholder="如 L0102" />
+                    <TextInput label="门店编码" value={storeDraftCode} onChange={setStoreDraftCode} placeholder="如 KFC_SZBAY_L0102" />
+                    <TextInput label="门店名称" value={storeDraftName} onChange={setStoreDraftName} placeholder="如 肯德基（深圳湾万象城店）" />
                     <ActionButton
-                      label="新增授权"
+                      label={editingMasterEntity?.type === 'store' ? '保存门店' : '新增门店'}
                       tone="primary"
                       onClick={() =>
                         runAction(async () => {
-                          if (!brandAuthorizationTenantId || !brandAuthorizationBrandId) throw new Error('请选择租户和品牌')
-                          await api.createTenantBrandAuthorization({
-                            tenantId: brandAuthorizationTenantId,
-                            brandId: brandAuthorizationBrandId,
-                            status: 'ACTIVE',
-                            description: '基础资料中心授权',
-                          })
-                        }, '已新增品牌授权')
+                          if (!currentMasterPlatformId) throw new Error('请先选择平台')
+                          if (!storeDraftTenantId || !storeDraftBrandId || !storeDraftProjectId || !storeDraftUnitCode.trim() || !storeDraftCode.trim() || !storeDraftName.trim()) throw new Error('请先填写完整门店信息')
+                          if (editingMasterEntity?.type === 'store') {
+                            await api.updateStore(editingMasterEntity.id, { platformId: currentMasterPlatformId, tenantId: storeDraftTenantId, brandId: storeDraftBrandId, projectId: storeDraftProjectId, unitCode: storeDraftUnitCode, storeCode: storeDraftCode, storeName: storeDraftName, status: 'ACTIVE', description: '基础资料中心更新' })
+                          } else {
+                            await api.createStore({ platformId: currentMasterPlatformId, tenantId: storeDraftTenantId, brandId: storeDraftBrandId, projectId: storeDraftProjectId, unitCode: storeDraftUnitCode, storeCode: storeDraftCode, storeName: storeDraftName, status: 'ACTIVE', description: '基础资料中心创建' })
+                          }
+                          setStoreDraftUnitCode('')
+                          setStoreDraftCode('')
+                          setStoreDraftName('')
+                          setEditingMasterEntity(null)
+                        }, editingMasterEntity?.type === 'store' ? '已更新门店' : '已新增门店')
                       }
                     />
+                    {editingMasterEntity?.type === 'store' ? <ActionButton label="取消编辑" onClick={() => { setEditingMasterEntity(null); setStoreDraftUnitCode(''); setStoreDraftCode(''); setStoreDraftName('') }} /> : null}
                   </FormGrid>
-                  <Panel title="授权摘要" subtitle="实时确认你正在建立的是哪一组“租户 + 品牌”关系">
+                  <Panel title="门店装配摘要" subtitle="实时确认你正在创建的是哪一家门店，避免项目、租户、品牌、铺位号组合错误">
                     <KeyValueList
                       items={[
-                        { label: '租户', value: selectedAuthorizationTenant?.tenantName ?? '待选择' },
-                        { label: '品牌', value: selectedAuthorizationBrand?.brandName ?? '待选择' },
-                        { label: '授权状态', value: 'ACTIVE（创建后即可用于门店装配）' },
-                        { label: '最终结果', value: selectedAuthorizationTenant && selectedAuthorizationBrand ? `${selectedAuthorizationTenant.tenantName} 可使用 ${selectedAuthorizationBrand.brandName}` : '等待完成关系装配' },
+                        { label: '平台', value: currentMasterPlatform?.platformName ?? '待选择' },
+                        { label: '项目', value: selectedStoreDraftProject?.projectName ?? '待选择' },
+                        { label: '租户', value: selectedStoreDraftTenant?.tenantName ?? '待选择' },
+                        { label: '品牌', value: selectedStoreDraftBrand?.brandName ?? '待选择' },
+                        { label: '铺位号', value: storeDraftUnitCode.trim() || '待填写' },
+                        { label: '最终结果', value: currentMasterPlatform && selectedStoreDraftProject && selectedStoreDraftTenant && selectedStoreDraftBrand && storeDraftName.trim() ? `${currentMasterPlatform.platformName} / ${selectedStoreDraftProject.projectName} / ${selectedStoreDraftTenant.tenantName} / ${selectedStoreDraftBrand.brandName} / ${storeDraftUnitCode.trim()} / ${storeDraftName.trim()}` : '等待完成装配' },
                       ]}
                     />
                   </Panel>
@@ -1717,46 +1977,62 @@ export default function App() {
             </Panel>
           ) : null}
 
-          {masterTab === 'projects' ? (
-            <Panel title="项目" subtitle="第 1 步：先建经营场地。项目独立存在，本身不依赖租户或品牌">
+          {masterTab === 'contracts' ? (
+            <Panel title="合同" subtitle="第 6 步：维护经营/租赁合同。一个门店可以挂多份合同，合同必须归属于明确门店">
               <div className="two-column">
-                <DataTable columns={['项目名', '编码', '门店数', '终端数', '操作']} rows={focusedProjects.map((item) => [item.projectName, item.projectCode, item.storeCount ?? 0, item.terminalCount ?? 0, <div key={item.projectId} className="button-group"><ActionButton label="详情" onClick={() => openDetail(`项目 ${item.projectName}`, buildProjectDetail(item.projectId) ?? item)} /><ActionButton label="编辑" onClick={() => loadProjectForEdit(item.projectId)} /></div>])} />
-                <FormGrid>
-                  <TextInput label="项目编码" value={projectDraftCode} onChange={setProjectDraftCode} placeholder="如 PROJECT_SZ_BAY" />
-                  <TextInput label="项目名称" value={projectDraftName} onChange={setProjectDraftName} placeholder="如 深圳湾万象城项目" />
-                  <ActionButton label={editingMasterEntity?.type === 'project' ? '保存项目' : '新增项目'} tone="primary" onClick={() => runAction(async () => { if (!projectDraftCode.trim() || !projectDraftName.trim()) throw new Error('请先填写完整项目信息'); if (editingMasterEntity?.type === 'project') { await api.updateProject(editingMasterEntity.id, { projectCode: projectDraftCode, projectName: projectDraftName, status: 'ACTIVE', description: '基础资料中心更新', region: 'CN', timezone: 'Asia/Shanghai' }) } else { await api.createProject({ projectCode: projectDraftCode, projectName: projectDraftName, status: 'ACTIVE', description: '基础资料中心创建', region: 'CN', timezone: 'Asia/Shanghai' }) } setProjectDraftCode(''); setProjectDraftName(''); setEditingMasterEntity(null) }, editingMasterEntity?.type === 'project' ? '已更新项目' : '已新增项目')} />
-                  {editingMasterEntity?.type === 'project' ? <ActionButton label="取消编辑" onClick={() => { setEditingMasterEntity(null); setProjectDraftCode(''); setProjectDraftName('') }} /> : null}
-                </FormGrid>
-              </div>
-            </Panel>
-          ) : null}
-
-          {masterTab === 'stores' ? (
-            <Panel title="门店" subtitle="第 4 步：把项目、租户、品牌装配成真实门店；只有完成品牌授权后才能创建门店">
-              <div className="two-column">
-                <DataTable columns={['门店名', '编码', '项目', '品牌', '终端数', '操作']} rows={focusedStores.map((item) => [item.storeName, item.storeCode, item.projectName ?? '--', item.brandName ?? '--', item.terminalCount ?? 0, <div key={item.storeId} className="button-group"><ActionButton label="详情" onClick={() => openDetail(`门店 ${item.storeName}`, buildStoreDetail(item.storeId) ?? item)} /><ActionButton label="编辑" onClick={() => loadStoreForEdit(item.storeId)} /></div>])} />
+                <DataTable columns={['合同编码', '门店', '铺位号', '项目', '起止日期', '操作']} rows={focusedContracts.map((item) => [item.contractCode, item.storeName ?? '--', item.unitCode, item.projectName ?? '--', `${item.startDate ?? '--'} ~ ${item.endDate ?? '--'}`, <div key={item.contractId} className="button-group"><ActionButton label="详情" onClick={() => openDetail(`合同 ${item.contractCode}`, buildContractDetail(item.contractId) ?? item)} /><ActionButton label="编辑" onClick={() => loadContractForEdit(item.contractId)} /><ActionButton label="删除" tone="danger" onClick={() => deleteMasterEntity('contract', item.contractId, () => api.deleteContract(item.contractId), '已删除合同')} /></div>])} />
                 <div>
                   <FormGrid>
-                    <SelectInput label="1. 选择项目" value={storeDraftProjectId} onChange={setStoreDraftProjectId} options={projects.map((item) => ({ label: item.projectName, value: item.projectId }))} />
-                    <SelectInput label="2. 选择租户" value={storeDraftTenantId} onChange={setStoreDraftTenantId} options={tenants.map((item) => ({ label: item.tenantName, value: item.tenantId }))} />
-                    <SelectInput label="3. 选择已授权品牌" value={storeDraftBrandId} onChange={setStoreDraftBrandId} options={authorizedBrandsForStoreTenant.map((item) => ({ label: item.brandName, value: item.brandId }))} />
-                    <TextInput label="4. 门店编码" value={storeDraftCode} onChange={setStoreDraftCode} placeholder="如 STORE_SZ_BAY" />
-                    <TextInput label="5. 门店名称" value={storeDraftName} onChange={setStoreDraftName} placeholder="如 深圳湾旗舰店" />
-                    <ActionButton label={editingMasterEntity?.type === 'store' ? '保存门店' : '新增门店'} tone="primary" onClick={() => runAction(async () => { if (!storeDraftTenantId || !storeDraftBrandId || !storeDraftProjectId || !storeDraftCode.trim() || !storeDraftName.trim()) throw new Error('请先填写完整门店信息'); if (editingMasterEntity?.type === 'store') { await api.updateStore(editingMasterEntity.id, { tenantId: storeDraftTenantId, brandId: storeDraftBrandId, projectId: storeDraftProjectId, storeCode: storeDraftCode, storeName: storeDraftName, status: 'ACTIVE', description: '基础资料中心更新' }) } else { await api.createStore({ tenantId: storeDraftTenantId, brandId: storeDraftBrandId, projectId: storeDraftProjectId, storeCode: storeDraftCode, storeName: storeDraftName, status: 'ACTIVE', description: '基础资料中心创建' }) } setStoreDraftCode(''); setStoreDraftName(''); setEditingMasterEntity(null) }, editingMasterEntity?.type === 'store' ? '已更新门店' : '已新增门店')} />
-                    {editingMasterEntity?.type === 'store' ? <ActionButton label="取消编辑" onClick={() => { setEditingMasterEntity(null); setStoreDraftCode(''); setStoreDraftName('') }} /> : null}
+                    <SelectInput label="所属项目" value={contractDraftProjectId} onChange={setContractDraftProjectId} options={platformScopedProjects.map((item) => ({ label: item.projectName, value: item.projectId }))} />
+                    <SelectInput label="所属租户" value={contractDraftTenantId} onChange={setContractDraftTenantId} options={platformScopedTenants.map((item) => ({ label: item.tenantName, value: item.tenantId }))} />
+                    <SelectInput label="所属品牌" value={contractDraftBrandId} onChange={setContractDraftBrandId} options={platformScopedBrands.map((item) => ({ label: item.brandName, value: item.brandId }))} />
+                    <SelectInput label="所属门店" value={contractDraftStoreId} onChange={setContractDraftStoreId} options={platformScopedStores.map((item) => ({ label: `${item.storeName} (${item.unitCode})`, value: item.storeId }))} />
+                    <TextInput label="合同编码" value={contractDraftCode} onChange={setContractDraftCode} placeholder="如 CONTRACT_GZ_TIANHUAN_KFC_01" />
+                    <TextInput label="铺位号" value={contractDraftUnitCode} onChange={setContractDraftUnitCode} placeholder="如 L0102" />
+                    <TextInput label="开始日期" value={contractDraftStartDate} onChange={setContractDraftStartDate} placeholder="如 2026-01-01" />
+                    <TextInput label="结束日期" value={contractDraftEndDate} onChange={setContractDraftEndDate} placeholder="如 2026-12-31" />
+                    <ActionButton
+                      label={editingMasterEntity?.type === 'contract' ? '保存合同' : '新增合同'}
+                      tone="primary"
+                      onClick={() =>
+                        runAction(async () => {
+                          if (!currentMasterPlatformId) throw new Error('请先选择平台')
+                          if (!contractDraftProjectId || !contractDraftTenantId || !contractDraftBrandId || !contractDraftStoreId || !contractDraftCode.trim() || !contractDraftUnitCode.trim()) throw new Error('请先填写完整合同信息')
+                          const payload = {
+                            platformId: currentMasterPlatformId,
+                            projectId: contractDraftProjectId,
+                            tenantId: contractDraftTenantId,
+                            brandId: contractDraftBrandId,
+                            storeId: contractDraftStoreId,
+                            contractCode: contractDraftCode,
+                            unitCode: contractDraftUnitCode,
+                            startDate: contractDraftStartDate || undefined,
+                            endDate: contractDraftEndDate || undefined,
+                            status: 'ACTIVE',
+                            description: '基础资料中心维护',
+                          }
+                          if (editingMasterEntity?.type === 'contract') {
+                            await api.updateContract(editingMasterEntity.id, payload)
+                          } else {
+                            await api.createContract(payload)
+                          }
+                          setContractDraftCode('')
+                          setContractDraftUnitCode('')
+                          setEditingMasterEntity(null)
+                        }, editingMasterEntity?.type === 'contract' ? '已更新合同' : '已新增合同')
+                      }
+                    />
+                    {editingMasterEntity?.type === 'contract' ? <ActionButton label="取消编辑" onClick={() => { setEditingMasterEntity(null); setContractDraftCode(''); setContractDraftUnitCode('') }} /> : null}
                   </FormGrid>
-                  {storeDraftTenantId && authorizedBrandsForStoreTenant.length === 0 ? (
-                    <div className="feedback error">当前租户还没有可用品牌授权，请先到“品牌授权”页签里建立授权关系后，再创建门店。</div>
-                  ) : null}
-                  <Panel title="门店装配摘要" subtitle="实时确认你正在创建的是哪一家门店，避免项目、租户、品牌选错">
+                  <Panel title="合同摘要" subtitle="确认当前合同落在哪个平台、项目、门店上">
                     <KeyValueList
                       items={[
-                        { label: '项目', value: selectedStoreDraftProject?.projectName ?? '待选择' },
-                        { label: '租户', value: selectedStoreDraftTenant?.tenantName ?? '待选择' },
-                        { label: '品牌', value: selectedStoreDraftBrand?.brandName ?? (storeDraftTenantId ? '待选择已授权品牌' : '请先选择租户') },
-                        { label: '门店编码', value: storeDraftCode.trim() || '待填写' },
-                        { label: '门店名称', value: storeDraftName.trim() || '待填写' },
-                        { label: '最终结果', value: selectedStoreDraftProject && selectedStoreDraftTenant && selectedStoreDraftBrand && storeDraftName.trim() ? `${selectedStoreDraftProject.projectName} / ${selectedStoreDraftTenant.tenantName} / ${selectedStoreDraftBrand.brandName} / ${storeDraftName.trim()}` : '等待完成装配' },
+                        { label: '平台', value: currentMasterPlatform?.platformName ?? '待选择' },
+                        { label: '项目', value: platformScopedProjects.find((item) => item.projectId === contractDraftProjectId)?.projectName ?? '待选择' },
+                        { label: '租户', value: platformScopedTenants.find((item) => item.tenantId === contractDraftTenantId)?.tenantName ?? '待选择' },
+                        { label: '品牌', value: platformScopedBrands.find((item) => item.brandId === contractDraftBrandId)?.brandName ?? '待选择' },
+                        { label: '门店', value: selectedContractDraftStore?.storeName ?? '待选择' },
+                        { label: '铺位号', value: contractDraftUnitCode.trim() || selectedContractDraftStore?.unitCode || '待填写' },
                       ]}
                     />
                   </Panel>
@@ -1768,7 +2044,7 @@ export default function App() {
           {masterTab === 'profiles' ? (
             <Panel title="终端机型" subtitle="第 5 步：定义终端类型与硬件能力，如安卓收银机、自助点餐屏、手持点餐 PDA">
               <div className="two-column">
-                <DataTable columns={['机型编码', '机型名称', '模板数', '终端数', '操作']} rows={focusedProfiles.map((item) => [item.profileCode, item.name, item.templateCount ?? 0, item.terminalCount ?? 0, <div key={item.profileId} className="button-group"><ActionButton label="详情" onClick={() => openDetail(`终端机型 ${item.name}`, buildProfileDetail(item.profileId) ?? item)} /><ActionButton label="编辑" onClick={() => loadProfileForEdit(item.profileId)} /></div>])} />
+                <DataTable columns={['机型编码', '机型名称', '模板数', '终端数', '操作']} rows={focusedProfiles.map((item) => [item.profileCode, item.name, item.templateCount ?? 0, item.terminalCount ?? 0, <div key={item.profileId} className="button-group"><ActionButton label="详情" onClick={() => openDetail(`终端机型 ${item.name}`, buildProfileDetail(item.profileId) ?? item)} /><ActionButton label="编辑" onClick={() => loadProfileForEdit(item.profileId)} /><ActionButton label="删除" tone="danger" onClick={() => deleteMasterEntity('profile', item.profileId, () => api.deleteProfile(item.profileId), '已删除终端机型')} /></div>])} />
                 <div className="inline-actions">
                   <FormGrid columns={3}>
                     <TextInput label="机型编码" value={profileDraftCode} onChange={setProfileDraftCode} placeholder="如 ANDROID_POS" />
@@ -1810,7 +2086,7 @@ export default function App() {
           {masterTab === 'templates' ? (
             <Panel title="终端模板" subtitle="第 6 步：为终端机型准备可复用模板，供激活码和终端实例直接引用">
               <div className="two-column">
-                <DataTable columns={['模板编码', '模板名称', '适用机型', '激活码数', '终端数', '操作']} rows={focusedTemplates.map((item) => [item.templateCode, item.name, profiles.find((profile) => profile.profileId === item.profileId)?.name ?? item.profileId, item.activationCodeCount ?? 0, item.terminalCount ?? 0, <div key={item.templateId} className="button-group"><ActionButton label="详情" onClick={() => openDetail(`终端模板 ${item.name}`, buildTemplateDetail(item.templateId) ?? item)} /><ActionButton label="编辑" onClick={() => loadTemplateForEdit(item.templateId)} /></div>])} />
+                <DataTable columns={['模板编码', '模板名称', '适用机型', '激活码数', '终端数', '操作']} rows={focusedTemplates.map((item) => [item.templateCode, item.name, profiles.find((profile) => profile.profileId === item.profileId)?.name ?? item.profileId, item.activationCodeCount ?? 0, item.terminalCount ?? 0, <div key={item.templateId} className="button-group"><ActionButton label="详情" onClick={() => openDetail(`终端模板 ${item.name}`, buildTemplateDetail(item.templateId) ?? item)} /><ActionButton label="编辑" onClick={() => loadTemplateForEdit(item.templateId)} /><ActionButton label="删除" tone="danger" onClick={() => deleteMasterEntity('template', item.templateId, () => api.deleteTemplate(item.templateId), '已删除终端模板')} /></div>])} />
                 <div className="inline-actions">
                   <FormGrid columns={3}>
                     <TextInput label="模板编码" value={templateDraftCode} onChange={setTemplateDraftCode} placeholder="如 ANDROID_POS_STANDARD" />

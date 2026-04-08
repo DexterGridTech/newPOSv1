@@ -1,0 +1,153 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: MT
+      - generic [ref=e7]:
+        - generic [ref=e8]: Mock Terminal
+        - generic [ref=e9]: Platform Console
+    - navigation [ref=e10]:
+      - button "总览" [ref=e12] [cursor=pointer]:
+        - generic [ref=e13]: 总览
+      - generic [ref=e14]:
+        - button "TCP 控制面 0" [ref=e15] [cursor=pointer]:
+          - generic [ref=e16]: TCP 控制面
+          - generic [ref=e17]: "0"
+        - generic [ref=e18]:
+          - button "快捷控制台" [ref=e19] [cursor=pointer]:
+            - generic [ref=e20]: 快捷控制台
+          - button "手动控制台" [ref=e21] [cursor=pointer]:
+            - generic [ref=e22]: 手动控制台
+      - button "TDP 数据面" [ref=e24] [cursor=pointer]:
+        - generic [ref=e25]: TDP 数据面
+      - button "场景引擎" [ref=e27] [cursor=pointer]:
+        - generic [ref=e28]: 场景引擎
+      - button "故障注入" [ref=e30] [cursor=pointer]:
+        - generic [ref=e31]: 故障注入
+      - button "基础资料" [ref=e33] [cursor=pointer]:
+        - generic [ref=e34]: 基础资料
+  - main [ref=e35]:
+    - generic [ref=e36]:
+      - generic [ref=e37]:
+        - heading "Mock Terminal Platform" [level=1] [ref=e38]
+        - paragraph [ref=e39]: 面向 TCP / TDP 联调、场景演练与故障注入的高自由度后台控制台
+      - generic [ref=e40]:
+        - generic [ref=e41]:
+          - generic [ref=e42]:
+            - generic [ref=e43]: 当前沙箱
+            - strong [ref=e44]: 加载中...
+          - generic [ref=e45]:
+            - generic [ref=e46]: 切换沙箱
+            - combobox "切换沙箱" [ref=e47]
+          - button "新建沙箱" [ref=e48] [cursor=pointer]
+          - button "管理沙箱" [ref=e49] [cursor=pointer]
+        - generic [ref=e50]:
+          - generic [ref=e51]: 真实控制台风格
+          - generic [ref=e52]: 高自由度联调
+    - generic [ref=e53]:
+      - generic [ref=e54]:
+        - generic [ref=e55]:
+          - generic [ref=e56]:
+            - heading "运行状态" [level=2] [ref=e57]
+            - paragraph [ref=e58]: 核心资源概览、告警和联调态势
+          - generic [ref=e60]:
+            - button "刷新数据" [ref=e61] [cursor=pointer]
+            - button "预览导出数据" [ref=e62] [cursor=pointer]
+            - button "下载导出文件" [ref=e63] [cursor=pointer]
+        - generic [ref=e64]: 正在加载平台数据…
+      - generic [ref=e65]:
+        - generic [ref=e67]:
+          - heading "当前沙箱" [level=2] [ref=e68]
+          - paragraph [ref=e69]: 当前全局上下文立即生效，所有模块都跟随该沙箱运行
+        - generic [ref=e70]:
+          - generic [ref=e71]:
+            - generic [ref=e72]: 名称
+            - generic [ref=e73]: "--"
+          - generic [ref=e74]:
+            - generic [ref=e75]: 状态
+            - generic [ref=e76]: "--"
+          - generic [ref=e77]:
+            - generic [ref=e78]: 类型
+            - generic [ref=e79]: 普通沙箱
+          - generic [ref=e80]:
+            - generic [ref=e81]: 用途
+            - generic [ref=e82]: "--"
+          - generic [ref=e83]:
+            - generic [ref=e84]: 创建方式
+            - generic [ref=e85]: "--"
+          - generic [ref=e86]:
+            - generic [ref=e87]: 来源沙箱
+            - generic [ref=e88]: "--"
+          - generic [ref=e89]:
+            - generic [ref=e90]: 资源上限
+            - generic [ref=e91]: "{}"
+          - generic [ref=e92]:
+            - generic [ref=e93]: 更新时间
+            - generic [ref=e94]: "--"
+      - generic [ref=e95]:
+        - generic [ref=e97]:
+          - heading "联调建议" [level=2] [ref=e98]
+          - paragraph [ref=e99]: 按典型联调路径组织的可操作入口
+        - generic [ref=e100]:
+          - generic [ref=e101]:
+            - generic [ref=e102]: 终端联调
+            - generic [ref=e103]: 当前在线 0 台，可直接下发配置 / 升级 / 远控任务
+          - generic [ref=e104]:
+            - generic [ref=e105]: TDP 观察
+            - generic [ref=e106]: Projection 0 条，Change Log 0 条
+          - generic [ref=e107]:
+            - generic [ref=e108]: 测试场景
+            - generic [ref=e109]: 0 个预制模板，可一键造数与投递
+          - generic [ref=e110]:
+            - generic [ref=e111]: 故障调试
+            - generic [ref=e112]: 0 条规则，支持延迟 / 失败 / 伪结果回写
+      - generic [ref=e113]:
+        - generic [ref=e115]:
+          - heading "审计日志与导出预览" [level=2] [ref=e116]
+          - paragraph [ref=e117]: 后台操作、终端接入与调试动作的统一审计轨迹
+        - generic [ref=e118]:
+          - generic [ref=e119]:
+            - table [ref=e121]:
+              - rowgroup [ref=e122]:
+                - row "时间 域 动作 操作者 目标 详情" [ref=e123]:
+                  - columnheader "时间" [ref=e124]
+                  - columnheader "域" [ref=e125]
+                  - columnheader "动作" [ref=e126]
+                  - columnheader "操作者" [ref=e127]
+                  - columnheader "目标" [ref=e128]
+                  - columnheader "详情" [ref=e129]
+              - rowgroup
+            - generic [ref=e130]:
+              - button "上一页" [ref=e131] [cursor=pointer]
+              - generic [ref=e132]: 第 1 / 1 页
+              - button "下一页" [ref=e133] [cursor=pointer]
+          - generic [ref=e134]: "{ \"hint\": \"点击顶部“预览导出数据”查看结果\" }"
+      - generic [ref=e135]:
+        - generic [ref=e137]:
+          - heading "模板库与导入" [level=2] [ref=e138]
+          - paragraph [ref=e139]: 复用 Topic / Fault 模板，并支持导入预检
+        - generic [ref=e140]:
+          - table [ref=e142]:
+            - rowgroup [ref=e143]:
+              - row "Topic 模板 分类 Key 套用" [ref=e144]:
+                - columnheader "Topic 模板" [ref=e145]
+                - columnheader "分类" [ref=e146]
+                - columnheader "Key" [ref=e147]
+                - columnheader "套用" [ref=e148]
+            - rowgroup
+          - table [ref=e150]:
+            - rowgroup [ref=e151]:
+              - row "Fault 模板 分类 目标类型 套用" [ref=e152]:
+                - columnheader "Fault 模板" [ref=e153]
+                - columnheader "分类" [ref=e154]
+                - columnheader "目标类型" [ref=e155]
+                - columnheader "套用" [ref=e156]
+            - rowgroup
+          - generic [ref=e157]: "{ \"hint\": \"可先执行导入预检\" }"
+        - generic [ref=e159]:
+          - generic [ref=e160]: 导入模板(JSON)
+          - textbox "导入模板(JSON)" [ref=e161]:
+            - /placeholder: "{\"topics\":[],\"faultRules\":[]}"
+            - text: "{\"topics\":[{\"key\":\"terminal.debug.flag\",\"name\":\"终端调试标记\"}],\"faultRules\":[{\"name\":\"配置延迟模板\",\"targetType\":\"TDP_DELIVERY\",\"matcher\":{\"taskType\":\"CONFIG_PUBLISH\"},\"action\":{\"type\":\"DELAY\",\"durationMs\":3000}}]}"
+        - generic [ref=e162]:
+          - button "导入预检" [ref=e163] [cursor=pointer]
+          - button "导入模板" [ref=e164] [cursor=pointer]

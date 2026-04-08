@@ -11,8 +11,19 @@ import {testWsSessionOrchestrator} from './test-ws-session-orchestrator'
 import {testWsSessionRefresh} from './test-ws-session-refresh'
 import {testWsObservability} from './test-ws-observability'
 import {testWsRefreshPolicy} from './test-ws-refresh-policy'
+import {runWsServiceRegistryDemo} from './test-ws-service-registry'
+
+async function resetCommunicationTestServer() {
+  const response = await fetch('http://localhost:6190/test/reset', {
+    method: 'POST',
+  })
+  if (!response.ok) {
+    throw new Error(`reset communication-test failed: ${response.status}`)
+  }
+}
 
 async function run() {
+  await resetCommunicationTestServer()
   const results = []
   const tests = [
     testHttpBasic,
@@ -28,6 +39,10 @@ async function run() {
     testWsSessionRefresh,
     testWsObservability,
     testWsRefreshPolicy,
+    async () => {
+      await runWsServiceRegistryDemo()
+      return {name: 'testWsServiceRegistry', passed: true}
+    },
   ]
 
   for (const test of tests) {
@@ -42,6 +57,7 @@ async function run() {
   }
 
   console.log('All communication tests passed:', results.length)
+  process.exit(0)
 }
 
 void run()

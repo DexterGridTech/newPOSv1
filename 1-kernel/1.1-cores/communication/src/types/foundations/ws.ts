@@ -12,6 +12,7 @@ export interface SocketConnectionMeta extends CommunicationMeta {
   heartbeatIntervalMs?: number
   heartbeatTimeoutMs?: number
   maxQueueSize?: number
+  // `0` 表示不自动重连；正整数表示最多重连次数；负数表示无限重连。
   reconnectAttempts?: number
   reconnectIntervalMs?: number
 }
@@ -161,6 +162,7 @@ export interface SocketClientOptions<TIncoming = unknown> {
   metricsRecorder?: SocketMetricsRecorder
   traceExtractor?: (context?: CommunicationRequestContext) => TraceContext | undefined
   hooks?: SocketClientHooks<TIncoming>
+  codec?: SocketCodec<TIncoming, any>
 }
 
 export interface SocketSessionDescriptor<TQuery = Record<string, unknown>, THeaders = Record<string, string>> {
@@ -189,4 +191,38 @@ export interface SocketConnectionOrchestratorOptions {
   refreshOnDisconnectReasons?: string[]
   refreshOnMessage?: (message: any) => boolean
   refreshPredicate?: (event: {reason?: string; message?: any; trigger: 'disconnect' | 'message'}) => boolean
+}
+
+export interface SocketCodec<TIncoming = unknown, TOutgoing = unknown> {
+  serialize(message: TOutgoing): string
+  deserialize(raw: string): TIncoming
+}
+
+export interface SocketRuntimeProfileRegistration<TBootstrapInput, TQuery, THeaders, TIncoming, TOutgoing> {
+  profile: SocketConnectionProfile<TQuery, THeaders, TIncoming, TOutgoing>
+  bootstrapProvider?: SocketBootstrapProvider<TBootstrapInput, TQuery, THeaders>
+  client?: import('../../foundations/ws/BaseSocketClient').BaseSocketClient<TIncoming, TOutgoing>
+  orchestratorOptions?: SocketConnectionOrchestratorOptions
+}
+
+export interface SocketManagedConnection<TBootstrapInput = unknown, TQuery = unknown, THeaders = unknown, TIncoming = unknown, TOutgoing = unknown> {
+  profile: SocketConnectionProfile<TQuery, THeaders, TIncoming, TOutgoing>
+  client: import('../../foundations/ws/BaseSocketClient').BaseSocketClient<TIncoming, TOutgoing>
+  bootstrapProvider?: SocketBootstrapProvider<TBootstrapInput, TQuery, THeaders>
+  orchestrator?: import('../../foundations/ws/SocketConnectionOrchestrator').SocketConnectionOrchestrator<TBootstrapInput, TQuery, THeaders, TIncoming, TOutgoing>
+}
+
+export interface SocketRuntimeConfig {
+  servers?: import('./shared').CommunicationServerConfig[]
+  serverConfigProvider?: () => import('./shared').CommunicationServerConfig[]
+  socketFactory?: SocketFactory
+  metricsRecorder?: SocketMetricsRecorder
+  traceExtractor?: (context?: import('./shared').CommunicationRequestContext) => TraceContext | undefined
+  hooks?: SocketClientHooks
+  codec?: SocketCodec
+}
+
+export interface SocketServiceModuleDefinition<TServices> {
+  moduleName: string
+  services: TServices
 }

@@ -77,8 +77,20 @@ export interface ImportValidationResult {
   faultRuleCount: number
 }
 
+export interface PlatformItem {
+  platformId: string
+  platformCode: string
+  platformName: string
+  status: string
+  description: string
+  projectCount?: number
+  storeCount?: number
+  updatedAt: number
+}
+
 export interface TerminalItem {
   terminalId: string
+  platformId?: string
   tenantId?: string
   brandId?: string
   projectId?: string
@@ -97,6 +109,7 @@ export interface TerminalItem {
 
 export interface ActivationCodeItem {
   code: string
+  platformId?: string
   tenantId?: string
   brandId?: string
   projectId?: string
@@ -110,11 +123,12 @@ export interface ActivationCodeItem {
 
 export interface TenantItem {
   tenantId: string
+  platformId: string
+  platformName?: string
   tenantCode: string
   tenantName: string
   status: string
   description: string
-  brandCount?: number
   projectCount?: number
   storeCount?: number
   updatedAt: number
@@ -122,29 +136,21 @@ export interface TenantItem {
 
 export interface BrandItem {
   brandId: string
+  platformId: string
+  platformName?: string
   brandCode: string
   brandName: string
   status: string
   description: string
   projectCount?: number
   storeCount?: number
-  authorizedTenantCount?: number
-  updatedAt: number
-}
-
-export interface TenantBrandAuthorizationItem {
-  authorizationId: string
-  tenantId: string
-  tenantName?: string
-  brandId: string
-  brandName?: string
-  status: string
-  description: string
   updatedAt: number
 }
 
 export interface ProjectItem {
   projectId: string
+  platformId: string
+  platformName?: string
   projectCode: string
   projectName: string
   status: string
@@ -158,12 +164,15 @@ export interface ProjectItem {
 
 export interface StoreItem {
   storeId: string
+  platformId: string
+  platformName?: string
   tenantId: string
   tenantName?: string
   brandId: string
   brandName?: string
   projectId: string
   projectName?: string
+  unitCode: string
   storeCode: string
   storeName: string
   status: string
@@ -173,6 +182,28 @@ export interface StoreItem {
   contactPhone?: string | null
   terminalCount?: number
   activationCodeCount?: number
+  contractCount?: number
+  updatedAt: number
+}
+
+export interface ContractItem {
+  contractId: string
+  platformId: string
+  platformName?: string
+  projectId: string
+  projectName?: string
+  tenantId: string
+  tenantName?: string
+  brandId: string
+  brandName?: string
+  storeId: string
+  storeName?: string
+  contractCode: string
+  unitCode: string
+  startDate?: string | null
+  endDate?: string | null
+  status: string
+  description: string
   updatedAt: number
 }
 
@@ -244,6 +275,12 @@ export interface SessionItem {
   status: string
   connectedAt: number
   lastHeartbeatAt?: number | null
+  lastDeliveredRevision?: number | null
+  lastAckedRevision?: number | null
+  lastAppliedRevision?: number | null
+  highWatermark?: number
+  ackLag?: number
+  applyLag?: number
 }
 
 export interface TopicItem {
@@ -280,6 +317,19 @@ export interface ChangeLogItem {
   payload: Record<string, unknown>
   sourceReleaseId?: string | null
   createdAt: number
+}
+
+export interface CommandOutboxItem {
+  commandId: string
+  terminalId: string
+  topicKey: string
+  status: string
+  payload: Record<string, unknown>
+  sourceReleaseId?: string | null
+  deliveredAt?: number | null
+  ackedAt?: number | null
+  expiresAt?: number | null
+  updatedAt: number
 }
 
 export interface SceneTemplateItem {

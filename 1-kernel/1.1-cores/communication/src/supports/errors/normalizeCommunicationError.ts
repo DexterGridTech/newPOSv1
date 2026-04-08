@@ -1,5 +1,13 @@
 import {APIError, APIResponseCode} from '@impos2/kernel-core-base'
-import {CommunicationError, HttpBusinessError, HttpTransportError} from '../../types'
+import {
+  CommunicationError,
+  HttpBusinessError,
+  HttpTransportError,
+  SocketBootstrapError,
+  SocketConnectionError,
+  SocketParseError,
+  SocketRuntimeError,
+} from '../../types'
 
 export function normalizeCommunicationError(error: unknown): APIError {
   if (error instanceof APIError) {
@@ -19,6 +27,26 @@ export function normalizeCommunicationError(error: unknown): APIError {
   if (error instanceof HttpTransportError) {
     return new APIError({
       code: APIResponseCode.NETWORK_ERROR,
+      message: error.message,
+      extra: {
+        details: error.details,
+      },
+    })
+  }
+
+  if (error instanceof SocketConnectionError) {
+    return new APIError({
+      code: APIResponseCode.NETWORK_ERROR,
+      message: error.message,
+      extra: {
+        details: error.details,
+      },
+    })
+  }
+
+  if (error instanceof SocketBootstrapError || error instanceof SocketRuntimeError || error instanceof SocketParseError) {
+    return new APIError({
+      code: APIResponseCode.UNKNOWN_ERROR,
       message: error.message,
       extra: {
         details: error.details,

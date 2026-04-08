@@ -1,0 +1,152 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: MT
+      - generic [ref=e7]:
+        - generic [ref=e8]: Mock Terminal
+        - generic [ref=e9]: Platform Console
+    - navigation [ref=e10]:
+      - button "总览" [ref=e12] [cursor=pointer]:
+        - generic [ref=e13]: 总览
+      - generic [ref=e14]:
+        - button "TCP 控制面 5" [ref=e165] [cursor=pointer]:
+          - generic [ref=e16]: TCP 控制面
+          - generic [ref=e17]: "5"
+        - generic [ref=e18]:
+          - button "快捷控制台" [ref=e19] [cursor=pointer]:
+            - generic [ref=e20]: 快捷控制台
+          - button "手动控制台" [ref=e21] [cursor=pointer]:
+            - generic [ref=e22]: 手动控制台
+      - button "TDP 数据面" [ref=e24] [cursor=pointer]:
+        - generic [ref=e25]: TDP 数据面
+      - button "场景引擎" [ref=e27] [cursor=pointer]:
+        - generic [ref=e28]: 场景引擎
+      - button "故障注入" [ref=e30] [cursor=pointer]:
+        - generic [ref=e31]: 故障注入
+      - button "基础资料" [ref=e33] [cursor=pointer]:
+        - generic [ref=e34]: 基础资料
+  - main [ref=e35]:
+    - generic [ref=e36]:
+      - generic [ref=e37]:
+        - heading "Mock Terminal Platform" [level=1] [ref=e38]
+        - paragraph [ref=e39]: 面向 TCP / TDP 联调、场景演练与故障注入的高自由度后台控制台
+      - generic [ref=e40]:
+        - generic [ref=e41]:
+          - generic [ref=e42]:
+            - generic [ref=e43]: 当前沙箱
+            - strong [ref=e44]: test sandbox
+          - generic [ref=e45]:
+            - generic [ref=e46]: 切换沙箱
+            - combobox "切换沙箱" [ref=e47]:
+              - option "test sandbox" [selected]
+              - option "默认联调沙箱"
+          - button "新建沙箱" [ref=e48] [cursor=pointer]
+          - button "管理沙箱" [ref=e49] [cursor=pointer]
+        - generic [ref=e50]:
+          - generic [ref=e51]: 真实控制台风格
+          - generic [ref=e52]: 高自由度联调
+    - generic [ref=e53]:
+      - generic [ref=e54]:
+        - generic [ref=e55]:
+          - generic [ref=e56]:
+            - heading "运行状态" [level=2] [ref=e57]
+            - paragraph [ref=e58]: 核心资源概览、告警和联调态势
+          - generic [ref=e60]:
+            - button "刷新数据" [ref=e61] [cursor=pointer]
+            - button "预览导出数据" [ref=e62] [cursor=pointer]
+            - button "下载导出文件" [ref=e63] [cursor=pointer]
+        - generic [ref=e367]: 已新增平台
+        - generic [ref=e166]:
+          - generic [ref=e167]:
+            - generic [ref=e168]: 终端总量
+            - generic [ref=e169]: "7"
+          - generic [ref=e170]:
+            - generic [ref=e171]: 在线终端
+            - generic [ref=e172]: "0"
+          - generic [ref=e173]:
+            - generic [ref=e174]: 运行中任务
+            - generic [ref=e175]: "5"
+          - generic [ref=e176]:
+            - generic [ref=e177]: 活跃会话
+            - generic [ref=e178]: "0"
+          - generic [ref=e179]:
+            - generic [ref=e180]: 主题数量
+            - generic [ref=e181]: "0"
+          - generic [ref=e183]: 故障命中
+      - generic [ref=e282]:
+        - generic [ref=e284]:
+          - heading "基础资料中心" [level=2] [ref=e285]
+          - paragraph [ref=e286]: 建议按“平台 → 项目 / 租户 / 品牌 → 门店 → 合同 → 终端机型 → 终端模板”的顺序维护，先确定业务组织，再落执行对象
+        - generic [ref=e287]:
+          - generic [ref=e288]:
+            - generic [ref=e289]:
+              - generic [ref=e290]: 推荐顺序 1
+              - generic [ref=e291]: 先建平台。平台代表购物中心集团，是天然业务隔离器。
+            - generic [ref=e292]:
+              - generic [ref=e293]: 推荐顺序 2
+              - generic [ref=e294]: 再建项目、租户、品牌，这些都是上游同步来的平台内参考数据。
+          - generic [ref=e295]:
+            - generic [ref=e296]:
+              - generic [ref=e297]: 推荐顺序 3
+              - generic [ref=e298]: 再建门店。门店是项目 + 租户 + 品牌 + 铺位号的执行对象。
+            - generic [ref=e299]:
+              - generic [ref=e300]: 推荐顺序 4
+              - generic [ref=e301]: 最后建合同、终端机型、终端模板，供执行链路引用。
+          - generic [ref=e302]: "{ \"recommendedOrder\": [ \"平台\", \"项目\", \"租户\", \"品牌\", \"门店\", \"合同\", \"终端机型\", \"终端模板\" ] }"
+        - generic [ref=e303]:
+          - generic [ref=e304]:
+            - generic [ref=e305]: 当前平台上下文
+            - combobox "当前平台上下文" [ref=e306]:
+              - option "平台UI测试" [selected]
+              - option "平台 platform_pfi76h894g6p"
+          - generic [ref=e307]: 当前正在维护：平台UI测试
+        - generic [ref=e308]:
+          - button "1. 平台 2" [ref=e368] [cursor=pointer]:
+            - generic [ref=e310]: 1. 平台
+            - generic [ref=e311]: "2"
+          - button "2. 项目 0" [ref=e399] [cursor=pointer]:
+            - generic [ref=e313]: 2. 项目
+            - generic [ref=e314]: "0"
+          - button "3. 租户 0" [active] [ref=e400] [cursor=pointer]:
+            - generic [ref=e316]: 3. 租户
+            - generic [ref=e317]: "0"
+          - button "4. 品牌 0" [ref=e401] [cursor=pointer]:
+            - generic [ref=e319]: 4. 品牌
+            - generic [ref=e320]: "0"
+          - button "5. 门店 0" [ref=e402] [cursor=pointer]:
+            - generic [ref=e322]: 5. 门店
+            - generic [ref=e323]: "0"
+          - button "6. 合同 0" [ref=e403] [cursor=pointer]:
+            - generic [ref=e325]: 6. 合同
+            - generic [ref=e326]: "0"
+          - button "7. 终端机型 1" [ref=e327] [cursor=pointer]:
+            - generic [ref=e328]: 7. 终端机型
+            - generic [ref=e329]: "1"
+          - button "8. 终端模板 1" [ref=e330] [cursor=pointer]:
+            - generic [ref=e331]: 8. 终端模板
+            - generic [ref=e332]: "1"
+      - generic [ref=e404]:
+        - generic [ref=e406]:
+          - heading "租户" [level=2] [ref=e407]
+          - paragraph [ref=e408]: 第 3 步：维护经营主体。租户按平台隔离，同名租户可以存在于不同平台
+        - generic [ref=e409]:
+          - table [ref=e411]:
+            - rowgroup [ref=e412]:
+              - row "租户名 编码 所属平台 项目数 门店数 操作" [ref=e413]:
+                - columnheader "租户名" [ref=e414]
+                - columnheader "编码" [ref=e415]
+                - columnheader "所属平台" [ref=e416]
+                - columnheader "项目数" [ref=e417]
+                - columnheader "门店数" [ref=e418]
+                - columnheader "操作" [ref=e419]
+            - rowgroup
+          - generic [ref=e420]:
+            - generic [ref=e421]:
+              - generic [ref=e422]: 租户编码
+              - textbox "租户编码" [ref=e423]:
+                - /placeholder: 如 MCDONALD_SZ
+            - generic [ref=e424]:
+              - generic [ref=e425]: 租户名称
+              - textbox "租户名称" [ref=e426]:
+                - /placeholder: 如 麦当劳深圳有限公司
+            - button "新增租户" [ref=e427] [cursor=pointer]

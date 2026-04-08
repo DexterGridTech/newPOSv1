@@ -40,9 +40,20 @@ export const initializeDatabase = (): void => {
       current_sandbox_id TEXT NOT NULL,
       updated_at INTEGER NOT NULL
     );
+    CREATE TABLE IF NOT EXISTS platforms (
+      platform_id TEXT PRIMARY KEY,
+      sandbox_id TEXT NOT NULL,
+      platform_code TEXT NOT NULL,
+      platform_name TEXT NOT NULL,
+      status TEXT NOT NULL,
+      description TEXT NOT NULL,
+      created_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL
+    );
     CREATE TABLE IF NOT EXISTS tenants (
       tenant_id TEXT PRIMARY KEY,
       sandbox_id TEXT NOT NULL,
+      platform_id TEXT NOT NULL,
       tenant_code TEXT NOT NULL,
       tenant_name TEXT NOT NULL,
       status TEXT NOT NULL,
@@ -53,18 +64,9 @@ export const initializeDatabase = (): void => {
     CREATE TABLE IF NOT EXISTS brands (
       brand_id TEXT PRIMARY KEY,
       sandbox_id TEXT NOT NULL,
+      platform_id TEXT NOT NULL,
       brand_code TEXT NOT NULL,
       brand_name TEXT NOT NULL,
-      status TEXT NOT NULL,
-      description TEXT NOT NULL,
-      created_at INTEGER NOT NULL,
-      updated_at INTEGER NOT NULL
-    );
-    CREATE TABLE IF NOT EXISTS tenant_brand_authorizations (
-      authorization_id TEXT PRIMARY KEY,
-      sandbox_id TEXT NOT NULL,
-      tenant_id TEXT NOT NULL,
-      brand_id TEXT NOT NULL,
       status TEXT NOT NULL,
       description TEXT NOT NULL,
       created_at INTEGER NOT NULL,
@@ -73,6 +75,7 @@ export const initializeDatabase = (): void => {
     CREATE TABLE IF NOT EXISTS projects (
       project_id TEXT PRIMARY KEY,
       sandbox_id TEXT NOT NULL,
+      platform_id TEXT NOT NULL,
       project_code TEXT NOT NULL,
       project_name TEXT NOT NULL,
       status TEXT NOT NULL,
@@ -85,9 +88,11 @@ export const initializeDatabase = (): void => {
     CREATE TABLE IF NOT EXISTS stores (
       store_id TEXT PRIMARY KEY,
       sandbox_id TEXT NOT NULL,
+      platform_id TEXT NOT NULL,
       tenant_id TEXT NOT NULL,
       brand_id TEXT NOT NULL,
       project_id TEXT NOT NULL,
+      unit_code TEXT NOT NULL,
       store_code TEXT NOT NULL,
       store_name TEXT NOT NULL,
       status TEXT NOT NULL,
@@ -95,6 +100,23 @@ export const initializeDatabase = (): void => {
       address TEXT,
       contact_name TEXT,
       contact_phone TEXT,
+      created_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS contracts (
+      contract_id TEXT PRIMARY KEY,
+      sandbox_id TEXT NOT NULL,
+      platform_id TEXT NOT NULL,
+      project_id TEXT NOT NULL,
+      tenant_id TEXT NOT NULL,
+      brand_id TEXT NOT NULL,
+      store_id TEXT NOT NULL,
+      contract_code TEXT NOT NULL,
+      unit_code TEXT NOT NULL,
+      start_date TEXT,
+      end_date TEXT,
+      status TEXT NOT NULL,
+      description TEXT NOT NULL,
       created_at INTEGER NOT NULL,
       updated_at INTEGER NOT NULL
     );
@@ -123,6 +145,7 @@ export const initializeDatabase = (): void => {
     CREATE TABLE IF NOT EXISTS terminal_instances (
       terminal_id TEXT PRIMARY KEY,
       sandbox_id TEXT NOT NULL,
+      platform_id TEXT NOT NULL,
       tenant_id TEXT NOT NULL,
       brand_id TEXT NOT NULL,
       project_id TEXT NOT NULL,
@@ -146,6 +169,7 @@ export const initializeDatabase = (): void => {
     CREATE TABLE IF NOT EXISTS activation_codes (
       code TEXT PRIMARY KEY,
       sandbox_id TEXT NOT NULL,
+      platform_id TEXT NOT NULL,
       tenant_id TEXT NOT NULL,
       brand_id TEXT NOT NULL,
       project_id TEXT NOT NULL,
@@ -207,7 +231,10 @@ export const initializeDatabase = (): void => {
       status TEXT NOT NULL,
       connected_at INTEGER NOT NULL,
       disconnected_at INTEGER,
-      last_heartbeat_at INTEGER
+      last_heartbeat_at INTEGER,
+      last_delivered_revision INTEGER,
+      last_acked_revision INTEGER,
+      last_applied_revision INTEGER
     );
     CREATE TABLE IF NOT EXISTS tdp_topics (
       topic_id TEXT PRIMARY KEY,
@@ -234,6 +261,7 @@ export const initializeDatabase = (): void => {
     CREATE TABLE IF NOT EXISTS tdp_change_logs (
       change_id TEXT PRIMARY KEY,
       sandbox_id TEXT NOT NULL,
+      cursor INTEGER NOT NULL DEFAULT 0,
       topic_key TEXT NOT NULL,
       scope_type TEXT NOT NULL,
       scope_key TEXT NOT NULL,
@@ -241,6 +269,20 @@ export const initializeDatabase = (): void => {
       payload_json TEXT NOT NULL,
       source_release_id TEXT,
       created_at INTEGER NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS tdp_command_outbox (
+      command_id TEXT PRIMARY KEY,
+      sandbox_id TEXT NOT NULL,
+      terminal_id TEXT NOT NULL,
+      topic_key TEXT NOT NULL,
+      payload_json TEXT NOT NULL,
+      status TEXT NOT NULL,
+      source_release_id TEXT,
+      delivered_at INTEGER,
+      acked_at INTEGER,
+      expires_at INTEGER,
+      created_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL
     );
     CREATE TABLE IF NOT EXISTS fault_rules (
       fault_rule_id TEXT PRIMARY KEY,
@@ -273,7 +315,20 @@ export const initializeDatabase = (): void => {
   ensureColumn('terminal_profiles', 'profile_code', `TEXT NOT NULL DEFAULT ''`)
   ensureColumn('terminal_templates', 'sandbox_id', `TEXT NOT NULL DEFAULT '${DEFAULT_SANDBOX_ID}'`)
   ensureColumn('terminal_templates', 'template_code', `TEXT NOT NULL DEFAULT ''`)
+  ensureColumn('tenants', 'platform_id', `TEXT NOT NULL DEFAULT 'platform-default'`)
+  ensureColumn('brands', 'platform_id', `TEXT NOT NULL DEFAULT 'platform-default'`)
+  ensureColumn('projects', 'platform_id', `TEXT NOT NULL DEFAULT 'platform-default'`)
+  ensureColumn('stores', 'platform_id', `TEXT NOT NULL DEFAULT 'platform-default'`)
+  ensureColumn('stores', 'unit_code', `TEXT NOT NULL DEFAULT ''`)
+  ensureColumn('activation_codes', 'platform_id', `TEXT NOT NULL DEFAULT 'platform-default'`)
   ensureColumn('activation_codes', 'project_id', `TEXT NOT NULL DEFAULT 'project-mixc-bay'`)
+  ensureColumn('terminal_instances', 'platform_id', `TEXT NOT NULL DEFAULT 'platform-default'`)
+  ensureColumn('tdp_change_logs', 'cursor', 'INTEGER NOT NULL DEFAULT 0')
+  ensureColumn('tdp_sessions', 'last_delivered_revision', 'INTEGER')
+  ensureColumn('tdp_sessions', 'last_acked_revision', 'INTEGER')
+  ensureColumn('tdp_sessions', 'last_applied_revision', 'INTEGER')
+  migrateTdpChangeLogCursor()
+  migratePlatformScopedMasterData()
   migrateMasterDataToIndependentModel()
   migrateTerminalMasterData()
 
@@ -288,6 +343,154 @@ const ensureColumn = (tableName: string, columnName: string, definition: string)
   }
 }
 
+const migrateTdpChangeLogCursor = () => {
+  const rows = sqlite.prepare(`
+    SELECT change_id
+    FROM tdp_change_logs
+    ORDER BY created_at ASC, rowid ASC
+  `).all() as Array<{ change_id: string }>
+
+  const update = sqlite.prepare('UPDATE tdp_change_logs SET cursor = ? WHERE change_id = ?')
+  const transaction = sqlite.transaction((items: Array<{ change_id: string }>) => {
+    items.forEach((item, index) => {
+      update.run(index + 1, item.change_id)
+    })
+  })
+
+  transaction(rows)
+}
+
+const migratePlatformScopedMasterData = () => {
+  const timestamp = now()
+
+  const sandboxRows = sqlite.prepare('SELECT sandbox_id FROM sandboxes').all() as Array<{ sandbox_id: string }>
+  for (const row of sandboxRows) {
+    const existing = sqlite.prepare('SELECT platform_id FROM platforms WHERE sandbox_id = ? LIMIT 1').get(row.sandbox_id) as { platform_id: string } | undefined
+    if (!existing) {
+      const platformId = row.sandbox_id === DEFAULT_SANDBOX_ID ? 'platform-default' : createId('platform')
+      sqlite.prepare(`
+        INSERT INTO platforms (platform_id, sandbox_id, platform_code, platform_name, status, description, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        platformId,
+        row.sandbox_id,
+        row.sandbox_id === DEFAULT_SANDBOX_ID ? 'PLATFORM_DEFAULT' : `PLATFORM_${platformId.replace(/-/g, '_').toUpperCase()}`,
+        row.sandbox_id === DEFAULT_SANDBOX_ID ? '默认集团平台' : `平台 ${platformId}`,
+        'ACTIVE',
+        '由系统迁移生成的平台主数据',
+        timestamp,
+        timestamp,
+      )
+    }
+  }
+
+  sqlite.exec(`
+    UPDATE tenants
+    SET platform_id = COALESCE(
+      (SELECT p.platform_id FROM platforms p WHERE p.platform_id = tenants.platform_id AND p.sandbox_id = tenants.sandbox_id LIMIT 1),
+      (SELECT p.platform_id FROM platforms p WHERE p.sandbox_id = tenants.sandbox_id ORDER BY p.created_at ASC LIMIT 1)
+    );
+
+    UPDATE brands
+    SET platform_id = COALESCE(
+      (SELECT p.platform_id FROM platforms p WHERE p.platform_id = brands.platform_id AND p.sandbox_id = brands.sandbox_id LIMIT 1),
+      (SELECT p.platform_id FROM platforms p WHERE p.sandbox_id = brands.sandbox_id ORDER BY p.created_at ASC LIMIT 1)
+    );
+
+    UPDATE projects
+    SET platform_id = COALESCE(
+      (SELECT p.platform_id FROM platforms p WHERE p.platform_id = projects.platform_id AND p.sandbox_id = projects.sandbox_id LIMIT 1),
+      (SELECT p.platform_id FROM platforms p WHERE p.sandbox_id = projects.sandbox_id ORDER BY p.created_at ASC LIMIT 1)
+    );
+
+    UPDATE stores
+    SET
+      platform_id = COALESCE(
+        (SELECT p.platform_id FROM platforms p WHERE p.platform_id = stores.platform_id AND p.sandbox_id = stores.sandbox_id LIMIT 1),
+        (SELECT projects.platform_id FROM projects WHERE projects.project_id = stores.project_id AND projects.sandbox_id = stores.sandbox_id LIMIT 1),
+        (SELECT p.platform_id FROM platforms p WHERE p.sandbox_id = stores.sandbox_id ORDER BY p.created_at ASC LIMIT 1)
+      ),
+      unit_code = CASE
+        WHEN unit_code IS NULL OR TRIM(unit_code) = '' THEN store_code
+        ELSE unit_code
+      END;
+
+    UPDATE contracts
+    SET
+      platform_id = COALESCE(
+        (SELECT p.platform_id FROM platforms p WHERE p.platform_id = contracts.platform_id AND p.sandbox_id = contracts.sandbox_id LIMIT 1),
+        (SELECT stores.platform_id FROM stores WHERE stores.store_id = contracts.store_id AND stores.sandbox_id = contracts.sandbox_id LIMIT 1),
+        (SELECT projects.platform_id FROM projects WHERE projects.project_id = contracts.project_id AND projects.sandbox_id = contracts.sandbox_id LIMIT 1),
+        (SELECT p.platform_id FROM platforms p WHERE p.sandbox_id = contracts.sandbox_id ORDER BY p.created_at ASC LIMIT 1)
+      ),
+      unit_code = CASE
+        WHEN unit_code IS NULL OR TRIM(unit_code) = '' THEN COALESCE(
+          (SELECT stores.unit_code FROM stores WHERE stores.store_id = contracts.store_id AND stores.sandbox_id = contracts.sandbox_id LIMIT 1),
+          contract_code
+        )
+        ELSE unit_code
+      END;
+
+    UPDATE activation_codes
+    SET platform_id = COALESCE(
+      (SELECT p.platform_id FROM platforms p WHERE p.platform_id = activation_codes.platform_id AND p.sandbox_id = activation_codes.sandbox_id LIMIT 1),
+      (SELECT stores.platform_id FROM stores WHERE stores.store_id = activation_codes.store_id AND stores.sandbox_id = activation_codes.sandbox_id LIMIT 1),
+      (SELECT projects.platform_id FROM projects WHERE projects.project_id = activation_codes.project_id AND projects.sandbox_id = activation_codes.sandbox_id LIMIT 1),
+      (SELECT p.platform_id FROM platforms p WHERE p.sandbox_id = activation_codes.sandbox_id ORDER BY p.created_at ASC LIMIT 1)
+    );
+
+    UPDATE terminal_instances
+    SET platform_id = COALESCE(
+      (SELECT p.platform_id FROM platforms p WHERE p.platform_id = terminal_instances.platform_id AND p.sandbox_id = terminal_instances.sandbox_id LIMIT 1),
+      (SELECT stores.platform_id FROM stores WHERE stores.store_id = terminal_instances.store_id AND stores.sandbox_id = terminal_instances.sandbox_id LIMIT 1),
+      (SELECT projects.platform_id FROM projects WHERE projects.project_id = terminal_instances.project_id AND projects.sandbox_id = terminal_instances.sandbox_id LIMIT 1),
+      (SELECT p.platform_id FROM platforms p WHERE p.sandbox_id = terminal_instances.sandbox_id ORDER BY p.created_at ASC LIMIT 1)
+    );
+  `)
+
+  const contractsCount = sqlite.prepare('SELECT COUNT(*) as count FROM contracts').get() as { count: number }
+  if (contractsCount.count === 0) {
+    const stores = sqlite.prepare('SELECT * FROM stores ORDER BY created_at ASC').all() as Array<{
+      store_id: string
+      sandbox_id: string
+      platform_id: string
+      project_id: string
+      tenant_id: string
+      brand_id: string
+      unit_code: string
+      store_code: string
+      store_name: string
+      created_at: number
+      updated_at: number
+    }>
+    for (const store of stores) {
+      const contractId = createId('contract')
+      sqlite.prepare(`
+        INSERT INTO contracts (
+          contract_id, sandbox_id, platform_id, project_id, tenant_id, brand_id, store_id,
+          contract_code, unit_code, start_date, end_date, status, description, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        contractId,
+        store.sandbox_id,
+        store.platform_id,
+        store.project_id,
+        store.tenant_id,
+        store.brand_id,
+        store.store_id,
+        `CONTRACT_${store.store_code}`,
+        store.unit_code || store.store_code,
+        '2026-01-01',
+        '2026-12-31',
+        'ACTIVE',
+        `门店 ${store.store_name} 的默认迁移合同`,
+        store.created_at ?? timestamp,
+        store.updated_at ?? timestamp,
+      )
+    }
+  }
+}
+
 const migrateMasterDataToIndependentModel = () => {
   const brandColumns = sqlite.prepare('PRAGMA table_info(brands)').all() as Array<{ name: string }>
   if (brandColumns.some((column) => column.name === 'tenant_id')) {
@@ -295,6 +498,7 @@ const migrateMasterDataToIndependentModel = () => {
       CREATE TABLE IF NOT EXISTS brands_v2 (
         brand_id TEXT PRIMARY KEY,
         sandbox_id TEXT NOT NULL,
+        platform_id TEXT NOT NULL,
         brand_code TEXT NOT NULL,
         brand_name TEXT NOT NULL,
         status TEXT NOT NULL,
@@ -302,8 +506,8 @@ const migrateMasterDataToIndependentModel = () => {
         created_at INTEGER NOT NULL,
         updated_at INTEGER NOT NULL
       );
-      INSERT INTO brands_v2 (brand_id, sandbox_id, brand_code, brand_name, status, description, created_at, updated_at)
-      SELECT brand_id, sandbox_id, brand_code, brand_name, status, description, created_at, updated_at FROM brands;
+      INSERT INTO brands_v2 (brand_id, sandbox_id, platform_id, brand_code, brand_name, status, description, created_at, updated_at)
+      SELECT brand_id, sandbox_id, COALESCE(platform_id, 'platform-default'), brand_code, brand_name, status, description, created_at, updated_at FROM brands;
       DROP TABLE brands;
       ALTER TABLE brands_v2 RENAME TO brands;
     `)
@@ -315,6 +519,7 @@ const migrateMasterDataToIndependentModel = () => {
       CREATE TABLE IF NOT EXISTS projects_v2 (
         project_id TEXT PRIMARY KEY,
         sandbox_id TEXT NOT NULL,
+        platform_id TEXT NOT NULL,
         project_code TEXT NOT NULL,
         project_name TEXT NOT NULL,
         status TEXT NOT NULL,
@@ -324,8 +529,8 @@ const migrateMasterDataToIndependentModel = () => {
         created_at INTEGER NOT NULL,
         updated_at INTEGER NOT NULL
       );
-      INSERT INTO projects_v2 (project_id, sandbox_id, project_code, project_name, status, description, region, timezone, created_at, updated_at)
-      SELECT project_id, sandbox_id, project_code, project_name, status, description, region, timezone, created_at, updated_at FROM projects;
+      INSERT INTO projects_v2 (project_id, sandbox_id, platform_id, project_code, project_name, status, description, region, timezone, created_at, updated_at)
+      SELECT project_id, sandbox_id, COALESCE(platform_id, 'platform-default'), project_code, project_name, status, description, region, timezone, created_at, updated_at FROM projects;
       DROP TABLE projects;
       ALTER TABLE projects_v2 RENAME TO projects;
     `)
@@ -392,11 +597,26 @@ const seedDefaultData = (): void => {
   )
 
   sqlite.prepare(`
-    INSERT INTO tenants (tenant_id, sandbox_id, tenant_code, tenant_name, status, description, created_at, updated_at)
+    INSERT INTO platforms (platform_id, sandbox_id, platform_code, platform_name, status, description, created_at, updated_at)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    'platform-default',
+    DEFAULT_SANDBOX_ID,
+    'PLATFORM_DEFAULT',
+    '默认购物中心集团',
+    'ACTIVE',
+    '默认联调平台',
+    timestamp,
+    timestamp,
+  )
+
+  sqlite.prepare(`
+    INSERT INTO tenants (tenant_id, sandbox_id, platform_id, tenant_code, tenant_name, status, description, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     'tenant-mixc',
     DEFAULT_SANDBOX_ID,
+    'platform-default',
     'TENANT_MIXC',
     '万象城租户',
     'ACTIVE',
@@ -406,11 +626,12 @@ const seedDefaultData = (): void => {
   )
 
   sqlite.prepare(`
-    INSERT INTO brands (brand_id, sandbox_id, brand_code, brand_name, status, description, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO brands (brand_id, sandbox_id, platform_id, brand_code, brand_name, status, description, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     'brand-mixc',
     DEFAULT_SANDBOX_ID,
+    'platform-default',
     'BRAND_MIXC',
     '万象城品牌',
     'ACTIVE',
@@ -420,25 +641,12 @@ const seedDefaultData = (): void => {
   )
 
   sqlite.prepare(`
-    INSERT INTO tenant_brand_authorizations (authorization_id, sandbox_id, tenant_id, brand_id, status, description, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-  `).run(
-    'auth-tenant-mixc-brand-mixc',
-    DEFAULT_SANDBOX_ID,
-    'tenant-mixc',
-    'brand-mixc',
-    'ACTIVE',
-    '默认品牌授权',
-    timestamp,
-    timestamp,
-  )
-
-  sqlite.prepare(`
-    INSERT INTO projects (project_id, sandbox_id, project_code, project_name, status, description, region, timezone, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO projects (project_id, sandbox_id, platform_id, project_code, project_name, status, description, region, timezone, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     'project-mixc-bay',
     DEFAULT_SANDBOX_ID,
+    'platform-default',
     'PROJECT_MIXC_BAY',
     '深圳湾万象城项目',
     'ACTIVE',
@@ -450,14 +658,16 @@ const seedDefaultData = (): void => {
   )
 
   sqlite.prepare(`
-    INSERT INTO stores (store_id, sandbox_id, tenant_id, brand_id, project_id, store_code, store_name, status, description, address, contact_name, contact_phone, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO stores (store_id, sandbox_id, platform_id, tenant_id, brand_id, project_id, unit_code, store_code, store_name, status, description, address, contact_name, contact_phone, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     'store-sz-bay',
     DEFAULT_SANDBOX_ID,
+    'platform-default',
     'tenant-mixc',
     'brand-mixc',
     'project-mixc-bay',
+    'L0102',
     'STORE_SZ_BAY',
     '深圳湾旗舰店',
     'ACTIVE',
@@ -470,14 +680,16 @@ const seedDefaultData = (): void => {
   )
 
   sqlite.prepare(`
-    INSERT INTO stores (store_id, sandbox_id, tenant_id, brand_id, project_id, store_code, store_name, status, description, address, contact_name, contact_phone, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO stores (store_id, sandbox_id, platform_id, tenant_id, brand_id, project_id, unit_code, store_code, store_name, status, description, address, contact_name, contact_phone, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     'store-gz-tower',
     DEFAULT_SANDBOX_ID,
+    'platform-default',
     'tenant-mixc',
     'brand-mixc',
     'project-mixc-bay',
+    'L0203',
     'STORE_GZ_TOWER',
     '广州塔体验店',
     'ACTIVE',
@@ -485,6 +697,52 @@ const seedDefaultData = (): void => {
     '广州市海珠区',
     '李四',
     '13900000000',
+    timestamp,
+    timestamp,
+  )
+
+  sqlite.prepare(`
+    INSERT INTO contracts (
+      contract_id, sandbox_id, platform_id, project_id, tenant_id, brand_id, store_id,
+      contract_code, unit_code, start_date, end_date, status, description, created_at, updated_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    'contract-sz-bay-main',
+    DEFAULT_SANDBOX_ID,
+    'platform-default',
+    'project-mixc-bay',
+    'tenant-mixc',
+    'brand-mixc',
+    'store-sz-bay',
+    'CONTRACT_SZ_BAY_MAIN',
+    'L0102',
+    '2026-01-01',
+    '2026-12-31',
+    'ACTIVE',
+    '深圳湾旗舰店默认合同',
+    timestamp,
+    timestamp,
+  )
+
+  sqlite.prepare(`
+    INSERT INTO contracts (
+      contract_id, sandbox_id, platform_id, project_id, tenant_id, brand_id, store_id,
+      contract_code, unit_code, start_date, end_date, status, description, created_at, updated_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    'contract-gz-tower-main',
+    DEFAULT_SANDBOX_ID,
+    'platform-default',
+    'project-mixc-bay',
+    'tenant-mixc',
+    'brand-mixc',
+    'store-gz-tower',
+    'CONTRACT_GZ_TOWER_MAIN',
+    'L0203',
+    '2026-01-01',
+    '2026-12-31',
+    'ACTIVE',
+    '广州塔体验店默认合同',
     timestamp,
     timestamp,
   )
@@ -523,13 +781,14 @@ const seedDefaultData = (): void => {
     const terminalId = `T-100${index}`
     sqlite.prepare(`
       INSERT INTO terminal_instances (
-        terminal_id, sandbox_id, project_id, tenant_id, brand_id, store_id, profile_id, template_id,
+        terminal_id, sandbox_id, platform_id, project_id, tenant_id, brand_id, store_id, profile_id, template_id,
         lifecycle_status, presence_status, health_status, current_app_version, current_bundle_version,
         current_config_version, device_fingerprint, device_info_json, source_mode, activated_at, last_seen_at, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(
       terminalId,
       DEFAULT_SANDBOX_ID,
+      'platform-default',
       'project-mixc-bay',
       'tenant-mixc',
       'brand-mixc',
@@ -554,11 +813,12 @@ const seedDefaultData = (): void => {
 
   for (let index = 1; index <= 8; index += 1) {
     sqlite.prepare(`
-    INSERT INTO activation_codes (code, sandbox_id, tenant_id, brand_id, project_id, store_id, profile_id, template_id, status, expires_at, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO activation_codes (code, sandbox_id, platform_id, tenant_id, brand_id, project_id, store_id, profile_id, template_id, status, expires_at, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
       `10000000000${index}`,
       DEFAULT_SANDBOX_ID,
+      'platform-default',
       'tenant-mixc',
       'brand-mixc',
       'project-mixc-bay',
@@ -583,6 +843,22 @@ const seedDefaultData = (): void => {
     JSON.stringify({ type: 'object', required: ['taskType', 'releaseId', 'payload'] }),
     'TERMINAL',
     72,
+    timestamp,
+    timestamp,
+  )
+
+  sqlite.prepare(`
+    INSERT INTO tdp_topics (topic_id, sandbox_id, key, name, payload_mode, schema_json, scope_type, retention_hours, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    createId('topic'),
+    DEFAULT_SANDBOX_ID,
+    'remote.control',
+    '远程控制命令主题',
+    'EPHEMERAL_COMMAND',
+    JSON.stringify({ type: 'object', required: ['commandType'] }),
+    'TERMINAL',
+    1,
     timestamp,
     timestamp,
   )

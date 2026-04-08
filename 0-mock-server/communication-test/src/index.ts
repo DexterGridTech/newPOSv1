@@ -19,6 +19,19 @@ const validSocketSessions = new Map<string, {deviceId: string; token: string}>()
 const sessionConnectAttempts = new Map<string, number>()
 const deviceSessionExpiryAttempts = new Map<string, number>()
 
+function resetTestState() {
+  retryAttempts = 0
+  interceptorChecks = 0
+  queueActive = 0
+  queueMaxObserved = 0
+  rateLimitHits = 0
+  recentRateRequests = []
+  reconnectOpenCount = 0
+  validSocketSessions.clear()
+  sessionConnectAttempts.clear()
+  deviceSessionExpiryAttempts.clear()
+}
+
 function ok<T>(data: T) {
   return {code: 'SUCCESS', message: 'ok', data}
 }
@@ -29,6 +42,11 @@ function businessError(message: string) {
 
 app.get('/health', (_req, res) => {
   res.json(ok({service: 'communication-test', status: 'UP'}))
+})
+
+app.post('/test/reset', (_req, res) => {
+  resetTestState()
+  res.json(ok({reset: true}))
 })
 
 app.post('/http/echo', (req, res) => {
