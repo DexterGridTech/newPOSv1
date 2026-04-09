@@ -12,6 +12,10 @@
 
 本文档是 `topology-runtime` 和 `0-mock-server/dual-topology-host` 的共同设计依据。
 
+时间与 ID 相关规则还必须同时遵守：
+
+- [refactor-doc/2026-04-09-kernel-base-time-and-runtime-id-design.md](/Users/dexter/Documents/workspace/idea/newPOSv1/refactor-doc/2026-04-09-kernel-base-time-and-runtime-id-design.md)
+
 ---
 
 ## 2. 设计目标
@@ -22,6 +26,8 @@
 2. request 结果与 request 完成判断不依赖跨机 slice 同步。
 3. 协议兼容性有显式判断机制。
 4. 宿主实现可先在 Node 环境验证，后续下沉到主屏机内置宿主。
+5. 协议中的时间字段统一使用毫秒时间戳数字。
+6. `topology-runtime` 与 `dual-topology-host` 协议兼容，但不要求共享同一套 ID 生成实现。
 
 ---
 
@@ -100,6 +106,11 @@ export interface NodeRuntimeInfo {
 }
 ```
 
+说明：
+
+1. 这里的 `nodeId` 是语义化 ID 字段。
+2. `dual-topology-host` 可以独立生成 host 侧 id，但必须保证协议字段兼容。
+
 ### 4.2 pairing ticket
 
 ```ts
@@ -112,6 +123,10 @@ export interface PairingTicket {
   hostRuntime: NodeRuntimeInfo
 }
 ```
+
+说明：
+
+1. `issuedAt / expiresAt` 必须是毫秒时间戳数字。
 
 ### 4.3 hello / ack
 
@@ -148,6 +163,10 @@ export interface NodeHelloAck {
 }
 ```
 
+说明：
+
+1. `sentAt / hostTime` 必须是毫秒时间戳数字。
+
 ### 4.4 command dispatch
 
 ```ts
@@ -172,6 +191,11 @@ export interface CommandDispatchEnvelope {
 }
 ```
 
+说明：
+
+1. `sentAt` 必须是毫秒时间戳数字。
+2. `requestId / commandId / sessionId` 是正式语义字段，不允许退化成只存在于 message 文本里的字符串。
+
 ### 4.5 command event
 
 ```ts
@@ -195,6 +219,10 @@ export interface CommandEventEnvelope {
 }
 ```
 
+说明：
+
+1. `occurredAt` 必须是毫秒时间戳数字。
+
 ### 4.6 request projection
 
 ```ts
@@ -211,6 +239,10 @@ export interface RequestProjection {
 }
 ```
 
+说明：
+
+1. `startedAt / updatedAt` 必须是毫秒时间戳数字。
+
 ### 4.7 projection mirror
 
 ```ts
@@ -222,6 +254,10 @@ export interface ProjectionMirrorEnvelope {
   mirroredAt: number
 }
 ```
+
+说明：
+
+1. `mirroredAt` 必须是毫秒时间戳数字。
 
 ---
 
@@ -253,6 +289,8 @@ projection mirror 策略：
 
 - ledger 不跨机复制
 - projection 可跨机镜像
+- `topology-runtime` 复用产品 runtime 的统一时间与 ID helper
+- `dual-topology-host` 只做协议兼容，不要求复用同一 helper 实现
 
 ---
 

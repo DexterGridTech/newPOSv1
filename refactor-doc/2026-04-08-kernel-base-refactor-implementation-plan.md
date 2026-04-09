@@ -15,6 +15,16 @@
 
 ## 2. 总体实施原则
 
+本实施计划除本章约束外，还必须同时遵守：
+
+- [refactor-doc/2026-04-09-kernel-core-inherited-strengths-and-upgrade-requirements.md](/Users/dexter/Documents/workspace/idea/newPOSv1/refactor-doc/2026-04-09-kernel-core-inherited-strengths-and-upgrade-requirements.md)
+- [refactor-doc/2026-04-09-kernel-base-time-and-runtime-id-design.md](/Users/dexter/Documents/workspace/idea/newPOSv1/refactor-doc/2026-04-09-kernel-base-time-and-runtime-id-design.md)
+
+后续每个 step 不仅要解决旧问题，还必须显式回答：
+
+1. 继承了旧架构的哪条核心亮点。
+2. 如何把该亮点升级成更显式、更清晰的新协议。
+
 ### 2.1 先搭骨架，再接行为
 
 第一阶段先建立：
@@ -59,6 +69,44 @@ request 相关实施顺序必须是：
 
 涉及主副机的步骤必须具备真实链路验证。
 
+### 2.5 每一步都必须回答“继承了什么”
+
+每个 step 在设计和落地时，都必须同时回答：
+
+1. 这一 step 继承了旧架构的什么核心工程价值。
+2. 这一 step 如何避免把该价值和旧实现方式一起推翻。
+
+例如：
+
+1. `contracts` 要继承旧统一上下文语言与模块契约。
+2. `execution-runtime` 要继承旧 command 驱动思想。
+3. `topology-runtime` 要继承旧 POS 多屏拓扑语言与跨端 request 观测价值。
+4. `runtime-shell` 要继承旧统一 runtime 总装配价值。
+
+### 2.6 不允许用“边界清晰”换掉“低接入成本”
+
+后续每个 step 都必须注意：
+
+1. 新架构可以更显式。
+2. 但不能把过去由基础设施统一承担的主副协同工作重新甩回业务包。
+
+因此每个新包都必须兼顾：
+
+1. 清晰边界
+2. 统一入口
+3. 对下游足够低的接入成本
+
+### 2.7 时间与 ID 必须先统一
+
+第一阶段不能把时间与运行时 ID 留到后面再补。
+
+必须从第一步就定死：
+
+1. 存储中的时间字段统一为毫秒时间戳数字。
+2. 时间格式化只属于展示与日志渲染层。
+3. `1-kernel / 2-ui / 3-adapter / 4-assembly` 统一走同一套 runtime ID helper。
+4. `0-mock-server` 不接入这套 helper，只要求协议兼容。
+
 ---
 
 ## 3. 第一阶段总体顺序
@@ -79,6 +127,13 @@ request 相关实施顺序必须是：
 - `transport-runtime` 虽然是基础包，但本阶段 request/control-plane 先由协议对象和 topology 设计驱动。
 - 先定义 topology 所需最小 transport 抽象，再补通用 HTTP/WS runtime，更容易避免把 topology 语义混进 transport。
 
+补充说明：
+
+这个顺序同时服务于两件事：
+
+1. 先把旧架构真正正确的统一语言与统一 runtime 思想保留下来。
+2. 再把旧架构中最容易混层的 transport / topology / request 语义拆清楚。
+
 ---
 
 ## 4. Step 1：建立 `contracts`
@@ -90,9 +145,12 @@ request 相关实施顺序必须是：
 ### 4.2 输出
 
 - 包目录骨架
+- `src/moduleName.ts`
 - `package.json`
 - `src/generated/packageVersion.ts`
 - `src/index.ts`
+- `TimestampMs` 与时间 helper
+- 运行时 ID 类型与生成 helper
 - request / topology / compatibility 协议对象
 - `AppModule` 新契约
 - `protocolVersion` 常量
@@ -103,6 +161,15 @@ request 相关实施顺序必须是：
 - `CommandId`
 - `SessionId`
 - `NodeId`
+- `TimestampMs`
+- `nowTimestampMs`
+- `formatTimestampMs`
+- `createRuntimeId`
+- `ErrorDefinition`
+- `AppError`
+- `ErrorCatalogEntry`
+- `ParameterDefinition`
+- `ParameterCatalogEntry`
 - `NodeRuntimeInfo`
 - `PairingTicket`
 - `NodeHello`
@@ -120,6 +187,10 @@ request 相关实施顺序必须是：
 - 包版本接入 `packageVersion`
 - 不依赖 React
 - 不依赖其他新基础包
+- 必须显式承接旧架构的统一上下文语言与模块契约价值
+- 必须显式定义时间统一为毫秒时间戳数字
+- 必须显式定义产品 runtime 四层统一 ID helper
+- 必须显式标记该统一 ID 方案不外溢到 `0-mock-server`
 
 ---
 
@@ -131,9 +202,18 @@ request 相关实施顺序必须是：
 
 ### 5.2 输出
 
+- `src/moduleName.ts`
 - `PlatformPorts`
 - logger / storage / device / appControl / localWebServer / connector 等 port interface
+- `LogEvent` / `LogLevel` / `LoggerPort`
+- `DEV raw / PROD masked` 脱敏规则
+- 场景化 logger helper 设计
 - `createPlatformPorts(...)`
+
+补充要求：
+
+- `LogEvent.timestamp` 统一使用毫秒时间戳数字
+- port context 中的 `requestId / commandId / sessionId / nodeId` 使用显式语义字段
 
 ### 5.3 验收
 
@@ -141,6 +221,8 @@ request 相关实施顺序必须是：
 - 只依赖 `contracts`
 - 不引入运行时真相源
 - 不出现全局单例
+- 必须把旧 adapter 注入方向升级成 runtime-scoped ports，而不是全局注册槽位
+- 必须把 logger 从“文本打印抽象”升级成“结构化日志事件接口”
 
 ---
 
@@ -152,15 +234,25 @@ request 相关实施顺序必须是：
 
 ### 6.2 输出
 
+- `src/moduleName.ts`
 - registry factory
 - error / parameter / task / screen descriptor 注册器
+- errorDefinition registry
+- parameterDefinition registry
 - 查询 API
+
+补充要求：
+
+- registry 相关目录对象中的 `updatedAt` 一律使用毫秒时间戳数字
 
 ### 6.3 验收
 
 - 可注册与查询
 - 不包含执行逻辑
 - 不依赖 transport / topology
+- 必须继承旧统一注册中心的工程价值，但不再重回大一统 `base`
+- 错误定义注册与运行时错误目录必须语义分离
+- 参数定义注册与运行时参数目录必须语义分离
 
 ---
 
@@ -198,6 +290,7 @@ request 相关实施顺序必须是：
 - child command 不再走裸 `executeFromParent`
 - runtime 不依赖全局 manager
 - 可用 dev 用例验证同步/异步边界
+- 必须显式继承旧 command 驱动体系，而不是退回 service 直连
 
 ---
 
@@ -235,6 +328,7 @@ request 相关实施顺序必须是：
 - request complete 由 owner-ledger 判定
 - `resultsByCommand + mergedResults` 投影可用
 - `CompatibilityDecision` 可正常产出
+- 必须显式继承旧 POS 多屏拓扑语言与跨端 request 观测能力
 
 ---
 
@@ -270,6 +364,7 @@ request 相关统一进入：
 - 不再存在多个全局 manager 并列
 - request projection 可通过 selector 读取
 - `1-kernel` 中 `hooks/index.ts` 只保留规则说明
+- 必须继续保留旧统一 runtime 装配价值，而不是把装配责任散回下游
 
 ---
 
@@ -300,6 +395,7 @@ request 相关统一进入：
 - topology-runtime 可依赖 transport 抽象，不依赖旧 `communication`
 - `tcp-client` / `tdp-client` 后续可迁移到此基座
 - 与旧 `ApiManager` 清晰切断
+- 必须继承旧 HTTP/WS 基础设施价值，但不再混入 topology 和 request 完成语义
 
 ---
 
@@ -334,6 +430,7 @@ request 相关统一进入：
 - 可以完成 dispatch / event 往返
 - 可以完成 compatibility decision
 - 可以模拟延迟、断连、丢包
+- 必须继承旧 pair host 模型，但 host 不承担 request 真相判定
 
 ---
 
@@ -347,6 +444,10 @@ request 相关统一进入：
 4. `protocolVersion`、`runtimeVersion`、`assemblyVersion` 在握手模型中位置清晰。
 5. `runtime-shell` 成为唯一总装配入口。
 6. `transport-runtime` 与 `topology-runtime` 边界清晰。
+7. 新架构明确继承了旧统一 runtime、command 主语、POS 多屏拓扑语言、跨端 request 观测这四项核心价值。
+8. 下游业务包未来接入新架构时，不需要重新承担主副机基础设施细节。
+9. 所有时间相关存储字段均以毫秒时间戳数字表达。
+10. 产品 runtime 四层已明确统一运行时 ID 生成规则，且作用域不外溢到 `0-mock-server`。
 
 ---
 
@@ -397,6 +498,11 @@ request 相关统一进入：
 - 先把 request 真相源和 runtime 模型定住
 - 再把 transport 基座对齐新控制面
 - 避免先做 transport，后面再返工 request 语义
+
+每个批次完成后都应补一次“继承检查”：
+
+1. 是否保留了旧架构最强的工程价值。
+2. 是否只是替换了旧名字，却没有真正升级协议与边界。
 
 ---
 

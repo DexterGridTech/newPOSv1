@@ -3612,6 +3612,41 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@impos2/kernel-base-contracts@*, @impos2/kernel-base-contracts@workspace:1-kernel/1.1-base/contracts":
+  version: 0.0.0-use.local
+  resolution: "@impos2/kernel-base-contracts@workspace:1-kernel/1.1-base/contracts"
+  dependencies:
+    "@types/node": ^25.0.9
+    madge: ^8.0.0
+    tsx: ^4.21.0
+    typescript: ^5.9.3
+  languageName: unknown
+  linkType: soft
+
+"@impos2/kernel-base-definition-registry@workspace:1-kernel/1.1-base/definition-registry":
+  version: 0.0.0-use.local
+  resolution: "@impos2/kernel-base-definition-registry@workspace:1-kernel/1.1-base/definition-registry"
+  dependencies:
+    "@impos2/kernel-base-contracts": "*"
+    "@types/node": ^25.0.9
+    madge: ^8.0.0
+    tsx: ^4.21.0
+    typescript: ^5.9.3
+  languageName: unknown
+  linkType: soft
+
+"@impos2/kernel-base-platform-ports@workspace:1-kernel/1.1-base/platform-ports":
+  version: 0.0.0-use.local
+  resolution: "@impos2/kernel-base-platform-ports@workspace:1-kernel/1.1-base/platform-ports"
+  dependencies:
+    "@impos2/kernel-base-contracts": "*"
+    "@types/node": ^25.0.9
+    madge: ^8.0.0
+    tsx: ^4.21.0
+    typescript: ^5.9.3
+  languageName: unknown
+  linkType: soft
+
 "@impos2/kernel-core-base@*, @impos2/kernel-core-base@workspace:1-kernel/1.1-cores/base":
   version: 0.0.0-use.local
   resolution: "@impos2/kernel-core-base@workspace:1-kernel/1.1-cores/base"
