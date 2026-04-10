@@ -17,6 +17,7 @@
     "web": "expo start --web",
     "build": "tsc --noEmit --skipLibCheck",
     "build-for-product": "rm -rf dist && tsc --skipLibCheck",
+    "test": "tsx ./test/store.ts",
     "clean": "rm -rf .expo node_modules",
     "type-check": "tsc --noEmit"
   },

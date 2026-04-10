@@ -102,6 +102,7 @@ yarn create-package
 2. 输入包名（kebab-case 格式）
 3. 确认生成信息
 4. 自动复制模板并替换变量
+5. 生成统一结构，但公开导出仍需按包职责手工收口
 
 ### 包名规则
 
@@ -114,6 +115,7 @@ yarn create-package
 ### 1. 创建模板文件
 
 在 `_package_template_/kernel-template/` 或 `ui-template/` 中创建文件。
+模板目录只保证统一结构，不代表 `src/foundations` 或内部 feature 目录应该默认对外暴露。
 
 ### 2. 使用模板变量
 
@@ -152,6 +154,7 @@ export const {{PACKAGE_NAME}}Config = {
 3. **可扩展**：轻松添加新变量和转换规则
 4. **类型安全**：模板引擎确保所有变量都被正确替换
 5. **无依赖**：不依赖外部模板库
+6. **边界可控**：模板统一结构，但要求包根入口只显式导出稳定公共 API
 
 ## 故障排查
 

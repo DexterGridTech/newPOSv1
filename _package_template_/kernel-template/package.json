@@ -11,7 +11,7 @@
   "scripts": {
     "build": "tsc --noEmit",
     "build-for-product": "rm -rf dist && tsc",
-    "dev": "tsx ./dev/index.ts",
+    "test": "tsx ./test/index.ts",
     "clean": "rm -rf dist",
     "type-check": "tsc --noEmit",
     "check:circular": "madge --circular --extensions ts --warning src/"
@@ -22,9 +22,7 @@
     "@impos2/kernel-core-navigation": "*",
     "@impos2/kernel-core-task": "*",
     "@impos2/kernel-core-terminal": "*",
-    "@reduxjs/toolkit": "^2.11.2",
-    "redux-observable": "^3.0.0-rc.3",
-    "rxjs": "^7.8.2"
+    "@reduxjs/toolkit": "^2.11.2"
   },
   "devDependencies": {
     "@types/node": "^25.0.9",

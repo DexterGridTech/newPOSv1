@@ -7,5 +7,5 @@
     "lib": ["ES2022", "DOM"]
   },
   "include": ["./src/**/*"],
-  "exclude": ["node_modules", "dist", "dev"]
+  "exclude": ["node_modules", "dist", "test"]
 }

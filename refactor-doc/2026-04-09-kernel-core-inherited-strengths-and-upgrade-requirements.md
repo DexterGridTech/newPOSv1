@@ -471,7 +471,7 @@
 
 1. `state` 是否仍可被全局读取。
 2. 包根公开面是否只暴露 contracts、selectors、commands、必要 supports。
-3. `features/slices`、`features/actors`、`features/middlewares` 是否仍保持包内实现属性。
+3. `features/slices`、`features/actors` 是否仍保持包内实现属性。
 4. 产品 runtime 四层是否统一使用同一套运行时 ID helper。
 5. `0-mock-server` 是否只做协议兼容，而没有被错误纳入产品 runtime 的统一 ID 实现边界。
 

@@ -227,7 +227,8 @@ async function main() {
     console.log(`\n下一步:`);
     console.log(`1. cd ${newPackageDir}`);
     console.log(`2. 开始开发你的模块`);
-    console.log(`3. 运行 yarn install 安装依赖`);
+    console.log(`3. 按需完善 test 入口和公开导出边界`);
+    console.log(`4. 运行 yarn install 安装依赖`);
 
     rl.close();
   } catch (error) {

@@ -52,11 +52,14 @@
 
 | 旧能力 | 新包 |
 | --- | --- |
-| master/slave 节点角色 | `topology-runtime` |
-| pairing / session | `topology-runtime` |
-| display / workspace / 主副节点关系 | `topology-runtime` |
+| master/slave 节点角色与恢复状态 | `topology-runtime` |
+| pairing / relay host 核心 | `host-runtime` |
+| 客户端连接 / 重连 / resume / remote-command 编排 | `topology-client-runtime` |
+| display / workspace / 主副节点关系公开 read model | `topology-client-runtime` |
+| workspace / instanceMode 作用域 helper | `state-runtime` |
 | request 聚合 | `topology-runtime` |
 | request 对外读模型 | `runtime-shell` |
+| request 的 React hook 包装 | `2-ui/*` |
 | 主副机宿主承载实现 | `0-mock-server/dual-topology-host` |
 
 ### 3.2 去掉或重做的能力
@@ -68,6 +71,8 @@
 - `REMOTE_COMMAND_EXECUTED` 混合 ack 语义
 - master/slave slice 合并后推导 request 真相
 - lifecycle listener 负责 request 真相源写入
+- `interconnection` 同时承担 scoped state helper 与连接编排
+- kernel 内直接提供 React hook
 
 ### 3.3 重构结论
 
@@ -77,8 +82,14 @@
 - 配对概念
 - 主副屏业务特点
 - request 聚合诉求
+- scoped state 路由诉求
 
-提升为 `topology-runtime` 的正式控制面模型。
+拆分升级为：
+
+1. `topology-runtime` 的正式控制面模型
+2. `topology-client-runtime` 的客户端编排模型
+3. `state-runtime` 的通用 scoped state 工具
+4. `runtime-shell` 的 request projection 读模型
 
 ---
 
@@ -132,11 +143,11 @@
 
 | 旧能力 | 新位置 |
 | --- | --- |
-| master/slave 配对 | `dual-topology-host` |
-| token / ticket 机制 | `dual-topology-host` |
-| 心跳与断线管理 | `dual-topology-host` |
-| 消息转发与缓存 | `dual-topology-host` |
-| 上下线通知 | `dual-topology-host` |
+| master/slave 配对 | `host-runtime` + `dual-topology-host` |
+| token / ticket 机制 | `host-runtime` + `dual-topology-host` |
+| 心跳与断线管理 | `host-runtime` + `dual-topology-host` |
+| 消息转发与缓存 | `host-runtime` + `dual-topology-host` |
+| 上下线通知 | `host-runtime` + `dual-topology-host` |
 | stats 与观测 | `dual-topology-host` |
 
 ### 5.3 不应继续承担的能力

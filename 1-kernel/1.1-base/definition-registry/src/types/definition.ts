@@ -1,4 +1,10 @@
-/**
- * Definition descriptor contracts belong here.
- */
-export {}
+import type {ErrorDefinition, ParameterDefinition} from '@impos2/kernel-base-contracts'
+
+export interface KeyedDefinition {
+    key: string
+    name: string
+    moduleName?: string
+}
+
+export type ErrorDefinitionEntry = ErrorDefinition
+export type ParameterDefinitionEntry = ParameterDefinition
