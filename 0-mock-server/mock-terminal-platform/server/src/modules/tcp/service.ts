@@ -281,12 +281,21 @@ export const getTaskTrace = (instanceId: string) => {
   }
 
   const release = sqlite.prepare('SELECT * FROM task_releases WHERE release_id = ?').get(instance.release_id) as Record<string, unknown> | undefined
-  const projections = sqlite.prepare('SELECT * FROM tdp_projections WHERE scope_key = ? ORDER BY updated_at DESC').all(instance.terminal_id) as Array<Record<string, unknown>>
-  const changes = sqlite.prepare('SELECT * FROM tdp_change_logs WHERE scope_key = ? ORDER BY created_at DESC LIMIT 20').all(instance.terminal_id) as Array<Record<string, unknown>>
+  const projections = sqlite.prepare('SELECT * FROM tdp_projections WHERE topic_key = ? AND item_key = ? ORDER BY updated_at DESC').all('tcp.task.release', instance.instance_id) as Array<Record<string, unknown>>
+  const changes = sqlite.prepare('SELECT * FROM tdp_change_logs WHERE topic_key = ? AND item_key = ? ORDER BY created_at DESC LIMIT 20').all('tcp.task.release', instance.instance_id) as Array<Record<string, unknown>>
 
   return {
     instance: {
       ...instance,
+      instanceId: instance.instance_id,
+      releaseId: instance.release_id,
+      terminalId: instance.terminal_id,
+      taskType: instance.task_type,
+      deliveryStatus: instance.delivery_status,
+      createdAt: instance.created_at,
+      updatedAt: instance.updated_at,
+      deliveredAt: instance.delivered_at,
+      finishedAt: instance.finished_at,
       payload: parseJson(String(instance.payload_json ?? ''), {}),
       result: parseJson(String(instance.result_json ?? ''), null),
       error: parseJson(String(instance.error_json ?? ''), null),
@@ -294,13 +303,39 @@ export const getTaskTrace = (instanceId: string) => {
     release: release
       ? {
           ...release,
-          payload: parseJson(String(release.payload_json ?? ''), {}),
+          releaseId: release.release_id,
+          taskType: release.task_type,
+          sourceType: release.source_type,
+          sourceId: release.source_id,
           targetSelector: parseJson(String(release.target_selector_json ?? ''), {}),
+          createdAt: release.created_at,
+          updatedAt: release.updated_at,
+          payload: parseJson(String(release.payload_json ?? ''), {}),
         }
       : null,
     dataPlane: {
-      projections: projections.map((item) => ({ ...item, payload: parseJson(String(item.payload_json ?? ''), {}) })),
-      changes: changes.map((item) => ({ ...item, payload: parseJson(String(item.payload_json ?? ''), {}) })),
+      projections: projections.map((item) => ({
+        ...item,
+        projectionId: item.projection_id,
+        topicKey: item.topic_key,
+        scopeType: item.scope_type,
+        scopeKey: item.scope_key,
+        itemKey: item.item_key,
+        updatedAt: item.updated_at,
+        payload: parseJson(String(item.payload_json ?? ''), {}),
+      })),
+      changes: changes.map((item) => ({
+        ...item,
+        changeId: item.change_id,
+        topicKey: item.topic_key,
+        scopeType: item.scope_type,
+        scopeKey: item.scope_key,
+        itemKey: item.item_key,
+        targetTerminalId: item.target_terminal_id,
+        sourceReleaseId: item.source_release_id,
+        createdAt: item.created_at,
+        payload: parseJson(String(item.payload_json ?? ''), {}),
+      })),
     },
   }
 }

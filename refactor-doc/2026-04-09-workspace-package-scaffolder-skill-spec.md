@@ -212,6 +212,13 @@ skill 完成后必须汇报：
 
 统一骨架只解决结构统一，不代表所有包都应生成同一种占位内容。
 
+补充约束：
+
+1. `src/features/actors/index.ts` 只做聚合导出，不承载具体 actor 逻辑。
+2. 一旦包内出现 2 个及以上 actor，必须拆成独立职责文件，例如 `bootstrapActor.ts`、`messageActor.ts`、`stateMutationActor.ts`。
+3. 不允许默认把多个 actor 和大量 handler 逻辑堆在单一 `actors/index.ts`。
+4. actor 内若需要推动多 slice 状态迁移，应优先通过单个 domain action 触发，由 slice 自己响应，不鼓励在 actor 里连续写一串 `dispatchAction(setXxx)`。
+
 补充规则：
 
 - `src/foundations` 是实现层目录，不等于必须在包根入口整体公开。

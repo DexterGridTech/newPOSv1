@@ -23,11 +23,13 @@
     "@impos2/kernel-base-platform-ports": "workspace:*",
     "@impos2/kernel-base-runtime-shell": "workspace:*",
     "@impos2/kernel-base-state-runtime": "workspace:*",
-    "@impos2/kernel-base-transport-runtime": "workspace:*",
     "@impos2/kernel-base-topology-runtime": "workspace:*",
+    "@impos2/kernel-base-transport-runtime": "workspace:*",
     "@reduxjs/toolkit": "^2.10.0"
   },
   "devDependencies": {
+    "@impos2/kernel-base-tcp-control-runtime": "workspace:*",
+    "@impos2/kernel-base-tdp-sync-runtime": "workspace:*",
     "@types/node": "^25.0.9",
     "madge": "^8.0.0",
     "tsx": "^4.21.0",

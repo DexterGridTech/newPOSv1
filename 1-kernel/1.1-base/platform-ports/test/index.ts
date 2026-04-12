@@ -23,10 +23,19 @@ logger.info({
 const ports = createPlatformPorts({
     environmentMode: 'PROD',
     logger,
+    scriptExecutor: {
+        async execute<T = unknown>() {
+            return {ok: true} as T
+        },
+    },
 })
 
 if (!ports.logger) {
     throw new Error('PlatformPorts logger missing')
+}
+
+if (!ports.scriptExecutor) {
+    throw new Error('PlatformPorts scriptExecutor missing')
 }
 
 if (events[0]?.security.maskingMode !== 'masked') {

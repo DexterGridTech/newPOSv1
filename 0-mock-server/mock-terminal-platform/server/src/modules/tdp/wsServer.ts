@@ -195,7 +195,7 @@ const handleClientMessage = (socket: WebSocket, req: IncomingMessage, raw: strin
       sessionId: onlineSession.sessionId,
       cursor: message.data.cursor,
       topic: message.data.topic,
-      itemKey: message.data.instanceId ?? message.data.itemKey,
+      itemKey: message.data.itemKey ?? message.data.instanceId,
     })
     return
   }

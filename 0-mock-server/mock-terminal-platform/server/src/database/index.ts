@@ -4,13 +4,24 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { sql } from 'drizzle-orm'
 import { DEFAULT_OWNER_TEAM_ID, DEFAULT_OWNER_USER_ID, DEFAULT_SANDBOX_ID } from '../shared/constants.js'
-import { createId, now } from '../shared/utils.js'
+import { createId, now, parseJson } from '../shared/utils.js'
 
 const currentDir = path.dirname(fileURLToPath(import.meta.url))
-const dataFile = path.resolve(currentDir, '../../data/mock-terminal-platform.sqlite')
+const defaultDataFile = path.resolve(currentDir, '../../data/mock-terminal-platform.sqlite')
+const resolveDataFile = (override?: string) => override?.trim()
+  ? path.resolve(override.trim())
+  : (process.env.MOCK_TERMINAL_PLATFORM_DB_FILE?.trim()
+      ? path.resolve(process.env.MOCK_TERMINAL_PLATFORM_DB_FILE.trim())
+      : defaultDataFile)
 
-export const sqlite = new Database(dataFile)
-export const db = drizzle(sqlite)
+export let sqlite = new Database(resolveDataFile())
+export let db = drizzle(sqlite)
+
+export const resetDatabaseConnection = (input?: { dataFile?: string }) => {
+  sqlite.close()
+  sqlite = new Database(resolveDataFile(input?.dataFile))
+  db = drizzle(sqlite)
+}
 
 const RUNTIME_CONTEXT_KEY = 'global'
 
@@ -254,6 +265,7 @@ export const initializeDatabase = (): void => {
       topic_key TEXT NOT NULL,
       scope_type TEXT NOT NULL,
       scope_key TEXT NOT NULL,
+      item_key TEXT NOT NULL DEFAULT '',
       revision INTEGER NOT NULL,
       payload_json TEXT NOT NULL,
       updated_at INTEGER NOT NULL
@@ -263,8 +275,11 @@ export const initializeDatabase = (): void => {
       sandbox_id TEXT NOT NULL,
       cursor INTEGER NOT NULL DEFAULT 0,
       topic_key TEXT NOT NULL,
+      operation TEXT NOT NULL DEFAULT 'upsert',
       scope_type TEXT NOT NULL,
       scope_key TEXT NOT NULL,
+      item_key TEXT NOT NULL DEFAULT '',
+      target_terminal_id TEXT NOT NULL DEFAULT '',
       revision INTEGER NOT NULL,
       payload_json TEXT NOT NULL,
       source_release_id TEXT,
@@ -324,9 +339,15 @@ export const initializeDatabase = (): void => {
   ensureColumn('activation_codes', 'project_id', `TEXT NOT NULL DEFAULT 'project-mixc-bay'`)
   ensureColumn('terminal_instances', 'platform_id', `TEXT NOT NULL DEFAULT 'platform-default'`)
   ensureColumn('tdp_change_logs', 'cursor', 'INTEGER NOT NULL DEFAULT 0')
+  ensureColumn('tdp_change_logs', 'operation', `TEXT NOT NULL DEFAULT 'upsert'`)
+  ensureColumn('tdp_projections', 'item_key', `TEXT NOT NULL DEFAULT ''`)
+  ensureColumn('tdp_change_logs', 'item_key', `TEXT NOT NULL DEFAULT ''`)
+  ensureColumn('tdp_change_logs', 'target_terminal_id', `TEXT NOT NULL DEFAULT ''`)
   ensureColumn('tdp_sessions', 'last_delivered_revision', 'INTEGER')
   ensureColumn('tdp_sessions', 'last_acked_revision', 'INTEGER')
   ensureColumn('tdp_sessions', 'last_applied_revision', 'INTEGER')
+  migrateTdpProjectionIdentity()
+  migrateTdpChangeLogIdentity()
   migrateTdpChangeLogCursor()
   migratePlatformScopedMasterData()
   migrateMasterDataToIndependentModel()
@@ -357,6 +378,85 @@ const migrateTdpChangeLogCursor = () => {
     })
   })
 
+  transaction(rows)
+}
+
+const buildLegacyProjectionItemKey = (input: {
+  topicKey: string
+  scopeKey: string
+  payloadJson: string
+  sourceReleaseId?: string | null
+}) => {
+  const payload = parseJson<Record<string, unknown>>(input.payloadJson, {})
+  if (input.topicKey === 'tcp.task.release' && typeof payload.instanceId === 'string' && payload.instanceId.trim()) {
+    return payload.instanceId.trim()
+  }
+  if (typeof payload.itemKey === 'string' && payload.itemKey.trim()) {
+    return payload.itemKey.trim()
+  }
+  return input.sourceReleaseId ?? `${input.topicKey}:${input.scopeKey}`
+}
+
+const migrateTdpProjectionIdentity = () => {
+  const rows = sqlite.prepare(`
+    SELECT projection_id, topic_key, scope_key, payload_json
+    FROM tdp_projections
+    WHERE item_key = ''
+  `).all() as Array<{
+    projection_id: string
+    topic_key: string
+    scope_key: string
+    payload_json: string
+  }>
+  const update = sqlite.prepare('UPDATE tdp_projections SET item_key = ? WHERE projection_id = ?')
+  const transaction = sqlite.transaction((items: typeof rows) => {
+    items.forEach(item => {
+      update.run(
+        buildLegacyProjectionItemKey({
+          topicKey: item.topic_key,
+          scopeKey: item.scope_key,
+          payloadJson: item.payload_json,
+        }),
+        item.projection_id,
+      )
+    })
+  })
+  transaction(rows)
+}
+
+const migrateTdpChangeLogIdentity = () => {
+  const rows = sqlite.prepare(`
+    SELECT change_id, topic_key, scope_type, scope_key, payload_json, source_release_id, target_terminal_id, item_key
+    FROM tdp_change_logs
+  `).all() as Array<{
+    change_id: string
+    topic_key: string
+    scope_type: string
+    scope_key: string
+    payload_json: string
+    source_release_id: string | null
+    target_terminal_id: string
+    item_key: string
+  }>
+  const update = sqlite.prepare('UPDATE tdp_change_logs SET item_key = ?, target_terminal_id = ? WHERE change_id = ?')
+  const transaction = sqlite.transaction((items: typeof rows) => {
+    items.forEach(item => {
+      const itemKey = item.item_key.trim()
+        ? item.item_key
+        : buildLegacyProjectionItemKey({
+            topicKey: item.topic_key,
+            scopeKey: item.scope_key,
+            payloadJson: item.payload_json,
+            sourceReleaseId: item.source_release_id,
+          })
+      const targetTerminalId = item.target_terminal_id.trim()
+        ? item.target_terminal_id
+        : item.scope_type === 'TERMINAL'
+          ? item.scope_key
+          : ''
+      update.run(itemKey, targetTerminalId, item.change_id)
+    })
+  })
   transaction(rows)
 }
 
@@ -880,27 +980,32 @@ const seedDefaultData = (): void => {
   )
 
   sqlite.prepare(`
-    INSERT INTO tdp_projections (projection_id, sandbox_id, topic_key, scope_type, scope_key, revision, payload_json, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO tdp_projections (projection_id, sandbox_id, topic_key, scope_type, scope_key, item_key, revision, payload_json, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     createId('projection'),
     DEFAULT_SANDBOX_ID,
     'terminal.config.state',
     'TERMINAL',
     'T-1001',
+    'terminal.config.state:T-1001',
     4,
     JSON.stringify({ configVersion: 'config-2026.04.01', featureFlags: { mockMode: true, grayUpgrade: true } }),
     timestamp,
   )
 
   sqlite.prepare(`
-    INSERT INTO tdp_change_logs (change_id, sandbox_id, topic_key, scope_type, scope_key, revision, payload_json, source_release_id, created_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO tdp_change_logs (change_id, sandbox_id, cursor, topic_key, operation, scope_type, scope_key, item_key, target_terminal_id, revision, payload_json, source_release_id, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     createId('change'),
     DEFAULT_SANDBOX_ID,
+    1,
     'terminal.config.state',
+    'upsert',
     'TERMINAL',
+    'T-1001',
+    'terminal.config.state:T-1001',
     'T-1001',
     4,
     JSON.stringify({ configVersion: 'config-2026.04.01', source: 'release_bootstrap' }),

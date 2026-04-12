@@ -1,2 +1,5 @@
 export * from './sync'
 export * from './scope'
+export * from './scopedSlice'
+export * from './errors'
+export * from './parameters'

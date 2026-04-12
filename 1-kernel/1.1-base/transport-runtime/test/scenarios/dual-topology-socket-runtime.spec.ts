@@ -691,6 +691,7 @@ describe('transport-runtime dual-topology ws', () => {
             sessionId,
             sourceNodeId: masterNodeId,
             targetNodeId: slaveNodeId,
+            direction: 'master-to-slave',
         })
         if (!summaryEnvelope) {
             throw new Error('Missing state sync summary envelope')
@@ -752,6 +753,7 @@ describe('transport-runtime dual-topology ws', () => {
             sessionId,
             sourceNodeId: slaveNodeId,
             targetNodeId: masterNodeId,
+            direction: 'master-to-slave',
             committedAt: Date.now(),
         }
 

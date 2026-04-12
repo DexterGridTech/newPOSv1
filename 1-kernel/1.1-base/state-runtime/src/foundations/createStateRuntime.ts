@@ -9,6 +9,10 @@ import type {
     StateRuntimePersistenceRecordDescriptor,
 } from '../types/persistence'
 import {createReplaceStateRuntimeAction, createStateStore} from './store'
+import {
+    createProtectedPersistenceStorageMissingError,
+    stateRuntimeParameterDefinitions,
+} from '../supports'
 
 const NOOP_LOGGER = {
     emit() {},
@@ -110,6 +114,8 @@ export const createStateRuntime = (
     let persistenceChain = Promise.resolve()
     let hydrated = false
     let lastStateSignature = ''
+    const persistenceDebounceMs =
+        input.persistenceDebounceMs ?? stateRuntimeParameterDefinitions.persistenceDebounceMs.defaultValue
 
     const persistableSlices = input.slices.filter(
         slice => slice.persistIntent === 'owner-only' && (slice.persistence?.length ?? 0) > 0,
@@ -347,7 +353,10 @@ export const createStateRuntime = (
             const protectedStorage = getStoragePort(input, 'protected')
 
             if (Object.keys(nextProtectedEntries).length > 0 && !protectedStorage) {
-                throw new Error(`Missing secureStateStorage for protected persistence in ${input.runtimeName}`)
+                throw createProtectedPersistenceStorageMissingError(input.runtimeName, {
+                    phase: 'flush',
+                    protectedKeys: Object.keys(nextProtectedEntries),
+                })
             }
 
             const stalePlainKeys = [...persistedValueCache.keys()].filter(
@@ -409,7 +418,7 @@ export const createStateRuntime = (
         flushTimer = setTimeout(() => {
             flushTimer = null
             void flushPersistence()
-        }, input.persistenceDebounceMs ?? 16)
+        }, persistenceDebounceMs)
     }
 
     const collectPersistenceModes = (): ('immediate' | 'debounced')[] => {
@@ -456,7 +465,10 @@ export const createStateRuntime = (
 
                 if (!storage) {
                     if (storageKind === 'protected') {
-                        throw new Error(`Missing secureStateStorage for protected persistence in ${input.runtimeName}`)
+                        throw createProtectedPersistenceStorageMissingError(input.runtimeName, {
+                            phase: 'hydrate',
+                            sliceName: slice.name,
+                        })
                     }
                     continue
                 }

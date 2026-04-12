@@ -66,12 +66,17 @@ export interface TopologyRuntime {
     acceptRemoteSyncSummary(input: AcceptTopologySyncSummaryInput): TopologySyncSessionSnapshot
     activateContinuousSync(input: ActivateTopologyContinuousSyncInput): TopologySyncSessionSnapshot
     collectContinuousSyncDiff(input: CollectTopologyContinuousSyncDiffInput): TopologySyncSessionSnapshot
-    commitContinuousSync(sessionId: SessionId, currentSummary: Record<string, SyncStateSummary>): TopologySyncSessionSnapshot | undefined
+    commitContinuousSync(
+        sessionId: SessionId,
+        direction: CollectTopologyContinuousSyncDiffInput['direction'],
+        currentSummary: Record<string, SyncStateSummary>,
+    ): TopologySyncSessionSnapshot | undefined
     createSyncSummaryEnvelope(input: {
         envelopeId: EnvelopeId
         sessionId: SessionId
         sourceNodeId: NodeId
         targetNodeId: NodeId
+        direction: BeginTopologySyncSessionInput['direction']
     }): StateSyncSummaryEnvelope | undefined
     handleSyncSummaryEnvelope(input: {
         envelope: StateSyncSummaryEnvelope
@@ -83,8 +88,14 @@ export interface TopologyRuntime {
         envelope: StateSyncCommitAckEnvelope
         currentSummary: Record<string, SyncStateSummary>
     }): TopologySyncSessionSnapshot | undefined
-    getSyncSession(sessionId: SessionId): TopologySyncSessionSnapshot | undefined
-    clearSyncSession(sessionId: SessionId): void
+    getSyncSession(
+        sessionId: SessionId,
+        direction: CollectTopologyContinuousSyncDiffInput['direction'],
+    ): TopologySyncSessionSnapshot | undefined
+    clearSyncSession(
+        sessionId: SessionId,
+        direction?: CollectTopologyContinuousSyncDiffInput['direction'],
+    ): void
     registerRootRequest(input: RegisterRootRequestInput): void
     registerChildDispatch(envelope: CommandDispatchEnvelope): void
     applyCommandEvent(envelope: CommandEventEnvelope): void

@@ -1,9 +1,5 @@
 import {createAppError, nowTimestampMs} from '@impos2/kernel-base-contracts'
-import type {
-    AppError,
-    CreateAppErrorInput,
-    ErrorDefinition,
-} from '@impos2/kernel-base-contracts'
+import type {AppError, CreateAppErrorInput} from '@impos2/kernel-base-contracts'
 import type {LoggerPort} from '@impos2/kernel-base-platform-ports'
 import {createExecutionJournal} from './journal'
 import type {
@@ -19,24 +15,7 @@ import type {
     ExecuteCommandOptions,
     ExecutionRuntime,
 } from '../types/runtime'
-
-const COMMAND_NOT_FOUND_ERROR: ErrorDefinition = {
-    key: 'kernel.base.execution-runtime.command_not_found',
-    name: 'Execution Command Not Found',
-    defaultTemplate: 'Execution handler not found for ${commandName}',
-    category: 'SYSTEM',
-    severity: 'HIGH',
-    moduleName: 'kernel.base.execution-runtime',
-}
-
-const COMMAND_EXECUTION_FAILED_ERROR: ErrorDefinition = {
-    key: 'kernel.base.execution-runtime.command_execution_failed',
-    name: 'Execution Command Failed',
-    defaultTemplate: 'Execution failed for ${commandName}',
-    category: 'SYSTEM',
-    severity: 'MEDIUM',
-    moduleName: 'kernel.base.execution-runtime',
-}
+import {executionRuntimeErrorDefinitions} from '../supports'
 
 const createLifecycleEvent = (
     eventType: ExecutionLifecycleEvent['eventType'],
@@ -88,7 +67,7 @@ const createNormalizeError = (logger: LoggerPort) => {
             },
         }
 
-        const appError = createAppError(COMMAND_EXECUTION_FAILED_ERROR, input)
+        const appError = createAppError(executionRuntimeErrorDefinitions.commandExecutionFailed, input)
 
         logger.error({
             category: 'command.lifecycle',
@@ -149,6 +128,34 @@ export const createExecutionRuntime = (
         input.onLifecycleEvent?.(event)
     }
 
+    const createFailedResult = (
+        error: unknown,
+        command: ExecutionCommand,
+        emitObservedLifecycle: (event: ExecutionLifecycleEvent) => void,
+        commandLogger: LoggerPort,
+    ): ExecutionResult => {
+        const appError = normalizeError(error, command)
+        const failedEvent = createLifecycleEvent('failed', command)
+        emitObservedLifecycle(failedEvent)
+
+        commandLogger.error({
+            category: 'command.lifecycle',
+            event: 'failed',
+            message: appError.message,
+            error: {
+                name: appError.name,
+                code: appError.code,
+                message: appError.message,
+                stack: appError.stack,
+            },
+        })
+
+        return {
+            status: 'failed',
+            error: appError,
+        }
+    }
+
     const execute = async (
         command: ExecutionCommand,
         options?: ExecuteCommandOptions,
@@ -157,7 +164,7 @@ export const createExecutionRuntime = (
         const handler = handlers.get(command.commandName)
 
         if (!handler) {
-            throw createAppError(COMMAND_NOT_FOUND_ERROR, {
+            throw createAppError(executionRuntimeErrorDefinitions.commandNotFound, {
                 args: {commandName: command.commandName},
                 context: {
                     commandName: command.commandName,
@@ -205,30 +212,15 @@ export const createExecutionRuntime = (
                     result: result ?? undefined,
                 }
             } catch (error) {
-                const appError = normalizeError(error, command)
-                const failedEvent = createLifecycleEvent('failed', command)
-                emitObservedLifecycle(failedEvent)
-
-                commandLogger.error({
-                    category: 'command.lifecycle',
-                    event: 'failed',
-                    message: appError.message,
-                    error: {
-                        name: appError.name,
-                        code: appError.code,
-                        message: appError.message,
-                        stack: appError.stack,
-                    },
-                })
-
-                return {
-                    status: 'failed',
-                    error: appError,
-                }
+                return createFailedResult(error, command, emitObservedLifecycle, commandLogger)
             }
         }
 
-        return runWithMiddlewares(middlewares, context, runHandler)
+        try {
+            return await runWithMiddlewares(middlewares, context, runHandler)
+        } catch (error) {
+            return createFailedResult(error, command, emitObservedLifecycle, commandLogger)
+        }
     }
 
     return {

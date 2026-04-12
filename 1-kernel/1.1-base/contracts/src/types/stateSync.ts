@@ -45,5 +45,6 @@ export interface StateSyncCommitAckEnvelope {
     sessionId: SessionId
     sourceNodeId: NodeId
     targetNodeId: NodeId
+    direction: 'master-to-slave' | 'slave-to-master'
     committedAt: TimestampMs
 }

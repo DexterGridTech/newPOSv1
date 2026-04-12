@@ -7,15 +7,21 @@ import type {
 } from '../types/sync'
 import {createTopologySyncDiff, createTopologySyncSummary} from './stateSyncPlan'
 import type {SyncStateSummary} from '@impos2/kernel-base-state-runtime'
+import type {SyncIntent} from '@impos2/kernel-base-state-runtime'
+
+type TopologySyncLaneDirection = Exclude<SyncIntent, 'isolated'>
+
+const getSessionKey = (sessionId: string, direction: TopologySyncLaneDirection) =>
+    `${sessionId}:${direction}`
 
 export interface TopologySyncSessionManager {
     begin(input: BeginTopologySyncSessionInput): TopologySyncSessionSnapshot
     acceptRemoteSummary(input: AcceptTopologySyncSummaryInput): TopologySyncSessionSnapshot
     activateContinuous(input: ActivateTopologyContinuousSyncInput): TopologySyncSessionSnapshot
     collectContinuousDiff(input: CollectTopologyContinuousSyncDiffInput): TopologySyncSessionSnapshot
-    commitContinuous(sessionId: string, currentSummary: Record<string, SyncStateSummary>): TopologySyncSessionSnapshot | undefined
-    get(sessionId: string): TopologySyncSessionSnapshot | undefined
-    clear(sessionId: string): void
+    commitContinuous(sessionId: string, direction: TopologySyncLaneDirection, currentSummary: Record<string, SyncStateSummary>): TopologySyncSessionSnapshot | undefined
+    get(sessionId: string, direction: TopologySyncLaneDirection): TopologySyncSessionSnapshot | undefined
+    clear(sessionId: string, direction?: TopologySyncLaneDirection): void
 }
 
 export const createTopologySyncSessionManager = (): TopologySyncSessionManager => {
@@ -31,11 +37,11 @@ export const createTopologySyncSessionManager = (): TopologySyncSessionManager =
                 startedAt: input.startedAt,
                 localSummary: createTopologySyncSummary(input),
             }
-            sessions.set(input.sessionId, snapshot)
+            sessions.set(getSessionKey(input.sessionId, input.direction), snapshot)
             return snapshot
         },
         acceptRemoteSummary(input) {
-            const current = sessions.get(input.sessionId)
+            const current = sessions.get(getSessionKey(input.sessionId, input.direction))
             const next: TopologySyncSessionSnapshot = {
                 sessionId: input.sessionId,
                 peerNodeId: input.peerNodeId,
@@ -47,11 +53,11 @@ export const createTopologySyncSessionManager = (): TopologySyncSessionManager =
                 lastRemoteSummary: input.remoteSummaryBySlice,
                 lastDiff: createTopologySyncDiff(input),
             }
-            sessions.set(input.sessionId, next)
+            sessions.set(getSessionKey(input.sessionId, input.direction), next)
             return next
         },
         activateContinuous(input) {
-            const current = sessions.get(input.sessionId)
+            const current = sessions.get(getSessionKey(input.sessionId, input.direction))
             const baselineEntries = createTopologySyncSummary(input)
             const baselineSummaryBySlice = Object.fromEntries(
                 baselineEntries.map(entry => [entry.sliceName, entry.summary]),
@@ -68,11 +74,11 @@ export const createTopologySyncSessionManager = (): TopologySyncSessionManager =
                 lastDiff: current?.lastDiff,
                 baselineSummaryBySlice,
             }
-            sessions.set(input.sessionId, next)
+            sessions.set(getSessionKey(input.sessionId, input.direction), next)
             return next
         },
         collectContinuousDiff(input) {
-            const current = sessions.get(input.sessionId)
+            const current = sessions.get(getSessionKey(input.sessionId, input.direction))
             const remoteSummaryBySlice = current?.baselineSummaryBySlice ?? {}
             const next: TopologySyncSessionSnapshot = {
                 sessionId: input.sessionId,
@@ -89,26 +95,35 @@ export const createTopologySyncSessionManager = (): TopologySyncSessionManager =
                 }),
                 baselineSummaryBySlice: current?.baselineSummaryBySlice,
             }
-            sessions.set(input.sessionId, next)
+            sessions.set(getSessionKey(input.sessionId, input.direction), next)
             return next
         },
-        commitContinuous(sessionId, currentSummary) {
-            const current = sessions.get(sessionId)
+        commitContinuous(sessionId, direction, currentSummary) {
+            const current = sessions.get(getSessionKey(sessionId, direction))
             if (!current) {
                 return undefined
             }
             const next: TopologySyncSessionSnapshot = {
                 ...current,
+                status: 'continuous',
                 baselineSummaryBySlice: currentSummary,
             }
-            sessions.set(sessionId, next)
+            sessions.set(getSessionKey(sessionId, direction), next)
             return next
         },
-        get(sessionId) {
-            return sessions.get(sessionId)
+        get(sessionId, direction) {
+            return sessions.get(getSessionKey(sessionId, direction))
         },
-        clear(sessionId) {
-            sessions.delete(sessionId)
+        clear(sessionId, direction) {
+            if (direction) {
+                sessions.delete(getSessionKey(sessionId, direction))
+                return
+            }
+            for (const key of sessions.keys()) {
+                if (key.startsWith(`${sessionId}:`)) {
+                    sessions.delete(key)
+                }
+            }
         },
     }
 }

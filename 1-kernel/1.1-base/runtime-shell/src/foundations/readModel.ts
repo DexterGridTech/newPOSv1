@@ -1,6 +1,7 @@
 import type {
     ErrorCatalogEntry,
     ParameterCatalogEntry,
+    ProjectionMirrorEnvelope,
     RequestId,
     RequestProjection,
     RuntimeInstanceId,
@@ -76,11 +77,30 @@ export const createRuntimeReadModel = (
                 }),
             )
         },
+        applyProjectionMirror(envelope: ProjectionMirrorEnvelope) {
+            const current = readState().requestProjections[envelope.projection.requestId]
+            if (current && current.updatedAt > envelope.projection.updatedAt) {
+                return
+            }
+
+            store.dispatch(
+                runtimeShellStateActions.setRequestProjection({
+                    requestId: envelope.projection.requestId,
+                    projection: envelope.projection,
+                }),
+            )
+        },
         setErrorCatalogEntry(entry: ErrorCatalogEntry) {
             store.dispatch(runtimeShellStateActions.setErrorCatalogEntry(entry))
         },
+        removeErrorCatalogEntry(key: string) {
+            store.dispatch(runtimeShellStateActions.removeErrorCatalogEntry(key))
+        },
         setParameterCatalogEntry(entry: ParameterCatalogEntry) {
             store.dispatch(runtimeShellStateActions.setParameterCatalogEntry(entry))
+        },
+        removeParameterCatalogEntry(key: string) {
+            store.dispatch(runtimeShellStateActions.removeParameterCatalogEntry(key))
         },
     }
 }

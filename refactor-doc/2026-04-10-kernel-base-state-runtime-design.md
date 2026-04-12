@@ -255,7 +255,47 @@
 
 1. 业务 state 的跨机同步，继续保留顶层 `updatedAt` 比较思路
 2. `workspace / instanceMode` scope helper 继续保留
-3. request/control-plane 正确性不再依赖这套同步
+3. `displayMode` 也允许进入 scoped helper，但不强行塞进全局 command route contract
+4. request/control-plane 正确性不再依赖这套同步
+
+### 10.2A scoped helper 已落地能力
+
+当前 `state-runtime` 已正式提供：
+
+1. `createWorkspaceStateKeys`
+2. `createInstanceModeStateKeys`
+3. `createDisplayModeStateKeys`
+4. `createScopedStateDescriptors`
+5. `createScopedActionType`
+6. `createScopedDispatchAction`
+7. `createWorkspaceActionDispatcher`
+8. `createInstanceModeActionDispatcher`
+9. `createDisplayModeActionDispatcher`
+10. `getScopedStateKey`
+11. `createScopedStateSlice`
+12. `createWorkspaceStateSlice`
+13. `createInstanceModeStateSlice`
+14. `createDisplayModeStateSlice`
+15. `toScopedSliceDescriptors`
+16. `toWorkspaceStateDescriptors`
+17. `toInstanceModeStateDescriptors`
+18. `toDisplayModeStateDescriptors`
+
+这些 helper 的语义边界已经明确：
+
+1. `create*StateSlice` 只负责按 scope 展开多个 reducer/slice name，并复用同一组 action creator。
+2. 这些 action creator 的 `type` 必须保持未 scoped 的 base slice action type，交给 routeContext/scoped dispatcher 去做最终重写。
+3. 原因是旧业务长期依赖“先拿基础 action，再按 workspace / instanceMode 路由改写”的模式；如果 action 自身先带 scope，会产生双 scope 拼接错误。
+4. `to*StateDescriptors` 只负责把展开后的 reducer 注册成 `StateRuntimeSliceDescriptor`。
+5. `persistIntent / syncIntent / persistence / sync` 既支持统一值，也支持按 scope value 单独覆盖。
+6. 对象型 `sync` 配置例如 `{kind: 'record'}` 必须按“单个正式值”处理，不能误判成 scope map。
+7. scope map 只有在对象 key 全部命中当前 `values` 时，才视为按 scope 配置。
+
+当前约束：
+
+1. scoped helper 只处理 key/path/action type 重写，不读取 topology 真相。
+2. `workspace / instanceMode` 可以直接由 command route context 提供。
+3. `displayMode` 若要参与 scoped dispatch，由上层显式传入 scope value，不为了它扩大全局 command route contract。
 
 ### 10.3 清空语义
 

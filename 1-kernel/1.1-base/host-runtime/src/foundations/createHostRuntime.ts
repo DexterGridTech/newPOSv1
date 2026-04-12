@@ -12,6 +12,7 @@ import {createRelayRegistry} from './relay'
 import {createSessionRegistry} from './sessions'
 import {createTicketRegistry} from './tickets'
 import {evaluateHostCompatibility} from './compatibility'
+import {hostRuntimeParameterDefinitions} from '../supports'
 import type {
     AttachHostConnectionInput,
     BeginHostResumeInput,
@@ -79,10 +80,11 @@ export const createHostRuntime = (
     const faults = createHostFaultRegistry()
     const observability = createHostObservability({
         logger,
-        maxEvents: input.maxObservationEvents ?? 200,
+        maxEvents: input.maxObservationEvents ?? hostRuntimeParameterDefinitions.maxObservationEvents.defaultValue,
     })
 
-    const heartbeatTimeoutMs = input.heartbeatTimeoutMs ?? 15_000
+    const heartbeatTimeoutMs =
+        input.heartbeatTimeoutMs ?? hostRuntimeParameterDefinitions.heartbeatTimeoutMs.defaultValue
 
     const syncPendingCount = (sessionId: string, updatedAt: number) => {
         sessions.updateRelayPending(sessionId as any, relay.pendingCount(sessionId as any), updatedAt)

@@ -1,10 +1,35 @@
 import type {StateScopeAxis, StateScopeDescriptor} from '../types'
 import type {StateRuntimeSliceDescriptor} from '../types'
+import type {UnknownAction} from '@reduxjs/toolkit'
+
+export const createModuleStateKeys = <TModuleName extends string, TKey extends string>(
+    moduleName: TModuleName,
+    keys: readonly TKey[],
+) => {
+    return Object.fromEntries(
+        keys.map(key => [key, `${moduleName}.${key}`]),
+    ) as {[K in TKey]: `${TModuleName}.${K}`}
+}
 
 export const createScopedStateKey = (
     baseKey: string,
     scope: StateScopeDescriptor,
 ) => `${baseKey}.${scope.value}`
+
+export const createModuleWorkspaceStateKeys = <TModuleName extends string, TKey extends string>(
+    moduleName: TModuleName,
+    keys: readonly TKey[],
+) => createModuleStateKeys(moduleName, keys)
+
+export const createModuleInstanceModeStateKeys = <TModuleName extends string, TKey extends string>(
+    moduleName: TModuleName,
+    keys: readonly TKey[],
+) => createModuleStateKeys(moduleName, keys)
+
+export const createModuleDisplayModeStateKeys = <TModuleName extends string, TKey extends string>(
+    moduleName: TModuleName,
+    keys: readonly TKey[],
+) => createModuleStateKeys(moduleName, keys)
 
 export const createScopedStatePath = (
     baseKey: string,
@@ -64,3 +89,77 @@ export const getScopedStateKey = (
     baseKey: string,
     scopes: readonly StateScopeDescriptor[],
 ) => createScopedStatePath(baseKey, scopes)
+
+const splitActionType = (actionType: string) => {
+    const slashIndex = actionType.lastIndexOf('/')
+    if (slashIndex === -1) {
+        throw new Error(`[createScopedActionType] invalid action type: ${actionType}`)
+    }
+
+    return {
+        sliceType: actionType.slice(0, slashIndex),
+        actionName: actionType.slice(slashIndex),
+    }
+}
+
+export const createScopedActionType = (
+    actionType: string,
+    scope: StateScopeDescriptor,
+) => {
+    const {sliceType, actionName} = splitActionType(actionType)
+    return `${createScopedStateKey(sliceType, scope)}${actionName}`
+}
+
+export const createScopedDispatchAction = <TAction extends UnknownAction>(
+    action: TAction,
+    scope: StateScopeDescriptor,
+) => ({
+    ...action,
+    type: createScopedActionType(action.type, scope),
+})
+
+interface ScopedActionDispatcherInput {
+    dispatch: (action: UnknownAction) => unknown
+    routeContext?: Partial<Record<StateScopeAxis, string>>
+}
+
+const createAxisActionDispatcher = (
+    axis: StateScopeAxis,
+    errorFactory: () => string,
+    input: ScopedActionDispatcherInput,
+) => {
+    const value = input.routeContext?.[axis]
+    if (!value) {
+        throw new Error(errorFactory())
+    }
+
+    return <TAction extends UnknownAction>(action: TAction) =>
+        input.dispatch(createScopedDispatchAction(action, {
+            axis,
+            value,
+        }))
+}
+
+export const createWorkspaceActionDispatcher = (
+    input: ScopedActionDispatcherInput,
+) => createAxisActionDispatcher(
+    'workspace',
+    () => '[createWorkspaceActionDispatcher] routeContext.workspace is required',
+    input,
+)
+
+export const createInstanceModeActionDispatcher = (
+    input: ScopedActionDispatcherInput,
+) => createAxisActionDispatcher(
+    'instanceMode',
+    () => '[createInstanceModeActionDispatcher] routeContext.instanceMode is required',
+    input,
+)
+
+export const createDisplayModeActionDispatcher = (
+    input: ScopedActionDispatcherInput,
+) => createAxisActionDispatcher(
+    'displayMode',
+    () => '[createDisplayModeActionDispatcher] routeContext.displayMode is required',
+    input,
+)

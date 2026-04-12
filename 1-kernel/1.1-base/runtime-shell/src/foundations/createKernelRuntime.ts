@@ -12,35 +12,53 @@ import type {
     CommandDispatchEnvelope,
     CommandEventEnvelope,
     ErrorCatalogEntry,
-    ErrorDefinition,
     ParameterCatalogEntry,
+    ParameterDefinition,
+    ProjectionMirrorEnvelope,
     RequestId,
+    ResolvedErrorView,
+    ResolvedParameter,
     SessionId,
     StateSyncDiffEnvelope,
 } from '@impos2/kernel-base-contracts'
-import {createDefinitionRegistryBundle} from '@impos2/kernel-base-definition-registry'
+import {
+    createDefinitionRegistryBundle,
+    createDefinitionResolverBundle,
+} from '@impos2/kernel-base-definition-registry'
 import {
     createExecutionCommand,
     createExecutionRuntime,
     createInternalExecutionCommand,
+    executionRuntimeErrorDefinitionList,
     type ExecutionContext,
     type ExecutionHandler,
     type ExecutionResult,
 } from '@impos2/kernel-base-execution-runtime'
 import type {ExecutionLifecycleEvent} from '@impos2/kernel-base-execution-runtime'
-import {createTopologyRuntime} from '@impos2/kernel-base-topology-runtime'
+import {
+    createTopologyRuntime,
+    topologyRuntimeErrorDefinitionList,
+} from '@impos2/kernel-base-topology-runtime'
 import {
     applySliceSyncDiff,
     createStateRuntime,
+    stateRuntimeErrorDefinitionList,
+    stateRuntimeParameterDefinitionList,
 } from '@impos2/kernel-base-state-runtime'
 import {createRuntimeReadModel} from './readModel'
 import {resolveRuntimeModules} from './moduleResolver'
+import {
+    runtimeShellErrorDefinitionList,
+    runtimeShellErrorDefinitions,
+} from '../supports'
 import type {
     DispatchRuntimeCommandInput,
+    KernelRuntimeActorHandler,
     KernelRuntimeHandler,
     KernelRuntimeModule,
     RuntimeModuleContext,
 } from '../types/module'
+import {runtimeShellCommandNames} from '../features/commands'
 import type {
     CreateKernelRuntimeInput,
     CreateRemoteDispatchEnvelopeInput,
@@ -48,15 +66,6 @@ import type {
     HandleRemoteDispatchResult,
     KernelRuntime,
 } from '../types/runtime'
-
-const KERNEL_RUNTIME_EXECUTE_FAILED_ERROR: ErrorDefinition = {
-    key: 'kernel.base.runtime-shell.execute_failed',
-    name: 'Kernel Runtime Execute Failed',
-    defaultTemplate: 'Kernel runtime failed to execute ${commandName}',
-    category: 'SYSTEM',
-    severity: 'HIGH',
-    moduleName: 'kernel.base.runtime-shell',
-}
 
 const toCatalogErrorEntry = (
     definition: NonNullable<AppModule['errorDefinitions']>[number],
@@ -128,7 +137,25 @@ export const createKernelRuntime = (
         slices: appStateSlices,
     })
     const moduleContexts = new Map<string, RuntimeModuleContext>()
+    const actorHandlers = new Map<string, Array<{
+        moduleName: string
+        handler: KernelRuntimeActorHandler
+    }>>()
     let started = false
+    const internalErrorDefinitions = [
+        ...executionRuntimeErrorDefinitionList,
+        ...stateRuntimeErrorDefinitionList,
+        ...topologyRuntimeErrorDefinitionList,
+        ...runtimeShellErrorDefinitionList,
+    ]
+    const internalParameterDefinitions = [
+        ...stateRuntimeParameterDefinitionList,
+    ]
+
+    const createResolverBundle = () => createDefinitionResolverBundle(registries, {
+        errorCatalog: readModel.getState().errorCatalog,
+        parameterCatalog: readModel.getState().parameterCatalog,
+    })
 
     const syncProjection = (requestId: RequestId) => {
         const projection = topology.getRequestProjection(requestId)
@@ -166,6 +193,10 @@ export const createKernelRuntime = (
                 : undefined,
             occurredAt: event.occurredAt,
         })
+    }
+
+    const applyProjectionMirror = (envelope: ProjectionMirrorEnvelope) => {
+        readModel.applyProjectionMirror(envelope)
     }
 
     const buildRootCommand = <TPayload>(
@@ -212,7 +243,7 @@ export const createKernelRuntime = (
         try {
             result = await execution.execute(command)
         } catch (error) {
-            const appError = createAppError(KERNEL_RUNTIME_EXECUTE_FAILED_ERROR, {
+            const appError = createAppError(runtimeShellErrorDefinitions.executeFailed, {
                 args: {commandName: command.commandName},
                 context: {
                     commandName: command.commandName,
@@ -313,6 +344,7 @@ export const createKernelRuntime = (
             getState: () => appStateRuntime.getState(),
             getStore: () => appStateRuntime.getStore(),
             dispatchAction: action => appStateRuntime.getStore().dispatch(action),
+            subscribeState: listener => appStateRuntime.getStore().subscribe(listener),
             createRemoteDispatchEnvelope,
             handleRemoteDispatch,
             applyRemoteCommandEvent,
@@ -320,8 +352,17 @@ export const createKernelRuntime = (
                 topology.applyRequestLifecycleSnapshot(snapshot)
                 syncProjection(snapshot.requestId)
             },
+            applyProjectionMirror,
             getRequestProjection: requestId => readModel.getState().requestProjections[requestId],
             listTrackedRequestIds: filter => topology.listTrackedRequestIds(filter),
+            resolveParameter: inputValue => {
+                if (inputValue.definition) {
+                    return createResolverBundle().resolveParameter({
+                        definition: inputValue.definition as ParameterDefinition<unknown>,
+                    }) as ResolvedParameter<any>
+                }
+                return createResolverBundle().resolveParameterByKey(inputValue.key) as ResolvedParameter<any>
+            },
             getSyncSlices: () => appStateRuntime.getSlices().filter(slice => Boolean(slice.sync)),
             applyStateSyncDiff: envelope => {
                 const state = appStateRuntime.getState() as Record<string, unknown>
@@ -349,10 +390,99 @@ export const createKernelRuntime = (
                     appStateRuntime.applySlicePatches(nextSlices)
                 }
             },
+            publishActor: async inputValue => {
+                const handlers = actorHandlers.get(inputValue.actorName) ?? []
+                if (handlers.length === 0) {
+                    return
+                }
+
+                for (const actor of handlers) {
+                    try {
+                        await actor.handler({
+                            ...buildModuleContext(modules.find(item => item.moduleName === actor.moduleName)!),
+                            actorName: inputValue.actorName,
+                            payload: inputValue.payload,
+                        })
+                    } catch (error) {
+                        throw createAppError(runtimeShellErrorDefinitions.actorPublishFailed, {
+                            args: {actorName: inputValue.actorName},
+                            context: {
+                                nodeId: input.localNodeId,
+                            },
+                            details: {
+                                moduleName: actor.moduleName,
+                            },
+                            cause: error,
+                        })
+                    }
+                }
+            },
         }
 
         moduleContexts.set(module.moduleName, context)
         return context
+    }
+
+    const registerReadModelHandlers = () => {
+        execution.registerHandler(
+            runtimeShellCommandNames.upsertErrorCatalogEntries,
+            async executionContext => {
+                const payload = (executionContext.command.payload ?? {}) as {
+                    entries?: readonly ErrorCatalogEntry[]
+                }
+                payload.entries?.forEach(entry => {
+                    readModel.setErrorCatalogEntry(entry)
+                })
+                return {
+                    count: payload.entries?.length ?? 0,
+                }
+            },
+        )
+
+        execution.registerHandler(
+            runtimeShellCommandNames.removeErrorCatalogEntries,
+            async executionContext => {
+                const payload = (executionContext.command.payload ?? {}) as {
+                    keys?: readonly string[]
+                }
+                payload.keys?.forEach(key => {
+                    readModel.removeErrorCatalogEntry(key)
+                })
+                return {
+                    count: payload.keys?.length ?? 0,
+                }
+            },
+        )
+
+        execution.registerHandler(
+            runtimeShellCommandNames.upsertParameterCatalogEntries,
+            async executionContext => {
+                const payload = (executionContext.command.payload ?? {}) as {
+                    entries?: readonly ParameterCatalogEntry[]
+                }
+                payload.entries?.forEach(entry => {
+                    readModel.setParameterCatalogEntry(entry)
+                })
+                return {
+                    count: payload.entries?.length ?? 0,
+                }
+            },
+        )
+
+        execution.registerHandler(
+            runtimeShellCommandNames.removeParameterCatalogEntries,
+            async executionContext => {
+                const payload = (executionContext.command.payload ?? {}) as {
+                    keys?: readonly string[]
+                }
+                payload.keys?.forEach(key => {
+                    readModel.removeParameterCatalogEntry(key)
+                })
+                return {
+                    count: payload.keys?.length ?? 0,
+                }
+            },
+        )
     }
 
     const registerModuleHandler = (
@@ -410,6 +540,19 @@ export const createKernelRuntime = (
         }
 
         execution.registerHandler(commandName, wrappedHandler)
+    }
+
+    const registerModuleActor = (
+        module: KernelRuntimeModule,
+        actorName: string,
+        handler: KernelRuntimeActorHandler,
+    ) => {
+        const current = actorHandlers.get(actorName) ?? []
+        current.push({
+            moduleName: module.moduleName,
+            handler,
+        })
+        actorHandlers.set(actorName, current)
     }
 
     const execute = async <TPayload = unknown>(
@@ -555,6 +698,7 @@ export const createKernelRuntime = (
         await topology.hydrate()
         await appStateRuntime.hydratePersistence()
         await readModel.hydrate()
+        registerReadModelHandlers()
 
         input.platformPorts.logger.info({
             category: 'runtime.load',
@@ -600,6 +744,24 @@ export const createKernelRuntime = (
             })
         }
 
+        internalErrorDefinitions.forEach(definition => {
+            if (!registries.errors.has(definition.key)) {
+                registries.errors.register(definition)
+            }
+            if (!readModel.getState().errorCatalog[definition.key]) {
+                readModel.setErrorCatalogEntry(toCatalogErrorEntry(definition))
+            }
+        })
+
+        internalParameterDefinitions.forEach(definition => {
+            if (!registries.parameters.has(definition.key)) {
+                registries.parameters.register(definition)
+            }
+            if (!readModel.getState().parameterCatalog[definition.key]) {
+                readModel.setParameterCatalogEntry(toCatalogParameterEntry(definition))
+            }
+        })
+
         input.platformPorts.logger.info({
             category: 'runtime.load',
             event: 'kernel-runtime-host-bootstrap',
@@ -641,6 +803,9 @@ export const createKernelRuntime = (
                 ...buildModuleContext(module),
                 registerHandler(commandName, handler) {
                     registerModuleHandler(module, commandName, handler)
+                },
+                registerActor(actorName, handler) {
+                    registerModuleActor(module, actorName, handler)
                 },
             })
         }
@@ -696,6 +861,7 @@ export const createKernelRuntime = (
             topology.applyRequestLifecycleSnapshot(snapshot)
             syncProjection(snapshot.requestId)
         },
+        applyProjectionMirror,
         listTrackedRequestIds(inputFilter) {
             return topology.listTrackedRequestIds(inputFilter)
         },
@@ -713,6 +879,35 @@ export const createKernelRuntime = (
         },
         getParameterCatalogEntry(key) {
             return readModel.getState().parameterCatalog[key]
+        },
+        resolveError(key) {
+            ensureStarted()
+            return createResolverBundle().resolveErrorByKey({key})
+        },
+        resolveAppError(inputValue) {
+            ensureStarted()
+            const definition = registries.errors.get(inputValue.key)
+            const appError: AppError = {
+                name: definition?.name ?? inputValue.key,
+                key: inputValue.key,
+                code: inputValue.code ?? definition?.code ?? inputValue.key,
+                message: inputValue.message ?? definition?.defaultTemplate ?? inputValue.key,
+                category: definition?.category ?? 'UNKNOWN',
+                severity: definition?.severity ?? 'MEDIUM',
+                createdAt: nowTimestampMs(),
+                details: inputValue.details,
+                args: inputValue.args,
+            }
+            return createResolverBundle().resolveAppError({appError})
+        },
+        resolveParameter(inputValue) {
+            ensureStarted()
+            if (inputValue.definition) {
+                return createResolverBundle().resolveParameter({
+                    definition: inputValue.definition as ParameterDefinition<unknown>,
+                }) as ResolvedParameter<any>
+            }
+            return createResolverBundle().resolveParameterByKey(inputValue.key) as ResolvedParameter<any>
         },
         getSubsystems() {
             return {

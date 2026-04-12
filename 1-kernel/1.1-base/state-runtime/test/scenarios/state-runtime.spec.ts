@@ -1,21 +1,34 @@
 import {describe, expect, it} from 'vitest'
 import {createSlice} from '@reduxjs/toolkit'
 import {
+    createModuleDisplayModeStateKeys,
+    createModuleInstanceModeStateKeys,
+    createModuleStateKeys,
+    createModuleWorkspaceStateKeys,
+    createDisplayModeActionDispatcher,
     createDisplayModeStateKeys,
+    createInstanceModeActionDispatcher,
     createInstanceModeStateKeys,
+    createScopedActionType,
+    createScopedDispatchAction,
+    createWorkspaceStateSlice,
     createScopedStateKey,
     createScopedStateDescriptors,
     createScopedStateKeys,
     createScopedStatePath,
     createSliceSyncDiff,
+    createProtectedPersistenceStorageMissingError,
     applySliceSyncDiff,
     createSliceSyncSummary,
     createStateRuntime,
     createSyncStateSummary,
     createSyncTombstone,
+    toWorkspaceStateDescriptors,
+    createWorkspaceActionDispatcher,
     createWorkspaceStateKeys,
     getScopedStateKey,
     mergeSyncRecordState,
+    stateRuntimeParameterDefinitions,
     type RootState,
     type StateRuntimeSliceDescriptor,
     type ValueWithUpdatedAt,
@@ -309,6 +322,69 @@ describe('state-runtime store assembly', () => {
         expect(secure.saved.get('state-runtime-secure-test:kernel.base.state-runtime.test.secure:accessToken')).toBe(JSON.stringify('token-1'))
     })
 
+    it('throws a structured error when protected persistence storage is missing', async () => {
+        const secureSlice = createSlice({
+            name: 'kernel.base.state-runtime.test.secure-missing',
+            initialState: {
+                accessToken: 'seed',
+            },
+            reducers: {
+                setToken(state, action: {payload: string}) {
+                    state.accessToken = action.payload
+                },
+            },
+        })
+
+        const runtime = createStateRuntime({
+            runtimeName: 'state-runtime-secure-missing',
+            slices: [
+                {
+                    name: secureSlice.name,
+                    reducer: secureSlice.reducer,
+                    persistIntent: 'owner-only',
+                    syncIntent: 'isolated',
+                    persistence: [
+                        {
+                            kind: 'field',
+                            stateKey: 'accessToken',
+                            protection: 'protected',
+                            flushMode: 'immediate',
+                        },
+                    ],
+                },
+            ],
+            logger: createTestLogger() as any,
+            allowPersistence: true,
+            persistenceKey: 'state-runtime-secure-missing-test',
+            stateStorage: createMemoryStorage().storage,
+        })
+
+        await expect(runtime.hydratePersistence()).rejects.toMatchObject({
+            key: 'kernel.base.state-runtime.protected_persistence_storage_missing',
+            args: {
+                runtimeName: 'state-runtime-secure-missing',
+            },
+            details: {
+                phase: 'hydrate',
+                sliceName: secureSlice.name,
+            },
+        })
+    })
+
+    it('exposes state runtime persistence defaults through parameter definitions', () => {
+        expect(stateRuntimeParameterDefinitions.persistenceDebounceMs.defaultValue).toBe(16)
+        expect(stateRuntimeParameterDefinitions.persistenceDebounceMs.validate?.(16)).toBe(true)
+        expect(stateRuntimeParameterDefinitions.persistenceDebounceMs.validate?.(-1)).toBe(false)
+
+        const appError = createProtectedPersistenceStorageMissingError('state-runtime-test')
+        expect(appError).toMatchObject({
+            key: 'kernel.base.state-runtime.protected_persistence_storage_missing',
+            args: {
+                runtimeName: 'state-runtime-test',
+            },
+        })
+    })
+
     it('applies slice patches through the formal runtime API', async () => {
         const slice = createSlice({
             name: 'kernel.base.state-runtime.test.patchable',
@@ -378,6 +454,23 @@ describe('state-runtime store assembly', () => {
     })
 
     it('builds scoped keys without implicit string concatenation in callers', () => {
+        expect(createModuleStateKeys('kernel.user.state', ['profile', 'session'] as const)).toEqual({
+            profile: 'kernel.user.state.profile',
+            session: 'kernel.user.state.session',
+        })
+        expect(createModuleWorkspaceStateKeys('kernel.user.state', ['order', 'draft'] as const)).toEqual({
+            order: 'kernel.user.state.order',
+            draft: 'kernel.user.state.draft',
+        })
+        expect(createModuleInstanceModeStateKeys('kernel.user.state', ['terminal', 'admin'] as const)).toEqual({
+            terminal: 'kernel.user.state.terminal',
+            admin: 'kernel.user.state.admin',
+        })
+        expect(createModuleDisplayModeStateKeys('kernel.user.state', ['primary', 'secondary'] as const)).toEqual({
+            primary: 'kernel.user.state.primary',
+            secondary: 'kernel.user.state.secondary',
+        })
+
         expect(createScopedStateKey('kernel.user.state', {
             axis: 'workspace',
             value: 'main',
@@ -414,6 +507,93 @@ describe('state-runtime store assembly', () => {
         ])).toBe('kernel.user.state.MASTER.main')
     })
 
+    it('rewrites action types to scoped slice action types from route context', () => {
+        const action = {
+            type: 'kernel.user.state/setReady',
+            payload: {ready: true},
+        }
+
+        expect(createScopedActionType(action.type, {
+            axis: 'workspace',
+            value: 'branch',
+        })).toBe('kernel.user.state.branch/setReady')
+
+        expect(createScopedDispatchAction(action, {
+            axis: 'instanceMode',
+            value: 'SLAVE',
+        })).toEqual({
+            type: 'kernel.user.state.SLAVE/setReady',
+            payload: {ready: true},
+        })
+    })
+
+    it('creates workspace and instance scoped action dispatchers from command route context', () => {
+        const dispatchCalls: unknown[] = []
+        const dispatch = (action: unknown) => {
+            dispatchCalls.push(action)
+            return action
+        }
+
+        const dispatchWorkspaceAction = createWorkspaceActionDispatcher({
+            dispatch,
+            routeContext: {
+                workspace: 'branch',
+            },
+        })
+        const dispatchInstanceModeAction = createInstanceModeActionDispatcher({
+            dispatch,
+            routeContext: {
+                instanceMode: 'SLAVE',
+            },
+        })
+        const dispatchDisplayModeAction = createDisplayModeActionDispatcher({
+            dispatch,
+            routeContext: {
+                displayMode: 'SECONDARY',
+            },
+        })
+
+        dispatchWorkspaceAction({
+            type: 'kernel.user.state/setReady',
+            payload: {ready: true},
+        })
+        dispatchInstanceModeAction({
+            type: 'kernel.user.state/setReady',
+            payload: {ready: false},
+        })
+        dispatchDisplayModeAction({
+            type: 'kernel.user.state/setVisible',
+            payload: {visible: true},
+        })
+
+        expect(dispatchCalls).toEqual([
+            {
+                type: 'kernel.user.state.branch/setReady',
+                payload: {ready: true},
+            },
+            {
+                type: 'kernel.user.state.SLAVE/setReady',
+                payload: {ready: false},
+            },
+            {
+                type: 'kernel.user.state.SECONDARY/setVisible',
+                payload: {visible: true},
+            },
+        ])
+    })
+
+    it('throws explicit errors when scoped dispatch route context is missing', () => {
+        expect(() => createWorkspaceActionDispatcher({
+            dispatch: action => action,
+            routeContext: {},
+        })).toThrowError('[createWorkspaceActionDispatcher] routeContext.workspace is required')
+
+        expect(() => createInstanceModeActionDispatcher({
+            dispatch: action => action,
+            routeContext: {},
+        })).toThrowError('[createInstanceModeActionDispatcher] routeContext.instanceMode is required')
+    })
+
     it('expands scoped state descriptors from a base descriptor factory', () => {
         const descriptors = createScopedStateDescriptors({
             baseName: 'kernel.user.state',
@@ -436,6 +616,230 @@ describe('state-runtime store assembly', () => {
                 name: 'kernel.user.state.branch',
                 persistIntent: 'never',
                 syncIntent: 'isolated',
+            },
+        ])
+    })
+
+    it('creates workspace scoped slices and descriptors for future business modules', () => {
+        const slice = createWorkspaceStateSlice({
+            baseName: 'kernel.user.state.order',
+            values: ['MAIN', 'BRANCH'] as const,
+            initialState: {
+                orderType: {value: 'active', updatedAt: 0},
+            },
+            reducers: {
+                setOrderType(state, action: {payload: {value: string; updatedAt: number}}) {
+                    state.orderType = action.payload
+                },
+            },
+        })
+
+        expect(slice.sliceNames).toEqual({
+            MAIN: 'kernel.user.state.order.MAIN',
+            BRANCH: 'kernel.user.state.order.BRANCH',
+        })
+
+        const descriptors = toWorkspaceStateDescriptors(['MAIN', 'BRANCH'] as const, {
+            name: slice.name,
+            reducers: slice.reducers,
+            persistIntent: 'owner-only',
+            syncIntent: {
+                MAIN: 'master-to-slave',
+                BRANCH: 'slave-to-master',
+            },
+        })
+
+        expect(descriptors).toEqual([
+            {
+                name: 'kernel.user.state.order.MAIN',
+                reducer: slice.reducers.MAIN,
+                persistIntent: 'owner-only',
+                syncIntent: 'master-to-slave',
+                persistence: undefined,
+                sync: undefined,
+            },
+            {
+                name: 'kernel.user.state.order.BRANCH',
+                reducer: slice.reducers.BRANCH,
+                persistIntent: 'owner-only',
+                syncIntent: 'slave-to-master',
+                persistence: undefined,
+                sync: undefined,
+            },
+        ])
+    })
+
+    it('treats object-shaped sync descriptors as plain values instead of scope maps', () => {
+        const slice = createWorkspaceStateSlice({
+            baseName: 'kernel.user.state.syncable',
+            values: ['MAIN', 'BRANCH'] as const,
+            initialState: {
+                items: {},
+            },
+            reducers: {},
+        })
+
+        const descriptors = toWorkspaceStateDescriptors(['MAIN', 'BRANCH'] as const, {
+            name: slice.name,
+            reducers: slice.reducers,
+            sync: {
+                kind: 'record',
+            },
+        })
+
+        expect(descriptors).toEqual([
+            {
+                name: 'kernel.user.state.syncable.MAIN',
+                reducer: slice.reducers.MAIN,
+                persistIntent: 'never',
+                syncIntent: 'isolated',
+                persistence: undefined,
+                sync: {
+                    kind: 'record',
+                },
+            },
+            {
+                name: 'kernel.user.state.syncable.BRANCH',
+                reducer: slice.reducers.BRANCH,
+                persistIntent: 'never',
+                syncIntent: 'isolated',
+                persistence: undefined,
+                sync: {
+                    kind: 'record',
+                },
+            },
+        ])
+    })
+
+    it('supports old business-style workspace scoped selectors without global getters', async () => {
+        interface OrderCreationState {
+            orderCreationType: ValueWithUpdatedAt<string | undefined>
+            selectedPayingOrder: ValueWithUpdatedAt<string | null>
+        }
+
+        const slice = createWorkspaceStateSlice({
+            baseName: 'kernel.trade.state.orderCreation',
+            values: ['MAIN', 'BRANCH'] as const,
+            initialState: {
+                orderCreationType: {
+                    value: undefined,
+                    updatedAt: 0 as any,
+                },
+                selectedPayingOrder: {
+                    value: null,
+                    updatedAt: 0 as any,
+                },
+            } satisfies OrderCreationState,
+            reducers: {
+                setOrderCreationType(state, action: {payload: ValueWithUpdatedAt<string>}) {
+                    state.orderCreationType = action.payload
+                },
+                setSelectedPayingOrder(state, action: {payload: ValueWithUpdatedAt<string | null>}) {
+                    state.selectedPayingOrder = action.payload
+                },
+            },
+        })
+
+        const runtime = createStateRuntime({
+            runtimeName: 'state-runtime-workspace-business-selector',
+            slices: toWorkspaceStateDescriptors(['MAIN', 'BRANCH'] as const, {
+                name: slice.name,
+                reducers: slice.reducers,
+                persistIntent: 'never',
+                syncIntent: 'master-to-slave',
+            }),
+            logger: createTestLogger() as any,
+        })
+
+        await runtime.hydratePersistence()
+        const dispatchBranchAction = createWorkspaceActionDispatcher({
+            dispatch: action => runtime.getStore().dispatch(action),
+            routeContext: {
+                workspace: 'BRANCH',
+            },
+        })
+
+        dispatchBranchAction(slice.actions.setOrderCreationType({
+            value: 'refund',
+            updatedAt: 10 as any,
+        }))
+        dispatchBranchAction(slice.actions.setSelectedPayingOrder({
+            value: 'PAY-1',
+            updatedAt: 11 as any,
+        }))
+
+        const selectOrderCreationState = (
+            state: Record<string, unknown>,
+            workspace: string,
+        ) => {
+            const stateKey = getScopedStateKey(slice.name, [{
+                axis: 'workspace',
+                value: workspace,
+            }])
+            return state[stateKey] as OrderCreationState | undefined
+        }
+
+        const state = runtime.getState() as Record<string, unknown>
+        const branchOrderCreationState = selectOrderCreationState(state, 'BRANCH')
+        const mainOrderCreationState = selectOrderCreationState(state, 'MAIN')
+
+        expect(branchOrderCreationState?.orderCreationType.value).toBe('refund')
+        expect(branchOrderCreationState?.selectedPayingOrder.value).toBe('PAY-1')
+        expect(mainOrderCreationState?.orderCreationType.value).toBeUndefined()
+        expect(mainOrderCreationState?.selectedPayingOrder.value).toBeNull()
+    })
+
+    it('supports old business-style ValueWithUpdatedAt record filtering', () => {
+        interface PaymentFunction {
+            key: string
+            instanceMode: readonly string[]
+        }
+
+        const paymentFunctionState: Record<string, ValueWithUpdatedAt<PaymentFunction | undefined>> = {
+            cash: {
+                value: {
+                    key: 'cash',
+                    instanceMode: ['MASTER', 'SLAVE'],
+                },
+                updatedAt: 1 as any,
+            },
+            card: {
+                value: {
+                    key: 'card',
+                    instanceMode: ['MASTER'],
+                },
+                updatedAt: 2 as any,
+            },
+            disabled: {
+                value: undefined,
+                updatedAt: 3 as any,
+            },
+        }
+
+        const selectPaymentFunctions = (
+            state: Record<string, ValueWithUpdatedAt<PaymentFunction | undefined>>,
+            currentInstanceMode: string,
+        ) => Object.values(state)
+            .map(wrapper => wrapper.value)
+            .filter((paymentFunction): paymentFunction is PaymentFunction =>
+                paymentFunction != null && Array.isArray(paymentFunction.instanceMode),
+            )
+            .filter(paymentFunction => paymentFunction.instanceMode.includes(currentInstanceMode))
+
+        expect(selectPaymentFunctions(paymentFunctionState, 'SLAVE')).toEqual([
+            {
+                key: 'cash',
+                instanceMode: ['MASTER', 'SLAVE'],
+            },
+        ])
+        expect(selectPaymentFunctions(paymentFunctionState, 'MASTER')).toEqual([
+            {
+                key: 'cash',
+                instanceMode: ['MASTER', 'SLAVE'],
+            },
+            {
+                key: 'card',
+                instanceMode: ['MASTER'],
             },
         ])
     })

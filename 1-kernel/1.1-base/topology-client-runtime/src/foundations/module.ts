@@ -1,5 +1,4 @@
 import {createAppError, nowTimestampMs} from '@impos2/kernel-base-contracts'
-import type {ErrorDefinition} from '@impos2/kernel-base-contracts'
 import type {KernelRuntimeModule} from '@impos2/kernel-base-runtime-shell'
 import {topologyClientCommandNames} from '../features/commands'
 import {topologyClientStateActions, topologyClientStateSlices} from '../features/slices'
@@ -15,24 +14,11 @@ import type {
     SetTopologyInstanceModeInput,
     SetTopologyMasterInfoInput,
 } from '../types'
-
-const TOPOLOGY_CLIENT_SESSION_UNAVAILABLE_ERROR: ErrorDefinition = {
-    key: 'kernel.base.topology-client-runtime.session_unavailable',
-    name: 'Topology Client Session Unavailable',
-    defaultTemplate: 'Topology client session is not available for remote command ${commandName}',
-    category: 'NETWORK',
-    severity: 'HIGH',
-    moduleName,
-}
-
-const TOPOLOGY_CLIENT_ASSEMBLY_REQUIRED_ERROR: ErrorDefinition = {
-    key: 'kernel.base.topology-client-runtime.assembly_required',
-    name: 'Topology Client Assembly Required',
-    defaultTemplate: 'Topology client assembly is required for command ${commandName}',
-    category: 'SYSTEM',
-    severity: 'HIGH',
-    moduleName,
-}
+import {
+    topologyClientErrorDefinitionList,
+    topologyClientErrorDefinitions,
+    topologyClientParameterDefinitionList,
+} from '../supports'
 
 export const createTopologyClientRuntimeModule = (
     input: CreateTopologyClientRuntimeModuleInput = {},
@@ -87,10 +73,8 @@ export const createTopologyClientRuntimeModule = (
                 visibility: 'public',
             },
         ],
-        errorDefinitions: [
-            TOPOLOGY_CLIENT_SESSION_UNAVAILABLE_ERROR,
-            TOPOLOGY_CLIENT_ASSEMBLY_REQUIRED_ERROR,
-        ],
+        errorDefinitions: topologyClientErrorDefinitionList,
+        parameterDefinitions: topologyClientParameterDefinitionList,
         install(context) {
             const syncTopologyContext = () => {
                 const topologyContext = createTopologyClientContext({
@@ -174,7 +158,7 @@ export const createTopologyClientRuntimeModule = (
                     context.registerHandler(
                         commandName,
                         async handlerContext => {
-                            throw createAppError(TOPOLOGY_CLIENT_ASSEMBLY_REQUIRED_ERROR, {
+                            throw createAppError(topologyClientErrorDefinitions.assemblyRequired, {
                                 args: {commandName: handlerContext.command.commandName},
                                 context: {
                                     commandName: handlerContext.command.commandName,
@@ -195,7 +179,7 @@ export const createTopologyClientRuntimeModule = (
                 context.registerHandler(
                     topologyClientCommandNames.dispatchRemoteCommand,
                     async handlerContext => {
-                        throw createAppError(TOPOLOGY_CLIENT_ASSEMBLY_REQUIRED_ERROR, {
+                        throw createAppError(topologyClientErrorDefinitions.assemblyRequired, {
                             args: {commandName: handlerContext.command.commandName},
                             context: {
                                 commandName: handlerContext.command.commandName,
@@ -213,6 +197,7 @@ export const createTopologyClientRuntimeModule = (
             const orchestrator = createTopologyClientOrchestrator({
                 context,
                 assembly: input.assembly,
+                reconnectAttemptsOverride: input.socket?.reconnectAttempts,
             })
 
             context.registerHandler(
@@ -249,7 +234,7 @@ export const createTopologyClientRuntimeModule = (
                     const payload = handlerContext.command.payload as DispatchRemoteCommandInput
                     const sessionId = orchestrator.getSessionContext().sessionId
                     if (!sessionId) {
-                        throw createAppError(TOPOLOGY_CLIENT_SESSION_UNAVAILABLE_ERROR, {
+                        throw createAppError(topologyClientErrorDefinitions.sessionUnavailable, {
                             args: {commandName: payload.commandName},
                             context: {
                                 commandName: handlerContext.command.commandName,

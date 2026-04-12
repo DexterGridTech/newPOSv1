@@ -232,6 +232,13 @@
 5. 把会话状态从 `awaiting-diff` 推进到 `active`
 6. 提供会话查询与清理
 
+补充约束：
+
+1. 同步会话的真正键不是单一 `sessionId`，而是 `(sessionId, direction)`。
+2. 同一个双机 session 内可以同时存在 `master-to-slave` 与 `slave-to-master` 两条 lane。
+3. `commit ack` 只能推进对应 direction 的 baseline，不能模糊提交整个 session。
+4. continuous 阶段的目标 peer 也应以该 lane 的 `peerNodeId` 为准，而不是依赖 hello ack 中是否携带 `peerRuntime`。
+
 它仍然不负责：
 
 1. 网络发送
@@ -275,6 +282,7 @@
 2. `collectContinuousSyncDiff` 只根据当前 baseline 计算 diff
 3. `commitContinuousSync` 成功后才推进 baseline
 4. 如果本轮发送失败，不调用 commit，下一轮仍能重新产出相同 diff
+5. 发送方在收到 `StateSyncCommitAckEnvelope` 后，也必须把本 direction lane 推进到 `continuous`，否则后续自动增量不会启动
 
 这正是旧 `stateSyncMiddleware` 最重要的正确性语义：
 

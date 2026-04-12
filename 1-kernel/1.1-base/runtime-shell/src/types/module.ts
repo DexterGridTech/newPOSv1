@@ -1,12 +1,15 @@
 import type {
     AppModule,
     AppModuleDependency,
+    AppModuleActorDescriptor,
     CommandDispatchEnvelope,
     CommandEventEnvelope,
     CommandRouteContext,
     ErrorCatalogEntry,
     NodeId,
+    ParameterDefinition,
     ParameterCatalogEntry,
+    ProjectionMirrorEnvelope,
     RequestId,
     RequestLifecycleSnapshot,
     RequestProjection,
@@ -53,6 +56,7 @@ export interface RuntimeModuleContext {
     getState(): RootState
     getStore(): EnhancedStore
     dispatchAction(action: UnknownAction): UnknownAction
+    subscribeState(listener: () => void): () => void
     createRemoteDispatchEnvelope<TPayload = unknown>(
         input: CreateRemoteDispatchEnvelopeInput<TPayload>,
     ): CommandDispatchEnvelope
@@ -62,12 +66,26 @@ export interface RuntimeModuleContext {
     ): Promise<{events: readonly CommandEventEnvelope[]}>
     applyRemoteCommandEvent(envelope: CommandEventEnvelope): void
     applyRequestLifecycleSnapshot(snapshot: RequestLifecycleSnapshot): void
+    applyProjectionMirror(envelope: ProjectionMirrorEnvelope): void
     getRequestProjection(requestId: RequestId): RequestProjection | undefined
     listTrackedRequestIds(input?: {
         peerNodeId?: NodeId
     }): readonly RequestId[]
+    resolveParameter<TValue = unknown>(input: {
+        key: string
+        definition?: ParameterDefinition<TValue>
+    }): {
+        key: string
+        value: TValue
+        source: 'default' | 'catalog-fallback' | 'catalog'
+        valid: boolean
+    }
     getSyncSlices(): readonly StateRuntimeSliceDescriptor<any>[]
     applyStateSyncDiff(envelope: StateSyncDiffEnvelope): void
+    publishActor<TPayload = unknown>(input: {
+        actorName: string
+        payload: TPayload
+    }): Promise<void>
 }
 
 export interface RuntimeModuleHostBootstrapContext extends RuntimeModuleContext {}
@@ -81,8 +99,18 @@ export type KernelRuntimeHandler<TPayload = unknown> = (
     context: KernelRuntimeHandlerContext<TPayload>,
 ) => Promise<Record<string, unknown> | void>
 
+export interface KernelRuntimeActorContext<TPayload = unknown> extends RuntimeModuleContext {
+    readonly actorName: string
+    readonly payload: TPayload
+}
+
+export type KernelRuntimeActorHandler<TPayload = unknown> = (
+    context: KernelRuntimeActorContext<TPayload>,
+) => Promise<void> | void
+
 export interface RuntimeModuleInstallContext extends RuntimeModuleContext {
     registerHandler(commandName: string, handler: KernelRuntimeHandler): void
+    registerActor(actorName: string, handler: KernelRuntimeActorHandler): void
 }
 
 export interface RuntimeModuleInitializeCommand {
@@ -95,6 +123,7 @@ export interface RuntimeModuleInitializeCommand {
 
 export interface KernelRuntimeModule extends AppModule {
     dependencies?: readonly AppModuleDependency[]
+    actors?: readonly AppModuleActorDescriptor[]
     stateSlices?: readonly StateRuntimeSliceDescriptor<any>[]
     hostBootstrap?: (context: RuntimeModuleHostBootstrapContext) => Promise<void> | void
     install?: (context: RuntimeModuleInstallContext) => Promise<void> | void

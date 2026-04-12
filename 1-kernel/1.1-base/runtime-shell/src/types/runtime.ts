@@ -6,9 +6,13 @@ import type {
     ErrorCatalogEntry,
     NodeId,
     ParameterCatalogEntry,
+    ParameterDefinition,
+    ProjectionMirrorEnvelope,
     RequestId,
     RequestLifecycleSnapshot,
     RequestProjection,
+    ResolvedErrorView,
+    ResolvedParameter,
     RuntimeInstanceId,
     SessionId,
 } from '@impos2/kernel-base-contracts'
@@ -68,6 +72,7 @@ export interface KernelRuntime {
     applyRemoteCommandEvent(envelope: CommandEventEnvelope): void
     exportRequestLifecycleSnapshot(requestId: RequestId, sessionId?: SessionId): RequestLifecycleSnapshot | undefined
     applyRequestLifecycleSnapshot(snapshot: RequestLifecycleSnapshot): void
+    applyProjectionMirror(envelope: ProjectionMirrorEnvelope): void
     listTrackedRequestIds(input?: {
         peerNodeId?: NodeId
     }): readonly RequestId[]
@@ -75,5 +80,17 @@ export interface KernelRuntime {
     getRequestProjection(requestId: RequestId): RequestProjection | undefined
     getErrorCatalogEntry(key: string): ErrorCatalogEntry | undefined
     getParameterCatalogEntry(key: string): ParameterCatalogEntry | undefined
+    resolveError(key: string): ResolvedErrorView
+    resolveAppError(input: {
+        key: string
+        code?: string
+        message?: string
+        details?: unknown
+        args?: Record<string, unknown>
+    }): ResolvedErrorView
+    resolveParameter<TValue = unknown>(input: {
+        key: string
+        definition?: ParameterDefinition<TValue>
+    }): ResolvedParameter<TValue>
     getSubsystems(): KernelRuntimeSubsystems
 }

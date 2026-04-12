@@ -5,6 +5,7 @@ import {
     createRequestId,
     createSessionId,
     type CommandEventEnvelope,
+    type ProjectionMirrorEnvelope,
     type RequestLifecycleSnapshotEnvelope,
 } from '@impos2/kernel-base-contracts'
 import {createLoggerPort, createPlatformPorts} from '@impos2/kernel-base-platform-ports'
@@ -30,11 +31,10 @@ import {
     createEchoModule,
     createHello,
     createRuntimeInfo,
-    createSyncValueModule,
     installTopologyClientServerCleanup,
     topologyClientTestServers,
     waitFor,
-} from './helpers'
+} from '../helpers/topologyClientHarness'
 
 installTopologyClientServerCleanup()
 
@@ -268,6 +268,261 @@ describe('topology-client-runtime dispatch and resume', () => {
 
         masterSocketRuntime.disconnect('dual-topology.ws.resume', 'test-complete')
         slaveSocketRuntime.disconnect('dual-topology.ws.resume', 'test-complete')
+    })
+
+    it('applies projection mirror to owner read model over real dual-topology host relay', async () => {
+        const server = createDualTopologyHostServer({
+            config: {
+                port: 0,
+                heartbeatIntervalMs: 50,
+                heartbeatTimeoutMs: 5_000,
+            },
+        })
+        topologyClientTestServers.push(server)
+        await server.start()
+
+        const addressInfo = server.getAddressInfo()
+        const serverBaseUrl = `http://${addressInfo.host}:${addressInfo.port}`
+        const masterNodeId = createNodeId()
+        const slaveNodeId = createNodeId()
+
+        const ticket = await fetchJson<{
+            success: boolean
+            token: string
+        }>(`${addressInfo.httpBaseUrl}/tickets`, {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+            },
+            body: JSON.stringify({
+                masterNodeId,
+            }),
+        })
+
+        const masterSocketRuntime = createSocketRuntime({
+            logger: createLoggerPort({
+                environmentMode: 'DEV',
+                write() {},
+                scope: {
+                    moduleName: 'kernel.base.topology-client-runtime.test.projection-mirror.master-socket',
+                    layer: 'kernel',
+                },
+            }),
+            transport: createNodeWsTransport(),
+            servers: [
+                {
+                    serverName: 'dual-topology-host',
+                    addresses: [
+                        {
+                            addressName: 'local',
+                            baseUrl: serverBaseUrl,
+                        },
+                    ],
+                },
+            ],
+        })
+
+        const slaveSocketRuntime = createSocketRuntime({
+            logger: createLoggerPort({
+                environmentMode: 'DEV',
+                write() {},
+                scope: {
+                    moduleName: 'kernel.base.topology-client-runtime.test.projection-mirror.slave-socket',
+                    layer: 'kernel',
+                },
+            }),
+            transport: createNodeWsTransport(),
+            servers: [
+                {
+                    serverName: 'dual-topology-host',
+                    addresses: [
+                        {
+                            addressName: 'local',
+                            baseUrl: serverBaseUrl,
+                        },
+                    ],
+                },
+            ],
+        })
+
+        const profile = defineSocketProfile<void, void, Record<string, string>, any, any>({
+            name: 'dual-topology.ws.projection-mirror',
+            serverName: 'dual-topology-host',
+            pathTemplate: '/mockMasterServer/ws',
+            handshake: {
+                headers: typed<Record<string, string>>('dual-topology.ws.projection-mirror.headers'),
+            },
+            messages: {
+                incoming: typed('dual-topology.ws.projection-mirror.incoming'),
+                outgoing: typed('dual-topology.ws.projection-mirror.outgoing'),
+            },
+            codec: new JsonSocketCodec(),
+            meta: {
+                reconnectAttempts: 0,
+            },
+        })
+
+        const ownerRuntime = createKernelRuntime({
+            localNodeId: masterNodeId,
+            platformPorts: createPlatformPorts({
+                environmentMode: 'DEV',
+                logger: createLoggerPort({
+                    environmentMode: 'DEV',
+                    write() {},
+                    scope: {
+                        moduleName: 'kernel.base.topology-client-runtime.test.projection-mirror.owner-runtime',
+                        layer: 'kernel',
+                    },
+                }),
+            }),
+            modules: [
+                createEchoModule(),
+                createTopologyClientRuntimeModule({
+                    assembly: {
+                        resolveSocketBinding() {
+                            return {
+                                socketRuntime: masterSocketRuntime,
+                                profileName: 'dual-topology.ws.projection-mirror',
+                                profile,
+                            }
+                        },
+                        createHello() {
+                            return createHello(ticket.token, createRuntimeInfo({
+                                nodeId: masterNodeId,
+                                deviceId: 'master-device',
+                                role: 'master',
+                            }))
+                        },
+                    },
+                }),
+            ],
+        })
+
+        const slaveRuntime = createKernelRuntime({
+            localNodeId: slaveNodeId,
+            platformPorts: createPlatformPorts({
+                environmentMode: 'DEV',
+                logger: createLoggerPort({
+                    environmentMode: 'DEV',
+                    write() {},
+                    scope: {
+                        moduleName: 'kernel.base.topology-client-runtime.test.projection-mirror.slave-runtime',
+                        layer: 'kernel',
+                    },
+                }),
+            }),
+            modules: [
+                createTopologyClientRuntimeModule({
+                    assembly: {
+                        resolveSocketBinding() {
+                            return {
+                                socketRuntime: slaveSocketRuntime,
+                                profileName: 'dual-topology.ws.projection-mirror',
+                                profile,
+                            }
+                        },
+                        createHello() {
+                            return createHello(ticket.token, createRuntimeInfo({
+                                nodeId: slaveNodeId,
+                                deviceId: 'slave-device',
+                                role: 'slave',
+                            }))
+                        },
+                    },
+                }),
+            ],
+        })
+
+        await ownerRuntime.start()
+        await slaveRuntime.start()
+
+        ownerRuntime.getSubsystems().topology.updateRecoveryState({
+            instanceMode: 'MASTER',
+            displayMode: 'PRIMARY',
+            enableSlave: true,
+            masterInfo: null,
+        })
+
+        slaveRuntime.getSubsystems().topology.updateRecoveryState({
+            instanceMode: 'SLAVE',
+            displayMode: 'PRIMARY',
+            enableSlave: false,
+            masterInfo: {
+                deviceId: 'master-device',
+                serverAddress: [{address: addressInfo.wsUrl}],
+                addedAt: Date.now() as any,
+            },
+        })
+
+        expect((await ownerRuntime.execute({
+            commandName: topologyClientCommandNames.startTopologyConnection,
+            payload: {},
+        })).status).toBe('completed')
+        expect((await slaveRuntime.execute({
+            commandName: topologyClientCommandNames.startTopologyConnection,
+            payload: {},
+        })).status).toBe('completed')
+
+        await waitFor(() => {
+            return selectTopologyClientConnection(ownerRuntime.getState())?.serverConnectionStatus === 'CONNECTED'
+                && selectTopologyClientConnection(slaveRuntime.getState())?.serverConnectionStatus === 'CONNECTED'
+        })
+
+        const requestId = createRequestId()
+        const ownerResult = await ownerRuntime.execute({
+            commandName: 'kernel.base.topology-client-runtime.test.echo',
+            payload: {from: 'owner'},
+            requestId,
+        })
+        expect(ownerResult.status).toBe('completed')
+
+        const ownerSessionId = selectTopologyClientSync(ownerRuntime.getState())?.activeSessionId
+        if (!ownerSessionId) {
+            throw new Error('Owner runtime did not expose active session id')
+        }
+
+        const mirrorEnvelope: ProjectionMirrorEnvelope = {
+            envelopeId: createEnvelopeId(),
+            sessionId: ownerSessionId as any,
+            ownerNodeId: masterNodeId,
+            projection: {
+                requestId,
+                ownerNodeId: masterNodeId as any,
+                status: 'complete',
+                startedAt: Date.now() as any,
+                updatedAt: (Date.now() + 10) as any,
+                resultsByCommand: {},
+                mergedResults: {
+                    payload: {
+                        from: 'owner-mirror',
+                    },
+                },
+                errorsByCommand: {},
+                pendingCommandCount: 0,
+            },
+            mirroredAt: Date.now() as any,
+        }
+
+        slaveSocketRuntime.send('dual-topology.ws.projection-mirror', {
+            type: 'projection-mirror',
+            envelope: mirrorEnvelope,
+        })
+
+        await waitFor(() => {
+            const mergedResults = selectRequestProjection(ownerRuntime.getState(), requestId)?.mergedResults as
+                | {payload?: {from?: string}}
+                | undefined
+            return mergedResults?.payload?.from === 'owner-mirror'
+        })
+
+        expect(selectRequestProjection(ownerRuntime.getState(), requestId)?.mergedResults).toEqual({
+            payload: {
+                from: 'owner-mirror',
+            },
+        })
+
+        masterSocketRuntime.disconnect('dual-topology.ws.projection-mirror', 'test-complete')
+        slaveSocketRuntime.disconnect('dual-topology.ws.projection-mirror', 'test-complete')
     })
 
     it('streams remote command started lifecycle back to owner before remote command completes', async () => {
@@ -742,6 +997,9 @@ describe('topology-client-runtime dispatch and resume', () => {
         })
 
         expect(dispatchResult.status).toBe('completed')
+        if (dispatchResult.status !== 'completed') {
+            throw new Error('Expected dispatchRemoteCommand to complete')
+        }
         expect(dispatchResult.result).toMatchObject({
             requestId: rootRequestId,
             sessionId,
@@ -1034,250 +1292,4 @@ describe('topology-client-runtime dispatch and resume', () => {
         slaveSocketRuntime.disconnect('dual-topology.ws.auto-resume', 'test-complete')
     })
 
-    it('applies master-to-slave state sync diff through real dual-topology host flow', async () => {
-        const server = createDualTopologyHostServer({
-            config: {
-                port: 0,
-                heartbeatIntervalMs: 50,
-                heartbeatTimeoutMs: 5_000,
-            },
-        })
-        topologyClientTestServers.push(server)
-        await server.start()
-
-        const addressInfo = server.getAddressInfo()
-        const serverBaseUrl = `http://${addressInfo.host}:${addressInfo.port}`
-        const masterNodeId = createNodeId()
-        const slaveNodeId = createNodeId()
-        const syncSliceName = 'kernel.base.topology-client-runtime.test.sync-state'
-        const syncCommandName = 'kernel.base.topology-client-runtime.test.sync-state.put'
-
-        const ticket = await fetchJson<{
-            success: boolean
-            token: string
-        }>(`${addressInfo.httpBaseUrl}/tickets`, {
-            method: 'POST',
-            headers: {
-                'content-type': 'application/json',
-            },
-            body: JSON.stringify({
-                masterNodeId,
-            }),
-        })
-
-        const masterSocketRuntime = createSocketRuntime({
-            logger: createLoggerPort({
-                environmentMode: 'DEV',
-                write() {},
-                scope: {
-                    moduleName: 'kernel.base.topology-client-runtime.test.state-sync.master-socket',
-                    layer: 'kernel',
-                },
-            }),
-            transport: createNodeWsTransport(),
-            servers: [
-                {
-                    serverName: 'dual-topology-host',
-                    addresses: [
-                        {
-                            addressName: 'local',
-                            baseUrl: serverBaseUrl,
-                        },
-                    ],
-                },
-            ],
-        })
-
-        const slaveSocketRuntime = createSocketRuntime({
-            logger: createLoggerPort({
-                environmentMode: 'DEV',
-                write() {},
-                scope: {
-                    moduleName: 'kernel.base.topology-client-runtime.test.state-sync.slave-socket',
-                    layer: 'kernel',
-                },
-            }),
-            transport: createNodeWsTransport(),
-            servers: [
-                {
-                    serverName: 'dual-topology-host',
-                    addresses: [
-                        {
-                            addressName: 'local',
-                            baseUrl: serverBaseUrl,
-                        },
-                    ],
-                },
-            ],
-        })
-
-        const profile = defineSocketProfile<void, void, Record<string, string>, any, any>({
-            name: 'dual-topology.ws.state-sync',
-            serverName: 'dual-topology-host',
-            pathTemplate: '/mockMasterServer/ws',
-            handshake: {
-                headers: typed<Record<string, string>>('dual-topology.ws.state-sync.headers'),
-            },
-            messages: {
-                incoming: typed('dual-topology.ws.state-sync.incoming'),
-                outgoing: typed('dual-topology.ws.state-sync.outgoing'),
-            },
-            codec: new JsonSocketCodec(),
-            meta: {
-                reconnectAttempts: 0,
-            },
-        })
-
-        const masterRuntime = createKernelRuntime({
-            localNodeId: masterNodeId,
-            platformPorts: createPlatformPorts({
-                environmentMode: 'DEV',
-                logger: createLoggerPort({
-                    environmentMode: 'DEV',
-                    write() {},
-                    scope: {
-                        moduleName: 'kernel.base.topology-client-runtime.test.state-sync.master-runtime',
-                        layer: 'kernel',
-                    },
-                }),
-            }),
-            modules: [
-                createSyncValueModule({
-                    sliceName: syncSliceName,
-                    commandName: syncCommandName,
-                }),
-                createTopologyClientRuntimeModule({
-                    assembly: {
-                        resolveSocketBinding() {
-                            return {
-                                socketRuntime: masterSocketRuntime,
-                                profileName: 'dual-topology.ws.state-sync',
-                                profile,
-                            }
-                        },
-                        createHello() {
-                            return createHello(ticket.token, createRuntimeInfo({
-                                nodeId: masterNodeId,
-                                deviceId: 'master-device',
-                                role: 'master',
-                            }))
-                        },
-                    },
-                }),
-            ],
-        })
-
-        const slaveRuntime = createKernelRuntime({
-            localNodeId: slaveNodeId,
-            platformPorts: createPlatformPorts({
-                environmentMode: 'DEV',
-                logger: createLoggerPort({
-                    environmentMode: 'DEV',
-                    write() {},
-                    scope: {
-                        moduleName: 'kernel.base.topology-client-runtime.test.state-sync.slave-runtime',
-                        layer: 'kernel',
-                    },
-                }),
-            }),
-            modules: [
-                createSyncValueModule({
-                    sliceName: syncSliceName,
-                    commandName: syncCommandName,
-                }),
-                createTopologyClientRuntimeModule({
-                    assembly: {
-                        resolveSocketBinding() {
-                            return {
-                                socketRuntime: slaveSocketRuntime,
-                                profileName: 'dual-topology.ws.state-sync',
-                                profile,
-                            }
-                        },
-                        createHello() {
-                            return createHello(ticket.token, createRuntimeInfo({
-                                nodeId: slaveNodeId,
-                                deviceId: 'slave-device',
-                                role: 'slave',
-                            }))
-                        },
-                    },
-                }),
-            ],
-        })
-
-        await masterRuntime.start()
-        await slaveRuntime.start()
-
-        expect((await masterRuntime.execute({
-            commandName: topologyClientCommandNames.setEnableSlave,
-            payload: {enableSlave: true},
-        })).status).toBe('completed')
-        expect((await slaveRuntime.execute({
-            commandName: topologyClientCommandNames.setInstanceMode,
-            payload: {instanceMode: 'SLAVE'},
-        })).status).toBe('completed')
-        expect((await slaveRuntime.execute({
-            commandName: topologyClientCommandNames.setDisplayMode,
-            payload: {displayMode: 'PRIMARY'},
-        })).status).toBe('completed')
-        expect((await slaveRuntime.execute({
-            commandName: topologyClientCommandNames.setMasterInfo,
-            payload: {
-                masterInfo: {
-                    deviceId: 'master-device',
-                    serverAddress: [{address: addressInfo.wsUrl}],
-                    addedAt: Date.now() as any,
-                },
-            },
-        })).status).toBe('completed')
-
-        expect((await masterRuntime.execute({
-            commandName: syncCommandName,
-            payload: {
-                entryKey: 'counter',
-                value: 'master-value',
-                updatedAt: 100,
-            },
-        })).status).toBe('completed')
-
-        expect((await masterRuntime.execute({
-            commandName: topologyClientCommandNames.startTopologyConnection,
-            payload: {},
-        })).status).toBe('completed')
-        expect((await slaveRuntime.execute({
-            commandName: topologyClientCommandNames.startTopologyConnection,
-            payload: {},
-        })).status).toBe('completed')
-
-        await waitFor(() => {
-            return selectTopologyClientConnection(masterRuntime.getState())?.serverConnectionStatus === 'CONNECTED'
-                && selectTopologyClientConnection(slaveRuntime.getState())?.serverConnectionStatus === 'CONNECTED'
-        })
-
-        await waitFor(() => {
-            const slaveState = slaveRuntime.getState()
-            const slaveSlice = slaveState[syncSliceName as keyof typeof slaveState] as
-                | Record<string, {value: string; updatedAt: number}>
-                | undefined
-            return slaveSlice?.counter?.value === 'master-value'
-        })
-
-        const slaveState = slaveRuntime.getState()
-        const slaveSlice = slaveState[syncSliceName as keyof typeof slaveState] as
-            | Record<string, {value: string; updatedAt: number}>
-            | undefined
-
-        expect(slaveSlice).toEqual({
-            counter: {
-                value: 'master-value',
-                updatedAt: 100,
-            },
-        })
-        expect(selectTopologyClientSync(masterRuntime.getState())?.continuousSyncActive).toBe(true)
-        expect(selectTopologyClientSync(slaveRuntime.getState())?.continuousSyncActive).toBe(true)
-
-        masterSocketRuntime.disconnect('dual-topology.ws.state-sync', 'test-complete')
-        slaveSocketRuntime.disconnect('dual-topology.ws.state-sync', 'test-complete')
-    })
 })

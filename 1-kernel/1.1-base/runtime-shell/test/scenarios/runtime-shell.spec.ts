@@ -7,13 +7,15 @@ import {
 } from '@impos2/kernel-base-contracts'
 import type {StateRuntimeSliceDescriptor} from '@impos2/kernel-base-state-runtime'
 import {createSlice, type PayloadAction} from '@reduxjs/toolkit'
-import {describe, expect, it} from 'vitest'
+import {describe, expect, it, vi} from 'vitest'
 import {createPlatformPorts, createLoggerPort} from '@impos2/kernel-base-platform-ports'
 import {
     createKernelRuntime,
+    runtimeShellCommandNames,
     selectErrorCatalogEntry,
     selectParameterCatalogEntry,
     selectRequestProjection,
+    runtimeShellErrorDefinitions,
 } from '../../src'
 import type {KernelRuntimeModule} from '../../src'
 
@@ -216,6 +218,9 @@ describe('runtime-shell', () => {
         expect(logEvents.some(event => event.event === 'kernel-runtime-modules-resolved')).toBe(true)
         expect(logEvents.some(event => event.event === 'kernel-runtime-host-bootstrap')).toBe(true)
         expect(logEvents.some(event => event.event === 'kernel-runtime-install')).toBe(true)
+        expect(runtime.getErrorCatalogEntry(runtimeShellErrorDefinitions.executeFailed.key)?.template).toBe(
+            runtimeShellErrorDefinitions.executeFailed.defaultTemplate,
+        )
 
         const requestId = createRequestId()
         const result = await runtime.execute({
@@ -236,6 +241,10 @@ describe('runtime-shell', () => {
         const projection = selectRequestProjection(state, requestId)
         const errorCatalogEntry = selectErrorCatalogEntry(state, 'kernel.base.runtime-shell.test.error')
         const parameterCatalogEntry = selectParameterCatalogEntry(state, 'kernel.base.runtime-shell.test.parameter')
+        const resolvedError = runtime.resolveError('kernel.base.runtime-shell.test.error')
+        const resolvedParameter = runtime.resolveParameter<number>({
+            key: 'kernel.base.runtime-shell.test.parameter',
+        })
         const appCounterState = state[APP_COUNTER_SLICE as keyof typeof state] as {
             value: number
             updatedAt: number
@@ -244,6 +253,18 @@ describe('runtime-shell', () => {
         expect(projection?.status).toBe('complete')
         expect(errorCatalogEntry?.template).toBe('runtime shell test error persisted')
         expect(parameterCatalogEntry?.rawValue).toBe(88)
+        expect(selectErrorCatalogEntry(
+            state,
+            'kernel.base.state-runtime.protected_persistence_storage_missing',
+        )?.template).toBe('Missing secureStateStorage for protected persistence in ${runtimeName}')
+        expect(selectParameterCatalogEntry(
+            state,
+            'kernel.base.state-runtime.persistence.debounce-ms',
+        )?.rawValue).toBe(16)
+        expect(resolvedError.message).toBe('runtime shell test error persisted')
+        expect(resolvedError.source).toBe('catalog')
+        expect(resolvedParameter.value).toBe(88)
+        expect(resolvedParameter.source).toBe('catalog')
         expect(appCounterState).toEqual({
             value: 1,
             updatedAt: 123,
@@ -328,6 +349,14 @@ describe('runtime-shell', () => {
             updatedAt: 123,
         })
         expect(persistedRuntime.getSubsystems().topology.getRecoveryState().masterInfo?.deviceId).toBe('persisted-master')
+
+        const resolvedPersistedError = persistedRuntime.resolveAppError({
+            key: 'kernel.base.runtime-shell.test.error',
+            args: {
+                requestId: 'req-1',
+            },
+        })
+        expect(resolvedPersistedError.message).toBe('runtime shell test error persisted')
     })
 
     it('converges owner projection after remote child command events round-trip', async () => {
@@ -480,5 +509,207 @@ describe('runtime-shell', () => {
             value: 7,
             updatedAt: 456,
         })
+    })
+
+    it('updates error and parameter catalogs through runtime-shell commands', async () => {
+        const runtime = createKernelRuntime({
+            localNodeId: createNodeId(),
+            platformPorts: createPlatformPorts({
+                environmentMode: 'DEV',
+                logger: createLoggerPort({
+                    environmentMode: 'DEV',
+                    write() {},
+                    scope: {
+                        moduleName: 'kernel.base.runtime-shell.test.catalog-command',
+                        layer: 'kernel',
+                    },
+                }),
+            }),
+            modules: [],
+        })
+
+        await runtime.start()
+
+        const updatedAt = 789 as any
+
+        const upsertErrors = await runtime.execute({
+            commandName: runtimeShellCommandNames.upsertErrorCatalogEntries,
+            requestId: createRequestId(),
+            payload: {
+                entries: [
+                    {
+                        key: 'kernel.base.runtime-shell.test.remote.error',
+                        template: 'remote error template',
+                        updatedAt,
+                        source: 'remote',
+                    },
+                ],
+            },
+        })
+        const upsertParameters = await runtime.execute({
+            commandName: runtimeShellCommandNames.upsertParameterCatalogEntries,
+            requestId: createRequestId(),
+            payload: {
+                entries: [
+                    {
+                        key: 'kernel.base.runtime-shell.test.remote.parameter',
+                        rawValue: 1234,
+                        updatedAt,
+                        source: 'remote',
+                    },
+                ],
+            },
+        })
+
+        expect(upsertErrors.status).toBe('completed')
+        expect(upsertParameters.status).toBe('completed')
+        expect(selectErrorCatalogEntry(
+            runtime.getState(),
+            'kernel.base.runtime-shell.test.remote.error',
+        )?.template).toBe('remote error template')
+        expect(selectParameterCatalogEntry(
+            runtime.getState(),
+            'kernel.base.runtime-shell.test.remote.parameter',
+        )?.rawValue).toBe(1234)
+
+        const removeErrors = await runtime.execute({
+            commandName: runtimeShellCommandNames.removeErrorCatalogEntries,
+            requestId: createRequestId(),
+            payload: {
+                keys: ['kernel.base.runtime-shell.test.remote.error'],
+            },
+        })
+        const removeParameters = await runtime.execute({
+            commandName: runtimeShellCommandNames.removeParameterCatalogEntries,
+            requestId: createRequestId(),
+            payload: {
+                keys: ['kernel.base.runtime-shell.test.remote.parameter'],
+            },
+        })
+
+        expect(removeErrors.status).toBe('completed')
+        expect(removeParameters.status).toBe('completed')
+        expect(selectErrorCatalogEntry(
+            runtime.getState(),
+            'kernel.base.runtime-shell.test.remote.error',
+        )).toBeUndefined()
+        expect(selectParameterCatalogEntry(
+            runtime.getState(),
+            'kernel.base.runtime-shell.test.remote.parameter',
+        )).toBeUndefined()
+    })
+
+    it('publishes actor events to every registered handler under the same actor name', async () => {
+        const receivedPayloads: Array<{moduleName: string; value: string}> = []
+        let capturedContext: any
+
+        const runtime = createKernelRuntime({
+            localNodeId: createNodeId(),
+            platformPorts: createPlatformPorts({
+                environmentMode: 'DEV',
+                logger: createLoggerPort({
+                    environmentMode: 'DEV',
+                    write() {},
+                    scope: {
+                        moduleName: 'kernel.base.runtime-shell.test.actor-broadcast',
+                        layer: 'kernel',
+                    },
+                }),
+            }),
+            modules: [
+                {
+                    moduleName: 'kernel.base.runtime-shell.test.actor-a',
+                    packageVersion: '0.0.1',
+                    install(context) {
+                        capturedContext = context
+                        context.registerActor('kernel.base.runtime-shell.test.actor.topic', actorContext => {
+                            receivedPayloads.push({
+                                moduleName: actorContext.moduleName,
+                                value: (actorContext.payload as {value: string}).value,
+                            })
+                        })
+                    },
+                },
+                {
+                    moduleName: 'kernel.base.runtime-shell.test.actor-b',
+                    packageVersion: '0.0.1',
+                    install(context) {
+                        context.registerActor('kernel.base.runtime-shell.test.actor.topic', actorContext => {
+                            receivedPayloads.push({
+                                moduleName: actorContext.moduleName,
+                                value: (actorContext.payload as {value: string}).value,
+                            })
+                        })
+                    },
+                },
+            ],
+        })
+
+        await runtime.start()
+        await capturedContext.publishActor({
+            actorName: 'kernel.base.runtime-shell.test.actor.topic',
+            payload: {
+                value: 'fanout',
+            },
+        })
+
+        expect(receivedPayloads).toEqual([
+            {
+                moduleName: 'kernel.base.runtime-shell.test.actor-a',
+                value: 'fanout',
+            },
+            {
+                moduleName: 'kernel.base.runtime-shell.test.actor-b',
+                value: 'fanout',
+            },
+        ])
+    })
+
+    it('wraps actor handler failure with runtime-shell actor publish error', async () => {
+        let capturedContext: any
+        const cause = new Error('actor exploded')
+        const loggerWrite = vi.fn()
+
+        const runtime = createKernelRuntime({
+            localNodeId: createNodeId(),
+            platformPorts: createPlatformPorts({
+                environmentMode: 'DEV',
+                logger: createLoggerPort({
+                    environmentMode: 'DEV',
+                    write: loggerWrite,
+                    scope: {
+                        moduleName: 'kernel.base.runtime-shell.test.actor-error',
+                        layer: 'kernel',
+                    },
+                }),
+            }),
+            modules: [
+                {
+                    moduleName: 'kernel.base.runtime-shell.test.actor-error',
+                    packageVersion: '0.0.1',
+                    install(context) {
+                        capturedContext = context
+                        context.registerActor('kernel.base.runtime-shell.test.actor.failure', () => {
+                            throw cause
+                        })
+                    },
+                },
+            ],
+        })
+
+        await runtime.start()
+
+        await expect(capturedContext.publishActor({
+            actorName: 'kernel.base.runtime-shell.test.actor.failure',
+            payload: {},
+        })).rejects.toMatchObject({
+            key: runtimeShellErrorDefinitions.actorPublishFailed.key,
+            cause,
+            details: {
+                moduleName: 'kernel.base.runtime-shell.test.actor-error',
+            },
+        })
+
+        expect(loggerWrite).toHaveBeenCalled()
     })
 })

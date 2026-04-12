@@ -1,6 +1,7 @@
 import type {
     ErrorCatalogEntry,
     ParameterCatalogEntry,
+    ProjectionMirrorEnvelope,
     RequestId,
     RequestProjection,
     RuntimeInstanceId,
@@ -22,6 +23,9 @@ export interface RuntimeReadModel {
     flush(): Promise<void>
     replaceState(state: RuntimeShellState): void
     setRequestProjection(requestId: RequestId, projection: RequestProjection): void
+    applyProjectionMirror(envelope: ProjectionMirrorEnvelope): void
     setErrorCatalogEntry(entry: ErrorCatalogEntry): void
+    removeErrorCatalogEntry(key: string): void
     setParameterCatalogEntry(entry: ParameterCatalogEntry): void
+    removeParameterCatalogEntry(key: string): void
 }

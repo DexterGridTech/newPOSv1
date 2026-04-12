@@ -88,6 +88,19 @@
 
 这些内容后续会直接约束实现，不再只停留在口头理解。
 
+### 2.4A task 域与 workflow 边界已正式收敛
+
+本轮又补充沉淀了一份关键边界文档：
+
+1. [refactor-doc/2026-04-11-kernel-base-task-domain-and-workflow-boundary.md](/Users/dexter/Documents/workspace/idea/newPOSv1/refactor-doc/2026-04-11-kernel-base-task-domain-and-workflow-boundary.md)
+
+该文档正式确认：
+
+1. 服务端 `task_release / task_instance` 是平台业务域。
+2. `tcp.task.release` 是 TDP projection topic，不等于客户端 workflow 定义。
+3. 旧 `1-kernel/1.1-cores/task` 后续不再迁为 `task` 包。
+4. 旧 `task` 包的推荐迁移目标命名为 `workflow-runtime`。
+
 ---
 
 ## 3. 已完成的仓库落地工作
@@ -208,6 +221,8 @@
 10. 包内测试若需验证内部算法，应改走包内相对路径导入，而不是逼迫产品 API 暴露实现细节。
 11. `typed()` 这类外部声明 DSL helper 可以保留为稳定 API，但 `moduleResolver / readModel / serverCatalog / ledger` 这类实现 helper 默认不对外公开。
 12. 第一批基础包的 `src/index.ts` 已开始收敛为显式稳定文件导出，不再统一透传 `./foundations`。
+13. `state-runtime` 已补齐声明式 scoped slice/helper，未来业务包不再需要自己复制旧 `workspace.ts / instanceMode.ts` 里的展开逻辑。
+14. `topology-client-runtime` 已补齐稳定 selector 面，承接旧 `getInstanceMode / getDisplayMode / getWorkspace / getStandalone / getEnableSlave` 这类高频读取语义。
 
 ### 4.3 已确认需要进入 batch A 的首批 contract 要素
 
@@ -238,6 +253,70 @@
 
 ## 5. 当前尚未开始或尚未完成的代码工作
 
+### 5.1 已完成并验证的最新收口
+
+本轮已完成并通过验证：
+
+1. `state-runtime` 新增 `createScopedStateSlice / createWorkspaceStateSlice / createInstanceModeStateSlice / createDisplayModeStateSlice`
+2. `state-runtime` 新增 `toScopedSliceDescriptors / toWorkspaceStateDescriptors / toInstanceModeStateDescriptors / toDisplayModeStateDescriptors`
+3. `state-runtime` 已补测试，覆盖对象型 `sync` 配置不会被误判为 scope map
+4. `topology-client-runtime` 新增稳定 selector：
+5. `selectTopologyStandalone`
+6. `selectTopologyEnableSlave`
+7. `selectTopologyMasterInfo`
+8. `selectTopologyLocalNodeId`
+9. `selectTopologyServerConnected`
+10. `selectTopologyPeerConnected`
+11. `selectTopologyPeerNodeId`
+12. `selectTopologyScopedStateKey`
+13. `execution-runtime` 已补独立 `vitest` 场景，覆盖生命周期、middleware 链、child dispatch、handler 失败、AppError 保留、command not found
+14. `execution-runtime` 已修正 middleware 抛错语义，现在统一归一成 `failed` execution result
+15. `0-mock-server/mock-terminal-platform/server` 已补 `kernel-base-test` 专用测试沙箱准备能力
+16. 新增 debug 入口：`POST /mock-debug/kernel-base-test/prepare`
+17. 该入口会重置并播种 `sandbox-kernel-base-test`，同时切换当前 runtime sandbox
+18. 当前播种的基线已覆盖 `tcp-client / tdp-client` 联调需要的主数据、激活码和 TDP topics
+19. 已覆盖的 TDP topics 包括：
+20. `tcp.task.release`
+21. `terminal.config.state`
+22. `config.delta`
+23. `menu.delta`
+24. `printer.delta`
+25. `remote.control`
+26. `print.command`
+
+说明：
+
+1. 后续 `tcp-client / tdp-client` 的新测试与 dev 场景，统一先调用这个入口准备沙箱。
+2. 不再额外创建独立测试 mock 服务，继续以 `mock-terminal-platform` 作为真实业务 mock server。
+15. `transport-runtime` 已补支持层参数定义和 `normalizeTransportError`
+16. `execution-runtime` 当前不补 `parameters.ts` 是刻意设计，不为“每包都齐全”硬造参数
+
+已验证命令：
+
+1. `corepack yarn workspace @impos2/kernel-base-state-runtime type-check`
+2. `corepack yarn workspace @impos2/kernel-base-state-runtime test`
+3. `corepack yarn workspace @impos2/kernel-base-topology-client-runtime type-check`
+4. `corepack yarn workspace @impos2/kernel-base-topology-client-runtime test`
+5. `corepack yarn workspace @impos2/kernel-base-execution-runtime type-check`
+6. `corepack yarn workspace @impos2/kernel-base-execution-runtime test`
+7. `corepack yarn workspace @impos2/kernel-base-execution-runtime test:scenario`
+8. `corepack yarn workspace @impos2/kernel-base-transport-runtime type-check`
+9. `corepack yarn workspace @impos2/kernel-base-transport-runtime test`
+
+说明：
+
+1. `topology-client-runtime` 的 selector 验证继续走 `0-mock-server/dual-topology-host` 真实双机流。
+2. 当前没有把旧 `accessory.ts` 式全局 getter 原样搬回 kernel，而是固定为 selector 读取面。
+
+### 5.2 下一步建议
+
+下一步继续按“先把未来业务会依赖的新基座 API 做完整，再迁业务包”的原则推进：
+
+1. 继续补 `topology-client-runtime` 与旧 `interconnection` 高频 helper 的迁移说明
+2. 对照旧业务使用面，继续补 `state-runtime + topology-client-runtime` 的 selector 示例测试
+3. 继续梳理旧业务中 `normalizeCommunicationError` 的真实调用点，决定后续是否在业务包层增加轻量适配 helper
+4. 继续回补其他基础包已出现但尚未系统整理的 `errorDefinitions / parameterDefinitions`
+
 当前阶段已经不再只是“设计已定、骨架已建”，而是：
 
 1. batch A 已完成首轮真实实现
@@ -265,6 +344,12 @@
 9. `PlatformPorts` 已补充 `secureStateStorage`
 10. persistence schema 已支持 `protected` 条目路由到安全存储
 11. 动态 `Record<string, T>` 已支持 manifest + entry key 模型
+12. 缺失 `secureStateStorage` 已抽为公开结构化错误 `kernel.base.state-runtime.protected_persistence_storage_missing`
+13. 默认 persistence debounce 已抽为公开参数 `kernel.base.state-runtime.persistence.debounce-ms`
+14. `runtime-shell` 已将 `state-runtime` 的内建 errors / parameters 接入统一 registry/catalog
+15. `runtime-shell` 已新增 `applyProjectionMirror(...)` 读模型入口，明确只更新 projection read model，不回写 owner truth
+16. `topology-client-runtime` 已接入 `projection-mirror` 消息收发与消费
+17. 已通过真实 `dual-topology-host` 场景验证：resume 期间从机通过 lifecycle snapshot 恢复 request projection，owner 可通过 `projection-mirror` 更新读模型
 
 ### 5.3 `topology-runtime` 已接入恢复型 state
 
@@ -337,6 +422,14 @@
 9. `remote summary` 缺失某个 slice 时，要视作该 slice 远端为空，而不是直接跳过。
 10. 即使 diff 为空，也要返回空 diff envelope，让对端完成 commit ack 与 baseline 推进，而不是卡在 awaiting-diff。
 11. 已新增真实双机 `dual-topology-host` 场景测试，验证 master-to-slave slice 能通过 summary/diff/apply/ack 闭环同步到 slave。
+12. sync session 已正式升级为 `(sessionId, direction)` 双键 lane，`StateSyncCommitAckEnvelope` 也已携带 `direction`。
+13. `topology-runtime.commitContinuousSync(...)` / `handleSyncCommitAckEnvelope(...)` 已只推进对应 lane 的 baseline，并在 ack 后把发送方 lane 也切到 `continuous`。
+14. `topology-client-runtime` 已补齐 continuous sync 自动增量推送，并通过真实 `dual-topology-host` 场景验证第二次 master 更新可自动同步到 slave。
+15. 已确认一个关键工程约束：continuous diff 发送时不能依赖 hello ack 的 `peerRuntime`，而要从当前 sync lane 的 `peerNodeId` 取目标节点，因为先连上的一端可能拿不到 peer runtime。
+16. 已新增真实 `slave-to-master` 双机场景测试，确认现有单向 authority 规则同样能覆盖 slave 作为 authoritative source 的连续增量推送。
+17. 当前结论是：在 `syncIntent` 明确声明单向的前提下，不需要继续扩一套更重的 authority 配置模型。
+18. `state-runtime` 的 scoped helper 已补齐第二阶段能力，现已提供 scoped key/path、scoped descriptor 展开，以及 scoped action type 重写与 dispatcher helper。
+19. scoped dispatch helper 保持通用，不绑定 topology；`workspace / instanceMode` 可直接复用 route context，`displayMode` 则要求上层显式传入 scope value。
 
 这一轮新增设计文档：
 
@@ -345,9 +438,10 @@
 直接下一步建议顺序：
 
 1. 继续扩 `topology-client-runtime`，补 continuous sync 的运行期 diff 收集与推送，而不只是在 reconnect/resume 阶段完成首轮对齐。
-2. 明确并落地单向同步 authority 规则，避免 `master-to-slave` / `slave-to-master` 双端都对同一 slice 生成修正 diff。
-3. 再补 `state-runtime` 的 scoped helper，使其正式替代旧 `createModuleWorkspaceStateKeys / toModuleSliceConfigs / dispatchWorkspaceAction`
-4. 最后开始旧 `interconnection` 客户端语义向新 topology shell 的整体验证迁移
+2. 开始把旧业务包中的 `createModuleWorkspaceStateKeys / toModuleSliceConfigs / dispatchWorkspaceAction` 迁移到新 `state-runtime` helper 语言
+3. 最后开始旧 `interconnection` 客户端语义向新 topology shell 的整体验证迁移
+
+其中 continuous sync、单向 authority、scoped helper 当前都已完成首轮闭环，后续重点转到旧业务包迁移与规则收敛。
 
 ---
 
@@ -869,5 +963,6 @@
 4. batch A 三个基础包、`execution-runtime`、`topology-runtime`、`runtime-shell`、`transport-runtime`、`host-runtime` 都已完成首轮真实实现并通过基础验证。
 5. `dual-topology-host` 已成为明确依赖 `host-runtime` 的 Node/mock shell。
 6. `1-kernel/1.1-base/*` 已统一使用 `test/`，原 `dev` 目录已删除。
+7. `execution-runtime / runtime-shell / topology-runtime / transport-runtime / host-runtime / topology-client-runtime` 已开始形成统一的 `supports/errors.ts` 与 `supports/parameters.ts` 回填示范，并要求后续模块开发同步抽出稳定错误与运行参数。
 
 下一步应停止继续扩张基础 runtime 文档范围，直接进入新的双机 interconnection shell 设计与实现，并让它正式替换旧 `interconnection` 的连接编排与状态同步职责。

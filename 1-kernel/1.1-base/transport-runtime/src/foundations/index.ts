@@ -1,5 +1,7 @@
 export {typed} from './shared'
 export * from './httpEndpoint'
+export * from './httpServiceFactory'
+export * from './httpServiceModule'
 export * from './httpRuntime'
 export * from './socketProfile'
 export * from './socketRuntime'

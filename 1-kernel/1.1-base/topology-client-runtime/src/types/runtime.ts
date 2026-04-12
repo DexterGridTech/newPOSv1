@@ -6,6 +6,7 @@ import type {
     NodeHelloAck,
     NodeId,
     NodeRuntimeInfo,
+    ProjectionMirrorEnvelope,
     RequestId,
     RequestLifecycleSnapshotEnvelope,
     SessionId,
@@ -132,6 +133,11 @@ export interface TopologyClientRequestLifecycleSnapshotMessage {
     envelope: RequestLifecycleSnapshotEnvelope
 }
 
+export interface TopologyClientProjectionMirrorMessage {
+    type: 'projection-mirror'
+    envelope: ProjectionMirrorEnvelope
+}
+
 export interface TopologyClientStateSyncSummaryMessage {
     type: 'state-sync-summary'
     envelope: StateSyncSummaryEnvelope
@@ -154,6 +160,7 @@ export type TopologyClientIncomingMessage =
     | TopologyClientDispatchMessage
     | TopologyClientCommandEventMessage
     | TopologyClientRequestLifecycleSnapshotMessage
+    | TopologyClientProjectionMirrorMessage
     | TopologyClientStateSyncSummaryMessage
     | TopologyClientStateSyncDiffMessage
     | TopologyClientStateSyncCommitAckMessage
@@ -166,6 +173,7 @@ export type TopologyClientOutgoingMessage =
     | TopologyClientDispatchMessage
     | TopologyClientCommandEventMessage
     | TopologyClientRequestLifecycleSnapshotMessage
+    | TopologyClientProjectionMirrorMessage
     | TopologyClientStateSyncSummaryMessage
     | TopologyClientStateSyncDiffMessage
     | TopologyClientStateSyncCommitAckMessage
@@ -185,6 +193,9 @@ export interface TopologyClientAssembly {
 
 export interface CreateTopologyClientRuntimeModuleInput {
     assembly?: TopologyClientAssembly
+    socket?: {
+        reconnectAttempts?: number
+    }
 }
 
 export interface TopologyClientSessionContext {

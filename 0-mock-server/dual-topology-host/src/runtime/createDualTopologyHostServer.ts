@@ -30,12 +30,13 @@ import type {
 } from '../types/server'
 import {moduleName} from '../moduleName'
 import {runtimeContracts} from './runtimeDeps'
+import {dualTopologyHostServerParameters} from '../supports'
 
 const DEFAULT_SERVER_CONFIG: DualTopologyHostServerConfig = {
-    port: 8888,
-    basePath: '/mockMasterServer',
-    heartbeatIntervalMs: 30_000,
-    heartbeatTimeoutMs: 60_000,
+    port: dualTopologyHostServerParameters.defaultPort.defaultValue,
+    basePath: dualTopologyHostServerParameters.defaultBasePath.defaultValue,
+    heartbeatIntervalMs: dualTopologyHostServerParameters.heartbeatIntervalMs.defaultValue,
+    heartbeatTimeoutMs: dualTopologyHostServerParameters.heartbeatTimeoutMs.defaultValue,
 }
 
 const isRelayEnvelopeMessage = (message: DualTopologyIncomingMessage): message is RelayEnvelopeMessage => {
@@ -460,7 +461,7 @@ export const createDualTopologyHostServer = (
             const ticket = host.hostRuntime.issueTicket({
                 masterNodeId: body.masterNodeId as any,
                 transportUrls: body.transportUrls ?? [getAddressInfo().wsUrl],
-                expiresInMs: body.expiresInMs ?? 5 * 60 * 1000,
+                expiresInMs: body.expiresInMs ?? dualTopologyHostServerParameters.defaultTicketExpiresInMs.defaultValue,
             })
 
             writeJson(response, 200, {

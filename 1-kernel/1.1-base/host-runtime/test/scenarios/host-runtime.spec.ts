@@ -18,6 +18,7 @@ import {
 } from '@impos2/kernel-base-contracts'
 import {
     createHostRuntime,
+    hostRuntimeParameterDefinitions,
 } from '../../src'
 
 const createLogger = () => {
@@ -204,12 +205,14 @@ const createStateSyncCommitAckEnvelope = (input: {
     sessionId: string
     sourceNodeId: string
     targetNodeId: string
+    direction?: 'master-to-slave' | 'slave-to-master'
 }): StateSyncCommitAckEnvelope => {
     return {
         envelopeId: createEnvelopeId(),
         sessionId: input.sessionId as any,
         sourceNodeId: input.sourceNodeId as any,
         targetNodeId: input.targetNodeId as any,
+        direction: input.direction ?? 'master-to-slave',
         committedAt: nowTimestampMs(),
     }
 }
@@ -575,6 +578,52 @@ describe('host-runtime', () => {
         expect(detached).toHaveLength(1)
         expect(detached[0].sessionId).toBe(sessionId)
         expect(runtime.getSession(sessionId)?.nodes[masterNodeId]?.connected).toBe(false)
+    })
+
+    it('uses exported default heartbeat timeout parameter when runtime input does not override it', () => {
+        const masterNodeId = createNodeId()
+        const runtime = createHostRuntime({
+            hostRuntime: createRuntimeInfo({
+                nodeId: createNodeId(),
+                deviceId: 'host',
+                role: 'master',
+            }),
+            logger: createLogger(),
+        })
+
+        const ticket = runtime.issueTicket({
+            masterNodeId,
+            transportUrls: ['ws://127.0.0.1:8080/dual'],
+            expiresInMs: 30_000,
+            issuedAt: 1_000,
+        })
+
+        const hello = runtime.processHello({
+            connectionId: 'conn-master-default-timeout' as any,
+            receivedAt: 2_000,
+            hello: createHello({
+                ticketToken: ticket.ticket.token,
+                runtime: createRuntimeInfo({
+                    nodeId: masterNodeId,
+                    deviceId: 'master-device',
+                    role: 'master',
+                }),
+            }),
+        })
+
+        const defaultTimeoutMs = hostRuntimeParameterDefinitions.heartbeatTimeoutMs.defaultValue
+        const sessionId = hello.ack.sessionId!
+
+        expect(runtime.expireIdleConnections({
+            now: (2_000 + defaultTimeoutMs) as any,
+        })).toHaveLength(0)
+
+        const detached = runtime.expireIdleConnections({
+            now: (2_001 + defaultTimeoutMs) as any,
+        })
+
+        expect(detached).toHaveLength(1)
+        expect(detached[0].sessionId).toBe(sessionId)
     })
 
     it('routes projection mirror envelopes to the owner node connection', () => {

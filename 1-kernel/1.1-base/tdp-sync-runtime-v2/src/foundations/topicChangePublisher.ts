@@ -1,0 +1,142 @@
+import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
+import {tdpSyncV2CommandDefinitions} from '../features/commands'
+import {selectTdpResolvedProjectionByTopic} from '../selectors'
+import {selectTdpProjectionState} from '../selectors'
+import type {
+    TdpProjectionEnvelope,
+    TdpTopicDataChangeItem,
+    TdpTopicDataChangedPayload,
+} from '../types'
+
+export const TDP_SYSTEM_TOPIC_KEYS = {
+    errorCatalog: 'error.message',
+    parameterCatalog: 'system.parameter',
+} as const
+
+export interface TopicChangePublisherFingerprintV2 {
+    byTopic: Record<string, string>
+    resolvedByTopic: Record<string, Record<string, TdpProjectionEnvelope>>
+}
+
+const toTopicFingerprint = (entries: Record<string, TdpProjectionEnvelope>) =>
+    Object.values(entries)
+        .map(item => [
+            item.itemKey,
+            item.scopeType,
+            item.scopeId,
+            item.revision,
+            item.operation,
+            JSON.stringify(item.payload),
+        ].join(':'))
+        .sort()
+        .join('|')
+
+const toChangeItems = (
+    current: Record<string, TdpProjectionEnvelope>,
+    previous: Record<string, TdpProjectionEnvelope>,
+): TdpTopicDataChangeItem[] => {
+    const itemKeys = new Set([
+        ...Object.keys(current),
+        ...Object.keys(previous),
+    ])
+
+    const changes: TdpTopicDataChangeItem[] = []
+
+    for (const itemKey of itemKeys) {
+        const currentEntry = current[itemKey]
+        const previousEntry = previous[itemKey]
+
+        if (!currentEntry && previousEntry) {
+            changes.push({
+                operation: 'delete',
+                itemKey,
+                revision: previousEntry.revision,
+            })
+            continue
+        }
+
+        if (currentEntry && !previousEntry) {
+            changes.push({
+                operation: 'upsert',
+                itemKey,
+                payload: currentEntry.payload,
+                revision: currentEntry.revision,
+            })
+            continue
+        }
+
+        if (!currentEntry || !previousEntry) {
+            continue
+        }
+
+        const currentFingerprint = `${currentEntry.revision}:${JSON.stringify(currentEntry.payload)}`
+        const previousFingerprint = `${previousEntry.revision}:${JSON.stringify(previousEntry.payload)}`
+        if (currentFingerprint === previousFingerprint) {
+            continue
+        }
+
+        changes.push({
+            operation: 'upsert',
+            itemKey,
+            payload: currentEntry.payload,
+            revision: currentEntry.revision,
+        })
+    }
+
+    return changes.sort((left, right) => left.itemKey.localeCompare(right.itemKey))
+}
+
+export const createTopicChangePublisherFingerprintV2 = (): TopicChangePublisherFingerprintV2 => ({
+    byTopic: {},
+    resolvedByTopic: {},
+})
+
+export const publishTopicDataChangesV2 = async (
+    runtime: {
+        getState(): unknown
+        dispatchCommand<TPayload = unknown>(command: ReturnType<typeof createCommand<TPayload>>): Promise<unknown>
+    },
+    fingerprintRef: TopicChangePublisherFingerprintV2,
+): Promise<{
+    changedTopicCount: number
+    changedTopics: string[]
+}> => {
+    const state = runtime.getState() as any
+    const topics = new Set<string>([
+        ...Object.values(selectTdpProjectionState(state) ?? {}).map(item => item.topic),
+        ...Object.keys(fingerprintRef.byTopic),
+    ])
+    const changedTopics: string[] = []
+
+    for (const topic of topics) {
+        const resolved = selectTdpResolvedProjectionByTopic(state, topic)
+        const fingerprint = toTopicFingerprint(resolved)
+        const previousFingerprint = fingerprintRef.byTopic[topic] ?? ''
+        if (fingerprint === previousFingerprint) {
+            continue
+        }
+
+        const previousResolved = fingerprintRef.resolvedByTopic[topic] ?? {}
+        const changes = toChangeItems(resolved, previousResolved)
+
+        fingerprintRef.byTopic[topic] = fingerprint
+        fingerprintRef.resolvedByTopic[topic] = resolved
+
+        if (changes.length === 0) {
+            continue
+        }
+
+        const payload: TdpTopicDataChangedPayload = {
+            topic,
+            changes,
+        }
+
+        await runtime.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.tdpTopicDataChanged, payload))
+        changedTopics.push(topic)
+    }
+
+    return {
+        changedTopicCount: changedTopics.length,
+        changedTopics,
+    }
+}

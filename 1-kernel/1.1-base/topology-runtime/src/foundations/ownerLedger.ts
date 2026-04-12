@@ -2,7 +2,6 @@ import {createAppError, nowTimestampMs} from '@impos2/kernel-base-contracts'
 import type {
     CommandDispatchEnvelope,
     CommandEventEnvelope,
-    ErrorDefinition,
     RequestId,
     RequestLifecycleSnapshot,
     SessionId,
@@ -13,51 +12,7 @@ import type {
     OwnerLedgerRecord,
 } from '../types/ownerLedger'
 import type {RegisterRootRequestInput} from '../types/runtime'
-
-const REQUEST_ALREADY_REGISTERED_ERROR: ErrorDefinition = {
-    key: 'kernel.base.topology-runtime.request_already_registered',
-    name: 'Request Already Registered',
-    defaultTemplate: 'Request already registered: ${requestId}',
-    category: 'SYSTEM',
-    severity: 'HIGH',
-    moduleName: 'kernel.base.topology-runtime',
-}
-
-const REQUEST_NOT_FOUND_ERROR: ErrorDefinition = {
-    key: 'kernel.base.topology-runtime.request_not_found',
-    name: 'Request Not Found',
-    defaultTemplate: 'Request not found: ${requestId}',
-    category: 'SYSTEM',
-    severity: 'HIGH',
-    moduleName: 'kernel.base.topology-runtime',
-}
-
-const COMMAND_NOT_FOUND_ERROR: ErrorDefinition = {
-    key: 'kernel.base.topology-runtime.command_not_found',
-    name: 'Owner Command Node Not Found',
-    defaultTemplate: 'Command node not found: ${commandId}',
-    category: 'SYSTEM',
-    severity: 'HIGH',
-    moduleName: 'kernel.base.topology-runtime',
-}
-
-const COMMAND_PARENT_NOT_FOUND_ERROR: ErrorDefinition = {
-    key: 'kernel.base.topology-runtime.command_parent_not_found',
-    name: 'Owner Parent Command Node Not Found',
-    defaultTemplate: 'Parent command node not found: ${parentCommandId}',
-    category: 'SYSTEM',
-    severity: 'HIGH',
-    moduleName: 'kernel.base.topology-runtime',
-}
-
-const EVENT_ERROR_DEFINITION: ErrorDefinition = {
-    key: 'kernel.base.topology-runtime.remote_command_failed',
-    name: 'Remote Command Failed',
-    defaultTemplate: '${message}',
-    category: 'SYSTEM',
-    severity: 'MEDIUM',
-    moduleName: 'kernel.base.topology-runtime',
-}
+import {topologyRuntimeErrorDefinitions} from '../supports'
 
 const getRecordOrThrow = (
     records: Map<RequestId, OwnerLedgerRecord>,
@@ -65,7 +20,7 @@ const getRecordOrThrow = (
 ): OwnerLedgerRecord => {
     const record = records.get(requestId)
     if (!record) {
-        throw createAppError(REQUEST_NOT_FOUND_ERROR, {args: {requestId}})
+        throw createAppError(topologyRuntimeErrorDefinitions.requestNotFound, {args: {requestId}})
     }
     return record
 }
@@ -76,7 +31,7 @@ const getNodeOrThrow = (
 ): OwnerCommandNode => {
     const node = record.nodes[commandId]
     if (!node) {
-        throw createAppError(COMMAND_NOT_FOUND_ERROR, {
+        throw createAppError(topologyRuntimeErrorDefinitions.commandNotFound, {
             args: {commandId},
             context: {
                 requestId: record.requestId,
@@ -168,7 +123,7 @@ export const createOwnerLedger = (): OwnerLedger => {
     return {
         registerRootRequest(input: RegisterRootRequestInput): OwnerLedgerRecord {
             if (records.has(input.requestId)) {
-                throw createAppError(REQUEST_ALREADY_REGISTERED_ERROR, {
+                throw createAppError(topologyRuntimeErrorDefinitions.requestAlreadyRegistered, {
                     args: {requestId: input.requestId},
                     context: {
                         requestId: input.requestId,
@@ -210,7 +165,7 @@ export const createOwnerLedger = (): OwnerLedger => {
             const record = getRecordOrThrow(records, envelope.requestId)
 
             if (envelope.parentCommandId && !record.nodes[envelope.parentCommandId]) {
-                throw createAppError(COMMAND_PARENT_NOT_FOUND_ERROR, {
+                throw createAppError(topologyRuntimeErrorDefinitions.commandParentNotFound, {
                     args: {parentCommandId: envelope.parentCommandId},
                     context: {
                         requestId: envelope.requestId,
@@ -259,7 +214,7 @@ export const createOwnerLedger = (): OwnerLedger => {
                 node.result = envelope.result ?? node.result
             } else if (envelope.eventType === 'failed') {
                 node.status = 'error'
-                node.error = createAppError(EVENT_ERROR_DEFINITION, {
+                node.error = createAppError(topologyRuntimeErrorDefinitions.remoteCommandFailed, {
                     args: {
                         message: envelope.error?.message ?? 'remote command failed',
                     },

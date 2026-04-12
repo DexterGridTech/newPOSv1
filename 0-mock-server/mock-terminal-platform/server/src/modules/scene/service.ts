@@ -1,4 +1,5 @@
 import { batchCreateTerminals, createTaskRelease, createTaskInstancesForRelease } from '../tcp/service.js'
+import { dispatchTaskReleaseToDataPlane } from '../tdp/service.js'
 
 export const listSceneTemplates = () => [
   {
@@ -17,31 +18,45 @@ export const listSceneTemplates = () => [
   },
 ]
 
-export const runSceneTemplate = (sceneTemplateId: string) => {
+export const runSceneTemplate = (
+  sceneTemplateId: string,
+  input: {
+    targetTerminalIds?: string[]
+    batchCount?: number
+  } = {},
+) => {
   if (sceneTemplateId === 'scene-batch-terminal-online') {
-    const terminals = batchCreateTerminals(5)
+    const terminals = batchCreateTerminals(input.batchCount ?? 5)
+    const targetTerminalIds = input.targetTerminalIds?.length
+      ? input.targetTerminalIds
+      : terminals.terminalIds
     const release = createTaskRelease({
       title: '场景-批量配置下发',
       taskType: 'CONFIG_PUBLISH',
       sourceType: 'CONFIG',
       sourceId: 'config-scene-default',
       priority: 80,
-      targetTerminalIds: terminals.terminalIds,
+      targetTerminalIds,
       payload: { configVersion: 'config-2026.04.06', strategy: 'immediate' },
     })
     const dispatch = createTaskInstancesForRelease(release.releaseId)
-    return { sceneTemplateId, terminals, release, dispatch }
+    const tdp = dispatchTaskReleaseToDataPlane(release.releaseId)
+    return { sceneTemplateId, terminals, release, dispatch, tdp, targetTerminalIds }
   }
 
+  const targetTerminalIds = input.targetTerminalIds?.length
+    ? input.targetTerminalIds
+    : ['T-1001', 'T-1002', 'T-1003']
   const release = createTaskRelease({
     title: '场景-灰度热更新',
     taskType: 'APP_UPGRADE',
     sourceType: 'APP_VERSION',
     sourceId: 'app-2.4.0',
     priority: 90,
-    targetTerminalIds: ['T-1001', 'T-1002', 'T-1003'],
+    targetTerminalIds,
     payload: { targetVersion: '2.4.0', bundleVersion: 'bundle-2026.04.06.1', policy: 'gray-10%' },
   })
   const dispatch = createTaskInstancesForRelease(release.releaseId)
-  return { sceneTemplateId, release, dispatch }
+  const tdp = dispatchTaskReleaseToDataPlane(release.releaseId)
+  return { sceneTemplateId, release, dispatch, tdp, targetTerminalIds }
 }

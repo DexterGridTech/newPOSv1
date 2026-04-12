@@ -36,6 +36,7 @@ export interface AppError {
     sessionId?: SessionId
     nodeId?: NodeId
     createdAt: TimestampMs
+    args?: Record<string, unknown>
     details?: unknown
     cause?: unknown
     stack?: string
@@ -46,6 +47,17 @@ export interface ErrorCatalogEntry {
     template: string
     updatedAt: TimestampMs
     source: 'default' | 'remote' | 'host'
+}
+
+export interface ResolvedErrorView {
+    key: string
+    code: string
+    name: string
+    category: ErrorCategory
+    severity: ErrorSeverity
+    template: string
+    message: string
+    source: 'catalog' | 'definition-default' | 'app-error'
 }
 
 export interface CreateAppErrorContext {

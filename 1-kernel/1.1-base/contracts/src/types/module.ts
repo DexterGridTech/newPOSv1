@@ -31,7 +31,7 @@ export interface AppModule {
     protocolVersion?: string
     dependencies?: readonly AppModuleDependency[]
     errorDefinitions?: readonly ErrorDefinition[]
-    parameterDefinitions?: readonly ParameterDefinition[]
+    parameterDefinitions?: readonly ParameterDefinition<any>[]
     commands?: readonly AppModuleCommandDescriptor[]
     actors?: readonly AppModuleActorDescriptor[]
     middlewares?: readonly AppModuleMiddlewareDescriptor[]

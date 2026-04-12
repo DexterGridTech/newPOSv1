@@ -79,11 +79,11 @@ export const createTopologyRuntime = (
         collectContinuousSyncDiff(syncInput) {
             return syncSessions.collectContinuousDiff(syncInput)
         },
-        commitContinuousSync(sessionId, currentSummary) {
-            return syncSessions.commitContinuous(sessionId, currentSummary)
+        commitContinuousSync(sessionId, direction, currentSummary) {
+            return syncSessions.commitContinuous(sessionId, direction, currentSummary)
         },
         createSyncSummaryEnvelope(syncInput) {
-            const session = syncSessions.get(syncInput.sessionId)
+            const session = syncSessions.get(syncInput.sessionId, syncInput.direction)
             if (!session) {
                 return undefined
             }
@@ -124,14 +124,15 @@ export const createTopologyRuntime = (
         handleSyncCommitAckEnvelope(syncInput) {
             return syncSessions.commitContinuous(
                 syncInput.envelope.sessionId,
+                syncInput.envelope.direction,
                 syncInput.currentSummary,
             )
         },
-        getSyncSession(sessionId) {
-            return syncSessions.get(sessionId)
+        getSyncSession(sessionId, direction) {
+            return syncSessions.get(sessionId, direction)
         },
-        clearSyncSession(sessionId) {
-            syncSessions.clear(sessionId)
+        clearSyncSession(sessionId, direction) {
+            syncSessions.clear(sessionId, direction)
         },
         registerRootRequest(inputRecord) {
             ledger.registerRootRequest(inputRecord)

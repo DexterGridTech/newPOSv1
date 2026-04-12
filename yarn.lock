@@ -3612,7 +3612,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/dual-topology-host@*, @impos2/dual-topology-host@workspace:0-mock-server/dual-topology-host":
+"@impos2/dual-topology-host@*, @impos2/dual-topology-host@workspace:*, @impos2/dual-topology-host@workspace:0-mock-server/dual-topology-host":
   version: 0.0.0-use.local
   resolution: "@impos2/dual-topology-host@workspace:0-mock-server/dual-topology-host"
   dependencies:
@@ -3649,6 +3649,7 @@ __metadata:
     madge: ^8.0.0
     tsx: ^4.21.0
     typescript: ^5.9.3
+    vitest: ^3.2.4
   languageName: unknown
   linkType: soft
 
@@ -3663,6 +3664,7 @@ __metadata:
     madge: ^8.0.0
     tsx: ^4.21.0
     typescript: ^5.9.3
+    vitest: ^3.2.4
   languageName: unknown
   linkType: soft
 
@@ -3689,6 +3691,22 @@ __metadata:
     madge: ^8.0.0
     tsx: ^4.21.0
     typescript: ^5.9.3
+  languageName: unknown
+  linkType: soft
+
+"@impos2/kernel-base-runtime-shell-v2@workspace:*, @impos2/kernel-base-runtime-shell-v2@workspace:1-kernel/1.1-base/runtime-shell-v2":
+  version: 0.0.0-use.local
+  resolution: "@impos2/kernel-base-runtime-shell-v2@workspace:1-kernel/1.1-base/runtime-shell-v2"
+  dependencies:
+    "@impos2/kernel-base-contracts": "*"
+    "@impos2/kernel-base-platform-ports": "*"
+    "@impos2/kernel-base-state-runtime": "workspace:*"
+    "@reduxjs/toolkit": ^2.10.0
+    "@types/node": ^25.0.9
+    madge: ^8.0.0
+    tsx: ^4.21.0
+    typescript: ^5.9.3
+    vitest: ^3.2.4
   languageName: unknown
   linkType: soft
 
@@ -3726,6 +3744,79 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@impos2/kernel-base-tcp-control-runtime-v2@workspace:*, @impos2/kernel-base-tcp-control-runtime-v2@workspace:1-kernel/1.1-base/tcp-control-runtime-v2":
+  version: 0.0.0-use.local
+  resolution: "@impos2/kernel-base-tcp-control-runtime-v2@workspace:1-kernel/1.1-base/tcp-control-runtime-v2"
+  dependencies:
+    "@impos2/kernel-base-contracts": "workspace:*"
+    "@impos2/kernel-base-platform-ports": "workspace:*"
+    "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
+    "@impos2/kernel-base-state-runtime": "workspace:*"
+    "@impos2/kernel-base-transport-runtime": "workspace:*"
+    "@reduxjs/toolkit": ^2.10.0
+    "@types/node": ^25.0.9
+    madge: ^8.0.0
+    tsx: ^4.21.0
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  languageName: unknown
+  linkType: soft
+
+"@impos2/kernel-base-tcp-control-runtime@workspace:*, @impos2/kernel-base-tcp-control-runtime@workspace:1-kernel/1.1-base/tcp-control-runtime":
+  version: 0.0.0-use.local
+  resolution: "@impos2/kernel-base-tcp-control-runtime@workspace:1-kernel/1.1-base/tcp-control-runtime"
+  dependencies:
+    "@impos2/kernel-base-contracts": "workspace:*"
+    "@impos2/kernel-base-platform-ports": "workspace:*"
+    "@impos2/kernel-base-runtime-shell": "workspace:*"
+    "@impos2/kernel-base-state-runtime": "workspace:*"
+    "@impos2/kernel-base-transport-runtime": "workspace:*"
+    "@reduxjs/toolkit": ^2.10.0
+    "@types/node": ^25.0.9
+    madge: ^8.0.0
+    tsx: ^4.21.0
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  languageName: unknown
+  linkType: soft
+
+"@impos2/kernel-base-tdp-sync-runtime-v2@workspace:*, @impos2/kernel-base-tdp-sync-runtime-v2@workspace:1-kernel/1.1-base/tdp-sync-runtime-v2":
+  version: 0.0.0-use.local
+  resolution: "@impos2/kernel-base-tdp-sync-runtime-v2@workspace:1-kernel/1.1-base/tdp-sync-runtime-v2"
+  dependencies:
+    "@impos2/kernel-base-contracts": "workspace:*"
+    "@impos2/kernel-base-platform-ports": "workspace:*"
+    "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
+    "@impos2/kernel-base-state-runtime": "workspace:*"
+    "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*"
+    "@reduxjs/toolkit": ^2.10.0
+    "@types/node": ^25.0.9
+    madge: ^8.0.0
+    tsx: ^4.21.0
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  languageName: unknown
+  linkType: soft
+
+"@impos2/kernel-base-tdp-sync-runtime@workspace:*, @impos2/kernel-base-tdp-sync-runtime@workspace:1-kernel/1.1-base/tdp-sync-runtime":
+  version: 0.0.0-use.local
+  resolution: "@impos2/kernel-base-tdp-sync-runtime@workspace:1-kernel/1.1-base/tdp-sync-runtime"
+  dependencies:
+    "@impos2/kernel-base-contracts": "workspace:*"
+    "@impos2/kernel-base-platform-ports": "workspace:*"
+    "@impos2/kernel-base-runtime-shell": "workspace:*"
+    "@impos2/kernel-base-state-runtime": "workspace:*"
+    "@impos2/kernel-base-tcp-control-runtime": "workspace:*"
+    "@impos2/kernel-base-transport-runtime": "workspace:*"
+    "@reduxjs/toolkit": ^2.10.0
+    "@types/node": ^25.0.9
+    madge: ^8.0.0
+    tsx: ^4.21.0
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  languageName: unknown
+  linkType: soft
+
 "@impos2/kernel-base-topology-client-runtime@workspace:1-kernel/1.1-base/topology-client-runtime":
   version: 0.0.0-use.local
   resolution: "@impos2/kernel-base-topology-client-runtime@workspace:1-kernel/1.1-base/topology-client-runtime"
@@ -3734,7 +3825,29 @@ __metadata:
     "@impos2/kernel-base-platform-ports": "workspace:*"
     "@impos2/kernel-base-runtime-shell": "workspace:*"
     "@impos2/kernel-base-state-runtime": "workspace:*"
+    "@impos2/kernel-base-tcp-control-runtime": "workspace:*"
+    "@impos2/kernel-base-tdp-sync-runtime": "workspace:*"
     "@impos2/kernel-base-topology-runtime": "workspace:*"
+    "@impos2/kernel-base-transport-runtime": "workspace:*"
+    "@reduxjs/toolkit": ^2.10.0
+    "@types/node": ^25.0.9
+    madge: ^8.0.0
+    tsx: ^4.21.0
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  languageName: unknown
+  linkType: soft
+
+"@impos2/kernel-base-topology-runtime-v2@workspace:1-kernel/1.1-base/topology-runtime-v2":
+  version: 0.0.0-use.local
+  resolution: "@impos2/kernel-base-topology-runtime-v2@workspace:1-kernel/1.1-base/topology-runtime-v2"
+  dependencies:
+    "@impos2/dual-topology-host": "workspace:*"
+    "@impos2/kernel-base-contracts": "workspace:*"
+    "@impos2/kernel-base-platform-ports": "workspace:*"
+    "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
+    "@impos2/kernel-base-state-runtime": "workspace:*"
+    "@impos2/kernel-base-transport-runtime": "workspace:*"
     "@reduxjs/toolkit": ^2.10.0
     "@types/node": ^25.0.9
     madge: ^8.0.0
@@ -3761,7 +3874,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/kernel-base-transport-runtime@workspace:1-kernel/1.1-base/transport-runtime":
+"@impos2/kernel-base-transport-runtime@workspace:*, @impos2/kernel-base-transport-runtime@workspace:1-kernel/1.1-base/transport-runtime":
   version: 0.0.0-use.local
   resolution: "@impos2/kernel-base-transport-runtime@workspace:1-kernel/1.1-base/transport-runtime"
   dependencies:
@@ -3776,6 +3889,44 @@ __metadata:
     typescript: ^5.9.3
     vitest: ^3.2.4
     ws: ^8.18.0
+  languageName: unknown
+  linkType: soft
+
+"@impos2/kernel-base-workflow-runtime-v2@workspace:1-kernel/1.1-base/workflow-runtime-v2":
+  version: 0.0.0-use.local
+  resolution: "@impos2/kernel-base-workflow-runtime-v2@workspace:1-kernel/1.1-base/workflow-runtime-v2"
+  dependencies:
+    "@impos2/kernel-base-contracts": "workspace:*"
+    "@impos2/kernel-base-platform-ports": "workspace:*"
+    "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
+    "@impos2/kernel-base-state-runtime": "workspace:*"
+    "@impos2/kernel-base-tdp-sync-runtime-v2": "workspace:*"
+    "@reduxjs/toolkit": ^2.10.0
+    "@types/node": ^25.0.9
+    madge: ^8.0.0
+    rxjs: ^7.8.2
+    tsx: ^4.21.0
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  languageName: unknown
+  linkType: soft
+
+"@impos2/kernel-base-workflow-runtime@workspace:1-kernel/1.1-base/workflow-runtime":
+  version: 0.0.0-use.local
+  resolution: "@impos2/kernel-base-workflow-runtime@workspace:1-kernel/1.1-base/workflow-runtime"
+  dependencies:
+    "@impos2/kernel-base-contracts": "workspace:*"
+    "@impos2/kernel-base-platform-ports": "workspace:*"
+    "@impos2/kernel-base-runtime-shell": "workspace:*"
+    "@impos2/kernel-base-state-runtime": "workspace:*"
+    "@impos2/kernel-base-tdp-sync-runtime": "workspace:*"
+    "@reduxjs/toolkit": ^2.10.0
+    "@types/node": ^25.0.9
+    madge: ^8.0.0
+    rxjs: ^7.8.2
+    tsx: ^4.21.0
+    typescript: ^5.9.3
+    vitest: ^3.2.4
   languageName: unknown
   linkType: soft
 

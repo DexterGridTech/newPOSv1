@@ -1,5 +1,14 @@
 import type {LoggerPort, LogEnvironmentMode} from './logging'
 
+export interface ScriptExecutorPort {
+    execute<T = unknown>(input: {
+        source: string
+        params?: Record<string, unknown>
+        globals?: Record<string, unknown>
+        timeoutMs?: number
+    }): Promise<T>
+}
+
 export interface StateStoragePort {
     getItem(key: string): Promise<string | null>
     setItem(key: string, value: string): Promise<void>
@@ -30,13 +39,30 @@ export interface LocalWebServerPort {
 }
 
 export interface ConnectorPort {
-    connect(input: Record<string, unknown>): Promise<Record<string, unknown>>
+    call?(input: {
+        channel: Record<string, unknown>
+        action: string
+        params?: Record<string, unknown>
+        timeoutMs?: number
+    }): Promise<Record<string, unknown>>
+    subscribe?(input: {
+        channel: Record<string, unknown>
+        onMessage: (message: Record<string, unknown>) => void
+        onError?: (error: Record<string, unknown>) => void
+    }): Promise<string>
+    unsubscribe?(subscriptionId: string): Promise<void>
+    on?(
+        eventType: string,
+        handler: (event: Record<string, unknown>) => void,
+    ): () => void
+    connect?(input: Record<string, unknown>): Promise<Record<string, unknown>>
     disconnect?(input?: Record<string, unknown>): Promise<void>
 }
 
 export interface PlatformPorts {
     environmentMode: LogEnvironmentMode
     logger: LoggerPort
+    scriptExecutor?: ScriptExecutorPort
     stateStorage?: StateStoragePort
     secureStateStorage?: StateStoragePort
     device?: DevicePort

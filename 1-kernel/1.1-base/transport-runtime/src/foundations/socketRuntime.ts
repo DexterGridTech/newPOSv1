@@ -3,7 +3,6 @@ import {
     createConnectionId,
     nowTimestampMs,
 } from '@impos2/kernel-base-contracts'
-import type {ErrorDefinition} from '@impos2/kernel-base-contracts'
 import type {LoggerPort} from '@impos2/kernel-base-platform-ports'
 import type {
     CreateSocketRuntimeInput,
@@ -19,15 +18,7 @@ import type {
 } from '../types'
 import {createServerCatalog} from './serverCatalog'
 import {buildSocketUrl} from './socketProfile'
-
-const SOCKET_RUNTIME_FAILED_ERROR: ErrorDefinition = {
-    key: 'kernel.base.transport-runtime.socket_runtime_failed',
-    name: 'Socket Runtime Failed',
-    defaultTemplate: 'Socket runtime failed for ${profileName}',
-    category: 'NETWORK',
-    severity: 'MEDIUM',
-    moduleName: 'kernel.base.transport-runtime',
-}
+import {transportRuntimeErrorDefinitions} from '../supports'
 
 interface ManagedSocketConnection {
     readonly profile: SocketConnectionProfile<any, any, any, any, any>
@@ -87,7 +78,7 @@ export const createSocketRuntime = (
     const getConnection = (profileName: string): ManagedSocketConnection => {
         const connection = connections.get(profileName)
         if (!connection) {
-            throw createAppError(SOCKET_RUNTIME_FAILED_ERROR, {
+            throw createAppError(transportRuntimeErrorDefinitions.socketRuntimeFailed, {
                 args: {profileName},
                 details: {profileName},
             })

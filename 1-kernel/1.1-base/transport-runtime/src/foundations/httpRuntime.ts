@@ -2,7 +2,6 @@ import {
     createAppError,
     nowTimestampMs,
 } from '@impos2/kernel-base-contracts'
-import type {ErrorDefinition} from '@impos2/kernel-base-contracts'
 import type {LoggerPort} from '@impos2/kernel-base-platform-ports'
 import type {
     CreateHttpRuntimeInput,
@@ -17,15 +16,7 @@ import type {
 import {createServerCatalog} from './serverCatalog'
 import {buildHttpUrl} from './httpEndpoint'
 import {HttpExecutionController} from './httpPolicy'
-
-const HTTP_RUNTIME_FAILED_ERROR: ErrorDefinition = {
-    key: 'kernel.base.transport-runtime.http_runtime_failed',
-    name: 'HTTP Runtime Failed',
-    defaultTemplate: 'HTTP runtime failed for ${endpointName}',
-    category: 'NETWORK',
-    severity: 'MEDIUM',
-    moduleName: 'kernel.base.transport-runtime',
-}
+import {transportRuntimeErrorDefinitions} from '../supports'
 
 const createEndpointLogger = (logger: LoggerPort): LoggerPort => {
     return logger.scope({
@@ -73,7 +64,7 @@ export const createHttpRuntime = (
         cause: unknown,
         inputValue: HttpCallInput<any, any, any>,
     ) => {
-        return createAppError(HTTP_RUNTIME_FAILED_ERROR, {
+        return createAppError(transportRuntimeErrorDefinitions.httpRuntimeFailed, {
             args: {endpointName: endpoint.name},
             details: {
                 endpointName: endpoint.name,

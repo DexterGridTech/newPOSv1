@@ -1,6 +1,10 @@
 import {afterEach, describe, expect, it} from 'vitest'
 import {createNodeId} from '@impos2/kernel-base-contracts'
-import {moduleName, createDualTopologyHostServer} from '../../src'
+import {
+    moduleName,
+    createDualTopologyHostServer,
+    dualTopologyHostServerParameters,
+} from '../../src'
 import {fetchJson} from '../helpers/http'
 
 const servers: Array<ReturnType<typeof createDualTopologyHostServer>> = []
@@ -97,5 +101,36 @@ describe('dual-topology-host http server', () => {
 
         expect(statsAfterMutations.ticketCount).toBe(1)
         expect(statsAfterMutations.activeFaultRuleCount).toBe(1)
+    })
+
+    it('uses exported default ticket expiry when request does not override expiresInMs', async () => {
+        const server = createDualTopologyHostServer({
+            config: {
+                port: 0,
+            },
+        })
+        servers.push(server)
+        await server.start()
+
+        const addressInfo = server.getAddressInfo()
+        const before = Date.now()
+
+        const ticket = await fetchJson<{
+            success: boolean
+            expiresAt: number
+        }>(`${addressInfo.httpBaseUrl}/tickets`, {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+            },
+            body: JSON.stringify({
+                masterNodeId: createNodeId(),
+            }),
+        })
+
+        expect(ticket.success).toBe(true)
+        expect(ticket.expiresAt).toBeGreaterThanOrEqual(
+            before + dualTopologyHostServerParameters.defaultTicketExpiresInMs.defaultValue,
+        )
     })
 })

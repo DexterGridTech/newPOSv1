@@ -508,9 +508,9 @@ describe('topology-runtime', () => {
                 ],
             },
         ])
-        expect(topology.getSyncSession(sessionId)?.status).toBe('active')
+        expect(topology.getSyncSession(sessionId, 'master-to-slave')?.status).toBe('active')
         topology.clearSyncSession(sessionId)
-        expect(topology.getSyncSession(sessionId)).toBeUndefined()
+        expect(topology.getSyncSession(sessionId, 'master-to-slave')).toBeUndefined()
     })
 
     it('tracks continuous sync diffs and only advances baseline on commit', () => {
@@ -587,7 +587,7 @@ describe('topology-runtime', () => {
         })
         expect(unchangedBeforeCommit.lastDiff?.[0]?.diff).toHaveLength(2)
 
-        topology.commitContinuousSync(sessionId, {
+        topology.commitContinuousSync(sessionId, 'master-to-slave', {
             'kernel.base.topology-runtime.test.continuous-state': {
                 A: {updatedAt: 20},
                 B: {updatedAt: 30},
@@ -675,6 +675,7 @@ describe('topology-runtime', () => {
             sessionId,
             sourceNodeId: masterNodeId,
             targetNodeId: slaveNodeId,
+            direction: 'master-to-slave',
         })
 
         expect(summaryEnvelope?.summaryBySlice).toEqual({
@@ -735,6 +736,7 @@ describe('topology-runtime', () => {
                 sessionId,
                 sourceNodeId: slaveNodeId,
                 targetNodeId: masterNodeId,
+                direction: 'master-to-slave',
                 committedAt: 3_300 as any,
             },
             currentSummary: {
@@ -745,6 +747,7 @@ describe('topology-runtime', () => {
             },
         })
 
+        expect(committed?.status).toBe('continuous')
         expect(committed?.baselineSummaryBySlice).toEqual({
             'kernel.base.topology-runtime.test.transport-sync': {
                 A: {updatedAt: 10},

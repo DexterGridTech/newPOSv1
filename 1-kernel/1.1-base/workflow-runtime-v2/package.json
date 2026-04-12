@@ -1,0 +1,35 @@
+{
+  "name": "@impos2/kernel-base-workflow-runtime-v2",
+  "version": "1.0.0",
+  "description": "Kernel base workflow runtime v2 package",
+  "author": "DexterYang",
+  "license": "ISC",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "react-native": "./src/index.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json --noEmit",
+    "build-for-product": "rm -rf dist && tsc -p tsconfig.json",
+    "test": "vitest run",
+    "clean": "rm -rf dist",
+    "type-check": "tsc -p tsconfig.json --noEmit",
+    "check:circular": "madge --circular --extensions ts --warning src/"
+  },
+  "dependencies": {
+    "@impos2/kernel-base-contracts": "workspace:*",
+    "@impos2/kernel-base-runtime-shell-v2": "workspace:*",
+    "@impos2/kernel-base-state-runtime": "workspace:*",
+    "@impos2/kernel-base-tdp-sync-runtime-v2": "workspace:*",
+    "@reduxjs/toolkit": "^2.10.0",
+    "rxjs": "^7.8.2"
+  },
+  "devDependencies": {
+    "@impos2/kernel-base-platform-ports": "workspace:*",
+    "@types/node": "^25.0.9",
+    "madge": "^8.0.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  }
+}

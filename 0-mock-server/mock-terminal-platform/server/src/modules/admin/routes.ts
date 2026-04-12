@@ -1,7 +1,16 @@
 import { Router } from 'express'
 import { ok, created, fail } from '../../shared/http.js'
 import { parsePagination } from '../../shared/pagination.js'
-import { createSandbox, getRuntimeContext, listAuditLogs, listSandboxes, getPlatformOverview, switchCurrentSandbox, updateSandbox } from '../sandbox/service.js'
+import {
+  createSandbox,
+  getRuntimeContext,
+  listAuditLogs,
+  listSandboxes,
+  getPlatformOverview,
+  prepareKernelBaseTestSandbox,
+  switchCurrentSandbox,
+  updateSandbox,
+} from '../sandbox/service.js'
 import {
   activateTerminal,
   batchCreateTerminals,
@@ -40,6 +49,7 @@ import {
   sendProtocolErrorToSession,
   sendSessionRehomeRequired,
   upsertProjection,
+  upsertProjectionBatch,
 } from '../tdp/service.js'
 import { createFaultRule, applyMockResult, listFaultRules, simulateFaultHit, updateFaultRule } from '../fault/service.js'
 import { listSceneTemplates, runSceneTemplate } from '../scene/service.js'
@@ -113,6 +123,21 @@ export const createRouter = () => {
       return ok(res, result)
     } catch (error) {
       return fail(res, error instanceof Error ? error.message : '更新沙箱失败', 400)
+    }
+  })
+  router.post('/mock-debug/kernel-base-test/prepare', (_req, res) => {
+    try {
+      const result = prepareKernelBaseTestSandbox()
+      appendAuditLog({
+        domain: 'SANDBOX',
+        action: 'PREPARE_KERNEL_BASE_TEST_SANDBOX',
+        operator: 'kernel-base-test',
+        targetId: result.sandboxId,
+        detail: result,
+      })
+      return ok(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '准备 kernel-base-test 沙箱失败', 400)
     }
   })
   router.get('/api/v1/admin/audit-logs', (req, res) => ok(res, listAuditLogs(parsePagination(req.query))))
@@ -512,7 +537,12 @@ export const createRouter = () => {
   router.get('/api/v1/admin/tdp/scopes', (_req, res) => ok(res, listScopes()))
   router.post('/api/v1/admin/tdp/projections/upsert', (req, res) => {
     const result = upsertProjection(req.body)
-    appendAuditLog({ domain: 'TDP', action: 'UPSERT_PROJECTION', targetId: `${result.topicKey}:${result.scopeKey}`, detail: req.body })
+    appendAuditLog({ domain: 'TDP', action: 'UPSERT_PROJECTION', targetId: `${result.topicKey}:${result.scopeType}:${result.scopeKey}:${result.itemKey}`, detail: req.body })
+    return ok(res, result)
+  })
+  router.post('/api/v1/admin/tdp/projections/batch-upsert', (req, res) => {
+    const result = upsertProjectionBatch(req.body)
+    appendAuditLog({ domain: 'TDP', action: 'BATCH_UPSERT_PROJECTION', targetId: `count:${result.total}`, detail: req.body })
     return ok(res, result)
   })
   router.get('/api/v1/admin/tdp/projections', (_req, res) => ok(res, listProjections()))
@@ -536,7 +566,7 @@ export const createRouter = () => {
 
   router.get('/mock-admin/scenes/templates', (_req, res) => ok(res, listSceneTemplates()))
   router.post('/mock-admin/scenes/:sceneTemplateId/run', (req, res) => {
-    const result = runSceneTemplate(req.params.sceneTemplateId)
+    const result = runSceneTemplate(req.params.sceneTemplateId, req.body ?? {})
     appendAuditLog({ domain: 'SCENE', action: 'RUN_SCENE_TEMPLATE', targetId: req.params.sceneTemplateId, detail: result })
     return ok(res, result)
   })

@@ -32,3 +32,37 @@ export const selectTopologyDisplayMode = (state: RootState) =>
 
 export const selectTopologyInstanceMode = (state: RootState) =>
     selectTopologyClientContext(state)?.instanceMode
+
+export const selectTopologyStandalone = (state: RootState) =>
+    selectTopologyClientContext(state)?.standalone
+
+export const selectTopologyEnableSlave = (state: RootState) =>
+    selectTopologyClientContext(state)?.enableSlave
+
+export const selectTopologyMasterInfo = (state: RootState) =>
+    selectTopologyClientContext(state)?.masterInfo
+
+export const selectTopologyLocalNodeId = (state: RootState) =>
+    selectTopologyClientContext(state)?.localNodeId
+
+export const selectTopologyServerConnected = (state: RootState) =>
+    selectTopologyClientConnection(state)?.serverConnectionStatus === 'CONNECTED'
+
+export const selectTopologyPeerConnected = (state: RootState) => {
+    const peer = selectTopologyClientPeer(state)
+    return Boolean(peer?.peerNodeId && peer.connectedAt && !peer.disconnectedAt)
+}
+
+export const selectTopologyPeerNodeId = (state: RootState) =>
+    selectTopologyClientPeer(state)?.peerNodeId
+
+export const selectTopologyScopedStateKey = (
+    state: RootState,
+    baseKey: string,
+) => {
+    const workspace = selectTopologyWorkspace(state)
+    if (!workspace) {
+        return undefined
+    }
+    return `${baseKey}.${workspace}`
+}

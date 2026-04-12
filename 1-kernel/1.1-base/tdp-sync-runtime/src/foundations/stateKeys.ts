@@ -1,0 +1,5 @@
+export const TDP_SESSION_STATE_KEY = 'kernel.base.tdp-sync-runtime.session'
+export const TDP_SYNC_STATE_KEY = 'kernel.base.tdp-sync-runtime.sync'
+export const TDP_PROJECTION_STATE_KEY = 'kernel.base.tdp-sync-runtime.projection'
+export const TDP_COMMAND_INBOX_STATE_KEY = 'kernel.base.tdp-sync-runtime.command-inbox'
+export const TDP_CONTROL_SIGNALS_STATE_KEY = 'kernel.base.tdp-sync-runtime.control-signals'

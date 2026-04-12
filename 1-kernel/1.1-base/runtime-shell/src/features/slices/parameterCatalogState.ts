@@ -14,6 +14,9 @@ const slice = createSlice({
         setParameterCatalogEntry: (state, action: PayloadAction<ParameterCatalogEntry>) => {
             state[action.payload.key] = action.payload
         },
+        removeParameterCatalogEntry: (state, action: PayloadAction<string>) => {
+            delete state[action.payload]
+        },
     },
 })
 

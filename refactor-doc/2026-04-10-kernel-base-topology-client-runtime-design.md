@@ -404,6 +404,8 @@
 4. 本端发送 commit ack。
 5. continuous baseline 只能在 commit ack 后前进。
 6. 不允许把本地队列一股脑 flush 给对端。
+7. continuous diff 的目标节点应优先取 `topology-runtime` 当前 sync lane 上记录的 `peerNodeId`，不能只依赖 hello ack 的 `peerRuntime`。
+8. 原因是先连上的一端在首个 hello-ack 中可能拿不到 peer runtime，但它仍然需要在首轮 commit ack 后继续向已知 peer lane 发增量。
 
 ---
 
@@ -470,6 +472,20 @@
 2. selector 层可以读取 `topologyContext`。
 3. UI 层通过 selector/hook 读取，不直接依赖旧 state key。
 
+当前已落地的稳定 selector：
+
+1. `selectTopologyInstanceMode`
+2. `selectTopologyDisplayMode`
+3. `selectTopologyWorkspace`
+4. `selectTopologyStandalone`
+5. `selectTopologyEnableSlave`
+6. `selectTopologyMasterInfo`
+7. `selectTopologyLocalNodeId`
+8. `selectTopologyServerConnected`
+9. `selectTopologyPeerConnected`
+10. `selectTopologyPeerNodeId`
+11. `selectTopologyScopedStateKey`
+
 ## 8.6 `selectSlaveConnected`
 
 去向：`topology-client-runtime` selector。
@@ -478,6 +494,11 @@
 
 1. `selectPeerConnected`
 2. `selectSlaveConnected` 可作为 UI 层兼容命名，但新 kernel API 优先使用 `peer` 语言。
+
+当前实现结论：
+
+1. kernel 只正式导出 `selectTopologyPeerConnected`
+2. 如后续 UI/业务层仍想保留 `selectSlaveConnected` 名字，应在 `2-ui` 层自行包一层兼容 selector
 
 ## 8.7 `useRequestStatus`
 
@@ -682,6 +703,14 @@ interface TopologyClientRuntimeBridge {
 4. continuous sync baseline 只在 commit ack 后前进。
 5. remote command started lifecycle 先同步，再允许 dispatch ack。
 6. request result 最终进入 request projection。
+7. `syncIntent = master-to-slave` 的首轮与连续增量都必须通过真实 `dual-topology-host` 验证。
+8. `syncIntent = slave-to-master` 的首轮与连续增量也必须通过真实 `dual-topology-host` 验证。
+
+当前已验证结论：
+
+1. 在单向 slice 声明前提下，现有 authority 规则已经能正确覆盖 `master-to-slave` 与 `slave-to-master` 两条 lane。
+2. 因此现阶段不需要额外引入更重的 authority 配置模型。
+3. 下一阶段先保持 `syncIntent` 只声明单向同步，暂不开放 `bidirectional` 业务使用。
 
 ## 13.4 旧业务语义回归测试
 
@@ -713,18 +742,25 @@ interface TopologyClientRuntimeBridge {
 
 ## 14.2 `state-runtime` scoped helper
 
-当前 `state-runtime` 已有基础 scope path helper，但还不够替代旧包。
-
-需要补齐：
+当前这批 helper 已在 `state-runtime` 落地：
 
 1. `createWorkspaceStateKeys`
 2. `createInstanceModeStateKeys`
 3. `createDisplayModeStateKeys`
-4. `createScopedSliceDescriptors`
-5. `dispatchScopedAction`
-6. `getScopedStateKey`
+4. `createScopedStateDescriptors`
+5. `createScopedActionType`
+6. `createScopedDispatchAction`
+7. `createWorkspaceActionDispatcher`
+8. `createInstanceModeActionDispatcher`
+9. `createDisplayModeActionDispatcher`
+10. `getScopedStateKey`
 
-这些 helper 必须是通用能力，不依赖 topology。
+补充约束：
+
+1. 这些 helper 保持通用，不依赖 topology。
+2. scoped dispatch helper 接受显式 scope value，而不是强绑某个具体 runtime 的 route context 类型。
+3. `workspace / instanceMode` 可直接复用 command route context。
+4. `displayMode` 如果后续业务要参与 scoped dispatch，应由上层显式传入 scope value，而不是为了它扩大全局 command contract。
 
 ---
 
@@ -770,4 +806,3 @@ interface TopologyClientRuntimeBridge {
 3. 是否接受 `topologyContext` 是公开 read model，持久化真相仍在 `topology-runtime` recovery state。
 4. 是否接受 request hook 不进入 kernel，kernel 只提供 selector。
 5. 是否接受实现前先补 `runtime-shell` app-wide state 装配能力。
-

@@ -4,6 +4,7 @@ import {
     createSocketRuntime,
     defineSocketProfile,
     JsonSocketCodec,
+    transportRuntimeParameterDefinitions,
     typed,
     type SocketTransport,
 } from '../../src'
@@ -100,5 +101,47 @@ describe('transport-runtime socket', () => {
         expect(events).toContain('send')
         expect(events).toContain('disconnected')
         expect(events).toContain('reconnecting')
+    })
+
+    it('throws structured runtime error when profile is not registered', async () => {
+        const runtime = createSocketRuntime({
+            logger: createLoggerPort({
+                environmentMode: 'DEV',
+                write: () => {},
+                scope: {
+                    moduleName: 'kernel.base.transport-runtime.test',
+                    layer: 'kernel',
+                },
+            }),
+            transport: {
+                async connect() {
+                    throw new Error('should not connect')
+                },
+            },
+            servers: [
+                {
+                    serverName: 'socket-demo',
+                    addresses: [
+                        {addressName: 'primary', baseUrl: 'http://socket.local'},
+                    ],
+                },
+            ],
+        })
+
+        await expect(runtime.connect('missing.profile')).rejects.toMatchObject({
+            key: 'kernel.base.transport-runtime.socket_runtime_failed',
+            category: 'NETWORK',
+        })
+    })
+
+    it('exposes stable socket parameter defaults', () => {
+        expect(transportRuntimeParameterDefinitions.socketReconnectAttempts.defaultValue).toBe(0)
+        expect(transportRuntimeParameterDefinitions.socketReconnectAttempts.validate?.(0)).toBe(true)
+        expect(transportRuntimeParameterDefinitions.socketReconnectAttempts.validate?.(-2)).toBe(false)
+
+        expect(transportRuntimeParameterDefinitions.socketReconnectDelayMs.defaultValue).toBe(1_000)
+        expect(transportRuntimeParameterDefinitions.socketConnectionTimeoutMs.defaultValue).toBe(10_000)
+        expect(transportRuntimeParameterDefinitions.socketHeartbeatIntervalMs.defaultValue).toBe(30_000)
+        expect(transportRuntimeParameterDefinitions.socketHeartbeatTimeoutMs.defaultValue).toBe(60_000)
     })
 })

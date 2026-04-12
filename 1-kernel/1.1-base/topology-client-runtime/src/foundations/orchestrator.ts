@@ -1,27 +1,30 @@
 import {
+    createAppError,
     createEnvelopeId,
     nowTimestampMs,
 } from '@impos2/kernel-base-contracts'
 import type {
     CommandEventEnvelope,
     RequestProjection,
+    ProjectionMirrorEnvelope,
     RequestLifecycleSnapshotEnvelope,
     StateSyncCommitAckEnvelope,
     StateSyncSummaryEnvelope,
 } from '@impos2/kernel-base-contracts'
-import type {SyncStateSummary} from '@impos2/kernel-base-state-runtime'
-import type {SocketEvent} from '@impos2/kernel-base-transport-runtime'
-import {
-    topologyClientStateActions,
-} from '../features/slices'
+import {createSliceSyncSummary, type SyncStateSummary} from '@impos2/kernel-base-state-runtime'
+import {defineSocketProfile, type SocketEvent} from '@impos2/kernel-base-transport-runtime'
+import {topologyClientStateActions} from '../features/slices'
+import {topologyClientErrorDefinitions, topologyClientParameterDefinitions} from '../supports'
+import {TOPOLOGY_CLIENT_SYNC_STATE_KEY} from './stateKeys'
 import type {
-    TopologyClientAssembly,
     DispatchRemoteCommandInput,
     DispatchRemoteCommandResult,
+    TopologyClientAssembly,
     TopologyClientIncomingMessage,
     TopologyClientOutgoingMessage,
     TopologyClientRuntimeInstallContext,
     TopologyClientSessionContext,
+    TopologyClientSocketBinding,
 } from '../types'
 
 export interface TopologyClientOrchestrator {
@@ -33,6 +36,7 @@ export interface TopologyClientOrchestrator {
     sendRemoteDispatch(message: Extract<TopologyClientOutgoingMessage, {type: 'command-dispatch'}>): void
     sendCommandEvent(message: Extract<TopologyClientOutgoingMessage, {type: 'command-event'}>): void
     sendRequestLifecycleSnapshot(envelope: RequestLifecycleSnapshotEnvelope): void
+    sendProjectionMirror(envelope: ProjectionMirrorEnvelope): void
     getSessionContext(): TopologyClientSessionContext
 }
 
@@ -57,21 +61,15 @@ const resolvePeerFromAck = (
 
 const isMessageEvent = (
     event: SocketEvent<TopologyClientIncomingMessage>,
-): event is Extract<SocketEvent<TopologyClientIncomingMessage>, {type: 'message'}> => {
-    return event.type === 'message'
-}
-
-const isReconnectingEvent = (
-    event: SocketEvent<unknown>,
-): event is Extract<SocketEvent<unknown>, {type: 'reconnecting'}> => {
-    return event.type === 'reconnecting'
-}
+): event is Extract<SocketEvent<TopologyClientIncomingMessage>, {type: 'message'}> => event.type === 'message'
 
 const isErrorEvent = (
     event: SocketEvent<unknown>,
-): event is Extract<SocketEvent<unknown>, {type: 'error'}> => {
-    return event.type === 'error'
-}
+): event is Extract<SocketEvent<unknown>, {type: 'error'}> => event.type === 'error'
+
+const isDisconnectedEvent = (
+    event: SocketEvent<unknown>,
+): event is Extract<SocketEvent<unknown>, {type: 'disconnected'}> => event.type === 'disconnected'
 
 const resolveSyncDirection = (input: {
     localInstanceMode?: string
@@ -83,15 +81,92 @@ const resolveSyncDirection = (input: {
     return 'slave-to-master'
 }
 
+const isAuthorityForDirection = (input: {
+    localInstanceMode?: string
+    direction: 'master-to-slave' | 'slave-to-master'
+}) => {
+    const localInstanceMode = input.localInstanceMode ?? 'MASTER'
+    if (input.direction === 'master-to-slave') {
+        return localInstanceMode === 'MASTER'
+    }
+    return localInstanceMode === 'SLAVE'
+}
+
+const shouldAutoConnectOnBoot = (context: TopologyClientRuntimeInstallContext) => {
+    const recoveryState = context.topology.getRecoveryState()
+    return recoveryState.instanceMode === 'SLAVE'
+        ? Boolean(recoveryState.masterInfo)
+        : recoveryState.enableSlave === true
+}
+
+const createResolvedBinding = (
+    binding: TopologyClientSocketBinding | undefined,
+    context: TopologyClientRuntimeInstallContext,
+    reconnectAttemptsOverride?: number,
+): TopologyClientSocketBinding | undefined => {
+    if (!binding?.profile) {
+        return binding
+    }
+
+    const connectionTimeoutMs = context.resolveParameter<number>({
+        key: topologyClientParameterDefinitions.serverConnectionTimeoutMs.key,
+    }).value
+    const heartbeatTimeoutMs = context.resolveParameter<number>({
+        key: topologyClientParameterDefinitions.serverHeartbeatTimeoutMs.key,
+    }).value
+    const reconnectDelayMs = context.resolveParameter<number>({
+        key: topologyClientParameterDefinitions.serverReconnectIntervalMs.key,
+    }).value
+    const reconnectAttempts = reconnectAttemptsOverride
+        ?? context.resolveParameter<number>({
+            key: topologyClientParameterDefinitions.serverReconnectAttempts.key,
+        }).value
+
+    return {
+        ...binding,
+        profile: defineSocketProfile({
+            name: binding.profile.name,
+            serverName: binding.profile.serverName,
+            pathTemplate: binding.profile.pathTemplate,
+            handshake: binding.profile.handshake,
+            messages: binding.profile.messages,
+            codec: binding.profile.codec,
+            meta: {
+                ...binding.profile.meta,
+                connectionTimeoutMs,
+                heartbeatTimeoutMs,
+                reconnectDelayMs,
+                reconnectAttempts,
+            },
+        }),
+    }
+}
+
 export const createTopologyClientOrchestrator = (
     input: {
         context: TopologyClientRuntimeInstallContext
         assembly: TopologyClientAssembly
+        reconnectAttemptsOverride?: number
     },
 ): TopologyClientOrchestrator => {
-    const binding = input.assembly.resolveSocketBinding(input.context)
+    const binding = createResolvedBinding(
+        input.assembly.resolveSocketBinding(input.context),
+        input.context,
+        input.reconnectAttemptsOverride,
+    )
     const sessionContext: TopologyClientSessionContext = {}
     let listenersAttached = false
+    let stateUnsubscribe: (() => void) | undefined
+    let lastContinuousDiffSignature = ''
+    let disposed = false
+    let reconnectTimer: ReturnType<typeof setTimeout> | undefined
+    let reconnectAttempt = 0
+    let manualStop = false
+    let connectionToken = 0
+    const pendingCommitSummaryByDirection = new Map<
+        'master-to-slave' | 'slave-to-master',
+        Record<string, SyncStateSummary>
+    >()
 
     if (binding?.profile) {
         binding.socketRuntime.registerProfile(binding.profile)
@@ -109,11 +184,213 @@ export const createTopologyClientOrchestrator = (
         input.context.dispatchAction(topologyClientStateActions.patchTopologyClientSync(patch))
     }
 
+    const clearReconnectTimer = () => {
+        if (!reconnectTimer) {
+            return
+        }
+        clearTimeout(reconnectTimer)
+        reconnectTimer = undefined
+    }
+
+    const getReconnectDelayMs = () => {
+        return input.context.resolveParameter<number>({
+            key: topologyClientParameterDefinitions.serverReconnectIntervalMs.key,
+        }).value
+    }
+
+    const getReconnectAttempts = () => {
+        return binding?.profile?.meta?.reconnectAttempts
+            ?? input.context.resolveParameter<number>({
+                key: topologyClientParameterDefinitions.serverReconnectAttempts.key,
+            }).value
+    }
+
+    const getRemoteCommandResponseTimeoutMs = () => {
+        return input.context.resolveParameter<number>({
+            key: topologyClientParameterDefinitions.remoteCommandResponseTimeoutMs.key,
+        }).value
+    }
+
+    const getRemoteCommandResponsePollIntervalMs = () => {
+        return input.context.resolveParameter<number>({
+            key: topologyClientParameterDefinitions.remoteCommandResponsePollIntervalMs.key,
+        }).value
+    }
+
+    const createSocketBindingUnavailableError = (commandName: string) => {
+        return createAppError(topologyClientErrorDefinitions.socketBindingUnavailable, {
+                args: {
+                commandName,
+                },
+            })
+    }
+
     const send = (message: TopologyClientOutgoingMessage) => {
         if (!binding) {
-            throw new Error('Topology client socket binding is not available')
+            throw createSocketBindingUnavailableError(message.type)
         }
         binding.socketRuntime.send(binding.profileName, message)
+    }
+
+    const resetSessionState = (disconnectedAt: number, resumeStatus: 'idle' | 'pending') => {
+        sessionContext.sessionId = undefined
+        sessionContext.peerRuntime = undefined
+        lastContinuousDiffSignature = ''
+        pendingCommitSummaryByDirection.clear()
+        input.context.dispatchAction(topologyClientStateActions.replaceTopologyClientPeer({}))
+        dispatchConnectionPatch({
+            serverConnectionStatus: 'DISCONNECTED',
+            disconnectedAt,
+        })
+        dispatchSyncPatch({
+            resumeStatus,
+            activeSessionId: undefined,
+            continuousSyncActive: false,
+        })
+    }
+
+    const scheduleReconnect = (reason: string) => {
+        if (!binding || disposed || manualStop) {
+            return
+        }
+        if (!shouldAutoConnectOnBoot(input.context)) {
+            return
+        }
+        if (reconnectTimer) {
+            return
+        }
+
+        const maxAttempts = getReconnectAttempts()
+        if (maxAttempts >= 0 && reconnectAttempt >= maxAttempts) {
+            return
+        }
+
+        reconnectAttempt += 1
+        const reconnectDelayMs = getReconnectDelayMs()
+        dispatchConnectionPatch({
+            serverConnectionStatus: 'CONNECTING',
+            reconnectAttempt,
+            connectionError: reason,
+        })
+        dispatchSyncPatch({
+            resumeStatus: 'pending',
+            continuousSyncActive: false,
+        })
+
+        reconnectTimer = setTimeout(() => {
+            reconnectTimer = undefined
+            void startConnection({isReconnect: true})
+        }, reconnectDelayMs)
+    }
+
+    const getContinuousDirection = (): 'master-to-slave' | 'slave-to-master' => {
+        return resolveSyncDirection({
+            localInstanceMode: input.context.topology.getRecoveryState().instanceMode,
+            peerRole: sessionContext.peerRuntime?.role,
+        })
+    }
+
+    const getAuthoritativeDirection = (): 'master-to-slave' | 'slave-to-master' => {
+        return input.context.topology.getRecoveryState().instanceMode === 'SLAVE'
+            ? 'slave-to-master'
+            : 'master-to-slave'
+    }
+
+    const buildCurrentSummaryByDirection = (
+        direction: 'master-to-slave' | 'slave-to-master',
+    ): Record<string, SyncStateSummary> => {
+        const state = input.context.getState() as Record<string, unknown>
+        const summaryBySlice: Record<string, SyncStateSummary> = {}
+
+        for (const slice of input.context.getSyncSlices()) {
+            if (!slice.sync || slice.syncIntent !== direction) {
+                continue
+            }
+            const sliceState = state[slice.name]
+            if (!sliceState || typeof sliceState !== 'object') {
+                continue
+            }
+
+            const summary = createSliceSyncSummary(
+                slice,
+                sliceState as Record<string, unknown>,
+            )
+
+            if (Object.keys(summary).length === 0) {
+                continue
+            }
+            summaryBySlice[slice.name] = summary
+        }
+
+        return summaryBySlice
+    }
+
+    const maybeSendContinuousSyncDiff = () => {
+        if (!sessionContext.sessionId) {
+            return
+        }
+
+        const continuousDirection = getAuthoritativeDirection()
+        if (!isAuthorityForDirection({
+            localInstanceMode: input.context.topology.getRecoveryState().instanceMode,
+            direction: continuousDirection,
+        })) {
+            return
+        }
+
+        const syncState = input.context.getState() as Record<string, unknown>
+        const syncRuntimeState = syncState[TOPOLOGY_CLIENT_SYNC_STATE_KEY] as {
+            continuousSyncActive?: boolean
+        } | undefined
+
+        if (!syncRuntimeState?.continuousSyncActive) {
+            return
+        }
+
+        const activeSession = input.context.topology.getSyncSession(
+            sessionContext.sessionId,
+            continuousDirection,
+        )
+        if (!activeSession || activeSession.status !== 'continuous') {
+            return
+        }
+        if (!activeSession.peerNodeId) {
+            return
+        }
+
+        const session = input.context.topology.collectContinuousSyncDiff({
+            sessionId: sessionContext.sessionId,
+            direction: continuousDirection,
+            slices: input.context.getSyncSlices(),
+            state: syncState,
+        })
+
+        const diffBySlice = Object.fromEntries(
+            (session.lastDiff ?? []).map(entry => [entry.sliceName, entry.diff]),
+        )
+        const signature = JSON.stringify(diffBySlice)
+        if (signature === '{}' || signature === lastContinuousDiffSignature) {
+            return
+        }
+
+        send({
+            type: 'state-sync-diff',
+            envelope: {
+                envelopeId: createEnvelopeId(),
+                sessionId: sessionContext.sessionId as any,
+                sourceNodeId: input.context.localNodeId as any,
+                targetNodeId: activeSession.peerNodeId as any,
+                direction: continuousDirection,
+                diffBySlice,
+                sentAt: nowTimestampMs(),
+            },
+        })
+
+        pendingCommitSummaryByDirection.set(
+            continuousDirection,
+            buildCurrentSummaryByDirection(continuousDirection),
+        )
+        lastContinuousDiffSignature = signature
     }
 
     const sendResumeArtifacts = (inputArtifacts: {
@@ -157,6 +434,22 @@ export const createTopologyClientOrchestrator = (
                 type: 'request-lifecycle-snapshot',
                 envelope,
             })
+
+            const projection = input.context.getRequestProjection(snapshot.requestId)
+            if (!projection) {
+                continue
+            }
+
+            send({
+                type: 'projection-mirror',
+                envelope: {
+                    envelopeId: createEnvelopeId(),
+                    sessionId: inputArtifacts.sessionId as any,
+                    ownerNodeId: snapshot.ownerNodeId,
+                    projection,
+                    mirroredAt: nowTimestampMs(),
+                },
+            })
         }
 
         const syncDirection = resolveSyncDirection({
@@ -177,6 +470,7 @@ export const createTopologyClientOrchestrator = (
             sessionId: inputArtifacts.sessionId as any,
             sourceNodeId: input.context.localNodeId as any,
             targetNodeId: inputArtifacts.targetNodeId as any,
+            direction: syncDirection,
         })
 
         if (summaryEnvelope) {
@@ -193,8 +487,9 @@ export const createTopologyClientOrchestrator = (
     const waitForRemoteCommandStarted = async (
         requestId: string,
         commandId: string,
-        timeoutMs = 2_000,
     ): Promise<RequestProjection> => {
+        const timeoutMs = getRemoteCommandResponseTimeoutMs()
+        const pollIntervalMs = getRemoteCommandResponsePollIntervalMs()
         const startedAt = Date.now()
 
         while (true) {
@@ -210,10 +505,15 @@ export const createTopologyClientOrchestrator = (
             }
 
             if (Date.now() - startedAt > timeoutMs) {
-                throw new Error(`Timed out waiting for remote command started: ${commandId}`)
+                throw createAppError(topologyClientErrorDefinitions.remoteCommandResponseTimeout, {
+                    args: {
+                        commandName: command?.commandName ?? commandId,
+                        timeoutMs,
+                    },
+                })
             }
 
-            await new Promise(resolve => setTimeout(resolve, 10))
+            await new Promise(resolve => setTimeout(resolve, pollIntervalMs))
         }
     }
 
@@ -251,6 +551,7 @@ export const createTopologyClientOrchestrator = (
         dispatchConnectionPatch({
             lastResumeAt: nowTimestampMs(),
         })
+        lastContinuousDiffSignature = ''
     }
 
     const applyStateSyncSummary = (message: Extract<TopologyClientIncomingMessage, {type: 'state-sync-summary'}>) => {
@@ -275,6 +576,10 @@ export const createTopologyClientOrchestrator = (
             type: 'state-sync-diff',
             envelope: diff,
         })
+        pendingCommitSummaryByDirection.set(
+            message.envelope.direction,
+            buildCurrentSummaryByDirection(message.envelope.direction),
+        )
         dispatchSyncPatch({
             lastDiffAppliedAt: nowTimestampMs(),
         })
@@ -295,6 +600,7 @@ export const createTopologyClientOrchestrator = (
             sessionId: message.envelope.sessionId,
             sourceNodeId: message.envelope.targetNodeId,
             targetNodeId: message.envelope.sourceNodeId,
+            direction: message.envelope.direction,
             committedAt,
         }
         send({
@@ -308,19 +614,27 @@ export const createTopologyClientOrchestrator = (
     }
 
     const applyStateSyncCommitAck = (message: Extract<TopologyClientIncomingMessage, {type: 'state-sync-commit-ack'}>) => {
-        const session = input.context.topology.getSyncSession(message.envelope.sessionId)
-        const currentSummary: Record<string, SyncStateSummary> = Object.fromEntries(
+        const session = input.context.topology.getSyncSession(
+            message.envelope.sessionId,
+            message.envelope.direction,
+        )
+        const currentSummary: Record<string, SyncStateSummary> = pendingCommitSummaryByDirection.get(
+            message.envelope.direction,
+        ) ?? Object.fromEntries(
             (session?.localSummary ?? []).map(entry => [entry.sliceName, entry.summary]),
         )
         input.context.topology.handleSyncCommitAckEnvelope({
             envelope: message.envelope,
             currentSummary,
         })
+        pendingCommitSummaryByDirection.delete(message.envelope.direction)
+        lastContinuousDiffSignature = ''
         dispatchSyncPatch({
             lastCommitAckAt: message.envelope.committedAt,
             continuousSyncActive: true,
             resumeStatus: 'completed',
         })
+        maybeSendContinuousSyncDiff()
     }
 
     const onMessage = (event: SocketEvent<TopologyClientIncomingMessage>) => {
@@ -341,19 +655,23 @@ export const createTopologyClientOrchestrator = (
             sessionContext.sessionId = message.ack.sessionId
             sessionContext.peerRuntime = message.ack.peerRuntime
             if (!message.ack.accepted || !message.ack.sessionId) {
+                resetSessionState(nowTimestampMs(), 'pending')
+                const reason = message.ack.rejectionMessage ?? message.ack.rejectionCode ?? 'hello rejected'
                 dispatchConnectionPatch({
-                    serverConnectionStatus: 'DISCONNECTED',
-                    connectionError: message.ack.rejectionMessage ?? message.ack.rejectionCode ?? 'hello rejected',
-                    disconnectedAt: nowTimestampMs(),
+                    connectionError: reason,
                 })
+                scheduleReconnect(reason)
                 return
             }
 
+            reconnectAttempt = 0
+            clearReconnectTimer()
             input.context.dispatchAction(topologyClientStateActions.patchTopologyClientPeer(resolvePeerFromAck(message.ack)))
             dispatchConnectionPatch({
                 serverConnectionStatus: 'CONNECTED',
                 connectedAt: nowTimestampMs(),
                 connectionError: undefined,
+                reconnectAttempt: 0,
                 lastHelloAt: message.ack.hostTime,
             })
             dispatchSyncPatch({
@@ -381,11 +699,6 @@ export const createTopologyClientOrchestrator = (
                         })
                     },
                 })
-                .then((result: {events: readonly CommandEventEnvelope[]}) => {
-                    if (result.events.length === 0) {
-                        return
-                    }
-                })
             return
         }
 
@@ -396,6 +709,11 @@ export const createTopologyClientOrchestrator = (
 
         if (message.type === 'request-lifecycle-snapshot') {
             input.context.applyRequestLifecycleSnapshot(message.envelope.snapshot)
+            return
+        }
+
+        if (message.type === 'projection-mirror') {
+            input.context.applyProjectionMirror(message.envelope)
             return
         }
 
@@ -417,11 +735,12 @@ export const createTopologyClientOrchestrator = (
     const onConnected = () => {
         const hello = input.assembly.createHello(input.context)
         if (!hello) {
+            const occurredAt = nowTimestampMs()
+            resetSessionState(occurredAt, 'pending')
             dispatchConnectionPatch({
-                serverConnectionStatus: 'DISCONNECTED',
                 connectionError: 'hello unavailable',
-                disconnectedAt: nowTimestampMs(),
             })
+            scheduleReconnect('hello unavailable')
             return
         }
 
@@ -439,138 +758,123 @@ export const createTopologyClientOrchestrator = (
         listenersAttached = true
 
         binding.socketRuntime.on(binding.profileName, 'message', onMessage)
-        binding.socketRuntime.on(binding.profileName, 'disconnected', event => {
-            sessionContext.sessionId = undefined
-            sessionContext.peerRuntime = undefined
-            input.context.dispatchAction(topologyClientStateActions.replaceTopologyClientPeer({}))
-            dispatchConnectionPatch({
-                serverConnectionStatus: 'DISCONNECTED',
-                disconnectedAt: event.occurredAt,
-            })
-            dispatchSyncPatch({
-                resumeStatus: 'pending',
-                activeSessionId: undefined,
-                continuousSyncActive: false,
-            })
+        stateUnsubscribe = input.context.subscribeState(() => {
+            maybeSendContinuousSyncDiff()
         })
-        binding.socketRuntime.on(binding.profileName, 'reconnecting', event => {
-            if (!isReconnectingEvent(event)) {
+        binding.socketRuntime.on(binding.profileName, 'disconnected', event => {
+            if (!isDisconnectedEvent(event)) {
                 return
             }
-            dispatchConnectionPatch({
-                serverConnectionStatus: 'CONNECTING',
-                reconnectAttempt: event.attempt,
-            })
-            dispatchSyncPatch({
-                resumeStatus: 'pending',
-                continuousSyncActive: false,
-            })
+            resetSessionState(event.occurredAt, 'pending')
+            scheduleReconnect(event.reason ?? 'socket disconnected')
         })
         binding.socketRuntime.on(binding.profileName, 'error', event => {
             if (!isErrorEvent(event)) {
                 return
             }
+            const errorMessage = event.error instanceof Error ? event.error.message : String(event.error)
             dispatchConnectionPatch({
-                connectionError: event.error instanceof Error ? event.error.message : String(event.error),
+                connectionError: errorMessage,
             })
         })
     }
 
-    const dispatchRemoteCommand = async <TPayload = unknown>(
-        dispatchInput: DispatchRemoteCommandInput<TPayload>,
-    ): Promise<DispatchRemoteCommandResult> => {
-        if (!sessionContext.sessionId) {
-            throw new Error('Topology client session is not active')
-        }
-
-        const envelope = input.context.createRemoteDispatchEnvelope({
-            requestId: dispatchInput.requestId,
-            sessionId: sessionContext.sessionId,
-            parentCommandId: dispatchInput.parentCommandId,
-            targetNodeId: dispatchInput.targetNodeId,
-            commandName: dispatchInput.commandName,
-            payload: dispatchInput.payload,
-        })
-
-        send({
-            type: 'command-dispatch',
-            envelope,
-        })
-
-        const projection = await waitForRemoteCommandStarted(
-            dispatchInput.requestId,
-            envelope.commandId,
-        )
-
-        return {
-            requestId: dispatchInput.requestId,
-            commandId: envelope.commandId,
-            sessionId: sessionContext.sessionId,
-            targetNodeId: dispatchInput.targetNodeId,
-            startedAt: projection.updatedAt,
-        }
-    }
-
-    const startConnection = async () => {
+    const startConnection = async (
+        inputValue: {
+            isReconnect?: boolean
+            commandName?: string
+        } = {},
+    ) => {
         if (!binding) {
+            throw createSocketBindingUnavailableError(inputValue.commandName ?? 'startConnection')
+        }
+        if (disposed) {
             return
         }
 
+        manualStop = false
+        clearReconnectTimer()
         attachListeners()
+        const token = ++connectionToken
 
         dispatchConnectionPatch({
             serverConnectionStatus: 'CONNECTING',
-            reconnectAttempt: 0,
+            reconnectAttempt: inputValue.isReconnect ? reconnectAttempt : 0,
             connectionError: undefined,
         })
 
         try {
             await binding.socketRuntime.connect(binding.profileName)
+            if (disposed || token !== connectionToken || manualStop) {
+                binding.socketRuntime.disconnect(binding.profileName, 'stale-connect')
+                return
+            }
             onConnected()
         } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error)
+            resetSessionState(nowTimestampMs(), 'pending')
             dispatchConnectionPatch({
-                serverConnectionStatus: 'DISCONNECTED',
-                disconnectedAt: nowTimestampMs(),
-                connectionError: error instanceof Error ? error.message : String(error),
+                connectionError: errorMessage,
             })
+            scheduleReconnect(errorMessage)
         }
     }
 
     return {
-        startConnection,
+        async startConnection() {
+            reconnectAttempt = 0
+            await startConnection({commandName: 'startTopologyConnection'})
+        },
         stopConnection(reason) {
-            sessionContext.sessionId = undefined
-            sessionContext.peerRuntime = undefined
-            input.context.dispatchAction(topologyClientStateActions.replaceTopologyClientPeer({}))
-            dispatchConnectionPatch({
-                serverConnectionStatus: 'DISCONNECTED',
-                disconnectedAt: nowTimestampMs(),
-            })
-            dispatchSyncPatch({
-                resumeStatus: 'idle',
-                activeSessionId: undefined,
-                continuousSyncActive: false,
-            })
+            manualStop = true
+            reconnectAttempt = 0
+            connectionToken += 1
+            clearReconnectTimer()
+            resetSessionState(nowTimestampMs(), 'idle')
             binding?.socketRuntime.disconnect(binding.profileName, reason)
         },
         async restartConnection(reason) {
-            sessionContext.sessionId = undefined
-            sessionContext.peerRuntime = undefined
-            input.context.dispatchAction(topologyClientStateActions.replaceTopologyClientPeer({}))
-            dispatchConnectionPatch({
-                serverConnectionStatus: 'DISCONNECTED',
-                disconnectedAt: nowTimestampMs(),
-            })
-            dispatchSyncPatch({
-                resumeStatus: 'idle',
-                activeSessionId: undefined,
-                continuousSyncActive: false,
-            })
+            manualStop = false
+            reconnectAttempt = 0
+            connectionToken += 1
+            clearReconnectTimer()
+            resetSessionState(nowTimestampMs(), 'idle')
             binding?.socketRuntime.disconnect(binding.profileName, reason)
-            await startConnection()
+            await startConnection({commandName: 'restartTopologyConnection'})
         },
         beginResume,
-        dispatchRemoteCommand,
+        async dispatchRemoteCommand(dispatchInput) {
+            if (!sessionContext.sessionId) {
+                throw createAppError(topologyClientErrorDefinitions.remoteNotConnected, {})
+            }
+
+            const envelope = input.context.createRemoteDispatchEnvelope({
+                requestId: dispatchInput.requestId,
+                sessionId: sessionContext.sessionId,
+                parentCommandId: dispatchInput.parentCommandId,
+                targetNodeId: dispatchInput.targetNodeId,
+                commandName: dispatchInput.commandName,
+                payload: dispatchInput.payload,
+            })
+
+            send({
+                type: 'command-dispatch',
+                envelope,
+            })
+
+            const projection = await waitForRemoteCommandStarted(
+                dispatchInput.requestId,
+                envelope.commandId,
+            )
+
+            return {
+                requestId: dispatchInput.requestId,
+                commandId: envelope.commandId,
+                sessionId: sessionContext.sessionId,
+                targetNodeId: dispatchInput.targetNodeId,
+                startedAt: projection.updatedAt,
+            }
+        },
         sendRemoteDispatch(message) {
             send(message)
         },
@@ -580,6 +884,12 @@ export const createTopologyClientOrchestrator = (
         sendRequestLifecycleSnapshot(envelope) {
             send({
                 type: 'request-lifecycle-snapshot',
+                envelope,
+            })
+        },
+        sendProjectionMirror(envelope) {
+            send({
+                type: 'projection-mirror',
                 envelope,
             })
         },

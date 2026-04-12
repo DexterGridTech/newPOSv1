@@ -28,6 +28,7 @@ export const createAppError = (
         requestId: input.context?.requestId,
         sessionId: input.context?.sessionId,
         nodeId: input.context?.nodeId,
+        args: input.args,
         details: input.details,
         cause: input.cause,
     }

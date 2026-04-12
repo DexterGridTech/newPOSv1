@@ -4,9 +4,12 @@ import {
     createCommandId,
     createRequestId,
     createRuntimeInstanceId,
+    integerAtLeast,
     formatTimestampMs,
+    nonEmptyString,
     nowTimestampMs,
     packageVersion,
+    positiveFiniteNumber,
     protocolVersion,
 } from '../src'
 
@@ -39,6 +42,26 @@ const appError = createAppError(
 
 if (appError.requestId !== requestId) {
     throw new Error('AppError context binding failed')
+}
+
+if (!positiveFiniteNumber(1)) {
+    throw new Error('positiveFiniteNumber validation failed')
+}
+
+if (positiveFiniteNumber(0)) {
+    throw new Error('positiveFiniteNumber should reject zero')
+}
+
+if (!integerAtLeast(2)(2)) {
+    throw new Error('integerAtLeast validation failed')
+}
+
+if (!nonEmptyString('ok')) {
+    throw new Error('nonEmptyString validation failed')
+}
+
+if (nonEmptyString('   ')) {
+    throw new Error('nonEmptyString should reject blank string')
 }
 
 console.log('[contracts-test-scenario]', {

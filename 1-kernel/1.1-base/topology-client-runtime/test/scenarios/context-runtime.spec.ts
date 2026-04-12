@@ -6,7 +6,11 @@ import {
     createTopologyClientRuntimeModule,
     selectTopologyClientContext,
     selectTopologyDisplayMode,
+    selectTopologyEnableSlave,
     selectTopologyInstanceMode,
+    selectTopologyMasterInfo,
+    selectTopologyScopedStateKey,
+    selectTopologyStandalone,
     selectTopologyWorkspace,
     topologyClientCommandNames,
 } from '../../src'
@@ -55,6 +59,10 @@ describe('topology-client-runtime context', () => {
         expect(selectTopologyInstanceMode(state)).toBe('SLAVE')
         expect(selectTopologyDisplayMode(state)).toBe('PRIMARY')
         expect(selectTopologyWorkspace(state)).toBe('BRANCH')
+        expect(selectTopologyStandalone(state)).toBe(false)
+        expect(selectTopologyEnableSlave(state)).toBe(false)
+        expect(selectTopologyMasterInfo(state)?.deviceId).toBe('master-a')
+        expect(selectTopologyScopedStateKey(state, 'kernel.user.state.order')).toBe('kernel.user.state.order.BRANCH')
     })
 
     it('keeps projected topology context in sync after runtime start', async () => {
@@ -96,6 +104,9 @@ describe('topology-client-runtime context', () => {
         expect(context?.workspace).toBe('BRANCH')
         expect(context?.enableSlave).toBe(true)
         expect(context?.masterInfo?.deviceId).toBe('master-b')
+        expect(selectTopologyStandalone(state)).toBe(false)
+        expect(selectTopologyEnableSlave(state)).toBe(true)
+        expect(selectTopologyMasterInfo(state)?.deviceId).toBe('master-b')
     })
 
     it('updates topology recovery state through public context commands', async () => {
@@ -147,6 +158,9 @@ describe('topology-client-runtime context', () => {
         })
 
         expect(refreshResult.status).toBe('completed')
+        if (refreshResult.status !== 'completed') {
+            throw new Error('Expected refreshTopologyContext to complete')
+        }
         expect(runtime.getSubsystems().topology.getRecoveryState()).toMatchObject({
             instanceMode: 'SLAVE',
             displayMode: 'PRIMARY',
@@ -163,6 +177,9 @@ describe('topology-client-runtime context', () => {
             enableSlave: true,
             masterInfo,
         })
+        expect(selectTopologyEnableSlave(runtime.getState())).toBe(true)
+        expect(selectTopologyMasterInfo(runtime.getState())).toEqual(masterInfo)
+        expect(selectTopologyStandalone(runtime.getState())).toBe(false)
         expect(refreshResult.result).toMatchObject({
             context: {
                 localNodeId,

@@ -14,6 +14,9 @@ const slice = createSlice({
         setErrorCatalogEntry: (state, action: PayloadAction<ErrorCatalogEntry>) => {
             state[action.payload.key] = action.payload
         },
+        removeErrorCatalogEntry: (state, action: PayloadAction<string>) => {
+            delete state[action.payload]
+        },
     },
 })
 

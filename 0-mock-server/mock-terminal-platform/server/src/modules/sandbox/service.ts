@@ -27,6 +27,9 @@ import { paginateItems, type PaginationQuery } from '../../shared/pagination.js'
 import { createId, now, parseJson, serializeJson } from '../../shared/utils.js'
 
 const GLOBAL_CONTEXT_KEY = 'global'
+export const KERNEL_BASE_TEST_SANDBOX_ID = 'sandbox-kernel-base-test'
+const KERNEL_BASE_TEST_SANDBOX_NAME = 'kernel-base-test'
+const KERNEL_BASE_TEST_SEED = 20260411
 
 export type SandboxCreationMode = 'EMPTY' | 'CLONE_BASELINE'
 
@@ -443,4 +446,344 @@ export const appendAuditLog = (input: {
     detailJson: serializeJson(input.detail),
     createdAt: now(),
   }).run()
+}
+
+const insertKernelBaseTestSandbox = (timestamp: number) => {
+  db.insert(sandboxesTable).values({
+    sandboxId: KERNEL_BASE_TEST_SANDBOX_ID,
+    name: KERNEL_BASE_TEST_SANDBOX_NAME,
+    description: '用于 kernel-base tcp-client / tdp-client 真实链路测试的专用沙箱',
+    status: 'ACTIVE',
+    isSystemDefault: 0,
+    creationMode: 'EMPTY',
+    sourceSandboxId: null,
+    seed: KERNEL_BASE_TEST_SEED,
+    ownerUserId: 'system',
+    ownerTeamId: 'mock-platform',
+    purpose: 'kernel-base-test',
+    resourceLimitsJson: serializeJson({
+      maxTerminals: 100,
+      maxTasks: 500,
+      maxFaultRules: 50,
+      maxStorageSize: '1GB',
+    }),
+    createdBy: 'kernel-base-test',
+    createdAt: timestamp,
+    updatedAt: timestamp,
+  }).run()
+}
+
+const deleteSandboxRows = (sandboxId: string) => {
+  const terminalIds = sqlite
+    .prepare('SELECT terminal_id FROM terminal_instances WHERE sandbox_id = ?')
+    .all(sandboxId) as Array<{ terminal_id: string }>
+  const releaseIds = sqlite
+    .prepare('SELECT release_id FROM task_releases WHERE sandbox_id = ?')
+    .all(sandboxId) as Array<{ release_id: string }>
+
+  const tableNames = [
+    'audit_logs',
+    'fault_rules',
+    'tdp_command_outbox',
+    'tdp_change_logs',
+    'tdp_projections',
+    'tdp_topics',
+    'tdp_sessions',
+    'task_releases',
+    'activation_codes',
+    'terminal_instances',
+    'terminal_templates',
+    'terminal_profiles',
+    'contracts',
+    'stores',
+    'projects',
+    'brands',
+    'tenants',
+    'platforms',
+  ] as const
+
+  tableNames.forEach(tableName => {
+    sqlite.prepare(`DELETE FROM ${tableName} WHERE sandbox_id = ?`).run(sandboxId)
+  })
+
+  if (terminalIds.length > 0) {
+    const deleteCredential = sqlite.prepare('DELETE FROM terminal_credentials WHERE terminal_id = ?')
+    for (const terminal of terminalIds) {
+      deleteCredential.run(terminal.terminal_id)
+    }
+  }
+
+  if (releaseIds.length > 0) {
+    const deleteTaskInstance = sqlite.prepare('DELETE FROM task_instances WHERE release_id = ?')
+    for (const release of releaseIds) {
+      deleteTaskInstance.run(release.release_id)
+    }
+  }
+}
+
+const seedKernelBaseTestSandboxData = (timestamp: number) => {
+  sqlite.prepare(`
+    INSERT INTO platforms (platform_id, sandbox_id, platform_code, platform_name, status, description, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    'platform-kernel-base-test',
+    KERNEL_BASE_TEST_SANDBOX_ID,
+    'PLATFORM_KERNEL_BASE_TEST',
+    'Kernel Base Test Platform',
+    'ACTIVE',
+    'kernel-base 联调测试平台',
+    timestamp,
+    timestamp,
+  )
+
+  sqlite.prepare(`
+    INSERT INTO tenants (tenant_id, sandbox_id, platform_id, tenant_code, tenant_name, status, description, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    'tenant-kernel-base-test',
+    KERNEL_BASE_TEST_SANDBOX_ID,
+    'platform-kernel-base-test',
+    'TENANT_KERNEL_BASE_TEST',
+    'Kernel Base Test Tenant',
+    'ACTIVE',
+    'kernel-base 联调测试租户',
+    timestamp,
+    timestamp,
+  )
+
+  sqlite.prepare(`
+    INSERT INTO brands (brand_id, sandbox_id, platform_id, brand_code, brand_name, status, description, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    'brand-kernel-base-test',
+    KERNEL_BASE_TEST_SANDBOX_ID,
+    'platform-kernel-base-test',
+    'BRAND_KERNEL_BASE_TEST',
+    'Kernel Base Test Brand',
+    'ACTIVE',
+    'kernel-base 联调测试品牌',
+    timestamp,
+    timestamp,
+  )
+
+  sqlite.prepare(`
+    INSERT INTO projects (project_id, sandbox_id, platform_id, project_code, project_name, status, description, region, timezone, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    'project-kernel-base-test',
+    KERNEL_BASE_TEST_SANDBOX_ID,
+    'platform-kernel-base-test',
+    'PROJECT_KERNEL_BASE_TEST',
+    'Kernel Base Test Project',
+    'ACTIVE',
+    'kernel-base 联调测试项目',
+    'SZ',
+    'Asia/Shanghai',
+    timestamp,
+    timestamp,
+  )
+
+  sqlite.prepare(`
+    INSERT INTO stores (store_id, sandbox_id, platform_id, tenant_id, brand_id, project_id, unit_code, store_code, store_name, status, description, address, contact_name, contact_phone, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    'store-kernel-base-test',
+    KERNEL_BASE_TEST_SANDBOX_ID,
+    'platform-kernel-base-test',
+    'tenant-kernel-base-test',
+    'brand-kernel-base-test',
+    'project-kernel-base-test',
+    'KB001',
+    'STORE_KERNEL_BASE_TEST',
+    'Kernel Base Test Store',
+    'ACTIVE',
+    'kernel-base 联调测试门店',
+    '深圳市南山区科苑南路',
+    'Kernel Tester',
+    '13800138000',
+    timestamp,
+    timestamp,
+  )
+
+  sqlite.prepare(`
+    INSERT INTO contracts (
+      contract_id, sandbox_id, platform_id, project_id, tenant_id, brand_id, store_id,
+      contract_code, unit_code, start_date, end_date, status, description, created_at, updated_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    'contract-kernel-base-test',
+    KERNEL_BASE_TEST_SANDBOX_ID,
+    'platform-kernel-base-test',
+    'project-kernel-base-test',
+    'tenant-kernel-base-test',
+    'brand-kernel-base-test',
+    'store-kernel-base-test',
+    'CONTRACT_KERNEL_BASE_TEST',
+    'KB001',
+    '2026-01-01',
+    '2026-12-31',
+    'ACTIVE',
+    'kernel-base 联调测试合同',
+    timestamp,
+    timestamp,
+  )
+
+  sqlite.prepare(`
+    INSERT INTO terminal_profiles (profile_id, sandbox_id, profile_code, name, description, capabilities_json, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    'profile-kernel-base-android-pos',
+    KERNEL_BASE_TEST_SANDBOX_ID,
+    'KERNEL_BASE_ANDROID_POS',
+    'Kernel Base Android POS',
+    'kernel-base 联调测试终端机型',
+    serializeJson({
+      supportsDualScreen: true,
+      supportsCamera: true,
+      supportsPrinter: true,
+      supportsScanner: true,
+    }),
+    timestamp,
+    timestamp,
+  )
+
+  sqlite.prepare(`
+    INSERT INTO terminal_templates (template_id, sandbox_id, template_code, name, description, profile_id, preset_config_json, preset_tags_json, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    'template-kernel-base-android-pos-standard',
+    KERNEL_BASE_TEST_SANDBOX_ID,
+    'KERNEL_BASE_ANDROID_POS_STANDARD',
+    'Kernel Base Android POS Standard',
+    'kernel-base 联调测试终端模板',
+    'profile-kernel-base-android-pos',
+    serializeJson({
+      app: {theme: 'light', locale: 'zh-CN'},
+      hardware: {printer: true, scanner: true},
+    }),
+    serializeJson(['kernel-base-test', 'android-pos']),
+    timestamp,
+    timestamp,
+  )
+
+  for (let index = 1; index <= 12; index += 1) {
+    sqlite.prepare(`
+      INSERT INTO activation_codes (code, sandbox_id, platform_id, tenant_id, brand_id, project_id, store_id, profile_id, template_id, status, expires_at, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(
+      `2000000000${String(index).padStart(2, '0')}`,
+      KERNEL_BASE_TEST_SANDBOX_ID,
+      'platform-kernel-base-test',
+      'tenant-kernel-base-test',
+      'brand-kernel-base-test',
+      'project-kernel-base-test',
+      'store-kernel-base-test',
+      'profile-kernel-base-android-pos',
+      'template-kernel-base-android-pos-standard',
+      'AVAILABLE',
+      timestamp + 30 * 24 * 3600_000,
+      timestamp,
+    )
+  }
+
+  const topics = [
+    {
+      key: 'tcp.task.release',
+      name: 'TCP Task Release',
+      payloadMode: 'FLEXIBLE_JSON',
+      schema: {type: 'object', required: ['taskType', 'releaseId', 'payload']},
+      retentionHours: 72,
+    },
+    {
+      key: 'terminal.config.state',
+      name: 'Terminal Config State',
+      payloadMode: 'FLEXIBLE_JSON',
+      schema: {type: 'object', required: ['configVersion']},
+      retentionHours: 168,
+    },
+    {
+      key: 'config.delta',
+      name: 'Config Delta',
+      payloadMode: 'FLEXIBLE_JSON',
+      schema: {type: 'object', additionalProperties: true},
+      retentionHours: 72,
+    },
+    {
+      key: 'menu.delta',
+      name: 'Menu Delta',
+      payloadMode: 'FLEXIBLE_JSON',
+      schema: {type: 'object', additionalProperties: true},
+      retentionHours: 72,
+    },
+    {
+      key: 'printer.delta',
+      name: 'Printer Delta',
+      payloadMode: 'FLEXIBLE_JSON',
+      schema: {type: 'object', additionalProperties: true},
+      retentionHours: 72,
+    },
+    {
+      key: 'remote.control',
+      name: 'Remote Control',
+      payloadMode: 'EPHEMERAL_COMMAND',
+      schema: {type: 'object', required: ['commandType']},
+      retentionHours: 1,
+    },
+    {
+      key: 'print.command',
+      name: 'Print Command',
+      payloadMode: 'EPHEMERAL_COMMAND',
+      schema: {type: 'object', required: ['commandType']},
+      retentionHours: 1,
+    },
+  ] as const
+
+  topics.forEach(topic => {
+    db.insert(topicsTable).values({
+      topicId: createId('topic'),
+      sandboxId: KERNEL_BASE_TEST_SANDBOX_ID,
+      key: topic.key,
+      name: topic.name,
+      payloadMode: topic.payloadMode,
+      schemaJson: serializeJson(topic.schema),
+      scopeType: 'TERMINAL',
+      retentionHours: topic.retentionHours,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    }).run()
+  })
+
+  appendAuditLog({
+    sandboxId: KERNEL_BASE_TEST_SANDBOX_ID,
+    domain: 'SANDBOX',
+    action: 'SEED_KERNEL_BASE_TEST_SANDBOX',
+    operator: 'kernel-base-test',
+    targetId: KERNEL_BASE_TEST_SANDBOX_ID,
+    detail: {
+      sandboxName: KERNEL_BASE_TEST_SANDBOX_NAME,
+      activationCodeCount: 12,
+      topicKeys: topics.map(topic => topic.key),
+    },
+  })
+}
+
+export const prepareKernelBaseTestSandbox = () => {
+  const timestamp = now()
+  const existing = getSandboxById(KERNEL_BASE_TEST_SANDBOX_ID)
+
+  if (!existing) {
+    insertKernelBaseTestSandbox(timestamp)
+  }
+
+  deleteSandboxRows(KERNEL_BASE_TEST_SANDBOX_ID)
+  seedKernelBaseTestSandboxData(timestamp)
+  const runtimeContext = switchCurrentSandbox(KERNEL_BASE_TEST_SANDBOX_ID)
+
+  return {
+    sandboxId: KERNEL_BASE_TEST_SANDBOX_ID,
+    sandboxName: KERNEL_BASE_TEST_SANDBOX_NAME,
+    seed: KERNEL_BASE_TEST_SEED,
+    runtimeContext,
+    preparedAt: timestamp,
+  }
 }
