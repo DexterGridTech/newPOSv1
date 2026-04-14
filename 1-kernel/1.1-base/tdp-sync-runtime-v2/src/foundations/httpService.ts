@@ -1,5 +1,5 @@
 import {
-    callHttpEnvelope,
+    createHttpServiceBinder,
     createModuleHttpEndpointFactory,
     type HttpRuntime,
 } from '@impos2/kernel-base-transport-runtime'
@@ -44,22 +44,26 @@ const changesEndpoint = defineEndpoint<
     },
 })
 
-export const createTdpSyncHttpServiceV2 = (runtime: HttpRuntime): TdpSyncHttpServiceV2 => ({
-    async getSnapshot(terminalId) {
-        return callHttpEnvelope(runtime, snapshotEndpoint, {
-            path: {terminalId},
-        }, {
-            errorDefinition: tdpSyncV2ErrorDefinitions.protocolError,
-            fallbackMessage: TDP_SYNC_V2_SNAPSHOT_FALLBACK_MESSAGE,
-        })
-    },
-    async getChanges(terminalId, cursor = 0, limit) {
-        return callHttpEnvelope(runtime, changesEndpoint, {
-            path: {terminalId},
-            query: {cursor, limit},
-        }, {
-            errorDefinition: tdpSyncV2ErrorDefinitions.protocolError,
-            fallbackMessage: TDP_SYNC_V2_CHANGES_FALLBACK_MESSAGE,
-        })
-    },
-})
+export const createTdpSyncHttpServiceV2 = (runtime: HttpRuntime): TdpSyncHttpServiceV2 => {
+    const http = createHttpServiceBinder(runtime)
+
+    return {
+        async getSnapshot(terminalId) {
+            return http.envelope(snapshotEndpoint, {
+                path: {terminalId},
+            }, {
+                errorDefinition: tdpSyncV2ErrorDefinitions.protocolError,
+                fallbackMessage: TDP_SYNC_V2_SNAPSHOT_FALLBACK_MESSAGE,
+            })
+        },
+        async getChanges(terminalId, cursor = 0, limit) {
+            return http.envelope(changesEndpoint, {
+                path: {terminalId},
+                query: {cursor, limit},
+            }, {
+                errorDefinition: tdpSyncV2ErrorDefinitions.protocolError,
+                fallbackMessage: TDP_SYNC_V2_CHANGES_FALLBACK_MESSAGE,
+            })
+        },
+    }
+}

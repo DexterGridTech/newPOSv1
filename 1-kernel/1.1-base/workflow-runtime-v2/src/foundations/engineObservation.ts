@@ -112,7 +112,7 @@ export const toParameterNumber = (
     fallback: number,
 ): number => {
     const raw = catalog[key]?.rawValue
-    return typeof raw === 'number' && Number.isFinite(raw) && raw > 0
+    return typeof raw === 'number' && Number.isFinite(raw) && raw >= 0
         ? raw
         : fallback
 }

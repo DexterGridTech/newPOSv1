@@ -32,7 +32,12 @@ export interface RuntimeModuleContextV2 {
         command: CommandIntent<TPayload>,
         options?: DispatchOptions,
     ): Promise<CommandAggregateResult>
-    installPeerDispatchGateway(gateway: import('./runtime').PeerDispatchGateway | undefined): void
+    installPeerDispatchGateway(gateway: {
+        dispatchCommand<TPayload = unknown>(
+            command: CommandIntent<TPayload>,
+            options: DispatchOptions,
+        ): Promise<CommandAggregateResult>
+    } | undefined): void
     queryRequest(requestId: string): RequestQueryResult | undefined
     resolveParameter<TValue = unknown>(input: {
         key: string

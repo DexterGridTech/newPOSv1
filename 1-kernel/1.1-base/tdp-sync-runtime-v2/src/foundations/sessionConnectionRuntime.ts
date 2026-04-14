@@ -4,7 +4,11 @@ import {
     protocolVersion,
 } from '@impos2/kernel-base-contracts'
 import type {RuntimeModuleContextV2} from '@impos2/kernel-base-runtime-shell-v2'
-import {createHttpRuntime, type HttpTransport} from '@impos2/kernel-base-transport-runtime'
+import {
+    createHttpRuntime,
+    createSocketLifecycleController,
+    type HttpTransport,
+} from '@impos2/kernel-base-transport-runtime'
 import {SERVER_NAME_MOCK_TERMINAL_PLATFORM} from '@impos2/kernel-server-config-v2'
 import {moduleName} from '../moduleName'
 import {
@@ -24,6 +28,11 @@ import type {
     TdpSessionConnectionRuntimeRefV2,
 } from '../types'
 
+/**
+ * 设计意图：
+ * 这里把 TDP 会话连接逻辑从 actor 中抽离出来，统一管理 snapshot、changes、WS session 和断线恢复节奏。
+ * 这样 actor 保持业务语义清晰，底层 transport/connection 细节留在独立运行时对象中维护。
+ */
 const DEFAULT_MOCK_TERMINAL_PLATFORM_BASE_URL = 'http://127.0.0.1:5810'
 const DEFAULT_MOCK_TERMINAL_PLATFORM_ADDRESS_NAME = 'local-default'
 
@@ -142,18 +151,6 @@ export const installTdpSessionConnectionRuntimeV2 = (input: {
         },
     })
 
-    let reconnectTimer: ReturnType<typeof setTimeout> | undefined
-    let reconnectAttempt = 0
-    let manualDisconnect = false
-
-    const clearReconnectTimer = () => {
-        if (!reconnectTimer) {
-            return
-        }
-        clearTimeout(reconnectTimer)
-        reconnectTimer = undefined
-    }
-
     const sendHandshake = () => {
         const state = input.context.getState()
         const terminalId = selectTcpTerminalId(state)
@@ -181,7 +178,9 @@ export const installTdpSessionConnectionRuntimeV2 = (input: {
         input.context.dispatchAction(tdpSyncV2StateActions.setStatus('HANDSHAKING'))
     }
 
-    const startSocketConnection = async (options?: {isReconnect?: boolean}) => {
+    let lastConnectionStartResult: Record<string, unknown> | undefined
+
+    const performSocketConnection = async (options?: {isReconnect?: boolean}) => {
         const state = input.context.getState()
         const terminalId = selectTcpTerminalId(state)
         const accessToken = selectTcpAccessToken(state)
@@ -193,9 +192,6 @@ export const installTdpSessionConnectionRuntimeV2 = (input: {
                 },
             })
         }
-
-        clearReconnectTimer()
-        manualDisconnect = false
         input.context.dispatchAction(tdpSyncV2StateActions.setStatus(
             options?.isReconnect ? 'RECONNECTING' : 'CONNECTING',
         ))
@@ -207,6 +203,8 @@ export const installTdpSessionConnectionRuntimeV2 = (input: {
             },
         })
 
+        // socketRuntime.connect resolve 后才保证 transportConnection 已可用；
+        // 握手若延后到 connected 事件里，事件可能早于 transportConnection 赋值，导致 send 被静默丢弃。
         sendHandshake()
 
         return {
@@ -216,71 +214,85 @@ export const installTdpSessionConnectionRuntimeV2 = (input: {
         }
     }
 
-    const scheduleReconnect = (reason?: string) => {
-        if (manualDisconnect) {
-            return
-        }
-        if (reconnectTimer) {
-            return
-        }
-
-        const maxAttempts = getReconnectAttempts(input.context, input.moduleInput)
-        if (maxAttempts >= 0 && reconnectAttempt >= maxAttempts) {
-            return
-        }
-
-        reconnectAttempt += 1
-        input.context.dispatchAction(tdpSyncV2StateActions.setStatus('RECONNECTING'))
-        input.context.dispatchAction(tdpSyncV2StateActions.setReconnectAttempt(reconnectAttempt))
-        input.context.dispatchAction(tdpSyncV2StateActions.setDisconnectReason(reason ?? null))
-        input.context.dispatchAction(tdpSyncV2StateActions.setLastDisconnectReason(reason ?? null))
-
-        reconnectTimer = setTimeout(() => {
-            reconnectTimer = undefined
-            void startSocketConnection({isReconnect: true}).catch(error => {
-                scheduleReconnect(error instanceof Error ? error.message : String(error))
+    const lifecycle = createSocketLifecycleController({
+        async connect(options) {
+            lastConnectionStartResult = await performSocketConnection(options)
+        },
+        disconnect(reason) {
+            socketBinding.socketRuntime.disconnect(socketBinding.profileName, reason)
+        },
+        attachListeners(handlers) {
+            socketBinding.socketRuntime.on(socketBinding.profileName, 'connected', () => {
+                handlers.connected()
             })
-        }, resolveReconnectDelayMs(input.context, input.moduleInput))
-    }
+            socketBinding.socketRuntime.on(socketBinding.profileName, 'disconnected', event => {
+                if (!isDisconnectedEvent(event)) {
+                    return
+                }
+                handlers.disconnected(event.reason)
+            })
+            socketBinding.socketRuntime.on(socketBinding.profileName, 'error', event => {
+                if (!isErrorEvent(event)) {
+                    return
+                }
+                handlers.error(event.error)
+            })
+        },
+        resolveReconnectPolicy() {
+            return {
+                attempts: getReconnectAttempts(input.context, input.moduleInput),
+                delayMs: resolveReconnectDelayMs(input.context, input.moduleInput),
+            }
+        },
+        shouldReconnect() {
+            return true
+        },
+        onConnected() {},
+        onDisconnected(reason) {
+            input.context.dispatchAction(tdpSyncV2StateActions.setStatus('DISCONNECTED'))
+            input.context.dispatchAction(tdpSyncV2StateActions.setDisconnectReason(reason ?? null))
+            input.context.dispatchAction(tdpSyncV2StateActions.setLastDisconnectReason(reason ?? null))
+        },
+        onReconnectScheduled({reason, attempt}) {
+            input.context.dispatchAction(tdpSyncV2StateActions.setStatus('RECONNECTING'))
+            input.context.dispatchAction(tdpSyncV2StateActions.setReconnectAttempt(attempt))
+            input.context.dispatchAction(tdpSyncV2StateActions.setDisconnectReason(reason ?? null))
+            input.context.dispatchAction(tdpSyncV2StateActions.setLastDisconnectReason(reason ?? null))
+        },
+    })
 
-    socketBinding.socketRuntime.on(socketBinding.profileName, 'connected', () => {
-        clearReconnectTimer()
-        input.context.dispatchAction(tdpSyncV2StateActions.setStatus('HANDSHAKING'))
-    })
-    socketBinding.socketRuntime.on(socketBinding.profileName, 'disconnected', event => {
-        if (!isDisconnectedEvent(event)) {
-            return
-        }
-        input.context.dispatchAction(tdpSyncV2StateActions.setStatus('DISCONNECTED'))
-        input.context.dispatchAction(tdpSyncV2StateActions.setDisconnectReason(event.reason ?? null))
-        input.context.dispatchAction(tdpSyncV2StateActions.setLastDisconnectReason(event.reason ?? null))
-        scheduleReconnect(event.reason)
-    })
-    socketBinding.socketRuntime.on(socketBinding.profileName, 'error', event => {
-        if (!isErrorEvent(event)) {
-            return
-        }
-        scheduleReconnect(event.error instanceof Error ? event.error.message : String(event.error))
-    })
     socketBinding.socketRuntime.on(socketBinding.profileName, 'message', event => {
         if (!isMessageEvent(event)) {
             return
         }
         if (event.message.type === 'SESSION_READY') {
-            reconnectAttempt = 0
+            lifecycle.resetReconnectAttempt()
         }
         void input.context.dispatchCommand({
             definition: tdpSyncV2CommandDefinitions.tdpMessageReceived,
             payload: event.message,
+        }).catch(error => {
+            input.context.platformPorts.logger.error({
+                category: 'tdp.connection',
+                event: 'message-dispatch-failed',
+                message: 'TDP server message dispatch failed',
+                error: {
+                    name: error instanceof Error ? error.name : undefined,
+                    message: error instanceof Error ? error.message : String(error),
+                    stack: error instanceof Error ? error.stack : undefined,
+                },
+            })
         })
     })
+    lifecycle.attach()
 
     const runtime: TdpSessionConnectionRuntimeV2 = {
-        startSocketConnection,
+        async startSocketConnection(options?: {isReconnect?: boolean}) {
+            await lifecycle.start(options)
+            return lastConnectionStartResult ?? {}
+        },
         disconnect(reason?: string) {
-            manualDisconnect = true
-            clearReconnectTimer()
-            socketBinding.socketRuntime.disconnect(socketBinding.profileName, reason)
+            lifecycle.stop(reason)
         },
         sendAck(payload: {cursor: number; topic?: string; itemKey?: string; instanceId?: string}) {
             socketBinding.socketRuntime.send(socketBinding.profileName, {

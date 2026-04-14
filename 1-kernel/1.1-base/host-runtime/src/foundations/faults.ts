@@ -41,6 +41,16 @@ export interface HostFaultRegistry {
 export const createHostFaultRegistry = (): HostFaultRegistry => {
     let rules: HostFaultRule[] = []
 
+    const normalizeRule = (rule: HostFaultRule): HostFaultRule => {
+        if (rule.remainingHits != null && rule.remainingHits < 1) {
+            return {
+                ...rule,
+                remainingHits: 1,
+            }
+        }
+        return {...rule}
+    }
+
     const consumeRule = (rule: HostFaultRule) => {
         if (rule.remainingHits == null) {
             return
@@ -53,10 +63,10 @@ export const createHostFaultRegistry = (): HostFaultRegistry => {
 
     return {
         replaceRules(nextRules) {
-            rules = [...nextRules]
+            rules = nextRules.map(normalizeRule)
         },
         addRule(rule) {
-            rules = [...rules, rule]
+            rules = [...rules, normalizeRule(rule)]
         },
         clear() {
             rules = []

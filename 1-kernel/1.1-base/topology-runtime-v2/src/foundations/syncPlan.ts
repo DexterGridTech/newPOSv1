@@ -16,6 +16,11 @@ const filterSlicesByDirection = (
     direction: Exclude<SyncIntent, 'isolated'>,
 ) => slices.filter(slice => slice.syncIntent === direction && slice.sync)
 
+/**
+ * 设计意图：
+ * 同步计划只使用 slice descriptor 生成 summary/diff，不直接读写具体业务字段规则。
+ * 业务包通过 state-runtime 描述哪些字段可同步，topology 只负责把这些差异可靠送到 peer。
+ */
 export const createTopologyV2SyncSummary = (
     input: TopologyV2SyncPlanInput,
 ): TopologyV2SyncSliceSummary[] => {

@@ -1,4 +1,4 @@
-import {createAppError} from '@impos2/kernel-base-contracts'
+import {createAppError, isAppError} from '@impos2/kernel-base-contracts'
 import type {AppError, ErrorDefinition} from '@impos2/kernel-base-contracts'
 import {moduleName} from '../moduleName'
 
@@ -71,8 +71,8 @@ export const createTransportParseError = (message: string, details?: unknown) =>
 }
 
 export const normalizeTransportError = (error: unknown): AppError => {
-    if (typeof error === 'object' && error !== null && 'key' in error && 'message' in error) {
-        return error as AppError
+    if (isAppError(error)) {
+        return error
     }
 
     if (error instanceof SyntaxError) {

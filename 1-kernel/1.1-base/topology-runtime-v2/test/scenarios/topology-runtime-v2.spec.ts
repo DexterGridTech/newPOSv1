@@ -127,6 +127,116 @@ describe('topology-runtime-v2', () => {
         expect(result.status).toBe('FAILED')
     })
 
+    it('does not apply rejected hello ack session id into active sync context', async () => {
+        const listenersByType = new Map<string, Array<(event: any) => void>>()
+        const runtime = createKernelRuntimeV2({
+            localNodeId: createNodeId(),
+            platformPorts: createPlatformPorts({
+                environmentMode: 'DEV',
+                logger: createTestLogger('kernel.base.topology-runtime-v2.test.reject-ack'),
+            }),
+            modules: [
+                createTopologyRuntimeModuleV2({
+                    assembly: {
+                        resolveSocketBinding() {
+                            return {
+                                socketRuntime: {
+                                    registerProfile() {},
+                                    async connect() {
+                                        listenersByType.get('connected')?.forEach(listener => listener({type: 'connected'}))
+                                        return {} as any
+                                    },
+                                    send() {},
+                                    disconnect() {},
+                                    getConnectionState() {
+                                        return 'connected'
+                                    },
+                                    on(_profileName, eventType, listener) {
+                                        const listeners = listenersByType.get(eventType) ?? []
+                                        listeners.push(listener as any)
+                                        listenersByType.set(eventType, listeners)
+                                    },
+                                    off() {},
+                                    replaceServers() {},
+                                    getServerCatalog() {
+                                        return {} as any
+                                    },
+                                },
+                                profileName: 'reject-ack',
+                            }
+                        },
+                        createHello() {
+                            return {
+                                helloId: 'hello-reject-ack',
+                                ticketToken: 'token-reject-ack',
+                                runtime: {
+                                    nodeId: 'node-reject-ack' as any,
+                                    deviceId: 'device-reject-ack',
+                                    role: 'slave',
+                                    platform: 'node',
+                                    product: 'test',
+                                    assemblyAppId: 'assembly.test',
+                                    assemblyVersion: '1.0.0',
+                                    buildNumber: 1,
+                                    bundleVersion: '1',
+                                    runtimeVersion: '1.0.0',
+                                    protocolVersion: '2026.04',
+                                    capabilities: [],
+                                },
+                                sentAt: Date.now() as any,
+                            }
+                        },
+                    },
+                }),
+            ],
+        })
+
+        await runtime.start()
+        await runtime.dispatchCommand(createCommand(topologyRuntimeV2CommandDefinitions.setInstanceMode, {
+            instanceMode: 'SLAVE',
+        }))
+        await runtime.dispatchCommand(createCommand(topologyRuntimeV2CommandDefinitions.setMasterInfo, {
+            masterInfo: {
+                deviceId: 'master-reject',
+                serverAddress: [{address: 'ws://127.0.0.1:7788'}],
+                addedAt: Date.now() as any,
+            },
+        }))
+
+        const startPromise = runtime.dispatchCommand(createCommand(
+            topologyRuntimeV2CommandDefinitions.startTopologyConnection,
+            {},
+        ))
+
+        listenersByType.get('message')?.forEach(listener => listener({
+            type: 'message',
+            message: {
+                type: 'node-hello-ack',
+                ack: {
+                    helloId: 'hello-reject-ack',
+                    accepted: false,
+                    sessionId: 'session-rejected',
+                    rejectionCode: 'COMPATIBILITY_REJECTED',
+                    rejectionMessage: 'rejected for test',
+                    compatibility: {
+                        level: 'rejected',
+                        reasons: ['rejected for test'],
+                        enabledCapabilities: [],
+                        disabledCapabilities: [],
+                    },
+                    hostTime: Date.now(),
+                },
+            },
+        }))
+
+        await startPromise
+
+        expect(selectTopologyRuntimeV2ServerConnected(runtime.getState())).toBe(false)
+        expect(runtime.getState()['kernel.base.topology-runtime-v2.sync' as keyof ReturnType<typeof runtime.getState>]).not.toMatchObject({
+            activeSessionId: 'session-rejected',
+        })
+    })
+
     it('fails start connection with structured precheck error when slave masterInfo is missing', async () => {
         const runtime = createKernelRuntimeV2({
             localNodeId: createNodeId(),

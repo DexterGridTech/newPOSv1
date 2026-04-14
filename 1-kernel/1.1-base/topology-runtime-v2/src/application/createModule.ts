@@ -20,6 +20,11 @@ import {createTopologyPeerOrchestratorV2} from '../foundations/orchestrator'
 import {TOPOLOGY_V2_RECOVERY_STATE_KEY} from '../foundations/stateKeys'
 import {topologyRuntimeV2ModuleManifest} from './moduleManifest'
 
+/**
+ * 设计意图：
+ * topology 模块安装阶段只建立 context state、orchestrator 和 peer gateway。
+ * runtime-shell-v2 仍是唯一 command 入口；topology 只负责把 peer 命令、远端事件和 state sync 接到这个统一运行时上。
+ */
 export const topologyRuntimeV2PreSetup = async (
     context: RuntimeModulePreSetupContextV2,
 ): Promise<void> => {

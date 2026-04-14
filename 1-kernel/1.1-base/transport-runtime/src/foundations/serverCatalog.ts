@@ -5,6 +5,11 @@ import type {
 import {createTransportConfigurationError} from './shared'
 
 export const createServerCatalog = (): ServerCatalog => {
+    /**
+     * 设计意图：
+     * ServerCatalog 只保存“服务器名 -> 地址列表”的运行时配置，不内置任何业务服务名。
+     * 地址切换、失败重试和有效地址保持由 HTTP runtime 使用 catalog 完成，server-config-v2 只负责提供配置数据。
+     */
     const servers = new Map<string, TransportServerDefinition>()
 
     const ensureServer = (serverName: string): TransportServerDefinition => {

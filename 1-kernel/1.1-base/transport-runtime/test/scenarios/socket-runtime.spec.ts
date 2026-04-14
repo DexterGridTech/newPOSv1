@@ -1,4 +1,4 @@
-import {describe, expect, it} from 'vitest'
+import {describe, expect, it, vi} from 'vitest'
 import {createLoggerPort} from '@impos2/kernel-base-platform-ports'
 import {
     createSocketRuntime,
@@ -138,5 +138,65 @@ describe('transport-runtime socket', () => {
         expect(transportRuntimeParameterDefinitions.socketConnectionTimeoutMs.defaultValue).toBe(10_000)
         expect(transportRuntimeParameterDefinitions.socketHeartbeatIntervalMs.defaultValue).toBe(30_000)
         expect(transportRuntimeParameterDefinitions.socketHeartbeatTimeoutMs.defaultValue).toBe(60_000)
+    })
+
+    it('marks socket disconnected on error and does not count unsent messages', async () => {
+        const metrics = vi.fn()
+        let handlersRef: Parameters<SocketTransport['connect']>[1] | undefined
+
+        const runtime = createSocketRuntime({
+            logger: createLoggerPort({
+                environmentMode: 'DEV',
+                write: () => {},
+                scope: {
+                    moduleName: 'kernel.base.transport-runtime.test',
+                    layer: 'kernel',
+                },
+            }),
+            metricsRecorder: {
+                recordConnection: metrics,
+            },
+            transport: {
+                async connect(_connection, handlers) {
+                    handlersRef = handlers
+                    return {
+                        sendRaw() {},
+                        disconnect() {},
+                    }
+                },
+            },
+            servers: [
+                {
+                    serverName: 'socket-demo',
+                    addresses: [
+                        {addressName: 'primary', baseUrl: 'http://socket.local'},
+                    ],
+                },
+            ],
+        })
+
+        runtime.registerProfile(defineSocketProfile<void, void, void, {kind: string}, {kind: string}>({
+            name: 'demo.socket',
+            serverName: 'socket-demo',
+            pathTemplate: '/socket',
+            handshake: {},
+            messages: {
+                incoming: typed<{kind: string}>('demo.socket.incoming'),
+                outgoing: typed<{kind: string}>('demo.socket.outgoing'),
+            },
+            codec: new JsonSocketCodec<{kind: string}, {kind: string}>(),
+            meta: {},
+        }))
+
+        runtime.send('demo.socket', {kind: 'ignored'})
+        await runtime.connect('demo.socket')
+        handlersRef?.onOpen()
+        handlersRef?.onError(new Error('socket boom'))
+
+        expect(runtime.getConnectionState('demo.socket')).toBe('disconnected')
+        expect(metrics).toHaveBeenCalledWith(expect.objectContaining({
+            outboundMessageCount: 0,
+            success: false,
+        }))
     })
 })

@@ -13,6 +13,11 @@ import {getUiScreenRegistry} from '../selectors'
 import {createUiRuntimeActorDefinitions} from '../features/actors'
 import {uiRuntimeV2ModuleManifest} from './moduleManifest'
 
+/**
+ * 设计意图：
+ * ui-runtime-v2 模块本身保持很薄，只负责把 registry、state slice 和 actor 接入 runtime-shell。
+ * screen 定义与渲染选择留在 registry/selector 层，避免 UI 基础包重新退化成重职责导航中心。
+ */
 export const uiRuntimeV2PreSetup = async (
     context: RuntimeModulePreSetupContextV2,
 ): Promise<void> => {

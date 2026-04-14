@@ -8,8 +8,28 @@ import type {
     WorkflowOutputMapping,
 } from '../types'
 
+const FUNCTION_CACHE_LIMIT = 200
 const functionCache = new Map<string, Function>()
 
+const rememberCachedFunction = (cacheKey: string, fn: Function) => {
+    if (functionCache.has(cacheKey)) {
+        functionCache.delete(cacheKey)
+    }
+    functionCache.set(cacheKey, fn)
+    if (functionCache.size <= FUNCTION_CACHE_LIMIT) {
+        return
+    }
+    const oldestKey = functionCache.keys().next().value
+    if (oldestKey) {
+        functionCache.delete(oldestKey)
+    }
+}
+
+/**
+ * 设计意图：
+ * workflow script 优先交给 platformPorts.scriptExecutor，让 Android/Electron/Node 可以用各自安全边界执行动态 JS。
+ * 本地 new Function 只是无适配器时的兜底和测试能力，不把脚本沙箱策略绑死在 kernel 包内。
+ */
 const getContextGlobals = (
     context: WorkflowContextSnapshot,
 ): Record<string, unknown> => {
@@ -62,12 +82,15 @@ const executeLocalScript = async <T = unknown>(input: {
     const globalKeys = Object.keys(globals)
     const argumentNames = ['params', ...globalKeys]
     const argumentValues = [params, ...globalKeys.map(key => globals[key])]
-    const cacheKey = `${source}|${argumentNames.join(',')}`
+    const cacheKey = JSON.stringify({
+        source,
+        argumentNames,
+    })
 
     const runner = functionCache.get(cacheKey) ?? (() => {
         // eslint-disable-next-line no-new-func
         const created = new Function(...argumentNames, source)
-        functionCache.set(cacheKey, created)
+        rememberCachedFunction(cacheKey, created)
         return created
     })()
 

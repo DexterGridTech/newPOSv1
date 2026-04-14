@@ -1,5 +1,5 @@
 import {
-    callHttpEnvelope,
+    createHttpServiceBinder,
     createModuleHttpEndpointFactory,
     type HttpRuntime,
 } from '@impos2/kernel-base-transport-runtime'
@@ -64,31 +64,45 @@ const reportTaskResultEndpoint = defineEndpoint<
 export const createTcpControlHttpServiceV2 = (
     runtime: HttpRuntime,
 ): TcpControlHttpService => {
+    const http = createHttpServiceBinder(runtime)
+
     return {
         async activateTerminal(request) {
-            return callHttpEnvelope(runtime, activateTerminalEndpoint, {
-                body: request,
-            }, {
-                errorDefinition: tcpControlV2ErrorDefinitions.activationFailed,
-                fallbackMessage: TCP_CONTROL_V2_HTTP_FALLBACK_MESSAGE,
-            })
+            return http.envelope(
+                activateTerminalEndpoint,
+                {
+                    body: request,
+                },
+                {
+                    errorDefinition: tcpControlV2ErrorDefinitions.activationFailed,
+                    fallbackMessage: TCP_CONTROL_V2_HTTP_FALLBACK_MESSAGE,
+                },
+            )
         },
         async refreshCredential(request) {
-            return callHttpEnvelope(runtime, refreshCredentialEndpoint, {
-                body: request,
-            }, {
-                errorDefinition: tcpControlV2ErrorDefinitions.refreshFailed,
-                fallbackMessage: TCP_CONTROL_V2_HTTP_FALLBACK_MESSAGE,
-            })
+            return http.envelope(
+                refreshCredentialEndpoint,
+                {
+                    body: request,
+                },
+                {
+                    errorDefinition: tcpControlV2ErrorDefinitions.refreshFailed,
+                    fallbackMessage: TCP_CONTROL_V2_HTTP_FALLBACK_MESSAGE,
+                },
+            )
         },
         async reportTaskResult(terminalId, instanceId, request) {
-            return callHttpEnvelope(runtime, reportTaskResultEndpoint, {
-                path: {terminalId, instanceId},
-                body: request,
-            }, {
-                errorDefinition: tcpControlV2ErrorDefinitions.taskResultReportFailed,
-                fallbackMessage: TCP_CONTROL_V2_HTTP_FALLBACK_MESSAGE,
-            })
+            return http.envelope(
+                reportTaskResultEndpoint,
+                {
+                    path: {terminalId, instanceId},
+                    body: request,
+                },
+                {
+                    errorDefinition: tcpControlV2ErrorDefinitions.taskResultReportFailed,
+                    fallbackMessage: TCP_CONTROL_V2_HTTP_FALLBACK_MESSAGE,
+                },
+            )
         },
     }
 }

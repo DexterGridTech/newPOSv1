@@ -91,6 +91,11 @@ export const createTopicChangePublisherFingerprintV2 = (): TopicChangePublisherF
     resolvedByTopic: {},
 })
 
+/**
+ * 设计意图：
+ * TDP 本地保存的是全量 projection 仓库，但对外广播的是“按优先级计算后的生效变化”。
+ * 这样业务包不需要知道 Platform/Project/Brand/Tenant/Store/Terminal 的覆盖规则，只消费当前真正生效的 upsert/delete。
+ */
 export const publishTopicDataChangesV2 = async (
     runtime: {
         getState(): unknown

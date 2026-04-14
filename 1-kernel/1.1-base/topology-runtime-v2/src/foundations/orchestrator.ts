@@ -10,7 +10,10 @@ import {
 } from '@impos2/kernel-base-contracts'
 import type {CommandQueryResult, RuntimeModuleContextV2} from '@impos2/kernel-base-runtime-shell-v2'
 import {createCommand, type CommandAggregateResult} from '@impos2/kernel-base-runtime-shell-v2'
-import type {SocketEvent} from '@impos2/kernel-base-transport-runtime'
+import {
+    createSocketLifecycleController,
+    type SocketEvent,
+} from '@impos2/kernel-base-transport-runtime'
 import {topologyRuntimeV2StateActions} from '../features/slices'
 import {topologyRuntimeV2ErrorDefinitions, topologyRuntimeV2ParameterDefinitions} from '../supports'
 import type {
@@ -43,6 +46,11 @@ import {createTopologyIncomingHandlers} from './orchestratorIncoming'
 import {createTopologyV2SyncSessionManager} from './syncSession'
 import {createTopologyV2SyncSummary} from './syncPlan'
 
+/**
+ * 设计意图：
+ * orchestrator 是 topology-runtime-v2 的控制面协调器，负责把 peer 通道转换成 command、request mirror 和 state sync。
+ * 它不承载业务模块逻辑；重点是让主副机之间的执行屏障、恢复和同步时序保持一致且可观测。
+ */
 const isMessageEvent = (
     event: SocketEvent<TopologyRuntimeV2IncomingMessage>,
 ): event is Extract<SocketEvent<TopologyRuntimeV2IncomingMessage>, {type: 'message'}> => event.type === 'message'
@@ -74,11 +82,7 @@ export const createTopologyPeerOrchestratorV2 = (input: {
         peerRuntime?: NodeRuntimeInfo
     } = {}
     const syncSessions = createTopologyV2SyncSessionManager()
-    let reconnectTimer: ReturnType<typeof setTimeout> | undefined
-    let reconnectAttempt = 0
-    let manualStop = false
     let listenersAttached = false
-    let connectionToken = 0
     let stateUnsubscribe: (() => void) | undefined
     let lastContinuousDiffSignature = ''
     const pendingCommitSummaryByDirection = new Map<'master-to-slave' | 'slave-to-master', Record<string, any>>()
@@ -97,14 +101,6 @@ export const createTopologyPeerOrchestratorV2 = (input: {
         patch: Parameters<typeof topologyRuntimeV2StateActions.patchSyncState>[0],
     ) => {
         input.context.dispatchAction(topologyRuntimeV2StateActions.patchSyncState(patch))
-    }
-
-    const clearReconnectTimer = () => {
-        if (!reconnectTimer) {
-            return
-        }
-        clearTimeout(reconnectTimer)
-        reconnectTimer = undefined
     }
 
     const getContinuousDirection = (): 'master-to-slave' | 'slave-to-master' => {
@@ -339,8 +335,16 @@ export const createTopologyPeerOrchestratorV2 = (input: {
         while (true) {
             const request = input.context.queryRequest(requestId)
             const command = request?.commands.find(item => item.commandId === commandId)
-            if (command && command.actorResults.length > 0 && isFinalCommandAggregateResult(command)) {
-                return command
+            if (command && command.actorResults.length > 0) {
+                if (command.actorResults.some(item => item.status === 'RUNNING')) {
+                    return {
+                        ...command,
+                        status: 'COMPLETED',
+                    } as CommandAggregateResult
+                }
+                if (isFinalCommandAggregateResult(command)) {
+                    return command
+                }
             }
             if (Date.now() - startedAt > timeoutMs) {
                 throw createAppError(topologyRuntimeV2ErrorDefinitions.remoteCommandResponseTimeout, {
@@ -424,30 +428,6 @@ export const createTopologyPeerOrchestratorV2 = (input: {
         }
     }
 
-    const scheduleReconnect = (reason?: string) => {
-        if (!binding || manualStop || reconnectTimer || !shouldAutoConnectOnBoot(input.context)) {
-            return
-        }
-        const maxAttempts = getReconnectAttempts()
-        if (maxAttempts >= 0 && reconnectAttempt >= maxAttempts) {
-            return
-        }
-        reconnectAttempt += 1
-        dispatchConnectionPatch({
-            serverConnectionStatus: 'CONNECTING',
-            reconnectAttempt,
-            connectionError: reason,
-        })
-        dispatchSyncPatch({
-            resumeStatus: 'pending',
-            continuousSyncActive: false,
-        })
-        reconnectTimer = setTimeout(() => {
-            reconnectTimer = undefined
-            void startConnection({isReconnect: true})
-        }, getReconnectDelayMs())
-    }
-
     const handleRemoteDispatch = async (envelope: CommandDispatchEnvelope) => {
         send({
             type: 'command-event',
@@ -462,7 +442,7 @@ export const createTopologyPeerOrchestratorV2 = (input: {
                 occurredAt: nowTimestampMs() as any,
             },
         })
-        await input.context.dispatchCommand({
+        void input.context.dispatchCommand({
             definition: {
                 moduleName: envelope.commandName.split('.').slice(0, -1).join('.'),
                 commandName: envelope.commandName,
@@ -508,6 +488,25 @@ export const createTopologyPeerOrchestratorV2 = (input: {
                     occurredAt: nowTimestampMs() as any,
                 },
             })
+        }).catch(error => {
+            send({
+                type: 'command-event',
+                envelope: {
+                    envelopeId: createEnvelopeId(),
+                    sessionId: envelope.sessionId,
+                    requestId: envelope.requestId,
+                    commandId: envelope.commandId,
+                    ownerNodeId: envelope.ownerNodeId,
+                    sourceNodeId: input.context.localNodeId as any,
+                    eventType: 'failed',
+                    error: {
+                        key: topologyRuntimeV2ErrorDefinitions.connectionFailed.key,
+                        code: topologyRuntimeV2ErrorDefinitions.connectionFailed.code ?? topologyRuntimeV2ErrorDefinitions.connectionFailed.key,
+                        message: error instanceof Error ? error.message : String(error),
+                    },
+                    occurredAt: nowTimestampMs() as any,
+                },
+            })
         })
     }
 
@@ -522,11 +521,17 @@ export const createTopologyPeerOrchestratorV2 = (input: {
         send,
         dispatchConnectionPatch,
         dispatchSyncPatch,
-        scheduleReconnect,
-        clearReconnectTimer,
+        scheduleReconnect: reason => {
+            lifecycle.scheduleReconnect(reason)
+        },
+        clearReconnectTimer: () => {
+            lifecycle.clearReconnectTimer()
+        },
         beginResume: () => beginResume(),
         setReconnectAttempt: next => {
-            reconnectAttempt = next
+            if (next === 0) {
+                lifecycle.resetReconnectAttempt()
+            }
         },
         getCurrentSummaryByDirection: buildCurrentSummaryByDirection,
         pendingCommitSummaryByDirection,
@@ -599,14 +604,14 @@ export const createTopologyPeerOrchestratorV2 = (input: {
         }
     }
 
-    const onConnected = () => {
+    const sendHelloAfterConnect = () => {
         const hello = input.assembly.createHello(input.context)
         if (!hello) {
             dispatchConnectionPatch({
                 connectionError: 'hello unavailable',
                 serverConnectionStatus: 'DISCONNECTED',
             })
-            scheduleReconnect('hello unavailable')
+            lifecycle.scheduleReconnect('hello unavailable')
             return
         }
         send({
@@ -637,20 +642,106 @@ export const createTopologyPeerOrchestratorV2 = (input: {
                 resumeStatus: 'pending',
                 continuousSyncActive: false,
             })
-            scheduleReconnect(event.reason)
-        })
-        binding.socketRuntime.on(binding.profileName, 'error', event => {
-            if (!isErrorEvent(event)) {
-                return
-            }
-            scheduleReconnect(event.error instanceof Error ? event.error.message : String(event.error))
         })
     }
 
-    const startConnection = async (options?: {isReconnect?: boolean; manualTrigger?: boolean}) => {
+    const performConnection = async (options?: {isReconnect?: boolean; manualTrigger?: boolean}) => {
         if (!binding) {
             throw createSocketBindingUnavailableError('start-topology-connection')
         }
+        attachListeners()
+        await binding.socketRuntime.connect(binding.profileName)
+    }
+
+    let nextManualTrigger: boolean | undefined
+
+    const lifecycle = createSocketLifecycleController({
+        connect: options => performConnection({
+            ...options,
+            manualTrigger: nextManualTrigger,
+        }),
+        disconnect(reason) {
+            binding?.socketRuntime.disconnect(binding.profileName, reason)
+        },
+        attachListeners(handlers) {
+            attachListeners()
+            if (!binding) {
+                return
+            }
+            binding.socketRuntime.on(binding.profileName, 'connected', () => {
+                handlers.connected()
+            })
+            binding.socketRuntime.on(binding.profileName, 'disconnected', event => {
+                if (!isDisconnectedEvent(event)) {
+                    return
+                }
+                handlers.disconnected(event.reason)
+            })
+            binding.socketRuntime.on(binding.profileName, 'error', event => {
+                if (!isErrorEvent(event)) {
+                    return
+                }
+                handlers.error(event.error)
+            })
+        },
+        resolveReconnectPolicy() {
+            return {
+                attempts: getReconnectAttempts(),
+                delayMs: getReconnectDelayMs(),
+            }
+        },
+        shouldReconnect() {
+            return Boolean(binding) && shouldAutoConnectOnBoot(input.context)
+        },
+        onConnectStarting() {
+            dispatchConnectionPatch({
+                serverConnectionStatus: 'CONNECTING',
+                connectionError: undefined,
+            })
+        },
+        onConnectResolved() {
+            sendHelloAfterConnect()
+        },
+        onConnectFailed({isReconnect, error}) {
+            const errorMessage = error instanceof Error ? error.message : String(error)
+            dispatchConnectionPatch({
+                serverConnectionStatus: 'DISCONNECTED',
+                disconnectedAt: nowTimestampMs(),
+                connectionError: errorMessage,
+            })
+            dispatchSyncPatch({
+                resumeStatus: 'pending',
+                continuousSyncActive: false,
+            })
+            if (!isReconnect) {
+                return
+            }
+        },
+        onDisconnected(reason) {
+            dispatchConnectionPatch({
+                serverConnectionStatus: 'DISCONNECTED',
+                disconnectedAt: nowTimestampMs(),
+                connectionError: reason,
+            })
+            dispatchSyncPatch({
+                resumeStatus: 'pending',
+                continuousSyncActive: false,
+            })
+        },
+        onReconnectScheduled({reason, attempt}) {
+            dispatchConnectionPatch({
+                serverConnectionStatus: 'CONNECTING',
+                reconnectAttempt: attempt,
+                connectionError: reason,
+            })
+            dispatchSyncPatch({
+                resumeStatus: 'pending',
+                continuousSyncActive: false,
+            })
+        },
+    })
+
+    const startConnection = async (options?: {isReconnect?: boolean; manualTrigger?: boolean}) => {
         if (!options?.isReconnect) {
             const reasons = createConnectionPrecheckReasons(input.context, {
                 mode: options?.manualTrigger === false ? 'auto' : 'manual',
@@ -666,22 +757,13 @@ export const createTopologyPeerOrchestratorV2 = (input: {
                 })
             }
         }
-        clearReconnectTimer()
-        manualStop = false
-        attachListeners()
-        const token = ++connectionToken
-        dispatchConnectionPatch({
-            serverConnectionStatus: options?.isReconnect ? 'CONNECTING' : 'CONNECTING',
-            connectionError: undefined,
-        })
+        nextManualTrigger = options?.manualTrigger
         try {
-            await binding.socketRuntime.connect(binding.profileName)
-            if (token !== connectionToken || manualStop) {
-                binding.socketRuntime.disconnect(binding.profileName, 'stale-connect')
-                return
-            }
-            onConnected()
+            await lifecycle.start({isReconnect: options?.isReconnect})
         } catch (error) {
+            if ((error as {key?: string})?.key === topologyRuntimeV2ErrorDefinitions.socketBindingUnavailable.key) {
+                throw error
+            }
             const errorMessage = error instanceof Error ? error.message : String(error)
             if (!options?.isReconnect) {
                 throw createAppError(topologyRuntimeV2ErrorDefinitions.connectionFailed, {
@@ -691,25 +773,16 @@ export const createTopologyPeerOrchestratorV2 = (input: {
                     cause: error,
                 })
             }
-            dispatchConnectionPatch({
-                serverConnectionStatus: 'DISCONNECTED',
-                disconnectedAt: nowTimestampMs(),
-                connectionError: errorMessage,
-            })
-            dispatchSyncPatch({
-                resumeStatus: 'pending',
-                continuousSyncActive: false,
-            })
-            scheduleReconnect(errorMessage)
+        } finally {
+            nextManualTrigger = undefined
         }
     }
 
     const stopConnection = (reason?: string) => {
-        manualStop = true
-        reconnectAttempt = 0
-        connectionToken += 1
-        clearReconnectTimer()
-        binding?.socketRuntime.disconnect(binding.profileName, reason)
+        lifecycle.stop(reason)
+        stateUnsubscribe?.()
+        stateUnsubscribe = undefined
+        listenersAttached = false
         dispatchConnectionPatch({
             serverConnectionStatus: 'DISCONNECTED',
             disconnectedAt: nowTimestampMs(),

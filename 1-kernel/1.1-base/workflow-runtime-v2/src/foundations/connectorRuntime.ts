@@ -66,7 +66,7 @@ export const executeExternalSubscribe = async (input: {
 
     return await new Promise<unknown>((resolve, reject) => {
         let settled = false
-        let subscriptionId = ''
+        let subscriptionId: string | undefined
         const timeout = input.payload?.timeoutMs
         const timer = typeof timeout === 'number' && timeout > 0
             ? setTimeout(() => {
@@ -74,7 +74,9 @@ export const executeExternalSubscribe = async (input: {
                     return
                 }
                 settled = true
-                void unsubscribe(subscriptionId)
+                if (subscriptionId) {
+                    void unsubscribe(subscriptionId)
+                }
                 reject(createAppError(workflowRuntimeV2ErrorDefinitions.workflowStepFailed, {
                     args: {stepKey: input.stepKey},
                     details: {reason: 'external-subscribe timeout'},
@@ -92,7 +94,9 @@ export const executeExternalSubscribe = async (input: {
                 if (timer) {
                     clearTimeout(timer)
                 }
-                void unsubscribe(subscriptionId)
+                if (subscriptionId) {
+                    void unsubscribe(subscriptionId)
+                }
                 resolve(message)
             },
             onError(error) {
@@ -103,7 +107,9 @@ export const executeExternalSubscribe = async (input: {
                 if (timer) {
                     clearTimeout(timer)
                 }
-                void unsubscribe(subscriptionId)
+                if (subscriptionId) {
+                    void unsubscribe(subscriptionId)
+                }
                 reject(createAppError(workflowRuntimeV2ErrorDefinitions.workflowStepFailed, {
                     args: {stepKey: input.stepKey},
                     details: error,

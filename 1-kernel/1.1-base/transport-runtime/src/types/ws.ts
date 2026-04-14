@@ -184,3 +184,41 @@ export interface SocketRuntime {
 export interface SocketRuntimeFailure extends AppError {
     readonly details?: unknown
 }
+
+export interface SocketLifecycleReconnectPolicy {
+    readonly attempts: number
+    readonly delayMs: number
+}
+
+export interface SocketLifecycleControllerHandlers {
+    connected(): void
+    disconnected(reason?: string): void
+    error(error: unknown): void
+}
+
+export interface SocketLifecycleController {
+    attach(): void
+    start(options?: {isReconnect?: boolean}): Promise<void>
+    stop(reason?: string): void
+    restart(reason?: string): Promise<void>
+    getReconnectAttempt(): number
+    resetReconnectAttempt(): void
+    clearReconnectTimer(): void
+    scheduleReconnect(reason?: string): void
+}
+
+export interface CreateSocketLifecycleControllerInput {
+    connect(options?: {isReconnect?: boolean}): Promise<void>
+    disconnect(reason?: string): void
+    attachListeners(handlers: SocketLifecycleControllerHandlers): void
+    resolveReconnectPolicy(): SocketLifecycleReconnectPolicy
+    shouldReconnect(): boolean
+    onConnectStarting?(input: {isReconnect: boolean}): void
+    onConnectResolved?(input: {isReconnect: boolean}): void | Promise<void>
+    onConnectFailed?(input: {isReconnect: boolean; error: unknown}): void
+    onConnected?(): void
+    onDisconnected?(reason?: string): void
+    onError?(error: unknown): void
+    onReconnectScheduled?(input: {reason?: string; attempt: number; delayMs: number}): void
+    onReconnectGiveUp?(input: {reason?: string; attempt: number; attempts: number}): void
+}

@@ -19,6 +19,11 @@ import {createTdpSyncHttpServiceV2} from '../foundations/httpService'
 import type {CreateTdpSyncRuntimeModuleV2Input} from '../types'
 import {tdpSyncRuntimeV2ModuleManifest} from './moduleManifest'
 
+/**
+ * 设计意图：
+ * 模块安装时只准备 TDP 运行时引用并挂上 actor，不在 install 阶段提前掺入业务模块分支。
+ * projection 仓库、topic 变化和 system catalog 桥接都通过 command/actor 正式流转，便于后续业务包按能力订阅。
+ */
 export const tdpSyncRuntimeV2PreSetup = async (
     context: RuntimeModulePreSetupContextV2,
 ): Promise<void> => {

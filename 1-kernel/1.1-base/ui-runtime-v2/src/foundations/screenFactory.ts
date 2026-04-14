@@ -14,6 +14,11 @@ export const createUiScreenRuntimeEntry = <TProps = unknown>(
         operation: 'show' | 'replace'
     },
 ): UiScreenRuntimeEntry<TProps> => {
+    /**
+     * 设计意图：
+     * ui-runtime-v2 只保存“要渲染什么 part、用哪个 renderer、放到哪个 container”的运行时协议。
+     * 它不依赖 React，也不创建真实组件；具体渲染交给 2-ui 或宿主适配层。
+     */
     const {definition, id, props, source, operation} = input
     if (!definition.containerKey) {
         throw new Error(`[ui-runtime-v2] screen definition ${definition.partKey} missing containerKey`)

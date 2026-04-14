@@ -250,6 +250,138 @@ describe('workflow-runtime-v2', () => {
         expect(selectWorkflowObservationByRequestId(runtime.getState(), thirdRequestId)?.status).toBe('COMPLETED')
     })
 
+    it('propagates setup errors to run$ subscribers instead of leaving the stream hanging', async () => {
+        let workflowRuntime: WorkflowRuntimeFacadeV2 | undefined
+        const runtime = createTestRuntime([
+            createWorkflowRuntimeModuleV2({
+                initialDefinitions: [
+                    {
+                        workflowKey: 'test.duplicate-request',
+                        moduleName: 'kernel.base.workflow-runtime-v2.test',
+                        name: 'Duplicate Request Workflow',
+                        enabled: true,
+                        rootStep: {
+                            stepKey: 'delay',
+                            name: 'Delay',
+                            type: 'custom',
+                            input: {
+                                value: {
+                                    delayMs: 50,
+                                    output: {ok: true},
+                                },
+                            },
+                        },
+                    },
+                ],
+                onRuntimeReady(runtimeValue) {
+                    workflowRuntime = runtimeValue
+                },
+            }),
+        ])
+        await runtime.start()
+
+        const duplicatedRequestId = createRequestId()
+
+        const firstRun = new Promise<void>((resolve, reject) => {
+            const subscription = workflowRuntime!.run$({
+                workflowKey: 'test.duplicate-request',
+                requestId: duplicatedRequestId,
+            }).subscribe({
+                next(observation) {
+                    if (observation.status === 'COMPLETED') {
+                        subscription.unsubscribe()
+                        resolve()
+                    }
+                },
+                error: reject,
+            })
+        })
+
+        await delay(5)
+
+        const error = await new Promise<unknown>(resolve => {
+            workflowRuntime!.run$({
+                workflowKey: 'test.duplicate-request',
+                requestId: duplicatedRequestId,
+            }).subscribe({
+                error: resolve,
+            })
+        })
+
+        expect(error).toMatchObject({
+            key: expect.any(String),
+            message: expect.stringContaining('is already active'),
+        })
+        await firstRun
+    })
+
+    it('allows completed observation limit to be set to zero', async () => {
+        const firstRequestId = createRequestId()
+        const secondRequestId = createRequestId()
+        let workflowRuntime: WorkflowRuntimeFacadeV2 | undefined
+
+        const runtime = createTestRuntime([
+            createWorkflowRuntimeModuleV2({
+                initialDefinitions: [
+                    {
+                        workflowKey: 'test.zero-completed-limit',
+                        moduleName: 'kernel.base.workflow-runtime-v2.test',
+                        name: 'Zero Completed Limit Workflow',
+                        enabled: true,
+                        rootStep: {
+                            stepKey: 'done',
+                            name: 'Done',
+                            type: 'custom',
+                            input: {
+                                value: {
+                                    output: {ok: true},
+                                },
+                            },
+                        },
+                    },
+                ],
+                onRuntimeReady(runtimeValue) {
+                    workflowRuntime = runtimeValue
+                },
+            }),
+        ])
+        await runtime.start()
+
+        await runtime.dispatchCommand(createCommand(runtimeShellV2CommandDefinitions.upsertParameterCatalogEntries, {
+            entries: [
+                {
+                    key: 'kernel.base.workflow-runtime-v2.completed-observation-limit',
+                    rawValue: 0,
+                    updatedAt: 1 as any,
+                    source: 'host',
+                },
+            ],
+        }))
+
+        const runToCompletion = async (requestId: RequestId) => {
+            await new Promise<void>((resolve, reject) => {
+                const subscription = workflowRuntime!.run$({
+                    workflowKey: 'test.zero-completed-limit',
+                    requestId,
+                }).subscribe({
+                    next(observation) {
+                        if (observation.status === 'COMPLETED') {
+                            subscription.unsubscribe()
+                            resolve()
+                        }
+                    },
+                    error: reject,
+                })
+            })
+        }
+
+        await runToCompletion(firstRequestId)
+        await runToCompletion(secondRequestId)
+
+        expect(selectWorkflowObservationByRequestId(runtime.getState(), firstRequestId)).toBeUndefined()
+        expect(selectWorkflowObservationByRequestId(runtime.getState(), secondRequestId)).toBeUndefined()
+    })
+
     it('runs command-step workflow through runWorkflow command and returns terminal summary', async () => {
         const requestId = createRequestId()
 
@@ -890,6 +1022,61 @@ describe('workflow-runtime-v2', () => {
             target: 'printer',
             value: 'matched',
         })
+    })
+
+    it('does not unsubscribe with empty subscription id when external-subscribe resolves immediately', async () => {
+        const requestId = createRequestId()
+        const unsubscribed: string[] = []
+
+        const runtime = createTestRuntime([
+            createWorkflowRuntimeModuleV2({
+                initialDefinitions: [
+                    {
+                        workflowKey: 'test.external-subscribe-immediate',
+                        moduleName: 'kernel.base.workflow-runtime-v2.test',
+                        name: 'External Subscribe Immediate Workflow',
+                        enabled: true,
+                        rootStep: {
+                            stepKey: 'wait-subscription',
+                            name: 'Wait Subscription',
+                            type: 'external-subscribe',
+                            input: {
+                                value: {
+                                    channel: {
+                                        type: 'EVENT_STREAM',
+                                        target: 'scanner',
+                                    },
+                                    timeoutMs: 100,
+                                },
+                            },
+                        },
+                    },
+                ],
+            }),
+        ], {
+            connector: {
+                async subscribe(input) {
+                    input.onMessage({
+                        source: 'subscription',
+                        value: 'message-now',
+                    })
+                    return 'subscription-now'
+                },
+                async unsubscribe(subscriptionId) {
+                    unsubscribed.push(subscriptionId)
+                },
+            },
+        })
+        await runtime.start()
+
+        const result = await runtime.dispatchCommand(createCommand(workflowRuntimeV2CommandDefinitions.runWorkflow, {
+            workflowKey: 'test.external-subscribe-immediate',
+        }), {
+            requestId,
+        })
+
+        expect(result.status).toBe('COMPLETED')
+        expect(unsubscribed).toEqual([])
     })
 
     it('runs compensation step but keeps workflow terminal status failed', async () => {

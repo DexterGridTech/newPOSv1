@@ -17,6 +17,12 @@ export interface WorkflowRunRecord {
     rejectTerminal?: (error: unknown) => void
 }
 
+export interface WorkflowEngineMutableState {
+    queue: WorkflowRunRecord[]
+    runsByRequestId: Map<RequestId, WorkflowRunRecord>
+    activeRun?: WorkflowRunRecord
+}
+
 export const createTerminalPromise = (
     run: WorkflowRunRecord,
 ): Promise<WorkflowObservation> => {

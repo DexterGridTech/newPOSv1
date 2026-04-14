@@ -3,6 +3,11 @@ import type {PersistIntent, StateRuntimePersistenceDescriptor, SyncIntent} from 
 import type {StateRuntimeSliceDescriptor, StateRuntimeSyncDescriptor, StateScopeAxis} from '../types'
 import {createScopedStateKey} from './scope'
 
+/**
+ * 设计意图：
+ * scoped slice 用来表达“同一类状态按 workspace/display/instance 等轴复制多份”的场景。
+ * 复制规则在这里统一生成，业务包只关心声明 axis 和 reducers，不需要自己手写多套 slice name 与 reducer。
+ */
 type ScopedValueConfig<TValue> = TValue | Partial<Record<string, TValue>>
 
 const isScopedValueRecord = <TValue>(

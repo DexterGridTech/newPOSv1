@@ -8,7 +8,9 @@ export const finiteNumberAtLeast = (minimum: number) => {
     }
 }
 
-export const positiveFiniteNumber = finiteNumberAtLeast(Number.MIN_VALUE)
+export const positiveFiniteNumber = (value: unknown): value is number => {
+    return typeof value === 'number' && Number.isFinite(value) && value > 0
+}
 
 export const nonNegativeFiniteNumber = finiteNumberAtLeast(0)
 

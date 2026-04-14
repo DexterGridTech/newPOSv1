@@ -29,20 +29,27 @@ const containsSensitiveRaw = (value: unknown): boolean => {
     return false
 }
 
-const maskValue = (value: unknown): unknown => {
+const maskValue = (
+    value: unknown,
+    visited: WeakSet<object> = new WeakSet<object>(),
+): unknown => {
     if (value == null) {
         return value
     }
     if (Array.isArray(value)) {
-        return value.map(maskValue)
+        return value.map(item => maskValue(item, visited))
     }
     if (typeof value === 'object') {
+        if (visited.has(value)) {
+            return '[CIRCULAR]'
+        }
+        visited.add(value)
         return Object.fromEntries(
             Object.entries(value as Record<string, unknown>).map(([key, nestedValue]) => {
                 if (SENSITIVE_FIELD_PATTERN.test(key)) {
                     return [key, '[MASKED]']
                 }
-                return [key, maskValue(nestedValue)]
+                return [key, maskValue(nestedValue, visited)]
             }),
         )
     }
@@ -75,7 +82,10 @@ const createLogEvent = (
         message: input.message,
         scope,
         context: Object.keys(mergedContext).length > 0 ? mergedContext : undefined,
-        data: maskedData as Record<string, unknown> | undefined,
+        data:
+            maskedData && typeof maskedData === 'object' && !Array.isArray(maskedData)
+                ? maskedData as Record<string, unknown>
+                : undefined,
         error: input.error,
         security: {
             containsSensitiveRaw: containsSensitiveRaw(input.data),

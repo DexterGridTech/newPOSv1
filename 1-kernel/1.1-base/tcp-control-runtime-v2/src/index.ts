@@ -1,5 +1,10 @@
 import {packageVersion} from './generated/packageVersion'
 
+/**
+ * 设计意图：
+ * tcp-control-runtime-v2 负责终端控制平面：激活终端、刷新凭证、上报任务结果，并把最小恢复状态落入 kernel state。
+ * 它通过 transport-runtime 调 HTTP，通过 runtime-shell-v2 暴露 command/actor，不直接绑定具体 mock-server 或平台实现。
+ */
 export {moduleName} from './moduleName'
 export {packageVersion}
 

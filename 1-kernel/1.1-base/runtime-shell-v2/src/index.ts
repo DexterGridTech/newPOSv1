@@ -1,5 +1,10 @@
 import {packageVersion} from './generated/packageVersion'
 
+/**
+ * 设计意图：
+ * runtime-shell-v2 是新版 kernel 的唯一运行时外壳，统一装配模块、Redux state、Command/Actor 广播执行、request ledger 和参数目录。
+ * 上层模块只通过公开的 command、actor、state slice、selector、parameter/error definition 接入，不再并列创建多个全局 manager。
+ */
 export {moduleName} from './moduleName'
 export {packageVersion}
 

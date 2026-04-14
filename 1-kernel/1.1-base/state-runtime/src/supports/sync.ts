@@ -6,6 +6,11 @@ import type {
     SyncValueEnvelope,
 } from '../types'
 
+/**
+ * 设计意图：
+ * 这里实现 state-runtime 的通用同步算法，只解决“谁更新得更新、墓碑如何传播、record 如何合并”。
+ * 真正哪些 slice 参与同步、按什么粒度同步，仍由各 slice descriptor 声明，避免同步规则散落在业务模块里。
+ */
 const isSyncValueEnvelope = (value: unknown): value is SyncValueEnvelope => {
     if (!value || typeof value !== 'object') {
         return false

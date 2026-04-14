@@ -62,6 +62,18 @@ export const createRelayRegistry = (): RelayRegistry => {
         return `${sessionId}:${targetNodeId}`
     }
 
+    const recomputeSessionPendingCount = (sessionId: SessionId) => {
+        const connectionCount = [...queueByConnection.values()]
+            .flat()
+            .filter(entry => entry.delivery.sessionId === sessionId)
+            .length
+        const offlineCount = [...offlineQueueByTarget.entries()]
+            .filter(([key]) => key.startsWith(`${sessionId}:`))
+            .flatMap(([, entries]) => entries)
+            .length
+        queueBySession.set(sessionId, connectionCount + offlineCount)
+    }
+
     return {
         enqueue(input) {
             const sequenceKey = getSequenceKey(input.sessionId, input.channel)
@@ -151,10 +163,7 @@ export const createRelayRegistry = (): RelayRegistry => {
             }
 
             ready.forEach(entry => {
-                queueBySession.set(
-                    entry.delivery.sessionId,
-                    Math.max(0, (queueBySession.get(entry.delivery.sessionId) ?? 0) - 1),
-                )
+                recomputeSessionPendingCount(entry.delivery.sessionId)
             })
 
             counters.delivered += ready.length

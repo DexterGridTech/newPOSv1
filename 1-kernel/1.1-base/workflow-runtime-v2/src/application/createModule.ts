@@ -17,6 +17,11 @@ import {workflowRuntimeV2ModuleManifest} from './moduleManifest'
 
 export const DEFAULT_REMOTE_WORKFLOW_DEFINITION_TOPIC_V2 = 'kernel.workflow.definition'
 
+/**
+ * 设计意图：
+ * workflow 模块安装时创建单个 engine，并把 run/register/remove/cancel 能力通过 registry 暴露给 actor 和宿主。
+ * remote topic 只是定义输入来源之一，不是另一个真相源；真正生效定义仍统一进入 workflowDefinitions state。
+ */
 export const workflowRuntimeV2PreSetup = async (
     context: RuntimeModulePreSetupContextV2,
 ): Promise<void> => {

@@ -1,5 +1,10 @@
 import type {UiRuntimeScreenRegistry, UiScreenDefinition, UiScreenRegistryContext} from '../types'
 
+/**
+ * 设计意图：
+ * screen registry 是 UI 基础包里少数允许保留可变注册状态的地方，用来承接屏幕定义的动态组合。
+ * 这里故意只做定义查询和上下文过滤，不承担导航跳转、副作用或渲染逻辑。
+ */
 const createDefinitionKey = (definition: UiScreenDefinition) => definition.partKey
 
 const matchesContext = (
@@ -11,16 +16,19 @@ const matchesContext = (
 
 export const createUiScreenRegistry = (): UiRuntimeScreenRegistry => {
     const definitions = new Map<string, UiScreenDefinition>()
+    const registerDefinition = (definition: UiScreenDefinition) => {
+        const key = createDefinitionKey(definition)
+        definitions.set(key, definition)
+        return definition
+    }
 
     return {
         register(definition) {
-            const key = createDefinitionKey(definition)
-            definitions.set(key, definition)
-            return definition
+            return registerDefinition(definition)
         },
         registerMany(input) {
             input.forEach(definition => {
-                this.register(definition)
+                registerDefinition(definition)
             })
             return input
         },

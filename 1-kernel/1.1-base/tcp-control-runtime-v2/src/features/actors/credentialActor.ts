@@ -73,6 +73,7 @@ export const createTcpCredentialActorDefinitionV2 = (
                     accessToken: result.token,
                 }
             } catch (error) {
+                actorContext.dispatchAction(tcpControlV2StateActions.setCredentialStatus('EMPTY'))
                 actorContext.dispatchAction(tcpControlV2StateActions.setLastError(error as any))
                 throw error
             }

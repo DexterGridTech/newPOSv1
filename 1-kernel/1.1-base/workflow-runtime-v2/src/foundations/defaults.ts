@@ -83,6 +83,40 @@ export const createInitialObservation = (input: {
     }
 }
 
+export const createFailedObservation = (input: {
+    requestId: RequestId
+    workflowRunId: WorkflowRunId
+    workflowKey: string
+    error: AppError
+    contextInput?: unknown
+}): WorkflowObservation => {
+    const base = createInitialObservation({
+        requestId: input.requestId,
+        workflowRunId: input.workflowRunId,
+        workflowKey: input.workflowKey,
+        status: 'RUNNING',
+        contextInput: input.contextInput,
+    })
+    const failedAt = nowTimestampMs()
+    const error = toWorkflowErrorView(input.error)
+    return patchObservation(
+        base,
+        {
+            status: 'FAILED',
+            error,
+            completedAt: failedAt,
+            updatedAt: failedAt,
+        },
+        createWorkflowEvent({
+            requestId: input.requestId,
+            workflowRunId: base.workflowRunId,
+            type: 'workflow.failed',
+            error,
+            occurredAt: failedAt,
+        }),
+    )
+}
+
 export const createStepObservation = (
     step: WorkflowStepDefinition,
 ): WorkflowStepObservation => ({

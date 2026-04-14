@@ -30,6 +30,11 @@ export interface TopologyV2SyncSessionManager {
 }
 
 export const createTopologyV2SyncSessionManager = (): TopologyV2SyncSessionManager => {
+    /**
+     * 设计意图：
+     * sync session 记录一次主副屏同步协商的基线和连续 diff 游标。
+     * 这不是业务持久化状态，而是连接期控制面状态；断线后重新握手，比盲目 flush 全量数据更接近旧 interconnection 的自动同步思想。
+     */
     const sessions = new Map<string, TopologyV2SyncSessionSnapshot>()
 
     return {

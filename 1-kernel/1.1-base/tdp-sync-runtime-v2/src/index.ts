@@ -1,5 +1,10 @@
 import {packageVersion} from './generated/packageVersion'
 
+/**
+ * 设计意图：
+ * tdp-sync-runtime-v2 是终端数据平面的同步仓库，负责 TDP session、projection 全量本地仓库、优先级生效快照和 topic 变更广播。
+ * 其他业务包只消费通用 topicDataChanged 语义；除基础 error/parameter catalog 桥接外，这里不主动调用业务模块 command。
+ */
 export {moduleName} from './moduleName'
 export {packageVersion}
 

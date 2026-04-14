@@ -5,7 +5,7 @@ import type {
 } from '../types'
 import {appendQueryToUrl, compilePath} from './shared'
 
-export interface DefineSocketProfileInput<TPath, TQuery, THeaders, TIncoming, TOutgoing> {
+interface DefineSocketProfileInput<TPath, TQuery, THeaders, TIncoming, TOutgoing> {
     readonly name: string
     readonly serverName: string
     readonly pathTemplate: string

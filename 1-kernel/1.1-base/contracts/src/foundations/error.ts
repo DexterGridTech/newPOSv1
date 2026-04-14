@@ -33,3 +33,16 @@ export const createAppError = (
         cause: input.cause,
     }
 }
+
+export const isAppError = (value: unknown): value is AppError => {
+    if (typeof value !== 'object' || value == null) {
+        return false
+    }
+    const candidate = value as Partial<AppError>
+    return typeof candidate.key === 'string'
+        && typeof candidate.message === 'string'
+        && typeof candidate.code === 'string'
+        && typeof candidate.category === 'string'
+        && typeof candidate.severity === 'string'
+        && typeof candidate.createdAt === 'number'
+}

@@ -6,20 +6,23 @@ export const createKeyedDefinitionRegistry = <TDefinition extends KeyedDefinitio
     kind: string,
 ): DefinitionRegistry<TDefinition> => {
     const definitions = new Map<string, TDefinition>()
+    const registerDefinition = (definition: TDefinition) => {
+        if (definitions.has(definition.key)) {
+            throw new Error(`[${kind}] duplicated definition key: ${definition.key}`)
+        }
+
+        definitions.set(definition.key, definition)
+        return definition
+    }
 
     return {
         kind,
         register(definition) {
-            if (definitions.has(definition.key)) {
-                throw new Error(`[${kind}] duplicated definition key: ${definition.key}`)
-            }
-
-            definitions.set(definition.key, definition)
-            return definition
+            return registerDefinition(definition)
         },
         registerMany(input) {
             input.forEach(definition => {
-                this.register(definition)
+                registerDefinition(definition)
             })
             return input
         },

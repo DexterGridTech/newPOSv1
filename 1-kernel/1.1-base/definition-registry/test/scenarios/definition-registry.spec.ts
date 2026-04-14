@@ -4,6 +4,7 @@ import {
     createDefinitionRegistryBundle,
     createDefinitionResolverBundle,
     resolveAppError,
+    resolveErrorDefinitionByKey,
     resolveParameter,
 } from '../../src'
 
@@ -163,5 +164,54 @@ describe('definition-registry resolvers', () => {
         expect(fallback.value).toBe(false)
         expect(fallback.valid).toBe(false)
         expect(fallback.source).toBe('catalog-fallback')
+    })
+
+    it('falls back on invalid numeric raw value and rejects mismatched appError key', () => {
+        const registries = createDefinitionRegistryBundle()
+        const definition = registries.parameters.register({
+            key: 'kernel.base.definition-registry.parameter.invalid-number',
+            name: 'Invalid Number',
+            defaultValue: 10,
+            valueType: 'number',
+            moduleName: 'kernel.base.definition-registry.test',
+        })
+        const errorDefinition = registries.errors.register({
+            key: 'kernel.base.definition-registry.error.a',
+            name: 'Error A',
+            defaultTemplate: 'error a',
+            category: 'SYSTEM',
+            severity: 'LOW',
+            moduleName: 'kernel.base.definition-registry.test',
+        })
+        registries.errors.register({
+            key: 'kernel.base.definition-registry.error.b',
+            name: 'Error B',
+            defaultTemplate: 'error b',
+            category: 'SYSTEM',
+            severity: 'LOW',
+            moduleName: 'kernel.base.definition-registry.test',
+        })
+
+        const invalidNumber = resolveParameter({
+            definition,
+            parameterCatalog: {
+                [definition.key]: {
+                    key: definition.key,
+                    rawValue: 'not-a-number',
+                    updatedAt: 1 as any,
+                    source: 'remote',
+                },
+            },
+        })
+
+        expect(invalidNumber.value).toBe(10)
+        expect(invalidNumber.valid).toBe(false)
+
+        const appError = createAppError(errorDefinition)
+        expect(() => resolveErrorDefinitionByKey({
+            key: 'kernel.base.definition-registry.error.b',
+            errorRegistry: registries.errors,
+            appError,
+        })).toThrow(/appError.key mismatch/)
     })
 })

@@ -17,6 +17,11 @@ import {
     stateRuntimeParameterDefinitions,
 } from '../supports'
 
+/**
+ * 设计意图：
+ * state-runtime 统一负责 Redux store、持久化、恢复和同步准备。
+ * 业务 slice 只声明自己的 persist/sync 意图，真正的按字段落盘、按 record 拆存、普通/加密存储选择都在这里收敛。
+ */
 const NOOP_LOGGER: LoggerPort = {
     emit() {},
     debug() {},
@@ -90,7 +95,11 @@ const decodeEntry = (raw: string | null): unknown => {
     if (raw == null) {
         return undefined
     }
-    return JSON.parse(raw)
+    try {
+        return JSON.parse(raw)
+    } catch {
+        return undefined
+    }
 }
 
 const getStoragePort = (
@@ -115,6 +124,7 @@ export const createStateRuntime = (
     const persistedStorageKindCache = new Map<string, PersistableStorageKind>()
     let flushTimer: ReturnType<typeof setTimeout> | null = null
     let persistenceChain = Promise.resolve()
+    let hydratePromise: Promise<void> | null = null
     let hydrated = false
     let persistenceDirty = false
     const persistenceDebounceMs =
@@ -307,10 +317,10 @@ export const createStateRuntime = (
             }
         }
 
-        const snapshot = await exportPersistedState()
-        const currentEntries = exportEntries()
-
-        persistenceChain = persistenceChain.then(async () => {
+        persistenceChain = persistenceChain
+            .catch(() => undefined)
+            .then(async () => {
+            const currentEntries = exportEntries()
             const nextPlainEntries: Record<string, string> = {}
             const nextProtectedEntries: Record<string, string> = {}
             const nextKeys = new Set<string>()
@@ -405,7 +415,7 @@ export const createStateRuntime = (
 
         await persistenceChain
         clearPersistenceDirty()
-        return snapshot
+        return await exportPersistedState()
     }
 
     const scheduleFlush = (mode: 'immediate' | 'debounced') => {
@@ -414,6 +424,10 @@ export const createStateRuntime = (
         }
 
         if (mode === 'immediate') {
+            if (flushTimer) {
+                clearTimeout(flushTimer)
+                flushTimer = null
+            }
             void flushPersistence()
             return
         }
@@ -477,74 +491,92 @@ export const createStateRuntime = (
         if (!persistenceEnabled || !input.persistenceKey || hydrated) {
             return
         }
+        if (hydratePromise) {
+            return await hydratePromise
+        }
+        const persistenceKey = input.persistenceKey
 
-        const entries: PersistedStateEntrySnapshot[] = []
+        hydratePromise = (async () => {
+            const entries: PersistedStateEntrySnapshot[] = []
 
-        for (const slice of persistableSlices) {
-            for (const descriptor of slice.persistence ?? []) {
-                const storageKind = descriptor.protection === 'protected' ? 'protected' : 'plain'
-                const storage = getStoragePort(input, storageKind)
+            for (const slice of persistableSlices) {
+                for (const descriptor of slice.persistence ?? []) {
+                    const storageKind = descriptor.protection === 'protected' ? 'protected' : 'plain'
+                    const storage = getStoragePort(input, storageKind)
 
-                if (!storage) {
-                    if (storageKind === 'protected') {
-                        throw createProtectedPersistenceStorageMissingError(input.runtimeName, {
-                            phase: 'hydrate',
-                            sliceName: slice.name,
-                        })
+                    if (!storage) {
+                        if (storageKind === 'protected') {
+                            throw createProtectedPersistenceStorageMissingError(input.runtimeName, {
+                                phase: 'hydrate',
+                                sliceName: slice.name,
+                            })
+                        }
+                        continue
                     }
-                    continue
-                }
 
-                if (descriptor.kind === 'field') {
-                    const storageKey = createFieldStorageKey(input.persistenceKey, slice.name, descriptor)
-                    const raw = await storage.getItem(storageKey)
-                    if (raw != null) {
-                        entries.push({
-                            key: storageKey,
-                            value: decodeEntry(raw),
-                            protected: storageKind === 'protected',
-                        })
+                    if (descriptor.kind === 'field') {
+                        const storageKey = createFieldStorageKey(persistenceKey, slice.name, descriptor)
+                        const raw = await storage.getItem(storageKey)
+                        if (raw != null) {
+                            const decoded = decodeEntry(raw)
+                            if (decoded !== undefined) {
+                                entries.push({
+                                    key: storageKey,
+                                    value: decoded,
+                                    protected: storageKind === 'protected',
+                                })
+                            }
+                            persistedValueCache.set(storageKey, raw)
+                            persistedStorageKindCache.set(storageKey, storageKind)
+                        }
+                        continue
+                    }
+
+                    const manifestKey = createRecordManifestKey(persistenceKey, slice.name, descriptor)
+                    const manifestRaw = await storage.getItem(manifestKey)
+                    if (manifestRaw != null) {
+                        persistedValueCache.set(manifestKey, manifestRaw)
+                        persistedStorageKindCache.set(manifestKey, storageKind)
+                    }
+                    const manifest = decodeEntry(manifestRaw) as PersistedRecordManifest | undefined
+                    for (const entryKey of manifest?.entries ?? []) {
+                        const storageKey = createRecordEntryKey(
+                            persistenceKey,
+                            slice.name,
+                            descriptor,
+                            entryKey,
+                        )
+                        const raw = await storage.getItem(storageKey)
+                        if (raw == null) {
+                            continue
+                        }
+                        const decoded = decodeEntry(raw)
+                        if (decoded !== undefined) {
+                            entries.push({
+                                key: storageKey,
+                                value: decoded,
+                                protected: storageKind === 'protected',
+                            })
+                        }
                         persistedValueCache.set(storageKey, raw)
                         persistedStorageKindCache.set(storageKey, storageKind)
                     }
-                    continue
-                }
-
-                const manifestKey = createRecordManifestKey(input.persistenceKey, slice.name, descriptor)
-                const manifestRaw = await storage.getItem(manifestKey)
-                if (manifestRaw != null) {
-                    persistedValueCache.set(manifestKey, manifestRaw)
-                    persistedStorageKindCache.set(manifestKey, storageKind)
-                }
-                const manifest = decodeEntry(manifestRaw) as PersistedRecordManifest | undefined
-                for (const entryKey of manifest?.entries ?? []) {
-                    const storageKey = createRecordEntryKey(
-                        input.persistenceKey,
-                        slice.name,
-                        descriptor,
-                        entryKey,
-                    )
-                    const raw = await storage.getItem(storageKey)
-                    if (raw == null) {
-                        continue
-                    }
-                    entries.push({
-                        key: storageKey,
-                        value: decodeEntry(raw),
-                        protected: storageKind === 'protected',
-                    })
-                    persistedValueCache.set(storageKey, raw)
-                    persistedStorageKindCache.set(storageKey, storageKind)
                 }
             }
-        }
 
-        if (entries.length > 0) {
-            applyPersistedState({entries})
-        }
+            if (entries.length > 0) {
+                applyPersistedState({entries})
+            }
 
-        hydrated = true
-        clearPersistenceDirty()
+            hydrated = true
+            clearPersistenceDirty()
+        })()
+
+        try {
+            await hydratePromise
+        } finally {
+            hydratePromise = null
+        }
     }
 
     const previousPersistableSliceRefs = new Map<string, unknown>()
@@ -574,7 +606,7 @@ export const createStateRuntime = (
 
         markPersistenceDirty()
         const modes = collectPersistenceModes(state, changedSliceNames)
-        if (!persistenceDirty || modes.length === 0) {
+        if (modes.length === 0) {
             return
         }
 

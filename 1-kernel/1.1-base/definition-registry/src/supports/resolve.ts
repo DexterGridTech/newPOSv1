@@ -10,6 +10,11 @@ import type {
 } from '@impos2/kernel-base-contracts'
 import type {DefinitionRegistryBundle} from '../types/registry'
 
+/**
+ * 设计意图：
+ * 这里是错误与参数解析的唯一规则入口。
+ * runtime-shell、业务模块和测试都应该复用这里的 decode/validate/fallback 语义，避免各处各自维护一套“看起来差不多”的解析逻辑。
+ */
 export interface ResolveAppErrorInput {
     appError: AppError
     definitionRegistry?: DefinitionRegistryBundle['errors']
@@ -81,7 +86,11 @@ const decodeParameterValue = <TValue>(
     }
 
     if (definition.valueType === 'number') {
-        return Number(rawValue) as TValue
+        const decoded = Number(rawValue)
+        if (Number.isNaN(decoded)) {
+            throw new Error(`Invalid number rawValue: ${String(rawValue)}`)
+        }
+        return decoded as TValue
     }
 
     if (definition.valueType === 'boolean') {
@@ -165,6 +174,9 @@ export const resolveErrorDefinitionByKey = (
 ): ResolvedErrorView => {
     const definition = input.errorRegistry.get(input.key)
     if (input.appError) {
+        if (input.appError.key !== input.key) {
+            throw new Error(`[resolveErrorDefinitionByKey] appError.key mismatch: ${input.key} !== ${input.appError.key}`)
+        }
         return resolveAppError({
             appError: input.appError,
             definitionRegistry: input.errorRegistry,

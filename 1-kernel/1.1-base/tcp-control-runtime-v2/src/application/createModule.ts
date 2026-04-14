@@ -22,6 +22,11 @@ import {tcpControlRuntimeV2ModuleManifest} from './moduleManifest'
 const DEFAULT_MOCK_TERMINAL_PLATFORM_BASE_URL = 'http://127.0.0.1:5810'
 const DEFAULT_MOCK_TERMINAL_PLATFORM_ADDRESS_NAME = 'local-default'
 
+/**
+ * 设计意图：
+ * tcp-control-runtime-v2 模块只装配控制面 actor、HTTP service 和最小恢复状态。
+ * 默认 HTTP runtime 只是开发/测试兜底，真正生产装配应优先由 assembly 注入宿主 transport 和 server-config。
+ */
 const createFetchHttpTransport = (): HttpTransport => {
     return {
         async execute(request) {

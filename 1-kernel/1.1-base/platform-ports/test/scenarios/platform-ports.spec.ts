@@ -53,4 +53,30 @@ describe('kernel-base-platform-ports', () => {
         expect(ports.scriptExecutor).toBeTruthy()
         await expect(ports.scriptExecutor?.execute()).resolves.toEqual({ok: true})
     })
+
+    it('masks circular payloads in PROD without stack overflow', () => {
+        const events: LogEvent[] = []
+        const logger = createLoggerPort({
+            environmentMode: 'PROD',
+            write: event => {
+                events.push(event)
+            },
+            scope: {
+                moduleName: 'kernel.base.platform-ports.test',
+                layer: 'kernel',
+            },
+        })
+
+        const payload: Record<string, unknown> = {token: 'secret'}
+        payload.self = payload
+
+        logger.info({
+            category: 'runtime.lifecycle',
+            event: 'circular-payload',
+            data: payload,
+        })
+
+        expect(events[0]?.data?.token).toBe('[MASKED]')
+        expect(events[0]?.data?.self).toBe('[CIRCULAR]')
+    })
 })

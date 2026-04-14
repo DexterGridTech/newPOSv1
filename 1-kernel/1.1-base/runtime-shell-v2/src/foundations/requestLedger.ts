@@ -53,6 +53,11 @@ const toRequestStatus = (commands: readonly MutableCommandRecord[]): RequestQuer
     return 'RUNNING'
 }
 
+/**
+ * 设计意图：
+ * RequestLedger 是 request selector 的内存真相源，不走 Redux 持久化。
+ * 它只记录命令、Actor 结果和远端镜像事件，避免把 request lifecycle 和业务 slice 混在一起。
+ */
 export const createRequestLedger = () => {
     const records = new Map<RequestId, MutableRequestRecord>()
     const requestListeners = new Map<RequestId, Set<RequestListener>>()
@@ -145,7 +150,7 @@ export const createRequestLedger = () => {
                 command,
                 startedAt: now,
                 actorResults: [],
-                status: 'COMPLETED',
+                status: 'RUNNING',
             })
             touch(record)
         },
@@ -188,7 +193,7 @@ export const createRequestLedger = () => {
                 },
                 startedAt: now,
                 actorResults: [],
-                status: 'COMPLETED',
+                status: 'RUNNING',
             })
             touch(record)
         },
@@ -197,7 +202,7 @@ export const createRequestLedger = () => {
             if (!commandRecord.actorResults.some(result => result.actorKey === actorKey)) {
                 commandRecord.actorResults.push({
                     actorKey,
-                    status: 'TIMEOUT',
+                    status: 'RUNNING',
                     startedAt: nowTimestampMs(),
                 })
             }
@@ -241,9 +246,10 @@ export const createRequestLedger = () => {
                 return
             }
             if (envelope.eventType === 'accepted' || envelope.eventType === 'started') {
+                // 远端 accepted/started 只是执行屏障事件，不能提前映射成 TIMEOUT，否则运行中 selector 会产生假失败信号。
                 const startedResult: ActorExecutionResult = {
                     actorKey,
-                    status: 'TIMEOUT',
+                    status: 'RUNNING',
                     startedAt: now,
                 }
                 const existingIndex = commandRecord.actorResults.findIndex(result => result.actorKey === actorKey)

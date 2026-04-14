@@ -1,5 +1,10 @@
 import {packageVersion} from './generated/packageVersion'
 
+/**
+ * 设计意图：
+ * workflow-runtime-v2 负责动态工作流定义、串行队列执行和 Observable 运行观测。
+ * workflow 定义可以来自 module、host 或 TDP topic；执行过程和最终结果都落入 observation，让 command 和 UI selector 使用同一套视图。
+ */
 export {moduleName} from './moduleName'
 export {packageVersion}
 

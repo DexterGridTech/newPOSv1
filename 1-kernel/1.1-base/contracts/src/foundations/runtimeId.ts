@@ -23,8 +23,15 @@ const KIND_PREFIX: Record<RuntimeIdKind, string> = {
     projection: 'prj',
 }
 
+const createRandomSuffix = (): string => {
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+        return crypto.randomUUID().replace(/-/g, '').slice(0, 16)
+    }
+    return `${Math.random().toString(36).slice(2, 10)}${Math.random().toString(36).slice(2, 10)}`
+}
+
 const createIdPayload = (): string => {
-    return `${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`
+    return `${Date.now().toString(36)}_${createRandomSuffix()}`
 }
 
 export const createRuntimeId = <TId extends string>(kind: RuntimeIdKind): TId => {

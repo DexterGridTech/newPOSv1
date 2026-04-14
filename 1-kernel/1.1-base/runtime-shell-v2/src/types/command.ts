@@ -9,7 +9,7 @@ import type {
 
 export type CommandVisibility = 'public' | 'internal'
 export type CommandTarget = 'local' | 'peer'
-export type ActorExecutionStatus = 'COMPLETED' | 'FAILED' | 'TIMEOUT'
+export type ActorExecutionStatus = 'RUNNING' | 'COMPLETED' | 'FAILED' | 'TIMEOUT'
 export type CommandAggregateStatus = 'COMPLETED' | 'PARTIAL_FAILED' | 'FAILED' | 'TIMEOUT'
 export type CommandQueryStatus = CommandAggregateStatus | 'RUNNING'
 

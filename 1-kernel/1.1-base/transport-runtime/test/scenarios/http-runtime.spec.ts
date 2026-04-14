@@ -11,9 +11,9 @@ import {
     callHttpEnvelope,
     callHttpResult,
     createHttpRuntime,
+    createHttpServiceBinder,
     createModuleHttpEndpointFactory,
     defineHttpEndpoint,
-    defineHttpServiceModule,
     normalizeTransportError,
     transportRuntimeParameterDefinitions,
     typed,
@@ -226,7 +226,7 @@ describe('transport-runtime http', () => {
         expect(response.data.ok).toBe(true)
     })
 
-    it('supports declaration-style http service modules used by business packages', async () => {
+    it('supports service-first http helpers used by business packages', async () => {
         const transport: HttpTransport = {
             async execute(request) {
                 return toSuccessResponse({
@@ -269,7 +269,7 @@ describe('transport-runtime http', () => {
             }
         }
 
-        const serviceModule = defineHttpServiceModule<DemoServices>('kernel.user.login', {
+        const services: DemoServices = {
             auth: {
                 async login(request) {
                     const response = await runtime.call(loginEndpoint, {
@@ -278,11 +278,10 @@ describe('transport-runtime http', () => {
                     return response.data
                 },
             },
-        })
+        }
 
-        const result = await serviceModule.services.auth.login({name: 'boss'})
+        const result = await services.auth.login({name: 'boss'})
 
-        expect(serviceModule.moduleName).toBe('kernel.user.login')
         expect(result).toEqual({
             echoedName: 'boss',
         })
@@ -403,6 +402,65 @@ describe('transport-runtime http', () => {
 
         expect(plainResult).toEqual({echoedName: 'alice'})
         expect(envelopeResult).toEqual({echoedName: 'bob'})
+    })
+
+    it('provides a thin binder for service-first http methods without hiding endpoint semantics', async () => {
+        const defineEndpoint = createModuleHttpEndpointFactory('kernel.base.demo-runtime', 'demo')
+        const endpoint = defineEndpoint<void, void, {name: string}, {
+            success: boolean
+            data: {echoedName: string}
+        }>('binder-login', {
+            method: 'POST',
+            pathTemplate: '/binder-login',
+            request: {
+                body: true,
+            },
+        })
+
+        const runtime = createHttpRuntime({
+            logger: createTestLogger(),
+            transport: {
+                async execute(request) {
+                    return toSuccessResponse({
+                        success: true,
+                        data: {
+                            echoedName: readBodyName(request),
+                        },
+                    } as any)
+                },
+            },
+            servers: resolveTransportServers(kernelBaseTestServerConfig, {
+                serverOverrides: {
+                    [SERVER_NAME_KERNEL_BASE_HTTP_DEMO_TEST]: {
+                        addresses: [
+                            {
+                                addressName: 'primary',
+                                baseUrl: 'http://primary.local',
+                            },
+                        ],
+                    },
+                },
+            }),
+        })
+
+        const http = createHttpServiceBinder(runtime)
+        const result = await http.envelope(endpoint, {
+            body: {name: 'binder-user'},
+        }, {
+            errorDefinition: {
+                key: 'kernel.base.demo-runtime.call_failed',
+                name: 'Demo Call Failed',
+                defaultTemplate: 'Demo call failed: ${error}',
+                category: 'NETWORK',
+                severity: 'HIGH',
+                moduleName: 'kernel.base.demo-runtime',
+            },
+            fallbackMessage: 'binder login failed',
+        })
+
+        expect(result).toEqual({
+            echoedName: 'binder-user',
+        })
     })
 
     it('maps envelope and transport failures through the provided business error definition', async () => {

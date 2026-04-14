@@ -91,6 +91,9 @@ export const createSessionRegistry = (): SessionRegistry => {
 
     const resolveStatus = (record: HostSessionRecord): HostSessionRecord['status'] => {
         const nodes = Object.values(record.nodes)
+        if (nodes.length === 0) {
+            return 'awaiting-peer'
+        }
         if (nodes.every(node => node.connected === false && node.disconnectedAt != null)) {
             return 'closed'
         }
@@ -211,9 +214,13 @@ export const createSessionRegistry = (): SessionRegistry => {
             node.connected = false
             node.connectionId = undefined
             node.disconnectedAt = input.disconnectedAt
+            const pendingNodeIds = Array.from(new Set([
+                ...session.resume.pendingNodeIds,
+                target.nodeId,
+            ]))
             session.resume = {
                 phase: 'required',
-                pendingNodeIds: [target.nodeId],
+                pendingNodeIds,
                 requiredAt: input.disconnectedAt,
                 reason: input.reason,
             }

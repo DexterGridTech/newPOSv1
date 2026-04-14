@@ -4,7 +4,7 @@ import type {
 } from '../types/http'
 import {appendQueryToUrl, compilePath} from './shared'
 
-export interface DefineHttpEndpointInput<TPath, TQuery, TBody, TResponse, TError = unknown> {
+interface DefineHttpEndpointInput<TPath, TQuery, TBody, TResponse, TError = unknown> {
     readonly name: string
     readonly serverName: string
     readonly method: HttpEndpointDefinition<TPath, TQuery, TBody, TResponse, TError>['method']

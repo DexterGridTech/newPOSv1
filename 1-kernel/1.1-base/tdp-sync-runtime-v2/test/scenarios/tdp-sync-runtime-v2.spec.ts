@@ -512,6 +512,53 @@ describe('tdp-sync-runtime-v2', () => {
         })
     })
 
+    it('sends handshake after socket connect resolves so transportConnection is ready', async () => {
+        const stateStorage = createMemoryStorage()
+        const secureStateStorage = createMemoryStorage()
+        const socketRuntimeSpy = createSocketRuntimeSpy()
+        const runtime = createRuntime({
+            localNodeId: 'node_tdp_v2_handshake_after_connect_resolve',
+            stateStorage,
+            secureStateStorage,
+            socketRuntimeSpy,
+        })
+
+        await runtime.start()
+        await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.bootstrapTcpControl, {
+            deviceInfo: {
+                id: 'device-test-handshake-001',
+                model: 'Mock POS',
+            },
+        }))
+        await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.activateTerminal, {
+            activationCode: 'ACT-TDP-V2-HANDSHAKE-001',
+            deviceFingerprint: 'device-test-handshake-001',
+            deviceInfo: {
+                id: 'device-test-handshake-001',
+                model: 'Mock POS',
+            },
+        }))
+
+        const result = await runtime.dispatchCommand(createCommand(
+            tdpSyncV2CommandDefinitions.connectTdpSession,
+            {},
+        ))
+
+        expect(result.status).toBe('COMPLETED')
+        expect(socketRuntimeSpy.sentMessages).toContainEqual({
+            profileName: 'kernel.base.tdp-sync-runtime-v2.test.socket',
+            message: {
+                type: 'HANDSHAKE',
+                data: expect.objectContaining({
+                    terminalId: 'terminal-test-001',
+                    appVersion: expect.any(String),
+                    protocolVersion: expect.any(String),
+                }),
+            },
+        })
+        expect(selectTdpSessionState(runtime.getState())?.status).toBe('HANDSHAKING')
+    })
+
     it('auto acknowledges and reports applied cursor for projection stream messages', async () => {
         const stateStorage = createMemoryStorage()
         const secureStateStorage = createMemoryStorage()

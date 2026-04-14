@@ -1,5 +1,10 @@
 import {packageVersion} from './generated/packageVersion'
 
+/**
+ * 设计意图：
+ * topology-runtime-v2 合并旧拓扑客户端能力，负责主副机连接、远程 command 投递、request lifecycle 镜像和 state sync。
+ * 它只维护“活的控制面”与必要恢复信息；业务状态仍由各自 slice 通过 state-runtime 的 syncIntent 参与同步。
+ */
 export {moduleName} from './moduleName'
 export {packageVersion}
 

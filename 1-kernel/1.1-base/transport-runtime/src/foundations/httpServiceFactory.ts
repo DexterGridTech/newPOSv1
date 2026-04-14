@@ -14,7 +14,12 @@ import {defineHttpEndpoint} from './httpEndpoint'
 import {typed} from './shared'
 import {normalizeTransportError} from '../supports'
 
-export interface DefineModuleHttpEndpointInput<TPath, TQuery, TBody, TResponse, TError = unknown> {
+/**
+ * 设计意图：
+ * 这里提供“endpoint 定义工厂 + service binder”这两个轻量工具，让业务包少写样板代码，但不再新增 registry/module 包装层。
+ * endpoint 仍然是第一公民，service binder 只是把 runtime.call 的重复样板收薄，不隐藏传输语义。
+ */
+interface DefineModuleHttpEndpointInput<TPath, TQuery, TBody, TResponse, TError = unknown> {
     readonly method: HttpMethod
     readonly pathTemplate: string
     readonly timeoutMs?: number
@@ -29,7 +34,7 @@ export interface DefineModuleHttpEndpointInput<TPath, TQuery, TBody, TResponse, 
     readonly meta?: Record<string, unknown>
 }
 
-export interface HttpResultEnvelope<TData> {
+interface HttpResultEnvelope<TData> {
     readonly success: boolean
     readonly data: TData
     readonly error?: {
@@ -38,9 +43,22 @@ export interface HttpResultEnvelope<TData> {
     }
 }
 
-export interface HttpCallErrorInput {
+interface HttpCallErrorInput {
     readonly errorDefinition: ErrorDefinition
     readonly fallbackMessage: string
+}
+
+interface HttpServiceBinder {
+    result<TPath, TQuery, TBody, TResponse, TError = unknown>(
+        endpoint: HttpEndpointDefinition<TPath, TQuery, TBody, TResponse, TError>,
+        requestInput: HttpCallInput<TPath, TQuery, TBody> | undefined,
+        errorInput: HttpCallErrorInput,
+    ): Promise<TResponse>
+    envelope<TPath, TQuery, TBody, TData, TEnvelope extends HttpResultEnvelope<TData>, TError = unknown>(
+        endpoint: HttpEndpointDefinition<TPath, TQuery, TBody, TEnvelope, TError>,
+        requestInput: HttpCallInput<TPath, TQuery, TBody> | undefined,
+        errorInput: HttpCallErrorInput,
+    ): Promise<TData>
 }
 
 const createDescriptor = <T>(
@@ -151,3 +169,14 @@ export const callHttpEnvelope = async <
 
     return envelope.data
 }
+
+export const createHttpServiceBinder = (
+    runtime: HttpRuntime,
+): HttpServiceBinder => ({
+    result(endpoint, requestInput, errorInput) {
+        return callHttpResult(runtime, endpoint, requestInput, errorInput)
+    },
+    envelope(endpoint, requestInput, errorInput) {
+        return callHttpEnvelope(runtime, endpoint, requestInput, errorInput)
+    },
+})

@@ -424,6 +424,68 @@ describe('host-runtime', () => {
         expect(runtime.getSession(sessionId)?.status).toBe('active')
     })
 
+    it('keeps all pending resume node ids when multiple nodes disconnect before resume completes', () => {
+        const masterNodeId = createNodeId()
+        const slaveNodeId = createNodeId()
+        const runtime = createHostRuntime({
+            hostRuntime: createRuntimeInfo({
+                nodeId: createNodeId(),
+                deviceId: 'host',
+                role: 'master',
+            }),
+            logger: createLogger(),
+        })
+
+        const ticket = runtime.issueTicket({
+            masterNodeId,
+            transportUrls: ['ws://127.0.0.1:8080/dual'],
+            expiresInMs: 30_000,
+            issuedAt: 1_000,
+        })
+
+        const masterHello = runtime.processHello({
+            connectionId: 'conn-master-multi' as any,
+            receivedAt: 2_000,
+            hello: createHello({
+                ticketToken: ticket.ticket.token,
+                runtime: createRuntimeInfo({
+                    nodeId: masterNodeId,
+                    deviceId: 'master-device',
+                    role: 'master',
+                }),
+            }),
+        })
+        const sessionId = masterHello.ack.sessionId!
+
+        runtime.processHello({
+            connectionId: 'conn-slave-multi' as any,
+            receivedAt: 3_000,
+            hello: createHello({
+                ticketToken: ticket.ticket.token,
+                runtime: createRuntimeInfo({
+                    nodeId: slaveNodeId,
+                    deviceId: 'slave-device',
+                    role: 'slave',
+                }),
+            }),
+        })
+
+        runtime.detachConnection({
+            connectionId: 'conn-slave-multi' as any,
+            disconnectedAt: 4_000,
+            reason: 'slave-disconnect',
+        })
+        runtime.detachConnection({
+            connectionId: 'conn-master-multi' as any,
+            disconnectedAt: 4_100,
+            reason: 'master-disconnect',
+        })
+
+        expect(runtime.getSession(sessionId)?.resume.pendingNodeIds.sort()).toEqual(
+            [masterNodeId, slaveNodeId].sort(),
+        )
+    })
+
     it('allows request lifecycle snapshot relay during resume barrier while keeping dispatch blocked', () => {
         const masterNodeId = createNodeId()
         const slaveNodeId = createNodeId()
@@ -624,6 +686,125 @@ describe('host-runtime', () => {
 
         expect(detached).toHaveLength(1)
         expect(detached[0].sessionId).toBe(sessionId)
+    })
+
+    it('recomputes relay pending count correctly when one connection drains among multiple queued deliveries', () => {
+        const masterNodeId = createNodeId()
+        const slaveNodeId = createNodeId()
+        const runtime = createHostRuntime({
+            hostRuntime: createRuntimeInfo({
+                nodeId: createNodeId(),
+                deviceId: 'host',
+                role: 'master',
+            }),
+            logger: createLogger(),
+        })
+
+        const ticket = runtime.issueTicket({
+            masterNodeId,
+            transportUrls: ['ws://127.0.0.1:8080/dual'],
+            expiresInMs: 30_000,
+            issuedAt: 1_000,
+        })
+
+        const masterHello = runtime.processHello({
+            connectionId: 'conn-master-pending' as any,
+            receivedAt: 2_000,
+            hello: createHello({
+                ticketToken: ticket.ticket.token,
+                runtime: createRuntimeInfo({
+                    nodeId: masterNodeId,
+                    deviceId: 'master-device',
+                    role: 'master',
+                }),
+            }),
+        })
+        const sessionId = masterHello.ack.sessionId!
+
+        runtime.processHello({
+            connectionId: 'conn-slave-pending' as any,
+            receivedAt: 3_000,
+            hello: createHello({
+                ticketToken: ticket.ticket.token,
+                runtime: createRuntimeInfo({
+                    nodeId: slaveNodeId,
+                    deviceId: 'slave-device',
+                    role: 'slave',
+                }),
+            }),
+        })
+
+        runtime.relayEnvelope({
+            sessionId,
+            sourceNodeId: masterNodeId,
+            relayedAt: 4_000,
+            envelope: createDispatchEnvelope({
+                sessionId,
+                sourceNodeId: masterNodeId,
+                targetNodeId: slaveNodeId,
+            }),
+        })
+        runtime.relayEnvelope({
+            sessionId,
+            sourceNodeId: slaveNodeId,
+            relayedAt: 4_100,
+            envelope: createDispatchEnvelope({
+                sessionId,
+                sourceNodeId: slaveNodeId,
+                targetNodeId: masterNodeId,
+            }),
+        })
+
+        expect(runtime.getSession(sessionId)?.relayPendingCount).toBe(2)
+        expect(runtime.drainConnectionOutbox('conn-slave-pending' as any, 5_000)).toHaveLength(1)
+        expect(runtime.getSession(sessionId)?.relayPendingCount).toBe(1)
+        expect(runtime.drainConnectionOutbox('conn-master-pending' as any, 5_000)).toHaveLength(1)
+        expect(runtime.getSession(sessionId)?.relayPendingCount).toBe(0)
+    })
+
+    it('normalizes fault rules with remainingHits below one so the rule still applies once', () => {
+        const masterNodeId = createNodeId()
+        const runtime = createHostRuntime({
+            hostRuntime: createRuntimeInfo({
+                nodeId: createNodeId(),
+                deviceId: 'host',
+                role: 'master',
+            }),
+            logger: createLogger(),
+        })
+
+        const ticket = runtime.issueTicket({
+            masterNodeId,
+            transportUrls: ['ws://127.0.0.1:8080/dual'],
+            expiresInMs: 30_000,
+            issuedAt: 1_000,
+        })
+
+        runtime.addFaultRule({
+            ruleId: 'fault-hello-reject-once',
+            kind: 'hello-reject',
+            createdAt: 1_100 as any,
+            remainingHits: 0,
+            rejectionCode: 'CAPABILITY_MISSING',
+            rejectionMessage: 'fault once',
+        })
+
+        const result = runtime.processHello({
+            connectionId: 'conn-fault-once' as any,
+            receivedAt: 2_000,
+            hello: createHello({
+                ticketToken: ticket.ticket.token,
+                runtime: createRuntimeInfo({
+                    nodeId: masterNodeId,
+                    deviceId: 'master-device',
+                    role: 'master',
+                }),
+            }),
+        })
+
+        expect(result.ack.accepted).toBe(false)
+        expect(result.ack.rejectionMessage).toBe('fault once')
+        expect(runtime.listFaultRules()).toHaveLength(0)
     })
 
     it('routes projection mirror envelopes to the owner node connection', () => {

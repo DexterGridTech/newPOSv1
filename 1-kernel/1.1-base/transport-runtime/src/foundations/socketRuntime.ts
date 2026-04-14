@@ -20,8 +20,14 @@ import {createServerCatalog} from './serverCatalog'
 import {buildSocketUrl} from './socketProfile'
 import {transportRuntimeErrorDefinitions} from '../supports'
 
+/**
+ * 设计意图：
+ * socket runtime 只关心 WS 连接本身，不关心 TDP、拓扑或 UI 具体协议。
+ * 各上层包通过不同的 socket profile 和消息 codec 复用这套基础设施，保证重连与消息收发语义一致。
+ */
 interface ManagedSocketConnection {
     readonly profile: SocketConnectionProfile<any, any, any, any, any>
+    readonly connectionId: ReturnType<typeof createConnectionId>
     state: SocketConnectionState
     resolved?: SocketResolvedConnection<any, any, any, any, any>
     transportConnection?: SocketTransportConnection
@@ -56,7 +62,7 @@ const setState = (
     connection.state = nextState
     emitEvent(connection, {
         type: 'state-change',
-        connectionId: connection.resolved?.connectionId ?? createConnectionId(),
+        connectionId: connection.resolved?.connectionId ?? connection.connectionId,
         previousState,
         nextState,
         occurredAt: nowTimestampMs(),
@@ -205,6 +211,7 @@ export const createSocketRuntime = (
             },
             onError(error) {
                 finalizeMetric(connection, false)
+                setState(connection, 'disconnected')
                 emitEvent(connection, {
                     type: 'error',
                     connectionId: resolved.connectionId,
@@ -222,6 +229,7 @@ export const createSocketRuntime = (
     return {
         registerProfile(profile) {
             connections.set(profile.name, {
+                connectionId: createConnectionId(),
                 profile,
                 state: 'disconnected',
                 reconnectAttempt: 0,
@@ -233,8 +241,11 @@ export const createSocketRuntime = (
         connect,
         send(profileName, message) {
             const connection = getConnection(profileName)
+            if (!connection.transportConnection) {
+                return
+            }
+            connection.transportConnection.sendRaw(connection.profile.codec.serialize(message))
             connection.outboundMessageCount += 1
-            connection.transportConnection?.sendRaw(connection.profile.codec.serialize(message))
         },
         disconnect(profileName, reason) {
             const connection = getConnection(profileName)

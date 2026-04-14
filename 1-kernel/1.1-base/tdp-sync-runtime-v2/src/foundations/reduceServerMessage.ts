@@ -7,6 +7,11 @@ export const reduceTdpServerMessageV2 = (
     dispatchAction: (action: unknown) => void,
     message: TdpServerMessage,
 ) => {
+    /**
+     * 设计意图：
+     * 这里是 TDP 服务端消息进入本地 projection 仓库的唯一 reducer 边界。
+     * 它只把协议消息归一化成 state action，不在这里触发业务消费，业务变化统一交给 topicChangePublisher 再广播 command。
+     */
     switch (message.type) {
         case 'SESSION_READY':
             dispatchAction(tdpSyncV2DomainActions.applySessionReady({

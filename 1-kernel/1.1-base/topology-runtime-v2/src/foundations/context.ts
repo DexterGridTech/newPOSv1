@@ -36,6 +36,11 @@ export const createTopologyContextState = (input: {
     displayCount?: number
     updatedAt?: number
 }): TopologyV2ContextState => {
+    /**
+     * 设计意图：
+     * topology context 把旧 Core 的 instanceMode/displayMode/workspace/displayIndex 规则显式化。
+     * 这些值会影响自动连接、同步方向和主副屏路由，所以必须在启动时从持久化 recoveryState 和终端显示信息共同推导。
+     */
     const instanceMode = input.recoveryState.instanceMode ?? (input.displayIndex === 0 ? 'MASTER' : 'SLAVE')
     const displayMode = input.recoveryState.displayMode ?? (input.displayIndex === 0 ? 'PRIMARY' : 'SECONDARY')
     const standalone = deriveTopologyStandalone(instanceMode, input.recoveryState.masterInfo, input.displayIndex)

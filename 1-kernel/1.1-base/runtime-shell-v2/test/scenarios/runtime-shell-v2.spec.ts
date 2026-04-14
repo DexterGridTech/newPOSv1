@@ -1,6 +1,10 @@
 import {describe, expect, it, vi} from 'vitest'
 import {createSlice, type PayloadAction} from '@reduxjs/toolkit'
-import {createCommandId, createRequestId} from '@impos2/kernel-base-contracts'
+import {
+    createCommandId,
+    createModuleParameterFactory,
+    createRequestId,
+} from '@impos2/kernel-base-contracts'
 import type {StateRuntimeSliceDescriptor} from '@impos2/kernel-base-state-runtime'
 import {
     createCommand,
@@ -9,6 +13,7 @@ import {
     defineCommand,
     onCommand,
     runtimeShellV2CommandDefinitions,
+    runtimeShellV2StateActions,
     type ActorDefinition,
     type KernelRuntimeModuleV2,
 } from '../../src'
@@ -57,6 +62,18 @@ const peerCommand = defineCommand<void>({
 })
 
 const stateKey = `${testModuleName}.state`
+const defineParameter = createModuleParameterFactory(testModuleName)
+const positiveTimeoutParameter = defineParameter.number('positive-timeout-ms', {
+    name: 'Positive Timeout',
+    defaultValue: 3000,
+    validate(value) {
+        return Number.isFinite(value) && value > 0
+    },
+})
+const featureEnabledParameter = defineParameter.boolean('feature-enabled', {
+    name: 'Feature Enabled',
+    defaultValue: true,
+})
 
 const slice = createSlice({
     name: stateKey,
@@ -625,5 +642,71 @@ describe('runtime-shell-v2', () => {
             'base:install',
             'feature:install',
         ])
+    })
+
+    it('reuses definition-registry parameter decode and validation semantics', async () => {
+        const runtime = createKernelRuntimeV2({
+            modules: [{
+                ...createModule([]),
+                parameterDefinitions: [
+                    positiveTimeoutParameter,
+                    featureEnabledParameter,
+                ],
+            }],
+        })
+        await runtime.start()
+
+        runtime.getStore().dispatch(runtimeShellV2StateActions.setParameterCatalogEntry({
+            key: positiveTimeoutParameter.key,
+            rawValue: '-1',
+            updatedAt: 1 as any,
+            source: 'remote',
+        }))
+        runtime.getStore().dispatch(runtimeShellV2StateActions.setParameterCatalogEntry({
+            key: featureEnabledParameter.key,
+            rawValue: 'false',
+            updatedAt: 2 as any,
+            source: 'remote',
+        }))
+
+        expect(runtime.resolveParameter({
+            key: positiveTimeoutParameter.key,
+            definition: positiveTimeoutParameter,
+        })).toEqual({
+            key: positiveTimeoutParameter.key,
+            value: 3000,
+            source: 'catalog-fallback',
+            valid: false,
+        })
+        expect(runtime.resolveParameter({
+            key: featureEnabledParameter.key,
+            definition: featureEnabledParameter,
+        })).toEqual({
+            key: featureEnabledParameter.key,
+            value: false,
+            source: 'catalog',
+            valid: true,
+        })
+    })
+
+    it('keeps raw catalog compatibility when resolveParameter is called without definition', async () => {
+        const runtime = createKernelRuntimeV2({modules: [createModule([])]})
+        await runtime.start()
+
+        runtime.getStore().dispatch(runtimeShellV2StateActions.setParameterCatalogEntry({
+            key: 'kernel.base.runtime-shell-v2.test.raw-only',
+            rawValue: {enabled: true},
+            updatedAt: 1 as any,
+            source: 'remote',
+        }))
+
+        expect(runtime.resolveParameter<{enabled: boolean}>({
+            key: 'kernel.base.runtime-shell-v2.test.raw-only',
+        })).toEqual({
+            key: 'kernel.base.runtime-shell-v2.test.raw-only',
+            value: {enabled: true},
+            source: 'catalog',
+            valid: true,
+        })
     })
 })

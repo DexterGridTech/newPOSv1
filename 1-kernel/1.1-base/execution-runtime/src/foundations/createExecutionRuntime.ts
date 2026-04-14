@@ -1,4 +1,4 @@
-import {createAppError, nowTimestampMs} from '@impos2/kernel-base-contracts'
+import {createAppError, isAppError, nowTimestampMs} from '@impos2/kernel-base-contracts'
 import type {AppError, CreateAppErrorInput} from '@impos2/kernel-base-contracts'
 import type {LoggerPort} from '@impos2/kernel-base-platform-ports'
 import {createExecutionJournal} from './journal'
@@ -42,8 +42,8 @@ const createCommandScopeLogger = (logger: LoggerPort, command: ExecutionCommand)
 
 const createNormalizeError = (logger: LoggerPort) => {
     return (error: unknown, command: ExecutionCommand): AppError => {
-        if (typeof error === 'object' && error !== null && 'key' in error && 'message' in error) {
-            return error as AppError
+        if (isAppError(error)) {
+            return error
         }
 
         const input: CreateAppErrorInput = {

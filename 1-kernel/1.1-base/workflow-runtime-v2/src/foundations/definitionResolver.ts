@@ -6,6 +6,11 @@ import type {
 
 const SOURCE_PRIORITY = ['host', 'remote', 'module', 'test'] as const
 
+/**
+ * 设计意图：
+ * workflow definition 可以来自宿主注入、TDP 远端、模块默认或测试覆盖。
+ * 这里集中处理来源优先级和平台匹配，避免执行引擎里夹杂“应该用哪个定义”的策略判断。
+ */
 const sortDefinitions = (definitions: readonly WorkflowDefinition[]) =>
     [...definitions].sort((left, right) => (right.updatedAt ?? 0) - (left.updatedAt ?? 0))
 
