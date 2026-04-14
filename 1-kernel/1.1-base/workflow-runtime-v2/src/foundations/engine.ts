@@ -361,9 +361,9 @@ export const createWorkflowEngineV2 = (input: {
                         }
                     }
                 } catch (error) {
-                    subscription.unsubscribe()
                     state.runsByRequestId.delete(run.input.requestId)
                     subscriber.error(error)
+                    subscription.unsubscribe()
                 }
                 return () => subscription.unsubscribe()
             })

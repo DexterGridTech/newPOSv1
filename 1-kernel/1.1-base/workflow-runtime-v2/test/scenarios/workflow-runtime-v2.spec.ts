@@ -8,6 +8,7 @@ import {
     selectWorkflowDefinition,
     selectWorkflowObservationByRequestId,
     workflowRuntimeV2CommandDefinitions,
+    workflowRuntimeV2ParameterDefinitions,
     type WorkflowObservation,
     type WorkflowRuntimeFacadeV2,
 } from '../../src'
@@ -152,6 +153,71 @@ describe('workflow-runtime-v2', () => {
         expect(secondStatuses[0]).toBe('WAITING_IN_QUEUE')
         expect(secondStatuses.includes('RUNNING')).toBe(true)
         expect((firstObservation.completedAt ?? 0) <= (secondObservation.completedAt ?? 0)).toBe(true)
+    })
+
+    it('cancels an active workflow run and reflects the terminal cancelled observation', async () => {
+        const requestId = createRequestId()
+        let workflowRuntime: WorkflowRuntimeFacadeV2 | undefined
+
+        const runtime = createTestRuntime([
+            createWorkflowRuntimeModuleV2({
+                initialDefinitions: [
+                    {
+                        workflowKey: 'test.cancel-active',
+                        moduleName: 'kernel.base.workflow-runtime-v2.test',
+                        name: 'Cancel Active Workflow',
+                        enabled: true,
+                        rootStep: {
+                            stepKey: 'slow-step',
+                            name: 'Slow Step',
+                            type: 'custom',
+                            input: {
+                                value: {
+                                    delayMs: 100,
+                                    output: {done: true},
+                                },
+                            },
+                        },
+                    },
+                ],
+                onRuntimeReady(runtimeValue) {
+                    workflowRuntime = runtimeValue
+                },
+            }),
+        ])
+        await runtime.start()
+
+        const statuses: string[] = []
+        const cancelled = new Promise<WorkflowObservation>((resolve, reject) => {
+            const subscription = workflowRuntime!.run$({
+                workflowKey: 'test.cancel-active',
+                requestId,
+            }).subscribe({
+                next(observation) {
+                    statuses.push(observation.status)
+                    if (observation.status === 'CANCELLED') {
+                        subscription.unsubscribe()
+                        resolve(observation)
+                    }
+                },
+                error: reject,
+            })
+        })
+
+        await delay(10)
+        await runtime.dispatchCommand(createCommand(workflowRuntimeV2CommandDefinitions.cancelWorkflowRun, {
+            requestId,
+            reason: 'manual-cancel',
+        }))
+
+        const observation = await cancelled
+        const fromSelector = selectWorkflowObservationByRequestId(runtime.getState(), requestId)
+
+        expect(statuses[0]).toBe('RUNNING')
+        expect(observation.status).toBe('CANCELLED')
+        expect(observation.cancelledAt).toBeDefined()
+        expect(fromSelector).toEqual(observation)
+        expect(observation.events.some(event => event.type === 'workflow.cancelled')).toBe(true)
     })
 
     it('retains only the latest completed observations while keeping active runs intact', async () => {
@@ -313,6 +379,130 @@ describe('workflow-runtime-v2', () => {
             message: expect.stringContaining('is already active'),
         })
         await firstRun
+    })
+
+    it('emits queue-size-limit errors to run$ subscribers before hanging work enters the queue', async () => {
+        let workflowRuntime: WorkflowRuntimeFacadeV2 | undefined
+
+        const runtime = createTestRuntime([
+            createWorkflowRuntimeModuleV2({
+                initialDefinitions: [
+                    {
+                        workflowKey: 'test.queue-limit',
+                        moduleName: 'kernel.base.workflow-runtime-v2.test',
+                        name: 'Queue Limit Workflow',
+                        enabled: true,
+                        rootStep: {
+                            stepKey: 'delay',
+                            name: 'Delay',
+                            type: 'custom',
+                            input: {
+                                value: {
+                                    delayMs: 300,
+                                    output: {ok: true},
+                                },
+                            },
+                        },
+                    },
+                ],
+                onRuntimeReady(runtimeValue) {
+                    workflowRuntime = runtimeValue
+                },
+            }),
+        ])
+        await runtime.start()
+
+        await runtime.dispatchCommand(createCommand(runtimeShellV2CommandDefinitions.upsertParameterCatalogEntries, {
+            entries: [
+                {
+                    key: workflowRuntimeV2ParameterDefinitions.queueSizeLimit.key,
+                    rawValue: 1,
+                    updatedAt: 1 as any,
+                    source: 'host',
+                },
+            ],
+        }))
+
+        const firstRequestId = createRequestId()
+        const secondRequestId = createRequestId()
+        const thirdRequestId = createRequestId()
+
+        const firstStatuses: string[] = []
+        const secondStatuses: string[] = []
+        let resolveFirstRunning!: () => void
+        let resolveSecondWaiting!: () => void
+        let firstRunningResolved = false
+        let secondWaitingResolved = false
+
+        const firstRunning = new Promise<void>(resolve => {
+            resolveFirstRunning = resolve
+        })
+        const secondWaiting = new Promise<void>(resolve => {
+            resolveSecondWaiting = resolve
+        })
+
+        const firstRun = new Promise<void>((resolve, reject) => {
+            const subscription = workflowRuntime!.run$({
+                workflowKey: 'test.queue-limit',
+                requestId: firstRequestId,
+            }).subscribe({
+                next(observation) {
+                    firstStatuses.push(observation.status)
+                    if (observation.status === 'RUNNING' && !firstRunningResolved) {
+                        firstRunningResolved = true
+                        resolveFirstRunning()
+                    }
+                    if (observation.status === 'COMPLETED') {
+                        subscription.unsubscribe()
+                        resolve()
+                    }
+                },
+                error: reject,
+            })
+        })
+
+        await firstRunning
+
+        const secondRun = new Promise<void>((resolve, reject) => {
+            const subscription = workflowRuntime!.run$({
+                workflowKey: 'test.queue-limit',
+                requestId: secondRequestId,
+            }).subscribe({
+                next(observation) {
+                    secondStatuses.push(observation.status)
+                    if (observation.status === 'WAITING_IN_QUEUE' && !secondWaitingResolved) {
+                        secondWaitingResolved = true
+                        resolveSecondWaiting()
+                    }
+                    if (observation.status === 'COMPLETED') {
+                        subscription.unsubscribe()
+                        resolve()
+                    }
+                },
+                error: reject,
+            })
+        })
+
+        await secondWaiting
+
+        const queueLimitError = await new Promise<unknown>(resolve => {
+            workflowRuntime!.run$({
+                workflowKey: 'test.queue-limit',
+                requestId: thirdRequestId,
+            }).subscribe({
+                error: resolve,
+            })
+        })
+
+        expect(queueLimitError).toMatchObject({
+            key: expect.any(String),
+            message: 'Workflow test.queue-limit execution failed',
+        })
+        expect((queueLimitError as {cause?: Error}).cause?.message).toBe('workflow queue size limit exceeded')
+        expect(firstStatuses).toContain('RUNNING')
+        expect(secondStatuses[0]).toBe('WAITING_IN_QUEUE')
+
+        await Promise.all([firstRun, secondRun])
     })
 
     it('allows completed observation limit to be set to zero', async () => {

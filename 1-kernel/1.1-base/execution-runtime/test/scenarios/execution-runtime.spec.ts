@@ -161,6 +161,19 @@ describe('execution-runtime', () => {
         ])
     })
 
+    it('rejects duplicated handler registration for the same command name', () => {
+        const runtime = createExecutionRuntime({
+            logger: createTestLogger(),
+        })
+        const handler = async () => ({ok: true})
+
+        runtime.registerHandler('kernel.base.execution-runtime.test.duplicate', handler)
+
+        expect(() => runtime.registerHandler('kernel.base.execution-runtime.test.duplicate', handler)).toThrow(
+            /Duplicated handler/,
+        )
+    })
+
     it('rejects middleware next re-entry and normalizes it into a failed execution result', async () => {
         const runtime = createExecutionRuntime({
             logger: createTestLogger(),
@@ -194,6 +207,35 @@ describe('execution-runtime', () => {
             'completed',
             'failed',
         ])
+    })
+
+    it('normalizes middleware exceptions into failed execution results', async () => {
+        const runtime = createExecutionRuntime({
+            logger: createTestLogger(),
+            middlewares: [
+                {
+                    name: 'thrower',
+                    async handle() {
+                        throw new Error('middleware failed')
+                    },
+                },
+            ],
+        })
+
+        runtime.registerHandler('kernel.base.execution-runtime.test.middleware-throw', async () => ({ok: true}))
+
+        const result = await runtime.execute(createTestCommand({
+            commandName: 'kernel.base.execution-runtime.test.middleware-throw',
+        }))
+
+        expect(result.status).toBe('failed')
+        if (result.status !== 'failed') {
+            throw new Error('expected failed result')
+        }
+        expect(result.error).toMatchObject({
+            key: executionRuntimeErrorDefinitions.commandExecutionFailed.key,
+            commandName: 'kernel.base.execution-runtime.test.middleware-throw',
+        })
     })
 
     it('supports child dispatch while preserving parent and child lifecycle order', async () => {
@@ -253,6 +295,47 @@ describe('execution-runtime', () => {
         ])
     })
 
+    it('propagates failed child dispatch back into the parent command lifecycle', async () => {
+        const lifecycle: string[] = []
+        const runtime = createExecutionRuntime({
+            logger: createTestLogger(),
+            onLifecycleEvent: event => {
+                lifecycle.push(`${event.commandName}:${event.eventType}`)
+            },
+        })
+
+        runtime.registerHandler('kernel.base.execution-runtime.test.child-fail', async () => {
+            throw new Error('child failed')
+        })
+        runtime.registerHandler('kernel.base.execution-runtime.test.parent-fail', async context => {
+            const childResult = await context.dispatchChild(createExecutionCommand({
+                commandId: createCommandId(),
+                requestId: context.command.requestId,
+                sessionId: context.command.sessionId,
+                parentCommandId: context.command.commandId,
+                commandName: 'kernel.base.execution-runtime.test.child-fail',
+                payload: {},
+            }))
+
+            if (childResult.status === 'failed') {
+                throw childResult.error
+            }
+            return childResult.result
+        })
+
+        const result = await runtime.execute(createTestCommand({
+            commandName: 'kernel.base.execution-runtime.test.parent-fail',
+        }))
+
+        expect(result.status).toBe('failed')
+        expect(lifecycle).toEqual([
+            'kernel.base.execution-runtime.test.parent-fail:started',
+            'kernel.base.execution-runtime.test.child-fail:started',
+            'kernel.base.execution-runtime.test.child-fail:failed',
+            'kernel.base.execution-runtime.test.parent-fail:failed',
+        ])
+    })
+
     it('returns structured failed result when handler throws a plain error', async () => {
         const runtime = createExecutionRuntime({
             logger: createTestLogger(),
@@ -307,6 +390,28 @@ describe('execution-runtime', () => {
             throw new Error('expected failed result')
         }
         expect(result.error).toBe(appError)
+    })
+
+    it('preserves raw thrown values when handlers throw non-Error inputs', async () => {
+        const runtime = createExecutionRuntime({
+            logger: createTestLogger(),
+        })
+
+        runtime.registerHandler('kernel.base.execution-runtime.test.raw-throw', async () => {
+            throw 'string failure'
+        })
+
+        const result = await runtime.execute(createTestCommand({
+            commandName: 'kernel.base.execution-runtime.test.raw-throw',
+        }))
+
+        expect(result.status).toBe('failed')
+        if (result.status !== 'failed') {
+            throw new Error('expected failed result')
+        }
+        expect(result.error.details).toEqual({
+            error: 'string failure',
+        })
     })
 
     it('throws structured command_not_found before emitting lifecycle when no handler is registered', async () => {

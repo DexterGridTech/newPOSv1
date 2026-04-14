@@ -5,13 +5,17 @@ import {
     createCommandId,
     createRequestId,
     createRuntimeInstanceId,
+    finiteNumberAtLeast,
     formatTimestampMs,
     integerAtLeast,
+    isAppError,
+    nonNegativeFiniteNumber,
     nonEmptyString,
     nowTimestampMs,
     packageVersion,
     positiveFiniteNumber,
     protocolVersion,
+    renderErrorTemplate,
 } from '../../src'
 
 describe('kernel-base-contracts', () => {
@@ -51,6 +55,29 @@ describe('kernel-base-contracts', () => {
         expect(appError.message).toBe(`request ${requestId} failed`)
     })
 
+    it('renders error templates with repeated placeholders and missing args as empty strings', () => {
+        expect(renderErrorTemplate('hello ${name}', {name: 'world'})).toBe('hello world')
+        expect(renderErrorTemplate('${name}-${name}-${missing}', {name: 'worker'})).toBe('worker-worker-')
+        expect(renderErrorTemplate('request ${requestId} failed')).toBe('request  failed')
+        expect(renderErrorTemplate('${x}', undefined)).toBe('')
+    })
+
+    it('creates app errors with code fallback and exposes a strict type guard', () => {
+        const appError = createAppError({
+            key: 'kernel.base.contracts.error.guard',
+            name: 'Guard Error',
+            defaultTemplate: 'failed',
+            category: 'SYSTEM',
+            severity: 'LOW',
+        })
+
+        expect(appError.code).toBe(appError.key)
+        expect(isAppError(appError)).toBe(true)
+        expect(isAppError(null)).toBe(false)
+        expect(isAppError('error')).toBe(false)
+        expect(isAppError({key: 'only-key'})).toBe(false)
+    })
+
     it('exposes reusable validators for common business definitions', () => {
         expect(positiveFiniteNumber(1)).toBe(true)
         expect(positiveFiniteNumber(0)).toBe(false)
@@ -59,6 +86,16 @@ describe('kernel-base-contracts', () => {
         expect(integerAtLeast(2)(1)).toBe(false)
         expect(nonEmptyString('ok')).toBe(true)
         expect(nonEmptyString('   ')).toBe(false)
+    })
+
+    it('rejects non-finite values for shared numeric validators', () => {
+        expect(finiteNumberAtLeast(3)(3)).toBe(true)
+        expect(finiteNumberAtLeast(3)(2.9)).toBe(false)
+        expect(finiteNumberAtLeast(3)(Infinity)).toBe(false)
+        expect(finiteNumberAtLeast(3)(Number.NaN)).toBe(false)
+        expect(nonNegativeFiniteNumber(0)).toBe(true)
+        expect(nonNegativeFiniteNumber(-1)).toBe(false)
+        expect(nonNegativeFiniteNumber(Infinity)).toBe(false)
     })
 
     it('creates ids with stable prefixes and long random suffixes', () => {

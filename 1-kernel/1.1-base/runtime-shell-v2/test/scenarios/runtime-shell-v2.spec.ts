@@ -503,6 +503,125 @@ describe('runtime-shell-v2', () => {
         })
     })
 
+    it('keeps mirrored commands RUNNING on accepted and started events, and maps remote failures into actor errors', async () => {
+        const runtime = createKernelRuntimeV2({modules: [createModule([])]})
+        await runtime.start()
+
+        const requestId = createRequestId()
+        const commandId = createCommandId()
+        runtime.registerMirroredCommand({
+            requestId,
+            commandId,
+            commandName: 'kernel.base.runtime-shell-v2.test.remote-command-progress',
+            target: 'peer',
+        })
+        runtime.registerMirroredCommand({
+            requestId,
+            commandId,
+            commandName: 'kernel.base.runtime-shell-v2.test.remote-command-progress',
+            target: 'peer',
+        })
+
+        runtime.applyRemoteCommandEvent({
+            envelopeId: 'env_remote_accepted' as any,
+            sessionId: 'session_remote' as any,
+            requestId,
+            commandId,
+            ownerNodeId: runtime.localNodeId,
+            sourceNodeId: 'peer-node' as any,
+            eventType: 'accepted',
+            occurredAt: 10 as any,
+        })
+
+        expect(runtime.queryRequest(requestId)).toMatchObject({
+            status: 'RUNNING',
+            commands: [
+                {
+                    commandId,
+                    status: 'RUNNING',
+                    completedAt: undefined,
+                    actorResults: [
+                        expect.objectContaining({
+                            actorKey: 'runtime-shell-v2.remote-event',
+                            status: 'RUNNING',
+                            startedAt: 10,
+                        }),
+                    ],
+                },
+            ],
+        })
+
+        runtime.applyRemoteCommandEvent({
+            envelopeId: 'env_remote_started' as any,
+            sessionId: 'session_remote' as any,
+            requestId,
+            commandId,
+            ownerNodeId: runtime.localNodeId,
+            sourceNodeId: 'peer-node' as any,
+            eventType: 'started',
+            occurredAt: 12 as any,
+        })
+
+        expect(runtime.queryRequest(requestId)?.commands).toHaveLength(1)
+        expect(runtime.queryRequest(requestId)?.commands[0]).toMatchObject({
+            status: 'RUNNING',
+            actorResults: [
+                expect.objectContaining({
+                    actorKey: 'runtime-shell-v2.remote-event',
+                    status: 'RUNNING',
+                    startedAt: 12,
+                }),
+            ],
+        })
+
+        runtime.applyRemoteCommandEvent({
+            envelopeId: 'env_remote_failed' as any,
+            sessionId: 'session_remote' as any,
+            requestId,
+            commandId,
+            ownerNodeId: runtime.localNodeId,
+            sourceNodeId: 'peer-node' as any,
+            eventType: 'failed',
+            error: {
+                key: 'kernel.base.runtime-shell-v2.test.remote_failed',
+                code: 'REMOTE_FAILED',
+                message: 'peer failed',
+                details: {
+                    reason: 'remote-error',
+                },
+            },
+            occurredAt: 20 as any,
+        })
+
+        expect(runtime.queryRequest(requestId)).toMatchObject({
+            status: 'FAILED',
+            commands: [
+                {
+                    commandId,
+                    status: 'FAILED',
+                    actorResults: [
+                        {
+                            actorKey: 'runtime-shell-v2.remote-event',
+                            status: 'FAILED',
+                            error: {
+                                key: 'kernel.base.runtime-shell-v2.test.remote_failed',
+                                code: 'REMOTE_FAILED',
+                                message: 'peer failed',
+                                name: 'kernel.base.runtime-shell-v2.test.remote_failed',
+                                category: 'SYSTEM',
+                                severity: 'MEDIUM',
+                                createdAt: 20,
+                                details: {
+                                    reason: 'remote-error',
+                                },
+                            },
+                        },
+                    ],
+                },
+            ],
+        })
+    })
+
     it('imports request lifecycle snapshot into the request ledger', async () => {
         const runtime = createKernelRuntimeV2({modules: [createModule([])]})
         await runtime.start()
@@ -558,6 +677,50 @@ describe('runtime-shell-v2', () => {
                 }),
             ],
         })
+    })
+
+    it('replays existing request snapshots to late subscribers', async () => {
+        const runtime = createKernelRuntimeV2({modules: [createModule([])]})
+        await runtime.start()
+
+        const requestId = createRequestId()
+        const rootCommandId = createCommandId()
+        runtime.applyRequestLifecycleSnapshot({
+            requestId,
+            ownerNodeId: runtime.localNodeId,
+            rootCommandId,
+            sessionId: 'session_snapshot_replay' as any,
+            status: 'complete',
+            startedAt: Date.now() as any,
+            updatedAt: Date.now() as any,
+            commands: [
+                {
+                    commandId: rootCommandId,
+                    ownerNodeId: runtime.localNodeId,
+                    sourceNodeId: runtime.localNodeId,
+                    targetNodeId: runtime.localNodeId,
+                    commandName: 'kernel.base.runtime-shell-v2.test.snapshot-replay',
+                    status: 'complete',
+                    updatedAt: Date.now() as any,
+                },
+            ],
+            commandResults: [],
+        })
+
+        const replayedRequestStatuses: string[] = []
+        const replayedAllStatuses: string[] = []
+
+        runtime.subscribeRequest(requestId, request => {
+            replayedRequestStatuses.push(request.status)
+        })
+        runtime.subscribeRequests(request => {
+            if (request.requestId === requestId) {
+                replayedAllStatuses.push(request.status)
+            }
+        })
+
+        expect(replayedRequestStatuses).toEqual(['COMPLETED'])
+        expect(replayedAllStatuses).toEqual(['COMPLETED'])
     })
 
     it('keeps snapshot commands RUNNING while remote snapshot is still in progress', async () => {

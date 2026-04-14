@@ -559,6 +559,30 @@ describe('tdp-sync-runtime-v2', () => {
         expect(selectTdpSessionState(runtime.getState())?.status).toBe('HANDSHAKING')
     })
 
+    it('fails connectTdpSession when terminal credentials are missing', async () => {
+        const runtime = createRuntime({
+            localNodeId: 'node_tdp_v2_missing_credential',
+            stateStorage: createMemoryStorage(),
+            secureStateStorage: createMemoryStorage(),
+            socketRuntimeSpy: createSocketRuntimeSpy(),
+        })
+
+        await runtime.start()
+
+        const result = await runtime.dispatchCommand(createCommand(
+            tdpSyncV2CommandDefinitions.connectTdpSession,
+            {},
+        ))
+
+        expect(result.status).toBe('FAILED')
+        expect(result.actorResults[0]).toMatchObject({
+            status: 'FAILED',
+            error: {
+                key: 'kernel.base.tdp-sync-runtime-v2.credential_missing',
+            },
+        })
+    })
+
     it('auto acknowledges and reports applied cursor for projection stream messages', async () => {
         const stateStorage = createMemoryStorage()
         const secureStateStorage = createMemoryStorage()

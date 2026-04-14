@@ -1,4 +1,4 @@
-import {describe, expect, it} from 'vitest'
+import {describe, expect, it, vi} from 'vitest'
 import {createLoggerPort} from '@impos2/kernel-base-platform-ports'
 import {
     kernelBaseTestServerConfig,
@@ -285,6 +285,217 @@ describe('transport-runtime http', () => {
         expect(result).toEqual({
             echoedName: 'boss',
         })
+    })
+
+    it('enforces maxConcurrent queueing and never exceeds the configured parallelism', async () => {
+        let activeCount = 0
+        let maxObservedActiveCount = 0
+        const startedAddresses: string[] = []
+
+        const transport: HttpTransport = {
+            async execute(request) {
+                startedAddresses.push(request.selectedAddress.addressName)
+                activeCount += 1
+                maxObservedActiveCount = Math.max(maxObservedActiveCount, activeCount)
+                await new Promise(resolve => setTimeout(resolve, 10))
+                activeCount -= 1
+                return toSuccessResponse({ok: true} as any)
+            },
+        }
+
+        const runtime = createHttpRuntime({
+            logger: createTestLogger(),
+            transport,
+            servers: resolveTransportServers(kernelBaseTestServerConfig),
+            executionPolicy: {
+                maxConcurrent: 2,
+            },
+        })
+        const endpoint = defineHttpEndpoint<void, void, void, {ok: boolean}>({
+            name: 'demo.http.max-concurrent',
+            serverName: SERVER_NAME_KERNEL_BASE_HTTP_FAILOVER_TEST,
+            method: 'GET',
+            pathTemplate: '/max-concurrent',
+            request: {},
+            response: typed<{ok: boolean}>('demo.http.max-concurrent.response'),
+        })
+
+        const requests = [
+            runtime.call(endpoint),
+            runtime.call(endpoint),
+            runtime.call(endpoint),
+        ]
+
+        await Promise.all(requests)
+
+        expect(maxObservedActiveCount).toBe(2)
+        expect(startedAddresses).toEqual(['primary', 'primary', 'primary'])
+    })
+
+    it('enforces rate limits inside the configured time window', async () => {
+        vi.useFakeTimers()
+        try {
+            const transport: HttpTransport = {
+                async execute() {
+                    return toSuccessResponse({ok: true} as any)
+                },
+            }
+
+            const runtime = createHttpRuntime({
+                logger: createTestLogger(),
+                transport,
+                servers: resolveTransportServers(kernelBaseTestServerConfig),
+                executionPolicy: {
+                    rateLimitWindowMs: 100,
+                    rateLimitMaxRequests: 2,
+                },
+            })
+            const endpoint = defineHttpEndpoint<void, void, void, {ok: boolean}>({
+                name: 'demo.http.rate-limit',
+                serverName: SERVER_NAME_KERNEL_BASE_HTTP_FAILOVER_TEST,
+                method: 'GET',
+                pathTemplate: '/rate-limit',
+                request: {},
+                response: typed<{ok: boolean}>('demo.http.rate-limit.response'),
+            })
+
+            await runtime.call(endpoint)
+            await runtime.call(endpoint)
+            await expect(runtime.call(endpoint)).rejects.toMatchObject({
+                key: 'kernel.base.transport-runtime.network_error',
+                details: {
+                    windowMs: 100,
+                    maxRequests: 2,
+                },
+            })
+
+            await vi.advanceTimersByTimeAsync(100)
+            await expect(runtime.call(endpoint)).resolves.toMatchObject({
+                data: {ok: true},
+            })
+        } finally {
+            vi.useRealTimers()
+        }
+    })
+
+    it('stops retrying when shouldRetry returns false and records metrics for both success and failure', async () => {
+        const calls: string[] = []
+        const recorded: Array<{success: boolean; attempts: number}> = []
+
+        const runtime = createHttpRuntime({
+            logger: createTestLogger(),
+            transport: {
+                async execute(request) {
+                    calls.push(request.selectedAddress.addressName)
+                    if (request.endpoint.pathTemplate === '/no-retry') {
+                        throw new Error('hard stop')
+                    }
+                    if (request.endpoint.pathTemplate === '/single-address' && request.selectedAddress.addressName === 'primary') {
+                        throw new Error('single address failed')
+                    }
+                    return toSuccessResponse({ok: true} as any)
+                },
+            },
+            servers: resolveTransportServers(kernelBaseTestServerConfig),
+            executionPolicy: {
+                retryRounds: 2,
+                failoverStrategy: 'ordered',
+                shouldRetry(error, request) {
+                    return request.endpoint.pathTemplate !== '/no-retry' && !(error instanceof Error && error.message === 'hard stop')
+                },
+            },
+            metricsRecorder: {
+                recordCall(metric) {
+                    recorded.push({
+                        success: metric.success,
+                        attempts: metric.attempts.length,
+                    })
+                },
+            },
+        })
+        const noRetryEndpoint = defineHttpEndpoint<void, void, void, {ok: boolean}>({
+            name: 'demo.http.no-retry',
+            serverName: SERVER_NAME_KERNEL_BASE_HTTP_FAILOVER_TEST,
+            method: 'GET',
+            pathTemplate: '/no-retry',
+            request: {},
+            response: typed<{ok: boolean}>('demo.http.no-retry.response'),
+        })
+
+        await expect(runtime.call(noRetryEndpoint)).rejects.toMatchObject({
+            key: 'kernel.base.transport-runtime.http_runtime_failed',
+            details: {
+                endpointName: 'demo.http.no-retry',
+                attempts: [
+                    expect.objectContaining({
+                        addressName: 'primary',
+                    }),
+                ],
+            },
+        })
+
+        expect(calls).toEqual(['primary'])
+        expect(recorded[0]).toEqual({
+            success: false,
+            attempts: 1,
+        })
+    })
+
+    it('supports single-address failover strategy and refreshes servers from serverProvider per call', async () => {
+        const calls: string[] = []
+        let serverProviderCalls = 0
+
+        const runtime = createHttpRuntime({
+            logger: createTestLogger(),
+            transport: {
+                async execute(request) {
+                    calls.push(request.selectedAddress.addressName)
+                    if (request.selectedAddress.addressName === 'new-primary') {
+                        throw new Error('primary failed')
+                    }
+                    return toSuccessResponse({ok: true} as any)
+                },
+            },
+            serverProvider() {
+                serverProviderCalls += 1
+                return resolveTransportServers(kernelBaseTestServerConfig, {
+                    selectedSpace: SERVER_CONFIG_SPACE_KERNEL_BASE_HTTP_REPLACEMENT_TEST,
+                })
+            },
+            executionPolicy: {
+                retryRounds: 1,
+                failoverStrategy: 'single-address',
+            },
+        })
+        const endpoint = defineHttpEndpoint<void, void, void, {ok: boolean}>({
+            name: 'demo.http.single-address',
+            serverName: SERVER_NAME_KERNEL_BASE_HTTP_FAILOVER_TEST,
+            method: 'GET',
+            pathTemplate: '/single-address',
+            request: {},
+            response: typed<{ok: boolean}>('demo.http.single-address.response'),
+        })
+
+        await expect(runtime.call(endpoint)).rejects.toMatchObject({
+            key: 'kernel.base.transport-runtime.http_runtime_failed',
+            details: {
+                attempts: [
+                    expect.objectContaining({addressName: 'new-primary'}),
+                    expect.objectContaining({addressName: 'new-primary'}),
+                ],
+            },
+        })
+        await expect(runtime.call(endpoint)).rejects.toMatchObject({
+            key: 'kernel.base.transport-runtime.http_runtime_failed',
+        })
+
+        expect(calls).toEqual([
+            'new-primary',
+            'new-primary',
+            'new-primary',
+            'new-primary',
+        ])
+        expect(serverProviderCalls).toBe(3)
     })
 
     it('creates module-scoped endpoint definitions with stable descriptor names', () => {

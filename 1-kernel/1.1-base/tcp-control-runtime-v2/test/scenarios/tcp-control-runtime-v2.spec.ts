@@ -50,7 +50,19 @@ const createMemoryStorage = () => {
     }
 }
 
-const createMockTransport = (calls: string[]): HttpTransport => ({
+const createMockTransport = (
+    calls: string[],
+    options?: {
+        refreshFailure?: Error
+        activationResponse?: {
+            terminalId: string
+            token: string
+            refreshToken: string
+            expiresIn: number
+            refreshExpiresIn: number
+        }
+    },
+): HttpTransport => ({
     async execute(request) {
         calls.push(`${request.endpoint.method} ${request.endpoint.pathTemplate}`)
 
@@ -59,11 +71,11 @@ const createMockTransport = (calls: string[]): HttpTransport => ({
                 data: {
                     success: true,
                     data: {
-                        terminalId: 'terminal-test-001',
-                        token: 'access-token-001',
-                        refreshToken: 'refresh-token-001',
-                        expiresIn: 7200,
-                        refreshExpiresIn: 30 * 24 * 3600,
+                        terminalId: options?.activationResponse?.terminalId ?? 'terminal-test-001',
+                        token: options?.activationResponse?.token ?? 'access-token-001',
+                        refreshToken: options?.activationResponse?.refreshToken ?? 'refresh-token-001',
+                        expiresIn: options?.activationResponse?.expiresIn ?? 7200,
+                        refreshExpiresIn: options?.activationResponse?.refreshExpiresIn ?? 30 * 24 * 3600,
                         binding: {
                             platformId: 'platform-test',
                             tenantId: 'tenant-test',
@@ -82,6 +94,9 @@ const createMockTransport = (calls: string[]): HttpTransport => ({
         }
 
         if (request.endpoint.pathTemplate === '/api/v1/terminals/token/refresh') {
+            if (options?.refreshFailure) {
+                throw options.refreshFailure
+            }
             expect(request.input.body).toEqual({
                 refreshToken: 'refresh-token-001',
             })
@@ -127,6 +142,7 @@ const createRuntime = (input: {
     stateStorage: ReturnType<typeof createMemoryStorage>
     secureStateStorage: ReturnType<typeof createMemoryStorage>
     calls?: string[]
+    transportOptions?: Parameters<typeof createMockTransport>[1]
 }) => {
     const calls = input.calls ?? []
 
@@ -154,7 +170,7 @@ const createRuntime = (input: {
                                 moduleName: 'kernel.base.tcp-control-runtime-v2.test',
                                 subsystem: 'transport.http',
                             }),
-                            transport: createMockTransport(calls),
+                            transport: createMockTransport(calls, input.transportOptions),
                             servers: resolveTransportServers(kernelBaseTestServerConfig),
                         })
                     },
@@ -239,6 +255,7 @@ describe('tcp-control-runtime-v2', () => {
             refreshToken: 'refresh-token-001',
             status: 'READY',
         })
+        expect(selectTcpCredentialSnapshot(runtime.getState()).expiresAt).toBeGreaterThan(Date.now())
 
         const taskReportRequestId = createRequestId()
         const taskReportResult = await runtime.dispatchCommand(
@@ -290,5 +307,81 @@ describe('tcp-control-runtime-v2', () => {
             bootstrapped: false,
         })
         expect(selectTcpRuntimeState(restartedRuntime.getState())?.lastActivationRequestId).toBeUndefined()
+    })
+
+    it('fails refreshCredential immediately when refreshToken is missing', async () => {
+        const runtime = createRuntime({
+            localNodeId: 'node_tcp_v2_missing_refresh_token',
+            stateStorage: createMemoryStorage(),
+            secureStateStorage: createMemoryStorage(),
+        })
+
+        await runtime.start()
+        const result = await runtime.dispatchCommand(
+            createCommand(tcpControlV2CommandDefinitions.refreshCredential, {}),
+            {requestId: createRequestId()},
+        )
+
+        expect(result.status).toBe('FAILED')
+        expect(selectTcpCredentialSnapshot(runtime.getState()).status).toBe('EMPTY')
+        expect(selectTcpRuntimeState(runtime.getState())?.lastError).toMatchObject({
+            key: 'kernel.base.tcp-control-runtime-v2.credential_missing',
+        })
+    })
+
+    it('resets credential status to EMPTY and stores lastError when refresh http call fails', async () => {
+        const runtime = createRuntime({
+            localNodeId: 'node_tcp_v2_refresh_failure',
+            stateStorage: createMemoryStorage(),
+            secureStateStorage: createMemoryStorage(),
+            transportOptions: {
+                refreshFailure: new Error('refresh transport failed'),
+            },
+        })
+
+        await runtime.start()
+        await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.bootstrapTcpControl, {
+            deviceInfo: {
+                id: 'device-test-refresh-failure',
+                model: 'Mock POS',
+            },
+        }))
+        await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.activateTerminal, {
+            activationCode: 'ACT-TCP-FAIL-001',
+        }))
+
+        const result = await runtime.dispatchCommand(
+            createCommand(tcpControlV2CommandDefinitions.refreshCredential, {}),
+            {requestId: createRequestId()},
+        )
+
+        expect(result.status).toBe('FAILED')
+        expect(selectTcpCredentialSnapshot(runtime.getState()).status).toBe('EMPTY')
+        expect(selectTcpRuntimeState(runtime.getState())?.lastError).toMatchObject({
+            key: 'kernel.base.tcp-control-runtime-v2.refresh_failed',
+        })
+    })
+
+    it('fails task result reporting when terminalId is unavailable', async () => {
+        const runtime = createRuntime({
+            localNodeId: 'node_tcp_v2_missing_terminal',
+            stateStorage: createMemoryStorage(),
+            secureStateStorage: createMemoryStorage(),
+        })
+
+        await runtime.start()
+        const result = await runtime.dispatchCommand(
+            createCommand(tcpControlV2CommandDefinitions.reportTaskResult, {
+                instanceId: 'instance-test-missing-terminal',
+                status: 'FAILED',
+                error: {message: 'broken'},
+            }),
+            {requestId: createRequestId()},
+        )
+
+        expect(result.status).toBe('FAILED')
+        expect(selectTcpRuntimeState(runtime.getState())?.lastError).toMatchObject({
+            key: 'kernel.base.tcp-control-runtime-v2.bootstrap_hydration_failed',
+        })
     })
 })

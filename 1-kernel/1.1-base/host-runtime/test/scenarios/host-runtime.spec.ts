@@ -688,6 +688,175 @@ describe('host-runtime', () => {
         expect(detached[0].sessionId).toBe(sessionId)
     })
 
+    it('applies relay delay, drop, disconnect and hello delay fault rules through public runtime APIs', () => {
+        const masterNodeId = createNodeId()
+        const slaveNodeId = createNodeId()
+        const runtime = createHostRuntime({
+            hostRuntime: createRuntimeInfo({
+                nodeId: createNodeId(),
+                deviceId: 'host',
+                role: 'master',
+            }),
+            logger: createLogger(),
+        })
+
+        runtime.replaceFaultRules([
+            {
+                ruleId: 'hello-delay',
+                kind: 'hello-delay',
+                delayMs: 120,
+                createdAt: 1 as any,
+                targetRole: 'master',
+            },
+        ])
+
+        const ticket = runtime.issueTicket({
+            masterNodeId,
+            transportUrls: ['ws://127.0.0.1:8080/dual'],
+            expiresInMs: 30_000,
+            issuedAt: 1_000,
+        })
+
+        const masterHello = runtime.processHello({
+            connectionId: 'conn-master-fault' as any,
+            receivedAt: 2_000,
+            hello: createHello({
+                ticketToken: ticket.ticket.token,
+                runtime: createRuntimeInfo({
+                    nodeId: masterNodeId,
+                    deviceId: 'master-device',
+                    role: 'master',
+                }),
+            }),
+        })
+
+        expect(masterHello.effect.ackDeliverAfterMs).toBe(120)
+        expect(runtime.listFaultRules()).toEqual([
+            {
+                ruleId: 'hello-delay',
+                kind: 'hello-delay',
+                delayMs: 120,
+                createdAt: 1 as any,
+                targetRole: 'master',
+            },
+        ])
+
+        const slaveHello = runtime.processHello({
+            connectionId: 'conn-slave-fault' as any,
+            receivedAt: 3_000,
+            hello: createHello({
+                ticketToken: ticket.ticket.token,
+                runtime: createRuntimeInfo({
+                    nodeId: slaveNodeId,
+                    deviceId: 'slave-device',
+                    role: 'slave',
+                }),
+            }),
+        })
+        const sessionId = slaveHello.ack.sessionId!
+
+        runtime.replaceFaultRules([
+            {
+                ruleId: 'relay-delay-1',
+                kind: 'relay-delay',
+                delayMs: 50,
+                createdAt: 4_000 as any,
+                sessionId,
+                targetNodeId: slaveNodeId,
+            },
+            {
+                ruleId: 'relay-delay-2',
+                kind: 'relay-delay',
+                delayMs: 120,
+                createdAt: 4_001 as any,
+                sessionId,
+                targetNodeId: slaveNodeId,
+            },
+        ])
+
+        const delayed = runtime.relayEnvelope({
+            sessionId,
+            sourceNodeId: masterNodeId,
+            relayedAt: 5_000,
+            envelope: createDispatchEnvelope({
+                sessionId,
+                sourceNodeId: masterNodeId,
+                targetNodeId: slaveNodeId,
+            }),
+        })
+
+        expect(delayed.effect.delayMs).toBe(120)
+        expect(runtime.drainConnectionOutbox('conn-slave-fault' as any, 5_100)).toHaveLength(0)
+        expect(runtime.drainConnectionOutbox('conn-slave-fault' as any, 5_120)).toHaveLength(1)
+
+        runtime.replaceFaultRules([
+            {
+                ruleId: 'relay-drop',
+                kind: 'relay-drop',
+                createdAt: 6_000 as any,
+                sessionId,
+                targetNodeId: slaveNodeId,
+            },
+        ])
+
+        const dropped = runtime.relayEnvelope({
+            sessionId,
+            sourceNodeId: masterNodeId,
+            relayedAt: 6_100,
+            envelope: createDispatchEnvelope({
+                sessionId,
+                sourceNodeId: masterNodeId,
+                targetNodeId: slaveNodeId,
+            }),
+        })
+
+        expect(dropped.deliveries).toHaveLength(0)
+        expect(runtime.getSession(sessionId)?.relayPendingCount).toBe(0)
+
+        runtime.replaceFaultRules([
+            {
+                ruleId: 'relay-disconnect',
+                kind: 'relay-disconnect-target',
+                createdAt: 7_000 as any,
+                sessionId,
+                targetNodeId: slaveNodeId,
+            },
+        ])
+
+        const disconnected = runtime.relayEnvelope({
+            sessionId,
+            sourceNodeId: masterNodeId,
+            relayedAt: 7_100,
+            envelope: createDispatchEnvelope({
+                sessionId,
+                sourceNodeId: masterNodeId,
+                targetNodeId: slaveNodeId,
+            }),
+        })
+
+        expect(disconnected.disconnectedConnectionIds).toEqual(['conn-slave-fault'])
+        expect(runtime.getSession(sessionId)?.status).toBe('resume-required')
+    })
+
+    it('returns undefined when detaching or querying unknown host entities', () => {
+        const runtime = createHostRuntime({
+            hostRuntime: createRuntimeInfo({
+                nodeId: createNodeId(),
+                deviceId: 'host',
+                role: 'master',
+            }),
+            logger: createLogger(),
+        })
+
+        expect(runtime.detachConnection({
+            connectionId: 'missing-connection' as any,
+            disconnectedAt: 1_000,
+        })).toBeUndefined()
+        expect(runtime.getTicket('missing-ticket')).toBeUndefined()
+        expect(runtime.getSession('missing-session' as any)).toBeUndefined()
+        expect(() => runtime.recordHeartbeat('missing-connection' as any, 1_500)).not.toThrow()
+    })
+
     it('recomputes relay pending count correctly when one connection drains among multiple queued deliveries', () => {
         const masterNodeId = createNodeId()
         const slaveNodeId = createNodeId()

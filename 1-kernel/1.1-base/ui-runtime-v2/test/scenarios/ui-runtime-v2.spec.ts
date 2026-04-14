@@ -138,6 +138,27 @@ describe('ui-runtime-v2', () => {
             screenPartKey: checkoutScreen.partKey,
         })
 
+        expect((await runtime.dispatchCommand(createCommand(
+            uiRuntimeV2CommandDefinitions.openOverlay,
+            {
+                definition: checkoutScreen,
+                id: 'overlay-2',
+                props: {kind: 'secondary'},
+            },
+        ))).status).toBe('COMPLETED')
+
+        expect(selectUiOverlays(runtime.getState())).toHaveLength(2)
+
+        expect((await runtime.dispatchCommand(createCommand(
+            uiRuntimeV2CommandDefinitions.closeOverlay,
+            {
+                overlayId: 'overlay-1',
+            },
+        ))).status).toBe('COMPLETED')
+
+        expect(selectUiOverlays(runtime.getState())).toHaveLength(1)
+        expect(selectUiOverlays(runtime.getState())[0]?.id).toBe('overlay-2')
+
         const modalOverlay = createUiModalScreen(checkoutScreen, 'overlay-helper', {
             kind: 'helper',
         })
@@ -176,11 +197,45 @@ describe('ui-runtime-v2', () => {
         expect(selectUiVariable(runtime.getState(), 'note', 'default')).toBeNull()
 
         expect((await runtime.dispatchCommand(createCommand(
+            uiRuntimeV2CommandDefinitions.clearUiVariables,
+            ['orderNo'],
+        ))).status).toBe('COMPLETED')
+        expect(selectUiVariable(runtime.getState(), 'orderNo')).toBeNull()
+
+        expect((await runtime.dispatchCommand(createCommand(
             uiRuntimeV2CommandDefinitions.resetScreen,
             {
                 containerKey: 'main-root',
             },
         ))).status).toBe('COMPLETED')
         expect(selectUiScreen(runtime.getState(), 'main-root', 'fallback' as any)).toBeNull()
+    })
+
+    it('filters fallback screen definitions by current instance mode', async () => {
+        registerUiScreenDefinitions([checkoutScreen, secondaryAlertScreen, tertiaryReadyScreen])
+
+        const runtime = createKernelRuntimeV2({
+            platformPorts: createPlatformPorts({
+                environmentMode: 'TEST',
+                logger: createTestLogger('kernel.base.ui-runtime-v2.test.instance-mode'),
+            }),
+            modules: [
+                createTopologyRuntimeModuleV2(),
+                createUiRuntimeModuleV2(),
+            ],
+        })
+
+        await runtime.start()
+        await runtime.dispatchCommand(createCommand(topologyRuntimeV2CommandDefinitions.setInstanceMode, {
+            instanceMode: 'SLAVE',
+        }))
+        await runtime.dispatchCommand(createCommand(topologyRuntimeV2CommandDefinitions.setDisplayMode, {
+            displayMode: 'PRIMARY',
+        }))
+
+        expect(selectUiCurrentScreenOrFirstReady(runtime.getState(), 'main-root')).toBeUndefined()
+        expect(selectUiCurrentScreenOrFirstReady(runtime.getState(), 'secondary-root')).toMatchObject({
+            partKey: secondaryAlertScreen.partKey,
+        })
     })
 })

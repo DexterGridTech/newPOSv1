@@ -1,4 +1,4 @@
-import {describe, expect, it} from 'vitest'
+import {describe, expect, it, vi} from 'vitest'
 import {createSlice} from '@reduxjs/toolkit'
 import {
     createModuleDisplayModeStateKeys,
@@ -321,6 +321,64 @@ describe('state-runtime store assembly', () => {
         expect(saved.get('state-runtime-record-test:kernel.base.state-runtime.test.dictionary:records:B')).toBe(JSON.stringify({value: '2'}))
     })
 
+    it('restores persisted record entries from manifest snapshots during hydrate', async () => {
+        const {storage} = createMemoryStorage()
+        const dictionarySlice = createSlice({
+            name: 'kernel.base.state-runtime.test.dictionary-restore',
+            initialState: {} as Record<string, {value: string}>,
+            reducers: {
+                put(state, action: {payload: {key: string; value: string}}) {
+                    state[action.payload.key] = {value: action.payload.value}
+                },
+            },
+        })
+        const slices = [
+            {
+                name: dictionarySlice.name,
+                reducer: dictionarySlice.reducer,
+                persistIntent: 'owner-only' as const,
+                syncIntent: 'isolated' as const,
+                persistence: [
+                    {
+                        kind: 'record' as const,
+                        storageKeyPrefix: 'records',
+                        flushMode: 'immediate' as const,
+                    },
+                ],
+            },
+        ]
+
+        const runtimeA = createStateRuntime({
+            runtimeName: 'state-runtime-record-restore-a',
+            slices,
+            logger: createTestLogger() as any,
+            allowPersistence: true,
+            persistenceKey: 'state-runtime-record-restore-test',
+            stateStorage: storage,
+        })
+
+        await runtimeA.hydratePersistence()
+        runtimeA.getStore().dispatch(dictionarySlice.actions.put({key: 'A', value: '1'}))
+        runtimeA.getStore().dispatch(dictionarySlice.actions.put({key: 'B', value: '2'}))
+        await runtimeA.flushPersistence()
+
+        const runtimeB = createStateRuntime({
+            runtimeName: 'state-runtime-record-restore-b',
+            slices,
+            logger: createTestLogger() as any,
+            allowPersistence: true,
+            persistenceKey: 'state-runtime-record-restore-test',
+            stateStorage: storage,
+        })
+
+        await runtimeB.hydratePersistence()
+
+        expect((runtimeB.getState() as Record<string, any>)[dictionarySlice.name]).toEqual({
+            A: {value: '1'},
+            B: {value: '2'},
+        })
+    })
+
     it('routes protected entries to secureStateStorage', async () => {
         const plain = createMemoryStorage()
         const secure = createMemoryStorage()
@@ -367,6 +425,57 @@ describe('state-runtime store assembly', () => {
 
         expect(plain.saved.size).toBe(0)
         expect(secure.saved.get('state-runtime-secure-test:kernel.base.state-runtime.test.secure:accessToken')).toBe(JSON.stringify('token-1'))
+    })
+
+    it('routes protected record manifests and entries to secureStateStorage', async () => {
+        const plain = createMemoryStorage()
+        const secure = createMemoryStorage()
+        const secureSlice = createSlice({
+            name: 'kernel.base.state-runtime.test.secure-record',
+            initialState: {} as Record<string, {value: string}>,
+            reducers: {
+                put(state, action: {payload: {key: string; value: string}}) {
+                    state[action.payload.key] = {value: action.payload.value}
+                },
+            },
+        })
+
+        const runtime = createStateRuntime({
+            runtimeName: 'state-runtime-secure-record',
+            slices: [
+                {
+                    name: secureSlice.name,
+                    reducer: secureSlice.reducer,
+                    persistIntent: 'owner-only',
+                    syncIntent: 'isolated',
+                    persistence: [
+                        {
+                            kind: 'record',
+                            storageKeyPrefix: 'records',
+                            protection: 'protected',
+                            flushMode: 'immediate',
+                        },
+                    ],
+                },
+            ],
+            logger: createTestLogger() as any,
+            allowPersistence: true,
+            persistenceKey: 'state-runtime-secure-record-test',
+            stateStorage: plain.storage,
+            secureStateStorage: secure.storage,
+        })
+
+        await runtime.hydratePersistence()
+        runtime.getStore().dispatch(secureSlice.actions.put({key: 'A', value: '1'}))
+        await runtime.flushPersistence()
+
+        expect(plain.saved.size).toBe(0)
+        expect(secure.saved.get('state-runtime-secure-record-test:kernel.base.state-runtime.test.secure-record:records:__manifest__')).toBe(
+            JSON.stringify({entries: ['A']}),
+        )
+        expect(secure.saved.get('state-runtime-secure-record-test:kernel.base.state-runtime.test.secure-record:records:A')).toBe(
+            JSON.stringify({value: '1'}),
+        )
     })
 
     it('throws a structured error when protected persistence storage is missing', async () => {
@@ -467,6 +576,246 @@ describe('state-runtime store assembly', () => {
             value: 9,
             updatedAt: 20,
         })
+    })
+
+    it('does not flush persistence before hydrate completes', async () => {
+        const {saved, storage} = createMemoryStorage()
+        const slice = createSlice({
+            name: 'kernel.base.state-runtime.test.before-hydrate',
+            initialState: {value: 'seed'},
+            reducers: {
+                setValue(state, action: {payload: string}) {
+                    state.value = action.payload
+                },
+            },
+        })
+
+        const runtime = createStateRuntime({
+            runtimeName: 'state-runtime-before-hydrate',
+            slices: [
+                {
+                    name: slice.name,
+                    reducer: slice.reducer,
+                    persistIntent: 'owner-only',
+                    syncIntent: 'isolated',
+                    persistence: [
+                        {
+                            kind: 'field',
+                            stateKey: 'value',
+                            flushMode: 'immediate',
+                        },
+                    ],
+                },
+            ],
+            logger: createTestLogger() as any,
+            allowPersistence: true,
+            persistenceKey: 'state-runtime-before-hydrate-test',
+            stateStorage: storage,
+        })
+
+        runtime.getStore().dispatch(slice.actions.setValue('changed-before-hydrate'))
+        await new Promise(resolve => setTimeout(resolve, 0))
+
+        expect(saved.size).toBe(0)
+    })
+
+    it('flushes immediate fields without waiting for debounce windows', async () => {
+        const {saved, storage} = createMemoryStorage()
+        const slice = createSlice({
+            name: 'kernel.base.state-runtime.test.immediate',
+            initialState: {value: 'seed'},
+            reducers: {
+                setValue(state, action: {payload: string}) {
+                    state.value = action.payload
+                },
+            },
+        })
+
+        const runtime = createStateRuntime({
+            runtimeName: 'state-runtime-immediate',
+            slices: [
+                {
+                    name: slice.name,
+                    reducer: slice.reducer,
+                    persistIntent: 'owner-only',
+                    syncIntent: 'isolated',
+                    persistence: [
+                        {
+                            kind: 'field',
+                            stateKey: 'value',
+                            flushMode: 'immediate',
+                        },
+                    ],
+                },
+            ],
+            logger: createTestLogger() as any,
+            allowPersistence: true,
+            persistenceKey: 'state-runtime-immediate-test',
+            stateStorage: storage,
+        })
+
+        await runtime.hydratePersistence()
+        runtime.getStore().dispatch(slice.actions.setValue('persisted-now'))
+        await new Promise(resolve => setTimeout(resolve, 0))
+
+        expect(saved.get('state-runtime-immediate-test:kernel.base.state-runtime.test.immediate:value')).toBe(
+            JSON.stringify('persisted-now'),
+        )
+    })
+
+    it('debounces repeated persistence writes into a single storage flush', async () => {
+        vi.useFakeTimers()
+        try {
+            const memory = createMemoryStorage()
+            let multiSetCalls = 0
+            const baseStorage = memory.storage
+            const trackedStorage = {
+                ...baseStorage,
+                async multiSet(entries: Readonly<Record<string, string>>) {
+                    multiSetCalls += 1
+                    await baseStorage.multiSet(entries)
+                },
+            }
+            const slice = createSlice({
+                name: 'kernel.base.state-runtime.test.debounced',
+                initialState: {value: 'seed'},
+                reducers: {
+                    setValue(state, action: {payload: string}) {
+                        state.value = action.payload
+                    },
+                },
+            })
+
+            const runtime = createStateRuntime({
+                runtimeName: 'state-runtime-debounced',
+                slices: [
+                    {
+                        name: slice.name,
+                        reducer: slice.reducer,
+                        persistIntent: 'owner-only',
+                        syncIntent: 'isolated',
+                        persistence: [
+                            {
+                                kind: 'field',
+                                stateKey: 'value',
+                                flushMode: 'debounced',
+                            },
+                        ],
+                    },
+                ],
+                logger: createTestLogger() as any,
+                allowPersistence: true,
+                persistenceKey: 'state-runtime-debounced-test',
+                stateStorage: trackedStorage,
+                persistenceDebounceMs: 20,
+            })
+
+            await runtime.hydratePersistence()
+            runtime.getStore().dispatch(slice.actions.setValue('value-1'))
+            runtime.getStore().dispatch(slice.actions.setValue('value-2'))
+
+            expect(multiSetCalls).toBe(0)
+
+            await vi.advanceTimersByTimeAsync(19)
+            expect(multiSetCalls).toBe(0)
+
+            await vi.advanceTimersByTimeAsync(1)
+            expect(multiSetCalls).toBe(1)
+            expect(memory.saved.get('state-runtime-debounced-test:kernel.base.state-runtime.test.debounced:value')).toBe(
+                JSON.stringify('value-2'),
+            )
+        } finally {
+            vi.useRealTimers()
+        }
+    })
+
+    it('skips persistence when shouldPersist returns false and export stays side-effect free', async () => {
+        const memory = createMemoryStorage()
+        const slice = createSlice({
+            name: 'kernel.base.state-runtime.test.should-persist',
+            initialState: {value: 'seed'},
+            reducers: {
+                setValue(state, action: {payload: string}) {
+                    state.value = action.payload
+                },
+            },
+        })
+
+        const runtime = createStateRuntime({
+            runtimeName: 'state-runtime-should-persist',
+            slices: [
+                {
+                    name: slice.name,
+                    reducer: slice.reducer,
+                    persistIntent: 'owner-only',
+                    syncIntent: 'isolated',
+                    persistence: [
+                        {
+                            kind: 'field',
+                            stateKey: 'value',
+                            flushMode: 'immediate',
+                            shouldPersist: value => value !== 'skip-me',
+                        },
+                    ],
+                },
+            ],
+            logger: createTestLogger() as any,
+            allowPersistence: true,
+            persistenceKey: 'state-runtime-should-persist-test',
+            stateStorage: memory.storage,
+        })
+
+        await runtime.hydratePersistence()
+        runtime.getStore().dispatch(slice.actions.setValue('skip-me'))
+
+        const exported = await runtime.exportPersistedState()
+
+        expect(exported.entries).toEqual([])
+        expect(memory.saved.size).toBe(0)
+        await runtime.flushPersistence()
+        expect(memory.saved.size).toBe(0)
+    })
+
+    it('treats disabled persistence as a no-op for flush and hydrate', async () => {
+        const memory = createMemoryStorage()
+        const slice = createSlice({
+            name: 'kernel.base.state-runtime.test.persistence-disabled',
+            initialState: {value: 'seed'},
+            reducers: {
+                setValue(state, action: {payload: string}) {
+                    state.value = action.payload
+                },
+            },
+        })
+
+        const runtime = createStateRuntime({
+            runtimeName: 'state-runtime-disabled',
+            slices: [
+                {
+                    name: slice.name,
+                    reducer: slice.reducer,
+                    persistIntent: 'owner-only',
+                    syncIntent: 'isolated',
+                    persistence: [
+                        {
+                            kind: 'field',
+                            stateKey: 'value',
+                            flushMode: 'immediate',
+                        },
+                    ],
+                },
+            ],
+            logger: createTestLogger() as any,
+            allowPersistence: false,
+            persistenceKey: 'state-runtime-disabled-test',
+            stateStorage: memory.storage,
+        })
+
+        await runtime.hydratePersistence()
+        runtime.getStore().dispatch(slice.actions.setValue('changed'))
+
+        await expect(runtime.flushPersistence()).resolves.toEqual({entries: []})
+        expect(memory.saved.size).toBe(0)
     })
 
     it('merges sync record state by updatedAt and keeps tombstones explicit', () => {

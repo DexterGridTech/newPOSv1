@@ -3,6 +3,7 @@ import {createAppError} from '@impos2/kernel-base-contracts'
 import {
     createDefinitionRegistryBundle,
     createDefinitionResolverBundle,
+    createKeyedDefinitionRegistry,
     resolveAppError,
     resolveErrorDefinitionByKey,
     resolveParameter,
@@ -96,6 +97,67 @@ describe('definition-registry resolvers', () => {
         expect(fallback.valid).toBe(false)
     })
 
+    it('resolves json parameters from strings or objects and falls back on invalid json', () => {
+        const registries = createDefinitionRegistryBundle()
+        const definition = registries.parameters.register({
+            key: 'kernel.base.definition-registry.parameter.layout',
+            name: 'Layout',
+            defaultValue: {theme: 'default'},
+            valueType: 'json',
+            moduleName: 'kernel.base.definition-registry.test',
+        })
+
+        const fromString = resolveParameter({
+            definition,
+            parameterCatalog: {
+                [definition.key]: {
+                    key: definition.key,
+                    rawValue: JSON.stringify({theme: 'remote'}),
+                    updatedAt: 1 as any,
+                    source: 'remote',
+                },
+            },
+        })
+        const fromObject = resolveParameter({
+            definition,
+            parameterCatalog: {
+                [definition.key]: {
+                    key: definition.key,
+                    rawValue: {theme: 'object'},
+                    updatedAt: 2 as any,
+                    source: 'remote',
+                },
+            },
+        })
+        const fallback = resolveParameter({
+            definition,
+            parameterCatalog: {
+                [definition.key]: {
+                    key: definition.key,
+                    rawValue: '{invalid-json',
+                    updatedAt: 3 as any,
+                    source: 'remote',
+                },
+            },
+        })
+
+        expect(fromString).toMatchObject({
+            value: {theme: 'remote'},
+            source: 'catalog',
+            valid: true,
+        })
+        expect(fromObject).toMatchObject({
+            value: {theme: 'object'},
+            source: 'catalog',
+            valid: true,
+        })
+        expect(fallback).toMatchObject({
+            value: {theme: 'default'},
+            source: 'catalog-fallback',
+            valid: false,
+        })
+    })
+
     it('decodes boolean parameters with explicit true/false semantics', () => {
         const registries = createDefinitionRegistryBundle()
         const definition = registries.parameters.register({
@@ -166,6 +228,24 @@ describe('definition-registry resolvers', () => {
         expect(fallback.source).toBe('catalog-fallback')
     })
 
+    it('returns definition defaults when no parameter catalog entry exists', () => {
+        const registries = createDefinitionRegistryBundle()
+        const definition = registries.parameters.register({
+            key: 'kernel.base.definition-registry.parameter.default-only',
+            name: 'Default Only',
+            defaultValue: 7,
+            valueType: 'number',
+            moduleName: 'kernel.base.definition-registry.test',
+        })
+
+        expect(resolveParameter({definition})).toEqual({
+            key: definition.key,
+            value: 7,
+            source: 'default',
+            valid: true,
+        })
+    })
+
     it('falls back on invalid numeric raw value and rejects mismatched appError key', () => {
         const registries = createDefinitionRegistryBundle()
         const definition = registries.parameters.register({
@@ -213,5 +293,88 @@ describe('definition-registry resolvers', () => {
             errorRegistry: registries.errors,
             appError,
         })).toThrow(/appError.key mismatch/)
+    })
+
+    it('resolves error definitions from catalog overrides without requiring an app error', () => {
+        const registries = createDefinitionRegistryBundle()
+        const definition = registries.errors.register({
+            key: 'kernel.base.definition-registry.error.catalog-only',
+            name: 'Catalog Error',
+            defaultTemplate: 'default template',
+            category: 'SYSTEM',
+            severity: 'LOW',
+            moduleName: 'kernel.base.definition-registry.test',
+        })
+
+        expect(resolveErrorDefinitionByKey({
+            key: definition.key,
+            errorRegistry: registries.errors,
+            errorCatalog: {
+                [definition.key]: {
+                    key: definition.key,
+                    template: 'catalog template',
+                    updatedAt: 1 as any,
+                    source: 'remote',
+                },
+            },
+        })).toMatchObject({
+            key: definition.key,
+            message: 'catalog template',
+            source: 'catalog',
+        })
+    })
+
+    it('uses custom decode functions and resolver bundles by key', () => {
+        const registries = createDefinitionRegistryBundle()
+        const definition = registries.parameters.register({
+            key: 'kernel.base.definition-registry.parameter.custom',
+            name: 'Custom',
+            defaultValue: 'seed',
+            valueType: 'string',
+            decode(rawValue) {
+                return `decoded:${String(rawValue)}`
+            },
+            moduleName: 'kernel.base.definition-registry.test',
+        })
+        const resolver = createDefinitionResolverBundle(registries, {
+            parameterCatalog: {
+                [definition.key]: {
+                    key: definition.key,
+                    rawValue: 'remote',
+                    updatedAt: 1 as any,
+                    source: 'remote',
+                },
+            },
+        })
+
+        expect(resolver.resolveParameterByKey<string>(definition.key)).toEqual({
+            key: definition.key,
+            value: 'decoded:remote',
+            source: 'catalog',
+            valid: true,
+        })
+        expect(() => resolver.resolveParameterByKey('kernel.base.definition-registry.parameter.missing')).toThrow(
+            /definition not found/,
+        )
+    })
+
+    it('rejects duplicate registry keys and exposes list plus frozen snapshot views', () => {
+        const registry = createKeyedDefinitionRegistry<{
+            key: string
+            name: string
+        }>('test-definition')
+        const definition = {
+            key: 'kernel.base.definition-registry.definition.duplicated',
+            name: 'Duplicated',
+        }
+
+        registry.register(definition)
+
+        expect(() => registry.register(definition)).toThrow(/duplicated definition key/)
+        expect(registry.list()).toEqual([definition])
+        expect(registry.snapshot()).toEqual({
+            [definition.key]: definition,
+        })
+        expect(Object.isFrozen(registry.snapshot())).toBe(true)
     })
 })
