@@ -22,4 +22,3 @@ export type RuntimeIdKind =
     | 'projection'
 
 export const INTERNAL_REQUEST_ID = 'INTERNAL' as RequestId
-export const INTERNAL_SESSION_ID = 'INTERNAL' as SessionId

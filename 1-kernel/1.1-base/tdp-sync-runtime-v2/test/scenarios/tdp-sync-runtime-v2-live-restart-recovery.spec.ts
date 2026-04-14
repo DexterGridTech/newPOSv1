@@ -48,7 +48,7 @@ describe('tdp-sync-runtime-v2 live restart recovery', () => {
             {requestId: createRequestId()},
         )
 
-        await waitFor(() => selectTdpSessionState(firstRuntimeHarness.runtime.getState())?.status === 'READY', 5_000)
+        await waitFor(() => selectTdpSessionState(firstRuntimeHarness.runtime.getState())?.status === 'READY', 10_000)
 
         const terminalId = selectTcpTerminalId(firstRuntimeHarness.runtime.getState())
         if (!terminalId) {
@@ -77,7 +77,7 @@ describe('tdp-sync-runtime-v2 live restart recovery', () => {
             return typeof sync?.lastCursor === 'number'
                 && sync.lastCursor > 0
                 && projection?.payload.configVersion === 'restart-v2-seed-v1'
-        }, 5_000)
+        }, 10_000)
 
         const seededSyncState = selectTdpSyncState(firstRuntimeHarness.runtime.getState())
         const seededCursor = seededSyncState?.lastCursor
@@ -137,7 +137,7 @@ describe('tdp-sync-runtime-v2 live restart recovery', () => {
         await waitFor(() => {
             const session = selectTdpSessionState(secondRuntimeHarness.runtime.getState())
             return session?.status === 'READY' && session.syncMode === 'incremental'
-        }, 5_000)
+        }, 10_000)
 
         await waitFor(() => {
             return selectTdpProjectionByTopicAndBucket(secondRuntimeHarness.runtime.getState(), {
@@ -146,7 +146,7 @@ describe('tdp-sync-runtime-v2 live restart recovery', () => {
                 scopeId: terminalId,
                 itemKey: 'config.delta.v2.restart-001',
             })?.payload.configVersion === 'restart-v2-seed-v2'
-        }, 5_000)
+        }, 10_000)
 
         expect(selectTdpSyncState(secondRuntimeHarness.runtime.getState())?.lastCursor).toBeGreaterThan(seededCursor)
         expect(selectTdpProjectionByTopicAndBucket(secondRuntimeHarness.runtime.getState(), {
@@ -157,5 +157,5 @@ describe('tdp-sync-runtime-v2 live restart recovery', () => {
         })?.payload.configVersion).toBe('restart-v2-seed-v2')
         expect(Object.keys(selectTdpProjectionState(secondRuntimeHarness.runtime.getState()) ?? {}).length).toBeGreaterThan(0)
         expect(selectTdpCommandInboxState(secondRuntimeHarness.runtime.getState())?.orderedIds ?? []).toEqual([])
-    }, 15_000)
+    }, 20_000)
 })

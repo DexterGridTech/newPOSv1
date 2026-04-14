@@ -1,5 +1,6 @@
 import {createSelector} from '@reduxjs/toolkit'
 import type {RequestId} from '@impos2/kernel-base-contracts'
+import type {RootState} from '@impos2/kernel-base-state-runtime'
 import type {
     WorkflowDefinition,
     WorkflowDefinitionsBySource,
@@ -11,24 +12,24 @@ import {
     WORKFLOW_QUEUE_STATE_KEY,
 } from '../features/slices'
 
-export const selectWorkflowDefinitionsState = (state: Record<string, unknown>) =>
-    state[WORKFLOW_DEFINITIONS_STATE_KEY] as {
+export const selectWorkflowDefinitionsState = (state: RootState) =>
+    state[WORKFLOW_DEFINITIONS_STATE_KEY as keyof RootState] as {
         bySource: WorkflowDefinitionsBySource
     } | undefined
 
-const selectWorkflowObservationsState = (state: Record<string, unknown>) =>
-    state[WORKFLOW_OBSERVATIONS_STATE_KEY] as {
+const selectWorkflowObservationsState = (state: RootState) =>
+    state[WORKFLOW_OBSERVATIONS_STATE_KEY as keyof RootState] as {
         byRequestId: Record<string, WorkflowObservation>
     } | undefined
 
-export const selectWorkflowQueueState = (state: Record<string, unknown>) =>
-    state[WORKFLOW_QUEUE_STATE_KEY] as {
+export const selectWorkflowQueueState = (state: RootState) =>
+    state[WORKFLOW_QUEUE_STATE_KEY as keyof RootState] as {
         activeRequestId?: RequestId
         queuedRequestIds: readonly RequestId[]
     } | undefined
 
 export const selectWorkflowDefinition = (
-    state: Record<string, unknown>,
+    state: RootState,
     workflowKey: string,
 ): readonly WorkflowDefinition[] => {
     const bySource = selectWorkflowDefinitionsState(state)?.bySource
@@ -45,13 +46,13 @@ export const selectWorkflowDefinition = (
 }
 
 export const selectWorkflowDefinitionsBySource = (
-    state: Record<string, unknown>,
+    state: RootState,
 ): WorkflowDefinitionsBySource | undefined => {
     return selectWorkflowDefinitionsState(state)?.bySource
 }
 
 export const selectWorkflowObservationByRequestId = (
-    state: Record<string, unknown>,
+    state: RootState,
     requestId: RequestId,
 ): WorkflowObservation | undefined => {
     return selectWorkflowObservationsState(state)?.byRequestId[requestId]
@@ -59,7 +60,7 @@ export const selectWorkflowObservationByRequestId = (
 
 export const selectWorkflowObservationStatusByRequestId = createSelector(
     [
-        (state: Record<string, unknown>, requestId: RequestId) => selectWorkflowObservationByRequestId(state, requestId),
+        (state: RootState, requestId: RequestId) => selectWorkflowObservationByRequestId(state, requestId),
     ],
     observation => observation?.status,
 )

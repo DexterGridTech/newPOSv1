@@ -19,12 +19,11 @@
     "check:circular": "madge --circular --extensions ts --warning src/"
   },
   "dependencies": {
-    "@impos2/kernel-base-contracts": "*",
-    "@impos2/kernel-base-platform-ports": "*"
+    "@impos2/kernel-base-contracts": "workspace:*",
+    "@impos2/kernel-base-platform-ports": "workspace:*"
   },
   "devDependencies": {
-    "@impos2/dual-topology-host": "*",
-    "@impos2/kernel-base-runtime-shell": "*",
+    "@impos2/kernel-server-config-v2": "workspace:*",
     "@types/node": "^25.0.9",
     "@types/ws": "^8.5.13",
     "madge": "^8.0.0",

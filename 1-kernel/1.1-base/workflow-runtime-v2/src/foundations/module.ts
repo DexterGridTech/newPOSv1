@@ -38,6 +38,7 @@ export const createWorkflowRuntimeModuleV2 = (
             const engine = createWorkflowEngineV2({
                 context,
                 registry,
+                runtimePlatform: input.runtimePlatform,
             })
             registry.runtime = engine.runtime
             registry.runFromCommand = engine.runFromCommand

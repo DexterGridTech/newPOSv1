@@ -1,6 +1,11 @@
 import type {UnknownAction} from '@reduxjs/toolkit'
 import type {RootState} from '@impos2/kernel-base-state-runtime'
-import type {NodeId, RuntimeInstanceId} from '@impos2/kernel-base-contracts'
+import type {
+    NodeId,
+    ParameterDefinition,
+    ResolvedParameter,
+    RuntimeInstanceId,
+} from '@impos2/kernel-base-contracts'
 import type {
     ActorDispatchOptions,
     CommandAggregateResult,
@@ -29,6 +34,10 @@ export interface ActorExecutionContext<TPayload = unknown> {
         options?: ActorDispatchOptions,
     ): Promise<CommandAggregateResult>
     queryRequest(requestId: string): RequestQueryResult | undefined
+    resolveParameter<TValue = unknown>(input: {
+        key: string
+        definition?: ParameterDefinition<TValue>
+    }): ResolvedParameter<TValue>
 }
 
 export type ActorCommandHandler<TPayload = unknown> = (

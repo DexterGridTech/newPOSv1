@@ -3,7 +3,7 @@ import type {
     RequestId,
     TimestampMs,
 } from '@impos2/kernel-base-contracts'
-import type {CommandAggregateResult} from './command'
+import type {CommandQueryResult} from './command'
 
 export type RequestQueryStatus = 'RUNNING' | 'COMPLETED' | 'PARTIAL_FAILED' | 'FAILED' | 'TIMEOUT'
 
@@ -13,7 +13,7 @@ export interface RequestQueryResult {
     status: RequestQueryStatus
     startedAt: TimestampMs
     updatedAt: TimestampMs
-    commands: readonly CommandAggregateResult[]
+    commands: readonly CommandQueryResult[]
 }
 
 export type RequestListener = (request: RequestQueryResult) => void

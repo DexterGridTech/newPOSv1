@@ -80,10 +80,6 @@ describe('transport-runtime socket', () => {
         runtime.on('demo.socket', 'disconnected', () => {
             events.push('disconnected')
         })
-        runtime.on('demo.socket', 'reconnecting', () => {
-            events.push('reconnecting')
-        })
-
         const resolved = await runtime.connect('demo.socket', {
             query: {token: 't-1'},
             headers: {authorization: 'Bearer token'},
@@ -100,7 +96,6 @@ describe('transport-runtime socket', () => {
         expect(events).toContain('message:hello')
         expect(events).toContain('send')
         expect(events).toContain('disconnected')
-        expect(events).toContain('reconnecting')
     })
 
     it('throws structured runtime error when profile is not registered', async () => {

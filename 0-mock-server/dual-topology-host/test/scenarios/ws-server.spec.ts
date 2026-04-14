@@ -10,11 +10,15 @@ import {
     type CommandDispatchEnvelope,
     type RequestLifecycleSnapshotEnvelope,
 } from '@impos2/kernel-base-contracts'
-import {createPlatformPorts, createLoggerPort} from '@impos2/kernel-base-platform-ports'
-import {createKernelRuntime, selectRequestProjection, type KernelRuntimeModule} from '@impos2/kernel-base-runtime-shell'
 import {createDualTopologyHostServer} from '../../src'
 import {fetchJson} from '../helpers/http'
 import {createHello, createRuntimeInfo} from '../helpers/runtimeInfo'
+import {
+    createDualTopologyHostTestRuntime,
+    createEchoModuleV2,
+    createSilentRuntimeV2,
+    selectRequestProjectionV2,
+} from '../helpers/runtimeV2Harness'
 import {createTestWsClient} from '../helpers/ws'
 
 const servers: Array<ReturnType<typeof createDualTopologyHostServer>> = []
@@ -32,38 +36,6 @@ const waitFor = async (predicate: () => boolean, timeoutMs = 1_000) => {
 afterEach(async () => {
     await Promise.all(servers.splice(0).map(server => server.close()))
 })
-
-const createSilentRuntime = (localNodeId: ReturnType<typeof createNodeId>) => {
-    return createKernelRuntime({
-        localNodeId,
-        platformPorts: createPlatformPorts({
-            environmentMode: 'DEV',
-            logger: createLoggerPort({
-                environmentMode: 'DEV',
-                write: () => {},
-                scope: {
-                    moduleName: 'mock.server.dual-topology-host.test.runtime',
-                    layer: 'kernel',
-                },
-            }),
-        }),
-        modules: [],
-    })
-}
-
-const createEchoModule = (): KernelRuntimeModule => {
-    return {
-        moduleName: 'mock.server.dual-topology-host.test.echo-module',
-        packageVersion: '0.0.1',
-        install(context) {
-            context.registerHandler('mock.server.dual-topology-host.test.echo', async handlerContext => {
-                return {
-                    payload: handlerContext.command.payload as Record<string, unknown>,
-                }
-            })
-        },
-    }
-}
 
 describe('dual-topology-host ws server', () => {
     it('relays dispatch over real sockets and blocks offline replay until resume completes', async () => {
@@ -257,37 +229,17 @@ describe('dual-topology-host ws server', () => {
         const masterNodeId = createNodeId()
         const slaveNodeId = createNodeId()
 
-        const ownerRuntime = createKernelRuntime({
+        const ownerRuntime = createDualTopologyHostTestRuntime({
             localNodeId: masterNodeId,
-            platformPorts: createPlatformPorts({
-                environmentMode: 'DEV',
-                logger: createLoggerPort({
-                    environmentMode: 'DEV',
-                    write: () => {},
-                    scope: {
-                        moduleName: 'mock.server.dual-topology-host.test.owner-runtime',
-                        layer: 'kernel',
-                    },
-                }),
-            }),
-            modules: [createEchoModule()],
+            loggerModuleName: 'mock.server.dual-topology-host.test.owner-runtime-v2',
+            modules: [createEchoModuleV2()],
         })
         await ownerRuntime.start()
 
-        const peerRuntime = createKernelRuntime({
+        const peerRuntime = createDualTopologyHostTestRuntime({
             localNodeId: slaveNodeId,
-            platformPorts: createPlatformPorts({
-                environmentMode: 'DEV',
-                logger: createLoggerPort({
-                    environmentMode: 'DEV',
-                    write: () => {},
-                    scope: {
-                        moduleName: 'mock.server.dual-topology-host.test.peer-runtime',
-                        layer: 'kernel',
-                    },
-                }),
-            }),
-            modules: [createEchoModule()],
+            loggerModuleName: 'mock.server.dual-topology-host.test.peer-runtime-v2',
+            modules: [createEchoModuleV2()],
         })
         await peerRuntime.start()
 
@@ -343,7 +295,7 @@ describe('dual-topology-host ws server', () => {
                 requestId,
             })
 
-            expect(rootResult.status).toBe('completed')
+            expect(rootResult.status).toBe('COMPLETED')
 
             const rootCommandId = ownerRuntime
                 .exportRequestLifecycleSnapshot(requestId, sessionId)
@@ -362,8 +314,8 @@ describe('dual-topology-host ws server', () => {
                 payload: {peer: 'done'},
             })
 
-            const ownerProjectionAfterDispatch = selectRequestProjection(
-                ownerRuntime.getState(),
+            const ownerProjectionAfterDispatch = selectRequestProjectionV2(
+                ownerRuntime,
                 requestId,
             )
             expect(ownerProjectionAfterDispatch?.status).toBe('started')
@@ -387,7 +339,7 @@ describe('dual-topology-host ws server', () => {
             const remoteHandleResult = await peerRuntime.handleRemoteDispatch(relayedDispatch.envelope)
             expect(remoteHandleResult.events).toHaveLength(3)
 
-            const peerProjection = selectRequestProjection(peerRuntime.getState(), requestId)
+            const peerProjection = selectRequestProjectionV2(peerRuntime, requestId)
             expect(peerProjection).toBeUndefined()
 
             remoteHandleResult.events.forEach(event => {
@@ -412,7 +364,7 @@ describe('dual-topology-host ws server', () => {
                 ownerRuntime.applyRemoteCommandEvent(relayedEvent.envelope)
             }
 
-            const ownerProjection = selectRequestProjection(ownerRuntime.getState(), requestId)
+            const ownerProjection = selectRequestProjectionV2(ownerRuntime, requestId)
             expect(ownerProjection?.status).toBe('complete')
             expect(ownerProjection?.pendingCommandCount).toBe(0)
             expect(ownerProjection?.resultsByCommand[remoteDispatchEnvelope.commandId]).toEqual({
@@ -616,24 +568,14 @@ describe('dual-topology-host ws server', () => {
         const masterNodeId = createNodeId()
         const slaveNodeId = createNodeId()
 
-        const ownerRuntime = createKernelRuntime({
+        const ownerRuntime = createDualTopologyHostTestRuntime({
             localNodeId: masterNodeId,
-            platformPorts: createPlatformPorts({
-                environmentMode: 'DEV',
-                logger: createLoggerPort({
-                    environmentMode: 'DEV',
-                    write: () => {},
-                    scope: {
-                        moduleName: 'mock.server.dual-topology-host.test.owner-runtime',
-                        layer: 'kernel',
-                    },
-                }),
-            }),
-            modules: [createEchoModule()],
+            loggerModuleName: 'mock.server.dual-topology-host.test.owner-runtime-v2',
+            modules: [createEchoModuleV2()],
         })
         await ownerRuntime.start()
 
-        const mirrorRuntime = createSilentRuntime(slaveNodeId)
+        const mirrorRuntime = createSilentRuntimeV2(slaveNodeId)
         await mirrorRuntime.start()
 
         const executionRequestId = createRequestId()
@@ -643,7 +585,7 @@ describe('dual-topology-host ws server', () => {
             requestId: executionRequestId,
         })
 
-        expect(executionResult.status).toBe('completed')
+        expect(executionResult.status).toBe('COMPLETED')
 
         const ticket = await fetchJson<{
             success: boolean
@@ -750,8 +692,8 @@ describe('dual-topology-host ws server', () => {
 
                 mirrorRuntime.applyRequestLifecycleSnapshot(snapshotMessage.envelope.snapshot)
 
-                const mirroredProjection = selectRequestProjection(
-                    mirrorRuntime.getState(),
+                const mirroredProjection = selectRequestProjectionV2(
+                    mirrorRuntime,
                     executionRequestId,
                 )
 
@@ -904,6 +846,7 @@ describe('dual-topology-host ws server', () => {
                     sessionId,
                     sourceNodeId: slaveNodeId,
                     targetNodeId: masterNodeId,
+                    direction: 'slave-to-master',
                     committedAt: Date.now(),
                 }
 

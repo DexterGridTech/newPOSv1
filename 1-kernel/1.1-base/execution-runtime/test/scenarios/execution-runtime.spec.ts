@@ -5,7 +5,6 @@ import {
     createRequestId,
     createSessionId,
     INTERNAL_REQUEST_ID,
-    INTERNAL_SESSION_ID,
 } from '@impos2/kernel-base-contracts'
 import {createLoggerPort} from '@impos2/kernel-base-platform-ports'
 import {
@@ -94,6 +93,7 @@ describe('execution-runtime', () => {
             internal: context.command.internal === true,
             requestId: context.command.requestId,
             sessionId: context.command.sessionId,
+            hasOwnSessionId: Object.prototype.hasOwnProperty.call(context.command, 'sessionId'),
         }))
 
         const result = await runtime.execute(createInternalExecutionCommand({
@@ -109,7 +109,8 @@ describe('execution-runtime', () => {
         expect(result.result).toMatchObject({
             internal: true,
             requestId: INTERNAL_REQUEST_ID,
-            sessionId: INTERNAL_SESSION_ID,
+            sessionId: undefined,
+            hasOwnSessionId: false,
         })
         expect(runtime.getJournal().list().map(event => event.internal)).toEqual([true, true])
     })

@@ -53,6 +53,25 @@ export interface ResolveParameterInput<TValue = unknown> {
     parameterCatalog?: Readonly<Record<string, ParameterCatalogEntry>>
 }
 
+const decodeBooleanParameterValue = (rawValue: unknown): boolean => {
+    if (rawValue === true || rawValue === 1) {
+        return true
+    }
+    if (rawValue === false || rawValue === 0) {
+        return false
+    }
+    if (typeof rawValue === 'string') {
+        const normalized = rawValue.trim().toLowerCase()
+        if (normalized === 'true' || normalized === '1') {
+            return true
+        }
+        if (normalized === 'false' || normalized === '0') {
+            return false
+        }
+    }
+    throw new Error(`Invalid boolean rawValue: ${String(rawValue)}`)
+}
+
 const decodeParameterValue = <TValue>(
     definition: ParameterDefinition<TValue>,
     rawValue: unknown,
@@ -66,7 +85,7 @@ const decodeParameterValue = <TValue>(
     }
 
     if (definition.valueType === 'boolean') {
-        return Boolean(rawValue) as TValue
+        return decodeBooleanParameterValue(rawValue) as TValue
     }
 
     if (definition.valueType === 'json') {

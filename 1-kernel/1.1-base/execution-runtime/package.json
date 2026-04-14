@@ -19,9 +19,9 @@
     "check:circular": "madge --circular --extensions ts --warning src/"
   },
   "dependencies": {
-    "@impos2/kernel-base-contracts": "*",
-    "@impos2/kernel-base-definition-registry": "*",
-    "@impos2/kernel-base-platform-ports": "*"
+    "@impos2/kernel-base-contracts": "workspace:*",
+    "@impos2/kernel-base-definition-registry": "workspace:*",
+    "@impos2/kernel-base-platform-ports": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^25.0.9",

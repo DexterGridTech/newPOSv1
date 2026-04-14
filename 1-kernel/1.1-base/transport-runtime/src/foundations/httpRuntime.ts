@@ -31,10 +31,33 @@ export const createHttpRuntime = (
     const serverCatalog = createServerCatalog()
     const executionController = new HttpExecutionController(input.executionPolicy)
     const runtimeLogger = createEndpointLogger(input.logger)
+    const preferredAddressByServer = new Map<string, string>()
+    let currentServers = input.servers
 
     const refreshServers = () => {
-        const servers = input.servers ?? input.serverProvider?.() ?? []
+        const servers = currentServers ?? input.serverProvider?.() ?? []
         serverCatalog.replaceServers(servers)
+    }
+
+    const resolveRoundAddresses = (serverName: string) => {
+        const addresses = serverCatalog.resolveAddresses(serverName)
+        const preferredAddressName = preferredAddressByServer.get(serverName)
+        if (preferredAddressName == null) {
+            return [...addresses]
+        }
+        const preferredAddress = addresses.find(address => address.addressName === preferredAddressName)
+        if (preferredAddress == null) {
+            preferredAddressByServer.delete(serverName)
+            return [...addresses]
+        }
+        return [
+            preferredAddress,
+            ...addresses.filter(address => address.addressName !== preferredAddressName),
+        ]
+    }
+
+    const rememberPreferredAddress = (serverName: string, addressName: string) => {
+        preferredAddressByServer.set(serverName, addressName)
     }
 
     const recordMetric = (
@@ -104,7 +127,7 @@ export const createHttpRuntime = (
 
         return executionController.run(async () => {
             for (let roundIndex = 0; roundIndex <= retryRounds; roundIndex += 1) {
-                const addresses = serverCatalog.resolveAddresses(endpoint.serverName)
+                const addresses = resolveRoundAddresses(endpoint.serverName)
                 const roundAddresses = failoverStrategy === 'single-address' ? addresses.slice(0, 1) : addresses
 
                 for (const address of roundAddresses) {
@@ -168,6 +191,7 @@ export const createHttpRuntime = (
                             },
                         })
 
+                        rememberPreferredAddress(endpoint.serverName, address.addressName)
                         recordMetric(endpoint, startedAt, attempts, true)
                         return response
                     } catch (error) {
@@ -224,6 +248,8 @@ export const createHttpRuntime = (
         call,
         replaceServers(servers) {
             serverCatalog.replaceServers(servers)
+            currentServers = servers
+            preferredAddressByServer.clear()
         },
         getServerCatalog() {
             return serverCatalog

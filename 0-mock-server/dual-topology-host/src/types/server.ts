@@ -66,22 +66,38 @@ export interface HeartbeatAckEnvelope {
 }
 
 export interface RelayEnvelopeMessage {
-    type:
-        | 'command-dispatch'
-        | 'command-event'
-        | 'projection-mirror'
-        | 'request-lifecycle-snapshot'
-        | 'state-sync-summary'
-        | 'state-sync-diff'
-        | 'state-sync-commit-ack'
-    envelope:
-        | CommandDispatchEnvelope
-        | CommandEventEnvelope
-        | ProjectionMirrorEnvelope
-        | RequestLifecycleSnapshotEnvelope
-        | StateSyncSummaryEnvelope
-        | StateSyncDiffEnvelope
-        | StateSyncCommitAckEnvelope
+    type: 'command-dispatch'
+    envelope: CommandDispatchEnvelope
+}
+
+export interface CommandEventMessage {
+    type: 'command-event'
+    envelope: CommandEventEnvelope
+}
+
+export interface ProjectionMirrorMessage {
+    type: 'projection-mirror'
+    envelope: ProjectionMirrorEnvelope
+}
+
+export interface RequestLifecycleSnapshotMessage {
+    type: 'request-lifecycle-snapshot'
+    envelope: RequestLifecycleSnapshotEnvelope
+}
+
+export interface StateSyncSummaryMessage {
+    type: 'state-sync-summary'
+    envelope: StateSyncSummaryEnvelope
+}
+
+export interface StateSyncDiffMessage {
+    type: 'state-sync-diff'
+    envelope: StateSyncDiffEnvelope
+}
+
+export interface StateSyncCommitAckMessage {
+    type: 'state-sync-commit-ack'
+    envelope: StateSyncCommitAckEnvelope
 }
 
 export interface HelloEnvelopeMessage {
@@ -123,12 +139,24 @@ export type DualTopologyIncomingMessage =
     | ResumeBeginEnvelopeMessage
     | ResumeCompleteEnvelopeMessage
     | RelayEnvelopeMessage
+    | CommandEventMessage
+    | ProjectionMirrorMessage
+    | RequestLifecycleSnapshotMessage
+    | StateSyncSummaryMessage
+    | StateSyncDiffMessage
+    | StateSyncCommitAckMessage
 
 export type DualTopologyOutgoingMessage =
     | HeartbeatEnvelope
     | HelloAckEnvelopeMessage
     | ResumeBeginEnvelopeMessage
     | RelayEnvelopeMessage
+    | CommandEventMessage
+    | ProjectionMirrorMessage
+    | RequestLifecycleSnapshotMessage
+    | StateSyncSummaryMessage
+    | StateSyncDiffMessage
+    | StateSyncCommitAckMessage
 
 export interface HostConnectionContext {
     connectionId: string

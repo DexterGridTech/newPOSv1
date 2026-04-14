@@ -3,11 +3,9 @@ import {Observable, Subject} from 'rxjs'
 import {
     createAppError,
     nowTimestampMs,
-    type ParameterCatalogEntry,
     type RequestId,
 } from '@impos2/kernel-base-contracts'
 import {
-    createCommand,
     selectRuntimeShellV2ParameterCatalog,
     type ActorExecutionContext,
     type RuntimeModuleContextV2,
@@ -15,14 +13,17 @@ import {
 import type {
     RunWorkflowInput,
     RunWorkflowSummary,
-    WorkflowContextSnapshot,
     WorkflowDefinition,
+    WorkflowDefinitionsBySource,
     WorkflowObservation,
     WorkflowRuntimeFacadeV2,
     WorkflowStepDefinition,
     WorkflowStepObservation,
 } from '../types'
-import {workflowRuntimeV2StateActions} from '../features/slices'
+import {
+    workflowRuntimeV2StateActions,
+    WORKFLOW_OBSERVATIONS_STATE_KEY,
+} from '../features/slices'
 import {
     selectWorkflowDefinitionsBySource,
     selectWorkflowObservationByRequestId,
@@ -36,7 +37,7 @@ import {
     createExecutionFailedError,
     createInitialObservation,
     createStepFailedError,
-    createStepObservation,
+    createWorkflowStepRunId,
     createWorkflowEvent,
     createWorkflowRunId,
     patchObservation,
@@ -52,205 +53,42 @@ import {
     resolveWorkflowInput,
 } from './scriptRuntime'
 import {
-    executeExternalCall,
-    executeExternalOn,
-    executeExternalSubscribe,
-} from './connectorRuntime'
+    findWorkflowStep,
+    getProgressTotal,
+    resolveWorkflowOutput,
+} from './engineStep'
+import {
+    executeWorkflowStepRawOutput,
+    type ResolvedWorkflowStepInput,
+} from './engineStepExecutor'
+import {
+    markStepCompensating,
+    markStepCompleted,
+    markStepFailed,
+    markStepRetrying,
+    markStepSkipped,
+    markStepStarted,
+} from './engineTransitions'
+import {
+    cloneObservation,
+    isTerminalObservation,
+    isTimeoutError,
+    toParameterNumber,
+    toTerminalSummary,
+    trimEvents,
+    withTimeout,
+} from './engineObservation'
+import {
+    collectRetainedRequestIds,
+    createTerminalPromise,
+    type WorkflowRunRecord,
+} from './engineRunState'
 import type {WorkflowRuntimeRegistryRecord} from './runtime'
-
-interface RunRecord {
-    input: RunWorkflowInput
-    subject: Subject<WorkflowObservation>
-    actorContext?: ActorExecutionContext
-    started: boolean
-    settled: boolean
-    resolveTerminal?: (observation: WorkflowObservation) => void
-    rejectTerminal?: (error: unknown) => void
-}
-
-const terminalStatuses = new Set<WorkflowObservation['status']>([
-    'COMPLETED',
-    'FAILED',
-    'CANCELLED',
-    'TIMED_OUT',
-])
-
-const cloneObservation = (observation: WorkflowObservation): WorkflowObservation => ({
-    ...observation,
-    progress: {...observation.progress},
-    context: {
-        ...observation.context,
-        variables: {...observation.context.variables},
-        stepOutputs: {...observation.context.stepOutputs},
-    },
-    steps: Object.fromEntries(
-        Object.entries(observation.steps).map(([stepKey, step]) => [stepKey, {...step}]),
-    ),
-    events: [...observation.events],
-})
-
-const trimEvents = (
-    events: readonly WorkflowObservation['events'][number][],
-    limit: number,
-) => {
-    if (limit <= 0 || events.length <= limit) {
-        return [...events]
-    }
-    return events.slice(events.length - limit)
-}
-
-const toTerminalSummary = (observation: WorkflowObservation): RunWorkflowSummary => ({
-    requestId: observation.requestId,
-    workflowRunId: observation.workflowRunId,
-    workflowKey: observation.workflowKey,
-    status: observation.status as RunWorkflowSummary['status'],
-    result: {
-        output: observation.output,
-        variables: observation.context.variables,
-        stepOutputs: observation.context.stepOutputs,
-    },
-    error: observation.error,
-    completedAt: observation.completedAt,
-})
-
-const isTerminalObservation = (observation: WorkflowObservation) =>
-    terminalStatuses.has(observation.status)
-
-const isTimeoutError = (error: unknown): boolean => {
-    if (typeof error !== 'object' || error == null || !('details' in error)) {
-        return false
-    }
-
-    const details = (error as {details?: unknown}).details
-    if (typeof details !== 'object' || details == null || !('reason' in details)) {
-        return false
-    }
-
-    const reason = (details as {reason?: unknown}).reason
-    return reason === 'step-timeout' || reason === 'workflow-timeout' || reason === 'timeout'
-}
-
-const withTimeout = async <T>(input: {
-    promise: Promise<T>
-    timeoutMs?: number
-    stepKey: string
-    type: 'step' | 'workflow'
-}): Promise<T> => {
-    if (!input.timeoutMs || input.timeoutMs <= 0) {
-        return input.promise
-    }
-
-    let timer: ReturnType<typeof setTimeout> | undefined
-    try {
-        return await Promise.race([
-            input.promise,
-            new Promise<T>((_, reject) => {
-                timer = setTimeout(() => {
-                    reject(createAppError(
-                        workflowRuntimeV2ErrorDefinitions.workflowStepFailed,
-                        {
-                            args: {stepKey: input.stepKey},
-                            details: {
-                                reason: `${input.type}-timeout`,
-                                timeoutMs: input.timeoutMs,
-                            },
-                        },
-                    ))
-                }, input.timeoutMs)
-            }),
-        ])
-    } finally {
-        if (timer) {
-            clearTimeout(timer)
-        }
-    }
-}
-
-const getProgressTotal = (step: WorkflowStepDefinition): number => {
-    if (step.type !== 'flow' || !step.steps?.length) {
-        return 1
-    }
-    return step.steps.reduce((sum, child) => sum + getProgressTotal(child), 0)
-}
-
-const findWorkflowStep = (
-    step: WorkflowStepDefinition,
-    stepKey: string,
-): WorkflowStepDefinition | undefined => {
-    if (step.stepKey === stepKey) {
-        return step
-    }
-    for (const child of step.steps ?? []) {
-        const matched = findWorkflowStep(child, stepKey)
-        if (matched) {
-            return matched
-        }
-    }
-    return undefined
-}
-
-const resolveWorkflowOutput = (
-    definition: WorkflowDefinition,
-    observation: WorkflowObservation,
-): unknown => {
-    const rootOutput = observation.context.stepOutputs[definition.rootStep.stepKey]
-    if (rootOutput !== undefined) {
-        return rootOutput
-    }
-
-    if (definition.rootStep.type === 'flow') {
-        const completedChild = [...(definition.rootStep.steps ?? [])]
-            .reverse()
-            .find(child => observation.steps[child.stepKey]?.status === 'COMPLETED')
-        if (completedChild) {
-            return observation.context.stepOutputs[completedChild.stepKey]
-        }
-    }
-
-    return observation.output
-}
-
-const aggregateCommandStepOutput = (result: Awaited<ReturnType<ActorExecutionContext['dispatchCommand']>>) => {
-    const completedActorResults = result.actorResults
-        .filter(item => item.status === 'COMPLETED')
-        .map(item => ({
-            actorKey: item.actorKey,
-            result: item.result,
-        }))
-
-    if (completedActorResults.length === 1) {
-        return completedActorResults[0]?.result
-    }
-
-    return {
-        status: result.status,
-        actorResults: completedActorResults,
-    }
-}
-
-const createTerminalPromise = (
-    run: RunRecord,
-): Promise<WorkflowObservation> => {
-    return new Promise<WorkflowObservation>((resolve, reject) => {
-        run.resolveTerminal = resolve
-        run.rejectTerminal = reject
-    })
-}
-
-const toParameterNumber = (
-    catalog: Record<string, ParameterCatalogEntry>,
-    key: string,
-    fallback: number,
-): number => {
-    const raw = catalog[key]?.rawValue
-    return typeof raw === 'number' && Number.isFinite(raw) && raw > 0
-        ? raw
-        : fallback
-}
 
 export const createWorkflowEngineV2 = (input: {
     context: RuntimeModuleContextV2
     registry: WorkflowRuntimeRegistryRecord
+    runtimePlatform?: WorkflowDefinition['platform']
 }): {
     runtime: WorkflowRuntimeFacadeV2
     runFromCommand(
@@ -259,13 +97,13 @@ export const createWorkflowEngineV2 = (input: {
     ): Promise<RunWorkflowSummary>
     registerDefinitions(definitions: WorkflowDefinition[], source: 'module' | 'host' | 'remote' | 'test'): void
     removeDefinition(input: {workflowKey: string; definitionId?: string; source?: 'module' | 'host' | 'remote' | 'test'}): void
-    cancel(input: {requestId?: RequestId; workflowRunId?: string; reason?: string}): void
+    cancel(input: {requestId?: RequestId; workflowRunId?: WorkflowObservation['workflowRunId']; reason?: string}): void
 } => {
-    const {context, registry} = input
+    const {context, registry, runtimePlatform} = input
     const observersByRequestId = new Map<string, Set<Subject<WorkflowObservation>>>()
-    const queue: RunRecord[] = []
-    const runsByRequestId = new Map<RequestId, RunRecord>()
-    let activeRun: RunRecord | undefined
+    const queue: WorkflowRunRecord[] = []
+    const runsByRequestId = new Map<RequestId, WorkflowRunRecord>()
+    let activeRun: WorkflowRunRecord | undefined
 
     const getParameterCatalog = () =>
         selectRuntimeShellV2ParameterCatalog(context.getState())
@@ -282,6 +120,13 @@ export const createWorkflowEngineV2 = (input: {
             getParameterCatalog(),
             workflowRuntimeV2ParameterDefinitions.queueSizeLimit.key,
             workflowRuntimeV2ParameterDefinitions.queueSizeLimit.defaultValue,
+        )
+
+    const getCompletedObservationLimit = () =>
+        toParameterNumber(
+            getParameterCatalog(),
+            workflowRuntimeV2ParameterDefinitions.completedObservationLimit.key,
+            workflowRuntimeV2ParameterDefinitions.completedObservationLimit.defaultValue,
         )
 
     const normalizeObservation = (observation: WorkflowObservation): WorkflowObservation => ({
@@ -314,6 +159,34 @@ export const createWorkflowEngineV2 = (input: {
         }
     }
 
+    const trimCompletedObservations = () => {
+        const limit = getCompletedObservationLimit()
+        const observations =
+            (
+                context.getState()[WORKFLOW_OBSERVATIONS_STATE_KEY as keyof ReturnType<RuntimeModuleContextV2['getState']>] as
+                    | {byRequestId: Record<string, WorkflowObservation>}
+                    | undefined
+            )?.byRequestId ?? {}
+        const activeRequestIds = new Set<RequestId>([
+            ...queue.map(item => item.input.requestId),
+            ...(activeRun ? [activeRun.input.requestId] : []),
+        ])
+        const retainRequestIds = collectRetainedRequestIds({
+            observations,
+            activeRequestIds,
+            completedObservationLimit: limit,
+        })
+
+        if (retainRequestIds.length === Object.keys(observations).length) {
+            return
+        }
+
+        context.dispatchAction(workflowRuntimeV2StateActions.trimTerminalObservations({
+            retainRequestIds,
+            updatedAt: nowTimestampMs(),
+        }))
+    }
+
     registry.addObserver = (requestId, listener) => {
         const subject = new Subject<WorkflowObservation>()
         const listeners = observersByRequestId.get(requestId) ?? new Set<Subject<WorkflowObservation>>()
@@ -341,7 +214,7 @@ export const createWorkflowEngineV2 = (input: {
         }))
 
         queue.forEach((item, index) => {
-            const current = selectWorkflowObservationByRequestId(context.getState() as any, item.input.requestId)
+            const current = selectWorkflowObservationByRequestId(context.getState(), item.input.requestId)
             if (!current || isTerminalObservation(current)) {
                 return
             }
@@ -353,7 +226,7 @@ export const createWorkflowEngineV2 = (input: {
         })
     }
 
-    const settleRun = (run: RunRecord, observation: WorkflowObservation) => {
+    const settleRun = (run: WorkflowRunRecord, observation: WorkflowObservation) => {
         if (run.settled) {
             return
         }
@@ -375,19 +248,20 @@ export const createWorkflowEngineV2 = (input: {
         }
 
         updateQueueState()
+        trimCompletedObservations()
         void startNext()
     }
 
     const createFailedObservation = (failure: {
         requestId: RequestId
-        workflowRunId: string
+        workflowRunId: WorkflowObservation['workflowRunId']
         workflowKey: string
         error: ReturnType<typeof createAppError>
         contextInput?: unknown
     }): WorkflowObservation => {
         const base = createInitialObservation({
             requestId: failure.requestId,
-            workflowRunId: failure.workflowRunId as any,
+            workflowRunId: failure.workflowRunId,
             workflowKey: failure.workflowKey,
             status: 'RUNNING',
             contextInput: failure.contextInput,
@@ -413,7 +287,7 @@ export const createWorkflowEngineV2 = (input: {
     }
 
     const failBeforeStart = (
-        run: RunRecord,
+        run: WorkflowRunRecord,
         error: ReturnType<typeof createAppError>,
     ) => {
         settleRun(run, createFailedObservation({
@@ -440,8 +314,8 @@ export const createWorkflowEngineV2 = (input: {
     }
 
     const resolveDefinition = (workflowKey: string) => {
-        const bySource = selectWorkflowDefinitionsBySource(context.getState() as any)
-        const resolved = resolveWorkflowDefinitionFromSources(bySource, workflowKey)
+        const bySource = selectWorkflowDefinitionsBySource(context.getState()) as WorkflowDefinitionsBySource | undefined
+        const resolved = resolveWorkflowDefinitionFromSources(bySource, workflowKey, runtimePlatform)
         if (resolved) {
             if (!resolved.enabled) {
                 throw createDefinitionDisabledError(workflowKey)
@@ -456,7 +330,7 @@ export const createWorkflowEngineV2 = (input: {
 
     const resolveWorkflowTimeoutMs = (
         definition: WorkflowDefinition,
-        run: RunRecord,
+        run: WorkflowRunRecord,
     ): number | undefined => {
         const runtimeOptionTimeout = run.input.options?.timeoutMs
         if (typeof runtimeOptionTimeout === 'number' && runtimeOptionTimeout > 0) {
@@ -551,47 +425,23 @@ export const createWorkflowEngineV2 = (input: {
     }
 
     const executeLeafStep = async (
-        run: RunRecord,
+        run: WorkflowRunRecord,
         definition: WorkflowDefinition,
         observation: WorkflowObservation,
         step: WorkflowStepDefinition,
         progress: {current: number; total: number},
     ): Promise<WorkflowObservation> => {
         if (run.settled) {
-            return selectWorkflowObservationByRequestId(context.getState() as any, run.input.requestId) ?? observation
+            return selectWorkflowObservationByRequestId(context.getState(), run.input.requestId) ?? observation
         }
 
-        const stepRunId = createWorkflowRunId() as unknown as WorkflowStepObservation['stepRunId']
-        const startedAt = nowTimestampMs()
-        let nextObservation = patchObservation(
+        const stepRunId = createWorkflowStepRunId()
+        let nextObservation = markStepStarted({
             observation,
-            {
-                status: 'RUNNING',
-                progress: {
-                    ...observation.progress,
-                    total: progress.total,
-                    activeStepKey: step.stepKey,
-                },
-                steps: {
-                    ...observation.steps,
-                    [step.stepKey]: {
-                        ...createStepObservation(step),
-                        stepRunId,
-                        status: 'RUNNING',
-                        startedAt,
-                        updatedAt: startedAt,
-                    },
-                },
-                updatedAt: startedAt,
-            },
-            createWorkflowEvent({
-                requestId: run.input.requestId,
-                workflowRunId: observation.workflowRunId,
-                stepKey: step.stepKey,
-                type: 'step.started',
-                occurredAt: startedAt,
-            }),
-        )
+            step,
+            stepRunId,
+            progressTotal: progress.total,
+        })
         notify(nextObservation)
 
         try {
@@ -602,38 +452,11 @@ export const createWorkflowEngineV2 = (input: {
             })
 
             if (!conditionPassed) {
-                progress.current += 1
-                const skippedAt = nowTimestampMs()
-                nextObservation = patchObservation(
-                    nextObservation,
-                    {
-                        progress: {
-                            current: progress.current,
-                            total: progress.total,
-                            percent: progress.total > 0
-                                ? Math.round((progress.current / progress.total) * 100)
-                                : 100,
-                            activeStepKey: step.stepKey,
-                        },
-                        steps: {
-                            ...nextObservation.steps,
-                            [step.stepKey]: {
-                                ...nextObservation.steps[step.stepKey],
-                                status: 'SKIPPED',
-                                completedAt: skippedAt,
-                                updatedAt: skippedAt,
-                            },
-                        },
-                        updatedAt: skippedAt,
-                    },
-                    createWorkflowEvent({
-                        requestId: run.input.requestId,
-                        workflowRunId: nextObservation.workflowRunId,
-                        stepKey: step.stepKey,
-                        type: 'step.skipped',
-                        occurredAt: skippedAt,
-                    }),
-                )
+                nextObservation = markStepSkipped({
+                    observation: nextObservation,
+                    step,
+                    progress,
+                })
                 notify(nextObservation)
                 return nextObservation
             }
@@ -643,18 +466,7 @@ export const createWorkflowEngineV2 = (input: {
                 platformPorts: context.platformPorts,
                 mapping: step.input,
                 context: nextObservation.context,
-            }) as {
-                commandName?: string
-                payload?: unknown
-                output?: unknown
-                delayMs?: number
-                channel?: Record<string, unknown>
-                action?: string
-                eventType?: string
-                timeoutMs?: number
-                target?: string
-                params?: Record<string, unknown>
-            } | undefined
+            }) as ResolvedWorkflowStepInput | undefined
 
             let attempt = 0
             const maxRetries = step.strategy?.onError === 'retry'
@@ -664,111 +476,23 @@ export const createWorkflowEngineV2 = (input: {
 
             while (true) {
                 try {
-                    if (step.type === 'command') {
-                        const commandInput = stepInput
-                        const commandName = commandInput?.commandName
-                        if (!commandName) {
-                            throw createStepFailedError(step.stepKey, {reason: 'missing commandName'})
-                        }
-                        if (!run.actorContext) {
-                            throw createStepFailedError(step.stepKey, {reason: 'missing actor context'})
-                        }
-
-                        const result = await withTimeout({
-                            promise: run.actorContext.dispatchCommand(createCommand({
-                                moduleName: commandName.split('.').slice(0, -1).join('.') || 'external',
-                                commandName,
-                                visibility: 'public',
-                                timeoutMs: 60_000,
-                                allowNoActor: false,
-                                allowReentry: false,
-                                defaultTarget: 'local',
-                            }, commandInput?.payload ?? {})),
-                            timeoutMs: resolvedStepTimeoutMs,
-                            stepKey: step.stepKey,
-                            type: 'step',
-                        })
-
-                        if (result.status === 'FAILED' || result.status === 'PARTIAL_FAILED' || result.status === 'TIMEOUT') {
-                            throw createStepFailedError(step.stepKey, result)
-                        }
-                        rawOutput = aggregateCommandStepOutput(result)
-                    } else if (step.type === 'external-call') {
-                        rawOutput = await withTimeout({
-                            promise: executeExternalCall({
-                                platformPorts: context.platformPorts,
-                                stepKey: step.stepKey,
-                                payload: stepInput,
-                            }),
-                            timeoutMs: resolvedStepTimeoutMs,
-                            stepKey: step.stepKey,
-                            type: 'step',
-                        })
-                    } else if (step.type === 'external-subscribe') {
-                        rawOutput = await withTimeout({
-                            promise: executeExternalSubscribe({
-                                platformPorts: context.platformPorts,
-                                stepKey: step.stepKey,
-                                payload: stepInput,
-                            }),
-                            timeoutMs: resolvedStepTimeoutMs,
-                            stepKey: step.stepKey,
-                            type: 'step',
-                        })
-                    } else if (step.type === 'external-on') {
-                        rawOutput = await withTimeout({
-                            promise: executeExternalOn({
-                                platformPorts: context.platformPorts,
-                                stepKey: step.stepKey,
-                                payload: stepInput,
-                            }),
-                            timeoutMs: resolvedStepTimeoutMs,
-                            stepKey: step.stepKey,
-                            type: 'step',
-                        })
-                    } else {
-                        rawOutput = await withTimeout({
-                            promise: (async () => {
-                                if (typeof stepInput?.delayMs === 'number' && stepInput.delayMs > 0) {
-                                    await delay(stepInput.delayMs)
-                                }
-                                return stepInput?.output ?? stepInput ?? {}
-                            })(),
-                            timeoutMs: resolvedStepTimeoutMs,
-                            stepKey: step.stepKey,
-                            type: 'step',
-                        })
-                    }
+                    rawOutput = await executeWorkflowStepRawOutput({
+                        run,
+                        step,
+                        stepInput,
+                        resolvedStepTimeoutMs,
+                        platformPorts: context.platformPorts,
+                    })
                     break
                 } catch (error) {
                     if (attempt < maxRetries) {
                         attempt += 1
-                        const retryAt = nowTimestampMs()
-                        nextObservation = patchObservation(
-                            nextObservation,
-                            {
-                                steps: {
-                                    ...nextObservation.steps,
-                                    [step.stepKey]: {
-                                        ...nextObservation.steps[step.stepKey],
-                                        retryCount: attempt,
-                                        updatedAt: retryAt,
-                                    },
-                                },
-                                updatedAt: retryAt,
-                            },
-                            createWorkflowEvent({
-                                requestId: run.input.requestId,
-                                workflowRunId: nextObservation.workflowRunId,
-                                stepKey: step.stepKey,
-                                type: 'step.retrying',
-                                payload: {
-                                    attempt,
-                                    maxRetries,
-                                },
-                                occurredAt: retryAt,
-                            }),
-                        )
+                        nextObservation = markStepRetrying({
+                            observation: nextObservation,
+                            step,
+                            attempt,
+                            maxRetries,
+                        })
                         notify(nextObservation)
                         if (step.strategy?.retry?.intervalMs) {
                             await delay(step.strategy.retry.intervalMs)
@@ -780,7 +504,7 @@ export const createWorkflowEngineV2 = (input: {
             }
 
             if (run.settled) {
-                return selectWorkflowObservationByRequestId(context.getState() as any, run.input.requestId) ?? nextObservation
+                return selectWorkflowObservationByRequestId(context.getState(), run.input.requestId) ?? nextObservation
             }
 
             const outputResolution = await applyWorkflowOutput({
@@ -790,57 +514,18 @@ export const createWorkflowEngineV2 = (input: {
                 context: nextObservation.context,
             })
 
-            progress.current += 1
-            const completedAt = nowTimestampMs()
-            nextObservation = patchObservation(
-                nextObservation,
-                {
-                    progress: {
-                        current: progress.current,
-                        total: progress.total,
-                        percent: progress.total > 0
-                            ? Math.round((progress.current / progress.total) * 100)
-                            : 100,
-                        activeStepKey: step.stepKey,
-                    },
-                    steps: {
-                        ...nextObservation.steps,
-                        [step.stepKey]: {
-                            ...nextObservation.steps[step.stepKey],
-                            status: 'COMPLETED',
-                            output: outputResolution.output,
-                            completedAt,
-                            updatedAt: completedAt,
-                        },
-                    },
-                    context: {
-                        ...nextObservation.context,
-                        variables: {
-                            ...nextObservation.context.variables,
-                            ...outputResolution.variablesPatch,
-                        },
-                        stepOutputs: {
-                            ...nextObservation.context.stepOutputs,
-                            [step.stepKey]: outputResolution.output,
-                        },
-                        updatedAt: completedAt,
-                    },
-                    updatedAt: completedAt,
-                },
-                createWorkflowEvent({
-                    requestId: run.input.requestId,
-                    workflowRunId: nextObservation.workflowRunId,
-                    stepKey: step.stepKey,
-                    type: 'step.completed',
-                    payload: outputResolution.output,
-                    occurredAt: completedAt,
-                }),
-            )
+            nextObservation = markStepCompleted({
+                observation: nextObservation,
+                step,
+                progress,
+                output: outputResolution.output,
+                variablesPatch: outputResolution.variablesPatch,
+            })
             notify(nextObservation)
             return nextObservation
         } catch (error) {
             if (run.settled) {
-                return selectWorkflowObservationByRequestId(context.getState() as any, run.input.requestId) ?? nextObservation
+                return selectWorkflowObservationByRequestId(context.getState(), run.input.requestId) ?? nextObservation
             }
 
             const appError = toAppError(error, step.stepKey)
@@ -848,39 +533,12 @@ export const createWorkflowEngineV2 = (input: {
             const failedAt = nowTimestampMs()
 
             if (step.strategy?.onError === 'skip') {
-                progress.current += 1
-                nextObservation = patchObservation(
-                    nextObservation,
-                    {
-                        progress: {
-                            current: progress.current,
-                            total: progress.total,
-                            percent: progress.total > 0
-                                ? Math.round((progress.current / progress.total) * 100)
-                                : 100,
-                            activeStepKey: step.stepKey,
-                        },
-                        steps: {
-                            ...nextObservation.steps,
-                            [step.stepKey]: {
-                                ...nextObservation.steps[step.stepKey],
-                                status: 'SKIPPED',
-                                error: errorView,
-                                completedAt: failedAt,
-                                updatedAt: failedAt,
-                            },
-                        },
-                        updatedAt: failedAt,
-                    },
-                    createWorkflowEvent({
-                        requestId: run.input.requestId,
-                        workflowRunId: nextObservation.workflowRunId,
-                        stepKey: step.stepKey,
-                        type: 'step.skipped',
-                        error: errorView,
-                        occurredAt: failedAt,
-                    }),
-                )
+                nextObservation = markStepSkipped({
+                    observation: nextObservation,
+                    step,
+                    progress,
+                    error: errorView,
+                })
                 notify(nextObservation)
                 return nextObservation
             }
@@ -888,33 +546,12 @@ export const createWorkflowEngineV2 = (input: {
             if (step.strategy?.onError === 'compensate' && step.strategy.compensationStepKey) {
                 const compensationStep = findWorkflowStep(definition.rootStep, step.strategy.compensationStepKey)
                 if (compensationStep && compensationStep.stepKey !== step.stepKey) {
-                    const compensatingAt = nowTimestampMs()
-                    nextObservation = patchObservation(
-                        nextObservation,
-                        {
-                            steps: {
-                                ...nextObservation.steps,
-                                [step.stepKey]: {
-                                    ...nextObservation.steps[step.stepKey],
-                                    status: 'FAILED',
-                                    error: errorView,
-                                    updatedAt: compensatingAt,
-                                },
-                            },
-                            updatedAt: compensatingAt,
-                        },
-                        createWorkflowEvent({
-                            requestId: run.input.requestId,
-                            workflowRunId: nextObservation.workflowRunId,
-                            stepKey: step.stepKey,
-                            type: 'step.compensating',
-                            payload: {
-                                compensationStepKey: compensationStep.stepKey,
-                            },
-                            error: errorView,
-                            occurredAt: compensatingAt,
-                        }),
-                    )
+                    nextObservation = markStepCompensating({
+                        observation: nextObservation,
+                        step,
+                        compensationStepKey: compensationStep.stepKey,
+                        error: errorView,
+                    })
                     notify(nextObservation)
 
                     const compensatedObservation = await executeStep(
@@ -929,36 +566,11 @@ export const createWorkflowEngineV2 = (input: {
                         return compensatedObservation
                     }
 
-                    const finalFailedAt = nowTimestampMs()
-                    const failedObservation = patchObservation(
-                        compensatedObservation,
-                        {
-                            status: 'FAILED',
-                            error: errorView,
-                            completedAt: finalFailedAt,
-                            updatedAt: finalFailedAt,
-                        },
-                        createWorkflowEvent({
-                            requestId: run.input.requestId,
-                            workflowRunId: compensatedObservation.workflowRunId,
-                            stepKey: step.stepKey,
-                            type: 'step.failed',
-                            error: errorView,
-                            occurredAt: finalFailedAt,
-                        }),
-                    )
-
-                    return patchObservation(
-                        failedObservation,
-                        {},
-                        createWorkflowEvent({
-                            requestId: run.input.requestId,
-                            workflowRunId: compensatedObservation.workflowRunId,
-                            type: 'workflow.failed',
-                            error: errorView,
-                            occurredAt: finalFailedAt,
-                        }),
-                    )
+                    return markStepFailed({
+                        observation: compensatedObservation,
+                        step,
+                        error: errorView,
+                    })
                 }
             }
 
@@ -971,49 +583,17 @@ export const createWorkflowEngineV2 = (input: {
                 })
             }
 
-            nextObservation = patchObservation(
-                nextObservation,
-                {
-                    status: 'FAILED',
-                    error: errorView,
-                    steps: {
-                        ...nextObservation.steps,
-                        [step.stepKey]: {
-                            ...nextObservation.steps[step.stepKey],
-                            status: 'FAILED',
-                            error: errorView,
-                            updatedAt: failedAt,
-                        },
-                    },
-                    completedAt: failedAt,
-                    updatedAt: failedAt,
-                },
-                createWorkflowEvent({
-                    requestId: run.input.requestId,
-                    workflowRunId: nextObservation.workflowRunId,
-                    stepKey: step.stepKey,
-                    type: 'step.failed',
-                    error: errorView,
-                    occurredAt: failedAt,
-                }),
-            )
-
-            return patchObservation(
-                nextObservation,
-                {},
-                createWorkflowEvent({
-                    requestId: run.input.requestId,
-                    workflowRunId: nextObservation.workflowRunId,
-                    type: 'workflow.failed',
-                    error: errorView,
-                    occurredAt: failedAt,
-                }),
-            )
+            return markStepFailed({
+                observation: nextObservation,
+                step,
+                error: errorView,
+                completedAt: failedAt,
+            })
         }
     }
 
     const executeStep = async (
-        run: RunRecord,
+        run: WorkflowRunRecord,
         definition: WorkflowDefinition,
         observation: WorkflowObservation,
         step: WorkflowStepDefinition,
@@ -1032,7 +612,7 @@ export const createWorkflowEngineV2 = (input: {
         return await executeLeafStep(run, definition, observation, step, progress)
     }
 
-    const runActive = async (run: RunRecord) => {
+    const runActive = async (run: WorkflowRunRecord) => {
         let definition: WorkflowDefinition
         try {
             definition = resolveDefinition(run.input.workflowKey)
@@ -1046,7 +626,7 @@ export const createWorkflowEngineV2 = (input: {
             return
         }
 
-        let observation = selectWorkflowObservationByRequestId(context.getState() as any, run.input.requestId)
+        let observation = selectWorkflowObservationByRequestId(context.getState(), run.input.requestId)
             ?? createInitialObservation({
                 requestId: run.input.requestId,
                 workflowRunId: run.input.workflowRunId ?? createWorkflowRunId(),
@@ -1150,7 +730,7 @@ export const createWorkflowEngineV2 = (input: {
         await runActive(activeRun)
     }
 
-    const enqueue = (run: RunRecord) => {
+    const enqueue = (run: WorkflowRunRecord) => {
         if (run.started) {
             return
         }
@@ -1190,13 +770,13 @@ export const createWorkflowEngineV2 = (input: {
     const createRunRecord = (
         runInput: RunWorkflowInput,
         actorContext?: ActorExecutionContext,
-    ): RunRecord => {
+    ): WorkflowRunRecord => {
         if (runsByRequestId.has(runInput.requestId)) {
             throw createDuplicateRequestError(runInput.requestId)
         }
 
         const workflowRunId = runInput.workflowRunId ?? createWorkflowRunId()
-        const run: RunRecord = {
+        const run: WorkflowRunRecord = {
             input: {
                 ...runInput,
                 workflowRunId,
@@ -1216,7 +796,7 @@ export const createWorkflowEngineV2 = (input: {
             return new Observable<WorkflowObservation>(subscriber => {
                 const subscription = run.subject.subscribe(subscriber)
                 enqueue(run)
-                const current = selectWorkflowObservationByRequestId(context.getState() as any, run.input.requestId)
+                const current = selectWorkflowObservationByRequestId(context.getState(), run.input.requestId)
                 if (current) {
                     subscriber.next(cloneObservation(current))
                     if (isTerminalObservation(current)) {
@@ -1229,7 +809,7 @@ export const createWorkflowEngineV2 = (input: {
         cancel(cancelInput) {
             const requestId = cancelInput.requestId
                 ?? [...runsByRequestId.keys()].find(id => {
-                    const observation = selectWorkflowObservationByRequestId(context.getState() as any, id)
+                    const observation = selectWorkflowObservationByRequestId(context.getState(), id)
                     return observation?.workflowRunId === cancelInput.workflowRunId
                 })
 
@@ -1243,7 +823,7 @@ export const createWorkflowEngineV2 = (input: {
                 : activeRun?.input.requestId === requestId
                     ? activeRun
                     : undefined
-            const current = selectWorkflowObservationByRequestId(context.getState() as any, requestId)
+            const current = selectWorkflowObservationByRequestId(context.getState(), requestId)
             if (!run || !current) {
                 return
             }
@@ -1270,7 +850,7 @@ export const createWorkflowEngineV2 = (input: {
             )
         },
         getObservation(requestId) {
-            return selectWorkflowObservationByRequestId(context.getState() as any, requestId)
+            return selectWorkflowObservationByRequestId(context.getState(), requestId)
         },
         async registerDefinitions(inputValue) {
             context.dispatchAction(workflowRuntimeV2StateActions.registerDefinitions(inputValue))
@@ -1302,7 +882,7 @@ export const createWorkflowEngineV2 = (input: {
             context.dispatchAction(workflowRuntimeV2StateActions.removeDefinition(removeInput))
         },
         cancel(inputValue) {
-            runtime.cancel(inputValue as any)
+            runtime.cancel(inputValue)
         },
     }
 }

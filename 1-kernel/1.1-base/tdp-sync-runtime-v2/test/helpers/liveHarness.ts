@@ -3,6 +3,10 @@ import type {ParameterCatalogEntry} from '@impos2/kernel-base-contracts'
 import {createLoggerPort, createPlatformPorts} from '@impos2/kernel-base-platform-ports'
 import {createKernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
 import {
+    kernelBaseTestServerConfig,
+    SERVER_NAME_MOCK_TERMINAL_PLATFORM,
+} from '@impos2/kernel-server-config-v2'
+import {
     createHttpRuntime,
     createSocketRuntime,
     type HttpTransport,
@@ -10,16 +14,19 @@ import {
 } from '@impos2/kernel-base-transport-runtime'
 import {
     createTcpControlRuntimeModuleV2,
+    selectTcpBindingSnapshot,
     tcpControlV2CommandDefinitions,
+    selectTcpTerminalId,
 } from '@impos2/kernel-base-tcp-control-runtime-v2'
 import {
     createTdpSyncRuntimeModuleV2,
     tdpSyncV2SocketProfile,
     type CreateTdpSyncRuntimeModuleV2Input,
 } from '../../src'
-import {createMockTerminalPlatformTestServer} from '/Users/dexter/Documents/workspace/idea/newPOSv1/0-mock-server/mock-terminal-platform/server/src/test/createMockTerminalPlatformTestServer'
-import {createNodeWsTransport} from '/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-base/transport-runtime/test/helpers/nodeWsTransport'
-import {createFileStoragePair, createMemoryStorage} from '/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-base/tdp-sync-runtime/test/helpers/runtimeHarness'
+import {createMockTerminalPlatformTestServer} from '../../../../../0-mock-server/mock-terminal-platform/server/src/test/createMockTerminalPlatformTestServer'
+import {createNodeWsTransport} from '../../../transport-runtime/test/helpers/nodeWsTransport'
+import {createFileStoragePair, createMemoryStorage} from '../../../../test-support/storageHarness'
+import {resolveTransportServers} from '../../../../test-support/serverConfig'
 
 type ApiEnvelope<T> =
     | {success: true; data: T}
@@ -91,6 +98,10 @@ export const createLivePlatform = async () => {
             sessions: () => fetchJson<any[]>(`${baseUrl}/api/v1/admin/tdp/sessions`),
             projections: () => fetchJson<any[]>(`${baseUrl}/api/v1/admin/tdp/projections`),
             changeLogs: () => fetchJson<any[]>(`${baseUrl}/api/v1/admin/tdp/change-logs`),
+            commandOutbox: () => fetchJson<any[]>(`${baseUrl}/api/v1/admin/tdp/commands`),
+            terminals: () => fetchJson<any[]>(`${baseUrl}/api/v1/admin/terminals`),
+            taskReleases: () => fetchJson<any[]>(`${baseUrl}/api/v1/admin/tasks/releases`),
+            taskInstances: () => fetchJson<any[]>(`${baseUrl}/api/v1/admin/tasks/instances`),
             upsertProjection: (body: Record<string, unknown>) => fetchJson<any>(
                 `${baseUrl}/api/v1/admin/tdp/projections/upsert`,
                 {
@@ -111,6 +122,37 @@ export const createLivePlatform = async () => {
                     method: 'POST',
                     body: JSON.stringify(body),
                 },
+            ),
+            edgeDegraded: (sessionId: string, body: Record<string, unknown>) => fetchJson<any>(
+                `${baseUrl}/api/v1/admin/tdp/sessions/${sessionId}/edge-degraded`,
+                {
+                    method: 'POST',
+                    body: JSON.stringify(body),
+                },
+            ),
+            rehome: (sessionId: string, body: Record<string, unknown>) => fetchJson<any>(
+                `${baseUrl}/api/v1/admin/tdp/sessions/${sessionId}/rehome`,
+                {
+                    method: 'POST',
+                    body: JSON.stringify(body),
+                },
+            ),
+            protocolError: (sessionId: string, body: Record<string, unknown>) => fetchJson<any>(
+                `${baseUrl}/api/v1/admin/tdp/sessions/${sessionId}/protocol-error`,
+                {
+                    method: 'POST',
+                    body: JSON.stringify(body),
+                },
+            ),
+            createTaskRelease: (body: Record<string, unknown>) => fetchJson<any>(
+                `${baseUrl}/api/v1/admin/tasks/releases`,
+                {
+                    method: 'POST',
+                    body: JSON.stringify(body),
+                },
+            ),
+            getTaskTrace: (instanceId: string) => fetchJson<any>(
+                `${baseUrl}/api/v1/admin/tasks/instances/${instanceId}/trace`,
             ),
             getSnapshot: (terminalId: string) => fetchJson<any>(
                 `${baseUrl}/api/v1/tdp/terminals/${terminalId}/snapshot`,
@@ -144,17 +186,11 @@ export const createLiveRuntime = (input: {
             },
         }),
         transport: createNodeWsTransport() as SocketTransport,
-        servers: [
-            {
-                serverName: 'mock-terminal-platform',
-                addresses: [
-                    {
-                        addressName: 'live',
-                        baseUrl: input.baseUrl,
-                    },
-                ],
+        servers: resolveTransportServers(kernelBaseTestServerConfig, {
+            baseUrlOverrides: {
+                [SERVER_NAME_MOCK_TERMINAL_PLATFORM]: input.baseUrl,
             },
-        ],
+        }),
     })
 
     const runtime = createKernelRuntimeV2({
@@ -182,17 +218,11 @@ export const createLiveRuntime = (input: {
                                 subsystem: 'transport.http',
                             }),
                             transport: createFetchTransport(),
-                            servers: [
-                                {
-                                    serverName: 'mock-terminal-platform',
-                                    addresses: [
-                                        {
-                                            addressName: 'live',
-                                            baseUrl: input.baseUrl,
-                                        },
-                                    ],
+                            servers: resolveTransportServers(kernelBaseTestServerConfig, {
+                                baseUrlOverrides: {
+                                    [SERVER_NAME_MOCK_TERMINAL_PLATFORM]: input.baseUrl,
                                 },
-                            ],
+                            }),
                         })
                     },
                 },
@@ -207,17 +237,11 @@ export const createLiveRuntime = (input: {
                                 subsystem: 'transport.http',
                             }),
                             transport: createFetchTransport(),
-                            servers: [
-                                {
-                                    serverName: 'mock-terminal-platform',
-                                    addresses: [
-                                        {
-                                            addressName: 'live',
-                                            baseUrl: input.baseUrl,
-                                        },
-                                    ],
+                            servers: resolveTransportServers(kernelBaseTestServerConfig, {
+                                baseUrlOverrides: {
+                                    [SERVER_NAME_MOCK_TERMINAL_PLATFORM]: input.baseUrl,
                                 },
-                            ],
+                            }),
                         })
                     },
                     resolveSocketBinding() {
@@ -270,4 +294,18 @@ export const activateLiveTerminal = async (
         },
         {requestId: createRequestId()},
     )
+}
+
+export const readLiveTerminalScope = (
+    runtime: ReturnType<typeof createLiveRuntime>['runtime'],
+) => {
+    const terminalId = selectTcpTerminalId(runtime.getState())
+    const binding = selectTcpBindingSnapshot(runtime.getState())
+    if (!terminalId) {
+        throw new Error('missing terminal id')
+    }
+    return {
+        terminalId,
+        binding,
+    }
 }

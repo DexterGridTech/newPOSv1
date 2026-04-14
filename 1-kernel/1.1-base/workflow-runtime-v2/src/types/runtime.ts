@@ -9,6 +9,7 @@ import type {
     RegisterWorkflowDefinitionsInput,
     RemoveWorkflowDefinitionInput,
     RunWorkflowInput,
+    WorkflowPlatformMatcher,
 } from './definition'
 
 export interface WorkflowRuntimeV2 {
@@ -39,6 +40,7 @@ export interface RunWorkflowSummary {
 export interface CreateWorkflowRuntimeModuleV2Input {
     initialDefinitions?: RegisterWorkflowDefinitionsInput['definitions']
     remoteDefinitionTopicKey?: string
+    runtimePlatform?: WorkflowPlatformMatcher
     onRuntimeReady?: (runtime: WorkflowRuntimeFacadeV2) => void
 }
 

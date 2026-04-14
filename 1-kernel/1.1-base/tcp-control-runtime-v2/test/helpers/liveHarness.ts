@@ -4,6 +4,10 @@ import type {StateStoragePort} from '@impos2/kernel-base-platform-ports'
 import {createLoggerPort, createPlatformPorts} from '@impos2/kernel-base-platform-ports'
 import {createKernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
 import {
+    kernelBaseTestServerConfig,
+    SERVER_NAME_MOCK_TERMINAL_PLATFORM,
+} from '@impos2/kernel-server-config-v2'
+import {
     createHttpRuntime,
     type HttpTransport,
 } from '@impos2/kernel-base-transport-runtime'
@@ -11,8 +15,9 @@ import {
     createTcpControlRuntimeModuleV2,
     tcpControlV2CommandDefinitions,
 } from '../../src'
-import {createMockTerminalPlatformTestServer} from '/Users/dexter/Documents/workspace/idea/newPOSv1/0-mock-server/mock-terminal-platform/server/src/test/createMockTerminalPlatformTestServer'
-import {createFileStoragePair, createMemoryStorage} from '/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-base/tdp-sync-runtime/test/helpers/runtimeHarness'
+import {createMockTerminalPlatformTestServer} from '../../../../../0-mock-server/mock-terminal-platform/server/src/test/createMockTerminalPlatformTestServer'
+import {createFileStoragePair, createMemoryStorage} from '../../../../test-support/storageHarness'
+import {resolveTransportServers} from '../../../../test-support/serverConfig'
 
 type StorageHarness = {
     storage: StateStoragePort
@@ -139,17 +144,11 @@ export const createLiveRuntime = (input: {
                                 subsystem: 'transport.http',
                             }),
                             transport: createFetchTransport(),
-                            servers: [
-                                {
-                                    serverName: 'mock-terminal-platform',
-                                    addresses: [
-                                        {
-                                            addressName: 'live',
-                                            baseUrl: input.baseUrl,
-                                        },
-                                    ],
+                            servers: resolveTransportServers(kernelBaseTestServerConfig, {
+                                baseUrlOverrides: {
+                                    [SERVER_NAME_MOCK_TERMINAL_PLATFORM]: input.baseUrl,
                                 },
-                            ],
+                            }),
                         })
                     },
                 },

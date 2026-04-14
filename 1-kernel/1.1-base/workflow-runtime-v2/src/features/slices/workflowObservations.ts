@@ -1,4 +1,5 @@
 import {createSlice, type PayloadAction} from '@reduxjs/toolkit'
+import {castDraft} from 'immer'
 import type {StateRuntimeSliceDescriptor} from '@impos2/kernel-base-state-runtime'
 import type {
     WorkflowObservation,
@@ -15,17 +16,31 @@ const initialState: WorkflowObservationsState = {
 const toMutableObservation = (observation: WorkflowObservation): WorkflowObservation =>
     JSON.parse(JSON.stringify(observation)) as WorkflowObservation
 
+export interface TrimTerminalObservationsPayload {
+    retainRequestIds: readonly string[]
+    updatedAt: number
+}
+
 const slice = createSlice({
     name: WORKFLOW_OBSERVATIONS_STATE_KEY,
     initialState,
     reducers: {
         putObservation(state, action: PayloadAction<WorkflowObservation>) {
-            state.byRequestId[action.payload.requestId] = toMutableObservation(action.payload) as any
+            state.byRequestId[action.payload.requestId] = castDraft(toMutableObservation(action.payload))
             state.updatedAt = action.payload.updatedAt
         },
         removeObservation(state, action: PayloadAction<string>) {
             delete state.byRequestId[action.payload]
             state.updatedAt = Date.now()
+        },
+        trimTerminalObservations(state, action: PayloadAction<TrimTerminalObservationsPayload>) {
+            const retainedIds = new Set(action.payload.retainRequestIds)
+            Object.keys(state.byRequestId).forEach(requestId => {
+                if (!retainedIds.has(requestId)) {
+                    delete state.byRequestId[requestId]
+                }
+            })
+            state.updatedAt = action.payload.updatedAt
         },
     },
 })
@@ -35,6 +50,8 @@ export const workflowObservationsV2Actions = {
         slice.actions.putObservation(payload),
     removeObservation: (payload: string) =>
         slice.actions.removeObservation(payload),
+    trimTerminalObservations: (payload: TrimTerminalObservationsPayload) =>
+        slice.actions.trimTerminalObservations(payload),
 }
 
 export const workflowObservationsV2SliceDescriptor: StateRuntimeSliceDescriptor<WorkflowObservationsState> = {

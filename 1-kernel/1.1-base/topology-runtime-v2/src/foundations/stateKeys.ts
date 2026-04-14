@@ -3,3 +3,4 @@ export const TOPOLOGY_V2_CONTEXT_STATE_KEY = 'kernel.base.topology-runtime-v2.co
 export const TOPOLOGY_V2_CONNECTION_STATE_KEY = 'kernel.base.topology-runtime-v2.connection'
 export const TOPOLOGY_V2_PEER_STATE_KEY = 'kernel.base.topology-runtime-v2.peer'
 export const TOPOLOGY_V2_SYNC_STATE_KEY = 'kernel.base.topology-runtime-v2.sync'
+export const TOPOLOGY_V2_PROJECTION_STATE_KEY = 'kernel.base.topology-runtime-v2.projection'

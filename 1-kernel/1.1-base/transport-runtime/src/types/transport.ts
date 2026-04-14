@@ -27,6 +27,34 @@ export interface TransportServerDefinition {
     readonly metadata?: Record<string, unknown>
 }
 
+export interface TransportServerConfigSpace {
+    readonly name: string
+    readonly servers: readonly TransportServerDefinition[]
+}
+
+export interface TransportServerConfig {
+    readonly selectedSpace: string
+    readonly spaces: readonly TransportServerConfigSpace[]
+}
+
+export interface TransportServerAddressOverride {
+    readonly addressName?: string
+    readonly baseUrl: string
+    readonly timeoutMs?: number
+    readonly metadata?: Record<string, unknown>
+}
+
+export interface TransportServerOverride {
+    readonly addresses?: readonly TransportServerAddressOverride[]
+    readonly metadata?: Record<string, unknown>
+}
+
+export interface ResolveTransportServerConfigOptions {
+    readonly selectedSpace?: string
+    readonly baseUrlOverrides?: Readonly<Record<string, string>>
+    readonly serverOverrides?: Readonly<Record<string, TransportServerOverride>>
+}
+
 export interface ServerCatalog {
     registerServer(server: TransportServerDefinition): void
     replaceServers(servers: readonly TransportServerDefinition[]): void

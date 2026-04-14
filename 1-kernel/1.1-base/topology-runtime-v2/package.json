@@ -28,6 +28,10 @@
   },
   "devDependencies": {
     "@impos2/dual-topology-host": "workspace:*",
+    "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*",
+    "@impos2/kernel-base-tdp-sync-runtime-v2": "workspace:*",
+    "@impos2/kernel-server-config-v2": "workspace:*",
+    "@impos2/mock-terminal-platform-server": "workspace:*",
     "@types/node": "^25.0.9",
     "madge": "^8.0.0",
     "tsx": "^4.21.0",

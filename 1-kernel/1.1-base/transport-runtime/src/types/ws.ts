@@ -16,7 +16,6 @@ export type SocketConnectionState =
     | 'disconnected'
     | 'connecting'
     | 'connected'
-    | 'reconnecting'
 
 export interface SocketProfileMeta {
     readonly connectionTimeoutMs?: number
@@ -107,7 +106,6 @@ export interface SocketMetricsRecorder {
 export type SocketEventType =
     | 'state-change'
     | 'connected'
-    | 'reconnecting'
     | 'disconnected'
     | 'message'
     | 'error'
@@ -125,13 +123,6 @@ export interface SocketConnectedEvent {
     readonly connectionId: ConnectionId
     readonly url: string
     readonly addressName: string
-    readonly occurredAt: TimestampMs
-}
-
-export interface SocketReconnectingEvent {
-    readonly type: 'reconnecting'
-    readonly connectionId: ConnectionId
-    readonly attempt: number
     readonly occurredAt: TimestampMs
 }
 
@@ -159,7 +150,6 @@ export interface SocketMessageEvent<TIncoming = unknown> {
 export type SocketEvent<TIncoming = unknown> =
     | SocketStateChangeEvent
     | SocketConnectedEvent
-    | SocketReconnectingEvent
     | SocketDisconnectedEvent
     | SocketErrorEvent
     | SocketMessageEvent<TIncoming>

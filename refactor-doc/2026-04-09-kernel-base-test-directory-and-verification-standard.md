@@ -187,6 +187,10 @@ test/
 1. `test` 是正式测试入口
 2. `test:watch` 用于本地迭代
 3. `test:scenario` 用于需要独立进程、重启恢复、双机协同的测试总入口
+4. 只要包使用 `vitest`，就必须提供包级 `vitest.config.ts`
+5. 包级 `vitest.config.ts` 必须通过仓库根的 `vitest.base.config.ts` 统一生成
+6. `cacheDir` 必须统一落到仓库根 `node_modules/.vite/vitest/<workspace-name>`
+7. 禁止让 `vitest` 在子包目录生成 `node_modules/.vite` 或其他测试缓存目录
 
 如果某个包暂时没有 `vitest` 单测，也至少应提供：
 
@@ -214,8 +218,16 @@ test/
 
 从现在开始：
 
+1. `1-kernel/1.1-base/*` 中所有 HTTP 服务测试，统一通过 `@impos2/kernel-server-config-v2` 提供 serverName 与地址定义。
+2. HTTP 测试里禁止再手写 `servers: [{serverName, addresses}]` 这类本地地址数组。
+3. HTTP 测试必须覆盖三类核心语义：
+4. 地址切换：前序地址失败后能切到后续地址。
+5. 失败重试：同一请求在策略允许范围内继续重试。
+6. 有效地址保持：找到有效地址后，后续请求优先命中该地址；只有显式替换 server 配置后才重置偏好。
+
 1. `1-kernel/1.1-base/*` 的正式验证目录标准名为 `test/`
 2. 可以多文件、多场景、多 worker
 3. 可以引入专业测试工具
 4. 测试目标是正式验收，而不是开发时顺手跑的脚本
 5. 所有双屏通讯相关测试统一走 `0-mock-server/dual-topology-host`
+6. `1-kernel/1.1-base/*` 子包内不应再出现测试工具生成的 `node_modules/.vite` 缓存目录

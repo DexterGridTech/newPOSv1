@@ -4,7 +4,9 @@ import {createTdpInitializeActorDefinitionV2} from './initializeActor'
 import {createTdpBootstrapActorDefinitionV2} from './bootstrapActor'
 import {createTdpMessageActorDefinitionV2} from './messageActor'
 import {createTdpProjectionRepositoryActorDefinitionV2} from './projectionRepositoryActor'
+import {createTdpCursorFeedbackActorDefinitionV2} from './cursorFeedbackActor'
 import {createTdpCommandInboxActorDefinitionV2} from './commandInboxActor'
+import {createTdpCommandAckActorDefinitionV2} from './commandAckActor'
 import {
     createTdpSessionConnectionActorDefinitionV2,
     type TdpSessionConnectionRuntimeRefV2,
@@ -18,7 +20,9 @@ export * from './initializeActor'
 export * from './bootstrapActor'
 export * from './messageActor'
 export * from './projectionRepositoryActor'
+export * from './cursorFeedbackActor'
 export * from './commandInboxActor'
+export * from './commandAckActor'
 export * from './sessionConnectionActor'
 export * from './sessionStateActor'
 export * from './topicChangeActor'
@@ -34,7 +38,9 @@ export const createTdpSyncActorDefinitionsV2 = (
     createTdpSessionConnectionActorDefinitionV2(connectionRuntimeRef, moduleInput),
     createTdpMessageActorDefinitionV2(),
     createTdpProjectionRepositoryActorDefinitionV2(),
+    createTdpCursorFeedbackActorDefinitionV2(),
     createTdpCommandInboxActorDefinitionV2(),
+    createTdpCommandAckActorDefinitionV2(),
     createTdpSessionStateActorDefinitionV2(),
     createTdpTopicChangeActorDefinitionV2(fingerprintRef),
     createTdpSystemCatalogBridgeActorDefinitionV2(),

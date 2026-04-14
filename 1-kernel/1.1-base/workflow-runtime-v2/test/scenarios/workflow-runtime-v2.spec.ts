@@ -1,6 +1,6 @@
 import {setTimeout as delay} from 'node:timers/promises'
 import {describe, expect, it} from 'vitest'
-import {createRequestId} from '@impos2/kernel-base-contracts'
+import {createRequestId, type RequestId} from '@impos2/kernel-base-contracts'
 import {createCommand, runtimeShellV2CommandDefinitions} from '@impos2/kernel-base-runtime-shell-v2'
 import {tdpSyncV2CommandDefinitions} from '@impos2/kernel-base-tdp-sync-runtime-v2'
 import {
@@ -154,6 +154,102 @@ describe('workflow-runtime-v2', () => {
         expect((firstObservation.completedAt ?? 0) <= (secondObservation.completedAt ?? 0)).toBe(true)
     })
 
+    it('retains only the latest completed observations while keeping active runs intact', async () => {
+        const firstRequestId = createRequestId()
+        const secondRequestId = createRequestId()
+        const thirdRequestId = createRequestId()
+        let workflowRuntime: WorkflowRuntimeFacadeV2 | undefined
+
+        const runtime = createTestRuntime([
+            createWorkflowRuntimeModuleV2({
+                initialDefinitions: [
+                    {
+                        workflowKey: 'test.retention',
+                        moduleName: 'kernel.base.workflow-runtime-v2.test',
+                        name: 'Retention Workflow',
+                        enabled: true,
+                        rootStep: {
+                            stepKey: 'delay',
+                            name: 'Delay',
+                            type: 'custom',
+                            input: {
+                                value: {
+                                    delayMs: 5,
+                                    output: {ok: true},
+                                },
+                            },
+                        },
+                    },
+                ],
+                onRuntimeReady(runtimeValue) {
+                    workflowRuntime = runtimeValue
+                },
+            }),
+        ])
+        await runtime.start()
+
+        await runtime.dispatchCommand(createCommand(runtimeShellV2CommandDefinitions.upsertParameterCatalogEntries, {
+            entries: [
+                {
+                    key: 'kernel.base.workflow-runtime-v2.completed-observation-limit',
+                    rawValue: 1,
+                    updatedAt: 1 as any,
+                    source: 'host',
+                },
+            ],
+        }))
+
+        const runToCompletion = async (requestId: RequestId) => {
+            await new Promise<void>((resolve, reject) => {
+                const subscription = workflowRuntime!.run$({
+                    workflowKey: 'test.retention',
+                    requestId,
+                }).subscribe({
+                    next(observation) {
+                        if (observation.status === 'COMPLETED') {
+                            subscription.unsubscribe()
+                            resolve()
+                        }
+                    },
+                    error: reject,
+                })
+            })
+        }
+
+        await runToCompletion(firstRequestId)
+        await runToCompletion(secondRequestId)
+
+        expect(selectWorkflowObservationByRequestId(runtime.getState(), firstRequestId)).toBeUndefined()
+        expect(selectWorkflowObservationByRequestId(runtime.getState(), secondRequestId)?.status).toBe('COMPLETED')
+
+        const thirdStatuses: string[] = []
+        const thirdDone = new Promise<void>((resolve, reject) => {
+            const subscription = workflowRuntime!.run$({
+                workflowKey: 'test.retention',
+                requestId: thirdRequestId,
+            }).subscribe({
+                next(observation) {
+                    thirdStatuses.push(observation.status)
+                    if (observation.status === 'COMPLETED') {
+                        subscription.unsubscribe()
+                        resolve()
+                    }
+                },
+                error: reject,
+            })
+        })
+
+        await delay(1)
+
+        expect(selectWorkflowObservationByRequestId(runtime.getState(), thirdRequestId)?.status).toBeDefined()
+
+        await thirdDone
+
+        expect(thirdStatuses.includes('RUNNING')).toBe(true)
+        expect(selectWorkflowObservationByRequestId(runtime.getState(), secondRequestId)).toBeUndefined()
+        expect(selectWorkflowObservationByRequestId(runtime.getState(), thirdRequestId)?.status).toBe('COMPLETED')
+    })
+
     it('runs command-step workflow through runWorkflow command and returns terminal summary', async () => {
         const requestId = createRequestId()
 
@@ -253,6 +349,141 @@ describe('workflow-runtime-v2', () => {
         }))
 
         expect(selectWorkflowDefinition(runtime.getState(), 'test.priority')[0]?.moduleName).toBe('host')
+    })
+
+    it('selects workflow definition by runtime platform and falls back to generic definition', async () => {
+        const matchedRequestId = createRequestId()
+        const fallbackRequestId = createRequestId()
+
+        const matchedRuntime = createTestRuntime([
+            createWorkflowRuntimeModuleV2({
+                runtimePlatform: {
+                    os: 'android',
+                    osVersion: '14',
+                    deviceModel: 'PDA-A',
+                    runtimeVersion: '2.0.0',
+                    capabilities: ['scanner', 'printer'],
+                },
+                initialDefinitions: [
+                    {
+                        workflowKey: 'test.platform',
+                        moduleName: 'kernel.base.workflow-runtime-v2.test',
+                        name: 'Generic Definition',
+                        enabled: true,
+                        updatedAt: 1,
+                        rootStep: {
+                            stepKey: 'generic-output',
+                            name: 'Generic Output',
+                            type: 'custom',
+                            input: {
+                                value: {
+                                    output: {variant: 'generic'},
+                                },
+                            },
+                        },
+                    },
+                    {
+                        workflowKey: 'test.platform',
+                        moduleName: 'kernel.base.workflow-runtime-v2.test',
+                        name: 'Android Definition',
+                        enabled: true,
+                        updatedAt: 2,
+                        platform: {
+                            os: 'android',
+                            osVersion: '14',
+                            deviceModel: 'PDA-A',
+                            runtimeVersion: '2.0.0',
+                            capabilities: ['scanner'],
+                        },
+                        rootStep: {
+                            stepKey: 'android-output',
+                            name: 'Android Output',
+                            type: 'custom',
+                            input: {
+                                value: {
+                                    output: {variant: 'android'},
+                                },
+                            },
+                        },
+                    },
+                ],
+            }),
+        ])
+        await matchedRuntime.start()
+
+        const matchedResult = await matchedRuntime.dispatchCommand(createCommand(workflowRuntimeV2CommandDefinitions.runWorkflow, {
+            workflowKey: 'test.platform',
+        }), {
+            requestId: matchedRequestId,
+        })
+
+        expect(matchedResult.status).toBe('COMPLETED')
+        expect((matchedResult.actorResults[0]?.result as any)?.result?.output).toEqual({
+            variant: 'android',
+        })
+
+        const fallbackRuntime = createTestRuntime([
+            createWorkflowRuntimeModuleV2({
+                runtimePlatform: {
+                    os: 'ios',
+                    osVersion: '18',
+                    deviceModel: 'PAD-B',
+                },
+                initialDefinitions: [
+                    {
+                        workflowKey: 'test.platform',
+                        moduleName: 'kernel.base.workflow-runtime-v2.test',
+                        name: 'Generic Definition',
+                        enabled: true,
+                        updatedAt: 1,
+                        rootStep: {
+                            stepKey: 'generic-output',
+                            name: 'Generic Output',
+                            type: 'custom',
+                            input: {
+                                value: {
+                                    output: {variant: 'generic'},
+                                },
+                            },
+                        },
+                    },
+                    {
+                        workflowKey: 'test.platform',
+                        moduleName: 'kernel.base.workflow-runtime-v2.test',
+                        name: 'Android Definition',
+                        enabled: true,
+                        updatedAt: 2,
+                        platform: {
+                            os: 'android',
+                            osVersion: '14',
+                            capabilities: ['scanner'],
+                        },
+                        rootStep: {
+                            stepKey: 'android-output',
+                            name: 'Android Output',
+                            type: 'custom',
+                            input: {
+                                value: {
+                                    output: {variant: 'android'},
+                                },
+                            },
+                        },
+                    },
+                ],
+            }),
+        ])
+        await fallbackRuntime.start()
+
+        const fallbackResult = await fallbackRuntime.dispatchCommand(createCommand(workflowRuntimeV2CommandDefinitions.runWorkflow, {
+            workflowKey: 'test.platform',
+        }), {
+            requestId: fallbackRequestId,
+        })
+
+        expect(fallbackResult.status).toBe('COMPLETED')
+        expect((fallbackResult.actorResults[0]?.result as any)?.result?.output).toEqual({
+            variant: 'generic',
+        })
     })
 
     it('updates remote definitions from tdpTopicDataChanged and executes latest definition', async () => {

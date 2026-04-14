@@ -148,7 +148,7 @@ describe('state-runtime store assembly', () => {
         const store = stateRuntime.getStore()
         store.dispatch(slice.actions.increment())
 
-        const state = stateRuntime.getState() as Record<string, unknown>
+        const state = stateRuntime.getState() as unknown as Record<string, unknown>
 
         expect(state[slice.name]).toEqual({
             count: 2,
@@ -225,6 +225,53 @@ describe('state-runtime store assembly', () => {
         expect(state[persistedSlice.name]).toEqual({
             value: 'persisted',
         })
+    })
+
+    it('automatically removes persisted field entries when value becomes undefined', async () => {
+        const {saved, storage} = createMemoryStorage()
+        const persistedSlice = createSlice({
+            name: 'kernel.base.state-runtime.test.persisted-removal',
+            initialState: {value: 'seed' as string | undefined},
+            reducers: {
+                setValue: (state, action: {payload: string | undefined}) => {
+                    state.value = action.payload
+                },
+            },
+        })
+
+        const runtime = createStateRuntime({
+            runtimeName: 'state-runtime-persist-removal',
+            slices: [
+                {
+                    name: persistedSlice.name,
+                    reducer: persistedSlice.reducer,
+                    persistIntent: 'owner-only',
+                    syncIntent: 'isolated',
+                    persistence: [
+                        {
+                            kind: 'field',
+                            stateKey: 'value',
+                            flushMode: 'immediate',
+                        },
+                    ],
+                },
+            ],
+            logger: createTestLogger() as any,
+            allowPersistence: true,
+            persistenceKey: 'state-runtime-removal-test',
+            stateStorage: storage,
+        })
+
+        await runtime.hydratePersistence()
+        runtime.getStore().dispatch(persistedSlice.actions.setValue('persisted'))
+        await runtime.flushPersistence()
+
+        expect(saved.get('state-runtime-removal-test:kernel.base.state-runtime.test.persisted-removal:value')).toBe(JSON.stringify('persisted'))
+
+        runtime.getStore().dispatch(persistedSlice.actions.setValue(undefined))
+        await runtime.flushPersistence()
+
+        expect(saved.has('state-runtime-removal-test:kernel.base.state-runtime.test.persisted-removal:value')).toBe(false)
     })
 
     it('persists dynamic record entries via manifest keys', async () => {
@@ -416,7 +463,7 @@ describe('state-runtime store assembly', () => {
             },
         })
 
-        expect((runtime.getState() as Record<string, unknown>)[slice.name]).toEqual({
+        expect((runtime.getState() as unknown as Record<string, unknown>)[slice.name]).toEqual({
             value: 9,
             updatedAt: 20,
         })
@@ -717,21 +764,23 @@ describe('state-runtime store assembly', () => {
             selectedPayingOrder: ValueWithUpdatedAt<string | null>
         }
 
+        const initialOrderCreationState: OrderCreationState = {
+            orderCreationType: {
+                value: undefined,
+                updatedAt: 0 as any,
+            },
+            selectedPayingOrder: {
+                value: null,
+                updatedAt: 0 as any,
+            },
+        }
+
         const slice = createWorkspaceStateSlice({
             baseName: 'kernel.trade.state.orderCreation',
             values: ['MAIN', 'BRANCH'] as const,
-            initialState: {
-                orderCreationType: {
-                    value: undefined,
-                    updatedAt: 0 as any,
-                },
-                selectedPayingOrder: {
-                    value: null,
-                    updatedAt: 0 as any,
-                },
-            } satisfies OrderCreationState,
+            initialState: initialOrderCreationState,
             reducers: {
-                setOrderCreationType(state, action: {payload: ValueWithUpdatedAt<string>}) {
+                setOrderCreationType(state, action: {payload: ValueWithUpdatedAt<string | undefined>}) {
                     state.orderCreationType = action.payload
                 },
                 setSelectedPayingOrder(state, action: {payload: ValueWithUpdatedAt<string | null>}) {
@@ -779,7 +828,7 @@ describe('state-runtime store assembly', () => {
             return state[stateKey] as OrderCreationState | undefined
         }
 
-        const state = runtime.getState() as Record<string, unknown>
+        const state = runtime.getState() as unknown as Record<string, unknown>
         const branchOrderCreationState = selectOrderCreationState(state, 'BRANCH')
         const mainOrderCreationState = selectOrderCreationState(state, 'MAIN')
 

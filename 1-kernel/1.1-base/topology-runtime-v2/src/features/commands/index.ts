@@ -54,3 +54,15 @@ export const topologyRuntimeV2CommandDefinitions = {
         commandName: 'dispatch-peer-command',
     }),
 } as const
+
+export const topologyRuntimeV2CommandNames = Object.fromEntries(
+    Object.entries(topologyRuntimeV2CommandDefinitions).map(([key, definition]) => [
+        key,
+        definition.commandName,
+    ]),
+) as {
+    readonly [K in keyof typeof topologyRuntimeV2CommandDefinitions]: typeof topologyRuntimeV2CommandDefinitions[K]['commandName']
+}
+
+export const topologyCommandDefinitions = topologyRuntimeV2CommandDefinitions
+export const topologyCommandNames = topologyRuntimeV2CommandNames

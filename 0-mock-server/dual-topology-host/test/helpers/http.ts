@@ -1,4 +1,4 @@
-export const fetchJson = async <TValue>(input: RequestInfo | URL, init?: RequestInit): Promise<TValue> => {
+export const fetchJson = async <TValue>(input: string | URL, init?: RequestInit): Promise<TValue> => {
     const response = await fetch(input, init)
     const payload = await response.json() as TValue
     if (!response.ok) {

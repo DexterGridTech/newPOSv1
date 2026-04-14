@@ -17,6 +17,18 @@ export const topologyRuntimeV2ErrorDefinitions = {
         category: 'SYSTEM',
         severity: 'HIGH',
     }),
+    connectionPrecheckFailed: defineError('connection_precheck_failed', {
+        name: 'Topology Runtime V2 Connection Precheck Failed',
+        defaultTemplate: 'Topology runtime v2 connection precheck failed: ${reasons}',
+        category: 'VALIDATION',
+        severity: 'HIGH',
+    }),
+    connectionFailed: defineError('connection_failed', {
+        name: 'Topology Runtime V2 Connection Failed',
+        defaultTemplate: 'Topology runtime v2 connection failed: ${message}',
+        category: 'NETWORK',
+        severity: 'HIGH',
+    }),
     socketBindingUnavailable: defineError('socket_binding_unavailable', {
         name: 'Topology Runtime V2 Socket Binding Unavailable',
         defaultTemplate: 'Topology runtime v2 socket binding is not available for ${commandName}',

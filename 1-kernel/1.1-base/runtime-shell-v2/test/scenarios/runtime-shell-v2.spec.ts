@@ -40,6 +40,10 @@ const allowedReentryCommand = defineCommand<{depth: number}>({
     commandName: 'allowed-reentry',
     allowReentry: true,
 })
+const concurrentCommand = defineCommand<{value: number}>({
+    moduleName: testModuleName,
+    commandName: 'concurrent-command',
+})
 const timeoutCommand = defineCommand<void>({
     moduleName: testModuleName,
     commandName: 'timeout',
@@ -113,6 +117,15 @@ const createModule = (events: string[], beforeActorBody?: () => void): KernelRun
                         }
                     },
                 },
+                {
+                    commandName: concurrentCommand.commandName,
+                    async handle(context) {
+                        events.push(`concurrent:start:${context.command.payload.value}`)
+                        await new Promise(resolve => setTimeout(resolve, 20))
+                        events.push(`concurrent:end:${context.command.payload.value}`)
+                        return {value: context.command.payload.value}
+                    },
+                },
             ],
         },
         {
@@ -147,6 +160,7 @@ const createModule = (events: string[], beforeActorBody?: () => void): KernelRun
             allowedNoActorCommand,
             reentryCommand,
             allowedReentryCommand,
+            concurrentCommand,
             timeoutCommand,
             peerCommand,
         ],
@@ -208,6 +222,35 @@ describe('runtime-shell-v2', () => {
         expect(events).toEqual(['allowed-reentry:0', 'allowed-reentry:1'])
     })
 
+    it('allows same command and actor to run concurrently across different requests', async () => {
+        const events: string[] = []
+        const runtime = createKernelRuntimeV2({modules: [createModule(events)]})
+        await runtime.start()
+
+        const [first, second] = await Promise.all([
+            runtime.dispatchCommand(createCommand(concurrentCommand, {value: 1})),
+            runtime.dispatchCommand(createCommand(concurrentCommand, {value: 2})),
+        ])
+
+        expect(first.status).toBe('COMPLETED')
+        expect(second.status).toBe('COMPLETED')
+        expect(first.requestId).not.toBe(second.requestId)
+        expect(first.actorResults[0]).toMatchObject({
+            actorKey: `${testModuleName}.ActorOne`,
+            status: 'COMPLETED',
+        })
+        expect(second.actorResults[0]).toMatchObject({
+            actorKey: `${testModuleName}.ActorOne`,
+            status: 'COMPLETED',
+        })
+        expect(events).toEqual([
+            'concurrent:start:1',
+            'concurrent:start:2',
+            'concurrent:end:1',
+            'concurrent:end:2',
+        ])
+    })
+
     it('returns TIMEOUT when actor exceeds timeout', async () => {
         const runtime = createKernelRuntimeV2({modules: [createModule([])]})
         await runtime.start()
@@ -216,6 +259,25 @@ describe('runtime-shell-v2', () => {
 
         expect(result.status).toBe('TIMEOUT')
         expect(result.actorResults[0]?.status).toBe('TIMEOUT')
+    })
+
+    it('clears actor timeout timer after command completes before deadline', async () => {
+        vi.useFakeTimers()
+        try {
+            const runtime = createKernelRuntimeV2({modules: [createModule([])]})
+            await runtime.start()
+
+            const baselineTimerCount = vi.getTimerCount()
+            const dispatchPromise = runtime.dispatchCommand(createCommand(commandA, {value: 1}))
+
+            await vi.runAllTimersAsync()
+            const result = await dispatchPromise
+
+            expect(result.status).toBe('COMPLETED')
+            expect(vi.getTimerCount()).toBe(baselineTimerCount)
+        } finally {
+            vi.useRealTimers()
+        }
     })
 
     it('makes request RUNNING before actor body executes and notifies subscribers', async () => {
@@ -475,6 +537,46 @@ describe('runtime-shell-v2', () => {
                     commandId: childCommandId,
                     parentCommandId: rootCommandId,
                     status: 'COMPLETED',
+                }),
+            ],
+        })
+    })
+
+    it('keeps snapshot commands RUNNING while remote snapshot is still in progress', async () => {
+        const runtime = createKernelRuntimeV2({modules: [createModule([])]})
+        await runtime.start()
+
+        const requestId = createRequestId()
+        const rootCommandId = createCommandId()
+        runtime.applyRequestLifecycleSnapshot({
+            requestId,
+            ownerNodeId: runtime.localNodeId,
+            rootCommandId,
+            sessionId: 'session_snapshot_running' as any,
+            status: 'started',
+            startedAt: Date.now() as any,
+            updatedAt: Date.now() as any,
+            commands: [
+                {
+                    commandId: rootCommandId,
+                    ownerNodeId: runtime.localNodeId,
+                    sourceNodeId: runtime.localNodeId,
+                    targetNodeId: 'peer-node' as any,
+                    commandName: 'kernel.base.runtime-shell-v2.test.snapshot-running',
+                    status: 'started',
+                    updatedAt: Date.now() as any,
+                },
+            ],
+            commandResults: [],
+        })
+
+        expect(runtime.queryRequest(requestId)).toMatchObject({
+            status: 'RUNNING',
+            commands: [
+                expect.objectContaining({
+                    commandId: rootCommandId,
+                    status: 'RUNNING',
+                    completedAt: undefined,
                 }),
             ],
         })

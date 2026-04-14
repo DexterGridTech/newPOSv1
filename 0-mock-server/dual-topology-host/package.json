@@ -19,7 +19,7 @@
     "@impos2/kernel-base-contracts": "*",
     "@impos2/kernel-base-host-runtime": "*",
     "@impos2/kernel-base-platform-ports": "*",
-    "@impos2/kernel-base-runtime-shell": "*",
+    "@impos2/kernel-base-runtime-shell-v2": "*",
     "ws": "^8.18.0"
   },
   "devDependencies": {

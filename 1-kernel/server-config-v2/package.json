@@ -1,0 +1,26 @@
+{
+  "name": "@impos2/kernel-server-config-v2",
+  "version": "1.0.0",
+  "description": "POS Kernel server config v2",
+  "author": "DexterYang",
+  "license": "ISC",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "react-native": "./src/index.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json --noEmit",
+    "build-for-product": "rm -rf dist && tsc -p tsconfig.json",
+    "clean": "rm -rf dist",
+    "type-check": "tsc -p tsconfig.json --noEmit",
+    "check:circular": "madge --circular --extensions ts --warning src/"
+  },
+  "dependencies": {
+    "@impos2/kernel-base-transport-runtime": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.9",
+    "madge": "^8.0.0",
+    "typescript": "^5.9.3"
+  }
+}

@@ -11,7 +11,7 @@ import {
     type StateSyncDiffEnvelope,
     type StateSyncSummaryEnvelope,
 } from '@impos2/kernel-base-contracts'
-import type {HostFaultRule, HostResumeBeginEnvelope} from '@impos2/kernel-base-host-runtime'
+import type {HostFaultRule, HostRelayEnvelope, HostResumeBeginEnvelope} from '@impos2/kernel-base-host-runtime'
 import {createDualTopologyHost} from './createDualTopologyHost'
 import type {DualTopologyHost} from '../types/hostShell'
 import type {
@@ -64,7 +64,7 @@ const createResumeBeginEnvelope = (input: {
     }
 }
 
-const isResumeBeginEnvelope = (envelope: RelayEnvelopeMessage['envelope'] | HostResumeBeginEnvelope): envelope is HostResumeBeginEnvelope => {
+const isResumeBeginEnvelope = (envelope: HostRelayEnvelope): envelope is HostResumeBeginEnvelope => {
     return 'timestamp' in envelope
         && !('commandName' in envelope)
         && !('projection' in envelope)
@@ -242,6 +242,16 @@ export const createDualTopologyHostServer = (
             })
     }
 
+    const closeConnectionSocket = (connectionId: string, reason: string) => {
+        const socket = socketsByConnectionId.get(connectionId)
+        if (!socket) {
+            return
+        }
+        if (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING) {
+            socket.close(1011, reason)
+        }
+    }
+
     const handleRelayEnvelope = (
         connectionId: string,
         message: RelayEnvelopeMessage,
@@ -259,10 +269,14 @@ export const createDualTopologyHostServer = (
             | StateSyncSummaryEnvelope
             | StateSyncDiffEnvelope
             | StateSyncCommitAckEnvelope
-        host.hostRuntime.relayEnvelope({
+        const relayResult = host.hostRuntime.relayEnvelope({
             sessionId: context.sessionId as any,
             sourceNodeId: context.nodeId as any,
             envelope,
+        })
+
+        relayResult.disconnectedConnectionIds.forEach(disconnectedConnectionId => {
+            closeConnectionSocket(disconnectedConnectionId, 'fault:relay-disconnect-target')
         })
 
         const snapshot = host.hostRuntime.getSnapshot()

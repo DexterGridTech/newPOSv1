@@ -2,6 +2,7 @@ import {describe, expect, it} from 'vitest'
 import {createNodeId, createRequestId} from '@impos2/kernel-base-contracts'
 import {createLoggerPort, createPlatformPorts} from '@impos2/kernel-base-platform-ports'
 import {createCommand, createKernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
+import {kernelBaseTestServerConfig} from '@impos2/kernel-server-config-v2'
 import {createHttpRuntime, type HttpTransport} from '@impos2/kernel-base-transport-runtime'
 import {
     createTcpControlRuntimeModuleV2,
@@ -13,6 +14,7 @@ import {
     selectTcpTerminalId,
     tcpControlV2CommandDefinitions,
 } from '../../src'
+import {resolveTransportServers} from '../../../../test-support/serverConfig'
 
 const createMemoryStorage = () => {
     const saved = new Map<string, string>()
@@ -149,17 +151,7 @@ const createRuntime = (input: {
                                 subsystem: 'transport.http',
                             }),
                             transport: createMockTransport(calls),
-                            servers: [
-                                {
-                                    serverName: 'mock-terminal-platform',
-                                    addresses: [
-                                        {
-                                            addressName: 'test',
-                                            baseUrl: 'http://mock-terminal-platform.test',
-                                        },
-                                    ],
-                                },
-                            ],
+                            servers: resolveTransportServers(kernelBaseTestServerConfig),
                         })
                     },
                 },

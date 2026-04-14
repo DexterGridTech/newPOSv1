@@ -95,53 +95,65 @@
    3. TDP v2 live roundtrip
    4. TDP v2 reconnect
    5. TDP v2 restart recovery
+   6. TDP v2 system catalog live bridge
    6. Workflow v2 remote definitions
 2. `dual-topology-host`
    1. topology-runtime-v2 live connection
+   2. topology-runtime-v2 remote command roundtrip
+   3. topology-runtime-v2 projection mirror
+   4. topology-runtime-v2 state sync master -> slave
+   5. topology-runtime-v2 state sync slave -> master
+   6. topology-runtime-v2 reconnect + resume + continuous sync recovery
 
 ## 4. 当前剩余缺口
 
-虽然本轮四个 v2 包都已经进入“可继续迁移”的基线，但 `topology-runtime-v2` 还没有达到“完全覆盖旧 topology-client-runtime live 场景”的程度。
+当前判断需要更新：
 
-当前还没迁完的重点不是基础连接，而是下面三块：
+1. `contracts`、`runtime-shell-v2`、`tcp-control-runtime-v2`、`tdp-sync-runtime-v2`、`workflow-runtime-v2`、`topology-runtime-v2`
+   1. 都已经进入可继续迁移后续 kernel 旧 core 能力的基线。
+2. `topology-runtime-v2` 这一轮已经补齐之前列出的关键 live 缺口：
+   1. 远端 command roundtrip
+   2. request snapshot / projection mirror
+   3. state sync master -> slave
+   4. state sync slave -> master
+   5. relay disconnect 后 reconnect + resume + continuous sync 恢复
+3. 当前真正还没有开始的，不是 `topology-runtime-v2` 自身的基础能力，而是“哪些 v2 使用方需要正式接入 topology v2 peer 路由”。
 
-1. 远端 command 完整 roundtrip live 场景
-   1. 真正让 master 通过 topology v2 调 slave command
-   2. 观察本地 request selector / result 聚合
-2. request snapshot / projection mirror live 场景
-   1. 从 dual-topology-host 真实 relay 走完 request 恢复与 projection mirror
-3. state sync live 场景
-   1. master -> slave
-   2. slave -> master
-   3. reconnect 后连续同步
-
-这三块能力在方向上已经可做，因为本轮把 runtime-shell-v2 的必要底座补上了，但测试和细节还未全部迁完。
+也就是说，当前剩余工作已经从“补 topology-runtime-v2 自身闭环”切换为“让后续包逐步消费 topology-runtime-v2 的 peer 能力”。
 
 ## 5. 对“是否可以开始业务模块迁移”的结论
 
-结论分两层：
+结论更新为：
 
 1. `contracts`、`runtime-shell-v2`、`tcp-control-runtime-v2`、`tdp-sync-runtime-v2`、`workflow-runtime-v2`
    1. 已达到可以继续承接业务迁移的状态
 2. `topology-runtime-v2`
    1. 已达到可以继续做核心能力迁移的状态
-   2. 但还不建议立刻大规模承接依赖双屏命令转发和状态同步的复杂业务
-   3. 应先把旧 `topology-client-runtime` 的关键 live 场景迁完再进入大规模业务迁移
+   2. 远端 command、request mirror、projection mirror、state sync、reconnect/resume 都已有真实联调验证
+   3. 现在可以进入“把旧 core 里真正需要双屏 peer 路由的能力逐步迁到 v2”的阶段
 
 ## 6. 下一步建议
 
-下一步建议只做一件大事，不再散开：
+下一步建议收口为两条：
 
-1. 专注补完 `topology-runtime-v2`
+1. 继续让后续 v2 runtime 按需接入 `topology-runtime-v2`
+   1. 优先分析哪些旧 core 能力真的需要 peer route，而不是先广泛接线
+   2. 保持“能力依赖 topology，不形成业务反向依赖”
+2. 继续推进剩余旧 core 到 base 的迁移
+   1. 尤其是后续会直接消费 request / state / peer 同步模型的能力线
 
-具体顺序建议：
+不再建议把时间继续花在重复补 `topology-runtime-v2` 自身基础场景上。
 
-1. 迁移旧 `topology-client-runtime/test/scenarios/dispatch-runtime.spec.ts` 中与远端 command / request snapshot / projection mirror 直接相关的场景到 v2
-2. 迁移旧 live state sync 场景到 v2
-3. 迁移旧 topology reconnect/live terminal bridge/task panel 场景中真正仍有价值的部分
-4. 等 `topology-runtime-v2` live 基线完整后，再进入后续 kernel 旧 core 包迁移
+## 7. 本轮额外结构收口
 
-## 7. 本轮涉及的关键文件
+1. `transport-runtime` 已删除一条历史遗留的 `dual-topology-socket-runtime.spec.ts`
+2. 原因是这条测试本质上在验证旧 `runtime-shell` + 旧 `topology-runtime` 的集成能力，不属于纯 transport 包职责
+3. 收口后，`transport-runtime` 只保留：
+   1. socket 纯 transport 语义测试
+   2. http 纯 transport 语义测试
+4. 这样 `1-kernel/1.1-base/transport-runtime` 不再在测试层继续挂着旧执行模型依赖
+
+## 8. 本轮涉及的关键文件
 
 本轮主要新增或修改的关键文件：
 
@@ -156,3 +168,4 @@
 9. `1-kernel/1.1-base/topology-runtime-v2/test/scenarios/topology-runtime-v2-live-connection.spec.ts`
 10. `1-kernel/1.1-base/tdp-sync-runtime-v2/test/scenarios/tdp-sync-runtime-v2-live-restart-recovery.spec.ts`
 11. `1-kernel/1.1-base/tdp-sync-runtime-v2/vitest.config.ts`
+12. `1-kernel/1.1-base/transport-runtime/package.json`

@@ -192,5 +192,4 @@ export interface TopologyRuntimeModuleFactoryV2 {
 export interface TopologyRequestMirror {
     exportRequestLifecycleSnapshot(requestId: RequestId, sessionId?: string): RequestLifecycleSnapshot | undefined
     applyRequestLifecycleSnapshot(snapshot: RequestLifecycleSnapshot): void
-    getRequestProjection(requestId: RequestId): import('@impos2/kernel-base-contracts').RequestProjection | undefined
 }

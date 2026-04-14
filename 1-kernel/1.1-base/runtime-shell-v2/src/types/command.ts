@@ -11,6 +11,7 @@ export type CommandVisibility = 'public' | 'internal'
 export type CommandTarget = 'local' | 'peer'
 export type ActorExecutionStatus = 'COMPLETED' | 'FAILED' | 'TIMEOUT'
 export type CommandAggregateStatus = 'COMPLETED' | 'PARTIAL_FAILED' | 'FAILED' | 'TIMEOUT'
+export type CommandQueryStatus = CommandAggregateStatus | 'RUNNING'
 
 export interface CommandDefinition<TPayload = unknown> {
     moduleName: string
@@ -79,6 +80,18 @@ export interface CommandAggregateResult {
     target: CommandTarget
     status: CommandAggregateStatus
     startedAt: TimestampMs
-    completedAt: TimestampMs
+    completedAt?: TimestampMs
+    actorResults: readonly ActorExecutionResult[]
+}
+
+export interface CommandQueryResult {
+    requestId: RequestId
+    commandId: CommandId
+    parentCommandId?: CommandId
+    commandName: string
+    target: CommandTarget
+    status: CommandQueryStatus
+    startedAt: TimestampMs
+    completedAt?: TimestampMs
     actorResults: readonly ActorExecutionResult[]
 }

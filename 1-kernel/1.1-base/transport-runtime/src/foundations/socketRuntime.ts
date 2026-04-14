@@ -202,21 +202,6 @@ export const createSocketRuntime = (
                     reason,
                     occurredAt: nowTimestampMs(),
                 })
-
-                const maxAttempts = connection.profile.meta.reconnectAttempts ?? 0
-                const canReconnect = maxAttempts < 0 || connection.reconnectAttempt < maxAttempts
-                if (!canReconnect) {
-                    return
-                }
-
-                connection.reconnectAttempt += 1
-                setState(connection, 'reconnecting')
-                emitEvent(connection, {
-                    type: 'reconnecting',
-                    connectionId: resolved.connectionId,
-                    attempt: connection.reconnectAttempt,
-                    occurredAt: nowTimestampMs(),
-                })
             },
             onError(error) {
                 finalizeMetric(connection, false)

@@ -24,6 +24,7 @@ import type {
     ActorExecutionResult,
     CommandAggregateResult,
     CommandAggregateStatus,
+    CommandQueryResult,
     CommandIntent,
     CreateKernelRuntimeV2Input,
     DispatchOptions,
@@ -88,6 +89,10 @@ const normalizeError = (error: unknown, command: DispatchedCommand): AppError =>
     })
 }
 
+const isFinalCommandAggregateResult = (
+    command: CommandQueryResult,
+): command is CommandAggregateResult => command.status !== 'RUNNING'
+
 const aggregateStatus = (
     actorResults: readonly ActorExecutionResult[],
     allowNoActor: boolean,
@@ -146,7 +151,12 @@ export const createKernelRuntimeV2 = (
     })
     const ledger = createRequestLedger()
     const handlersByCommand = new Map<string, RegisteredActorHandler[]>()
-    const executionStack: Array<{commandName: string; actorKey: string; commandId: CommandId}> = []
+    const executionStack: Array<{
+        requestId: import('@impos2/kernel-base-contracts').RequestId
+        commandName: string
+        actorKey: string
+        commandId: CommandId
+    }> = []
     let actorOrder = 0
     let startPromise: Promise<void> | null = null
     let peerDispatchGateway: PeerDispatchGateway | undefined = input.peerDispatchGateway
@@ -331,8 +341,12 @@ export const createKernelRuntimeV2 = (
         }
 
         const actorResults = await Promise.all(handlers.map(async handler => {
-            const reentryKey = `${dispatched.commandName}:${handler.actor.actorKey}`
-            const inStack = executionStack.some(entry => `${entry.commandName}:${entry.actorKey}` === reentryKey)
+            const reentryKey = `${dispatched.requestId}:${dispatched.commandName}:${handler.actor.actorKey}`
+            const inStack = executionStack.some(entry =>
+                entry.requestId === dispatched.requestId
+                && entry.commandName === dispatched.commandName
+                && entry.actorKey === handler.actor.actorKey,
+            )
             if (inStack && !commandIntent.definition.allowReentry) {
                 const failedResult: ActorExecutionResult = {
                     actorKey: handler.actor.actorKey,
@@ -348,6 +362,7 @@ export const createKernelRuntimeV2 = (
             ledger.markActorStarted(requestId, commandId, handler.actor.actorKey)
             const startedAt = nowTimestampMs()
             executionStack.push({
+                requestId: dispatched.requestId,
                 commandName: dispatched.commandName,
                 actorKey: handler.actor.actorKey,
                 commandId: dispatched.commandId,
@@ -367,9 +382,11 @@ export const createKernelRuntimeV2 = (
                         parentCommandId: dispatched.commandId,
                     }),
                     queryRequest,
+                    resolveParameter,
                 }
+                let timeoutId: ReturnType<typeof setTimeout> | undefined
                 const timeout = new Promise<ActorExecutionResult>(resolve => {
-                    setTimeout(() => {
+                    timeoutId = setTimeout(() => {
                         resolve({
                             actorKey: handler.actor.actorKey,
                             status: 'TIMEOUT',
@@ -406,6 +423,9 @@ export const createKernelRuntimeV2 = (
                 }
 
                 const actorResult = await Promise.race([execution, timeout])
+                if (timeoutId) {
+                    clearTimeout(timeoutId)
+                }
                 ledger.markActorCompleted(requestId, commandId, actorResult)
                 return actorResult
             } finally {

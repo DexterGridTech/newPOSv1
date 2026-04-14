@@ -6,6 +6,7 @@ import {
     createKernelRuntimeV2,
     defineCommand,
     onCommand,
+    runtimeShellV2CommandDefinitions,
     type ActorDefinition,
     type KernelRuntimeModuleV2,
 } from '@impos2/kernel-base-runtime-shell-v2'
@@ -16,6 +17,8 @@ import {
     selectTopologyRuntimeV2InstanceMode,
     selectTopologyRuntimeV2MasterInfo,
     selectTopologyRuntimeV2ServerConnected,
+    topologyRuntimeV2ErrorDefinitions,
+    topologyRuntimeV2ParameterDefinitions,
     topologyRuntimeV2CommandDefinitions,
 } from '../../src'
 
@@ -124,6 +127,81 @@ describe('topology-runtime-v2', () => {
         expect(result.status).toBe('FAILED')
     })
 
+    it('fails start connection with structured precheck error when slave masterInfo is missing', async () => {
+        const runtime = createKernelRuntimeV2({
+            localNodeId: createNodeId(),
+            platformPorts: createPlatformPorts({
+                environmentMode: 'DEV',
+                logger: createTestLogger('kernel.base.topology-runtime-v2.test.precheck'),
+            }),
+            modules: [
+                createTopologyRuntimeModuleV2({
+                    assembly: {
+                        resolveSocketBinding() {
+                            return {
+                                socketRuntime: {
+                                    registerProfile() {},
+                                    async connect() {
+                                        return {} as any
+                                    },
+                                    send() {},
+                                    disconnect() {},
+                                    getConnectionState() {
+                                        return 'disconnected'
+                                    },
+                                    on() {},
+                                    off() {},
+                                    replaceServers() {},
+                                    getServerCatalog() {
+                                        return {} as any
+                                    },
+                                },
+                                profileName: 'precheck',
+                            }
+                        },
+                        createHello() {
+                            return {
+                                helloId: 'hello-precheck',
+                                ticketToken: 'token-precheck',
+                                runtime: {
+                                    nodeId: 'node-precheck' as any,
+                                    deviceId: 'device-precheck',
+                                    role: 'slave',
+                                    platform: 'node',
+                                    product: 'test',
+                                    assemblyAppId: 'assembly.test',
+                                    assemblyVersion: '1.0.0',
+                                    buildNumber: 1,
+                                    bundleVersion: '1',
+                                    runtimeVersion: '1.0.0',
+                                    protocolVersion: '2026.04',
+                                    capabilities: [],
+                                },
+                                sentAt: Date.now() as any,
+                            }
+                        },
+                    },
+                }),
+            ],
+        })
+
+        await runtime.start()
+        await runtime.dispatchCommand(createCommand(topologyRuntimeV2CommandDefinitions.setInstanceMode, {
+            instanceMode: 'SLAVE',
+        }))
+
+        const result = await runtime.dispatchCommand(createCommand(
+            topologyRuntimeV2CommandDefinitions.startTopologyConnection,
+            {},
+        ))
+
+        expect(result.status).toBe('FAILED')
+        expect(result.actorResults[0]?.error).toMatchObject({
+            key: topologyRuntimeV2ErrorDefinitions.connectionPrecheckFailed.key,
+            category: 'VALIDATION',
+        })
+    })
+
     it('routes peer target command through installed peer gateway', async () => {
         const runtime = createKernelRuntimeV2({
             localNodeId: createNodeId(),
@@ -218,5 +296,93 @@ describe('topology-runtime-v2', () => {
 
         await runtime.start()
         expect(selectTopologyRuntimeV2ServerConnected(runtime.getState())).toBe(false)
+    })
+
+    it('auto starts topology connection after initialize using slave delay parameter', async () => {
+        let connectCalls = 0
+        const runtime = createKernelRuntimeV2({
+            localNodeId: createNodeId(),
+            platformPorts: createPlatformPorts({
+                environmentMode: 'DEV',
+                logger: createTestLogger('kernel.base.topology-runtime-v2.test.initialize-auto-connect'),
+            }),
+            modules: [
+                createTopologyRuntimeModuleV2({
+                    assembly: {
+                        resolveSocketBinding() {
+                            return {
+                                socketRuntime: {
+                                    registerProfile() {},
+                                    async connect() {
+                                        connectCalls += 1
+                                        return {} as any
+                                    },
+                                    send() {},
+                                    disconnect() {},
+                                    getConnectionState() {
+                                        return 'disconnected'
+                                    },
+                                    on() {},
+                                    off() {},
+                                    replaceServers() {},
+                                    getServerCatalog() {
+                                        return {} as any
+                                    },
+                                },
+                                profileName: 'initialize-auto-connect',
+                            }
+                        },
+                        createHello() {
+                            return {
+                                helloId: 'hello-auto-connect',
+                                ticketToken: 'token-auto-connect',
+                                runtime: {
+                                    nodeId: 'node-auto-connect' as any,
+                                    deviceId: 'device-auto-connect',
+                                    role: 'slave',
+                                    platform: 'node',
+                                    product: 'test',
+                                    assemblyAppId: 'assembly.test',
+                                    assemblyVersion: '1.0.0',
+                                    buildNumber: 1,
+                                    bundleVersion: '1',
+                                    runtimeVersion: '1.0.0',
+                                    protocolVersion: '2026.04',
+                                    capabilities: [],
+                                },
+                                sentAt: Date.now() as any,
+                            }
+                        },
+                    },
+                }),
+            ],
+        })
+
+        await runtime.start()
+        await runtime.dispatchCommand(createCommand(runtimeShellV2CommandDefinitions.upsertParameterCatalogEntries, {
+            entries: [
+                {
+                    key: topologyRuntimeV2ParameterDefinitions.slaveConnectDelayMs.key,
+                    rawValue: 10,
+                    updatedAt: Date.now() as any,
+                    source: 'host',
+                },
+            ],
+        }))
+        await runtime.dispatchCommand(createCommand(topologyRuntimeV2CommandDefinitions.setInstanceMode, {
+            instanceMode: 'SLAVE',
+        }))
+        await runtime.dispatchCommand(createCommand(topologyRuntimeV2CommandDefinitions.setMasterInfo, {
+            masterInfo: {
+                deviceId: 'master-a',
+                serverAddress: [{address: 'ws://127.0.0.1:7788'}],
+                addedAt: Date.now() as any,
+            },
+        }))
+        await runtime.dispatchCommand(createCommand(topologyRuntimeV2CommandDefinitions.refreshTopologyContext, {}))
+        await runtime.dispatchCommand(createCommand(runtimeShellV2CommandDefinitions.initialize, {}))
+        await new Promise(resolve => setTimeout(resolve, 30))
+
+        expect(connectCalls).toBe(1)
     })
 })

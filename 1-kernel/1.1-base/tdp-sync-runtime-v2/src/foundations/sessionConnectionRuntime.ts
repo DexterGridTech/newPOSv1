@@ -34,10 +34,6 @@ const isErrorEvent = (
     event: {type: string},
 ): event is {type: 'error'; error: unknown} => event.type === 'error'
 
-const isReconnectingEvent = (
-    event: {type: string},
-): event is {type: 'reconnecting'; attempt: number} => event.type === 'reconnecting'
-
 const createFetchHttpTransport = (): HttpTransport => ({
     async execute(request) {
         const response = await fetch(request.url, {
@@ -245,13 +241,6 @@ export const installTdpSessionConnectionRuntimeV2 = (input: {
     socketBinding.socketRuntime.on(socketBinding.profileName, 'connected', () => {
         clearReconnectTimer()
         input.context.dispatchAction(tdpSyncV2StateActions.setStatus('HANDSHAKING'))
-    })
-    socketBinding.socketRuntime.on(socketBinding.profileName, 'reconnecting', event => {
-        if (!isReconnectingEvent(event)) {
-            return
-        }
-        input.context.dispatchAction(tdpSyncV2StateActions.setStatus('RECONNECTING'))
-        input.context.dispatchAction(tdpSyncV2StateActions.setReconnectAttempt(event.attempt))
     })
     socketBinding.socketRuntime.on(socketBinding.profileName, 'disconnected', event => {
         if (!isDisconnectedEvent(event)) {

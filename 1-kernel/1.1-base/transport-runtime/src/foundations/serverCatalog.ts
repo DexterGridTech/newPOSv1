@@ -29,13 +29,16 @@ export const createServerCatalog = (): ServerCatalog => {
             servers.set(server.serverName, server)
         },
         replaceServers(nextServers) {
-            servers.clear()
             nextServers.forEach(server => {
                 if (!server.addresses.length) {
                     throw createTransportConfigurationError(`Server has no addresses: ${server.serverName}`, {
                         serverName: server.serverName,
                     })
                 }
+            })
+
+            servers.clear()
+            nextServers.forEach(server => {
                 servers.set(server.serverName, server)
             })
         },

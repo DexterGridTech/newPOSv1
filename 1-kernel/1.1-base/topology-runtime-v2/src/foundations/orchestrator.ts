@@ -4,34 +4,44 @@ import {
     nowTimestampMs,
     type CommandDispatchEnvelope,
     type CommandEventEnvelope,
-    type NodeId,
     type NodeRuntimeInfo,
     type ProjectionMirrorEnvelope,
     type RequestId,
-    type RequestLifecycleSnapshotEnvelope,
-    type StateSyncCommitAckEnvelope,
-    type StateSyncSummaryEnvelope,
 } from '@impos2/kernel-base-contracts'
-import type {RuntimeModuleContextV2} from '@impos2/kernel-base-runtime-shell-v2'
+import type {CommandQueryResult, RuntimeModuleContextV2} from '@impos2/kernel-base-runtime-shell-v2'
 import {createCommand, type CommandAggregateResult} from '@impos2/kernel-base-runtime-shell-v2'
-import {defineSocketProfile, JsonSocketCodec, type SocketEvent} from '@impos2/kernel-base-transport-runtime'
+import type {SocketEvent} from '@impos2/kernel-base-transport-runtime'
 import {topologyRuntimeV2StateActions} from '../features/slices'
 import {topologyRuntimeV2ErrorDefinitions, topologyRuntimeV2ParameterDefinitions} from '../supports'
 import type {
     DispatchPeerCommandInput,
     TopologyPeerGatewayV2,
     TopologyPeerOrchestratorV2,
-    TopologyRuntimeV2Assembly,
     TopologyRuntimeV2IncomingMessage,
     TopologyRuntimeV2OutgoingMessage,
-    TopologyRuntimeV2SocketBinding,
 } from '../types'
 import {
     TOPOLOGY_V2_CONNECTION_STATE_KEY,
-    TOPOLOGY_V2_RECOVERY_STATE_KEY,
-    TOPOLOGY_V2_SYNC_STATE_KEY,
 } from './stateKeys'
 import {createPeerStateFromRuntimeInfo} from './context'
+import {
+    createConnectionPrecheckReasons,
+    createPeerRuntimeInfoFromNodeId,
+    createResolvedBinding,
+    resolveAuthoritativeDirection,
+    resolveSyncDirection,
+    selectTopologyRecoveryState,
+    selectTopologySyncState,
+    shouldAutoConnectOnBoot,
+} from './orchestratorState'
+import {
+    buildRequestLifecycleSnapshotEnvelope,
+    buildStateSyncCommitAckEnvelope,
+    buildStateSyncSummaryEnvelope,
+} from './orchestratorMessages'
+import {createTopologyIncomingHandlers} from './orchestratorIncoming'
+import {createTopologyV2SyncSessionManager} from './syncSession'
+import {createTopologyV2SyncSummary} from './syncPlan'
 
 const isMessageEvent = (
     event: SocketEvent<TopologyRuntimeV2IncomingMessage>,
@@ -45,65 +55,13 @@ const isErrorEvent = (
     event: SocketEvent<unknown>,
 ): event is Extract<SocketEvent<unknown>, {type: 'error'}> => event.type === 'error'
 
-const shouldAutoConnectOnBoot = (context: RuntimeModuleContextV2) => {
-    const recoveryState = context.getState()?.[TOPOLOGY_V2_RECOVERY_STATE_KEY as keyof ReturnType<typeof context.getState>] as
-        | {instanceMode?: string; masterInfo?: unknown; enableSlave?: boolean}
-        | undefined
-    return recoveryState?.instanceMode === 'SLAVE'
-        ? Boolean(recoveryState.masterInfo)
-        : recoveryState?.enableSlave === true
-}
-
-const createResolvedBinding = (
-    binding: TopologyRuntimeV2SocketBinding | undefined,
-    context: RuntimeModuleContextV2,
-    reconnectAttemptsOverride?: number,
-): TopologyRuntimeV2SocketBinding | undefined => {
-    if (!binding?.profile) {
-        return binding
-    }
-
-    const connectionTimeoutMs = context.resolveParameter({
-        key: topologyRuntimeV2ParameterDefinitions.serverConnectionTimeoutMs.key,
-        definition: topologyRuntimeV2ParameterDefinitions.serverConnectionTimeoutMs,
-    }).value
-    const heartbeatTimeoutMs = context.resolveParameter({
-        key: topologyRuntimeV2ParameterDefinitions.serverHeartbeatTimeoutMs.key,
-        definition: topologyRuntimeV2ParameterDefinitions.serverHeartbeatTimeoutMs,
-    }).value
-    const reconnectDelayMs = context.resolveParameter({
-        key: topologyRuntimeV2ParameterDefinitions.serverReconnectIntervalMs.key,
-        definition: topologyRuntimeV2ParameterDefinitions.serverReconnectIntervalMs,
-    }).value
-    const reconnectAttempts = reconnectAttemptsOverride
-        ?? context.resolveParameter({
-            key: topologyRuntimeV2ParameterDefinitions.serverReconnectAttempts.key,
-            definition: topologyRuntimeV2ParameterDefinitions.serverReconnectAttempts,
-        }).value
-
-    return {
-        ...binding,
-        profile: defineSocketProfile({
-            name: binding.profile.name,
-            serverName: binding.profile.serverName,
-            pathTemplate: binding.profile.pathTemplate,
-            handshake: binding.profile.handshake,
-            messages: binding.profile.messages,
-            codec: binding.profile.codec ?? new JsonSocketCodec(),
-            meta: {
-                ...binding.profile.meta,
-                connectionTimeoutMs,
-                heartbeatTimeoutMs,
-                reconnectDelayMs,
-                reconnectAttempts,
-            },
-        }),
-    }
-}
+const isFinalCommandAggregateResult = (
+    command: CommandQueryResult,
+): command is CommandAggregateResult => command.status !== 'RUNNING'
 
 export const createTopologyPeerOrchestratorV2 = (input: {
     context: RuntimeModuleContextV2
-    assembly: TopologyRuntimeV2Assembly
+    assembly: import('../types').TopologyRuntimeV2Assembly
     reconnectAttemptsOverride?: number
 }): TopologyPeerOrchestratorV2 & {gateway: TopologyPeerGatewayV2} => {
     const binding = createResolvedBinding(
@@ -115,9 +73,19 @@ export const createTopologyPeerOrchestratorV2 = (input: {
         sessionId?: string
         peerRuntime?: NodeRuntimeInfo
     } = {}
+    const syncSessions = createTopologyV2SyncSessionManager()
     let reconnectTimer: ReturnType<typeof setTimeout> | undefined
     let reconnectAttempt = 0
     let manualStop = false
+    let listenersAttached = false
+    let connectionToken = 0
+    let stateUnsubscribe: (() => void) | undefined
+    let lastContinuousDiffSignature = ''
+    const pendingCommitSummaryByDirection = new Map<'master-to-slave' | 'slave-to-master', Record<string, any>>()
+
+    if (binding?.profile) {
+        binding.socketRuntime.registerProfile(binding.profile)
+    }
 
     const dispatchConnectionPatch = (
         patch: Parameters<typeof topologyRuntimeV2StateActions.patchConnectionState>[0],
@@ -139,6 +107,83 @@ export const createTopologyPeerOrchestratorV2 = (input: {
         reconnectTimer = undefined
     }
 
+    const getContinuousDirection = (): 'master-to-slave' | 'slave-to-master' => {
+        const recoveryState = selectTopologyRecoveryState(input.context.getState())
+        return resolveSyncDirection({
+            localInstanceMode: recoveryState?.instanceMode,
+            peerRole: sessionState.peerRuntime?.role,
+        })
+    }
+
+    const getAuthoritativeDirection = (): 'master-to-slave' | 'slave-to-master' => {
+        const recoveryState = selectTopologyRecoveryState(input.context.getState())
+        return resolveAuthoritativeDirection(recoveryState?.instanceMode)
+    }
+
+    const buildCurrentSummaryByDirection = (
+        direction: 'master-to-slave' | 'slave-to-master',
+    ): Record<string, any> => {
+        const state = input.context.getState() as Record<string, unknown>
+        return Object.fromEntries(
+            createTopologyV2SyncSummary({
+                direction,
+                slices: input.context.getSyncSlices(),
+                state,
+            }).map(entry => [entry.sliceName, entry.summary]),
+        )
+    }
+
+    const maybeSendContinuousSyncDiff = () => {
+        if (!sessionState.sessionId || !sessionState.peerRuntime) {
+            return
+        }
+
+        const direction = getAuthoritativeDirection()
+        const syncState = selectTopologySyncState(input.context.getState())
+        if (!syncState?.continuousSyncActive) {
+            return
+        }
+
+        const activeSession = syncSessions.get(sessionState.sessionId, direction)
+        if (!activeSession || activeSession.status !== 'continuous') {
+            return
+        }
+
+        const session = syncSessions.collectContinuousDiff({
+            sessionId: sessionState.sessionId as any,
+            direction,
+            slices: input.context.getSyncSlices(),
+            state: input.context.getState() as Record<string, unknown>,
+        })
+
+        const diffBySlice = Object.fromEntries(
+            (session.lastDiff ?? []).map(entry => [entry.sliceName, entry.diff]),
+        )
+        const signature = JSON.stringify(diffBySlice)
+        if (signature === '{}' || signature === lastContinuousDiffSignature) {
+            return
+        }
+
+        send({
+            type: 'state-sync-diff',
+            envelope: {
+                envelopeId: createEnvelopeId(),
+                sessionId: sessionState.sessionId as any,
+                sourceNodeId: input.context.localNodeId as any,
+                targetNodeId: sessionState.peerRuntime.nodeId as any,
+                direction,
+                diffBySlice,
+                sentAt: nowTimestampMs() as any,
+            },
+        })
+
+        pendingCommitSummaryByDirection.set(
+            direction,
+            buildCurrentSummaryByDirection(direction),
+        )
+        lastContinuousDiffSignature = signature
+    }
+
     const getReconnectAttempts = () => contextResolve(topologyRuntimeV2ParameterDefinitions.serverReconnectAttempts)
     const getReconnectDelayMs = () => contextResolve(topologyRuntimeV2ParameterDefinitions.serverReconnectIntervalMs)
     const getResponseTimeoutMs = () => contextResolve(topologyRuntimeV2ParameterDefinitions.remoteCommandResponseTimeoutMs)
@@ -156,29 +201,6 @@ export const createTopologyPeerOrchestratorV2 = (input: {
         })
     }
 
-    const getLocalRuntimeInfo = () => input.assembly.getRuntimeInfo?.(input.context)
-        ?? input.assembly.createHello(input.context)?.runtime
-
-    const createPeerRuntimeInfoFromNodeId = (peerNodeId: NodeId): NodeRuntimeInfo => {
-        const localRuntime = getLocalRuntimeInfo()
-        const localRole = localRuntime?.role
-        const peerRole: NodeRuntimeInfo['role'] = localRole === 'slave' ? 'master' : 'slave'
-        return {
-            nodeId: peerNodeId,
-            deviceId: peerNodeId,
-            role: peerRole,
-            platform: localRuntime?.platform ?? 'unknown',
-            product: localRuntime?.product ?? 'unknown',
-            assemblyAppId: localRuntime?.assemblyAppId ?? 'unknown',
-            assemblyVersion: localRuntime?.assemblyVersion ?? 'unknown',
-            buildNumber: localRuntime?.buildNumber ?? 0,
-            bundleVersion: localRuntime?.bundleVersion ?? 'unknown',
-            runtimeVersion: localRuntime?.runtimeVersion ?? 'unknown',
-            protocolVersion: localRuntime?.protocolVersion ?? 'unknown',
-            capabilities: localRuntime?.capabilities ?? [],
-        }
-    }
-
     const rememberPeerRuntime = (runtime: NodeRuntimeInfo | undefined) => {
         if (!runtime) {
             return
@@ -189,14 +211,16 @@ export const createTopologyPeerOrchestratorV2 = (input: {
         ))
     }
 
-    const rememberPeerNodeId = (peerNodeId: NodeId | string | undefined) => {
+    const rememberPeerNodeId = (peerNodeId: NodeRuntimeInfo['nodeId'] | string | undefined) => {
         if (!peerNodeId || peerNodeId === input.context.localNodeId) {
             return
         }
         if (sessionState.peerRuntime?.nodeId === peerNodeId) {
             return
         }
-        rememberPeerRuntime(createPeerRuntimeInfoFromNodeId(peerNodeId as NodeId))
+        rememberPeerRuntime(
+            createPeerRuntimeInfoFromNodeId(peerNodeId as NodeRuntimeInfo['nodeId'], input.assembly, input.context),
+        )
     }
 
     const send = (message: TopologyRuntimeV2OutgoingMessage) => {
@@ -225,42 +249,42 @@ export const createTopologyPeerOrchestratorV2 = (input: {
             if (!request) {
                 return
             }
-            const snapshotEnvelope: RequestLifecycleSnapshotEnvelope = {
-                envelopeId: createEnvelopeId(),
-                sessionId: inputArtifacts.sessionId as any,
-                requestId: request.requestId as any,
-                ownerNodeId: input.context.localNodeId as any,
-                sourceNodeId: input.context.localNodeId as any,
-                targetNodeId: inputArtifacts.targetNodeId as any,
-                snapshot: {
-                    requestId: request.requestId as any,
-                    ownerNodeId: input.context.localNodeId as any,
-                    rootCommandId: request.rootCommandId as any,
-                    sessionId: inputArtifacts.sessionId as any,
-                    status: request.status === 'COMPLETED' ? 'complete' : request.status === 'FAILED' ? 'error' : 'started',
-                    startedAt: request.startedAt as any,
-                    updatedAt: request.updatedAt as any,
-                    commands: request.commands.map(command => ({
-                        commandId: command.commandId as any,
-                        parentCommandId: command.parentCommandId as any,
-                        ownerNodeId: input.context.localNodeId as any,
-                        sourceNodeId: input.context.localNodeId as any,
-                        targetNodeId: inputArtifacts.targetNodeId as any,
-                        commandName: command.commandName,
-                        status: command.status === 'COMPLETED' ? 'complete' : command.status === 'FAILED' ? 'error' : 'started',
-                        result: command.actorResults.find(result => result.result)?.result,
-                        error: command.actorResults.find(result => result.error)?.error,
-                        startedAt: command.startedAt as any,
-                        updatedAt: command.completedAt as any,
-                    })),
-                    commandResults: [],
-                },
-                sentAt: nowTimestampMs() as any,
-            }
             send({
                 type: 'request-lifecycle-snapshot',
-                envelope: snapshotEnvelope,
+                envelope: buildRequestLifecycleSnapshotEnvelope({
+                    request,
+                    sessionId: inputArtifacts.sessionId,
+                    ownerNodeId: input.context.localNodeId as any,
+                    targetNodeId: inputArtifacts.targetNodeId as any,
+                }),
             })
+        })
+
+        const syncDirection = getContinuousDirection()
+        syncSessions.begin({
+            sessionId: inputArtifacts.sessionId as any,
+            peerNodeId: inputArtifacts.targetNodeId as any,
+            direction: syncDirection,
+            slices: input.context.getSyncSlices(),
+            state: input.context.getState() as Record<string, unknown>,
+            startedAt: nowTimestampMs() as any,
+        })
+
+        const summaryEnvelope = buildStateSyncSummaryEnvelope({
+            sessionId: inputArtifacts.sessionId,
+            sourceNodeId: input.context.localNodeId as any,
+            targetNodeId: inputArtifacts.targetNodeId as any,
+            direction: syncDirection,
+            slices: input.context.getSyncSlices(),
+            state: input.context.getState() as Record<string, unknown>,
+        })
+        pendingCommitSummaryByDirection.set(syncDirection, summaryEnvelope.summaryBySlice)
+        send({
+            type: 'state-sync-summary',
+            envelope: summaryEnvelope,
+        })
+        dispatchSyncPatch({
+            lastSummarySentAt: nowTimestampMs(),
         })
     }
 
@@ -301,6 +325,33 @@ export const createTopologyPeerOrchestratorV2 = (input: {
         dispatchSyncPatch({
             resumeStatus: 'completed',
         })
+        lastContinuousDiffSignature = ''
+    }
+
+    const waitForRemoteStarted = async (
+        requestId: string,
+        commandId: string,
+    ): Promise<CommandAggregateResult> => {
+        const timeoutMs = getResponseTimeoutMs()
+        const pollIntervalMs = getResponsePollIntervalMs()
+        const startedAt = Date.now()
+
+        while (true) {
+            const request = input.context.queryRequest(requestId)
+            const command = request?.commands.find(item => item.commandId === commandId)
+            if (command && command.actorResults.length > 0 && isFinalCommandAggregateResult(command)) {
+                return command
+            }
+            if (Date.now() - startedAt > timeoutMs) {
+                throw createAppError(topologyRuntimeV2ErrorDefinitions.remoteCommandResponseTimeout, {
+                    args: {
+                        commandName: commandId,
+                        timeoutMs,
+                    },
+                })
+            }
+            await new Promise(resolve => setTimeout(resolve, pollIntervalMs))
+        }
     }
 
     const waitForRemoteResult = async (
@@ -314,7 +365,7 @@ export const createTopologyPeerOrchestratorV2 = (input: {
         while (true) {
             const request = input.context.queryRequest(requestId)
             const command = request?.commands.find(item => item.commandId === commandId)
-            if (command && command.completedAt) {
+            if (command && command.completedAt && isFinalCommandAggregateResult(command)) {
                 return command
             }
             if (Date.now() - startedAt > timeoutMs) {
@@ -351,11 +402,19 @@ export const createTopologyPeerOrchestratorV2 = (input: {
             context: {},
             sentAt: nowTimestampMs() as any,
         }
+        input.context.registerMirroredCommand({
+            requestId: envelope.requestId,
+            commandId: envelope.commandId,
+            parentCommandId: envelope.parentCommandId,
+            commandName: envelope.commandName,
+            target: 'peer',
+            routeContext: envelope.context,
+        })
         send({
             type: 'command-dispatch',
             envelope,
         })
-        await waitForRemoteResult(command.requestId, envelope.commandId)
+        await waitForRemoteStarted(command.requestId, envelope.commandId)
         return {
             requestId: command.requestId,
             commandId: envelope.commandId,
@@ -390,13 +449,18 @@ export const createTopologyPeerOrchestratorV2 = (input: {
     }
 
     const handleRemoteDispatch = async (envelope: CommandDispatchEnvelope) => {
-        input.context.registerMirroredCommand({
-            requestId: envelope.requestId,
-            commandId: envelope.commandId,
-            parentCommandId: envelope.parentCommandId,
-            commandName: envelope.commandName,
-            target: 'peer',
-            routeContext: envelope.context,
+        send({
+            type: 'command-event',
+            envelope: {
+                envelopeId: createEnvelopeId(),
+                sessionId: envelope.sessionId,
+                requestId: envelope.requestId,
+                commandId: envelope.commandId,
+                ownerNodeId: envelope.ownerNodeId,
+                sourceNodeId: input.context.localNodeId as any,
+                eventType: 'started',
+                occurredAt: nowTimestampMs() as any,
+            },
         })
         await input.context.dispatchCommand({
             definition: {
@@ -447,6 +511,42 @@ export const createTopologyPeerOrchestratorV2 = (input: {
         })
     }
 
+    const incomingHandlers = createTopologyIncomingHandlers({
+        setSessionId: sessionId => {
+            sessionState.sessionId = sessionId
+        },
+        onHelloAccepted: () => undefined,
+        rememberPeerRuntime,
+        rememberPeerNodeId,
+        sendResumeArtifacts,
+        send,
+        dispatchConnectionPatch,
+        dispatchSyncPatch,
+        scheduleReconnect,
+        clearReconnectTimer,
+        beginResume: () => beginResume(),
+        setReconnectAttempt: next => {
+            reconnectAttempt = next
+        },
+        getCurrentSummaryByDirection: buildCurrentSummaryByDirection,
+        pendingCommitSummaryByDirection,
+        syncSessions,
+        context: {
+            localNodeId: input.context.localNodeId as any,
+            getSyncSlices: () => input.context.getSyncSlices(),
+            getState: () => input.context.getState() as Record<string, unknown>,
+            applyRemoteCommandEvent: envelope => input.context.applyRemoteCommandEvent(envelope),
+            applyRequestLifecycleSnapshot: snapshot => input.context.applyRequestLifecycleSnapshot(snapshot),
+            applyStateSyncDiff: envelope => input.context.applyStateSyncDiff(envelope),
+            dispatchAction: action => input.context.dispatchAction(action),
+        },
+        handleRemoteDispatch,
+        resetContinuousDiffSignature: () => {
+            lastContinuousDiffSignature = ''
+        },
+        maybeSendContinuousSyncDiff,
+    })
+
     const onMessage = (event: SocketEvent<TopologyRuntimeV2IncomingMessage>) => {
         if (!isMessageEvent(event)) {
             return
@@ -460,38 +560,11 @@ export const createTopologyPeerOrchestratorV2 = (input: {
             return
         }
         if (message.type === 'node-hello-ack') {
-            sessionState.sessionId = message.ack.sessionId
-            if (!message.ack.accepted || !message.ack.sessionId) {
-                dispatchConnectionPatch({
-                    connectionError: message.ack.rejectionMessage ?? message.ack.rejectionCode,
-                    serverConnectionStatus: 'DISCONNECTED',
-                })
-                scheduleReconnect(message.ack.rejectionMessage ?? message.ack.rejectionCode)
-                return
-            }
-            reconnectAttempt = 0
-            clearReconnectTimer()
-            rememberPeerRuntime(message.ack.peerRuntime)
-            dispatchConnectionPatch({
-                serverConnectionStatus: 'CONNECTED',
-                connectedAt: nowTimestampMs(),
-                connectionError: undefined,
-                reconnectAttempt: 0,
-                lastHelloAt: message.ack.hostTime,
-            })
-            dispatchSyncPatch({
-                activeSessionId: message.ack.sessionId,
-            })
-            beginResume()
+            incomingHandlers.handleHelloAck(message)
             return
         }
         if (message.type === 'resume-begin') {
-            sessionState.sessionId = message.sessionId
-            rememberPeerNodeId(message.nodeId)
-            sendResumeArtifacts({
-                sessionId: message.sessionId,
-                targetNodeId: message.nodeId,
-            })
+            incomingHandlers.handleResumeBegin(message)
             return
         }
         if (message.type === 'command-dispatch') {
@@ -505,46 +578,24 @@ export const createTopologyPeerOrchestratorV2 = (input: {
             return
         }
         if (message.type === 'request-lifecycle-snapshot') {
-            rememberPeerNodeId(message.envelope.sourceNodeId)
-            input.context.applyRequestLifecycleSnapshot(message.envelope.snapshot)
+            incomingHandlers.handleRequestLifecycleSnapshot(message)
             return
         }
         if (message.type === 'projection-mirror') {
             rememberPeerNodeId(message.envelope.ownerNodeId)
+            input.context.dispatchAction(topologyRuntimeV2StateActions.applyProjectionMirror(message.envelope))
             return
         }
         if (message.type === 'state-sync-summary') {
-            rememberPeerNodeId(message.envelope.sourceNodeId)
-            const ack: StateSyncCommitAckEnvelope = {
-                envelopeId: createEnvelopeId(),
-                sessionId: message.envelope.sessionId,
-                sourceNodeId: message.envelope.targetNodeId,
-                targetNodeId: message.envelope.sourceNodeId,
-                direction: message.envelope.direction,
-                committedAt: nowTimestampMs() as any,
-            }
-            send({
-                type: 'state-sync-commit-ack',
-                envelope: ack,
-            })
+            incomingHandlers.handleStateSyncSummary(message)
             return
         }
         if (message.type === 'state-sync-diff') {
-            rememberPeerNodeId(message.envelope.sourceNodeId)
-            input.context.applyStateSyncDiff(message.envelope)
-            dispatchSyncPatch({
-                lastDiffAppliedAt: nowTimestampMs(),
-                continuousSyncActive: true,
-            })
+            incomingHandlers.handleStateSyncDiff(message)
             return
         }
         if (message.type === 'state-sync-commit-ack') {
-            rememberPeerNodeId(message.envelope.sourceNodeId)
-            dispatchSyncPatch({
-                lastCommitAckAt: message.envelope.committedAt,
-                continuousSyncActive: true,
-                resumeStatus: 'completed',
-            })
+            incomingHandlers.handleStateSyncCommitAck(message)
         }
     }
 
@@ -565,10 +616,14 @@ export const createTopologyPeerOrchestratorV2 = (input: {
     }
 
     const attachListeners = () => {
-        if (!binding) {
+        if (!binding || listenersAttached) {
             return
         }
+        listenersAttached = true
         binding.socketRuntime.on(binding.profileName, 'message', onMessage)
+        stateUnsubscribe = input.context.subscribeState(() => {
+            maybeSendContinuousSyncDiff()
+        })
         binding.socketRuntime.on(binding.profileName, 'disconnected', event => {
             if (!isDisconnectedEvent(event)) {
                 return
@@ -577,6 +632,10 @@ export const createTopologyPeerOrchestratorV2 = (input: {
                 serverConnectionStatus: 'DISCONNECTED',
                 disconnectedAt: nowTimestampMs(),
                 connectionError: event.reason,
+            })
+            dispatchSyncPatch({
+                resumeStatus: 'pending',
+                continuousSyncActive: false,
             })
             scheduleReconnect(event.reason)
         })
@@ -588,36 +647,77 @@ export const createTopologyPeerOrchestratorV2 = (input: {
         })
     }
 
-    const startConnection = async (options?: {isReconnect?: boolean}) => {
+    const startConnection = async (options?: {isReconnect?: boolean; manualTrigger?: boolean}) => {
         if (!binding) {
             throw createSocketBindingUnavailableError('start-topology-connection')
         }
+        if (!options?.isReconnect) {
+            const reasons = createConnectionPrecheckReasons(input.context, {
+                mode: options?.manualTrigger === false ? 'auto' : 'manual',
+            })
+            if (reasons.length > 0) {
+                throw createAppError(topologyRuntimeV2ErrorDefinitions.connectionPrecheckFailed, {
+                    args: {
+                        reasons: reasons.join(', '),
+                    },
+                    details: {
+                        reasons,
+                    },
+                })
+            }
+        }
         clearReconnectTimer()
         manualStop = false
+        attachListeners()
+        const token = ++connectionToken
         dispatchConnectionPatch({
             serverConnectionStatus: options?.isReconnect ? 'CONNECTING' : 'CONNECTING',
             connectionError: undefined,
         })
-        binding.socketRuntime.registerProfile(binding.profile ?? defineSocketProfile({
-            name: binding.profileName,
-            serverName: 'dual-topology-host',
-            pathTemplate: '/mockMasterServer/ws',
-            handshake: {headers: {} as any},
-            messages: {incoming: {} as any, outgoing: {} as any},
-            codec: new JsonSocketCodec(),
-        }))
-        attachListeners()
-        await binding.socketRuntime.connect(binding.profileName)
-        onConnected()
+        try {
+            await binding.socketRuntime.connect(binding.profileName)
+            if (token !== connectionToken || manualStop) {
+                binding.socketRuntime.disconnect(binding.profileName, 'stale-connect')
+                return
+            }
+            onConnected()
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error)
+            if (!options?.isReconnect) {
+                throw createAppError(topologyRuntimeV2ErrorDefinitions.connectionFailed, {
+                    args: {
+                        message: errorMessage,
+                    },
+                    cause: error,
+                })
+            }
+            dispatchConnectionPatch({
+                serverConnectionStatus: 'DISCONNECTED',
+                disconnectedAt: nowTimestampMs(),
+                connectionError: errorMessage,
+            })
+            dispatchSyncPatch({
+                resumeStatus: 'pending',
+                continuousSyncActive: false,
+            })
+            scheduleReconnect(errorMessage)
+        }
     }
 
     const stopConnection = (reason?: string) => {
         manualStop = true
+        reconnectAttempt = 0
+        connectionToken += 1
         clearReconnectTimer()
         binding?.socketRuntime.disconnect(binding.profileName, reason)
         dispatchConnectionPatch({
             serverConnectionStatus: 'DISCONNECTED',
             disconnectedAt: nowTimestampMs(),
+            reconnectAttempt: 0,
+        })
+        dispatchSyncPatch({
+            resumeStatus: 'idle',
+            continuousSyncActive: false,
         })
     }
 

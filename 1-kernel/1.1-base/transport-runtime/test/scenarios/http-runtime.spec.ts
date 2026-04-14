@@ -1,6 +1,12 @@
 import {describe, expect, it} from 'vitest'
-// @ts-ignore
 import {createLoggerPort} from '@impos2/kernel-base-platform-ports'
+import {
+    kernelBaseTestServerConfig,
+    SERVER_CONFIG_SPACE_KERNEL_BASE_HTTP_REPLACEMENT_TEST,
+    SERVER_CONFIG_SPACE_KERNEL_BASE_HTTP_RETRY_TEST,
+    SERVER_NAME_KERNEL_BASE_HTTP_DEMO_TEST,
+    SERVER_NAME_KERNEL_BASE_HTTP_FAILOVER_TEST,
+} from '@impos2/kernel-server-config-v2'
 import {
     callHttpEnvelope,
     callHttpResult,
@@ -12,49 +18,51 @@ import {
     transportRuntimeParameterDefinitions,
     typed,
     type HttpTransport,
+    type HttpSuccessResponse,
+    type HttpTransportRequest,
 } from '../../src'
 import {compilePath} from '../../src/foundations/shared'
+import {resolveTransportServers} from '../../../../test-support/serverConfig'
+
+const createTestLogger = () => createLoggerPort({
+    environmentMode: 'DEV',
+    write: () => {},
+    scope: {
+        moduleName: 'kernel.base.transport-runtime.test',
+        layer: 'kernel',
+    },
+})
+
+const toSuccessResponse = <TResponse>(data: TResponse): HttpSuccessResponse<TResponse> => ({
+    data,
+    status: 200,
+    statusText: 'OK',
+    headers: {},
+})
+
+const readBodyName = (
+    request: HttpTransportRequest<any, any, any>,
+) => (request.input.body as {name?: string} | undefined)?.name
 
 describe('transport-runtime http', () => {
     it('fails over to the second address when the first address fails', async () => {
         const calls: string[] = []
 
         const transport: HttpTransport = {
-            // @ts-ignore
             async execute(request) {
                 calls.push(request.selectedAddress.addressName)
                 if (request.selectedAddress.addressName === 'primary') {
                     throw new Error('primary failed')
                 }
 
-                return {
-                    data: {ok: true},
-                    status: 200,
-                    statusText: 'OK',
-                    headers: {},
-                }
+                return toSuccessResponse({ok: true} as any)
             },
         }
 
         const runtime = createHttpRuntime({
-            logger: createLoggerPort({
-                environmentMode: 'DEV',
-                write: () => {},
-                scope: {
-                    moduleName: 'kernel.base.transport-runtime.test',
-                    layer: 'kernel',
-                },
-            }),
+            logger: createTestLogger(),
             transport,
-            servers: [
-                {
-                    serverName: 'demo',
-                    addresses: [
-                        {addressName: 'primary', baseUrl: 'http://primary.local'},
-                        {addressName: 'secondary', baseUrl: 'http://secondary.local'},
-                    ],
-                },
-            ],
+            servers: resolveTransportServers(kernelBaseTestServerConfig),
             executionPolicy: {
                 retryRounds: 0,
                 failoverStrategy: 'ordered',
@@ -63,7 +71,7 @@ describe('transport-runtime http', () => {
 
         const endpoint = defineHttpEndpoint<void, {q: string}, void, {ok: boolean}>({
             name: 'demo.http.echo',
-            serverName: 'demo',
+            serverName: SERVER_NAME_KERNEL_BASE_HTTP_FAILOVER_TEST,
             method: 'GET',
             pathTemplate: '/echo',
             request: {
@@ -80,43 +88,173 @@ describe('transport-runtime http', () => {
         expect(calls).toEqual(['primary', 'secondary'])
     })
 
-    it('supports declaration-style http service modules used by business packages', async () => {
+    it('retries rounds across addresses and remembers the last successful address', async () => {
+        const calls: string[] = []
+        const addressAttempts = new Map<string, number>()
+
         const transport: HttpTransport = {
             async execute(request) {
-                return {
-                    data: {
-                        echoedName: request.input.body?.name,
-                    },
-                    status: 200,
-                    statusText: 'OK',
-                    headers: {},
+                const currentAttempts = (addressAttempts.get(request.selectedAddress.addressName) ?? 0) + 1
+                addressAttempts.set(request.selectedAddress.addressName, currentAttempts)
+                calls.push(request.selectedAddress.addressName)
+
+                if (request.selectedAddress.addressName === 'primary') {
+                    throw new Error('primary failed')
                 }
+
+                if (request.selectedAddress.addressName === 'secondary' && currentAttempts === 1) {
+                    throw new Error('secondary transient failed')
+                }
+
+                return toSuccessResponse({ok: true} as any)
             },
         }
 
         const runtime = createHttpRuntime({
-            logger: createLoggerPort({
-                environmentMode: 'DEV',
-                write: () => {},
-                scope: {
-                    moduleName: 'kernel.base.transport-runtime.test',
-                    layer: 'kernel',
+            logger: createTestLogger(),
+            transport,
+            servers: resolveTransportServers(kernelBaseTestServerConfig, {
+                selectedSpace: SERVER_CONFIG_SPACE_KERNEL_BASE_HTTP_RETRY_TEST,
+            }),
+            executionPolicy: {
+                retryRounds: 1,
+                failoverStrategy: 'ordered',
+            },
+        })
+
+        const endpoint = defineHttpEndpoint<void, void, void, {ok: boolean}>({
+            name: 'demo.http.retry-and-stick',
+            serverName: SERVER_NAME_KERNEL_BASE_HTTP_FAILOVER_TEST,
+            method: 'GET',
+            pathTemplate: '/retry-and-stick',
+            request: {},
+            response: typed<{ok: boolean}>('demo.http.retry-and-stick.response'),
+        })
+
+        const firstResponse = await runtime.call(endpoint)
+        const secondResponse = await runtime.call(endpoint)
+
+        expect(firstResponse.data.ok).toBe(true)
+        expect(secondResponse.data.ok).toBe(true)
+        expect(calls).toEqual([
+            'primary',
+            'secondary',
+            'tertiary',
+            'tertiary',
+        ])
+    })
+
+    it('clears the remembered effective address after replaceServers and uses the new order', async () => {
+        const calls: string[] = []
+
+        const transport: HttpTransport = {
+            async execute(request) {
+                calls.push(request.selectedAddress.addressName)
+                if (request.selectedAddress.addressName === 'primary') {
+                    throw new Error('primary failed')
+                }
+                return toSuccessResponse({ok: true} as any)
+            },
+        }
+
+        const initialServers = resolveTransportServers(kernelBaseTestServerConfig)
+
+        const runtime = createHttpRuntime({
+            logger: createTestLogger(),
+            transport,
+            servers: initialServers,
+            executionPolicy: {
+                retryRounds: 0,
+                failoverStrategy: 'ordered',
+            },
+        })
+
+        const endpoint = defineHttpEndpoint<void, void, void, {ok: boolean}>({
+            name: 'demo.http.replace-servers',
+            serverName: SERVER_NAME_KERNEL_BASE_HTTP_FAILOVER_TEST,
+            method: 'GET',
+            pathTemplate: '/replace-servers',
+            request: {},
+            response: typed<{ok: boolean}>('demo.http.replace-servers.response'),
+        })
+
+        await runtime.call(endpoint)
+
+        runtime.replaceServers(resolveTransportServers(kernelBaseTestServerConfig, {
+            selectedSpace: SERVER_CONFIG_SPACE_KERNEL_BASE_HTTP_REPLACEMENT_TEST,
+        }))
+
+        await runtime.call(endpoint)
+
+        expect(calls).toEqual([
+            'primary',
+            'secondary',
+            'new-primary',
+        ])
+    })
+
+    it('keeps the previous server catalog when replaceServers validation fails', async () => {
+        const transport: HttpTransport = {
+            async execute() {
+                return toSuccessResponse({ok: true} as any)
+            },
+        }
+
+        const runtime = createHttpRuntime({
+            logger: createTestLogger(),
+            transport,
+            servers: resolveTransportServers(kernelBaseTestServerConfig),
+        })
+
+        expect(() => runtime.replaceServers([
+            {
+                serverName: SERVER_NAME_KERNEL_BASE_HTTP_FAILOVER_TEST,
+                addresses: [],
+            },
+        ])).toThrowError(/Server has no addresses/)
+
+        const endpoint = defineHttpEndpoint<void, void, void, {ok: boolean}>({
+            name: 'demo.http.replace-servers-rollback',
+            serverName: SERVER_NAME_KERNEL_BASE_HTTP_FAILOVER_TEST,
+            method: 'GET',
+            pathTemplate: '/replace-servers-rollback',
+            request: {},
+            response: typed<{ok: boolean}>('demo.http.replace-servers-rollback.response'),
+        })
+
+        const response = await runtime.call(endpoint)
+        expect(response.data.ok).toBe(true)
+    })
+
+    it('supports declaration-style http service modules used by business packages', async () => {
+        const transport: HttpTransport = {
+            async execute(request) {
+                return toSuccessResponse({
+                    echoedName: readBodyName(request),
+                } as any)
+            },
+        }
+
+        const runtime = createHttpRuntime({
+            logger: createTestLogger(),
+            transport,
+            servers: resolveTransportServers(kernelBaseTestServerConfig, {
+                serverOverrides: {
+                    [SERVER_NAME_KERNEL_BASE_HTTP_DEMO_TEST]: {
+                        addresses: [
+                            {
+                                addressName: 'primary',
+                                baseUrl: 'http://primary.local',
+                            },
+                        ],
+                    },
                 },
             }),
-            transport,
-            servers: [
-                {
-                    serverName: 'demo',
-                    addresses: [
-                        {addressName: 'primary', baseUrl: 'http://primary.local'},
-                    ],
-                },
-            ],
         })
 
         const loginEndpoint = defineHttpEndpoint<void, void, {name: string}, {echoedName: string}>({
             name: 'demo.http.login',
-            serverName: 'demo',
+            serverName: SERVER_NAME_KERNEL_BASE_HTTP_DEMO_TEST,
             method: 'POST',
             pathTemplate: '/login',
             request: {
@@ -198,48 +336,35 @@ describe('transport-runtime http', () => {
         })
 
         const runtime = createHttpRuntime({
-            logger: createLoggerPort({
-                environmentMode: 'DEV',
-                write: () => {},
-                scope: {
-                    moduleName: 'kernel.base.transport-runtime.test',
-                    layer: 'kernel',
-                },
-            }),
+            logger: createTestLogger(),
             transport: {
                 async execute(request) {
                     if (request.endpoint.name.endsWith('plain-login')) {
-                        return {
-                            data: {
-                                echoedName: request.input.body?.name,
-                            },
-                            status: 200,
-                            statusText: 'OK',
-                            headers: {},
-                        }
+                        return toSuccessResponse({
+                            echoedName: readBodyName(request),
+                        } as any)
                     }
 
-                    return {
+                    return toSuccessResponse({
+                        success: true,
                         data: {
-                            success: true,
-                            data: {
-                                echoedName: request.input.body?.name,
-                            },
+                            echoedName: readBodyName(request),
                         },
-                        status: 200,
-                        statusText: 'OK',
-                        headers: {},
-                    }
+                    } as any)
                 },
             },
-            servers: [
-                {
-                    serverName: 'demo',
-                    addresses: [
-                        {addressName: 'primary', baseUrl: 'http://primary.local'},
-                    ],
+            servers: resolveTransportServers(kernelBaseTestServerConfig, {
+                serverOverrides: {
+                    [SERVER_NAME_KERNEL_BASE_HTTP_DEMO_TEST]: {
+                        addresses: [
+                            {
+                                addressName: 'primary',
+                                baseUrl: 'http://primary.local',
+                            },
+                        ],
+                    },
                 },
-            ],
+            }),
         })
 
         const plainResult = await callHttpResult(
@@ -301,39 +426,31 @@ describe('transport-runtime http', () => {
         } as const
 
         const envelopeRuntime = createHttpRuntime({
-            logger: createLoggerPort({
-                environmentMode: 'DEV',
-                write: () => {},
-                scope: {
-                    moduleName: 'kernel.base.transport-runtime.test',
-                    layer: 'kernel',
-                },
-            }),
+            logger: createTestLogger(),
             transport: {
                 async execute() {
-                    return {
-                        data: {
-                            success: false,
-                            data: {ok: true},
-                            error: {
-                                message: 'server rejected',
-                                details: {code: 'SERVER_REJECTED'},
-                            },
+                    return toSuccessResponse({
+                        success: false,
+                        data: {ok: true},
+                        error: {
+                            message: 'server rejected',
+                            details: {code: 'SERVER_REJECTED'},
                         },
-                        status: 200,
-                        statusText: 'OK',
-                        headers: {},
-                    }
+                    } as any)
                 },
             },
-            servers: [
-                {
-                    serverName: 'demo',
-                    addresses: [
-                        {addressName: 'primary', baseUrl: 'http://primary.local'},
-                    ],
+            servers: resolveTransportServers(kernelBaseTestServerConfig, {
+                serverOverrides: {
+                    [SERVER_NAME_KERNEL_BASE_HTTP_DEMO_TEST]: {
+                        addresses: [
+                            {
+                                addressName: 'primary',
+                                baseUrl: 'http://primary.local',
+                            },
+                        ],
+                    },
                 },
-            ],
+            }),
         })
 
         await expect(callHttpEnvelope(
@@ -351,27 +468,24 @@ describe('transport-runtime http', () => {
         })
 
         const networkRuntime = createHttpRuntime({
-            logger: createLoggerPort({
-                environmentMode: 'DEV',
-                write: () => {},
-                scope: {
-                    moduleName: 'kernel.base.transport-runtime.test',
-                    layer: 'kernel',
-                },
-            }),
+            logger: createTestLogger(),
             transport: {
                 async execute() {
                     throw new TypeError('fetch failed')
                 },
             },
-            servers: [
-                {
-                    serverName: 'demo',
-                    addresses: [
-                        {addressName: 'primary', baseUrl: 'http://primary.local'},
-                    ],
+            servers: resolveTransportServers(kernelBaseTestServerConfig, {
+                serverOverrides: {
+                    [SERVER_NAME_KERNEL_BASE_HTTP_DEMO_TEST]: {
+                        addresses: [
+                            {
+                                addressName: 'primary',
+                                baseUrl: 'http://primary.local',
+                            },
+                        ],
+                    },
                 },
-            ],
+            }),
         })
 
         await expect(callHttpEnvelope(
@@ -437,28 +551,25 @@ describe('transport-runtime http', () => {
         }
 
         const runtime = createHttpRuntime({
-            logger: createLoggerPort({
-                environmentMode: 'DEV',
-                write: () => {},
-                scope: {
-                    moduleName: 'kernel.base.transport-runtime.test',
-                    layer: 'kernel',
+            logger: createTestLogger(),
+            transport,
+            servers: resolveTransportServers(kernelBaseTestServerConfig, {
+                serverOverrides: {
+                    [SERVER_NAME_KERNEL_BASE_HTTP_DEMO_TEST]: {
+                        addresses: [
+                            {
+                                addressName: 'primary',
+                                baseUrl: 'http://primary.local',
+                            },
+                        ],
+                    },
                 },
             }),
-            transport,
-            servers: [
-                {
-                    serverName: 'demo',
-                    addresses: [
-                        {addressName: 'primary', baseUrl: 'http://primary.local'},
-                    ],
-                },
-            ],
         })
 
         const endpoint = defineHttpEndpoint<void, void, {name: string}, {ok: boolean}>({
             name: 'demo.http.login',
-            serverName: 'demo',
+            serverName: SERVER_NAME_KERNEL_BASE_HTTP_DEMO_TEST,
             method: 'POST',
             pathTemplate: '/login',
             request: {

@@ -3,6 +3,10 @@ import type {ParameterCatalogEntry} from '@impos2/kernel-base-contracts'
 import {createLoggerPort, createPlatformPorts} from '@impos2/kernel-base-platform-ports'
 import {createKernelRuntimeV2, type KernelRuntimeModuleV2} from '@impos2/kernel-base-runtime-shell-v2'
 import {
+    kernelBaseTestServerConfig,
+    SERVER_NAME_MOCK_TERMINAL_PLATFORM,
+} from '@impos2/kernel-server-config-v2'
+import {
     createHttpRuntime,
     createSocketRuntime,
     type HttpTransport,
@@ -21,9 +25,10 @@ import {
     tdpSyncV2SocketProfile,
     type CreateTdpSyncRuntimeModuleV2Input,
 } from '@impos2/kernel-base-tdp-sync-runtime-v2'
-import {createMockTerminalPlatformTestServer} from '/Users/dexter/Documents/workspace/idea/newPOSv1/0-mock-server/mock-terminal-platform/server/src/test/createMockTerminalPlatformTestServer'
-import {createNodeWsTransport} from '/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-base/transport-runtime/test/helpers/nodeWsTransport'
-import {createFileStoragePair, createMemoryStorage} from '/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-base/tdp-sync-runtime/test/helpers/runtimeHarness'
+import {createMockTerminalPlatformTestServer} from '../../../../../0-mock-server/mock-terminal-platform/server/src/test/createMockTerminalPlatformTestServer'
+import {createNodeWsTransport} from '../../../transport-runtime/test/helpers/nodeWsTransport'
+import {createFileStoragePair, createMemoryStorage} from '../../../../test-support/storageHarness'
+import {resolveTransportServers} from '../../../../test-support/serverConfig'
 
 type ApiEnvelope<T> =
     | {success: true; data: T}
@@ -126,17 +131,11 @@ export const createLiveRuntime = (input: {
             },
         }),
         transport: createNodeWsTransport() as SocketTransport,
-        servers: [
-            {
-                serverName: 'mock-terminal-platform',
-                addresses: [
-                    {
-                        addressName: 'live',
-                        baseUrl: input.baseUrl,
-                    },
-                ],
+        servers: resolveTransportServers(kernelBaseTestServerConfig, {
+            baseUrlOverrides: {
+                [SERVER_NAME_MOCK_TERMINAL_PLATFORM]: input.baseUrl,
             },
-        ],
+        }),
     })
 
     const runtime = createKernelRuntimeV2({
@@ -164,17 +163,11 @@ export const createLiveRuntime = (input: {
                                 subsystem: 'transport.http',
                             }),
                             transport: createFetchTransport(),
-                            servers: [
-                                {
-                                    serverName: 'mock-terminal-platform',
-                                    addresses: [
-                                        {
-                                            addressName: 'live',
-                                            baseUrl: input.baseUrl,
-                                        },
-                                    ],
+                            servers: resolveTransportServers(kernelBaseTestServerConfig, {
+                                baseUrlOverrides: {
+                                    [SERVER_NAME_MOCK_TERMINAL_PLATFORM]: input.baseUrl,
                                 },
-                            ],
+                            }),
                         })
                     },
                 },
@@ -189,17 +182,11 @@ export const createLiveRuntime = (input: {
                                 subsystem: 'transport.http',
                             }),
                             transport: createFetchTransport(),
-                            servers: [
-                                {
-                                    serverName: 'mock-terminal-platform',
-                                    addresses: [
-                                        {
-                                            addressName: 'live',
-                                            baseUrl: input.baseUrl,
-                                        },
-                                    ],
+                            servers: resolveTransportServers(kernelBaseTestServerConfig, {
+                                baseUrlOverrides: {
+                                    [SERVER_NAME_MOCK_TERMINAL_PLATFORM]: input.baseUrl,
                                 },
-                            ],
+                            }),
                         })
                     },
                     resolveSocketBinding() {

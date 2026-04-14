@@ -2,13 +2,25 @@ import {describe, expect, it} from 'vitest'
 import {createNodeId} from '@impos2/kernel-base-contracts'
 import {createLoggerPort, createPlatformPorts} from '@impos2/kernel-base-platform-ports'
 import {createCommand, createKernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
-import {createHttpRuntime, type HttpTransport} from '@impos2/kernel-base-transport-runtime'
+import {
+    kernelBaseTestServerConfig,
+    SERVER_NAME_MOCK_TERMINAL_PLATFORM,
+} from '@impos2/kernel-server-config-v2'
+import {
+    createHttpRuntime,
+    JsonSocketCodec,
+    defineSocketProfile,
+    typed,
+    type HttpTransport,
+    type SocketRuntime,
+} from '@impos2/kernel-base-transport-runtime'
 import {
     createTcpControlRuntimeModuleV2,
     tcpControlV2CommandDefinitions,
 } from '@impos2/kernel-base-tcp-control-runtime-v2'
 import {
     createTdpSyncRuntimeModuleV2,
+    selectTdpCommandInboxState,
     selectTdpProjectionByTopicAndBucket,
     selectTdpResolvedProjectionByTopic,
     selectTdpSessionState,
@@ -19,6 +31,7 @@ import {
     selectRuntimeShellV2ErrorCatalog,
     selectRuntimeShellV2ParameterCatalog,
 } from '@impos2/kernel-base-runtime-shell-v2'
+import {resolveTransportServers} from '../../../../test-support/serverConfig'
 
 const createMemoryStorage = () => {
     const saved = new Map<string, string>()
@@ -96,53 +109,117 @@ const createMockTcpTransport = (): HttpTransport => ({
     },
 })
 
+const createSocketRuntimeSpy = () => {
+    const sentMessages: unknown[] = []
+    const connectionStateByProfile = new Map<string, 'connected' | 'connecting' | 'disconnected'>()
+
+    const socketRuntime: SocketRuntime = {
+        registerProfile() {},
+        async connect(profileName) {
+            connectionStateByProfile.set(profileName, 'connected')
+            return {} as any
+        },
+        send(profileName, message) {
+            sentMessages.push({profileName, message})
+        },
+        disconnect(profileName) {
+            connectionStateByProfile.set(profileName, 'disconnected')
+        },
+        getConnectionState(profileName) {
+            return connectionStateByProfile.get(profileName) ?? 'disconnected'
+        },
+        on() {},
+        off() {},
+        replaceServers() {},
+        getServerCatalog() {
+            return {} as any
+        },
+    }
+
+    return {
+        socketRuntime,
+        sentMessages,
+    }
+}
+
 const createRuntime = (input: {
     localNodeId?: string
     stateStorage: ReturnType<typeof createMemoryStorage>
     secureStateStorage: ReturnType<typeof createMemoryStorage>
-}) => createKernelRuntimeV2({
-    localNodeId: (input.localNodeId ?? createNodeId()) as any,
-    platformPorts: createPlatformPorts({
-        environmentMode: 'DEV',
-        logger: createLoggerPort({
+    socketRuntimeSpy?: ReturnType<typeof createSocketRuntimeSpy>
+}) => {
+    const socketRuntimeSpy = input.socketRuntimeSpy
+
+    return createKernelRuntimeV2({
+        localNodeId: (input.localNodeId ?? createNodeId()) as any,
+        platformPorts: createPlatformPorts({
             environmentMode: 'DEV',
-            write: () => {},
-            scope: {
-                moduleName: 'kernel.base.tdp-sync-runtime-v2.test',
-                layer: 'kernel',
-            },
-        }),
-        stateStorage: input.stateStorage.storage,
-        secureStateStorage: input.secureStateStorage.storage,
-    }),
-    modules: [
-        createTcpControlRuntimeModuleV2({
-            assembly: {
-                createHttpRuntime(context) {
-                    return createHttpRuntime({
-                        logger: context.platformPorts.logger.scope({
-                            moduleName: 'kernel.base.tdp-sync-runtime-v2.test',
-                            subsystem: 'transport.http',
-                        }),
-                        transport: createMockTcpTransport(),
-                        servers: [
-                            {
-                                serverName: 'mock-terminal-platform',
-                                addresses: [
-                                    {
-                                        addressName: 'test',
-                                        baseUrl: 'http://mock-terminal-platform.test',
-                                    },
-                                ],
-                            },
-                        ],
-                    })
+            logger: createLoggerPort({
+                environmentMode: 'DEV',
+                write: () => {},
+                scope: {
+                    moduleName: 'kernel.base.tdp-sync-runtime-v2.test',
+                    layer: 'kernel',
                 },
-            },
+            }),
+            stateStorage: input.stateStorage.storage,
+            secureStateStorage: input.secureStateStorage.storage,
         }),
-        createTdpSyncRuntimeModuleV2(),
-    ],
-})
+        modules: [
+            createTcpControlRuntimeModuleV2({
+                assembly: {
+                    createHttpRuntime(context) {
+                        return createHttpRuntime({
+                            logger: context.platformPorts.logger.scope({
+                                moduleName: 'kernel.base.tdp-sync-runtime-v2.test',
+                                subsystem: 'transport.http',
+                            }),
+                            transport: createMockTcpTransport(),
+                            servers: resolveTransportServers(kernelBaseTestServerConfig),
+                        })
+                    },
+                },
+            }),
+            createTdpSyncRuntimeModuleV2(socketRuntimeSpy == null ? undefined : {
+                assembly: {
+                    createHttpRuntime(context) {
+                        return createHttpRuntime({
+                            logger: context.platformPorts.logger.scope({
+                                moduleName: 'kernel.base.tdp-sync-runtime-v2.test',
+                                subsystem: 'transport.http',
+                            }),
+                            transport: createMockTcpTransport(),
+                            servers: resolveTransportServers(kernelBaseTestServerConfig),
+                        })
+                    },
+                    resolveSocketBinding() {
+                        return {
+                            socketRuntime: socketRuntimeSpy.socketRuntime,
+                            profileName: 'kernel.base.tdp-sync-runtime-v2.test.socket',
+                            profile: defineSocketProfile<void, {terminalId: string; token: string}, Record<string, string>, any, any>({
+                                name: 'kernel.base.tdp-sync-runtime-v2.test.socket',
+                                serverName: SERVER_NAME_MOCK_TERMINAL_PLATFORM,
+                                pathTemplate: '/api/v1/tdp/ws/connect',
+                                handshake: {
+                                    query: typed<{terminalId: string; token: string}>('kernel.base.tdp-sync-runtime-v2.test.socket.query'),
+                                    headers: typed<Record<string, string>>('kernel.base.tdp-sync-runtime-v2.test.socket.headers'),
+                                },
+                                messages: {
+                                    incoming: typed<any>('kernel.base.tdp-sync-runtime-v2.test.socket.incoming'),
+                                    outgoing: typed<any>('kernel.base.tdp-sync-runtime-v2.test.socket.outgoing'),
+                                },
+                                codec: new JsonSocketCodec<any, any>(),
+                                meta: {
+                                    reconnectAttempts: 0,
+                                },
+                            }),
+                        }
+                    },
+                },
+            }),
+        ],
+    })
+}
 
 describe('tdp-sync-runtime-v2', () => {
     it('bootstraps automatically from the global runtime initialize lifecycle', async () => {
@@ -166,6 +243,9 @@ describe('tdp-sync-runtime-v2', () => {
         expect(observedBootstrapRequests).toContain('RUNNING')
         expect(observedBootstrapRequests.at(-1)).toBe('COMPLETED')
         const syncState = selectTdpSyncState(runtime.getState())
+        if (syncState == null) {
+            throw new Error('expected tdp sync state to exist after runtime start')
+        }
         expect(syncState.snapshotStatus).toBe('idle')
         expect(syncState.changesStatus).toBe('idle')
         expect(syncState.lastDeliveredCursor).toBeUndefined()
@@ -356,6 +436,177 @@ describe('tdp-sync-runtime-v2', () => {
             'wf-a': {
                 payload: {steps: ['store']},
             },
+        })
+    })
+
+    it('auto acknowledges delivered remote commands with command id and instance id', async () => {
+        const stateStorage = createMemoryStorage()
+        const secureStateStorage = createMemoryStorage()
+        const socketRuntimeSpy = createSocketRuntimeSpy()
+        const runtime = createRuntime({
+            localNodeId: 'node_tdp_v2_command_ack',
+            stateStorage,
+            secureStateStorage,
+            socketRuntimeSpy,
+        })
+
+        await runtime.start()
+        await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.bootstrapTcpControl, {
+            deviceInfo: {
+                id: 'device-test-ack-001',
+                model: 'Mock POS',
+            },
+        }))
+        await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.activateTerminal, {
+            activationCode: 'ACT-TDP-V2-ACK-001',
+            deviceFingerprint: 'device-test-ack-001',
+            deviceInfo: {
+                id: 'device-test-ack-001',
+                model: 'Mock POS',
+            },
+        }))
+
+        await runtime.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.tdpSessionReady, {
+            sessionId: 'session-ack-001',
+            nodeId: 'mock-tdp-node-ack',
+            nodeState: 'healthy',
+            highWatermark: 12,
+            syncMode: 'incremental',
+            alternativeEndpoints: [],
+        }))
+        await runtime.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.tdpChangesLoaded, {
+            nextCursor: 12,
+            highWatermark: 12,
+            changes: [],
+        }))
+
+        await runtime.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.tdpCommandDelivered, {
+            commandId: 'cmd-ack-001',
+            topic: 'remote.control',
+            terminalId: 'terminal-test-001',
+            sourceReleaseId: 'release-ack-001',
+            expiresAt: '2026-04-13T23:59:59.000Z',
+            payload: {
+                instanceId: 'instance-ack-001',
+                commandType: 'SYNC_ORDER',
+                action: 'SYNC_ORDER',
+            },
+        }))
+
+        expect(selectTdpCommandInboxState(runtime.getState())?.orderedIds).toContain('cmd-ack-001')
+        expect(socketRuntimeSpy.sentMessages).toContainEqual({
+            profileName: 'kernel.base.tdp-sync-runtime-v2.test.socket',
+            message: {
+                type: 'ACK',
+                data: {
+                    cursor: 12,
+                    topic: 'remote.control',
+                    itemKey: 'cmd-ack-001',
+                    instanceId: 'instance-ack-001',
+                },
+            },
+        })
+    })
+
+    it('auto acknowledges and reports applied cursor for projection stream messages', async () => {
+        const stateStorage = createMemoryStorage()
+        const secureStateStorage = createMemoryStorage()
+        const socketRuntimeSpy = createSocketRuntimeSpy()
+        const runtime = createRuntime({
+            localNodeId: 'node_tdp_v2_projection_feedback',
+            stateStorage,
+            secureStateStorage,
+            socketRuntimeSpy,
+        })
+
+        await runtime.start()
+        await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.bootstrapTcpControl, {
+            deviceInfo: {
+                id: 'device-test-feedback-001',
+                model: 'Mock POS',
+            },
+        }))
+        await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.activateTerminal, {
+            activationCode: 'ACT-TDP-V2-FEEDBACK-001',
+            deviceFingerprint: 'device-test-feedback-001',
+            deviceInfo: {
+                id: 'device-test-feedback-001',
+                model: 'Mock POS',
+            },
+        }))
+        await runtime.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.tdpSessionReady, {
+            sessionId: 'session-feedback-001',
+            nodeId: 'mock-tdp-node-feedback',
+            nodeState: 'healthy',
+            highWatermark: 4,
+            syncMode: 'full',
+            alternativeEndpoints: [],
+        }))
+
+        await runtime.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.tdpSnapshotLoaded, {
+            highWatermark: 4,
+            snapshot: [],
+        }))
+        await runtime.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.tdpProjectionReceived, {
+            cursor: 5,
+            change: {
+                topic: 'config.delta',
+                itemKey: 'cfg-feedback-001',
+                operation: 'upsert',
+                scopeType: 'TERMINAL',
+                scopeId: 'terminal-test-001',
+                revision: 5,
+                payload: {
+                    featureFlag: true,
+                },
+                occurredAt: '2026-04-13T01:00:00.000Z',
+            },
+        }))
+
+        expect(socketRuntimeSpy.sentMessages).toContainEqual({
+            profileName: 'kernel.base.tdp-sync-runtime-v2.test.socket',
+            message: {
+                type: 'ACK',
+                data: {
+                    cursor: 4,
+                },
+            },
+        })
+        expect(socketRuntimeSpy.sentMessages).toContainEqual({
+            profileName: 'kernel.base.tdp-sync-runtime-v2.test.socket',
+            message: {
+                type: 'STATE_REPORT',
+                data: {
+                    lastAppliedCursor: 4,
+                    connectionMetrics: undefined,
+                    localStoreMetrics: undefined,
+                },
+            },
+        })
+        expect(socketRuntimeSpy.sentMessages).toContainEqual({
+            profileName: 'kernel.base.tdp-sync-runtime-v2.test.socket',
+            message: {
+                type: 'ACK',
+                data: {
+                    cursor: 5,
+                },
+            },
+        })
+        expect(socketRuntimeSpy.sentMessages).toContainEqual({
+            profileName: 'kernel.base.tdp-sync-runtime-v2.test.socket',
+            message: {
+                type: 'STATE_REPORT',
+                data: {
+                    lastAppliedCursor: 5,
+                    connectionMetrics: undefined,
+                    localStoreMetrics: undefined,
+                },
+            },
+        })
+        expect(selectTdpSyncState(runtime.getState())).toMatchObject({
+            lastCursor: 5,
+            lastAckedCursor: 5,
+            lastAppliedCursor: 5,
         })
     })
 })

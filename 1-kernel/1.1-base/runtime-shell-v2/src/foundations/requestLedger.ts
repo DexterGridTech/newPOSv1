@@ -10,6 +10,8 @@ import type {
     ActorExecutionResult,
     CommandAggregateResult,
     CommandAggregateStatus,
+    CommandQueryStatus,
+    CommandQueryResult,
     DispatchedCommand,
     RequestListener,
     RequestQueryResult,
@@ -21,7 +23,7 @@ interface MutableCommandRecord {
     startedAt: number
     completedAt?: number
     actorResults: ActorExecutionResult[]
-    status: CommandAggregateStatus
+    status: CommandQueryStatus
 }
 
 interface MutableRequestRecord {
@@ -56,7 +58,7 @@ export const createRequestLedger = () => {
     const requestListeners = new Map<RequestId, Set<RequestListener>>()
     const allListeners = new Set<RequestListener>()
 
-    const toAggregate = (record: MutableCommandRecord): CommandAggregateResult => ({
+    const toQueryCommand = (record: MutableCommandRecord): CommandQueryResult => ({
         requestId: record.command.requestId,
         commandId: record.command.commandId,
         parentCommandId: record.command.parentCommandId,
@@ -64,7 +66,21 @@ export const createRequestLedger = () => {
         target: record.command.target,
         status: record.status,
         startedAt: record.startedAt,
-        completedAt: record.completedAt ?? nowTimestampMs(),
+        completedAt: record.completedAt,
+        actorResults: [...record.actorResults],
+    })
+
+    const toAggregateResult = (
+        record: MutableCommandRecord & {status: CommandAggregateStatus; completedAt: number},
+    ): CommandAggregateResult => ({
+        requestId: record.command.requestId,
+        commandId: record.command.commandId,
+        parentCommandId: record.command.parentCommandId,
+        commandName: record.command.commandName,
+        target: record.command.target,
+        status: record.status,
+        startedAt: record.startedAt,
+        completedAt: record.completedAt,
         actorResults: [...record.actorResults],
     })
 
@@ -74,7 +90,7 @@ export const createRequestLedger = () => {
         status: record.status,
         startedAt: record.startedAt,
         updatedAt: record.updatedAt,
-        commands: record.commands.map(toAggregate),
+        commands: record.commands.map(toQueryCommand),
     })
 
     const emit = (requestId: RequestId) => {
@@ -208,7 +224,10 @@ export const createRequestLedger = () => {
             commandRecord.actorResults = [...actorResults]
             commandRecord.completedAt = nowTimestampMs()
             touch(getRecord(requestId))
-            return toAggregate(commandRecord)
+            return toAggregateResult(commandRecord as MutableCommandRecord & {
+                status: CommandAggregateStatus
+                completedAt: number
+            })
         },
         applyRemoteCommandEvent(envelope: CommandEventEnvelope) {
             const actorKey = 'runtime-shell-v2.remote-event'
@@ -305,7 +324,7 @@ export const createRequestLedger = () => {
                         ? 'FAILED'
                         : command.status === 'complete'
                             ? 'COMPLETED'
-                            : 'COMPLETED',
+                            : 'RUNNING',
                 }
             })
             const record: MutableRequestRecord = {

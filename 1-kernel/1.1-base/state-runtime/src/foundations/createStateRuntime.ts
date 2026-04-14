@@ -1,4 +1,7 @@
-import type {StateStoragePort} from '@impos2/kernel-base-platform-ports'
+import type {
+    LoggerPort,
+    StateStoragePort,
+} from '@impos2/kernel-base-platform-ports'
 import type {RootState} from '../types/state'
 import type {CreateStateRuntimeInput, StateRuntime} from '../types/runtime'
 import type {
@@ -14,7 +17,7 @@ import {
     stateRuntimeParameterDefinitions,
 } from '../supports'
 
-const NOOP_LOGGER = {
+const NOOP_LOGGER: LoggerPort = {
     emit() {},
     debug() {},
     info() {},
@@ -104,7 +107,7 @@ export const createStateRuntime = (
     input: CreateStateRuntimeInput,
 ): StateRuntime => {
     const store = createStateStore(input.slices)
-    const logger = input.logger ?? (NOOP_LOGGER as any)
+    const logger = input.logger ?? NOOP_LOGGER
     const persistenceEnabled = Boolean(
         input.persistenceKey && input.allowPersistence !== false,
     )
@@ -113,7 +116,7 @@ export const createStateRuntime = (
     let flushTimer: ReturnType<typeof setTimeout> | null = null
     let persistenceChain = Promise.resolve()
     let hydrated = false
-    let lastStateSignature = ''
+    let persistenceDirty = false
     const persistenceDebounceMs =
         input.persistenceDebounceMs ?? stateRuntimeParameterDefinitions.persistenceDebounceMs.defaultValue
 
@@ -244,12 +247,17 @@ export const createStateRuntime = (
         return Object.fromEntries(slicePatchMap.entries())
     }
 
+    const markPersistenceDirty = () => {
+        persistenceDirty = true
+    }
+
+    const clearPersistenceDirty = () => {
+        persistenceDirty = false
+    }
+
     const applyPersistedState = (snapshot: PersistedStateRuntimeSnapshot) => {
         store.dispatch(createReplaceStateRuntimeAction(buildStatePatchFromSnapshot(snapshot)))
-        lastStateSignature = JSON.stringify(exportEntries().map(entry => ({
-            key: entry.storageKey,
-            value: entry.value,
-        })))
+        clearPersistenceDirty()
     }
 
     const applySlicePatches = (slices: Record<string, unknown>) => {
@@ -258,10 +266,7 @@ export const createStateRuntime = (
         }
 
         store.dispatch(createReplaceStateRuntimeAction(slices))
-        lastStateSignature = JSON.stringify(exportEntries().map(entry => ({
-            key: entry.storageKey,
-            value: entry.value,
-        })))
+        clearPersistenceDirty()
     }
 
     const removeKeys = async (
@@ -399,6 +404,7 @@ export const createStateRuntime = (
         })
 
         await persistenceChain
+        clearPersistenceDirty()
         return snapshot
     }
 
@@ -421,13 +427,23 @@ export const createStateRuntime = (
         }, persistenceDebounceMs)
     }
 
-    const collectPersistenceModes = (): ('immediate' | 'debounced')[] => {
-        const state = store.getState() as Record<string, unknown>
-        const modes: ('immediate' | 'debounced')[] = []
+    const collectPersistenceModes = (
+        state: Record<string, unknown>,
+        changedSliceNames: readonly string[],
+    ): ('immediate' | 'debounced')[] => {
+        const changed = new Set(changedSliceNames)
+        const modes = new Set<'immediate' | 'debounced'>()
 
         for (const slice of persistableSlices) {
+            if (!changed.has(slice.name)) {
+                continue
+            }
+
             const sliceState = state[slice.name]
             if (sliceState == null) {
+                for (const descriptor of slice.persistence ?? []) {
+                    modes.add(descriptor.flushMode ?? 'debounced')
+                }
                 continue
             }
 
@@ -435,20 +451,26 @@ export const createStateRuntime = (
                 if (descriptor.kind === 'field') {
                     const value = (sliceState as Record<string, unknown>)[descriptor.stateKey]
                     const shouldPersist = descriptor.shouldPersist?.(value, sliceState) ?? value !== undefined
-                    if (shouldPersist) {
-                        modes.push(descriptor.flushMode ?? 'debounced')
+                    if (shouldPersist || persistedValueCache.has(
+                        createFieldStorageKey(input.persistenceKey!, slice.name, descriptor),
+                    )) {
+                        modes.add(descriptor.flushMode ?? 'debounced')
                     }
                     continue
                 }
 
                 const recordEntries = toRecordEntries(descriptor, sliceState as Record<string, unknown>)
-                if (Object.keys(recordEntries).length > 0) {
-                    modes.push(descriptor.flushMode ?? 'debounced')
+                const manifestKey = createRecordManifestKey(input.persistenceKey!, slice.name, descriptor)
+                if (
+                    Object.keys(recordEntries).length > 0
+                    || persistedValueCache.has(manifestKey)
+                ) {
+                    modes.add(descriptor.flushMode ?? 'debounced')
                 }
             }
         }
 
-        return modes
+        return [...modes]
     }
 
     const hydratePersistence = async () => {
@@ -522,6 +544,12 @@ export const createStateRuntime = (
         }
 
         hydrated = true
+        clearPersistenceDirty()
+    }
+
+    const previousPersistableSliceRefs = new Map<string, unknown>()
+    for (const slice of persistableSlices) {
+        previousPersistableSliceRefs.set(slice.name, (store.getState() as Record<string, unknown>)[slice.name])
     }
 
     store.subscribe(() => {
@@ -529,17 +557,27 @@ export const createStateRuntime = (
             return
         }
 
-        const stateSignature = JSON.stringify(exportEntries().map(entry => ({
-            key: entry.storageKey,
-            value: entry.value,
-        })))
+        const state = store.getState() as Record<string, unknown>
+        const changedSliceNames: string[] = []
 
-        if (stateSignature === lastStateSignature) {
+        for (const slice of persistableSlices) {
+            const currentRef = state[slice.name]
+            if (previousPersistableSliceRefs.get(slice.name) !== currentRef) {
+                previousPersistableSliceRefs.set(slice.name, currentRef)
+                changedSliceNames.push(slice.name)
+            }
+        }
+
+        if (changedSliceNames.length === 0) {
             return
         }
 
-        lastStateSignature = stateSignature
-        const modes = collectPersistenceModes()
+        markPersistenceDirty()
+        const modes = collectPersistenceModes(state, changedSliceNames)
+        if (!persistenceDirty || modes.length === 0) {
+            return
+        }
+
         if (modes.includes('immediate')) {
             scheduleFlush('immediate')
         } else if (modes.includes('debounced')) {

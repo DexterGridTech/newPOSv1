@@ -32,6 +32,7 @@
     "build-for-product:clean": "turbo run build-for-product --force",
     "check-env": "node scripts/check-env.cjs",
     "type-check": "turbo run type-check",
+    "check:base-node-modules": "node scripts/check-base-workspace-node-modules.cjs",
     "kill-port": "node scripts/kill-port.mjs",
     "android:port-forward": "node scripts/setup-android-port-forwarding.mjs",
     "android:port-list": "node scripts/setup-android-port-forwarding.mjs --list",

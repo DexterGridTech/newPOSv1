@@ -53,17 +53,6 @@ export const createTopologyRuntimeModuleV2 = (
                 })
                 orchestratorRef.current = orchestrator
                 context.installPeerDispatchGateway(orchestrator.gateway)
-                if (context.getState()?.[TOPOLOGY_V2_RECOVERY_STATE_KEY as keyof ReturnType<typeof context.getState>]) {
-                    if ((
-                        context.getState()?.[TOPOLOGY_V2_RECOVERY_STATE_KEY as keyof ReturnType<typeof context.getState>] as
-                            {instanceMode?: string; enableSlave?: boolean; masterInfo?: unknown}
-                    )?.enableSlave || (
-                        context.getState()?.[TOPOLOGY_V2_RECOVERY_STATE_KEY as keyof ReturnType<typeof context.getState>] as
-                            {instanceMode?: string; enableSlave?: boolean; masterInfo?: unknown}
-                    )?.instanceMode === 'SLAVE') {
-                        void orchestrator.startConnection()
-                    }
-                }
             }
 
             context.platformPorts.logger.info({

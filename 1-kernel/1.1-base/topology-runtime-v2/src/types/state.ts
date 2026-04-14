@@ -65,9 +65,11 @@ export interface TopologyRemoteDispatchResult {
     startedAt: number
 }
 
-export interface TopologyProjectionMirrorState {
+export interface TopologyV2ProjectionState {
     requestProjections: Record<string, RequestProjection>
 }
+
+export type TopologyProjectionMirrorState = TopologyV2ProjectionState
 
 export interface TopologyPeerSessionState {
     sessionId?: string

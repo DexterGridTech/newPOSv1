@@ -59,7 +59,7 @@ describe('definition-registry resolvers', () => {
             defaultValue: 3000,
             valueType: 'number',
             validate(value) {
-                return value > 0
+                return typeof value === 'number' && value > 0
             },
             moduleName: 'kernel.base.definition-registry.test',
         })
@@ -93,5 +93,75 @@ describe('definition-registry resolvers', () => {
         expect(fallback.value).toBe(3000)
         expect(fallback.source).toBe('catalog-fallback')
         expect(fallback.valid).toBe(false)
+    })
+
+    it('decodes boolean parameters with explicit true/false semantics', () => {
+        const registries = createDefinitionRegistryBundle()
+        const definition = registries.parameters.register({
+            key: 'kernel.base.definition-registry.parameter.feature-enabled',
+            name: 'Feature Enabled',
+            defaultValue: false,
+            valueType: 'boolean',
+            moduleName: 'kernel.base.definition-registry.test',
+        })
+
+        const trueFromCatalog = resolveParameter({
+            definition,
+            parameterCatalog: {
+                [definition.key]: {
+                    key: definition.key,
+                    rawValue: 'true',
+                    updatedAt: 1 as any,
+                    source: 'remote',
+                },
+            },
+        })
+        expect(trueFromCatalog.value).toBe(true)
+        expect(trueFromCatalog.valid).toBe(true)
+        expect(trueFromCatalog.source).toBe('catalog')
+
+        const falseFromCatalog = resolveParameter({
+            definition,
+            parameterCatalog: {
+                [definition.key]: {
+                    key: definition.key,
+                    rawValue: 'false',
+                    updatedAt: 2 as any,
+                    source: 'remote',
+                },
+            },
+        })
+        expect(falseFromCatalog.value).toBe(false)
+        expect(falseFromCatalog.valid).toBe(true)
+        expect(falseFromCatalog.source).toBe('catalog')
+
+        const falseFromNumber = resolveParameter({
+            definition,
+            parameterCatalog: {
+                [definition.key]: {
+                    key: definition.key,
+                    rawValue: 0,
+                    updatedAt: 3 as any,
+                    source: 'remote',
+                },
+            },
+        })
+        expect(falseFromNumber.value).toBe(false)
+        expect(falseFromNumber.valid).toBe(true)
+
+        const fallback = resolveParameter({
+            definition,
+            parameterCatalog: {
+                [definition.key]: {
+                    key: definition.key,
+                    rawValue: 'invalid',
+                    updatedAt: 4 as any,
+                    source: 'remote',
+                },
+            },
+        })
+        expect(fallback.value).toBe(false)
+        expect(fallback.valid).toBe(false)
+        expect(fallback.source).toBe('catalog-fallback')
     })
 })

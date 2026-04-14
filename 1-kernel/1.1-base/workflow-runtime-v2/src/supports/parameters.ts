@@ -1,5 +1,6 @@
 import {
     createModuleParameterFactory,
+    integerAtLeast,
     listDefinitions,
     positiveFiniteNumber,
 } from '@impos2/kernel-base-contracts'
@@ -22,6 +23,11 @@ export const workflowRuntimeV2ParameterDefinitions = {
         name: 'Workflow event history limit',
         defaultValue: 100,
         validate: positiveFiniteNumber,
+    }),
+    completedObservationLimit: defineParameter.number('completed-observation-limit', {
+        name: 'Workflow completed observation retention limit',
+        defaultValue: 100,
+        validate: integerAtLeast(0),
     }),
     queueSizeLimit: defineParameter.number('queue-size-limit', {
         name: 'Workflow queue size limit',

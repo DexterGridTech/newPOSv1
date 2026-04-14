@@ -1,8 +1,7 @@
-import {defineConfig} from 'vitest/config'
+import {createWorkspaceVitestConfig} from '../../../vitest.base.config'
 
-export default defineConfig({
+export default createWorkspaceVitestConfig('kernel-base-tcp-control-runtime-v2', {
     test: {
-        environment: 'node',
         include: ['test/**/*.spec.ts'],
     },
 })
