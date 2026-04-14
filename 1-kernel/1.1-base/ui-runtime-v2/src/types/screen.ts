@@ -39,3 +39,12 @@ export interface UiScreenRegistryContext {
     workspace: string
     instanceMode: string
 }
+
+export interface UiAlertInfo {
+    title?: string
+    message?: string
+    level?: 'info' | 'warning' | 'error' | 'success'
+    confirmText?: string
+    cancelText?: string
+    metadata?: Record<string, unknown>
+}

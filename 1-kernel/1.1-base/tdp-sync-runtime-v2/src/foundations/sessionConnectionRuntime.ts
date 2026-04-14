@@ -5,6 +5,8 @@ import {
 } from '@impos2/kernel-base-contracts'
 import type {RuntimeModuleContextV2} from '@impos2/kernel-base-runtime-shell-v2'
 import {createHttpRuntime, type HttpTransport} from '@impos2/kernel-base-transport-runtime'
+import {SERVER_NAME_MOCK_TERMINAL_PLATFORM} from '@impos2/kernel-server-config-v2'
+import {moduleName} from '../moduleName'
 import {
     selectTcpAccessToken,
     selectTcpTerminalId,
@@ -21,6 +23,9 @@ import type {
     TdpSessionConnectionRuntimeV2,
     TdpSessionConnectionRuntimeRefV2,
 } from '../types'
+
+const DEFAULT_MOCK_TERMINAL_PLATFORM_BASE_URL = 'http://127.0.0.1:5810'
+const DEFAULT_MOCK_TERMINAL_PLATFORM_ADDRESS_NAME = 'local-default'
 
 const isMessageEvent = (
     event: {type: string},
@@ -64,18 +69,18 @@ export const createDefaultTdpSyncHttpRuntimeV2 = (
     context: RuntimeModuleContextV2,
 ) => createHttpRuntime({
     logger: context.platformPorts.logger.scope({
-        moduleName: 'kernel.base.tdp-sync-runtime-v2',
+        moduleName,
         subsystem: 'transport.http',
         component: 'TdpSyncHttpRuntimeV2',
     }),
     transport: createFetchHttpTransport(),
     servers: [
         {
-            serverName: 'mock-terminal-platform',
+            serverName: SERVER_NAME_MOCK_TERMINAL_PLATFORM,
             addresses: [
                 {
-                    addressName: 'local-default',
-                    baseUrl: 'http://127.0.0.1:5810',
+                    addressName: DEFAULT_MOCK_TERMINAL_PLATFORM_ADDRESS_NAME,
+                    baseUrl: DEFAULT_MOCK_TERMINAL_PLATFORM_BASE_URL,
                 },
             ],
         },

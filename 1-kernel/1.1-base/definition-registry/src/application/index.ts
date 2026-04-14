@@ -1,4 +1,1 @@
-/**
- * Package-level application wiring belongs here.
- */
-export {}
+export * from '../foundations/registry'

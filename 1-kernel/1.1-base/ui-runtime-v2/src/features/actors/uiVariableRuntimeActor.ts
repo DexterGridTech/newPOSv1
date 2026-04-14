@@ -1,5 +1,10 @@
 import {createWorkspaceActionDispatcher} from '@impos2/kernel-base-state-runtime'
-import {onCommand, type ActorDefinition, type ActorExecutionContext} from '@impos2/kernel-base-runtime-shell-v2'
+import {
+    createModuleActorFactory,
+    onCommand,
+    type ActorDefinition,
+    type ActorExecutionContext,
+} from '@impos2/kernel-base-runtime-shell-v2'
 import {selectTopologyWorkspace} from '@impos2/kernel-base-topology-runtime-v2'
 import {moduleName} from '../../moduleName'
 import {normalizeUiRuntimeWorkspace} from '../../selectors'
@@ -16,10 +21,11 @@ const getWorkspaceDispatcher = (context: ActorExecutionContext) => {
     })
 }
 
-export const createUiRuntimeVariableRuntimeActorDefinition = (): ActorDefinition => ({
-    moduleName,
-    actorName: 'UiRuntimeVariableRuntimeActor',
-    handlers: [
+const defineActor = createModuleActorFactory(moduleName)
+
+export const createUiRuntimeVariableRuntimeActorDefinition = (): ActorDefinition => defineActor(
+    'UiRuntimeVariableRuntimeActor',
+    [
         onCommand(uiRuntimeV2CommandDefinitions.setUiVariables, context => {
             getWorkspaceDispatcher(context)(
                 uiRuntimeV2VariableStateActions.setUiVariables(context.command.payload),
@@ -33,4 +39,4 @@ export const createUiRuntimeVariableRuntimeActorDefinition = (): ActorDefinition
             return {keys: [...context.command.payload]}
         }),
     ],
-})
+)

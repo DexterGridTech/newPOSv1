@@ -1,5 +1,11 @@
-import {execFileSync} from 'node:child_process'
-
-execFileSync('vitest', ['run'], {
-    stdio: 'inherit',
-})
+import './scenarios/topology-runtime-v2.spec'
+import './scenarios/topology-runtime-v2-live-connection.spec'
+import './scenarios/topology-runtime-v2-live-reconnect-state-sync-master-to-slave.spec'
+import './scenarios/topology-runtime-v2-live-remote-command-panel.spec'
+import './scenarios/topology-runtime-v2-live-state-sync-master-to-slave.spec'
+import './scenarios/topology-runtime-v2-live-state-sync-slave-to-master.spec'
+import './scenarios/topology-runtime-v2-live-task-panel.spec'
+import './scenarios/topology-runtime-v2-live-task-panel-reconnect.spec'
+import './scenarios/topology-runtime-v2-live-terminal-bridge.spec'
+import './scenarios/topology-runtime-v2-live-terminal-bridge-reconnect.spec'
+import './scenarios/topology-runtime-v2-live-terminal-bridge-sequential.spec'

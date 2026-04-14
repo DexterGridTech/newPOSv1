@@ -1,6 +1,11 @@
 import {createAppError} from '@impos2/kernel-base-contracts'
 import {createWorkspaceActionDispatcher} from '@impos2/kernel-base-state-runtime'
-import {onCommand, type ActorDefinition, type ActorExecutionContext} from '@impos2/kernel-base-runtime-shell-v2'
+import {
+    createModuleActorFactory,
+    onCommand,
+    type ActorDefinition,
+    type ActorExecutionContext,
+} from '@impos2/kernel-base-runtime-shell-v2'
 import {selectTopologyWorkspace} from '@impos2/kernel-base-topology-runtime-v2'
 import {createUiScreenRuntimeEntry} from '../../foundations'
 import {moduleName} from '../../moduleName'
@@ -19,10 +24,11 @@ const getWorkspaceDispatcher = (context: ActorExecutionContext) => {
     })
 }
 
-export const createUiRuntimeScreenRuntimeActorDefinition = (): ActorDefinition => ({
-    moduleName,
-    actorName: 'UiRuntimeScreenRuntimeActor',
-    handlers: [
+const defineActor = createModuleActorFactory(moduleName)
+
+export const createUiRuntimeScreenRuntimeActorDefinition = (): ActorDefinition => defineActor(
+    'UiRuntimeScreenRuntimeActor',
+    [
         onCommand(uiRuntimeV2CommandDefinitions.showScreen, context => {
             const definition = context.command.payload.definition
             if (!definition.containerKey) {
@@ -74,4 +80,4 @@ export const createUiRuntimeScreenRuntimeActorDefinition = (): ActorDefinition =
             return {containerKey: context.command.payload.containerKey}
         }),
     ],
-})
+)

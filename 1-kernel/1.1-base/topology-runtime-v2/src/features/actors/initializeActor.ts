@@ -1,4 +1,10 @@
-import {createCommand, onCommand, runtimeShellV2CommandDefinitions, type ActorDefinition} from '@impos2/kernel-base-runtime-shell-v2'
+import {
+    createCommand,
+    createModuleActorFactory,
+    onCommand,
+    runtimeShellV2CommandDefinitions,
+    type ActorDefinition,
+} from '@impos2/kernel-base-runtime-shell-v2'
 import {moduleName} from '../../moduleName'
 import {topologyRuntimeV2CommandDefinitions} from '../commands'
 import {topologyRuntimeV2ParameterDefinitions} from '../../supports'
@@ -13,10 +19,11 @@ const shouldAutoConnect = (state: Record<string, unknown> | undefined) => {
         : recoveryState?.enableSlave === true
 }
 
-export const createTopologyRuntimeV2InitializeActor = (): ActorDefinition => ({
-    moduleName,
-    actorName: 'TopologyInitializeActor',
-    handlers: [
+const defineActor = createModuleActorFactory(moduleName)
+
+export const createTopologyRuntimeV2InitializeActor = (): ActorDefinition => defineActor(
+    'TopologyInitializeActor',
+    [
         onCommand(runtimeShellV2CommandDefinitions.initialize, async context => {
             if (!shouldAutoConnect(context.getState() as Record<string, unknown> | undefined)) {
                 return {
@@ -53,4 +60,4 @@ export const createTopologyRuntimeV2InitializeActor = (): ActorDefinition => ({
             }
         }),
     ],
-})
+)

@@ -1,5 +1,10 @@
 import {createAppError} from '@impos2/kernel-base-contracts'
-import {createCommand, onCommand, type ActorDefinition} from '@impos2/kernel-base-runtime-shell-v2'
+import {
+    createCommand,
+    createModuleActorFactory,
+    onCommand,
+    type ActorDefinition,
+} from '@impos2/kernel-base-runtime-shell-v2'
 import {moduleName} from '../../moduleName'
 import {selectTcpTerminalId} from '../../selectors'
 import {tcpControlV2ErrorDefinitions} from '../../supports'
@@ -7,13 +12,12 @@ import {tcpControlV2CommandDefinitions} from '../commands'
 import {tcpControlV2StateActions} from '../slices'
 import {requireTcpControlHttpService, type TcpControlServiceRefV2} from './serviceRef'
 
+const defineActor = createModuleActorFactory(moduleName)
+
 export const createTcpTaskReportActorDefinitionV2 = (
     serviceRef: TcpControlServiceRefV2,
-): ActorDefinition => ({
-    moduleName,
-    actorName: 'TcpTaskReportActor',
-    handlers: [
-        onCommand(tcpControlV2CommandDefinitions.reportTaskResult, async actorContext => {
+): ActorDefinition => defineActor('TcpTaskReportActor', [
+    onCommand(tcpControlV2CommandDefinitions.reportTaskResult, async actorContext => {
             const httpService = requireTcpControlHttpService(serviceRef)
             const terminalId = actorContext.command.payload.terminalId
                 ?? selectTcpTerminalId(actorContext.getState())
@@ -70,5 +74,4 @@ export const createTcpTaskReportActorDefinitionV2 = (
                 throw error
             }
         }),
-    ],
-})
+])

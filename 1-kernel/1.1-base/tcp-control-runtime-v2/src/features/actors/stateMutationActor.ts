@@ -1,12 +1,17 @@
-import {onCommand, type ActorDefinition} from '@impos2/kernel-base-runtime-shell-v2'
+import {
+    createModuleActorFactory,
+    onCommand,
+    type ActorDefinition,
+} from '@impos2/kernel-base-runtime-shell-v2'
 import {moduleName} from '../../moduleName'
 import {tcpControlV2CommandDefinitions} from '../commands'
 import {tcpControlV2StateActions} from '../slices'
 
-export const createTcpStateMutationActorDefinitionV2 = (): ActorDefinition => ({
-    moduleName,
-    actorName: 'TcpStateMutationActor',
-    handlers: [
+const defineActor = createModuleActorFactory(moduleName)
+
+export const createTcpStateMutationActorDefinitionV2 = (): ActorDefinition => defineActor(
+    'TcpStateMutationActor',
+    [
         onCommand(tcpControlV2CommandDefinitions.bootstrapTcpControlSucceeded, () => ({})),
         onCommand(tcpControlV2CommandDefinitions.activateTerminalSucceeded, () => ({})),
         onCommand(tcpControlV2CommandDefinitions.credentialRefreshed, () => ({})),
@@ -19,4 +24,4 @@ export const createTcpStateMutationActorDefinitionV2 = (): ActorDefinition => ({
             return {}
         }),
     ],
-})
+)

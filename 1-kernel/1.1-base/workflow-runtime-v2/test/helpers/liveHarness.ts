@@ -1,7 +1,11 @@
 import {createNodeId, createRequestId} from '@impos2/kernel-base-contracts'
 import type {ParameterCatalogEntry} from '@impos2/kernel-base-contracts'
 import {createLoggerPort, createPlatformPorts} from '@impos2/kernel-base-platform-ports'
-import {createKernelRuntimeV2, type KernelRuntimeModuleV2} from '@impos2/kernel-base-runtime-shell-v2'
+import {
+    createKernelRuntimeV2,
+    type KernelRuntimeModuleV2,
+    type RuntimeModuleContextV2,
+} from '@impos2/kernel-base-runtime-shell-v2'
 import {
     kernelBaseTestServerConfig,
     SERVER_NAME_MOCK_TERMINAL_PLATFORM,
@@ -156,7 +160,7 @@ export const createLiveRuntime = (input: {
         modules: [
             createTcpControlRuntimeModuleV2({
                 assembly: {
-                    createHttpRuntime(context) {
+                    createHttpRuntime(context: RuntimeModuleContextV2) {
                         return createHttpRuntime({
                             logger: context.platformPorts.logger.scope({
                                 moduleName: 'kernel.base.workflow-runtime-v2.live-test',
@@ -175,7 +179,7 @@ export const createLiveRuntime = (input: {
             createTdpSyncRuntimeModuleV2({
                 ...input.tdp,
                 assembly: {
-                    createHttpRuntime(context) {
+                    createHttpRuntime(context: RuntimeModuleContextV2) {
                         return createHttpRuntime({
                             logger: context.platformPorts.logger.scope({
                                 moduleName: 'kernel.base.workflow-runtime-v2.live-test',

@@ -13,6 +13,7 @@ import type {
     CommandEventEnvelope,
     CommandId,
     CommandRouteContext,
+    ErrorDefinition,
     ParameterDefinition,
     RequestLifecycleSnapshot,
     ResolvedParameter,
@@ -56,5 +57,29 @@ export interface KernelRuntimeModuleV2 extends AppModule {
     stateSlices?: readonly StateRuntimeSliceDescriptor<any>[]
     commandDefinitions?: readonly CommandDefinition[]
     actorDefinitions?: readonly ActorDefinition[]
+    errorDefinitions?: readonly ErrorDefinition[]
+    parameterDefinitions?: readonly ParameterDefinition<any>[]
     install?: (context: RuntimeModuleContextV2) => Promise<void> | void
+    preSetup?: (context: RuntimeModulePreSetupContextV2) => Promise<void> | void
+}
+
+export interface KernelRuntimeModuleDescriptorV2 {
+    moduleName: string
+    packageVersion: string
+    protocolVersion?: string
+    dependencies: readonly AppModuleDependency[]
+    stateSliceNames: readonly string[]
+    commandNames: readonly string[]
+    actorKeys: readonly string[]
+    errorKeys: readonly string[]
+    parameterKeys: readonly string[]
+    hasInstall: boolean
+    hasPreSetup: boolean
+}
+
+export interface RuntimeModulePreSetupContextV2 {
+    readonly moduleName: string
+    readonly localNodeId: NodeId
+    readonly platformPorts: PlatformPorts
+    readonly descriptors: readonly KernelRuntimeModuleDescriptorV2[]
 }

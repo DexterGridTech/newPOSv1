@@ -1,7 +1,11 @@
 import {describe, expect, it} from 'vitest'
 import {createNodeId} from '@impos2/kernel-base-contracts'
 import {createLoggerPort, createPlatformPorts} from '@impos2/kernel-base-platform-ports'
-import {createCommand, createKernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
+import {
+    createCommand,
+    createKernelRuntimeV2,
+    type RuntimeModuleContextV2,
+} from '@impos2/kernel-base-runtime-shell-v2'
 import {
     kernelBaseTestServerConfig,
     SERVER_NAME_MOCK_TERMINAL_PLATFORM,
@@ -168,7 +172,7 @@ const createRuntime = (input: {
         modules: [
             createTcpControlRuntimeModuleV2({
                 assembly: {
-                    createHttpRuntime(context) {
+                    createHttpRuntime(context: RuntimeModuleContextV2) {
                         return createHttpRuntime({
                             logger: context.platformPorts.logger.scope({
                                 moduleName: 'kernel.base.tdp-sync-runtime-v2.test',
@@ -182,7 +186,7 @@ const createRuntime = (input: {
             }),
             createTdpSyncRuntimeModuleV2(socketRuntimeSpy == null ? undefined : {
                 assembly: {
-                    createHttpRuntime(context) {
+                    createHttpRuntime(context: RuntimeModuleContextV2) {
                         return createHttpRuntime({
                             logger: context.platformPorts.logger.scope({
                                 moduleName: 'kernel.base.tdp-sync-runtime-v2.test',

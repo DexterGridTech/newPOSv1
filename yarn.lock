@@ -3637,14 +3637,15 @@ __metadata:
     madge: ^8.0.0
     tsx: ^4.21.0
     typescript: ^5.9.3
+    vitest: ^3.2.4
   languageName: unknown
   linkType: soft
 
-"@impos2/kernel-base-definition-registry@*, @impos2/kernel-base-definition-registry@workspace:1-kernel/1.1-base/definition-registry":
+"@impos2/kernel-base-definition-registry@workspace:*, @impos2/kernel-base-definition-registry@workspace:1-kernel/1.1-base/definition-registry":
   version: 0.0.0-use.local
   resolution: "@impos2/kernel-base-definition-registry@workspace:1-kernel/1.1-base/definition-registry"
   dependencies:
-    "@impos2/kernel-base-contracts": "*"
+    "@impos2/kernel-base-contracts": "workspace:*"
     "@types/node": ^25.0.9
     madge: ^8.0.0
     tsx: ^4.21.0
@@ -3657,9 +3658,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@impos2/kernel-base-execution-runtime@workspace:1-kernel/1.1-base/execution-runtime"
   dependencies:
-    "@impos2/kernel-base-contracts": "*"
-    "@impos2/kernel-base-definition-registry": "*"
-    "@impos2/kernel-base-platform-ports": "*"
+    "@impos2/kernel-base-contracts": "workspace:*"
+    "@impos2/kernel-base-definition-registry": "workspace:*"
+    "@impos2/kernel-base-platform-ports": "workspace:*"
     "@types/node": ^25.0.9
     madge: ^8.0.0
     tsx: ^4.21.0
@@ -3672,8 +3673,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@impos2/kernel-base-host-runtime@workspace:1-kernel/1.1-base/host-runtime"
   dependencies:
-    "@impos2/kernel-base-contracts": "*"
-    "@impos2/kernel-base-platform-ports": "*"
+    "@impos2/kernel-base-contracts": "workspace:*"
+    "@impos2/kernel-base-platform-ports": "workspace:*"
     "@types/node": ^25.0.9
     madge: ^8.0.0
     tsx: ^4.21.0
@@ -3686,11 +3687,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@impos2/kernel-base-platform-ports@workspace:1-kernel/1.1-base/platform-ports"
   dependencies:
-    "@impos2/kernel-base-contracts": "*"
+    "@impos2/kernel-base-contracts": "workspace:*"
     "@types/node": ^25.0.9
     madge: ^8.0.0
     tsx: ^4.21.0
     typescript: ^5.9.3
+    vitest: ^3.2.4
   languageName: unknown
   linkType: soft
 
@@ -3698,8 +3700,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@impos2/kernel-base-runtime-shell-v2@workspace:1-kernel/1.1-base/runtime-shell-v2"
   dependencies:
-    "@impos2/kernel-base-contracts": "*"
-    "@impos2/kernel-base-platform-ports": "*"
+    "@impos2/kernel-base-contracts": "workspace:*"
+    "@impos2/kernel-base-platform-ports": "workspace:*"
     "@impos2/kernel-base-state-runtime": "workspace:*"
     "@reduxjs/toolkit": ^2.10.0
     "@types/node": ^25.0.9
@@ -3791,8 +3793,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@impos2/kernel-base-transport-runtime@workspace:1-kernel/1.1-base/transport-runtime"
   dependencies:
-    "@impos2/kernel-base-contracts": "*"
-    "@impos2/kernel-base-platform-ports": "*"
+    "@impos2/kernel-base-contracts": "workspace:*"
+    "@impos2/kernel-base-platform-ports": "workspace:*"
     "@impos2/kernel-server-config-v2": "workspace:*"
     "@types/node": ^25.0.9
     "@types/ws": ^8.5.13

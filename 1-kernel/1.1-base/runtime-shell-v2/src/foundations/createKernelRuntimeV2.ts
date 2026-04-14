@@ -17,7 +17,6 @@ import {
     type StateRuntimeSliceDescriptor,
 } from '@impos2/kernel-base-state-runtime'
 import type {EnhancedStore, UnknownAction} from '@reduxjs/toolkit'
-import type {LoggerPort, PlatformPorts} from '@impos2/kernel-base-platform-ports'
 import {moduleName} from '../moduleName'
 import type {
     ActorExecutionContext,
@@ -39,32 +38,7 @@ import {createRuntimeShellInternalModuleV2} from './internalModule'
 import {runtimeShellV2CommandDefinitions} from '../features/commands'
 import {runtimeShellV2StateActions} from '../features/slices'
 import {RUNTIME_SHELL_V2_PARAMETER_CATALOG_STATE_KEY} from '../features/slices/parameterCatalogState'
-
-const noopLogger: LoggerPort = {
-    emit() {},
-    debug() {},
-    info() {},
-    warn() {},
-    error() {},
-    scope() {
-        return this
-    },
-    withContext() {
-        return this
-    },
-}
-
-const createDefaultPorts = (ports?: Partial<PlatformPorts>): PlatformPorts => ({
-    environmentMode: ports?.environmentMode ?? 'DEV',
-    logger: ports?.logger ?? noopLogger,
-    scriptExecutor: ports?.scriptExecutor,
-    stateStorage: ports?.stateStorage,
-    secureStateStorage: ports?.secureStateStorage,
-    device: ports?.device,
-    appControl: ports?.appControl,
-    localWebServer: ports?.localWebServer,
-    connector: ports?.connector,
-})
+import {createDefaultRuntimePlatformPortsV2} from './platformPorts'
 
 const normalizeError = (error: unknown, command: DispatchedCommand): AppError => {
     if (typeof error === 'object' && error !== null && 'key' in error && 'message' in error) {
@@ -135,7 +109,7 @@ export const createKernelRuntimeV2 = (
 ): KernelRuntimeV2 => {
     const runtimeId = input.runtimeId ?? createRuntimeInstanceId()
     const localNodeId = input.localNodeId ?? createNodeId()
-    const platformPorts = createDefaultPorts(input.platformPorts)
+    const platformPorts = createDefaultRuntimePlatformPortsV2(input.platformPorts)
     const modules = [
         createRuntimeShellInternalModuleV2(),
         ...(input.modules ?? []),

@@ -22,7 +22,10 @@ import {
     topologyRuntimeV2ParameterDefinitions,
     type CreateTopologyRuntimeModuleV2Input,
 } from '../../src'
-import {createDualTopologyHostServer} from '../../../../../0-mock-server/dual-topology-host/src'
+import {
+    createDualTopologyHost,
+    createDualTopologyHostServer,
+} from '../../../../../0-mock-server/dual-topology-host/src'
 import {fetchJson} from '../../../../../0-mock-server/dual-topology-host/test/helpers/http'
 import {createNodeWsTransport} from '../../../transport-runtime/test/helpers/nodeWsTransport'
 
@@ -116,7 +119,11 @@ export const createTopologyRuntimeV2LiveHarness = async (input: {
     reconnectIntervalMs?: number
     reconnectAttempts?: number
 }) => {
+    const silentHost = createDualTopologyHost({
+        logger: createTestLogger(`${input.profileName}.dual-topology-host`),
+    })
     const server = createDualTopologyHostServer({
+        host: silentHost,
         config: {
             port: 0,
             heartbeatIntervalMs: 50,

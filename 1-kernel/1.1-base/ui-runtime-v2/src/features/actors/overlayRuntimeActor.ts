@@ -1,6 +1,11 @@
 import {createAppError} from '@impos2/kernel-base-contracts'
 import {createWorkspaceActionDispatcher} from '@impos2/kernel-base-state-runtime'
-import {onCommand, type ActorDefinition, type ActorExecutionContext} from '@impos2/kernel-base-runtime-shell-v2'
+import {
+    createModuleActorFactory,
+    onCommand,
+    type ActorDefinition,
+    type ActorExecutionContext,
+} from '@impos2/kernel-base-runtime-shell-v2'
 import {selectTopologyDisplayMode, selectTopologyWorkspace} from '@impos2/kernel-base-topology-runtime-v2'
 import {createUiOverlayEntry} from '../../foundations'
 import {moduleName} from '../../moduleName'
@@ -22,10 +27,11 @@ const getWorkspaceDispatcher = (context: ActorExecutionContext) => {
 const getDisplayMode = (context: ActorExecutionContext) =>
     selectTopologyDisplayMode(context.getState()) ?? 'PRIMARY'
 
-export const createUiRuntimeOverlayRuntimeActorDefinition = (): ActorDefinition => ({
-    moduleName,
-    actorName: 'UiRuntimeOverlayRuntimeActor',
-    handlers: [
+const defineActor = createModuleActorFactory(moduleName)
+
+export const createUiRuntimeOverlayRuntimeActorDefinition = (): ActorDefinition => defineActor(
+    'UiRuntimeOverlayRuntimeActor',
+    [
         onCommand(uiRuntimeV2CommandDefinitions.openOverlay, context => {
             if (!context.command.payload.id) {
                 throw createAppError(uiRuntimeV2ErrorDefinitions.overlayIdRequired)
@@ -60,4 +66,4 @@ export const createUiRuntimeOverlayRuntimeActorDefinition = (): ActorDefinition 
             return {displayMode: getDisplayMode(context)}
         }),
     ],
-})
+)

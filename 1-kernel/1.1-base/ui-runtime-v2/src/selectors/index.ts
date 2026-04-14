@@ -37,6 +37,13 @@ export const registerUiScreenDefinitions = (
 
 export const getUiScreenRegistry = () => sharedRegistry
 
+export const registerUiScreenDefinition = (
+    definition: UiScreenDefinition,
+) => sharedRegistry.register(definition)
+
+export const selectUiScreenRendererKey = (partKey: string) =>
+    sharedRegistry.getRendererKey(partKey)
+
 export const selectUiRuntimeCurrentWorkspace = (state: RootState) =>
     normalizeUiRuntimeWorkspace(selectTopologyWorkspace(state))
 
@@ -119,3 +126,11 @@ export const selectFirstReadyUiScreenDefinition = (
     fromIndex,
     buildUiScreenRegistryContext(state, overrides),
 )
+
+export const selectUiCurrentScreenOrFirstReady = (
+    state: RootState,
+    containerKey: string,
+    fromIndex = -1,
+    overrides: Partial<UiScreenRegistryContext> = {},
+) => selectUiScreen(state, containerKey)
+    ?? selectFirstReadyUiScreenDefinition(state, containerKey, fromIndex, overrides)

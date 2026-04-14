@@ -1,4 +1,4 @@
-import {defineCommand} from '@impos2/kernel-base-runtime-shell-v2'
+import {createModuleCommandFactory} from '@impos2/kernel-base-runtime-shell-v2'
 import {moduleName} from '../../moduleName'
 import type {
     TdpCommandInboxItem,
@@ -7,142 +7,104 @@ import type {
     TdpTopicDataChangedPayload,
 } from '../../types'
 
+const defineModuleCommand = createModuleCommandFactory(moduleName)
+
 export const tdpSyncV2CommandDefinitions = {
-    bootstrapTdpSync: defineCommand<Record<string, never>>({
-        moduleName,
-        commandName: 'bootstrap-tdp-sync',
-    }),
-    bootstrapTdpSyncSucceeded: defineCommand<Record<string, never>>({
-        moduleName,
-        commandName: 'bootstrap-tdp-sync-succeeded',
+    bootstrapTdpSync: defineModuleCommand<Record<string, never>>('bootstrap-tdp-sync'),
+    bootstrapTdpSyncSucceeded: defineModuleCommand<Record<string, never>>('bootstrap-tdp-sync-succeeded', {
         visibility: 'internal',
     }),
-    connectTdpSession: defineCommand<Record<string, never>>({
-        moduleName,
-        commandName: 'connect-tdp-session',
-    }),
-    disconnectTdpSession: defineCommand<Record<string, never>>({
-        moduleName,
-        commandName: 'disconnect-tdp-session',
-    }),
-    acknowledgeCursor: defineCommand<{
+    connectTdpSession: defineModuleCommand<Record<string, never>>('connect-tdp-session'),
+    disconnectTdpSession: defineModuleCommand<Record<string, never>>('disconnect-tdp-session'),
+    acknowledgeCursor: defineModuleCommand<{
         cursor: number
         topic?: string
         itemKey?: string
         instanceId?: string
-    }>({
-        moduleName,
-        commandName: 'acknowledge-cursor',
-    }),
-    reportAppliedCursor: defineCommand<{
+    }>('acknowledge-cursor'),
+    reportAppliedCursor: defineModuleCommand<{
         cursor: number
-    }>({
-        moduleName,
-        commandName: 'report-applied-cursor',
-    }),
-    sendPing: defineCommand<Record<string, never>>({
-        moduleName,
-        commandName: 'send-ping',
-    }),
-    tdpTopicDataChanged: defineCommand<TdpTopicDataChangedPayload>({
-        moduleName,
-        commandName: 'topic-data-changed',
+    }>('report-applied-cursor'),
+    sendPing: defineModuleCommand<Record<string, never>>('send-ping'),
+    tdpTopicDataChanged: defineModuleCommand<TdpTopicDataChangedPayload>('topic-data-changed', {
         allowNoActor: true,
     }),
-    recomputeResolvedTopicChanges: defineCommand<Record<string, never>>({
-        moduleName,
-        commandName: 'recompute-resolved-topic-changes',
-        visibility: 'internal',
-    }),
-    tdpSnapshotLoaded: defineCommand<{
+    recomputeResolvedTopicChanges: defineModuleCommand<Record<string, never>>(
+        'recompute-resolved-topic-changes',
+        {
+            visibility: 'internal',
+        },
+    ),
+    tdpSnapshotLoaded: defineModuleCommand<{
         snapshot: TdpProjectionEnvelope[]
         highWatermark: number
-    }>({
-        moduleName,
-        commandName: 'snapshot-loaded',
+    }>('snapshot-loaded', {
         visibility: 'internal',
     }),
-    tdpChangesLoaded: defineCommand<{
+    tdpChangesLoaded: defineModuleCommand<{
         changes: TdpProjectionEnvelope[]
         nextCursor: number
         highWatermark: number
-    }>({
-        moduleName,
-        commandName: 'changes-loaded',
+    }>('changes-loaded', {
         visibility: 'internal',
     }),
-    tdpProjectionReceived: defineCommand<{
+    tdpProjectionReceived: defineModuleCommand<{
         cursor: number
         change: TdpProjectionEnvelope
-    }>({
-        moduleName,
-        commandName: 'projection-received',
+    }>('projection-received', {
         visibility: 'internal',
     }),
-    tdpProjectionBatchReceived: defineCommand<{
+    tdpProjectionBatchReceived: defineModuleCommand<{
         nextCursor: number
         changes: TdpProjectionEnvelope[]
-    }>({
-        moduleName,
-        commandName: 'projection-batch-received',
+    }>('projection-batch-received', {
         visibility: 'internal',
     }),
-    tdpCommandDelivered: defineCommand<Omit<TdpCommandInboxItem, 'receivedAt'>>({
-        moduleName,
-        commandName: 'command-delivered',
-        visibility: 'internal',
-    }),
-    tdpSessionReady: defineCommand<{
+    tdpCommandDelivered: defineModuleCommand<Omit<TdpCommandInboxItem, 'receivedAt'>>(
+        'command-delivered',
+        {
+            visibility: 'internal',
+        },
+    ),
+    tdpSessionReady: defineModuleCommand<{
         sessionId: string
         nodeId: string
         nodeState: 'healthy' | 'grace' | 'degraded'
         highWatermark: number
         syncMode: 'incremental' | 'full'
         alternativeEndpoints: string[]
-    }>({
-        moduleName,
-        commandName: 'session-ready',
+    }>('session-ready', {
         visibility: 'internal',
     }),
-    tdpPongReceived: defineCommand<{
+    tdpPongReceived: defineModuleCommand<{
         timestamp: number
-    }>({
-        moduleName,
-        commandName: 'pong-received',
+    }>('pong-received', {
         visibility: 'internal',
     }),
-    tdpEdgeDegraded: defineCommand<{
+    tdpEdgeDegraded: defineModuleCommand<{
         reason: string
         issuedAt: string
         nodeState: 'healthy' | 'grace' | 'degraded'
         gracePeriodSeconds: number
         alternativeEndpoints: string[]
-    }>({
-        moduleName,
-        commandName: 'edge-degraded',
+    }>('edge-degraded', {
         visibility: 'internal',
     }),
-    tdpSessionRehomeRequired: defineCommand<{
+    tdpSessionRehomeRequired: defineModuleCommand<{
         reason: string
         deadline: string
         alternativeEndpoints: string[]
-    }>({
-        moduleName,
-        commandName: 'session-rehome-required',
+    }>('session-rehome-required', {
         visibility: 'internal',
     }),
-    tdpProtocolFailed: defineCommand<{
+    tdpProtocolFailed: defineModuleCommand<{
         code: string
         message: string
         details?: unknown
-    }>({
-        moduleName,
-        commandName: 'protocol-failed',
+    }>('protocol-failed', {
         visibility: 'internal',
     }),
-    tdpMessageReceived: defineCommand<TdpServerMessage>({
-        moduleName,
-        commandName: 'message-received',
+    tdpMessageReceived: defineModuleCommand<TdpServerMessage>('message-received', {
         visibility: 'internal',
     }),
 } as const

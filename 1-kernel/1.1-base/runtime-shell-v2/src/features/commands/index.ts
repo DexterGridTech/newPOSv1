@@ -1,40 +1,32 @@
-import {defineCommand} from '../../foundations/command'
+import {createModuleCommandFactory} from '../../supports/moduleDsl'
 import {moduleName} from '../../moduleName'
 import type {ErrorCatalogEntry, ParameterCatalogEntry} from '@impos2/kernel-base-contracts'
 
+const defineModuleCommand = createModuleCommandFactory(moduleName)
+
 export const runtimeShellV2CommandDefinitions = {
-    initialize: defineCommand<Record<string, never>>({
-        moduleName,
-        commandName: 'initialize',
+    initialize: defineModuleCommand<Record<string, never>>('initialize', {
         visibility: 'internal',
         allowNoActor: true,
     }),
-    upsertErrorCatalogEntries: defineCommand<{
+    upsertErrorCatalogEntries: defineModuleCommand<{
         entries: ErrorCatalogEntry[]
-    }>({
-        moduleName,
-        commandName: 'upsert-error-catalog-entries',
+    }>('upsert-error-catalog-entries', {
         visibility: 'internal',
     }),
-    removeErrorCatalogEntries: defineCommand<{
+    removeErrorCatalogEntries: defineModuleCommand<{
         keys: string[]
-    }>({
-        moduleName,
-        commandName: 'remove-error-catalog-entries',
+    }>('remove-error-catalog-entries', {
         visibility: 'internal',
     }),
-    upsertParameterCatalogEntries: defineCommand<{
+    upsertParameterCatalogEntries: defineModuleCommand<{
         entries: ParameterCatalogEntry[]
-    }>({
-        moduleName,
-        commandName: 'upsert-parameter-catalog-entries',
+    }>('upsert-parameter-catalog-entries', {
         visibility: 'internal',
     }),
-    removeParameterCatalogEntries: defineCommand<{
+    removeParameterCatalogEntries: defineModuleCommand<{
         keys: string[]
-    }>({
-        moduleName,
-        commandName: 'remove-parameter-catalog-entries',
+    }>('remove-parameter-catalog-entries', {
         visibility: 'internal',
     }),
 } as const

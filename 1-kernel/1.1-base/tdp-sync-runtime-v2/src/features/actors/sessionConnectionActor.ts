@@ -1,5 +1,9 @@
 import {createAppError} from '@impos2/kernel-base-contracts'
-import {onCommand, type ActorDefinition} from '@impos2/kernel-base-runtime-shell-v2'
+import {
+    createModuleActorFactory,
+    onCommand,
+    type ActorDefinition,
+} from '@impos2/kernel-base-runtime-shell-v2'
 import {moduleName} from '../../moduleName'
 import {tdpSyncV2ErrorDefinitions} from '../../supports'
 import type {CreateTdpSyncRuntimeModuleV2Input} from '../../types'
@@ -40,14 +44,13 @@ const requireConnectionRuntime = (
     return runtimeRef.current
 }
 
+const defineActor = createModuleActorFactory(moduleName)
+
 export const createTdpSessionConnectionActorDefinitionV2 = (
     runtimeRef: TdpSessionConnectionRuntimeRefV2,
     input: CreateTdpSyncRuntimeModuleV2Input,
-): ActorDefinition => ({
-    moduleName,
-    actorName: 'TdpSessionConnectionActor',
-    handlers: [
-        onCommand(tdpSyncV2CommandDefinitions.connectTdpSession, async () => {
+): ActorDefinition => defineActor('TdpSessionConnectionActor', [
+    onCommand(tdpSyncV2CommandDefinitions.connectTdpSession, async () => {
             return await requireConnectionRuntime(
                 runtimeRef,
                 tdpSyncV2CommandDefinitions.connectTdpSession.commandName,
@@ -88,5 +91,4 @@ export const createTdpSessionConnectionActorDefinitionV2 = (
             ).sendPing()
             return {}
         }),
-    ],
-})
+])

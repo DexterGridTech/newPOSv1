@@ -1,6 +1,9 @@
-import {createCommand, onCommand, type ActorDefinition} from '@impos2/kernel-base-runtime-shell-v2'
+import {createModuleActorFactory} from '@impos2/kernel-base-runtime-shell-v2'
 import {
+    createCommand,
+    onCommand,
     runtimeShellV2CommandDefinitions,
+    type ActorDefinition,
 } from '@impos2/kernel-base-runtime-shell-v2'
 import type {ErrorCatalogEntry, ParameterCatalogEntry} from '@impos2/kernel-base-contracts'
 import {moduleName} from '../../moduleName'
@@ -38,66 +41,66 @@ const toParameterCatalogEntry = (
     source: 'remote',
 })
 
-export const createTdpSystemCatalogBridgeActorDefinitionV2 = (): ActorDefinition => ({
-    moduleName,
-    actorName: 'TdpSystemCatalogBridgeActor',
-    handlers: [
+const defineActor = createModuleActorFactory(moduleName)
+
+export const createTdpSystemCatalogBridgeActorDefinitionV2 = (): ActorDefinition => defineActor(
+    'TdpSystemCatalogBridgeActor',
+    [
         onCommand(tdpSyncV2CommandDefinitions.tdpTopicDataChanged, async context => {
-                const payload = context.command.payload
+            const payload = context.command.payload
 
-                if (payload.topic === TDP_SYSTEM_TOPIC_KEYS.errorCatalog) {
-                    const nextEntries = payload.changes
-                        .filter(item => item.operation === 'upsert' && item.payload)
-                        .map(item => toErrorCatalogEntry(item.payload!, item.itemKey))
-                        .filter((item): item is ErrorCatalogEntry => Boolean(item))
-                    const removeKeys = payload.changes
-                        .filter(item => item.operation === 'delete')
-                        .map(item => item.itemKey)
+            if (payload.topic === TDP_SYSTEM_TOPIC_KEYS.errorCatalog) {
+                const nextEntries = payload.changes
+                    .filter(item => item.operation === 'upsert' && item.payload)
+                    .map(item => toErrorCatalogEntry(item.payload!, item.itemKey))
+                    .filter((item): item is ErrorCatalogEntry => Boolean(item))
+                const removeKeys = payload.changes
+                    .filter(item => item.operation === 'delete')
+                    .map(item => item.itemKey)
 
-                    if (nextEntries.length > 0) {
-                        await context.dispatchCommand(createCommand(runtimeShellV2CommandDefinitions.upsertErrorCatalogEntries, {
-                            entries: nextEntries,
-                        }))
-                    }
-                    if (removeKeys.length > 0) {
-                        await context.dispatchCommand(createCommand(runtimeShellV2CommandDefinitions.removeErrorCatalogEntries, {
-                            keys: removeKeys,
-                        }))
-                    }
-                    return {
-                        topic: payload.topic,
-                        upsertCount: nextEntries.length,
-                        removeCount: removeKeys.length,
-                    }
+                if (nextEntries.length > 0) {
+                    await context.dispatchCommand(createCommand(runtimeShellV2CommandDefinitions.upsertErrorCatalogEntries, {
+                        entries: nextEntries,
+                    }))
                 }
-
-                if (payload.topic === TDP_SYSTEM_TOPIC_KEYS.parameterCatalog) {
-                    const nextEntries = payload.changes
-                        .filter(item => item.operation === 'upsert' && item.payload)
-                        .map(item => toParameterCatalogEntry(item.payload!, item.itemKey))
-                    const removeKeys = payload.changes
-                        .filter(item => item.operation === 'delete')
-                        .map(item => item.itemKey)
-
-                    if (nextEntries.length > 0) {
-                        await context.dispatchCommand(createCommand(runtimeShellV2CommandDefinitions.upsertParameterCatalogEntries, {
-                            entries: nextEntries,
-                        }))
-                    }
-                    if (removeKeys.length > 0) {
-                        await context.dispatchCommand(createCommand(runtimeShellV2CommandDefinitions.removeParameterCatalogEntries, {
-                            keys: removeKeys,
-                        }))
-                    }
-                    return {
-                        topic: payload.topic,
-                        upsertCount: nextEntries.length,
-                        removeCount: removeKeys.length,
-                    }
+                if (removeKeys.length > 0) {
+                    await context.dispatchCommand(createCommand(runtimeShellV2CommandDefinitions.removeErrorCatalogEntries, {
+                        keys: removeKeys,
+                    }))
                 }
+                return {
+                    topic: payload.topic,
+                    upsertCount: nextEntries.length,
+                    removeCount: removeKeys.length,
+                }
+            }
 
-                return {}
-            },
-        ),
+            if (payload.topic === TDP_SYSTEM_TOPIC_KEYS.parameterCatalog) {
+                const nextEntries = payload.changes
+                    .filter(item => item.operation === 'upsert' && item.payload)
+                    .map(item => toParameterCatalogEntry(item.payload!, item.itemKey))
+                const removeKeys = payload.changes
+                    .filter(item => item.operation === 'delete')
+                    .map(item => item.itemKey)
+
+                if (nextEntries.length > 0) {
+                    await context.dispatchCommand(createCommand(runtimeShellV2CommandDefinitions.upsertParameterCatalogEntries, {
+                        entries: nextEntries,
+                    }))
+                }
+                if (removeKeys.length > 0) {
+                    await context.dispatchCommand(createCommand(runtimeShellV2CommandDefinitions.removeParameterCatalogEntries, {
+                        keys: removeKeys,
+                    }))
+                }
+                return {
+                    topic: payload.topic,
+                    upsertCount: nextEntries.length,
+                    removeCount: removeKeys.length,
+                }
+            }
+
+            return {}
+        }),
     ],
-})
+)

@@ -3,6 +3,7 @@ import {
     createModuleHttpEndpointFactory,
     type HttpRuntime,
 } from '@impos2/kernel-base-transport-runtime'
+import {SERVER_NAME_MOCK_TERMINAL_PLATFORM} from '@impos2/kernel-server-config-v2'
 import {moduleName} from '../moduleName'
 import {tdpSyncV2ErrorDefinitions} from '../supports'
 import type {
@@ -11,9 +12,10 @@ import type {
     TdpSyncHttpServiceV2,
 } from '../types'
 
-const MOCK_TERMINAL_PLATFORM_SERVER = 'mock-terminal-platform'
+const TDP_SYNC_V2_SNAPSHOT_FALLBACK_MESSAGE = 'tdp snapshot request failed'
+const TDP_SYNC_V2_CHANGES_FALLBACK_MESSAGE = 'tdp changes request failed'
 
-const defineEndpoint = createModuleHttpEndpointFactory(moduleName, MOCK_TERMINAL_PLATFORM_SERVER)
+const defineEndpoint = createModuleHttpEndpointFactory(moduleName, SERVER_NAME_MOCK_TERMINAL_PLATFORM)
 
 const snapshotEndpoint = defineEndpoint<
     {terminalId: string},
@@ -48,7 +50,7 @@ export const createTdpSyncHttpServiceV2 = (runtime: HttpRuntime): TdpSyncHttpSer
             path: {terminalId},
         }, {
             errorDefinition: tdpSyncV2ErrorDefinitions.protocolError,
-            fallbackMessage: 'get snapshot failed',
+            fallbackMessage: TDP_SYNC_V2_SNAPSHOT_FALLBACK_MESSAGE,
         })
     },
     async getChanges(terminalId, cursor = 0, limit) {
@@ -57,7 +59,7 @@ export const createTdpSyncHttpServiceV2 = (runtime: HttpRuntime): TdpSyncHttpSer
             query: {cursor, limit},
         }, {
             errorDefinition: tdpSyncV2ErrorDefinitions.protocolError,
-            fallbackMessage: 'get changes failed',
+            fallbackMessage: TDP_SYNC_V2_CHANGES_FALLBACK_MESSAGE,
         })
     },
 })

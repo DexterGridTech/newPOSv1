@@ -17,7 +17,10 @@ import type {
     CommandIntent,
     DispatchOptions,
 } from './command'
-import type {KernelRuntimeModuleV2} from './module'
+import type {
+    KernelRuntimeModuleDescriptorV2,
+    KernelRuntimeModuleV2,
+} from './module'
 import type {RequestListener, RequestQueryResult} from './request'
 
 export interface PeerDispatchGateway {
@@ -66,5 +69,30 @@ export interface KernelRuntimeV2 {
     getSyncSlices(): readonly StateRuntimeSliceDescriptor<any>[]
     applyStateSyncDiff(envelope: StateSyncDiffEnvelope): void
     installPeerDispatchGateway(gateway: PeerDispatchGateway | undefined): void
+    flushPersistence(): Promise<void>
+}
+
+export interface KernelRuntimeAppConfigV2 {
+    runtimeName?: string
+    runtimeId?: RuntimeInstanceId
+    localNodeId?: NodeId
+    platformPorts?: Partial<PlatformPorts>
+    modules?: readonly KernelRuntimeModuleV2[]
+    peerDispatchGateway?: PeerDispatchGateway
+    autoStart?: boolean
+}
+
+export interface KernelRuntimeAppDescriptorV2 {
+    runtimeName: string
+    runtimeId: RuntimeInstanceId
+    localNodeId: NodeId
+    moduleDescriptors: readonly KernelRuntimeModuleDescriptorV2[]
+}
+
+export interface KernelRuntimeAppV2 {
+    readonly runtimeName: string
+    readonly runtime: KernelRuntimeV2
+    readonly descriptor: KernelRuntimeAppDescriptorV2
+    start(): Promise<KernelRuntimeV2>
     flushPersistence(): Promise<void>
 }

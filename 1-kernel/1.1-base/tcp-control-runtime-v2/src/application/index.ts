@@ -1,4 +1,2 @@
-/**
- * Package-level application wiring belongs here.
- */
-export {}
+export * from './createModule'
+export * from './moduleManifest'

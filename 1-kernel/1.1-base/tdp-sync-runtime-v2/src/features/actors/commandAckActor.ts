@@ -1,12 +1,18 @@
-import {createCommand, onCommand, type ActorDefinition} from '@impos2/kernel-base-runtime-shell-v2'
+import {
+    createCommand,
+    createModuleActorFactory,
+    onCommand,
+    type ActorDefinition,
+} from '@impos2/kernel-base-runtime-shell-v2'
 import {moduleName} from '../../moduleName'
 import {selectTdpSyncState} from '../../selectors'
 import {tdpSyncV2CommandDefinitions} from '../commands'
 
-export const createTdpCommandAckActorDefinitionV2 = (): ActorDefinition => ({
-    moduleName,
-    actorName: 'TdpCommandAckActor',
-    handlers: [
+const defineActor = createModuleActorFactory(moduleName)
+
+export const createTdpCommandAckActorDefinitionV2 = (): ActorDefinition => defineActor(
+    'TdpCommandAckActor',
+    [
         onCommand(tdpSyncV2CommandDefinitions.tdpCommandDelivered, async context => {
             const resolvedCursor = selectTdpSyncState(context.getState())?.lastCursor ?? 0
             await context.dispatchCommand(createCommand(
@@ -25,4 +31,4 @@ export const createTdpCommandAckActorDefinitionV2 = (): ActorDefinition => ({
             }
         }),
     ],
-})
+)

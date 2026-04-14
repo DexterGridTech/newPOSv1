@@ -1,4 +1,3 @@
-export * from './module'
 export * from './reduceServerMessage'
 export * from './httpService'
 export * from './sessionConnectionRuntime'

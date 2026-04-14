@@ -14,7 +14,7 @@
     "clean": "rm -rf dist",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:scenario": "tsx ./test/index.ts",
+    "test:scenario": "vitest run",
     "type-check": "tsc -p tsconfig.json --noEmit",
     "check:circular": "madge --circular --extensions ts --warning src/"
   },

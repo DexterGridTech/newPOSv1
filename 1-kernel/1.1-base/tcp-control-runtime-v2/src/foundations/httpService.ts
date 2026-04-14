@@ -3,6 +3,7 @@ import {
     createModuleHttpEndpointFactory,
     type HttpRuntime,
 } from '@impos2/kernel-base-transport-runtime'
+import {SERVER_NAME_MOCK_TERMINAL_PLATFORM} from '@impos2/kernel-server-config-v2'
 import {moduleName} from '../moduleName'
 import {tcpControlV2ErrorDefinitions} from '../supports'
 import type {
@@ -16,9 +17,9 @@ import type {
     TcpPlatformEnvelope,
 } from '../types'
 
-const MOCK_TERMINAL_PLATFORM_SERVER = 'mock-terminal-platform'
+const TCP_CONTROL_V2_HTTP_FALLBACK_MESSAGE = 'mock terminal platform request failed'
 
-const defineEndpoint = createModuleHttpEndpointFactory(moduleName, MOCK_TERMINAL_PLATFORM_SERVER)
+const defineEndpoint = createModuleHttpEndpointFactory(moduleName, SERVER_NAME_MOCK_TERMINAL_PLATFORM)
 
 const activateTerminalEndpoint = defineEndpoint<
     void,
@@ -69,7 +70,7 @@ export const createTcpControlHttpServiceV2 = (
                 body: request,
             }, {
                 errorDefinition: tcpControlV2ErrorDefinitions.activationFailed,
-                fallbackMessage: 'mock-terminal-platform request failed',
+                fallbackMessage: TCP_CONTROL_V2_HTTP_FALLBACK_MESSAGE,
             })
         },
         async refreshCredential(request) {
@@ -77,7 +78,7 @@ export const createTcpControlHttpServiceV2 = (
                 body: request,
             }, {
                 errorDefinition: tcpControlV2ErrorDefinitions.refreshFailed,
-                fallbackMessage: 'mock-terminal-platform request failed',
+                fallbackMessage: TCP_CONTROL_V2_HTTP_FALLBACK_MESSAGE,
             })
         },
         async reportTaskResult(terminalId, instanceId, request) {
@@ -86,7 +87,7 @@ export const createTcpControlHttpServiceV2 = (
                 body: request,
             }, {
                 errorDefinition: tcpControlV2ErrorDefinitions.taskResultReportFailed,
-                fallbackMessage: 'mock-terminal-platform request failed',
+                fallbackMessage: TCP_CONTROL_V2_HTTP_FALLBACK_MESSAGE,
             })
         },
     }

@@ -1,4 +1,8 @@
-import {onCommand, type ActorDefinition} from '@impos2/kernel-base-runtime-shell-v2'
+import {
+    createModuleActorFactory,
+    onCommand,
+    type ActorDefinition,
+} from '@impos2/kernel-base-runtime-shell-v2'
 import {topologyRuntimeV2CommandDefinitions} from '../commands'
 import {topologyRuntimeV2StateActions} from '../slices'
 import {moduleName} from '../../moduleName'
@@ -13,10 +17,11 @@ const buildContextState = (context: Parameters<NonNullable<ActorDefinition['hand
     })
 }
 
-export const createTopologyRuntimeV2ContextActor = (): ActorDefinition => ({
-    moduleName,
-    actorName: 'TopologyContextActor',
-    handlers: [
+const defineActor = createModuleActorFactory(moduleName)
+
+export const createTopologyRuntimeV2ContextActor = (): ActorDefinition => defineActor(
+    'TopologyContextActor',
+    [
         onCommand(topologyRuntimeV2CommandDefinitions.setInstanceMode, context => {
             context.dispatchAction(topologyRuntimeV2StateActions.updateRecoveryState({
                 instanceMode: context.command.payload.instanceMode,
@@ -55,4 +60,4 @@ export const createTopologyRuntimeV2ContextActor = (): ActorDefinition => ({
             }
         }),
     ],
-})
+)

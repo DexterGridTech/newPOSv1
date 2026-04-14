@@ -5,10 +5,16 @@ import {createLoggerPort} from '@impos2/kernel-base-platform-ports'
 import {createTopologyRuntimeModuleV2} from '@impos2/kernel-base-topology-runtime-v2'
 import {topologyRuntimeV2CommandDefinitions} from '@impos2/kernel-base-topology-runtime-v2'
 import {
+    createUiAlertDefinition,
+    createUiAlertScreen,
+    createUiModalScreen,
     createUiRuntimeModuleV2,
     registerUiScreenDefinitions,
+    registerUiScreenDefinition,
     selectFirstReadyUiScreenDefinition,
+    selectUiCurrentScreenOrFirstReady,
     selectUiOverlays,
+    selectUiScreenRendererKey,
     selectUiScreen,
     selectUiScreenDefinition,
     selectUiVariable,
@@ -51,9 +57,23 @@ const secondaryAlertScreen: UiScreenDefinition = {
     instanceModes: ['SLAVE'],
 }
 
+const tertiaryReadyScreen: UiScreenDefinition = {
+    partKey: 'checkout.fallback',
+    rendererKey: 'ui.checkout.fallback',
+    name: 'Checkout Fallback',
+    title: 'Checkout Fallback',
+    description: 'Fallback checkout screen',
+    containerKey: 'main-root',
+    indexInContainer: 1,
+    screenModes: ['DESKTOP'],
+    workspaces: ['main'],
+    instanceModes: ['MASTER'],
+}
+
 describe('ui-runtime-v2', () => {
     it('registers screen definitions and drives screen/overlay/ui-variable state through commands', async () => {
         registerUiScreenDefinitions([checkoutScreen, secondaryAlertScreen])
+        registerUiScreenDefinition(tertiaryReadyScreen)
 
         const runtime = createKernelRuntimeV2({
             platformPorts: createPlatformPorts({
@@ -75,7 +95,11 @@ describe('ui-runtime-v2', () => {
         }))
 
         expect(selectUiScreenDefinition(checkoutScreen.partKey)?.rendererKey).toBe('ui.checkout.main')
+        expect(selectUiScreenRendererKey(checkoutScreen.partKey)).toBe('ui.checkout.main')
         expect(selectFirstReadyUiScreenDefinition(runtime.getState(), 'main-root')?.partKey).toBe(checkoutScreen.partKey)
+        expect(selectUiCurrentScreenOrFirstReady(runtime.getState(), 'main-root')).toMatchObject({
+            partKey: checkoutScreen.partKey,
+        })
 
         expect((await runtime.dispatchCommand(createCommand(
             uiRuntimeV2CommandDefinitions.showScreen,
@@ -94,6 +118,10 @@ describe('ui-runtime-v2', () => {
             source: 'test',
             operation: 'show',
         })
+        expect(selectUiCurrentScreenOrFirstReady(runtime.getState(), 'main-root')).toMatchObject({
+            partKey: checkoutScreen.partKey,
+            id: 'screen-1',
+        })
 
         expect((await runtime.dispatchCommand(createCommand(
             uiRuntimeV2CommandDefinitions.openOverlay,
@@ -108,6 +136,26 @@ describe('ui-runtime-v2', () => {
         expect(selectUiOverlays(runtime.getState())[0]).toMatchObject({
             id: 'overlay-1',
             screenPartKey: checkoutScreen.partKey,
+        })
+
+        const modalOverlay = createUiModalScreen(checkoutScreen, 'overlay-helper', {
+            kind: 'helper',
+        })
+        expect(modalOverlay).toMatchObject({
+            id: 'overlay-helper',
+            screenPartKey: checkoutScreen.partKey,
+            rendererKey: checkoutScreen.rendererKey,
+        })
+
+        const alertDefinition = createUiAlertDefinition()
+        const alertOverlay = createUiAlertScreen('alert-1', {
+            title: 'Alert',
+            message: 'Need attention',
+        }, alertDefinition)
+        expect(alertOverlay).toMatchObject({
+            id: 'alert-1',
+            screenPartKey: 'alert',
+            rendererKey: 'ui.alert.default',
         })
 
         expect((await runtime.dispatchCommand(createCommand(

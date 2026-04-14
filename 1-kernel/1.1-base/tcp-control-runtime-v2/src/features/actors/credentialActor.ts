@@ -1,5 +1,10 @@
 import {createAppError, nowTimestampMs} from '@impos2/kernel-base-contracts'
-import {createCommand, onCommand, type ActorDefinition} from '@impos2/kernel-base-runtime-shell-v2'
+import {
+    createCommand,
+    createModuleActorFactory,
+    onCommand,
+    type ActorDefinition,
+} from '@impos2/kernel-base-runtime-shell-v2'
 import {moduleName} from '../../moduleName'
 import {selectTcpCredentialSnapshot} from '../../selectors'
 import {tcpControlV2ErrorDefinitions} from '../../supports'
@@ -7,13 +12,12 @@ import {tcpControlV2CommandDefinitions} from '../commands'
 import {tcpControlV2StateActions} from '../slices'
 import {requireTcpControlHttpService, type TcpControlServiceRefV2} from './serviceRef'
 
+const defineActor = createModuleActorFactory(moduleName)
+
 export const createTcpCredentialActorDefinitionV2 = (
     serviceRef: TcpControlServiceRefV2,
-): ActorDefinition => ({
-    moduleName,
-    actorName: 'TcpCredentialActor',
-    handlers: [
-        onCommand(tcpControlV2CommandDefinitions.refreshCredential, async actorContext => {
+): ActorDefinition => defineActor('TcpCredentialActor', [
+    onCommand(tcpControlV2CommandDefinitions.refreshCredential, async actorContext => {
             const httpService = requireTcpControlHttpService(serviceRef)
             const credential = selectTcpCredentialSnapshot(actorContext.getState())
             if (!credential.refreshToken) {
@@ -73,5 +77,4 @@ export const createTcpCredentialActorDefinitionV2 = (
                 throw error
             }
         }),
-    ],
-})
+])

@@ -27,6 +27,9 @@ export const createUiScreenRegistry = (): UiRuntimeScreenRegistry => {
         get(partKey) {
             return definitions.get(partKey)
         },
+        getRendererKey(partKey) {
+            return definitions.get(partKey)?.rendererKey
+        },
         list() {
             return [...definitions.values()]
         },

@@ -16,6 +16,7 @@ export interface UiRuntimeScreenRegistry {
     register(definition: UiScreenDefinition): UiScreenDefinition
     registerMany(definitions: readonly UiScreenDefinition[]): readonly UiScreenDefinition[]
     get(partKey: string): UiScreenDefinition | undefined
+    getRendererKey(partKey: string): string | undefined
     list(): readonly UiScreenDefinition[]
     listByContainer(containerKey: string, context: UiScreenRegistryContext): readonly UiScreenDefinition[]
     findFirstReady(containerKey: string, fromIndex: number, context: UiScreenRegistryContext): UiScreenDefinition | undefined

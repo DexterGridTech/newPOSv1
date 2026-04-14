@@ -4,6 +4,7 @@ import {createCommandId, createRequestId} from '@impos2/kernel-base-contracts'
 import type {StateRuntimeSliceDescriptor} from '@impos2/kernel-base-state-runtime'
 import {
     createCommand,
+    createKernelRuntimeApp,
     createKernelRuntimeV2,
     defineCommand,
     onCommand,
@@ -580,5 +581,49 @@ describe('runtime-shell-v2', () => {
                 }),
             ],
         })
+    })
+
+    it('starts runtime through createKernelRuntimeApp with dependency-ordered pre-setup', async () => {
+        const events: string[] = []
+        const baseModule: KernelRuntimeModuleV2 = {
+            moduleName: 'kernel.base.runtime-shell-v2.test.base',
+            packageVersion: '0.0.1',
+            preSetup() {
+                events.push('base:pre-setup')
+            },
+            install() {
+                events.push('base:install')
+            },
+        }
+        const featureModule: KernelRuntimeModuleV2 = {
+            moduleName: 'kernel.base.runtime-shell-v2.test.feature',
+            packageVersion: '0.0.1',
+            dependencies: [{moduleName: baseModule.moduleName}],
+            preSetup() {
+                events.push('feature:pre-setup')
+            },
+            install() {
+                events.push('feature:install')
+            },
+        }
+
+        const app = createKernelRuntimeApp({
+            runtimeName: 'runtime-shell-v2-app-test',
+            modules: [featureModule, baseModule],
+        })
+
+        await app.start()
+
+        expect(app.descriptor.runtimeName).toBe('runtime-shell-v2-app-test')
+        expect(app.descriptor.moduleDescriptors.map(item => item.moduleName)).toEqual([
+            baseModule.moduleName,
+            featureModule.moduleName,
+        ])
+        expect(events).toEqual([
+            'base:pre-setup',
+            'feature:pre-setup',
+            'base:install',
+            'feature:install',
+        ])
     })
 })

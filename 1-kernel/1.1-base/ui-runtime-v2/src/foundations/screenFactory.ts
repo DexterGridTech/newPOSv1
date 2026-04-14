@@ -1,8 +1,10 @@
 import {nowTimestampMs} from '@impos2/kernel-base-contracts'
 import type {
+    UiAlertInfo,
     UiOverlayEntry,
     UiRuntimeCreateOverlayInput,
     UiRuntimeCreateScreenInput,
+    UiScreenDefinition,
     UiScreenRuntimeEntry,
 } from '../types'
 
@@ -39,4 +41,46 @@ export const createUiOverlayEntry = <TProps = unknown>(
     rendererKey: input.definition.rendererKey,
     props: input.props,
     openedAt: nowTimestampMs(),
+})
+
+export const createUiOverlayScreen = <TProps = unknown>(
+    definition: UiScreenDefinition<TProps>,
+    id: string,
+    props?: TProps,
+): UiOverlayEntry<TProps> => createUiOverlayEntry({
+    definition,
+    id,
+    props,
+})
+
+export const createUiModalScreen = createUiOverlayScreen
+
+export const defaultUiAlertPartKey = 'alert'
+
+export const createUiAlertDefinition = (
+    input: {
+        partKey?: string
+        rendererKey?: string
+        containerKey?: string
+    } = {},
+): UiScreenDefinition<UiAlertInfo> => ({
+    partKey: input.partKey ?? defaultUiAlertPartKey,
+    rendererKey: input.rendererKey ?? 'ui.alert.default',
+    name: 'Alert',
+    title: 'Alert',
+    description: 'Alert',
+    containerKey: input.containerKey,
+    screenModes: ['DESKTOP', 'MOBILE'],
+    workspaces: ['main', 'branch'],
+    instanceModes: ['MASTER', 'SLAVE'],
+})
+
+export const createUiAlertScreen = (
+    id: string,
+    props: UiAlertInfo,
+    definition = createUiAlertDefinition(),
+): UiOverlayEntry<UiAlertInfo> => createUiOverlayEntry({
+    definition,
+    id,
+    props,
 })

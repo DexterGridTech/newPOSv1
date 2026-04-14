@@ -1,4 +1,9 @@
-import {createCommand, onCommand, type ActorDefinition} from '@impos2/kernel-base-runtime-shell-v2'
+import {
+    createCommand,
+    createModuleActorFactory,
+    onCommand,
+    type ActorDefinition,
+} from '@impos2/kernel-base-runtime-shell-v2'
 import {moduleName} from '../../moduleName'
 import {tdpSyncV2CommandDefinitions} from '../commands'
 
@@ -16,10 +21,11 @@ const dispatchCursorFeedback = async (
     ))
 }
 
-export const createTdpCursorFeedbackActorDefinitionV2 = (): ActorDefinition => ({
-    moduleName,
-    actorName: 'TdpCursorFeedbackActor',
-    handlers: [
+const defineActor = createModuleActorFactory(moduleName)
+
+export const createTdpCursorFeedbackActorDefinitionV2 = (): ActorDefinition => defineActor(
+    'TdpCursorFeedbackActor',
+    [
         onCommand(tdpSyncV2CommandDefinitions.tdpSnapshotLoaded, async context => {
             await dispatchCursorFeedback(context, context.command.payload.highWatermark)
             return {
@@ -45,4 +51,4 @@ export const createTdpCursorFeedbackActorDefinitionV2 = (): ActorDefinition => (
             }
         }),
     ],
-})
+)

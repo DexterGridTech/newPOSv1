@@ -1,4 +1,4 @@
-import {defineCommand} from '@impos2/kernel-base-runtime-shell-v2'
+import {createModuleCommandFactory} from '@impos2/kernel-base-runtime-shell-v2'
 import {moduleName} from '../../moduleName'
 import type {
     DispatchPeerCommandInput,
@@ -8,51 +8,20 @@ import type {
     SetTopologyMasterInfoInput,
 } from '../../types'
 
+const defineModuleCommand = createModuleCommandFactory(moduleName)
+
 export const topologyRuntimeV2CommandDefinitions = {
-    setInstanceMode: defineCommand<SetTopologyInstanceModeInput>({
-        moduleName,
-        commandName: 'set-instance-mode',
-    }),
-    setDisplayMode: defineCommand<SetTopologyDisplayModeInput>({
-        moduleName,
-        commandName: 'set-display-mode',
-    }),
-    setEnableSlave: defineCommand<SetTopologyEnableSlaveInput>({
-        moduleName,
-        commandName: 'set-enable-slave',
-    }),
-    setMasterInfo: defineCommand<SetTopologyMasterInfoInput>({
-        moduleName,
-        commandName: 'set-master-info',
-    }),
-    clearMasterInfo: defineCommand<Record<string, never>>({
-        moduleName,
-        commandName: 'clear-master-info',
-    }),
-    refreshTopologyContext: defineCommand<Record<string, never>>({
-        moduleName,
-        commandName: 'refresh-topology-context',
-    }),
-    startTopologyConnection: defineCommand<Record<string, never>>({
-        moduleName,
-        commandName: 'start-topology-connection',
-    }),
-    stopTopologyConnection: defineCommand<Record<string, never>>({
-        moduleName,
-        commandName: 'stop-topology-connection',
-    }),
-    restartTopologyConnection: defineCommand<Record<string, never>>({
-        moduleName,
-        commandName: 'restart-topology-connection',
-    }),
-    resumeTopologySession: defineCommand<Record<string, never>>({
-        moduleName,
-        commandName: 'resume-topology-session',
-    }),
-    dispatchPeerCommand: defineCommand<DispatchPeerCommandInput>({
-        moduleName,
-        commandName: 'dispatch-peer-command',
-    }),
+    setInstanceMode: defineModuleCommand<SetTopologyInstanceModeInput>('set-instance-mode'),
+    setDisplayMode: defineModuleCommand<SetTopologyDisplayModeInput>('set-display-mode'),
+    setEnableSlave: defineModuleCommand<SetTopologyEnableSlaveInput>('set-enable-slave'),
+    setMasterInfo: defineModuleCommand<SetTopologyMasterInfoInput>('set-master-info'),
+    clearMasterInfo: defineModuleCommand<Record<string, never>>('clear-master-info'),
+    refreshTopologyContext: defineModuleCommand<Record<string, never>>('refresh-topology-context'),
+    startTopologyConnection: defineModuleCommand<Record<string, never>>('start-topology-connection'),
+    stopTopologyConnection: defineModuleCommand<Record<string, never>>('stop-topology-connection'),
+    restartTopologyConnection: defineModuleCommand<Record<string, never>>('restart-topology-connection'),
+    resumeTopologySession: defineModuleCommand<Record<string, never>>('resume-topology-session'),
+    dispatchPeerCommand: defineModuleCommand<DispatchPeerCommandInput>('dispatch-peer-command'),
 } as const
 
 export const topologyRuntimeV2CommandNames = Object.fromEntries(

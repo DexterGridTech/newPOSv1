@@ -1,1 +1,2 @@
-export {createUiRuntimeModuleV2} from '../foundations/module'
+export * from './createModule'
+export * from './moduleManifest'

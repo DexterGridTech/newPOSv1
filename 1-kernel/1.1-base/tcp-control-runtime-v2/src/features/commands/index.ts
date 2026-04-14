@@ -1,64 +1,46 @@
-import {defineCommand} from '@impos2/kernel-base-runtime-shell-v2'
+import {createModuleCommandFactory} from '@impos2/kernel-base-runtime-shell-v2'
 import {moduleName} from '../../moduleName'
 import type {TcpDeviceInfo, TcpTaskResultReportRuntimePayload} from '../../types'
 
+const defineModuleCommand = createModuleCommandFactory(moduleName)
+
 export const tcpControlV2CommandDefinitions = {
-    bootstrapTcpControl: defineCommand<{
+    bootstrapTcpControl: defineModuleCommand<{
         deviceInfo?: TcpDeviceInfo
         deviceFingerprint?: string
-    }>({
-        moduleName,
-        commandName: 'bootstrap-tcp-control',
-    }),
-    bootstrapTcpControlSucceeded: defineCommand<Record<string, never>>({
-        moduleName,
-        commandName: 'bootstrap-tcp-control-succeeded',
-        visibility: 'internal',
-    }),
-    activateTerminal: defineCommand<{
+    }>('bootstrap-tcp-control'),
+    bootstrapTcpControlSucceeded: defineModuleCommand<Record<string, never>>(
+        'bootstrap-tcp-control-succeeded',
+        {
+            visibility: 'internal',
+        },
+    ),
+    activateTerminal: defineModuleCommand<{
         activationCode: string
         deviceInfo?: TcpDeviceInfo
         deviceFingerprint?: string
-    }>({
-        moduleName,
-        commandName: 'activate-terminal',
-    }),
-    activateTerminalSucceeded: defineCommand<{
+    }>('activate-terminal'),
+    activateTerminalSucceeded: defineModuleCommand<{
         terminalId: string
         accessToken: string
-    }>({
-        moduleName,
-        commandName: 'activate-terminal-succeeded',
+    }>('activate-terminal-succeeded', {
         visibility: 'internal',
     }),
-    refreshCredential: defineCommand<Record<string, never>>({
-        moduleName,
-        commandName: 'refresh-credential',
-    }),
-    credentialRefreshed: defineCommand<{
+    refreshCredential: defineModuleCommand<Record<string, never>>('refresh-credential'),
+    credentialRefreshed: defineModuleCommand<{
         accessToken: string
         expiresAt: number
-    }>({
-        moduleName,
-        commandName: 'credential-refreshed',
+    }>('credential-refreshed', {
         visibility: 'internal',
     }),
-    reportTaskResult: defineCommand<TcpTaskResultReportRuntimePayload>({
-        moduleName,
-        commandName: 'report-task-result',
-    }),
-    taskResultReported: defineCommand<{
+    reportTaskResult: defineModuleCommand<TcpTaskResultReportRuntimePayload>('report-task-result'),
+    taskResultReported: defineModuleCommand<{
         instanceId: string
         status: string
-    }>({
-        moduleName,
-        commandName: 'task-result-reported',
+    }>('task-result-reported', {
         visibility: 'internal',
     }),
-    resetTcpControl: defineCommand<Record<string, never>>({
-        moduleName,
-        commandName: 'reset-tcp-control',
-    }),
+    resetTcpControl: defineModuleCommand<Record<string, never>>('reset-tcp-control'),
 } as const
 
 export const tcpControlV2CommandNames = {
