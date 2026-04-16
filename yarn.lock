@@ -3440,6 +3440,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@impos2/adapter-android-v2@workspace:3-adapter/android/adapter-android-v2":
+  version: 0.0.0-use.local
+  resolution: "@impos2/adapter-android-v2@workspace:3-adapter/android/adapter-android-v2"
+  languageName: unknown
+  linkType: soft
+
 "@impos2/adapter-electron-dev-app@workspace:3-adapter/electron/adapterDevApp":
   version: 0.0.0-use.local
   resolution: "@impos2/adapter-electron-dev-app@workspace:3-adapter/electron/adapterDevApp"
@@ -3508,6 +3514,53 @@ __metadata:
     electron: ">=37.0.0"
     react: 19.2.0
     react-native: 0.84.1
+  languageName: unknown
+  linkType: soft
+
+"@impos2/assembly-android-mixc-retail-rn84@workspace:4-assembly/android/mixc-retail-assembly-rn84":
+  version: 0.0.0-use.local
+  resolution: "@impos2/assembly-android-mixc-retail-rn84@workspace:4-assembly/android/mixc-retail-assembly-rn84"
+  dependencies:
+    "@babel/core": ^7.25.2
+    "@babel/preset-env": ^7.25.3
+    "@babel/runtime": ^7.25.0
+    "@impos2/kernel-base-contracts": "workspace:*"
+    "@impos2/kernel-base-platform-ports": "workspace:*"
+    "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
+    "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*"
+    "@impos2/kernel-base-topology-runtime-v2": "workspace:*"
+    "@impos2/kernel-base-transport-runtime": "workspace:*"
+    "@impos2/kernel-base-ui-runtime-v2": "workspace:*"
+    "@impos2/kernel-server-config-v2": "workspace:*"
+    "@impos2/ui-base-admin-console": "workspace:*"
+    "@impos2/ui-base-input-runtime": "workspace:*"
+    "@impos2/ui-base-runtime-react": "workspace:*"
+    "@impos2/ui-base-terminal-console": "workspace:*"
+    "@impos2/ui-integration-retail-shell": "workspace:*"
+    "@react-native-community/cli": 20.1.0
+    "@react-native-community/cli-platform-android": 20.1.0
+    "@react-native-community/cli-platform-ios": 20.1.0
+    "@react-native/babel-preset": 0.84.1
+    "@react-native/eslint-config": 0.84.1
+    "@react-native/metro-config": 0.84.1
+    "@react-native/typescript-config": 0.84.1
+    "@reduxjs/toolkit": ^2.10.0
+    "@types/jest": ^29.5.13
+    "@types/react": ^19.2.0
+    "@types/react-test-renderer": ^19.1.0
+    eslint: ^8.19.0
+    jest: ^29.6.3
+    prettier: 2.8.8
+    react: 19.2.3
+    react-native: 0.84.1
+    react-native-qrcode-svg: ^6.3.21
+    react-native-svg: ^15.15.3
+    react-redux: ^9.1.0
+    react-test-renderer: 19.2.3
+    reactotron-core-client: ^2.9.9
+    reactotron-react-native: ^5.1.18
+    typescript: ^5.8.3
+    vitest: ^3.2.4
   languageName: unknown
   linkType: soft
 
@@ -4287,6 +4340,11 @@ __metadata:
     "@impos2/ui-base-runtime-react": "workspace:*"
     "@types/node": ^25.0.9
     "@types/react": ^18.3.12
+    expo: ~54.0.31
+    expo-status-bar: ~3.0.9
+    react-dom: 18.3.1
+    react-native-qrcode-svg: ^6.3.21
+    react-native-web: ^0.21.0
     react-test-renderer: 18.3.1
     typescript: ^5.9.3
     vitest: ^3.2.4
@@ -4307,6 +4365,10 @@ __metadata:
     "@impos2/ui-base-runtime-react": "workspace:*"
     "@types/node": ^25.0.9
     "@types/react": ^18.3.12
+    expo: ~54.0.31
+    expo-status-bar: ~3.0.9
+    react-dom: 18.3.1
+    react-native-web: ^0.21.0
     react-test-renderer: 18.3.1
     typescript: ^5.9.3
     vitest: ^3.2.4
@@ -4328,6 +4390,10 @@ __metadata:
     "@reduxjs/toolkit": ^2.10.0
     "@types/node": ^25.0.9
     "@types/react": ^18.3.12
+    expo: ~54.0.31
+    expo-status-bar: ~3.0.9
+    react-dom: 18.3.1
+    react-native-web: ^0.21.0
     react-test-renderer: 18.3.1
     typescript: ^5.9.3
     vitest: ^3.2.4
@@ -4342,14 +4408,23 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@impos2/ui-base-terminal-console@workspace:2-ui/2.1-base/terminal-console"
   dependencies:
+    "@impos2/kernel-base-contracts": "workspace:*"
     "@impos2/kernel-base-platform-ports": "workspace:*"
     "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
+    "@impos2/kernel-base-state-runtime": "workspace:*"
     "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*"
+    "@impos2/kernel-base-transport-runtime": "workspace:*"
+    "@impos2/kernel-server-config-v2": "workspace:*"
     "@impos2/ui-base-input-runtime": "workspace:*"
     "@impos2/ui-base-runtime-react": "workspace:*"
     "@types/node": ^25.0.9
     "@types/react": ^18.3.12
+    expo: ~54.0.31
+    expo-status-bar: ~3.0.9
+    react-dom: 18.3.1
+    react-native-web: ^0.21.0
     react-test-renderer: 18.3.1
+    tsx: ^4.20.6
     typescript: ^5.9.3
     vitest: ^3.2.4
   peerDependencies:
@@ -4505,7 +4580,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/ui-integration-retail-shell@workspace:2-ui/2.3-integration/retail-shell":
+"@impos2/ui-integration-retail-shell@workspace:*, @impos2/ui-integration-retail-shell@workspace:2-ui/2.3-integration/retail-shell":
   version: 0.0.0-use.local
   resolution: "@impos2/ui-integration-retail-shell@workspace:2-ui/2.3-integration/retail-shell"
   dependencies:
@@ -4519,7 +4594,12 @@ __metadata:
     "@impos2/ui-base-terminal-console": "workspace:*"
     "@types/node": ^25.0.9
     "@types/react": ^18.3.12
+    expo: ~54.0.31
+    expo-status-bar: ~3.0.9
+    react-dom: 18.3.1
+    react-native-web: ^0.21.0
     react-test-renderer: 18.3.1
+    tsx: ^4.20.6
     typescript: ^5.9.3
     vitest: ^3.2.4
   peerDependencies:
