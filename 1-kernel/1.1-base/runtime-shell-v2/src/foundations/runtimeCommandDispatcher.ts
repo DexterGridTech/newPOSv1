@@ -80,6 +80,8 @@ interface CreateRuntimeCommandDispatcherInput {
     resolveParameter: RuntimeModuleContextV2['resolveParameter']
     queryRequest: (requestId: string) => RequestQueryResult | undefined
     getPeerDispatchGateway: () => PeerDispatchGateway | undefined
+    displayContext: RuntimeModuleContextV2['displayContext']
+    resetApplicationState?: (input?: {reason?: string}) => Promise<void>
 }
 
 export const createRuntimeCommandDispatcher = (
@@ -96,6 +98,7 @@ export const createRuntimeCommandDispatcher = (
         actorKey: string
         commandId: CommandId
     }> = []
+    const pendingResetByRequestId = new Map<import('@impos2/kernel-base-contracts').RequestId, {reason?: string}>()
 
     const dispatchLocal = async <TPayload>(
         commandIntent: CommandIntent<TPayload>,
@@ -211,6 +214,7 @@ export const createRuntimeCommandDispatcher = (
                 const context: ActorExecutionContext<TPayload> = {
                     runtimeId: input.runtimeId,
                     localNodeId: input.localNodeId,
+                    displayContext: input.displayContext,
                     command: dispatched,
                     actor: handler.actor,
                     getState: () => input.store.getState() as any,
@@ -220,6 +224,9 @@ export const createRuntimeCommandDispatcher = (
                         requestId,
                         parentCommandId: dispatched.commandId,
                     }),
+                    requestApplicationReset(resetInput) {
+                        pendingResetByRequestId.set(requestId, resetInput ?? {})
+                    },
                     queryRequest: input.queryRequest,
                     resolveParameter: input.resolveParameter,
                 }
@@ -277,12 +284,22 @@ export const createRuntimeCommandDispatcher = (
             }
         }))
 
-        return input.ledger.completeCommand(
+        const aggregateResult = input.ledger.completeCommand(
             requestId,
             commandId,
             aggregateStatus(actorResults, commandIntent.definition.allowNoActor),
             actorResults,
         )
+
+        if (options.parentCommandId == null) {
+            const pendingReset = pendingResetByRequestId.get(requestId)
+            if (pendingReset) {
+                pendingResetByRequestId.delete(requestId)
+                await input.resetApplicationState?.(pendingReset)
+            }
+        }
+
+        return aggregateResult
     }
 
     return {

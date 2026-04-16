@@ -49,6 +49,8 @@ export const createTopologyRuntimeModuleV2 = (
                 const nextContext = createTopologyContextState({
                     localNodeId: context.localNodeId,
                     recoveryState: recoveryState ?? {},
+                    displayIndex: context.displayContext.displayIndex,
+                    displayCount: context.displayContext.displayCount,
                 })
                 const nextFingerprint = JSON.stringify(nextContext)
                 if (nextFingerprint === lastContextFingerprint) {

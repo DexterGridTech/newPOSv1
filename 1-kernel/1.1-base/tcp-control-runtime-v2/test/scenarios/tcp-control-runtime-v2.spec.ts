@@ -133,6 +133,25 @@ const createMockTransport = (
             }
         }
 
+        if (request.endpoint.pathTemplate === '/api/v1/terminals/{terminalId}/deactivate') {
+            expect(request.input.path).toEqual({
+                terminalId: 'terminal-test-001',
+            })
+            return {
+                data: {
+                    success: true,
+                    data: {
+                        terminalId: 'terminal-test-001',
+                        status: 'DEACTIVATED',
+                        deactivatedAt: Date.now(),
+                    },
+                } as any,
+                status: 200,
+                statusText: 'OK',
+                headers: {},
+            }
+        }
+
         throw new Error(`Unexpected endpoint: ${request.endpoint.pathTemplate}`)
     },
 })
@@ -181,6 +200,36 @@ const createRuntime = (input: {
 }
 
 describe('tcp-control-runtime-v2', () => {
+    it('returns stable snapshot selector references for unchanged state', async () => {
+        const runtime = createRuntime({
+            localNodeId: 'node_tcp_v2_selector_stability',
+            stateStorage: createMemoryStorage(),
+            secureStateStorage: createMemoryStorage(),
+        })
+
+        await runtime.start()
+
+        const initialState = runtime.getState()
+        expect(selectTcpIdentitySnapshot(initialState)).toBe(selectTcpIdentitySnapshot(initialState))
+        expect(selectTcpCredentialSnapshot(initialState)).toBe(selectTcpCredentialSnapshot(initialState))
+        expect(selectTcpBindingSnapshot(initialState)).toBe(selectTcpBindingSnapshot(initialState))
+
+        await runtime.dispatchCommand(
+            createCommand(tcpControlV2CommandDefinitions.bootstrapTcpControl, {
+                deviceInfo: {
+                    id: 'device-test-selector-stability',
+                    model: 'Mock POS',
+                },
+            }),
+        )
+
+        const nextState = runtime.getState()
+        expect(selectTcpIdentitySnapshot(nextState)).toBe(selectTcpIdentitySnapshot(nextState))
+        expect(selectTcpCredentialSnapshot(nextState)).toBe(selectTcpCredentialSnapshot(nextState))
+        expect(selectTcpBindingSnapshot(nextState)).toBe(selectTcpBindingSnapshot(nextState))
+        expect(selectTcpIdentitySnapshot(nextState)).not.toBe(selectTcpIdentitySnapshot(initialState))
+    })
+
     it('activates terminal, refreshes credential, reports task result, and persists only recovery state', async () => {
         const stateStorage = createMemoryStorage()
         const secureStateStorage = createMemoryStorage()
@@ -307,6 +356,59 @@ describe('tcp-control-runtime-v2', () => {
             bootstrapped: false,
         })
         expect(selectTcpRuntimeState(restartedRuntime.getState())?.lastActivationRequestId).toBeUndefined()
+    })
+
+    it('deactivates terminal remotely and clears local activation recovery state', async () => {
+        const stateStorage = createMemoryStorage()
+        const secureStateStorage = createMemoryStorage()
+        const calls: string[] = []
+        const runtime = createRuntime({
+            localNodeId: 'node_tcp_v2_deactivate',
+            stateStorage,
+            secureStateStorage,
+            calls,
+        })
+
+        await runtime.start()
+        await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.bootstrapTcpControl, {
+            deviceInfo: {
+                id: 'device-test-deactivate',
+                model: 'Mock POS',
+            },
+        }))
+        await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.activateTerminal, {
+            activationCode: 'ACT-DEACTIVATE-001',
+        }))
+
+        expect(selectTcpIdentitySnapshot(runtime.getState()).activationStatus).toBe('ACTIVATED')
+        expect(selectTcpCredentialSnapshot(runtime.getState()).status).toBe('READY')
+
+        const deactivateRequestId = createRequestId()
+        const result = await runtime.dispatchCommand(
+            createCommand(tcpControlV2CommandDefinitions.deactivateTerminal, {
+                reason: 'admin-console-reset',
+            }),
+            {requestId: deactivateRequestId},
+        )
+
+        expect(result.status).toBe('COMPLETED')
+        expect(runtime.queryRequest(deactivateRequestId)).toBeUndefined()
+        expect(calls).toEqual([
+            'POST /api/v1/terminals/activate',
+            'POST /api/v1/terminals/{terminalId}/deactivate',
+        ])
+        expect(selectTcpIdentitySnapshot(runtime.getState())).toMatchObject({
+            activationStatus: 'UNACTIVATED',
+        })
+        expect(selectTcpCredentialSnapshot(runtime.getState())).toMatchObject({
+            status: 'EMPTY',
+        })
+        expect(selectTcpBindingSnapshot(runtime.getState())).toEqual({})
+
+        await runtime.flushPersistence()
+        expect([...stateStorage.saved.keys()].some(key => key.endsWith(':terminalId'))).toBe(false)
+        expect([...secureStateStorage.saved.keys()].some(key => key.endsWith(':accessToken'))).toBe(false)
+        expect([...secureStateStorage.saved.keys()].some(key => key.endsWith(':refreshToken'))).toBe(false)
     })
 
     it('fails refreshCredential immediately when refreshToken is missing', async () => {

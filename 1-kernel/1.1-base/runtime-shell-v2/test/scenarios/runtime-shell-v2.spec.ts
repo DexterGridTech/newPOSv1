@@ -207,6 +207,17 @@ describe('runtime-shell-v2', () => {
         expect((runtime.getState()[stateKey as keyof ReturnType<typeof runtime.getState>] as {value: number}).value).toBe(7)
     })
 
+    it('exposes runtime environment mode for upper layers', async () => {
+        const runtime = createKernelRuntimeV2({
+            modules: [createModule([])],
+            platformPorts: {
+                environmentMode: 'PROD',
+            },
+        })
+
+        expect(runtime.environmentMode).toBe('PROD')
+    })
+
     it('fails no-actor commands unless allowNoActor is enabled', async () => {
         const runtime = createKernelRuntimeV2({modules: [createModule([])]})
         await runtime.start()
@@ -428,6 +439,74 @@ describe('runtime-shell-v2', () => {
         await runtime.start()
 
         expect(events).toEqual(['initialize'])
+    })
+
+    it('resets application state, clears request ledger, and re-broadcasts initialize', async () => {
+        const events: string[] = []
+        const resettableSlice = createSlice({
+            name: `${testModuleName}.resettable`,
+            initialState: {value: 1},
+            reducers: {
+                setValue(state, action: PayloadAction<number>) {
+                    state.value = action.payload
+                },
+            },
+        })
+        const module: KernelRuntimeModuleV2 = {
+            moduleName: testModuleName,
+            packageVersion: '0.0.1',
+            commandDefinitions: [commandA],
+            stateSlices: [
+                {
+                    name: resettableSlice.name,
+                    reducer: resettableSlice.reducer,
+                    persistIntent: 'owner-only',
+                    syncIntent: 'isolated',
+                    persistence: [
+                        {
+                            kind: 'field',
+                            stateKey: 'value',
+                            flushMode: 'immediate',
+                        },
+                    ],
+                },
+            ],
+            actorDefinitions: [
+                {
+                    moduleName: testModuleName,
+                    actorName: 'InitializeActor',
+                    handlers: [
+                        onCommand(runtimeShellV2CommandDefinitions.initialize, () => {
+                            events.push('initialize')
+                            return {}
+                        }),
+                    ],
+                },
+                {
+                    moduleName: testModuleName,
+                    actorName: 'CommandActor',
+                    handlers: [
+                        onCommand(commandA, context => ({
+                            value: context.command.payload.value,
+                        })),
+                    ],
+                },
+            ],
+        }
+        const runtime = createKernelRuntimeV2({modules: [module]})
+
+        await runtime.start()
+        runtime.getStore().dispatch(resettableSlice.actions.setValue(42))
+        const requestId = createRequestId()
+        await runtime.dispatchCommand(createCommand(commandA, {value: 5}), {requestId})
+        expect(runtime.queryRequest(requestId)?.status).toBe('COMPLETED')
+
+        await runtime.resetApplicationState({reason: 'test-reset'})
+
+        expect(runtime.queryRequest(requestId)).toBeUndefined()
+        expect((runtime.getState()[resettableSlice.name as keyof ReturnType<typeof runtime.getState>] as {value: number}).value)
+            .toBe(1)
+        expect(events).toEqual(['initialize', 'initialize'])
     })
 
     it('rejects start when initialize actors fail and keeps the request in the ledger', async () => {

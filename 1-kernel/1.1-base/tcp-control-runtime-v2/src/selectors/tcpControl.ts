@@ -1,3 +1,4 @@
+import {createSelector} from '@reduxjs/toolkit'
 import type {RootState} from '@impos2/kernel-base-state-runtime'
 import {
     TCP_BINDING_STATE_KEY,
@@ -27,32 +28,32 @@ export const selectTcpBindingState = (state: RootState) =>
 export const selectTcpRuntimeState = (state: RootState) =>
     state[TCP_RUNTIME_STATE_KEY as keyof RootState] as TcpRuntimeState | undefined
 
-export const selectTcpIdentitySnapshot = (state: RootState): TcpIdentitySnapshot => {
-    const tcpIdentity = selectTcpIdentityState(state)
-    return {
+export const selectTcpIdentitySnapshot = createSelector(
+    [selectTcpIdentityState],
+    (tcpIdentity): TcpIdentitySnapshot => ({
         terminalId: tcpIdentity?.terminalId,
         deviceFingerprint: tcpIdentity?.deviceFingerprint,
         deviceInfo: tcpIdentity?.deviceInfo,
         activationStatus: tcpIdentity?.activationStatus ?? 'UNACTIVATED',
         activatedAt: tcpIdentity?.activatedAt,
-    }
-}
+    }),
+)
 
-export const selectTcpCredentialSnapshot = (state: RootState): TcpCredentialSnapshot => {
-    const tcpCredential = selectTcpCredentialState(state)
-    return {
+export const selectTcpCredentialSnapshot = createSelector(
+    [selectTcpCredentialState],
+    (tcpCredential): TcpCredentialSnapshot => ({
         accessToken: tcpCredential?.accessToken,
         refreshToken: tcpCredential?.refreshToken,
         expiresAt: tcpCredential?.expiresAt,
         refreshExpiresAt: tcpCredential?.refreshExpiresAt,
         status: tcpCredential?.status ?? 'EMPTY',
         updatedAt: tcpCredential?.updatedAt,
-    }
-}
+    }),
+)
 
-export const selectTcpBindingSnapshot = (state: RootState): TcpBindingContext => {
-    const tcpBinding = selectTcpBindingState(state)
-    return {
+export const selectTcpBindingSnapshot = createSelector(
+    [selectTcpBindingState],
+    (tcpBinding): TcpBindingContext => ({
         platformId: tcpBinding?.platformId,
         tenantId: tcpBinding?.tenantId,
         brandId: tcpBinding?.brandId,
@@ -60,8 +61,8 @@ export const selectTcpBindingSnapshot = (state: RootState): TcpBindingContext =>
         storeId: tcpBinding?.storeId,
         profileId: tcpBinding?.profileId,
         templateId: tcpBinding?.templateId,
-    }
-}
+    }),
+)
 
 export const selectTcpTerminalId = (state: RootState) =>
     selectTcpIdentitySnapshot(state).terminalId

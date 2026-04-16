@@ -33,6 +33,17 @@ export interface RefreshTerminalCredentialApiResponse {
     expiresIn: number
 }
 
+export interface DeactivateTerminalApiRequest {
+    reason?: string
+}
+
+export interface DeactivateTerminalApiResponse {
+    terminalId: string
+    status: string
+    deactivatedAt?: number
+    reason?: string
+}
+
 export interface ReportTaskResultApiRequest
     extends Omit<TcpTaskResultReportRuntimePayload, 'terminalId' | 'instanceId'> {}
 

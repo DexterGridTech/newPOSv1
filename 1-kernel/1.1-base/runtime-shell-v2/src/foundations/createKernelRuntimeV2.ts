@@ -30,6 +30,7 @@ export const createKernelRuntimeV2 = (
     const runtimeId = input.runtimeId ?? createRuntimeInstanceId()
     const localNodeId = input.localNodeId ?? createNodeId()
     const platformPorts = createDefaultRuntimePlatformPortsV2(input.platformPorts)
+    const displayContext = input.displayContext ?? {}
     const modules = [
         createRuntimeShellInternalModuleV2(),
         ...(input.modules ?? []),
@@ -75,6 +76,11 @@ export const createKernelRuntimeV2 = (
         resolveParameter,
         queryRequest,
         getPeerDispatchGateway: () => peerDispatchGateway,
+        displayContext,
+        async resetApplicationState(input) {
+            ledger.clear()
+            await lifecycle.resetApplicationState(input?.reason)
+        },
     })
 
     const lifecycle = createRuntimeLifecycle({
@@ -83,6 +89,7 @@ export const createKernelRuntimeV2 = (
         modules,
         store,
         platformPorts,
+        displayContext,
         stateRuntime,
         dispatchAction,
         subscribeState,
@@ -103,6 +110,7 @@ export const createKernelRuntimeV2 = (
     return {
         runtimeId,
         localNodeId,
+        environmentMode: platformPorts.environmentMode,
         async start() {
             if (startPromise) {
                 return await startPromise
@@ -140,6 +148,10 @@ export const createKernelRuntimeV2 = (
         },
         async flushPersistence() {
             await stateRuntime.flushPersistence()
+        },
+        async resetApplicationState(input) {
+            ledger.clear()
+            await lifecycle.resetApplicationState(input?.reason)
         },
     }
 }

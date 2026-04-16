@@ -34,6 +34,12 @@ export const tcpControlV2ErrorDefinitions = {
         category: 'NETWORK',
         severity: 'HIGH',
     }),
+    deactivationFailed: defineError('deactivation_failed', {
+        name: 'TCP Deactivation Failed',
+        defaultTemplate: 'Terminal deactivation failed: ${error}',
+        category: 'NETWORK',
+        severity: 'HIGH',
+    }),
     taskResultReportFailed: defineError('task_result_report_failed', {
         name: 'TCP Task Result Report Failed',
         defaultTemplate: 'Terminal task result report failed: ${error}',

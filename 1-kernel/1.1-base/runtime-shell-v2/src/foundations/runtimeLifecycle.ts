@@ -14,8 +14,10 @@ interface CreateRuntimeLifecycleInput {
     modules: readonly KernelRuntimeModuleV2[]
     store: EnhancedStore
     platformPorts: RuntimeModuleContextV2['platformPorts']
+    displayContext: RuntimeModuleContextV2['displayContext']
     stateRuntime: {
         hydratePersistence(): Promise<void>
+        resetState(): Promise<void>
     }
     dispatchAction: (action: UnknownAction) => UnknownAction
     subscribeState: (listener: () => void) => () => void
@@ -36,6 +38,7 @@ const createRuntimeModuleInstallContext = (input: CreateRuntimeLifecycleInput) =
         moduleName: module.moduleName,
         localNodeId: input.localNodeId,
         platformPorts: input.platformPorts,
+        displayContext: input.displayContext,
         getState: () => input.store.getState() as any,
         getStore: () => input.store,
         dispatchAction: input.dispatchAction,
@@ -57,31 +60,8 @@ const createRuntimeModuleInstallContext = (input: CreateRuntimeLifecycleInput) =
 export const createRuntimeLifecycle = (input: CreateRuntimeLifecycleInput) => {
     const installContextFactory = createRuntimeModuleInstallContext(input)
 
-    const start = async () => {
-        /**
-         * 启动顺序必须稳定：
-         * 先恢复 state-runtime，再注册 catalog，再 install 模块，最后广播 initialize。
-         * 这继承旧 Core “store 可用后统一 initialize”的思想，保证模块初始化时能读到已恢复的配置和业务状态。
-         */
-        input.platformPorts.logger.info({
-            category: 'runtime.load',
-            event: 'runtime-shell-v2-start',
-            message: 'start runtime-shell-v2',
-            data: {
-                runtimeId: input.runtimeId,
-                localNodeId: input.localNodeId,
-                modules: input.modules.map(item => item.moduleName),
-                actorCount: input.getActorCount(),
-            },
-        })
-
-        await input.stateRuntime.hydratePersistence()
+    const runInitialize = async () => {
         bootstrapRuntimeCatalogs(input.modules, input.dispatchAction)
-
-        for (const module of input.modules) {
-            await module.install?.(installContextFactory(module))
-        }
-
         const initializeResult = await input.dispatchCommand(
             createCommand(runtimeShellV2CommandDefinitions.initialize, {}),
         )
@@ -104,7 +84,50 @@ export const createRuntimeLifecycle = (input: CreateRuntimeLifecycleInput) => {
         }
     }
 
+    /**
+     * 启动顺序必须稳定：
+     * 先恢复 state-runtime，再注册 catalog，再 install 模块，最后广播 initialize。
+     * 这继承旧 Core “store 可用后统一 initialize”的思想，保证模块初始化时能读到已恢复的配置和业务状态。
+     */
+    const start = async () => {
+        input.platformPorts.logger.info({
+            category: 'runtime.load',
+            event: 'runtime-shell-v2-start',
+            message: 'start runtime-shell-v2',
+            data: {
+                runtimeId: input.runtimeId,
+                localNodeId: input.localNodeId,
+                modules: input.modules.map(item => item.moduleName),
+                actorCount: input.getActorCount(),
+            },
+        })
+
+        await input.stateRuntime.hydratePersistence()
+
+        for (const module of input.modules) {
+            await module.install?.(installContextFactory(module))
+        }
+
+        await runInitialize()
+    }
+
+    const resetApplicationState = async (reason?: string) => {
+        input.platformPorts.logger.warn({
+            category: 'runtime.reset',
+            event: 'runtime-shell-v2-reset-application-state',
+            message: 'reset runtime application state',
+            data: {
+                runtimeId: input.runtimeId,
+                localNodeId: input.localNodeId,
+                reason,
+            },
+        })
+        await input.stateRuntime.resetState()
+        await runInitialize()
+    }
+
     return {
         start,
+        resetApplicationState,
     }
 }

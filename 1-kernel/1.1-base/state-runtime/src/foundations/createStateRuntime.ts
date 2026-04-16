@@ -11,7 +11,11 @@ import type {
     StateRuntimePersistenceFieldDescriptor,
     StateRuntimePersistenceRecordDescriptor,
 } from '../types/persistence'
-import {createReplaceStateRuntimeAction, createStateStore} from './store'
+import {
+    createReplaceStateRuntimeAction,
+    createResetStateRuntimeAction,
+    createStateStore,
+} from './store'
 import {
     createProtectedPersistenceStorageMissingError,
     stateRuntimeParameterDefinitions,
@@ -310,6 +314,18 @@ export const createStateRuntime = (
         )
     }
 
+    const clearStorage = async (storage: StateStoragePort) => {
+        if (storage.clear) {
+            await storage.clear()
+            return
+        }
+
+        const keys = await storage.getAllKeys?.()
+        if (keys && keys.length > 0) {
+            await removeKeys(storage, keys)
+        }
+    }
+
     const flushPersistence = async (): Promise<PersistedStateRuntimeSnapshot> => {
         if (!persistenceEnabled || !input.persistenceKey) {
             return {
@@ -579,6 +595,41 @@ export const createStateRuntime = (
         }
     }
 
+    const resetState = async () => {
+        if (flushTimer) {
+            clearTimeout(flushTimer)
+            flushTimer = null
+        }
+
+        persistenceChain = persistenceChain
+            .catch(() => undefined)
+            .then(async () => {
+                if (persistenceEnabled) {
+                    const plainStorage = getStoragePort(input, 'plain')
+                    const protectedStorage = getStoragePort(input, 'protected')
+
+                    if (plainStorage) {
+                        await clearStorage(plainStorage)
+                    }
+                    if (protectedStorage && protectedStorage !== plainStorage) {
+                        await clearStorage(protectedStorage)
+                    }
+                }
+            })
+
+        await persistenceChain
+
+        persistedValueCache.clear()
+        persistedStorageKindCache.clear()
+        hydrated = persistenceEnabled ? true : hydrated
+        clearPersistenceDirty()
+        store.dispatch(createResetStateRuntimeAction())
+
+        for (const slice of persistableSlices) {
+            previousPersistableSliceRefs.set(slice.name, (store.getState() as Record<string, unknown>)[slice.name])
+        }
+    }
+
     const previousPersistableSliceRefs = new Map<string, unknown>()
     for (const slice of persistableSlices) {
         previousPersistableSliceRefs.set(slice.name, (store.getState() as Record<string, unknown>)[slice.name])
@@ -628,6 +679,7 @@ export const createStateRuntime = (
             return input.slices
         },
         applySlicePatches,
+        resetState,
         exportPersistedState,
         applyPersistedState,
         hydratePersistence,

@@ -124,5 +124,26 @@ describe('tcp-control-runtime-v2 live roundtrip', () => {
                 reportedBy: 'tcp-control-runtime-v2-live-roundtrip',
             },
         })
+
+        const deactivateResult = await runtime.dispatchCommand(
+            createCommand(tcpControlV2CommandDefinitions.deactivateTerminal, {
+                reason: 'live-roundtrip-test',
+            }),
+            {requestId: createRequestId()},
+        )
+
+        expect(deactivateResult.status).toBe('COMPLETED')
+        expect(selectTcpIdentitySnapshot(runtime.getState()).activationStatus).toBe('UNACTIVATED')
+
+        await waitFor(async () => {
+            const terminals = await platform.admin.terminals()
+            return terminals.some(item => item.terminalId === terminalId && item.lifecycleStatus === 'DEACTIVATED')
+        })
+
+        const terminals = await platform.admin.terminals()
+        expect(terminals.find(item => item.terminalId === terminalId)).toMatchObject({
+            lifecycleStatus: 'DEACTIVATED',
+            presenceStatus: 'OFFLINE',
+        })
     })
 })

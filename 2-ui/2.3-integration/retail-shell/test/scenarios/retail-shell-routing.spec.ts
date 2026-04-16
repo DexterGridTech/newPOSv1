@@ -1,0 +1,84 @@
+import {describe, expect, it} from 'vitest'
+import {
+    createCommand,
+    runtimeShellV2CommandDefinitions,
+} from '@impos2/kernel-base-runtime-shell-v2'
+import {
+    selectUiScreen,
+} from '@impos2/kernel-base-ui-runtime-v2'
+import {
+    uiRuntimeRootVariables,
+} from '@impos2/ui-base-runtime-react'
+import {
+    tcpControlV2CommandDefinitions,
+    tcpControlV2StateActions,
+} from '@impos2/kernel-base-tcp-control-runtime-v2'
+import type {RootState} from '@impos2/kernel-base-state-runtime'
+import {createRetailShellHarness} from '../support/retailShellHarness'
+
+const selectPrimaryRoot = (state: RootState) =>
+    selectUiScreen(state, uiRuntimeRootVariables.primaryRootContainer.key)
+
+describe('retail-shell routing', () => {
+    it('routes to activation screen on initialize when terminal is not activated', async () => {
+        const harness = await createRetailShellHarness()
+        const current = selectPrimaryRoot(harness.runtime.getState())
+
+        expect(current?.partKey).toBe('ui.base.terminal.activate-device')
+    })
+
+    it('routes to welcome screen on initialize when terminal is already activated', async () => {
+        const harness = await createRetailShellHarness()
+
+        harness.store.dispatch(tcpControlV2StateActions.setActivatedIdentity({
+            terminalId: 'terminal-001',
+            activatedAt: Date.now(),
+        }))
+        await harness.runtime.dispatchCommand(createCommand(
+            runtimeShellV2CommandDefinitions.initialize,
+            {},
+        ))
+
+        const current = selectPrimaryRoot(harness.runtime.getState())
+        expect(current?.partKey).toBe('ui.integration.retail-shell.welcome')
+        expect((current?.props as {terminalId?: string} | undefined)?.terminalId).toBe('terminal-001')
+    })
+
+    it('switches to welcome screen after activation succeeds', async () => {
+        const harness = await createRetailShellHarness()
+
+        await harness.runtime.dispatchCommand(createCommand(
+            tcpControlV2CommandDefinitions.activateTerminalSucceeded,
+            {
+                terminalId: 'terminal-002',
+                accessToken: 'token-002',
+            },
+        ))
+
+        const current = selectPrimaryRoot(harness.runtime.getState())
+        expect(current?.partKey).toBe('ui.integration.retail-shell.welcome')
+        expect((current?.props as {terminalId?: string} | undefined)?.terminalId).toBe('terminal-002')
+    })
+
+    it('switches back to activation screen after deactivation succeeds', async () => {
+        const harness = await createRetailShellHarness()
+
+        await harness.runtime.dispatchCommand(createCommand(
+            tcpControlV2CommandDefinitions.activateTerminalSucceeded,
+            {
+                terminalId: 'terminal-003',
+                accessToken: 'token-003',
+            },
+        ))
+
+        await harness.runtime.dispatchCommand(createCommand(
+            tcpControlV2CommandDefinitions.deactivateTerminalSucceeded,
+            {
+                terminalId: 'terminal-003',
+            },
+        ))
+
+        const current = selectPrimaryRoot(harness.runtime.getState())
+        expect(current?.partKey).toBe('ui.base.terminal.activate-device')
+    })
+})

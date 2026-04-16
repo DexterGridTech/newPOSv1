@@ -19,11 +19,13 @@ import type {
     ResolvedParameter,
     StateSyncDiffEnvelope,
 } from '@impos2/kernel-base-contracts'
+import type {RuntimeDisplayContextV2} from './runtime'
 
 export interface RuntimeModuleContextV2 {
     readonly moduleName: string
     readonly localNodeId: NodeId
     readonly platformPorts: PlatformPorts
+    readonly displayContext: RuntimeDisplayContextV2
     getState(): RootState
     getStore(): EnhancedStore
     dispatchAction(action: UnknownAction): UnknownAction
@@ -86,5 +88,6 @@ export interface RuntimeModulePreSetupContextV2 {
     readonly moduleName: string
     readonly localNodeId: NodeId
     readonly platformPorts: PlatformPorts
+    readonly displayContext: RuntimeDisplayContextV2
     readonly descriptors: readonly KernelRuntimeModuleDescriptorV2[]
 }

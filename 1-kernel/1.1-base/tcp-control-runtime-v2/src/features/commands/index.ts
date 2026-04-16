@@ -33,6 +33,14 @@ export const tcpControlV2CommandDefinitions = {
     }>('credential-refreshed', {
         visibility: 'internal',
     }),
+    deactivateTerminal: defineModuleCommand<{
+        reason?: string
+    }>('deactivate-terminal'),
+    deactivateTerminalSucceeded: defineModuleCommand<{
+        terminalId: string
+    }>('deactivate-terminal-succeeded', {
+        visibility: 'internal',
+    }),
     reportTaskResult: defineModuleCommand<TcpTaskResultReportRuntimePayload>('report-task-result'),
     taskResultReported: defineModuleCommand<{
         instanceId: string
@@ -50,6 +58,8 @@ export const tcpControlV2CommandNames = {
     activateTerminalSucceeded: tcpControlV2CommandDefinitions.activateTerminalSucceeded.commandName,
     refreshCredential: tcpControlV2CommandDefinitions.refreshCredential.commandName,
     credentialRefreshed: tcpControlV2CommandDefinitions.credentialRefreshed.commandName,
+    deactivateTerminal: tcpControlV2CommandDefinitions.deactivateTerminal.commandName,
+    deactivateTerminalSucceeded: tcpControlV2CommandDefinitions.deactivateTerminalSucceeded.commandName,
     reportTaskResult: tcpControlV2CommandDefinitions.reportTaskResult.commandName,
     taskResultReported: tcpControlV2CommandDefinitions.taskResultReported.commandName,
     resetTcpControl: tcpControlV2CommandDefinitions.resetTcpControl.commandName,

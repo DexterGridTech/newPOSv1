@@ -45,7 +45,7 @@ const createFetchHttpTransport = (): HttpTransport => {
                 statusText: response.statusText,
                 headers: (() => {
                     const headers: Record<string, string> = {}
-                    response.headers.forEach((value, key) => {
+                    response.headers.forEach((value: string, key: string) => {
                         headers[key] = value
                     })
                     return headers

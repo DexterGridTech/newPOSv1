@@ -149,6 +149,41 @@ export const refreshTerminalToken = (refreshToken: string) => {
   }
 }
 
+export const deactivateTerminal = (input: {
+  terminalId: string
+  reason?: string
+}) => {
+  const sandboxId = getCurrentSandboxId()
+  const terminal = db.select().from(terminalsTable).where(and(eq(terminalsTable.terminalId, input.terminalId), eq(terminalsTable.sandboxId, sandboxId))).get()
+  if (!terminal) {
+    throw new Error('终端不存在')
+  }
+
+  const timestamp = now()
+
+  db.update(terminalsTable)
+    .set({
+      lifecycleStatus: 'DEACTIVATED',
+      presenceStatus: 'OFFLINE',
+      healthStatus: 'UNKNOWN',
+      updatedAt: timestamp,
+    })
+    .where(and(eq(terminalsTable.terminalId, input.terminalId), eq(terminalsTable.sandboxId, sandboxId)))
+    .run()
+
+  db.update(credentialsTable)
+    .set({ revokedAt: timestamp })
+    .where(eq(credentialsTable.terminalId, input.terminalId))
+    .run()
+
+  return {
+    terminalId: input.terminalId,
+    status: 'DEACTIVATED',
+    deactivatedAt: timestamp,
+    reason: input.reason,
+  }
+}
+
 export const listTaskReleases = () => {
   const sandboxId = getCurrentSandboxId()
   return db.select().from(taskReleasesTable).where(eq(taskReleasesTable.sandboxId, sandboxId)).orderBy(desc(taskReleasesTable.updatedAt)).all().map((item) => ({

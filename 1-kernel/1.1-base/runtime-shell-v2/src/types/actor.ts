@@ -14,6 +14,7 @@ import type {
     DispatchedCommand,
 } from './command'
 import type {RequestQueryResult} from './request'
+import type {RuntimeDisplayContextV2} from './runtime'
 
 export interface ActorInfo {
     actorKey: string
@@ -24,6 +25,7 @@ export interface ActorInfo {
 export interface ActorExecutionContext<TPayload = unknown> {
     readonly runtimeId: RuntimeInstanceId
     readonly localNodeId: NodeId
+    readonly displayContext: RuntimeDisplayContextV2
     readonly command: DispatchedCommand<TPayload>
     readonly actor: ActorInfo
     getState(): RootState
@@ -33,6 +35,7 @@ export interface ActorExecutionContext<TPayload = unknown> {
         command: CommandIntent<TChildPayload>,
         options?: ActorDispatchOptions,
     ): Promise<CommandAggregateResult>
+    requestApplicationReset?(input?: {reason?: string}): void
     queryRequest(requestId: string): RequestQueryResult | undefined
     resolveParameter<TValue = unknown>(input: {
         key: string

@@ -818,6 +818,57 @@ describe('state-runtime store assembly', () => {
         expect(memory.saved.size).toBe(0)
     })
 
+    it('resets redux state and clears persisted entries', async () => {
+        const memory = createMemoryStorage()
+        const slice = createSlice({
+            name: 'kernel.base.state-runtime.test.resettable',
+            initialState: {value: 'seed'},
+            reducers: {
+                setValue(state, action: {payload: string}) {
+                    state.value = action.payload
+                },
+            },
+        })
+
+        const runtime = createStateRuntime({
+            runtimeName: 'state-runtime-reset',
+            slices: [
+                {
+                    name: slice.name,
+                    reducer: slice.reducer,
+                    persistIntent: 'owner-only',
+                    syncIntent: 'isolated',
+                    persistence: [
+                        {
+                            kind: 'field',
+                            stateKey: 'value',
+                            flushMode: 'immediate',
+                        },
+                    ],
+                },
+            ],
+            logger: createTestLogger() as any,
+            allowPersistence: true,
+            persistenceKey: 'state-runtime-reset-test',
+            stateStorage: memory.storage,
+        })
+
+        await runtime.hydratePersistence()
+        runtime.getStore().dispatch(slice.actions.setValue('persisted'))
+        await runtime.flushPersistence()
+        expect(memory.saved.size).toBeGreaterThan(0)
+
+        await runtime.resetState()
+        await runtime.flushPersistence()
+
+        expect((runtime.getState() as Record<string, any>)[slice.name]).toEqual({value: 'seed'})
+        expect([...memory.saved.keys()]).toEqual([
+            'state-runtime-reset-test:kernel.base.state-runtime.test.resettable:value',
+        ])
+        expect(memory.saved.get('state-runtime-reset-test:kernel.base.state-runtime.test.resettable:value'))
+            .toBe(JSON.stringify('seed'))
+    })
+
     it('merges sync record state by updatedAt and keeps tombstones explicit', () => {
         const merged = mergeSyncRecordState(
             {

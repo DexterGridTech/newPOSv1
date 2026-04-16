@@ -47,13 +47,14 @@ This rebuild must not switch to:
 `1-kernel/1.1-base` must continue to avoid React.
 All React Native rendering, component registration, focus/input orchestration, and UI interaction logic must live in `2-ui/2.1-base`.
 
-### 3. Input model is mixed, not global custom keyboard
+### 3. Input model is explicit virtual keyboard, default system keyboard
 
-The new input architecture uses mixed mode:
+The new input architecture must use an explicit keyboard policy:
 
-1. normal text input uses the system keyboard by default
-2. number / PIN / controlled secure input uses managed custom input
-3. the old pseudo-input approach must be removed
+1. when the program explicitly declares that a field uses the virtual keyboard, the field must use the virtual keyboard
+2. when the program does not declare a virtual keyboard, the field must use the system keyboard
+3. number, PIN, amount, activation-code, or secure fields do not automatically imply virtual keyboard unless their field definition explicitly requests it
+4. the old pseudo-input approach must be removed
 
 ### 4. UI testing must be dual-lane
 
@@ -96,7 +97,24 @@ The admin console must still be opened the same way as the old package:
 
 The implementation may be refactored and formalized, but the entry behavior must remain consistent with the old product.
 
-### 7. Admin password rule changes
+### 7. UI layer does not own business orchestration
+
+The UI layer must stay intentionally thin:
+
+1. UI packages may map state to view models
+2. UI packages may dispatch user intent commands
+3. UI packages may switch screens or overlays according to already-derived state
+4. UI packages must not coordinate multi-step business workflows inside React components
+5. UI packages must not embed activation, deactivation, recovery, synchronization, or reset orchestration logic in screens or hooks
+6. business sequencing belongs in kernel/runtime actors or other non-UI orchestration layers
+
+In practice this means:
+
+1. React components render the current state and emit a command when the user acts
+2. screen transitions are driven by `ui-runtime` state and commands
+3. if a flow requires “call A, wait for B, then reset C, then route D”, that flow belongs outside the UI layer
+
+### 8. Admin password rule changes
 
 The old fixed password `123456` is replaced by a local dynamic password algorithm:
 
@@ -176,6 +194,34 @@ That behavior should remain, but the logic should become a stable reusable launc
 It maps cleanly to `1-kernel/1.1-base/tcp-control-runtime-v2`.
 
 So it should stay as its own UI console package rather than being merged into a generic admin package.
+
+### 6. Integration shell only owns shell-specific welcome screens
+
+For the future `2-ui/2.3-integration/*` layer, the responsibility split must stay explicit:
+
+1. `terminal-console` owns and registers the reusable activation screen
+2. each integration shell owns and registers only its own business / brand welcome screen
+3. `RootScreen` is a host shell only, not a business router
+4. root container current content must still be switched through `ui-runtime` commands, not by direct `RootScreen` conditional rendering
+5. terminal activation success / deactivation / runtime initialize are handled by integration actors that dispatch `ui-runtime` navigation commands
+6. shared activation screens must not be duplicated or re-registered by integration packages
+7. UI screens only react to state and emit commands; they do not orchestrate activation/deactivation side effects themselves
+
+This preserves the old design advantage:
+
+1. reusable terminal activation UI stays shared
+2. each integration keeps its own welcome semantics
+3. the true current screen still lives in `ui-runtime`
+4. integration shell behavior remains declarative and screen-part-driven
+
+The first rebuilt integration shell follows this rule:
+
+1. `2-ui/2.3-integration/retail-shell` registers `retail.shell.welcome`
+2. `2-ui/2.1-base/terminal-console` registers `ui.base.terminal.activate-device`
+3. `retail-shell` chooses which registered screen should be in the primary root container by dispatching `replaceScreen`
+4. `retail-shell` root UI only hosts `UiRuntimeRootShell`, input runtime shelling, virtual keyboard overlay, and the admin popup launcher
+5. the host root may read display mode and device ID for shell concerns, but it must not decide activation-vs-welcome content through React conditionals
+6. business restore / reset / activation lifecycle sequencing must stay in runtime actors, not in `RootScreen` or page hooks
 
 ### 5. Adapter test is really an operations capability
 
@@ -285,10 +331,14 @@ Recommended standardized input modes:
 
 1. `system-text`
 2. `system-password`
-3. `managed-number`
-4. `managed-pin`
-5. `managed-amount`
-6. `managed-activation-code`
+3. `system-number`
+4. `virtual-number`
+5. `virtual-pin`
+6. `virtual-amount`
+7. `virtual-activation-code`
+
+The important rule is not the semantic field type itself, but the explicit keyboard policy.
+If a field definition does not choose a `virtual-*` mode, the runtime must render a real `TextInput` and let the platform provide the system keyboard.
 
 ### Key Design Decision
 
@@ -300,6 +350,7 @@ In the rebuilt design:
 2. system input uses real `TextInput`
 3. managed keyboards emit key actions only
 4. keyboard overlays do not own business truth
+5. virtual keyboard is opt-in per field and must never be enabled by implicit type guessing
 
 This is much closer to real system keyboard behavior and is easier to reason about and test.
 
@@ -760,7 +811,7 @@ The rebuilt UI base should:
 
 1. keep the current screen-part navigation model
 2. move React rendering concerns into a clear RN bridge layer
-3. replace pseudo-input with a mixed input system
+3. replace pseudo-input with an explicit virtual-keyboard opt-in input system
 4. merge adapter diagnostics into admin operations
 5. keep terminal UI as a dedicated TCP-facing console
 6. support both headless and rendered automated testing

@@ -101,6 +101,86 @@ describe('topology-runtime-v2', () => {
         expect(selectTopologyRuntimeV2MasterInfo(state)?.deviceId).toBe('master-a')
     })
 
+    it('derives slave secondary branch context from injected display context', async () => {
+        const runtime = createKernelRuntimeV2({
+            localNodeId: createNodeId(),
+            displayContext: {
+                displayIndex: 1,
+                displayCount: 2,
+            },
+            platformPorts: createPlatformPorts({
+                environmentMode: 'DEV',
+                logger: createTestLogger('kernel.base.topology-runtime-v2.test.display-context-secondary'),
+            }),
+            modules: [createTopologyRuntimeModuleV2()],
+        })
+
+        await runtime.start()
+
+        const context = selectTopologyRuntimeV2Context(runtime.getState())
+        expect(context).toMatchObject({
+            instanceMode: 'SLAVE',
+            displayMode: 'SECONDARY',
+            workspace: 'MAIN',
+            standalone: false,
+            enableSlave: false,
+        })
+    })
+
+    it('derives branch workspace when slave is explicitly projected to primary display', async () => {
+        const runtime = createKernelRuntimeV2({
+            localNodeId: createNodeId(),
+            displayContext: {
+                displayIndex: 1,
+                displayCount: 2,
+            },
+            platformPorts: createPlatformPorts({
+                environmentMode: 'DEV',
+                logger: createTestLogger('kernel.base.topology-runtime-v2.test.display-context-branch'),
+            }),
+            modules: [createTopologyRuntimeModuleV2()],
+        })
+
+        await runtime.start()
+        await runtime.dispatchCommand(createCommand(topologyRuntimeV2CommandDefinitions.setDisplayMode, {
+            displayMode: 'PRIMARY',
+        }))
+
+        const context = selectTopologyRuntimeV2Context(runtime.getState())
+        expect(context).toMatchObject({
+            instanceMode: 'SLAVE',
+            displayMode: 'PRIMARY',
+            workspace: 'BRANCH',
+            standalone: false,
+        })
+    })
+
+    it('derives master primary main context from injected display context', async () => {
+        const runtime = createKernelRuntimeV2({
+            localNodeId: createNodeId(),
+            displayContext: {
+                displayIndex: 0,
+                displayCount: 2,
+            },
+            platformPorts: createPlatformPorts({
+                environmentMode: 'DEV',
+                logger: createTestLogger('kernel.base.topology-runtime-v2.test.display-context-primary'),
+            }),
+            modules: [createTopologyRuntimeModuleV2()],
+        })
+
+        await runtime.start()
+
+        const context = selectTopologyRuntimeV2Context(runtime.getState())
+        expect(context).toMatchObject({
+            instanceMode: 'MASTER',
+            displayMode: 'PRIMARY',
+            workspace: 'MAIN',
+            standalone: true,
+            enableSlave: true,
+        })
+    })
+
     it('fails peer dispatch when assembly is missing', async () => {
         const runtime = createKernelRuntimeV2({
             localNodeId: createNodeId(),

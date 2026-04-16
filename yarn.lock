@@ -3701,6 +3701,7 @@ __metadata:
   resolution: "@impos2/kernel-base-runtime-shell-v2@workspace:1-kernel/1.1-base/runtime-shell-v2"
   dependencies:
     "@impos2/kernel-base-contracts": "workspace:*"
+    "@impos2/kernel-base-definition-registry": "workspace:*"
     "@impos2/kernel-base-platform-ports": "workspace:*"
     "@impos2/kernel-base-state-runtime": "workspace:*"
     "@reduxjs/toolkit": ^2.10.0
@@ -3806,7 +3807,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/kernel-base-ui-runtime-v2@workspace:1-kernel/1.1-base/ui-runtime-v2":
+"@impos2/kernel-base-ui-runtime-v2@workspace:*, @impos2/kernel-base-ui-runtime-v2@workspace:1-kernel/1.1-base/ui-runtime-v2":
   version: 0.0.0-use.local
   resolution: "@impos2/kernel-base-ui-runtime-v2@workspace:1-kernel/1.1-base/ui-runtime-v2"
   dependencies:
@@ -4274,6 +4275,90 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@impos2/ui-base-admin-console@workspace:*, @impos2/ui-base-admin-console@workspace:2-ui/2.1-base/admin-console":
+  version: 0.0.0-use.local
+  resolution: "@impos2/ui-base-admin-console@workspace:2-ui/2.1-base/admin-console"
+  dependencies:
+    "@impos2/kernel-base-platform-ports": "workspace:*"
+    "@impos2/kernel-base-state-runtime": "workspace:*"
+    "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*"
+    "@impos2/kernel-base-topology-runtime-v2": "workspace:*"
+    "@impos2/ui-base-input-runtime": "workspace:*"
+    "@impos2/ui-base-runtime-react": "workspace:*"
+    "@types/node": ^25.0.9
+    "@types/react": ^18.3.12
+    react-test-renderer: 18.3.1
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  peerDependencies:
+    react: ">=18"
+    react-native: ">=0.77"
+    react-redux: ^9.1.0
+  languageName: unknown
+  linkType: soft
+
+"@impos2/ui-base-input-runtime@workspace:*, @impos2/ui-base-input-runtime@workspace:2-ui/2.1-base/input-runtime":
+  version: 0.0.0-use.local
+  resolution: "@impos2/ui-base-input-runtime@workspace:2-ui/2.1-base/input-runtime"
+  dependencies:
+    "@impos2/kernel-base-platform-ports": "workspace:*"
+    "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
+    "@impos2/kernel-base-state-runtime": "workspace:*"
+    "@impos2/ui-base-runtime-react": "workspace:*"
+    "@types/node": ^25.0.9
+    "@types/react": ^18.3.12
+    react-test-renderer: 18.3.1
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  peerDependencies:
+    react: ">=18"
+    react-native: ">=0.77"
+    react-redux: ^9.1.0
+  languageName: unknown
+  linkType: soft
+
+"@impos2/ui-base-runtime-react@workspace:*, @impos2/ui-base-runtime-react@workspace:2-ui/2.1-base/runtime-react":
+  version: 0.0.0-use.local
+  resolution: "@impos2/ui-base-runtime-react@workspace:2-ui/2.1-base/runtime-react"
+  dependencies:
+    "@impos2/kernel-base-platform-ports": "workspace:*"
+    "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
+    "@impos2/kernel-base-topology-runtime-v2": "workspace:*"
+    "@impos2/kernel-base-ui-runtime-v2": "workspace:*"
+    "@reduxjs/toolkit": ^2.10.0
+    "@types/node": ^25.0.9
+    "@types/react": ^18.3.12
+    react-test-renderer: 18.3.1
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  peerDependencies:
+    react: ">=18"
+    react-native: ">=0.77"
+    react-redux: ^9.1.0
+  languageName: unknown
+  linkType: soft
+
+"@impos2/ui-base-terminal-console@workspace:*, @impos2/ui-base-terminal-console@workspace:2-ui/2.1-base/terminal-console":
+  version: 0.0.0-use.local
+  resolution: "@impos2/ui-base-terminal-console@workspace:2-ui/2.1-base/terminal-console"
+  dependencies:
+    "@impos2/kernel-base-platform-ports": "workspace:*"
+    "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
+    "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*"
+    "@impos2/ui-base-input-runtime": "workspace:*"
+    "@impos2/ui-base-runtime-react": "workspace:*"
+    "@types/node": ^25.0.9
+    "@types/react": ^18.3.12
+    react-test-renderer: 18.3.1
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  peerDependencies:
+    react: ">=18"
+    react-native: ">=0.77"
+    react-redux: ^9.1.0
+  languageName: unknown
+  linkType: soft
+
 "@impos2/ui-core-adapter-test@*, @impos2/ui-core-adapter-test@workspace:2-ui/2.1-cores/adapter-test":
   version: 0.0.0-use.local
   resolution: "@impos2/ui-core-adapter-test@workspace:2-ui/2.1-cores/adapter-test"
@@ -4416,6 +4501,30 @@ __metadata:
   peerDependencies:
     react: 18.3.1
     react-native: 0.77.1
+    react-redux: ^9.1.0
+  languageName: unknown
+  linkType: soft
+
+"@impos2/ui-integration-retail-shell@workspace:2-ui/2.3-integration/retail-shell":
+  version: 0.0.0-use.local
+  resolution: "@impos2/ui-integration-retail-shell@workspace:2-ui/2.3-integration/retail-shell"
+  dependencies:
+    "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
+    "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*"
+    "@impos2/kernel-base-topology-runtime-v2": "workspace:*"
+    "@impos2/kernel-base-ui-runtime-v2": "workspace:*"
+    "@impos2/ui-base-admin-console": "workspace:*"
+    "@impos2/ui-base-input-runtime": "workspace:*"
+    "@impos2/ui-base-runtime-react": "workspace:*"
+    "@impos2/ui-base-terminal-console": "workspace:*"
+    "@types/node": ^25.0.9
+    "@types/react": ^18.3.12
+    react-test-renderer: 18.3.1
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  peerDependencies:
+    react: ">=18"
+    react-native: ">=0.77"
     react-redux: ^9.1.0
   languageName: unknown
   linkType: soft
@@ -7146,7 +7255,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^18.3.0, @types/react@npm:~18.3.12":
+"@types/react@npm:^18.3.0, @types/react@npm:^18.3.12, @types/react@npm:~18.3.12":
   version: 18.3.28
   resolution: "@types/react@npm:18.3.28"
   dependencies:
@@ -18413,17 +18522,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-is@npm:^16.12.0 || ^17.0.0 || ^18.0.0, react-is@npm:^18.0.0, react-is@npm:^18.3.1":
+  version: 18.3.1
+  resolution: "react-is@npm:18.3.1"
+  checksum: e20fe84c86ff172fc8d898251b7cc2c43645d108bf96d0b8edf39b98f9a2cae97b40520ee7ed8ee0085ccc94736c4886294456033304151c3f94978cec03df21
+  languageName: node
+  linkType: hard
+
 "react-is@npm:^16.13.1":
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
   checksum: f7a19ac3496de32ca9ae12aa030f00f14a3d45374f1ceca0af707c831b2a6098ef0d6bdae51bd437b0a306d7f01d4677fcc8de7c0d331eb47ad0f46130e53c5f
-  languageName: node
-  linkType: hard
-
-"react-is@npm:^18.0.0":
-  version: 18.3.1
-  resolution: "react-is@npm:18.3.1"
-  checksum: e20fe84c86ff172fc8d898251b7cc2c43645d108bf96d0b8edf39b98f9a2cae97b40520ee7ed8ee0085ccc94736c4886294456033304151c3f94978cec03df21
   languageName: node
   linkType: hard
 
@@ -18671,6 +18780,31 @@ __metadata:
   version: 0.17.0
   resolution: "react-refresh@npm:0.17.0"
   checksum: e9d23a70543edde879263976d7909cd30c6f698fa372a1240142cf7c8bf99e0396378b9c07c2d39c3a10261d7ba07dc49f990cd8f1ac7b88952e99040a0be5e9
+  languageName: node
+  linkType: hard
+
+"react-shallow-renderer@npm:^16.15.0":
+  version: 16.15.0
+  resolution: "react-shallow-renderer@npm:16.15.0"
+  dependencies:
+    object-assign: ^4.1.1
+    react-is: ^16.12.0 || ^17.0.0 || ^18.0.0
+  peerDependencies:
+    react: ^16.0.0 || ^17.0.0 || ^18.0.0
+  checksum: 6052c7e3e9627485120ebd8257f128aad8f56386fe8d42374b7743eac1be457c33506d153c7886b4e32923c0c352d402ab805ef9ca02dbcd8393b2bdeb6e5af8
+  languageName: node
+  linkType: hard
+
+"react-test-renderer@npm:18.3.1":
+  version: 18.3.1
+  resolution: "react-test-renderer@npm:18.3.1"
+  dependencies:
+    react-is: ^18.3.1
+    react-shallow-renderer: ^16.15.0
+    scheduler: ^0.23.2
+  peerDependencies:
+    react: ^18.3.1
+  checksum: e8e58e738835fab3801afb63f6bfe0fcf6e68ea39619fae5bdf47feefc36b1e4acb48c9dd139c7533611466eff1dfce6ffdda4b317e06aee663dda7d91438f26
   languageName: node
   linkType: hard
 

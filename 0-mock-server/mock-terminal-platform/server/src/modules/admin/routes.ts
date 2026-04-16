@@ -17,6 +17,7 @@ import {
   createActivationCodes,
   createTaskInstancesForRelease,
   createTaskRelease,
+  deactivateTerminal,
   forceTerminalStatus,
   getTaskTrace,
   listActivationCodes,
@@ -420,6 +421,19 @@ export const createRouter = () => {
       return ok(res, refreshTerminalToken(req.body.refreshToken))
     } catch (error) {
       return fail(res, error instanceof Error ? error.message : '刷新失败')
+    }
+  })
+
+  router.post('/api/v1/terminals/:terminalId/deactivate', (req, res) => {
+    try {
+      const result = deactivateTerminal({
+        terminalId: req.params.terminalId,
+        reason: req.body?.reason,
+      })
+      appendAuditLog({ domain: 'TCP', action: 'DEACTIVATE_TERMINAL', targetId: result.terminalId, detail: req.body, operator: 'terminal-client' })
+      return ok(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '注销激活失败')
     }
   })
 

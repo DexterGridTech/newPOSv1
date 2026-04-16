@@ -30,17 +30,24 @@ export interface PeerDispatchGateway {
     ): Promise<CommandAggregateResult>
 }
 
+export interface RuntimeDisplayContextV2 {
+    displayIndex?: number
+    displayCount?: number
+}
+
 export interface CreateKernelRuntimeV2Input {
     runtimeId?: RuntimeInstanceId
     localNodeId?: NodeId
     platformPorts?: Partial<PlatformPorts>
     modules?: readonly KernelRuntimeModuleV2[]
     peerDispatchGateway?: PeerDispatchGateway
+    displayContext?: RuntimeDisplayContextV2
 }
 
 export interface KernelRuntimeV2 {
     readonly runtimeId: RuntimeInstanceId
     readonly localNodeId: NodeId
+    readonly environmentMode: PlatformPorts['environmentMode']
     start(): Promise<void>
     dispatchCommand<TPayload = unknown>(
         command: CommandIntent<TPayload>,
@@ -70,6 +77,7 @@ export interface KernelRuntimeV2 {
     applyStateSyncDiff(envelope: StateSyncDiffEnvelope): void
     installPeerDispatchGateway(gateway: PeerDispatchGateway | undefined): void
     flushPersistence(): Promise<void>
+    resetApplicationState(input?: {reason?: string}): Promise<void>
 }
 
 export interface KernelRuntimeAppConfigV2 {
@@ -79,6 +87,7 @@ export interface KernelRuntimeAppConfigV2 {
     platformPorts?: Partial<PlatformPorts>
     modules?: readonly KernelRuntimeModuleV2[]
     peerDispatchGateway?: PeerDispatchGateway
+    displayContext?: RuntimeDisplayContextV2
     autoStart?: boolean
 }
 

@@ -50,6 +50,7 @@ export {
     selectTopologyRuntimeV2Workspace,
     selectTopologyDisplayMode,
     selectTopologyInstanceMode,
+    selectTopologyStandalone,
     selectTopologyWorkspace,
 } from './selectors'
 export type {

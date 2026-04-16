@@ -20,6 +20,7 @@ export interface StateRuntime {
     getState(): RootState
     getSlices(): readonly StateRuntimeSliceDescriptor<any>[]
     applySlicePatches(slices: Record<string, unknown>): void
+    resetState(): Promise<void>
     exportPersistedState(): Promise<PersistedStateRuntimeSnapshot>
     applyPersistedState(snapshot: PersistedStateRuntimeSnapshot): void
     hydratePersistence(): Promise<void>

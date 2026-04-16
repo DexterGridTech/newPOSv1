@@ -1,0 +1,48 @@
+{
+  "name": "@impos2/ui-base-admin-console",
+  "version": "1.0.0",
+  "description": "Admin console and operator tools for UI base",
+  "author": "DexterYang",
+  "license": "ISC",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "react-native": "./src/index.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json --noEmit",
+    "build-for-product": "rm -rf dist && tsc -p tsconfig.json",
+    "web": "EXPO_OFFLINE=1 node ../../../node_modules/expo/bin/cli start --web --localhost",
+    "expo:web": "EXPO_OFFLINE=1 node ../../../node_modules/expo/bin/cli start --web --localhost",
+    "test-expo": "tsc -p test-expo/tsconfig.json --noEmit && node test-expo/runAutomation.mjs",
+    "test-expo:visible": "tsc -p test-expo/tsconfig.json --noEmit && ADMIN_CONSOLE_EXPO_HEADED=1 ADMIN_CONSOLE_EXPO_SLOW_MS=700 ADMIN_CONSOLE_EXPO_FINAL_PAUSE_MS=5000 node test-expo/runAutomation.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist",
+    "type-check": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@impos2/kernel-base-platform-ports": "workspace:*",
+    "@impos2/kernel-base-state-runtime": "workspace:*",
+    "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*",
+    "@impos2/kernel-base-topology-runtime-v2": "workspace:*",
+    "@impos2/ui-base-input-runtime": "workspace:*",
+    "@impos2/ui-base-runtime-react": "workspace:*",
+    "react-native-qrcode-svg": "^6.3.21"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-native": ">=0.77",
+    "react-redux": "^9.1.0"
+  },
+  "devDependencies": {
+    "expo": "~54.0.31",
+    "expo-status-bar": "~3.0.9",
+    "@types/node": "^25.0.9",
+    "@types/react": "^18.3.12",
+    "react-dom": "18.3.1",
+    "react-native-web": "^0.21.0",
+    "react-test-renderer": "18.3.1",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  }
+}

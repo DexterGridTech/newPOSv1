@@ -2,10 +2,15 @@ import {combineReducers, configureStore, type Reducer} from '@reduxjs/toolkit'
 import type {StateRuntimeSliceDescriptor} from '../types/slice'
 
 const STATE_RUNTIME_REPLACE_ACTION = '@@kernel.base.state-runtime/replace'
+const STATE_RUNTIME_RESET_ACTION = '@@kernel.base.state-runtime/reset'
 
 export const createReplaceStateRuntimeAction = (slices: Record<string, unknown>) => ({
     type: STATE_RUNTIME_REPLACE_ACTION,
     payload: slices,
+})
+
+export const createResetStateRuntimeAction = () => ({
+    type: STATE_RUNTIME_RESET_ACTION,
 })
 
 export const createStateStore = (
@@ -31,6 +36,10 @@ export const createStateStore = (
                 ...(state as Record<string, unknown> | undefined),
                 ...incomingSlices,
             }, {type: '@@kernel.base.state-runtime/init'})
+        }
+
+        if (action.type === STATE_RUNTIME_RESET_ACTION) {
+            return combinedReducer(undefined, {type: '@@kernel.base.state-runtime/init'})
         }
 
         return combinedReducer(state, action)

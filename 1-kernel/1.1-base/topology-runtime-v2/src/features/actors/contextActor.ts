@@ -14,6 +14,8 @@ const buildContextState = (context: Parameters<NonNullable<ActorDefinition['hand
     return createTopologyContextState({
         localNodeId: context.localNodeId,
         recoveryState: recoveryState ?? {},
+        displayIndex: context.displayContext.displayIndex,
+        displayCount: context.displayContext.displayCount,
     })
 }
 

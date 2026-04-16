@@ -15,6 +15,7 @@ export const createTcpStateMutationActorDefinitionV2 = (): ActorDefinition => de
         onCommand(tcpControlV2CommandDefinitions.bootstrapTcpControlSucceeded, () => ({})),
         onCommand(tcpControlV2CommandDefinitions.activateTerminalSucceeded, () => ({})),
         onCommand(tcpControlV2CommandDefinitions.credentialRefreshed, () => ({})),
+        onCommand(tcpControlV2CommandDefinitions.deactivateTerminalSucceeded, () => ({})),
         onCommand(tcpControlV2CommandDefinitions.taskResultReported, () => ({})),
         onCommand(tcpControlV2CommandDefinitions.resetTcpControl, actorContext => {
             actorContext.dispatchAction(tcpControlV2StateActions.clearActivation())

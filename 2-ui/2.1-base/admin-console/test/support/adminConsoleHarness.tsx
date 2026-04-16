@@ -1,0 +1,52 @@
+import {
+    createRuntimeReactHarness,
+    renderWithStore,
+    type RuntimeReactHarness,
+} from '../../../runtime-react/test/support/runtimeReactHarness'
+import type {PlatformPorts} from '@impos2/kernel-base-platform-ports'
+import type {KernelRuntimeModuleV2} from '@impos2/kernel-base-runtime-shell-v2'
+import {createMemoryStorage} from '../../../../../1-kernel/test-support/storageHarness'
+import type {CreateAdminConsoleModuleInput} from '../../src'
+import {createModule} from '../../src'
+import {resetAdminHostTools} from '../../src/supports/adminHostToolsRegistry'
+import {resetAdminConsoleSections} from '../../src/supports/adminSectionRegistry'
+import {resetAdminAdapterDiagnosticsScenarios} from '../../src/supports/adapterDiagnosticsRuntime'
+
+export interface AdminConsoleHarness extends RuntimeReactHarness {}
+
+export const createAdminConsoleHarness = async (
+    input: CreateAdminConsoleModuleInput & {
+        platformPorts?: Partial<PlatformPorts>
+        modules?: readonly KernelRuntimeModuleV2[]
+        displayContext?: {
+            displayIndex?: number
+            displayCount?: number
+        }
+    } = {},
+): Promise<AdminConsoleHarness> => {
+    const {
+        displayContext,
+        modules,
+        platformPorts,
+        ...moduleInput
+    } = input
+
+    resetAdminHostTools()
+    resetAdminConsoleSections()
+    resetAdminAdapterDiagnosticsScenarios()
+
+    return createRuntimeReactHarness({
+        modules: [
+            ...(modules ?? []),
+            createModule(moduleInput),
+        ],
+        platformPorts: {
+            stateStorage: createMemoryStorage().storage,
+            secureStateStorage: createMemoryStorage().storage,
+            ...platformPorts,
+        },
+        displayContext,
+    })
+}
+
+export {renderWithStore}

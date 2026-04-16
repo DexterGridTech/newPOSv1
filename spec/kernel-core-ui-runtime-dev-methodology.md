@@ -21,6 +21,22 @@
 
 ## 一、状态建模方法
 
+### 0. UI 层只消费状态并触发指令，不承接业务编排
+
+后续所有 UI runtime / UI base / integration shell 开发，默认遵守这条边界：
+
+1. UI 组件负责把 state/selectors 映射成界面
+2. UI 组件负责响应用户输入并发出 command
+3. UI 组件可以根据已有 state 做页面切换、overlay 切换
+4. UI 组件不负责“调用 A -> 等待 B -> 清理 C -> 再跳 D”这类业务编排
+5. 激活、注销、恢复、本地清空、主副屏协同、远端同步等流程，统一放在 kernel/runtime actor 或其他非 UI orchestration 层
+
+这样做的原因：
+
+1. React 组件更容易测试，只需要验证“给定状态显示什么、点击后发什么 command”
+2. 业务时序集中在 runtime 层，更容易复用、联调和排障
+3. 避免 integration root / page hook 逐渐长成新的 `ApplicationManager`
+
 ### 1. 按运行职责拆 slice，不按“都属于 UI”硬塞到一起
 
 `ui-runtime` 这次验证下来的合理拆分是：

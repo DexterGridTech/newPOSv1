@@ -371,5 +371,8 @@ export const createRequestLedger = () => {
                 allListeners.delete(listener)
             }
         },
+        clear() {
+            records.clear()
+        },
     }
 }

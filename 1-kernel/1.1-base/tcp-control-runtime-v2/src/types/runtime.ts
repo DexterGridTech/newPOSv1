@@ -3,6 +3,8 @@ import type {RuntimeModuleContextV2} from '@impos2/kernel-base-runtime-shell-v2'
 import type {
     ActivateTerminalApiRequest,
     ActivateTerminalApiResponse,
+    DeactivateTerminalApiRequest,
+    DeactivateTerminalApiResponse,
     RefreshTerminalCredentialApiRequest,
     RefreshTerminalCredentialApiResponse,
     ReportTaskResultApiRequest,
@@ -12,6 +14,7 @@ import type {
 export interface TcpControlHttpService {
     activateTerminal(request: ActivateTerminalApiRequest): Promise<ActivateTerminalApiResponse>
     refreshCredential(request: RefreshTerminalCredentialApiRequest): Promise<RefreshTerminalCredentialApiResponse>
+    deactivateTerminal(terminalId: string, request: DeactivateTerminalApiRequest): Promise<DeactivateTerminalApiResponse>
     reportTaskResult(
         terminalId: string,
         instanceId: string,

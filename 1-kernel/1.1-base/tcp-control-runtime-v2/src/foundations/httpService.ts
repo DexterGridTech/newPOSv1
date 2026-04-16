@@ -9,6 +9,8 @@ import {tcpControlV2ErrorDefinitions} from '../supports'
 import type {
     ActivateTerminalApiRequest,
     ActivateTerminalApiResponse,
+    DeactivateTerminalApiRequest,
+    DeactivateTerminalApiResponse,
     RefreshTerminalCredentialApiRequest,
     RefreshTerminalCredentialApiResponse,
     ReportTaskResultApiRequest,
@@ -43,6 +45,20 @@ const refreshCredentialEndpoint = defineEndpoint<
     method: 'POST',
     pathTemplate: '/api/v1/terminals/token/refresh',
     request: {
+        body: true,
+    },
+})
+
+const deactivateTerminalEndpoint = defineEndpoint<
+    {terminalId: string},
+    void,
+    DeactivateTerminalApiRequest,
+    TcpPlatformEnvelope<DeactivateTerminalApiResponse>
+>('deactivate-terminal', {
+    method: 'POST',
+    pathTemplate: '/api/v1/terminals/{terminalId}/deactivate',
+    request: {
+        path: true,
         body: true,
     },
 })
@@ -87,6 +103,19 @@ export const createTcpControlHttpServiceV2 = (
                 },
                 {
                     errorDefinition: tcpControlV2ErrorDefinitions.refreshFailed,
+                    fallbackMessage: TCP_CONTROL_V2_HTTP_FALLBACK_MESSAGE,
+                },
+            )
+        },
+        async deactivateTerminal(terminalId, request) {
+            return http.envelope(
+                deactivateTerminalEndpoint,
+                {
+                    path: {terminalId},
+                    body: request,
+                },
+                {
+                    errorDefinition: tcpControlV2ErrorDefinitions.deactivationFailed,
                     fallbackMessage: TCP_CONTROL_V2_HTTP_FALLBACK_MESSAGE,
                 },
             )

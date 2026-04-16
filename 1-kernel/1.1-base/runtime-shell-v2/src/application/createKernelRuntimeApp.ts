@@ -26,6 +26,7 @@ const runRuntimeModulePreSetupV2 = async (input: {
     descriptor: KernelRuntimeAppDescriptorV2
     localNodeId: KernelRuntimeV2['localNodeId']
     platformPorts: ReturnType<typeof createDefaultRuntimePlatformPortsV2>
+    displayContext: import('../types').RuntimeDisplayContextV2
     modules: readonly NonNullable<KernelRuntimeAppConfigV2['modules']>[number][]
     moduleDescriptors: readonly KernelRuntimeAppDescriptorV2['moduleDescriptors'][number][]
     logger: ReturnType<typeof createRuntimeAppLoggerV2>
@@ -38,6 +39,7 @@ const runRuntimeModulePreSetupV2 = async (input: {
             moduleName: module.moduleName,
             localNodeId: input.localNodeId,
             platformPorts: input.platformPorts,
+            displayContext: input.displayContext,
             descriptors: input.moduleDescriptors,
         })
         input.logger.preSetupCompleted(moduleDescriptor)
@@ -52,12 +54,14 @@ export const createKernelRuntimeApp = (
     const localNodeId = config.localNodeId ?? createNodeId()
     const modules = resolveKernelRuntimeModuleOrderV2([...(config.modules ?? [])])
     const platformPorts = createDefaultRuntimePlatformPortsV2(config.platformPorts)
+    const displayContext = config.displayContext ?? {}
     const runtime = createKernelRuntimeV2({
         runtimeId,
         localNodeId,
         platformPorts,
         modules,
         peerDispatchGateway: config.peerDispatchGateway,
+        displayContext,
     })
     const moduleDescriptors = modules.map(describeKernelRuntimeModuleV2)
     const descriptor: KernelRuntimeAppDescriptorV2 = createKernelRuntimeAppDescriptorV2({
@@ -83,6 +87,7 @@ export const createKernelRuntimeApp = (
                 descriptor,
                 localNodeId,
                 platformPorts,
+                displayContext,
                 modules,
                 moduleDescriptors,
                 logger,

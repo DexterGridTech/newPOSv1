@@ -1,0 +1,108 @@
+import React from 'react'
+import {describe, expect, it} from 'vitest'
+import {act} from 'react-test-renderer'
+import {
+    createCommand,
+    runtimeShellV2CommandDefinitions,
+} from '@impos2/kernel-base-runtime-shell-v2'
+import {
+    selectTcpIdentitySnapshot,
+    tcpControlV2CommandDefinitions,
+} from '@impos2/kernel-base-tcp-control-runtime-v2'
+import {
+    selectUiScreen,
+} from '@impos2/kernel-base-ui-runtime-v2'
+import {
+    uiRuntimeRootVariables,
+} from '@impos2/ui-base-runtime-react'
+import {AdminTerminalSection} from '@impos2/ui-base-admin-console'
+import type {RootState} from '@impos2/kernel-base-state-runtime'
+import {
+    createRetailShellLiveHarness,
+    fetchJson,
+    renderWithStore,
+    waitFor,
+} from '../support/retailShellLiveHarness'
+
+const selectPrimaryRoot = (state: RootState) =>
+    selectUiScreen(state, uiRuntimeRootVariables.primaryRootContainer.key)
+
+describe('retail-shell live admin deactivation loop', () => {
+    it('activates against mock-terminal-platform and returns to activation screen after admin deactivation', async () => {
+        const harness = await createRetailShellLiveHarness()
+
+        try {
+            const activationCodes = await fetchJson<Array<{code: string; status: string}>>(
+                `${harness.platform.baseUrl}/api/v1/admin/activation-codes`,
+            )
+            const activationCode = activationCodes[0]?.code
+
+            expect(activationCode).toBeTruthy()
+            expect(selectPrimaryRoot(harness.runtime.getState())?.partKey).toBe('ui.base.terminal.activate-device')
+
+            await harness.runtime.dispatchCommand(createCommand(
+                runtimeShellV2CommandDefinitions.initialize,
+                {},
+            ))
+            await harness.runtime.dispatchCommand(createCommand(
+                tcpControlV2CommandDefinitions.bootstrapTcpControl,
+                {
+                    deviceInfo: {
+                        id: 'DEVICE-LIVE-001',
+                        model: 'Retail Shell Live Mock POS',
+                    },
+                },
+            ))
+            await harness.runtime.dispatchCommand(createCommand(
+                tcpControlV2CommandDefinitions.activateTerminal,
+                {
+                    activationCode: activationCode!,
+                },
+            ))
+
+            await waitFor(() =>
+                selectPrimaryRoot(harness.runtime.getState())?.partKey === 'ui.integration.retail-shell.welcome',
+            )
+
+            const welcomeState = harness.runtime.getState()
+            const terminalId = selectTcpIdentitySnapshot(welcomeState).terminalId
+
+            expect(terminalId).toBeTruthy()
+            expect(selectPrimaryRoot(welcomeState)?.partKey).toBe('ui.integration.retail-shell.welcome')
+
+            const tree = renderWithStore(
+                <AdminTerminalSection runtime={harness.runtime} store={harness.store} />,
+                harness.store,
+                harness.runtime,
+            )
+
+            await act(async () => {
+                tree.root.findByProps({testID: 'ui-base-admin-section:terminal:deactivate'}).props.onPress()
+            })
+
+            await waitFor(() =>
+                selectPrimaryRoot(harness.runtime.getState())?.partKey === 'ui.base.terminal.activate-device',
+            )
+            await waitFor(async () => {
+                const terminals = await harness.platform.admin.terminals()
+                return terminals.some(item => item.terminalId === terminalId && item.lifecycleStatus === 'DEACTIVATED')
+            })
+
+            const terminals = await harness.platform.admin.terminals()
+            expect(terminals.find(item => item.terminalId === terminalId)).toMatchObject({
+                lifecycleStatus: 'DEACTIVATED',
+            })
+            expect(selectTcpIdentitySnapshot(harness.runtime.getState()).activationStatus).toBe('UNACTIVATED')
+            expect(selectPrimaryRoot(harness.runtime.getState())?.partKey).toBe('ui.base.terminal.activate-device')
+
+            await harness.runtime.flushPersistence()
+            const stateKeys = await harness.storagePair.stateStorage.storage.getAllKeys?.()
+            const secureKeys = await harness.storagePair.secureStateStorage.storage.getAllKeys?.()
+            expect((stateKeys ?? []).some(key => key.endsWith(':terminalId'))).toBe(false)
+            expect((secureKeys ?? []).some(key => key.endsWith(':accessToken'))).toBe(false)
+            expect((secureKeys ?? []).some(key => key.endsWith(':refreshToken'))).toBe(false)
+        } finally {
+            await harness.cleanup()
+        }
+    })
+})
