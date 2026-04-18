@@ -55,9 +55,13 @@ export const bootstrapAssemblyRuntime = async (
     ))
 
     if (props.topology?.ticketToken && props.topology.wsUrl) {
-        await runtime.dispatchCommand(createCommand(
-            topologyRuntimeV2CommandDefinitions.startTopologyConnection,
-            {},
-        ))
+        void Promise.resolve().then(async () => {
+            await runtime.dispatchCommand(createCommand(
+                topologyRuntimeV2CommandDefinitions.startTopologyConnection,
+                {},
+            ))
+        }).catch(() => {
+            // 拓扑连接属于运行期长动作，不阻塞 initialize；失败由 topology-runtime 自己通过状态和日志暴露。
+        })
     }
 }

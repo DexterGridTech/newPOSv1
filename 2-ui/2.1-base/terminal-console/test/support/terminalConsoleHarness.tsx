@@ -1,5 +1,6 @@
 import {
     createRuntimeReactHarness,
+    renderWithAutomation,
     renderWithStore,
     type RuntimeReactHarness,
 } from '../../../runtime-react/test/support/runtimeReactHarness'
@@ -10,17 +11,22 @@ import {createModule} from '../../src'
 
 export interface TerminalConsoleHarness extends RuntimeReactHarness {}
 
-export const createTerminalConsoleHarness = async (): Promise<TerminalConsoleHarness> =>
+export const createTerminalConsoleHarness = async (
+    input: Parameters<typeof createRuntimeReactHarness>[0] = {},
+): Promise<TerminalConsoleHarness> =>
     createRuntimeReactHarness({
+        ...input,
         modules: [
             createTcpControlRuntimeModuleV2(),
             createInputRuntimeModule(),
             createModule(),
+            ...(input.modules ?? []),
         ],
         platformPorts: {
             stateStorage: createMemoryStorage().storage,
             secureStateStorage: createMemoryStorage().storage,
+            ...input.platformPorts,
         },
     })
 
-export {renderWithStore}
+export {renderWithAutomation, renderWithStore}

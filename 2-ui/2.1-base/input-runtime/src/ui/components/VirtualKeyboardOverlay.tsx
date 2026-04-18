@@ -1,5 +1,10 @@
 import React from 'react'
-import {Pressable, Text, View} from 'react-native'
+import {Pressable, Text, View, type StyleProp, type ViewStyle} from 'react-native'
+import {
+    useOptionalUiAutomationBridge,
+    useOptionalUiAutomationRuntimeId,
+    useOptionalUiAutomationTarget,
+} from '@impos2/ui-base-runtime-react'
 import {getVirtualKeyboardLayout} from '../../foundations'
 import {useOptionalInputRuntime} from '../../contexts'
 import type {VirtualKeyboardKey} from '../../types'
@@ -28,6 +33,13 @@ const overlayColors = {
 const isUtilityKey = (key: VirtualKeyboardKey): boolean =>
     key === 'backspace' || key === 'clear'
 
+const pressedScaleStyle = (
+    pressed: boolean,
+    scale: number,
+): StyleProp<ViewStyle> => pressed
+    ? {transform: [{scale}]}
+    : null
+
 const getKeyLabel = (key: VirtualKeyboardKey): string => {
     if (key === 'backspace') {
         return '退格'
@@ -43,17 +55,72 @@ export const VirtualKeyboardOverlay: React.FC<VirtualKeyboardOverlayProps> = ({
     onKeyPress,
 }) => {
     const runtime = useOptionalInputRuntime()
+    const automationBridge = useOptionalUiAutomationBridge()
+    const automationRuntimeId = useOptionalUiAutomationRuntimeId() ?? 'runtime'
+    const automationTarget = useOptionalUiAutomationTarget() ?? 'primary'
     const activeInput = runtime?.activeInput ?? null
     const actualVisible = visible ?? Boolean(activeInput)
+    const layout = activeInput
+        ? getVirtualKeyboardLayout(activeInput.mode)
+        : null
+    const previewValue = activeInput
+        ? (
+            activeInput.secureTextEntry
+                ? '•'.repeat(activeInput.value.length)
+                : (activeInput.value || activeInput.placeholder || '')
+        )
+        : ''
 
-    if (!actualVisible || !activeInput) {
+    React.useEffect(() => {
+        if (!automationBridge || !actualVisible || !activeInput || !layout) {
+            return undefined
+        }
+        const unregisterHost = automationBridge.registerNode({
+            target: automationTarget,
+            runtimeId: automationRuntimeId,
+            screenKey: 'input',
+            mountId: 'virtual-keyboard',
+            nodeId: 'ui-base-virtual-keyboard',
+            testID: 'ui-base-virtual-keyboard',
+            semanticId: 'ui-base-virtual-keyboard',
+            role: 'keyboard',
+            text: previewValue,
+            value: activeInput.value,
+            visible: true,
+            enabled: true,
+            persistent: true,
+            availableActions: [],
+        })
+        const allKeys: VirtualKeyboardKey[] = ['close', ...layout.rows.flat(), 'enter']
+        const unregisterKeys = allKeys.map(key => automationBridge.registerNode({
+            target: automationTarget,
+            runtimeId: automationRuntimeId,
+            screenKey: 'input',
+            mountId: `virtual-keyboard:key:${key}`,
+            nodeId: `ui-base-virtual-keyboard:key:${key}`,
+            testID: `ui-base-virtual-keyboard:key:${key}`,
+            semanticId: `ui-base-virtual-keyboard:key:${key}`,
+            role: 'button',
+            text: key,
+            visible: true,
+            enabled: true,
+            persistent: true,
+            availableActions: ['press'],
+            onAutomationAction: () => {
+                onKeyPress?.(key)
+                runtime?.applyVirtualKey(key)
+                return {ok: true}
+            },
+        }))
+        return () => {
+            unregisterHost()
+            unregisterKeys.forEach(unregister => unregister())
+        }
+    }, [activeInput, actualVisible, automationBridge, automationRuntimeId, automationTarget, layout, onKeyPress, previewValue, runtime])
+
+    if (!actualVisible || !activeInput || !layout) {
         return null
     }
-
-    const layout = getVirtualKeyboardLayout(activeInput.mode)
-    const previewValue = activeInput.secureTextEntry
-        ? '•'.repeat(activeInput.value.length)
-        : (activeInput.value || activeInput.placeholder || '')
 
     return (
         <View
@@ -136,22 +203,24 @@ export const VirtualKeyboardOverlay: React.FC<VirtualKeyboardOverlayProps> = ({
                         <Pressable
                             key={key}
                             testID={`ui-base-virtual-keyboard:key:${key}`}
-                            style={({pressed}) => ({
-                                flex: 1,
-                                minHeight: 48,
-                                borderRadius: 14,
-                                borderWidth: 1,
-                                borderColor: isUtilityKey(key)
-                                    ? (pressed ? '#475569' : '#334155')
-                                    : overlayColors.normalKeyBorder,
-                                backgroundColor: isUtilityKey(key)
-                                    ? (pressed ? overlayColors.utilityKeyPressed : overlayColors.utilityKey)
-                                    : (pressed ? overlayColors.normalKeyPressed : overlayColors.normalKey),
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                opacity: pressed ? 0.96 : 1,
-                                transform: pressed ? [{scale: 0.98}] : undefined,
-                            })}
+                            style={({pressed}) => [
+                                {
+                                    flex: 1,
+                                    minHeight: 48,
+                                    borderRadius: 14,
+                                    borderWidth: 1,
+                                    borderColor: isUtilityKey(key)
+                                        ? (pressed ? '#475569' : '#334155')
+                                        : overlayColors.normalKeyBorder,
+                                    backgroundColor: isUtilityKey(key)
+                                        ? (pressed ? overlayColors.utilityKeyPressed : overlayColors.utilityKey)
+                                        : (pressed ? overlayColors.normalKeyPressed : overlayColors.normalKey),
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    opacity: pressed ? 0.96 : 1,
+                                },
+                                pressedScaleStyle(pressed, 0.98),
+                            ]}
                             onPress={() => {
                                 onKeyPress?.(key)
                                 runtime?.applyVirtualKey(key)
@@ -170,15 +239,17 @@ export const VirtualKeyboardOverlay: React.FC<VirtualKeyboardOverlayProps> = ({
             ))}
             <Pressable
                 testID="ui-base-virtual-keyboard:key:enter"
-                style={({pressed}) => ({
-                    minHeight: 48,
-                    borderRadius: 14,
-                    backgroundColor: pressed ? overlayColors.primaryKeyPressed : overlayColors.primaryKey,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    opacity: pressed ? 0.96 : 1,
-                    transform: pressed ? [{scale: 0.99}] : undefined,
-                })}
+                style={({pressed}) => [
+                    {
+                        minHeight: 48,
+                        borderRadius: 14,
+                        backgroundColor: pressed ? overlayColors.primaryKeyPressed : overlayColors.primaryKey,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        opacity: pressed ? 0.96 : 1,
+                    },
+                    pressedScaleStyle(pressed, 0.99),
+                ]}
                 onPress={() => {
                     onKeyPress?.('enter')
                     runtime?.applyVirtualKey('enter')

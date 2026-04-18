@@ -1,5 +1,6 @@
 import {
     createRuntimeReactHarness,
+    renderWithAutomation,
     renderWithStore,
     type RuntimeReactHarness,
 } from '../../../../2.1-base/runtime-react/test/support/runtimeReactHarness'
@@ -82,4 +83,4 @@ export const createRetailShellLiveHarness = async (): Promise<RetailShellLiveHar
     }
 }
 
-export {renderWithStore, waitFor, fetchJson}
+export {renderWithStore, renderWithAutomation, waitFor, fetchJson}

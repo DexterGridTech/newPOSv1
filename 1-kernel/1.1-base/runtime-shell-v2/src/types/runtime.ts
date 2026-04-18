@@ -11,7 +11,7 @@ import type {
 } from '@impos2/kernel-base-contracts'
 import type {PlatformPorts} from '@impos2/kernel-base-platform-ports'
 import type {RootState, StateRuntimeSliceDescriptor} from '@impos2/kernel-base-state-runtime'
-import type {EnhancedStore} from '@reduxjs/toolkit'
+import type {EnhancedStore, StoreEnhancer} from '@reduxjs/toolkit'
 import type {
     CommandAggregateResult,
     CommandIntent,
@@ -39,6 +39,7 @@ export interface CreateKernelRuntimeV2Input {
     runtimeId?: RuntimeInstanceId
     localNodeId?: NodeId
     platformPorts?: Partial<PlatformPorts>
+    storeEnhancers?: readonly StoreEnhancer[]
     modules?: readonly KernelRuntimeModuleV2[]
     peerDispatchGateway?: PeerDispatchGateway
     displayContext?: RuntimeDisplayContextV2
@@ -48,6 +49,7 @@ export interface KernelRuntimeV2 {
     readonly runtimeId: RuntimeInstanceId
     readonly localNodeId: NodeId
     readonly environmentMode: PlatformPorts['environmentMode']
+    readonly displayContext: RuntimeDisplayContextV2
     start(): Promise<void>
     dispatchCommand<TPayload = unknown>(
         command: CommandIntent<TPayload>,
@@ -85,6 +87,7 @@ export interface KernelRuntimeAppConfigV2 {
     runtimeId?: RuntimeInstanceId
     localNodeId?: NodeId
     platformPorts?: Partial<PlatformPorts>
+    storeEnhancers?: readonly StoreEnhancer[]
     modules?: readonly KernelRuntimeModuleV2[]
     peerDispatchGateway?: PeerDispatchGateway
     displayContext?: RuntimeDisplayContextV2

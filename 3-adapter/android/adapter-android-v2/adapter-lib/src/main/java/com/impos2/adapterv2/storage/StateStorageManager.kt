@@ -1,106 +1,129 @@
 package com.impos2.adapterv2.storage
 
 import android.content.Context
-import android.content.SharedPreferences
 import com.impos2.adapterv2.interfaces.IStateStorage
+import com.tencent.mmkv.MMKV
 
 /**
- * 轻量原生状态存储实现。
+ * 原生状态存储实现。
  *
- * 在 adapterPure 中，这个模块只承担“原生侧可独立验证的基础 KV 存储”角色，当前基于
- * SharedPreferences 实现。它的定位不是最终的跨层生产持久化方案；最终整合层会由 RN 侧适配器
- * 接入 MMKV 4.x。
+ * adapter-android-v2 作为正式 Android 适配层，直接承担生产可用的原生持久化能力。
+ * 这里不再沿用 SharedPreferences，而是直接使用 Android 原生 MMKV。
  *
- * 保留这个实现的意义在于：
- * - adapterPure 本身的测试页面可以完整验证存储能力；
- * - 原生代码在不依赖 RN 的情况下也能有最小可用存储；
- * - 对外接口保持稳定，后续若要替换底层实现，不影响上层调用者。
+ * 这样做的原因是：
+ * - 正式持久化能力属于 Android 原生能力，放在 adapter 层边界更清晰；
+ * - assembly 层只保留 RN TurboModule 桥接，不再直接依赖 JS 侧 react-native-mmkv；
+ * - 避免 JS 启动早期被 NitroModules 注册链路阻塞。
+ *
+ * 注意：
+ * - manager 本身不带业务语义，只提供按 storageId 拿实例的能力；
+ * - 具体 namespace 由 assembly 层决定；
+ * - initialize() 保留为幂等入口，兼容 dev-app 和上层桥接的初始化时机。
  */
-class StateStorageManager private constructor(context: Context) : IStateStorage {
+class StateStorageManager private constructor(
+  context: Context,
+  private val storageId: String,
+) : IStateStorage {
 
   companion object {
-    private const val PREF_NAME = "adapter_pure_state_storage"
+    private const val DEFAULT_STORAGE_ID = "adapter-android-v2-state-storage"
 
     @Volatile
-    private var instance: StateStorageManager? = null
+    private var initialized = false
 
-    fun getInstance(context: Context): StateStorageManager =
-      instance ?: synchronized(this) {
-        instance ?: StateStorageManager(context.applicationContext).also { instance = it }
+    private val instances = mutableMapOf<String, StateStorageManager>()
+
+    fun getInstance(
+      context: Context,
+      storageId: String = DEFAULT_STORAGE_ID,
+    ): StateStorageManager {
+      val normalizedStorageId = storageId.trim().ifEmpty { DEFAULT_STORAGE_ID }
+      return synchronized(this) {
+        ensureInitialized(context.applicationContext)
+        instances[normalizedStorageId]
+          ?: StateStorageManager(
+            context = context.applicationContext,
+            storageId = normalizedStorageId,
+          ).also { instances[normalizedStorageId] = it }
       }
+    }
+
+    private fun ensureInitialized(context: Context) {
+      if (initialized) {
+        return
+      }
+      synchronized(this) {
+        if (!initialized) {
+          MMKV.initialize(context)
+          initialized = true
+        }
+      }
+    }
   }
 
-  // SharedPreferences 只作为当前阶段的轻量实现，优势是稳定、零额外依赖、易于原生独立测试。
-  private val prefs: SharedPreferences =
-    context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+  private val appContext = context.applicationContext
+
+  private val storage: MMKV by lazy {
+    ensureInitialized()
+    MMKV.mmkvWithID(storageId)
+      ?: throw IllegalStateException("Unable to open MMKV storage for id=$storageId")
+  }
 
   override fun initialize(rootDir: String) {
-    // 当前 adapterPure 阶段使用 SharedPreferences，无需目录初始化。
+    ensureInitialized()
   }
 
-  override fun getString(key: String): String? = prefs.getString(key, null)
+  private fun ensureInitialized() {
+    Companion.ensureInitialized(appContext)
+  }
+
+  override fun getString(key: String): String? = storage.decodeString(key, null)
 
   override fun getInt(key: String, defaultValue: Int): Int {
-    return try {
-      prefs.getInt(key, defaultValue)
-    } catch (_: ClassCastException) {
-      defaultValue
-    }
+    return storage.decodeInt(key, defaultValue)
   }
 
   override fun getLong(key: String, defaultValue: Long): Long {
-    return try {
-      prefs.getLong(key, defaultValue)
-    } catch (_: ClassCastException) {
-      defaultValue
-    }
+    return storage.decodeLong(key, defaultValue)
   }
 
   override fun getFloat(key: String, defaultValue: Float): Float {
-    return try {
-      prefs.getFloat(key, defaultValue)
-    } catch (_: ClassCastException) {
-      defaultValue
-    }
+    return storage.decodeFloat(key, defaultValue)
   }
 
   override fun getBoolean(key: String, defaultValue: Boolean): Boolean {
-    return try {
-      prefs.getBoolean(key, defaultValue)
-    } catch (_: ClassCastException) {
-      defaultValue
-    }
+    return storage.decodeBool(key, defaultValue)
   }
 
   override fun setString(key: String, value: String) {
-    prefs.edit().putString(key, value).apply()
+    storage.encode(key, value)
   }
 
   override fun setInt(key: String, value: Int) {
-    prefs.edit().putInt(key, value).apply()
+    storage.encode(key, value)
   }
 
   override fun setLong(key: String, value: Long) {
-    prefs.edit().putLong(key, value).apply()
+    storage.encode(key, value)
   }
 
   override fun setFloat(key: String, value: Float) {
-    prefs.edit().putFloat(key, value).apply()
+    storage.encode(key, value)
   }
 
   override fun setBoolean(key: String, value: Boolean) {
-    prefs.edit().putBoolean(key, value).apply()
+    storage.encode(key, value)
   }
 
   override fun remove(key: String) {
-    prefs.edit().remove(key).apply()
+    storage.removeValueForKey(key)
   }
 
   override fun clearAll() {
-    prefs.edit().clear().apply()
+    storage.clearAll()
   }
 
-  override fun getAllKeys(): Set<String> = prefs.all.keys
+  override fun getAllKeys(): Set<String> = storage.allKeys()?.toSet() ?: emptySet()
 
-  override fun contains(key: String): Boolean = prefs.contains(key)
+  override fun contains(key: String): Boolean = storage.containsKey(key)
 }

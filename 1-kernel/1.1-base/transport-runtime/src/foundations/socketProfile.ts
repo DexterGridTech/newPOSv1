@@ -35,6 +35,42 @@ const normalizeBase = (baseUrl: string): string => {
     return normalized.endsWith('/') ? normalized : `${normalized}/`
 }
 
+const hasUrlHost = (value: string): boolean => {
+    return /^[a-z][a-z0-9+.-]*:\/\/[^/?#]+/i.test(value)
+}
+
+const appendQueryToSocketUrl = (
+    value: string,
+    query?: Record<string, unknown>,
+): string => {
+    if (!query) {
+        return value
+    }
+
+    const entries: string[] = []
+    Object.entries(query).forEach(([key, rawValue]) => {
+        if (rawValue === undefined || rawValue === null) {
+            return
+        }
+
+        if (Array.isArray(rawValue)) {
+            rawValue.forEach(item => {
+                entries.push(`${encodeURIComponent(key)}=${encodeURIComponent(String(item))}`)
+            })
+            return
+        }
+
+        entries.push(`${encodeURIComponent(key)}=${encodeURIComponent(String(rawValue))}`)
+    })
+
+    if (!entries.length) {
+        return value
+    }
+
+    const separator = value.includes('?') ? '&' : '?'
+    return `${value}${separator}${entries.join('&')}`
+}
+
 export const defineSocketProfile = <TPath, TQuery, THeaders, TIncoming, TOutgoing>(
     input: DefineSocketProfileInput<TPath, TQuery, THeaders, TIncoming, TOutgoing>,
 ): SocketConnectionProfile<TPath, TQuery, THeaders, TIncoming, TOutgoing> => {
@@ -58,8 +94,17 @@ export const buildSocketUrl = (
 ): string => {
     const compiledPath = compilePath(pathTemplate, path)
     const joinedUrl = `${trimTrailingSlash(normalizeBase(baseUrl))}/${trimLeadingSlash(compiledPath)}`
-    const url = new URL(joinedUrl)
-    return appendQueryToUrl(url, query).toString()
+    if (!hasUrlHost(joinedUrl)) {
+        throw new Error(`Socket url host is empty: ${joinedUrl}`)
+    }
+    /**
+     * 不使用 `new URL(joinedUrl)` 解析 ws/wss。
+     *
+     * RN84 + Hermes 在 Android 上对 `new URL('ws://...')` 的 host 解析不可靠，会得到空
+     * host，进而让 RN 原生 WebSocketModule 抛 `Invalid URL host: ""`。这里保持纯字符串
+     * 方式拼接 query，避免把已经合法的 ws 地址交给运行时 URL polyfill 二次解析。
+     */
+    return appendQueryToSocketUrl(joinedUrl, query)
 }
 
 export class JsonSocketCodec<TIncoming = unknown, TOutgoing = unknown> implements SocketCodec<TIncoming, TOutgoing> {

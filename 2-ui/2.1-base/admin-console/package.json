@@ -5,7 +5,10 @@
   "author": "DexterYang",
   "license": "ISC",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./application": "./src/application/index.ts",
+    "./supports": "./src/supports/index.ts",
+    "./types": "./src/types/index.ts"
   },
   "react-native": "./src/index.ts",
   "scripts": {

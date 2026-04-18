@@ -1,13 +1,13 @@
 import React from 'react'
 import {describe, expect, it} from 'vitest'
 import {OverlayHost} from '../../src'
-import {createRuntimeReactHarness, renderWithStore} from '../support/runtimeReactHarness'
+import {createRuntimeReactHarness, renderWithAutomation} from '../support/runtimeReactHarness'
 
 describe('OverlayHost', () => {
     it('renders an empty overlay host when no overlays are active', async () => {
         const harness = await createRuntimeReactHarness()
-        const tree = renderWithStore(<OverlayHost />, harness.store, harness.runtime)
+        const tree = renderWithAutomation(<OverlayHost />, harness.store, harness.runtime)
 
-        expect(tree.toJSON()).toBeTruthy()
+        await expect(tree.getNode('ui-base-overlay-host')).resolves.toBeTruthy()
     })
 })

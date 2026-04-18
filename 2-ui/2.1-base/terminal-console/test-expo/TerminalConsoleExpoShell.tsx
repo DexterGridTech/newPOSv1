@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useMemo, useState} from 'react'
 import {Provider, useSelector} from 'react-redux'
 import {ScrollView, Text, View} from 'react-native'
 import {
@@ -24,6 +24,7 @@ import {
     type RuntimeReactHarness,
 } from '../../runtime-react/test/support/runtimeReactHarness'
 import {UiRuntimeProvider} from '../../runtime-react/src'
+import {createBrowserAutomationHost} from '../../ui-automation-runtime/src/supports'
 import {
     InputRuntimeProvider,
     VirtualKeyboardOverlay,
@@ -166,6 +167,22 @@ export const TerminalConsoleExpoShell: React.FC = () => {
     const [harness, setHarness] = useState<RuntimeReactHarness | null>(null)
     const [activationCode, setActivationCode] = useState('')
     const [bootError, setBootError] = useState('')
+    const automationHost = useMemo(() => createBrowserAutomationHost({
+        autoStart: false,
+        buildProfile: 'test',
+        runtimeId: 'terminal-console-expo',
+        target: 'primary',
+    }), [])
+
+    useEffect(() => {
+        if (!harness) {
+            return undefined
+        }
+        automationHost.start()
+        return () => {
+            automationHost.stop()
+        }
+    }, [automationHost, harness])
 
     useEffect(() => {
         let disposed = false

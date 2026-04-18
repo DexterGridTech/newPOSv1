@@ -1,4 +1,9 @@
-import {combineReducers, configureStore, type Reducer} from '@reduxjs/toolkit'
+import {
+    combineReducers,
+    configureStore,
+    type Reducer,
+    type StoreEnhancer,
+} from '@reduxjs/toolkit'
 import type {StateRuntimeSliceDescriptor} from '../types/slice'
 
 const STATE_RUNTIME_REPLACE_ACTION = '@@kernel.base.state-runtime/replace'
@@ -15,6 +20,9 @@ export const createResetStateRuntimeAction = () => ({
 
 export const createStateStore = (
     slices: readonly StateRuntimeSliceDescriptor[],
+    input: {
+        enhancers?: readonly StoreEnhancer[]
+    } = {},
 ) => {
     const reducerMap: Record<string, Reducer> = {}
 
@@ -52,5 +60,12 @@ export const createStateStore = (
                 serializableCheck: false,
                 immutableCheck: false,
             }),
+        enhancers: getDefaultEnhancers => {
+            const defaultEnhancers = getDefaultEnhancers()
+            if (!input.enhancers?.length) {
+                return defaultEnhancers
+            }
+            return defaultEnhancers.concat(input.enhancers)
+        },
     })
 }

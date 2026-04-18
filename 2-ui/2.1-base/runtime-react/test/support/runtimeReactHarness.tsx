@@ -14,6 +14,7 @@ import type {PlatformPorts} from '@impos2/kernel-base-platform-ports'
 import type {EnhancedStore} from '@reduxjs/toolkit'
 import {createModule, UiRuntimeProvider} from '../../src'
 import {createBrowserConsoleLogger} from './browserConsoleLogger'
+export {renderWithAutomation} from './renderWithAutomation'
 
 export interface RuntimeReactHarness {
     app: KernelRuntimeAppV2

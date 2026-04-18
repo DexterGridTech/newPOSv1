@@ -2,6 +2,7 @@ import React, {useMemo} from 'react'
 import {Pressable, ScrollView, Text, View} from 'react-native'
 import QRCode from 'react-native-qrcode-svg'
 import {InputField} from '@impos2/ui-base-input-runtime'
+import {useOptionalInputRuntime} from '@impos2/ui-base-input-runtime'
 import {useUiRuntime} from '@impos2/ui-base-runtime-react'
 import {useStore} from 'react-redux'
 import type {EnhancedStore} from '@reduxjs/toolkit'
@@ -29,6 +30,10 @@ const colors = {
     primaryDeep: '#123b74',
     danger: '#d14343',
     dangerSoft: '#fdecec',
+} as const
+
+const selectedTabShadowStyle = {
+    boxShadow: '0px 10px 20px rgba(11, 95, 255, 0.18)',
 } as const
 
 const Shell: React.FC<{
@@ -108,6 +113,7 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
     onClose,
 }) => {
     const runtime = useUiRuntime()
+    const inputRuntime = useOptionalInputRuntime()
     const store = useStore() as EnhancedStore
     const popupState = useAdminPopupState()
     const verifier = useMemo(() => createAdminPasswordVerifier({
@@ -127,6 +133,7 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
             popupState.setError('管理员密码不正确')
             return
         }
+        inputRuntime?.deactivateInput()
         popupState.setError('')
         popupState.setScreen('panel')
     }
@@ -219,7 +226,14 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
                             </View>
                         ) : null}
                         <View style={{flexDirection: 'row', gap: 12, justifyContent: 'flex-end', flexWrap: 'wrap'}}>
-                            <Action testID="ui-base-admin-popup:close-login" label="关闭" onPress={onClose} />
+                            <Action
+                                testID="ui-base-admin-popup:close-login"
+                                label="关闭"
+                                onPress={() => {
+                                    inputRuntime?.deactivateInput()
+                                    onClose()
+                                }}
+                            />
                             <Action testID="ui-base-admin-popup:submit" label="进入工作台" tone="primary" onPress={handleSubmit} />
                         </View>
                     </View>
@@ -259,7 +273,14 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
                             统一查看终端运行态、拓扑连接、宿主能力与适配器调试结果。
                         </Text>
                     </View>
-                    <Action testID="ui-base-admin-popup:close-panel" label="关闭" onPress={onClose} />
+                    <Action
+                        testID="ui-base-admin-popup:close-panel"
+                        label="关闭"
+                        onPress={() => {
+                            inputRuntime?.deactivateInput()
+                            onClose()
+                        }}
+                    />
                 </View>
                 <View style={{flex: 1, flexDirection: 'row'}}>
                     <ScrollView
@@ -316,9 +337,7 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
                                                     borderWidth: 1,
                                                     borderColor: selected ? colors.primary : colors.borderStrong,
                                                     gap: 4,
-                                                    boxShadow: selected
-                                                        ? '0px 10px 20px rgba(11, 95, 255, 0.18)'
-                                                        : 'none',
+                                                    ...(selected ? selectedTabShadowStyle : {}),
                                                 }}
                                             >
                                                 <Text
@@ -362,7 +381,14 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
                         >
                             {popupState.selectedTab}
                         </Text>
-                        {activeSection?.render({runtime, store}) ?? null}
+                        {activeSection?.render({
+                            runtime,
+                            store,
+                            closePanel: () => {
+                                inputRuntime?.deactivateInput()
+                                onClose()
+                            },
+                        }) ?? null}
                     </ScrollView>
                 </View>
             </View>

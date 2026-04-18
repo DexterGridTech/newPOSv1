@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react'
+import React, {useMemo, useRef, useState} from 'react'
 import type {EnhancedStore} from '@reduxjs/toolkit'
 import type {KernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
 import {selectLatestAdapterSummary} from '../../selectors'
@@ -31,21 +31,24 @@ export const AdapterDiagnosticsScreen: React.FC<AdapterDiagnosticsScreenProps> =
 }) => {
     const [isRunning, setRunning] = useState(false)
     const [lastMessage, setLastMessage] = useState<string>('')
+    const runningRef = useRef(false)
     const controller = useMemo(() => createAdapterDiagnosticsController({
         registry,
     }), [registry])
     const latestSummary = selectLatestAdapterSummary(store.getState())
 
     const handleRunAll = async () => {
-        if (isRunning) {
+        if (runningRef.current) {
             return
         }
+        runningRef.current = true
         setRunning(true)
         try {
             const summary = await controller.runAll()
             store.dispatch(adminConsoleStateActions.setLatestAdapterSummary(summary))
             setLastMessage(`已完成 ${summary.total} 项测试`)
         } finally {
+            runningRef.current = false
             setRunning(false)
         }
     }
@@ -148,6 +151,41 @@ export const AdapterDiagnosticsScreen: React.FC<AdapterDiagnosticsScreenProps> =
                             }
                         />
                     </AdminSummaryGrid>
+                    {(latestSummary?.results.filter(item => item.adapterKey === adapterKey) ?? [])
+                        .map(result => (
+                            <AdminBlock
+                                key={`${result.adapterKey}:${result.scenarioKey}`}
+                                title={result.title}
+                                description={result.message}
+                            >
+                                <AdminSummaryGrid>
+                                    <AdminSummaryCard
+                                        label="场景标识"
+                                        value={result.scenarioKey}
+                                        detail="适配器场景唯一标识。"
+                                        tone="neutral"
+                                    />
+                                    <AdminSummaryCard
+                                        label="执行结果"
+                                        value={formatAdapterDiagnosticStatus(result.status)}
+                                        detail={`耗时 ${result.durationMs}ms`}
+                                        tone={
+                                            result.status === 'passed'
+                                                ? 'ok'
+                                                : result.status === 'failed'
+                                                    ? 'danger'
+                                                    : 'warn'
+                                        }
+                                    />
+                                    <AdminSummaryCard
+                                        label="完成时间"
+                                        value={formatAdminTimestamp(result.finishedAt)}
+                                        detail="最近一次场景执行完成时间。"
+                                        tone={result.finishedAt ? 'primary' : 'neutral'}
+                                    />
+                                </AdminSummaryGrid>
+                            </AdminBlock>
+                        ))}
                 </AdminBlock>
             ))}
         </AdminSectionShell>

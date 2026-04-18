@@ -25,10 +25,30 @@ const isPreparedLaunchReady = (
 export const resolveAssemblyTopologyLaunch = async (
     props: AppProps,
 ): Promise<AssemblyTopologyLaunchOptions | undefined> => {
-    if (props.topology?.ticketToken && props.topology.wsUrl) {
+    if (props.displayCount <= 1) {
         return props.topology
     }
-    if (props.displayCount <= 1) {
+
+    const toMasterLaunch = (
+        prepared: Required<PreparedTopologyLaunch>,
+    ): AssemblyTopologyLaunchOptions => ({
+        role: 'master',
+        localNodeId: prepared.masterNodeId,
+        masterNodeId: prepared.masterNodeId,
+        ticketToken: prepared.ticketToken,
+        wsUrl: prepared.wsUrl,
+        httpBaseUrl: prepared.httpBaseUrl,
+    })
+
+    if (props.displayIndex === 0) {
+        const prepared = await nativeTopologyHost.prepareLaunch(props.displayCount) as PreparedTopologyLaunch
+        if (isPreparedLaunchReady(prepared)) {
+            return toMasterLaunch(prepared)
+        }
+        return props.topology
+    }
+
+    if (props.topology?.ticketToken && props.topology.wsUrl) {
         return props.topology
     }
 

@@ -3,5 +3,7 @@ import {retailShellScreenParts} from './retailShellScreenParts'
 
 export const retailShellNavigationTargets = {
     activation: uiBaseTerminalScreenParts.activateDeviceScreen,
+    activationSecondary: uiBaseTerminalScreenParts.activateDeviceSecondaryScreen,
     welcome: retailShellScreenParts.welcome,
+    welcomeSecondary: retailShellScreenParts.secondaryWelcome,
 } as const

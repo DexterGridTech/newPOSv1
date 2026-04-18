@@ -78,6 +78,33 @@ describe('adapter diagnostics', () => {
         expect(summary.total).toBe(0)
         expect(summary.passed).toBe(0)
         expect(summary.failed).toBe(0)
-        expect(summary.status).toBe('passed')
+        expect(summary.skipped).toBe(0)
+        expect(summary.status).toBe('skipped')
+    })
+
+    it('marks all-skipped runs as skipped instead of passed', async () => {
+        const controller = createAdapterDiagnosticsController({
+            scenarios: [
+                {
+                    adapterKey: 'printer',
+                    scenarioKey: 'skip',
+                    title: '打印机跳过',
+                    async run() {
+                        return {
+                            status: 'skipped',
+                            message: '未连接打印机',
+                        }
+                    },
+                },
+            ],
+        })
+
+        const summary = await controller.runAll()
+
+        expect(summary.total).toBe(1)
+        expect(summary.passed).toBe(0)
+        expect(summary.failed).toBe(0)
+        expect(summary.skipped).toBe(1)
+        expect(summary.status).toBe('skipped')
     })
 })

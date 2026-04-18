@@ -44,3 +44,7 @@ export interface SyncStateDiffEntry {
 }
 
 export type SyncStateDiff = SyncStateDiffEntry[]
+
+export interface SyncDiffOptions {
+    mode?: 'latest-wins' | 'authoritative'
+}

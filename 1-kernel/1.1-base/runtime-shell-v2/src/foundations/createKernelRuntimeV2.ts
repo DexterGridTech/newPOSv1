@@ -39,6 +39,7 @@ export const createKernelRuntimeV2 = (
         runtimeName: moduleName,
         logger: platformPorts.logger.scope({moduleName, subsystem: 'state-runtime'}),
         slices: modules.flatMap(module => [...(module.stateSlices ?? [])]),
+        storeEnhancers: input.storeEnhancers,
         stateStorage: platformPorts.stateStorage,
         secureStateStorage: platformPorts.secureStateStorage,
         persistenceKey: `kernel-runtime-v2:${localNodeId}:app-state`,
@@ -111,6 +112,7 @@ export const createKernelRuntimeV2 = (
         runtimeId,
         localNodeId,
         environmentMode: platformPorts.environmentMode,
+        displayContext,
         async start() {
             if (startPromise) {
                 return await startPromise

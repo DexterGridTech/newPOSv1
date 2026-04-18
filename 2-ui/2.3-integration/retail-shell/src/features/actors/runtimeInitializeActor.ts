@@ -13,12 +13,20 @@ const defineActor = createModuleActorFactory(moduleName)
 export const createRetailShellRuntimeInitializeActorDefinition = (): ActorDefinition =>
     defineActor('RetailShellRuntimeInitializeActor', [
         onCommand(runtimeShellV2CommandDefinitions.initialize, async context => {
+            if ((context.displayContext.displayIndex ?? 0) > 0) {
+                return {
+                    skipped: true,
+                    reason: 'secondary-display-follows-master-ui-state',
+                }
+            }
             const state = context.getState()
             await replaceRetailShellRootScreen(context, {
                 activated: selectTcpIsActivated(state),
                 terminalId: selectTcpTerminalId(state) ?? undefined,
                 source: `${moduleName}.initialize`,
             })
-            return {}
+            return {
+                skipped: false,
+            }
         }),
     ])

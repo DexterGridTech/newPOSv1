@@ -27,11 +27,12 @@ object LaunchOptionsFactory {
   fun create(context: Context, displayIndex: Int): Bundle {
     val deviceInfo = DeviceManager.getInstance(context.applicationContext).getDeviceInfo()
     val displayManager = context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
+    val displayCount = displayManager.displays.size
     val topologyLaunch = TopologyLaunchCoordinator.load(context.applicationContext)
     return Bundle().apply {
       putString("deviceId", deviceInfo.id)
       putString("screenMode", "desktop")
-      putInt("displayCount", displayManager.displays.size)
+      putInt("displayCount", displayCount)
       putInt("displayIndex", displayIndex)
       putBoolean("isEmulator", isEmulator())
       topologyLaunch?.let { launch ->
@@ -54,14 +55,39 @@ object LaunchOptionsFactory {
   }
 
   private fun isEmulator(): Boolean {
+    val fingerprint = Build.FINGERPRINT.lowercase()
+    val model = Build.MODEL.lowercase()
+    val manufacturer = Build.MANUFACTURER.lowercase()
+    val brand = Build.BRAND.lowercase()
+    val device = Build.DEVICE.lowercase()
+    val product = Build.PRODUCT.lowercase()
+    val hardware = Build.HARDWARE.lowercase()
+    val bootQemu = readSystemProperty("ro.boot.qemu") == "1"
+    val kernelQemu = readSystemProperty("ro.kernel.qemu") == "1"
+
     return (
-      Build.FINGERPRINT.startsWith("generic") ||
-        Build.FINGERPRINT.lowercase().contains("emulator") ||
-        Build.MODEL.contains("Emulator") ||
-        Build.MODEL.contains("Android SDK built for") ||
-        Build.MANUFACTURER.contains("Genymotion") ||
-        Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic") ||
-        Build.PRODUCT == "google_sdk"
+      bootQemu ||
+        kernelQemu ||
+        fingerprint.startsWith("generic") ||
+        fingerprint.contains("emulator") ||
+        model.contains("emulator") ||
+        model.contains("android sdk built for") ||
+        manufacturer.contains("genymotion") ||
+        brand.startsWith("generic") && device.startsWith("generic") ||
+        product == "google_sdk" ||
+        product.contains("sdk_gphone") ||
+        hardware.contains("goldfish") ||
+        hardware.contains("ranchu")
       )
+  }
+
+  private fun readSystemProperty(key: String): String {
+    return try {
+      val systemProperties = Class.forName("android.os.SystemProperties")
+      val get = systemProperties.getMethod("get", String::class.java)
+      get.invoke(null, key) as? String ?: ""
+    } catch (_: Throwable) {
+      ""
+    }
   }
 }

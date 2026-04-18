@@ -62,6 +62,9 @@ export const createTopologyV2SyncDiff = (
                 slice,
                 sliceState as Record<string, unknown>,
                 input.remoteSummaryBySlice[slice.name] ?? {},
+                {
+                    mode: 'authoritative',
+                },
             )
 
             if (diff.length === 0) {

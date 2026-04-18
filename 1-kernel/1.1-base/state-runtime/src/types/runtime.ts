@@ -1,4 +1,4 @@
-import type {EnhancedStore} from '@reduxjs/toolkit'
+import type {EnhancedStore, StoreEnhancer} from '@reduxjs/toolkit'
 import type {LoggerPort, StateStoragePort} from '@impos2/kernel-base-platform-ports'
 import type {RootState} from './state'
 import type {StateRuntimeSliceDescriptor} from './slice'
@@ -8,6 +8,7 @@ export interface CreateStateRuntimeInput {
     runtimeName: string
     slices: readonly StateRuntimeSliceDescriptor<any>[]
     logger?: LoggerPort
+    storeEnhancers?: readonly StoreEnhancer[]
     stateStorage?: StateStoragePort
     secureStateStorage?: StateStoragePort
     persistenceKey?: string

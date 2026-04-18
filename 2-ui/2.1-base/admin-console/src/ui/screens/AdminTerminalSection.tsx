@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useCallback, useEffect, useRef, useState} from 'react'
 import type {EnhancedStore} from '@reduxjs/toolkit'
 import {
     selectTcpBindingSnapshot,
@@ -25,12 +25,15 @@ import {
 export interface AdminTerminalSectionProps {
     runtime: KernelRuntimeV2
     store: EnhancedStore
+    closePanel?: () => void
 }
 
 export const AdminTerminalSection: React.FC<AdminTerminalSectionProps> = ({
     runtime,
     store,
+    closePanel,
 }) => {
+    const mountedRef = useRef(true)
     const [snapshot, setSnapshot] = useState(() => ({
         identity: selectTcpIdentitySnapshot(store.getState()),
         credential: selectTcpCredentialSnapshot(store.getState()),
@@ -41,32 +44,39 @@ export const AdminTerminalSection: React.FC<AdminTerminalSectionProps> = ({
     const [loading, setLoading] = useState(false)
     const {identity, credential, binding, runtimeState} = snapshot
 
-    useEffect(() => {
-        const updateSnapshot = () => {
-            const state = store.getState()
-            setSnapshot({
-                identity: selectTcpIdentitySnapshot(state),
-                credential: selectTcpCredentialSnapshot(state),
-                binding: selectTcpBindingSnapshot(state),
-                runtimeState: selectTcpRuntimeState(state),
-            })
-        }
-        updateSnapshot()
-        return store.subscribe(updateSnapshot)
-    }, [store])
+    useEffect(() => () => {
+        mountedRef.current = false
+    }, [])
 
-    const refreshSnapshot = () => {
+    const readSnapshot = useCallback(() => {
         const state = store.getState()
-        setSnapshot({
+        return {
             identity: selectTcpIdentitySnapshot(state),
             credential: selectTcpCredentialSnapshot(state),
             binding: selectTcpBindingSnapshot(state),
             runtimeState: selectTcpRuntimeState(state),
-        })
-    }
+        }
+    }, [store])
+
+    const refreshSnapshot = useCallback(() => {
+        if (mountedRef.current) {
+            setSnapshot(readSnapshot())
+        }
+    }, [readSnapshot])
+
+    useEffect(() => {
+        const updateSnapshot = () => {
+            refreshSnapshot()
+        }
+        updateSnapshot()
+        return store.subscribe(updateSnapshot)
+    }, [refreshSnapshot, store])
 
     const deactivate = () => {
         void (async () => {
+            if (!mountedRef.current) {
+                return
+            }
             setLoading(true)
             setMessage('')
             try {
@@ -75,11 +85,23 @@ export const AdminTerminalSection: React.FC<AdminTerminalSectionProps> = ({
                     {reason: 'admin-console'},
                 ))
                 refreshSnapshot()
-                setMessage(result.status === 'COMPLETED' ? '终端已注销激活' : '注销激活未完成')
+                if (!mountedRef.current) {
+                    return
+                }
+                if (result.status === 'COMPLETED') {
+                    setMessage('终端已注销激活')
+                    closePanel?.()
+                } else {
+                    setMessage('注销激活未完成')
+                }
             } catch (error) {
-                setMessage(error instanceof Error ? error.message : '注销激活失败')
+                if (mountedRef.current) {
+                    setMessage(error instanceof Error ? error.message : '注销激活失败')
+                }
             } finally {
-                setLoading(false)
+                if (mountedRef.current) {
+                    setLoading(false)
+                }
             }
         })()
     }

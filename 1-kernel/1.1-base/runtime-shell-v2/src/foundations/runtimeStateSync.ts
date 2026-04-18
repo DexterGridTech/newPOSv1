@@ -12,6 +12,9 @@ export const createRuntimeStateSync = (stateRuntime: StateRuntime) => {
     const applyStateSyncDiff = (envelope: StateSyncDiffEnvelope) => {
         const state = stateRuntime.getStore().getState() as Record<string, unknown>
         const nextSlices: Record<string, unknown> = {}
+        const syncMode = envelope.direction === 'master-to-slave' || envelope.direction === 'slave-to-master'
+            ? 'authoritative'
+            : 'latest-wins'
 
         for (const slice of stateRuntime.getSlices()) {
             const diff = envelope.diffBySlice[slice.name]
@@ -28,6 +31,9 @@ export const createRuntimeStateSync = (stateRuntime: StateRuntime) => {
                 slice,
                 currentSliceState as Record<string, unknown>,
                 diff as any,
+                {
+                    mode: syncMode,
+                },
             )
         }
 

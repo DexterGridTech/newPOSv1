@@ -12,8 +12,8 @@ import {
     createAdminHostTools,
     installAdminAdapterDiagnosticsScenarios,
     installAdminHostTools,
-    installAdminConsoleSections,
 } from '../supports'
+import {installAdminConsoleSections} from '../supports/adminSectionRegistry'
 import {adminConsoleModuleManifest} from './moduleManifest'
 import type {CreateAdminHostToolsInput} from '../supports/adminHostToolsFactory'
 import type {AdminHostTools} from '../types'

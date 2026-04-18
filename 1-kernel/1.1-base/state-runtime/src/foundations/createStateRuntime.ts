@@ -119,7 +119,9 @@ const getStoragePort = (
 export const createStateRuntime = (
     input: CreateStateRuntimeInput,
 ): StateRuntime => {
-    const store = createStateStore(input.slices)
+    const store = createStateStore(input.slices, {
+        enhancers: input.storeEnhancers,
+    })
     const logger = input.logger ?? NOOP_LOGGER
     const persistenceEnabled = Boolean(
         input.persistenceKey && input.allowPersistence !== false,

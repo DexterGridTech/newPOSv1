@@ -29,9 +29,12 @@ function adbCommand(args) {
   return `${escapedAdb} ${args}`;
 }
 
-// 需要映射的端口列表
+// 需要映射的端口列表。
+// 注意：不要映射 8888。新 assembly 的 topology host 运行在 Android 设备本机，
+// JS 侧访问 ws://127.0.0.1:8888 是为了连接设备内置服务，而不是宿主机服务。
 const PORTS_TO_FORWARD = [
-  { host: 9999, device: 9999, description: 'Custom Service' },
+  { host: 8081, device: 8081, description: 'React Native Metro' },
+  { host: 5810, device: 5810, description: 'Mock Terminal Platform' },
   { host: 9090, device: 9090, description: 'Reactotron' }
 ];
 

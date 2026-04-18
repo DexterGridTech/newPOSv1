@@ -17,7 +17,14 @@ describe('assembly topology launch resolution', () => {
         vi.clearAllMocks()
     })
 
-    it('keeps the existing topology when ticket and ws are already present', async () => {
+    it('refreshes master topology launch from native topology host on the primary display', async () => {
+        prepareLaunchMock.mockResolvedValue({
+            masterNodeId: 'master-device-1',
+            ticketToken: 'ticket-native-001',
+            wsUrl: 'ws://127.0.0.1:8888/mockMasterServer/ws',
+            httpBaseUrl: 'http://127.0.0.1:8888/mockMasterServer',
+        })
+
         const topology = await resolveAssemblyTopologyLaunch({
             deviceId: 'device-1',
             screenMode: 'desktop',
@@ -35,10 +42,12 @@ describe('assembly topology launch resolution', () => {
         expect(topology).toEqual({
             role: 'master',
             localNodeId: 'master-device-1',
-            ticketToken: 'ticket-001',
-            wsUrl: 'ws://127.0.0.1:9541/dual-topology/ws',
+            masterNodeId: 'master-device-1',
+            ticketToken: 'ticket-native-001',
+            wsUrl: 'ws://127.0.0.1:8888/mockMasterServer/ws',
+            httpBaseUrl: 'http://127.0.0.1:8888/mockMasterServer',
         })
-        expect(prepareLaunchMock).not.toHaveBeenCalled()
+        expect(prepareLaunchMock).toHaveBeenCalledWith(2)
     })
 
     it('does not prepare dual-topology launch for a single-display terminal', async () => {

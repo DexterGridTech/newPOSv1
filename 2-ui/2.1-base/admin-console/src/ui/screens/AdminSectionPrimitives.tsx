@@ -1,5 +1,10 @@
 import React from 'react'
 import {Pressable, Text, View} from 'react-native'
+import {
+    useOptionalUiAutomationBridge,
+    useOptionalUiAutomationRuntimeId,
+    useOptionalUiAutomationTarget,
+} from '@impos2/ui-base-runtime-react'
 import type {
     AdminDetailItem,
     AdminStatusItem,
@@ -173,6 +178,9 @@ export const AdminActionButton: React.FC<{
     disabled?: boolean
     onPress: () => void
 }> = ({testID, label, tone = 'secondary', disabled, onPress}) => {
+    const automationBridge = useOptionalUiAutomationBridge()
+    const automationRuntimeId = useOptionalUiAutomationRuntimeId() ?? 'runtime'
+    const automationTarget = useOptionalUiAutomationTarget() ?? 'primary'
     const toneMap = {
         primary: {
             borderColor: '#0b5fff',
@@ -191,6 +199,33 @@ export const AdminActionButton: React.FC<{
         },
     } as const
     const toneStyle = toneMap[tone]
+
+    React.useEffect(() => {
+        if (!automationBridge || !testID) {
+            return undefined
+        }
+        return automationBridge.registerNode({
+            target: automationTarget,
+            runtimeId: automationRuntimeId,
+            screenKey: 'admin-console',
+            mountId: `admin-action:${testID}`,
+            nodeId: testID,
+            testID,
+            semanticId: testID,
+            role: 'button',
+            text: label,
+            visible: true,
+            enabled: !disabled,
+            persistent: true,
+            availableActions: ['press'],
+            onAutomationAction: () => {
+                if (!disabled) {
+                    onPress()
+                }
+                return {ok: !disabled}
+            },
+        })
+    }, [automationBridge, automationRuntimeId, automationTarget, disabled, label, onPress, testID])
 
     return (
         <Pressable

@@ -1,5 +1,6 @@
 import type {
     StateRuntimeSliceDescriptor,
+    SyncDiffOptions,
     SyncStateDiff,
     SyncRecordState,
     SyncStateSummary,
@@ -62,17 +63,50 @@ export const applySliceSyncDiff = <TState extends Record<string, unknown>>(
     descriptor: Pick<StateRuntimeSliceDescriptor<TState>, 'sync'>,
     state: TState,
     diff: SyncStateDiff,
+    options: SyncDiffOptions = {},
 ): TState => {
     if (!descriptor.sync || descriptor.sync.kind !== 'record') {
         return state
     }
 
-    const incoming = Object.fromEntries(
+    const nextEntries = Object.fromEntries(
         diff.map(entry => [entry.key, entry.value]),
     ) as Record<string, SyncValueEnvelope | undefined>
 
+    const incoming = options.mode === 'authoritative'
+        ? nextEntries
+        : Object.fromEntries(
+            Object.entries(nextEntries).filter(([key, nextValue]) => {
+                if (!nextValue) {
+                    return false
+                }
+                const currentValue = (state as Record<string, SyncValueEnvelope | undefined>)[key]
+                if (!currentValue) {
+                    return true
+                }
+                return currentValue.updatedAt < nextValue.updatedAt
+            }),
+        ) as Record<string, SyncValueEnvelope | undefined>
+
     if (descriptor.sync.applyEntries) {
         return descriptor.sync.applyEntries(state, incoming) as TState
+    }
+
+    if (options.mode === 'authoritative') {
+        const next: SyncRecordState = {
+            ...state as SyncRecordState,
+        }
+        for (const [key, incomingValue] of Object.entries(incoming)) {
+            if (!incomingValue) {
+                continue
+            }
+            if (incomingValue.tombstone === true) {
+                delete next[key]
+                continue
+            }
+            next[key] = incomingValue
+        }
+        return next as TState
     }
 
     const next = mergeSyncRecordState(
@@ -112,6 +146,7 @@ export const createSliceSyncDiff = <TState extends Record<string, unknown>>(
     descriptor: Pick<StateRuntimeSliceDescriptor<TState>, 'sync'>,
     state: TState,
     remoteSummary: SyncStateSummary,
+    options: SyncDiffOptions = {},
 ): SyncStateDiff => {
     if (!descriptor.sync || descriptor.sync.kind !== 'record') {
         return []
@@ -130,7 +165,10 @@ export const createSliceSyncDiff = <TState extends Record<string, unknown>>(
             })
             continue
         }
-        if (localEntry.updatedAt > remoteEntry.updatedAt) {
+        if (
+            options.mode === 'authoritative'
+            || localEntry.updatedAt > remoteEntry.updatedAt
+        ) {
             diff.push({
                 key,
                 value: localEntry,

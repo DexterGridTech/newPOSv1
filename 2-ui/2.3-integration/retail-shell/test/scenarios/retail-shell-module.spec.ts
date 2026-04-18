@@ -9,5 +9,8 @@ describe('retail-shell module', () => {
         expect(
             selectUiScreenDefinition('ui.integration.retail-shell.welcome')?.rendererKey,
         ).toBe('ui.integration.retail-shell.welcome')
+        expect(
+            selectUiScreenDefinition('ui.integration.retail-shell.secondary-welcome')?.rendererKey,
+        ).toBe('ui.integration.retail-shell.secondary-welcome')
     })
 })

@@ -5,6 +5,8 @@ describe('terminal console authoring surface', () => {
     it('exports moduleScreenParts-style references for business modules', () => {
         expect(uiBaseTerminalScreenParts.activateDeviceScreen.definition.partKey)
             .toBe('ui.base.terminal.activate-device')
+        expect(uiBaseTerminalScreenParts.activateDeviceSecondaryScreen.definition.partKey)
+            .toBe('ui.base.terminal.activate-device-secondary')
         expect(uiBaseTerminalScreenParts.terminalSummaryScreen.definition.partKey)
             .toBe('ui.base.terminal.summary')
     })

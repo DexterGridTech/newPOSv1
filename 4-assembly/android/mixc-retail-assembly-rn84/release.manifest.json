@@ -1,0 +1,33 @@
+{
+  "appId": "assembly-android-mixc-retail-rn84",
+  "platform": "android",
+  "product": "mixc-retail",
+  "assemblyVersion": "1.0.0",
+  "buildNumber": 1,
+  "bundleVersion": "1.0.0+ota.0",
+  "runtimeVersion": "android-mixc-retail-rn84@1.0",
+  "channel": "development",
+  "minSupportedAppVersion": "1.0.0",
+  "targetPackages": {
+    "@impos2/kernel-base-contracts": "1.0.0",
+    "@impos2/kernel-base-platform-ports": "1.0.0",
+    "@impos2/kernel-base-runtime-shell-v2": "1.0.0",
+    "@impos2/kernel-base-tcp-control-runtime-v2": "1.0.0",
+    "@impos2/kernel-base-topology-runtime-v2": "1.0.0",
+    "@impos2/kernel-base-transport-runtime": "1.0.0",
+    "@impos2/kernel-base-ui-runtime-v2": "1.0.0",
+    "@impos2/kernel-server-config-v2": "1.0.0",
+    "@impos2/ui-base-admin-console": "1.0.0",
+    "@impos2/ui-base-input-runtime": "1.0.0",
+    "@impos2/ui-base-runtime-react": "1.0.0",
+    "@impos2/ui-base-terminal-console": "1.0.0",
+    "@impos2/ui-integration-retail-shell": "1.0.0",
+    "@impos2/adapter-android-v2": "1.0.0"
+  },
+  "git": {
+    "commit": "HEAD",
+    "branch": "local"
+  },
+  "updatedAt": "2026-04-17T00:00:00.000Z",
+  "artifacts": {}
+}

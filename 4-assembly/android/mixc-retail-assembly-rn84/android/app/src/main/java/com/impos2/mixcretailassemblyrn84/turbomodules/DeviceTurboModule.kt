@@ -6,6 +6,7 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.WritableArray
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.module.annotations.ReactModule
+import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.impos2.adapterv2.device.DeviceManager
 import com.impos2.adapterv2.interfaces.BluetoothDevice
 import com.impos2.adapterv2.interfaces.CpuUsage
@@ -34,12 +35,14 @@ class DeviceTurboModule(reactContext: ReactApplicationContext) :
 
   companion object {
     const val NAME = "DeviceTurboModule"
+    private const val EVENT_POWER_STATUS_CHANGED = "onPowerStatusChanged"
   }
 
   /**
    * 底层设备能力管理器。
    */
   private val deviceManager by lazy { DeviceManager.getInstance(reactApplicationContext) }
+  private val powerStatusListenerIds = mutableSetOf<String>()
 
   override fun getName(): String = NAME
 
@@ -69,9 +72,52 @@ class DeviceTurboModule(reactContext: ReactApplicationContext) :
     }
   }
 
+  override fun addPowerStatusChangeListener(promise: Promise) {
+    runCatching {
+      val listenerId = deviceManager.addPowerStatusChangeListener { event ->
+        sendEvent(
+          EVENT_POWER_STATUS_CHANGED,
+          Arguments.createMap().apply {
+            putBoolean("powerConnected", event.powerConnected)
+            putBoolean("isCharging", event.isCharging)
+            putInt("batteryLevel", event.batteryLevel)
+            putString("batteryStatus", event.batteryStatus)
+            putString("batteryHealth", event.batteryHealth)
+            putDouble("timestamp", event.timestamp.toDouble())
+          },
+        )
+      }
+      powerStatusListenerIds += listenerId
+      listenerId
+    }.onSuccess {
+      promise.resolve(it)
+    }.onFailure {
+      promise.reject("ADD_POWER_STATUS_LISTENER_ERROR", it.message, it)
+    }
+  }
+
+  override fun removePowerStatusChangeListener(listenerId: String, promise: Promise) {
+    runCatching {
+      deviceManager.removePowerStatusChangeListener(listenerId)
+      powerStatusListenerIds -= listenerId
+    }.onSuccess {
+      promise.resolve(null)
+    }.onFailure {
+      promise.reject("REMOVE_POWER_STATUS_LISTENER_ERROR", it.message, it)
+    }
+  }
+
   override fun addListener(eventName: String) = Unit
 
   override fun removeListeners(count: Double) = Unit
+
+  override fun invalidate() {
+    powerStatusListenerIds.toList().forEach { listenerId ->
+      runCatching { deviceManager.removePowerStatusChangeListener(listenerId) }
+    }
+    powerStatusListenerIds.clear()
+    super.invalidate()
+  }
 
   /**
    * 把 DeviceInfo 转成 WritableMap。
@@ -231,5 +277,11 @@ class DeviceTurboModule(reactContext: ReactApplicationContext) :
         }
       }
     }
+  }
+
+  private fun sendEvent(eventName: String, params: WritableMap) {
+    reactApplicationContext
+      .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+      .emit(eventName, params)
   }
 }

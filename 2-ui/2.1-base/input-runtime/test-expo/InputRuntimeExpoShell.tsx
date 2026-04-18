@@ -1,10 +1,11 @@
-import React, {useState} from 'react'
+import React, {useEffect, useMemo, useState} from 'react'
 import {ScrollView, Text, View} from 'react-native'
 import {
     InputField,
     InputRuntimeProvider,
     VirtualKeyboardOverlay,
 } from '../src'
+import {createBrowserAutomationHost} from '../../ui-automation-runtime/src/supports'
 
 const sectionStyle = {
     gap: 8,
@@ -18,6 +19,19 @@ export const InputRuntimeExpoShell: React.FC = () => {
     const [pin, setPin] = useState('')
     const [amount, setAmount] = useState('12')
     const [activationCode, setActivationCode] = useState('')
+    const automationHost = useMemo(() => createBrowserAutomationHost({
+        autoStart: false,
+        buildProfile: 'test',
+        runtimeId: 'input-runtime-expo',
+        target: 'primary',
+    }), [])
+
+    useEffect(() => {
+        automationHost.start()
+        return () => {
+            automationHost.stop()
+        }
+    }, [automationHost])
 
     return (
         <InputRuntimeProvider>

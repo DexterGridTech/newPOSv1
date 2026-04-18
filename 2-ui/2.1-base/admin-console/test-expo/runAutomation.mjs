@@ -1,8 +1,15 @@
-import {execFile} from 'node:child_process'
-import {createServer} from 'node:net'
 import {dirname, resolve} from 'node:path'
 import {fileURLToPath} from 'node:url'
 import {setTimeout as delay} from 'node:timers/promises'
+import {
+    createCommandRunner,
+    startExpoWithRetry,
+    waitForAutomationNode,
+    readAutomationTree,
+    toAutomationNodeMap,
+    pressAutomationNode,
+    rapidPressAutomationNode,
+} from '../../ui-automation-runtime/test-expo/browserAutomationHarness.mjs'
 
 const testExpoDir = dirname(fileURLToPath(import.meta.url))
 const packageDir = resolve(testExpoDir, '..')
@@ -14,97 +21,14 @@ const slowMs = Number(process.env.ADMIN_CONSOLE_EXPO_SLOW_MS ?? '0')
 const finalPauseMs = Number(process.env.ADMIN_CONSOLE_EXPO_FINAL_PAUSE_MS ?? '0')
 const adminLauncherRequiredPresses = 5
 
-const run = (command, args, options = {}) => new Promise((resolvePromise, reject) => {
-    execFile(command, args, {
-        cwd: repoRoot,
-        maxBuffer: 1024 * 1024 * 20,
-        ...options,
-    }, (error, stdout, stderr) => {
-        if (error) {
-            error.stdout = stdout
-            error.stderr = stderr
-            reject(error)
-            return
-        }
-        resolvePromise({stdout, stderr})
+const {runAgent, callAutomation} = createCommandRunner({repoRoot, headed})
+
+const waitForPageReady = async session => {
+    await waitForAutomationNode({
+        callAutomation,
+        session,
+        testID: 'ui-base-admin-console-expo:ready',
     })
-})
-
-const runAgent = async (args, options = {}) => {
-    const globalArgs = headed ? ['--headed'] : []
-    const result = await run('agent-browser', [...globalArgs, ...args], options)
-    return result.stdout.trim()
-}
-
-const parseEvalResult = (stdout) => {
-    const value = JSON.parse(stdout.trim())
-    return typeof value === 'string' ? JSON.parse(value) : value
-}
-
-const evalInBrowser = async (session, expression) => {
-    const stdout = await runAgent(['--session', session, 'eval', expression])
-    return parseEvalResult(stdout)
-}
-
-const findFreePort = async (startPort) => {
-    for (let port = startPort; port < startPort + 50; port += 1) {
-        const available = await new Promise((resolvePromise) => {
-            const server = createServer()
-            server.once('error', () => resolvePromise(false))
-            server.once('listening', () => {
-                server.close(() => resolvePromise(true))
-            })
-            server.listen(port)
-        })
-        if (available) {
-            return port
-        }
-    }
-    throw new Error(`No free port found from ${startPort}`)
-}
-
-const waitForHttp = async (url, timeoutMs = 30000) => {
-    const deadline = Date.now() + timeoutMs
-    while (Date.now() < deadline) {
-        try {
-            const response = await fetch(url)
-            if (response.ok) {
-                return
-            }
-        } catch {
-            // retry
-        }
-        await delay(500)
-    }
-    throw new Error(`Timed out waiting for ${url}`)
-}
-
-const waitForExpoReady = async (logs, port, timeoutMs = 30000) => {
-    const marker = `Waiting on http://localhost:${port}`
-    const deadline = Date.now() + timeoutMs
-    while (Date.now() < deadline) {
-        const combined = logs.join('')
-        if (combined.includes(marker)) {
-            return
-        }
-        if (combined.includes('Use port') || combined.includes('Skipping dev server')) {
-            throw new Error(`Expo failed to bind port ${port}: ${combined}`)
-        }
-        await delay(250)
-    }
-    throw new Error(`Timed out waiting for Expo readiness on ${port}: ${logs.join('')}`)
-}
-
-const waitForPageReady = async (session) => {
-    const deadline = Date.now() + 30000
-    while (Date.now() < deadline) {
-        const ready = await evalInBrowser(session, `Boolean(document.body.innerText.includes('Admin Console Test Expo'))`)
-        if (ready) {
-            return
-        }
-        await delay(500)
-    }
-    throw new Error(`Timed out waiting for admin-console Expo page in ${session}`)
 }
 
 const assertRuntimeLogsPresent = async (session, expectedNeedles, label) => {
@@ -117,48 +41,48 @@ const assertRuntimeLogsPresent = async (session, expectedNeedles, label) => {
 }
 
 const clickTestId = async (session, testId) => {
-    await evalInBrowser(session, `(() => {
-        const node = document.querySelector('[data-testid="${testId}"]')
-        if (!node) {
-            throw new Error('Missing testID: ${testId}')
-        }
-        node.click()
-        return true
-    })()`)
-    await delay(Math.max(500, slowMs))
+    await pressAutomationNode({
+        callAutomation,
+        session,
+        nodeId: testId,
+        slowMs: Math.max(500, slowMs),
+    })
 }
 
 const rapidClickTestId = async (session, testId, times) => {
-    await evalInBrowser(session, `(() => {
-        const node = document.querySelector('[data-testid="${testId}"]')
-        if (!node) {
-            throw new Error('Missing testID: ${testId}')
-        }
-        for (let index = 0; index < ${times}; index += 1) {
-            node.click()
-        }
-        return true
-    })()`)
+    await rapidPressAutomationNode({
+        callAutomation,
+        session,
+        nodeId: testId,
+        times,
+    })
     await delay(Math.max(500, slowMs))
 }
 
-const readState = async (session) => evalInBrowser(session, `JSON.stringify({
-    ready: Boolean(document.querySelector('[data-testid="ui-base-admin-console-expo:ready"]')),
-    password: document.querySelector('[data-testid="ui-base-admin-console-expo:password"]')?.textContent ?? null,
-    loginVisible: Boolean(document.querySelector('[data-testid="ui-base-admin-popup:login"]')),
-    panelVisible: Boolean(document.querySelector('[data-testid="ui-base-admin-popup:panel"]')),
-    runtimeGroupVisible: Boolean(document.querySelector('[data-testid="ui-base-admin-popup:group:runtime"]')),
-    adapterGroupVisible: Boolean(document.querySelector('[data-testid="ui-base-admin-popup:group:adapter"]')),
-    selectedTab: document.querySelector('[data-testid="ui-base-admin-popup:selected-tab"]')?.textContent ?? null,
-    adapterVisible: Boolean(document.querySelector('[data-testid="ui-base-admin-adapter-diagnostics"]')),
-    deviceVisible: Boolean(document.querySelector('[data-testid="ui-base-admin-section:device"]')),
-    logsVisible: Boolean(document.querySelector('[data-testid="ui-base-admin-section:logs"]')),
-    connectorVisible: Boolean(document.querySelector('[data-testid="ui-base-admin-section:connector"]')),
-    terminalVisible: Boolean(document.querySelector('[data-testid="ui-base-admin-section:terminal"]')),
-    topologyVisible: Boolean(document.querySelector('[data-testid="ui-base-admin-section:topology"]')),
-    keyboardVisible: Boolean(document.querySelector('[data-testid="ui-base-virtual-keyboard"]')),
-    adapterMessage: document.querySelector('[data-testid="ui-base-admin-adapter-diagnostics"]')?.textContent ?? null,
-})`)
+const readText = (nodeMap, nodeId) => nodeMap.get(nodeId)?.text ?? null
+const hasNode = (nodeMap, nodeId) => nodeMap.has(nodeId)
+
+const readState = async session => {
+    const nodes = await readAutomationTree({callAutomation, session})
+    const nodeMap = toAutomationNodeMap(nodes)
+    return {
+        ready: hasNode(nodeMap, 'ui-base-admin-console-expo:ready'),
+        password: readText(nodeMap, 'ui-base-admin-console-expo:password'),
+        loginVisible: hasNode(nodeMap, 'ui-base-admin-popup:login'),
+        panelVisible: hasNode(nodeMap, 'ui-base-admin-popup:panel'),
+        runtimeGroupVisible: hasNode(nodeMap, 'ui-base-admin-popup:group:runtime'),
+        adapterGroupVisible: hasNode(nodeMap, 'ui-base-admin-popup:group:adapter'),
+        selectedTab: readText(nodeMap, 'ui-base-admin-popup:selected-tab'),
+        adapterVisible: hasNode(nodeMap, 'ui-base-admin-adapter-diagnostics'),
+        deviceVisible: hasNode(nodeMap, 'ui-base-admin-section:device'),
+        logsVisible: hasNode(nodeMap, 'ui-base-admin-section:logs'),
+        connectorVisible: hasNode(nodeMap, 'ui-base-admin-section:connector'),
+        terminalVisible: hasNode(nodeMap, 'ui-base-admin-section:terminal'),
+        topologyVisible: hasNode(nodeMap, 'ui-base-admin-section:topology'),
+        keyboardVisible: hasNode(nodeMap, 'ui-base-virtual-keyboard'),
+        adapterMessage: readText(nodeMap, 'ui-base-admin-adapter-diagnostics'),
+    }
+}
 
 const expectState = (actual, expected, label) => {
     for (const [key, value] of Object.entries(expected)) {
@@ -168,68 +92,13 @@ const expectState = (actual, expected, label) => {
     }
 }
 
-const startExpo = async (port) => {
-    const {spawn} = await import('node:child_process')
-    const logs = []
-    const server = spawn(process.execPath, [
-        expoCli,
-        'start',
-        '--web',
-        '--localhost',
-        '--port',
-        String(port),
-        '--clear',
-    ], {
-        cwd: packageDir,
-        detached: true,
-        env: {
-            ...process.env,
-            CI: '1',
-            EXPO_OFFLINE: '1',
-        },
-        stdio: ['ignore', 'pipe', 'pipe'],
-    })
-
-    server.stdout.on('data', chunk => logs.push(chunk.toString()))
-    server.stderr.on('data', chunk => logs.push(chunk.toString()))
-
-    await waitForExpoReady(logs, port)
-    await waitForHttp(`http://localhost:${port}`)
-
-    return {
-        server,
-        port,
-        async stop() {
-            try {
-                process.kill(server.pid, 'SIGTERM')
-            } catch {
-                try {
-                    server.kill('SIGTERM')
-                } catch {
-                    // best-effort
-                }
-            }
-        },
-    }
-}
-
-const startExpoWithRetry = async (startPort, attempts = 5) => {
-    let port = startPort
-    let lastError
-    for (let attempt = 0; attempt < attempts; attempt += 1) {
-        try {
-            return await startExpo(await findFreePort(port))
-        } catch (error) {
-            lastError = error
-            port += 1
-        }
-    }
-    throw lastError ?? new Error(`Unable to start Expo after ${attempts} attempts`)
-}
-
 const main = async () => {
     await runAgent(['skills', 'get', 'agent-browser'])
-    const expo = await startExpoWithRetry(preferredPort)
+    const expo = await startExpoWithRetry({
+        startPort: preferredPort,
+        packageDir,
+        expoCli,
+    })
     const baseUrl = `http://localhost:${expo.port}`
     const session = `admin-console-expo-${process.pid}`
 
@@ -249,11 +118,7 @@ const main = async () => {
             panelVisible: false,
         }, 'boot')
 
-        await rapidClickTestId(
-            session,
-            'ui-base-admin-console-expo:launcher',
-            adminLauncherRequiredPresses,
-        )
+        await rapidClickTestId(session, 'ui-base-admin-console-expo:launcher', adminLauncherRequiredPresses)
 
         expectState(await readState(session), {
             loginVisible: true,

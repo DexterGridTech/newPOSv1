@@ -1,13 +1,11 @@
 import React from 'react'
 import {Text} from 'react-native'
 import {describe, expect, it} from 'vitest'
-import {act} from 'react-test-renderer'
-import {InputField} from '@impos2/ui-base-input-runtime'
 import {
     createAdminPasswordVerifier,
     getAdminConsoleSectionRegistry,
 } from '../../src'
-import {createAdminConsoleHarness, renderWithStore} from '../support/adminConsoleHarness'
+import {createAdminConsoleHarness, renderWithAutomation} from '../support/adminConsoleHarness'
 import {AdminPopup} from '../../src'
 
 describe('admin sections', () => {
@@ -38,7 +36,7 @@ describe('admin sections', () => {
         const harness = await createAdminConsoleHarness({
             sections: [customSection],
         })
-        const tree = renderWithStore(
+        const automation = renderWithAutomation(
             <AdminPopup deviceId="DEVICE-001" onClose={() => {}} />,
             harness.store,
             harness.runtime,
@@ -47,14 +45,9 @@ describe('admin sections', () => {
             deviceIdProvider: () => 'DEVICE-001',
         }).deriveFor(new Date())
 
-        await act(async () => {
-            tree.root.findByType(InputField).props.onChangeText(password)
-        })
-
-        await act(async () => {
-            tree.root.findByProps({testID: 'ui-base-admin-popup:submit'}).props.onPress()
-        })
-
-        expect(() => tree.root.findByProps({testID: 'ui-base-admin-custom-section'})).not.toThrow()
+        await automation.changeText('ui-base-admin-popup:password', password)
+        await automation.press('ui-base-admin-popup:submit')
+        await automation.waitForText('custom-device-section')
+        await expect(automation.getNode('ui-base-admin-custom-section')).resolves.toBeTruthy()
     })
 })

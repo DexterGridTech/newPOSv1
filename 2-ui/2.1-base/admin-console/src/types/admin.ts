@@ -164,6 +164,7 @@ export interface AdminHostTools {
 export interface AdminConsoleSectionRenderContext {
     runtime: import('@impos2/kernel-base-runtime-shell-v2').KernelRuntimeV2
     store: import('@reduxjs/toolkit').EnhancedStore
+    closePanel: () => void
 }
 
 export interface AdminConsoleSection {

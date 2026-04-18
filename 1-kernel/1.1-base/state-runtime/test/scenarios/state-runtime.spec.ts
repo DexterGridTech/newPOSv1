@@ -1,5 +1,5 @@
 import {describe, expect, it, vi} from 'vitest'
-import {createSlice} from '@reduxjs/toolkit'
+import {createSlice, type StoreEnhancer} from '@reduxjs/toolkit'
 import {
     createModuleDisplayModeStateKeys,
     createModuleInstanceModeStateKeys,
@@ -153,6 +153,37 @@ describe('state-runtime store assembly', () => {
         expect(state[slice.name]).toEqual({
             count: 2,
         })
+    })
+
+    it('passes custom store enhancers into Redux store creation', async () => {
+        const enhancerApplied = vi.fn()
+        const enhancer: StoreEnhancer = next => (...args) => {
+            enhancerApplied()
+            return next(...args)
+        }
+        const slice = createSlice({
+            name: 'kernel.base.state-runtime.test.enhancer',
+            initialState: {count: 0},
+            reducers: {},
+        })
+
+        const stateRuntime = createStateRuntime({
+            runtimeName: 'state-runtime-enhancer-test',
+            slices: [
+                {
+                    name: slice.name,
+                    reducer: slice.reducer,
+                    persistIntent: 'never',
+                    syncIntent: 'isolated',
+                },
+            ],
+            logger: createTestLogger() as any,
+            storeEnhancers: [enhancer],
+        })
+
+        await stateRuntime.hydratePersistence()
+
+        expect(enhancerApplied).toHaveBeenCalledTimes(1)
     })
 
     it('automatically persists and restores field-level entries', async () => {
@@ -1365,6 +1396,49 @@ describe('state-runtime store assembly', () => {
         expect(next).toEqual({
             A: {value: 'remote-new', updatedAt: 20},
             C: {value: 'remote-add', updatedAt: 50},
+        })
+    })
+
+    it('supports authoritative sync mode for directed topology lanes', () => {
+        const descriptor: StateRuntimeSliceDescriptor<Record<string, any>> = {
+            name: 'kernel.base.state-runtime.test.sync-authoritative',
+            persistIntent: 'never',
+            syncIntent: 'master-to-slave',
+            sync: {
+                kind: 'record',
+            },
+        }
+
+        expect(createSliceSyncDiff(descriptor, {
+            primaryRoot: {value: 'welcome', updatedAt: 100},
+        }, {
+            primaryRoot: {updatedAt: 999},
+        }, {
+            mode: 'authoritative',
+        })).toEqual([
+            {
+                key: 'primaryRoot',
+                value: {value: 'welcome', updatedAt: 100},
+            },
+        ])
+
+        expect(applySliceSyncDiff(descriptor, {
+            primaryRoot: {value: 'secondary-local-activation', updatedAt: 999},
+            secondaryRoot: {value: 'secondary-local-activation', updatedAt: 999},
+        }, [
+            {
+                key: 'primaryRoot',
+                value: {value: 'welcome', updatedAt: 100},
+            },
+            {
+                key: 'secondaryRoot',
+                value: {value: 'secondary-welcome', updatedAt: 100},
+            },
+        ], {
+            mode: 'authoritative',
+        })).toEqual({
+            primaryRoot: {value: 'welcome', updatedAt: 100},
+            secondaryRoot: {value: 'secondary-welcome', updatedAt: 100},
         })
     })
 })

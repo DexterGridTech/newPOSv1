@@ -25,7 +25,10 @@ describe('input controller', () => {
     it('normalizes amount and activation-code virtual keys', () => {
         expect(applyVirtualKeyToValue('', '.', 'virtual-amount')).toBe('0.')
         expect(applyVirtualKeyToValue('12.', '.', 'virtual-amount')).toBe('12.')
+        expect(applyVirtualKeyToValue('12.3', '-', 'virtual-amount')).toBe('-12.3')
+        expect(applyVirtualKeyToValue('-12.3', '-', 'virtual-amount')).toBe('12.3')
         expect(applyVirtualKeyToValue('ab', 'C', 'virtual-activation-code')).toBe('abC')
+        expect(applyVirtualKeyToValue('ab', '.', 'virtual-activation-code')).toBe('ab.')
         expect(applyVirtualKeyToValue('123456', '7', 'virtual-pin', 6)).toBe('123456')
     })
 

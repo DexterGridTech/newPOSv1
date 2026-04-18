@@ -1,13 +1,9 @@
 import React from 'react'
 import {describe, expect, it, vi} from 'vitest'
-import {act} from 'react-test-renderer'
 import {createRequestId} from '@impos2/kernel-base-contracts'
 import {
     createCommand,
 } from '@impos2/kernel-base-runtime-shell-v2'
-import {
-    InputField,
-} from '@impos2/ui-base-input-runtime'
 import {
     selectTcpIdentitySnapshot,
     tcpControlV2CommandDefinitions,
@@ -22,6 +18,7 @@ import {
     renderTerminalConsoleLive,
     waitFor,
 } from '../support/terminalConsoleLiveHarness'
+import {renderWithAutomation} from '../support/terminalConsoleHarness'
 
 vi.mock('react-native', async () => {
     const ReactModule = await import('react')
@@ -54,21 +51,19 @@ describe('terminal-console live', () => {
             const activationCode = activationCodes.find(item => item.status === 'AVAILABLE')?.code
             expect(activationCode).toBeTruthy()
 
-            const activationTree = renderTerminalConsoleLive(
+            const activationAutomation = renderWithAutomation(
                 <ActivateDeviceScreen />,
                 harness.store,
                 harness.runtime,
             )
 
-            await act(async () => {
-                activationTree.root.findByType(InputField).props.onChangeText(activationCode)
-            })
+            await activationAutomation.changeText('ui-base-terminal-activate-device:input', activationCode!)
 
             let submitResult: unknown
-            await act(async () => {
-                submitResult = await activationTree.root.findByProps({
-                    testID: 'ui-base-terminal-activate-device:submit',
-                }).props.onPress()
+            submitResult = await activationAutomation.client.call('ui.performAction', {
+                target: 'primary',
+                nodeId: 'ui-base-terminal-activate-device:submit',
+                action: 'press',
             })
 
             try {
@@ -85,7 +80,7 @@ describe('terminal-console live', () => {
                 ].join('\n'))
             }
 
-            const summaryTree = renderTerminalConsoleLive(
+            const summaryAutomation = renderWithAutomation(
                 <TerminalSummaryScreen />,
                 harness.store,
                 harness.runtime,
@@ -93,9 +88,8 @@ describe('terminal-console live', () => {
 
             const identity = selectTcpIdentitySnapshot(harness.runtime.getState())
             expect(identity.terminalId).toBeTruthy()
-            expect(summaryTree.root.findByProps({
-                testID: 'ui-base-terminal-summary:description',
-            }).props.children).toContain('终端已完成激活')
+            await expect(summaryAutomation.getText('ui-base-terminal-summary:description'))
+                .resolves.toContain('终端已完成激活')
         } finally {
             await harness.cleanup()
         }

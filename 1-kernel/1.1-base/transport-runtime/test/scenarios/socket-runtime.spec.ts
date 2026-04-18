@@ -1,6 +1,7 @@
 import {describe, expect, it, vi} from 'vitest'
 import {createLoggerPort} from '@impos2/kernel-base-platform-ports'
 import {
+    buildSocketUrl,
     createSocketRuntime,
     defineSocketProfile,
     JsonSocketCodec,
@@ -96,6 +97,23 @@ describe('transport-runtime socket', () => {
         expect(events).toContain('message:hello')
         expect(events).toContain('send')
         expect(events).toContain('disconnected')
+    })
+
+    it('builds ws urls without relying on URL parsing for websocket schemes', () => {
+        expect(buildSocketUrl(
+            'http://127.0.0.1:8888',
+            '/mockMasterServer/ws',
+        )).toBe('ws://127.0.0.1:8888/mockMasterServer/ws')
+
+        expect(buildSocketUrl(
+            'https://127.0.0.1:8888/',
+            '/mockMasterServer/ws',
+            undefined,
+            {
+                ticket: 'ticket-001',
+                values: ['a', 'b'],
+            },
+        )).toBe('wss://127.0.0.1:8888/mockMasterServer/ws?ticket=ticket-001&values=a&values=b')
     })
 
     it('throws structured runtime error when profile is not registered', async () => {

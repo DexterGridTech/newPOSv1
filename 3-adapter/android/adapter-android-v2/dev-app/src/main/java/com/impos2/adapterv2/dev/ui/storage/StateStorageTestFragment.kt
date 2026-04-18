@@ -23,14 +23,22 @@ import com.impos2.adapterv2.storage.StateStorageManager
 
 class StateStorageTestFragment : Fragment() {
 
+  companion object {
+    private const val DEFAULT_STORAGE_ID = "adapter-android-v2-state-storage"
+  }
+
+  private lateinit var storageIdInput: TextInputEditText
   private lateinit var keyInput: TextInputEditText
   private lateinit var valueInput: TextInputEditText
-  private val storage by lazy { StateStorageManager.getInstance(requireContext()) }
+  private var activeStorageId: String = DEFAULT_STORAGE_ID
   private var latestKey: String = "--"
   private var latestValue: String = "--"
   private var latestAction: String = "--"
   private var latestKeys: Set<String> = emptySet()
   private val eventLines = mutableListOf<String>()
+
+  private val storage: StateStorageManager
+    get() = StateStorageManager.getInstance(requireContext(), resolveStorageId())
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -59,6 +67,7 @@ class StateStorageTestFragment : Fragment() {
       addView(
         metricRow(
           listOf(
+            "StorageId" to activeStorageId,
             "最近 Key" to latestKey,
             "最近值" to latestValue,
             "最近动作" to latestAction,
@@ -69,6 +78,13 @@ class StateStorageTestFragment : Fragment() {
 
       addView(sectionTitle("输入区"))
       addView(consoleCard("Key / Value") {
+        addView(TextInputLayout(context).apply {
+          hint = "storageId"
+          storageIdInput = TextInputEditText(context).apply {
+            setText(DEFAULT_STORAGE_ID)
+          }
+          addView(storageIdInput)
+        })
         addView(TextInputLayout(context).apply {
           hint = "key"
           keyInput = TextInputEditText(context)
@@ -121,9 +137,10 @@ class StateStorageTestFragment : Fragment() {
           updateState(key, storage.contains(key).toString(), "contains")
         })
         addView(outlineButton("全部 keys") {
+          activeStorageId = resolveStorageId()
           latestKeys = storage.getAllKeys()
           latestAction = "getAllKeys"
-          appendEvent("StateStorage / getAllKeys / success keys=${latestKeys.joinToString(",")}")
+          appendEvent("StateStorage[$activeStorageId] / getAllKeys / success keys=${latestKeys.joinToString(",")}")
           ConsoleSessionStore.record("StateStorage", "getAllKeys", "success")
           refresh()
         })
@@ -134,11 +151,12 @@ class StateStorageTestFragment : Fragment() {
         })
         addView(outlineButton("清空全部") {
           storage.clearAll()
+          activeStorageId = resolveStorageId()
           latestKey = "--"
           latestValue = "--"
           latestAction = "clearAll"
           latestKeys = emptySet()
-          appendEvent("StateStorage / clearAll / success")
+          appendEvent("StateStorage[$activeStorageId] / clearAll / success")
           ConsoleSessionStore.record("StateStorage", "clearAll", "success")
           refresh()
         })
@@ -149,6 +167,7 @@ class StateStorageTestFragment : Fragment() {
         addView(detailLine("key", latestKey))
         addView(detailLine("value", latestValue))
         addView(detailLine("action", latestAction))
+        addView(detailLine("storageId", activeStorageId))
         addView(detailLine("keys", if (latestKeys.isEmpty()) "--" else latestKeys.joinToString(", ")))
       })
 
@@ -158,13 +177,23 @@ class StateStorageTestFragment : Fragment() {
   }
 
   private fun updateState(key: String, value: String, action: String) {
+    activeStorageId = resolveStorageId()
     latestKey = key.ifEmpty { "--" }
     latestValue = value.ifEmpty { "<empty>" }
     latestAction = action
     latestKeys = storage.getAllKeys()
-    appendEvent("StateStorage / $action / success key=$key value=$value")
+    appendEvent("StateStorage[$activeStorageId] / $action / success key=$key value=$value")
     ConsoleSessionStore.record("StateStorage", action, "success")
     refresh()
+  }
+
+  private fun resolveStorageId(): String {
+    val rawValue = if (::storageIdInput.isInitialized) {
+      storageIdInput.text?.toString().orEmpty()
+    } else {
+      DEFAULT_STORAGE_ID
+    }
+    return rawValue.ifBlank { DEFAULT_STORAGE_ID }
   }
 
   private fun detailLine(label: String, value: String): View {

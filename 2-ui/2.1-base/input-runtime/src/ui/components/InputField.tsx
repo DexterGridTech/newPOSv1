@@ -1,5 +1,10 @@
 import React, {useEffect, useMemo, useRef} from 'react'
 import {Pressable, Text, TextInput, View} from 'react-native'
+import {
+    useOptionalUiAutomationBridge,
+    useOptionalUiAutomationRuntimeId,
+    useOptionalUiAutomationTarget,
+} from '@impos2/ui-base-runtime-react'
 import type {ManagedInputMode} from '../../types'
 import {usesVirtualKeyboard} from '../../foundations/inputPolicies'
 import {createInputRuntimeId} from '../../supports'
@@ -32,15 +37,89 @@ export const InputField: React.FC<InputFieldProps> = ({
     testID,
 }) => {
     const runtime = useOptionalInputRuntime()
+    const activateInput = runtime?.activateInput
+    const deactivateInput = runtime?.deactivateInput
+    const syncInputValue = runtime?.syncInputValue
+    const automationBridge = useOptionalUiAutomationBridge()
+    const automationRuntimeId = useOptionalUiAutomationRuntimeId() ?? 'runtime'
+    const automationTarget = useOptionalUiAutomationTarget() ?? 'primary'
     const inputIdRef = useRef<string>(createInputRuntimeId('field'))
     const isVirtual = usesVirtualKeyboard(mode)
+    const resolvedTestId = testID ?? (isVirtual ? `ui-base-virtual-field:${mode}` : `ui-base-system-field:${mode}`)
 
     useEffect(() => {
-        if (!isVirtual || !runtime) {
+        if (!isVirtual || !syncInputValue) {
             return
         }
-        runtime.syncInputValue(inputIdRef.current, value)
-    }, [isVirtual, runtime, value])
+        syncInputValue(inputIdRef.current, value)
+    }, [isVirtual, syncInputValue, value])
+
+    useEffect(() => {
+        if (!isVirtual || !deactivateInput) {
+            return
+        }
+        return () => {
+            deactivateInput(inputIdRef.current)
+        }
+    }, [deactivateInput, isVirtual])
+
+    useEffect(() => {
+        if (!automationBridge) {
+            return undefined
+        }
+        return automationBridge.registerNode({
+            target: automationTarget,
+            runtimeId: automationRuntimeId,
+            screenKey: 'input',
+            mountId: `input:${inputIdRef.current}`,
+            nodeId: resolvedTestId,
+            testID: resolvedTestId,
+            semanticId: resolvedTestId,
+            role: isVirtual ? 'button' : 'input',
+            text: value.length > 0 ? value : placeholder,
+            value,
+            visible: true,
+            enabled: true,
+            persistent: true,
+            availableActions: isVirtual ? ['press', 'changeText', 'clear'] : ['changeText', 'clear'],
+            onAutomationAction: action => {
+                if (action.action === 'press' && isVirtual) {
+                    activateInput?.({
+                        id: inputIdRef.current,
+                        mode,
+                        value,
+                        placeholder,
+                        secureTextEntry,
+                        maxLength,
+                        onChangeText,
+                    })
+                    return {ok: true}
+                }
+                if (action.action === 'changeText') {
+                    onChangeText(String(action.value ?? ''))
+                    return {ok: true}
+                }
+                if (action.action === 'clear') {
+                    onChangeText('')
+                    return {ok: true}
+                }
+                return {ok: false}
+            },
+        })
+    }, [
+        activateInput,
+        automationBridge,
+        automationRuntimeId,
+        automationTarget,
+        isVirtual,
+        maxLength,
+        mode,
+        onChangeText,
+        placeholder,
+        resolvedTestId,
+        secureTextEntry,
+        value,
+    ])
 
     const maskedValue = useMemo(() => {
         if (!secureTextEntry) {
@@ -49,12 +128,12 @@ export const InputField: React.FC<InputFieldProps> = ({
         return '•'.repeat(value.length)
     }, [secureTextEntry, value])
 
-    if (usesVirtualKeyboard(mode)) {
+    if (isVirtual) {
         return (
             <Pressable
-                testID={testID ?? `ui-base-virtual-field:${mode}`}
+                testID={resolvedTestId}
                 accessibilityRole="button"
-                onPress={() => runtime?.activateInput({
+                onPress={() => activateInput?.({
                     id: inputIdRef.current,
                     mode,
                     value,
@@ -85,7 +164,7 @@ export const InputField: React.FC<InputFieldProps> = ({
 
     return (
         <TextInput
-            testID={testID ?? `ui-base-system-field:${mode}`}
+            testID={resolvedTestId}
             value={value}
             onChangeText={onChangeText}
             placeholder={placeholder}

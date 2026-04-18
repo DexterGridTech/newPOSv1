@@ -1,6 +1,11 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import {View} from 'react-native'
 import {uiRuntimeRootVariables} from '../../foundations/uiVariables'
+import type {RuntimeReactAutomationBridge} from '../../types'
+import {
+    useOptionalUiAutomationBridge,
+    useOptionalUiAutomationRuntimeId,
+} from '../../contexts/UiRuntimeContext'
 import {AlertHost} from './AlertHost'
 import {OverlayHost} from './OverlayHost'
 import {ScreenContainer} from './ScreenContainer'
@@ -8,22 +13,66 @@ import {ScreenContainer} from './ScreenContainer'
 export interface UiRuntimeRootShellProps {
     display?: 'primary' | 'secondary'
     children?: React.ReactNode
+    automationBridge?: RuntimeReactAutomationBridge
+    automationRuntimeId?: string
 }
 
 export const UiRuntimeRootShell: React.FC<UiRuntimeRootShellProps> = ({
     display = 'primary',
     children,
+    automationBridge: automationBridgeProp,
+    automationRuntimeId: automationRuntimeIdProp,
 }) => {
+    const automationBridge = automationBridgeProp ?? useOptionalUiAutomationBridge() ?? undefined
+    const automationRuntimeId = automationRuntimeIdProp
+        ?? useOptionalUiAutomationRuntimeId()
+        ?? `${display}-runtime`
     const container = display === 'secondary'
         ? uiRuntimeRootVariables.secondaryRootContainer
         : uiRuntimeRootVariables.primaryRootContainer
 
+    useEffect(() => {
+        if (!automationBridge) {
+            return undefined
+        }
+        const target = display
+        return automationBridge.registerNode({
+            target,
+            runtimeId: automationRuntimeId,
+            screenKey: 'runtime-root',
+            mountId: `root:${target}`,
+            nodeId: `root:${target}`,
+            testID: `ui-base-root-shell:${target}`,
+            semanticId: `runtime-root:${target}`,
+            role: 'root',
+            visible: true,
+            enabled: true,
+            persistent: true,
+            availableActions: [],
+        })
+    }, [automationBridge, automationRuntimeId, display])
+
     return (
-        <View testID={`ui-base-root-shell:${display}`}>
+        <View testID={`ui-base-root-shell:${display}`} style={{flex: 1}}>
             {children}
-            <ScreenContainer containerPart={container} />
-            <OverlayHost displayMode={display === 'secondary' ? 'SECONDARY' : 'PRIMARY'} />
-            <AlertHost displayMode={display === 'secondary' ? 'SECONDARY' : 'PRIMARY'} />
+            <ScreenContainer
+                automationBridge={automationBridge}
+                automationRuntimeId={automationRuntimeId}
+                automationTarget={display}
+                containerPart={container}
+            />
+            <OverlayHost
+                automationBridge={automationBridge}
+                automationRuntimeId={automationRuntimeId}
+                automationTarget={display}
+                displayMode={display === 'secondary' ? 'SECONDARY' : 'PRIMARY'}
+            />
+            <AlertHost
+                automationBridge={automationBridge}
+                automationRuntimeId={automationRuntimeId}
+                automationTarget={display}
+                displayMode={display === 'secondary' ? 'SECONDARY' : 'PRIMARY'}
+            />
         </View>
     )
 }

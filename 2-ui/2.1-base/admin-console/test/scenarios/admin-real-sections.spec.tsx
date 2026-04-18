@@ -1,6 +1,7 @@
-import React from 'react'
+import React, {useState} from 'react'
 import {describe, expect, it, vi} from 'vitest'
 import {act} from 'react-test-renderer'
+import {Pressable, Text} from 'react-native'
 import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
 import {
     createTcpControlRuntimeModuleV2,
@@ -13,30 +14,32 @@ import {
     topologyRuntimeV2StateActions,
 } from '@impos2/kernel-base-topology-runtime-v2'
 import {
+    AdapterDiagnosticsScreen,
     AdminTerminalSection,
     AdminTopologySection,
 } from '../../src'
 import {
     createAdminConsoleHarness,
-    renderWithStore,
+    renderWithAutomation,
 } from '../support/adminConsoleHarness'
 
 describe('admin built-in sections', () => {
     it('renders terminal section from tcp-control state', async () => {
         const harness = await createAdminConsoleHarness()
-        const tree = renderWithStore(
+        const tree = renderWithAutomation(
             <AdminTerminalSection runtime={harness.runtime} store={harness.store} />,
             harness.store,
             harness.runtime,
         )
 
-        expect(() => tree.root.findByProps({testID: 'ui-base-admin-section:terminal'})).not.toThrow()
+        await expect(tree.getNode('ui-base-admin-section:terminal')).resolves.toBeTruthy()
     })
 
     it('dispatches terminal deactivation from terminal section when activated', async () => {
         const harness = await createAdminConsoleHarness({
             modules: [createTcpControlRuntimeModuleV2()],
         })
+        const closePanel = vi.fn()
         harness.store.dispatch(tcpControlV2StateActions.setActivatedIdentity({
             terminalId: 'terminal-admin-test',
             activatedAt: Date.now(),
@@ -72,49 +75,46 @@ describe('admin built-in sections', () => {
         })))
         const dispatchSpy = vi.spyOn(harness.runtime, 'dispatchCommand')
             .mockResolvedValue({status: 'COMPLETED'} as any)
-        const tree = renderWithStore(
-            <AdminTerminalSection runtime={harness.runtime} store={harness.store} />,
+        const tree = renderWithAutomation(
+            <AdminTerminalSection runtime={harness.runtime} store={harness.store} closePanel={closePanel} />,
             harness.store,
             harness.runtime,
         )
 
-        await act(async () => {
-            tree.root.findByProps({testID: 'ui-base-admin-section:terminal:deactivate'}).props.onPress()
-        })
+        await tree.press('ui-base-admin-section:terminal:deactivate')
 
         expect(dispatchSpy).toHaveBeenCalledWith(
             createCommand(tcpControlV2CommandDefinitions.deactivateTerminal, {
                 reason: 'admin-console',
             }),
         )
-        expect(JSON.stringify(tree.toJSON())).toContain('激活时间')
-        expect(JSON.stringify(tree.toJSON())).toContain('凭证过期')
-        expect(JSON.stringify(tree.toJSON())).toContain('业务绑定')
-        expect(JSON.stringify(tree.toJSON())).toContain('platform-admin')
-        expect(JSON.stringify(tree.toJSON())).toContain('request-refresh-1')
-        expect(JSON.stringify(tree.toJSON())).toContain('refresh failed')
+        expect(closePanel).toHaveBeenCalledTimes(1)
+        await expect(tree.queryNodesByText('激活时间')).resolves.toHaveLength(1)
+        await expect(tree.queryNodesByText('凭证过期')).resolves.toHaveLength(1)
+        await expect(tree.queryNodesByText('业务绑定')).resolves.toHaveLength(1)
+        await expect(tree.queryNodesByText('platform-admin')).resolves.toHaveLength(1)
+        await expect(tree.queryNodesByText('request-refresh-1')).resolves.toHaveLength(1)
+        await expect(tree.queryNodesByText('refresh failed')).resolves.toHaveLength(1)
     })
 
     it('dispatches topology commands from the merged topology section', async () => {
         const harness = await createAdminConsoleHarness()
         const dispatchSpy = vi.spyOn(harness.runtime, 'dispatchCommand')
-        const topologyTree = renderWithStore(
+        const topologyTree = renderWithAutomation(
             <AdminTopologySection runtime={harness.runtime} store={harness.store} />,
             harness.store,
             harness.runtime,
         )
 
-        await act(async () => {
-            topologyTree.root.findByProps({testID: 'ui-base-admin-section:topology:set-master'}).props.onPress()
-            topologyTree.root.findByProps({testID: 'ui-base-admin-section:topology:start'}).props.onPress()
-        })
+        await topologyTree.press('ui-base-admin-section:topology:set-master')
+        await topologyTree.press('ui-base-admin-section:topology:start')
 
         expect(dispatchSpy).toHaveBeenCalledTimes(2)
     })
 
     it('reacts to topology store changes and shows connection metadata', async () => {
         const harness = await createAdminConsoleHarness()
-        const topologyTree = renderWithStore(
+        const topologyTree = renderWithAutomation(
             <AdminTopologySection runtime={harness.runtime} store={harness.store} />,
             harness.store,
             harness.runtime,
@@ -158,12 +158,11 @@ describe('admin built-in sections', () => {
             }))
         })
 
-        const serialized = JSON.stringify(topologyTree.toJSON())
-        expect(serialized).toContain('分支工作区')
-        expect(serialized).toContain('主屏')
-        expect(serialized).toContain('对端节点')
-        expect(serialized).toContain('PEER-DEVICE-001')
-        expect(serialized).toContain('重连次数')
+        await expect(topologyTree.queryNodesByText('分支工作区')).resolves.toHaveLength(1)
+        await expect(topologyTree.queryNodesByText('主屏')).resolves.toHaveLength(1)
+        await expect(topologyTree.queryNodesByText('对端节点')).resolves.toHaveLength(1)
+        await expect(topologyTree.queryNodesByText('PEER-DEVICE-001')).resolves.toHaveLength(1)
+        await expect(topologyTree.queryNodesByText('重连次数')).resolves.toHaveLength(1)
     })
 
     it('shows slave secondary display as main workspace to preserve old topology semantics', async () => {
@@ -173,15 +172,95 @@ describe('admin built-in sections', () => {
                 displayCount: 2,
             },
         } as any)
-        const topologyTree = renderWithStore(
+        const topologyTree = renderWithAutomation(
             <AdminTopologySection runtime={harness.runtime} store={harness.store} />,
             harness.store,
             harness.runtime,
         )
 
-        const serialized = JSON.stringify(topologyTree.toJSON())
-        expect(serialized).toContain('副机')
-        expect(serialized).toContain('副屏')
-        expect(serialized).toContain('主工作区')
+        await expect(topologyTree.queryNodesByText('副机')).resolves.toHaveLength(1)
+        await expect(topologyTree.queryNodesByText('副屏')).resolves.toHaveLength(1)
+        await expect(topologyTree.queryNodesByText('主工作区')).resolves.toHaveLength(1)
+    })
+
+    it('runs adapter diagnostics only once under rapid double invocation', async () => {
+        const harness = await createAdminConsoleHarness()
+        const run = vi.fn(async () => {
+            await Promise.resolve()
+            return {
+                status: 'passed' as const,
+                message: 'ok',
+            }
+        })
+        const tree = renderWithAutomation(
+            <AdapterDiagnosticsScreen
+                runtime={harness.runtime}
+                store={harness.store}
+                registry={{
+                    getScenarios: () => [{
+                        adapterKey: 'scanner',
+                        scenarioKey: 'connect',
+                        title: '扫码连接',
+                        run,
+                    }],
+                    setScenarios: () => {},
+                }}
+            />,
+            harness.store,
+            harness.runtime,
+        )
+
+        await Promise.allSettled([
+            tree.press('ui-base-admin-adapter-diagnostics:run-all'),
+            tree.press('ui-base-admin-adapter-diagnostics:run-all'),
+        ])
+
+        expect(run).toHaveBeenCalledTimes(1)
+    })
+
+    it('ignores async terminal deactivation completion after section unmount', async () => {
+        const harness = await createAdminConsoleHarness({
+            modules: [createTcpControlRuntimeModuleV2()],
+        })
+        harness.store.dispatch(tcpControlV2StateActions.setActivatedIdentity({
+            terminalId: 'terminal-unmount-test',
+            activatedAt: Date.now(),
+        }))
+        let resolveDispatch: ((value: any) => void) | undefined
+        const dispatchSpy = vi.spyOn(harness.runtime, 'dispatchCommand')
+            .mockImplementation(() => new Promise(resolve => {
+                resolveDispatch = resolve
+            }) as any)
+        const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+        const SectionHarness: React.FC = () => {
+            const [mounted, setMounted] = useState(true)
+            return mounted ? (
+                <>
+                    <AdminTerminalSection runtime={harness.runtime} store={harness.store} />
+                    <Pressable testID="unmount-terminal-section" onPress={() => setMounted(false)}>
+                        <Text>Unmount</Text>
+                    </Pressable>
+                </>
+            ) : null
+        }
+
+        const tree = renderWithAutomation(
+            <SectionHarness />,
+            harness.store,
+            harness.runtime,
+        )
+
+        await tree.press('ui-base-admin-section:terminal:deactivate')
+        await tree.press('unmount-terminal-section')
+        await act(async () => {
+            resolveDispatch?.({status: 'COMPLETED'})
+            await Promise.resolve()
+        })
+
+        expect(dispatchSpy).toHaveBeenCalledTimes(1)
+        expect(consoleErrorSpy).not.toHaveBeenCalled()
+        dispatchSpy.mockRestore()
+        consoleErrorSpy.mockRestore()
     })
 })

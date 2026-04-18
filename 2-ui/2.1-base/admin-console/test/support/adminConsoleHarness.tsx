@@ -1,5 +1,6 @@
 import {
     createRuntimeReactHarness,
+    renderWithAutomation,
     renderWithStore,
     type RuntimeReactHarness,
 } from '../../../runtime-react/test/support/runtimeReactHarness'
@@ -49,4 +50,4 @@ export const createAdminConsoleHarness = async (
     })
 }
 
-export {renderWithStore}
+export {renderWithAutomation, renderWithStore}

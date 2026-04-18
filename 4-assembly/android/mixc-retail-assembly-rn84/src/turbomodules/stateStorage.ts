@@ -4,18 +4,27 @@ import NativeStateStorageTurboModule from './specs/NativeStateStorageTurboModule
 export const createNativeStateStorage = (
     namespace: string,
 ): StateStoragePort => {
-    const prefix = `${namespace}:`
-    const keyOf = (key: string) => `${prefix}${key}`
+    const normalizeKey = (key: string): string => {
+        const normalizedKey = key.trim()
+        if (!normalizedKey) {
+            throw new Error('assembly stateStorage key must not be empty')
+        }
+        return normalizedKey
+    }
 
     return {
         async getItem(key) {
-            return await NativeStateStorageTurboModule.getString(keyOf(key))
+            return await NativeStateStorageTurboModule.getString(namespace, normalizeKey(key))
         },
         async setItem(key, value) {
-            await NativeStateStorageTurboModule.setString(keyOf(key), value)
+            await NativeStateStorageTurboModule.setString(
+                namespace,
+                normalizeKey(key),
+                value,
+            )
         },
         async removeItem(key) {
-            await NativeStateStorageTurboModule.remove(keyOf(key))
+            await NativeStateStorageTurboModule.remove(namespace, normalizeKey(key))
         },
         async multiGet(keys) {
             const entries = await Promise.all(keys.map(async key => [key, await this.getItem(key)] as const))
@@ -28,14 +37,10 @@ export const createNativeStateStorage = (
             await Promise.all(keys.map(key => this.removeItem(key)))
         },
         async getAllKeys() {
-            const keys = await NativeStateStorageTurboModule.getAllKeys()
-            return keys
-                .filter(key => key.startsWith(prefix))
-                .map(key => key.slice(prefix.length))
+            return [...await NativeStateStorageTurboModule.getAllKeys(namespace)]
         },
         async clear() {
-            const keys = await this.getAllKeys?.() ?? []
-            await this.multiRemove?.(keys)
+            await NativeStateStorageTurboModule.clearAll(namespace)
         },
     }
 }

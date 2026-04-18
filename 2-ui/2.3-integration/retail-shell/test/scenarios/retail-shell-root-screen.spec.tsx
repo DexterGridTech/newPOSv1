@@ -1,13 +1,12 @@
 import React from 'react'
 import {describe, expect, it, vi} from 'vitest'
-import {act} from 'react-test-renderer'
 import {
     createCommand,
     runtimeShellV2CommandDefinitions,
 } from '@impos2/kernel-base-runtime-shell-v2'
 import {tcpControlV2StateActions} from '@impos2/kernel-base-tcp-control-runtime-v2'
 import {RootScreen} from '../../src'
-import {createRetailShellHarness, renderWithStore} from '../support/retailShellHarness'
+import {createRetailShellHarness, renderWithAutomation} from '../support/retailShellHarness'
 
 vi.mock('@impos2/ui-base-admin-console', async () => {
     const ReactModule = await import('react')
@@ -36,13 +35,38 @@ describe('retail-shell root screen', () => {
             {},
         ))
 
-        const tree = renderWithStore(
+        const tree = renderWithAutomation(
             <RootScreen deviceId="DEVICE-001" />,
             harness.store,
             harness.runtime,
         )
 
-        expect(tree.toJSON()).toBeTruthy()
+        await expect(tree.getNode('ui-integration-retail-shell:root:primary')).resolves.toBeTruthy()
+        await expect(tree.getNode('ui-base-root-shell:primary')).resolves.toBeTruthy()
+        await expect(tree.getNode('ui-base-screen-container:primary')).resolves.toBeTruthy()
+    })
+
+    it('uses the secondary root shell when hosted on displayIndex 1', async () => {
+        const harness = await createRetailShellHarness({
+            displayContext: {
+                displayIndex: 1,
+                displayCount: 2,
+            },
+        })
+        await harness.runtime.dispatchCommand(createCommand(
+            runtimeShellV2CommandDefinitions.initialize,
+            {},
+        ))
+
+        const tree = renderWithAutomation(
+            <RootScreen deviceId="DEVICE-SECONDARY" />,
+            harness.store,
+            harness.runtime,
+        )
+
+        await expect(tree.getNode('ui-integration-retail-shell:root:secondary')).resolves.toBeTruthy()
+        await expect(tree.getNode('ui-base-root-shell:secondary')).resolves.toBeTruthy()
+        await expect(tree.getNode('ui-base-screen-container:secondary')).resolves.toBeTruthy()
     })
 
     it('opens admin popup through repeated top-left presses', async () => {
@@ -56,26 +80,16 @@ describe('retail-shell root screen', () => {
             {},
         ))
 
-        const tree = renderWithStore(
+        const automation = renderWithAutomation(
             <RootScreen deviceId="DEVICE-001" />,
             harness.store,
             harness.runtime,
         )
 
-        const host = tree.root.findByProps({testID: 'ui-integration-retail-shell:root'})
         for (let index = 0; index < 5; index += 1) {
-            await act(async () => {
-                const event = {
-                    nativeEvent: {
-                        pageX: 12,
-                        pageY: 12,
-                    },
-                }
-                host.props.onClick?.(event)
-                host.props.onTouchEnd?.(event)
-            })
+            await automation.press('ui-integration-retail-shell:root')
         }
 
-        expect(() => tree.root.findByProps({testID: 'ui-base-admin-popup:login'})).not.toThrow()
+        await automation.waitForNode('ui-base-admin-popup:login')
     })
 })

@@ -9,13 +9,17 @@ const normalizeAmountValue = (
     value: string,
     key: string,
 ): string => {
-    if (key === '.') {
-        return value.includes('.') ? value : `${value || '0'}.`
-    }
-    if (key === '-') {
-        return value.startsWith('-') ? value.slice(1) : `-${value}`
-    }
-    return `${value}${key}`
+    const candidate = (() => {
+        if (key === '.') {
+            return value.includes('.') ? value : `${value || '0'}.`
+        }
+        if (key === '-') {
+            return value.startsWith('-') ? value.slice(1) : `-${value}`
+        }
+        return `${value}${key}`
+    })()
+
+    return /^-?\d*\.?\d*$/.test(candidate) ? candidate : value
 }
 
 const normalizeActivationCodeValue = (

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useMemo, useState} from 'react'
 import {Provider} from 'react-redux'
 import {ScrollView, Text, View} from 'react-native'
 import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
@@ -9,6 +9,7 @@ import {createRuntimeReactScenarioModule} from '../test/support/runtimeReactScen
 import {RuntimeReactScenarioStatePanel} from '../test/support/RuntimeReactScenarioStatePanel'
 import {UiRuntimeProvider, UiRuntimeRootShell} from '../src'
 import type {RuntimeReactHarness} from '../test/support/runtimeReactHarness'
+import {createBrowserAutomationHost} from '../../ui-automation-runtime/src/supports'
 import {getRuntimeReactExpoConfig} from './runtimeReactExpoConfig'
 import {createTopologyHostAssembly} from './topologyHostAssembly'
 
@@ -65,6 +66,23 @@ export const RuntimeReactExpoShell: React.FC = () => {
     const [bootError, setBootError] = useState<string | null>(null)
     const [topologyStartError, setTopologyStartError] = useState<string | null>(null)
     const [topologyStartResult, setTopologyStartResult] = useState<CommandAggregateResult | null>(null)
+    const automationHost = useMemo(() => createBrowserAutomationHost({
+        autoStart: false,
+        buildProfile: 'test',
+        runtimeId: 'runtime-react-expo',
+        target: config.displayIndex > 0 ? 'secondary' : 'primary',
+        getRuntimeState: () => harness?.runtime.getState() ?? null,
+    }), [config.displayIndex, harness])
+
+    useEffect(() => {
+        if (!harness) {
+            return undefined
+        }
+        automationHost.start()
+        return () => {
+            automationHost.stop()
+        }
+    }, [automationHost, harness])
 
     useEffect(() => {
         let disposed = false

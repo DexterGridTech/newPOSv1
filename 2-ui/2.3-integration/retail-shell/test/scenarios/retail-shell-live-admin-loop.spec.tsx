@@ -1,6 +1,5 @@
 import React from 'react'
 import {describe, expect, it} from 'vitest'
-import {act} from 'react-test-renderer'
 import {
     createCommand,
     runtimeShellV2CommandDefinitions,
@@ -20,7 +19,7 @@ import type {RootState} from '@impos2/kernel-base-state-runtime'
 import {
     createRetailShellLiveHarness,
     fetchJson,
-    renderWithStore,
+    renderWithAutomation,
     waitFor,
 } from '../support/retailShellLiveHarness'
 
@@ -70,15 +69,14 @@ describe('retail-shell live admin deactivation loop', () => {
             expect(terminalId).toBeTruthy()
             expect(selectPrimaryRoot(welcomeState)?.partKey).toBe('ui.integration.retail-shell.welcome')
 
-            const tree = renderWithStore(
+            const tree = renderWithAutomation(
                 <AdminTerminalSection runtime={harness.runtime} store={harness.store} />,
                 harness.store,
                 harness.runtime,
             )
 
-            await act(async () => {
-                tree.root.findByProps({testID: 'ui-base-admin-section:terminal:deactivate'}).props.onPress()
-            })
+            await tree.press('ui-base-admin-section:terminal:deactivate')
+            await tree.waitForIdle()
 
             await waitFor(() =>
                 selectPrimaryRoot(harness.runtime.getState())?.partKey === 'ui.base.terminal.activate-device',

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useMemo, useState} from 'react'
 import {Provider} from 'react-redux'
 import {ScrollView, Text, View} from 'react-native'
 import {createCommand, runtimeShellV2CommandDefinitions} from '@impos2/kernel-base-runtime-shell-v2'
@@ -18,6 +18,7 @@ import {
     type RuntimeReactHarness,
 } from '../../runtime-react/test/support/runtimeReactHarness'
 import {UiRuntimeProvider} from '@impos2/ui-base-runtime-react'
+import {createBrowserAutomationHost} from '../../ui-automation-runtime/src/supports'
 import {resetAdminHostTools} from '../src/supports/adminHostToolsRegistry'
 import {resetAdminConsoleSections} from '../src/supports/adminSectionRegistry'
 import {resetAdminAdapterDiagnosticsScenarios} from '../src/supports/adapterDiagnosticsRuntime'
@@ -200,6 +201,22 @@ export const AdminConsoleExpoShell: React.FC = () => {
     const [showAdmin, setShowAdmin] = useState(false)
     const verifier = createAdminPasswordVerifier({deviceIdProvider: () => deviceId})
     const password = verifier.deriveFor(new Date())
+    const automationHost = useMemo(() => createBrowserAutomationHost({
+        autoStart: false,
+        buildProfile: 'test',
+        runtimeId: 'admin-console-expo',
+        target: 'primary',
+    }), [])
+
+    useEffect(() => {
+        if (!harness) {
+            return undefined
+        }
+        automationHost.start()
+        return () => {
+            automationHost.stop()
+        }
+    }, [automationHost, harness])
 
     useEffect(() => {
         let disposed = false

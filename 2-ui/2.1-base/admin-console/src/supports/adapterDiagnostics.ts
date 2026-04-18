@@ -58,7 +58,7 @@ const toSummary = (
     const skipped = ordered.filter(item => item.status === 'skipped').length
     return {
         runId,
-        status: failed > 0 ? 'failed' : 'passed',
+        status: failed > 0 ? 'failed' : passed > 0 ? 'passed' : 'skipped',
         total: ordered.length,
         passed,
         failed,

@@ -52,6 +52,29 @@ const evalInBrowser = async (session, expression) => {
     return parseEvalResult(stdout)
 }
 
+const callAutomation = async (session, method, params = {}) => await evalInBrowser(
+    session,
+    `(() => {
+        const automation = globalThis.__IMPOS_AUTOMATION__;
+        if (!automation?.started) {
+            throw new Error('Browser automation host is not started');
+        }
+        const request = JSON.stringify({
+            jsonrpc: '2.0',
+            id: 'runtime-react-expo',
+            method: ${JSON.stringify(method)},
+            params: ${JSON.stringify(params)},
+        });
+        return automation.dispatchMessage(request).then(message => {
+            const response = JSON.parse(message);
+            if (response.error) {
+                throw new Error(response.error.message ?? 'AUTOMATION_ERROR');
+            }
+            return JSON.stringify(response.result ?? null);
+        });
+    })()`,
+)
+
 const findFreePort = async (startPort) => {
     for (let port = startPort; port < startPort + 50; port += 1) {
         const available = await new Promise((resolvePromise) => {
@@ -119,7 +142,10 @@ const listListeningPids = async (port) => {
 const waitForPageReady = async (session) => {
     const deadline = Date.now() + 30000
     while (Date.now() < deadline) {
-        const ready = await evalInBrowser(session, `Boolean(document.querySelector('[data-testid="ui-base-runtime-react-test:home"]'))`)
+        const ready = await callAutomation(session, 'ui.getNode', {
+            target: 'primary',
+            nodeId: 'ui-base-runtime-react-test:home',
+        })
         if (ready) {
             return
         }
@@ -128,31 +154,48 @@ const waitForPageReady = async (session) => {
     throw new Error(`Timed out waiting for runtime-react Expo page in ${session}`)
 }
 
-const readState = async (session) => evalInBrowser(session, `JSON.stringify({
-    appReady: document.body.innerText.includes('Runtime React Test Expo'),
-    primary: document.querySelector('[data-testid="ui-base-runtime-react-test:state:primary"]')?.textContent ?? null,
-    secondary: document.querySelector('[data-testid="ui-base-runtime-react-test:state:secondary"]')?.textContent ?? null,
-    overlayCount: document.querySelector('[data-testid="ui-base-runtime-react-test:state:overlay-count"]')?.textContent ?? null,
-    displayMode: document.querySelector('[data-testid="ui-base-runtime-react-test:state:display-mode"]')?.textContent ?? null,
-    instanceMode: document.querySelector('[data-testid="ui-base-runtime-react-test:state:instance-mode"]')?.textContent ?? null,
-    workspace: document.querySelector('[data-testid="ui-base-runtime-react-test:state:workspace"]')?.textContent ?? null,
-    serverConnected: document.querySelector('[data-testid="ui-base-runtime-react-test:state:server-connected"]')?.textContent ?? null,
-    serverConnectionStatus: document.querySelector('[data-testid="ui-base-runtime-react-test:state:server-connection-status"]')?.textContent ?? null,
-    connectionError: document.querySelector('[data-testid="ui-base-runtime-react-test:state:connection-error"]')?.textContent ?? null,
-    peerNodeId: document.querySelector('[data-testid="ui-base-runtime-react-test:state:peer-node-id"]')?.textContent ?? null,
-    topologyStartError: document.querySelector('[data-testid="ui-base-runtime-react-test:topology-start-error"]')?.textContent ?? null,
-    topologyStartStatus: document.querySelector('[data-testid="ui-base-runtime-react-test:topology-start-status"]')?.textContent ?? null,
-    stateVariable: document.querySelector('[data-testid="ui-base-runtime-react-test:state:variable"]')?.textContent ?? null,
-    homeLabel: document.querySelector('[data-testid="ui-base-runtime-react-test:home-label"]')?.textContent ?? null,
-    screenVariable: document.querySelector('[data-testid="ui-base-runtime-react-test:variable-value"]')?.textContent ?? null,
-    detailLabel: document.querySelector('[data-testid="ui-base-runtime-react-test:detail-label"]')?.textContent ?? null,
-    modalLabel: document.querySelector('[data-testid="ui-base-runtime-react-test:modal-label"]')?.textContent ?? null,
-    hasHome: Boolean(document.querySelector('[data-testid="ui-base-runtime-react-test:home"]')),
-    hasDetail: Boolean(document.querySelector('[data-testid="ui-base-runtime-react-test:detail"]')),
-    hasModal: Boolean(document.querySelector('[data-testid="ui-base-runtime-react-test:modal"]')),
-    hasSecondary: Boolean(document.querySelector('[data-testid="ui-base-runtime-react-test:secondary"]')),
-    hasExpoError: Boolean(document.querySelector('[data-testid="ui-base-runtime-react-test:expo-error-message"]')),
-})`)
+const readNodeText = async (session, nodeId) => {
+    const node = await callAutomation(session, 'ui.getNode', {
+        target: 'primary',
+        nodeId,
+    })
+    return node?.text ?? null
+}
+
+const hasNode = async (session, nodeId) => {
+    const node = await callAutomation(session, 'ui.getNode', {
+        target: 'primary',
+        nodeId,
+    })
+    return Boolean(node)
+}
+
+const readState = async (session) => ({
+    appReady: (await hasNode(session, 'ui-base-runtime-react-test:home'))
+        || (await hasNode(session, 'ui-base-runtime-react-test:detail')),
+    primary: await readNodeText(session, 'ui-base-runtime-react-test:state:primary'),
+    secondary: await readNodeText(session, 'ui-base-runtime-react-test:state:secondary'),
+    overlayCount: await readNodeText(session, 'ui-base-runtime-react-test:state:overlay-count'),
+    displayMode: await readNodeText(session, 'ui-base-runtime-react-test:state:display-mode'),
+    instanceMode: await readNodeText(session, 'ui-base-runtime-react-test:state:instance-mode'),
+    workspace: await readNodeText(session, 'ui-base-runtime-react-test:state:workspace'),
+    serverConnected: await readNodeText(session, 'ui-base-runtime-react-test:state:server-connected'),
+    serverConnectionStatus: await readNodeText(session, 'ui-base-runtime-react-test:state:server-connection-status'),
+    connectionError: await readNodeText(session, 'ui-base-runtime-react-test:state:connection-error'),
+    peerNodeId: await readNodeText(session, 'ui-base-runtime-react-test:state:peer-node-id'),
+    topologyStartError: await readNodeText(session, 'ui-base-runtime-react-test:topology-start-error'),
+    topologyStartStatus: await readNodeText(session, 'ui-base-runtime-react-test:topology-start-status'),
+    stateVariable: await readNodeText(session, 'ui-base-runtime-react-test:state:variable'),
+    homeLabel: await readNodeText(session, 'ui-base-runtime-react-test:home-label'),
+    screenVariable: await readNodeText(session, 'ui-base-runtime-react-test:variable-value'),
+    detailLabel: await readNodeText(session, 'ui-base-runtime-react-test:detail-label'),
+    modalLabel: await readNodeText(session, 'ui-base-runtime-react-test:modal-label'),
+    hasHome: await hasNode(session, 'ui-base-runtime-react-test:home'),
+    hasDetail: await hasNode(session, 'ui-base-runtime-react-test:detail'),
+    hasModal: await hasNode(session, 'ui-base-runtime-react-test:modal'),
+    hasSecondary: await hasNode(session, 'ui-base-runtime-react-test:secondary'),
+    hasExpoError: await hasNode(session, 'ui-base-runtime-react-test:expo-error-message'),
+})
 
 const assertNoRequireCycle = async (session, label) => {
     const consoleText = await runAgent(['--session', session, 'console'])
@@ -162,14 +205,15 @@ const assertNoRequireCycle = async (session, label) => {
 }
 
 const clickTestId = async (session, testId) => {
-    await evalInBrowser(session, `(() => {
-        const node = document.querySelector('[data-testid="${testId}"]')
-        if (!node) {
-            throw new Error('Missing testID: ${testId}')
-        }
-        node.click()
-        return true
-    })()`)
+    await callAutomation(session, 'ui.performAction', {
+        target: 'primary',
+        nodeId: testId,
+        action: 'press',
+    })
+    await callAutomation(session, 'wait.forIdle', {
+        target: 'primary',
+        timeoutMs: 3_000,
+    })
     await delay(Math.max(500, slowMs))
 }
 

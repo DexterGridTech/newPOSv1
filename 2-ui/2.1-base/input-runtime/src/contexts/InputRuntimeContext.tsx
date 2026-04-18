@@ -1,4 +1,4 @@
-import React, {createContext, useCallback, useContext, useMemo, useState} from 'react'
+import React, {createContext, useCallback, useContext, useMemo, useRef, useState} from 'react'
 import type {ManagedInputMode, VirtualKeyboardKey} from '../types'
 import {applyVirtualKeyToValue} from '../supports/inputController'
 
@@ -30,8 +30,23 @@ export interface InputRuntimeProviderProps {
     children: React.ReactNode
 }
 
+type ActiveVirtualInputUpdater = (
+    current: ActiveVirtualInput | null,
+) => ActiveVirtualInput | null
+
 export const InputRuntimeProvider: React.FC<InputRuntimeProviderProps> = ({children}) => {
-    const [activeInput, setActiveInput] = useState<ActiveVirtualInput | null>(null)
+    const [activeInput, setActiveInputState] = useState<ActiveVirtualInput | null>(null)
+    const activeInputRef = useRef<ActiveVirtualInput | null>(null)
+
+    const setActiveInput = useCallback((
+        nextInput: ActiveVirtualInput | null | ActiveVirtualInputUpdater,
+    ) => {
+        const resolved = typeof nextInput === 'function'
+            ? nextInput(activeInputRef.current)
+            : nextInput
+        activeInputRef.current = resolved
+        setActiveInputState(resolved)
+    }, [])
 
     const activateInput = useCallback((input: ActivateVirtualInputPayload) => {
         setActiveInput({
@@ -65,27 +80,28 @@ export const InputRuntimeProvider: React.FC<InputRuntimeProviderProps> = ({child
     }, [])
 
     const applyVirtualKey = useCallback((key: VirtualKeyboardKey) => {
-        setActiveInput(current => {
-            if (!current) {
-                return current
-            }
-            if (key === 'close') {
-                return null
+        const current = activeInputRef.current
+        if (!current) {
+            return
+        }
+        if (key === 'close') {
+            setActiveInput(null)
+            return
+        }
+
+        const nextValue = applyVirtualKeyToValue(current.value, key, current.mode, current.maxLength)
+        const nextInput = key === 'enter'
+            ? null
+            : {
+                ...current,
+                value: nextValue,
             }
 
-            const nextValue = applyVirtualKeyToValue(current.value, key, current.mode, current.maxLength)
-            if (nextValue !== current.value) {
-                current.onChangeText(nextValue)
-            }
-
-            return key === 'enter'
-                ? null
-                : {
-                    ...current,
-                    value: nextValue,
-                }
-        })
-    }, [])
+        setActiveInput(nextInput)
+        if (nextValue !== current.value) {
+            current.onChangeText(nextValue)
+        }
+    }, [setActiveInput])
 
     const value = useMemo<InputRuntimeContextValue>(() => ({
         activeInput,

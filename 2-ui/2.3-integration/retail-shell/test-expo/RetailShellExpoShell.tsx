@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useMemo, useState} from 'react'
 import {Provider} from 'react-redux'
 import {Text, View} from 'react-native'
 import {
@@ -25,6 +25,7 @@ import {
     type RuntimeReactHarness,
 } from '../../../2.1-base/runtime-react/test/support/runtimeReactHarness'
 import {UiRuntimeProvider} from '../../../2.1-base/runtime-react/src'
+import {createBrowserAutomationHost} from '../../../2.1-base/ui-automation-runtime/src/supports'
 import {createAdminPasswordVerifier} from '../../../2.1-base/admin-console/src'
 import {createModule as createAdminConsoleModule} from '../../../2.1-base/admin-console/src'
 import {createModule as createInputRuntimeModule} from '../../../2.1-base/input-runtime/src'
@@ -169,6 +170,22 @@ export const RetailShellExpoShell: React.FC = () => {
     const [harness, setHarness] = useState<RuntimeReactHarness | null>(null)
     const [activationCode, setActivationCode] = useState('')
     const [bootError, setBootError] = useState('')
+    const automationHost = useMemo(() => createBrowserAutomationHost({
+        autoStart: false,
+        buildProfile: 'test',
+        runtimeId: 'retail-shell-expo',
+        target: 'primary',
+    }), [])
+
+    useEffect(() => {
+        if (!harness) {
+            return undefined
+        }
+        automationHost.start()
+        return () => {
+            automationHost.stop()
+        }
+    }, [automationHost, harness])
 
     useEffect(() => {
         let disposed = false

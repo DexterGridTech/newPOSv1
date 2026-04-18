@@ -1,8 +1,8 @@
 import React from 'react'
 import {describe, expect, it, vi} from 'vitest'
-import {act} from 'react-test-renderer'
-import {InputField, InputRuntimeProvider, PinInputField, VirtualKeyboardOverlay} from '../../src'
-import {createInputHarness, renderWithStore} from '../support/inputHarness'
+import {InputField, InputRuntimeProvider, VirtualKeyboardOverlay} from '../../src'
+import {createInputHarness} from '../support/inputHarness'
+import {renderWithAutomation} from '../../../runtime-react/test/support/runtimeReactHarness'
 
 vi.mock('react-native', async () => {
     const ReactModule = await import('react')
@@ -18,7 +18,7 @@ describe('input-runtime rendered components', () => {
     it('renders dedicated virtual-keyboard fields and overlay', async () => {
         const harness = await createInputHarness()
         let value = '123456'
-        const tree = renderWithStore(
+        const tree = renderWithAutomation(
             <InputRuntimeProvider>
                 <>
                     <InputField
@@ -36,20 +36,25 @@ describe('input-runtime rendered components', () => {
             harness.runtime,
         )
 
-        expect(tree.toJSON()).toBeTruthy()
+        await expect(tree.getNode('ui-base-virtual-field:virtual-pin')).resolves.toMatchObject({
+            role: 'button',
+        })
+        await expect(tree.queryNodes('ui-base-virtual-keyboard')).resolves.toHaveLength(0)
+        expect(value).toBe('123456')
     })
 
     it('opens virtual keyboard from a virtual field and writes keys back through provider', async () => {
         const harness = await createInputHarness()
         let value = ''
-        const tree = renderWithStore(
+        const onChangeText = vi.fn((next: string) => {
+            value = next
+        })
+        const automation = renderWithAutomation(
             <InputRuntimeProvider>
                 <>
                     <InputField
                         value={value}
-                        onChangeText={(next) => {
-                            value = next
-                        }}
+                        onChangeText={onChangeText}
                         mode="virtual-pin"
                         secureTextEntry
                         maxLength={6}
@@ -62,24 +67,24 @@ describe('input-runtime rendered components', () => {
             harness.runtime,
         )
 
-        await act(async () => {
-            tree.root.findByProps({testID: 'ui-base-virtual-field:virtual-pin'}).props.onPress()
-        })
+        await automation.press('ui-base-virtual-field:virtual-pin')
+        await automation.waitForNode('ui-base-virtual-keyboard')
 
-        expect(() => tree.root.findByProps({testID: 'ui-base-virtual-keyboard'})).not.toThrow()
-
-        await act(async () => {
-            tree.root.findByProps({testID: 'ui-base-virtual-keyboard:key:1'}).props.onPress()
-            tree.root.findByProps({testID: 'ui-base-virtual-keyboard:key:2'}).props.onPress()
-            tree.root.findByProps({testID: 'ui-base-virtual-keyboard:key:backspace'}).props.onPress()
-        })
+        await automation.press('ui-base-virtual-keyboard:key:1')
+        await automation.press('ui-base-virtual-keyboard:key:2')
+        await automation.press('ui-base-virtual-keyboard:key:backspace')
+        await automation.waitForIdle()
 
         expect(value).toBe('1')
+        expect(onChangeText).toHaveBeenCalledTimes(3)
+        expect(onChangeText).toHaveBeenNthCalledWith(1, '1')
+        expect(onChangeText).toHaveBeenNthCalledWith(2, '12')
+        expect(onChangeText).toHaveBeenNthCalledWith(3, '1')
     })
 
-    it('renders centered preview text and pressable feedback styles for the virtual keyboard', async () => {
+    it('exposes virtual keyboard preview and primary keys through automation nodes', async () => {
         const harness = await createInputHarness()
-        const tree = renderWithStore(
+        const tree = renderWithAutomation(
             <InputRuntimeProvider>
                 <>
                     <InputField
@@ -95,31 +100,25 @@ describe('input-runtime rendered components', () => {
             harness.runtime,
         )
 
-        await act(async () => {
-            tree.root.findByProps({testID: 'ui-base-virtual-field:virtual-pin'}).props.onPress()
+        await tree.press('ui-base-virtual-field:virtual-pin')
+
+        await expect(tree.getText('ui-base-virtual-keyboard:title')).resolves.toBe('PIN 键盘')
+        await expect(tree.getText('ui-base-virtual-keyboard:value')).resolves.toBe('••')
+        await expect(tree.getNode('ui-base-virtual-keyboard:key:close')).resolves.toMatchObject({
+            role: 'button',
         })
-
-        const title = tree.root.findByProps({testID: 'ui-base-virtual-keyboard:title'})
-        const value = tree.root.findByProps({testID: 'ui-base-virtual-keyboard:value'})
-        const closeKey = tree.root.findByProps({testID: 'ui-base-virtual-keyboard:key:close'})
-        const digitKey = tree.root.findByProps({testID: 'ui-base-virtual-keyboard:key:1'})
-        const enterKey = tree.root.findByProps({testID: 'ui-base-virtual-keyboard:key:enter'})
-        const previewContainer = title.parent?.parent
-        expect(previewContainer).toBeTruthy()
-
-        expect(title.props.style.textAlign).toBe('center')
-        expect(value.props.style.textAlign).toBe('center')
-        expect(previewContainer?.props.style.borderWidth).toBe(1)
-        expect(previewContainer?.props.style.borderRadius).toBe(16)
-        expect(typeof closeKey.props.style).toBe('function')
-        expect(typeof digitKey.props.style).toBe('function')
-        expect(typeof enterKey.props.style).toBe('function')
+        await expect(tree.getNode('ui-base-virtual-keyboard:key:1')).resolves.toMatchObject({
+            role: 'button',
+        })
+        await expect(tree.getNode('ui-base-virtual-keyboard:key:enter')).resolves.toMatchObject({
+            role: 'button',
+        })
     })
 
-    it('uses a narrower max width for numeric keyboards than activation keyboards', async () => {
+    it('switches keyboard semantics between numeric and activation modes', async () => {
         const harness = await createInputHarness()
 
-        const pinTree = renderWithStore(
+        const pinTree = renderWithAutomation(
             <InputRuntimeProvider>
                 <>
                     <InputField
@@ -134,14 +133,13 @@ describe('input-runtime rendered components', () => {
             harness.runtime,
         )
 
-        await act(async () => {
-            pinTree.root.findByProps({testID: 'ui-base-virtual-field:virtual-pin'}).props.onPress()
-        })
+        await pinTree.press('ui-base-virtual-field:virtual-pin')
 
-        const pinKeyboard = pinTree.root.findByProps({testID: 'ui-base-virtual-keyboard'})
-        expect(pinKeyboard.props.style.maxWidth).toBe(360)
+        await expect(pinTree.getText('ui-base-virtual-keyboard:title')).resolves.toBe('PIN 键盘')
+        await expect(pinTree.getNode('ui-base-virtual-keyboard:key:9')).resolves.toBeTruthy()
+        await expect(pinTree.getNode('ui-base-virtual-keyboard:key:A')).resolves.toBeNull()
 
-        const activationTree = renderWithStore(
+        const activationTree = renderWithAutomation(
             <InputRuntimeProvider>
                 <>
                     <InputField
@@ -156,17 +154,46 @@ describe('input-runtime rendered components', () => {
             harness.runtime,
         )
 
-        await act(async () => {
-            activationTree.root.findByProps({testID: 'ui-base-virtual-field:virtual-activation-code'}).props.onPress()
-        })
+        await activationTree.press('ui-base-virtual-field:virtual-activation-code')
 
-        const activationKeyboard = activationTree.root.findByProps({testID: 'ui-base-virtual-keyboard'})
-        expect(activationKeyboard.props.style.maxWidth).toBe(520)
+        await expect(activationTree.getText('ui-base-virtual-keyboard:title')).resolves.toBe('激活码键盘')
+        await expect(activationTree.getNode('ui-base-virtual-keyboard:key:A')).resolves.toBeTruthy()
+        await expect(activationTree.getNode('ui-base-virtual-keyboard:key:F')).resolves.toBeTruthy()
+        await expect(activationTree.getNode('ui-base-virtual-keyboard:key:.')).resolves.toBeNull()
+    })
+
+    it('closes the virtual keyboard when the owning virtual field unmounts', async () => {
+        const harness = await createInputHarness()
+        const tree = renderWithAutomation(
+            <InputRuntimeProvider>
+                <>
+                    <InputField
+                        value=""
+                        onChangeText={() => {}}
+                        mode="virtual-activation-code"
+                    />
+                    <VirtualKeyboardOverlay />
+                </>
+            </InputRuntimeProvider>,
+            harness.store,
+            harness.runtime,
+        )
+
+        await tree.press('ui-base-virtual-field:virtual-activation-code')
+        await tree.waitForNode('ui-base-virtual-keyboard')
+
+        await tree.update(
+            <InputRuntimeProvider>
+                <VirtualKeyboardOverlay />
+            </InputRuntimeProvider>,
+        )
+
+        await expect(tree.queryNodes('ui-base-virtual-keyboard')).resolves.toHaveLength(0)
     })
 
     it('reduces the amount keyboard to four rows and removes clear or minus keys', async () => {
         const harness = await createInputHarness()
-        const tree = renderWithStore(
+        const tree = renderWithAutomation(
             <InputRuntimeProvider>
                 <>
                     <InputField
@@ -181,20 +208,19 @@ describe('input-runtime rendered components', () => {
             harness.runtime,
         )
 
-        await act(async () => {
-            tree.root.findByProps({testID: 'ui-base-virtual-field:virtual-amount'}).props.onPress()
-        })
+        await tree.press('ui-base-virtual-field:virtual-amount')
+        await tree.waitForNode('ui-base-virtual-keyboard')
 
-        expect(() => tree.root.findByProps({testID: 'ui-base-virtual-keyboard:key:0'})).not.toThrow()
-        expect(() => tree.root.findByProps({testID: 'ui-base-virtual-keyboard:key:.'})).not.toThrow()
-        expect(() => tree.root.findByProps({testID: 'ui-base-virtual-keyboard:key:backspace'})).not.toThrow()
-        expect(() => tree.root.findByProps({testID: 'ui-base-virtual-keyboard:key:clear'})).toThrow()
-        expect(() => tree.root.findByProps({testID: 'ui-base-virtual-keyboard:key:-'})).toThrow()
+        await expect(tree.getNode('ui-base-virtual-keyboard:key:0')).resolves.toBeTruthy()
+        await expect(tree.getNode('ui-base-virtual-keyboard:key:.')).resolves.toBeTruthy()
+        await expect(tree.getNode('ui-base-virtual-keyboard:key:backspace')).resolves.toBeTruthy()
+        await expect(tree.getNode('ui-base-virtual-keyboard:key:clear')).resolves.toBeNull()
+        await expect(tree.getNode('ui-base-virtual-keyboard:key:-')).resolves.toBeNull()
     })
 
     it('keeps unspecified fields on the system keyboard path', async () => {
         const harness = await createInputHarness()
-        const tree = renderWithStore(
+        const automation = renderWithAutomation(
             <InputRuntimeProvider>
                 <InputField
                     value="abc"
@@ -206,6 +232,9 @@ describe('input-runtime rendered components', () => {
             harness.runtime,
         )
 
-        expect(() => tree.root.findByProps({testID: 'ui-base-system-field:system-text'})).not.toThrow()
+        await expect(automation.getNode('ui-base-system-field:system-text')).resolves.toMatchObject({
+            testID: 'ui-base-system-field:system-text',
+            role: 'input',
+        })
     })
 })

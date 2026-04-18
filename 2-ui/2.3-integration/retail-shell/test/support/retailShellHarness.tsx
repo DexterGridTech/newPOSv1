@@ -1,5 +1,6 @@
 import {
     createRuntimeReactHarness,
+    renderWithAutomation,
     renderWithStore,
     type RuntimeReactHarness,
 } from '../../../../2.1-base/runtime-react/test/support/runtimeReactHarness'
@@ -41,7 +42,14 @@ const createRetailShellMockTransport = (): HttpTransport => ({
     },
 })
 
-export const createRetailShellHarness = async (): Promise<RetailShellHarness> =>
+export const createRetailShellHarness = async (
+    input: {
+        displayContext?: {
+            displayIndex?: number
+            displayCount?: number
+        }
+    } = {},
+): Promise<RetailShellHarness> =>
     createRuntimeReactHarness({
         modules: [
             createTcpControlRuntimeModuleV2({
@@ -76,9 +84,9 @@ export const createRetailShellHarness = async (): Promise<RetailShellHarness> =>
             },
         },
         displayContext: {
-            displayIndex: 0,
-            displayCount: 1,
+            displayIndex: input.displayContext?.displayIndex ?? 0,
+            displayCount: input.displayContext?.displayCount ?? 1,
         },
     })
 
-export {renderWithStore}
+export {renderWithStore, renderWithAutomation}

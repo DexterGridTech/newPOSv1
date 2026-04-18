@@ -79,4 +79,56 @@ describe('topology-runtime-v2 live state sync master-to-slave', () => {
             await harness.close()
         }
     })
+
+    it('overrides newer slave local state with authoritative master state', async () => {
+        const syncCommand = defineCommand<{entryKey: string; value: string; updatedAt: number}>({
+            moduleName: 'kernel.base.topology-runtime-v2.test.sync.master-to-slave.override',
+            commandName: 'put',
+        })
+
+        const harness = await createTopologyRuntimeV2StateSyncLiveHarness({
+            profileName: 'dual-topology.ws.topology-runtime-v2.state-sync.master-to-slave.override',
+            syncSliceName: 'kernel.base.topology-runtime-v2.test.sync-state.master-to-slave.override',
+            syncCommandName: syncCommand.commandName,
+            syncIntent: 'master-to-slave',
+        })
+
+        try {
+            await harness.configureTopologyPair()
+
+            expect((await harness.masterRuntime.dispatchCommand(createCommand(syncCommand, {
+                entryKey: 'root-screen',
+                value: 'welcome',
+                updatedAt: 100,
+            }))).status).toBe('COMPLETED')
+
+            expect((await harness.slaveRuntime.dispatchCommand(createCommand(syncCommand, {
+                entryKey: 'root-screen',
+                value: 'activation-secondary',
+                updatedAt: 999,
+            }))).status).toBe('COMPLETED')
+
+            await harness.startTopologyConnectionPair()
+
+            await waitFor(() => {
+                const slaveSlice = selectSyncValueState(
+                    harness.slaveRuntime.getState() as Record<string, unknown>,
+                    harness.syncSliceName,
+                )
+                return slaveSlice?.['root-screen']?.value === 'welcome'
+            }, 5_000)
+
+            expect(selectSyncValueState(
+                harness.slaveRuntime.getState() as Record<string, unknown>,
+                harness.syncSliceName,
+            )).toEqual({
+                'root-screen': {
+                    value: 'welcome',
+                    updatedAt: 100,
+                },
+            })
+        } finally {
+            await harness.close()
+        }
+    })
 })

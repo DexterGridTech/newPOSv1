@@ -59,6 +59,7 @@ export const createKernelRuntimeApp = (
         runtimeId,
         localNodeId,
         platformPorts,
+        storeEnhancers: config.storeEnhancers,
         modules,
         peerDispatchGateway: config.peerDispatchGateway,
         displayContext,

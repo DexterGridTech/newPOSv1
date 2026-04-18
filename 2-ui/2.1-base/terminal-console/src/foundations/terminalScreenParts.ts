@@ -3,10 +3,12 @@ import {
     uiRuntimeRootVariables,
 } from '@impos2/ui-base-runtime-react'
 import {ActivateDeviceScreen} from '../ui/screens/ActivateDeviceScreen'
+import {ActivateDeviceSecondaryScreen} from '../ui/screens/ActivateDeviceSecondaryScreen'
 import {TerminalSummaryScreen} from '../ui/screens/TerminalSummaryScreen'
 
 export const terminalConsoleScreenKeys = {
     activateDevice: 'ui.base.terminal.activate-device',
+    activateDeviceSecondary: 'ui.base.terminal.activate-device-secondary',
     terminalSummary: 'ui.base.terminal.summary',
 } as const
 
@@ -23,6 +25,19 @@ export const terminalConsoleScreenParts = {
         workspaces: ['main'],
         instanceModes: ['STANDALONE', 'MASTER', 'SLAVE'],
         component: ActivateDeviceScreen,
+    }),
+    activateDeviceSecondary: defineUiScreenPart({
+        partKey: terminalConsoleScreenKeys.activateDeviceSecondary,
+        rendererKey: terminalConsoleScreenKeys.activateDeviceSecondary,
+        name: 'activateDeviceSecondary',
+        title: '等待设备激活',
+        description: '副屏等待主屏完成设备激活',
+        containerKey: uiRuntimeRootVariables.secondaryRootContainer.key,
+        indexInContainer: 10,
+        screenModes: ['PRIMARY', 'SECONDARY', 'DESKTOP'],
+        workspaces: ['main', 'branch'],
+        instanceModes: ['MASTER', 'SLAVE'],
+        component: ActivateDeviceSecondaryScreen,
     }),
     terminalSummary: defineUiScreenPart({
         partKey: terminalConsoleScreenKeys.terminalSummary,

@@ -46,4 +46,10 @@ export const nativeConnector = {
         const listener = emitter.addListener(eventType, handler)
         return () => listener.remove()
     },
+    async isAvailable(channel: Record<string, unknown>): Promise<boolean> {
+        return await NativeConnectorTurboModule.isAvailable(JSON.stringify(channel))
+    },
+    async getAvailableTargets(type: string): Promise<readonly string[]> {
+        return await NativeConnectorTurboModule.getAvailableTargets(type)
+    },
 }

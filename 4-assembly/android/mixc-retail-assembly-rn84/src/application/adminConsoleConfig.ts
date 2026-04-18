@@ -1,0 +1,227 @@
+import {
+    createAdminConsoleModuleInputFromHost,
+} from '@impos2/ui-base-admin-console/supports'
+import type {
+    AdapterDiagnosticScenario,
+} from '@impos2/ui-base-admin-console/types'
+import type {CreateAdminConsoleModuleInput} from '@impos2/ui-base-admin-console/application'
+import {nativeLogger} from '../turbomodules/logger'
+import {nativeAppControl} from '../turbomodules/appControl'
+import {nativeConnector} from '../turbomodules/connector'
+import {nativeDevice} from '../turbomodules/device'
+import {nativeScriptExecutor} from '../turbomodules/scripts'
+import {nativeTopologyHost} from '../turbomodules/topologyHost'
+import {
+    getAssemblyServerSpaceSnapshot,
+    setAssemblySelectedServerSpace,
+} from '../platform-ports/serverSpaceState'
+import {createAssemblyStateStorage} from '../platform-ports/stateStorage'
+
+const ADAPTER_KEY_DEVICE = 'device'
+const ADAPTER_KEY_LOGGER = 'logger'
+const ADAPTER_KEY_CONNECTOR = 'connector'
+const ADAPTER_KEY_STORAGE = 'storage'
+const ADAPTER_KEY_SCRIPTS = 'scripts'
+const ADAPTER_KEY_TOPOLOGY = 'topology'
+const ADAPTER_KEY_APPCONTROL = 'app-control'
+
+const createAdapterDiagnosticScenarios = (): readonly AdapterDiagnosticScenario[] => {
+    const stateStorage = createAssemblyStateStorage('state')
+
+    return [
+        {
+            adapterKey: ADAPTER_KEY_DEVICE,
+            scenarioKey: 'device-info',
+            title: '设备信息读取',
+            async run() {
+                const info = await nativeDevice.getDeviceInfo()
+                return {
+                    status: typeof info.id === 'string' && info.id.length > 0 ? 'passed' : 'failed',
+                    message: typeof info.id === 'string' && info.id.length > 0 ? '设备信息可用' : '设备信息缺少 id',
+                    detail: info,
+                }
+            },
+        },
+        {
+            adapterKey: ADAPTER_KEY_DEVICE,
+            scenarioKey: 'system-status',
+            title: '系统状态读取',
+            async run() {
+                const status = await nativeDevice.getSystemStatus()
+                return {
+                    status: typeof status === 'object' && status != null ? 'passed' : 'failed',
+                    message: '系统状态读取完成',
+                    detail: status,
+                }
+            },
+        },
+        {
+            adapterKey: ADAPTER_KEY_LOGGER,
+            scenarioKey: 'write-and-list',
+            title: '日志写入与读取',
+            async run() {
+                nativeLogger.log('assembly.android.mixc-retail-rn84.admin', 'adapter-diagnostics-log')
+                const files = await nativeLogger.getLogFiles()
+                return {
+                    status: files.length > 0 ? 'passed' : 'failed',
+                    message: files.length > 0 ? '日志文件列表可用' : '日志文件列表为空',
+                    detail: {files},
+                }
+            },
+        },
+        {
+            adapterKey: ADAPTER_KEY_CONNECTOR,
+            scenarioKey: 'camera-availability',
+            title: '摄像头通道探测',
+            async run() {
+                const available = await nativeConnector.isAvailable({
+                    type: 'INTENT',
+                    target: 'camera',
+                    mode: 'request-response',
+                })
+                const targets = await nativeConnector.getAvailableTargets('INTENT')
+                return {
+                    status: available ? 'passed' : 'skipped',
+                    message: available ? '摄像头通道可用' : '摄像头通道不可用',
+                    detail: {available, targets},
+                }
+            },
+        },
+        {
+            adapterKey: ADAPTER_KEY_CONNECTOR,
+            scenarioKey: 'hid-availability',
+            title: 'HID 目标探测',
+            async run() {
+                const targets = await nativeConnector.getAvailableTargets('HID')
+                return {
+                    status: targets.length > 0 ? 'passed' : 'skipped',
+                    message: targets.length > 0 ? '发现 HID 目标' : '未发现 HID 目标',
+                    detail: {targets},
+                }
+            },
+        },
+        {
+            adapterKey: ADAPTER_KEY_STORAGE,
+            scenarioKey: 'read-write',
+            title: '状态存储读写',
+            async run() {
+                const key = 'admin.diagnostics.storage'
+                const value = JSON.stringify({ok: true})
+                await stateStorage.setItem(key, value)
+                const saved = await stateStorage.getItem(key)
+                await stateStorage.removeItem(key)
+                return {
+                    status: saved === value ? 'passed' : 'failed',
+                    message: saved === value ? '存储读写正常' : '存储读写不一致',
+                    detail: {saved},
+                }
+            },
+        },
+        {
+            adapterKey: ADAPTER_KEY_SCRIPTS,
+            scenarioKey: 'execute',
+            title: '脚本执行',
+            async run() {
+                const result = await nativeScriptExecutor.execute<number>({
+                    source: 'return params.left + params.right',
+                    params: {left: 2, right: 3},
+                })
+                return {
+                    status: result === 5 ? 'passed' : 'failed',
+                    message: result === 5 ? '脚本执行成功' : '脚本返回值异常',
+                    detail: {result},
+                }
+            },
+        },
+        {
+            adapterKey: ADAPTER_KEY_TOPOLOGY,
+            scenarioKey: 'host-status',
+            title: '拓扑宿主状态',
+            async run() {
+                const status = await nativeTopologyHost.getStatus()
+                return {
+                    status: 'passed',
+                    message: '拓扑宿主状态读取完成',
+                    detail: status,
+                }
+            },
+        },
+        {
+            adapterKey: ADAPTER_KEY_APPCONTROL,
+            scenarioKey: 'control-state',
+            title: '宿主控制状态',
+            async run() {
+                const [isFullScreen, isAppLocked] = await Promise.all([
+                    nativeAppControl.isFullScreen(),
+                    nativeAppControl.isAppLocked(),
+                ])
+                return {
+                    status: 'passed',
+                    message: '宿主控制状态读取完成',
+                    detail: {isFullScreen, isAppLocked},
+                }
+            },
+        },
+    ]
+}
+
+export const createAssemblyAdminConsoleInput = (): CreateAdminConsoleModuleInput => ({
+    ...createAdminConsoleModuleInputFromHost({
+        device: {
+            ...nativeDevice,
+            getModel: nativeDevice.getModel,
+            getDeviceInfo: nativeDevice.getDeviceInfo,
+            getSystemStatus: nativeDevice.getSystemStatus,
+        },
+        logs: {
+            getLogFiles: () => nativeLogger.getLogFiles(),
+            getLogContent: (fileName: string) => nativeLogger.getLogContent(fileName, 1024 * 1024),
+            deleteLogFile: (fileName: string) => nativeLogger.deleteLogFile(fileName),
+            clearAllLogs: () => nativeLogger.clearAllLogs(),
+            getLogDirPath: () => nativeLogger.getLogDirPath(),
+        },
+        control: {
+            restartApp: () => nativeAppControl.restartApp(),
+            clearCache: async () => {
+                const stateStorage = createAssemblyStateStorage('state')
+                const secureStateStorage = createAssemblyStateStorage('secure-state')
+                await stateStorage.clear?.()
+                await secureStateStorage.clear?.()
+            },
+            switchServerSpace: async (space: string) => {
+                setAssemblySelectedServerSpace(space)
+                await nativeAppControl.restartApp()
+            },
+            getServerSpaceSnapshot: async () => getAssemblyServerSpaceSnapshot(),
+            isFullScreen: () => nativeAppControl.isFullScreen(),
+            isAppLocked: () => nativeAppControl.isAppLocked(),
+            setFullScreen: (next: boolean) => nativeAppControl.setFullScreen(next),
+            setAppLocked: (next: boolean) => nativeAppControl.setAppLocked(next),
+        },
+        connector: nativeConnector,
+        connectorChannels: [
+            {
+                key: 'camera',
+                title: '摄像头扫码',
+                type: 'INTENT',
+                target: 'camera',
+                detail: '探测摄像头扫码意图通道。',
+            },
+            {
+                key: 'system',
+                title: '系统文件选择器',
+                type: 'INTENT',
+                target: 'system',
+                detail: '探测系统文件选择器通道。',
+            },
+            {
+                key: 'hid',
+                title: 'HID 键盘',
+                type: 'HID',
+                target: 'keyboard',
+                detail: '探测 HID 键盘或扫码枪通道。',
+            },
+        ],
+    }),
+    adapterDiagnosticScenarios: createAdapterDiagnosticScenarios(),
+})

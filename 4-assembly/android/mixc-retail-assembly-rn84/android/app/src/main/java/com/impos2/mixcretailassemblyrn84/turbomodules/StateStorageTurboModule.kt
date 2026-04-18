@@ -14,38 +14,43 @@ class StateStorageTurboModule(reactContext: ReactApplicationContext) :
     const val NAME = "StateStorageTurboModule"
   }
 
-  private val storage by lazy { StateStorageManager.getInstance(reactApplicationContext.applicationContext) }
+  private fun getStorage(namespace: String): StateStorageManager {
+    return StateStorageManager.getInstance(
+      context = reactApplicationContext.applicationContext,
+      storageId = namespace,
+    )
+  }
 
   override fun getName(): String = NAME
 
-  override fun getString(key: String, promise: Promise) {
-    runCatching { storage.getString(key) }
+  override fun getString(namespace: String, key: String, promise: Promise) {
+    runCatching { getStorage(namespace).getString(key) }
       .onSuccess { promise.resolve(it) }
       .onFailure { promise.reject("STATE_STORAGE_ERROR", it.message, it) }
   }
 
-  override fun setString(key: String, value: String, promise: Promise) {
-    runCatching { storage.setString(key, value) }
+  override fun setString(namespace: String, key: String, value: String, promise: Promise) {
+    runCatching { getStorage(namespace).setString(key, value) }
       .onSuccess { promise.resolve(null) }
       .onFailure { promise.reject("STATE_STORAGE_ERROR", it.message, it) }
   }
 
-  override fun remove(key: String, promise: Promise) {
-    runCatching { storage.remove(key) }
+  override fun remove(namespace: String, key: String, promise: Promise) {
+    runCatching { getStorage(namespace).remove(key) }
       .onSuccess { promise.resolve(null) }
       .onFailure { promise.reject("STATE_STORAGE_ERROR", it.message, it) }
   }
 
-  override fun clearAll(promise: Promise) {
-    runCatching { storage.clearAll() }
+  override fun clearAll(namespace: String, promise: Promise) {
+    runCatching { getStorage(namespace).clearAll() }
       .onSuccess { promise.resolve(null) }
       .onFailure { promise.reject("STATE_STORAGE_ERROR", it.message, it) }
   }
 
-  override fun getAllKeys(promise: Promise) {
+  override fun getAllKeys(namespace: String, promise: Promise) {
     runCatching {
       Arguments.createArray().apply {
-        storage.getAllKeys().forEach { pushString(it) }
+        getStorage(namespace).getAllKeys().forEach { pushString(it) }
       }
     }.onSuccess {
       promise.resolve(it)

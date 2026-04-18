@@ -1,12 +1,15 @@
 import React from 'react'
 import {describe, expect, it, vi} from 'vitest'
 import {act} from 'react-test-renderer'
+import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
 import {tcpControlV2StateActions} from '@impos2/kernel-base-tcp-control-runtime-v2'
+import {topologyRuntimeV2CommandDefinitions} from '@impos2/kernel-base-topology-runtime-v2'
 import {
     ActivateDeviceScreen,
+    ActivateDeviceSecondaryScreen,
     TerminalSummaryScreen,
 } from '../../src'
-import {createTerminalConsoleHarness, renderWithStore} from '../support/terminalConsoleHarness'
+import {createTerminalConsoleHarness, renderWithAutomation} from '../support/terminalConsoleHarness'
 
 vi.mock('react-native', async () => {
     const ReactModule = await import('react')
@@ -21,11 +24,40 @@ vi.mock('react-native', async () => {
 describe('terminal-console screens', () => {
     it('renders activation screen with stable call-to-action nodes', async () => {
         const harness = await createTerminalConsoleHarness()
-        const tree = renderWithStore(<ActivateDeviceScreen />, harness.store, harness.runtime)
+        const tree = renderWithAutomation(<ActivateDeviceScreen />, harness.store, harness.runtime)
 
-        expect(() => tree.root.findByProps({testID: 'ui-base-terminal-activate-device'})).not.toThrow()
-        expect(() => tree.root.findByProps({testID: 'ui-base-terminal-activate-device:input'})).not.toThrow()
-        expect(() => tree.root.findByProps({testID: 'ui-base-terminal-activate-device:submit'})).not.toThrow()
+        await expect(tree.getNode('ui-base-terminal-activate-device')).resolves.toBeTruthy()
+        await expect(tree.getNode('ui-base-terminal-activate-device:title')).resolves.toBeTruthy()
+        await expect(tree.getNode('ui-base-terminal-activate-device:input')).resolves.toBeTruthy()
+        await expect(tree.getNode('ui-base-terminal-activate-device:submit')).resolves.toBeTruthy()
+        await expect(tree.getNode('ui-base-terminal-activate-device:identity')).resolves.toBeTruthy()
+        await expect(tree.getNode('ui-base-terminal-activate-device:device-id')).resolves.toBeTruthy()
+    })
+
+    it('renders secondary waiting screen with stable terminal context nodes', async () => {
+        const harness = await createTerminalConsoleHarness({
+            displayContext: {
+                displayIndex: 1,
+                displayCount: 2,
+            },
+        })
+        await act(async () => {
+            await harness.runtime.dispatchCommand(createCommand(
+                topologyRuntimeV2CommandDefinitions.setDisplayMode,
+                {
+                    displayMode: 'SECONDARY',
+                },
+            ))
+            harness.store.dispatch(tcpControlV2StateActions.setDeviceInfo({
+                id: 'DEVICE-SECONDARY-001',
+                model: 'Renderer POS Secondary',
+            }))
+        })
+
+        const tree = renderWithAutomation(<ActivateDeviceSecondaryScreen />, harness.store, harness.runtime)
+        await expect(tree.getNode('ui-base-terminal-activate-device-secondary')).resolves.toBeTruthy()
+        await expect(tree.getNode('ui-base-terminal-activate-device-secondary:device-id')).resolves.toBeTruthy()
+        await expect(tree.getNode('ui-base-terminal-activate-device-secondary:display-mode')).resolves.toBeTruthy()
     })
 
     it('renders summary screen against the kernel runtime', async () => {
@@ -47,11 +79,10 @@ describe('terminal-console screens', () => {
             }))
         })
 
-        const summary = renderWithStore(<TerminalSummaryScreen />, harness.store, harness.runtime)
+        const summary = renderWithAutomation(<TerminalSummaryScreen />, harness.store, harness.runtime)
 
-        expect(summary.toJSON()).toBeTruthy()
-        expect(() => summary.root.findByProps({testID: 'ui-base-terminal-summary'})).not.toThrow()
-        expect(String(summary.root.findByProps({testID: 'ui-base-terminal-summary:description'}).props.children))
-            .toContain('终端已完成激活')
+        await expect(summary.getNode('ui-base-terminal-summary')).resolves.toBeTruthy()
+        await expect(summary.getText('ui-base-terminal-summary:description'))
+            .resolves.toContain('终端已完成激活')
     })
 })

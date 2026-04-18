@@ -5,6 +5,7 @@ export interface ScriptExecutorPort {
         source: string
         params?: Record<string, unknown>
         globals?: Record<string, unknown>
+        nativeFunctions?: Record<string, (...args: any[]) => unknown>
         timeoutMs?: number
     }): Promise<T>
 }
@@ -24,6 +25,9 @@ export interface DevicePort {
     getDeviceId(): Promise<string>
     getPlatform(): Promise<string>
     getModel?(): Promise<string>
+    addPowerStatusChangeListener?(
+        listener: (event: Record<string, unknown>) => void,
+    ): () => void
 }
 
 export interface AppControlPort {
@@ -55,6 +59,8 @@ export interface ConnectorPort {
         eventType: string,
         handler: (event: Record<string, unknown>) => void,
     ): () => void
+    isAvailable?(channel: Record<string, unknown>): Promise<boolean>
+    getAvailableTargets?(type: string): Promise<readonly string[]>
     connect?(input: Record<string, unknown>): Promise<Record<string, unknown>>
     disconnect?(input?: Record<string, unknown>): Promise<void>
 }

@@ -10,10 +10,14 @@ const {
     createAdminConsoleModuleMock,
     createTerminalConsoleModuleMock,
     createRetailShellModuleMock,
+    createAssemblyRuntimeModuleMock,
+    createAssemblyAdminConsoleInputMock,
     createHttpRuntimeMock,
     createAssemblyFetchTransportMock,
     createAssemblyPlatformPortsMock,
     createAssemblyTopologyInputMock,
+    createReactotronEnhancerMock,
+    createAssemblyAutomationMock,
     startMock,
     runtimeApp,
     topologyModule,
@@ -41,6 +45,8 @@ const {
         createAdminConsoleModuleMock: vi.fn((..._args: any[]) => ({kind: 'admin-console-module'})),
         createTerminalConsoleModuleMock: vi.fn((..._args: any[]) => ({kind: 'terminal-console-module'})),
         createRetailShellModuleMock: vi.fn((..._args: any[]) => ({kind: 'retail-shell-module'})),
+        createAssemblyRuntimeModuleMock: vi.fn((..._args: any[]) => ({kind: 'assembly-runtime-module'})),
+        createAssemblyAdminConsoleInputMock: vi.fn(() => ({kind: 'assembly-admin-console-input'})),
         createHttpRuntimeMock: vi.fn((..._args: any[]) => ({kind: 'http-runtime'})),
         createAssemblyFetchTransportMock: vi.fn((..._args: any[]) => ({kind: 'fetch-transport'})),
         createAssemblyPlatformPortsMock: vi.fn((..._args: any[]) => ({
@@ -50,6 +56,19 @@ const {
             },
         })),
         createAssemblyTopologyInputMock: vi.fn((..._args: any[]) => ({kind: 'topology-input'})),
+        createReactotronEnhancerMock: vi.fn(() => ({kind: 'reactotron-enhancer'})),
+        createAssemblyAutomationMock: vi.fn(() => ({
+            controller: {dispatchMessage: vi.fn()},
+            runtimeReactBridge: {
+                registerNode: vi.fn(() => () => {}),
+                updateNode: vi.fn(),
+                clearVisibleContexts: vi.fn(),
+                clearTarget: vi.fn(),
+                performNodeAction: vi.fn(),
+            },
+            attachRuntime: vi.fn(() => () => {}),
+            dispose: vi.fn(),
+        })),
         startMock,
         runtimeApp,
         topologyModule: {kind: 'topology-module'},
@@ -60,6 +79,7 @@ const {
         adminConsoleModule: {kind: 'admin-console-module'},
         terminalConsoleModule: {kind: 'terminal-console-module'},
         retailShellModule: {kind: 'retail-shell-module'},
+        assemblyRuntimeModule: {kind: 'assembly-runtime-module'},
     }
 })
 
@@ -126,13 +146,30 @@ vi.mock('@impos2/ui-integration-retail-shell', () => ({
     createModule: createRetailShellModuleMock,
 }))
 
+vi.mock('../../src/application/createModule', () => ({
+    createModule: createAssemblyRuntimeModuleMock,
+}))
+
+vi.mock('../../src/application/adminConsoleConfig', () => ({
+    createAssemblyAdminConsoleInput: createAssemblyAdminConsoleInputMock,
+}))
+
 vi.mock('../../src/platform-ports', () => ({
     createAssemblyFetchTransport: createAssemblyFetchTransportMock,
     createAssemblyPlatformPorts: createAssemblyPlatformPortsMock,
     createAssemblyTopologyInput: createAssemblyTopologyInputMock,
 }))
 
+vi.mock('../../src/platform-ports/reactotronConfig', () => ({
+    createReactotronEnhancer: createReactotronEnhancerMock,
+}))
+
+vi.mock('../../src/application/automation', () => ({
+    createAssemblyAutomation: createAssemblyAutomationMock,
+}))
+
 import {createApp} from '../../src/application/createApp'
+import {releaseInfo} from '../../src/generated/releaseInfo'
 
 describe('assembly createApp', () => {
     beforeEach(() => {
@@ -147,6 +184,8 @@ describe('assembly createApp', () => {
         createAdminConsoleModuleMock.mockReturnValue(adminConsoleModule)
         createTerminalConsoleModuleMock.mockReturnValue(terminalConsoleModule)
         createRetailShellModuleMock.mockReturnValue(retailShellModule)
+        createAssemblyRuntimeModuleMock.mockReturnValue({kind: 'assembly-runtime-module'})
+        createAssemblyAutomationMock.mockClear()
     })
 
     it('assembles the retail shell into the runtime module graph', async () => {
@@ -173,11 +212,13 @@ describe('assembly createApp', () => {
         const runtimeConfig = runtimeCall![0] as any
         expect(runtimeConfig.runtimeName).toBe('assembly.android.mixc-retail-rn84')
         expect(runtimeConfig.localNodeId).toBe('master-device-1')
+        expect(runtimeConfig.storeEnhancers).toEqual([{kind: 'reactotron-enhancer'}])
         expect(runtimeConfig.displayContext).toEqual({
             displayIndex: 0,
             displayCount: 2,
         })
         expect(runtimeConfig.modules).toEqual([
+            {kind: 'assembly-runtime-module'},
             topologyModule,
             tcpControlModule,
             uiRuntimeModule,
@@ -189,6 +230,14 @@ describe('assembly createApp', () => {
         ])
 
         expect(createRetailShellModuleMock).toHaveBeenCalledTimes(1)
+        expect(createAssemblyAdminConsoleInputMock).toHaveBeenCalledTimes(1)
+        expect(createAdminConsoleModuleMock).toHaveBeenCalledWith({kind: 'assembly-admin-console-input'})
+        expect(createReactotronEnhancerMock).toHaveBeenCalledWith({
+            isEmulator: true,
+            displayIndex: 0,
+            deviceId: 'device-1',
+        })
+        expect(releaseInfo.appId).toBe('assembly-android-mixc-retail-rn84')
 
         const tcpControlCall = createTcpControlRuntimeModuleV2Mock.mock.calls.at(0)
         expect(tcpControlCall).toBeDefined()
@@ -212,22 +261,31 @@ describe('assembly createApp', () => {
                 retryRounds: 1,
                 failoverStrategy: 'ordered',
             },
-            servers: [
-                {
-                    serverName: 'mock-terminal-platform',
-                    addresses: [
-                        {name: 'primary', baseUrl: 'http://127.0.0.1:9100'},
-                        {name: 'secondary', baseUrl: 'http://mock-terminal-platform:secondary'},
-                    ],
-                },
-                {
-                    serverName: 'other-server',
-                    addresses: [{name: 'primary', baseUrl: 'http://other-server'}],
-                },
-            ],
         })
+        expect(typeof httpRuntimeCall![0].serverProvider).toBe('function')
+        expect(httpRuntimeCall![0].serverProvider()).toEqual([
+            {
+                serverName: 'mock-terminal-platform',
+                addresses: [
+                    {name: 'primary', baseUrl: 'http://127.0.0.1:9100'},
+                    {name: 'secondary', baseUrl: 'http://mock-terminal-platform:secondary'},
+                ],
+            },
+            {
+                serverName: 'other-server',
+                addresses: [{name: 'primary', baseUrl: 'http://other-server'}],
+            },
+        ])
 
         await result.start()
         expect(startMock).toHaveBeenCalledTimes(1)
+        expect(createAssemblyAutomationMock).toHaveBeenCalledWith(expect.objectContaining({
+            buildProfile: 'debug',
+            automationEnabled: true,
+            scriptExecutionAvailable: true,
+        }))
+        expect(result.uiRuntimeProviderProps).toMatchObject({
+            automationRuntimeId: 'primary-runtime',
+        })
     })
 })

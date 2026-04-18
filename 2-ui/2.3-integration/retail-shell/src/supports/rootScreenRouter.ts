@@ -15,14 +15,25 @@ export const replaceRetailShellRootScreen = async (
     context: Pick<ActorExecutionContext, 'dispatchCommand'>,
     input: ReplaceRetailShellRootScreenInput,
 ) => {
-    const target = input.activated
+    const primaryTarget = input.activated
         ? retailShellNavigationTargets.welcome
         : retailShellNavigationTargets.activation
+    const secondaryTarget = input.activated
+        ? retailShellNavigationTargets.welcomeSecondary
+        : retailShellNavigationTargets.activationSecondary
 
     await context.dispatchCommand(createCommand(
         uiRuntimeV2CommandDefinitions.replaceScreen,
         {
-            definition: target.definition,
+            definition: primaryTarget.definition,
+            props: input.activated ? {terminalId: input.terminalId} : undefined,
+            source: input.source,
+        },
+    ))
+    await context.dispatchCommand(createCommand(
+        uiRuntimeV2CommandDefinitions.replaceScreen,
+        {
+            definition: secondaryTarget.definition,
             props: input.activated ? {terminalId: input.terminalId} : undefined,
             source: input.source,
         },

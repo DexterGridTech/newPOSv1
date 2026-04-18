@@ -1,3 +1,7 @@
 export * from './createApp'
+export * from './createModule'
 export * from './bootstrapRuntime'
 export * from './resolveTopologyLaunch'
+export * from './reportAppLoadComplete'
+export * from './adminConsoleConfig'
+export * from './automation'

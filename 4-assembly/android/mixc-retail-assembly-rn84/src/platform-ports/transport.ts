@@ -50,6 +50,16 @@ export const createAssemblyWebSocketTransport = (): SocketTransport => ({
         connection: SocketResolvedConnection<TPath, TQuery, THeaders, TIncoming, TOutgoing>,
         handlers: SocketConnectionHandlers,
     ): Promise<SocketTransportConnection> {
+        const parsedUrl = connection.url.match(/^([a-z][a-z0-9+.-]*):\/\/([^/?#]+)(\/[^?#]*)?/i)
+        if (!parsedUrl?.[2]) {
+            throw new Error(`Assembly WebSocket url host is empty: ${connection.url}`)
+        }
+        console.info('[assembly.android.mixc-retail-rn84.websocket] connect', {
+            url: connection.url,
+            protocol: parsedUrl[1],
+            host: parsedUrl[2],
+            pathname: parsedUrl[3] ?? '/',
+        })
         const socket = new WebSocket(connection.url)
 
         socket.onopen = () => {

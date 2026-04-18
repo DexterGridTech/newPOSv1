@@ -1,6 +1,5 @@
 import React from 'react'
 import {describe, expect, it} from 'vitest'
-import {act} from 'react-test-renderer'
 import {
     createCommand,
     runtimeShellV2CommandDefinitions,
@@ -18,7 +17,7 @@ import {
 } from '@impos2/kernel-base-tcp-control-runtime-v2'
 import {AdminTerminalSection} from '@impos2/ui-base-admin-console'
 import type {RootState} from '@impos2/kernel-base-state-runtime'
-import {createRetailShellHarness, renderWithStore} from '../support/retailShellHarness'
+import {createRetailShellHarness, renderWithAutomation} from '../support/retailShellHarness'
 
 const selectPrimaryRoot = (state: RootState) =>
     selectUiScreen(state, uiRuntimeRootVariables.primaryRootContainer.key)
@@ -43,19 +42,14 @@ describe('retail-shell admin deactivation loop', () => {
         expect(selectPrimaryRoot(harness.runtime.getState())?.partKey)
             .toBe('ui.integration.retail-shell.welcome')
 
-        const tree = renderWithStore(
+        const tree = renderWithAutomation(
             <AdminTerminalSection runtime={harness.runtime} store={harness.store} />,
             harness.store,
             harness.runtime,
         )
 
-        await act(async () => {
-            tree.root.findByProps({testID: 'ui-base-admin-section:terminal:deactivate'}).props.onPress()
-        })
-
-        await act(async () => {
-            await Promise.resolve()
-        })
+        await tree.press('ui-base-admin-section:terminal:deactivate')
+        await tree.waitForIdle()
 
         const state = harness.runtime.getState()
         expect(selectTcpIdentitySnapshot(state).activationStatus).toBe('UNACTIVATED')

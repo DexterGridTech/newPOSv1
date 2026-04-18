@@ -1,7 +1,5 @@
 import React from 'react'
 import {describe, expect, it, vi} from 'vitest'
-import {act} from 'react-test-renderer'
-import type {ReactTestRenderer} from 'react-test-renderer'
 import {
     AdminConnectorSection,
     AdminControlSection,
@@ -11,53 +9,22 @@ import {
 } from '../../src'
 import {
     createAdminConsoleHarness,
-    renderWithStore,
+    renderWithAutomation,
 } from '../support/adminConsoleHarness'
-
-const toText = (value: unknown): string => {
-    if (Array.isArray(value)) {
-        return value.map(toText).join('')
-    }
-    if (value === undefined || value === null) {
-        return ''
-    }
-    return String(value)
-}
-
-const collectText = (value: unknown, bucket: string[]) => {
-    if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
-        bucket.push(String(value))
-        return
-    }
-    if (Array.isArray(value)) {
-        value.forEach(item => collectText(item, bucket))
-    }
-}
-
-const hasRenderedText = (
-    tree: ReactTestRenderer,
-    expected: string,
-): boolean => {
-    const bucket: string[] = []
-    tree.root.findAll(() => true).forEach(node => {
-        collectText(node.props.children, bucket)
-    })
-    return bucket.some(item => item.includes(expected))
-}
 
 describe('admin host-backed sections', () => {
     it('falls back to unavailable views when host tools are not installed', async () => {
         const harness = await createAdminConsoleHarness()
 
-        const deviceTree = renderWithStore(<AdminDeviceSection />, harness.store, harness.runtime)
-        const logsTree = renderWithStore(<AdminLogsSection />, harness.store, harness.runtime)
-        const controlTree = renderWithStore(<AdminControlSection />, harness.store, harness.runtime)
-        const connectorTree = renderWithStore(<AdminConnectorSection />, harness.store, harness.runtime)
+        const deviceTree = renderWithAutomation(<AdminDeviceSection />, harness.store, harness.runtime)
+        const logsTree = renderWithAutomation(<AdminLogsSection />, harness.store, harness.runtime)
+        const controlTree = renderWithAutomation(<AdminControlSection />, harness.store, harness.runtime)
+        const connectorTree = renderWithAutomation(<AdminConnectorSection />, harness.store, harness.runtime)
 
-        expect(() => deviceTree.root.findByProps({testID: 'ui-base-admin-section:device:unavailable'})).not.toThrow()
-        expect(() => logsTree.root.findByProps({testID: 'ui-base-admin-section:logs:unavailable'})).not.toThrow()
-        expect(() => controlTree.root.findByProps({testID: 'ui-base-admin-section:control:unavailable'})).not.toThrow()
-        expect(() => connectorTree.root.findByProps({testID: 'ui-base-admin-section:connector:unavailable'})).not.toThrow()
+        await expect(deviceTree.getNode('ui-base-admin-section:device:unavailable')).resolves.toBeTruthy()
+        await expect(logsTree.getNode('ui-base-admin-section:logs:unavailable')).resolves.toBeTruthy()
+        await expect(controlTree.getNode('ui-base-admin-section:control:unavailable')).resolves.toBeTruthy()
+        await expect(connectorTree.getNode('ui-base-admin-section:connector:unavailable')).resolves.toBeTruthy()
     })
 
     it('renders device snapshot from injected device host and supports refresh', async () => {
@@ -84,25 +51,23 @@ describe('admin host-backed sections', () => {
         const harness = await createAdminConsoleHarness({
             hostTools: {device: deviceHost},
         })
-        const tree = renderWithStore(<AdminDeviceSection />, harness.store, harness.runtime)
+        const tree = renderWithAutomation(<AdminDeviceSection />, harness.store, harness.runtime)
 
-        await act(async () => {})
+        await tree.waitForText('DEVICE-001')
         expect(deviceHost.getSnapshot).toHaveBeenCalledTimes(1)
-        expect(hasRenderedText(tree, 'DEVICE-001')).toBe(true)
-        expect(hasRenderedText(tree, '资源概览')).toBe(true)
-        expect(hasRenderedText(tree, '资源摘要')).toBe(true)
-        expect(hasRenderedText(tree, 'USB 设备')).toBe(true)
-        expect(hasRenderedText(tree, 'USB-PINPAD')).toBe(true)
-        expect(hasRenderedText(tree, '串口设备')).toBe(true)
-        expect(hasRenderedText(tree, '115200 baud')).toBe(true)
+        await expect(tree.queryNodesByText('DEVICE-001')).resolves.toHaveLength(1)
+        await expect(tree.queryNodesByText('资源概览')).resolves.toHaveLength(1)
+        await expect(tree.queryNodesByText('资源摘要')).resolves.toHaveLength(1)
+        await expect(tree.queryNodesByText('USB 设备')).resolves.not.toHaveLength(0)
+        await expect(tree.queryNodesByText('USB-PINPAD')).resolves.not.toHaveLength(0)
+        await expect(tree.queryNodesByText('串口设备')).resolves.not.toHaveLength(0)
+        await expect(tree.queryNodesByTextContains('115200 baud')).resolves.not.toHaveLength(0)
 
-        await act(async () => {
-            tree.root.findByProps({testID: 'ui-base-admin-section:device:refresh'}).props.onPress()
-        })
+        await tree.press('ui-base-admin-section:device:refresh')
 
         expect(deviceHost.getSnapshot).toHaveBeenCalledTimes(2)
-        expect(hasRenderedText(tree, 'DEVICE-002')).toBe(true)
-        expect(hasRenderedText(tree, 'USB-SCANNER')).toBe(true)
+        await expect(tree.queryNodesByText('DEVICE-002')).resolves.toHaveLength(1)
+        await expect(tree.queryNodesByText('USB-SCANNER')).resolves.toHaveLength(1)
     })
 
     it('executes log host actions through the logs section', async () => {
@@ -122,27 +87,21 @@ describe('admin host-backed sections', () => {
         const harness = await createAdminConsoleHarness({
             hostTools: {logs: logHost},
         })
-        const tree = renderWithStore(<AdminLogsSection />, harness.store, harness.runtime)
+        const tree = renderWithAutomation(<AdminLogsSection />, harness.store, harness.runtime)
 
-        await act(async () => {})
+        await tree.waitForText('app.log')
         expect(logHost.listFiles).toHaveBeenCalledTimes(1)
         expect(logHost.getDirectoryPath).toHaveBeenCalledTimes(1)
-        expect(hasRenderedText(tree, 'app.log')).toBe(true)
+        await expect(tree.queryNodesByText('app.log')).resolves.toHaveLength(1)
 
-        await act(async () => {
-            tree.root.findByProps({testID: 'ui-base-admin-section:logs:open:0'}).props.onPress()
-        })
+        await tree.press('ui-base-admin-section:logs:open:0')
         expect(logHost.readFile).toHaveBeenCalledWith('app.log')
-        expect(hasRenderedText(tree, 'hello-log')).toBe(true)
+        await expect(tree.queryNodesByText('hello-log')).resolves.toHaveLength(1)
 
-        await act(async () => {
-            tree.root.findByProps({testID: 'ui-base-admin-section:logs:delete:0'}).props.onPress()
-        })
+        await tree.press('ui-base-admin-section:logs:delete:0')
         expect(logHost.deleteFile).toHaveBeenCalledWith('app.log')
 
-        await act(async () => {
-            tree.root.findByProps({testID: 'ui-base-admin-section:logs:clear'}).props.onPress()
-        })
+        await tree.press('ui-base-admin-section:logs:clear')
         expect(logHost.clearAll).toHaveBeenCalledTimes(1)
     })
 
@@ -219,40 +178,30 @@ describe('admin host-backed sections', () => {
         const harness = await createAdminConsoleHarness({
             hostTools: {control: controlHost},
         })
-        const tree = renderWithStore(<AdminControlSection />, harness.store, harness.runtime)
+        const tree = renderWithAutomation(<AdminControlSection />, harness.store, harness.runtime)
 
-        await act(async () => {})
-        expect(hasRenderedText(tree, '全屏 / 锁定 / 清缓存 / 重启')).toBe(true)
+        await tree.waitForText('全屏 / 锁定 / 清缓存 / 重启')
+        await expect(tree.queryNodesByText('全屏 / 锁定 / 清缓存 / 重启')).resolves.toHaveLength(1)
 
-        await act(async () => {
-            tree.root.findByProps({testID: 'ui-base-admin-section:control:toggle-fullscreen'}).props.onPress()
-        })
+        await tree.press('ui-base-admin-section:control:toggle-fullscreen')
         expect(controlHost.setFullScreen).toHaveBeenCalledWith(true)
-        expect(hasRenderedText(tree, '已开启全屏')).toBe(true)
+        await expect(tree.queryNodesByText('已开启全屏')).resolves.toHaveLength(1)
 
-        await act(async () => {
-            tree.root.findByProps({testID: 'ui-base-admin-section:control:toggle-lock'}).props.onPress()
-        })
+        await tree.press('ui-base-admin-section:control:toggle-lock')
         expect(controlHost.setAppLocked).toHaveBeenCalledWith(true)
-        expect(hasRenderedText(tree, '已锁定应用')).toBe(true)
+        await expect(tree.queryNodesByText('已锁定应用')).resolves.toHaveLength(1)
 
-        await act(async () => {
-            tree.root.findByProps({testID: 'ui-base-admin-section:control:restart'}).props.onPress()
-        })
+        await tree.press('ui-base-admin-section:control:restart')
         expect(controlHost.restartApp).toHaveBeenCalledTimes(1)
-        expect(hasRenderedText(tree, '已发出应用重启指令')).toBe(true)
+        await expect(tree.queryNodesByText('已发出应用重启指令')).resolves.toHaveLength(1)
 
-        await act(async () => {
-            tree.root.findByProps({testID: 'ui-base-admin-section:control:clear-cache'}).props.onPress()
-        })
+        await tree.press('ui-base-admin-section:control:clear-cache')
         expect(controlHost.clearCache).toHaveBeenCalledTimes(1)
-        expect(hasRenderedText(tree, '已清空本地缓存')).toBe(true)
+        await expect(tree.queryNodesByText('已清空本地缓存')).resolves.toHaveLength(1)
 
-        await act(async () => {
-            tree.root.findByProps({testID: 'ui-base-admin-section:control:switch-space:uat'}).props.onPress()
-        })
+        await tree.press('ui-base-admin-section:control:switch-space:uat')
         expect(controlHost.switchServerSpace).toHaveBeenCalledWith('uat')
-        expect(hasRenderedText(tree, '已切换到 uat 空间')).toBe(true)
+        await expect(tree.queryNodesByText('已切换到 uat 空间')).resolves.toHaveLength(1)
     })
 
     it('executes connector probes through the injected connector host', async () => {
@@ -269,18 +218,16 @@ describe('admin host-backed sections', () => {
         const harness = await createAdminConsoleHarness({
             hostTools: {connector: connectorHost},
         })
-        const tree = renderWithStore(<AdminConnectorSection />, harness.store, harness.runtime)
+        const tree = renderWithAutomation(<AdminConnectorSection />, harness.store, harness.runtime)
 
-        await act(async () => {})
+        await tree.waitForText('串口主通道')
         expect(connectorHost.getChannels).toHaveBeenCalledTimes(1)
-        expect(hasRenderedText(tree, '串口主通道')).toBe(true)
+        await expect(tree.queryNodesByText('串口主通道')).resolves.toHaveLength(1)
 
-        await act(async () => {
-            tree.root.findByProps({testID: 'ui-base-admin-section:connector:probe:serial-main'}).props.onPress()
-        })
+        await tree.press('ui-base-admin-section:connector:probe:serial-main')
 
         expect(connectorHost.probe).toHaveBeenCalledWith('serial-main')
-        expect(hasRenderedText(tree, 'serial-ready')).toBe(true)
+        await expect(tree.queryNodesByText('serial-ready')).resolves.toHaveLength(1)
     })
 
     it('installs host tools through module input', async () => {
@@ -326,12 +273,13 @@ describe('admin host-backed sections', () => {
             },
         })
 
-        const deviceTree = renderWithStore(<AdminDeviceSection />, harness.store, harness.runtime)
-        const logsTree = renderWithStore(<AdminLogsSection />, harness.store, harness.runtime)
+        const deviceTree = renderWithAutomation(<AdminDeviceSection />, harness.store, harness.runtime)
+        const logsTree = renderWithAutomation(<AdminLogsSection />, harness.store, harness.runtime)
 
-        await act(async () => {})
+        await deviceTree.waitForText('PORT-DEVICE')
+        await logsTree.waitForText('module.log')
 
-        expect(hasRenderedText(deviceTree, 'PORT-DEVICE')).toBe(true)
-        expect(hasRenderedText(logsTree, 'module.log')).toBe(true)
+        await expect(deviceTree.queryNodesByText('PORT-DEVICE')).resolves.toHaveLength(1)
+        await expect(logsTree.queryNodesByText('module.log')).resolves.toHaveLength(1)
     })
 })

@@ -1,4 +1,6 @@
 export * from './createPlatformPorts'
 export * from './logger'
+export * from './stateStorage'
+export * from './serverSpaceState'
 export * from './topology'
 export * from './transport'

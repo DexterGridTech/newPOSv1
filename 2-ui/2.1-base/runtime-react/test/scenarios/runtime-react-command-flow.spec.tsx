@@ -1,14 +1,12 @@
 import React from 'react'
 import {describe, expect, it} from 'vitest'
-import {act} from 'react-test-renderer'
 import {
     createRuntimeReactHarness,
-    renderWithStore,
+    renderWithAutomation,
 } from '../support/runtimeReactHarness'
 import {createRuntimeReactScenarioModule} from '../support/runtimeReactScenarioModule'
 import {RuntimeReactScenarioStatePanel} from '../support/RuntimeReactScenarioStatePanel'
 import {UiRuntimeRootShell} from '../../src'
-import {textOf} from '../support/testRendererText'
 
 const createScenarioTree = async () => {
     const harness = await createRuntimeReactHarness({
@@ -19,7 +17,7 @@ const createScenarioTree = async () => {
         },
     })
 
-    return renderWithStore(
+    return renderWithAutomation(
         <>
             <RuntimeReactScenarioStatePanel />
             <UiRuntimeRootShell />
@@ -29,55 +27,48 @@ const createScenarioTree = async () => {
     )
 }
 
-const expectText = (
-    tree: ReturnType<typeof renderWithStore>,
-    testID: string,
-    expected: string,
-) => {
-    expect(textOf(tree.root.findByProps({testID}))).toBe(expected)
-}
-
 describe('runtime-react command flow', () => {
     it('renders bootstrapped screen parts and reacts to navigation, overlay, variable and display commands', async () => {
         const bootstrapTree = await createScenarioTree()
-        expectText(bootstrapTree, 'ui-base-runtime-react-test:state:primary', 'ui.base.runtime-react.test.home')
-        expectText(bootstrapTree, 'ui-base-runtime-react-test:state:secondary', 'ui.base.runtime-react.test.secondary')
-        expectText(bootstrapTree, 'ui-base-runtime-react-test:state:variable', 'bootstrapped')
-        expectText(bootstrapTree, 'ui-base-runtime-react-test:state:instance-mode', 'MASTER')
-        expectText(bootstrapTree, 'ui-base-runtime-react-test:state:display-mode', 'PRIMARY')
-        expectText(bootstrapTree, 'ui-base-runtime-react-test:state:workspace', 'MAIN')
+        await expect(bootstrapTree.getNode('ui-base-root-shell:primary')).resolves.toBeTruthy()
+        await expect(bootstrapTree.getText('ui-base-runtime-react-test:state:primary'))
+            .resolves.toBe('ui.base.runtime-react.test.home')
+        await expect(bootstrapTree.getText('ui-base-runtime-react-test:state:secondary'))
+            .resolves.toBe('ui.base.runtime-react.test.secondary')
+        await expect(bootstrapTree.getText('ui-base-runtime-react-test:state:variable'))
+            .resolves.toBe('bootstrapped')
+        await expect(bootstrapTree.getText('ui-base-runtime-react-test:state:instance-mode'))
+            .resolves.toBe('MASTER')
+        await expect(bootstrapTree.getText('ui-base-runtime-react-test:state:display-mode'))
+            .resolves.toBe('PRIMARY')
+        await expect(bootstrapTree.getText('ui-base-runtime-react-test:state:workspace'))
+            .resolves.toBe('MAIN')
 
         const navigateTree = await createScenarioTree()
-        await act(async () => {
-            navigateTree.root.findByProps({testID: 'ui-base-runtime-react-test:navigate-detail'}).props.onPress()
-        })
-        expectText(navigateTree, 'ui-base-runtime-react-test:state:primary', 'ui.base.runtime-react.test.detail')
+        await navigateTree.press('ui-base-runtime-react-test:navigate-detail')
+        await expect(navigateTree.getText('ui-base-runtime-react-test:state:primary'))
+            .resolves.toBe('ui.base.runtime-react.test.detail')
 
         const replaceTree = await createScenarioTree()
-        await act(async () => {
-            replaceTree.root.findByProps({testID: 'ui-base-runtime-react-test:replace-detail'}).props.onPress()
-        })
-        expectText(replaceTree, 'ui-base-runtime-react-test:detail-label', 'detail-from-replace')
+        await replaceTree.press('ui-base-runtime-react-test:replace-detail')
+        await expect(replaceTree.getText('ui-base-runtime-react-test:detail-label'))
+            .resolves.toBe('detail-from-replace')
 
         const overlayTree = await createScenarioTree()
-        await act(async () => {
-            overlayTree.root.findByProps({testID: 'ui-base-runtime-react-test:open-modal'}).props.onPress()
-        })
-        expectText(overlayTree, 'ui-base-runtime-react-test:state:overlay-count', '1')
-        expect(() => overlayTree.root.findByProps({testID: 'ui-base-runtime-react-test:modal'})).not.toThrow()
-        await act(async () => {
-            overlayTree.root.findByProps({testID: 'ui-base-runtime-react-test:close-modal'}).props.onPress()
-        })
-        expectText(overlayTree, 'ui-base-runtime-react-test:state:overlay-count', '0')
+        await overlayTree.press('ui-base-runtime-react-test:open-modal')
+        await expect(overlayTree.getText('ui-base-runtime-react-test:state:overlay-count'))
+            .resolves.toBe('1')
+        await expect(overlayTree.getNode('ui-base-runtime-react-test:modal')).resolves.toBeTruthy()
+        await overlayTree.press('ui-base-runtime-react-test:close-modal')
+        await expect(overlayTree.getText('ui-base-runtime-react-test:state:overlay-count'))
+            .resolves.toBe('0')
 
         const variableTree = await createScenarioTree()
-        await act(async () => {
-            variableTree.root.findByProps({testID: 'ui-base-runtime-react-test:set-variable'}).props.onPress()
-        })
-        expectText(variableTree, 'ui-base-runtime-react-test:state:variable', 'value-from-button')
-        await act(async () => {
-            variableTree.root.findByProps({testID: 'ui-base-runtime-react-test:secondary-display'}).props.onPress()
-        })
-        expectText(variableTree, 'ui-base-runtime-react-test:state:display-mode', 'SECONDARY')
+        await variableTree.press('ui-base-runtime-react-test:set-variable')
+        await expect(variableTree.getText('ui-base-runtime-react-test:state:variable'))
+            .resolves.toBe('value-from-button')
+        await variableTree.press('ui-base-runtime-react-test:secondary-display')
+        await expect(variableTree.getText('ui-base-runtime-react-test:state:display-mode'))
+            .resolves.toBe('SECONDARY')
     })
 })

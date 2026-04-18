@@ -4,6 +4,8 @@ import {TurboModuleRegistry} from 'react-native'
 export interface Spec extends TurboModule {
     getDeviceInfo(): Promise<Record<string, unknown>>
     getSystemStatus(): Promise<Record<string, unknown>>
+    addPowerStatusChangeListener(): Promise<string>
+    removePowerStatusChangeListener(listenerId: string): Promise<void>
     addListener(eventName: string): void
     removeListeners(count: number): void
 }

@@ -28,7 +28,9 @@ function main() {
     throw new Error(`app is not android: ${appId}`)
   }
 
-  const buildGradlePath = resolveRepoPath('4-assembly/android/mixc-retail-rn84v2/android/app/build.gradle')
+  const buildGradlePath = appId === 'assembly-android-mixc-retail-rn84'
+    ? resolveRepoPath('4-assembly/android/mixc-retail-assembly-rn84/android/app/build.gradle')
+    : resolveRepoPath('4-assembly/android/mixc-retail-rn84v2/android/app/build.gradle')
   const current = readText(buildGradlePath)
   let next = current
   next = replaceOne(next, /versionCode\s+\d+/, `versionCode ${manifest.buildNumber}`, 'versionCode')
