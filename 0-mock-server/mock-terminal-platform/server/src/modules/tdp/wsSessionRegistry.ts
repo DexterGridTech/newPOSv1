@@ -20,7 +20,7 @@ export interface OnlineTdpSession {
 }
 
 const sessionsById = new Map<string, OnlineTdpSession>()
-const sessionIdBySocket = new WeakMap<WebSocket, string>()
+let sessionIdBySocket = new WeakMap<WebSocket, string>()
 
 export const registerOnlineSession = (session: OnlineTdpSession) => {
   sessionsById.set(session.sessionId, session)
@@ -40,6 +40,16 @@ export const unregisterOnlineSession = (sessionId: string) => {
     clearTimeout(session.batchTimer)
   }
   sessionsById.delete(sessionId)
+}
+
+export const resetOnlineSessions = () => {
+  for (const session of sessionsById.values()) {
+    if (session.batchTimer) {
+      clearTimeout(session.batchTimer)
+    }
+  }
+  sessionsById.clear()
+  sessionIdBySocket = new WeakMap<WebSocket, string>()
 }
 
 export const listOnlineSessions = () => Array.from(sessionsById.values())

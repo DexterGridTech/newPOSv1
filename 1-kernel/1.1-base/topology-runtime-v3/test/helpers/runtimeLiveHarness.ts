@@ -85,6 +85,8 @@ export const createTopologyRuntimeV3LiveHarness = async (input: {
     profileName: string
     reconnectIntervalMs?: number
     reconnectAttempts?: number
+    slaveDisplayIndex?: number
+    slaveDisplayCount?: number
 }) => {
     const server = createDualTopologyHostV3Server({
         config: {
@@ -268,8 +270,8 @@ export const createTopologyRuntimeV3LiveHarness = async (input: {
                 nodeId: slaveNodeId,
                 role: 'SLAVE',
                 deviceId: 'slave-device',
-                displayIndex: 1,
-                displayCount: 2,
+                displayIndex: input.slaveDisplayIndex ?? 1,
+                displayCount: input.slaveDisplayCount ?? 2,
             }, extraModules)
         },
         async seedReconnectParameters(runtime: ReturnType<typeof createRuntime>) {

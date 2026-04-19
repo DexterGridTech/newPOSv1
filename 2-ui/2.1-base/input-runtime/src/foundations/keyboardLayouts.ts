@@ -45,6 +45,19 @@ const identifierRows = [
     ['clear', '0', 'backspace'],
 ] as const satisfies readonly (readonly VirtualKeyboardKey[])[]
 
+const jsonRows = [
+    ['{', '}', '[', ']', '"', ':', ','],
+    ['A', 'B', 'C', 'D', 'E', 'F'],
+    ['G', 'H', 'I', 'J', 'K', 'L'],
+    ['M', 'N', 'O', 'P', 'Q', 'R'],
+    ['S', 'T', 'U', 'V', 'W', 'X'],
+    ['Y', 'Z', '-', '_', '.', '/'],
+    ['1', '2', '3'],
+    ['4', '5', '6'],
+    ['7', '8', '9'],
+    ['clear', '0', 'backspace'],
+] as const satisfies readonly (readonly VirtualKeyboardKey[])[]
+
 export const getVirtualKeyboardLayout = (
     mode: ManagedInputMode,
 ): VirtualKeyboardLayout => {
@@ -69,6 +82,13 @@ export const getVirtualKeyboardLayout = (
                 rows: identifierRows,
                 enterLabel: '完成',
                 maxWidth: 520,
+            }
+        case 'virtual-json':
+            return {
+                title: 'JSON 键盘',
+                rows: jsonRows,
+                enterLabel: '完成',
+                maxWidth: 640,
             }
         case 'virtual-pin':
             return {

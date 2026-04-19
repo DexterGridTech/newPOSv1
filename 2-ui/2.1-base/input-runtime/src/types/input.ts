@@ -7,6 +7,7 @@ export type ManagedInputMode =
     | 'virtual-amount'
     | 'virtual-activation-code'
     | 'virtual-identifier'
+    | 'virtual-json'
 
 export type InputPersistencePolicy =
     | 'transient'
@@ -25,6 +26,14 @@ export type VirtualKeyboardKey =
     | '8'
     | '9'
     | '.'
+    | ':'
+    | ','
+    | '"'
+    | '{'
+    | '}'
+    | '['
+    | ']'
+    | '/'
     | '-'
     | '_'
     | 'A'

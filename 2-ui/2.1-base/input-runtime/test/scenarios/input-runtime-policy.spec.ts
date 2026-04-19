@@ -8,5 +8,6 @@ describe('input policy', () => {
         expect(usesVirtualKeyboard('virtual-pin')).toBe(true)
         expect(usesVirtualKeyboard('virtual-amount')).toBe(true)
         expect(usesVirtualKeyboard('virtual-identifier')).toBe(true)
+        expect(usesVirtualKeyboard('virtual-json')).toBe(true)
     })
 })

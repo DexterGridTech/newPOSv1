@@ -217,6 +217,33 @@ describe('input-runtime rendered components', () => {
         await expect(activationTree.getNode('ui-base-virtual-keyboard:key:.')).resolves.toBeNull()
     })
 
+    it('exposes json keyboard with braces and punctuation keys', async () => {
+        const harness = await createInputHarness()
+        const tree = renderWithAutomation(
+            <InputRuntimeProvider>
+                <>
+                    <InputField
+                        value=""
+                        onChangeText={() => {}}
+                        mode="virtual-json"
+                    />
+                    <VirtualKeyboardOverlay />
+                </>
+            </InputRuntimeProvider>,
+            harness.store,
+            harness.runtime,
+        )
+
+        await tree.press('ui-base-virtual-field:virtual-json')
+
+        await expect(tree.getText('ui-base-virtual-keyboard:title')).resolves.toBe('JSON 键盘')
+        await expect(tree.getNode('ui-base-virtual-keyboard:key:{')).resolves.toBeTruthy()
+        await expect(tree.getNode('ui-base-virtual-keyboard:key:}')).resolves.toBeTruthy()
+        await expect(tree.getNode('ui-base-virtual-keyboard:key::')).resolves.toBeTruthy()
+        await expect(tree.getNode('ui-base-virtual-keyboard:key:,')).resolves.toBeTruthy()
+        await expect(tree.getNode('ui-base-virtual-keyboard:key:\"')).resolves.toBeTruthy()
+    })
+
     it('closes the virtual keyboard when the owning virtual field unmounts', async () => {
         const harness = await createInputHarness()
         const tree = renderWithAutomation(

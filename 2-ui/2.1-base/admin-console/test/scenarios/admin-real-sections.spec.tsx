@@ -1,4 +1,5 @@
 import React, {useState} from 'react'
+import {act} from 'react-test-renderer'
 import {describe, expect, it, vi} from 'vitest'
 import {Pressable, Text} from 'react-native'
 import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
@@ -20,7 +21,9 @@ import {
 import {
     createAdminConsoleHarness,
     renderWithAutomation,
+    renderWithStore,
 } from '../support/adminConsoleHarness'
+import {InputField} from '../../../input-runtime/src'
 
 describe('admin built-in sections', () => {
     it('renders terminal section from tcp-control state', async () => {
@@ -116,7 +119,7 @@ describe('admin built-in sections', () => {
         expect(dispatchSpy).toHaveBeenCalledTimes(2)
     })
 
-    it('dispatches display and slave capability commands from topology section', async () => {
+    it('dispatches enable-slave commands and keeps display switching disabled for master primary', async () => {
         const harness = await createAdminConsoleHarness()
         const dispatchSpy = vi.spyOn(harness.runtime, 'dispatchCommand')
         const topologyTree = renderWithAutomation(
@@ -125,19 +128,15 @@ describe('admin built-in sections', () => {
             harness.runtime,
         )
 
-        await topologyTree.press('ui-base-admin-section:topology:set-primary')
-        await topologyTree.press('ui-base-admin-section:topology:set-secondary')
         await topologyTree.press('ui-base-admin-section:topology:enable-slave')
         await topologyTree.press('ui-base-admin-section:topology:disable-slave')
 
-        expect(dispatchSpy).toHaveBeenCalledWith(createCommand(
-            topologyRuntimeV3CommandDefinitions.setDisplayMode,
-            {displayMode: 'PRIMARY'},
-        ))
-        expect(dispatchSpy).toHaveBeenCalledWith(createCommand(
-            topologyRuntimeV3CommandDefinitions.setDisplayMode,
-            {displayMode: 'SECONDARY'},
-        ))
+        await expect(topologyTree.getNode('ui-base-admin-section:topology:set-primary')).resolves.toMatchObject({
+            enabled: false,
+        })
+        await expect(topologyTree.getNode('ui-base-admin-section:topology:set-secondary')).resolves.toMatchObject({
+            enabled: false,
+        })
         expect(dispatchSpy).toHaveBeenCalledWith(createCommand(
             topologyRuntimeV3CommandDefinitions.setEnableSlave,
             {enableSlave: true},
@@ -166,6 +165,42 @@ describe('admin built-in sections', () => {
         await topologyTree.press('ui-base-admin-section:topology:reconnect')
 
         expect(reconnect).toHaveBeenCalledTimes(1)
+    })
+
+    it('imports topology share payload from pasted json and routes host stop to enableSlave=false', async () => {
+        const importSharePayload = vi.fn(async () => {})
+        const stop = vi.fn(async () => {})
+        const harness = await createAdminConsoleHarness({
+            hostTools: {
+                topology: {
+                    importSharePayload,
+                    stop,
+                },
+            } as any,
+        })
+        const renderer = renderWithStore(
+            <AdminTopologySection runtime={harness.runtime} store={harness.store} />,
+            harness.store,
+            harness.runtime,
+        )
+        const input = renderer.root.findByType(InputField)
+        await act(async () => {
+            input.props.onChangeText('{"formatVersion":"2026.04","deviceId":"MASTER-001","masterNodeId":"NODE-001"}')
+        })
+
+        const buttons = renderer.root.findAllByProps({testID: 'ui-base-admin-section:topology:import-json'})
+        const stopButtons = renderer.root.findAllByProps({testID: 'ui-base-admin-section:topology:host-stop'})
+        await act(async () => {
+            buttons[0].props.onPress()
+            stopButtons[0].props.onPress()
+        })
+
+        expect(importSharePayload).toHaveBeenCalledWith({
+            formatVersion: '2026.04',
+            deviceId: 'MASTER-001',
+            masterNodeId: 'NODE-001',
+        })
+        expect(stop).toHaveBeenCalledTimes(1)
     })
 
     it('reacts to topology store changes and shows connection metadata', async () => {

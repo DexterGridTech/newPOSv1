@@ -4,7 +4,7 @@ import type {StateSyncDiffEnvelope} from '@impos2/kernel-base-contracts'
 export const createRuntimeStateSync = (stateRuntime: StateRuntime) => {
     /**
      * 设计意图：
-     * topology-runtime-v2 不直接理解 Redux slice 内部结构，只通过 state-runtime 暴露的 sync 描述计算和应用 diff。
+     * topology runtime 不直接理解 Redux slice 内部结构，只通过 state-runtime 暴露的 sync 描述计算和应用 diff。
      * 这让主副屏同步能力保持通用，业务包只声明自己的 syncIntent 和字段策略。
      */
     const getSyncSlices = () => stateRuntime.getSlices().filter(slice => Boolean(slice.sync))

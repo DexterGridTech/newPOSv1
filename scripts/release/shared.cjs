@@ -86,7 +86,7 @@ function getTrackedPackagePathsByAppId(appId) {
       '1-kernel/1.1-base/platform-ports/package.json',
       '1-kernel/1.1-base/runtime-shell-v2/package.json',
       '1-kernel/1.1-base/tcp-control-runtime-v2/package.json',
-      '1-kernel/1.1-base/topology-runtime-v2/package.json',
+      '1-kernel/1.1-base/topology-runtime-v3/package.json',
       '1-kernel/1.1-base/transport-runtime/package.json',
       '1-kernel/1.1-base/ui-runtime-v2/package.json',
       '1-kernel/server-config-v2/package.json',

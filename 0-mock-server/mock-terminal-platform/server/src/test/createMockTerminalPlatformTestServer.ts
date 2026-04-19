@@ -6,6 +6,7 @@ import path from 'node:path'
 import { createApp } from '../app/createApp.js'
 import { initializeDatabase, resetDatabaseConnection } from '../database/index.js'
 import { createHttpAndWsServer } from '../modules/tdp/wsServer.js'
+import { resetOnlineSessions } from '../modules/tdp/wsSessionRegistry.js'
 
 export interface MockTerminalPlatformTestServer {
   start(): Promise<void>
@@ -69,6 +70,7 @@ export const createMockTerminalPlatformTestServer = (): MockTerminalPlatformTest
           resolve()
         })
       })
+      resetOnlineSessions()
       resetDatabaseConnection()
       fs.rmSync(tempDir, {recursive: true, force: true})
     },

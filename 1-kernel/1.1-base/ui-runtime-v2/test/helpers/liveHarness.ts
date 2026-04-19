@@ -60,6 +60,8 @@ export const createUiRuntimeV2LiveHarness = async (input: {
     profileName: string
     reconnectIntervalMs?: number
     reconnectAttempts?: number
+    slaveDisplayIndex?: number
+    slaveDisplayCount?: number
     slaveDisplayMode?: 'PRIMARY' | 'SECONDARY'
 }) => {
     registerUiScreenDefinitions([
@@ -72,6 +74,8 @@ export const createUiRuntimeV2LiveHarness = async (input: {
         profileName: input.profileName,
         reconnectIntervalMs: input.reconnectIntervalMs,
         reconnectAttempts: input.reconnectAttempts,
+        slaveDisplayIndex: input.slaveDisplayIndex,
+        slaveDisplayCount: input.slaveDisplayCount,
     })
 
     const masterRuntime = topologyHarness.createMasterRuntime([

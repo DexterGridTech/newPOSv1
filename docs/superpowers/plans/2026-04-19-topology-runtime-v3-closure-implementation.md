@@ -74,3 +74,26 @@
 - [ ] Run type-checks for the touched packages.
 - [ ] Re-run V2 import audit and list remaining blockers; do not delete V2 until emulator/real-device socket evidence is collected.
 - [ ] Record verification evidence and remaining risks in the final handoff.
+
+## 2026-04-19 Closure Addendum
+
+Implementation review found three remaining gaps before the old V2 packages can be considered removable:
+
+1. `AdminTopologyHost.stop()` must not pretend to own native host lifecycle directly. Native host lifecycle is derived by assembly from `instanceMode + displayCount + enableSlave`; the admin action should disable `enableSlave` for host shutdown intent, while `stopTopologyConnection` remains only a topology connection action.
+2. Admin topology pairing needs a real JSON import path, not just re-importing the last generated in-memory payload. The first version will use a simple text field plus parse/validate/import button.
+3. Assembly needs package-level lifecycle tests and structured lifecycle logs for `host-start`, `host-stop`, `host-skip`, and `host-error`; this is the minimum evidence path for later socket/device debugging.
+
+### Task 4A: Admin host control semantics
+
+- [ ] Add an import JSON text state to `AdminTopologySection`.
+- [ ] Add a visible input or simple text entry surface for pasted share payload JSON.
+- [ ] Add an `import-json` action that parses `AdminTopologySharePayload` and calls `topologyHost.importSharePayload`.
+- [ ] Change assembly `AdminTopologyHost.stop()` to dispatch `setEnableSlave(false)` so the assembly lifecycle subscription performs the native stop.
+- [ ] Add tests for JSON import and host stop intent.
+
+### Task 4B: Assembly lifecycle evidence
+
+- [ ] Mock `nativeTopologyHost` in `assembly-create-app.spec.ts` so `createApp` remains native-free under Vitest.
+- [ ] Add pure lifecycle helper tests for single-screen master enable/disable, activated master, slave, and managed secondary.
+- [ ] Add createApp lifecycle tests that start/stop native host only from subscribed topology context transitions.
+- [ ] Add structured logs around host lifecycle decisions and failures.

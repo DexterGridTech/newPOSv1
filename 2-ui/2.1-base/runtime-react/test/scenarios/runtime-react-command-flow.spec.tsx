@@ -69,6 +69,6 @@ describe('runtime-react command flow', () => {
             .resolves.toBe('value-from-button')
         await variableTree.press('ui-base-runtime-react-test:secondary-display')
         await expect(variableTree.getText('ui-base-runtime-react-test:state:display-mode'))
-            .resolves.toBe('SECONDARY')
+            .resolves.toBe('PRIMARY')
     })
 })

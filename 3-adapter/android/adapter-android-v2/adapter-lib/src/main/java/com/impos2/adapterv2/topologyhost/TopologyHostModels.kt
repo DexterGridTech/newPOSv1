@@ -7,7 +7,7 @@ const val TOPOLOGY_HOST_MODULE_NAME = "adapter.android.topology-host-v2"
 /**
  * 内置双屏 host 的默认参数。
  *
- * 这些默认值直接对齐 `0-mock-server/dual-topology-host`，避免终端内置 host 与 mock host
+ * 这些默认值直接对齐当前 mock topology host，避免终端内置 host 与 mock host
  * 在协议入口层面出现不必要分叉。
  */
 object TopologyHostDefaults {

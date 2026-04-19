@@ -70,7 +70,7 @@ class TopologyHostTestFragment : Fragment() {
 
       addView(consoleCard {
         addView(MaterialTextView(context).apply {
-          text = "本页验证新的 topologyHost。它要对齐 dual-topology-host，而不是沿用旧 LocalWebServer 协议。"
+          text = "本页验证新的 topologyHost。它要对齐 topology host v3，而不是沿用旧 LocalWebServer 协议。"
           textSize = 14f
           setTextColor(ConsoleTheme.textSecondary)
         })

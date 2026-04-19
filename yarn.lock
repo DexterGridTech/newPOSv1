@@ -3682,24 +3682,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/dual-topology-host@workspace:*, @impos2/dual-topology-host@workspace:0-mock-server/dual-topology-host":
-  version: 0.0.0-use.local
-  resolution: "@impos2/dual-topology-host@workspace:0-mock-server/dual-topology-host"
-  dependencies:
-    "@impos2/kernel-base-contracts": "*"
-    "@impos2/kernel-base-host-runtime": "*"
-    "@impos2/kernel-base-platform-ports": "*"
-    "@impos2/kernel-base-runtime-shell-v2": "*"
-    "@types/node": ^25.0.9
-    "@types/ws": ^8.5.13
-    tsx: ^4.21.0
-    typescript: ^5.9.3
-    vitest: ^3.2.4
-    ws: ^8.18.0
-  languageName: unknown
-  linkType: soft
-
-"@impos2/kernel-base-contracts@*, @impos2/kernel-base-contracts@workspace:*, @impos2/kernel-base-contracts@workspace:1-kernel/1.1-base/contracts":
+"@impos2/kernel-base-contracts@workspace:*, @impos2/kernel-base-contracts@workspace:1-kernel/1.1-base/contracts":
   version: 0.0.0-use.local
   resolution: "@impos2/kernel-base-contracts@workspace:1-kernel/1.1-base/contracts"
   dependencies:
@@ -3739,7 +3722,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/kernel-base-host-runtime@*, @impos2/kernel-base-host-runtime@workspace:1-kernel/1.1-base/host-runtime":
+"@impos2/kernel-base-host-runtime@workspace:1-kernel/1.1-base/host-runtime":
   version: 0.0.0-use.local
   resolution: "@impos2/kernel-base-host-runtime@workspace:1-kernel/1.1-base/host-runtime"
   dependencies:
@@ -3753,7 +3736,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/kernel-base-platform-ports@*, @impos2/kernel-base-platform-ports@workspace:*, @impos2/kernel-base-platform-ports@workspace:1-kernel/1.1-base/platform-ports":
+"@impos2/kernel-base-platform-ports@workspace:*, @impos2/kernel-base-platform-ports@workspace:1-kernel/1.1-base/platform-ports":
   version: 0.0.0-use.local
   resolution: "@impos2/kernel-base-platform-ports@workspace:1-kernel/1.1-base/platform-ports"
   dependencies:
@@ -3766,7 +3749,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/kernel-base-runtime-shell-v2@*, @impos2/kernel-base-runtime-shell-v2@workspace:*, @impos2/kernel-base-runtime-shell-v2@workspace:1-kernel/1.1-base/runtime-shell-v2":
+"@impos2/kernel-base-runtime-shell-v2@workspace:*, @impos2/kernel-base-runtime-shell-v2@workspace:1-kernel/1.1-base/runtime-shell-v2":
   version: 0.0.0-use.local
   resolution: "@impos2/kernel-base-runtime-shell-v2@workspace:1-kernel/1.1-base/runtime-shell-v2"
   dependencies:
@@ -3826,31 +3809,9 @@ __metadata:
     "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
     "@impos2/kernel-base-state-runtime": "workspace:*"
     "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*"
+    "@impos2/kernel-base-topology-runtime-v3": "workspace:*"
     "@impos2/kernel-base-transport-runtime": "workspace:*"
     "@impos2/kernel-server-config-v2": "workspace:*"
-    "@reduxjs/toolkit": ^2.10.0
-    "@types/node": ^25.0.9
-    madge: ^8.0.0
-    tsx: ^4.21.0
-    typescript: ^5.9.3
-    vitest: ^3.2.4
-  languageName: unknown
-  linkType: soft
-
-"@impos2/kernel-base-topology-runtime-v2@workspace:*, @impos2/kernel-base-topology-runtime-v2@workspace:1-kernel/1.1-base/topology-runtime-v2":
-  version: 0.0.0-use.local
-  resolution: "@impos2/kernel-base-topology-runtime-v2@workspace:1-kernel/1.1-base/topology-runtime-v2"
-  dependencies:
-    "@impos2/dual-topology-host": "workspace:*"
-    "@impos2/kernel-base-contracts": "workspace:*"
-    "@impos2/kernel-base-platform-ports": "workspace:*"
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
-    "@impos2/kernel-base-state-runtime": "workspace:*"
-    "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*"
-    "@impos2/kernel-base-tdp-sync-runtime-v2": "workspace:*"
-    "@impos2/kernel-base-transport-runtime": "workspace:*"
-    "@impos2/kernel-server-config-v2": "workspace:*"
-    "@impos2/mock-terminal-platform-server": "workspace:*"
     "@reduxjs/toolkit": ^2.10.0
     "@types/node": ^25.0.9
     madge: ^8.0.0
@@ -3896,7 +3857,7 @@ __metadata:
     "@impos2/kernel-base-platform-ports": "workspace:*"
     "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
     "@impos2/kernel-base-state-runtime": "workspace:*"
-    "@impos2/kernel-base-topology-runtime-v2": "workspace:*"
+    "@impos2/kernel-base-topology-runtime-v3": "workspace:*"
     "@reduxjs/toolkit": ^2.10.0
     "@types/node": ^25.0.9
     madge: ^8.0.0
@@ -4315,7 +4276,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/mock-terminal-platform-server@workspace:*, @impos2/mock-terminal-platform-server@workspace:0-mock-server/mock-terminal-platform/server":
+"@impos2/mock-terminal-platform-server@workspace:0-mock-server/mock-terminal-platform/server":
   version: 0.0.0-use.local
   resolution: "@impos2/mock-terminal-platform-server@workspace:0-mock-server/mock-terminal-platform/server"
   dependencies:
@@ -4363,7 +4324,7 @@ __metadata:
     "@impos2/kernel-base-platform-ports": "workspace:*"
     "@impos2/kernel-base-state-runtime": "workspace:*"
     "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*"
-    "@impos2/kernel-base-topology-runtime-v2": "workspace:*"
+    "@impos2/kernel-base-topology-runtime-v3": "workspace:*"
     "@impos2/ui-base-input-runtime": "workspace:*"
     "@impos2/ui-base-runtime-react": "workspace:*"
     "@types/node": ^25.0.9
@@ -4435,7 +4396,7 @@ __metadata:
   dependencies:
     "@impos2/kernel-base-platform-ports": "workspace:*"
     "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
-    "@impos2/kernel-base-topology-runtime-v2": "workspace:*"
+    "@impos2/kernel-base-topology-runtime-v3": "workspace:*"
     "@impos2/kernel-base-ui-runtime-v2": "workspace:*"
     "@reduxjs/toolkit": ^2.10.0
     "@types/node": ^25.0.9
@@ -4463,6 +4424,7 @@ __metadata:
     "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
     "@impos2/kernel-base-state-runtime": "workspace:*"
     "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*"
+    "@impos2/kernel-base-topology-runtime-v3": "workspace:*"
     "@impos2/kernel-base-transport-runtime": "workspace:*"
     "@impos2/kernel-server-config-v2": "workspace:*"
     "@impos2/ui-base-input-runtime": "workspace:*"
@@ -4636,7 +4598,7 @@ __metadata:
   dependencies:
     "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
     "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*"
-    "@impos2/kernel-base-topology-runtime-v2": "workspace:*"
+    "@impos2/kernel-base-topology-runtime-v3": "workspace:*"
     "@impos2/kernel-base-ui-runtime-v2": "workspace:*"
     "@impos2/ui-base-admin-console": "workspace:*"
     "@impos2/ui-base-input-runtime": "workspace:*"

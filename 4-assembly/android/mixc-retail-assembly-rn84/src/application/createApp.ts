@@ -43,10 +43,12 @@ import {
 } from './automation'
 import {
     createAssemblyTopologyBindingSource,
+    decideAssemblyTopologyHostLifecycle,
     shouldDisableAssemblyStatePersistence,
     type AssemblyTopologyBindingState,
     type AssemblyTopologyStorageGateSnapshot,
 } from './topology'
+import {nativeTopologyHost} from '../turbomodules/topologyHost'
 
 export interface AssemblyRuntimeApp {
     readonly app: KernelRuntimeAppV2
@@ -249,6 +251,116 @@ export const createApp = (
         })
         : undefined
     const automationTarget = getAssemblyAutomationHostConfig(props.displayIndex).target
+    let topologyHostRunning = false
+    let topologyHostTransition: Promise<void> | null = null
+
+    const syncNativeTopologyHostLifecycle = async (
+        runtime: import('@impos2/kernel-base-runtime-shell-v2').KernelRuntimeV2,
+    ): Promise<void> => {
+        const context = selectTopologyRuntimeV3Context(runtime.getState())
+        const decision = decideAssemblyTopologyHostLifecycle({
+            displayCount: props.displayCount,
+            displayIndex: props.displayIndex,
+            instanceMode: context?.instanceMode,
+            enableSlave: context?.enableSlave,
+        })
+
+        if (decision.shouldRun === topologyHostRunning) {
+            platformPorts.logger.info({
+                category: 'assembly.topology',
+                event: 'topology-host-lifecycle-skip',
+                message: 'Native topology host already matches desired lifecycle state',
+                data: {
+                    displayCount: props.displayCount,
+                    displayIndex: props.displayIndex,
+                    deviceId: props.deviceId,
+                    instanceMode: context?.instanceMode,
+                    enableSlave: context?.enableSlave,
+                    running: topologyHostRunning,
+                    reason: decision.reason,
+                },
+            })
+            return
+        }
+
+        try {
+            if (decision.shouldRun) {
+                platformPorts.logger.info({
+                    category: 'assembly.topology',
+                    event: 'topology-host-start',
+                    message: 'Starting native topology host from assembly lifecycle',
+                    data: {
+                        displayCount: props.displayCount,
+                        displayIndex: props.displayIndex,
+                        deviceId: props.deviceId,
+                        instanceMode: context?.instanceMode,
+                        enableSlave: context?.enableSlave,
+                        reason: decision.reason,
+                    },
+                })
+                await nativeTopologyHost.start({
+                    displayCount: props.displayCount,
+                    displayIndex: props.displayIndex,
+                    deviceId: props.deviceId,
+                })
+                topologyHostRunning = true
+                return
+            }
+
+            platformPorts.logger.info({
+                category: 'assembly.topology',
+                event: 'topology-host-stop',
+                message: 'Stopping native topology host from assembly lifecycle',
+                data: {
+                    displayCount: props.displayCount,
+                    displayIndex: props.displayIndex,
+                    deviceId: props.deviceId,
+                    instanceMode: context?.instanceMode,
+                    enableSlave: context?.enableSlave,
+                    reason: decision.reason,
+                },
+            })
+            await nativeTopologyHost.stop()
+            topologyHostRunning = false
+        } catch (error) {
+            platformPorts.logger.error({
+                category: 'assembly.topology',
+                event: 'topology-host-lifecycle-error',
+                message: 'Native topology host lifecycle transition failed',
+                data: {
+                    displayCount: props.displayCount,
+                    displayIndex: props.displayIndex,
+                    deviceId: props.deviceId,
+                    instanceMode: context?.instanceMode,
+                    enableSlave: context?.enableSlave,
+                    running: topologyHostRunning,
+                    desiredRunning: decision.shouldRun,
+                    reason: decision.reason,
+                },
+                error: {
+                    name: error instanceof Error ? error.name : undefined,
+                    message: error instanceof Error ? error.message : String(error),
+                    stack: error instanceof Error ? error.stack : undefined,
+                },
+            })
+            throw error
+        }
+    }
+
+    const scheduleTopologyHostLifecycleSync = (
+        runtime: import('@impos2/kernel-base-runtime-shell-v2').KernelRuntimeV2,
+    ) => {
+        const next = (topologyHostTransition ?? Promise.resolve())
+            .catch(() => undefined)
+            .then(async () => {
+                await syncNativeTopologyHostLifecycle(runtime)
+            })
+        topologyHostTransition = next.finally(() => {
+            if (topologyHostTransition === next) {
+                topologyHostTransition = null
+            }
+        })
+    }
 
     return {
         app,
@@ -302,8 +414,10 @@ export const createApp = (
                 }
 
                 updateTopologyRuntimeEnvironment(runtime, topologyBindingSource, latestTopologyContext)
+                scheduleTopologyHostLifecycleSync(runtime)
                 runtime.subscribeState(() => {
                     updateTopologyRuntimeEnvironment(runtime, topologyBindingSource, latestTopologyContext)
+                    scheduleTopologyHostLifecycleSync(runtime)
                     maybeReportActivatedVersion()
                 })
                 maybeReportActivatedVersion()

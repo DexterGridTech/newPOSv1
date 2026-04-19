@@ -11,6 +11,8 @@ describe('ui-runtime-v2 live branch screen slave-to-master', () => {
     it('syncs branch workspace screen from slave back to master through real dual-topology host flow', async () => {
         const harness = await createUiRuntimeV2LiveHarness({
             profileName: 'dual-topology.ws.ui-runtime-v2.branch-screen.slave-to-master',
+            slaveDisplayIndex: 0,
+            slaveDisplayCount: 1,
             slaveDisplayMode: 'PRIMARY',
         })
 

@@ -40,7 +40,7 @@
 7. 全局 state 可读，但不能因此绕过 command 直接改其他包 state。
 8. `transport-runtime` 只做 transport 语义，不解析业务成功、业务失败、业务结果。
 9. `tdp-sync-runtime-v2` 只维护 TDP projection 仓库和通用 topic 变化广播，不耦合普通业务模块。
-10. `topology-runtime-v2` 只维护双机活控制面和必要恢复信息，不承载业务状态仓库。
+10. `topology-runtime-v3` 只维护一主一副拓扑控制面和必要恢复信息，不承载业务状态仓库。
 11. `workflow-runtime-v2` 的统一真相是 `WorkflowObservation`，不是一次性 result。
 12. 所有时间存储统一用 long 毫秒时间戳，展示和日志再格式化。
 13. 所有运行时 ID、request ID、command ID、envelope ID 必须使用统一 ID 生成能力。
@@ -62,7 +62,7 @@ transport-runtime
 host-runtime
 tcp-control-runtime-v2
 tdp-sync-runtime-v2
-topology-runtime-v2
+topology-runtime-v3
 ui-runtime-v2
 workflow-runtime-v2
 ```
@@ -81,7 +81,7 @@ workflow-runtime-v2
 | Host 控制面 | `host-runtime` | 双机 host 的 ticket、session、relay、resume、fault injection。 |
 | TCP 控制面 | `tcp-control-runtime-v2` | 终端激活、凭证刷新、任务结果上报。 |
 | TDP 数据面 | `tdp-sync-runtime-v2` | TDP session、projection 全量仓库、生效 projection 解析、topic 变化广播。 |
-| 双机拓扑 | `topology-runtime-v2` | 主副机连接、remote command、request mirror、state sync、resume/reconnect。 |
+| 双机拓扑 | `topology-runtime-v3` | 一主一副连接、remote command、request mirror、state sync、reconnect。 |
 | UI runtime | `ui-runtime-v2` | screen、overlay、alert、workspace、UI variable 的 kernel 状态协议。 |
 | Workflow runtime | `workflow-runtime-v2` | 动态 workflow definitions、串行队列、Observable observation 运行视图。 |
 
@@ -147,7 +147,7 @@ test/
 import {createKernelRuntimeApp} from '@impos2/kernel-base-runtime-shell-v2'
 import {createTcpControlRuntimeModuleV2} from '@impos2/kernel-base-tcp-control-runtime-v2'
 import {createTdpSyncRuntimeModuleV2} from '@impos2/kernel-base-tdp-sync-runtime-v2'
-import {createTopologyRuntimeModuleV2} from '@impos2/kernel-base-topology-runtime-v2'
+import {createTopologyRuntimeModuleV3} from '@impos2/kernel-base-topology-runtime-v3'
 import {createUiRuntimeModuleV2} from '@impos2/kernel-base-ui-runtime-v2'
 import {createWorkflowRuntimeModuleV2} from '@impos2/kernel-base-workflow-runtime-v2'
 
@@ -157,7 +157,7 @@ const app = createKernelRuntimeApp({
     modules: [
         createTcpControlRuntimeModuleV2(),
         createTdpSyncRuntimeModuleV2(),
-        createTopologyRuntimeModuleV2(),
+        createTopologyRuntimeModuleV3(),
         createUiRuntimeModuleV2(),
         createWorkflowRuntimeModuleV2(),
     ],
@@ -315,7 +315,7 @@ TDP projection 的关键语义：
 
 ## 九、Topology 模型
 
-`topology-runtime-v2` 管理主副机之间的活控制面。
+`topology-runtime-v3` 管理一主一副之间的活控制面。
 
 它负责：
 
@@ -334,7 +334,7 @@ TDP projection 的关键语义：
 3. 管理 UI screen 具体渲染。
 4. 替业务包决定哪些 state 应该同步。
 
-业务 state 同步应由业务 slice 声明 sync intent，再由 `state-runtime` 和 `topology-runtime-v2` 协作完成。
+业务 state 同步应由业务 slice 声明 sync intent，再由 `state-runtime` 和 `topology-runtime-v3` 协作完成。
 
 重要设计点：
 
@@ -609,8 +609,8 @@ HTTP 服务测试要求：
 设计亮点：
 
 1. Host 语义和 HTTP/WS server 适配拆开。
-2. `0-mock-server/dual-topology-host` 和终端内置 host 可以复用同一内核。
-3. relay 支持对端离线时缓存与重绑。
+2. `0-mock-server/dual-topology-host-v3` 和终端内置 host 可以复用同一内核。
+3. reconnect 通过 fresh hello + authoritative snapshot 恢复，不依赖离线 relay 缓存。
 4. fault registry 支持复杂双机测试。
 
 注意：
@@ -622,7 +622,7 @@ HTTP 服务测试要求：
 上层使用：
 
 1. mock server 或未来主屏内置 host 使用它。
-2. 业务包只通过 topology-runtime-v2 感知双机能力。
+2. 业务包只通过 topology-runtime-v3 感知双机能力。
 
 ### platform-ports
 
@@ -809,9 +809,9 @@ HTTP 服务测试要求：
 3. 把 changes 写入自己的 slice。
 4. 需要直接读远端配置时使用 resolved projection selector。
 
-### topology-runtime-v2
+### topology-runtime-v3
 
-包名：`@impos2/kernel-base-topology-runtime-v2`
+包名：`@impos2/kernel-base-topology-runtime-v3`
 
 定位：主副机拓扑 runtime。
 
@@ -824,19 +824,19 @@ HTTP 服务测试要求：
 5. peer connection。
 6. remote command dispatch。
 7. request lifecycle mirror。
-8. state sync resume。
+8. authoritative state snapshot。
 9. continuous state sync。
 
 设计亮点：
 
-1. 合并旧 topology client runtime，减少包拆分。
+1. 使用一主一副固定配对模型，避免 ticket / resume 复杂度。
 2. 主副机 request 状态可以正确接续，不会本机提前完成而远端刚开始。
-3. resume 不是简单 flush，而是 request snapshot + state summary/diff。
+3. reconnect 通过 hello + snapshot 恢复，而不是离线队列回放。
 4. topology 只做控制面，不偷业务状态职责。
 
 注意：
 
-1. masterInfo 可持久化，用于 slave 重启后自动连接。
+1. masterLocator 可持久化，用于 slave 重启后自动连接。
 2. topology state 不是业务数据仓库。
 3. 业务不要自建 WebSocket RPC。
 
@@ -1020,7 +1020,7 @@ test/
 2. scenario 测试覆盖 command -> actor -> state -> selector。
 3. live 测试覆盖真实 mock server。
 4. 重启恢复测试采用 `full / seed / verify` 模式。
-5. 双屏通讯测试必须开启 `0-mock-server/dual-topology-host`。
+5. 双屏通讯测试必须开启 `0-mock-server/dual-topology-host-v3` 或终端内置 `topologyhostv3`。
 6. TCP/TDP 测试必须配合 `0-mock-server/mock-terminal-platform`。
 7. HTTP 地址切换测试必须使用 `1-kernel/server-config-v2`。
 8. WS 真实场景默认无限重连，测试场景可以传有限次数参数。
@@ -1068,7 +1068,7 @@ test/
 6. 是 HTTP/WS transport，放 `transport-runtime`。
 7. 是 TCP 控制面，放 `tcp-control-runtime-v2`。
 8. 是 TDP 数据面，放 `tdp-sync-runtime-v2`。
-9. 是主副机控制面，放 `topology-runtime-v2`。
+9. 是主副机控制面，放 `topology-runtime-v3`。
 10. 是 UI runtime 协议，放 `ui-runtime-v2`。
 11. 是 workflow runtime，放 `workflow-runtime-v2`。
 12. 如果只是业务规则，不要放进 base，应该进入未来 `1-kernel/1.2-business`。

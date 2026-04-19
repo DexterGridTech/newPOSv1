@@ -26,6 +26,8 @@ const {
     selectTdpHotUpdateCurrentMock,
     selectTcpIsActivatedMock,
     selectTcpTerminalIdMock,
+    nativeTopologyHostStartMock,
+    nativeTopologyHostStopMock,
     startMock,
     runtimeApp,
     topologyModule,
@@ -63,7 +65,17 @@ const {
         createAssemblyPlatformPortsMock: vi.fn((..._args: any[]) => ({
             environmentMode: 'DEV',
             logger: {
-                scope: vi.fn(() => ({kind: 'scoped-logger'})),
+                scope: vi.fn(() => ({
+                    kind: 'scoped-logger',
+                    info: vi.fn(),
+                    debug: vi.fn(),
+                    warn: vi.fn(),
+                    error: vi.fn(),
+                })),
+                info: vi.fn(),
+                debug: vi.fn(),
+                warn: vi.fn(),
+                error: vi.fn(),
             },
         })),
         createAssemblyTdpSyncRuntimeAssemblyMock: vi.fn((..._args: any[]) => ({kind: 'tdp-sync-assembly'})),
@@ -89,6 +101,11 @@ const {
         })),
         selectTcpIsActivatedMock: vi.fn((): boolean => false),
         selectTcpTerminalIdMock: vi.fn((): string | null => null),
+        nativeTopologyHostStartMock: vi.fn(async () => ({
+            httpBaseUrl: 'http://127.0.0.1:9999/mockMasterServer',
+            wsUrl: 'ws://127.0.0.1:9999/mockMasterServer/ws',
+        })),
+        nativeTopologyHostStopMock: vi.fn(async () => undefined),
         startMock,
         runtimeApp,
         topologyModule: {kind: 'topology-module'},
@@ -211,6 +228,13 @@ vi.mock('../../src/application/syncHotUpdateStateFromNativeBoot', () => ({
     syncHotUpdateStateFromNativeBoot: syncHotUpdateStateFromNativeBootMock,
 }))
 
+vi.mock('../../src/turbomodules/topologyHost', () => ({
+    nativeTopologyHost: {
+        start: nativeTopologyHostStartMock,
+        stop: nativeTopologyHostStopMock,
+    },
+}))
+
 import {createApp} from '../../src/application/createApp'
 import {releaseInfo} from '../../src/generated/releaseInfo'
 
@@ -233,6 +257,8 @@ describe('assembly createApp', () => {
         createAssemblyAutomationMock.mockClear()
         selectTcpIsActivatedMock.mockReturnValue(false)
         selectTcpTerminalIdMock.mockReturnValue(null)
+        nativeTopologyHostStartMock.mockClear()
+        nativeTopologyHostStopMock.mockClear()
         selectTdpHotUpdateCurrentMock.mockReturnValue({
             source: 'embedded',
             bundleVersion: '1.0.0+ota.0',
@@ -424,5 +450,57 @@ describe('assembly createApp', () => {
         expect(reportTerminalVersionMock).toHaveBeenCalledTimes(2)
         expect((reportTerminalVersionMock.mock.calls[0] as unknown[] | undefined)?.[2]).toBe('BOOTING')
         expect((reportTerminalVersionMock.mock.calls[1] as unknown[] | undefined)?.[2]).toBe('RUNNING')
+    })
+
+    it('starts and stops native topology host from topology context subscription', async () => {
+        const listeners: Array<() => void> = []
+        let currentContext: any = {
+            instanceMode: 'MASTER',
+            enableSlave: false,
+        }
+        const runtime = {
+            runtimeId: 'runtime-id',
+            getState: vi.fn(() => ({state: true})),
+            subscribeState: vi.fn((listener: () => void) => {
+                listeners.push(listener)
+                return () => {}
+            }),
+        }
+        startMock.mockResolvedValueOnce(runtime as any)
+        selectTopologyRuntimeV3ContextMock.mockImplementation(() => currentContext)
+
+        const result = createApp({
+            deviceId: 'device-1',
+            screenMode: 'desktop',
+            displayCount: 1,
+            displayIndex: 0,
+            isEmulator: true,
+        })
+
+        await result.start()
+        expect(nativeTopologyHostStartMock).not.toHaveBeenCalled()
+        expect(nativeTopologyHostStopMock).not.toHaveBeenCalled()
+
+        currentContext = {
+            instanceMode: 'MASTER',
+            enableSlave: true,
+        }
+        listeners.forEach(listener => listener())
+        await vi.waitFor(() => {
+            expect(nativeTopologyHostStartMock).toHaveBeenCalledWith({
+                displayCount: 1,
+                displayIndex: 0,
+                deviceId: 'device-1',
+            })
+        })
+
+        currentContext = {
+            instanceMode: 'SLAVE',
+            enableSlave: true,
+        }
+        listeners.forEach(listener => listener())
+        await vi.waitFor(() => {
+            expect(nativeTopologyHostStopMock).toHaveBeenCalledTimes(1)
+        })
     })
 })

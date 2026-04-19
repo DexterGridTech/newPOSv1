@@ -32,6 +32,11 @@ const normalizeIdentifierValue = (
     key: string,
 ): string => `${value}${key.toUpperCase()}`
 
+const normalizeJsonValue = (
+    value: string,
+    key: string,
+): string => `${value}${/[A-Z]/.test(key) ? key.toUpperCase() : key}`
+
 export const applyVirtualKeyToValue = (
     value: string,
     key: VirtualKeyboardKey,
@@ -57,6 +62,9 @@ export const applyVirtualKeyToValue = (
         }
         if (mode === 'virtual-identifier') {
             return normalizeIdentifierValue(value, key)
+        }
+        if (mode === 'virtual-json') {
+            return normalizeJsonValue(value, key)
         }
         return `${value}${key}`
     })()

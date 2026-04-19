@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicLong
  * Android 内置 topology host 的 HTTP / WebSocket 承载层。
  *
  * 这层故意只做传输承载：
- * - HTTP route 与 `0-mock-server/dual-topology-host` 对齐
+ * - HTTP route 与当前 mock topology host 协议对齐
  * - WS message type 与 mock host 对齐
  * - ticket/session/relay 真相全部委托给 [TopologyHostRuntime]
  */

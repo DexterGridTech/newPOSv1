@@ -98,6 +98,8 @@ const createAssemblyAdminTopologyHost = (
                 formatVersion: '2026.04',
                 deviceId,
                 masterNodeId: nodeId,
+                exportedAt: Date.now(),
+                serverAddress: wsUrl ? [{address: wsUrl}] : [],
                 wsUrl,
                 httpBaseUrl,
             }
@@ -125,8 +127,24 @@ const createAssemblyAdminTopologyHost = (
                 {},
             ))
         },
+        async stop(): Promise<void> {
+            nativeLogger.log(
+                'assembly.android.mixc-retail-rn84.topology',
+                JSON.stringify({
+                    event: 'topology-host-stop-requested',
+                    source: 'admin-console',
+                }),
+            )
+            await dispatchTopologyCommand(createCommand(
+                topologyRuntimeV3CommandDefinitions.setEnableSlave,
+                {enableSlave: false},
+            ))
+        },
         async getTopologyHostStatus(): Promise<Record<string, unknown> | null> {
             return await nativeTopologyHost.getStatus()
+        },
+        async getTopologyHostDiagnostics(): Promise<Record<string, unknown> | null> {
+            return await nativeTopologyHost.getDiagnosticsSnapshot()
         },
     }
 }
