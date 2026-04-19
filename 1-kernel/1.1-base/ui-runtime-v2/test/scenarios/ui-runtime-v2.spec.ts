@@ -2,8 +2,8 @@ import {describe, expect, it} from 'vitest'
 import {createCommand, createKernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
 import {createPlatformPorts} from '@impos2/kernel-base-platform-ports'
 import {createLoggerPort} from '@impos2/kernel-base-platform-ports'
-import {createTopologyRuntimeModuleV2} from '@impos2/kernel-base-topology-runtime-v2'
-import {topologyRuntimeV2CommandDefinitions} from '@impos2/kernel-base-topology-runtime-v2'
+import {createTopologyRuntimeModuleV3} from '@impos2/kernel-base-topology-runtime-v3'
+import {topologyRuntimeV3CommandDefinitions} from '@impos2/kernel-base-topology-runtime-v3'
 import {
     createUiAlertDefinition,
     createUiAlertScreen,
@@ -76,21 +76,25 @@ describe('ui-runtime-v2', () => {
         registerUiScreenDefinition(tertiaryReadyScreen)
 
         const runtime = createKernelRuntimeV2({
+            displayContext: {
+                displayIndex: 0,
+                displayCount: 1,
+            },
             platformPorts: createPlatformPorts({
                 environmentMode: 'TEST',
                 logger: createTestLogger('kernel.base.ui-runtime-v2.test'),
             }),
             modules: [
-                createTopologyRuntimeModuleV2(),
+                createTopologyRuntimeModuleV3(),
                 createUiRuntimeModuleV2(),
             ],
         })
 
         await runtime.start()
-        await runtime.dispatchCommand(createCommand(topologyRuntimeV2CommandDefinitions.setInstanceMode, {
+        await runtime.dispatchCommand(createCommand(topologyRuntimeV3CommandDefinitions.setInstanceMode, {
             instanceMode: 'MASTER',
         }))
-        await runtime.dispatchCommand(createCommand(topologyRuntimeV2CommandDefinitions.setDisplayMode, {
+        await runtime.dispatchCommand(createCommand(topologyRuntimeV3CommandDefinitions.setDisplayMode, {
             displayMode: 'PRIMARY',
         }))
 
@@ -215,21 +219,25 @@ describe('ui-runtime-v2', () => {
         registerUiScreenDefinitions([checkoutScreen, secondaryAlertScreen, tertiaryReadyScreen])
 
         const runtime = createKernelRuntimeV2({
+            displayContext: {
+                displayIndex: 0,
+                displayCount: 1,
+            },
             platformPorts: createPlatformPorts({
                 environmentMode: 'TEST',
                 logger: createTestLogger('kernel.base.ui-runtime-v2.test.instance-mode'),
             }),
             modules: [
-                createTopologyRuntimeModuleV2(),
+                createTopologyRuntimeModuleV3(),
                 createUiRuntimeModuleV2(),
             ],
         })
 
         await runtime.start()
-        await runtime.dispatchCommand(createCommand(topologyRuntimeV2CommandDefinitions.setInstanceMode, {
+        await runtime.dispatchCommand(createCommand(topologyRuntimeV3CommandDefinitions.setInstanceMode, {
             instanceMode: 'SLAVE',
         }))
-        await runtime.dispatchCommand(createCommand(topologyRuntimeV2CommandDefinitions.setDisplayMode, {
+        await runtime.dispatchCommand(createCommand(topologyRuntimeV3CommandDefinitions.setDisplayMode, {
             displayMode: 'PRIMARY',
         }))
 

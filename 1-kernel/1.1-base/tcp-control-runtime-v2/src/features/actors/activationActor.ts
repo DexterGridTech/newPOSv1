@@ -20,17 +20,18 @@ export const createTcpActivationActorDefinitionV2 = (
     onCommand(tcpControlV2CommandDefinitions.activateTerminal, async actorContext => {
         const httpService = requireTcpControlHttpService(serviceRef)
         const identity = selectTcpIdentitySnapshot(actorContext.getState())
+        const sandboxId = actorContext.command.payload.sandboxId?.trim()
         const deviceInfo = actorContext.command.payload.deviceInfo ?? identity.deviceInfo
         const deviceFingerprint =
             actorContext.command.payload.deviceFingerprint
                 ?? identity.deviceFingerprint
                 ?? deviceInfo?.id
 
-        if (!deviceInfo || !deviceFingerprint) {
+        if (!sandboxId || !deviceInfo || !deviceFingerprint) {
             const appError = createAppError(
                 tcpControlV2ErrorDefinitions.bootstrapHydrationFailed,
                 {
-                    args: {error: 'device info is missing'},
+                    args: {error: !sandboxId ? 'sandbox id is missing' : 'device info is missing'},
                     context: {
                         commandName: actorContext.command.commandName,
                         commandId: actorContext.command.commandId,
@@ -52,6 +53,7 @@ export const createTcpActivationActorDefinitionV2 = (
 
         try {
             const result = await httpService.activateTerminal({
+                sandboxId,
                 activationCode: actorContext.command.payload.activationCode,
                 deviceFingerprint,
                 deviceInfo,
@@ -62,6 +64,12 @@ export const createTcpActivationActorDefinitionV2 = (
                 ? undefined
                 : (now + result.refreshExpiresIn * 1_000) as any
 
+            actorContext.dispatchAction(
+                tcpControlV2StateActions.setSandbox({
+                    sandboxId,
+                    updatedAt: now,
+                }),
+            )
             actorContext.dispatchAction(
                 tcpControlV2StateActions.setActivatedIdentity({
                     terminalId: result.terminalId,
@@ -81,6 +89,13 @@ export const createTcpActivationActorDefinitionV2 = (
                 tcpControlV2StateActions.replaceBinding(result.binding ?? {}),
             )
             actorContext.dispatchAction(tcpControlV2StateActions.setLastError(null))
+            console.info('[tcp-activation-state-written]', JSON.stringify({
+                nodeId: actorContext.localNodeId,
+                sandboxId,
+                terminalId: result.terminalId,
+                bindingKeys: Object.keys(result.binding ?? {}),
+                activatedAt: now,
+            }))
 
             await actorContext.dispatchCommand(
                 createCommand(

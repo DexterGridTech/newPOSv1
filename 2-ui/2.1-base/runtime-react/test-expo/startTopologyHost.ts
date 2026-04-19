@@ -1,11 +1,9 @@
-import {createDualTopologyHostServer} from '../../../../0-mock-server/dual-topology-host/src'
+import {createDualTopologyHostV3Server} from '../../../../0-mock-server/dual-topology-host-v3/src'
 
 const main = async () => {
-    const server = createDualTopologyHostServer({
+    const server = createDualTopologyHostV3Server({
         config: {
             port: 0,
-            heartbeatIntervalMs: 50,
-            heartbeatTimeoutMs: 5000,
         },
     })
     await server.start()

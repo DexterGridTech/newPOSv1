@@ -18,18 +18,22 @@ import type {
     TdpSessionState,
     TdpSyncState,
 } from '../types'
+import {selectTerminalGroupMembership} from './groupMembership'
 
-const SCOPE_PRIORITY = ['PLATFORM', 'PROJECT', 'BRAND', 'TENANT', 'STORE', 'TERMINAL'] as const
+const SCOPE_PRIORITY = ['PLATFORM', 'PROJECT', 'BRAND', 'TENANT', 'STORE', 'GROUP', 'TERMINAL'] as const
 
 const buildScopePriorityChain = (state: RootState) => {
     const binding = selectTcpBindingSnapshot(state)
     const terminalId = selectTcpTerminalId(state)
+    const groups = [...(selectTerminalGroupMembership(state)?.groups ?? [])]
+        .sort((left, right) => left.rank - right.rank)
     return [
         {scopeType: 'PLATFORM', scopeId: binding.platformId},
         {scopeType: 'PROJECT', scopeId: binding.projectId},
         {scopeType: 'BRAND', scopeId: binding.brandId},
         {scopeType: 'TENANT', scopeId: binding.tenantId},
         {scopeType: 'STORE', scopeId: binding.storeId},
+        ...groups.map(group => ({scopeType: 'GROUP' as const, scopeId: group.groupId})),
         {scopeType: 'TERMINAL', scopeId: terminalId},
     ].filter((item): item is {scopeType: typeof SCOPE_PRIORITY[number]; scopeId: string} => Boolean(item.scopeId))
 }

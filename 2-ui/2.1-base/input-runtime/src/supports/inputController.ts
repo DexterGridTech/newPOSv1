@@ -27,6 +27,11 @@ const normalizeActivationCodeValue = (
     key: string,
 ): string => `${value}${key.toUpperCase()}`
 
+const normalizeIdentifierValue = (
+    value: string,
+    key: string,
+): string => `${value}${key.toUpperCase()}`
+
 export const applyVirtualKeyToValue = (
     value: string,
     key: VirtualKeyboardKey,
@@ -49,6 +54,9 @@ export const applyVirtualKeyToValue = (
         }
         if (mode === 'virtual-activation-code') {
             return normalizeActivationCodeValue(value, key)
+        }
+        if (mode === 'virtual-identifier') {
+            return normalizeIdentifierValue(value, key)
         }
         return `${value}${key}`
     })()

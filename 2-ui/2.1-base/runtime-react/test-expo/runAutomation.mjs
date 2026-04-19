@@ -341,21 +341,6 @@ const createTopologyHost = async () => {
 
     return {
         addressInfo,
-        async issueTicket(masterNodeId) {
-            const response = await fetch(`${addressInfo.httpBaseUrl}/tickets`, {
-                method: 'POST',
-                headers: {
-                    'content-type': 'application/json',
-                },
-                body: JSON.stringify({
-                    masterNodeId,
-                }),
-            })
-            if (!response.ok) {
-                throw new Error(`Failed to issue topology ticket: HTTP ${response.status}`)
-            }
-            return await response.json()
-        },
         async getStats() {
             const response = await fetch(`${addressInfo.httpBaseUrl}/stats`)
             if (!response.ok) {
@@ -388,7 +373,8 @@ const openTopologyHostPage = async (baseUrl, input) => {
         topologyRole: input.topologyRole,
         topologyHostBaseUrl: input.hostBaseUrl,
         topologyWsUrl: input.wsUrl,
-        topologyTicketToken: input.ticketToken,
+        topologyMasterNodeId: input.masterNodeId,
+        topologyMasterDeviceId: input.masterDeviceId,
         topologyProfileName: 'runtime-react.expo.topology-host',
         deviceId: input.deviceId,
         topologyNodeId: input.nodeId,
@@ -500,10 +486,7 @@ const runDualPageTopologyHostScenario = async (baseUrl) => {
     const sessions = []
     try {
         const masterNodeId = `runtime-react-topology-master-${process.pid}`
-        const ticket = await topologyHost.issueTicket(masterNodeId)
-        if (!ticket?.token) {
-            throw new Error(`Topology ticket token missing: ${JSON.stringify(ticket)}`)
-        }
+        const masterDeviceId = 'runtime-react-topology-master-device'
 
         sessions.push(await openTopologyHostPage(baseUrl, {
             name: 'topology-host-master',
@@ -511,8 +494,9 @@ const runDualPageTopologyHostScenario = async (baseUrl) => {
             topologyRole: 'master',
             hostBaseUrl: topologyHost.addressInfo.httpBaseUrl,
             wsUrl: topologyHost.addressInfo.wsUrl,
-            ticketToken: ticket.token,
-            deviceId: 'runtime-react-topology-device',
+            masterNodeId,
+            masterDeviceId,
+            deviceId: masterDeviceId,
             nodeId: masterNodeId,
         }))
         const slaveNodeId = `runtime-react-topology-slave-${process.pid}`
@@ -522,8 +506,9 @@ const runDualPageTopologyHostScenario = async (baseUrl) => {
             topologyRole: 'slave',
             hostBaseUrl: topologyHost.addressInfo.httpBaseUrl,
             wsUrl: topologyHost.addressInfo.wsUrl,
-            ticketToken: ticket.token,
-            deviceId: 'runtime-react-topology-device',
+            masterNodeId,
+            masterDeviceId,
+            deviceId: 'runtime-react-topology-slave-device',
             nodeId: slaveNodeId,
         }))
 

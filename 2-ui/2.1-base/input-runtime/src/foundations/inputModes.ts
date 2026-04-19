@@ -8,4 +8,5 @@ export const inputModes = {
     virtualPin: 'virtual-pin',
     virtualAmount: 'virtual-amount',
     virtualActivationCode: 'virtual-activation-code',
+    virtualIdentifier: 'virtual-identifier',
 } as const satisfies Record<string, ManagedInputMode>

@@ -19,6 +19,17 @@ const isSyncValueEnvelope = (value: unknown): value is SyncValueEnvelope => {
     return typeof (value as SyncValueEnvelope).updatedAt === 'number'
 }
 
+const createSyncValueHash = (value: SyncValueEnvelope): string => {
+    if (value.tombstone === true) {
+        return 'tombstone'
+    }
+    try {
+        return JSON.stringify(value.value) ?? 'undefined'
+    } catch {
+        return String(value.value)
+    }
+}
+
 export const createSyncStateSummary = (
     state: Record<string, unknown>,
 ): SyncStateSummary => {
@@ -31,6 +42,7 @@ export const createSyncStateSummary = (
         summary[key] = {
             updatedAt: value.updatedAt,
             tombstone: value.tombstone === true ? true : undefined,
+            valueHash: createSyncValueHash(value),
         }
     }
 
@@ -165,10 +177,20 @@ export const createSliceSyncDiff = <TState extends Record<string, unknown>>(
             })
             continue
         }
-        if (
-            options.mode === 'authoritative'
-            || localEntry.updatedAt > remoteEntry.updatedAt
-        ) {
+        if (options.mode === 'authoritative') {
+            if (
+                localEntry.updatedAt !== remoteEntry.updatedAt
+                || createSyncValueHash(localEntry) !== remoteEntry.valueHash
+                || (localEntry.tombstone === true) !== (remoteEntry.tombstone === true)
+            ) {
+                diff.push({
+                    key,
+                    value: localEntry,
+                })
+            }
+            continue
+        }
+        if (localEntry.updatedAt > remoteEntry.updatedAt) {
             diff.push({
                 key,
                 value: localEntry,

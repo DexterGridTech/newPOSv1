@@ -87,7 +87,7 @@ export const createLivePlatform = async () => {
     const server = createMockTerminalPlatformTestServer()
     await server.start()
     const baseUrl = server.getHttpBaseUrl()
-    await fetchJson<{
+    const prepare = await fetchJson<{
         sandboxId: string
         preparedAt: number
     }>(`${baseUrl}/mock-debug/kernel-base-test/prepare`, {
@@ -96,6 +96,7 @@ export const createLivePlatform = async () => {
 
     return {
         baseUrl,
+        prepare,
         async close() {
             await server.close()
         },
@@ -104,10 +105,34 @@ export const createLivePlatform = async () => {
                 `${baseUrl}/api/v1/admin/tdp/projections/batch-upsert`,
                 {
                     method: 'POST',
-                    body: JSON.stringify(body),
+                    body: JSON.stringify({...body, sandboxId: prepare.sandboxId}),
                 },
             ),
-            sessions: () => fetchJson<any[]>(`${baseUrl}/api/v1/admin/tdp/sessions`),
+            createSelectorGroup: (body: Record<string, unknown>) => fetchJson<any>(
+                `${baseUrl}/api/v1/admin/tdp/groups`,
+                {
+                    method: 'POST',
+                    body: JSON.stringify({...body, sandboxId: prepare.sandboxId}),
+                },
+            ),
+            createProjectionPolicy: (body: Record<string, unknown>) => fetchJson<any>(
+                `${baseUrl}/api/v1/admin/tdp/policies`,
+                {
+                    method: 'POST',
+                    body: JSON.stringify({...body, sandboxId: prepare.sandboxId}),
+                },
+            ),
+            recomputeGroupsByScope: (body: Record<string, unknown>) => fetchJson<any>(
+                `${baseUrl}/api/v1/admin/tdp/groups/recompute-by-scope`,
+                {
+                    method: 'POST',
+                    body: JSON.stringify({...body, sandboxId: prepare.sandboxId}),
+                },
+            ),
+            terminalGroupMemberships: (terminalId: string) => fetchJson<any>(
+                `${baseUrl}/api/v1/admin/tdp/terminals/${terminalId}/memberships?sandboxId=${encodeURIComponent(prepare.sandboxId)}`,
+            ),
+            sessions: () => fetchJson<any[]>(`${baseUrl}/api/v1/admin/tdp/sessions?sandboxId=${encodeURIComponent(prepare.sandboxId)}`),
         },
     }
 }
@@ -221,6 +246,7 @@ export const createLiveFileStoragePair = (prefix?: string) => {
 export const activateAndConnectLiveRuntime = async (
     runtime: ReturnType<typeof createLiveRuntime>['runtime'],
     input: {
+        sandboxId: string
         activationCode: string
         deviceId: string
     },
@@ -241,6 +267,7 @@ export const activateAndConnectLiveRuntime = async (
         {
             definition: tcpControlV2CommandDefinitions.activateTerminal,
             payload: {
+                sandboxId: input.sandboxId,
                 activationCode: input.activationCode,
             },
         },

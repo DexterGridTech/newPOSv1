@@ -3,7 +3,7 @@ import {
     selectTopologyDisplayMode,
     selectTopologyInstanceMode,
     selectTopologyWorkspace,
-} from '@impos2/kernel-base-topology-runtime-v2'
+} from '@impos2/kernel-base-topology-runtime-v3'
 import {createUiScreenRegistry} from '../foundations/screenRegistry'
 import {
     uiRuntimeV2OverlayWorkspaceKeys,

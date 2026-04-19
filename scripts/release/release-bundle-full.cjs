@@ -6,6 +6,22 @@ function run(command) {
   execSync(command, {stdio: 'inherit'})
 }
 
+function getLocalReleaseCommand(appId) {
+  if (appId === 'assembly-android-mixc-retail-rn84v2') {
+    return "bash -lc 'cd 4-assembly/android/mixc-retail-rn84v2 && ../../../node_modules/.bin/tsc --noEmit && cd android && rm -rf app/build/generated/assets/react/release app/build/generated/sourcemaps/react/release app/build/intermediates/assets/release && ./gradlew createBundleReleaseJsAndAssets --rerun-tasks'"
+  }
+
+  if (appId === 'assembly-android-mixc-retail-rn84') {
+    return "bash -lc 'cd 4-assembly/android/mixc-retail-assembly-rn84 && ../../../node_modules/.bin/tsc --noEmit && cd android && rm -rf app/build/generated/assets/react/release app/build/generated/sourcemaps/react/release app/build/intermediates/assets/release && ./gradlew createBundleReleaseJsAndAssets --rerun-tasks'"
+  }
+
+  if (appId === 'assembly-electron-mixc-retail-v1') {
+    return "bash -lc 'cd 4-assembly/electron/mixc-retail-v1 && ../../../node_modules/.bin/tsc -p tsconfig.check.json --noEmit && node ../../../node_modules/@electron/rebuild/lib/cli.js -f -w better-sqlite3 && node ../../../node_modules/@electron-forge/cli/dist/electron-forge.js package'"
+  }
+
+  throw new Error(`unsupported app id for bundle release: ${appId}`)
+}
+
 function main() {
   const args = parseArgs(process.argv.slice(2))
   const appId = args.app
@@ -20,28 +36,8 @@ function main() {
   run(`node scripts/release/inject-git-metadata.cjs --app ${appId}`)
   run(`node scripts/release/validate-release-manifest.cjs --app ${appId}`)
   run(`node scripts/release/generate-assembly-release-info.cjs --app ${appId}`)
-
-  if (appId === 'assembly-android-mixc-retail-rn84v2') {
-    run('corepack yarn workspace @impos2/assembly-android-mixc-retail-rn84v2 type-check')
-    run("bash -lc 'source ~/.zshrc && cd 4-assembly/android/mixc-retail-rn84v2/android && rm -rf app/build/generated/assets/react/release app/build/generated/sourcemaps/react/release app/build/intermediates/assets/release && ./gradlew createBundleReleaseJsAndAssets --rerun-tasks'")
-    run(`node scripts/release/finalize-release-manifest.cjs --app ${appId}`)
-    return
-  }
-
-  if (appId === 'assembly-android-mixc-retail-rn84') {
-    run('corepack yarn workspace @impos2/assembly-android-mixc-retail-rn84 type-check')
-    run("bash -lc 'source ~/.zshrc && cd 4-assembly/android/mixc-retail-assembly-rn84/android && rm -rf app/build/generated/assets/react/release app/build/generated/sourcemaps/react/release app/build/intermediates/assets/release && ./gradlew createBundleReleaseJsAndAssets --rerun-tasks'")
-    run(`node scripts/release/finalize-release-manifest.cjs --app ${appId}`)
-    return
-  }
-
-  if (appId === 'assembly-electron-mixc-retail-v1') {
-    run('corepack yarn workspace @impos2/assembly-electron-mixc-retail-v1 type-check')
-    console.log('[release] electron OTA build pipeline not implemented yet; manifest and version state are prepared.')
-    return
-  }
-
-  throw new Error(`unsupported app id for bundle release: ${appId}`)
+  run(getLocalReleaseCommand(appId))
+  run(`node scripts/release/finalize-release-manifest.cjs --app ${appId}`)
 }
 
 main()

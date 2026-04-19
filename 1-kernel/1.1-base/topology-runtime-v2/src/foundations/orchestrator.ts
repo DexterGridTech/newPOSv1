@@ -72,6 +72,12 @@ export const createTopologyPeerOrchestratorV2 = (input: {
     assembly: import('../types').TopologyRuntimeV2Assembly
     reconnectAttemptsOverride?: number
 }): TopologyPeerOrchestratorV2 & {gateway: TopologyPeerGatewayV2} => {
+    const orchestratorId = `topology-orchestrator:${String(input.context.localNodeId)}:${Date.now()}:${Math.random().toString(16).slice(2, 8)}`
+    const logger = input.context.platformPorts.logger.scope({
+        moduleName: 'kernel.base.topology-runtime-v2',
+        subsystem: 'sync',
+        component: 'TopologyPeerOrchestratorV2',
+    })
     const binding = createResolvedBinding(
         input.assembly.resolveSocketBinding(input.context),
         input.context,
@@ -120,28 +126,59 @@ export const createTopologyPeerOrchestratorV2 = (input: {
         direction: 'master-to-slave' | 'slave-to-master',
     ): Record<string, any> => {
         const state = input.context.getState() as Record<string, unknown>
-        return Object.fromEntries(
-            createTopologyV2SyncSummary({
-                direction,
-                slices: input.context.getSyncSlices(),
-                state,
-            }).map(entry => [entry.sliceName, entry.summary]),
+        const entries = createTopologyV2SyncSummary({
+            direction,
+            slices: input.context.getSyncSlices(),
+            state,
+        })
+        const summaryBySlice = Object.fromEntries(
+            entries.map(entry => [entry.sliceName, entry.summary]),
         )
+        logger.info({
+            category: 'topology.sync',
+            event: 'topology-sync-build-summary',
+            message: 'build topology sync summary',
+            data: {
+                direction,
+                sliceNames: entries.map(entry => entry.sliceName),
+            },
+        })
+        return summaryBySlice
     }
 
     const maybeSendContinuousSyncDiff = () => {
         if (!sessionState.sessionId || !sessionState.peerRuntime) {
+            console.info('[topology-sync-skip]', JSON.stringify({
+                orchestratorId,
+                reason: 'missing-session-or-peer-runtime',
+                sessionId: sessionState.sessionId ?? null,
+                peerRuntimeNodeId: sessionState.peerRuntime?.nodeId ?? null,
+            }))
             return
         }
 
         const direction = getAuthoritativeDirection()
         const syncState = selectTopologySyncState(input.context.getState())
         if (!syncState?.continuousSyncActive) {
+            console.info('[topology-sync-skip]', JSON.stringify({
+                orchestratorId,
+                reason: 'continuous-sync-inactive',
+                sessionId: sessionState.sessionId,
+                direction,
+                syncState,
+            }))
             return
         }
 
         const activeSession = syncSessions.get(sessionState.sessionId, direction)
         if (!activeSession || activeSession.status !== 'continuous') {
+            console.info('[topology-sync-skip]', JSON.stringify({
+                orchestratorId,
+                reason: 'missing-continuous-session',
+                sessionId: sessionState.sessionId,
+                direction,
+                activeSessionStatus: activeSession?.status ?? null,
+            }))
             return
         }
 
@@ -157,6 +194,17 @@ export const createTopologyPeerOrchestratorV2 = (input: {
         )
         const signature = JSON.stringify(diffBySlice)
         if (signature === '{}' || signature === lastContinuousDiffSignature) {
+            console.info('[topology-sync-skip]', JSON.stringify({
+                orchestratorId,
+                reason: signature === '{}'
+                    ? 'empty-diff'
+                    : 'duplicate-diff-signature',
+                sessionId: sessionState.sessionId,
+                direction,
+                sliceNames: Object.keys(diffBySlice),
+                signature,
+                lastContinuousDiffSignature,
+            }))
             return
         }
 
@@ -170,6 +218,16 @@ export const createTopologyPeerOrchestratorV2 = (input: {
                 direction,
                 diffBySlice,
                 sentAt: nowTimestampMs() as any,
+            },
+        })
+        logger.info({
+            category: 'topology.sync',
+            event: 'topology-sync-send-diff',
+            message: 'send topology sync diff',
+            data: {
+                sessionId: sessionState.sessionId,
+                direction,
+                sliceNames: Object.keys(diffBySlice),
             },
         })
 
@@ -201,6 +259,12 @@ export const createTopologyPeerOrchestratorV2 = (input: {
         if (!runtime) {
             return
         }
+        console.info('[topology-session-peer-runtime]', JSON.stringify({
+            orchestratorId,
+            nodeId: input.context.localNodeId,
+            peerNodeId: runtime.nodeId,
+            peerRole: runtime.role,
+        }))
         sessionState.peerRuntime = runtime
         input.context.dispatchAction(topologyRuntimeV2StateActions.patchPeerState(
             createPeerStateFromRuntimeInfo(runtime),
@@ -278,6 +342,16 @@ export const createTopologyPeerOrchestratorV2 = (input: {
         send({
             type: 'state-sync-summary',
             envelope: summaryEnvelope,
+        })
+        logger.info({
+            category: 'topology.sync',
+            event: 'topology-sync-send-summary',
+            message: 'send topology sync summary',
+            data: {
+                sessionId: inputArtifacts.sessionId,
+                direction: syncDirection,
+                sliceNames: Object.keys(summaryEnvelope.summaryBySlice),
+            },
         })
         dispatchSyncPatch({
             lastSummarySentAt: nowTimestampMs(),
@@ -512,6 +586,11 @@ export const createTopologyPeerOrchestratorV2 = (input: {
 
     const incomingHandlers = createTopologyIncomingHandlers({
         setSessionId: sessionId => {
+            console.info('[topology-session-id]', JSON.stringify({
+                orchestratorId,
+                nodeId: input.context.localNodeId,
+                sessionId: sessionId ?? null,
+            }))
             sessionState.sessionId = sessionId
         },
         onHelloAccepted: () => undefined,
@@ -538,6 +617,7 @@ export const createTopologyPeerOrchestratorV2 = (input: {
         syncSessions,
         context: {
             localNodeId: input.context.localNodeId as any,
+            platformPorts: input.context.platformPorts,
             getSyncSlices: () => input.context.getSyncSlices(),
             getState: () => input.context.getState() as Record<string, unknown>,
             applyRemoteCommandEvent: envelope => input.context.applyRemoteCommandEvent(envelope),

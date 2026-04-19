@@ -83,6 +83,25 @@ export const getCurrentSandboxId = (): string => getRuntimeContext().currentSand
 export const getSandboxById = (sandboxId: string): SandboxRecord | undefined =>
   db.select().from(sandboxesTable).where(eq(sandboxesTable.sandboxId, sandboxId)).get() as SandboxRecord | undefined
 
+export const assertSandboxExists = (sandboxId: string) => {
+  if (!sandboxId?.trim()) {
+    throw new Error('SANDBOX_ID_REQUIRED')
+  }
+  const sandbox = getSandboxById(sandboxId)
+  if (!sandbox) {
+    throw new Error('沙箱不存在')
+  }
+  return sandbox
+}
+
+export const assertSandboxUsable = (sandboxId: string) => {
+  const sandbox = assertSandboxExists(sandboxId)
+  if (sandbox.status !== 'ACTIVE') {
+    throw new Error('只能使用启用中的沙箱')
+  }
+  return sandbox
+}
+
 export const listSandboxes = () => {
   const currentSandboxId = getCurrentSandboxId()
   return db
@@ -487,6 +506,9 @@ const deleteSandboxRows = (sandboxId: string) => {
     'tdp_command_outbox',
     'tdp_change_logs',
     'tdp_projections',
+    'projection_policies',
+    'selector_group_memberships',
+    'selector_groups',
     'tdp_topics',
     'tdp_sessions',
     'task_releases',
@@ -752,6 +774,19 @@ const seedKernelBaseTestSandboxData = (timestamp: number) => {
       updatedAt: timestamp,
     }).run()
   })
+
+  db.insert(topicsTable).values({
+    topicId: createId('topic'),
+    sandboxId: KERNEL_BASE_TEST_SANDBOX_ID,
+    key: 'terminal.group.membership',
+    name: 'Terminal Group Membership',
+    payloadMode: 'FLEXIBLE_JSON',
+    schemaJson: serializeJson({ type: 'object', required: ['membershipVersion', 'groups'] }),
+    scopeType: 'TERMINAL',
+    retentionHours: 168,
+    createdAt: timestamp,
+    updatedAt: timestamp,
+  }).run()
 
   appendAuditLog({
     sandboxId: KERNEL_BASE_TEST_SANDBOX_ID,

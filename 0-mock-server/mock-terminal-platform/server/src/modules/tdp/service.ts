@@ -2,14 +2,13 @@ import { and, desc, eq, inArray } from 'drizzle-orm'
 import { db, sqlite } from '../../database/index.js'
 import { changeLogsTable, commandOutboxTable, projectionsTable, sessionsTable, taskInstancesTable, terminalsTable, topicsTable } from '../../database/schema.js'
 import { createId, now, parseJson } from '../../shared/utils.js'
-import { getCurrentSandboxId } from '../sandbox/service.js'
+import { assertSandboxUsable } from '../sandbox/service.js'
 import { forceCloseOnlineSession, getOnlineSessionById, listOnlineSessionsByTerminalId } from './wsSessionRegistry.js'
 import type { TdpProjectionEnvelope, TdpServerMessage } from './wsProtocol.js'
 
 const toIsoTime = (timestamp: number) => new Date(timestamp).toISOString()
 
-const getNextCursorForTerminal = (terminalId: string) => {
-  const sandboxId = getCurrentSandboxId()
+const getNextCursorForTerminal = (sandboxId: string, terminalId: string) => {
   const row = sqlite.prepare(`
     SELECT COALESCE(MAX(cursor), 0) as high_watermark
     FROM tdp_change_logs
@@ -61,8 +60,8 @@ const toProjectionEnvelope = (input: {
   sourceReleaseId: input.sourceReleaseId ?? null,
 })
 
-const pushToOnlineTerminal = (terminalId: string, message: TdpServerMessage) => {
-  const sessions = listOnlineSessionsByTerminalId(terminalId)
+const pushToOnlineTerminal = (sandboxId: string, terminalId: string, message: TdpServerMessage) => {
+  const sessions = listOnlineSessionsByTerminalId(sandboxId, terminalId)
   for (const session of sessions) {
     if (session.socket.readyState !== 1) continue
     session.socket.send(JSON.stringify(message))
@@ -72,10 +71,11 @@ const pushToOnlineTerminal = (terminalId: string, message: TdpServerMessage) => 
 const BATCH_WINDOW_MS = 120
 
 const queueProjectionChangeToOnlineTerminal = (terminalId: string, input: {
+  sandboxId: string
   change: TdpProjectionEnvelope
   cursor: number
 }) => {
-  const sessions = listOnlineSessionsByTerminalId(terminalId)
+  const sessions = listOnlineSessionsByTerminalId(input.sandboxId, terminalId)
   for (const session of sessions) {
     session.lastDeliveredRevision = input.cursor
     db.update(sessionsTable)
@@ -91,8 +91,8 @@ const queueProjectionChangeToOnlineTerminal = (terminalId: string, input: {
   }
 }
 
-const flushProjectionQueueToOnlineTerminal = (terminalId: string) => {
-  const sessions = listOnlineSessionsByTerminalId(terminalId)
+const flushProjectionQueueToOnlineTerminal = (sandboxId: string, terminalId: string) => {
+  const sessions = listOnlineSessionsByTerminalId(sandboxId, terminalId)
   for (const session of sessions) {
     if (session.socket.readyState !== 1) continue
     const batch = session.batchQueue ?? []
@@ -127,25 +127,27 @@ const flushProjectionQueueToOnlineTerminal = (terminalId: string) => {
 }
 
 const pushProjectionChangeToOnlineTerminal = (terminalId: string, input: {
+  sandboxId: string
   change: TdpProjectionEnvelope
   cursor: number
 }) => {
   queueProjectionChangeToOnlineTerminal(terminalId, input)
-  const sessions = listOnlineSessionsByTerminalId(terminalId)
+  const sessions = listOnlineSessionsByTerminalId(input.sandboxId, terminalId)
   for (const session of sessions) {
     if (session.socket.readyState !== 1) continue
     if (session.batchTimer) continue
     session.batchTimer = setTimeout(() => {
-      flushProjectionQueueToOnlineTerminal(terminalId)
+      flushProjectionQueueToOnlineTerminal(input.sandboxId, terminalId)
     }, BATCH_WINDOW_MS)
   }
 }
 
 const resolveTargetTerminalIds = (input: {
+  sandboxId: string
   scopeType: string
   scopeKey: string
 }) => {
-  const sandboxId = getCurrentSandboxId()
+  const { sandboxId } = input
   if (input.scopeType === 'TERMINAL') {
     return [input.scopeKey]
   }
@@ -167,11 +169,11 @@ const resolveTargetTerminalIds = (input: {
   }
 }
 
-export const listSessions = () => {
-  const sandboxId = getCurrentSandboxId()
+export const listSessions = (sandboxId: string) => {
+  assertSandboxUsable(sandboxId)
   const rows = db.select().from(sessionsTable).where(eq(sessionsTable.sandboxId, sandboxId)).orderBy(desc(sessionsTable.connectedAt)).all()
   return rows.map((item) => {
-    const highWatermark = getHighWatermarkForTerminal(item.terminalId)
+    const highWatermark = getHighWatermarkForTerminal(sandboxId, item.terminalId)
     const lastAckedRevision = item.lastAckedRevision ?? 0
     const lastAppliedRevision = item.lastAppliedRevision ?? 0
     return {
@@ -183,8 +185,9 @@ export const listSessions = () => {
   })
 }
 
-export const connectSession = (input: { terminalId: string; clientVersion: string; protocolVersion: string }) => {
-  const sandboxId = getCurrentSandboxId()
+export const connectSession = (input: { sandboxId: string; terminalId: string; clientVersion: string; protocolVersion: string }) => {
+  const sandboxId = input.sandboxId
+  assertSandboxUsable(sandboxId)
   const sessionId = createId('session')
   const timestamp = now()
   db.insert(sessionsTable).values({
@@ -208,13 +211,15 @@ export const connectSession = (input: { terminalId: string; clientVersion: strin
   return { sessionId }
 }
 
-export const heartbeatSession = (sessionId: string) => {
+export const heartbeatSession = (input: { sandboxId: string; sessionId: string }) => {
+  const { sandboxId, sessionId } = input
+  assertSandboxUsable(sandboxId)
   const timestamp = now()
   db.update(sessionsTable)
     .set({ lastHeartbeatAt: timestamp })
-    .where(eq(sessionsTable.sessionId, sessionId))
+    .where(and(eq(sessionsTable.sessionId, sessionId), eq(sessionsTable.sandboxId, sandboxId)))
     .run()
-  const session = db.select().from(sessionsTable).where(eq(sessionsTable.sessionId, sessionId)).get()
+  const session = db.select().from(sessionsTable).where(and(eq(sessionsTable.sessionId, sessionId), eq(sessionsTable.sandboxId, sandboxId))).get()
   if (session) {
     db.update(terminalsTable)
       .set({ presenceStatus: 'ONLINE', lastSeenAt: timestamp, updatedAt: timestamp })
@@ -224,20 +229,23 @@ export const heartbeatSession = (sessionId: string) => {
   return { sessionId, lastHeartbeatAt: timestamp }
 }
 
-export const updateSessionAppliedRevision = (sessionId: string, revision: number) => {
+export const updateSessionAppliedRevision = (input: { sandboxId: string; sessionId: string; revision: number }) => {
+  const { sandboxId, sessionId, revision } = input
+  assertSandboxUsable(sandboxId)
   const timestamp = now()
   db.update(sessionsTable)
     .set({ lastAppliedRevision: revision, lastHeartbeatAt: timestamp })
-    .where(eq(sessionsTable.sessionId, sessionId))
+    .where(and(eq(sessionsTable.sessionId, sessionId), eq(sessionsTable.sandboxId, sandboxId)))
     .run()
   return { sessionId, lastAppliedRevision: revision }
 }
 
-export const acknowledgeSessionRevision = (input: { sessionId: string; cursor: number; topic?: string; itemKey?: string }) => {
+export const acknowledgeSessionRevision = (input: { sandboxId: string; sessionId: string; cursor: number; topic?: string; itemKey?: string }) => {
+  assertSandboxUsable(input.sandboxId)
   const timestamp = now()
   db.update(sessionsTable)
     .set({ lastAckedRevision: input.cursor, lastHeartbeatAt: timestamp })
-    .where(eq(sessionsTable.sessionId, input.sessionId))
+    .where(and(eq(sessionsTable.sessionId, input.sessionId), eq(sessionsTable.sandboxId, input.sandboxId)))
     .run()
 
   if (input.topic === 'tcp.task.release' && input.itemKey?.trim()) {
@@ -266,13 +274,15 @@ export const acknowledgeSessionRevision = (input: { sessionId: string; cursor: n
   return { sessionId: input.sessionId, cursor: input.cursor }
 }
 
-export const disconnectSession = (sessionId: string) => {
+export const disconnectSession = (input: { sandboxId: string; sessionId: string }) => {
+  const { sandboxId, sessionId } = input
+  assertSandboxUsable(sandboxId)
   const timestamp = now()
   db.update(sessionsTable)
     .set({ status: 'DISCONNECTED', disconnectedAt: timestamp, lastHeartbeatAt: timestamp })
-    .where(eq(sessionsTable.sessionId, sessionId))
+    .where(and(eq(sessionsTable.sessionId, sessionId), eq(sessionsTable.sandboxId, sandboxId)))
     .run()
-  const session = db.select().from(sessionsTable).where(eq(sessionsTable.sessionId, sessionId)).get()
+  const session = db.select().from(sessionsTable).where(and(eq(sessionsTable.sessionId, sessionId), eq(sessionsTable.sandboxId, sandboxId))).get()
   if (session) {
     db.update(terminalsTable)
       .set({ presenceStatus: 'OFFLINE', lastSeenAt: timestamp, updatedAt: timestamp })
@@ -282,10 +292,11 @@ export const disconnectSession = (sessionId: string) => {
   return { sessionId, disconnectedAt: timestamp }
 }
 
-export const validateTerminalAccessToken = (input: { terminalId: string; token: string }):
+export const validateTerminalAccessToken = (input: { sandboxId: string; terminalId: string; token: string }):
   | { valid: true }
   | { valid: false; code: string; message: string } => {
-  const sandboxId = getCurrentSandboxId()
+  const sandboxId = input.sandboxId
+  assertSandboxUsable(sandboxId)
   const timestamp = now()
   const terminal = db.select().from(terminalsTable).where(and(eq(terminalsTable.terminalId, input.terminalId), eq(terminalsTable.sandboxId, sandboxId))).get()
   if (!terminal) {
@@ -312,47 +323,48 @@ export const validateTerminalAccessToken = (input: { terminalId: string; token: 
   return { valid: true }
 }
 
-export const listTopics = () => {
-  const sandboxId = getCurrentSandboxId()
+export const listTopics = (sandboxId: string) => {
+  assertSandboxUsable(sandboxId)
   return db.select().from(topicsTable).where(eq(topicsTable.sandboxId, sandboxId)).orderBy(desc(topicsTable.updatedAt)).all().map((item) => ({
     ...item,
     schema: parseJson(item.schemaJson, {}),
   }))
 }
 
-export const listProjections = () => {
-  const sandboxId = getCurrentSandboxId()
+export const listProjections = (sandboxId: string) => {
+  assertSandboxUsable(sandboxId)
   return db.select().from(projectionsTable).where(eq(projectionsTable.sandboxId, sandboxId)).orderBy(desc(projectionsTable.updatedAt)).all().map((item) => ({
     ...item,
     payload: parseJson(item.payloadJson, {}),
   }))
 }
 
-export const listChangeLogs = () => {
-  const sandboxId = getCurrentSandboxId()
+export const listChangeLogs = (sandboxId: string) => {
+  assertSandboxUsable(sandboxId)
   return db.select().from(changeLogsTable).where(eq(changeLogsTable.sandboxId, sandboxId)).orderBy(desc(changeLogsTable.createdAt)).all().map((item) => ({
     ...item,
     payload: parseJson(item.payloadJson, {}),
   }))
 }
 
-export const listCommandOutbox = () => {
-  const sandboxId = getCurrentSandboxId()
+export const listCommandOutbox = (sandboxId: string) => {
+  assertSandboxUsable(sandboxId)
   return db.select().from(commandOutboxTable).where(eq(commandOutboxTable.sandboxId, sandboxId)).orderBy(desc(commandOutboxTable.updatedAt)).all().map((item) => ({
     ...item,
     payload: parseJson(item.payloadJson, {}),
   }))
 }
 
-export const dispatchTaskReleaseToDataPlane = (releaseId: string) => {
-  const sandboxId = getCurrentSandboxId()
+export const dispatchTaskReleaseToDataPlane = (input: { sandboxId: string; releaseId: string }) => {
+  const { sandboxId, releaseId } = input
+  assertSandboxUsable(sandboxId)
   const releaseMeta = sqlite.prepare('SELECT task_type, payload_json FROM task_releases WHERE release_id = ? AND sandbox_id = ? LIMIT 1').get(releaseId, sandboxId) as { task_type: string; payload_json: string } | undefined
   if (!releaseMeta) {
     throw new Error('任务发布单不存在')
   }
 
   if (releaseMeta.task_type === 'REMOTE_CONTROL') {
-    const commandDispatch = dispatchRemoteControlRelease(releaseId)
+    const commandDispatch = dispatchRemoteControlRelease(sandboxId, releaseId)
     return {
       dispatchId: createId('dispatch'),
       releaseId,
@@ -373,7 +385,7 @@ export const dispatchTaskReleaseToDataPlane = (releaseId: string) => {
 
   for (const instance of instances) {
     const revision = instance.current_revision + 1
-    const cursor = getNextCursorForTerminal(instance.terminal_id)
+    const cursor = getNextCursorForTerminal(sandboxId, instance.terminal_id)
     const snapshotPayload = JSON.stringify({
       releaseId,
       instanceId: instance.instance_id,
@@ -414,6 +426,7 @@ export const dispatchTaskReleaseToDataPlane = (releaseId: string) => {
       createdAt: timestamp,
     }).run()
     pushProjectionChangeToOnlineTerminal(instance.terminal_id, {
+      sandboxId,
       cursor,
       change: toProjectionEnvelope({
         topicKey: 'tcp.task.release',
@@ -441,8 +454,7 @@ export const dispatchTaskReleaseToDataPlane = (releaseId: string) => {
   }
 }
 
-const dispatchRemoteControlRelease = (releaseId: string) => {
-  const sandboxId = getCurrentSandboxId()
+const dispatchRemoteControlRelease = (sandboxId: string, releaseId: string) => {
   const instances = sqlite.prepare(`
     SELECT ti.instance_id, ti.terminal_id, ti.payload_json
     FROM task_instances ti
@@ -477,7 +489,7 @@ const dispatchRemoteControlRelease = (releaseId: string) => {
       updatedAt: timestamp,
     }).run()
 
-    const sessions = listOnlineSessionsByTerminalId(instance.terminal_id)
+    const sessions = listOnlineSessionsByTerminalId(sandboxId, instance.terminal_id)
     for (const session of sessions) {
       session.socket.send(JSON.stringify({
         type: 'COMMAND_DELIVERED',
@@ -504,12 +516,12 @@ const dispatchRemoteControlRelease = (releaseId: string) => {
   return { totalInstances: instances.length }
 }
 
-export const getTerminalSnapshot = (terminalId: string) => {
-  return getTerminalSnapshotEnvelope(terminalId)
+export const getTerminalSnapshot = (sandboxId: string, terminalId: string) => {
+  return getTerminalSnapshotEnvelope(sandboxId, terminalId)
 }
 
-export const getTerminalSnapshotEnvelope = (terminalId: string) => {
-  const sandboxId = getCurrentSandboxId()
+export const getTerminalSnapshotEnvelope = (sandboxId: string, terminalId: string) => {
+  assertSandboxUsable(sandboxId)
   const rows = sqlite.prepare(
     'SELECT DISTINCT p.topic_key, p.scope_key, p.scope_type, p.item_key, p.revision, p.payload_json, p.updated_at FROM tdp_projections p JOIN tdp_change_logs c ON c.sandbox_id = p.sandbox_id AND c.topic_key = p.topic_key AND c.scope_type = p.scope_type AND c.scope_key = p.scope_key AND c.item_key = p.item_key AND c.revision = p.revision WHERE p.sandbox_id = ? AND c.target_terminal_id = ? ORDER BY p.updated_at DESC'
   ).all(sandboxId, terminalId) as Array<{ topic_key: string; scope_key: string; scope_type: string; item_key: string; revision: number; payload_json: string; updated_at: number }>
@@ -525,8 +537,8 @@ export const getTerminalSnapshotEnvelope = (terminalId: string) => {
   }))
 }
 
-export const getTerminalChanges = (terminalId: string) => {
-  const sandboxId = getCurrentSandboxId()
+export const getTerminalChanges = (sandboxId: string, terminalId: string) => {
+  assertSandboxUsable(sandboxId)
   const rows = sqlite.prepare(
     'SELECT change_id, cursor, topic_key, operation, item_key, revision, payload_json, source_release_id, created_at FROM tdp_change_logs WHERE sandbox_id = ? AND target_terminal_id = ? ORDER BY created_at DESC LIMIT 50'
   ).all(sandboxId, terminalId) as Array<{ change_id: string; cursor: number; topic_key: string; operation: "upsert" | "delete"; item_key: string; revision: number; payload_json: string; source_release_id: string | null; created_at: number }>
@@ -544,8 +556,8 @@ export const getTerminalChanges = (terminalId: string) => {
   }))
 }
 
-export const getTerminalChangesSince = (terminalId: string, cursor: number, limit = 100) => {
-  const sandboxId = getCurrentSandboxId()
+export const getTerminalChangesSince = (sandboxId: string, terminalId: string, cursor: number, limit = 100) => {
+  assertSandboxUsable(sandboxId)
   const rows = sqlite.prepare(
     'SELECT change_id, cursor, topic_key, operation, scope_type, scope_key, item_key, revision, payload_json, source_release_id, created_at FROM tdp_change_logs WHERE sandbox_id = ? AND target_terminal_id = ? AND cursor > ? ORDER BY cursor ASC LIMIT ?'
   ).all(sandboxId, terminalId, cursor, limit) as Array<{ change_id: string; cursor: number; topic_key: string; operation: "upsert" | "delete"; scope_type: string; scope_key: string; item_key: string; revision: number; payload_json: string; source_release_id: string | null; created_at: number }>
@@ -566,8 +578,8 @@ export const getTerminalChangesSince = (terminalId: string, cursor: number, limi
   }))
 }
 
-export const getHighWatermarkForTerminal = (terminalId: string) => {
-  const sandboxId = getCurrentSandboxId()
+export const getHighWatermarkForTerminal = (sandboxId: string, terminalId: string) => {
+  assertSandboxUsable(sandboxId)
   const row = sqlite.prepare(
     'SELECT COALESCE(MAX(cursor), 0) as high_watermark FROM tdp_change_logs WHERE sandbox_id = ? AND target_terminal_id = ?'
   ).get(sandboxId, terminalId) as { high_watermark: number } | undefined
@@ -575,6 +587,7 @@ export const getHighWatermarkForTerminal = (terminalId: string) => {
 }
 
 export const createTopic = (input: {
+  sandboxId: string
   key: string
   name: string
   payloadMode?: string
@@ -582,7 +595,8 @@ export const createTopic = (input: {
   scopeType?: string
   retentionHours?: number
 }) => {
-  const sandboxId = getCurrentSandboxId()
+  const sandboxId = input.sandboxId
+  assertSandboxUsable(sandboxId)
   const timestamp = now()
   const topicId = createId('topic')
   db.insert(topicsTable).values({
@@ -600,8 +614,8 @@ export const createTopic = (input: {
   return { topicId }
 }
 
-export const listScopes = () => {
-  const sandboxId = getCurrentSandboxId()
+export const listScopes = (sandboxId: string) => {
+  assertSandboxUsable(sandboxId)
   const topicScopes = sqlite.prepare(
     'SELECT key as topic_key, scope_type, COUNT(*) as topic_count FROM tdp_topics WHERE sandbox_id = ? GROUP BY key, scope_type ORDER BY key ASC'
   ).all(sandboxId) as Array<{ topic_key: string; scope_type: string; topic_count: number }>
@@ -613,6 +627,7 @@ export const listScopes = () => {
 }
 
 export const upsertProjection = (input: {
+  sandboxId: string
   topicKey: string
   scopeType?: string
   scopeKey: string
@@ -622,6 +637,7 @@ export const upsertProjection = (input: {
 }) => {
   const scopeType = input.scopeType ?? 'TERMINAL'
   return upsertProjectionBatch({
+    sandboxId: input.sandboxId,
     projections: [
       {
         ...input,
@@ -632,6 +648,7 @@ export const upsertProjection = (input: {
 }
 
 export const upsertProjectionBatch = (input: {
+  sandboxId: string
   projections: Array<{
     operation?: 'upsert' | 'delete'
     topicKey: string
@@ -640,9 +657,11 @@ export const upsertProjectionBatch = (input: {
     itemKey?: string
     payload: Record<string, unknown>
     sourceReleaseId?: string
+    targetTerminalIds?: string[]
   }>
 }) => {
-  const sandboxId = getCurrentSandboxId()
+  const sandboxId = input.sandboxId
+  assertSandboxUsable(sandboxId)
   const timestamp = now()
   const queuedByTerminal = new Map<string, Array<{cursor: number; change: TdpProjectionEnvelope}>>()
 
@@ -684,13 +703,14 @@ export const upsertProjectionBatch = (input: {
       }).run()
     }
 
-    const targetTerminalIds = resolveTargetTerminalIds({
+    const targetTerminalIds = item.targetTerminalIds ?? resolveTargetTerminalIds({
+      sandboxId,
       scopeType,
       scopeKey: item.scopeKey,
     })
 
     targetTerminalIds.forEach(terminalId => {
-      const cursor = getNextCursorForTerminal(terminalId)
+      const cursor = getNextCursorForTerminal(sandboxId, terminalId)
       db.insert(changeLogsTable).values({
         changeId: createId('change'),
         sandboxId,
@@ -720,7 +740,7 @@ export const upsertProjectionBatch = (input: {
       const queue = queuedByTerminal.get(terminalId) ?? []
       queue.push({cursor, change})
       queuedByTerminal.set(terminalId, queue)
-      queueProjectionChangeToOnlineTerminal(terminalId, {cursor, change})
+      queueProjectionChangeToOnlineTerminal(terminalId, { sandboxId, cursor, change })
     })
 
     return {
@@ -735,12 +755,74 @@ export const upsertProjectionBatch = (input: {
   })
 
   queuedByTerminal.forEach((_changes, terminalId) => {
-    flushProjectionQueueToOnlineTerminal(terminalId)
+    flushProjectionQueueToOnlineTerminal(sandboxId, terminalId)
   })
 
   return {
     total: items.length,
     items,
+  }
+}
+
+export const fanoutExistingProjectionToTerminalIds = (input: {
+  sandboxId: string
+  topicKey: string
+  scopeType: string
+  scopeKey: string
+  itemKey: string
+  revision: number
+  payload: Record<string, unknown>
+  sourceReleaseId?: string | null
+  targetTerminalIds: string[]
+}) => {
+  const sandboxId = input.sandboxId
+  assertSandboxUsable(sandboxId)
+  const timestamp = now()
+  const payloadJson = JSON.stringify(input.payload)
+  const targetTerminalIds = Array.from(new Set(input.targetTerminalIds.filter(terminalId => terminalId.trim().length > 0)))
+  const queuedByTerminal = new Map<string, Array<{cursor: number; change: TdpProjectionEnvelope}>>()
+
+  targetTerminalIds.forEach(terminalId => {
+    const cursor = getNextCursorForTerminal(sandboxId, terminalId)
+    db.insert(changeLogsTable).values({
+      changeId: createId('change'),
+      sandboxId,
+      cursor,
+      topicKey: input.topicKey,
+      operation: 'upsert',
+      scopeType: input.scopeType,
+      scopeKey: input.scopeKey,
+      itemKey: input.itemKey,
+      targetTerminalId: terminalId,
+      revision: input.revision,
+      payloadJson,
+      sourceReleaseId: input.sourceReleaseId ?? null,
+      createdAt: timestamp,
+    }).run()
+    const change = toProjectionEnvelope({
+      topicKey: input.topicKey,
+      operation: 'upsert',
+      scopeType: input.scopeType,
+      scopeKey: input.scopeKey,
+      itemKey: input.itemKey,
+      revision: input.revision,
+      payloadJson,
+      createdAt: timestamp,
+      sourceReleaseId: input.sourceReleaseId ?? null,
+    })
+    const queue = queuedByTerminal.get(terminalId) ?? []
+    queue.push({cursor, change})
+    queuedByTerminal.set(terminalId, queue)
+    queueProjectionChangeToOnlineTerminal(terminalId, {sandboxId, cursor, change})
+  })
+
+  queuedByTerminal.forEach((_changes, terminalId) => {
+    flushProjectionQueueToOnlineTerminal(sandboxId, terminalId)
+  })
+
+  return {
+    total: targetTerminalIds.length,
+    targetTerminalIds,
   }
 }
 

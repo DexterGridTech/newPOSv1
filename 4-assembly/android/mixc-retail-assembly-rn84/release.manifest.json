@@ -4,7 +4,7 @@
   "product": "mixc-retail",
   "assemblyVersion": "1.0.0",
   "buildNumber": 1,
-  "bundleVersion": "1.0.0+ota.0",
+  "bundleVersion": "1.0.0+ota.1",
   "runtimeVersion": "android-mixc-retail-rn84@1.0",
   "channel": "development",
   "minSupportedAppVersion": "1.0.0",
@@ -13,7 +13,7 @@
     "@impos2/kernel-base-platform-ports": "1.0.0",
     "@impos2/kernel-base-runtime-shell-v2": "1.0.0",
     "@impos2/kernel-base-tcp-control-runtime-v2": "1.0.0",
-    "@impos2/kernel-base-topology-runtime-v2": "1.0.0",
+    "@impos2/kernel-base-topology-runtime-v3": "1.0.0",
     "@impos2/kernel-base-transport-runtime": "1.0.0",
     "@impos2/kernel-base-ui-runtime-v2": "1.0.0",
     "@impos2/kernel-server-config-v2": "1.0.0",
@@ -25,9 +25,23 @@
     "@impos2/adapter-android-v2": "1.0.0"
   },
   "git": {
-    "commit": "HEAD",
-    "branch": "local"
+    "commit": "629e9f6a0b57ed0f03967dc971afebc7a8b28d8e",
+    "branch": "main"
   },
-  "updatedAt": "2026-04-17T00:00:00.000Z",
-  "artifacts": {}
+  "updatedAt": "2026-04-19T02:18:33.933Z",
+  "artifacts": {
+    "apk": null,
+    "bundle": {
+      "path": "4-assembly/android/mixc-retail-assembly-rn84/android/app/build/generated/assets/react/release/index.android.bundle",
+      "size": 2741064,
+      "sha256": "d577207a1a783361dfd1e252003203943cf15172c07e6392746f7b2e0e9625f7",
+      "modifiedAt": "2026-04-19T02:18:33.216Z"
+    },
+    "sourceMap": {
+      "path": "4-assembly/android/mixc-retail-assembly-rn84/android/app/build/intermediates/sourcemaps/react/release/index.android.bundle.packager.map",
+      "size": 10512436,
+      "sha256": "8fcc96267bddb3bae77fa9e96d4f563eb027618a6e2d4fee8d1e02359cc38e25",
+      "modifiedAt": "2026-04-19T02:18:29.940Z"
+    }
+  }
 }

@@ -31,7 +31,7 @@ describe('tdp-sync-runtime-v2 live command roundtrip', () => {
         })
 
         await runtime.start()
-        await activateLiveTerminal(runtime, '200000000006', 'device-live-tdp-v2-command-001')
+        await activateLiveTerminal(runtime, platform.prepare.sandboxId, '200000000006', 'device-live-tdp-v2-command-001')
         await runtime.dispatchCommand(
             createCommand(tdpSyncV2CommandDefinitions.connectTdpSession, {}),
             {requestId: createRequestId()},

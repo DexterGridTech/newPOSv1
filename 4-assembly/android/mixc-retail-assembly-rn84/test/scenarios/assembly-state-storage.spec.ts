@@ -69,6 +69,21 @@ describe('assembly state storage', () => {
         expect(createNativeStateStorageMock).toHaveBeenCalledTimes(1)
     })
 
+    it('keeps the existing topology gate when later callers reuse storage without options', async () => {
+        let disabled = false
+        const first = createAssemblyStateStorage('state', {
+            shouldDisablePersistence: () => disabled,
+        })
+        const second = createAssemblyStateStorage('state')
+
+        expect(second).toBe(first)
+
+        await first.setItem('runtime.node', 'master')
+        disabled = true
+
+        await expect(second.getItem('runtime.node')).resolves.toBeNull()
+    })
+
     it('delegates batch operations and clear to the native storage bridge', async () => {
         const stateStorage = createAssemblyStateStorage('state')
 
@@ -94,5 +109,48 @@ describe('assembly state storage', () => {
         await stateStorage.clear?.()
 
         await expect(stateStorage.getAllKeys?.()).resolves.toEqual([])
+    })
+
+    it('disables storage dynamically only when the topology gate is active', async () => {
+        let disabled = false
+        const stateStorage = createAssemblyStateStorage('state', {
+            shouldDisablePersistence: () => disabled,
+        })
+
+        await stateStorage.setItem('terminal.activation', 'active')
+        await expect(stateStorage.getItem('terminal.activation')).resolves.toBe('active')
+
+        disabled = true
+        await stateStorage.setItem('terminal.activation', 'managed-secondary-write')
+
+        await expect(stateStorage.getItem('terminal.activation')).resolves.toBeNull()
+        await expect(stateStorage.getAllKeys?.()).resolves.toEqual([])
+        await expect(stateStorage.multiGet?.([
+            'terminal.activation',
+            'terminal.missing',
+        ])).resolves.toEqual({
+            'terminal.activation': null,
+            'terminal.missing': null,
+        })
+
+        disabled = false
+
+        await expect(stateStorage.getItem('terminal.activation')).resolves.toBe('active')
+    })
+
+    it('does not clear underlying storage while the topology gate is active', async () => {
+        let disabled = false
+        const stateStorage = createAssemblyStateStorage('state', {
+            shouldDisablePersistence: () => disabled,
+        })
+
+        await stateStorage.setItem('terminal.activation', 'active')
+        disabled = true
+        await stateStorage.clear?.()
+        await stateStorage.removeItem('terminal.activation')
+        await stateStorage.multiRemove?.(['terminal.activation'])
+        disabled = false
+
+        await expect(stateStorage.getItem('terminal.activation')).resolves.toBe('active')
     })
 })

@@ -20,12 +20,15 @@ import {
 } from '@impos2/kernel-base-transport-runtime'
 import {
     createTcpControlRuntimeModuleV2,
+    selectTcpBindingSnapshot,
+    selectTcpTerminalId,
     tcpControlV2CommandDefinitions,
 } from '@impos2/kernel-base-tcp-control-runtime-v2'
 import {
     createTdpSyncRuntimeModuleV2,
     selectTdpCommandInboxState,
     selectTdpProjectionByTopicAndBucket,
+    selectTdpResolvedProjection,
     selectTdpResolvedProjectionByTopic,
     selectTdpSessionState,
     selectTdpSyncState,
@@ -70,6 +73,9 @@ const createMemoryStorage = () => {
 const createMockTcpTransport = (): HttpTransport => ({
     async execute(request) {
         if (request.endpoint.pathTemplate === '/api/v1/terminals/activate') {
+            expect(request.input.body).toMatchObject({
+                sandboxId: 'sandbox-test-001',
+            })
             return {
                 data: {
                     success: true,
@@ -95,6 +101,10 @@ const createMockTcpTransport = (): HttpTransport => ({
         }
 
         if (request.endpoint.pathTemplate === '/api/v1/terminals/token/refresh') {
+            expect(request.input.body).toMatchObject({
+                sandboxId: 'sandbox-test-001',
+                refreshToken: 'refresh-token-001',
+            })
             return {
                 data: {
                     success: true,
@@ -151,6 +161,7 @@ const createRuntime = (input: {
     stateStorage: ReturnType<typeof createMemoryStorage>
     secureStateStorage: ReturnType<typeof createMemoryStorage>
     socketRuntimeSpy?: ReturnType<typeof createSocketRuntimeSpy>
+    autoConnectOnActivation?: boolean
 }) => {
     const socketRuntimeSpy = input.socketRuntimeSpy
 
@@ -185,6 +196,7 @@ const createRuntime = (input: {
                 },
             }),
             createTdpSyncRuntimeModuleV2(socketRuntimeSpy == null ? undefined : {
+                autoConnectOnActivation: input.autoConnectOnActivation ?? false,
                 assembly: {
                     createHttpRuntime(context: RuntimeModuleContextV2) {
                         return createHttpRuntime({
@@ -200,12 +212,12 @@ const createRuntime = (input: {
                         return {
                             socketRuntime: socketRuntimeSpy.socketRuntime,
                             profileName: 'kernel.base.tdp-sync-runtime-v2.test.socket',
-                            profile: defineSocketProfile<void, {terminalId: string; token: string}, Record<string, string>, any, any>({
+                            profile: defineSocketProfile<void, {sandboxId: string; terminalId: string; token: string}, Record<string, string>, any, any>({
                                 name: 'kernel.base.tdp-sync-runtime-v2.test.socket',
                                 serverName: SERVER_NAME_MOCK_TERMINAL_PLATFORM,
                                 pathTemplate: '/api/v1/tdp/ws/connect',
                                 handshake: {
-                                    query: typed<{terminalId: string; token: string}>('kernel.base.tdp-sync-runtime-v2.test.socket.query'),
+                                    query: typed<{sandboxId: string; terminalId: string; token: string}>('kernel.base.tdp-sync-runtime-v2.test.socket.query'),
                                     headers: typed<Record<string, string>>('kernel.base.tdp-sync-runtime-v2.test.socket.headers'),
                                 },
                                 messages: {
@@ -273,6 +285,7 @@ describe('tdp-sync-runtime-v2', () => {
             },
         }))
         await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.activateTerminal, {
+            sandboxId: 'sandbox-test-001',
             activationCode: 'ACT-TDP-V2-001',
             deviceFingerprint: 'device-test-001',
             deviceInfo: {
@@ -462,6 +475,7 @@ describe('tdp-sync-runtime-v2', () => {
             },
         }))
         await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.activateTerminal, {
+            sandboxId: 'sandbox-test-001',
             activationCode: 'ACT-TDP-V2-ACK-001',
             deviceFingerprint: 'device-test-ack-001',
             deviceInfo: {
@@ -531,6 +545,7 @@ describe('tdp-sync-runtime-v2', () => {
             },
         }))
         await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.activateTerminal, {
+            sandboxId: 'sandbox-test-001',
             activationCode: 'ACT-TDP-V2-HANDSHAKE-001',
             deviceFingerprint: 'device-test-handshake-001',
             deviceInfo: {
@@ -550,9 +565,105 @@ describe('tdp-sync-runtime-v2', () => {
             message: {
                 type: 'HANDSHAKE',
                 data: expect.objectContaining({
+                    sandboxId: 'sandbox-test-001',
                     terminalId: 'terminal-test-001',
                     appVersion: expect.any(String),
                     protocolVersion: expect.any(String),
+                }),
+            },
+        })
+        expect(selectTdpSessionState(runtime.getState())?.status).toBe('HANDSHAKING')
+    })
+
+    it('auto connects TDP after terminal activation succeeds', async () => {
+        const stateStorage = createMemoryStorage()
+        const secureStateStorage = createMemoryStorage()
+        const socketRuntimeSpy = createSocketRuntimeSpy()
+        const runtime = createRuntime({
+            localNodeId: 'node_tdp_v2_auto_connect_after_activation',
+            stateStorage,
+            secureStateStorage,
+            socketRuntimeSpy,
+            autoConnectOnActivation: true,
+        })
+
+        await runtime.start()
+        await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.bootstrapTcpControl, {
+            deviceInfo: {
+                id: 'device-auto-connect-001',
+                model: 'Mock POS',
+            },
+        }))
+        await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.activateTerminal, {
+            sandboxId: 'sandbox-test-001',
+            activationCode: 'ACT-TDP-V2-AUTO-CONNECT-001',
+            deviceFingerprint: 'device-auto-connect-001',
+            deviceInfo: {
+                id: 'device-auto-connect-001',
+                model: 'Mock POS',
+            },
+        }))
+
+        expect(socketRuntimeSpy.sentMessages).toContainEqual({
+            profileName: 'kernel.base.tdp-sync-runtime-v2.test.socket',
+            message: {
+                type: 'HANDSHAKE',
+                data: expect.objectContaining({
+                    sandboxId: 'sandbox-test-001',
+                    terminalId: 'terminal-test-001',
+                }),
+            },
+        })
+        expect(selectTdpSessionState(runtime.getState())?.status).toBe('HANDSHAKING')
+    })
+
+    it('auto reconnects TDP on runtime start when activation state was persisted', async () => {
+        const stateStorage = createMemoryStorage()
+        const secureStateStorage = createMemoryStorage()
+        const seedRuntime = createRuntime({
+            localNodeId: 'node_tdp_v2_auto_reconnect_after_restart',
+            stateStorage,
+            secureStateStorage,
+            socketRuntimeSpy: createSocketRuntimeSpy(),
+            autoConnectOnActivation: false,
+        })
+
+        await seedRuntime.start()
+        await seedRuntime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.bootstrapTcpControl, {
+            deviceInfo: {
+                id: 'device-auto-reconnect-001',
+                model: 'Mock POS',
+            },
+        }))
+        await seedRuntime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.activateTerminal, {
+            sandboxId: 'sandbox-test-001',
+            activationCode: 'ACT-TDP-V2-AUTO-RECONNECT-001',
+            deviceFingerprint: 'device-auto-reconnect-001',
+            deviceInfo: {
+                id: 'device-auto-reconnect-001',
+                model: 'Mock POS',
+            },
+        }))
+        await seedRuntime.flushPersistence()
+
+        const socketRuntimeSpy = createSocketRuntimeSpy()
+        const runtime = createRuntime({
+            localNodeId: 'node_tdp_v2_auto_reconnect_after_restart',
+            stateStorage,
+            secureStateStorage,
+            socketRuntimeSpy,
+            autoConnectOnActivation: true,
+        })
+
+        await runtime.start()
+
+        expect(socketRuntimeSpy.sentMessages).toContainEqual({
+            profileName: 'kernel.base.tdp-sync-runtime-v2.test.socket',
+            message: {
+                type: 'HANDSHAKE',
+                data: expect.objectContaining({
+                    sandboxId: 'sandbox-test-001',
+                    terminalId: 'terminal-test-001',
                 }),
             },
         })
@@ -571,6 +682,44 @@ describe('tdp-sync-runtime-v2', () => {
 
         const result = await runtime.dispatchCommand(createCommand(
             tdpSyncV2CommandDefinitions.connectTdpSession,
+            {},
+        ))
+
+        expect(result.status).toBe('FAILED')
+        expect(result.actorResults[0]).toMatchObject({
+            status: 'FAILED',
+            error: {
+                key: 'kernel.base.tdp-sync-runtime-v2.credential_missing',
+            },
+        })
+    })
+
+    it('fails bootstrapTdpSync when tcp credential exists but sandboxId is missing', async () => {
+        const stateStorage = createMemoryStorage()
+        const secureStateStorage = createMemoryStorage()
+        await secureStateStorage.storage.setItem(
+            'kernel-runtime-v2:node_tdp_v2_missing_sandbox:secure-state:kernel.base.tcp-control-runtime-v2.credential:accessToken',
+            JSON.stringify('access-token-001'),
+        )
+        await secureStateStorage.storage.setItem(
+            'kernel-runtime-v2:node_tdp_v2_missing_sandbox:secure-state:kernel.base.tcp-control-runtime-v2.credential:refreshToken',
+            JSON.stringify('refresh-token-001'),
+        )
+        await stateStorage.storage.setItem(
+            'kernel-runtime-v2:node_tdp_v2_missing_sandbox:app-state:kernel.base.tcp-control-runtime-v2.identity:terminalId',
+            JSON.stringify('terminal-test-001'),
+        )
+
+        const runtime = createRuntime({
+            localNodeId: 'node_tdp_v2_missing_sandbox',
+            stateStorage,
+            secureStateStorage,
+        })
+
+        await runtime.start()
+
+        const result = await runtime.dispatchCommand(createCommand(
+            tdpSyncV2CommandDefinitions.bootstrapTdpSync,
             {},
         ))
 
@@ -602,6 +751,7 @@ describe('tdp-sync-runtime-v2', () => {
             },
         }))
         await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.activateTerminal, {
+            sandboxId: 'sandbox-test-001',
             activationCode: 'ACT-TDP-V2-FEEDBACK-001',
             deviceFingerprint: 'device-test-feedback-001',
             deviceInfo: {
@@ -683,5 +833,84 @@ describe('tdp-sync-runtime-v2', () => {
             lastAckedCursor: 5,
             lastAppliedCursor: 5,
         })
+    })
+
+    it('resolves GROUP scope between store and terminal by membership rank', async () => {
+        const stateStorage = createMemoryStorage()
+        const secureStateStorage = createMemoryStorage()
+        const runtime = createRuntime({
+            localNodeId: 'node_tdp_v2_group_scope',
+            stateStorage,
+            secureStateStorage,
+        })
+
+        await runtime.start()
+        await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.activateTerminal, {
+            sandboxId: 'sandbox-test-001',
+            activationCode: '123456789012',
+            deviceFingerprint: 'device-group-scope',
+            deviceInfo: {
+                id: 'device-group-scope',
+                model: 'Mock POS',
+            },
+        }))
+
+        const binding = selectTcpBindingSnapshot(runtime.getState())
+        const terminalId = selectTcpTerminalId(runtime.getState())
+        if (!terminalId) {
+            throw new Error('expected terminal id')
+        }
+
+        await runtime.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.tdpSnapshotLoaded, {
+            highWatermark: 4,
+            snapshot: [{
+            topic: 'config.delta',
+            itemKey: 'main',
+            operation: 'upsert',
+            scopeType: 'STORE',
+            scopeId: binding.storeId ?? 'store-test',
+            revision: 1,
+            payload: {version: 'store'},
+            occurredAt: '2026-04-18T00:00:00.000Z',
+        }, {
+            topic: 'config.delta',
+            itemKey: 'main',
+            operation: 'upsert',
+            scopeType: 'GROUP',
+            scopeId: 'group_a',
+            revision: 1,
+            payload: {version: 'group-a'},
+            occurredAt: '2026-04-18T00:00:01.000Z',
+        }, {
+            topic: 'config.delta',
+            itemKey: 'main',
+            operation: 'upsert',
+            scopeType: 'GROUP',
+            scopeId: 'group_b',
+            revision: 1,
+            payload: {version: 'group-b'},
+            occurredAt: '2026-04-18T00:00:02.000Z',
+        }, {
+            topic: 'terminal.group.membership',
+            itemKey: terminalId,
+            operation: 'upsert',
+            scopeType: 'TERMINAL',
+            scopeId: terminalId,
+            revision: 1,
+            payload: {
+                membershipVersion: 2,
+                groups: [
+                    {groupId: 'group_a', rank: 0, priority: 100, matchedBy: {projectId: binding.projectId}},
+                    {groupId: 'group_b', rank: 1, priority: 200, matchedBy: {templateId: binding.templateId}},
+                ],
+            },
+            occurredAt: '2026-04-18T00:00:03.000Z',
+        }],
+        }))
+
+        expect(selectTdpResolvedProjection(runtime.getState(), {
+            topic: 'config.delta',
+            itemKey: 'main',
+        })?.payload.version).toBe('group-b')
     })
 })

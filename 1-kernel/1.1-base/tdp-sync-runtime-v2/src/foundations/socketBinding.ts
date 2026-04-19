@@ -6,7 +6,7 @@ export const TDP_SYNC_V2_SOCKET_PROFILE_NAME = 'kernel.base.tdp-sync-runtime-v2.
 
 export const tdpSyncV2SocketProfile = defineSocketProfile<
     void,
-    {terminalId: string; token: string},
+    {sandboxId: string; terminalId: string; token: string},
     Record<string, string>,
     TdpServerMessage,
     TdpClientMessage
@@ -15,7 +15,7 @@ export const tdpSyncV2SocketProfile = defineSocketProfile<
     serverName: SERVER_NAME_MOCK_TERMINAL_PLATFORM,
     pathTemplate: '/api/v1/tdp/ws/connect',
     handshake: {
-        query: typed<{terminalId: string; token: string}>('kernel.base.tdp-sync-runtime-v2.socket.query'),
+        query: typed<{sandboxId: string; terminalId: string; token: string}>('kernel.base.tdp-sync-runtime-v2.socket.query'),
         headers: typed<Record<string, string>>('kernel.base.tdp-sync-runtime-v2.socket.headers'),
     },
     messages: {

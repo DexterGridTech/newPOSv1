@@ -5,7 +5,10 @@ import {
     adminConsoleStateActions,
     createAdminPasswordVerifier,
 } from '../../src'
-import {createAdminConsoleHarness, renderWithAutomation} from '../support/adminConsoleHarness'
+import {
+    createAdminConsoleHarness,
+    renderAdminWithAutomation,
+} from '../support/adminConsoleHarness'
 
 vi.mock('react-native-qrcode-svg', async () => {
     const ReactModule = await import('react')
@@ -20,12 +23,16 @@ vi.mock('react-native-qrcode-svg', async () => {
 })
 
 describe('AdminPopup', () => {
+    const enterPin = async (
+        automation: ReturnType<typeof renderAdminWithAutomation>,
+        value: string,
+    ) => await automation.typeVirtualValue('ui-base-admin-popup:password', value)
+
     it('renders the protected login view by default', async () => {
         const harness = await createAdminConsoleHarness()
-        const tree = renderWithAutomation(
+        const tree = renderAdminWithAutomation(
             <AdminPopup deviceId="DEVICE-001" onClose={() => {}} />,
-            harness.store,
-            harness.runtime,
+            harness,
         )
 
         await expect(tree.getNode('ui-base-admin-popup:login')).resolves.toBeTruthy()
@@ -34,10 +41,9 @@ describe('AdminPopup', () => {
 
     it('shows device id text and qr code on the login view without the removed helper sentence', async () => {
         const harness = await createAdminConsoleHarness()
-        const tree = renderWithAutomation(
+        const tree = renderAdminWithAutomation(
             <AdminPopup deviceId="DEVICE-001" onClose={() => {}} />,
-            harness.store,
-            harness.runtime,
+            harness,
         )
 
         await expect(tree.getNode('ui-base-admin-popup:device-identity')).resolves.toBeTruthy()
@@ -53,10 +59,9 @@ describe('AdminPopup', () => {
                 environmentMode: 'DEV',
             },
         })
-        const automation = renderWithAutomation(
+        const automation = renderAdminWithAutomation(
             <AdminPopup deviceId="DEVICE-001" onClose={() => {}} />,
-            harness.store,
-            harness.runtime,
+            harness,
         )
         const verifierPassword = createAdminPasswordVerifier({
             deviceIdProvider: () => 'DEVICE-001',
@@ -71,10 +76,9 @@ describe('AdminPopup', () => {
                 environmentMode: 'TEST',
             },
         })
-        const automation = renderWithAutomation(
+        const automation = renderAdminWithAutomation(
             <AdminPopup deviceId="DEVICE-001" onClose={() => {}} />,
-            harness.store,
-            harness.runtime,
+            harness,
         )
 
         expect(await automation.getText('ui-base-admin-popup:password')).toBe('请输入 6 位动态密码')
@@ -82,17 +86,16 @@ describe('AdminPopup', () => {
 
     it('renders grouped admin navigation and adapter diagnostics after login', async () => {
         const harness = await createAdminConsoleHarness()
-        const automation = renderWithAutomation(
+        const automation = renderAdminWithAutomation(
             <AdminPopup deviceId="DEVICE-001" onClose={() => {}} />,
-            harness.store,
-            harness.runtime,
+            harness,
         )
         const verifierPassword = createAdminPasswordVerifier({
             deviceIdProvider: () => 'DEVICE-001',
         }).deriveFor(new Date())
 
         await automation.waitForNode('ui-base-admin-popup:password')
-        await automation.changeText('ui-base-admin-popup:password', verifierPassword)
+        await enterPin(automation, verifierPassword)
         await automation.press('ui-base-admin-popup:submit')
         await automation.waitForNode('ui-base-admin-popup:panel')
 
@@ -154,16 +157,15 @@ describe('AdminPopup', () => {
                 },
             ],
         }))
-        const automation = renderWithAutomation(
+        const automation = renderAdminWithAutomation(
             <AdminPopup deviceId="DEVICE-001" onClose={() => {}} />,
-            harness.store,
-            harness.runtime,
+            harness,
         )
         const verifierPassword = createAdminPasswordVerifier({
             deviceIdProvider: () => 'DEVICE-001',
         }).deriveFor(new Date())
 
-        await automation.changeText('ui-base-admin-popup:password', verifierPassword)
+        await enterPin(automation, verifierPassword)
         await automation.press('ui-base-admin-popup:submit')
         await automation.press('ui-base-admin-popup:tab:adapter')
 

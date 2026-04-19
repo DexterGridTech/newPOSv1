@@ -220,10 +220,15 @@ export interface RenderWithAutomationResult {
     readonly client: ReturnType<typeof createAutomationJsonRpcClient>
     readonly trace: ReturnType<typeof createAutomationTrace>
     refresh(): void
+    act(run: () => void | Promise<void>): Promise<void>
+    dispatch(run: () => void | Promise<void>): Promise<void>
+    dispatchCommand(command: unknown): Promise<unknown>
     update(element: React.ReactElement): Promise<void>
+    unmount(): Promise<void>
     press(testID: string): Promise<void>
     changeText(testID: string, value: string): Promise<void>
     clearValue(testID: string): Promise<void>
+    typeVirtualValue(fieldNodeId: string, value: string, options?: {clear?: boolean}): Promise<void>
     getNode(testID: string): Promise<AutomationNodeSnapshot | null>
     getText(testID: string): Promise<string | undefined>
     queryNodes(testID: string): Promise<readonly AutomationNodeSnapshot[]>
@@ -233,6 +238,27 @@ export interface RenderWithAutomationResult {
     waitForText(text: string, timeoutMs?: number): Promise<AutomationNodeSnapshot>
     waitForIdle(timeoutMs?: number): Promise<{ok: boolean; blocker?: string}>
     getState(path?: readonly string[]): Promise<unknown>
+}
+
+const resolveNodeForTextEntry = async (
+    client: ReturnType<typeof createAutomationJsonRpcClient>,
+    target: 'primary' | 'secondary',
+    testID: string,
+): Promise<AutomationNodeSnapshot> => {
+    const node = await client.call<AutomationNodeSnapshot | null>('ui.getNode', {
+        target,
+        nodeId: testID,
+    })
+    if (!node) {
+        throw new Error(`NODE_NOT_FOUND:${testID}`)
+    }
+    if (node.nodeId.startsWith('ui-base-virtual-field:')) {
+        throw new Error(`VIRTUAL_INPUT_REQUIRES_KEYBOARD:${testID}`)
+    }
+    if (!node.availableActions.includes('changeText')) {
+        throw new Error(`NODE_NOT_TEXT_EDITABLE:${testID}`)
+    }
+    return node
 }
 
 export const renderWithAutomation = (
@@ -573,9 +599,39 @@ export const renderWithAutomation = (
         client,
         trace,
         refresh: rebuildRegistry,
+        async act(run) {
+            await act(async () => {
+                await run()
+                await sleep(0)
+            })
+            rebuildRegistry()
+        },
+        async dispatch(run) {
+            await act(async () => {
+                await run()
+                await sleep(0)
+            })
+            rebuildRegistry()
+        },
+        async dispatchCommand(command) {
+            let result: unknown
+            await act(async () => {
+                result = await runtime.dispatchCommand(command as never)
+                await sleep(0)
+            })
+            rebuildRegistry()
+            return result
+        },
         async update(nextElement) {
             await act(async () => {
                 tree.update(wrap(nextElement))
+            })
+            rebuildRegistry()
+        },
+        async unmount() {
+            await act(async () => {
+                tree.unmount()
+                await sleep(0)
             })
             rebuildRegistry()
         },
@@ -587,6 +643,7 @@ export const renderWithAutomation = (
             })
         },
         async changeText(testID, value) {
+            await resolveNodeForTextEntry(client, target, testID)
             await client.call('ui.setValue', {
                 target,
                 nodeId: testID,
@@ -594,9 +651,44 @@ export const renderWithAutomation = (
             })
         },
         async clearValue(testID) {
+            const node = await resolveNodeForTextEntry(client, target, testID)
+            if (!node.availableActions.includes('clear')) {
+                throw new Error(`NODE_NOT_CLEARABLE:${testID}`)
+            }
             await client.call('ui.clearValue', {
                 target,
                 nodeId: testID,
+            })
+        },
+        async typeVirtualValue(fieldNodeId, value, options = {}) {
+            await client.call('ui.performAction', {
+                target,
+                nodeId: fieldNodeId,
+                action: 'press',
+            })
+            await client.call('wait.forNode', {
+                target,
+                testID: 'ui-base-virtual-keyboard',
+                timeoutMs: 3_000,
+            })
+            if (options.clear !== false) {
+                await client.call('ui.performAction', {
+                    target,
+                    nodeId: 'ui-base-virtual-keyboard:key:clear',
+                    action: 'press',
+                })
+            }
+            for (const key of value.toUpperCase().split('')) {
+                await client.call('ui.performAction', {
+                    target,
+                    nodeId: `ui-base-virtual-keyboard:key:${key}`,
+                    action: 'press',
+                })
+            }
+            await client.call('ui.performAction', {
+                target,
+                nodeId: 'ui-base-virtual-keyboard:key:enter',
+                action: 'press',
             })
         },
         async getNode(testID) {

@@ -3,8 +3,14 @@ import {
 } from '@impos2/ui-base-admin-console/supports'
 import type {
     AdapterDiagnosticScenario,
+    AdminTopologyHost,
+    AdminTopologySharePayload,
 } from '@impos2/ui-base-admin-console/types'
 import type {CreateAdminConsoleModuleInput} from '@impos2/ui-base-admin-console/application'
+import {createCommand, type KernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
+import {
+    topologyRuntimeV3CommandDefinitions,
+} from '@impos2/kernel-base-topology-runtime-v3'
 import {nativeLogger} from '../turbomodules/logger'
 import {nativeAppControl} from '../turbomodules/appControl'
 import {nativeConnector} from '../turbomodules/connector'
@@ -16,6 +22,11 @@ import {
     setAssemblySelectedServerSpace,
 } from '../platform-ports/serverSpaceState'
 import {createAssemblyStateStorage} from '../platform-ports/stateStorage'
+import {
+    importAssemblyTopologySharePayload,
+    AssemblyTopologyBindingSource,
+    AssemblyTopologyStorageGateSnapshot,
+} from './topology'
 
 const ADAPTER_KEY_DEVICE = 'device'
 const ADAPTER_KEY_LOGGER = 'logger'
@@ -24,6 +35,101 @@ const ADAPTER_KEY_STORAGE = 'storage'
 const ADAPTER_KEY_SCRIPTS = 'scripts'
 const ADAPTER_KEY_TOPOLOGY = 'topology'
 const ADAPTER_KEY_APPCONTROL = 'app-control'
+
+export interface AssemblyAdminTopologyInput {
+    bindingSource?: AssemblyTopologyBindingSource
+    getTopologyContextSnapshot?: () => AssemblyTopologyStorageGateSnapshot
+    getRuntime?: () => KernelRuntimeV2 | undefined
+}
+
+type TopologyDiagnosticsSnapshot = {
+    hostRuntime?: {
+        nodeId?: string
+        deviceId?: string
+    }
+    peers?: Array<{
+        role?: string
+        nodeId?: string
+        deviceId?: string
+    }>
+}
+
+type TopologyHostStatus = {
+    addressInfo?: {
+        httpBaseUrl?: string
+        wsUrl?: string
+    }
+}
+
+const createAssemblyAdminTopologyHost = (
+    input: AssemblyAdminTopologyInput | undefined,
+): AdminTopologyHost | undefined => {
+    const bindingSource = input?.bindingSource
+    const getRuntime = input?.getRuntime
+    if (!bindingSource) {
+        return undefined
+    }
+
+    const dispatchTopologyCommand = async (
+        command: ReturnType<typeof createCommand>,
+    ): Promise<void> => {
+        const runtime = getRuntime?.()
+        if (!runtime?.dispatchCommand) {
+            return
+        }
+        await runtime.dispatchCommand(command)
+    }
+
+    return {
+        async getSharePayload(): Promise<AdminTopologySharePayload | null> {
+            const [diagnosticsSnapshot, status] = await Promise.all([
+                nativeTopologyHost.getDiagnosticsSnapshot() as Promise<TopologyDiagnosticsSnapshot | null>,
+                nativeTopologyHost.getStatus() as Promise<TopologyHostStatus>,
+            ])
+            const masterPeer = diagnosticsSnapshot?.peers?.find(peer => peer.role === 'MASTER')
+            const nodeId = diagnosticsSnapshot?.hostRuntime?.nodeId ?? masterPeer?.nodeId
+            const deviceId = diagnosticsSnapshot?.hostRuntime?.deviceId ?? masterPeer?.deviceId
+            const httpBaseUrl = status?.addressInfo?.httpBaseUrl
+            const wsUrl = status?.addressInfo?.wsUrl
+            if (!nodeId || !deviceId || (!httpBaseUrl && !wsUrl)) {
+                return null
+            }
+            return {
+                formatVersion: '2026.04',
+                deviceId,
+                masterNodeId: nodeId,
+                wsUrl,
+                httpBaseUrl,
+            }
+        },
+        async importSharePayload(payload): Promise<void> {
+            const imported = importAssemblyTopologySharePayload(payload)
+            bindingSource.set(imported.bindingSeed)
+            await dispatchTopologyCommand(createCommand(
+                topologyRuntimeV3CommandDefinitions.setMasterLocator,
+                {
+                    masterLocator: imported.masterLocator as any,
+                },
+            ))
+        },
+        async clearMasterLocator(): Promise<void> {
+            bindingSource.clear()
+            await dispatchTopologyCommand(createCommand(
+                topologyRuntimeV3CommandDefinitions.clearMasterLocator,
+                {},
+            ))
+        },
+        async reconnect(): Promise<void> {
+            await dispatchTopologyCommand(createCommand(
+                topologyRuntimeV3CommandDefinitions.restartTopologyConnection,
+                {},
+            ))
+        },
+        async getTopologyHostStatus(): Promise<Record<string, unknown> | null> {
+            return await nativeTopologyHost.getStatus()
+        },
+    }
+}
 
 const createAdapterDiagnosticScenarios = (): readonly AdapterDiagnosticScenario[] => {
     const stateStorage = createAssemblyStateStorage('state')
@@ -165,7 +271,11 @@ const createAdapterDiagnosticScenarios = (): readonly AdapterDiagnosticScenario[
     ]
 }
 
-export const createAssemblyAdminConsoleInput = (): CreateAdminConsoleModuleInput => ({
+export const createAssemblyAdminConsoleInput = (
+    input: {
+        topology?: AssemblyAdminTopologyInput
+    } = {},
+): CreateAdminConsoleModuleInput => ({
     ...createAdminConsoleModuleInputFromHost({
         device: {
             ...nativeDevice,
@@ -222,6 +332,7 @@ export const createAssemblyAdminConsoleInput = (): CreateAdminConsoleModuleInput
                 detail: '探测 HID 键盘或扫码枪通道。',
             },
         ],
+        topology: createAssemblyAdminTopologyHost(input.topology),
     }),
     adapterDiagnosticScenarios: createAdapterDiagnosticScenarios(),
 })

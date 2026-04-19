@@ -21,6 +21,7 @@ export const createTcpStateMutationActorDefinitionV2 = (): ActorDefinition => de
             actorContext.dispatchAction(tcpControlV2StateActions.clearActivation())
             actorContext.dispatchAction(tcpControlV2StateActions.clearCredential())
             actorContext.dispatchAction(tcpControlV2StateActions.clearBinding())
+            actorContext.dispatchAction(tcpControlV2StateActions.clearSandbox())
             actorContext.dispatchAction(tcpControlV2StateActions.resetRuntimeObservation())
             return {}
         }),

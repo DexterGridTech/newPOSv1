@@ -51,6 +51,7 @@ export {
     selectTopologyDisplayMode,
     selectTopologyInstanceMode,
     selectTopologyStandalone,
+    selectTopologySync,
     selectTopologyWorkspace,
 } from './selectors'
 export type {

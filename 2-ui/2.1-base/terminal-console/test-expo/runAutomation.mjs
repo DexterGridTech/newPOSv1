@@ -56,8 +56,10 @@ const readState = async session => {
     const nodeMap = toAutomationNodeMap(nodes)
     return {
         ready: hasNode(nodeMap, 'ui-base-terminal-console-expo:ready'),
+        sandboxId: readText(nodeMap, 'ui-base-terminal-console-expo:sandbox-id'),
         activationCode: readText(nodeMap, 'ui-base-terminal-console-expo:activation-code'),
         activationStatus: readText(nodeMap, 'ui-base-terminal-console-expo:activation-status'),
+        sandboxInputValue: readText(nodeMap, 'ui-base-terminal-activate-device:sandbox-value'),
         activationInputValue: readText(nodeMap, 'ui-base-terminal-activate-device:value'),
         activationMessage: readText(nodeMap, 'ui-base-terminal-activate-device:message'),
         summaryDescription: readText(nodeMap, 'ui-base-terminal-summary:description'),
@@ -162,8 +164,27 @@ const main = async () => {
             activationStatus: 'UNACTIVATED',
             keyboardVisible: false,
         }, 'boot')
-        if (!initial.activationCode) {
+        if (!initial.activationCode || !initial.sandboxId) {
             throw new Error(`missing activation code from expo shell: ${JSON.stringify(initial)}`)
+        }
+
+        await clickTestId(session, 'ui-base-terminal-activate-device:sandbox')
+        expectState(await readState(session), {
+            keyboardVisible: true,
+            keyboardTitle: '标识键盘',
+        }, 'sandbox keyboard open')
+
+        for (const key of initial.sandboxId.toUpperCase().split('')) {
+            await clickTestId(session, `ui-base-virtual-keyboard:key:${key}`)
+        }
+        await clickTestId(session, 'ui-base-virtual-keyboard:key:enter')
+
+        const sandboxFilled = await readState(session)
+        expectState(sandboxFilled, {
+            keyboardVisible: false,
+        }, 'sandbox keyboard closed')
+        if (!sandboxFilled.sandboxInputValue?.includes(initial.sandboxId)) {
+            throw new Error(`sandbox input did not reflect sandbox id: ${JSON.stringify(sandboxFilled)}`)
         }
 
         await clickTestId(session, 'ui-base-terminal-activate-device:input')

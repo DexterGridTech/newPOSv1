@@ -18,6 +18,7 @@ export type SyncRecordState<TValue = unknown> = Record<string, SyncValueEnvelope
 export interface SyncStateSummaryEntry {
     updatedAt: TimestampMs
     tombstone?: boolean
+    valueHash?: string
 }
 
 export type SyncStateSummary = Record<string, SyncStateSummaryEntry>

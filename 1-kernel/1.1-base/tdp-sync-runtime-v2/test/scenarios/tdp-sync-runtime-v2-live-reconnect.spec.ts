@@ -37,7 +37,7 @@ describe('tdp-sync-runtime-v2 live reconnect', () => {
         })
 
         await runtime.start()
-        await activateLiveTerminal(runtime, '200000000003', 'device-live-tdp-v2-reconnect-001')
+        await activateLiveTerminal(runtime, platform.prepare.sandboxId, '200000000003', 'device-live-tdp-v2-reconnect-001')
         await runtime.dispatchCommand(
             createCommand(tdpSyncV2CommandDefinitions.connectTdpSession, {}),
             {requestId: createRequestId()},

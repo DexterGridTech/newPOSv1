@@ -44,8 +44,8 @@ export const unregisterOnlineSession = (sessionId: string) => {
 
 export const listOnlineSessions = () => Array.from(sessionsById.values())
 
-export const listOnlineSessionsByTerminalId = (terminalId: string) =>
-  Array.from(sessionsById.values()).filter((item) => item.terminalId === terminalId)
+export const listOnlineSessionsByTerminalId = (sandboxId: string, terminalId: string) =>
+  Array.from(sessionsById.values()).filter((item) => item.sandboxId === sandboxId && item.terminalId === terminalId)
 
 export const forceCloseOnlineSession = (input: {
   sessionId: string

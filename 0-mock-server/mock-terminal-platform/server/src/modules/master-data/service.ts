@@ -13,9 +13,7 @@ import {
   terminalsTable,
 } from '../../database/schema.js'
 import { createId, now, parseJson } from '../../shared/utils.js'
-import { getCurrentSandboxId } from '../sandbox/service.js'
-
-const currentSandboxId = () => getCurrentSandboxId()
+import { assertSandboxUsable } from '../sandbox/service.js'
 
 const normalizeCode = (value: string) => value.trim().toUpperCase().replace(/\s+/g, '_')
 
@@ -62,8 +60,8 @@ const ensureStoreRelations = (input: {
   return { tenant, brand, project }
 }
 
-export const listPlatforms = () => {
-  const sandboxId = currentSandboxId()
+export const listPlatforms = (sandboxId: string) => {
+  assertSandboxUsable(sandboxId)
   const projects = db.select().from(projectsTable).where(eq(projectsTable.sandboxId, sandboxId)).all()
   const stores = db.select().from(storesTable).where(eq(storesTable.sandboxId, sandboxId)).all()
 
@@ -74,8 +72,9 @@ export const listPlatforms = () => {
   }))
 }
 
-export const createPlatform = (input: { platformCode: string; platformName: string; description?: string; status?: string }) => {
-  const sandboxId = currentSandboxId()
+export const createPlatform = (input: { sandboxId: string;  platformCode: string; platformName: string; description?: string; status?: string }) => {
+  const sandboxId = input.sandboxId
+  assertSandboxUsable(sandboxId)
   const platformCode = normalizeCode(input.platformCode)
   const duplicated = db.select().from(platformsTable).where(and(eq(platformsTable.sandboxId, sandboxId), eq(platformsTable.platformCode, platformCode))).get()
   if (duplicated) throw new Error('平台编码已存在')
@@ -94,8 +93,8 @@ export const createPlatform = (input: { platformCode: string; platformName: stri
   return { platformId }
 }
 
-export const updatePlatform = (platformId: string, input: { platformCode?: string; platformName?: string; description?: string; status?: string }) => {
-  const sandboxId = currentSandboxId()
+export const updatePlatform = (sandboxId: string, platformId: string, input: { platformCode?: string; platformName?: string; description?: string; status?: string }) => {
+  assertSandboxUsable(sandboxId)
   const current = getPlatform(sandboxId, platformId)
   if (!current) throw new Error('平台不存在')
   const nextPlatformCode = input.platformCode ? normalizeCode(input.platformCode) : current.platformCode
@@ -111,8 +110,8 @@ export const updatePlatform = (platformId: string, input: { platformCode?: strin
   return { platformId }
 }
 
-export const deletePlatform = (platformId: string) => {
-  const sandboxId = currentSandboxId()
+export const deletePlatform = (sandboxId: string, platformId: string) => {
+  assertSandboxUsable(sandboxId)
   const current = getPlatform(sandboxId, platformId)
   if (!current) throw new Error('平台不存在')
   const hasProjects = db.select().from(projectsTable).where(and(eq(projectsTable.sandboxId, sandboxId), eq(projectsTable.platformId, platformId))).get()
@@ -129,8 +128,8 @@ export const deletePlatform = (platformId: string) => {
   return { platformId }
 }
 
-export const listTenants = () => {
-  const sandboxId = currentSandboxId()
+export const listTenants = (sandboxId: string) => {
+  assertSandboxUsable(sandboxId)
   const stores = db.select().from(storesTable).where(eq(storesTable.sandboxId, sandboxId)).all()
   const platforms = db.select().from(platformsTable).where(eq(platformsTable.sandboxId, sandboxId)).all()
   const storeProjectIdsByTenant = new Map<string, Set<string>>()
@@ -148,8 +147,9 @@ export const listTenants = () => {
   }))
 }
 
-export const createTenant = (input: { platformId: string; tenantCode: string; tenantName: string; description?: string; status?: string }) => {
-  const sandboxId = currentSandboxId()
+export const createTenant = (input: { sandboxId: string;  platformId: string; tenantCode: string; tenantName: string; description?: string; status?: string }) => {
+  const sandboxId = input.sandboxId
+  assertSandboxUsable(sandboxId)
   const platform = getPlatform(sandboxId, input.platformId)
   if (!platform) throw new Error('平台不存在')
   const tenantCode = normalizeCode(input.tenantCode)
@@ -171,8 +171,8 @@ export const createTenant = (input: { platformId: string; tenantCode: string; te
   return { tenantId }
 }
 
-export const updateTenant = (tenantId: string, input: { platformId?: string; tenantCode?: string; tenantName?: string; description?: string; status?: string }) => {
-  const sandboxId = currentSandboxId()
+export const updateTenant = (sandboxId: string, tenantId: string, input: { platformId?: string; tenantCode?: string; tenantName?: string; description?: string; status?: string }) => {
+  assertSandboxUsable(sandboxId)
   const current = getTenant(sandboxId, tenantId)
   if (!current) throw new Error('租户不存在')
   const nextPlatformId = input.platformId ?? current.platformId
@@ -192,8 +192,8 @@ export const updateTenant = (tenantId: string, input: { platformId?: string; ten
   return { tenantId }
 }
 
-export const deleteTenant = (tenantId: string) => {
-  const sandboxId = currentSandboxId()
+export const deleteTenant = (sandboxId: string, tenantId: string) => {
+  assertSandboxUsable(sandboxId)
   const current = getTenant(sandboxId, tenantId)
   if (!current) throw new Error('租户不存在')
   const hasStores = db.select().from(storesTable).where(and(eq(storesTable.sandboxId, sandboxId), eq(storesTable.tenantId, tenantId))).get()
@@ -208,8 +208,8 @@ export const deleteTenant = (tenantId: string) => {
   return { tenantId }
 }
 
-export const listBrands = () => {
-  const sandboxId = currentSandboxId()
+export const listBrands = (sandboxId: string) => {
+  assertSandboxUsable(sandboxId)
   const stores = db.select().from(storesTable).where(eq(storesTable.sandboxId, sandboxId)).all()
   const platforms = db.select().from(platformsTable).where(eq(platformsTable.sandboxId, sandboxId)).all()
   const storeProjectIdsByBrand = new Map<string, Set<string>>()
@@ -226,8 +226,9 @@ export const listBrands = () => {
   }))
 }
 
-export const createBrand = (input: { platformId: string; brandCode: string; brandName: string; description?: string; status?: string }) => {
-  const sandboxId = currentSandboxId()
+export const createBrand = (input: { sandboxId: string;  platformId: string; brandCode: string; brandName: string; description?: string; status?: string }) => {
+  const sandboxId = input.sandboxId
+  assertSandboxUsable(sandboxId)
   const platform = getPlatform(sandboxId, input.platformId)
   if (!platform) throw new Error('平台不存在')
   const brandCode = normalizeCode(input.brandCode)
@@ -249,8 +250,8 @@ export const createBrand = (input: { platformId: string; brandCode: string; bran
   return { brandId }
 }
 
-export const updateBrand = (brandId: string, input: { platformId?: string; brandCode?: string; brandName?: string; description?: string; status?: string }) => {
-  const sandboxId = currentSandboxId()
+export const updateBrand = (sandboxId: string, brandId: string, input: { platformId?: string; brandCode?: string; brandName?: string; description?: string; status?: string }) => {
+  assertSandboxUsable(sandboxId)
   const current = getBrand(sandboxId, brandId)
   if (!current) throw new Error('品牌不存在')
   const nextPlatformId = input.platformId ?? current.platformId
@@ -270,8 +271,8 @@ export const updateBrand = (brandId: string, input: { platformId?: string; brand
   return { brandId }
 }
 
-export const deleteBrand = (brandId: string) => {
-  const sandboxId = currentSandboxId()
+export const deleteBrand = (sandboxId: string, brandId: string) => {
+  assertSandboxUsable(sandboxId)
   const current = getBrand(sandboxId, brandId)
   if (!current) throw new Error('品牌不存在')
   const hasStores = db.select().from(storesTable).where(and(eq(storesTable.sandboxId, sandboxId), eq(storesTable.brandId, brandId))).get()
@@ -286,8 +287,8 @@ export const deleteBrand = (brandId: string) => {
   return { brandId }
 }
 
-export const listProjects = () => {
-  const sandboxId = currentSandboxId()
+export const listProjects = (sandboxId: string) => {
+  assertSandboxUsable(sandboxId)
   const stores = db.select().from(storesTable).where(eq(storesTable.sandboxId, sandboxId)).all()
   const terminals = db.select().from(terminalsTable).where(eq(terminalsTable.sandboxId, sandboxId)).all()
   const platforms = db.select().from(platformsTable).where(eq(platformsTable.sandboxId, sandboxId)).all()
@@ -299,8 +300,9 @@ export const listProjects = () => {
   }))
 }
 
-export const createProject = (input: { platformId: string; projectCode: string; projectName: string; description?: string; status?: string; region?: string; timezone?: string }) => {
-  const sandboxId = currentSandboxId()
+export const createProject = (input: { sandboxId: string;  platformId: string; projectCode: string; projectName: string; description?: string; status?: string; region?: string; timezone?: string }) => {
+  const sandboxId = input.sandboxId
+  assertSandboxUsable(sandboxId)
   const platform = getPlatform(sandboxId, input.platformId)
   if (!platform) throw new Error('平台不存在')
   const projectCode = normalizeCode(input.projectCode)
@@ -324,8 +326,8 @@ export const createProject = (input: { platformId: string; projectCode: string; 
   return { projectId }
 }
 
-export const updateProject = (projectId: string, input: { platformId?: string; projectCode?: string; projectName?: string; description?: string; status?: string; region?: string; timezone?: string }) => {
-  const sandboxId = currentSandboxId()
+export const updateProject = (sandboxId: string, projectId: string, input: { platformId?: string; projectCode?: string; projectName?: string; description?: string; status?: string; region?: string; timezone?: string }) => {
+  assertSandboxUsable(sandboxId)
   const current = getProject(sandboxId, projectId)
   if (!current) throw new Error('项目不存在')
   const nextPlatformId = input.platformId ?? current.platformId
@@ -347,8 +349,8 @@ export const updateProject = (projectId: string, input: { platformId?: string; p
   return { projectId }
 }
 
-export const deleteProject = (projectId: string) => {
-  const sandboxId = currentSandboxId()
+export const deleteProject = (sandboxId: string, projectId: string) => {
+  assertSandboxUsable(sandboxId)
   const current = getProject(sandboxId, projectId)
   if (!current) throw new Error('项目不存在')
   const hasStores = db.select().from(storesTable).where(and(eq(storesTable.sandboxId, sandboxId), eq(storesTable.projectId, projectId))).get()
@@ -363,8 +365,8 @@ export const deleteProject = (projectId: string) => {
   return { projectId }
 }
 
-export const listStores = () => {
-  const sandboxId = currentSandboxId()
+export const listStores = (sandboxId: string) => {
+  assertSandboxUsable(sandboxId)
   const tenants = db.select().from(tenantsTable).where(eq(tenantsTable.sandboxId, sandboxId)).all()
   const brands = db.select().from(brandsTable).where(eq(brandsTable.sandboxId, sandboxId)).all()
   const projects = db.select().from(projectsTable).where(eq(projectsTable.sandboxId, sandboxId)).all()
@@ -384,8 +386,9 @@ export const listStores = () => {
   }))
 }
 
-export const createStore = (input: { platformId: string; tenantId: string; brandId: string; projectId: string; unitCode: string; storeCode: string; storeName: string; description?: string; status?: string; address?: string; contactName?: string; contactPhone?: string }) => {
-  const sandboxId = currentSandboxId()
+export const createStore = (input: { sandboxId: string;  platformId: string; tenantId: string; brandId: string; projectId: string; unitCode: string; storeCode: string; storeName: string; description?: string; status?: string; address?: string; contactName?: string; contactPhone?: string }) => {
+  const sandboxId = input.sandboxId
+  assertSandboxUsable(sandboxId)
   const platform = getPlatform(sandboxId, input.platformId)
   if (!platform) throw new Error('平台不存在')
   ensureStoreRelations({ sandboxId, platformId: input.platformId, tenantId: input.tenantId, brandId: input.brandId, projectId: input.projectId })
@@ -415,8 +418,8 @@ export const createStore = (input: { platformId: string; tenantId: string; brand
   return { storeId }
 }
 
-export const updateStore = (storeId: string, input: { platformId?: string; tenantId?: string; brandId?: string; projectId?: string; unitCode?: string; storeCode?: string; storeName?: string; description?: string; status?: string; address?: string; contactName?: string; contactPhone?: string }) => {
-  const sandboxId = currentSandboxId()
+export const updateStore = (sandboxId: string, storeId: string, input: { platformId?: string; tenantId?: string; brandId?: string; projectId?: string; unitCode?: string; storeCode?: string; storeName?: string; description?: string; status?: string; address?: string; contactName?: string; contactPhone?: string }) => {
+  assertSandboxUsable(sandboxId)
   const current = getStore(sandboxId, storeId)
   if (!current) throw new Error('门店不存在')
   const nextPlatformId = input.platformId ?? current.platformId
@@ -447,8 +450,8 @@ export const updateStore = (storeId: string, input: { platformId?: string; tenan
   return { storeId }
 }
 
-export const deleteStore = (storeId: string) => {
-  const sandboxId = currentSandboxId()
+export const deleteStore = (sandboxId: string, storeId: string) => {
+  assertSandboxUsable(sandboxId)
   const current = getStore(sandboxId, storeId)
   if (!current) throw new Error('门店不存在')
   const hasContracts = db.select().from(contractsTable).where(and(eq(contractsTable.sandboxId, sandboxId), eq(contractsTable.storeId, storeId))).get()
@@ -461,8 +464,8 @@ export const deleteStore = (storeId: string) => {
   return { storeId }
 }
 
-export const listContracts = () => {
-  const sandboxId = currentSandboxId()
+export const listContracts = (sandboxId: string) => {
+  assertSandboxUsable(sandboxId)
   const platforms = db.select().from(platformsTable).where(eq(platformsTable.sandboxId, sandboxId)).all()
   const projects = db.select().from(projectsTable).where(eq(projectsTable.sandboxId, sandboxId)).all()
   const tenants = db.select().from(tenantsTable).where(eq(tenantsTable.sandboxId, sandboxId)).all()
@@ -479,6 +482,7 @@ export const listContracts = () => {
 }
 
 export const createContract = (input: {
+  sandboxId: string
   platformId: string
   projectId: string
   tenantId: string
@@ -491,7 +495,8 @@ export const createContract = (input: {
   description?: string
   status?: string
 }) => {
-  const sandboxId = currentSandboxId()
+  const sandboxId = input.sandboxId
+  assertSandboxUsable(sandboxId)
   const platform = getPlatform(sandboxId, input.platformId)
   if (!platform) throw new Error('平台不存在')
   ensureStoreRelations({ sandboxId, platformId: input.platformId, tenantId: input.tenantId, brandId: input.brandId, projectId: input.projectId })
@@ -526,7 +531,7 @@ export const createContract = (input: {
   return { contractId }
 }
 
-export const updateContract = (contractId: string, input: {
+export const updateContract = (sandboxId: string, contractId: string, input: {
   platformId?: string
   projectId?: string
   tenantId?: string
@@ -539,7 +544,7 @@ export const updateContract = (contractId: string, input: {
   description?: string
   status?: string
 }) => {
-  const sandboxId = currentSandboxId()
+  assertSandboxUsable(sandboxId)
   const current = db.select().from(contractsTable).where(and(eq(contractsTable.contractId, contractId), eq(contractsTable.sandboxId, sandboxId))).get()
   if (!current) throw new Error('合同不存在')
   const nextPlatformId = input.platformId ?? current.platformId
@@ -576,16 +581,16 @@ export const updateContract = (contractId: string, input: {
   return { contractId }
 }
 
-export const deleteContract = (contractId: string) => {
-  const sandboxId = currentSandboxId()
+export const deleteContract = (sandboxId: string, contractId: string) => {
+  assertSandboxUsable(sandboxId)
   const current = db.select().from(contractsTable).where(and(eq(contractsTable.contractId, contractId), eq(contractsTable.sandboxId, sandboxId))).get()
   if (!current) throw new Error('合同不存在')
   db.delete(contractsTable).where(and(eq(contractsTable.contractId, contractId), eq(contractsTable.sandboxId, sandboxId))).run()
   return { contractId }
 }
 
-export const listProfiles = () => {
-  const sandboxId = currentSandboxId()
+export const listProfiles = (sandboxId: string) => {
+  assertSandboxUsable(sandboxId)
   const templates = db.select().from(terminalTemplatesTable).where(eq(terminalTemplatesTable.sandboxId, sandboxId)).all()
   const terminals = db.select().from(terminalsTable).where(eq(terminalsTable.sandboxId, sandboxId)).all()
   return db.select().from(terminalProfilesTable).where(eq(terminalProfilesTable.sandboxId, sandboxId)).orderBy(desc(terminalProfilesTable.updatedAt)).all().map((item) => ({
@@ -596,8 +601,8 @@ export const listProfiles = () => {
   }))
 }
 
-export const listTemplates = () => {
-  const sandboxId = currentSandboxId()
+export const listTemplates = (sandboxId: string) => {
+  assertSandboxUsable(sandboxId)
   const activations = db.select().from(activationCodesTable).where(eq(activationCodesTable.sandboxId, sandboxId)).all()
   const terminals = db.select().from(terminalsTable).where(eq(terminalsTable.sandboxId, sandboxId)).all()
   return db.select().from(terminalTemplatesTable).where(eq(terminalTemplatesTable.sandboxId, sandboxId)).orderBy(desc(terminalTemplatesTable.updatedAt)).all().map((item) => ({
@@ -610,12 +615,14 @@ export const listTemplates = () => {
 }
 
 export const createProfile = (input: {
+  sandboxId: string
   profileCode: string
   name: string
   description?: string
   capabilities?: Record<string, unknown>
 }) => {
-  const sandboxId = currentSandboxId()
+  const sandboxId = input.sandboxId
+  assertSandboxUsable(sandboxId)
   const profileCode = normalizeCode(input.profileCode)
   const duplicated = db.select().from(terminalProfilesTable).where(and(eq(terminalProfilesTable.sandboxId, sandboxId), eq(terminalProfilesTable.profileCode, profileCode))).get()
   if (duplicated) throw new Error('终端机型编码已存在')
@@ -636,13 +643,13 @@ export const createProfile = (input: {
   return { profileId }
 }
 
-export const updateProfile = (profileId: string, input: {
+export const updateProfile = (sandboxId: string, profileId: string, input: {
   profileCode?: string
   name?: string
   description?: string
   capabilities?: Record<string, unknown>
 }) => {
-  const sandboxId = currentSandboxId()
+  assertSandboxUsable(sandboxId)
   const current = db.select().from(terminalProfilesTable).where(and(eq(terminalProfilesTable.profileId, profileId), eq(terminalProfilesTable.sandboxId, sandboxId))).get()
   if (!current) throw new Error('终端机型不存在')
   const nextProfileCode = input.profileCode ? normalizeCode(input.profileCode) : current.profileCode
@@ -660,8 +667,8 @@ export const updateProfile = (profileId: string, input: {
   return { profileId }
 }
 
-export const deleteProfile = (profileId: string) => {
-  const sandboxId = currentSandboxId()
+export const deleteProfile = (sandboxId: string, profileId: string) => {
+  assertSandboxUsable(sandboxId)
   const current = db.select().from(terminalProfilesTable).where(and(eq(terminalProfilesTable.profileId, profileId), eq(terminalProfilesTable.sandboxId, sandboxId))).get()
   if (!current) throw new Error('终端机型不存在')
   const hasTemplates = db.select().from(terminalTemplatesTable).where(and(eq(terminalTemplatesTable.sandboxId, sandboxId), eq(terminalTemplatesTable.profileId, profileId))).get()
@@ -675,6 +682,7 @@ export const deleteProfile = (profileId: string) => {
 }
 
 export const createTemplate = (input: {
+  sandboxId: string
   templateCode: string
   name: string
   description?: string
@@ -682,7 +690,8 @@ export const createTemplate = (input: {
   presetConfig?: Record<string, unknown>
   presetTags?: string[]
 }) => {
-  const sandboxId = currentSandboxId()
+  const sandboxId = input.sandboxId
+  assertSandboxUsable(sandboxId)
   const templateCode = normalizeCode(input.templateCode)
   const duplicated = db.select().from(terminalTemplatesTable).where(and(eq(terminalTemplatesTable.sandboxId, sandboxId), eq(terminalTemplatesTable.templateCode, templateCode))).get()
   if (duplicated) throw new Error('终端模板编码已存在')
@@ -705,7 +714,7 @@ export const createTemplate = (input: {
   return { templateId }
 }
 
-export const updateTemplate = (templateId: string, input: {
+export const updateTemplate = (sandboxId: string, templateId: string, input: {
   templateCode?: string
   name?: string
   description?: string
@@ -713,7 +722,7 @@ export const updateTemplate = (templateId: string, input: {
   presetConfig?: Record<string, unknown>
   presetTags?: string[]
 }) => {
-  const sandboxId = currentSandboxId()
+  assertSandboxUsable(sandboxId)
   const current = db.select().from(terminalTemplatesTable).where(and(eq(terminalTemplatesTable.templateId, templateId), eq(terminalTemplatesTable.sandboxId, sandboxId))).get()
   if (!current) throw new Error('终端模板不存在')
   const nextTemplateCode = input.templateCode ? normalizeCode(input.templateCode) : current.templateCode
@@ -733,8 +742,8 @@ export const updateTemplate = (templateId: string, input: {
   return { templateId }
 }
 
-export const deleteTemplate = (templateId: string) => {
-  const sandboxId = currentSandboxId()
+export const deleteTemplate = (sandboxId: string, templateId: string) => {
+  assertSandboxUsable(sandboxId)
   const current = db.select().from(terminalTemplatesTable).where(and(eq(terminalTemplatesTable.templateId, templateId), eq(terminalTemplatesTable.sandboxId, sandboxId))).get()
   if (!current) throw new Error('终端模板不存在')
   const hasActivationCodes = db.select().from(activationCodesTable).where(and(eq(activationCodesTable.sandboxId, sandboxId), eq(activationCodesTable.templateId, templateId))).get()

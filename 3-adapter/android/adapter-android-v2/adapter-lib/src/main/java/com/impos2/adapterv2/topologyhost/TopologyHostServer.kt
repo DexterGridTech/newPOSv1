@@ -140,6 +140,16 @@ class TopologyHostServer(
     expiresInMs: Long,
   ): TopologyHostTicketResponse {
     val ticket = runtime.issueTicket(masterNodeId, transportUrls, expiresInMs)
+    logger.log(
+      TAG,
+      JSONObject()
+        .put("event", "issue-ticket")
+        .put("masterNodeId", masterNodeId)
+        .put("sessionId", ticket.sessionId)
+        .put("token", ticket.ticket.token)
+        .put("transportUrls", transportUrls.toJsonStringArray())
+        .toString(),
+    )
     return TopologyHostTicketResponse(
       success = true,
       token = ticket.ticket.token,
@@ -303,6 +313,14 @@ class TopologyHostServer(
 
     val session = TopologyHostWsSession(socket)
     val connectionId = TopologyHostIds.createConnectionId()
+    logger.log(
+      TAG,
+      JSONObject()
+        .put("event", "ws-upgrade")
+        .put("connectionId", connectionId)
+        .put("path", "${config.basePath}/ws")
+        .toString(),
+    )
     socketSessions.put(connectionId, session)
     readWebSocketLoop(connectionId, session, socket)
   }
@@ -327,6 +345,15 @@ class TopologyHostServer(
   }
 
   private fun handleIncomingMessage(connectionId: String, message: JSONObject): List<Pair<String, JSONObject>> {
+    logger.debug(
+      TAG,
+      JSONObject()
+        .put("event", "ws-incoming")
+        .put("connectionId", connectionId)
+        .put("type", message.optString("type"))
+        .put("message", message)
+        .toString(),
+    )
     return when (message.optString("type")) {
       "__host_heartbeat_ack" -> {
         runtime.recordHeartbeat(connectionId, message.optLong("timestamp", System.currentTimeMillis()))
@@ -377,6 +404,15 @@ class TopologyHostServer(
 
   private fun sendOutgoingMessages(outputs: List<Pair<String, JSONObject>>) {
     outputs.forEach { (connectionId, message) ->
+      logger.debug(
+        TAG,
+        JSONObject()
+          .put("event", "ws-outgoing")
+          .put("connectionId", connectionId)
+          .put("type", message.optString("type"))
+          .put("message", message)
+          .toString(),
+      )
       socketSessions.get(connectionId)?.send(message.toString())
     }
   }
@@ -389,6 +425,14 @@ class TopologyHostServer(
   }
 
   private fun deliveryToMessage(delivery: TopologyHostRelayDelivery): JSONObject {
+    if (deliveryMessageType(delivery) == "resume-begin") {
+      val envelope = delivery.envelope
+      return JSONObject()
+        .put("type", "resume-begin")
+        .put("sessionId", envelope.optString("sessionId"))
+        .put("nodeId", envelope.optString("sourceNodeId"))
+        .put("timestamp", envelope.optLong("timestamp", System.currentTimeMillis()))
+    }
     return JSONObject()
       .put("type", deliveryMessageType(delivery))
       .put("envelope", delivery.envelope)

@@ -10,6 +10,7 @@ import com.impos2.adapterv2.automation.AutomationSession
 import com.impos2.adapterv2.automation.AutomationSocketServer
 import com.impos2.adapterv2.automation.AutomationSocketServerConfig
 import org.json.JSONObject
+import kotlin.math.max
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
@@ -22,6 +23,8 @@ class AutomationTurboModule(reactContext: ReactApplicationContext) :
   companion object {
     const val NAME = "AutomationTurboModule"
     private const val EVENT_AUTOMATION_MESSAGE = "onAutomationMessage"
+    private const val DEFAULT_DISPATCH_TIMEOUT_MS = 30_000L
+    private const val DISPATCH_TIMEOUT_PADDING_MS = 2_000L
   }
 
   private data class PendingAutomationCall(
@@ -140,11 +143,12 @@ class AutomationTurboModule(reactContext: ReactApplicationContext) :
     pendingCalls[callId] = pending
     sendAutomationMessageEvent(pending)
 
-    val completed = pending.latch.await(30_000L, TimeUnit.MILLISECONDS)
+    val timeoutMs = resolveDispatchTimeoutMs(messageJson)
+    val completed = pending.latch.await(timeoutMs, TimeUnit.MILLISECONDS)
     pendingCalls.remove(callId)
 
     if (!completed) {
-      return """{"jsonrpc":"2.0","error":{"code":-32001,"message":"automation js dispatcher timeout"},"id":null}"""
+      return """{"jsonrpc":"2.0","error":{"code":-32001,"message":"automation js dispatcher timeout after ${timeoutMs}ms"},"id":null}"""
     }
     if (pending.errorMessage != null) {
       return """{"jsonrpc":"2.0","error":{"code":-32603,"message":"${escapeJson(pending.errorMessage ?: "automation js dispatcher error")}"},"id":null}"""
@@ -165,5 +169,13 @@ class AutomationTurboModule(reactContext: ReactApplicationContext) :
 
   private fun escapeJson(value: String): String =
     value.replace("\\", "\\\\").replace("\"", "\\\"")
-}
 
+  private fun resolveDispatchTimeoutMs(messageJson: String): Long {
+    return runCatching {
+      val params = JSONObject(messageJson).optJSONObject("params")
+      val requestedTimeout = params?.optLong("timeoutMs", DEFAULT_DISPATCH_TIMEOUT_MS)
+        ?: DEFAULT_DISPATCH_TIMEOUT_MS
+      max(DEFAULT_DISPATCH_TIMEOUT_MS, requestedTimeout + DISPATCH_TIMEOUT_PADDING_MS)
+    }.getOrDefault(DEFAULT_DISPATCH_TIMEOUT_MS)
+  }
+}

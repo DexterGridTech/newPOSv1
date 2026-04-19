@@ -309,6 +309,48 @@ assembly 只负责三件事：
 
 `ui.scroll` 的语义更底层，只表达对指定滚动容器或方向的滚动动作。自动化脚本优先使用 `ui.revealNode`，只有需要精确控制滚动距离或方向时才直接调用 `ui.scroll`。
 
+### 5.6 Assembly 调试与测试工作流约定
+
+对于 `4-assembly/android/mixc-retail-assembly-rn84` 的自动化调试，本设计默认规定一条 canonical 工作流：
+
+1. 优先使用本地 skill `~/.codex/skills/android-assembly-socket-debug`
+2. 优先使用 `scripts/android-automation-rpc.mjs` 直接通过 ADB + socket 与 assembly 通讯
+3. 优先读取真实 runtime state / request / current screen / semantic UI 节点
+4. 优先使用单条 `command.dispatch` 或局部 `ui.performAction` 做问题隔离
+5. 最后才是完整可见 UI 自动化脚本
+
+原因：
+
+1. 这条路径比高层脚本更容易 isolate 问题。
+2. 这条路径天然支持主屏 / 副屏分别观察。
+3. 这条路径天然支持把 UI 现象与 runtime state / request 结果一起验证。
+
+#### 5.6.1 证据优先级
+
+调试时，默认证据优先级如下：
+
+1. socket RPC 读到的真实 runtime 结果
+2. targeted TS logs
+3. targeted native logs
+4. 代码阅读
+
+也就是说：
+
+1. 代码阅读用于缩小范围，不是主要证据。
+2. 出现运行时 bug 时，应优先补日志并重跑，而不是长时间停留在推理层面。
+
+#### 5.6.2 时序判断约束
+
+1. 副屏延迟启动约 `3s` 是业务要求。
+2. 冷启动 ready 时间与 ready 后的主副屏同步延迟必须分开判断。
+3. 当前仓库已经验证：主副屏都 ready 后，主屏 state 变化传播到副屏 state / UI 大约在 `~100ms` 量级。
+
+#### 5.6.3 启动失败处理约束
+
+1. 如果副屏按预期应启动但未启动，应先按 crash / hang 处理。
+2. 不应用“手动再拉起副屏”来掩盖启动问题后继续测业务。
+3. 若需要后续会话复用，统一通过 `~/.codex/skills/android-assembly-socket-debug` 进入这条工作流，而不是重新临时发明脚本/步骤。
+
 ## 6. 选择器与 UI 语义模型
 
 ### 6.1 选择器能力
@@ -543,6 +585,40 @@ Android 通过 `adb forward` 连接 assembly 内部启动的 localhost socket se
 4. 宿主机通过 `adb forward tcp:<hostPort> tcp:<devicePort>` 接入。
 5. 客户端通过统一 JSON-RPC 调用 Android assembly。
 
+### 10.1.1 真机端口与双进程规则
+
+`mixc-retail-assembly-rn84` 的主屏和副屏运行在两个 Android 进程中，因此 automation socket 不能共用同一个设备端口。
+
+第一版固定端口为：
+
+1. 主屏 `primary`：设备本机 `127.0.0.1:18584`
+2. 副屏 `secondary`：设备本机 `127.0.0.1:18585`
+
+宿主机接入规则：
+
+1. automation socket 使用 `adb forward`，方向是宿主机到设备。
+2. Metro / mock server / Reactotron 仍使用 `adb reverse`，方向是设备到宿主机。
+3. 主副屏 smoke 应分别执行，不通过 `all` 隐式聚合。
+
+推荐命令：
+
+```bash
+node scripts/android-automation-rpc.mjs smoke --target primary
+node scripts/android-automation-rpc.mjs smoke --target secondary
+node scripts/android-automation-rpc.mjs type-virtual ui-base-terminal-activate-device:sandbox sandbox-test-001 --target primary
+node scripts/android-automation-rpc.mjs type-virtual ui-base-terminal-activate-device:input ABC123 --target primary
+node scripts/android-automation-rpc.mjs activate-device sandbox-test-001 ABC123 --target primary
+node scripts/android-automation-rpc.mjs wait-activated sandbox-test-001 --target primary
+```
+
+当前真机验收标准：
+
+1. `session.hello` 返回 `protocolVersion`、`availableTargets`、`capabilities`。
+2. `runtime.getInfo` 返回正确的 `displayContext` 和 current screen。
+3. `ui.getTree` 返回真实 semantic registry 节点。
+4. `wait.forIdle` 可以在 target 空闲时成功返回。
+5. 至少一个真实 UI action 链路能改变真机 UI，并可通过 `wait.forNode` / `ui.getNode` 读回结果。
+
 ### 10.2 Product 语义
 
 Product 环境中：
@@ -754,3 +830,36 @@ Product 环境中：
 5. 全部能力默认不启动，只有测试 / 调试场景显式装配时才进入工作态。
 
 该方案在保持架构边界清晰的前提下，能够逐步统一后续所有 `2-ui` 基础包与 `4-assembly` 集成包的自动化测试与运行时调试能力。
+
+## 17. 后续默认约束
+
+这份方案不是一次性试点文档，而是后续 UI 自动化演进的默认标准。
+
+后续约束：
+
+1. 新增或重构 `2-ui` 包时，默认优先接入 `ui-automation-runtime`，而不是再定义一套包私有自动化协议。
+2. 新增 rendered UI 测试时，优先使用共享 automation helper / semantic query / action / wait 语义，而不是直接依赖组件内部树结构。
+3. 新增 `test-expo` 自动化时，优先复用共享 browser harness，不再复制粘贴每包自定义 `runAutomation.mjs` 协议层。
+4. 新增高价值 UI 节点时，应同步考虑：
+   1. 稳定 `testID`
+   2. 是否需要进入 semantic registry
+   3. 是否需要暴露明确的可操作 action
+5. 如果某个场景暂时必须绕过该方案，应把它标记为临时 escape hatch，并在后续回收进共享协议，而不是沉淀成第二套长期标准。
+
+## 18. Topology-aware Automation 约束
+
+与主副机、独立副机、双屏或状态持久化相关的 UI 自动化，必须同时遵守 `docs/superpowers/specs/2026-04-18-topology-standalone-slave-design.md`。
+
+关键规则：
+
+1. managed secondary 的本地 stateStorage 必须视为禁用，唯一条件是 `displayMode === 'SECONDARY' && standalone === false`。
+2. standalone slave 即使 `displayMode === 'SECONDARY'`，也仍然保留本地持久化。
+3. 外部 master 接入必须通过 admin-console / automation 触发：
+   1. 导入 share payload；
+   2. 写入 masterInfo；
+   3. 请求 `/tickets`；
+   4. 更新 dynamic topology binding；
+   5. 重启 topology connection。
+4. power display switch 是 assembly 级能力：仅 `standalone && instanceMode === 'SLAVE'` 响应 `powerConnected` 切换。
+5. 测试脚本应通过 `ui-automation-runtime` 操作 admin-console 的 topology section，不应绕过 UI 直接改内部 slice，除非是明确的低层单元测试。
+6. 双屏断言必须显式 target `primary` / `secondary`；不要用隐式 `all` 等待拓扑状态收敛。

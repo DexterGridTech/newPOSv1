@@ -4,10 +4,7 @@ import type {KernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
 import {selectLatestAdapterSummary} from '../../selectors'
 import {adminConsoleStateActions} from '../../features/slices'
 import {createAdapterDiagnosticsController} from '../../supports/adapterDiagnostics'
-import {
-    formatAdapterDiagnosticStatus,
-    formatAdminTimestamp,
-} from '../../supports'
+import {formatAdapterDiagnosticStatus, formatAdminTimestamp} from '../../supports/adminFormatting'
 import type {AdapterDiagnosticsRegistry} from '../../types'
 import {
     AdminActionButton,

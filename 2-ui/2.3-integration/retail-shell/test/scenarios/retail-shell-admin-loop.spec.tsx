@@ -22,6 +22,20 @@ import {createRetailShellHarness, renderWithAutomation} from '../support/retailS
 const selectPrimaryRoot = (state: RootState) =>
     selectUiScreen(state, uiRuntimeRootVariables.primaryRootContainer.key)
 
+const waitFor = async (
+    predicate: () => boolean | Promise<boolean>,
+    timeoutMs = 2_000,
+) => {
+    const startedAt = Date.now()
+
+    while (!(await predicate())) {
+        if (Date.now() - startedAt > timeoutMs) {
+            throw new Error(`Timed out waiting for condition within ${timeoutMs}ms`)
+        }
+        await new Promise(resolve => setTimeout(resolve, 10))
+    }
+}
+
 describe('retail-shell admin deactivation loop', () => {
     it('returns from welcome screen to activation screen through admin deactivation', async () => {
         const harness = await createRetailShellHarness()
@@ -33,6 +47,10 @@ describe('retail-shell admin deactivation loop', () => {
             accessToken: 'token-admin-loop',
             refreshToken: 'refresh-admin-loop',
             expiresAt: Date.now() + 60_000,
+            updatedAt: Date.now(),
+        }))
+        harness.store.dispatch(tcpControlV2StateActions.setSandbox({
+            sandboxId: 'sandbox-admin-loop',
             updatedAt: Date.now(),
         }))
         await harness.runtime.dispatchCommand(createCommand(
@@ -50,6 +68,13 @@ describe('retail-shell admin deactivation loop', () => {
 
         await tree.press('ui-base-admin-section:terminal:deactivate')
         await tree.waitForIdle()
+        await waitFor(() => {
+            const state = harness.runtime.getState()
+            return (
+                selectTcpIdentitySnapshot(state).activationStatus === 'UNACTIVATED'
+                && selectPrimaryRoot(state)?.partKey === 'ui.base.terminal.activate-device'
+            )
+        })
 
         const state = harness.runtime.getState()
         expect(selectTcpIdentitySnapshot(state).activationStatus).toBe('UNACTIVATED')

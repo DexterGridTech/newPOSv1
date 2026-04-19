@@ -1,5 +1,6 @@
 import type {ActorDefinition} from '@impos2/kernel-base-runtime-shell-v2'
 import type {TopicChangePublisherFingerprintV2} from '../../foundations/topicChangePublisher'
+import {createTdpAutoConnectActorDefinitionV2} from './autoConnectActor'
 import {createTdpInitializeActorDefinitionV2} from './initializeActor'
 import {createTdpBootstrapActorDefinitionV2} from './bootstrapActor'
 import {createTdpMessageActorDefinitionV2} from './messageActor'
@@ -17,6 +18,7 @@ import {createTdpSystemCatalogBridgeActorDefinitionV2} from './systemCatalogBrid
 import type {CreateTdpSyncRuntimeModuleV2Input} from '../../types'
 
 export * from './initializeActor'
+export * from './autoConnectActor'
 export * from './bootstrapActor'
 export * from './messageActor'
 export * from './projectionRepositoryActor'
@@ -33,7 +35,8 @@ export const createTdpSyncActorDefinitionsV2 = (
     connectionRuntimeRef: TdpSessionConnectionRuntimeRefV2,
     moduleInput: CreateTdpSyncRuntimeModuleV2Input,
 ): ActorDefinition[] => [
-    createTdpInitializeActorDefinitionV2(),
+    createTdpInitializeActorDefinitionV2(moduleInput),
+    createTdpAutoConnectActorDefinitionV2(moduleInput),
     createTdpBootstrapActorDefinitionV2(),
     createTdpSessionConnectionActorDefinitionV2(connectionRuntimeRef, moduleInput),
     createTdpMessageActorDefinitionV2(),

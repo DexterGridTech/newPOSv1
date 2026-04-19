@@ -5,6 +5,7 @@ import {
     selectTcpCredentialSnapshot,
     selectTcpIdentitySnapshot,
     selectTcpRuntimeState,
+    selectTcpSandboxId,
     tcpControlV2CommandDefinitions,
 } from '../../src'
 import {
@@ -38,7 +39,7 @@ describe('tcp-control-runtime-v2 live restart recovery', () => {
         })
 
         await firstRuntimeHarness.runtime.start()
-        await activateLiveTerminal(firstRuntimeHarness.runtime, '200000000004', 'device-live-tcp-v2-restart-001')
+        await activateLiveTerminal(firstRuntimeHarness.runtime, platform.prepare.sandboxId, '200000000004', 'device-live-tcp-v2-restart-001')
         await firstRuntimeHarness.runtime.dispatchCommand(
             createCommand(tcpControlV2CommandDefinitions.refreshCredential, {}),
             {requestId: createRequestId()},
@@ -66,6 +67,7 @@ describe('tcp-control-runtime-v2 live restart recovery', () => {
 
         expect(selectTcpIdentitySnapshot(secondRuntimeHarness.runtime.getState()).terminalId).toBe(terminalIdBeforeRestart)
         expect(selectTcpCredentialSnapshot(secondRuntimeHarness.runtime.getState()).accessToken).toBe(accessTokenBeforeRestart)
+        expect(selectTcpSandboxId(secondRuntimeHarness.runtime.getState())).toBe(platform.prepare.sandboxId)
         expect(selectTcpRuntimeState(secondRuntimeHarness.runtime.getState())?.bootstrapped).toBe(false)
         expect(selectTcpRuntimeState(secondRuntimeHarness.runtime.getState())?.lastActivationRequestId).toBeUndefined()
         expect(selectTcpRuntimeState(secondRuntimeHarness.runtime.getState())?.lastRefreshRequestId).toBeUndefined()

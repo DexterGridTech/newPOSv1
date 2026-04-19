@@ -33,7 +33,7 @@ describe('tdp-sync-runtime-v2 live system catalog bridge', () => {
         })
 
         await runtime.start()
-        await activateLiveTerminal(runtime, '200000000008', 'device-live-tdp-v2-catalog-001')
+        await activateLiveTerminal(runtime, platform.prepare.sandboxId, '200000000008', 'device-live-tdp-v2-catalog-001')
         await runtime.dispatchCommand(
             createCommand(tdpSyncV2CommandDefinitions.connectTdpSession, {}),
             {requestId: createRequestId()},

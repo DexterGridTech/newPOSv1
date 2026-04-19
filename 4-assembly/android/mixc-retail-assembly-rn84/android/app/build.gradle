@@ -40,10 +40,12 @@ android {
   buildTypes {
     debug {
       signingConfig signingConfigs.debug
+      buildConfigField "boolean", "ENABLE_HOT_UPDATE_BUNDLE_RESOLVER", (project.findProperty("enableHotUpdateResolver")?.toString() == "true").toString()
     }
     release {
       signingConfig signingConfigs.debug
       minifyEnabled enableProguardInReleaseBuilds
+      buildConfigField "boolean", "ENABLE_HOT_UPDATE_BUNDLE_RESOLVER", "true"
       proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
     }
   }

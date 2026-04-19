@@ -5,6 +5,7 @@ import {
     useOptionalUiAutomationRuntimeId,
     useOptionalUiAutomationTarget,
 } from '@impos2/ui-base-runtime-react'
+import type {RuntimeReactAutomationNodeRegistration} from '@impos2/ui-base-runtime-react'
 import type {
     AdminDetailItem,
     AdminStatusItem,
@@ -30,36 +31,132 @@ const formatAdminValue = (
     return `${value}`
 }
 
+let adminAutomationNodeSequence = 0
+
+const sanitizeAutomationHint = (value: string): string =>
+    value
+        .trim()
+        .replace(/\s+/g, '-')
+        .replace(/[^a-zA-Z0-9:_-]/g, '')
+        || 'node'
+
+const useStableAutomationNodeId = (
+    prefix: string,
+    hint: string,
+): string => {
+    const nodeIdRef = React.useRef<string>()
+    if (!nodeIdRef.current) {
+        adminAutomationNodeSequence += 1
+        nodeIdRef.current = `${prefix}:${sanitizeAutomationHint(hint)}:${adminAutomationNodeSequence}`
+    }
+    return nodeIdRef.current
+}
+
+const createAutomationTestId = (
+    prefix: string,
+    hint: string,
+): string => `${prefix}:${sanitizeAutomationHint(hint)}`
+
+const useAdminAutomationNode = (
+    input: Omit<
+        RuntimeReactAutomationNodeRegistration,
+        'target' | 'runtimeId' | 'screenKey' | 'mountId' | 'visible' | 'enabled' | 'availableActions'
+    > & {
+        readonly screenKey?: string
+        readonly mountId?: string
+        readonly visible?: boolean
+        readonly enabled?: boolean
+        readonly availableActions?: readonly string[]
+    },
+): void => {
+    const automationBridge = useOptionalUiAutomationBridge()
+    const automationRuntimeId = useOptionalUiAutomationRuntimeId() ?? 'runtime'
+    const automationTarget = useOptionalUiAutomationTarget() ?? 'primary'
+
+    React.useEffect(() => {
+        if (!automationBridge) {
+            return undefined
+        }
+        return automationBridge.registerNode({
+            target: automationTarget,
+            runtimeId: automationRuntimeId,
+            screenKey: input.screenKey ?? 'admin-console',
+            mountId: input.mountId ?? `admin-node:${input.nodeId}`,
+            nodeId: input.nodeId,
+            testID: input.testID,
+            semanticId: input.semanticId ?? input.testID ?? input.nodeId,
+            role: input.role,
+            text: input.text,
+            value: input.value,
+            visible: input.visible ?? true,
+            enabled: input.enabled ?? true,
+            focused: input.focused,
+            bounds: input.bounds,
+            persistent: input.persistent ?? true,
+            availableActions: input.availableActions ?? [],
+            onAutomationAction: input.onAutomationAction,
+        })
+    }, [
+        automationBridge,
+        automationRuntimeId,
+        automationTarget,
+        input.availableActions,
+        input.bounds,
+        input.enabled,
+        input.focused,
+        input.mountId,
+        input.nodeId,
+        input.onAutomationAction,
+        input.persistent,
+        input.role,
+        input.screenKey,
+        input.semanticId,
+        input.testID,
+        input.text,
+        input.value,
+        input.visible,
+    ])
+}
+
 export const AdminSectionShell: React.FC<{
     testID: string
     title: string
     description?: string
     children: React.ReactNode
-}> = ({testID, title, description, children}) => (
-    <View
-        testID={testID}
-        style={{
-            borderRadius: 24,
-            borderWidth: 1,
-            borderColor: '#d7e1ec',
-            backgroundColor: '#ffffff',
-            padding: 18,
-            gap: 16,
-            boxShadow: '0px 14px 28px rgba(15, 23, 42, 0.08)',
-        }}
-    >
-        <View style={{gap: 6}}>
-            <Text style={{fontSize: 11, fontWeight: '800', color: '#64748b', letterSpacing: 0.8}}>
-                ADMIN SECTION
-            </Text>
-            <Text style={{fontSize: 20, fontWeight: '800', color: '#0f172a'}}>{title}</Text>
-            {description ? (
-                <Text style={{fontSize: 13, color: '#526072', lineHeight: 20}}>{description}</Text>
-            ) : null}
+}> = ({testID, title, description, children}) => {
+    useAdminAutomationNode({
+        nodeId: testID,
+        testID,
+        role: 'section',
+        text: title,
+    })
+
+    return (
+        <View
+            testID={testID}
+            style={{
+                borderRadius: 24,
+                borderWidth: 1,
+                borderColor: '#d7e1ec',
+                backgroundColor: '#ffffff',
+                padding: 18,
+                gap: 16,
+                boxShadow: '0px 14px 28px rgba(15, 23, 42, 0.08)',
+            }}
+        >
+            <View style={{gap: 6}}>
+                <Text style={{fontSize: 11, fontWeight: '800', color: '#64748b', letterSpacing: 0.8}}>
+                    ADMIN SECTION
+                </Text>
+                <Text style={{fontSize: 20, fontWeight: '800', color: '#0f172a'}}>{title}</Text>
+                {description ? (
+                    <Text style={{fontSize: 13, color: '#526072', lineHeight: 20}}>{description}</Text>
+                ) : null}
+            </View>
+            {children}
         </View>
-        {children}
-    </View>
-)
+    )
+}
 
 export const AdminSummaryGrid: React.FC<{
     children: React.ReactNode
@@ -75,6 +172,14 @@ export const AdminSummaryCard: React.FC<{
     detail?: string
     tone?: 'primary' | 'ok' | 'warn' | 'danger' | 'neutral'
 }> = ({label, value, detail, tone = 'neutral'}) => {
+    const nodeId = useStableAutomationNodeId('ui-base-admin-summary', label)
+    useAdminAutomationNode({
+        nodeId,
+        testID: createAutomationTestId('ui-base-admin-summary', label),
+        role: 'summary',
+        value,
+    })
+
     const toneMap = {
         primary: {backgroundColor: '#eff6ff', borderColor: '#bfdbfe', valueColor: '#0b5fff'},
         ok: {backgroundColor: '#ecfdf5', borderColor: '#bbf7d0', valueColor: '#15803d'},
@@ -115,28 +220,37 @@ export const AdminBlock: React.FC<{
     title: string
     description?: string
     children: React.ReactNode
-}> = ({title, description, children}) => (
-    <View
-        style={{
-            borderRadius: 18,
-            borderWidth: 1,
-            borderColor: '#d7e1ec',
-            backgroundColor: '#f8fafc',
-            padding: 14,
-            gap: 12,
-        }}
-    >
-        <View style={{gap: 4}}>
-            <Text style={{fontSize: 15, color: '#0f172a', fontWeight: '800'}}>{title}</Text>
-            {description ? (
-                <Text style={{fontSize: 12, color: '#526072', lineHeight: 18}}>
-                    {description}
-                </Text>
-            ) : null}
+}> = ({title, description, children}) => {
+    const nodeId = useStableAutomationNodeId('ui-base-admin-block', title)
+    useAdminAutomationNode({
+        nodeId,
+        testID: createAutomationTestId('ui-base-admin-block', title),
+        role: 'group',
+    })
+
+    return (
+        <View
+            style={{
+                borderRadius: 18,
+                borderWidth: 1,
+                borderColor: '#d7e1ec',
+                backgroundColor: '#f8fafc',
+                padding: 14,
+                gap: 12,
+            }}
+        >
+            <View style={{gap: 4}}>
+                <Text style={{fontSize: 15, color: '#0f172a', fontWeight: '800'}}>{title}</Text>
+                {description ? (
+                    <Text style={{fontSize: 12, color: '#526072', lineHeight: 18}}>
+                        {description}
+                    </Text>
+                ) : null}
+            </View>
+            {children}
         </View>
-        {children}
-    </View>
-)
+    )
+}
 
 export const AdminActionGroup: React.FC<{
     children: React.ReactNode
@@ -158,18 +272,93 @@ export const AdminSectionUnavailable: React.FC<{
 
 export const AdminSectionMessage: React.FC<{
     message?: string
-}> = ({message}) => message ? (
-    <View
-        style={{
-            borderRadius: 12,
-            backgroundColor: '#eff6ff',
-            paddingHorizontal: 12,
-            paddingVertical: 10,
-        }}
-    >
-        <Text style={{color: '#163a74'}}>{message}</Text>
-    </View>
-) : null
+}> = ({message}) => {
+    useAdminAutomationNode({
+        nodeId: 'ui-base-admin-section:message',
+        testID: 'ui-base-admin-section:message',
+        role: 'text',
+        text: message,
+        visible: Boolean(message),
+        enabled: Boolean(message),
+    })
+
+    return message ? (
+        <View
+            testID="ui-base-admin-section:message"
+            style={{
+                borderRadius: 12,
+                backgroundColor: '#eff6ff',
+                paddingHorizontal: 12,
+                paddingVertical: 10,
+            }}
+        >
+            <Text style={{color: '#163a74'}}>{message}</Text>
+        </View>
+    ) : null
+}
+
+const AdminDetailRow: React.FC<{
+    item: AdminDetailItem
+}> = ({item}) => {
+    const value = formatAdminValue(item.value)
+    const nodeId = useStableAutomationNodeId('ui-base-admin-detail', item.key)
+
+    useAdminAutomationNode({
+        nodeId,
+        testID: createAutomationTestId('ui-base-admin-detail', item.key),
+        role: 'text',
+        value,
+    })
+
+    return (
+        <View
+            style={{
+                borderRadius: 14,
+                backgroundColor: '#f7fafc',
+                paddingHorizontal: 12,
+                paddingVertical: 10,
+                gap: 4,
+            }}
+        >
+            <Text style={{fontSize: 12, color: '#7a8aa0'}}>{item.label}</Text>
+            <Text selectable style={{fontSize: 15, color: '#0f172a', fontWeight: '600'}}>
+                {value}
+            </Text>
+        </View>
+    )
+}
+
+const AdminStatusRow: React.FC<{
+    item: AdminStatusItem
+}> = ({item}) => {
+    const value = item.value ?? toneTextMap[item.tone ?? 'neutral']
+    const nodeId = useStableAutomationNodeId('ui-base-admin-status', item.key)
+
+    useAdminAutomationNode({
+        nodeId,
+        testID: createAutomationTestId('ui-base-admin-status', item.key),
+        role: 'text',
+        value,
+    })
+
+    return (
+        <View
+            style={{
+                borderRadius: 14,
+                backgroundColor: '#f7fafc',
+                paddingHorizontal: 12,
+                paddingVertical: 10,
+                gap: 4,
+            }}
+        >
+            <Text style={{fontSize: 12, color: '#7a8aa0'}}>{item.label}</Text>
+            <Text style={{fontSize: 15, color: '#0f172a', fontWeight: '600'}}>
+                {value}
+            </Text>
+            {item.detail ? <Text selectable style={{color: '#526072'}}>{item.detail}</Text> : null}
+        </View>
+    )
+}
 
 export const AdminActionButton: React.FC<{
     testID?: string
@@ -254,23 +443,7 @@ export const AdminDetailList: React.FC<{
     items: readonly AdminDetailItem[]
 }> = ({items}) => (
     <View style={{gap: 10}}>
-        {items.map(item => (
-            <View
-                key={item.key}
-                style={{
-                    borderRadius: 14,
-                    backgroundColor: '#f7fafc',
-                    paddingHorizontal: 12,
-                    paddingVertical: 10,
-                    gap: 4,
-                }}
-            >
-                <Text style={{fontSize: 12, color: '#7a8aa0'}}>{item.label}</Text>
-                <Text selectable style={{fontSize: 15, color: '#0f172a', fontWeight: '600'}}>
-                    {formatAdminValue(item.value)}
-                </Text>
-            </View>
-        ))}
+        {items.map(item => <AdminDetailRow key={item.key} item={item} />)}
     </View>
 )
 
@@ -278,23 +451,6 @@ export const AdminStatusList: React.FC<{
     items: readonly AdminStatusItem[]
 }> = ({items}) => (
     <View style={{gap: 10}}>
-        {items.map(item => (
-            <View
-                key={item.key}
-                style={{
-                    borderRadius: 14,
-                    backgroundColor: '#f7fafc',
-                    paddingHorizontal: 12,
-                    paddingVertical: 10,
-                    gap: 4,
-                }}
-            >
-                <Text style={{fontSize: 12, color: '#7a8aa0'}}>{item.label}</Text>
-                <Text style={{fontSize: 15, color: '#0f172a', fontWeight: '600'}}>
-                    {item.value ?? toneTextMap[item.tone ?? 'neutral']}
-                </Text>
-                {item.detail ? <Text selectable style={{color: '#526072'}}>{item.detail}</Text> : null}
-            </View>
-        ))}
+        {items.map(item => <AdminStatusRow key={item.key} item={item} />)}
     </View>
 )

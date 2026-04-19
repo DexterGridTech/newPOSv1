@@ -15,15 +15,23 @@ export const createRuntimeStateSync = (stateRuntime: StateRuntime) => {
         const syncMode = envelope.direction === 'master-to-slave' || envelope.direction === 'slave-to-master'
             ? 'authoritative'
             : 'latest-wins'
+        const incomingSliceNames = Object.keys(envelope.diffBySlice)
+        const appliedSliceNames: string[] = []
+        const skippedSliceReasons: Array<{sliceName: string; reason: string}> = []
 
         for (const slice of stateRuntime.getSlices()) {
             const diff = envelope.diffBySlice[slice.name]
-            if (!diff || !slice.sync) {
+            if (!diff) {
+                continue
+            }
+            if (!slice.sync) {
+                skippedSliceReasons.push({sliceName: slice.name, reason: 'missing-sync-descriptor'})
                 continue
             }
 
             const currentSliceState = state[slice.name]
             if (!currentSliceState || typeof currentSliceState !== 'object') {
+                skippedSliceReasons.push({sliceName: slice.name, reason: 'missing-current-slice-state'})
                 continue
             }
 
@@ -35,7 +43,15 @@ export const createRuntimeStateSync = (stateRuntime: StateRuntime) => {
                     mode: syncMode,
                 },
             )
+            appliedSliceNames.push(slice.name)
         }
+
+        console.info('[runtime-state-sync-apply]', JSON.stringify({
+            direction: envelope.direction,
+            incomingSliceNames,
+            appliedSliceNames,
+            skippedSliceReasons,
+        }))
 
         if (Object.keys(nextSlices).length > 0) {
             stateRuntime.applySlicePatches(nextSlices)

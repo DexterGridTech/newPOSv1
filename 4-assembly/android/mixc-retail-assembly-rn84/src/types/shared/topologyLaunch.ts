@@ -4,7 +4,7 @@ export interface AssemblyTopologyLaunchOptions {
     role?: AssemblyTopologyRole
     localNodeId?: string
     masterNodeId?: string
-    ticketToken?: string
+    masterDeviceId?: string
     wsUrl?: string
     httpBaseUrl?: string
 }

@@ -6,7 +6,7 @@ import {
     type ActorDefinition,
 } from '@impos2/kernel-base-runtime-shell-v2'
 import {moduleName} from '../../moduleName'
-import {selectTcpTerminalId} from '../../selectors'
+import {selectTcpSandboxId, selectTcpTerminalId} from '../../selectors'
 import {tcpControlV2ErrorDefinitions} from '../../supports'
 import {tcpControlV2CommandDefinitions} from '../commands'
 import {tcpControlV2StateActions} from '../slices'
@@ -19,13 +19,14 @@ export const createTcpTaskReportActorDefinitionV2 = (
 ): ActorDefinition => defineActor('TcpTaskReportActor', [
     onCommand(tcpControlV2CommandDefinitions.reportTaskResult, async actorContext => {
             const httpService = requireTcpControlHttpService(serviceRef)
+            const sandboxId = selectTcpSandboxId(actorContext.getState())
             const terminalId = actorContext.command.payload.terminalId
                 ?? selectTcpTerminalId(actorContext.getState())
-            if (!terminalId) {
+            if (!sandboxId || !terminalId) {
                 const appError = createAppError(
                     tcpControlV2ErrorDefinitions.bootstrapHydrationFailed,
                     {
-                        args: {error: 'terminalId is missing'},
+                        args: {error: !sandboxId ? 'sandboxId is missing' : 'terminalId is missing'},
                         context: {
                             commandName: actorContext.command.commandName,
                             commandId: actorContext.command.commandId,
@@ -47,6 +48,7 @@ export const createTcpTaskReportActorDefinitionV2 = (
                     terminalId,
                     actorContext.command.payload.instanceId,
                     {
+                        sandboxId,
                         status: actorContext.command.payload.status,
                         result: actorContext.command.payload.result,
                         error: actorContext.command.payload.error,

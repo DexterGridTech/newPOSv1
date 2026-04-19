@@ -5,13 +5,11 @@ import {
     selectTcpCredentialSnapshot,
     selectTcpIdentitySnapshot,
     selectTcpRuntimeState,
+    selectTcpSandboxId,
     tcpControlV2CommandDefinitions,
 } from '@impos2/kernel-base-tcp-control-runtime-v2'
 import {createCommand, type KernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
-import {
-    formatAdminStatus,
-    formatAdminTimestamp,
-} from '../../supports'
+import {formatAdminStatus, formatAdminTimestamp} from '../../supports/adminFormatting'
 import {
     AdminActionGroup,
     AdminActionButton,
@@ -38,11 +36,12 @@ export const AdminTerminalSection: React.FC<AdminTerminalSectionProps> = ({
         identity: selectTcpIdentitySnapshot(store.getState()),
         credential: selectTcpCredentialSnapshot(store.getState()),
         binding: selectTcpBindingSnapshot(store.getState()),
+        sandboxId: selectTcpSandboxId(store.getState()),
         runtimeState: selectTcpRuntimeState(store.getState()),
     }))
     const [message, setMessage] = useState('')
     const [loading, setLoading] = useState(false)
-    const {identity, credential, binding, runtimeState} = snapshot
+    const {identity, credential, binding, sandboxId, runtimeState} = snapshot
 
     useEffect(() => () => {
         mountedRef.current = false
@@ -54,6 +53,7 @@ export const AdminTerminalSection: React.FC<AdminTerminalSectionProps> = ({
             identity: selectTcpIdentitySnapshot(state),
             credential: selectTcpCredentialSnapshot(state),
             binding: selectTcpBindingSnapshot(state),
+            sandboxId: selectTcpSandboxId(state),
             runtimeState: selectTcpRuntimeState(state),
         }
     }, [store])
@@ -124,6 +124,12 @@ export const AdminTerminalSection: React.FC<AdminTerminalSectionProps> = ({
                     value={identity.terminalId ?? '未激活'}
                     detail="平台分配给当前终端的唯一标识。"
                     tone={identity.terminalId ? 'primary' : 'neutral'}
+                />
+                <AdminSummaryCard
+                    label="沙箱 ID"
+                    value={sandboxId ?? '未配置'}
+                    detail="当前终端控制面请求绑定的业务沙箱。"
+                    tone={sandboxId ? 'primary' : 'warn'}
                 />
                 <AdminSummaryCard
                     label="凭证状态"

@@ -13,6 +13,7 @@ import {SERVER_NAME_MOCK_TERMINAL_PLATFORM} from '@impos2/kernel-server-config-v
 import {moduleName} from '../moduleName'
 import {
     selectTcpAccessToken,
+    selectTcpSandboxId,
     selectTcpTerminalId,
 } from '@impos2/kernel-base-tcp-control-runtime-v2'
 import {tdpSyncV2CommandDefinitions} from '../features/commands'
@@ -153,10 +154,12 @@ export const installTdpSessionConnectionRuntimeV2 = (input: {
 
     const sendHandshake = () => {
         const state = input.context.getState()
+        const sandboxId = selectTcpSandboxId(state)
         const terminalId = selectTcpTerminalId(state)
         const accessToken = selectTcpAccessToken(state)
-        if (!terminalId || !accessToken) {
+        if (!sandboxId || !terminalId || !accessToken) {
             throw createAppError(tdpSyncV2ErrorDefinitions.credentialMissing, {
+                args: {error: !sandboxId ? 'sandboxId is missing' : 'tcp credential is missing'},
                 context: {
                     commandName: tdpSyncV2CommandDefinitions.connectTdpSession.commandName,
                     nodeId: input.context.localNodeId,
@@ -167,6 +170,7 @@ export const installTdpSessionConnectionRuntimeV2 = (input: {
         const handshakeMessage: TdpClientMessage = {
             type: 'HANDSHAKE',
             data: {
+                sandboxId,
                 terminalId,
                 appVersion: packageVersion,
                 lastCursor: selectTdpSyncState(state)?.lastCursor,
@@ -181,11 +185,22 @@ export const installTdpSessionConnectionRuntimeV2 = (input: {
     let lastConnectionStartResult: Record<string, unknown> | undefined
 
     const performSocketConnection = async (options?: {isReconnect?: boolean}) => {
+        const currentState = socketBinding.socketRuntime.getConnectionState(socketBinding.profileName)
+        if (currentState === 'connected' || currentState === 'connecting') {
+            return {
+                alreadyConnected: currentState === 'connected',
+                alreadyConnecting: currentState === 'connecting',
+                lastCursor: selectTdpSyncState(input.context.getState())?.lastCursor,
+            }
+        }
+
         const state = input.context.getState()
+        const sandboxId = selectTcpSandboxId(state)
         const terminalId = selectTcpTerminalId(state)
         const accessToken = selectTcpAccessToken(state)
-        if (!terminalId || !accessToken) {
+        if (!sandboxId || !terminalId || !accessToken) {
             throw createAppError(tdpSyncV2ErrorDefinitions.credentialMissing, {
+                args: {error: !sandboxId ? 'sandboxId is missing' : 'tcp credential is missing'},
                 context: {
                     commandName: tdpSyncV2CommandDefinitions.connectTdpSession.commandName,
                     nodeId: input.context.localNodeId,
@@ -198,6 +213,7 @@ export const installTdpSessionConnectionRuntimeV2 = (input: {
 
         await socketBinding.socketRuntime.connect(socketBinding.profileName, {
             query: {
+                sandboxId,
                 terminalId,
                 token: accessToken,
             },
@@ -208,6 +224,7 @@ export const installTdpSessionConnectionRuntimeV2 = (input: {
         sendHandshake()
 
         return {
+            sandboxId,
             terminalId,
             accessToken,
             lastCursor: selectTdpSyncState(input.context.getState())?.lastCursor,

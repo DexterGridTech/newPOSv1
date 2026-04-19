@@ -4,13 +4,21 @@ import {nativeConnector} from '../turbomodules/connector'
 import {nativeDevice} from '../turbomodules/device'
 import {nativeScriptExecutor} from '../turbomodules/scripts'
 import {createAssemblyLogger} from './logger'
+import {createAssemblyHotUpdatePort} from './hotUpdate'
 import {createAssemblyStateStorage} from './stateStorage'
 
 export const createAssemblyPlatformPorts = (
     environmentMode: LogEnvironmentMode,
+    options: {
+        shouldDisableStatePersistence?: () => boolean
+    } = {},
 ): PlatformPorts => {
-    const stateStorage = createAssemblyStateStorage('state')
-    const secureStateStorage = createAssemblyStateStorage('secure-state')
+    const stateStorage = createAssemblyStateStorage('state', {
+        shouldDisablePersistence: options.shouldDisableStatePersistence,
+    })
+    const secureStateStorage = createAssemblyStateStorage('secure-state', {
+        shouldDisablePersistence: options.shouldDisableStatePersistence,
+    })
 
     return {
         environmentMode,
@@ -29,5 +37,6 @@ export const createAssemblyPlatformPorts = (
                 await secureStateStorage.clear?.()
             },
         },
+        hotUpdate: createAssemblyHotUpdatePort(),
     }
 }

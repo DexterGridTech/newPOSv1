@@ -2,21 +2,19 @@ import React, {useEffect, useState} from 'react'
 import type {EnhancedStore} from '@reduxjs/toolkit'
 import {createCommand, type KernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
 import {
-    selectTopologyRuntimeV2Connection,
-    selectTopologyRuntimeV2Context,
-    selectTopologyRuntimeV2DisplayMode,
-    selectTopologyRuntimeV2EnableSlave,
-    selectTopologyRuntimeV2InstanceMode,
-    selectTopologyRuntimeV2MasterInfo,
-    selectTopologyRuntimeV2Peer,
-    selectTopologyRuntimeV2Sync,
-    selectTopologyRuntimeV2Workspace,
-    topologyRuntimeV2CommandDefinitions,
-} from '@impos2/kernel-base-topology-runtime-v2'
-import {
-    formatAdminStatus,
-    formatAdminTimestamp,
-} from '../../supports'
+    selectTopologyRuntimeV3Connection,
+    selectTopologyRuntimeV3Context,
+    selectTopologyRuntimeV3DisplayMode,
+    selectTopologyRuntimeV3EnableSlave,
+    selectTopologyRuntimeV3InstanceMode,
+    selectTopologyRuntimeV3MasterLocator,
+    selectTopologyRuntimeV3Peer,
+    selectTopologyRuntimeV3Sync,
+    selectTopologyRuntimeV3Workspace,
+    topologyRuntimeV3CommandDefinitions,
+} from '@impos2/kernel-base-topology-runtime-v3'
+import {formatAdminStatus, formatAdminTimestamp} from '../../supports/adminFormatting'
+import {getAdminHostTools} from '../../supports/adminHostToolsRegistry'
 import {
     AdminActionGroup,
     AdminActionButton,
@@ -35,19 +33,20 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
     runtime,
     store,
 }) => {
+    const topologyHost = getAdminHostTools().topology
     const readSnapshot = () => {
         const state = store.getState()
         return {
-            context: selectTopologyRuntimeV2Context(state),
-            instanceMode: selectTopologyRuntimeV2InstanceMode(state) ?? 'UNKNOWN',
-            displayMode: selectTopologyRuntimeV2DisplayMode(state) ?? 'UNKNOWN',
-            workspace: selectTopologyRuntimeV2Workspace(state) ?? 'UNKNOWN',
-            localNodeId: selectTopologyRuntimeV2Context(state)?.localNodeId,
-            enableSlave: selectTopologyRuntimeV2EnableSlave(state) ?? false,
-            masterInfo: selectTopologyRuntimeV2MasterInfo(state),
-            connection: selectTopologyRuntimeV2Connection(state),
-            peer: selectTopologyRuntimeV2Peer(state),
-            sync: selectTopologyRuntimeV2Sync(state),
+            context: selectTopologyRuntimeV3Context(state),
+            instanceMode: selectTopologyRuntimeV3InstanceMode(state) ?? 'UNKNOWN',
+            displayMode: selectTopologyRuntimeV3DisplayMode(state) ?? 'UNKNOWN',
+            workspace: selectTopologyRuntimeV3Workspace(state) ?? 'UNKNOWN',
+            localNodeId: selectTopologyRuntimeV3Context(state)?.localNodeId,
+            enableSlave: selectTopologyRuntimeV3EnableSlave(state) ?? false,
+            masterLocator: selectTopologyRuntimeV3MasterLocator(state),
+            connection: selectTopologyRuntimeV3Connection(state),
+            peer: selectTopologyRuntimeV3Peer(state),
+            sync: selectTopologyRuntimeV3Sync(state),
         }
     }
     const [snapshot, setSnapshot] = useState(readSnapshot)
@@ -58,7 +57,7 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
         workspace,
         localNodeId,
         enableSlave,
-        masterInfo,
+        masterLocator,
         connection,
         peer,
         sync,
@@ -121,27 +120,27 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
                 <AdminSummaryGrid>
                     <AdminSummaryCard
                         label="主机设备"
-                        value={masterInfo?.deviceId ?? '未配置'}
+                        value={masterLocator?.masterDeviceId ?? '未配置'}
                         detail="当前已保存的主机设备 ID。"
-                        tone={masterInfo?.deviceId ? 'primary' : 'neutral'}
+                        tone={masterLocator?.masterDeviceId ? 'primary' : 'neutral'}
                     />
                     <AdminSummaryCard
                         label="保存时间"
-                        value={formatAdminTimestamp(masterInfo?.addedAt)}
+                        value={formatAdminTimestamp(masterLocator?.addedAt)}
                         detail="主机信息写入本机恢复状态的时间。"
-                        tone={masterInfo?.addedAt ? 'primary' : 'neutral'}
+                        tone={masterLocator?.addedAt ? 'primary' : 'neutral'}
                     />
                     <AdminSummaryCard
                         label="主机地址"
-                        value={masterInfo?.serverAddress?.[0]?.address ?? '未配置'}
+                        value={masterLocator?.serverAddress?.[0]?.address ?? '未配置'}
                         detail="当前优先生效的主机连接地址。"
-                        tone={masterInfo?.serverAddress?.[0]?.address ? 'primary' : 'neutral'}
+                        tone={masterLocator?.serverAddress?.[0]?.address ? 'primary' : 'neutral'}
                     />
                     <AdminSummaryCard
-                        label="最近错误"
-                        value={connection?.connectionError ?? '无'}
-                        detail="最近一次拓扑连接失败的错误信息。"
-                        tone={connection?.connectionError ? 'danger' : 'ok'}
+                        label="同步会话"
+                        value={sync?.activeSessionId ?? '无'}
+                        detail="当前活动中的 topology 会话 ID。"
+                        tone={sync?.activeSessionId ? 'ok' : 'neutral'}
                     />
                 </AdminSummaryGrid>
             </AdminBlock>
@@ -152,15 +151,15 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
                 <AdminSummaryGrid>
                     <AdminSummaryCard
                         label="连接时间"
-                        value={formatAdminTimestamp(connection?.connectedAt)}
+                        value={formatAdminTimestamp(peer?.connectedAt)}
                         detail="最近一次拓扑连接建立时间。"
-                        tone={connection?.connectedAt ? 'ok' : 'neutral'}
+                        tone={peer?.connectedAt ? 'ok' : 'neutral'}
                     />
                     <AdminSummaryCard
                         label="断开时间"
-                        value={formatAdminTimestamp(connection?.disconnectedAt)}
+                        value={formatAdminTimestamp(peer?.disconnectedAt)}
                         detail="最近一次拓扑连接断开时间。"
-                        tone={connection?.disconnectedAt ? 'warn' : 'neutral'}
+                        tone={peer?.disconnectedAt ? 'warn' : 'neutral'}
                     />
                     <AdminSummaryCard
                         label="重连次数"
@@ -176,15 +175,15 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
                     />
                     <AdminSummaryCard
                         label="同步状态"
-                        value={sync?.continuousSyncActive ? '同步中' : '未同步'}
-                        detail={`resume: ${sync?.resumeStatus ?? 'idle'}`}
-                        tone={sync?.continuousSyncActive ? 'ok' : 'neutral'}
+                        value={formatAdminStatus(sync?.status)}
+                        detail={`session: ${sync?.activeSessionId ?? 'none'}`}
+                        tone={sync?.status === 'active' ? 'ok' : 'neutral'}
                     />
                     <AdminSummaryCard
                         label="上下文更新时间"
-                        value={formatAdminTimestamp(context?.updatedAt)}
-                        detail="拓扑上下文最近一次刷新时间。"
-                        tone={context?.updatedAt ? 'primary' : 'neutral'}
+                        value={context?.standalone ? '独立主屏' : '受管屏幕'}
+                        detail="standalone 由 displayIndex 推导，不持久化。"
+                        tone={context?.standalone ? 'primary' : 'neutral'}
                     />
                 </AdminSummaryGrid>
             </AdminBlock>
@@ -197,7 +196,7 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
                         testID="ui-base-admin-section:topology:set-master"
                         label="切换为主机"
                         onPress={() => void runtime.dispatchCommand(createCommand(
-                            topologyRuntimeV2CommandDefinitions.setInstanceMode,
+                            topologyRuntimeV3CommandDefinitions.setInstanceMode,
                             {instanceMode: 'MASTER'},
                         ))}
                     />
@@ -205,8 +204,40 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
                         testID="ui-base-admin-section:topology:set-slave"
                         label="切换为副机"
                         onPress={() => void runtime.dispatchCommand(createCommand(
-                            topologyRuntimeV2CommandDefinitions.setInstanceMode,
+                            topologyRuntimeV3CommandDefinitions.setInstanceMode,
                             {instanceMode: 'SLAVE'},
+                        ))}
+                    />
+                    <AdminActionButton
+                        testID="ui-base-admin-section:topology:set-primary"
+                        label="切换主屏"
+                        onPress={() => void runtime.dispatchCommand(createCommand(
+                            topologyRuntimeV3CommandDefinitions.setDisplayMode,
+                            {displayMode: 'PRIMARY'},
+                        ))}
+                    />
+                    <AdminActionButton
+                        testID="ui-base-admin-section:topology:set-secondary"
+                        label="切换副屏"
+                        onPress={() => void runtime.dispatchCommand(createCommand(
+                            topologyRuntimeV3CommandDefinitions.setDisplayMode,
+                            {displayMode: 'SECONDARY'},
+                        ))}
+                    />
+                    <AdminActionButton
+                        testID="ui-base-admin-section:topology:enable-slave"
+                        label="启用副机"
+                        onPress={() => void runtime.dispatchCommand(createCommand(
+                            topologyRuntimeV3CommandDefinitions.setEnableSlave,
+                            {enableSlave: true},
+                        ))}
+                    />
+                    <AdminActionButton
+                        testID="ui-base-admin-section:topology:disable-slave"
+                        label="停用副机"
+                        onPress={() => void runtime.dispatchCommand(createCommand(
+                            topologyRuntimeV3CommandDefinitions.setEnableSlave,
+                            {enableSlave: false},
                         ))}
                     />
                     <AdminActionButton
@@ -214,7 +245,7 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
                         label="启动连接"
                         tone="primary"
                         onPress={() => void runtime.dispatchCommand(createCommand(
-                            topologyRuntimeV2CommandDefinitions.startTopologyConnection,
+                            topologyRuntimeV3CommandDefinitions.startTopologyConnection,
                             {},
                         ))}
                     />
@@ -222,10 +253,32 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
                         testID="ui-base-admin-section:topology:restart"
                         label="重启连接"
                         onPress={() => void runtime.dispatchCommand(createCommand(
-                            topologyRuntimeV2CommandDefinitions.restartTopologyConnection,
+                            topologyRuntimeV3CommandDefinitions.restartTopologyConnection,
                             {},
                         ))}
                     />
+                    <AdminActionButton
+                        testID="ui-base-admin-section:topology:clear-master"
+                        label="清空主机"
+                        tone="danger"
+                        onPress={() => {
+                            void topologyHost?.clearMasterLocator?.()
+                            void runtime.dispatchCommand(createCommand(
+                                topologyRuntimeV3CommandDefinitions.clearMasterLocator,
+                                {},
+                            ))
+                        }}
+                    />
+                    {topologyHost?.reconnect ? (
+                        <AdminActionButton
+                            testID="ui-base-admin-section:topology:reconnect"
+                            label="重新连接"
+                            tone="primary"
+                            onPress={() => {
+                                void topologyHost.reconnect?.()
+                            }}
+                        />
+                    ) : null}
                 </AdminActionGroup>
             </AdminBlock>
         </AdminSectionShell>

@@ -8,6 +8,7 @@
     "start:clean": "react-native start --reset-cache",
     "android": "react-native run-android",
     "android:run": "react-native run-android --mode=debug",
+    "test-visible:admin-loop": "node ../../../scripts/android-assembly-visible-admin-loop.mjs",
     "clean": "rm -rf node_modules && cd android && ./gradlew clean",
     "test": "vitest run",
     "type-check": "tsc --noEmit"
@@ -17,7 +18,8 @@
     "@impos2/kernel-base-platform-ports": "workspace:*",
     "@impos2/kernel-base-runtime-shell-v2": "workspace:*",
     "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*",
-    "@impos2/kernel-base-topology-runtime-v2": "workspace:*",
+    "@impos2/kernel-base-tdp-sync-runtime-v2": "workspace:*",
+    "@impos2/kernel-base-topology-runtime-v3": "workspace:*",
     "@impos2/kernel-base-transport-runtime": "workspace:*",
     "@impos2/kernel-base-ui-runtime-v2": "workspace:*",
     "@impos2/kernel-server-config-v2": "workspace:*",

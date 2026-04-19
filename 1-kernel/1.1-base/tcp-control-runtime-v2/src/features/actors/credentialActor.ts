@@ -6,7 +6,7 @@ import {
     type ActorDefinition,
 } from '@impos2/kernel-base-runtime-shell-v2'
 import {moduleName} from '../../moduleName'
-import {selectTcpCredentialSnapshot} from '../../selectors'
+import {selectTcpCredentialSnapshot, selectTcpSandboxId} from '../../selectors'
 import {tcpControlV2ErrorDefinitions} from '../../supports'
 import {tcpControlV2CommandDefinitions} from '../commands'
 import {tcpControlV2StateActions} from '../slices'
@@ -20,6 +20,23 @@ export const createTcpCredentialActorDefinitionV2 = (
     onCommand(tcpControlV2CommandDefinitions.refreshCredential, async actorContext => {
             const httpService = requireTcpControlHttpService(serviceRef)
             const credential = selectTcpCredentialSnapshot(actorContext.getState())
+            const sandboxId = selectTcpSandboxId(actorContext.getState())
+            if (!sandboxId) {
+                const appError = createAppError(
+                    tcpControlV2ErrorDefinitions.credentialMissing,
+                    {
+                        args: {error: 'sandboxId is missing'},
+                        context: {
+                            commandName: actorContext.command.commandName,
+                            commandId: actorContext.command.commandId,
+                            requestId: actorContext.command.requestId,
+                            nodeId: actorContext.localNodeId,
+                        },
+                    },
+                )
+                actorContext.dispatchAction(tcpControlV2StateActions.setLastError(appError))
+                throw appError
+            }
             if (!credential.refreshToken) {
                 const appError = createAppError(
                     tcpControlV2ErrorDefinitions.credentialMissing,
@@ -43,6 +60,7 @@ export const createTcpCredentialActorDefinitionV2 = (
 
             try {
                 const result = await httpService.refreshCredential({
+                    sandboxId,
                     refreshToken: credential.refreshToken,
                 })
                 const now = nowTimestampMs()

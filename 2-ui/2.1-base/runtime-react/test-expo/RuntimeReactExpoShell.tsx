@@ -3,7 +3,7 @@ import {Provider} from 'react-redux'
 import {ScrollView, Text, View} from 'react-native'
 import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
 import type {CommandAggregateResult} from '@impos2/kernel-base-runtime-shell-v2'
-import {topologyRuntimeV2CommandDefinitions} from '@impos2/kernel-base-topology-runtime-v2'
+import {topologyRuntimeV3CommandDefinitions} from '@impos2/kernel-base-topology-runtime-v3'
 import {createRuntimeReactHarness} from '../test/support/runtimeReactHarness'
 import {createRuntimeReactScenarioModule} from '../test/support/runtimeReactScenarioModule'
 import {RuntimeReactScenarioStatePanel} from '../test/support/RuntimeReactScenarioStatePanel'
@@ -109,29 +109,31 @@ export const RuntimeReactExpoShell: React.FC = () => {
                     try {
                         if (config.topologyRole === 'master') {
                             await nextHarness.runtime.dispatchCommand(createCommand(
-                                topologyRuntimeV2CommandDefinitions.setEnableSlave,
+                                topologyRuntimeV3CommandDefinitions.setEnableSlave,
                                 {
                                     enableSlave: true,
                                 },
                             ))
                         } else if (config.topologyHostBaseUrl) {
                             await nextHarness.runtime.dispatchCommand(createCommand(
-                                topologyRuntimeV2CommandDefinitions.setMasterInfo,
+                                topologyRuntimeV3CommandDefinitions.setMasterLocator,
                                 {
-                                    masterInfo: {
-                                        deviceId: config.deviceId,
+                                    masterLocator: {
+                                        masterNodeId: config.topologyMasterNodeId,
+                                        masterDeviceId: config.topologyMasterDeviceId,
                                         serverAddress: [
                                             {
                                                 address: config.topologyHostBaseUrl,
                                             },
                                         ],
+                                        httpBaseUrl: config.topologyHostBaseUrl,
                                         addedAt: Date.now(),
                                     },
                                 },
                             ))
                         }
                         const result = await nextHarness.runtime.dispatchCommand(createCommand(
-                            topologyRuntimeV2CommandDefinitions.startTopologyConnection,
+                            topologyRuntimeV3CommandDefinitions.startTopologyConnection,
                             {},
                         ))
                         if (!disposed) {
@@ -161,14 +163,15 @@ export const RuntimeReactExpoShell: React.FC = () => {
         config.displayIndex,
         config.topologyHostBaseUrl,
         config.topologyMode,
+        config.topologyMasterDeviceId,
+        config.topologyMasterNodeId,
         config.topologyProfileName,
         config.topologyRole,
-        config.topologyTicketToken,
         config.topologyWsUrl,
     ])
 
     const topologySummary = config.topologyMode === 'host'
-        ? 'real-dual-topology-host'
+        ? 'real-dual-topology-host-v3'
         : config.enableDualTopologyPreview
             ? 'dual-root-preview-no-host'
             : 'single-runtime'

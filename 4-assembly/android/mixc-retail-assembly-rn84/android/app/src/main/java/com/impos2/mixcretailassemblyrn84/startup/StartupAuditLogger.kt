@@ -48,6 +48,26 @@ object StartupAuditLogger {
   }
 
   /**
+   * 记录主屏 ready 后实际触发副屏启动的时间点。
+   */
+  fun logSecondaryLaunchScheduled() {
+    Log.i(
+      TAG,
+      "secondary_launch_scheduled pid=${Process.myPid()} time=${formatter.format(Date())}",
+    )
+  }
+
+  /**
+   * 记录副屏启动器真正开始尝试 startActivity 的时间点。
+   */
+  fun logSecondaryLaunchAttempt(displayCount: Int, displayId: Int) {
+    Log.i(
+      TAG,
+      "secondary_launch_attempt displayCount=$displayCount displayId=$displayId pid=${Process.myPid()} time=${formatter.format(Date())}",
+    )
+  }
+
+  /**
    * 记录用户发起的重启请求，并额外附带当前是否存在副屏。
    */
   fun logRestartRequested(hasSecondary: Boolean) {

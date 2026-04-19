@@ -1,5 +1,5 @@
 import {createSlice, type PayloadAction} from '@reduxjs/toolkit'
-import type {StateRuntimeSliceDescriptor} from '@impos2/kernel-base-state-runtime'
+import type {StateRuntimeSliceDescriptor, SyncValueEnvelope} from '@impos2/kernel-base-state-runtime'
 import type {
     TcpActivationStatus,
     TcpDeviceInfo,
@@ -42,11 +42,51 @@ const slice = createSlice({
 
 export const tcpIdentityV2Actions = slice.actions
 
+const tcpIdentitySyncDescriptor = {
+    kind: 'record' as const,
+    getEntries(state: TcpIdentityState) {
+        const updatedAt = state.activatedAt ?? 0
+        return {
+            deviceFingerprint: {value: state.deviceFingerprint, updatedAt},
+            deviceInfo: {value: state.deviceInfo, updatedAt},
+            terminalId: {value: state.terminalId, updatedAt},
+            activationStatus: {value: state.activationStatus, updatedAt},
+            activatedAt: {value: state.activatedAt, updatedAt},
+        }
+    },
+    applyEntries(
+        state: TcpIdentityState,
+        entries: Readonly<Record<string, SyncValueEnvelope | undefined>>,
+    ): TcpIdentityState {
+        const resolveEntry = <TValue>(
+            key: string,
+            fallback: TValue,
+            tombstoneFallback: TValue,
+        ): TValue => {
+            if (!Object.prototype.hasOwnProperty.call(entries, key)) {
+                return fallback
+            }
+            const entry = entries[key]
+            if (!entry || entry.tombstone) {
+                return tombstoneFallback
+            }
+            return entry.value as TValue
+        }
+        return {
+            deviceFingerprint: resolveEntry<string | undefined>('deviceFingerprint', state.deviceFingerprint, undefined),
+            deviceInfo: resolveEntry<TcpDeviceInfo | undefined>('deviceInfo', state.deviceInfo, undefined),
+            terminalId: resolveEntry<string | undefined>('terminalId', state.terminalId, undefined),
+            activationStatus: resolveEntry<TcpActivationStatus>('activationStatus', state.activationStatus, 'UNACTIVATED'),
+            activatedAt: resolveEntry<number | undefined>('activatedAt', state.activatedAt, undefined),
+        }
+    },
+}
+
 export const tcpIdentityV2SliceDescriptor: StateRuntimeSliceDescriptor<TcpIdentityState> = {
     name: TCP_IDENTITY_STATE_KEY,
     reducer: slice.reducer,
     persistIntent: 'owner-only',
-    syncIntent: 'isolated',
+    syncIntent: 'master-to-slave',
     persistence: [
         {kind: 'field', stateKey: 'deviceFingerprint', flushMode: 'immediate'},
         {kind: 'field', stateKey: 'deviceInfo', flushMode: 'immediate'},
@@ -54,4 +94,5 @@ export const tcpIdentityV2SliceDescriptor: StateRuntimeSliceDescriptor<TcpIdenti
         {kind: 'field', stateKey: 'activationStatus', flushMode: 'immediate'},
         {kind: 'field', stateKey: 'activatedAt', flushMode: 'immediate'},
     ],
+    sync: tcpIdentitySyncDescriptor as any,
 }

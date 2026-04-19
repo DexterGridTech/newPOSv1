@@ -3,7 +3,7 @@ import type {AppProps, AssemblyTopologyLaunchOptions} from '../types'
 
 interface PreparedTopologyLaunch {
     masterNodeId?: string
-    ticketToken?: string
+    masterDeviceId?: string
     wsUrl?: string
     httpBaseUrl?: string
 }
@@ -12,7 +12,7 @@ const isPreparedLaunchReady = (
     launch: PreparedTopologyLaunch,
 ): launch is Required<PreparedTopologyLaunch> => Boolean(
     launch.masterNodeId
-        && launch.ticketToken
+        && launch.masterDeviceId
         && launch.wsUrl
         && launch.httpBaseUrl,
 )
@@ -20,7 +20,7 @@ const isPreparedLaunchReady = (
 /**
  * 设计意图：
  * Android assembly 的主副屏都必须通过真实 loopback topology host 通讯。
- * 这里只补齐 native launch props，不做业务编排；业务层仍由 topology-runtime-v2 command/actor 接管。
+ * 这里只补齐 native launch props，不做业务编排；业务层仍由 topology-runtime-v3 command/actor 接管。
  */
 export const resolveAssemblyTopologyLaunch = async (
     props: AppProps,
@@ -35,7 +35,7 @@ export const resolveAssemblyTopologyLaunch = async (
         role: 'master',
         localNodeId: prepared.masterNodeId,
         masterNodeId: prepared.masterNodeId,
-        ticketToken: prepared.ticketToken,
+        masterDeviceId: prepared.masterDeviceId,
         wsUrl: prepared.wsUrl,
         httpBaseUrl: prepared.httpBaseUrl,
     })
@@ -48,7 +48,7 @@ export const resolveAssemblyTopologyLaunch = async (
         return props.topology
     }
 
-    if (props.topology?.ticketToken && props.topology.wsUrl) {
+    if (props.topology?.wsUrl) {
         return props.topology
     }
 
@@ -64,7 +64,7 @@ export const resolveAssemblyTopologyLaunch = async (
             ? prepared.masterNodeId
             : `${prepared.masterNodeId}:display-${props.displayIndex}`,
         masterNodeId: prepared.masterNodeId,
-        ticketToken: prepared.ticketToken,
+        masterDeviceId: prepared.masterDeviceId,
         wsUrl: prepared.wsUrl,
         httpBaseUrl: prepared.httpBaseUrl,
     }

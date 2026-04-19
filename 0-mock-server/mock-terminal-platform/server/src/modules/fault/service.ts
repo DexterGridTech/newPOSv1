@@ -2,10 +2,10 @@ import { and, desc, eq } from 'drizzle-orm'
 import { db, sqlite } from '../../database/index.js'
 import { faultRulesTable, taskInstancesTable } from '../../database/schema.js'
 import { createId, now, parseJson } from '../../shared/utils.js'
-import { getCurrentSandboxId } from '../sandbox/service.js'
+import { assertSandboxUsable } from '../sandbox/service.js'
 
-export const listFaultRules = () => {
-  const sandboxId = getCurrentSandboxId()
+export const listFaultRules = (sandboxId: string) => {
+  assertSandboxUsable(sandboxId)
   return db.select().from(faultRulesTable).where(eq(faultRulesTable.sandboxId, sandboxId)).orderBy(desc(faultRulesTable.updatedAt)).all().map((item) => ({
     ...item,
     matcher: parseJson(item.matcherJson, {}),
@@ -15,17 +15,18 @@ export const listFaultRules = () => {
 }
 
 export const createFaultRule = (input: {
+  sandboxId: string
   name: string
   targetType: string
   matcher: Record<string, unknown>
   action: Record<string, unknown>
 }) => {
-  const sandboxId = getCurrentSandboxId()
+  assertSandboxUsable(input.sandboxId)
   const timestamp = now()
   const faultRuleId = createId('fault')
   db.insert(faultRulesTable).values({
     faultRuleId,
-    sandboxId,
+    sandboxId: input.sandboxId,
     name: input.name,
     targetType: input.targetType,
     matcherJson: JSON.stringify(input.matcher),
@@ -53,20 +54,20 @@ export const applyMockResult = (instanceId: string, input: { status: string; res
   return { instanceId, status: input.status }
 }
 
-export const simulateFaultHit = (faultRuleId: string) => {
-  const sandboxId = getCurrentSandboxId()
+export const simulateFaultHit = (sandboxId: string, faultRuleId: string) => {
+  assertSandboxUsable(sandboxId)
   sqlite.prepare('UPDATE fault_rules SET hit_count = hit_count + 1, updated_at = ? WHERE fault_rule_id = ? AND sandbox_id = ?').run(now(), faultRuleId, sandboxId)
   return { faultRuleId }
 }
 
-export const updateFaultRule = (faultRuleId: string, input: {
+export const updateFaultRule = (sandboxId: string, faultRuleId: string, input: {
   name?: string
   targetType?: string
   matcher?: Record<string, unknown>
   action?: Record<string, unknown>
   enabled?: boolean
 }) => {
-  const sandboxId = getCurrentSandboxId()
+  assertSandboxUsable(sandboxId)
   const timestamp = now()
   const current = sqlite.prepare('SELECT * FROM fault_rules WHERE fault_rule_id = ? AND sandbox_id = ?').get(faultRuleId, sandboxId) as Record<string, unknown> | undefined
   if (!current) {

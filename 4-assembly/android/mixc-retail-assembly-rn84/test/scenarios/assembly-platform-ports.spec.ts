@@ -10,6 +10,7 @@ const {
     nativeAppControlSetAppLockedMock,
     nativeConnector,
     nativeDevice,
+    nativeHotUpdate,
     nativeScriptExecutor,
 } = vi.hoisted(() => ({
     createAssemblyLoggerMock: vi.fn((environmentMode: string) => ({
@@ -27,6 +28,14 @@ const {
     nativeAppControlSetAppLockedMock: vi.fn(async () => undefined),
     nativeConnector: {kind: 'native-connector'},
     nativeDevice: {kind: 'native-device'},
+    nativeHotUpdate: {
+        downloadPackage: vi.fn(),
+        writeBootMarker: vi.fn(),
+        readActiveMarker: vi.fn(),
+        readBootMarker: vi.fn(),
+        clearBootMarker: vi.fn(),
+        confirmLoadComplete: vi.fn(),
+    },
     nativeScriptExecutor: {kind: 'native-script-executor'},
 }))
 
@@ -56,6 +65,10 @@ vi.mock('../../src/turbomodules/device', () => ({
     nativeDevice,
 }))
 
+vi.mock('../../src/turbomodules/hotUpdate', () => ({
+    nativeHotUpdate,
+}))
+
 vi.mock('../../src/turbomodules/scripts', () => ({
     nativeScriptExecutor,
 }))
@@ -72,13 +85,35 @@ describe('assembly platform ports', () => {
 
         expect(createAssemblyLoggerMock).toHaveBeenCalledWith('DEV')
         expect(createAssemblyStateStorageMock).toHaveBeenCalledTimes(2)
-        expect(createAssemblyStateStorageMock).toHaveBeenNthCalledWith(1, 'state')
-        expect(createAssemblyStateStorageMock).toHaveBeenNthCalledWith(2, 'secure-state')
+        expect(createAssemblyStateStorageMock).toHaveBeenNthCalledWith(1, 'state', {
+            shouldDisablePersistence: undefined,
+        })
+        expect(createAssemblyStateStorageMock).toHaveBeenNthCalledWith(2, 'secure-state', {
+            shouldDisablePersistence: undefined,
+        })
         expect(ports.stateStorage).toMatchObject({layer: 'state'})
         expect(ports.secureStateStorage).toMatchObject({layer: 'secure-state'})
         expect(ports.connector).toBe(nativeConnector)
         expect(ports.device).toBe(nativeDevice)
         expect(ports.scriptExecutor).toBe(nativeScriptExecutor)
+        expect(ports.hotUpdate).toBeDefined()
+        await ports.hotUpdate?.reportLoadComplete?.({displayIndex: 0})
+        expect(nativeHotUpdate.confirmLoadComplete).toHaveBeenCalledTimes(1)
+    })
+
+    it('threads the managed-secondary persistence gate into both storage layers', async () => {
+        const shouldDisableStatePersistence = vi.fn(() => true)
+
+        createAssemblyPlatformPorts('DEV', {
+            shouldDisableStatePersistence,
+        })
+
+        expect(createAssemblyStateStorageMock).toHaveBeenNthCalledWith(1, 'state', {
+            shouldDisablePersistence: shouldDisableStatePersistence,
+        })
+        expect(createAssemblyStateStorageMock).toHaveBeenNthCalledWith(2, 'secure-state', {
+            shouldDisablePersistence: shouldDisableStatePersistence,
+        })
     })
 
     it('clears both native storage namespaces and keeps restart delegated to native app control', async () => {

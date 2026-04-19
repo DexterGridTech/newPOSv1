@@ -36,6 +36,41 @@ export interface AppControlPort {
     switchServerSpace?(serverSpace: string): Promise<void>
 }
 
+export interface HotUpdatePort {
+    downloadPackage(input: {
+        packageId: string
+        releaseId: string
+        bundleVersion: string
+        packageUrls: readonly string[]
+        packageSha256: string
+        manifestSha256: string
+        packageSize: number
+    }): Promise<{
+        installDir: string
+        entryFile: string
+        manifestPath: string
+        packageSha256: string
+        manifestSha256: string
+    }>
+    writeBootMarker(input: {
+        releaseId: string
+        packageId: string
+        bundleVersion: string
+        installDir: string
+        entryFile?: string
+        manifestSha256: string
+        maxLaunchFailures: number
+    }): Promise<{bootMarkerPath: string}>
+    readBootMarker?(): Promise<Record<string, unknown> | null>
+    clearBootMarker?(): Promise<void>
+    reportLoadComplete?(input: {
+        displayIndex: number
+        releaseId?: string
+        packageId?: string
+        bundleVersion?: string
+    }): Promise<void>
+}
+
 export interface LocalWebServerPort {
     start(config?: Record<string, unknown>): Promise<Record<string, unknown>>
     stop?(): Promise<void>
@@ -73,6 +108,7 @@ export interface PlatformPorts {
     secureStateStorage?: StateStoragePort
     device?: DevicePort
     appControl?: AppControlPort
+    hotUpdate?: HotUpdatePort
     localWebServer?: LocalWebServerPort
     connector?: ConnectorPort
 }

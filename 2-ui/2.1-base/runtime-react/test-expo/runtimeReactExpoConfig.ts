@@ -7,7 +7,8 @@ export interface RuntimeReactExpoConfig {
     topologyRole: 'master' | 'slave'
     topologyHostBaseUrl?: string
     topologyWsUrl?: string
-    topologyTicketToken?: string
+    topologyMasterNodeId?: string
+    topologyMasterDeviceId?: string
     topologyProfileName?: string
     topologyNodeId?: string
 }
@@ -61,8 +62,11 @@ export const getRuntimeReactExpoConfig = (): RuntimeReactExpoConfig => {
     const topologyWsUrl = params?.get('topologyWsUrl')
         ?? injected.topologyWsUrl
         ?? undefined
-    const topologyTicketToken = params?.get('topologyTicketToken')
-        ?? injected.topologyTicketToken
+    const topologyMasterNodeId = params?.get('topologyMasterNodeId')
+        ?? injected.topologyMasterNodeId
+        ?? undefined
+    const topologyMasterDeviceId = params?.get('topologyMasterDeviceId')
+        ?? injected.topologyMasterDeviceId
         ?? undefined
     const topologyProfileName = params?.get('topologyProfileName')
         ?? injected.topologyProfileName
@@ -81,7 +85,8 @@ export const getRuntimeReactExpoConfig = (): RuntimeReactExpoConfig => {
         topologyRole,
         topologyHostBaseUrl,
         topologyWsUrl,
-        topologyTicketToken,
+        topologyMasterNodeId,
+        topologyMasterDeviceId,
         topologyProfileName,
         topologyNodeId,
     }

@@ -18,6 +18,7 @@ import {
 import {
     createTcpControlRuntimeModuleV2,
     selectTcpBindingSnapshot,
+    selectTcpSandboxId,
     tcpControlV2CommandDefinitions,
     selectTcpTerminalId,
 } from '@impos2/kernel-base-tcp-control-runtime-v2'
@@ -98,70 +99,101 @@ export const createLivePlatform = async () => {
             await server.close()
         },
         admin: {
-            sessions: () => fetchJson<any[]>(`${baseUrl}/api/v1/admin/tdp/sessions`),
-            projections: () => fetchJson<any[]>(`${baseUrl}/api/v1/admin/tdp/projections`),
-            changeLogs: () => fetchJson<any[]>(`${baseUrl}/api/v1/admin/tdp/change-logs`),
-            commandOutbox: () => fetchJson<any[]>(`${baseUrl}/api/v1/admin/tdp/commands`),
-            terminals: () => fetchJson<any[]>(`${baseUrl}/api/v1/admin/terminals`),
-            taskReleases: () => fetchJson<any[]>(`${baseUrl}/api/v1/admin/tasks/releases`),
-            taskInstances: () => fetchJson<any[]>(`${baseUrl}/api/v1/admin/tasks/instances`),
+            sessions: () => fetchJson<any[]>(`${baseUrl}/api/v1/admin/tdp/sessions?sandboxId=${encodeURIComponent(prepare.sandboxId)}`),
+            projections: () => fetchJson<any[]>(`${baseUrl}/api/v1/admin/tdp/projections?sandboxId=${encodeURIComponent(prepare.sandboxId)}`),
+            changeLogs: () => fetchJson<any[]>(`${baseUrl}/api/v1/admin/tdp/change-logs?sandboxId=${encodeURIComponent(prepare.sandboxId)}`),
+            commandOutbox: () => fetchJson<any[]>(`${baseUrl}/api/v1/admin/tdp/commands?sandboxId=${encodeURIComponent(prepare.sandboxId)}`),
+            terminals: () => fetchJson<any[]>(`${baseUrl}/api/v1/admin/terminals?sandboxId=${encodeURIComponent(prepare.sandboxId)}`),
+            taskReleases: () => fetchJson<any[]>(`${baseUrl}/api/v1/admin/tasks/releases?sandboxId=${encodeURIComponent(prepare.sandboxId)}`),
+            taskInstances: () => fetchJson<any[]>(`${baseUrl}/api/v1/admin/tasks/instances?sandboxId=${encodeURIComponent(prepare.sandboxId)}`),
             upsertProjection: (body: Record<string, unknown>) => fetchJson<any>(
                 `${baseUrl}/api/v1/admin/tdp/projections/upsert`,
                 {
                     method: 'POST',
-                    body: JSON.stringify(body),
+                    body: JSON.stringify({...body, sandboxId: prepare.sandboxId}),
                 },
             ),
             upsertProjectionBatch: (body: Record<string, unknown>) => fetchJson<any>(
                 `${baseUrl}/api/v1/admin/tdp/projections/batch-upsert`,
                 {
                     method: 'POST',
-                    body: JSON.stringify(body),
+                    body: JSON.stringify({...body, sandboxId: prepare.sandboxId}),
                 },
+            ),
+            createSelectorGroup: (body: Record<string, unknown>) => fetchJson<any>(
+                `${baseUrl}/api/v1/admin/tdp/groups`,
+                {
+                    method: 'POST',
+                    body: JSON.stringify({...body, sandboxId: prepare.sandboxId}),
+                },
+            ),
+            recomputeGroupsByScope: (body: Record<string, unknown>) => fetchJson<any>(
+                `${baseUrl}/api/v1/admin/tdp/groups/recompute-by-scope`,
+                {
+                    method: 'POST',
+                    body: JSON.stringify({...body, sandboxId: prepare.sandboxId}),
+                },
+            ),
+            recomputeAllGroups: () => fetchJson<any>(
+                `${baseUrl}/api/v1/admin/tdp/groups/recompute-all`,
+                {
+                    method: 'POST',
+                    body: JSON.stringify({sandboxId: prepare.sandboxId}),
+                },
+            ),
+            createProjectionPolicy: (body: Record<string, unknown>) => fetchJson<any>(
+                `${baseUrl}/api/v1/admin/tdp/policies`,
+                {
+                    method: 'POST',
+                    body: JSON.stringify({...body, sandboxId: prepare.sandboxId}),
+                },
+            ),
+            terminalGroupMemberships: (terminalId: string) => fetchJson<any>(
+                `${baseUrl}/api/v1/admin/tdp/terminals/${terminalId}/memberships?sandboxId=${encodeURIComponent(prepare.sandboxId)}`,
             ),
             forceCloseSession: (sessionId: string, body: Record<string, unknown>) => fetchJson<any>(
                 `${baseUrl}/api/v1/admin/tdp/sessions/${sessionId}/force-close`,
                 {
                     method: 'POST',
-                    body: JSON.stringify(body),
+                    body: JSON.stringify({...body, sandboxId: prepare.sandboxId}),
                 },
             ),
             edgeDegraded: (sessionId: string, body: Record<string, unknown>) => fetchJson<any>(
                 `${baseUrl}/api/v1/admin/tdp/sessions/${sessionId}/edge-degraded`,
                 {
                     method: 'POST',
-                    body: JSON.stringify(body),
+                    body: JSON.stringify({...body, sandboxId: prepare.sandboxId}),
                 },
             ),
             rehome: (sessionId: string, body: Record<string, unknown>) => fetchJson<any>(
                 `${baseUrl}/api/v1/admin/tdp/sessions/${sessionId}/rehome`,
                 {
                     method: 'POST',
-                    body: JSON.stringify(body),
+                    body: JSON.stringify({...body, sandboxId: prepare.sandboxId}),
                 },
             ),
             protocolError: (sessionId: string, body: Record<string, unknown>) => fetchJson<any>(
                 `${baseUrl}/api/v1/admin/tdp/sessions/${sessionId}/protocol-error`,
                 {
                     method: 'POST',
-                    body: JSON.stringify(body),
+                    body: JSON.stringify({...body, sandboxId: prepare.sandboxId}),
                 },
             ),
             createTaskRelease: (body: Record<string, unknown>) => fetchJson<any>(
                 `${baseUrl}/api/v1/admin/tasks/releases`,
                 {
                     method: 'POST',
-                    body: JSON.stringify(body),
+                    body: JSON.stringify({...body, sandboxId: prepare.sandboxId}),
                 },
             ),
             getTaskTrace: (instanceId: string) => fetchJson<any>(
-                `${baseUrl}/api/v1/admin/tasks/instances/${instanceId}/trace`,
+                `${baseUrl}/api/v1/admin/tasks/instances/${instanceId}/trace?sandboxId=${encodeURIComponent(prepare.sandboxId)}`,
             ),
             getSnapshot: (terminalId: string) => fetchJson<any>(
-                `${baseUrl}/api/v1/tdp/terminals/${terminalId}/snapshot`,
+                `${baseUrl}/api/v1/tdp/terminals/${terminalId}/snapshot?sandboxId=${encodeURIComponent(prepare.sandboxId)}`,
             ),
             getChanges: (terminalId: string, cursor = 0, limit?: number) => fetchJson<any>(
-                `${baseUrl}/api/v1/tdp/terminals/${terminalId}/changes?cursor=${cursor}${limit == null ? '' : `&limit=${limit}`}`,
+                `${baseUrl}/api/v1/tdp/terminals/${terminalId}/changes?sandboxId=${encodeURIComponent(prepare.sandboxId)}&cursor=${cursor}${limit == null ? '' : `&limit=${limit}`}`,
             ),
         },
     }
@@ -231,6 +263,7 @@ export const createLiveRuntime = (input: {
                 },
             }),
             createTdpSyncRuntimeModuleV2({
+                autoConnectOnActivation: false,
                 ...input.tdp,
                 assembly: {
                     createHttpRuntime(context: RuntimeModuleContextV2) {
@@ -273,6 +306,7 @@ export const createLiveFileStoragePair = (prefix?: string) => {
 
 export const activateLiveTerminal = async (
     runtime: ReturnType<typeof createLiveRuntime>['runtime'],
+    sandboxId: string,
     activationCode: string,
     deviceId: string,
 ) => {
@@ -292,6 +326,7 @@ export const activateLiveTerminal = async (
         {
             definition: tcpControlV2CommandDefinitions.activateTerminal,
             payload: {
+                sandboxId,
                 activationCode,
             },
         },
@@ -303,11 +338,13 @@ export const readLiveTerminalScope = (
     runtime: ReturnType<typeof createLiveRuntime>['runtime'],
 ) => {
     const terminalId = selectTcpTerminalId(runtime.getState())
+    const sandboxId = selectTcpSandboxId(runtime.getState())
     const binding = selectTcpBindingSnapshot(runtime.getState())
-    if (!terminalId) {
+    if (!terminalId || !sandboxId) {
         throw new Error('missing terminal id')
     }
     return {
+        sandboxId,
         terminalId,
         binding,
     }

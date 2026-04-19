@@ -1,7 +1,7 @@
 import { db } from '../../database/index.js'
 import { faultRulesTable, topicsTable } from '../../database/schema.js'
 import { createId, now } from '../../shared/utils.js'
-import { getCurrentSandboxId } from '../sandbox/service.js'
+import { assertSandboxUsable } from '../sandbox/service.js'
 
 const ensureNonEmptyString = (value: unknown, fieldName: string) => {
   if (typeof value !== 'string' || !value.trim()) {
@@ -10,6 +10,7 @@ const ensureNonEmptyString = (value: unknown, fieldName: string) => {
 }
 
 export interface ImportPayload {
+  sandboxId?: string
   topics?: Array<{ key: string; name: string; scopeType?: string; payloadMode?: string; schema?: Record<string, unknown>; retentionHours?: number }>
   faultRules?: Array<{ name: string; targetType: string; matcher: Record<string, unknown>; action: Record<string, unknown> }>
 }
@@ -37,8 +38,9 @@ export const validateImportPayload = (input: ImportPayload) => {
   }
 }
 
-export const importMockTemplates = (input: ImportPayload) => {
-  const sandboxId = getCurrentSandboxId()
+export const importMockTemplates = (input: ImportPayload & { sandboxId: string }) => {
+  const sandboxId = input.sandboxId
+  assertSandboxUsable(sandboxId)
   validateImportPayload(input)
 
   const timestamp = now()

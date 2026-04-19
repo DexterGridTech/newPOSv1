@@ -165,6 +165,7 @@ const createExpoHarness = async (): Promise<RuntimeReactHarness> =>
 
 export const TerminalConsoleExpoShell: React.FC = () => {
     const [harness, setHarness] = useState<RuntimeReactHarness | null>(null)
+    const [sandboxId, setSandboxId] = useState('')
     const [activationCode, setActivationCode] = useState('')
     const [bootError, setBootError] = useState('')
     const automationHost = useMemo(() => createBrowserAutomationHost({
@@ -205,10 +206,15 @@ export const TerminalConsoleExpoShell: React.FC = () => {
                         },
                     },
                 ))
+                const prepare = await fetchJson<{sandboxId: string; preparedAt: number}>(
+                    `${mockPlatformBaseUrl}/mock-debug/kernel-base-test/prepare`,
+                    {method: 'POST'},
+                )
                 const codes = await fetchJson<Array<{code: string; status: string}>>(
-                    `${mockPlatformBaseUrl}/api/v1/admin/activation-codes`,
+                    `${mockPlatformBaseUrl}/api/v1/admin/activation-codes?sandboxId=${encodeURIComponent(prepare.sandboxId)}`,
                 )
                 if (!disposed) {
+                    setSandboxId(prepare.sandboxId)
                     setActivationCode(codes.find(item => item.status === 'AVAILABLE')?.code ?? '')
                     setHarness(nextHarness)
                 }
@@ -243,7 +249,7 @@ export const TerminalConsoleExpoShell: React.FC = () => {
         <Provider store={harness.store}>
             <UiRuntimeProvider runtime={harness.runtime}>
                 <InputRuntimeProvider>
-                    <TerminalConsoleExpoContent activationCode={activationCode} />
+                    <TerminalConsoleExpoContent sandboxId={sandboxId} activationCode={activationCode} />
                     <VirtualKeyboardOverlay />
                 </InputRuntimeProvider>
             </UiRuntimeProvider>
@@ -252,8 +258,9 @@ export const TerminalConsoleExpoShell: React.FC = () => {
 }
 
 const TerminalConsoleExpoContent: React.FC<{
+    sandboxId: string
     activationCode: string
-}> = ({activationCode}) => {
+}> = ({activationCode, sandboxId}) => {
     const identity = useSelector<RootState, ReturnType<typeof selectTcpIdentitySnapshot>>(
         state => selectTcpIdentitySnapshot(state),
     )
@@ -276,6 +283,9 @@ const TerminalConsoleExpoContent: React.FC<{
                 </Text>
                 <Text selectable testID="ui-base-terminal-console-expo:activation-code">
                     {activationCode}
+                </Text>
+                <Text selectable testID="ui-base-terminal-console-expo:sandbox-id">
+                    {sandboxId}
                 </Text>
                 <Text testID="ui-base-terminal-console-expo:activation-status">
                     {identity.activationStatus}

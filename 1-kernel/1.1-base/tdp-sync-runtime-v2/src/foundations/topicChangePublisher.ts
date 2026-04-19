@@ -2,6 +2,8 @@ import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
 import {tdpSyncV2CommandDefinitions} from '../features/commands'
 import {selectTdpResolvedProjectionByTopic} from '../selectors'
 import {selectTdpProjectionState} from '../selectors'
+import {reconcileHotUpdateDesiredFromResolvedProjection} from './hotUpdateProjectionReducer'
+import {TDP_HOT_UPDATE_TOPIC} from './hotUpdateTopic'
 import type {
     TdpProjectionEnvelope,
     TdpTopicDataChangeItem,
@@ -99,6 +101,7 @@ export const createTopicChangePublisherFingerprintV2 = (): TopicChangePublisherF
 export const publishTopicDataChangesV2 = async (
     runtime: {
         getState(): unknown
+        dispatchAction?(action: unknown): unknown
         dispatchCommand<TPayload = unknown>(command: ReturnType<typeof createCommand<TPayload>>): Promise<unknown>
     },
     fingerprintRef: TopicChangePublisherFingerprintV2,
@@ -138,6 +141,13 @@ export const publishTopicDataChangesV2 = async (
 
         await runtime.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.tdpTopicDataChanged, payload))
         changedTopics.push(topic)
+    }
+
+    if (
+        changedTopics.includes(TDP_HOT_UPDATE_TOPIC)
+        || changedTopics.includes('terminal.group.membership')
+    ) {
+        await reconcileHotUpdateDesiredFromResolvedProjection(runtime as any)
     }
 
     return {

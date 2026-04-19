@@ -19,7 +19,7 @@ const defineEndpoint = createModuleHttpEndpointFactory(moduleName, SERVER_NAME_M
 
 const snapshotEndpoint = defineEndpoint<
     {terminalId: string},
-    void,
+    {sandboxId: string},
     void,
     TdpSnapshotResponse
 >('get-snapshot', {
@@ -27,12 +27,13 @@ const snapshotEndpoint = defineEndpoint<
     pathTemplate: '/api/v1/tdp/terminals/{terminalId}/snapshot',
     request: {
         path: true,
+        query: true,
     },
 })
 
 const changesEndpoint = defineEndpoint<
     {terminalId: string},
-    {cursor?: number; limit?: number},
+    {sandboxId: string; cursor?: number; limit?: number},
     void,
     TdpChangesResponse
 >('get-changes', {
@@ -48,18 +49,19 @@ export const createTdpSyncHttpServiceV2 = (runtime: HttpRuntime): TdpSyncHttpSer
     const http = createHttpServiceBinder(runtime)
 
     return {
-        async getSnapshot(terminalId) {
+        async getSnapshot(sandboxId, terminalId) {
             return http.envelope(snapshotEndpoint, {
                 path: {terminalId},
+                query: {sandboxId},
             }, {
                 errorDefinition: tdpSyncV2ErrorDefinitions.protocolError,
                 fallbackMessage: TDP_SYNC_V2_SNAPSHOT_FALLBACK_MESSAGE,
             })
         },
-        async getChanges(terminalId, cursor = 0, limit) {
+        async getChanges(sandboxId, terminalId, cursor = 0, limit) {
             return http.envelope(changesEndpoint, {
                 path: {terminalId},
-                query: {cursor, limit},
+                query: {sandboxId, cursor, limit},
             }, {
                 errorDefinition: tdpSyncV2ErrorDefinitions.protocolError,
                 fallbackMessage: TDP_SYNC_V2_CHANGES_FALLBACK_MESSAGE,

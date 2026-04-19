@@ -5,6 +5,7 @@ import {
     TCP_CREDENTIAL_STATE_KEY,
     TCP_IDENTITY_STATE_KEY,
     TCP_RUNTIME_STATE_KEY,
+    TCP_SANDBOX_STATE_KEY,
 } from '../foundations/stateKeys'
 import type {
     TcpBindingContext,
@@ -14,6 +15,8 @@ import type {
     TcpIdentitySnapshot,
     TcpIdentityState,
     TcpRuntimeState,
+    TcpSandboxSnapshot,
+    TcpSandboxState,
 } from '../types'
 
 export const selectTcpIdentityState = (state: RootState) =>
@@ -27,6 +30,9 @@ export const selectTcpBindingState = (state: RootState) =>
 
 export const selectTcpRuntimeState = (state: RootState) =>
     state[TCP_RUNTIME_STATE_KEY as keyof RootState] as TcpRuntimeState | undefined
+
+export const selectTcpSandboxState = (state: RootState) =>
+    state[TCP_SANDBOX_STATE_KEY as keyof RootState] as TcpSandboxState | undefined
 
 export const selectTcpIdentitySnapshot = createSelector(
     [selectTcpIdentityState],
@@ -64,6 +70,14 @@ export const selectTcpBindingSnapshot = createSelector(
     }),
 )
 
+export const selectTcpSandboxSnapshot = createSelector(
+    [selectTcpSandboxState],
+    (tcpSandbox): TcpSandboxSnapshot => ({
+        sandboxId: tcpSandbox?.sandboxId,
+        updatedAt: tcpSandbox?.updatedAt,
+    }),
+)
+
 export const selectTcpTerminalId = (state: RootState) =>
     selectTcpIdentitySnapshot(state).terminalId
 
@@ -72,6 +86,9 @@ export const selectTcpAccessToken = (state: RootState) =>
 
 export const selectTcpRefreshToken = (state: RootState) =>
     selectTcpCredentialSnapshot(state).refreshToken
+
+export const selectTcpSandboxId = (state: RootState) =>
+    selectTcpSandboxSnapshot(state).sandboxId
 
 export const selectTcpIsActivated = (state: RootState) =>
     selectTcpIdentitySnapshot(state).activationStatus === 'ACTIVATED'

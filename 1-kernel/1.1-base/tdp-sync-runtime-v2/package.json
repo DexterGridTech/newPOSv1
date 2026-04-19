@@ -23,6 +23,7 @@
     "@impos2/kernel-base-runtime-shell-v2": "workspace:*",
     "@impos2/kernel-base-state-runtime": "workspace:*",
     "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*",
+    "@impos2/kernel-base-topology-runtime-v3": "workspace:*",
     "@impos2/kernel-base-transport-runtime": "workspace:*",
     "@impos2/kernel-server-config-v2": "workspace:*",
     "@reduxjs/toolkit": "^2.10.0"

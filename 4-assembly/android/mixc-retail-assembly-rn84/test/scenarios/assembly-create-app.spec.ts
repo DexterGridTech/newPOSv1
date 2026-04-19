@@ -2,8 +2,10 @@ import {beforeEach, describe, expect, it, vi} from 'vitest'
 
 const {
     createKernelRuntimeAppMock,
-    createTopologyRuntimeModuleV2Mock,
+    createTopologyRuntimeModuleV3Mock,
+    selectTopologyRuntimeV3ContextMock,
     createTcpControlRuntimeModuleV2Mock,
+    createTdpSyncRuntimeModuleV2Mock,
     createUiRuntimeModuleV2Mock,
     createRuntimeReactModuleMock,
     createInputRuntimeModuleMock,
@@ -15,13 +17,20 @@ const {
     createHttpRuntimeMock,
     createAssemblyFetchTransportMock,
     createAssemblyPlatformPortsMock,
+    createAssemblyTdpSyncRuntimeAssemblyMock,
     createAssemblyTopologyInputMock,
     createReactotronEnhancerMock,
     createAssemblyAutomationMock,
+    reportTerminalVersionMock,
+    syncHotUpdateStateFromNativeBootMock,
+    selectTdpHotUpdateCurrentMock,
+    selectTcpIsActivatedMock,
+    selectTcpTerminalIdMock,
     startMock,
     runtimeApp,
     topologyModule,
     tcpControlModule,
+    tdpSyncModule,
     uiRuntimeModule,
     runtimeReactModule,
     inputRuntimeModule,
@@ -37,8 +46,10 @@ const {
     }
     return {
         createKernelRuntimeAppMock: vi.fn((..._args: any[]) => runtimeApp),
-        createTopologyRuntimeModuleV2Mock: vi.fn((..._args: any[]) => ({kind: 'topology-module'})),
+        createTopologyRuntimeModuleV3Mock: vi.fn((..._args: any[]) => ({kind: 'topology-module'})),
+        selectTopologyRuntimeV3ContextMock: vi.fn(() => null),
         createTcpControlRuntimeModuleV2Mock: vi.fn((..._args: any[]) => ({kind: 'tcp-control-module'})),
+        createTdpSyncRuntimeModuleV2Mock: vi.fn((..._args: any[]) => ({kind: 'tdp-sync-module'})),
         createUiRuntimeModuleV2Mock: vi.fn((..._args: any[]) => ({kind: 'ui-runtime-module'})),
         createRuntimeReactModuleMock: vi.fn((..._args: any[]) => ({kind: 'runtime-react-module'})),
         createInputRuntimeModuleMock: vi.fn((..._args: any[]) => ({kind: 'input-runtime-module'})),
@@ -55,6 +66,7 @@ const {
                 scope: vi.fn(() => ({kind: 'scoped-logger'})),
             },
         })),
+        createAssemblyTdpSyncRuntimeAssemblyMock: vi.fn((..._args: any[]) => ({kind: 'tdp-sync-assembly'})),
         createAssemblyTopologyInputMock: vi.fn((..._args: any[]) => ({kind: 'topology-input'})),
         createReactotronEnhancerMock: vi.fn(() => ({kind: 'reactotron-enhancer'})),
         createAssemblyAutomationMock: vi.fn(() => ({
@@ -69,10 +81,19 @@ const {
             attachRuntime: vi.fn(() => () => {}),
             dispose: vi.fn(),
         })),
+        reportTerminalVersionMock: vi.fn(async () => undefined),
+        syncHotUpdateStateFromNativeBootMock: vi.fn(async () => null),
+        selectTdpHotUpdateCurrentMock: vi.fn((): any => ({
+            source: 'embedded',
+            bundleVersion: '1.0.0+ota.0',
+        })),
+        selectTcpIsActivatedMock: vi.fn((): boolean => false),
+        selectTcpTerminalIdMock: vi.fn((): string | null => null),
         startMock,
         runtimeApp,
         topologyModule: {kind: 'topology-module'},
         tcpControlModule: {kind: 'tcp-control-module'},
+        tdpSyncModule: {kind: 'tdp-sync-module'},
         uiRuntimeModule: {kind: 'ui-runtime-module'},
         runtimeReactModule: {kind: 'runtime-react-module'},
         inputRuntimeModule: {kind: 'input-runtime-module'},
@@ -87,12 +108,20 @@ vi.mock('@impos2/kernel-base-runtime-shell-v2', () => ({
     createKernelRuntimeApp: createKernelRuntimeAppMock,
 }))
 
-vi.mock('@impos2/kernel-base-topology-runtime-v2', () => ({
-    createTopologyRuntimeModuleV2: createTopologyRuntimeModuleV2Mock,
+vi.mock('@impos2/kernel-base-topology-runtime-v3', () => ({
+    createTopologyRuntimeModuleV3: createTopologyRuntimeModuleV3Mock,
+    selectTopologyRuntimeV3Context: selectTopologyRuntimeV3ContextMock,
 }))
 
 vi.mock('@impos2/kernel-base-tcp-control-runtime-v2', () => ({
     createTcpControlRuntimeModuleV2: createTcpControlRuntimeModuleV2Mock,
+    selectTcpIsActivated: selectTcpIsActivatedMock,
+    selectTcpTerminalId: selectTcpTerminalIdMock,
+}))
+
+vi.mock('@impos2/kernel-base-tdp-sync-runtime-v2', () => ({
+    createTdpSyncRuntimeModuleV2: createTdpSyncRuntimeModuleV2Mock,
+    selectTdpHotUpdateCurrent: selectTdpHotUpdateCurrentMock,
 }))
 
 vi.mock('@impos2/kernel-base-ui-runtime-v2', () => ({
@@ -157,6 +186,7 @@ vi.mock('../../src/application/adminConsoleConfig', () => ({
 vi.mock('../../src/platform-ports', () => ({
     createAssemblyFetchTransport: createAssemblyFetchTransportMock,
     createAssemblyPlatformPorts: createAssemblyPlatformPortsMock,
+    createAssemblyTdpSyncRuntimeAssembly: createAssemblyTdpSyncRuntimeAssemblyMock,
     createAssemblyTopologyInput: createAssemblyTopologyInputMock,
 }))
 
@@ -166,6 +196,19 @@ vi.mock('../../src/platform-ports/reactotronConfig', () => ({
 
 vi.mock('../../src/application/automation', () => ({
     createAssemblyAutomation: createAssemblyAutomationMock,
+    getAssemblyAutomationHostConfig: (displayIndex: number) => ({
+        host: '127.0.0.1',
+        port: displayIndex > 0 ? 18585 : 18584,
+        target: displayIndex > 0 ? 'secondary' : 'primary',
+    }),
+}))
+
+vi.mock('../../src/application/reportTerminalVersion', () => ({
+    reportTerminalVersion: reportTerminalVersionMock,
+}))
+
+vi.mock('../../src/application/syncHotUpdateStateFromNativeBoot', () => ({
+    syncHotUpdateStateFromNativeBoot: syncHotUpdateStateFromNativeBootMock,
 }))
 
 import {createApp} from '../../src/application/createApp'
@@ -176,8 +219,10 @@ describe('assembly createApp', () => {
         vi.clearAllMocks()
         ;(globalThis as any).__DEV__ = true
         createKernelRuntimeAppMock.mockReturnValue(runtimeApp)
-        createTopologyRuntimeModuleV2Mock.mockReturnValue(topologyModule)
+        createTopologyRuntimeModuleV3Mock.mockReturnValue(topologyModule)
+        selectTopologyRuntimeV3ContextMock.mockReturnValue(null)
         createTcpControlRuntimeModuleV2Mock.mockReturnValue(tcpControlModule)
+        createTdpSyncRuntimeModuleV2Mock.mockReturnValue(tdpSyncModule)
         createUiRuntimeModuleV2Mock.mockReturnValue(uiRuntimeModule)
         createRuntimeReactModuleMock.mockReturnValue(runtimeReactModule)
         createInputRuntimeModuleMock.mockReturnValue(inputRuntimeModule)
@@ -186,6 +231,12 @@ describe('assembly createApp', () => {
         createRetailShellModuleMock.mockReturnValue(retailShellModule)
         createAssemblyRuntimeModuleMock.mockReturnValue({kind: 'assembly-runtime-module'})
         createAssemblyAutomationMock.mockClear()
+        selectTcpIsActivatedMock.mockReturnValue(false)
+        selectTcpTerminalIdMock.mockReturnValue(null)
+        selectTdpHotUpdateCurrentMock.mockReturnValue({
+            source: 'embedded',
+            bundleVersion: '1.0.0+ota.0',
+        })
     })
 
     it('assembles the retail shell into the runtime module graph', async () => {
@@ -203,7 +254,12 @@ describe('assembly createApp', () => {
             mockTerminalPlatformBaseUrl: 'http://127.0.0.1:9100',
         })
 
-        expect(createAssemblyPlatformPortsMock).toHaveBeenCalledWith('DEV')
+        expect(createAssemblyPlatformPortsMock).toHaveBeenCalledWith(
+            'DEV',
+            expect.objectContaining({
+                shouldDisableStatePersistence: expect.any(Function),
+            }),
+        )
         expect(createAssemblyTopologyInputMock).toHaveBeenCalledTimes(1)
         expect(createKernelRuntimeAppMock).toHaveBeenCalledTimes(1)
 
@@ -221,6 +277,7 @@ describe('assembly createApp', () => {
             {kind: 'assembly-runtime-module'},
             topologyModule,
             tcpControlModule,
+            tdpSyncModule,
             uiRuntimeModule,
             runtimeReactModule,
             inputRuntimeModule,
@@ -230,7 +287,21 @@ describe('assembly createApp', () => {
         ])
 
         expect(createRetailShellModuleMock).toHaveBeenCalledTimes(1)
-        expect(createAssemblyAdminConsoleInputMock).toHaveBeenCalledTimes(1)
+        expect(createAssemblyTdpSyncRuntimeAssemblyMock).toHaveBeenCalledWith({
+            logger: expect.any(Object),
+            mockTerminalPlatformBaseUrl: 'http://127.0.0.1:9100',
+        })
+        expect(createTdpSyncRuntimeModuleV2Mock).toHaveBeenCalledWith({
+            assembly: {kind: 'tdp-sync-assembly'},
+            hotUpdate: {
+                getPort: expect.any(Function),
+            },
+        })
+        expect(createAssemblyAdminConsoleInputMock).toHaveBeenCalledWith(
+            expect.objectContaining({
+                topology: expect.any(Object),
+            }),
+        )
         expect(createAdminConsoleModuleMock).toHaveBeenCalledWith({kind: 'assembly-admin-console-input'})
         expect(createReactotronEnhancerMock).toHaveBeenCalledWith({
             isEmulator: true,
@@ -287,5 +358,71 @@ describe('assembly createApp', () => {
         expect(result.uiRuntimeProviderProps).toMatchObject({
             automationRuntimeId: 'primary-runtime',
         })
+    })
+
+    it('passes topology-aware storage gate and dynamic binding source through assembly app setup', () => {
+        createApp({
+            deviceId: 'device-1',
+            screenMode: 'desktop',
+            displayCount: 1,
+            displayIndex: 0,
+            isEmulator: true,
+        })
+
+        expect(createAssemblyPlatformPortsMock).toHaveBeenCalledWith(
+            'DEV',
+            expect.objectContaining({
+                shouldDisableStatePersistence: expect.any(Function),
+            }),
+        )
+        expect(createAssemblyTopologyInputMock).toHaveBeenCalledWith(
+            expect.any(Object),
+            expect.any(Object),
+            expect.objectContaining({
+                bindingSource: expect.any(Object),
+            }),
+        )
+        expect(createAssemblyAdminConsoleInputMock).toHaveBeenCalledWith(
+            expect.objectContaining({
+                topology: expect.any(Object),
+            }),
+        )
+    })
+
+    it('deduplicates RUNNING version reports for the same terminal/version snapshot', async () => {
+        const listeners: Array<() => void> = []
+        const runtime = {
+            runtimeId: 'runtime-id',
+            getState: vi.fn(() => ({state: true})),
+            subscribeState: vi.fn((listener: () => void) => {
+                listeners.push(listener)
+                return () => {}
+            }),
+        }
+        startMock.mockResolvedValueOnce(runtime as any)
+        selectTcpIsActivatedMock.mockReturnValue(true)
+        selectTcpTerminalIdMock.mockReturnValue('terminal-1')
+        selectTdpHotUpdateCurrentMock.mockReturnValue({
+            source: 'hot-update',
+            bundleVersion: '1.0.0+ota.9',
+            packageId: 'pkg-1',
+            releaseId: 'rel-1',
+        })
+
+        const result = createApp({
+            deviceId: 'device-1',
+            screenMode: 'desktop',
+            displayCount: 1,
+            displayIndex: 0,
+            isEmulator: true,
+        })
+
+        await result.start()
+        listeners.forEach(listener => listener())
+        listeners.forEach(listener => listener())
+
+        expect(reportTerminalVersionMock).toHaveBeenCalledTimes(2)
+        expect((reportTerminalVersionMock.mock.calls[0] as unknown[] | undefined)?.[2]).toBe('BOOTING')
+        expect((reportTerminalVersionMock.mock.calls[1] as unknown[] | undefined)?.[2]).toBe('RUNNING')
     })
 })

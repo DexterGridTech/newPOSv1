@@ -4,6 +4,7 @@ import type {
     SocketRuntime,
 } from '@impos2/kernel-base-transport-runtime'
 import type {RuntimeModuleContextV2} from '@impos2/kernel-base-runtime-shell-v2'
+import type {HotUpdatePort} from '@impos2/kernel-base-platform-ports'
 import type {
     TdpChangesResponse,
     TdpClientMessage,
@@ -24,14 +25,14 @@ export interface TdpTopicDataChangedPayload {
 }
 
 export interface TdpSyncHttpServiceV2 {
-    getSnapshot(terminalId: string): Promise<TdpSnapshotResponse['data']>
-    getChanges(terminalId: string, cursor?: number, limit?: number): Promise<TdpChangesResponse['data']>
+    getSnapshot(sandboxId: string, terminalId: string): Promise<TdpSnapshotResponse['data']>
+    getChanges(sandboxId: string, terminalId: string, cursor?: number, limit?: number): Promise<TdpChangesResponse['data']>
 }
 
 export interface TdpSyncSocketBindingV2 {
     socketRuntime: SocketRuntime
     profileName: string
-    profile?: SocketConnectionProfile<void, {terminalId: string; token: string}, Record<string, string>, TdpServerMessage, TdpClientMessage>
+    profile?: SocketConnectionProfile<void, {sandboxId: string; terminalId: string; token: string}, Record<string, string>, TdpServerMessage, TdpClientMessage>
 }
 
 export interface TdpSyncRuntimeAssemblyV2 {
@@ -62,8 +63,12 @@ export interface TdpSessionConnectionRuntimeRefV2 {
 
 export interface CreateTdpSyncRuntimeModuleV2Input {
     assembly?: TdpSyncRuntimeAssemblyV2
+    autoConnectOnActivation?: boolean
     socket?: {
         reconnectAttempts?: number
         reconnectIntervalMs?: number
+    }
+    hotUpdate?: {
+        getPort?(context: RuntimeModuleContextV2): HotUpdatePort | undefined
     }
 }

@@ -4,6 +4,7 @@ export type TdpClientMessage =
     | {
         type: 'HANDSHAKE'
         data: {
+            sandboxId: string
             terminalId: string
             appVersion: string
             lastCursor?: number

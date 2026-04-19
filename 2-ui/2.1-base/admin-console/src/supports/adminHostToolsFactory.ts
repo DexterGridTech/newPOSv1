@@ -17,6 +17,7 @@ import type {
     AdminLogHost,
     AdminStatusItem,
     AdminStatusTone,
+    AdminTopologyHost,
 } from '../types'
 
 export interface AdminDeviceHostSource extends Partial<DevicePort> {
@@ -73,6 +74,7 @@ export interface CreateAdminHostToolsInput {
     control?: AdminControlHostSource
     connector?: AdminConnectorHostSource
     connectorChannels?: readonly AdminConnectorChannelDefinition[]
+    topology?: AdminTopologyHost
 }
 
 const toRecord = (value: unknown): Record<string, unknown> =>
@@ -406,5 +408,6 @@ export const createAdminHostTools = (
             connector,
             channels: input.connectorChannels,
         }) : undefined,
+        topology: input.topology,
     }
 }

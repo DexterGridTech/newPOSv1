@@ -15,6 +15,7 @@ import {
     createModuleHttpEndpointFactory,
     defineHttpEndpoint,
     normalizeTransportError,
+    resolveHttpUrlCandidates,
     transportRuntimeParameterDefinitions,
     typed,
     type HttpTransport,
@@ -863,5 +864,38 @@ describe('transport-runtime http', () => {
             category: 'NETWORK',
             message: 'HTTP runtime failed for demo.http.login',
         })
+    })
+
+    it('resolves ordered absolute candidate urls for relative paths', () => {
+        const runtime = createHttpRuntime({
+            logger: createTestLogger(),
+            transport: {
+                async execute() {
+                    return toSuccessResponse({ok: true} as any)
+                },
+            },
+            servers: resolveTransportServers(kernelBaseTestServerConfig),
+        })
+
+        expect(resolveHttpUrlCandidates({
+            runtime,
+            serverName: SERVER_NAME_KERNEL_BASE_HTTP_FAILOVER_TEST,
+            pathOrUrl: '/packages/update.zip',
+        })).toEqual([
+            'http://primary.local/packages/update.zip',
+            'http://secondary.local/packages/update.zip',
+        ])
+    })
+
+    it('returns absolute urls as-is without reading catalog', () => {
+        expect(resolveHttpUrlCandidates({
+            catalog: {
+                resolveAddresses() {
+                    throw new Error('catalog should not be used')
+                },
+            },
+            serverName: 'ignored',
+            pathOrUrl: 'https://cdn.example.com/update.zip',
+        })).toEqual(['https://cdn.example.com/update.zip'])
     })
 })

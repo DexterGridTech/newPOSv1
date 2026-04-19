@@ -46,7 +46,7 @@ object LaunchOptionsFactory {
           putString("role", role)
           putString("localNodeId", localNodeId)
           putString("masterNodeId", launch.masterNodeId)
-          putString("ticketToken", launch.ticketToken)
+          putString("masterDeviceId", launch.masterDeviceId)
           putString("wsUrl", launch.wsUrl)
           putString("httpBaseUrl", launch.httpBaseUrl)
         })

@@ -208,6 +208,80 @@
 
 1. `http://127.0.0.1:8888/mockMasterServer/health`
 
+### 4. Android assembly 双屏调试先走 automation socket，不先猜也不先写大脚本
+
+后续凡是 `mixc-retail-assembly-rn84`、`ui-automation-runtime`、主副屏 UI、管理员页、激活页、topology 协同相关问题，默认先走：
+
+1. 本地 skill `~/.codex/skills/android-assembly-socket-debug`
+2. `scripts/android-automation-rpc.mjs`
+
+默认顺序：
+
+1. `smoke` / `hello` / `runtime.getInfo`
+2. `runtime.selectState` / `runtime.getRequest` / `ui.getNode`
+3. `command.dispatch` 或单个 `ui.performAction`
+4. `wait.forState` / `wait.forScreen` / `wait.forIdle`
+5. 最后才是完整可见自动化脚本
+
+如果问题核心是“主副屏 state 到底同步了没有”，优先先打 `topology-runtime-v3` 自带 demo probe，而不是一上来就跑真实激活流程：
+
+1. `kernel.base.topology-runtime-v3.upsert-demo-master-entry`
+   - 从 `primary` dispatch
+   - 从 `secondary` 读取 `kernel.base.topology-runtime-v3.demo.master`
+2. `kernel.base.topology-runtime-v3.upsert-demo-slave-entry`
+   - 从 `secondary` dispatch
+   - 从 `primary` 读取 `kernel.base.topology-runtime-v3.demo.slave`
+3. `remove/reset-demo-*`
+   - 验证清空和 tombstone 传播
+
+这样做的价值：
+
+1. 不污染真实业务 state。
+2. 不依赖输入激活码或复杂页面跳转。
+3. 可以分别验证激活态和未激活态下 topology 通道是否健康。
+4. 业务流程出问题时，可以先把“拓扑同步本身没坏”这个前提快速坐实。
+
+这样做的原因：
+
+1. 直接 RPC 更容易 isolate 问题。
+2. 更容易知道每一步主屏和副屏“分别应该发生什么变化”。
+3. 可以同时验证 state 和 UI，而不是只看“点没点成功”。
+
+target 使用规则：
+
+1. 默认显式指定 `primary` 或 `secondary`。
+2. `wait.*` 不允许 `all`。
+3. 有副作用的方法，例如 `command.dispatch`、`scripts.execute`、UI action，不允许 `all`。
+4. 如果是虚拟键盘输入，优先使用 `type-virtual` 或逐键点击虚拟键盘，不要直接 `ui.setValue`。
+
+### 5. 调试时必须补日志，证据要来自运行时而不是猜测
+
+涉及主副屏、topology、socket、state sync、语义节点 registry 时，默认要求：
+
+1. TS 侧在 suspect path 加结构化日志。
+2. Android 原生侧在启动、secondary launch、socket session、script bridge、生命周期关键点加结构化日志。
+3. 先清日志，单次复现，再抓日志。
+
+建议命令：
+
+```bash
+adb logcat -c
+adb logcat -d -v epoch | rg -n "runtime-state-sync-apply|state-sync-diff|tcp-bootstrap-state-written|StartupAudit|secondary_launch_scheduled|secondary_launch_attempt" -S
+adb logcat -d -v time | rg -n "ReactNativeJS|automation|topology|secondary" -S
+```
+
+必须避免的做法：
+
+1. 长时间只靠读代码猜。
+2. 副屏没起来时直接手动拉起然后继续测。
+3. 还没弄清 direct RPC 路径时，就先写很长的 UI 自动化脚本。
+
+时序判断注意点：
+
+1. 副屏延迟启动约 `3s` 是业务要求，不应改掉。
+2. 只有在主副屏都 ready 后，再测主屏变更传播到副屏的时延，才有意义。
+3. 当前仓库已验证该时延大约在 `~100ms` 量级，不是几秒。
+
 ## 四、当前可复用模板
 
 后续新增同类型 core 包时，建议优先参考以下文件：

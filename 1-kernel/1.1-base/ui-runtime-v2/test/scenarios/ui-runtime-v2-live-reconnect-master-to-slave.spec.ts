@@ -1,9 +1,9 @@
 import {describe, expect, it} from 'vitest'
 import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
 import {
-    selectTopologyRuntimeV2Connection,
-    selectTopologyRuntimeV2Sync,
-} from '@impos2/kernel-base-topology-runtime-v2'
+    selectTopologyRuntimeV3Connection,
+    selectTopologySync,
+} from '@impos2/kernel-base-topology-runtime-v3'
 import {uiRuntimeV2CommandDefinitions} from '../../src'
 import {uiRuntimeV2VariableWorkspaceKeys} from '../../src/features/slices'
 import {createUiRuntimeV2LiveHarness} from '../helpers/liveHarness'
@@ -60,21 +60,19 @@ describe('ui-runtime-v2 live reconnect master-to-slave', () => {
 
             await harness.waitForSlaveVariable('syncToken', value => value === 'after-reconnect', 10_000)
 
-            const masterConnection = selectTopologyRuntimeV2Connection(harness.masterRuntime.getState())
-            const slaveConnection = selectTopologyRuntimeV2Connection(harness.slaveRuntime.getState())
-            const masterSync = selectTopologyRuntimeV2Sync(harness.masterRuntime.getState())
-            const slaveSync = selectTopologyRuntimeV2Sync(harness.slaveRuntime.getState())
+            const masterConnection = selectTopologyRuntimeV3Connection(harness.masterRuntime.getState())
+            const slaveConnection = selectTopologyRuntimeV3Connection(harness.slaveRuntime.getState())
+            const masterSync = selectTopologySync(harness.masterRuntime.getState())
+            const slaveSync = selectTopologySync(harness.slaveRuntime.getState())
             const slaveState = harness.slaveRuntime.getState() as Record<string, unknown>
             const variableState = slaveState[uiRuntimeV2VariableWorkspaceKeys.main] as Record<string, {value?: unknown | null}> | undefined
 
             expect(masterConnection?.serverConnectionStatus).toBe('CONNECTED')
             expect(slaveConnection?.serverConnectionStatus).toBe('CONNECTED')
-            expect(masterSync?.resumeStatus).toBe('completed')
-            expect(slaveSync?.resumeStatus).toBe('completed')
-            expect(masterSync?.continuousSyncActive).toBe(true)
-            expect(slaveSync?.continuousSyncActive).toBe(true)
+            expect(masterSync?.status).toBe('active')
+            expect(slaveSync?.status).toBe('active')
             expect(variableState?.syncToken?.value).toBe('after-reconnect')
-            expect((await harness.getStats()).relayCounters.disconnected).toBeGreaterThanOrEqual(1)
+            expect((await harness.getStats()).sessionCount).toBeGreaterThanOrEqual(1)
         } finally {
             await harness.close()
         }

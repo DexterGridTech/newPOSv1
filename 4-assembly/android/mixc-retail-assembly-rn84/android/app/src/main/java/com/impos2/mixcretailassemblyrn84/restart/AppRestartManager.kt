@@ -4,8 +4,8 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
-import com.impos2.adapterv2.topologyhost.TopologyHostManager
-import com.impos2.adapterv2.topologyhost.TopologyHostServiceState
+import com.impos2.adapterv2.topologyhostv3.TopologyHostV3Manager
+import com.impos2.adapterv2.topologyhostv3.TopologyHostV3ServiceState
 import com.impos2.mixcretailassemblyrn84.MainActivity
 import com.impos2.mixcretailassemblyrn84.startup.SecondaryProcessController
 import com.impos2.mixcretailassemblyrn84.startup.StartupAuditLogger
@@ -39,7 +39,7 @@ class AppRestartManager(private val activity: MainActivity) {
    * 用户已经明确要求：重启前如果 web server 正在运行，必须先停掉，后续由 JS 层按自身时序
    * 再重新启动。
    */
-  private val topologyHostManager by lazy { TopologyHostManager.getInstance(activity.applicationContext) }
+  private val topologyHostManager by lazy { TopologyHostV3Manager.getInstance(activity.applicationContext) }
 
   companion object {
     private const val TAG = "AppRestartManager"
@@ -92,7 +92,7 @@ class AppRestartManager(private val activity: MainActivity) {
   private fun stopTopologyHostIfRunning(onComplete: () -> Unit) {
     runCatching {
       val status = topologyHostManager.getStatus().state
-      if (status == TopologyHostServiceState.RUNNING || status == TopologyHostServiceState.STARTING || status == TopologyHostServiceState.STOPPING) {
+      if (status == TopologyHostV3ServiceState.RUNNING || status == TopologyHostV3ServiceState.STARTING || status == TopologyHostV3ServiceState.STOPPING) {
         StartupAuditLogger.logTopologyHostStopping()
         topologyHostManager.stop()
         waitUntilTopologyHostStopped(onComplete)
@@ -116,7 +116,7 @@ class AppRestartManager(private val activity: MainActivity) {
 
     fun poll() {
       val stopped = runCatching {
-        topologyHostManager.getStatus().state == TopologyHostServiceState.STOPPED
+        topologyHostManager.getStatus().state == TopologyHostV3ServiceState.STOPPED
       }.getOrElse {
         Log.w(TAG, "Failed to poll TopologyHost status", it)
         true

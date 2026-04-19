@@ -285,6 +285,110 @@ export const initializeDatabase = (): void => {
       source_release_id TEXT,
       created_at INTEGER NOT NULL
     );
+    CREATE TABLE IF NOT EXISTS selector_groups (
+      group_id TEXT PRIMARY KEY,
+      sandbox_id TEXT NOT NULL,
+      group_code TEXT NOT NULL,
+      name TEXT NOT NULL,
+      description TEXT NOT NULL,
+      enabled INTEGER NOT NULL,
+      priority INTEGER NOT NULL,
+      selector_dsl_json TEXT NOT NULL,
+      membership_version INTEGER NOT NULL,
+      created_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_selector_groups_sandbox_code
+      ON selector_groups (sandbox_id, group_code);
+    CREATE TABLE IF NOT EXISTS selector_group_memberships (
+      membership_id TEXT PRIMARY KEY,
+      sandbox_id TEXT NOT NULL,
+      group_id TEXT NOT NULL,
+      terminal_id TEXT NOT NULL,
+      rank INTEGER NOT NULL,
+      matched_by_json TEXT NOT NULL,
+      membership_version INTEGER NOT NULL,
+      computed_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_selector_group_memberships_terminal_group
+      ON selector_group_memberships (sandbox_id, terminal_id, group_id);
+    CREATE TABLE IF NOT EXISTS projection_policies (
+      policy_id TEXT PRIMARY KEY,
+      sandbox_id TEXT NOT NULL,
+      topic_key TEXT NOT NULL,
+      item_key TEXT NOT NULL,
+      scope_type TEXT NOT NULL,
+      scope_key TEXT NOT NULL,
+      enabled INTEGER NOT NULL,
+      payload_json TEXT NOT NULL,
+      description TEXT NOT NULL,
+      created_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_projection_policies_bucket
+      ON projection_policies (sandbox_id, topic_key, item_key, scope_type, scope_key);
+    CREATE TABLE IF NOT EXISTS hot_update_packages (
+      package_id TEXT PRIMARY KEY,
+      sandbox_id TEXT NOT NULL,
+      app_id TEXT NOT NULL,
+      platform TEXT NOT NULL,
+      product TEXT NOT NULL,
+      channel TEXT NOT NULL,
+      bundle_version TEXT NOT NULL,
+      runtime_version TEXT NOT NULL,
+      assembly_version TEXT NOT NULL,
+      build_number INTEGER NOT NULL,
+      manifest_json TEXT NOT NULL,
+      manifest_sha256 TEXT NOT NULL,
+      file_name TEXT NOT NULL,
+      file_size INTEGER NOT NULL,
+      sha256 TEXT NOT NULL,
+      storage_path TEXT NOT NULL,
+      status TEXT NOT NULL,
+      created_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_hot_update_packages_identity
+      ON hot_update_packages (sandbox_id, app_id, bundle_version, runtime_version, sha256);
+    CREATE TABLE IF NOT EXISTS hot_update_releases (
+      release_id TEXT PRIMARY KEY,
+      sandbox_id TEXT NOT NULL,
+      package_id TEXT NOT NULL,
+      topic_key TEXT NOT NULL,
+      item_key TEXT NOT NULL,
+      scope_type TEXT NOT NULL,
+      scope_key TEXT NOT NULL,
+      enabled INTEGER NOT NULL,
+      desired_payload_json TEXT NOT NULL,
+      policy_id TEXT,
+      status TEXT NOT NULL,
+      created_by TEXT NOT NULL,
+      created_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_hot_update_releases_sandbox
+      ON hot_update_releases (sandbox_id, status, updated_at);
+    CREATE TABLE IF NOT EXISTS terminal_version_reports (
+      report_id TEXT PRIMARY KEY,
+      sandbox_id TEXT NOT NULL,
+      terminal_id TEXT NOT NULL,
+      display_index INTEGER NOT NULL,
+      display_role TEXT NOT NULL,
+      app_id TEXT NOT NULL,
+      assembly_version TEXT NOT NULL,
+      build_number INTEGER NOT NULL,
+      runtime_version TEXT NOT NULL,
+      bundle_version TEXT NOT NULL,
+      source TEXT NOT NULL,
+      package_id TEXT,
+      release_id TEXT,
+      state TEXT NOT NULL,
+      reason TEXT,
+      reported_at INTEGER NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_terminal_version_reports_terminal
+      ON terminal_version_reports (sandbox_id, terminal_id, reported_at);
     CREATE TABLE IF NOT EXISTS tdp_command_outbox (
       command_id TEXT PRIMARY KEY,
       sandbox_id TEXT NOT NULL,
@@ -973,6 +1077,22 @@ const seedDefaultData = (): void => {
     '终端配置状态主题',
     'FLEXIBLE_JSON',
     JSON.stringify({ type: 'object', required: ['configVersion'] }),
+    'TERMINAL',
+    168,
+    timestamp,
+    timestamp,
+  )
+
+  sqlite.prepare(`
+    INSERT INTO tdp_topics (topic_id, sandbox_id, key, name, payload_mode, schema_json, scope_type, retention_hours, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    createId('topic'),
+    DEFAULT_SANDBOX_ID,
+    'terminal.group.membership',
+    'Terminal Group Membership',
+    'FLEXIBLE_JSON',
+    JSON.stringify({ type: 'object', required: ['membershipVersion', 'groups'] }),
     'TERMINAL',
     168,
     timestamp,

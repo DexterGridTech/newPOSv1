@@ -3,6 +3,7 @@ import type {EnvelopeId, NodeId, SessionId, TimestampMs} from './ids'
 export interface StateSyncSummaryEntry {
     updatedAt: TimestampMs
     tombstone?: boolean
+    valueHash?: string
 }
 
 export type StateSyncSummaryPayload = Record<string, Record<string, StateSyncSummaryEntry>>

@@ -1,7 +1,7 @@
 import React, {useEffect, useMemo, useState} from 'react'
 import {View} from 'react-native'
 import {useSelector} from 'react-redux'
-import {selectTopologyDisplayMode, selectTopologyStandalone} from '@impos2/kernel-base-topology-runtime-v2'
+import {selectTopologyDisplayMode, selectTopologyStandalone} from '@impos2/kernel-base-topology-runtime-v3'
 import {
     InputRuntimeProvider,
     VirtualKeyboardOverlay,
@@ -56,6 +56,7 @@ export const RootScreen: React.FC<RetailRootScreenProps> = ({
         }
         const rootId = 'ui-integration-retail-shell:root'
         const displayRootId = `ui-integration-retail-shell:root:${display}`
+        const launcherId = 'ui-integration-retail-shell:admin-launcher'
         const unregisterRoot = automationBridge.registerNode({
             target: display,
             runtimeId: automationRuntimeId,
@@ -70,10 +71,33 @@ export const RootScreen: React.FC<RetailRootScreenProps> = ({
             persistent: true,
             availableActions: [],
         })
+        const unregisterLauncher = automationBridge.registerNode({
+            target: display,
+            runtimeId: automationRuntimeId,
+            screenKey: 'retail-shell-root',
+            mountId: `${launcherId}:${display}`,
+            nodeId: launcherId,
+            testID: launcherId,
+            semanticId: launcherId,
+            role: 'button',
+            text: '管理员入口',
+            visible: true,
+            enabled: standalone,
+            persistent: true,
+            availableActions: standalone ? ['press'] : [],
+            onAutomationAction: action => {
+                if (action.action !== 'press' || !standalone) {
+                    return {ok: false}
+                }
+                setShowAdminPopup(true)
+                return {ok: true}
+            },
+        })
         return () => {
+            unregisterLauncher()
             unregisterRoot()
         }
-    }, [automationBridge, automationRuntimeId, display])
+    }, [automationBridge, automationRuntimeId, display, standalone])
 
     return (
         <InputRuntimeProvider>

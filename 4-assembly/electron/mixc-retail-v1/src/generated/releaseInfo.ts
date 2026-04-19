@@ -3,13 +3,13 @@ export const releaseInfo = {
   "platform": "electron",
   "assemblyVersion": "1.1.0",
   "buildNumber": 1000002,
-  "bundleVersion": "1.1.0+ota.1",
+  "bundleVersion": "1.1.0+ota.3",
   "runtimeVersion": "electron-mixc-retail-v1@1.1",
   "channel": "test",
   "minSupportedAppVersion": "1.1.0",
   "git": {
-    "commit": "3d96e768989b67c15e4f4a70233b21520ddfd228",
+    "commit": "629e9f6a0b57ed0f03967dc971afebc7a8b28d8e",
     "branch": "main"
   },
-  "updatedAt": "2026-04-07T12:11:54.511Z"
+  "updatedAt": "2026-04-19T02:20:38.470Z"
 } as const

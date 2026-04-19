@@ -109,6 +109,7 @@ object StartupCoordinator {
    * 安排延迟启动副屏。
    */
   private fun scheduleSecondaryStart(activity: MainActivity) {
+    StartupAuditLogger.logSecondaryLaunchScheduled()
     pendingSecondaryStart = Runnable {
       activity.launchSecondaryIfAvailable()
       pendingSecondaryStart = null

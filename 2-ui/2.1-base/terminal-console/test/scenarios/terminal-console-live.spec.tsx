@@ -13,9 +13,12 @@ import {
     TerminalSummaryScreen,
 } from '../../src'
 import {
+    InputRuntimeProvider,
+    VirtualKeyboardOverlay,
+} from '../../../input-runtime/src'
+import {
     createTerminalConsoleLiveHarness,
     fetchJson,
-    renderTerminalConsoleLive,
     waitFor,
 } from '../support/terminalConsoleLiveHarness'
 import {renderWithAutomation} from '../support/terminalConsoleHarness'
@@ -46,18 +49,31 @@ describe('terminal-console live', () => {
             )
 
             const activationCodes = await fetchJson<Array<{code: string; status: string}>>(
-                `${harness.platform.baseUrl}/api/v1/admin/activation-codes`,
+                `${harness.platform.baseUrl}/api/v1/admin/activation-codes?sandboxId=${encodeURIComponent(harness.platform.prepare.sandboxId)}`,
             )
             const activationCode = activationCodes.find(item => item.status === 'AVAILABLE')?.code
             expect(activationCode).toBeTruthy()
 
             const activationAutomation = renderWithAutomation(
-                <ActivateDeviceScreen />,
+                <InputRuntimeProvider>
+                    <ActivateDeviceScreen />
+                    <VirtualKeyboardOverlay />
+                </InputRuntimeProvider>,
                 harness.store,
                 harness.runtime,
             )
+            const inputVirtualValue = async (fieldNodeId: string, value: string) => {
+                await activationAutomation.typeVirtualValue(fieldNodeId, value)
+            }
 
-            await activationAutomation.changeText('ui-base-terminal-activate-device:input', activationCode!)
+            await inputVirtualValue(
+                'ui-base-terminal-activate-device:sandbox',
+                harness.platform.prepare.sandboxId,
+            )
+            await inputVirtualValue(
+                'ui-base-terminal-activate-device:input',
+                activationCode!,
+            )
 
             let submitResult: unknown
             submitResult = await activationAutomation.client.call('ui.performAction', {

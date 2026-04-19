@@ -60,6 +60,10 @@ class SecondaryDisplayLauncher(
     Handler(Looper.getMainLooper()).post {
       runCatching {
         launchRequested.set(true)
+        StartupAuditLogger.logSecondaryLaunchAttempt(
+          displayCount = displays.size,
+          displayId = secondary.displayId,
+        )
         val intent = Intent(activity, SecondaryActivity::class.java).apply {
           addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
         }

@@ -80,3 +80,13 @@ export interface TdpControlSignalsState {
     } | null
     lastDisconnectReason?: string | null
 }
+
+export interface TdpTerminalGroupMembershipPayload {
+    membershipVersion: number
+    groups: Array<{
+        groupId: string
+        rank: number
+        priority: number
+        matchedBy: Record<string, string | undefined>
+    }>
+}

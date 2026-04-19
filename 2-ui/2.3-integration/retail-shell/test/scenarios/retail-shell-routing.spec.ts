@@ -32,6 +32,37 @@ describe('retail-shell routing', () => {
         expect(secondary?.partKey).toBe('ui.base.terminal.activate-device-secondary')
     })
 
+    it('rebuilds the secondary root to activation on initialize when stale welcome state is persisted', async () => {
+        const harness = await createRetailShellHarness({
+            displayContext: {
+                displayIndex: 1,
+                displayCount: 2,
+            },
+        })
+
+        await harness.runtime.dispatchCommand(createCommand(
+            tcpControlV2CommandDefinitions.activateTerminalSucceeded,
+            {
+                terminalId: 'terminal-secondary-stale',
+                accessToken: 'token-secondary-stale',
+            },
+        ))
+        expect(selectSecondaryRoot(harness.runtime.getState())?.partKey).toBe(
+            'ui.integration.retail-shell.secondary-welcome',
+        )
+
+        harness.store.dispatch(tcpControlV2StateActions.clearActivation())
+
+        await harness.runtime.dispatchCommand(createCommand(
+            runtimeShellV2CommandDefinitions.initialize,
+            {},
+        ))
+
+        expect(selectSecondaryRoot(harness.runtime.getState())?.partKey).toBe(
+            'ui.base.terminal.activate-device-secondary',
+        )
+    })
+
     it('routes to welcome screen on initialize when terminal is already activated', async () => {
         const harness = await createRetailShellHarness()
 

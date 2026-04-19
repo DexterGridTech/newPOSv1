@@ -10,12 +10,12 @@ const {
         payload,
     })),
     topologyCommandDefinitions: {
-        setEnableSlave: {commandName: 'topology-runtime-v2.set-enable-slave'},
-        setInstanceMode: {commandName: 'topology-runtime-v2.set-instance-mode'},
-        setDisplayMode: {commandName: 'topology-runtime-v2.set-display-mode'},
-        setMasterInfo: {commandName: 'topology-runtime-v2.set-master-info'},
-        refreshTopologyContext: {commandName: 'topology-runtime-v2.refresh-topology-context'},
-        startTopologyConnection: {commandName: 'topology-runtime-v2.start-topology-connection'},
+        setEnableSlave: {commandName: 'topology-runtime-v3.set-enable-slave'},
+        setInstanceMode: {commandName: 'topology-runtime-v3.set-instance-mode'},
+        setDisplayMode: {commandName: 'topology-runtime-v3.set-display-mode'},
+        setMasterLocator: {commandName: 'topology-runtime-v3.set-master-locator'},
+        refreshTopologyContext: {commandName: 'topology-runtime-v3.refresh-topology-context'},
+        startTopologyConnection: {commandName: 'topology-runtime-v3.start-topology-connection'},
     },
     tcpCommandDefinitions: {
         bootstrapTcpControl: {commandName: 'tcp-control-runtime-v2.bootstrap-tcp-control'},
@@ -27,8 +27,8 @@ vi.mock('@impos2/kernel-base-runtime-shell-v2', async importOriginal => ({
     createCommand: createCommandMock,
 }))
 
-vi.mock('@impos2/kernel-base-topology-runtime-v2', () => ({
-    topologyRuntimeV2CommandDefinitions: topologyCommandDefinitions,
+vi.mock('@impos2/kernel-base-topology-runtime-v3', () => ({
+    topologyRuntimeV3CommandDefinitions: topologyCommandDefinitions,
 }))
 
 vi.mock('@impos2/kernel-base-tcp-control-runtime-v2', () => ({
@@ -42,7 +42,7 @@ describe('assembly bootstrap runtime', () => {
         vi.clearAllMocks()
     })
 
-    it('boots a dual-screen slave with topology handshake and tcp bootstrap', async () => {
+    it('boots an embedded managed secondary without writing tcp identity locally', async () => {
         const dispatchCommand = vi.fn(async () => ({ok: true}))
         const runtime = {
             dispatchCommand,
@@ -57,12 +57,12 @@ describe('assembly bootstrap runtime', () => {
             topology: {
                 role: 'slave',
                 masterNodeId: 'master-terminal',
-                ticketToken: 'ticket-001',
+                masterDeviceId: 'master-device-001',
                 wsUrl: 'ws://127.0.0.1:9541/dual-topology/ws',
             },
         })
 
-        expect(dispatchCommand).toHaveBeenCalledTimes(6)
+        expect(dispatchCommand).toHaveBeenCalledTimes(5)
         expect((dispatchCommand.mock.calls as any[]).map(call => call[0])).toEqual([
             {
                 definition: topologyCommandDefinitions.setInstanceMode,
@@ -73,10 +73,54 @@ describe('assembly bootstrap runtime', () => {
                 payload: {displayMode: 'SECONDARY'},
             },
             {
-                definition: topologyCommandDefinitions.setMasterInfo,
+                definition: topologyCommandDefinitions.setMasterLocator,
                 payload: {
-                    masterInfo: {
-                        deviceId: 'master-terminal',
+                    masterLocator: {
+                        masterNodeId: 'master-terminal',
+                        masterDeviceId: 'master-device-001',
+                        serverAddress: [{address: 'ws://127.0.0.1:9541/dual-topology/ws'}],
+                        addedAt: expect.any(Number),
+                    },
+                },
+            },
+            {
+                definition: topologyCommandDefinitions.refreshTopologyContext,
+                payload: {},
+            },
+            {
+                definition: topologyCommandDefinitions.startTopologyConnection,
+                payload: {},
+            },
+        ])
+    })
+
+    it('boots a standalone slave primary with its own tcp identity and topology connection', async () => {
+        const dispatchCommand = vi.fn(async () => ({ok: true}))
+        const runtime = {
+            dispatchCommand,
+        }
+
+        await bootstrapAssemblyRuntime(runtime as any, {
+            deviceId: 'terminal-standalone-slave',
+            screenMode: 'desktop',
+            displayCount: 1,
+            displayIndex: 0,
+            isEmulator: false,
+            topology: {
+                role: 'slave',
+                masterNodeId: 'master-terminal',
+                masterDeviceId: 'master-device-standalone',
+                wsUrl: 'ws://127.0.0.1:9541/dual-topology/ws',
+            },
+        })
+
+        expect((dispatchCommand.mock.calls as any[]).map(call => call[0])).toEqual([
+            {
+                definition: topologyCommandDefinitions.setMasterLocator,
+                payload: {
+                    masterLocator: {
+                        masterNodeId: 'master-terminal',
+                        masterDeviceId: 'master-device-standalone',
                         serverAddress: [{address: 'ws://127.0.0.1:9541/dual-topology/ws'}],
                         addedAt: expect.any(Number),
                     },
@@ -90,7 +134,7 @@ describe('assembly bootstrap runtime', () => {
                 definition: tcpCommandDefinitions.bootstrapTcpControl,
                 payload: {
                     deviceInfo: {
-                        id: 'terminal-001',
+                        id: 'terminal-standalone-slave',
                         model: 'Mixc Retail Android RN84',
                     },
                 },

@@ -926,8 +926,8 @@ describe('state-runtime store assembly', () => {
         })
 
         expect(summary).toEqual({
-            A: {updatedAt: 10},
-            B: {updatedAt: 20, tombstone: true},
+            A: {updatedAt: 10, valueHash: '"a"'},
+            B: {updatedAt: 20, tombstone: true, valueHash: 'tombstone'},
         })
     })
 
@@ -1340,9 +1340,9 @@ describe('state-runtime store assembly', () => {
         }
 
         expect(createSliceSyncSummary(descriptor, state)).toEqual({
-            A: {updatedAt: 30},
-            B: {updatedAt: 10},
-            C: {updatedAt: 40},
+            A: {updatedAt: 30, valueHash: '"local-newer"'},
+            B: {updatedAt: 10, valueHash: '"local-older"'},
+            C: {updatedAt: 40, valueHash: '"local-only"'},
         })
 
         expect(createSliceSyncDiff(descriptor, state, {
@@ -1412,7 +1412,7 @@ describe('state-runtime store assembly', () => {
         expect(createSliceSyncDiff(descriptor, {
             primaryRoot: {value: 'welcome', updatedAt: 100},
         }, {
-            primaryRoot: {updatedAt: 999},
+            primaryRoot: {updatedAt: 999, valueHash: '"secondary-local-activation"'},
         }, {
             mode: 'authoritative',
         })).toEqual([
@@ -1440,5 +1440,28 @@ describe('state-runtime store assembly', () => {
             primaryRoot: {value: 'welcome', updatedAt: 100},
             secondaryRoot: {value: 'secondary-welcome', updatedAt: 100},
         })
+
+        expect(createSliceSyncDiff(descriptor, {
+            primaryRoot: {value: 'welcome', updatedAt: 100},
+            secondaryRoot: {value: 'secondary-welcome', updatedAt: 100},
+        }, {
+            primaryRoot: {updatedAt: 100, valueHash: '"welcome"'},
+            secondaryRoot: {updatedAt: 100, valueHash: '"secondary-welcome"'},
+        }, {
+            mode: 'authoritative',
+        })).toEqual([])
+
+        expect(createSliceSyncDiff(descriptor, {
+            primaryRoot: {value: 'welcome-next', updatedAt: 100},
+        }, {
+            primaryRoot: {updatedAt: 100, valueHash: '"welcome"'},
+        }, {
+            mode: 'authoritative',
+        })).toEqual([
+            {
+                key: 'primaryRoot',
+                value: {value: 'welcome-next', updatedAt: 100},
+            },
+        ])
     })
 })

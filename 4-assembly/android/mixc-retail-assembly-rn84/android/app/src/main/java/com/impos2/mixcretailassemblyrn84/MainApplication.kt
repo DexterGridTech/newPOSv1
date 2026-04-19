@@ -1,6 +1,7 @@
 package com.impos2.mixcretailassemblyrn84
 
 import android.app.Application
+import android.os.Process
 import android.util.Log
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
@@ -10,6 +11,7 @@ import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.react.devsupport.interfaces.DevLoadingViewManager
 import com.impos2.mixcretailassemblyrn84.turbomodules.AdapterPackage
+import java.io.File
 
 /**
  * 应用级入口。
@@ -68,12 +70,23 @@ class MainApplication : Application(), ReactApplication {
        */
       override fun getJSMainModuleName(): String = "index"
 
+      override fun getJSBundleFile(): String? {
+        if (BuildConfig.ENABLE_HOT_UPDATE_BUNDLE_RESOLVER) {
+          return HotUpdateBundleResolver(this@MainApplication).resolveBundleFile(
+            isPrimaryProcess = !currentProcessName().endsWith(":secondary"),
+          )
+            ?: super.getJSBundleFile()
+        }
+        return super.getJSBundleFile()
+      }
+
       /**
        * 是否启用开发支持。
        *
        * 仅在 debug 构建中打开，避免 release 包暴露 DevMenu、Debugger 等开发能力。
        */
-      override fun getUseDeveloperSupport(): Boolean = BuildConfig.DEBUG
+      override fun getUseDeveloperSupport(): Boolean =
+        BuildConfig.DEBUG && !BuildConfig.ENABLE_HOT_UPDATE_BUNDLE_RESOLVER
 
       /**
        * 自定义开发态 loading 提示的接收器。
@@ -133,4 +146,11 @@ class MainApplication : Application(), ReactApplication {
     super.onCreate()
     loadReactNative(this)
   }
+
+  private fun currentProcessName(): String =
+    runCatching {
+      File("/proc/${Process.myPid()}/cmdline")
+        .readText(Charsets.UTF_8)
+        .trim { it <= ' ' }
+    }.getOrDefault(packageName)
 }

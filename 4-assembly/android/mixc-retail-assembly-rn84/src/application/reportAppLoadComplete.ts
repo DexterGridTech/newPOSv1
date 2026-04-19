@@ -1,4 +1,15 @@
+import type {KernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
+import {
+    selectTdpHotUpdateCurrent,
+    tdpHotUpdateActions,
+} from '@impos2/kernel-base-tdp-sync-runtime-v2'
+import {releaseInfo} from '../generated/releaseInfo'
 import {nativeAppControl, nativeLogger} from '../turbomodules'
+import {nativeHotUpdate} from '../turbomodules/hotUpdate'
+import {
+    syncHotUpdateStateFromNativeBoot,
+    type ReportAppLoadCompleteResult,
+} from './syncHotUpdateStateFromNativeBoot'
 
 /**
  * 设计意图：
@@ -9,7 +20,10 @@ import {nativeAppControl, nativeLogger} from '../turbomodules'
  *
  * 这不是 retail-shell 或 ui-runtime 的职责，所以收敛在 assembly application。
  */
-export const reportAppLoadComplete = async (displayIndex: number): Promise<void> => {
+export const reportAppLoadComplete = async (
+    runtime: KernelRuntimeV2,
+    displayIndex: number,
+): Promise<ReportAppLoadCompleteResult> => {
     nativeLogger.log(
         'assembly.android.mixc-retail-rn84.boot',
         JSON.stringify({
@@ -19,6 +33,39 @@ export const reportAppLoadComplete = async (displayIndex: number): Promise<void>
     )
 
     await nativeAppControl.hideLoading(displayIndex)
+    const bootState = await syncHotUpdateStateFromNativeBoot(runtime)
+    if (bootState?.terminalState === 'ROLLED_BACK') {
+        nativeLogger.log(
+            'assembly.android.mixc-retail-rn84.boot',
+            JSON.stringify({
+                stage: 'app-load-complete:done',
+                displayIndex,
+                terminalState: 'ROLLED_BACK',
+                reason: bootState.reason,
+            }),
+        )
+        return bootState
+    }
+
+    const bootMarker = await nativeHotUpdate.confirmLoadComplete().catch(() => null)
+    if (bootMarker?.bundleVersion && bootMarker.installDir) {
+        const previous = selectTdpHotUpdateCurrent(runtime.getState())
+        runtime.getStore().dispatch(tdpHotUpdateActions.markApplied({
+            previous,
+            current: {
+                source: 'hot-update',
+                appId: releaseInfo.appId,
+                assemblyVersion: releaseInfo.assemblyVersion,
+                buildNumber: releaseInfo.buildNumber,
+                runtimeVersion: releaseInfo.runtimeVersion,
+                bundleVersion: String(bootMarker.bundleVersion),
+                packageId: typeof bootMarker.packageId === 'string' ? bootMarker.packageId : undefined,
+                releaseId: typeof bootMarker.releaseId === 'string' ? bootMarker.releaseId : undefined,
+                installDir: String(bootMarker.installDir),
+                appliedAt: Date.now(),
+            },
+        }))
+    }
 
     nativeLogger.log(
         'assembly.android.mixc-retail-rn84.boot',
@@ -27,4 +74,7 @@ export const reportAppLoadComplete = async (displayIndex: number): Promise<void>
             displayIndex,
         }),
     )
+    return {
+        terminalState: 'RUNNING',
+    }
 }

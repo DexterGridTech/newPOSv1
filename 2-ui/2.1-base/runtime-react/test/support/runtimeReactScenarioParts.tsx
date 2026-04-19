@@ -1,7 +1,7 @@
 import React from 'react'
 import {Text, TouchableOpacity, View} from 'react-native'
 import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
-import {topologyRuntimeV2CommandDefinitions} from '@impos2/kernel-base-topology-runtime-v2'
+import {topologyRuntimeV3CommandDefinitions} from '@impos2/kernel-base-topology-runtime-v3'
 import {
     defineUiModalPart,
     defineUiScreenPart,
@@ -83,7 +83,7 @@ const ScenarioHomeScreen: React.FC<RuntimeReactScenarioScreenProps> = ({
             <TouchableOpacity
                 testID="ui-base-runtime-react-test:secondary-display"
                 onPress={() => {
-                    void runtime.dispatchCommand(createCommand(topologyRuntimeV2CommandDefinitions.setDisplayMode, {
+                    void runtime.dispatchCommand(createCommand(topologyRuntimeV3CommandDefinitions.setDisplayMode, {
                         displayMode: 'SECONDARY',
                     }))
                 }}

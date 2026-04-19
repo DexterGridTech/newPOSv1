@@ -21,5 +21,10 @@
       android:enabled="true"
       android:exported="false"
       android:foregroundServiceType="dataSync" />
+    <service
+      android:name=".topologyhostv3.TopologyHostV3Service"
+      android:enabled="true"
+      android:exported="false"
+      android:foregroundServiceType="dataSync" />
   </application>
 </manifest>

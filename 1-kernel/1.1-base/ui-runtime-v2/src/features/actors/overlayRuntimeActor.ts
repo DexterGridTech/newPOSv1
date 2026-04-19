@@ -6,7 +6,7 @@ import {
     type ActorDefinition,
     type ActorExecutionContext,
 } from '@impos2/kernel-base-runtime-shell-v2'
-import {selectTopologyDisplayMode, selectTopologyWorkspace} from '@impos2/kernel-base-topology-runtime-v2'
+import {selectTopologyDisplayMode, selectTopologyWorkspace} from '@impos2/kernel-base-topology-runtime-v3'
 import {createUiOverlayEntry} from '../../foundations'
 import {moduleName} from '../../moduleName'
 import {normalizeUiRuntimeWorkspace} from '../../selectors'

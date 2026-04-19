@@ -42,7 +42,7 @@ Covered flows:
 5. UI variable update command
 6. topology display mode command
 7. two independent browser pages using `displayIndex=0` and `displayIndex=1`
-8. real `0-mock-server/dual-topology-host` startup, ticket issue, master/slave hello, and connected-state convergence
+8. real `0-mock-server/dual-topology-host-v3` startup, no-ticket master/slave hello, and connected-state convergence
 
 ### Visible automation
 
@@ -67,7 +67,7 @@ corepack yarn workspace @impos2/ui-base-runtime-react test-expo:topology-host:vi
 Important:
 
 1. `test-expo:dual-pages` is still the light smoke that only validates display context and primary/secondary rendering in two browser pages.
-2. `test-expo` default flow now also starts a real `dual-topology-host`, issues a ticket, opens two Expo pages, and validates real topology WS connectivity through the browser-side transport assembly.
+2. `test-expo` default flow now also starts a real `dual-topology-host-v3`, opens two Expo pages, and validates no-ticket topology WS connectivity through the browser-side transport assembly.
 
 ## Query Parameters
 
@@ -81,8 +81,9 @@ Use the browser URL query string to switch topology-like display context:
 6. `topologyRole=master|slave`
 7. `topologyHostBaseUrl=<http base>`
 8. `topologyWsUrl=<ws url>`
-9. `topologyTicketToken=<ticket>`
-10. `topologyNodeId=<node id>`
+9. `topologyMasterNodeId=<master node id>`
+10. `topologyMasterDeviceId=<master device id>`
+11. `topologyNodeId=<node id>`
 
 Example:
 
@@ -90,7 +91,7 @@ Example:
 http://localhost:8081?displayIndex=1&displayCount=2&topology=dual
 ```
 
-`topology=dual` means dual-root display preview in this package. It is intentionally named out in the page as `dual-root-preview-no-host` so it is not confused with real `dual-topology-host` connectivity.
+`topology=dual` means dual-root display preview in this package. It is intentionally named out in the page as `dual-root-preview-no-host` so it is not confused with real `dual-topology-host-v3` connectivity.
 
 Example of real topology host mode:
 

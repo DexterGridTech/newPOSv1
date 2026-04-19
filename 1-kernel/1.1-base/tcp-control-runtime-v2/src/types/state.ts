@@ -49,6 +49,11 @@ export interface TcpCredentialState {
 
 export interface TcpBindingState extends TcpBindingContext {}
 
+export interface TcpSandboxState {
+    sandboxId?: string
+    updatedAt?: TimestampMs
+}
+
 export interface TcpRuntimeState {
     bootstrapped: boolean
     lastActivationRequestId?: string
@@ -59,6 +64,7 @@ export interface TcpRuntimeState {
 
 export interface TcpIdentitySnapshot extends TcpIdentityState {}
 export interface TcpCredentialSnapshot extends TcpCredentialState {}
+export interface TcpSandboxSnapshot extends TcpSandboxState {}
 
 export interface TcpTaskResultReportRuntimePayload {
     terminalId?: string

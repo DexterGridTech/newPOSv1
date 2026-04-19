@@ -19,6 +19,9 @@ export {
     tdpSyncV2CommandNames,
 } from './features/commands'
 export {
+    createTdpHotUpdateStateForTests,
+    reduceHotUpdateDesired,
+    tdpHotUpdateActions,
     tdpSyncV2StateActions,
     tdpSyncV2StateSlices,
 } from './features/slices'
@@ -33,11 +36,26 @@ export {
 export {tdpSyncV2SocketProfile} from './supports/socketProfile'
 export {TDP_SYNC_V2_SOCKET_PROFILE_NAME} from './foundations/socketBinding'
 export {
+    HOT_UPDATE_REJECT_REASONS,
+    TDP_HOT_UPDATE_ITEM_KEY,
+    TDP_HOT_UPDATE_SCHEMA_VERSION,
+    TDP_HOT_UPDATE_TOPIC,
+} from './foundations/hotUpdateTopic'
+export {evaluateHotUpdateCompatibility} from './foundations/hotUpdateCompatibility'
+export {reconcileHotUpdateDesiredFromResolvedProjection} from './foundations/hotUpdateProjectionReducer'
+export {buildHotUpdateVersionReportPayload} from './foundations/hotUpdateVersionReporter'
+export {
     createDefaultTdpSyncHttpRuntimeV2,
     installTdpSessionConnectionRuntimeV2,
 } from './foundations/sessionConnectionRuntime'
 export {createTdpSyncHttpServiceV2} from './foundations/httpService'
 export {
+    selectTdpHotUpdateCandidate,
+    selectTdpHotUpdateCurrent,
+    selectTdpHotUpdateDesired,
+    selectTdpHotUpdateReady,
+    selectTdpHotUpdateState,
+    selectTerminalGroupMembership,
     selectTdpCommandInboxState,
     selectTdpControlSignalsState,
     selectTdpProjectionByTopicAndBucket,
@@ -50,6 +68,15 @@ export {
 } from './selectors'
 export type {
     CreateTdpSyncRuntimeModuleV2Input,
+    HotUpdateAppliedVersion,
+    HotUpdateCandidateState,
+    HotUpdateCompatibility,
+    HotUpdateCompatibilityResult,
+    HotUpdateCurrentFacts,
+    HotUpdateHistoryItem,
+    HotUpdateReadyState,
+    HotUpdateState,
+    TerminalHotUpdateDesiredV1,
     TdpChangesResponse,
     TdpClientMessage,
     TdpCommandInboxItem,
@@ -64,6 +91,7 @@ export type {
     TdpSyncRuntimeAssemblyV2,
     TdpSyncSocketBindingV2,
     TdpSyncState,
+    TdpTerminalGroupMembershipPayload,
     TdpTopicDataChangeItem,
     TdpTopicDataChangedPayload,
 } from './types'

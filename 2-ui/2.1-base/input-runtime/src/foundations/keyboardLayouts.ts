@@ -22,8 +22,23 @@ const amountRows = [
 ] as const satisfies readonly (readonly VirtualKeyboardKey[])[]
 
 const activationRows = [
-    ['A', 'B', 'C'],
-    ['D', 'E', 'F'],
+    ['A', 'B', 'C', 'D', 'E', 'F'],
+    ['G', 'H', 'I', 'J', 'K', 'L'],
+    ['M', 'N', 'O', 'P', 'Q', 'R'],
+    ['S', 'T', 'U', 'V', 'W', 'X'],
+    ['Y', 'Z', '-'],
+    ['1', '2', '3'],
+    ['4', '5', '6'],
+    ['7', '8', '9'],
+    ['clear', '0', 'backspace'],
+] as const satisfies readonly (readonly VirtualKeyboardKey[])[]
+
+const identifierRows = [
+    ['A', 'B', 'C', 'D', 'E', 'F'],
+    ['G', 'H', 'I', 'J', 'K', 'L'],
+    ['M', 'N', 'O', 'P', 'Q', 'R'],
+    ['S', 'T', 'U', 'V', 'W', 'X'],
+    ['Y', 'Z', '-', '_'],
     ['1', '2', '3'],
     ['4', '5', '6'],
     ['7', '8', '9'],
@@ -45,6 +60,13 @@ export const getVirtualKeyboardLayout = (
             return {
                 title: '激活码键盘',
                 rows: activationRows,
+                enterLabel: '完成',
+                maxWidth: 520,
+            }
+        case 'virtual-identifier':
+            return {
+                title: '标识键盘',
+                rows: identifierRows,
                 enterLabel: '完成',
                 maxWidth: 520,
             }

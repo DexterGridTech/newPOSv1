@@ -275,6 +275,104 @@ export const changeLogsTable = sqliteTable('tdp_change_logs', {
   createdAt: integer('created_at').notNull()
 })
 
+export const selectorGroupsTable = sqliteTable('selector_groups', {
+  groupId: text('group_id').primaryKey(),
+  sandboxId: text('sandbox_id').notNull(),
+  groupCode: text('group_code').notNull(),
+  name: text('name').notNull(),
+  description: text('description').notNull(),
+  enabled: integer('enabled').notNull(),
+  priority: integer('priority').notNull(),
+  selectorDslJson: text('selector_dsl_json').notNull(),
+  membershipVersion: integer('membership_version').notNull(),
+  createdAt: integer('created_at').notNull(),
+  updatedAt: integer('updated_at').notNull()
+})
+
+export const selectorGroupMembershipsTable = sqliteTable('selector_group_memberships', {
+  membershipId: text('membership_id').primaryKey(),
+  sandboxId: text('sandbox_id').notNull(),
+  groupId: text('group_id').notNull(),
+  terminalId: text('terminal_id').notNull(),
+  rank: integer('rank').notNull(),
+  matchedByJson: text('matched_by_json').notNull(),
+  membershipVersion: integer('membership_version').notNull(),
+  computedAt: integer('computed_at').notNull(),
+  updatedAt: integer('updated_at').notNull()
+})
+
+export const projectionPoliciesTable = sqliteTable('projection_policies', {
+  policyId: text('policy_id').primaryKey(),
+  sandboxId: text('sandbox_id').notNull(),
+  topicKey: text('topic_key').notNull(),
+  itemKey: text('item_key').notNull(),
+  scopeType: text('scope_type').notNull(),
+  scopeKey: text('scope_key').notNull(),
+  enabled: integer('enabled').notNull(),
+  payloadJson: text('payload_json').notNull(),
+  description: text('description').notNull(),
+  createdAt: integer('created_at').notNull(),
+  updatedAt: integer('updated_at').notNull()
+})
+
+export const hotUpdatePackagesTable = sqliteTable('hot_update_packages', {
+  packageId: text('package_id').primaryKey(),
+  sandboxId: text('sandbox_id').notNull(),
+  appId: text('app_id').notNull(),
+  platform: text('platform').notNull(),
+  product: text('product').notNull(),
+  channel: text('channel').notNull(),
+  bundleVersion: text('bundle_version').notNull(),
+  runtimeVersion: text('runtime_version').notNull(),
+  assemblyVersion: text('assembly_version').notNull(),
+  buildNumber: integer('build_number').notNull(),
+  manifestJson: text('manifest_json').notNull(),
+  manifestSha256: text('manifest_sha256').notNull(),
+  fileName: text('file_name').notNull(),
+  fileSize: integer('file_size').notNull(),
+  sha256: text('sha256').notNull(),
+  storagePath: text('storage_path').notNull(),
+  status: text('status').notNull(),
+  createdAt: integer('created_at').notNull(),
+  updatedAt: integer('updated_at').notNull()
+})
+
+export const hotUpdateReleasesTable = sqliteTable('hot_update_releases', {
+  releaseId: text('release_id').primaryKey(),
+  sandboxId: text('sandbox_id').notNull(),
+  packageId: text('package_id').notNull(),
+  topicKey: text('topic_key').notNull(),
+  itemKey: text('item_key').notNull(),
+  scopeType: text('scope_type').notNull(),
+  scopeKey: text('scope_key').notNull(),
+  enabled: integer('enabled').notNull(),
+  desiredPayloadJson: text('desired_payload_json').notNull(),
+  policyId: text('policy_id'),
+  status: text('status').notNull(),
+  createdBy: text('created_by').notNull(),
+  createdAt: integer('created_at').notNull(),
+  updatedAt: integer('updated_at').notNull()
+})
+
+export const terminalVersionReportsTable = sqliteTable('terminal_version_reports', {
+  reportId: text('report_id').primaryKey(),
+  sandboxId: text('sandbox_id').notNull(),
+  terminalId: text('terminal_id').notNull(),
+  displayIndex: integer('display_index').notNull(),
+  displayRole: text('display_role').notNull(),
+  appId: text('app_id').notNull(),
+  assemblyVersion: text('assembly_version').notNull(),
+  buildNumber: integer('build_number').notNull(),
+  runtimeVersion: text('runtime_version').notNull(),
+  bundleVersion: text('bundle_version').notNull(),
+  source: text('source').notNull(),
+  packageId: text('package_id'),
+  releaseId: text('release_id'),
+  state: text('state').notNull(),
+  reason: text('reason'),
+  reportedAt: integer('reported_at').notNull()
+})
+
 export const commandOutboxTable = sqliteTable('tdp_command_outbox', {
   commandId: text('command_id').primaryKey(),
   sandboxId: text('sandbox_id').notNull(),

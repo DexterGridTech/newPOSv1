@@ -24,7 +24,7 @@ export const createDefaultRuntimePlatformPortsV2 = (
     secureStateStorage: ports?.secureStateStorage,
     device: ports?.device,
     appControl: ports?.appControl,
+    hotUpdate: ports?.hotUpdate,
     localWebServer: ports?.localWebServer,
     connector: ports?.connector,
 })
-

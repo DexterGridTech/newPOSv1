@@ -28,7 +28,9 @@ describe('input controller', () => {
         expect(applyVirtualKeyToValue('12.3', '-', 'virtual-amount')).toBe('-12.3')
         expect(applyVirtualKeyToValue('-12.3', '-', 'virtual-amount')).toBe('12.3')
         expect(applyVirtualKeyToValue('ab', 'C', 'virtual-activation-code')).toBe('abC')
-        expect(applyVirtualKeyToValue('ab', '.', 'virtual-activation-code')).toBe('ab.')
+        expect(applyVirtualKeyToValue('ACT', '-', 'virtual-activation-code')).toBe('ACT-')
+        expect(applyVirtualKeyToValue('sand', 'B', 'virtual-identifier')).toBe('sandB')
+        expect(applyVirtualKeyToValue('sandbox', '-', 'virtual-identifier')).toBe('sandbox-')
         expect(applyVirtualKeyToValue('123456', '7', 'virtual-pin', 6)).toBe('123456')
     })
 

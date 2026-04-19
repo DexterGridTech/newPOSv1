@@ -12,26 +12,26 @@ import {
 } from '../../database/schema.js'
 import { createId, now, parseJson } from '../../shared/utils.js'
 import type { DeliveryStatus, ReleaseStatus, TaskType } from '../../shared/types.js'
-import { getCurrentSandboxId } from '../sandbox/service.js'
+import { assertSandboxUsable } from '../sandbox/service.js'
 
-export const listTerminals = () => {
-  const sandboxId = getCurrentSandboxId()
+export const listTerminals = (sandboxId: string) => {
+  assertSandboxUsable(sandboxId)
   return db.select().from(terminalsTable).where(eq(terminalsTable.sandboxId, sandboxId)).orderBy(desc(terminalsTable.updatedAt)).all().map((item) => ({
     ...item,
     deviceInfo: parseJson(item.deviceInfoJson, {}),
   }))
 }
 
-export const listProfiles = () => {
-  const sandboxId = getCurrentSandboxId()
+export const listProfiles = (sandboxId: string) => {
+  assertSandboxUsable(sandboxId)
   return db.select().from(terminalProfilesTable).where(eq(terminalProfilesTable.sandboxId, sandboxId)).orderBy(desc(terminalProfilesTable.updatedAt)).all().map((item) => ({
     ...item,
     capabilities: parseJson(item.capabilitiesJson, {}),
   }))
 }
 
-export const listTemplates = () => {
-  const sandboxId = getCurrentSandboxId()
+export const listTemplates = (sandboxId: string) => {
+  assertSandboxUsable(sandboxId)
   return db.select().from(terminalTemplatesTable).where(eq(terminalTemplatesTable.sandboxId, sandboxId)).orderBy(desc(terminalTemplatesTable.updatedAt)).all().map((item) => ({
     ...item,
     presetConfig: parseJson(item.presetConfigJson, {}),
@@ -39,17 +39,19 @@ export const listTemplates = () => {
   }))
 }
 
-export const listActivationCodes = () => {
-  const sandboxId = getCurrentSandboxId()
+export const listActivationCodes = (sandboxId: string) => {
+  assertSandboxUsable(sandboxId)
   return db.select().from(activationCodesTable).where(eq(activationCodesTable.sandboxId, sandboxId)).orderBy(desc(activationCodesTable.createdAt)).all()
 }
 
 export const activateTerminal = (input: {
+  sandboxId: string
   activationCode: string
   deviceFingerprint: string
   deviceInfo: Record<string, unknown>
 }) => {
-  const sandboxId = getCurrentSandboxId()
+  const sandboxId = input.sandboxId
+  assertSandboxUsable(sandboxId)
   const activation = db.select().from(activationCodesTable).where(and(eq(activationCodesTable.code, input.activationCode), eq(activationCodesTable.sandboxId, sandboxId))).get()
   if (!activation || activation.status !== 'AVAILABLE') {
     throw new Error('激活码不可用')
@@ -125,10 +127,12 @@ export const activateTerminal = (input: {
   }
 }
 
-export const refreshTerminalToken = (refreshToken: string) => {
+export const refreshTerminalToken = (input: { sandboxId: string; refreshToken: string }) => {
+  const sandboxId = input.sandboxId
+  assertSandboxUsable(sandboxId)
   const credential = sqlite
     .prepare('SELECT * FROM terminal_credentials WHERE refresh_token = ? AND revoked_at IS NULL ORDER BY issued_at DESC LIMIT 1')
-    .get(refreshToken) as
+    .get(input.refreshToken) as
     | { terminal_id: string; refresh_token: string }
     | undefined
 
@@ -136,12 +140,17 @@ export const refreshTerminalToken = (refreshToken: string) => {
     throw new Error('refreshToken 无效')
   }
 
+  const terminal = db.select().from(terminalsTable).where(and(eq(terminalsTable.terminalId, credential.terminal_id), eq(terminalsTable.sandboxId, sandboxId))).get()
+  if (!terminal) {
+    throw new Error('refreshToken 不属于当前沙箱')
+  }
+
   const token = createId('token')
   const timestamp = now()
 
   sqlite
     .prepare('UPDATE terminal_credentials SET token = ?, issued_at = ?, expires_at = ? WHERE refresh_token = ?')
-    .run(token, timestamp, timestamp + 2 * 3600_000, refreshToken)
+    .run(token, timestamp, timestamp + 2 * 3600_000, input.refreshToken)
 
   return {
     token,
@@ -150,10 +159,12 @@ export const refreshTerminalToken = (refreshToken: string) => {
 }
 
 export const deactivateTerminal = (input: {
+  sandboxId: string
   terminalId: string
   reason?: string
 }) => {
-  const sandboxId = getCurrentSandboxId()
+  const sandboxId = input.sandboxId
+  assertSandboxUsable(sandboxId)
   const terminal = db.select().from(terminalsTable).where(and(eq(terminalsTable.terminalId, input.terminalId), eq(terminalsTable.sandboxId, sandboxId))).get()
   if (!terminal) {
     throw new Error('终端不存在')
@@ -184,8 +195,8 @@ export const deactivateTerminal = (input: {
   }
 }
 
-export const listTaskReleases = () => {
-  const sandboxId = getCurrentSandboxId()
+export const listTaskReleases = (sandboxId: string) => {
+  assertSandboxUsable(sandboxId)
   return db.select().from(taskReleasesTable).where(eq(taskReleasesTable.sandboxId, sandboxId)).orderBy(desc(taskReleasesTable.updatedAt)).all().map((item) => ({
     ...item,
     targetSelector: parseJson(item.targetSelectorJson, {}),
@@ -193,8 +204,8 @@ export const listTaskReleases = () => {
   }))
 }
 
-export const listTaskInstances = () => {
-  const sandboxId = getCurrentSandboxId()
+export const listTaskInstances = (sandboxId: string) => {
+  assertSandboxUsable(sandboxId)
   const releases = db.select({ releaseId: taskReleasesTable.releaseId }).from(taskReleasesTable).where(eq(taskReleasesTable.sandboxId, sandboxId)).all()
   const releaseIds = releases.map((item) => item.releaseId)
   if (releaseIds.length === 0) return []
@@ -207,6 +218,7 @@ export const listTaskInstances = () => {
 }
 
 export const createTaskRelease = (input: {
+  sandboxId: string
   title: string
   taskType: TaskType
   sourceType: string
@@ -215,7 +227,8 @@ export const createTaskRelease = (input: {
   targetTerminalIds: string[]
   payload: Record<string, unknown>
 }) => {
-  const sandboxId = getCurrentSandboxId()
+  const sandboxId = input.sandboxId
+  assertSandboxUsable(sandboxId)
   const timestamp = now()
   const releaseId = createId('release')
 
@@ -238,8 +251,9 @@ export const createTaskRelease = (input: {
   return { releaseId }
 }
 
-export const createTaskInstancesForRelease = (releaseId: string) => {
-  const sandboxId = getCurrentSandboxId()
+export const createTaskInstancesForRelease = (input: { sandboxId: string; releaseId: string }) => {
+  const { sandboxId, releaseId } = input
+  assertSandboxUsable(sandboxId)
   const release = db.select().from(taskReleasesTable).where(and(eq(taskReleasesTable.releaseId, releaseId), eq(taskReleasesTable.sandboxId, sandboxId))).get()
   if (!release) {
     throw new Error('任务发布单不存在')
@@ -293,7 +307,16 @@ export const updateDeliveryStatus = (instanceId: string, deliveryStatus: Deliver
   return { instanceId, deliveryStatus }
 }
 
-export const reportTaskResult = (instanceId: string, input: { status: ReleaseStatus; result?: unknown; error?: unknown }) => {
+export const reportTaskResult = (sandboxId: string, instanceId: string, input: { status: ReleaseStatus; result?: unknown; error?: unknown }) => {
+  assertSandboxUsable(sandboxId)
+  const taskInstance = db.select().from(taskInstancesTable).where(eq(taskInstancesTable.instanceId, instanceId)).get()
+  if (!taskInstance) {
+    throw new Error('任务实例不存在')
+  }
+  const release = db.select().from(taskReleasesTable).where(and(eq(taskReleasesTable.releaseId, taskInstance.releaseId), eq(taskReleasesTable.sandboxId, sandboxId))).get()
+  if (!release) {
+    throw new Error('任务实例不属于当前沙箱')
+  }
   const timestamp = now()
   db.update(taskInstancesTable)
     .set({
@@ -309,13 +332,17 @@ export const reportTaskResult = (instanceId: string, input: { status: ReleaseSta
   return { instanceId, status: input.status }
 }
 
-export const getTaskTrace = (instanceId: string) => {
+export const getTaskTrace = (sandboxId: string, instanceId: string) => {
+  assertSandboxUsable(sandboxId)
   const instance = sqlite.prepare('SELECT * FROM task_instances WHERE instance_id = ?').get(instanceId) as Record<string, unknown> | undefined
   if (!instance) {
     throw new Error('任务实例不存在')
   }
 
   const release = sqlite.prepare('SELECT * FROM task_releases WHERE release_id = ?').get(instance.release_id) as Record<string, unknown> | undefined
+  if (release?.sandbox_id !== sandboxId) {
+    throw new Error('任务实例不属于当前沙箱')
+  }
   const projections = sqlite.prepare('SELECT * FROM tdp_projections WHERE topic_key = ? AND item_key = ? ORDER BY updated_at DESC').all('tcp.task.release', instance.instance_id) as Array<Record<string, unknown>>
   const changes = sqlite.prepare('SELECT * FROM tdp_change_logs WHERE topic_key = ? AND item_key = ? ORDER BY created_at DESC LIMIT 20').all('tcp.task.release', instance.instance_id) as Array<Record<string, unknown>>
 
@@ -375,8 +402,8 @@ export const getTaskTrace = (instanceId: string) => {
   }
 }
 
-export const batchCreateTerminals = (count: number) => {
-  const sandboxId = getCurrentSandboxId()
+export const batchCreateTerminals = (sandboxId: string, count: number) => {
+  assertSandboxUsable(sandboxId)
   const timestamp = now()
   const terminalIds: string[] = []
 
@@ -424,13 +451,15 @@ export const batchCreateTerminals = (count: number) => {
 }
 
 export const createActivationCodes = (input: {
+  sandboxId: string
   count: number
   storeId?: string
   profileId?: string
   templateId?: string
   expiresInDays?: number
 }) => {
-  const sandboxId = getCurrentSandboxId()
+  const sandboxId = input.sandboxId
+  assertSandboxUsable(sandboxId)
   const timestamp = now()
   const profile = input.profileId
     ? db.select().from(terminalProfilesTable).where(and(eq(terminalProfilesTable.profileId, input.profileId), eq(terminalProfilesTable.sandboxId, sandboxId))).get()
@@ -476,8 +505,8 @@ export const createActivationCodes = (input: {
   return { count: input.count, codes }
 }
 
-export const forceTerminalStatus = (terminalId: string, input: { healthStatus?: string; presenceStatus?: string; lifecycleStatus?: string }) => {
-  const sandboxId = getCurrentSandboxId()
+export const forceTerminalStatus = (sandboxId: string, terminalId: string, input: { healthStatus?: string; presenceStatus?: string; lifecycleStatus?: string }) => {
+  assertSandboxUsable(sandboxId)
   const terminal = db.select().from(terminalsTable).where(and(eq(terminalsTable.terminalId, terminalId), eq(terminalsTable.sandboxId, sandboxId))).get()
   if (!terminal) {
     throw new Error('终端不存在')

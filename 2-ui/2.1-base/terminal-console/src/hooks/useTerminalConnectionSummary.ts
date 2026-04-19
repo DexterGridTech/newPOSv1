@@ -2,6 +2,7 @@ import {shallowEqual, useSelector} from 'react-redux'
 import {
     selectTcpCredentialSnapshot,
     selectTcpIdentitySnapshot,
+    selectTcpSandboxId,
 } from '@impos2/kernel-base-tcp-control-runtime-v2'
 import type {RootState} from '@impos2/kernel-base-state-runtime'
 import type {TerminalConnectionSummary} from '../types'
@@ -13,6 +14,7 @@ export const useTerminalConnectionSummary = (): TerminalConnectionSummary =>
 
         return {
             status: identity.activationStatus,
+            sandboxId: selectTcpSandboxId(state),
             terminalId: identity.terminalId,
             activatedAt: identity.activatedAt as number | undefined,
             credentialStatus: credential.status,

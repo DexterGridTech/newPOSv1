@@ -1,7 +1,11 @@
 import React, {useEffect} from 'react'
 import {Text, View} from 'react-native'
 import {useSelector} from 'react-redux'
-import {selectTopologyDisplayMode} from '@impos2/kernel-base-topology-runtime-v2'
+import {
+    selectTopologyDisplayMode,
+    selectTopologyStandalone,
+    selectTopologySync,
+} from '@impos2/kernel-base-topology-runtime-v3'
 import {
     useOptionalUiAutomationBridge,
     useOptionalUiAutomationRuntimeId,
@@ -31,6 +35,12 @@ export const ActivateDeviceSecondaryScreen: React.FC = () => {
     const automationTarget = useOptionalUiAutomationTarget() ?? 'secondary'
     const summary = useTerminalConnectionSummary()
     const displayMode = useSelector((state: RootState) => selectTopologyDisplayMode(state) ?? 'SECONDARY')
+    const standalone = useSelector((state: RootState) => selectTopologyStandalone(state) ?? true)
+    const continuousSyncActive = useSelector((state: RootState) =>
+        selectTopologySync(state)?.status === 'active',
+    )
+    const identityReady = standalone || continuousSyncActive
+    const displayDeviceId = identityReady ? summary.deviceId ?? '未记录' : '等待主屏同步'
     const screenKey = 'ui.base.terminal.activate-device-secondary'
 
     useEffect(() => {
@@ -90,8 +100,8 @@ export const ActivateDeviceSecondaryScreen: React.FC = () => {
                 testID: 'ui-base-terminal-activate-device-secondary:device-id',
                 semanticId: 'ui-base-terminal-activate-device-secondary:device-id',
                 role: 'text',
-                text: summary.deviceId ?? '未记录',
-                value: summary.deviceId ?? '未记录',
+                text: displayDeviceId,
+                value: displayDeviceId,
                 visible: true,
                 enabled: true,
                 availableActions: [],
@@ -105,8 +115,8 @@ export const ActivateDeviceSecondaryScreen: React.FC = () => {
         automationRuntimeId,
         automationTarget,
         displayMode,
+        displayDeviceId,
         screenKey,
-        summary.deviceId,
     ])
 
     return (
@@ -235,7 +245,7 @@ export const ActivateDeviceSecondaryScreen: React.FC = () => {
                             testID="ui-base-terminal-activate-device-secondary:device-id"
                             style={{fontSize: 20, fontWeight: '700', color: '#f6ecd2'}}
                         >
-                            {summary.deviceId ?? '未记录'}
+                            {displayDeviceId}
                         </Text>
                     </View>
                 </View>

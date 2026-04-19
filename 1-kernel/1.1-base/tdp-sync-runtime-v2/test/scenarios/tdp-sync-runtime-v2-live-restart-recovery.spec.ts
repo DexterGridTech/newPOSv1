@@ -42,7 +42,7 @@ describe('tdp-sync-runtime-v2 live restart recovery', () => {
         })
 
         await firstRuntimeHarness.runtime.start()
-        await activateLiveTerminal(firstRuntimeHarness.runtime, '200000000006', 'device-live-tdp-v2-restart-001')
+        await activateLiveTerminal(firstRuntimeHarness.runtime, platform.prepare.sandboxId, '200000000006', 'device-live-tdp-v2-restart-001')
         await firstRuntimeHarness.runtime.dispatchCommand(
             createCommand(tdpSyncV2CommandDefinitions.connectTdpSession, {}),
             {requestId: createRequestId()},

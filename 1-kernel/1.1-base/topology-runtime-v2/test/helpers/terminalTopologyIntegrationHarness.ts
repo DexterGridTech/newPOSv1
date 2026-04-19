@@ -123,7 +123,7 @@ export const createTerminalTopologyIntegrationHarnessV2 = async (input?: {
     const terminalPlatform = createMockTerminalPlatformTestServer()
     await terminalPlatform.start()
     const terminalBaseUrl = terminalPlatform.getHttpBaseUrl()
-    await fetchPlatformJson<{
+    const preparedSandbox = await fetchPlatformJson<{
         sandboxId: string
         preparedAt: number
     }>(`${terminalBaseUrl}/mock-debug/kernel-base-test/prepare`, {
@@ -254,6 +254,7 @@ export const createTerminalTopologyIntegrationHarnessV2 = async (input?: {
             await masterRuntime.dispatchCommand(createCommand(
                 tcpControlV2CommandDefinitions.activateTerminal,
                 {
+                    sandboxId: preparedSandbox.sandboxId,
                     activationCode: runtimeInput.activationCode,
                 },
             ), {requestId: createRequestId()})
@@ -280,6 +281,7 @@ export const createTerminalTopologyIntegrationHarnessV2 = async (input?: {
         },
         async upsertProjection(inputValue: {
             topicKey: string
+            itemKey?: string
             payload: Record<string, unknown>
         }) {
             const terminalId = selectTcpTerminalId(masterRuntime.getState())
@@ -289,9 +291,11 @@ export const createTerminalTopologyIntegrationHarnessV2 = async (input?: {
             return await fetchPlatformJson<any>(`${terminalBaseUrl}/api/v1/admin/tdp/projections/upsert`, {
                 method: 'POST',
                 body: JSON.stringify({
+                    sandboxId: preparedSandbox.sandboxId,
                     topicKey: inputValue.topicKey,
                     scopeType: 'TERMINAL',
                     scopeKey: terminalId,
+                    itemKey: inputValue.itemKey,
                     payload: inputValue.payload,
                 }),
             })

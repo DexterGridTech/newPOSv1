@@ -5,11 +5,11 @@ import type {RootState} from '@impos2/kernel-base-state-runtime'
 import {
     selectTopologyDisplayMode,
     selectTopologyInstanceMode,
-    selectTopologyRuntimeV2Connection,
-    selectTopologyRuntimeV2PeerNodeId,
-    selectTopologyRuntimeV2ServerConnected,
+    selectTopologyRuntimeV3Connection,
+    selectTopologyRuntimeV3PeerNodeId,
+    selectTopologyRuntimeV3ServerConnected,
     selectTopologyWorkspace,
-} from '@impos2/kernel-base-topology-runtime-v2'
+} from '@impos2/kernel-base-topology-runtime-v3'
 import {
     selectUiOverlays,
     selectUiScreen,
@@ -29,9 +29,9 @@ export const RuntimeReactScenarioStatePanel: React.FC = () => {
     const displayMode = useSelector(selectTopologyDisplayMode)
     const instanceMode = useSelector(selectTopologyInstanceMode)
     const workspace = useSelector(selectTopologyWorkspace)
-    const peerNodeId = useSelector(selectTopologyRuntimeV2PeerNodeId)
-    const serverConnected = useSelector(selectTopologyRuntimeV2ServerConnected)
-    const connection = useSelector(selectTopologyRuntimeV2Connection)
+    const peerNodeId = useSelector(selectTopologyRuntimeV3PeerNodeId)
+    const serverConnected = useSelector(selectTopologyRuntimeV3ServerConnected)
+    const connection = useSelector(selectTopologyRuntimeV3Connection)
     const variable = useSelector((state: RootState) =>
         selectUiVariable<string>(state, runtimeReactScenarioVariable.key),
     )
@@ -48,9 +48,7 @@ export const RuntimeReactScenarioStatePanel: React.FC = () => {
             <Text testID="ui-base-runtime-react-test:state:server-connection-status">
                 {connection?.serverConnectionStatus ?? 'null'}
             </Text>
-            <Text testID="ui-base-runtime-react-test:state:connection-error">
-                {connection?.connectionError ?? 'null'}
-            </Text>
+            <Text testID="ui-base-runtime-react-test:state:connection-error">null</Text>
             <Text testID="ui-base-runtime-react-test:state:peer-node-id">{peerNodeId ?? 'null'}</Text>
             <Text testID="ui-base-runtime-react-test:state:variable">{variable ?? 'null'}</Text>
         </View>

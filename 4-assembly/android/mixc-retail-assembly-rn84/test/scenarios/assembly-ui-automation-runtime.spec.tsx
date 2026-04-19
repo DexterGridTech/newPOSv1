@@ -1,13 +1,11 @@
 import React from 'react'
 import {beforeEach, describe, expect, it, vi} from 'vitest'
-import TestRenderer from 'react-test-renderer'
-import {Provider} from 'react-redux'
 import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
 import {tcpControlV2CommandDefinitions} from '@impos2/kernel-base-tcp-control-runtime-v2'
 import {uiRuntimeV2CommandDefinitions} from '@impos2/kernel-base-ui-runtime-v2'
-import {createAutomationJsonRpcClient} from '@impos2/ui-base-automation-runtime'
 import {uiBaseTerminalScreenParts} from '@impos2/ui-base-terminal-console'
 import {createMemoryStorage} from '../../../../../1-kernel/test-support/storageHarness'
+import {mountAssemblyAutomationApp} from '../support/mountAssemblyAutomationApp'
 
 type MemoryStorageHandle = ReturnType<typeof createMemoryStorage>
 
@@ -58,6 +56,9 @@ vi.mock('react-native', async () => {
         },
         NativeEventEmitter: MockNativeEventEmitter,
         TurboModuleRegistry: {
+            get(name: string) {
+                return this.getEnforcing(name)
+            },
             getEnforcing(name: string) {
                 switch (name) {
                     case 'DeviceTurboModule':
@@ -244,17 +245,17 @@ vi.mock('react-native-qrcode-svg', () => ({
     default: (props: Record<string, unknown>) => React.createElement('mock-qrcode', props),
 }))
 
-vi.mock('@impos2/ui-base-admin-console', async () => {
-    const ReactModule = await import('react')
+vi.mock('@impos2/ui-base-admin-console', async importOriginal => {
+    const actual = await importOriginal<typeof import('@impos2/ui-base-admin-console')>()
     const {defineKernelRuntimeModuleV2} = await import('@impos2/kernel-base-runtime-shell-v2')
 
     return {
+        ...actual,
         moduleName: 'ui.base.admin-console',
         createModule: () => defineKernelRuntimeModuleV2({
             moduleName: 'ui.base.admin-console',
             packageVersion: '0.0.1',
         }),
-        AdminPopup: (props: Record<string, unknown>) => ReactModule.createElement('mock-admin-popup', props),
         useAdminLauncher: () => ({}),
     }
 })
@@ -295,7 +296,6 @@ describe('assembly ui automation runtime', () => {
     })
 
     it('drives primary retail-shell UI through the assembly automation controller', async () => {
-        const {UiRuntimeProvider} = await import('@impos2/ui-base-runtime-react')
         const {RootScreen} = await import('@impos2/ui-integration-retail-shell')
         const {createApp} = await import('../../src/application/createApp')
         const runtimeApp = createApp({
@@ -309,90 +309,76 @@ describe('assembly ui automation runtime', () => {
                 localNodeId: 'master-node-1',
             },
         })
-        const runtime = await runtimeApp.start()
-        const client = createAutomationJsonRpcClient(runtimeApp.automation!.controller)
-
-        let tree!: TestRenderer.ReactTestRenderer
-        await TestRenderer.act(async () => {
-            tree = TestRenderer.create(
-                <Provider store={runtime.getStore()}>
-                    <UiRuntimeProvider runtime={runtime} {...(runtimeApp.uiRuntimeProviderProps ?? {})}>
-                        <RootScreen deviceId="ASSEMBLY-DEVICE-001" />
-                    </UiRuntimeProvider>
-                </Provider>,
-            )
-        })
+        const mounted = await mountAssemblyAutomationApp(
+            runtimeApp as any,
+            <RootScreen deviceId="ASSEMBLY-DEVICE-001" />,
+        )
 
         try {
-            await expect(client.call('runtime.getInfo', {target: 'primary'})).resolves.toMatchObject({
-                runtimeId: runtime.runtimeId,
+            await expect(mounted.client.call('runtime.getInfo', {target: 'primary'})).resolves.toMatchObject({
+                runtimeId: mounted.runtime.runtimeId,
                 displayContext: {
                     displayIndex: 0,
                     displayCount: 2,
                 },
             })
-            await expect(client.call('wait.forNode', {
+            await expect(mounted.client.call('wait.forNode', {
                 target: 'primary',
                 testID: 'ui-integration-retail-shell:root:primary',
                 timeoutMs: 3_000,
             })).resolves.toMatchObject({
                 testID: 'ui-integration-retail-shell:root:primary',
             })
-            await expect(client.call('wait.forNode', {
+            await expect(mounted.client.call('wait.forNode', {
                 target: 'primary',
                 testID: 'ui-base-terminal-activate-device',
                 timeoutMs: 3_000,
             })).resolves.toMatchObject({
                 testID: 'ui-base-terminal-activate-device',
             })
-
-            await TestRenderer.act(async () => {
-                await client.call('ui.performAction', {
-                    target: 'primary',
-                    nodeId: 'ui-base-terminal-activate-device:input',
-                    action: 'press',
-                })
-            })
-
-            await expect(client.call('wait.forNode', {
+            await expect(mounted.client.call('ui.setValue', {
                 target: 'primary',
-                testID: 'ui-base-virtual-keyboard',
-                timeoutMs: 3_000,
-            })).resolves.toMatchObject({
-                testID: 'ui-base-virtual-keyboard',
-            })
+                nodeId: 'ui-base-terminal-activate-device:sandbox',
+                value: 'sandbox-kernel-base-test',
+            })).rejects.toThrow(/NODE_NOT_ACTIONABLE/)
 
-            for (const key of ['A', 'B', '1', '2', '3', '4']) {
-                await TestRenderer.act(async () => {
-                    await client.call('ui.performAction', {
-                        target: 'primary',
-                        nodeId: `ui-base-virtual-keyboard:key:${key}`,
-                        action: 'press',
-                    })
-                })
-            }
-            await client.call('wait.forIdle', {
+            await mounted.typeVirtualValue(
+                'ui-base-terminal-activate-device:sandbox',
+                'SANDBOX-KERNEL-BASE-TEST',
+            )
+
+            await mounted.typeVirtualValue(
+                'ui-base-terminal-activate-device:input',
+                'AB1234',
+            )
+            await mounted.client.call('wait.forIdle', {
                 target: 'primary',
                 timeoutMs: 500,
             })
 
-            await expect(client.call('ui.getNode', {
+            await expect(mounted.client.call('ui.getNode', {
+                target: 'primary',
+                nodeId: 'ui-base-terminal-activate-device:sandbox-value',
+            })).resolves.toMatchObject({
+                text: '当前沙箱：sandbox-kernel-base-test',
+            })
+            await expect(mounted.client.call('ui.getNode', {
                 target: 'primary',
                 nodeId: 'ui-base-terminal-activate-device:input',
             })).resolves.toMatchObject({
                 value: 'AB1234',
             })
-            await expect(client.call('ui.getNode', {
+            await expect(mounted.client.call('ui.getNode', {
                 target: 'primary',
                 nodeId: 'ui-base-terminal-activate-device:value',
             })).resolves.toMatchObject({
                 text: '当前输入：AB1234',
             })
-            await expect(client.call('runtime.selectState', {
+            await expect(mounted.client.call('runtime.selectState', {
                 target: 'primary',
-                path: ['kernel.base.topology-runtime-v2.context', 'displayMode'],
+                path: ['kernel.base.topology-runtime-v3.context', 'displayMode'],
             })).resolves.toBe('PRIMARY')
-            await expect(client.call('wait.forScreen', {
+            await expect(mounted.client.call('wait.forScreen', {
                 target: 'primary',
                 partKey: 'ui.base.terminal.activate-device',
                 timeoutMs: 2_000,
@@ -402,17 +388,15 @@ describe('assembly ui automation runtime', () => {
                 },
             })
 
-            await TestRenderer.act(async () => {
-                await runtime.dispatchCommand(createCommand(
-                    tcpControlV2CommandDefinitions.activateTerminalSucceeded,
-                    {
-                        terminalId: 'terminal-assembly-001',
-                        accessToken: 'token-assembly-001',
-                    },
-                ))
-            })
+            await mounted.dispatchCommand(createCommand(
+                tcpControlV2CommandDefinitions.activateTerminalSucceeded,
+                {
+                    terminalId: 'terminal-assembly-001',
+                    accessToken: 'token-assembly-001',
+                },
+            ))
 
-            await expect(client.call('wait.forScreen', {
+            await expect(mounted.client.call('wait.forScreen', {
                 target: 'primary',
                 partKey: 'ui.integration.retail-shell.welcome',
                 timeoutMs: 3_000,
@@ -421,7 +405,7 @@ describe('assembly ui automation runtime', () => {
                     partKey: 'ui.integration.retail-shell.welcome',
                 },
             })
-            await expect(client.call('wait.forNode', {
+            await expect(mounted.client.call('wait.forNode', {
                 target: 'primary',
                 testID: 'ui-integration-retail-shell:welcome:title',
                 timeoutMs: 3_000,
@@ -429,15 +413,11 @@ describe('assembly ui automation runtime', () => {
                 text: '欢迎进入零售终端',
             })
         } finally {
-            await TestRenderer.act(async () => {
-                tree.unmount()
-            })
-            runtimeApp.automation?.dispose()
+            await mounted.unmount()
         }
     })
 
     it('exposes the secondary retail-shell target through the same controller', async () => {
-        const {UiRuntimeProvider} = await import('@impos2/ui-base-runtime-react')
         const {RootScreen} = await import('@impos2/ui-integration-retail-shell')
         const {createApp} = await import('../../src/application/createApp')
         const runtimeApp = createApp({
@@ -451,46 +431,35 @@ describe('assembly ui automation runtime', () => {
                 localNodeId: 'slave-node-1',
             },
         })
-        const runtime = await runtimeApp.start()
-        const client = createAutomationJsonRpcClient(runtimeApp.automation!.controller)
-
-        let tree!: TestRenderer.ReactTestRenderer
-        await TestRenderer.act(async () => {
-            tree = TestRenderer.create(
-                <Provider store={runtime.getStore()}>
-                    <UiRuntimeProvider runtime={runtime} {...(runtimeApp.uiRuntimeProviderProps ?? {})}>
-                        <RootScreen deviceId="ASSEMBLY-DEVICE-SECONDARY-001" />
-                    </UiRuntimeProvider>
-                </Provider>,
-            )
-        })
+        const mounted = await mountAssemblyAutomationApp(
+            runtimeApp as any,
+            <RootScreen deviceId="ASSEMBLY-DEVICE-SECONDARY-001" />,
+        )
 
         try {
-            await expect(client.call('runtime.getInfo', {target: 'secondary'})).resolves.toMatchObject({
+            await expect(mounted.client.call('runtime.getInfo', {target: 'secondary'})).resolves.toMatchObject({
                 displayContext: {
                     displayIndex: 1,
                     displayCount: 2,
                 },
             })
 
-            await TestRenderer.act(async () => {
-                await runtime.dispatchCommand(createCommand(
-                    uiRuntimeV2CommandDefinitions.replaceScreen,
-                    {
-                        definition: uiBaseTerminalScreenParts.activateDeviceSecondaryScreen.definition,
-                        source: 'assembly-ui-automation-runtime.spec',
-                    },
-                ))
-            })
+            await mounted.dispatchCommand(createCommand(
+                uiRuntimeV2CommandDefinitions.replaceScreen,
+                {
+                    definition: uiBaseTerminalScreenParts.activateDeviceSecondaryScreen.definition,
+                    source: 'assembly-ui-automation-runtime.spec',
+                },
+            ))
 
-            await expect(client.call('wait.forNode', {
+            await expect(mounted.client.call('wait.forNode', {
                 target: 'secondary',
                 testID: 'ui-integration-retail-shell:root:secondary',
                 timeoutMs: 3_000,
             })).resolves.toMatchObject({
                 testID: 'ui-integration-retail-shell:root:secondary',
             })
-            await expect(client.call('wait.forScreen', {
+            await expect(mounted.client.call('wait.forScreen', {
                 target: 'secondary',
                 partKey: 'ui.base.terminal.activate-device-secondary',
                 timeoutMs: 3_000,
@@ -499,7 +468,7 @@ describe('assembly ui automation runtime', () => {
                     partKey: 'ui.base.terminal.activate-device-secondary',
                 },
             })
-            await expect(client.call('wait.forNode', {
+            await expect(mounted.client.call('wait.forNode', {
                 target: 'secondary',
                 testID: 'ui-base-terminal-activate-device-secondary:title',
                 timeoutMs: 3_000,
@@ -507,10 +476,7 @@ describe('assembly ui automation runtime', () => {
                 text: '等待主屏完成设备激活',
             })
         } finally {
-            await TestRenderer.act(async () => {
-                tree.unmount()
-            })
-            runtimeApp.automation?.dispose()
+            await mounted.unmount()
         }
     })
 })

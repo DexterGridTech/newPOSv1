@@ -154,11 +154,34 @@ export interface AdminConnectorHost {
     probe(channelKey: string): Promise<AdminConnectorProbeResult>
 }
 
+export interface AdminTopologySharePayload {
+    formatVersion: string
+    deviceId: string
+    masterNodeId: string
+    exportedAt?: number
+    serverAddress?: readonly {
+        address: string
+    }[]
+    wsUrl?: string
+    httpBaseUrl?: string
+}
+
+export interface AdminTopologyHost {
+    getSharePayload?(): Promise<AdminTopologySharePayload | null>
+    importSharePayload?(payload: AdminTopologySharePayload): Promise<void>
+    clearMasterLocator?(): Promise<void>
+    reconnect?(): Promise<void>
+    stop?(): Promise<void>
+    getTopologyHostStatus?(): Promise<Record<string, unknown> | null>
+    getTopologyHostDiagnostics?(): Promise<Record<string, unknown> | null>
+}
+
 export interface AdminHostTools {
     device?: AdminDeviceHost
     logs?: AdminLogHost
     control?: AdminAppControlHost
     connector?: AdminConnectorHost
+    topology?: AdminTopologyHost
 }
 
 export interface AdminConsoleSectionRenderContext {

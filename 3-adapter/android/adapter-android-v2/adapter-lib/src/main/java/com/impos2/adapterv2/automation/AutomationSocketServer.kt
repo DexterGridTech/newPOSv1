@@ -40,7 +40,7 @@ class AutomationSocketServer(
   private val acceptedSessionCount = AtomicLong(0L)
   private val receivedMessageCount = AtomicLong(0L)
   private val failedMessageCount = AtomicLong(0L)
-  private val executor: ExecutorService = Executors.newCachedThreadPool(AutomationThreadFactory())
+  @Volatile private var executor: ExecutorService? = null
 
   @Volatile private var serverSocket: ServerSocket? = null
   @Volatile private var running = false
@@ -48,6 +48,7 @@ class AutomationSocketServer(
   @Volatile private var stoppedAt = 0L
   @Volatile private var lastError: String? = null
 
+  @Synchronized
   fun start(): AutomationSocketAddressInfo {
     if (running) {
       return getAddressInfo()
@@ -55,17 +56,19 @@ class AutomationSocketServer(
 
     val socket = ServerSocket(config.port, 50, InetAddress.getByName("127.0.0.1"))
     socket.reuseAddress = true
+    val nextExecutor = Executors.newCachedThreadPool(AutomationThreadFactory())
+    executor = nextExecutor
     serverSocket = socket
     running = true
     startedAt = System.currentTimeMillis()
     stoppedAt = 0L
     lastError = null
 
-    executor.execute {
+    nextExecutor.execute {
       while (running) {
         try {
-          val client = serverSocket?.accept() ?: break
-          executor.execute { handleClient(client) }
+          val client = socket.accept()
+          nextExecutor.execute { handleClient(client) }
         } catch (error: Exception) {
           if (running) {
             lastError = error.message ?: error.javaClass.name
@@ -78,6 +81,7 @@ class AutomationSocketServer(
     return getAddressInfo()
   }
 
+  @Synchronized
   fun stop() {
     running = false
     stoppedAt = System.currentTimeMillis()
@@ -85,8 +89,10 @@ class AutomationSocketServer(
     serverSocket = null
     sessions.values.forEach { it.close() }
     sessions.clear()
-    executor.shutdownNow()
-    executor.awaitTermination(2, TimeUnit.SECONDS)
+    val currentExecutor = executor
+    executor = null
+    currentExecutor?.shutdownNow()
+    currentExecutor?.awaitTermination(2, TimeUnit.SECONDS)
   }
 
   fun getAddressInfo(): AutomationSocketAddressInfo = AutomationSocketAddressInfo(
@@ -153,4 +159,3 @@ class AutomationSocketServer(
     }
   }
 }
-

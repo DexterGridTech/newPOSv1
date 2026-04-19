@@ -65,6 +65,30 @@ Every new UI base package must support both:
 
 In addition, Expo-based scenario smoke validation is allowed for test-only environments, but Expo must not leak into the production export surface.
 
+### 4.1 UI automation runtime is the canonical automation lane
+
+All future `2-ui` package testing should progressively converge on `2-ui/2.1-base/ui-automation-runtime` instead of growing package-local ad-hoc automation protocols.
+
+Rules:
+
+1. UI automation scripts should communicate through the shared JSON-RPC protocol exposed by `ui-automation-runtime`.
+2. The primary automation path is semantic query + action + wait:
+   1. query by stable `testID`, `semanticId`, `role`, `screen`, or text when appropriate
+   2. act through `ui.performAction`, `ui.setValue`, `ui.clearValue`, `ui.submit`, or package-approved semantic actions
+   3. wait through `wait.forNode`, `wait.forScreen`, `wait.forState`, `wait.forRequest`, or `wait.forIdle`
+3. New rendered tests should prefer shared automation helpers such as `renderWithAutomation` over direct `react-test-renderer` tree spelunking when the test is validating user-observable UI behavior.
+4. New `test-expo/runAutomation.mjs` scripts should prefer the shared browser automation harness from `ui-automation-runtime/test-expo` over defining another per-package browser protocol.
+5. Coordinate clicks, arbitrary DOM traversal, and package-local browser eval helpers are allowed only as temporary escape hatches when no semantic node exists yet.
+6. Dynamic script execution must not be used as the normal UI test API; it is reserved for adapter / host escape-hatch diagnostics and must go through the shared script executor interface.
+7. Product builds may compile the automation packages, but Product runtime must not start automation hosts, register targets, keep traces, or expose `scripts.execute`.
+
+Authoring implication:
+
+1. Every reusable screen, modal, overlay, alert, input primitive, and high-value business node should expose a stable `testID`.
+2. Nodes that automation must query or operate should be represented in the semantic registry by shared helpers or by package-level registration through the automation bridge.
+3. Screen changes must clean stale semantic nodes; tests must not rely on nodes from a previous screen remaining queryable.
+4. `primary` and `secondary` targets must be treated as independent automation targets. If a test requires both screens, it should explicitly wait/assert both targets.
+
 ### 5. UI persistence must stay minimal
 
 UI state persistence is allowed only for the minimum recovery set.

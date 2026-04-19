@@ -7,6 +7,7 @@ import {
     selectTcpCredentialSnapshot,
     selectTcpIdentitySnapshot,
     selectTcpRuntimeState,
+    selectTcpSandboxId,
     selectTcpTerminalId,
     tcpControlV2CommandDefinitions,
 } from '../../src'
@@ -33,7 +34,7 @@ describe('tcp-control-runtime-v2 live roundtrip', () => {
         })
 
         await runtime.start()
-        await activateLiveTerminal(runtime, '200000000001', 'device-live-tcp-v2-001')
+        await activateLiveTerminal(runtime, platform.prepare.sandboxId, '200000000001', 'device-live-tcp-v2-001')
 
         const terminalId = selectTcpTerminalId(runtime.getState())
         if (!terminalId) {
@@ -48,6 +49,7 @@ describe('tcp-control-runtime-v2 live roundtrip', () => {
         expect(selectTcpCredentialSnapshot(runtime.getState())).toMatchObject({
             status: 'READY',
         })
+        expect(selectTcpSandboxId(runtime.getState())).toBe(platform.prepare.sandboxId)
         expect(selectTcpBindingSnapshot(runtime.getState())).toMatchObject({
             storeId: 'store-kernel-base-test',
             templateId: 'template-kernel-base-android-pos-standard',

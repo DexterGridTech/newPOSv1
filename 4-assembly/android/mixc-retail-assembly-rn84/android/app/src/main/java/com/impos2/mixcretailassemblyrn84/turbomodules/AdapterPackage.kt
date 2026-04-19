@@ -39,6 +39,7 @@ class AdapterPackage : BaseReactPackage() {
       StateStorageTurboModule.NAME -> StateStorageTurboModule(reactContext)
       AppControlTurboModule.NAME -> AppControlTurboModule(reactContext)
       AutomationTurboModule.NAME -> AutomationTurboModule(reactContext)
+      HotUpdateTurboModule.NAME -> HotUpdateTurboModule(reactContext)
       else -> null
     }
   }
@@ -109,6 +110,14 @@ class AdapterPackage : BaseReactPackage() {
       AutomationTurboModule.NAME to ReactModuleInfo(
         AutomationTurboModule.NAME,
         AutomationTurboModule::class.java.name,
+        false,
+        false,
+        false,
+        true
+      ),
+      HotUpdateTurboModule.NAME to ReactModuleInfo(
+        HotUpdateTurboModule.NAME,
+        HotUpdateTurboModule::class.java.name,
         false,
         false,
         false,

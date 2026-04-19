@@ -2,6 +2,11 @@ import {describe, expect, it} from 'vitest'
 import {createNodeId, createRequestId} from '@impos2/kernel-base-contracts'
 import {createLoggerPort, createPlatformPorts} from '@impos2/kernel-base-platform-ports'
 import {
+    applySliceSyncDiff,
+    createSliceSyncDiff,
+    createSliceSyncSummary,
+} from '@impos2/kernel-base-state-runtime'
+import {
     createCommand,
     createKernelRuntimeV2,
     type RuntimeModuleContextV2,
@@ -14,10 +19,17 @@ import {
     selectTcpBindingSnapshot,
     selectTcpCredentialSnapshot,
     selectTcpIdentitySnapshot,
+    selectTcpSandboxId,
     selectTcpRuntimeState,
     selectTcpTerminalId,
     tcpControlV2CommandDefinitions,
 } from '../../src'
+import {
+    tcpBindingV2SliceDescriptor,
+    tcpCredentialV2SliceDescriptor,
+    tcpIdentityV2SliceDescriptor,
+    tcpSandboxV2SliceDescriptor,
+} from '../../src/features/slices'
 import {resolveTransportServers} from '../../../../test-support/serverConfig'
 
 const createMemoryStorage = () => {
@@ -67,6 +79,9 @@ const createMockTransport = (
         calls.push(`${request.endpoint.method} ${request.endpoint.pathTemplate}`)
 
         if (request.endpoint.pathTemplate === '/api/v1/terminals/activate') {
+            expect(request.input.body).toMatchObject({
+                sandboxId: 'sandbox-test-001',
+            })
             return {
                 data: {
                     success: true,
@@ -98,6 +113,7 @@ const createMockTransport = (
                 throw options.refreshFailure
             }
             expect(request.input.body).toEqual({
+                sandboxId: 'sandbox-test-001',
                 refreshToken: 'refresh-token-001',
             })
             return {
@@ -119,6 +135,9 @@ const createMockTransport = (
                 terminalId: 'terminal-test-001',
                 instanceId: 'instance-test-001',
             })
+            expect(request.input.body).toMatchObject({
+                sandboxId: 'sandbox-test-001',
+            })
             return {
                 data: {
                     success: true,
@@ -136,6 +155,9 @@ const createMockTransport = (
         if (request.endpoint.pathTemplate === '/api/v1/terminals/{terminalId}/deactivate') {
             expect(request.input.path).toEqual({
                 terminalId: 'terminal-test-001',
+            })
+            expect(request.input.body).toMatchObject({
+                sandboxId: 'sandbox-test-001',
             })
             return {
                 data: {
@@ -200,6 +222,205 @@ const createRuntime = (input: {
 }
 
 describe('tcp-control-runtime-v2', () => {
+    it('syncs activated tcp slices from primary state to managed secondary state', () => {
+        const nextIdentity = applySliceSyncDiff(
+            tcpIdentityV2SliceDescriptor,
+            {
+                activationStatus: 'UNACTIVATED',
+                deviceFingerprint: 'DEVICE-001',
+                deviceInfo: {id: 'DEVICE-001', model: 'RN84'},
+            },
+            createSliceSyncDiff(
+                tcpIdentityV2SliceDescriptor,
+                {
+                    activationStatus: 'ACTIVATED',
+                    deviceFingerprint: 'DEVICE-001',
+                    deviceInfo: {id: 'DEVICE-001', model: 'RN84'},
+                    terminalId: 'terminal-001',
+                    activatedAt: 100,
+                },
+                createSliceSyncSummary(tcpIdentityV2SliceDescriptor, {
+                    activationStatus: 'UNACTIVATED',
+                    deviceFingerprint: 'DEVICE-001',
+                    deviceInfo: {id: 'DEVICE-001', model: 'RN84'},
+                }),
+                {mode: 'authoritative'},
+            ),
+            {mode: 'authoritative'},
+        )
+        const nextCredential = applySliceSyncDiff(
+            tcpCredentialV2SliceDescriptor,
+            {status: 'EMPTY'},
+            createSliceSyncDiff(
+                tcpCredentialV2SliceDescriptor,
+                {
+                    accessToken: 'token-001',
+                    refreshToken: 'refresh-001',
+                    expiresAt: 200,
+                    refreshExpiresAt: 300,
+                    status: 'READY',
+                    updatedAt: 100,
+                },
+                createSliceSyncSummary(tcpCredentialV2SliceDescriptor, {status: 'EMPTY'}),
+                {mode: 'authoritative'},
+            ),
+            {mode: 'authoritative'},
+        )
+        const nextBinding = applySliceSyncDiff(
+            tcpBindingV2SliceDescriptor,
+            {},
+            createSliceSyncDiff(
+                tcpBindingV2SliceDescriptor,
+                {
+                    platformId: 'platform-001',
+                    tenantId: 'tenant-001',
+                },
+                createSliceSyncSummary(tcpBindingV2SliceDescriptor, {}),
+                {mode: 'authoritative'},
+            ),
+            {mode: 'authoritative'},
+        )
+        const nextSandbox = applySliceSyncDiff(
+            tcpSandboxV2SliceDescriptor,
+            {},
+            createSliceSyncDiff(
+                tcpSandboxV2SliceDescriptor,
+                {
+                    sandboxId: 'sandbox-001',
+                    updatedAt: 100,
+                },
+                createSliceSyncSummary(tcpSandboxV2SliceDescriptor, {}),
+                {mode: 'authoritative'},
+            ),
+            {mode: 'authoritative'},
+        )
+
+        expect(nextIdentity).toMatchObject({
+            activationStatus: 'ACTIVATED',
+            terminalId: 'terminal-001',
+            activatedAt: 100,
+        })
+        expect(nextCredential).toMatchObject({
+            status: 'READY',
+            accessToken: 'token-001',
+        })
+        expect(nextBinding).toMatchObject({
+            platformId: 'platform-001',
+            tenantId: 'tenant-001',
+        })
+        expect(nextSandbox).toMatchObject({
+            sandboxId: 'sandbox-001',
+            updatedAt: 100,
+        })
+    })
+
+    it('applies authoritative tcp diff clears without keeping stale values', () => {
+        const nextIdentity = applySliceSyncDiff(
+            tcpIdentityV2SliceDescriptor,
+            {
+                activationStatus: 'ACTIVATED',
+                deviceFingerprint: 'DEVICE-001',
+                deviceInfo: {id: 'DEVICE-001', model: 'RN84'},
+                terminalId: 'terminal-001',
+                activatedAt: 100,
+            },
+            createSliceSyncDiff(
+                tcpIdentityV2SliceDescriptor,
+                {
+                    activationStatus: 'UNACTIVATED',
+                    deviceFingerprint: 'DEVICE-001',
+                    deviceInfo: {id: 'DEVICE-001', model: 'RN84'},
+                },
+                createSliceSyncSummary(tcpIdentityV2SliceDescriptor, {
+                    activationStatus: 'ACTIVATED',
+                    deviceFingerprint: 'DEVICE-001',
+                    deviceInfo: {id: 'DEVICE-001', model: 'RN84'},
+                    terminalId: 'terminal-001',
+                    activatedAt: 100,
+                }),
+                {mode: 'authoritative'},
+            ),
+            {mode: 'authoritative'},
+        )
+        const nextCredential = applySliceSyncDiff(
+            tcpCredentialV2SliceDescriptor,
+            {
+                accessToken: 'token-001',
+                refreshToken: 'refresh-001',
+                expiresAt: 200,
+                refreshExpiresAt: 300,
+                status: 'READY',
+                updatedAt: 100,
+            },
+            createSliceSyncDiff(
+                tcpCredentialV2SliceDescriptor,
+                {
+                    status: 'EMPTY',
+                },
+                createSliceSyncSummary(tcpCredentialV2SliceDescriptor, {
+                    accessToken: 'token-001',
+                    refreshToken: 'refresh-001',
+                    expiresAt: 200,
+                    refreshExpiresAt: 300,
+                    status: 'READY',
+                    updatedAt: 100,
+                }),
+                {mode: 'authoritative'},
+            ),
+            {mode: 'authoritative'},
+        )
+        const nextBinding = applySliceSyncDiff(
+            tcpBindingV2SliceDescriptor,
+            {
+                platformId: 'platform-001',
+                tenantId: 'tenant-001',
+            },
+            createSliceSyncDiff(
+                tcpBindingV2SliceDescriptor,
+                {},
+                createSliceSyncSummary(tcpBindingV2SliceDescriptor, {
+                    platformId: 'platform-001',
+                    tenantId: 'tenant-001',
+                }),
+                {mode: 'authoritative'},
+            ),
+            {mode: 'authoritative'},
+        )
+        const nextSandbox = applySliceSyncDiff(
+            tcpSandboxV2SliceDescriptor,
+            {
+                sandboxId: 'sandbox-001',
+                updatedAt: 100,
+            },
+            createSliceSyncDiff(
+                tcpSandboxV2SliceDescriptor,
+                {},
+                createSliceSyncSummary(tcpSandboxV2SliceDescriptor, {
+                    sandboxId: 'sandbox-001',
+                    updatedAt: 100,
+                }),
+                {mode: 'authoritative'},
+            ),
+            {mode: 'authoritative'},
+        )
+
+        expect(nextIdentity).toMatchObject({
+            activationStatus: 'UNACTIVATED',
+            deviceFingerprint: 'DEVICE-001',
+            deviceInfo: {id: 'DEVICE-001', model: 'RN84'},
+        })
+        expect(nextIdentity.terminalId).toBeUndefined()
+        expect(nextIdentity.activatedAt).toBeUndefined()
+        expect(nextCredential).toMatchObject({
+            status: 'EMPTY',
+        })
+        expect(nextCredential.accessToken).toBeUndefined()
+        expect(nextCredential.refreshToken).toBeUndefined()
+        expect(nextCredential.expiresAt).toBeUndefined()
+        expect(nextBinding).toEqual({})
+        expect(nextSandbox).toEqual({})
+    })
+
     it('returns stable snapshot selector references for unchanged state', async () => {
         const runtime = createRuntime({
             localNodeId: 'node_tcp_v2_selector_stability',
@@ -260,6 +481,7 @@ describe('tcp-control-runtime-v2', () => {
         const activationRequestId = createRequestId()
         const activationResult = await runtime.dispatchCommand(
             createCommand(tcpControlV2CommandDefinitions.activateTerminal, {
+                sandboxId: 'sandbox-test-001',
                 activationCode: 'ACT-KERNEL-BASE-001',
             }),
             {requestId: activationRequestId},
@@ -271,6 +493,7 @@ describe('tcp-control-runtime-v2', () => {
             tcpControlV2CommandDefinitions.activateTerminalSucceeded.commandName,
         ])
         expect(selectTcpTerminalId(runtime.getState())).toBe('terminal-test-001')
+        expect(selectTcpSandboxId(runtime.getState())).toBe('sandbox-test-001')
         expect(selectTcpAccessToken(runtime.getState())).toBe('access-token-001')
         expect(selectTcpIdentitySnapshot(runtime.getState())).toMatchObject({
             deviceFingerprint: 'device-test-001',
@@ -356,6 +579,7 @@ describe('tcp-control-runtime-v2', () => {
             bootstrapped: false,
         })
         expect(selectTcpRuntimeState(restartedRuntime.getState())?.lastActivationRequestId).toBeUndefined()
+        expect(selectTcpSandboxId(restartedRuntime.getState())).toBe('sandbox-test-001')
     })
 
     it('deactivates terminal remotely and clears local activation recovery state', async () => {
@@ -377,6 +601,7 @@ describe('tcp-control-runtime-v2', () => {
             },
         }))
         await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.activateTerminal, {
+            sandboxId: 'sandbox-test-001',
             activationCode: 'ACT-DEACTIVATE-001',
         }))
 
@@ -449,6 +674,7 @@ describe('tcp-control-runtime-v2', () => {
             },
         }))
         await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.activateTerminal, {
+            sandboxId: 'sandbox-test-001',
             activationCode: 'ACT-TCP-FAIL-001',
         }))
 

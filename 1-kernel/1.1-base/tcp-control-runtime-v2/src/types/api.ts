@@ -10,6 +10,7 @@ export interface TcpPlatformEnvelope<T> {
 }
 
 export interface ActivateTerminalApiRequest {
+    sandboxId: string
     activationCode: string
     deviceFingerprint: string
     deviceInfo: TcpDeviceInfo
@@ -25,6 +26,7 @@ export interface ActivateTerminalApiResponse {
 }
 
 export interface RefreshTerminalCredentialApiRequest {
+    sandboxId: string
     refreshToken: string
 }
 
@@ -34,6 +36,7 @@ export interface RefreshTerminalCredentialApiResponse {
 }
 
 export interface DeactivateTerminalApiRequest {
+    sandboxId: string
     reason?: string
 }
 
@@ -45,7 +48,9 @@ export interface DeactivateTerminalApiResponse {
 }
 
 export interface ReportTaskResultApiRequest
-    extends Omit<TcpTaskResultReportRuntimePayload, 'terminalId' | 'instanceId'> {}
+    extends Omit<TcpTaskResultReportRuntimePayload, 'terminalId' | 'instanceId'> {
+    sandboxId: string
+}
 
 export interface ReportTaskResultApiResponse {
     instanceId: string

@@ -26,6 +26,7 @@ export interface TopologyIncomingHandlerDeps {
     }
     context: {
         localNodeId: string
+        platformPorts: import('@impos2/kernel-base-platform-ports').PlatformPorts
         getSyncSlices: () => readonly any[]
         getState: () => Record<string, unknown>
         applyRemoteCommandEvent: (envelope: Extract<TopologyRuntimeV2IncomingMessage, {type: 'command-event'}>['envelope']) => void
@@ -39,9 +40,26 @@ export interface TopologyIncomingHandlerDeps {
 }
 
 export const createTopologyIncomingHandlers = (deps: TopologyIncomingHandlerDeps) => {
+    const logger = deps.context.platformPorts.logger.scope({
+        moduleName: 'kernel.base.topology-runtime-v2',
+        subsystem: 'sync',
+        component: 'TopologyIncomingHandlers',
+    })
     const handleHelloAck = (
         message: Extract<TopologyRuntimeV2IncomingMessage, {type: 'node-hello-ack'}>,
     ) => {
+        logger.info({
+            category: 'topology.sync',
+            event: 'topology-handle-hello-ack',
+            message: 'handle topology hello ack',
+            data: {
+                localNodeId: deps.context.localNodeId,
+                accepted: message.ack.accepted,
+                sessionId: message.ack.sessionId ?? null,
+                peerNodeId: message.ack.peerRuntime?.nodeId ?? null,
+                peerRole: message.ack.peerRuntime?.role ?? null,
+            },
+        })
         deps.setSessionId(message.ack.sessionId)
         if (!message.ack.accepted || !message.ack.sessionId) {
             deps.dispatchConnectionPatch({
@@ -70,6 +88,25 @@ export const createTopologyIncomingHandlers = (deps: TopologyIncomingHandlerDeps
     const handleResumeBegin = (
         message: Extract<TopologyRuntimeV2IncomingMessage, {type: 'resume-begin'}>,
     ) => {
+        if (!message.sessionId || !message.nodeId) {
+            console.info('[topology-handle-resume-begin-skip]', JSON.stringify({
+                nodeId: deps.context.localNodeId,
+                reason: 'invalid-resume-begin-payload',
+                sessionId: message.sessionId ?? null,
+                sourceNodeId: message.nodeId ?? null,
+            }))
+            return
+        }
+        logger.info({
+            category: 'topology.sync',
+            event: 'topology-handle-resume-begin',
+            message: 'handle topology resume begin',
+            data: {
+                localNodeId: deps.context.localNodeId,
+                sessionId: message.sessionId,
+                sourceNodeId: message.nodeId,
+            },
+        })
         deps.setSessionId(message.sessionId)
         deps.rememberPeerNodeId(message.nodeId)
         deps.sendResumeArtifacts({
@@ -97,6 +134,16 @@ export const createTopologyIncomingHandlers = (deps: TopologyIncomingHandlerDeps
         message: Extract<TopologyRuntimeV2IncomingMessage, {type: 'state-sync-summary'}>,
     ) => {
         deps.rememberPeerNodeId(message.envelope.sourceNodeId)
+        logger.info({
+            category: 'topology.sync',
+            event: 'topology-sync-receive-summary',
+            message: 'receive topology sync summary',
+            data: {
+                sessionId: message.envelope.sessionId,
+                direction: message.envelope.direction,
+                sliceNames: Object.keys(message.envelope.summaryBySlice),
+            },
+        })
         const session = deps.syncSessions.acceptRemoteSummary({
             sessionId: message.envelope.sessionId as any,
             peerNodeId: message.envelope.sourceNodeId as any,
@@ -110,6 +157,16 @@ export const createTopologyIncomingHandlers = (deps: TopologyIncomingHandlerDeps
             (session.lastDiff ?? []).map(entry => [entry.sliceName, entry.diff]),
         )
         if (Object.keys(diffBySlice).length > 0) {
+            logger.info({
+                category: 'topology.sync',
+                event: 'topology-sync-reply-diff',
+                message: 'reply topology sync diff to summary',
+                data: {
+                    sessionId: message.envelope.sessionId,
+                    direction: message.envelope.direction,
+                    sliceNames: Object.keys(diffBySlice),
+                },
+            })
             deps.send({
                 type: 'state-sync-diff',
                 envelope: {
@@ -152,6 +209,17 @@ export const createTopologyIncomingHandlers = (deps: TopologyIncomingHandlerDeps
         message: Extract<TopologyRuntimeV2IncomingMessage, {type: 'state-sync-diff'}>,
     ) => {
         deps.rememberPeerNodeId(message.envelope.sourceNodeId)
+        logger.info({
+            category: 'topology.sync',
+            event: 'topology-sync-receive-diff',
+            message: 'receive topology sync diff',
+            data: {
+                sessionId: message.envelope.sessionId,
+                direction: message.envelope.direction,
+                sliceNames: Object.keys(message.envelope.diffBySlice),
+                diffBySlice: message.envelope.diffBySlice,
+            },
+        })
         deps.context.applyStateSyncDiff(message.envelope)
         deps.syncSessions.activateContinuous({
             sessionId: message.envelope.sessionId as any,
@@ -180,6 +248,18 @@ export const createTopologyIncomingHandlers = (deps: TopologyIncomingHandlerDeps
         message: Extract<TopologyRuntimeV2IncomingMessage, {type: 'state-sync-commit-ack'}>,
     ) => {
         deps.rememberPeerNodeId(message.envelope.sourceNodeId)
+        logger.info({
+            category: 'topology.sync',
+            event: 'topology-sync-receive-commit-ack',
+            message: 'receive topology sync commit ack',
+            data: {
+                localNodeId: deps.context.localNodeId,
+                sessionId: message.envelope.sessionId,
+                direction: message.envelope.direction,
+                committedAt: message.envelope.committedAt,
+                sourceNodeId: message.envelope.sourceNodeId,
+            },
+        })
         deps.syncSessions.commitContinuous(
             message.envelope.sessionId,
             message.envelope.direction,

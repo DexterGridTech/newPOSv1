@@ -81,7 +81,7 @@ export const InputField: React.FC<InputFieldProps> = ({
             visible: true,
             enabled: true,
             persistent: true,
-            availableActions: isVirtual ? ['press', 'changeText', 'clear'] : ['changeText', 'clear'],
+            availableActions: isVirtual ? ['press'] : ['changeText', 'clear'],
             onAutomationAction: action => {
                 if (action.action === 'press' && isVirtual) {
                     activateInput?.({
@@ -94,6 +94,9 @@ export const InputField: React.FC<InputFieldProps> = ({
                         onChangeText,
                     })
                     return {ok: true}
+                }
+                if (isVirtual) {
+                    return {ok: false}
                 }
                 if (action.action === 'changeText') {
                     onChangeText(String(action.value ?? ''))

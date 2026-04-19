@@ -3,13 +3,13 @@ export const releaseInfo = {
   "platform": "android",
   "assemblyVersion": "1.0.0",
   "buildNumber": 1,
-  "bundleVersion": "1.0.0+ota.0",
+  "bundleVersion": "1.0.0+ota.1",
   "runtimeVersion": "android-mixc-retail-rn84@1.0",
   "channel": "development",
   "minSupportedAppVersion": "1.0.0",
   "git": {
-    "commit": "HEAD",
-    "branch": "local"
+    "commit": "629e9f6a0b57ed0f03967dc971afebc7a8b28d8e",
+    "branch": "main"
   },
-  "updatedAt": "2026-04-17T00:00:00.000Z"
+  "updatedAt": "2026-04-19T02:18:13.233Z"
 } as const

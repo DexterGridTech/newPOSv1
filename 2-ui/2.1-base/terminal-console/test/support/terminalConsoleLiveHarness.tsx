@@ -1,9 +1,5 @@
-import React from 'react'
-import TestRenderer from 'react-test-renderer'
-import {Provider} from 'react-redux'
-import type {EnhancedStore} from '@reduxjs/toolkit'
 import type {PlatformPorts} from '@impos2/kernel-base-platform-ports'
-import type {KernelRuntimeModuleV2, KernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
+import type {KernelRuntimeModuleV2} from '@impos2/kernel-base-runtime-shell-v2'
 import {
     createCommand,
     runtimeShellV2CommandDefinitions,
@@ -26,7 +22,6 @@ import {
     createRuntimeReactHarness,
     type RuntimeReactHarness,
 } from '../../../runtime-react/test/support/runtimeReactHarness'
-import {UiRuntimeProvider} from '../../../runtime-react/src'
 import {createModule as createInputRuntimeModule} from '../../../input-runtime/src'
 import {createModule as createTerminalConsoleModule} from '../../src'
 
@@ -100,18 +95,5 @@ export const createTerminalConsoleLiveHarness = async (
         },
     }
 }
-
-export const renderTerminalConsoleLive = (
-    element: React.ReactElement,
-    store: EnhancedStore,
-    runtime: KernelRuntimeV2,
-) =>
-    TestRenderer.create(
-        <Provider store={store}>
-            <UiRuntimeProvider runtime={runtime}>
-                {element}
-            </UiRuntimeProvider>
-        </Provider>,
-    )
 
 export {fetchJson, waitFor}

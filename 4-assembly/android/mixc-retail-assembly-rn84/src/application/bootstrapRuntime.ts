@@ -1,6 +1,6 @@
 import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
 import {tcpControlV2CommandDefinitions} from '@impos2/kernel-base-tcp-control-runtime-v2'
-import {topologyRuntimeV2CommandDefinitions} from '@impos2/kernel-base-topology-runtime-v2'
+import {topologyRuntimeV3CommandDefinitions} from '@impos2/kernel-base-topology-runtime-v3'
 import type {KernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
 import type {AppProps} from '../types'
 
@@ -8,31 +8,35 @@ export const bootstrapAssemblyRuntime = async (
     runtime: KernelRuntimeV2,
     props: AppProps,
 ): Promise<void> => {
+    const isManagedSecondary = props.displayIndex > 0 && props.displayCount > 1
+
     if (props.displayIndex === 0 && props.displayCount > 1) {
         await runtime.dispatchCommand(createCommand(
-            topologyRuntimeV2CommandDefinitions.setEnableSlave,
+            topologyRuntimeV3CommandDefinitions.setEnableSlave,
             {enableSlave: true},
         ))
     }
 
     if (props.displayIndex > 0) {
         await runtime.dispatchCommand(createCommand(
-            topologyRuntimeV2CommandDefinitions.setInstanceMode,
+            topologyRuntimeV3CommandDefinitions.setInstanceMode,
             {instanceMode: 'SLAVE'},
         ))
         await runtime.dispatchCommand(createCommand(
-            topologyRuntimeV2CommandDefinitions.setDisplayMode,
+            topologyRuntimeV3CommandDefinitions.setDisplayMode,
             {displayMode: 'SECONDARY'},
         ))
     }
 
     if (props.topology?.wsUrl && props.topology.role === 'slave') {
         await runtime.dispatchCommand(createCommand(
-            topologyRuntimeV2CommandDefinitions.setMasterInfo,
+            topologyRuntimeV3CommandDefinitions.setMasterLocator,
             {
-                masterInfo: {
-                    deviceId: props.topology.masterNodeId ?? props.deviceId,
+                masterLocator: {
+                    masterNodeId: props.topology.masterNodeId,
+                    masterDeviceId: props.topology.masterDeviceId,
                     serverAddress: [{address: props.topology.wsUrl}],
+                    httpBaseUrl: props.topology.httpBaseUrl,
                     addedAt: Date.now() as any,
                 },
             },
@@ -40,24 +44,26 @@ export const bootstrapAssemblyRuntime = async (
     }
 
     await runtime.dispatchCommand(createCommand(
-        topologyRuntimeV2CommandDefinitions.refreshTopologyContext,
+        topologyRuntimeV3CommandDefinitions.refreshTopologyContext,
         {},
     ))
 
-    await runtime.dispatchCommand(createCommand(
-        tcpControlV2CommandDefinitions.bootstrapTcpControl,
-        {
-            deviceInfo: {
-                id: props.deviceId,
-                model: 'Mixc Retail Android RN84',
+    if (!isManagedSecondary) {
+        await runtime.dispatchCommand(createCommand(
+            tcpControlV2CommandDefinitions.bootstrapTcpControl,
+            {
+                deviceInfo: {
+                    id: props.deviceId,
+                    model: 'Mixc Retail Android RN84',
+                },
             },
-        },
-    ))
+        ))
+    }
 
-    if (props.topology?.ticketToken && props.topology.wsUrl) {
+    if (props.topology?.wsUrl) {
         void Promise.resolve().then(async () => {
             await runtime.dispatchCommand(createCommand(
-                topologyRuntimeV2CommandDefinitions.startTopologyConnection,
+                topologyRuntimeV3CommandDefinitions.startTopologyConnection,
                 {},
             ))
         }).catch(() => {

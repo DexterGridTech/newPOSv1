@@ -3528,11 +3528,13 @@ __metadata:
     "@impos2/kernel-base-platform-ports": "workspace:*"
     "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
     "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*"
-    "@impos2/kernel-base-topology-runtime-v2": "workspace:*"
+    "@impos2/kernel-base-tdp-sync-runtime-v2": "workspace:*"
+    "@impos2/kernel-base-topology-runtime-v3": "workspace:*"
     "@impos2/kernel-base-transport-runtime": "workspace:*"
     "@impos2/kernel-base-ui-runtime-v2": "workspace:*"
     "@impos2/kernel-server-config-v2": "workspace:*"
     "@impos2/ui-base-admin-console": "workspace:*"
+    "@impos2/ui-base-automation-runtime": "workspace:*"
     "@impos2/ui-base-input-runtime": "workspace:*"
     "@impos2/ui-base-runtime-react": "workspace:*"
     "@impos2/ui-base-terminal-console": "workspace:*"
@@ -3664,6 +3666,19 @@ __metadata:
     tsx: ^4.21.0
     typescript: ^5.9.3
     ws: ^8.19.0
+  languageName: unknown
+  linkType: soft
+
+"@impos2/dual-topology-host-v3@workspace:0-mock-server/dual-topology-host-v3":
+  version: 0.0.0-use.local
+  resolution: "@impos2/dual-topology-host-v3@workspace:0-mock-server/dual-topology-host-v3"
+  dependencies:
+    "@types/node": ^25.0.9
+    "@types/ws": ^8.5.13
+    tsx: ^4.21.0
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+    ws: ^8.18.0
   languageName: unknown
   linkType: soft
 
@@ -3840,6 +3855,17 @@ __metadata:
     "@types/node": ^25.0.9
     madge: ^8.0.0
     tsx: ^4.21.0
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  languageName: unknown
+  linkType: soft
+
+"@impos2/kernel-base-topology-runtime-v3@workspace:*, @impos2/kernel-base-topology-runtime-v3@workspace:1-kernel/1.1-base/topology-runtime-v3":
+  version: 0.0.0-use.local
+  resolution: "@impos2/kernel-base-topology-runtime-v3@workspace:1-kernel/1.1-base/topology-runtime-v3"
+  dependencies:
+    "@impos2/kernel-base-contracts": "workspace:*"
+    "@types/node": ^25.0.9
     typescript: ^5.9.3
     vitest: ^3.2.4
   languageName: unknown
@@ -4357,7 +4383,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@impos2/ui-base-automation-runtime@workspace:2-ui/2.1-base/ui-automation-runtime":
+"@impos2/ui-base-automation-runtime@workspace:*, @impos2/ui-base-automation-runtime@workspace:2-ui/2.1-base/ui-automation-runtime":
   version: 0.0.0-use.local
   resolution: "@impos2/ui-base-automation-runtime@workspace:2-ui/2.1-base/ui-automation-runtime"
   dependencies:

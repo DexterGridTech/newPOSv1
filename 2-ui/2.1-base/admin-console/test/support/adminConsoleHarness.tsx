@@ -4,6 +4,12 @@ import {
     renderWithStore,
     type RuntimeReactHarness,
 } from '../../../runtime-react/test/support/runtimeReactHarness'
+import React from 'react'
+import type {RenderWithAutomationResult} from '../../../runtime-react/test/support/renderWithAutomation'
+import {
+    InputRuntimeProvider,
+    VirtualKeyboardOverlay,
+} from '../../../input-runtime/src'
 import type {PlatformPorts} from '@impos2/kernel-base-platform-ports'
 import type {KernelRuntimeModuleV2} from '@impos2/kernel-base-runtime-shell-v2'
 import {createMemoryStorage} from '../../../../../1-kernel/test-support/storageHarness'
@@ -49,5 +55,18 @@ export const createAdminConsoleHarness = async (
         displayContext,
     })
 }
+
+export const renderAdminWithAutomation = (
+    element: React.ReactElement,
+    harness: AdminConsoleHarness,
+): RenderWithAutomationResult =>
+    renderWithAutomation(
+        <InputRuntimeProvider>
+            {element}
+            <VirtualKeyboardOverlay />
+        </InputRuntimeProvider>,
+        harness.store,
+        harness.runtime,
+    )
 
 export {renderWithAutomation, renderWithStore}

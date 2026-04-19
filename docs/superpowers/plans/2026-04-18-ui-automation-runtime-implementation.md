@@ -2427,51 +2427,64 @@ git commit -m "Add thin native automation startup bridge only where required"
 ## Task 12: Add ADB verification flow for the Android automation socket
 
 **Files:**
-- Modify if needed: `scripts/setup-android-port-forwarding.mjs`
-- Create if needed: `4-assembly/android/mixc-retail-assembly-rn84/test/scripts/check-automation-socket.mjs`
+- Create: `scripts/android-automation-rpc.mjs`
+- Modify: `package.json`
+- Modify: `4-assembly/android/mixc-retail-assembly-rn84/App.tsx`
+- Modify: `4-assembly/android/mixc-retail-assembly-rn84/src/application/automation/hostConfig.ts`
 - Test: Android device / emulator
 
 - [ ] **Step 1: Add a dedicated automation port mapping only if the chosen port is stable**
 
-If the implementation chooses a fixed automation port, extend `scripts/setup-android-port-forwarding.mjs` with:
+For `mixc-retail-assembly-rn84`, fix the Android device-side ports per process:
 
 ```js
-{ host: 9595, device: 9595, description: 'Assembly automation socket' }
+const PRIMARY_PORT = 18584
+const SECONDARY_PORT = 18585
 ```
 
-Do not map it until the transport implementation is real and stable.
+Do not reuse the same device port across main / secondary processes.
 
 - [ ] **Step 2: Add a raw socket smoke checker**
 
-Create `4-assembly/android/mixc-retail-assembly-rn84/test/scripts/check-automation-socket.mjs`:
+Create `scripts/android-automation-rpc.mjs` with commands:
 
-```js
-import net from 'node:net'
+1. `forward`
+2. `hello`
+3. `call`
+4. `smoke`
 
-const socket = net.createConnection({host: '127.0.0.1', port: 9595}, () => {
-  socket.write(JSON.stringify({id: '1', method: 'session.hello', target: 'host'}) + '\n')
-})
+Behavior:
 
-socket.on('data', chunk => {
-  process.stdout.write(chunk)
-  socket.end()
-})
-```
+1. Resolve `adb` from `ANDROID_HOME` or `PATH`
+2. Default to the first connected device, unless `ANDROID_SERIAL` / `--serial` is set
+3. Use `adb forward tcp:<hostPort> tcp:<devicePort>`
+4. Send newline-delimited JSON-RPC to `127.0.0.1:<hostPort>`
+5. Print only JSON to stdout; operational logs go to stderr
 
 - [ ] **Step 3: Run the real-device verification sequence**
 
 Run in order:
 
-1. `corepack yarn android:port-forward`
-2. `corepack yarn assembly:android-mixc-retail-rn84:metro`
-3. `corepack yarn assembly:android-mixc-retail-rn84:run`
-4. `node 4-assembly/android/mixc-retail-assembly-rn84/test/scripts/check-automation-socket.mjs`
+1. Start Metro: `corepack yarn workspace @impos2/assembly-android-mixc-retail-rn84 start`
+2. Configure device reverses for Metro/mock/Reactotron
+3. Install latest debug APK
+4. Restart app
+5. `node scripts/android-automation-rpc.mjs smoke --target primary`
+6. `node scripts/android-automation-rpc.mjs smoke --target secondary`
+7. `node scripts/android-automation-rpc.mjs call scripts.execute --target primary --params '{"source":"return { ok: true }"}'`
+8. `node scripts/android-automation-rpc.mjs type-virtual ui-base-terminal-activate-device:sandbox sandbox-test-001 --target primary`
+9. `node scripts/android-automation-rpc.mjs type-virtual ui-base-terminal-activate-device:input ABC123 --target primary`
+10. `node scripts/android-automation-rpc.mjs activate-device sandbox-test-001 ABC123 --target primary`
+11. `node scripts/android-automation-rpc.mjs wait-activated sandbox-test-001 --target primary`
 
 Expected:
 
-1. ADB reverse / forward is configured.
-2. Assembly boots.
-3. Socket responds with `protocolVersion`.
+1. Primary responds on `18584`, secondary responds on `18585`
+2. `session.hello` returns protocol metadata
+3. `runtime.getInfo` returns correct `displayIndex`
+4. `ui.getTree` returns semantic nodes
+5. `scripts.execute` returns a result in debug mode
+6. `type-virtual` / `activate-device` can change real-device UI through the virtual keyboard path and `wait-activated` confirms `ACTIVATED` plus the expected `sandboxId`
 
 - [ ] **Step 4: Record the real-device result in the task log**
 

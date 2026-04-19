@@ -195,6 +195,58 @@ TDP 已验证的做法是：
 2. command inbox 不需要持久化恢复。
 3. 与 command 相关的客户端设计重点应放在接收、分发、观测，而不是离线补执行。
 
+### 4. Android assembly / UI 自动化联调默认先走 socket 与日志
+
+对于 `4-assembly/android/mixc-retail-assembly-rn84`、`2-ui/2.1-base/ui-automation-runtime`、双屏 UI、topology 同步、激活/注销、管理员流程这类问题，默认遵守以下顺序：
+
+1. 先使用本地 skill `~/.codex/skills/android-assembly-socket-debug`。
+2. 先使用 `scripts/android-automation-rpc.mjs` 直连 automation socket。
+3. 先读真实运行态，再判断代码是否有问题。
+4. 先加日志，再下结论。
+
+涉及 `topology-runtime-v3` 主副屏同步时，优先先证明“拓扑同步通道本身是否健康”，再测业务链路。当前仓库已经内建可复用探针：
+
+1. `kernel.base.topology-runtime-v3.demo.master`
+   - 用于验证 `master-to-slave`
+2. `kernel.base.topology-runtime-v3.demo.slave`
+   - 用于验证 `slave-to-master`
+
+推荐顺序：
+
+1. 先用 `kernel.base.topology-runtime-v3.upsert-demo-master-entry`，从 `primary` 写，再从 `secondary` 读。
+2. 再用 `kernel.base.topology-runtime-v3.upsert-demo-slave-entry`，从 `secondary` 写，再从 `primary` 读。
+3. 再验证 `remove/reset`，确认 tombstone/清空也能同步。
+4. 最后再进入真实业务链路，例如激活、注销、管理员流程。
+
+这样能快速区分：
+
+1. 是 topology sync 通道坏了；
+2. 还是业务模块自己的 state/action/actor 有问题。
+
+推荐最小排查顺序：
+
+1. `session.hello` / `runtime.getInfo` 确认 `primary` / `secondary` target 是否真的 ready。
+2. `runtime.selectState` / `runtime.getRequest` / `ui.getNode` 读取真实 state / request / UI。
+3. 如需 isolate 问题，优先 `command.dispatch` 直接驱动单条命令，而不是一上来就跑完整激活链路。
+4. 只有 direct RPC 已经证明路径稳定后，再写或跑高层自动化脚本。
+
+日志与证据要求：
+
+1. 调试问题时，TS 侧和原生侧都可以并且应该加 targeted logs。
+2. 先 `adb logcat -c`，单次复现，再用 `adb logcat -d -v epoch` 或 `-v time` 对齐时序。
+3. 不要主要靠读代码和猜。代码阅读只用于缩小嫌疑范围，不是主要证据来源。
+
+双屏时序判断要求：
+
+1. 副屏延迟约 `3s` 启动是业务需要，不应把它和“主副屏同步慢”混为一谈。
+2. 冷启动 ready 时间与 ready 后同步延迟必须分开测。
+3. 当前仓库已经验证：主副屏都 ready 后，主屏 state 变更传播到副屏 state / UI 大约在 `~100ms` 量级。
+
+异常处理要求：
+
+1. 如果副屏按预期本该起来却没起来，应先按 crash / hang 排查。
+2. 不要用“手动再拉起副屏”来掩盖启动问题，然后继续测业务链路。
+
 ## 四、推荐实施清单
 
 后续新增需要通信和恢复能力的 core 包时，建议按下面顺序推进：

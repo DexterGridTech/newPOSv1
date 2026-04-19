@@ -23,7 +23,7 @@
   "dependencies": {
     "@impos2/kernel-base-runtime-shell-v2": "workspace:*",
     "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*",
-    "@impos2/kernel-base-topology-runtime-v2": "workspace:*",
+    "@impos2/kernel-base-topology-runtime-v3": "workspace:*",
     "@impos2/kernel-base-ui-runtime-v2": "workspace:*",
     "@impos2/ui-base-admin-console": "workspace:*",
     "@impos2/ui-base-input-runtime": "workspace:*",

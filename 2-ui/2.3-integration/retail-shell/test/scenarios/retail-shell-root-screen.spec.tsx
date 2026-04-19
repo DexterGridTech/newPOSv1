@@ -92,4 +92,26 @@ describe('retail-shell root screen', () => {
 
         await automation.waitForNode('ui-base-admin-popup:login')
     })
+
+    it('opens admin popup through the semantic launcher node', async () => {
+        const harness = await createRetailShellHarness()
+        harness.store.dispatch(tcpControlV2StateActions.setActivatedIdentity({
+            terminalId: 'terminal-root-003',
+            activatedAt: Date.now(),
+        }))
+        await harness.runtime.dispatchCommand(createCommand(
+            runtimeShellV2CommandDefinitions.initialize,
+            {},
+        ))
+
+        const automation = renderWithAutomation(
+            <RootScreen deviceId="DEVICE-001" />,
+            harness.store,
+            harness.runtime,
+        )
+
+        await automation.press('ui-integration-retail-shell:admin-launcher')
+
+        await automation.waitForNode('ui-base-admin-popup:login')
+    })
 })

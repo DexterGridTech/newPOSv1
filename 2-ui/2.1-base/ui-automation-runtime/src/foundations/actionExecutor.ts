@@ -27,7 +27,25 @@ export const createActionExecutor = (input: {
             })
             throw new Error('NODE_NOT_ACTIONABLE')
         }
-        await input.performNodeAction?.(action)
+        const delegatedResult = await input.performNodeAction?.(action)
+        if (
+            delegatedResult != null
+            && typeof delegatedResult === 'object'
+            && 'ok' in delegatedResult
+            && (delegatedResult as {ok?: unknown}).ok === false
+        ) {
+            const message = typeof (delegatedResult as {reason?: unknown}).reason === 'string'
+                ? String((delegatedResult as {reason?: unknown}).reason)
+                : 'ACTION_HANDLER_REJECTED'
+            input.trace.record({
+                step: 'ui.performAction',
+                status: 'failed',
+                input: action,
+                error: message,
+                output: delegatedResult,
+            })
+            throw new Error(message)
+        }
         const result = {ok: true, nodeId: action.nodeId}
         input.trace.record({
             step: 'ui.performAction',

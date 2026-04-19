@@ -4,7 +4,7 @@
   "product": "mixc-retail",
   "assemblyVersion": "1.1.0",
   "buildNumber": 1000002,
-  "bundleVersion": "1.1.0+ota.1",
+  "bundleVersion": "1.1.0+ota.3",
   "runtimeVersion": "electron-mixc-retail-v1@1.1",
   "channel": "test",
   "minSupportedAppVersion": "1.1.0",
@@ -20,16 +20,16 @@
     "@impos2/adapter-electron-v1": "1.0.0"
   },
   "git": {
-    "commit": "3d96e768989b67c15e4f4a70233b21520ddfd228",
+    "commit": "629e9f6a0b57ed0f03967dc971afebc7a8b28d8e",
     "branch": "main"
   },
-  "updatedAt": "2026-04-07T12:24:11.430Z",
+  "updatedAt": "2026-04-19T02:21:00.149Z",
   "artifacts": {
     "packagedAppVersion": {
       "path": "4-assembly/electron/mixc-retail-v1/out/mixc-retail-v1-darwin-arm64/version",
       "size": 7,
       "sha256": "47f4288ea96685258e59698f1d89eb4c54acc475ecff35e7af0b3b5fe93a68f3",
-      "modifiedAt": "2026-04-02T12:38:37.314Z"
+      "modifiedAt": "2026-04-19T02:20:58.452Z"
     }
   }
 }

@@ -28,9 +28,11 @@ export const ActivateDeviceScreen: React.FC = () => {
     const summary = useTerminalConnectionSummary()
     const helperMessage = model.errorMessage
         ? model.errorMessage
-        : model.activationCode.length > 0
+        : !model.eligibilityAllowed
+            ? model.eligibilityMessage
+            : model.activationCode.length > 0
             ? '确认激活码无误后点击“立即激活”，系统会自动完成终端接入。'
-            : '请向管理员索取激活码。激活成功后，本机将自动进入业务欢迎页。'
+            : model.eligibilityMessage
     const screenKey = 'ui.base.terminal.activate-device'
 
     useEffect(() => {
@@ -85,6 +87,21 @@ export const ActivateDeviceScreen: React.FC = () => {
                 target: automationTarget,
                 runtimeId: automationRuntimeId,
                 screenKey,
+                mountId: `${screenKey}:sandbox-value`,
+                nodeId: 'ui-base-terminal-activate-device:sandbox-value',
+                testID: 'ui-base-terminal-activate-device:sandbox-value',
+                semanticId: 'ui-base-terminal-activate-device:sandbox-value',
+                role: 'text',
+                text: `当前沙箱：${model.sandboxId || '未输入'}`,
+                value: model.sandboxId,
+                visible: true,
+                enabled: true,
+                availableActions: [],
+            }),
+            automationBridge.registerNode({
+                target: automationTarget,
+                runtimeId: automationRuntimeId,
+                screenKey,
                 mountId: `${screenKey}:value`,
                 nodeId: 'ui-base-terminal-activate-device:value',
                 testID: 'ui-base-terminal-activate-device:value',
@@ -106,6 +123,7 @@ export const ActivateDeviceScreen: React.FC = () => {
                 semanticId: 'ui-base-terminal-activate-device:message',
                 role: 'text',
                 text: helperMessage,
+                value: model.eligibilityReasonCode,
                 visible: true,
                 enabled: true,
                 availableActions: [],
@@ -120,6 +138,8 @@ export const ActivateDeviceScreen: React.FC = () => {
         automationTarget,
         helperMessage,
         model.activationCode,
+        model.eligibilityReasonCode,
+        model.sandboxId,
         screenKey,
         summary.deviceId,
     ])
@@ -238,6 +258,24 @@ export const ActivateDeviceScreen: React.FC = () => {
                 </View>
 
                 <View style={{gap: 10}}>
+                    <Text style={{fontSize: 14, fontWeight: '700', color: terminalConsolePalette.textPrimary}}>沙箱 ID</Text>
+                    <InputField
+                        testID="ui-base-terminal-activate-device:sandbox"
+                        value={model.sandboxId}
+                        onChangeText={model.setSandboxId}
+                        mode="virtual-identifier"
+                        placeholder="请输入 sandboxId"
+                    />
+                    <Text
+                        testID="ui-base-terminal-activate-device:sandbox-value"
+                        selectable
+                        style={{fontSize: 13, color: terminalConsolePalette.textMuted}}
+                    >
+                        当前沙箱：{model.sandboxId || '未输入'}
+                    </Text>
+                </View>
+
+                <View style={{gap: 10}}>
                     <Text style={{fontSize: 14, fontWeight: '700', color: terminalConsolePalette.textPrimary}}>激活码</Text>
                     <InputField
                         testID="ui-base-terminal-activate-device:input"
@@ -257,13 +295,13 @@ export const ActivateDeviceScreen: React.FC = () => {
 
                 <TerminalInlineMessage
                     testID="ui-base-terminal-activate-device:message"
-                    tone={model.errorMessage ? 'error' : 'info'}
+                    tone={model.errorMessage || !model.eligibilityAllowed ? 'error' : 'info'}
                     message={helperMessage}
                 />
 
                 <TerminalActionButton
                     testID="ui-base-terminal-activate-device:submit"
-                    label={model.isSubmitting ? '激活中...' : '立即激活'}
+                    label={model.submitLabel}
                     disabled={!model.canSubmit}
                     onPress={() => {
                         void model.submit()

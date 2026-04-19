@@ -1,3 +1,7 @@
+export * from './hotUpdateCompatibility'
+export * from './hotUpdateProjectionReducer'
+export * from './hotUpdateVersionReporter'
+export * from './hotUpdateTopic'
 export * from './reduceServerMessage'
 export * from './httpService'
 export * from './sessionConnectionRuntime'

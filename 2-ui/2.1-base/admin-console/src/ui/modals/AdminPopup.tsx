@@ -3,7 +3,12 @@ import {Pressable, ScrollView, Text, View} from 'react-native'
 import QRCode from 'react-native-qrcode-svg'
 import {InputField} from '@impos2/ui-base-input-runtime'
 import {useOptionalInputRuntime} from '@impos2/ui-base-input-runtime'
-import {useUiRuntime} from '@impos2/ui-base-runtime-react'
+import {
+    useOptionalUiAutomationBridge,
+    useOptionalUiAutomationRuntimeId,
+    useOptionalUiAutomationTarget,
+    useUiRuntime,
+} from '@impos2/ui-base-runtime-react'
 import {useStore} from 'react-redux'
 import type {EnhancedStore} from '@reduxjs/toolkit'
 import {adminConsoleGroups, adminConsoleTabs} from '../../foundations'
@@ -114,6 +119,9 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
 }) => {
     const runtime = useUiRuntime()
     const inputRuntime = useOptionalInputRuntime()
+    const automationBridge = useOptionalUiAutomationBridge()
+    const automationRuntimeId = useOptionalUiAutomationRuntimeId() ?? runtime.runtimeId
+    const automationTarget = useOptionalUiAutomationTarget() ?? 'primary'
     const store = useStore() as EnhancedStore
     const popupState = useAdminPopupState()
     const verifier = useMemo(() => createAdminPasswordVerifier({
@@ -137,6 +145,163 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
         popupState.setError('')
         popupState.setScreen('panel')
     }
+
+    React.useEffect(() => {
+        if (!automationBridge) {
+            return undefined
+        }
+        const screenKey = `admin-popup:${popupState.screen}`
+        const unregisters: Array<() => void> = [
+            automationBridge.registerNode({
+                target: automationTarget,
+                runtimeId: automationRuntimeId,
+                screenKey,
+                mountId: `${screenKey}:root`,
+                nodeId: `ui-base-admin-popup:${popupState.screen}`,
+                testID: `ui-base-admin-popup:${popupState.screen}`,
+                semanticId: `ui-base-admin-popup:${popupState.screen}`,
+                role: 'dialog',
+                text: popupState.screen === 'login' ? '管理员登录' : '系统管理工作台',
+                visible: true,
+                enabled: true,
+                persistent: true,
+                availableActions: [],
+            }),
+        ]
+        if (popupState.screen === 'login') {
+            unregisters.push(
+                automationBridge.registerNode({
+                    target: automationTarget,
+                    runtimeId: automationRuntimeId,
+                    screenKey,
+                    mountId: `${screenKey}:device-id`,
+                    nodeId: 'ui-base-admin-popup:device-id',
+                    testID: 'ui-base-admin-popup:device-id',
+                    semanticId: 'ui-base-admin-popup:device-id',
+                    role: 'text',
+                    text: deviceId,
+                    value: deviceId,
+                    visible: true,
+                    enabled: true,
+                    persistent: true,
+                    availableActions: [],
+                }),
+                automationBridge.registerNode({
+                    target: automationTarget,
+                    runtimeId: automationRuntimeId,
+                    screenKey,
+                    mountId: `${screenKey}:submit`,
+                    nodeId: 'ui-base-admin-popup:submit',
+                    testID: 'ui-base-admin-popup:submit',
+                    semanticId: 'ui-base-admin-popup:submit',
+                    role: 'button',
+                    text: '进入工作台',
+                    visible: true,
+                    enabled: true,
+                    persistent: true,
+                    availableActions: ['press'],
+                    onAutomationAction: () => {
+                        handleSubmit()
+                        return {ok: true}
+                    },
+                }),
+                automationBridge.registerNode({
+                    target: automationTarget,
+                    runtimeId: automationRuntimeId,
+                    screenKey,
+                    mountId: `${screenKey}:close-login`,
+                    nodeId: 'ui-base-admin-popup:close-login',
+                    testID: 'ui-base-admin-popup:close-login',
+                    semanticId: 'ui-base-admin-popup:close-login',
+                    role: 'button',
+                    text: '关闭',
+                    visible: true,
+                    enabled: true,
+                    persistent: true,
+                    availableActions: ['press'],
+                    onAutomationAction: () => {
+                        inputRuntime?.deactivateInput()
+                        onClose()
+                        return {ok: true}
+                    },
+                }),
+            )
+        }
+        if (popupState.screen === 'panel') {
+            unregisters.push(
+                automationBridge.registerNode({
+                    target: automationTarget,
+                    runtimeId: automationRuntimeId,
+                    screenKey,
+                    mountId: `${screenKey}:selected-tab`,
+                    nodeId: 'ui-base-admin-popup:selected-tab',
+                    testID: 'ui-base-admin-popup:selected-tab',
+                    semanticId: 'ui-base-admin-popup:selected-tab',
+                    role: 'text',
+                    text: popupState.selectedTab,
+                    value: popupState.selectedTab,
+                    visible: true,
+                    enabled: true,
+                    persistent: true,
+                    availableActions: [],
+                }),
+                automationBridge.registerNode({
+                    target: automationTarget,
+                    runtimeId: automationRuntimeId,
+                    screenKey,
+                    mountId: `${screenKey}:close-panel`,
+                    nodeId: 'ui-base-admin-popup:close-panel',
+                    testID: 'ui-base-admin-popup:close-panel',
+                    semanticId: 'ui-base-admin-popup:close-panel',
+                    role: 'button',
+                    text: '关闭',
+                    visible: true,
+                    enabled: true,
+                    persistent: true,
+                    availableActions: ['press'],
+                    onAutomationAction: () => {
+                        inputRuntime?.deactivateInput()
+                        onClose()
+                        return {ok: true}
+                    },
+                }),
+                ...adminConsoleTabs.map(tab => automationBridge.registerNode({
+                    target: automationTarget,
+                    runtimeId: automationRuntimeId,
+                    screenKey,
+                    mountId: `${screenKey}:tab:${tab.key}`,
+                    nodeId: `ui-base-admin-popup:tab:${tab.key}`,
+                    testID: `ui-base-admin-popup:tab:${tab.key}`,
+                    semanticId: `ui-base-admin-popup:tab:${tab.key}`,
+                    role: 'button',
+                    text: tab.title,
+                    value: tab.key,
+                    visible: true,
+                    enabled: true,
+                    persistent: true,
+                    availableActions: ['press'],
+                    onAutomationAction: () => {
+                        popupState.setSelectedTab(tab.key)
+                        return {ok: true}
+                    },
+                })),
+            )
+        }
+        return () => {
+            unregisters.forEach(unregister => unregister())
+        }
+    }, [
+        automationBridge,
+        automationRuntimeId,
+        automationTarget,
+        deviceId,
+        handleSubmit,
+        inputRuntime,
+        onClose,
+        popupState.screen,
+        popupState.selectedTab,
+        popupState.setSelectedTab,
+    ])
 
     if (popupState.screen === 'login') {
         return (

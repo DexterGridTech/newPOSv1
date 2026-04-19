@@ -20,7 +20,7 @@ describe('assembly topology launch resolution', () => {
     it('refreshes master topology launch from native topology host on the primary display', async () => {
         prepareLaunchMock.mockResolvedValue({
             masterNodeId: 'master-device-1',
-            ticketToken: 'ticket-native-001',
+            masterDeviceId: 'device-1',
             wsUrl: 'ws://127.0.0.1:8888/mockMasterServer/ws',
             httpBaseUrl: 'http://127.0.0.1:8888/mockMasterServer',
         })
@@ -34,7 +34,6 @@ describe('assembly topology launch resolution', () => {
             topology: {
                 role: 'master',
                 localNodeId: 'master-device-1',
-                ticketToken: 'ticket-001',
                 wsUrl: 'ws://127.0.0.1:9541/dual-topology/ws',
             },
         })
@@ -43,7 +42,7 @@ describe('assembly topology launch resolution', () => {
             role: 'master',
             localNodeId: 'master-device-1',
             masterNodeId: 'master-device-1',
-            ticketToken: 'ticket-native-001',
+            masterDeviceId: 'device-1',
             wsUrl: 'ws://127.0.0.1:8888/mockMasterServer/ws',
             httpBaseUrl: 'http://127.0.0.1:8888/mockMasterServer',
         })
@@ -66,7 +65,7 @@ describe('assembly topology launch resolution', () => {
     it('builds slave launch context from the native topology host handshake', async () => {
         prepareLaunchMock.mockResolvedValue({
             masterNodeId: 'master-node',
-            ticketToken: 'ticket-002',
+            masterDeviceId: 'master-device',
             wsUrl: 'ws://127.0.0.1:9541/dual-topology/ws',
             httpBaseUrl: 'http://127.0.0.1:9541/dual-topology',
         })
@@ -84,7 +83,7 @@ describe('assembly topology launch resolution', () => {
             role: 'slave',
             localNodeId: 'master-node:display-1',
             masterNodeId: 'master-node',
-            ticketToken: 'ticket-002',
+            masterDeviceId: 'master-device',
             wsUrl: 'ws://127.0.0.1:9541/dual-topology/ws',
             httpBaseUrl: 'http://127.0.0.1:9541/dual-topology',
         })

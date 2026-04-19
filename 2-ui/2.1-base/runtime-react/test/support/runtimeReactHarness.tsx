@@ -7,8 +7,8 @@ import type {
     KernelRuntimeV2,
 } from '@impos2/kernel-base-runtime-shell-v2'
 import {createKernelRuntimeApp} from '@impos2/kernel-base-runtime-shell-v2'
-import {createTopologyRuntimeModuleV2} from '@impos2/kernel-base-topology-runtime-v2'
-import type {CreateTopologyRuntimeModuleV2Input} from '@impos2/kernel-base-topology-runtime-v2'
+import {createTopologyRuntimeModuleV3} from '@impos2/kernel-base-topology-runtime-v3'
+import type {CreateTopologyRuntimeModuleV3Input} from '@impos2/kernel-base-topology-runtime-v3'
 import {createUiRuntimeModuleV2} from '@impos2/kernel-base-ui-runtime-v2'
 import type {PlatformPorts} from '@impos2/kernel-base-platform-ports'
 import type {EnhancedStore} from '@reduxjs/toolkit'
@@ -30,7 +30,7 @@ export const createRuntimeReactHarness = async (
             displayIndex?: number
             displayCount?: number
         }
-        topology?: CreateTopologyRuntimeModuleV2Input
+        topology?: CreateTopologyRuntimeModuleV3Input
         localNodeId?: string
     } = {},
 ): Promise<RuntimeReactHarness> => {
@@ -38,7 +38,7 @@ export const createRuntimeReactHarness = async (
         runtimeName: 'ui-base-runtime-react-test',
         localNodeId: input.localNodeId as any,
         modules: [
-            createTopologyRuntimeModuleV2(input.topology),
+            createTopologyRuntimeModuleV3(input.topology),
             createUiRuntimeModuleV2(),
             createModule(),
             ...(input.modules ?? []),
@@ -56,7 +56,10 @@ export const createRuntimeReactHarness = async (
             }),
             ...input.platformPorts,
         },
-        displayContext: input.displayContext,
+        displayContext: {
+            displayIndex: input.displayContext?.displayIndex ?? 0,
+            displayCount: input.displayContext?.displayCount ?? 1,
+        },
     })
     const runtime = await app.start()
 

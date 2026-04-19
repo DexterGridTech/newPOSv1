@@ -1,6 +1,6 @@
 import type {TransportServerConfig} from '@impos2/kernel-base-transport-runtime'
 import {
-    SERVER_NAME_DUAL_TOPOLOGY_HOST,
+    SERVER_NAME_DUAL_TOPOLOGY_HOST_V3,
     SERVER_NAME_MOCK_TERMINAL_PLATFORM,
 } from './serverName'
 
@@ -53,11 +53,11 @@ export const kernelBaseTestServerConfig: TransportServerConfig = {
                     ],
                 },
                 {
-                    serverName: SERVER_NAME_DUAL_TOPOLOGY_HOST,
+                    serverName: SERVER_NAME_DUAL_TOPOLOGY_HOST_V3,
                     addresses: [
                         {
                             addressName: 'local',
-                            baseUrl: 'http://dual-topology-host.test',
+                            baseUrl: 'http://dual-topology-host-v3.test',
                             timeoutMs: 3_000,
                         },
                     ],

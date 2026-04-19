@@ -5,10 +5,18 @@ import {
     createAdminPasswordVerifier,
     getAdminConsoleSectionRegistry,
 } from '../../src'
-import {createAdminConsoleHarness, renderWithAutomation} from '../support/adminConsoleHarness'
+import {
+    createAdminConsoleHarness,
+    renderAdminWithAutomation,
+} from '../support/adminConsoleHarness'
 import {AdminPopup} from '../../src'
 
 describe('admin sections', () => {
+    const enterPin = async (
+        automation: ReturnType<typeof renderAdminWithAutomation>,
+        value: string,
+    ) => await automation.typeVirtualValue('ui-base-admin-popup:password', value)
+
     it('allows module install to replace default console sections', async () => {
         const customSection = {
             tab: 'terminal' as const,
@@ -36,16 +44,15 @@ describe('admin sections', () => {
         const harness = await createAdminConsoleHarness({
             sections: [customSection],
         })
-        const automation = renderWithAutomation(
+        const automation = renderAdminWithAutomation(
             <AdminPopup deviceId="DEVICE-001" onClose={() => {}} />,
-            harness.store,
-            harness.runtime,
+            harness,
         )
         const password = createAdminPasswordVerifier({
             deviceIdProvider: () => 'DEVICE-001',
         }).deriveFor(new Date())
 
-        await automation.changeText('ui-base-admin-popup:password', password)
+        await enterPin(automation, password)
         await automation.press('ui-base-admin-popup:submit')
         await automation.waitForText('custom-device-section')
         await expect(automation.getNode('ui-base-admin-custom-section')).resolves.toBeTruthy()

@@ -4,7 +4,10 @@ import {
     onCommand,
     type ActorDefinition,
 } from '@impos2/kernel-base-runtime-shell-v2'
+import {createAppError} from '@impos2/kernel-base-contracts'
+import {selectTcpAccessToken, selectTcpSandboxId, selectTcpTerminalId} from '@impos2/kernel-base-tcp-control-runtime-v2'
 import {moduleName} from '../../moduleName'
+import {tdpSyncV2ErrorDefinitions} from '../../supports'
 import {tdpSyncV2CommandDefinitions} from '../commands'
 import {tdpSyncV2DomainActions} from '../slices'
 
@@ -14,6 +17,19 @@ export const createTdpBootstrapActorDefinitionV2 = (): ActorDefinition => define
     'TdpBootstrapActor',
     [
         onCommand(tdpSyncV2CommandDefinitions.bootstrapTdpSync, async context => {
+            const state = context.getState()
+            const terminalId = selectTcpTerminalId(state)
+            const accessToken = selectTcpAccessToken(state)
+            const sandboxId = selectTcpSandboxId(state)
+            if ((terminalId || accessToken) && !sandboxId) {
+                throw createAppError(tdpSyncV2ErrorDefinitions.credentialMissing, {
+                    args: {error: 'sandboxId is missing'},
+                    context: {
+                        commandName: tdpSyncV2CommandDefinitions.bootstrapTdpSync.commandName,
+                        nodeId: context.localNodeId,
+                    },
+                })
+            }
             context.dispatchAction(tdpSyncV2DomainActions.bootstrapResetRuntime())
 
             await context.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.bootstrapTdpSyncSucceeded, {}))

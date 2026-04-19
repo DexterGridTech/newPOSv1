@@ -1,4 +1,4 @@
-import type {CreateAdminConsoleModuleInput} from '../application'
+import type {CreateAdminConsoleModuleInput} from '../application/createModule'
 import type {
     AdminConnectorChannelDefinition,
     AdminControlHostSource,
@@ -13,6 +13,7 @@ export interface CreateAdminConsoleModuleInputFromHostInput {
     control?: AdminControlHostSource
     connector?: CreateAdminHostToolsInput['connector']
     connectorChannels?: readonly AdminConnectorChannelDefinition[]
+    topology?: CreateAdminHostToolsInput['topology']
 }
 
 const createDefaultConnectorChannels = (): readonly AdminConnectorChannelDefinition[] => ([
@@ -44,6 +45,7 @@ export const createAdminConsoleModuleInputFromHost = (
         logs: input.logs,
         control: input.control,
         connector: input.connector,
+        topology: input.topology,
         connectorChannels: input.connector
             ? (input.connectorChannels ?? createDefaultConnectorChannels())
             : input.connectorChannels,

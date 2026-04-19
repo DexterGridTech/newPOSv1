@@ -3,15 +3,13 @@ import type {
     AdminConsoleSection,
     AdminConsoleSectionRegistry,
 } from '../types'
-import {
-    AdapterDiagnosticsScreen,
-    AdminConnectorSection,
-    AdminControlSection,
-    AdminDeviceSection,
-    AdminLogsSection,
-    AdminTerminalSection,
-    AdminTopologySection,
-} from '../ui/screens'
+import {AdapterDiagnosticsScreen} from '../ui/screens/AdapterDiagnosticsScreen'
+import {AdminConnectorSection} from '../ui/screens/AdminConnectorSection'
+import {AdminControlSection} from '../ui/screens/AdminControlSection'
+import {AdminDeviceSection} from '../ui/screens/AdminDeviceSection'
+import {AdminLogsSection} from '../ui/screens/AdminLogsSection'
+import {AdminTerminalSection} from '../ui/screens/AdminTerminalSection'
+import {AdminTopologySection} from '../ui/screens/AdminTopologySection'
 import {getAdminAdapterDiagnosticsRegistry} from './adapterDiagnosticsRuntime'
 
 const createDefaultAdminConsoleSections = (): readonly AdminConsoleSection[] => ([

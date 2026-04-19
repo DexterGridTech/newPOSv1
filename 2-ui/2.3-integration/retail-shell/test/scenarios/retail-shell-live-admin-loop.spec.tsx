@@ -18,7 +18,6 @@ import {AdminTerminalSection} from '@impos2/ui-base-admin-console'
 import type {RootState} from '@impos2/kernel-base-state-runtime'
 import {
     createRetailShellLiveHarness,
-    fetchJson,
     renderWithAutomation,
     waitFor,
 } from '../support/retailShellLiveHarness'
@@ -31,10 +30,8 @@ describe('retail-shell live admin deactivation loop', () => {
         const harness = await createRetailShellLiveHarness()
 
         try {
-            const activationCodes = await fetchJson<Array<{code: string; status: string}>>(
-                `${harness.platform.baseUrl}/api/v1/admin/activation-codes`,
-            )
-            const activationCode = activationCodes[0]?.code
+            const activationCodes = await harness.platform.admin.activationCodes()
+            const activationCode = activationCodes.find(item => item.status === 'AVAILABLE')?.code
 
             expect(activationCode).toBeTruthy()
             expect(selectPrimaryRoot(harness.runtime.getState())?.partKey).toBe('ui.base.terminal.activate-device')
@@ -55,6 +52,7 @@ describe('retail-shell live admin deactivation loop', () => {
             await harness.runtime.dispatchCommand(createCommand(
                 tcpControlV2CommandDefinitions.activateTerminal,
                 {
+                    sandboxId: harness.platform.prepare.sandboxId,
                     activationCode: activationCode!,
                 },
             ))
@@ -79,7 +77,8 @@ describe('retail-shell live admin deactivation loop', () => {
             await tree.waitForIdle()
 
             await waitFor(() =>
-                selectPrimaryRoot(harness.runtime.getState())?.partKey === 'ui.base.terminal.activate-device',
+                selectTcpIdentitySnapshot(harness.runtime.getState()).activationStatus === 'UNACTIVATED'
+                && selectPrimaryRoot(harness.runtime.getState())?.partKey === 'ui.base.terminal.activate-device',
             )
             await waitFor(async () => {
                 const terminals = await harness.platform.admin.terminals()

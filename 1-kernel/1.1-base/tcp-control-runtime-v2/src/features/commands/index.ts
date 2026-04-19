@@ -16,6 +16,7 @@ export const tcpControlV2CommandDefinitions = {
         },
     ),
     activateTerminal: defineModuleCommand<{
+        sandboxId: string
         activationCode: string
         deviceInfo?: TcpDeviceInfo
         deviceFingerprint?: string

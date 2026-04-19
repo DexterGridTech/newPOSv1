@@ -1,6 +1,5 @@
 import React, {useState} from 'react'
 import {describe, expect, it, vi} from 'vitest'
-import {act} from 'react-test-renderer'
 import {Pressable, Text} from 'react-native'
 import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
 import {
@@ -10,9 +9,9 @@ import {
 } from '@impos2/kernel-base-tcp-control-runtime-v2'
 import {createAppError} from '@impos2/kernel-base-contracts'
 import {
-    topologyRuntimeV2CommandDefinitions,
-    topologyRuntimeV2StateActions,
-} from '@impos2/kernel-base-topology-runtime-v2'
+    topologyRuntimeV3CommandDefinitions,
+    topologyRuntimeV3StateActions,
+} from '@impos2/kernel-base-topology-runtime-v3'
 import {
     AdapterDiagnosticsScreen,
     AdminTerminalSection,
@@ -49,6 +48,10 @@ describe('admin built-in sections', () => {
             refreshToken: 'refresh-admin-test',
             expiresAt: Date.now() + 60_000,
             refreshExpiresAt: Date.now() + 3600_000,
+            updatedAt: Date.now(),
+        }))
+        harness.store.dispatch(tcpControlV2StateActions.setSandbox({
+            sandboxId: 'sandbox-admin-test',
             updatedAt: Date.now(),
         }))
         harness.store.dispatch(tcpControlV2StateActions.replaceBinding({
@@ -90,6 +93,7 @@ describe('admin built-in sections', () => {
         )
         expect(closePanel).toHaveBeenCalledTimes(1)
         await expect(tree.queryNodesByText('激活时间')).resolves.toHaveLength(1)
+        await expect(tree.queryNodesByText('sandbox-admin-test')).resolves.toHaveLength(1)
         await expect(tree.queryNodesByText('凭证过期')).resolves.toHaveLength(1)
         await expect(tree.queryNodesByText('业务绑定')).resolves.toHaveLength(1)
         await expect(tree.queryNodesByText('platform-admin')).resolves.toHaveLength(1)
@@ -112,6 +116,58 @@ describe('admin built-in sections', () => {
         expect(dispatchSpy).toHaveBeenCalledTimes(2)
     })
 
+    it('dispatches display and slave capability commands from topology section', async () => {
+        const harness = await createAdminConsoleHarness()
+        const dispatchSpy = vi.spyOn(harness.runtime, 'dispatchCommand')
+        const topologyTree = renderWithAutomation(
+            <AdminTopologySection runtime={harness.runtime} store={harness.store} />,
+            harness.store,
+            harness.runtime,
+        )
+
+        await topologyTree.press('ui-base-admin-section:topology:set-primary')
+        await topologyTree.press('ui-base-admin-section:topology:set-secondary')
+        await topologyTree.press('ui-base-admin-section:topology:enable-slave')
+        await topologyTree.press('ui-base-admin-section:topology:disable-slave')
+
+        expect(dispatchSpy).toHaveBeenCalledWith(createCommand(
+            topologyRuntimeV3CommandDefinitions.setDisplayMode,
+            {displayMode: 'PRIMARY'},
+        ))
+        expect(dispatchSpy).toHaveBeenCalledWith(createCommand(
+            topologyRuntimeV3CommandDefinitions.setDisplayMode,
+            {displayMode: 'SECONDARY'},
+        ))
+        expect(dispatchSpy).toHaveBeenCalledWith(createCommand(
+            topologyRuntimeV3CommandDefinitions.setEnableSlave,
+            {enableSlave: true},
+        ))
+        expect(dispatchSpy).toHaveBeenCalledWith(createCommand(
+            topologyRuntimeV3CommandDefinitions.setEnableSlave,
+            {enableSlave: false},
+        ))
+    })
+
+    it('calls topology host reconnect action when provided', async () => {
+        const reconnect = vi.fn(async () => {})
+        const harness = await createAdminConsoleHarness({
+            hostTools: {
+                topology: {
+                    reconnect,
+                },
+            } as any,
+        })
+        const topologyTree = renderWithAutomation(
+            <AdminTopologySection runtime={harness.runtime} store={harness.store} />,
+            harness.store,
+            harness.runtime,
+        )
+
+        await topologyTree.press('ui-base-admin-section:topology:reconnect')
+
+        expect(reconnect).toHaveBeenCalledTimes(1)
+    })
+
     it('reacts to topology store changes and shows connection metadata', async () => {
         const harness = await createAdminConsoleHarness()
         const topologyTree = renderWithAutomation(
@@ -120,41 +176,42 @@ describe('admin built-in sections', () => {
             harness.runtime,
         )
 
-        await act(async () => {
-            await harness.runtime.dispatchCommand(createCommand(
-                topologyRuntimeV2CommandDefinitions.setInstanceMode,
-                {instanceMode: 'SLAVE'},
-            ))
-            await harness.runtime.dispatchCommand(createCommand(
-                topologyRuntimeV2CommandDefinitions.setDisplayMode,
-                {displayMode: 'PRIMARY'},
-            ))
-            await harness.runtime.dispatchCommand(createCommand(
-                topologyRuntimeV2CommandDefinitions.setEnableSlave,
-                {enableSlave: true},
-            ))
-            await harness.runtime.dispatchCommand(createCommand(
-                topologyRuntimeV2CommandDefinitions.setMasterInfo,
-                {
-                    masterInfo: {
-                        deviceId: 'MASTER-001',
-                        serverAddress: [{address: 'ws://127.0.0.1:9999'}],
-                        addedAt: Date.now() as any,
-                    },
+        await topologyTree.dispatchCommand(createCommand(
+            topologyRuntimeV3CommandDefinitions.setInstanceMode,
+            {instanceMode: 'SLAVE'},
+        ))
+        await topologyTree.dispatchCommand(createCommand(
+            topologyRuntimeV3CommandDefinitions.setDisplayMode,
+            {displayMode: 'PRIMARY'},
+        ))
+        await topologyTree.dispatchCommand(createCommand(
+            topologyRuntimeV3CommandDefinitions.setEnableSlave,
+            {enableSlave: true},
+        ))
+        await topologyTree.dispatchCommand(createCommand(
+            topologyRuntimeV3CommandDefinitions.setMasterLocator,
+            {
+                masterLocator: {
+                    masterDeviceId: 'MASTER-001',
+                    masterNodeId: 'MASTER-NODE-001',
+                    serverAddress: [{address: 'ws://127.0.0.1:9999'}],
+                    addedAt: Date.now() as any,
                 },
-            ))
-            harness.store.dispatch(topologyRuntimeV2StateActions.patchConnectionState({
+            },
+        ))
+        await topologyTree.dispatch(() => {
+            harness.store.dispatch(topologyRuntimeV3StateActions.patchConnectionState({
                 serverConnectionStatus: 'CONNECTED',
                 reconnectAttempt: 2,
-                connectedAt: Date.now() as any,
             }))
-            harness.store.dispatch(topologyRuntimeV2StateActions.patchPeerState({
+            harness.store.dispatch(topologyRuntimeV3StateActions.patchPeerState({
                 peerNodeId: 'peer-admin-test' as any,
                 peerDeviceId: 'PEER-DEVICE-001',
+                connectedAt: Date.now() as any,
             }))
-            harness.store.dispatch(topologyRuntimeV2StateActions.patchSyncState({
-                continuousSyncActive: true,
-                resumeStatus: 'active',
+            harness.store.dispatch(topologyRuntimeV3StateActions.patchSyncState({
+                status: 'active',
+                activeSessionId: 'session-admin-001',
             }))
         })
 
@@ -253,7 +310,7 @@ describe('admin built-in sections', () => {
 
         await tree.press('ui-base-admin-section:terminal:deactivate')
         await tree.press('unmount-terminal-section')
-        await act(async () => {
+        await tree.dispatch(async () => {
             resolveDispatch?.({status: 'COMPLETED'})
             await Promise.resolve()
         })

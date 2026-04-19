@@ -6,6 +6,7 @@ import {
     AdminActionGroup,
     AdminActionButton,
     AdminBlock,
+    AdminDetailList,
     AdminSectionMessage,
     AdminSectionShell,
     AdminSectionUnavailable,
@@ -209,6 +210,15 @@ export const AdminLogsSection: React.FC<AdminLogsSectionProps> = ({
                     title={selectedFileName ?? '日志内容'}
                     description="当前文件的原始日志内容。"
                 >
+                    <AdminDetailList
+                        items={[
+                            {
+                                key: 'log-content',
+                                label: '日志内容',
+                                value: content,
+                            },
+                        ]}
+                    />
                     <Text selectable>{content}</Text>
                 </AdminBlock>
             ) : null}

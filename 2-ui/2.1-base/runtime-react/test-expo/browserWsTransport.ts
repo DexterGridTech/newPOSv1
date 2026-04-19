@@ -8,7 +8,7 @@ import type {
 /**
  * 设计意图：
  * 这是 test-expo 专用的浏览器 WS transport。
- * runtime-react 生产代码不依赖浏览器 WebSocket；只有 Expo Web 自动化测试才通过它接入真实 dual-topology-host。
+ * runtime-react 生产代码不依赖浏览器 WebSocket；只有 Expo Web 自动化测试才通过它接入真实 dual-topology-host-v3。
  */
 export const createBrowserWsTransport = (): SocketTransport => {
     return {

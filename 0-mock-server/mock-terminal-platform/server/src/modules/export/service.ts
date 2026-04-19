@@ -1,6 +1,6 @@
 import { sqlite } from '../../database/index.js'
 import { parseJson } from '../../shared/utils.js'
-import { getCurrentSandboxId } from '../sandbox/service.js'
+import { assertSandboxUsable } from '../sandbox/service.js'
 
 const normalizeRows = (rows: Array<Record<string, unknown>>) =>
   rows.map((item) => {
@@ -13,8 +13,8 @@ const normalizeRows = (rows: Array<Record<string, unknown>>) =>
     return normalized
   })
 
-export const exportMockData = () => {
-  const sandboxId = getCurrentSandboxId()
+export const exportMockData = (sandboxId: string) => {
+  assertSandboxUsable(sandboxId)
   const platforms = normalizeRows(sqlite.prepare('SELECT * FROM platforms WHERE sandbox_id = ? ORDER BY updated_at DESC').all(sandboxId) as Array<Record<string, unknown>>)
   const tenants = normalizeRows(sqlite.prepare('SELECT * FROM tenants WHERE sandbox_id = ? ORDER BY updated_at DESC').all(sandboxId) as Array<Record<string, unknown>>)
   const brands = normalizeRows(sqlite.prepare('SELECT * FROM brands WHERE sandbox_id = ? ORDER BY updated_at DESC').all(sandboxId) as Array<Record<string, unknown>>)
@@ -44,4 +44,4 @@ export const exportMockData = () => {
   }
 }
 
-export const exportMockDataText = () => JSON.stringify(exportMockData(), null, 2)
+export const exportMockDataText = (sandboxId: string) => JSON.stringify(exportMockData(sandboxId), null, 2)

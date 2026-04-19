@@ -8,7 +8,9 @@ import type {KernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
 import type {EnhancedStore} from '@reduxjs/toolkit'
 import {
     createApp,
+    getAssemblyAutomationHostConfig,
     reportAppLoadComplete,
+    reportTerminalVersion,
     resolveAssemblyTopologyLaunch,
 } from './src/application'
 import {nativeAutomationHost, nativeLogger} from './src/turbomodules'
@@ -38,6 +40,7 @@ export default function App(rawProps: Partial<AppProps>): React.JSX.Element {
     const [bootError, setBootError] = useState<string>('')
     const [bootStage, setBootStage] = useState<string>('rendered')
     const [loadCompleteReported, setLoadCompleteReported] = useState(false)
+    const automationHostConfig = getAssemblyAutomationHostConfig(props.displayIndex)
 
     useEffect(() => {
         let disposed = false
@@ -80,8 +83,15 @@ export default function App(rawProps: Partial<AppProps>): React.JSX.Element {
                 logStage('runtime.start:done')
 
                 if (runtimeApp.automation && __DEV__) {
-                    await nativeAutomationHost.start({})
+                    const automationHostAddress = await nativeAutomationHost.start({
+                        port: automationHostConfig.port,
+                    })
                     automationHostStarted = true
+                    logStage('automation.host:start', {
+                        target: automationHostConfig.target,
+                        host: automationHostAddress.host,
+                        port: automationHostAddress.port,
+                    })
                     unsubscribeAutomationMessages = nativeAutomationHost.subscribeMessages(async event => {
                         try {
                             const response = await runtimeApp.automation!.controller.dispatchMessage(event.messageJson)
@@ -119,7 +129,7 @@ export default function App(rawProps: Partial<AppProps>): React.JSX.Element {
                 void nativeAutomationHost.stop().catch(() => {})
             }
         }
-    }, [props.deviceId, props.displayCount, props.displayIndex, props.isEmulator, props.screenMode, props.topology])
+    }, [automationHostConfig.port, automationHostConfig.target, props.deviceId, props.displayCount, props.displayIndex, props.isEmulator, props.screenMode, props.topology])
 
     useEffect(() => {
         if (!ready || loadCompleteReported) {
@@ -130,7 +140,13 @@ export default function App(rawProps: Partial<AppProps>): React.JSX.Element {
 
         void (async () => {
             try {
-                await reportAppLoadComplete(props.displayIndex)
+                const result = await reportAppLoadComplete(ready.runtime, props.displayIndex)
+                await reportTerminalVersion(
+                    ready.runtime,
+                    props,
+                    result.terminalState,
+                    result.reason,
+                )
                 if (!cancelled) {
                     setLoadCompleteReported(true)
                 }

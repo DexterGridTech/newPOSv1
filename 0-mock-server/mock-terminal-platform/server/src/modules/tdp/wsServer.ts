@@ -5,8 +5,7 @@ import type { Express } from 'express'
 import { WebSocketServer } from 'ws'
 import type WebSocket from 'ws'
 import { appendAuditLog } from '../admin/audit.js'
-import { createId, now } from '../../shared/utils.js'
-import { getCurrentSandboxId } from '../sandbox/service.js'
+import { now } from '../../shared/utils.js'
 import {
   acknowledgeSessionRevision,
   connectSession,
@@ -18,6 +17,7 @@ import {
   updateSessionAppliedRevision,
   validateTerminalAccessToken,
 } from './service.js'
+import { upsertTerminalRuntimeFacts } from './groupService.js'
 import { getOnlineSessionBySocket, registerOnlineSession, unregisterOnlineSession } from './wsSessionRegistry.js'
 import { parseClientMessage, type TdpServerMessage } from './wsProtocol.js'
 
@@ -42,6 +42,7 @@ const sendErrorAndClose = (socket: WebSocket, code: string, message: string, det
 }
 
 const handleHandshake = (socket: WebSocket, req: IncomingMessage, payload: {
+  sandboxId: string
   terminalId: string
   appVersion: string
   lastCursor?: number
@@ -50,11 +51,17 @@ const handleHandshake = (socket: WebSocket, req: IncomingMessage, payload: {
   subscribedTopics?: string[]
 }) => {
   const url = new URL(req.url ?? '', 'http://127.0.0.1')
+  const sandboxId = url.searchParams.get('sandboxId')
   const terminalId = url.searchParams.get('terminalId')
   const token = url.searchParams.get('token')
 
-  if (!terminalId || !token) {
-    sendErrorAndClose(socket, 'UNAUTHORIZED', '缺少 terminalId 或 token')
+  if (!sandboxId || !terminalId || !token) {
+    sendErrorAndClose(socket, 'UNAUTHORIZED', '缺少 sandboxId、terminalId 或 token')
+    return
+  }
+
+  if (payload.sandboxId !== sandboxId) {
+    sendErrorAndClose(socket, 'SANDBOX_ID_MISMATCH', '握手 sandboxId 与连接参数不一致')
     return
   }
 
@@ -63,7 +70,7 @@ const handleHandshake = (socket: WebSocket, req: IncomingMessage, payload: {
     return
   }
 
-  const auth = validateTerminalAccessToken({ terminalId, token })
+  const auth = validateTerminalAccessToken({ sandboxId, terminalId, token })
   if (!auth.valid) {
     sendErrorAndClose(socket, auth.code, auth.message)
     return
@@ -76,13 +83,20 @@ const handleHandshake = (socket: WebSocket, req: IncomingMessage, payload: {
     return
   }
 
-  const sandboxId = getCurrentSandboxId()
   const connection = connectSession({
+    sandboxId,
     terminalId,
     clientVersion: appVersion,
     protocolVersion,
   })
-  const highWatermark = getHighWatermarkForTerminal(terminalId)
+  upsertTerminalRuntimeFacts({
+    sandboxId,
+    terminalId,
+    appVersion,
+    protocolVersion,
+    capabilities: payload.capabilities ?? [],
+  })
+  const highWatermark = getHighWatermarkForTerminal(sandboxId, terminalId)
   const lastCursor = Math.max(0, Number(payload.lastCursor ?? 0))
   const syncMode = lastCursor === 0 || lastCursor < Math.max(0, highWatermark - 1000) ? 'full' : 'incremental'
 
@@ -125,14 +139,14 @@ const handleHandshake = (socket: WebSocket, req: IncomingMessage, payload: {
       type: 'FULL_SNAPSHOT',
       data: {
         terminalId,
-        snapshot: getTerminalSnapshotEnvelope(terminalId),
+        snapshot: getTerminalSnapshotEnvelope(sandboxId, terminalId),
         highWatermark,
       },
     })
     return
   }
 
-  const changes = getTerminalChangesSince(terminalId, lastCursor)
+  const changes = getTerminalChangesSince(sandboxId, terminalId, lastCursor)
   sendMessage(socket, {
     type: 'CHANGESET',
     data: {
@@ -170,7 +184,7 @@ const handleClientMessage = (socket: WebSocket, req: IncomingMessage, raw: strin
   }
 
   if (message.type === 'PING') {
-    heartbeatSession(onlineSession.sessionId)
+    heartbeatSession({ sandboxId: onlineSession.sandboxId, sessionId: onlineSession.sessionId })
     sendMessage(socket, {
       type: 'PONG',
       data: {
@@ -183,15 +197,20 @@ const handleClientMessage = (socket: WebSocket, req: IncomingMessage, raw: strin
   if (message.type === 'STATE_REPORT') {
     if (typeof message.data.lastAppliedCursor === 'number') {
       onlineSession.lastAppliedRevision = message.data.lastAppliedCursor
-      updateSessionAppliedRevision(onlineSession.sessionId, message.data.lastAppliedCursor)
+      updateSessionAppliedRevision({
+        sandboxId: onlineSession.sandboxId,
+        sessionId: onlineSession.sessionId,
+        revision: message.data.lastAppliedCursor,
+      })
     }
-    heartbeatSession(onlineSession.sessionId)
+    heartbeatSession({ sandboxId: onlineSession.sandboxId, sessionId: onlineSession.sessionId })
     return
   }
 
   if (message.type === 'ACK') {
     onlineSession.lastAckedRevision = message.data.cursor
     acknowledgeSessionRevision({
+      sandboxId: onlineSession.sandboxId,
       sessionId: onlineSession.sessionId,
       cursor: message.data.cursor,
       topic: message.data.topic,
@@ -204,15 +223,22 @@ const handleClientMessage = (socket: WebSocket, req: IncomingMessage, raw: strin
 const handleSocketClose = (socket: WebSocket) => {
   const session = getOnlineSessionBySocket(socket)
   if (!session) return
-  disconnectSession(session.sessionId)
-  appendAuditLog({
-    domain: 'TDP',
-    action: 'WS_DISCONNECT_SESSION',
-    targetId: session.sessionId,
-    detail: { terminalId: session.terminalId, lastAckedRevision: session.lastAckedRevision, lastAppliedRevision: session.lastAppliedRevision },
-    operator: 'terminal-client',
-  })
   unregisterOnlineSession(session.sessionId)
+  try {
+    disconnectSession({ sandboxId: session.sandboxId, sessionId: session.sessionId })
+    appendAuditLog({
+      domain: 'TDP',
+      action: 'WS_DISCONNECT_SESSION',
+      targetId: session.sessionId,
+      detail: { terminalId: session.terminalId, lastAckedRevision: session.lastAckedRevision, lastAppliedRevision: session.lastAppliedRevision },
+      operator: 'terminal-client',
+    })
+  } catch (error) {
+    if (error instanceof Error && error.message === '沙箱不存在') {
+      return
+    }
+    throw error
+  }
 }
 
 export const createHttpAndWsServer = (app: Express) => {

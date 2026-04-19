@@ -13,6 +13,7 @@ import {
     AdminSectionUnavailable,
     AdminSummaryCard,
     AdminSummaryGrid,
+    AdminDetailList,
 } from './AdminSectionPrimitives'
 
 export interface AdminConnectorSectionProps {
@@ -148,6 +149,17 @@ export const AdminConnectorSection: React.FC<AdminConnectorSectionProps> = ({
                         disabled={loading}
                         onPress={() => handleProbe(channel.key)}
                     />
+                    {results[channel.key] ? (
+                        <AdminDetailList
+                            items={[
+                                {
+                                    key: `${channel.key}:probe-message`,
+                                    label: '探测消息',
+                                    value: results[channel.key]?.message,
+                                },
+                            ]}
+                        />
+                    ) : null}
                 </AdminBlock>
             ))}
         </AdminSectionShell>

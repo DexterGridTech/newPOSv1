@@ -8,11 +8,9 @@ import {
     defineKernelRuntimeModuleV2,
 } from '@impos2/kernel-base-runtime-shell-v2'
 import {moduleName} from '../moduleName'
-import {
-    createAdminHostTools,
-    installAdminAdapterDiagnosticsScenarios,
-    installAdminHostTools,
-} from '../supports'
+import {createAdminHostTools} from '../supports/adminHostToolsFactory'
+import {installAdminHostTools} from '../supports/adminHostToolsRegistry'
+import {installAdminAdapterDiagnosticsScenarios} from '../supports/adapterDiagnosticsRuntime'
 import {installAdminConsoleSections} from '../supports/adminSectionRegistry'
 import {adminConsoleModuleManifest} from './moduleManifest'
 import type {CreateAdminHostToolsInput} from '../supports/adminHostToolsFactory'

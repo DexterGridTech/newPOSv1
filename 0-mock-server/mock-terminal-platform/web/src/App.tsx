@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { api } from './api'
 import { ActionButton, AppShell, DataTable, FormGrid, InlineBadge, JsonBlock, KeyValueList, Pager, Panel, SelectInput, StatCard, TextInput } from './components/ui'
+import { TdpPolicyCenter } from './components/tdp-policy-center/TdpPolicyCenter'
+import { HotUpdateCenter } from './components/hot-update/HotUpdateCenter'
 import type {
   ActivationCodeItem,
   AuditLogItem,
@@ -35,6 +37,7 @@ const sections = [
   { key: 'overview', label: '总览' },
   { key: 'tcp', label: 'TCP 控制面', children: [{ key: 'tcp-quick', label: '快捷控制台' }, { key: 'tcp-manual', label: '手动控制台' }] },
   { key: 'tdp', label: 'TDP 数据面' },
+  { key: 'hot-update', label: '热更新' },
   { key: 'scene', label: '场景引擎' },
   { key: 'fault', label: '故障注入' },
   { key: 'master-data', label: '基础资料' },
@@ -42,7 +45,7 @@ const sections = [
 
 const STORAGE_KEY = 'mock-terminal-platform:view-preferences'
 
-type SectionKey = 'overview' | 'tcp' | 'tcp-quick' | 'tcp-manual' | 'tdp' | 'scene' | 'fault' | 'master-data'
+type SectionKey = 'overview' | 'tcp' | 'tcp-quick' | 'tcp-manual' | 'tdp' | 'hot-update' | 'scene' | 'fault' | 'master-data'
 type MasterTabKey = 'platforms' | 'projects' | 'tenants' | 'brands' | 'stores' | 'contracts' | 'profiles' | 'templates'
 
 function formatTime(value?: number | null) {
@@ -188,6 +191,16 @@ export default function App() {
   const [manualTaskPayload, setManualTaskPayload] = useState('{"configVersion":"config-manual-001","mode":"full"}')
   const [editingMasterEntity, setEditingMasterEntity] = useState<null | { type: 'platform' | 'tenant' | 'brand' | 'project' | 'store' | 'contract' | 'profile' | 'template'; id: string }>(null)
 
+  const resetSandboxScopedDetailState = () => {
+    setTaskTrace(null)
+    setTerminalSnapshot(null)
+    setTerminalChanges(null)
+    setExportPayload(null)
+    setDetailTitle('')
+    setDetailPayload(null)
+    setImportValidation(null)
+  }
+
   useEffect(() => {
     localStorage.setItem(
       STORAGE_KEY,
@@ -261,6 +274,7 @@ export default function App() {
         api.getMasterTemplates(),
       ])
 
+      api.setCurrentSandboxId(nextRuntimeContext.currentSandboxId)
       setOverview(nextOverview)
       setRuntimeContext(nextRuntimeContext)
       setSandboxes(nextSandboxes)
@@ -447,7 +461,7 @@ export default function App() {
   }, [filteredTerminals, terminals])
 
   const downloadExportFile = () => {
-    window.open('/api/v1/admin/export/download', '_blank', 'noopener,noreferrer')
+    window.open(api.buildExportDownloadUrl(), '_blank', 'noopener,noreferrer')
   }
 
   const buildPlatformDetail = (platformId: string) => {
@@ -1088,7 +1102,9 @@ export default function App() {
         onChange={(sandboxId) => {
           if (!sandboxId || sandboxId === runtimeContext?.currentSandboxId) return
           void runAction(async () => {
+            resetSandboxScopedDetailState()
             const nextContext = await api.switchCurrentSandbox(sandboxId)
+            api.setCurrentSandboxId(nextContext.currentSandboxId)
             setRuntimeContext(nextContext)
           }, `已切换到沙箱：${sandboxes.find((item) => item.sandboxId === sandboxId)?.name ?? sandboxId}`)
         }}
@@ -1675,6 +1691,8 @@ export default function App() {
 
       {activeKey === 'tdp' ? (
         <>
+          <TdpPolicyCenter terminals={terminals} onMutated={reloadAll} />
+
           <Panel title="TDP Topic / Schema / Scope 治理" subtitle="允许注册 Topic 后自由扩展 Payload，并支持 Projection 注入">
             <FormGrid>
               <TextInput label="Topic Key" value={topicKey} onChange={setTopicKey} placeholder="如 terminal.runtime.config" />
@@ -1725,6 +1743,10 @@ export default function App() {
             </div>
           </Panel>
         </>
+      ) : null}
+
+      {activeKey === 'hot-update' ? (
+        <HotUpdateCenter terminals={terminals} onMutated={reloadAll} />
       ) : null}
 
       {activeKey === 'scene' ? (
@@ -2156,7 +2178,7 @@ export default function App() {
                   item.sourceSandboxId ?? '--',
                   formatTime(item.updatedAt),
                   <div key={item.sandboxId} className="button-group">
-                    <ActionButton label="切换" onClick={() => runAction(async () => { const nextContext = await api.switchCurrentSandbox(item.sandboxId); setRuntimeContext(nextContext); setEditingSandboxId('') }, `已切换到沙箱：${item.name}`)} />
+                    <ActionButton label="切换" onClick={() => runAction(async () => { resetSandboxScopedDetailState(); const nextContext = await api.switchCurrentSandbox(item.sandboxId); api.setCurrentSandboxId(nextContext.currentSandboxId); setRuntimeContext(nextContext); setEditingSandboxId('') }, `已切换到沙箱：${item.name}`)} />
                     {!item.isSystemDefault ? <ActionButton label="载入编辑" onClick={() => { setEditingSandboxId(item.sandboxId); setSandboxDraftName(item.name); setSandboxDraftDescription(item.description); setSandboxDraftPurpose(item.purpose); setSandboxDraftLimits(JSON.stringify(item.resourceLimits, null, 2)); setSandboxDraftMode(item.creationMode); setSandboxDraftSourceId(item.sourceSandboxId ?? '') }} /> : null}
                   </div>,
                 ])}

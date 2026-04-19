@@ -86,4 +86,33 @@ describe('automation query/action/wait engines', () => {
             value: 'hello',
         }])
     })
+
+    it('fails when the delegated action handler rejects the action', async () => {
+        const registry = createSemanticRegistry()
+        const trace = createAutomationTrace()
+        const actionExecutor = createActionExecutor({
+            registry,
+            trace,
+            performNodeAction: () => ({ok: false, reason: 'NO_ACTION_HANDLER'}),
+        })
+        registry.registerNode({
+            target: 'primary',
+            runtimeId: 'primary-1',
+            screenKey: 'home',
+            mountId: 'mount-1',
+            nodeId: 'field',
+            testID: 'home.field',
+            visible: true,
+            enabled: true,
+            availableActions: ['changeText'],
+        })
+
+        await expect(actionExecutor.performAction({
+            target: 'primary',
+            nodeId: 'field',
+            action: 'changeText',
+            value: 'hello',
+        })).rejects.toThrow(/NO_ACTION_HANDLER/)
+        expect(trace.getLastTrace()?.status).toBe('failed')
+    })
 })

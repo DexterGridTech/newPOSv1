@@ -82,6 +82,60 @@ describe('input-runtime rendered components', () => {
         expect(onChangeText).toHaveBeenNthCalledWith(3, '1')
     })
 
+    it('rejects ui.setValue on virtual fields so automation must use keyboard keys', async () => {
+        const harness = await createInputHarness()
+        let value = ''
+        const automation = renderWithAutomation(
+            <InputRuntimeProvider>
+                <>
+                    <InputField
+                        value={value}
+                        onChangeText={(next) => {
+                            value = next
+                        }}
+                        mode="virtual-activation-code"
+                        placeholder="请输入激活码"
+                    />
+                    <VirtualKeyboardOverlay />
+                </>
+            </InputRuntimeProvider>,
+            harness.store,
+            harness.runtime,
+        )
+
+        await expect(automation.client.call('ui.setValue', {
+            target: 'primary',
+            nodeId: 'ui-base-virtual-field:virtual-activation-code',
+            value: 'ABC123',
+        })).rejects.toThrow('NODE_NOT_ACTIONABLE')
+        await expect(automation.queryNodes('ui-base-virtual-keyboard')).resolves.toHaveLength(0)
+        expect(value).toBe('')
+    })
+
+    it('rejects helper changeText on virtual fields with an explicit keyboard-only error', async () => {
+        const harness = await createInputHarness()
+        const automation = renderWithAutomation(
+            <InputRuntimeProvider>
+                <>
+                    <InputField
+                        value=""
+                        onChangeText={() => {}}
+                        mode="virtual-pin"
+                        placeholder="请输入 PIN"
+                    />
+                    <VirtualKeyboardOverlay />
+                </>
+            </InputRuntimeProvider>,
+            harness.store,
+            harness.runtime,
+        )
+
+        await expect(automation.changeText(
+            'ui-base-virtual-field:virtual-pin',
+            '123456',
+        )).rejects.toThrow('VIRTUAL_INPUT_REQUIRES_KEYBOARD:ui-base-virtual-field:virtual-pin')
+    })
+
     it('exposes virtual keyboard preview and primary keys through automation nodes', async () => {
         const harness = await createInputHarness()
         const tree = renderWithAutomation(
@@ -158,7 +212,8 @@ describe('input-runtime rendered components', () => {
 
         await expect(activationTree.getText('ui-base-virtual-keyboard:title')).resolves.toBe('激活码键盘')
         await expect(activationTree.getNode('ui-base-virtual-keyboard:key:A')).resolves.toBeTruthy()
-        await expect(activationTree.getNode('ui-base-virtual-keyboard:key:F')).resolves.toBeTruthy()
+        await expect(activationTree.getNode('ui-base-virtual-keyboard:key:Z')).resolves.toBeTruthy()
+        await expect(activationTree.getNode('ui-base-virtual-keyboard:key:-')).resolves.toBeTruthy()
         await expect(activationTree.getNode('ui-base-virtual-keyboard:key:.')).resolves.toBeNull()
     })
 

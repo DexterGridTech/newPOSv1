@@ -96,7 +96,9 @@ describe('admin host-backed sections', () => {
 
         await tree.press('ui-base-admin-section:logs:open:0')
         expect(logHost.readFile).toHaveBeenCalledWith('app.log')
-        await expect(tree.queryNodesByText('hello-log')).resolves.toHaveLength(1)
+        await expect(tree.queryNodes('ui-base-admin-detail:log-content')).resolves.toEqual([
+            expect.objectContaining({value: 'hello-log'}),
+        ])
 
         await tree.press('ui-base-admin-section:logs:delete:0')
         expect(logHost.deleteFile).toHaveBeenCalledWith('app.log')
@@ -185,23 +187,33 @@ describe('admin host-backed sections', () => {
 
         await tree.press('ui-base-admin-section:control:toggle-fullscreen')
         expect(controlHost.setFullScreen).toHaveBeenCalledWith(true)
-        await expect(tree.queryNodesByText('已开启全屏')).resolves.toHaveLength(1)
+        await expect(tree.getNode('ui-base-admin-section:message')).resolves.toMatchObject({
+            text: '已开启全屏',
+        })
 
         await tree.press('ui-base-admin-section:control:toggle-lock')
         expect(controlHost.setAppLocked).toHaveBeenCalledWith(true)
-        await expect(tree.queryNodesByText('已锁定应用')).resolves.toHaveLength(1)
+        await expect(tree.getNode('ui-base-admin-section:message')).resolves.toMatchObject({
+            text: '已锁定应用',
+        })
 
         await tree.press('ui-base-admin-section:control:restart')
         expect(controlHost.restartApp).toHaveBeenCalledTimes(1)
-        await expect(tree.queryNodesByText('已发出应用重启指令')).resolves.toHaveLength(1)
+        await expect(tree.getNode('ui-base-admin-section:message')).resolves.toMatchObject({
+            text: '已发出应用重启指令',
+        })
 
         await tree.press('ui-base-admin-section:control:clear-cache')
         expect(controlHost.clearCache).toHaveBeenCalledTimes(1)
-        await expect(tree.queryNodesByText('已清空本地缓存')).resolves.toHaveLength(1)
+        await expect(tree.getNode('ui-base-admin-section:message')).resolves.toMatchObject({
+            text: '已清空本地缓存',
+        })
 
         await tree.press('ui-base-admin-section:control:switch-space:uat')
         expect(controlHost.switchServerSpace).toHaveBeenCalledWith('uat')
-        await expect(tree.queryNodesByText('已切换到 uat 空间')).resolves.toHaveLength(1)
+        await expect(tree.getNode('ui-base-admin-section:message')).resolves.toMatchObject({
+            text: '已切换到 uat 空间',
+        })
     })
 
     it('executes connector probes through the injected connector host', async () => {
@@ -227,7 +239,9 @@ describe('admin host-backed sections', () => {
         await tree.press('ui-base-admin-section:connector:probe:serial-main')
 
         expect(connectorHost.probe).toHaveBeenCalledWith('serial-main')
-        await expect(tree.queryNodesByText('serial-ready')).resolves.toHaveLength(1)
+        await expect(tree.queryNodes('ui-base-admin-detail:serial-main:probe-message')).resolves.toEqual([
+            expect.objectContaining({value: 'serial-ready'}),
+        ])
     })
 
     it('installs host tools through module input', async () => {
