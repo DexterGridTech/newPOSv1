@@ -26,6 +26,7 @@ import {
 } from '@impos2/kernel-base-tcp-control-runtime-v2'
 import {
     createTdpSyncRuntimeModuleV2,
+    selectTdpHotUpdateState,
     selectTdpCommandInboxState,
     selectTdpProjectionByTopicAndBucket,
     selectTdpResolvedProjection,
@@ -266,6 +267,129 @@ describe('tdp-sync-runtime-v2', () => {
         expect(syncState.changesStatus).toBe('idle')
         expect(syncState.lastDeliveredCursor).toBeUndefined()
         expect(syncState.lastAckedCursor).toBeUndefined()
+    })
+
+    it('reconciles hot update desired with injected current facts so allowed channel can download', async () => {
+        const stateStorage = createMemoryStorage()
+        const secureStateStorage = createMemoryStorage()
+        const runtime = createKernelRuntimeV2({
+            localNodeId: 'node_tdp_v2_hot_update_channel' as any,
+            platformPorts: createPlatformPorts({
+                environmentMode: 'DEV',
+                logger: createLoggerPort({
+                    environmentMode: 'DEV',
+                    write: () => {},
+                    scope: {
+                        moduleName: 'kernel.base.tdp-sync-runtime-v2.test',
+                        layer: 'kernel',
+                    },
+                }),
+                stateStorage: stateStorage.storage,
+                secureStateStorage: secureStateStorage.storage,
+            }),
+            modules: [
+                createTcpControlRuntimeModuleV2({
+                    assembly: {
+                        createHttpRuntime(context: RuntimeModuleContextV2) {
+                            return createHttpRuntime({
+                                logger: context.platformPorts.logger.scope({
+                                    moduleName: 'kernel.base.tdp-sync-runtime-v2.test',
+                                    subsystem: 'transport.http',
+                                }),
+                                transport: createMockTcpTransport(),
+                                servers: resolveTransportServers(kernelBaseTestServerConfig),
+                            })
+                        },
+                    },
+                }),
+                createTdpSyncRuntimeModuleV2({
+                    hotUpdate: {
+                        getCurrentFacts() {
+                            return {
+                                appId: 'assembly-android-mixc-retail-rn84',
+                                platform: 'android' as const,
+                                product: 'mixc-retail',
+                                runtimeVersion: 'android-mixc-retail-rn84@1.0',
+                                assemblyVersion: '1.0.0',
+                                buildNumber: 1,
+                                channel: 'development',
+                                capabilities: [],
+                            }
+                        },
+                    },
+                }),
+            ],
+        })
+
+        await runtime.start()
+        await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.bootstrapTcpControl, {
+            deviceInfo: {
+                id: 'device-hot-update-001',
+                model: 'Mock POS',
+            },
+        }))
+        await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.activateTerminal, {
+            sandboxId: 'sandbox-test-001',
+            activationCode: 'ACT-HOT-UPDATE-001',
+            deviceFingerprint: 'device-hot-update-001',
+            deviceInfo: {
+                id: 'device-hot-update-001',
+                model: 'Mock POS',
+            },
+        }))
+        await runtime.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.tdpSnapshotLoaded, {
+            highWatermark: 1,
+            snapshot: [
+                {
+                    topic: 'terminal.hot-update.desired',
+                    itemKey: 'main',
+                    operation: 'upsert' as const,
+                    scopeType: 'TERMINAL',
+                    scopeId: 'terminal-test-001',
+                    revision: 1,
+                    payload: {
+                        schemaVersion: 1,
+                        releaseId: 'release-hot-update',
+                        packageId: 'package-hot-update',
+                        appId: 'assembly-android-mixc-retail-rn84',
+                        platform: 'android',
+                        product: 'mixc-retail',
+                        bundleVersion: '1.0.0+ota.9',
+                        runtimeVersion: 'android-mixc-retail-rn84@1.0',
+                        packageUrl: '/api/v1/hot-updates/packages/package-hot-update/download',
+                        packageSize: 1024,
+                        packageSha256: 'package-sha',
+                        manifestSha256: 'manifest-sha',
+                        compatibility: {
+                            appId: 'assembly-android-mixc-retail-rn84',
+                            platform: 'android',
+                            product: 'mixc-retail',
+                            runtimeVersion: 'android-mixc-retail-rn84@1.0',
+                            allowedChannels: ['development'],
+                        },
+                        restart: {mode: 'manual'},
+                        rollout: {mode: 'active', publishedAt: '2026-04-20T00:00:00.000Z'},
+                        safety: {
+                            requireSignature: false,
+                            maxDownloadAttempts: 3,
+                            maxLaunchFailures: 2,
+                            healthCheckTimeoutMs: 5000,
+                        },
+                    },
+                    occurredAt: '2026-04-20T00:00:00.000Z',
+                },
+            ],
+        }))
+
+        expect(selectTdpHotUpdateState(runtime.getState())).toMatchObject({
+            desired: {
+                packageId: 'package-hot-update',
+            },
+            candidate: {
+                packageId: 'package-hot-update',
+                status: 'download-pending',
+            },
+        })
     })
 
     it('resolves scope priority, publishes effective topic changes, bridges system catalogs, and restores projection repository', async () => {
@@ -667,6 +791,66 @@ describe('tdp-sync-runtime-v2', () => {
                 }),
             },
         })
+        expect(selectTdpSessionState(runtime.getState())?.status).toBe('HANDSHAKING')
+    })
+
+    it('disconnects the previous TDP session on reset so a later activation re-handshakes cleanly', async () => {
+        const stateStorage = createMemoryStorage()
+        const secureStateStorage = createMemoryStorage()
+        const socketRuntimeSpy = createSocketRuntimeSpy()
+        const runtime = createRuntime({
+            localNodeId: 'node_tdp_v2_reconnect_after_reset',
+            stateStorage,
+            secureStateStorage,
+            socketRuntimeSpy,
+            autoConnectOnActivation: true,
+        })
+
+        await runtime.start()
+        await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.bootstrapTcpControl, {
+            deviceInfo: {
+                id: 'device-reconnect-after-reset-001',
+                model: 'Mock POS',
+            },
+        }))
+
+        await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.activateTerminal, {
+            sandboxId: 'sandbox-test-001',
+            activationCode: 'ACT-TDP-V2-RESET-001',
+            deviceFingerprint: 'device-reconnect-after-reset-001',
+            deviceInfo: {
+                id: 'device-reconnect-after-reset-001',
+                model: 'Mock POS',
+            },
+        }))
+
+        const firstHandshakeCount = socketRuntimeSpy.sentMessages.filter(item =>
+            (item as any).message?.type === 'HANDSHAKE',
+        ).length
+        expect(firstHandshakeCount).toBe(1)
+
+        await runtime.dispatchCommand(createCommand(
+            tcpControlV2CommandDefinitions.resetTcpControl,
+            {},
+        ))
+
+        expect(socketRuntimeSpy.socketRuntime.getConnectionState('kernel.base.tdp-sync-runtime-v2.test.socket'))
+            .toBe('disconnected')
+
+        await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.activateTerminal, {
+            sandboxId: 'sandbox-test-001',
+            activationCode: 'ACT-TDP-V2-RESET-002',
+            deviceFingerprint: 'device-reconnect-after-reset-001',
+            deviceInfo: {
+                id: 'device-reconnect-after-reset-001',
+                model: 'Mock POS',
+            },
+        }))
+
+        const handshakeCountAfterReset = socketRuntimeSpy.sentMessages.filter(item =>
+            (item as any).message?.type === 'HANDSHAKE',
+        ).length
+        expect(handshakeCountAfterReset).toBe(2)
         expect(selectTdpSessionState(runtime.getState())?.status).toBe('HANDSHAKING')
     })
 

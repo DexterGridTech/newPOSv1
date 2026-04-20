@@ -1,39 +1,43 @@
-import {defineInputField} from './inputFieldFactory'
-
 export const inputRuntimeDefaultFields = {
-    username: defineInputField({
+    username: {
         key: 'username',
         mode: 'system-text',
+        persistence: 'transient',
         promptText: '请输入用户名',
-    }),
-    password: defineInputField({
+    },
+    password: {
         key: 'password',
         mode: 'system-password',
+        persistence: 'transient',
         secureTextEntry: true,
         promptText: '请输入密码',
-    }),
-    phone: defineInputField({
+    },
+    phone: {
         key: 'phone',
         mode: 'system-number',
+        persistence: 'transient',
         promptText: '请输入11位手机号',
         maxLength: 11,
-    }),
-    smsCode: defineInputField({
+    },
+    smsCode: {
         key: 'smsCode',
         mode: 'system-number',
+        persistence: 'transient',
         promptText: '请输入6位验证码',
         maxLength: 6,
-    }),
-    adminPassword: defineInputField({
+    },
+    adminPassword: {
         key: 'adminPassword',
         mode: 'virtual-pin',
+        persistence: 'transient',
         secureTextEntry: true,
         promptText: '请输入密码',
         maxLength: 6,
-    }),
-    activationCode: defineInputField({
+    },
+    activationCode: {
         key: 'activationCode',
         mode: 'system-text',
+        persistence: 'transient',
         promptText: '请输入激活码',
-    }),
+    },
 } as const

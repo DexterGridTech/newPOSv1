@@ -84,6 +84,17 @@ export const createRuntimeLifecycle = (input: CreateRuntimeLifecycleInput) => {
         }
     }
 
+    const runApplicationResetHooks = async (
+        resetInput: {
+            reason?: string
+            previousState: ReturnType<typeof input.store.getState>
+        },
+    ) => {
+        for (const module of input.modules) {
+            await module.onApplicationReset?.(installContextFactory(module), resetInput)
+        }
+    }
+
     /**
      * 启动顺序必须稳定：
      * 先恢复 state-runtime，再注册 catalog，再 install 模块，最后广播 initialize。
@@ -112,6 +123,7 @@ export const createRuntimeLifecycle = (input: CreateRuntimeLifecycleInput) => {
     }
 
     const resetApplicationState = async (reason?: string) => {
+        const previousState = input.store.getState()
         input.platformPorts.logger.warn({
             category: 'runtime.reset',
             event: 'runtime-shell-v2-reset-application-state',
@@ -123,6 +135,10 @@ export const createRuntimeLifecycle = (input: CreateRuntimeLifecycleInput) => {
             },
         })
         await input.stateRuntime.resetState()
+        await runApplicationResetHooks({
+            reason,
+            previousState,
+        })
         await runInitialize()
     }
 

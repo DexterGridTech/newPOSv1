@@ -196,6 +196,17 @@ class ConnectorTurboModule(reactContext: ReactApplicationContext) :
 
   override fun removeListeners(count: Double) = Unit
 
+  override fun invalidate() {
+    removeStreamListener?.invoke()
+    removeStreamListener = null
+    removePassiveListener?.invoke()
+    removePassiveListener = null
+    if (instance === this) {
+      instance = null
+    }
+    super.invalidate()
+  }
+
   /**
    * 绑定 Connector 的流式事件与被动事件，并转发给 JS。
    */

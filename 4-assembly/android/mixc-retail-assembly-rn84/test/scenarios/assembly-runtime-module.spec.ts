@@ -3,9 +3,11 @@ import {describe, expect, it, vi} from 'vitest'
 const {
     bootstrapAssemblyRuntimeMock,
     nativeAddPowerStatusChangeListenerMock,
+    syncHotUpdateStateFromNativeBootMock,
 } = vi.hoisted(() => ({
     bootstrapAssemblyRuntimeMock: vi.fn(async () => undefined),
     nativeAddPowerStatusChangeListenerMock: vi.fn(() => () => undefined),
+    syncHotUpdateStateFromNativeBootMock: vi.fn(async () => null),
 }))
 
 vi.mock('../../src/application/bootstrapRuntime', () => ({
@@ -16,6 +18,10 @@ vi.mock('../../src/turbomodules/device', () => ({
     nativeDevice: {
         addPowerStatusChangeListener: nativeAddPowerStatusChangeListenerMock,
     },
+}))
+
+vi.mock('../../src/application/syncHotUpdateStateFromNativeBoot', () => ({
+    syncHotUpdateStateFromNativeBoot: syncHotUpdateStateFromNativeBootMock,
 }))
 
 import {runtimeShellV2CommandDefinitions} from '@impos2/kernel-base-runtime-shell-v2'
@@ -121,5 +127,27 @@ describe('assembly runtime module', () => {
             }),
             payload: {displayMode: 'SECONDARY'},
         }))
+    })
+
+    it('re-syncs hot update current facts after runtime reset', async () => {
+        const module = createModule({
+            deviceId: 'device-001',
+            screenMode: 'desktop',
+            displayCount: 2,
+            displayIndex: 0,
+            isEmulator: false,
+        })
+        const context = {
+            getState: vi.fn(() => ({})),
+            getStore: vi.fn(() => ({dispatch: vi.fn()})),
+        }
+
+        await module.onApplicationReset?.(context as any, {reason: 'kernel.base.tcp-control-runtime-v2.deactivateTerminal'})
+
+        expect(syncHotUpdateStateFromNativeBootMock).toHaveBeenCalledTimes(1)
+        expect(syncHotUpdateStateFromNativeBootMock).toHaveBeenCalledWith(context, {
+            initializeEmbeddedCurrent: false,
+            previousState: undefined,
+        })
     })
 })

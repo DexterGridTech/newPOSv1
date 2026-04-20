@@ -7,6 +7,8 @@ object TopologyHostV3Defaults {
   const val DEFAULT_BASE_PATH = "/mockMasterServer"
   const val DEFAULT_PROTOCOL_VERSION = "2026.04-v3"
   const val DEFAULT_RUNTIME_VERSION = "android-topology-host-v3"
+  const val DEFAULT_HEARTBEAT_INTERVAL_MS = 15_000L
+  const val DEFAULT_HEARTBEAT_TIMEOUT_MS = 45_000L
 }
 
 enum class TopologyHostV3ServiceState {
@@ -20,6 +22,8 @@ enum class TopologyHostV3ServiceState {
 data class TopologyHostV3Config(
   val port: Int = TopologyHostV3Defaults.DEFAULT_PORT,
   val basePath: String = TopologyHostV3Defaults.DEFAULT_BASE_PATH,
+  val heartbeatIntervalMs: Long = TopologyHostV3Defaults.DEFAULT_HEARTBEAT_INTERVAL_MS,
+  val heartbeatTimeoutMs: Long = TopologyHostV3Defaults.DEFAULT_HEARTBEAT_TIMEOUT_MS,
 )
 
 data class TopologyHostV3AddressInfo(
@@ -32,6 +36,8 @@ data class TopologyHostV3AddressInfo(
 
 data class TopologyHostV3Stats(
   val sessionCount: Int = 0,
+  val peerCount: Int = 0,
+  val stalePeerCount: Int = 0,
   val activeFaultRuleCount: Int = 0,
 )
 
@@ -88,9 +94,15 @@ data class TopologyHostV3PeerSnapshot(
   val role: String,
   val nodeId: String,
   val deviceId: String,
+  val lastSeenAt: Long,
+  val lastHeartbeatSentAt: Long? = null,
+  val stale: Boolean = false,
 )
 
 internal data class TopologyHostV3PeerRecord(
   val runtime: TopologyHostV3RuntimeInfo,
   val connectionId: String,
+  val connectedAt: Long,
+  var lastSeenAt: Long,
+  var lastHeartbeatSentAt: Long? = null,
 )

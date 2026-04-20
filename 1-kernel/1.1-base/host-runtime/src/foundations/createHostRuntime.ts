@@ -371,17 +371,6 @@ export const createHostRuntime = (
             })
 
         tickets.bindSession(ticketRecord.ticket.token, session.sessionId, receivedAt)
-        tickets.occupy(
-            ticketRecord.ticket.token,
-            {
-                role: helloInput.hello.runtime.role,
-                nodeId: helloInput.hello.runtime.nodeId,
-                sessionId: session.sessionId,
-                connected: false,
-                updatedAt: receivedAt,
-            },
-            receivedAt,
-        )
 
         const peerRuntime = Object.values(session.nodes).find(node => {
             return node.nodeId !== helloInput.hello.runtime.nodeId

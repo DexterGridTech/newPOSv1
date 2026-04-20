@@ -2,14 +2,14 @@ export const releaseInfo = {
   "appId": "assembly-android-mixc-retail-rn84",
   "platform": "android",
   "assemblyVersion": "1.0.0",
-  "buildNumber": 1,
-  "bundleVersion": "1.0.0+ota.1",
+  "buildNumber": 2,
+  "bundleVersion": "1.0.0+ota.9",
   "runtimeVersion": "android-mixc-retail-rn84@1.0",
-  "channel": "development",
+  "channel": "production",
   "minSupportedAppVersion": "1.0.0",
   "git": {
-    "commit": "629e9f6a0b57ed0f03967dc971afebc7a8b28d8e",
+    "commit": "b34ddf0828f7663aa21b958611b95941ca001fef",
     "branch": "main"
   },
-  "updatedAt": "2026-04-19T02:18:13.233Z"
+  "updatedAt": "2026-04-20T21:30:58.021Z"
 } as const

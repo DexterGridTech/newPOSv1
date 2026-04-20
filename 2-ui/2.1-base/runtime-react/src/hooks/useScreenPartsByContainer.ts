@@ -1,5 +1,4 @@
-import {useMemo} from 'react'
-import {useSelector} from 'react-redux'
+import {shallowEqual, useSelector} from 'react-redux'
 import {
     selectUiScreenDefinitionsByContainer,
     type UiScreenDefinition,
@@ -14,9 +13,8 @@ export const useScreenPartsByContainer = (
     container: string | UiRuntimeVariable,
 ): readonly UiScreenDefinition[] => {
     const containerKey = resolveContainerKey(container)
-    const definitions = useSelector<RootState, readonly UiScreenDefinition[]>((state) =>
-        selectUiScreenDefinitionsByContainer(state, containerKey),
+    return useSelector<RootState, readonly UiScreenDefinition[]>(
+        (state) => selectUiScreenDefinitionsByContainer(state, containerKey),
+        shallowEqual,
     )
-
-    return useMemo(() => definitions, [definitions])
 }

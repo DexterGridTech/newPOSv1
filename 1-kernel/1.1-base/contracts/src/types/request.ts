@@ -6,10 +6,10 @@ export type CommandLifecycleStatus =
     | 'dispatched'
     | 'accepted'
     | 'started'
-    | 'complete'
+    | 'completed'
     | 'error'
 
-export type RequestLifecycleStatus = 'started' | 'complete' | 'error'
+export type RequestLifecycleStatus = 'started' | 'completed' | 'error'
 
 export interface CommandResultPatch {
     commandId: CommandId

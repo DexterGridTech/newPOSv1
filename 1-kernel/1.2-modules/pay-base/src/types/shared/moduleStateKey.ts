@@ -1,9 +1,6 @@
 import {moduleName} from "../../moduleName";
 import {createModuleStateKeys} from "@impos2/kernel-core-base";
-import {
-    createModuleInstanceModeStateKeys,
-    createModuleWorkspaceStateKeys
-} from "@impos2/kernel-core-interconnection";
+import {createModuleWorkspaceStateKeys} from "@impos2/kernel-core-interconnection";
 import {createUnitDataStateKeys} from "@impos2/kernel-core-terminal";
 
 
@@ -22,11 +19,6 @@ export const kernelPayBaseUnitDataState = createUnitDataStateKeys(
         'unitData_paymentFunction'
     ] as const
 );
-export const kernelPayBaseInstanceState= createModuleInstanceModeStateKeys(
-    moduleName,
-    [
-    ] as const
-)
 export const kernelPayBaseWorkspaceState = createModuleWorkspaceStateKeys(
     moduleName,
     [

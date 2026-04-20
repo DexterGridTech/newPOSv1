@@ -16,7 +16,7 @@ import java.util.Locale
  * - 重启何时发起；
  * - 副屏何时收到退出请求；
  * - ACK 是否收到；
- * - ReactHost 何时重载。
+ * - ReactHost 何时切 bundle / 触发 reload。
  *
  * 统一使用 `StartupAudit` tag，可以通过：
  * `adb logcat -s StartupAudit`
@@ -138,12 +138,32 @@ object StartupAuditLogger {
   }
 
   /**
-   * 记录主进程 ReactHost 即将 reload。
+   * 记录主进程准备直接 reload 当前 ReactHost。
    */
-  fun logMainReload() {
+  fun logReactHostReloadRequested(reason: String) {
     Log.i(
       TAG,
-      "main_reacthost_reload pid=${Process.myPid()} time=${formatter.format(Date())}",
+      "react_host_reload_requested reason=$reason pid=${Process.myPid()} time=${formatter.format(Date())}",
+    )
+  }
+
+  /**
+   * 记录主进程准备切换到新的 bundle 并 reload ReactHost。
+   */
+  fun logReactHostBundleReloadRequested(bundleFile: String) {
+    Log.i(
+      TAG,
+      "react_host_bundle_reload_requested bundleFile=$bundleFile pid=${Process.myPid()} time=${formatter.format(Date())}",
+    )
+  }
+
+  /**
+   * 记录主进程准备通过进程级重启应用热更新 bundle。
+   */
+  fun logHotUpdateProcessRelaunchRequested(bundleFile: String) {
+    Log.i(
+      TAG,
+      "hot_update_process_relaunch_requested bundleFile=$bundleFile pid=${Process.myPid()} time=${formatter.format(Date())}",
     )
   }
 }

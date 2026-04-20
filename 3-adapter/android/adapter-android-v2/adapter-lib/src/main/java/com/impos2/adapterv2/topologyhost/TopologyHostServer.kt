@@ -327,9 +327,12 @@ class TopologyHostServer(
 
   private fun readWebSocketLoop(connectionId: String, session: TopologyHostWsSession, socket: Socket) {
     try {
-      val reader = TopologyHostWsFrameReader(socket.getInputStream()) { payload ->
-        session.sendPong(payload)
-      }
+      val reader = TopologyHostWsFrameReader(
+        socket.getInputStream(),
+        onPing = { payload ->
+          session.sendPong(payload)
+        },
+      )
       while (running && session.isOpen) {
         val text = reader.readFrame() ?: break
         val outputs = handleIncomingMessage(connectionId, JSONObject(text))

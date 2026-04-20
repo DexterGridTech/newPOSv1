@@ -75,5 +75,10 @@
   "reactotron": {
     "emulatorHost": "localhost",
     "deviceHost": "192.168.0.172"
+  },
+  "assembly": {
+    "adbSocketDebug": {
+      "enabled": true
+    }
   }
 }

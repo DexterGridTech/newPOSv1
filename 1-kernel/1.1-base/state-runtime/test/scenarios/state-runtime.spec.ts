@@ -985,6 +985,51 @@ describe('state-runtime store assembly', () => {
         ])).toBe('kernel.user.state.MASTER.main')
     })
 
+    it('keeps module workspace keys as family roots while workspace slice helpers expand real slices', () => {
+        const moduleWorkspaceState = createModuleWorkspaceStateKeys(
+            'kernel.user.state',
+            ['screen', 'overlay'] as const,
+        )
+
+        expect(moduleWorkspaceState).toEqual({
+            screen: 'kernel.user.state.screen',
+            overlay: 'kernel.user.state.overlay',
+        })
+
+        const workspaceSlice = createWorkspaceStateSlice({
+            baseName: moduleWorkspaceState.screen,
+            values: ['main', 'branch'] as const,
+            initialState: {
+                current: {value: 'idle', updatedAt: 0},
+            },
+            reducers: {
+                setCurrent(state, action: {payload: {value: string; updatedAt: number}}) {
+                    state.current = action.payload
+                },
+            },
+        })
+
+        expect(workspaceSlice.sliceNames).toEqual({
+            main: 'kernel.user.state.screen.main',
+            branch: 'kernel.user.state.screen.branch',
+        })
+
+        const descriptors = toWorkspaceStateDescriptors(['main', 'branch'] as const, {
+            name: moduleWorkspaceState.screen,
+            reducers: workspaceSlice.reducers,
+            persistIntent: 'owner-only',
+            syncIntent: {
+                main: 'master-to-slave',
+                branch: 'slave-to-master',
+            },
+        })
+
+        expect(descriptors.map(descriptor => descriptor.name)).toEqual([
+            'kernel.user.state.screen.main',
+            'kernel.user.state.screen.branch',
+        ])
+    })
+
     it('rewrites action types to scoped slice action types from route context', () => {
         const action = {
             type: 'kernel.user.state/setReady',

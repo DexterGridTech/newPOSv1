@@ -83,6 +83,56 @@ class TopologyHostV3RuntimeTest {
     assertEquals("master-node", snapshot.peers.first().nodeId)
   }
 
+  @Test
+  fun marksPeerStaleAfterHeartbeatTimeout() {
+    val runtime = TopologyHostV3Runtime(heartbeatTimeoutMs = 50L)
+    runtime.processHello(
+      connectionId = "c-master",
+      hello = TopologyHostV3Hello(
+        helloId = "h-master",
+        runtime = createRuntimeInfo("master-node", "master-device", "MASTER"),
+        sentAt = 1L,
+      ),
+    )
+    runtime.recordInboundFrame("c-master", seenAt = 10L)
+
+    val timedOutConnections = runtime.collectTimedOutConnections(now = 70L)
+    val snapshot = runtime.getDiagnosticsSnapshot()
+
+    assertEquals(listOf("c-master"), timedOutConnections)
+    assertEquals(1, snapshot.peers.size)
+    assertTrue(snapshot.peers.first().stale)
+  }
+
+  @Test
+  fun statsExposePeerAndStaleCounts() {
+    val runtime = TopologyHostV3Runtime(heartbeatTimeoutMs = 10_000L)
+    runtime.processHello(
+      connectionId = "c-master",
+      hello = TopologyHostV3Hello(
+        helloId = "h-master",
+        runtime = createRuntimeInfo("master-node", "master-device", "MASTER"),
+        sentAt = 1L,
+      ),
+    )
+    runtime.processHello(
+      connectionId = "c-slave",
+      hello = TopologyHostV3Hello(
+        helloId = "h-slave",
+        runtime = createRuntimeInfo("slave-node", "slave-device", "SLAVE"),
+        sentAt = 2L,
+      ),
+    )
+    runtime.recordInboundFrame("c-master", seenAt = System.currentTimeMillis())
+    runtime.recordInboundFrame("c-slave", seenAt = System.currentTimeMillis())
+
+    val stats = runtime.getStats()
+
+    assertEquals(2, stats.peerCount)
+    assertEquals(1, stats.sessionCount)
+    assertEquals(0, stats.stalePeerCount)
+  }
+
   private fun createRuntimeInfo(nodeId: String, deviceId: String, instanceMode: String): TopologyHostV3RuntimeInfo {
     return TopologyHostV3RuntimeInfo(
       nodeId = nodeId,

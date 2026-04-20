@@ -73,6 +73,12 @@ class ConnectorManager private constructor(private val context: Context) : IConn
     val data: Map<String, Any?>? = null,
   )
 
+  internal data class HidSubscriptionSnapshot(
+    val channelId: String,
+    val target: String,
+    val buffer: StringBuilder = StringBuilder(),
+  )
+
   private data class HidSubscription(
     val channelId: String,
     val channel: ChannelDescriptor,
@@ -397,6 +403,11 @@ class ConnectorManager private constructor(private val context: Context) : IConn
 
     task.cancelAction = {
       canceledTaskCount.incrementAndGet()
+      finishTask(
+        task,
+        createCanceledConnectorResponse(task.startedAt),
+        callback,
+      )
     }
 
     val intent = Intent(activity, SystemFilePickerActivity::class.java).apply {
@@ -647,7 +658,6 @@ class ConnectorManager private constructor(private val context: Context) : IConn
       if (subscriptions.isEmpty()) {
         return false
       }
-      val subscription = subscriptions.values.firstOrNull() ?: return false
       val keyCode = event.keyCode
       if (isSystemKey(keyCode)) {
         return false
@@ -656,10 +666,17 @@ class ConnectorManager private constructor(private val context: Context) : IConn
         return true
       }
 
+      val snapshot = subscriptions.values.toList()
+      if (snapshot.isEmpty()) {
+        return false
+      }
+
       return when (keyCode) {
         KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER -> {
-          subscription.future?.cancel(false)
-          emitBuffered(subscription)
+          snapshot.forEach { subscription ->
+            subscription.future?.cancel(false)
+            emitBuffered(subscription)
+          }
           true
         }
         else -> {
@@ -667,13 +684,15 @@ class ConnectorManager private constructor(private val context: Context) : IConn
           if (char == 0) {
             true
           } else {
-            subscription.buffer.append(char.toChar())
-            subscription.future?.cancel(false)
-            subscription.future = scheduler.schedule(
-              { emitBuffered(subscription) },
-              COMMIT_DELAY_MS,
-              TimeUnit.MILLISECONDS,
-            )
+            appendBufferedCharForSubscriptions(snapshot.map { it.toSnapshot() }, char.toChar())
+            snapshot.forEach { subscription ->
+              subscription.future?.cancel(false)
+              subscription.future = scheduler.schedule(
+                { emitBuffered(subscription) },
+                COMMIT_DELAY_MS,
+                TimeUnit.MILLISECONDS,
+              )
+            }
             true
           }
         }
@@ -681,20 +700,14 @@ class ConnectorManager private constructor(private val context: Context) : IConn
     }
 
     private fun emitBuffered(subscription: HidSubscription) {
-      val text = subscription.buffer.toString().trim()
-      subscription.buffer.clear()
-      if (text.isEmpty()) {
-        return
-      }
-      emitStream(
-        ConnectorStreamEvent(
-          channelId = subscription.channelId,
-          type = subscription.channel.type.name,
-          target = subscription.channel.target,
-          timestamp = System.currentTimeMillis(),
-          raw = text,
-          data = mapOf("text" to text),
-        ),
+      buildHidBufferedEvent(subscription.toSnapshot())?.let(::emitStream)
+    }
+
+    private fun HidSubscription.toSnapshot(): HidSubscriptionSnapshot {
+      return HidSubscriptionSnapshot(
+        channelId = channelId,
+        target = channel.target,
+        buffer = buffer,
       )
     }
   }
@@ -717,4 +730,50 @@ class ConnectorManager private constructor(private val context: Context) : IConn
       callback: (ConnectorResponse) -> Unit,
     ): Boolean = false
   }
+}
+
+internal fun appendBufferedCharForSubscriptions(
+  subscriptions: List<ConnectorManager.HidSubscriptionSnapshot>,
+  char: Char,
+) {
+  subscriptions.forEach { it.buffer.append(char) }
+}
+
+internal fun flushBufferedSubscriptions(
+  subscriptions: List<ConnectorManager.HidSubscriptionSnapshot>,
+  timestamp: Long = System.currentTimeMillis(),
+): List<ConnectorManager.ConnectorStreamEvent> {
+  return subscriptions.mapNotNull { buildHidBufferedEvent(it, timestamp) }
+}
+
+internal fun createCanceledConnectorResponse(
+  startedAt: Long,
+  timestamp: Long = System.currentTimeMillis(),
+): ConnectorResponse {
+  return ConnectorResponse(
+    success = false,
+    code = ConnectorCodes.CANCELED,
+    message = "CANCELED",
+    timestamp = timestamp,
+    duration = timestamp - startedAt,
+  )
+}
+
+private fun buildHidBufferedEvent(
+  subscription: ConnectorManager.HidSubscriptionSnapshot,
+  timestamp: Long = System.currentTimeMillis(),
+): ConnectorManager.ConnectorStreamEvent? {
+  val text = subscription.buffer.toString().trim()
+  subscription.buffer.clear()
+  if (text.isEmpty()) {
+    return null
+  }
+  return ConnectorManager.ConnectorStreamEvent(
+    channelId = subscription.channelId,
+    type = ChannelType.HID.name,
+    target = subscription.target,
+    timestamp = timestamp,
+    raw = text,
+    data = mapOf("text" to text),
+  )
 }

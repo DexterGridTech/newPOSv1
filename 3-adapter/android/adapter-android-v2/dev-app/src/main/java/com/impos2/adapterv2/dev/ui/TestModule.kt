@@ -23,7 +23,7 @@ enum class TestModule(
   ),
   TOPOLOGY_HOST(
     "TopologyHost",
-    "内置双屏 host、HTTP/WS 协议、ticket 与 fault rule",
+    "内置双屏 host v3、HTTP/WS 协议、pair relay 与 fault rule",
     listOf("Host", "HTTP", "WS"),
     "双屏验证",
     "用于验证终端内置 topologyHost 是否与 topology host v3 协议保持一致。"

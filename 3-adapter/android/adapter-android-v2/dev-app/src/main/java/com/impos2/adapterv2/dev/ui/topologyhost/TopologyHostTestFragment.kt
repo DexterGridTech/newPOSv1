@@ -19,29 +19,27 @@ import com.impos2.adapterv2.dev.ui.console.metricRow
 import com.impos2.adapterv2.dev.ui.console.outlineButton
 import com.impos2.adapterv2.dev.ui.console.primaryButton
 import com.impos2.adapterv2.dev.ui.console.sectionTitle
-import com.impos2.adapterv2.topologyhost.TopologyHostConfig
-import com.impos2.adapterv2.topologyhost.TopologyHostDiagnosticsSnapshot
-import com.impos2.adapterv2.topologyhost.TopologyHostFaultRule
-import com.impos2.adapterv2.topologyhost.TopologyHostManager
-import com.impos2.adapterv2.topologyhost.TopologyHostStatusInfo
-import com.impos2.adapterv2.topologyhost.TopologyHostStats
+import com.impos2.adapterv2.topologyhostv3.TopologyHostV3Config
+import com.impos2.adapterv2.topologyhostv3.TopologyHostV3DiagnosticsSnapshot
+import com.impos2.adapterv2.topologyhostv3.TopologyHostV3Manager
+import com.impos2.adapterv2.topologyhostv3.TopologyHostV3StatusInfo
+import com.impos2.adapterv2.topologyhostv3.TopologyHostV3Stats
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.concurrent.Executors
 
 class TopologyHostTestFragment : Fragment() {
-  private val hostManager by lazy { TopologyHostManager.getInstance(requireContext()) }
+  private val hostManager by lazy { TopologyHostV3Manager.getInstance(requireContext()) }
   private val ioExecutor = Executors.newSingleThreadExecutor()
 
-  private lateinit var masterNodeIdInput: TextInputEditText
   private lateinit var faultRuleKindInput: TextInputEditText
   private lateinit var faultRuleChannelInput: TextInputEditText
   private lateinit var faultRuleDelayInput: TextInputEditText
 
-  private var latestStatus: TopologyHostStatusInfo? = null
-  private var latestStats: TopologyHostStats? = null
-  private var latestDiagnostics: TopologyHostDiagnosticsSnapshot? = null
+  private var latestStatus: TopologyHostV3StatusInfo? = null
+  private var latestStats: TopologyHostV3Stats? = null
+  private var latestDiagnostics: TopologyHostV3DiagnosticsSnapshot? = null
   private var latestHttpResult: String = "--"
   private val eventLines = mutableListOf<String>()
 
@@ -62,15 +60,15 @@ class TopologyHostTestFragment : Fragment() {
     return consolePage {
       addView(
         consoleTopBar(
-          title = "TopologyHost 验证台",
-          subtitle = "双屏 host 服务、ticket、fault rule 与诊断验证",
+          title = "TopologyHost V3 验证台",
+          subtitle = "双屏 V3 host、pair relay、fault rule 与 liveness 诊断",
           onBack = { requireActivity().onBackPressedDispatcher.onBackPressed() },
         )
       )
 
       addView(consoleCard {
         addView(MaterialTextView(context).apply {
-          text = "本页验证新的 topologyHost。它要对齐 topology host v3，而不是沿用旧 LocalWebServer 协议。"
+          text = "本页只验证 topologyHostV3。旧 ticket-based topologyhost 已冻结为 legacy，不再作为 adapter dev-app 的活跃验证面。"
           textSize = 14f
           setTextColor(ConsoleTheme.textSecondary)
         })
@@ -81,8 +79,8 @@ class TopologyHostTestFragment : Fragment() {
         listOf(
           "状态" to (latestStatus?.state?.name ?: "未启动"),
           "端口" to (latestStatus?.config?.port?.toString() ?: "8888"),
-          "ticketCount" to (latestStats?.ticketCount?.toString() ?: "0"),
-          "连接数" to (latestStats?.activeConnectionCount?.toString() ?: "0"),
+          "sessionCount" to (latestStats?.sessionCount?.toString() ?: "0"),
+          "peerCount" to (latestStats?.peerCount?.toString() ?: "0"),
         ),
       ))
 
@@ -93,7 +91,7 @@ class TopologyHostTestFragment : Fragment() {
           ConsoleSessionStore.record("TopologyHost", "start", "running")
           ioExecutor.execute {
             runActionOnUi("start", "start") {
-              hostManager.start(TopologyHostConfig())
+              hostManager.start(TopologyHostV3Config())
               latestStatus = hostManager.getStatus()
               latestStats = hostManager.getStats()
               "ws=${latestStatus?.addressInfo?.wsUrl}"
@@ -117,7 +115,7 @@ class TopologyHostTestFragment : Fragment() {
             runActionOnUi("stats", "stats") {
               latestStats = hostManager.getStats()
               latestDiagnostics = hostManager.getDiagnosticsSnapshot()
-              "tickets=${latestStats?.ticketCount}, sessions=${latestStats?.sessionCount}"
+              "sessions=${latestStats?.sessionCount}, peers=${latestStats?.peerCount}"
             }
           }
         })
@@ -135,23 +133,7 @@ class TopologyHostTestFragment : Fragment() {
       })
 
       addView(sectionTitle("HTTP 验证"))
-      addView(consoleCard("ticket 与 fault rules") {
-        addView(TextInputLayout(context).apply {
-          hint = "masterNodeId"
-          masterNodeIdInput = TextInputEditText(context).apply {
-            setText("master-terminal-dev")
-          }
-          addView(masterNodeIdInput)
-        })
-        addView(primaryButton("POST /tickets") {
-          val masterNodeId = masterNodeIdInput.text?.toString()?.trim().orEmpty()
-          requestPost(
-            url = "http://127.0.0.1:8888/mockMasterServer/tickets",
-            body = """{"masterNodeId":"$masterNodeId"}""",
-            action = "POST /tickets",
-          )
-        })
-
+      addView(consoleCard("V3 状态与 fault rules") {
         addView(TextInputLayout(context).apply {
           hint = "fault kind，例如 relay-delay / relay-drop"
           faultRuleKindInput = TextInputEditText(context).apply {
@@ -173,23 +155,33 @@ class TopologyHostTestFragment : Fragment() {
           }
           addView(faultRuleDelayInput)
         })
-        addView(outlineButton("PUT /fault-rules") {
+        addView(outlineButton("POST /fault-rules") {
           val kind = faultRuleKindInput.text?.toString()?.trim().orEmpty()
           val channel = faultRuleChannelInput.text?.toString()?.trim().orEmpty()
           val delayMs = faultRuleDelayInput.text?.toString()?.trim().orEmpty()
           val rule = buildFaultRuleJson(kind, channel, delayMs)
           requestPost(
             url = "http://127.0.0.1:8888/mockMasterServer/fault-rules",
-            method = "PUT",
             body = """{"rules":[$rule]}""",
-            action = "PUT /fault-rules",
+            action = "POST /fault-rules",
           )
         })
-        addView(outlineButton("GET /health") {
-          requestGet("http://127.0.0.1:8888/mockMasterServer/health", "GET /health")
+        addView(outlineButton("DELETE /fault-rules") {
+          requestPost(
+            url = "http://127.0.0.1:8888/mockMasterServer/fault-rules",
+            method = "DELETE",
+            body = "{}",
+            action = "DELETE /fault-rules",
+          )
+        })
+        addView(outlineButton("GET /status") {
+          requestGet("http://127.0.0.1:8888/mockMasterServer/status", "GET /status")
         })
         addView(outlineButton("GET /stats") {
           requestGet("http://127.0.0.1:8888/mockMasterServer/stats", "GET /stats")
+        })
+        addView(outlineButton("GET /diagnostics") {
+          requestGet("http://127.0.0.1:8888/mockMasterServer/diagnostics", "GET /diagnostics")
         })
       })
 
@@ -202,18 +194,17 @@ class TopologyHostTestFragment : Fragment() {
       })
 
       addView(consoleCard("统计") {
-        addView(detailLine("ticketCount", latestStats?.ticketCount?.toString() ?: "--"))
         addView(detailLine("sessionCount", latestStats?.sessionCount?.toString() ?: "--"))
-        addView(detailLine("relay.enqueued", latestStats?.relayCounters?.enqueued?.toString() ?: "--"))
-        addView(detailLine("relay.flushed", latestStats?.relayCounters?.flushed?.toString() ?: "--"))
+        addView(detailLine("peerCount", latestStats?.peerCount?.toString() ?: "--"))
+        addView(detailLine("stalePeerCount", latestStats?.stalePeerCount?.toString() ?: "--"))
         addView(detailLine("faultRuleCount", latestStats?.activeFaultRuleCount?.toString() ?: "--"))
       })
 
       addView(consoleCard("诊断快照") {
         addView(detailLine("hostNodeId", latestDiagnostics?.hostRuntime?.nodeId ?: "--"))
-        addView(detailLine("tickets", latestDiagnostics?.tickets?.size?.toString() ?: "--"))
-        addView(detailLine("sessions", latestDiagnostics?.sessions?.size?.toString() ?: "--"))
-        addView(detailLine("events", latestDiagnostics?.recentEvents?.size?.toString() ?: "--"))
+        addView(detailLine("sessionId", latestDiagnostics?.sessionId ?: "--"))
+        addView(detailLine("peers", latestDiagnostics?.peers?.size?.toString() ?: "--"))
+        addView(detailLine("faultRules", latestDiagnostics?.faultRules?.size?.toString() ?: "--"))
       })
 
       addView(consoleCard("最近 HTTP 结果") {

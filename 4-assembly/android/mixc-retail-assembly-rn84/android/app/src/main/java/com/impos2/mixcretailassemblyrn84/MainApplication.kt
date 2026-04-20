@@ -72,10 +72,17 @@ class MainApplication : Application(), ReactApplication {
 
       override fun getJSBundleFile(): String? {
         if (BuildConfig.ENABLE_HOT_UPDATE_BUNDLE_RESOLVER) {
-          return HotUpdateBundleResolver(this@MainApplication).resolveBundleFile(
-            isPrimaryProcess = !currentProcessName().endsWith(":secondary"),
+          val isPrimaryProcess = !currentProcessName().endsWith(":secondary")
+          val resolvedBundle = HotUpdateBundleResolver(this@MainApplication).resolveBundleFile(
+            isPrimaryProcess = isPrimaryProcess,
           )
-            ?: super.getJSBundleFile()
+          val fallbackBundle = super.getJSBundleFile()
+          val bundleFile = resolvedBundle ?: fallbackBundle
+          Log.i(
+            TAG,
+            "getJSBundleFile process=${currentProcessName()} isPrimaryProcess=$isPrimaryProcess resolvedBundle=$resolvedBundle fallbackBundle=$fallbackBundle selectedBundle=$bundleFile",
+          )
+          return bundleFile
         }
         return super.getJSBundleFile()
       }

@@ -1,17 +1,21 @@
 package com.impos2.mixcretailassemblyrn84.restart
 
+import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import com.impos2.adapterv2.topologyhostv3.TopologyHostV3Manager
 import com.impos2.adapterv2.topologyhostv3.TopologyHostV3ServiceState
+import com.impos2.mixcretailassemblyrn84.HotUpdateBundleResolver
 import com.impos2.mixcretailassemblyrn84.MainActivity
+import com.impos2.mixcretailassemblyrn84.MainApplication
 import com.impos2.mixcretailassemblyrn84.startup.SecondaryProcessController
 import com.impos2.mixcretailassemblyrn84.startup.StartupAuditLogger
 import com.impos2.mixcretailassemblyrn84.startup.StartupCoordinator
 import com.impos2.mixcretailassemblyrn84.startup.StartupOverlayManager
 import com.impos2.mixcretailassemblyrn84.startup.TopologyLaunchCoordinator
+import java.lang.ref.WeakReference
 
 /**
  * 应用级重启管理器。
@@ -21,17 +25,33 @@ import com.impos2.mixcretailassemblyrn84.startup.TopologyLaunchCoordinator
  * 1. 记录审计日志并重置启动编排状态；
  * 2. 如果主进程 topologyHost 正在运行，则先停止；
  * 3. 如果副屏还在运行，则请求副进程有序退出并等待 ACK；
- * 4. 最后才 reload 主进程的 ReactHost，重建主屏 JS 运行时；
+ * 4. 在前台主屏中切换目标 JS bundle 并触发 ReactHost reload；
  * 5. 主屏再次 ready 后，再由启动编排器拉起新的副屏进程。
  *
- * 这样做的目的，是保证未来热更新场景中主副屏都能从干净环境重新加载最新 bundle。
+ * Android 15 对后台启动 Activity 的限制更严格，传统“杀进程 + AlarmManager 拉起 Activity”
+ * 方案在生产包下会被 BAL 拦截。这里改为在当前前台宿主内直接驱动 ReactHost reload：
+ * - 热更新场景会从当前前台 Activity 重新拉起主入口并退出当前进程，让新进程在
+ *   MainApplication.getJSBundleFile() 中按 active marker 构造全新的 ReactHost；
+ * - 普通手动重启场景则直接 reload 当前 bundle source。
+ *
+ * 这样可以满足：
+ * 1. 主副屏 JS runtime 被完整销毁重建；
+ * 2. 热更新 bundle 立即生效；
+ * 3. 启动编排、marker、版本上报链路保持不变。
+ *
+ * 注意：不能在生产包热更新里依赖 ReactHost.setBundleSource(filePath)。RN 0.84 的
+ * setBundleSource 通过 DevSupportManager.bundleFilePath 传递路径，而 release 模式的
+ * ReleaseDevSupportManager 对该属性是 no-op，最终 reload 仍会回到首次创建 host 时固定的
+ * delegate bundle loader。
  */
-class AppRestartManager(private val activity: MainActivity) {
+class AppRestartManager(activity: MainActivity) {
 
   /**
    * 所有重启编排都统一投递到主线程，避免与 Activity / ReactHost 生命周期交叉调用。
    */
   private val mainHandler = Handler(Looper.getMainLooper())
+  private val appContext = activity.applicationContext
+  private val activityRef = WeakReference(activity)
 
   /**
    * 主进程 local web server 管理器。
@@ -39,7 +59,7 @@ class AppRestartManager(private val activity: MainActivity) {
    * 用户已经明确要求：重启前如果 web server 正在运行，必须先停掉，后续由 JS 层按自身时序
    * 再重新启动。
    */
-  private val topologyHostManager by lazy { TopologyHostV3Manager.getInstance(activity.applicationContext) }
+  private val topologyHostManager by lazy { TopologyHostV3Manager.getInstance(appContext) }
 
   companion object {
     private const val TAG = "AppRestartManager"
@@ -53,31 +73,45 @@ class AppRestartManager(private val activity: MainActivity) {
      * 轮询 topology host 状态的间隔。
      */
     private const val TOPOLOGY_HOST_STOP_POLL_INTERVAL_MS = 100L
+
+    internal fun normalizeHotUpdateBundleFile(bundleFile: String?): String? {
+      return bundleFile?.takeIf { it.isNotBlank() }
+    }
+
+    internal fun shouldRelaunchProcessForHotUpdate(bundleFile: String?): Boolean {
+      return normalizeHotUpdateBundleFile(bundleFile) != null
+    }
   }
 
   /**
    * 启动整条重启链路。
    */
   fun restart() {
+    if (activityRef.get() == null) {
+      return
+    }
     mainHandler.post {
-      StartupAuditLogger.logRestartRequested(activity.isSecondaryDisplayActive)
-      StartupCoordinator.beginRestart(activity)
+      val currentActivity = activityRef.get() ?: return@post
+      StartupAuditLogger.logRestartRequested(currentActivity.isSecondaryDisplayActive)
+      StartupCoordinator.beginRestart(currentActivity)
       stopTopologyHostIfRunning {
         SecondaryProcessController.requestShutdownIfNeeded(
-          context = activity,
-          hasSecondaryInstance = activity.isSecondaryDisplayActive,
+          context = currentActivity,
+          hasSecondaryInstance = currentActivity.isSecondaryDisplayActive,
         ) {
-          mainHandler.postDelayed({
+          mainHandler.post {
+            val delayedActivity = activityRef.get() ?: return@post
             try {
-              activity.reloadReactHostForRestart()
+              reloadReactHost(delayedActivity)
             } catch (error: Throwable) {
-              Log.e(TAG, "Failed to reload ReactHost", error)
+              Log.e(TAG, "Failed to restart process", error)
               mainHandler.post {
                 StartupOverlayManager.hide()
-                Toast.makeText(activity, "重启失败，请重试", Toast.LENGTH_LONG).show()
+                val failedActivity = activityRef.get() ?: return@post
+                Toast.makeText(failedActivity, "重启失败，请重试", Toast.LENGTH_LONG).show()
               }
             }
-          }, 100)
+          }
         }
       }
     }
@@ -86,7 +120,7 @@ class AppRestartManager(private val activity: MainActivity) {
   /**
    * 如果 topology host 正在运行，则先发起停止流程并等待它真正进入 STOPPED。
    *
-   * 这里不会无脑 stop 一次后立刻继续，因为 server 可能还处于 STOPPING 过渡态。如果直接重载，
+   * 这里不会无脑 stop 一次后立刻继续，因为 server 可能还处于 STOPPING 过渡态。如果直接退出重启，
    * 下一轮 JS 又马上启动 server，容易出现端口占用、旧连接未清理等问题。
    */
   private fun stopTopologyHostIfRunning(onComplete: () -> Unit) {
@@ -123,7 +157,7 @@ class AppRestartManager(private val activity: MainActivity) {
       }
 
       if (stopped) {
-        TopologyLaunchCoordinator.clear(activity.applicationContext)
+        TopologyLaunchCoordinator.clear(appContext)
         StartupAuditLogger.logTopologyHostStopped()
         onComplete()
         return
@@ -139,5 +173,37 @@ class AppRestartManager(private val activity: MainActivity) {
     }
 
     poll()
+  }
+
+  private fun reloadReactHost(activity: MainActivity) {
+    val application = activity.application as? MainApplication
+      ?: error("MainApplication unavailable")
+    val bundleFile = normalizeHotUpdateBundleFile(
+      HotUpdateBundleResolver(appContext).peekActiveBundleFile(),
+    )
+
+    if (shouldRelaunchProcessForHotUpdate(bundleFile)) {
+      StartupAuditLogger.logHotUpdateProcessRelaunchRequested(bundleFile!!)
+      relaunchProcess(activity)
+      return
+    }
+
+    StartupAuditLogger.logReactHostReloadRequested("manual-restart")
+    application.reactHost.reload("manual-restart")
+  }
+
+  private fun relaunchProcess(activity: MainActivity) {
+    val launchIntent = activity.packageManager.getLaunchIntentForPackage(activity.packageName)
+      ?: error("Launch intent unavailable")
+    launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+    activity.startActivity(launchIntent)
+    activity.finishAffinity()
+    Log.i(TAG, "Exiting current process for hot update relaunch")
+    Runtime.getRuntime().exit(0)
+  }
+
+  fun clear() {
+    mainHandler.removeCallbacksAndMessages(null)
+    activityRef.clear()
   }
 }

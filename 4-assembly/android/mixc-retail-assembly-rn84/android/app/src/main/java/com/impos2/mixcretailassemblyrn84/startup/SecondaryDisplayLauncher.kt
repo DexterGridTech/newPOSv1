@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.hardware.display.DisplayManager
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -27,16 +28,20 @@ class SecondaryDisplayLauncher(
   /**
    * 记录当前是否已经发起过副屏启动请求，但副屏可能还没真正创建完成。
    *
-   * 这个标记与 [SecondaryProcessController.isSecondaryAlive] 组合使用，可以避免在副屏还没完全拉起
-   * 时重复发起第二次启动请求。
+   * 这个标记是主进程侧唯一可靠的“副屏正在启动中”信号，用来避免在副屏还没完全拉起时重复发起第二次
+   * 启动请求。不要把它和副进程内的 [SecondaryProcessController.isSecondaryAlive] 混为一谈。
    */
   private val launchRequested = AtomicBoolean(false)
+  private val secondaryStarted = AtomicBoolean(false)
 
   /**
-   * 副屏是否已经存在，或者正在启动过程中。
+   * 主进程视角下，副屏是否正在启动中或已经通过跨进程广播确认存活。
+   *
+   * `launchRequested` 只表示 startActivity 已发起但副进程尚未回报；`secondaryStarted` 才是主进程
+   * 收到副进程 started 广播后的存活信号。
    */
   val isSecondaryActive: Boolean
-    get() = SecondaryProcessController.isSecondaryAlive() || launchRequested.get()
+    get() = launchRequested.get() || secondaryStarted.get()
 
   /**
    * 如果设备存在第二块屏幕，则尝试把 [SecondaryActivity] 启动到对应屏幕。
@@ -47,6 +52,10 @@ class SecondaryDisplayLauncher(
    * - 如果启动失败，回滚 `launchRequested`，允许后续再次尝试。
    */
   fun startIfAvailable() {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+      Log.w(TAG, "Secondary display launch requires API 26+, current=${Build.VERSION.SDK_INT}")
+      return
+    }
     val displayManager = activity.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
     val displays = displayManager.displays
     if (displays.size < 2) {
@@ -67,9 +76,8 @@ class SecondaryDisplayLauncher(
         val intent = Intent(activity, SecondaryActivity::class.java).apply {
           addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
         }
-        val options = android.app.ActivityOptions.makeBasic().apply {
-          launchDisplayId = secondary.displayId
-        }
+        val options = android.app.ActivityOptions.makeBasic()
+        options.launchDisplayId = secondary.displayId
         activity.startActivity(intent, options.toBundle())
       }.onFailure {
         launchRequested.set(false)
@@ -83,6 +91,7 @@ class SecondaryDisplayLauncher(
    */
   fun markSecondaryStarted() {
     launchRequested.set(false)
+    secondaryStarted.set(true)
   }
 
   /**
@@ -90,6 +99,7 @@ class SecondaryDisplayLauncher(
    */
   fun markSecondaryStopped() {
     launchRequested.set(false)
+    secondaryStarted.set(false)
   }
 
   /**
@@ -97,5 +107,6 @@ class SecondaryDisplayLauncher(
    */
   fun reset() {
     launchRequested.set(false)
+    secondaryStarted.set(false)
   }
 }

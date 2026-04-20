@@ -498,6 +498,7 @@ const updateReleaseLifecycle = (input: {
   }
   db.update(hotUpdateReleasesTable).set({
     enabled: input.enabled ? 1 : 0,
+    policyId: input.enabled ? current.policyId : null,
     status: input.status,
     desiredPayloadJson: JSON.stringify(desiredPayload),
     updatedAt: now(),
@@ -513,7 +514,7 @@ export const pauseHotUpdateRelease = (input: { sandboxId: string; releaseId: str
     ...input,
     status: 'PAUSED',
     rolloutMode: 'paused',
-    enabled: true,
+    enabled: false,
   })
 
 export const cancelHotUpdateRelease = (input: { sandboxId: string; releaseId: string }) => {
@@ -526,6 +527,7 @@ export const cancelHotUpdateRelease = (input: { sandboxId: string; releaseId: st
   }
   db.update(hotUpdateReleasesTable).set({
     enabled: 0,
+    policyId: null,
     status: 'CANCELLED',
     updatedAt: now(),
   }).where(and(

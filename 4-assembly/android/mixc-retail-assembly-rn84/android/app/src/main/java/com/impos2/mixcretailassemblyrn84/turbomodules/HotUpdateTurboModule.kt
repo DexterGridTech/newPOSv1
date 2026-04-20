@@ -4,13 +4,17 @@ import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.annotations.ReactModule
-import com.impos2.mixcretailassemblyrn84.HotUpdateBootMarkerStore
-import org.json.JSONObject
+import com.impos2.adapterv2.hotupdate.HotUpdateMarker
+import com.impos2.adapterv2.hotupdate.HotUpdateBootMarkerStore
+import com.impos2.adapterv2.hotupdate.HotUpdatePackageInstaller
+import com.impos2.adapterv2.hotupdate.HotUpdatePackageRequest
 import org.json.JSONArray
-import java.io.File
-import java.net.URL
-import java.security.MessageDigest
-import java.util.zip.ZipFile
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import java.util.concurrent.ThreadFactory
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicLong
 
 @ReactModule(name = HotUpdateTurboModule.NAME)
 class HotUpdateTurboModule(reactContext: ReactApplicationContext) :
@@ -19,6 +23,18 @@ class HotUpdateTurboModule(reactContext: ReactApplicationContext) :
   companion object {
     const val NAME = "HotUpdateTurboModule"
   }
+
+  private data class ActiveDownloadTask(
+    val taskId: String,
+    val promise: Promise,
+    val cancelled: AtomicBoolean = AtomicBoolean(false),
+  )
+
+  private val activeDownloads = ConcurrentHashMap<String, ActiveDownloadTask>()
+  private val taskSequence = AtomicLong(0L)
+  private val downloadExecutor: ExecutorService =
+    Executors.newSingleThreadExecutor(HotUpdateTaskThreadFactory())
+  @Volatile private var invalidated = false
 
   override fun getName(): String = NAME
 
@@ -32,78 +48,59 @@ class HotUpdateTurboModule(reactContext: ReactApplicationContext) :
     packageSize: Double,
     promise: Promise
   ) {
+    if (invalidated) {
+      rejectPromise(promise, "HOT_UPDATE_ERROR", "HotUpdateTurboModule invalidated")
+      return
+    }
+
+    val taskId = "download-${taskSequence.incrementAndGet()}"
+    val task = ActiveDownloadTask(taskId = taskId, promise = promise)
+    activeDownloads[taskId] = task
+
     runCatching {
-      val root = File(reactApplicationContext.filesDir, "hot-updates/packages/$packageId")
-      val staging = File(reactApplicationContext.cacheDir, "hot-updates/staging/$packageId")
-      staging.deleteRecursively()
-      staging.mkdirs()
-      root.parentFile?.mkdirs()
-
-      val archive = File(staging, "$packageId.zip")
-      val packageUrls = JSONArray(packageUrlsJson)
-      require(packageUrls.length() > 0) { "HOT_UPDATE_PACKAGE_URLS_EMPTY" }
-
-      var downloadError: Throwable? = null
-      for (index in 0 until packageUrls.length()) {
-        val packageUrl = packageUrls.optString(index)
-        if (packageUrl.isBlank()) {
-          continue
+      downloadExecutor.execute {
+        if (task.cancelled.get() || invalidated) {
+          activeDownloads.remove(taskId)
+          return@execute
         }
+
         try {
-          URL(packageUrl).openStream().use { input ->
-            archive.outputStream().use { output -> input.copyTo(output) }
+          runCatching {
+            val packageUrls = JSONArray(packageUrlsJson)
+            val result = HotUpdatePackageInstaller(reactApplicationContext.applicationContext)
+              .downloadPackage(
+                HotUpdatePackageRequest(
+                  packageId = packageId,
+                  packageUrls = List(packageUrls.length()) { index -> packageUrls.optString(index) },
+                  packageSha256 = packageSha256,
+                  manifestSha256 = manifestSha256,
+                  packageSize = packageSize.toLong(),
+                ),
+                isCancelled = { task.cancelled.get() || invalidated },
+              )
+            Arguments.createMap().apply {
+              putString("installDir", result.installDir.absolutePath)
+              putString("entryFile", result.entryFile)
+              putString("manifestPath", result.manifestPath.absolutePath)
+              putString("packageSha256", result.packageSha256)
+              putString("manifestSha256", result.manifestSha256)
+            }
+          }.onSuccess { result ->
+            if (!task.cancelled.get() && !invalidated) {
+              resolvePromise(task.promise, result)
+            }
+          }.onFailure { error ->
+            if (!task.cancelled.get() && !invalidated) {
+              rejectPromise(task.promise, "HOT_UPDATE_ERROR", error.message, error)
+            }
           }
-          downloadError = null
-          break
-        } catch (error: Throwable) {
-          downloadError = error
+        } finally {
+          activeDownloads.remove(taskId)
         }
       }
-      if (downloadError != null || !archive.exists()) {
-        throw downloadError ?: error("HOT_UPDATE_DOWNLOAD_FAILED")
-      }
-
-      val actualPackageSha = sha256(archive)
-      check(actualPackageSha.equals(packageSha256, ignoreCase = true)) { "HOT_UPDATE_PACKAGE_HASH_MISMATCH" }
-      if (packageSize > 0) {
-        check(archive.length() == packageSize.toLong()) { "HOT_UPDATE_PACKAGE_SIZE_MISMATCH" }
-      }
-
-      ZipFile(archive).use { zip ->
-        val manifestEntry = zip.getEntry("manifest/hot-update-manifest.json")
-          ?: error("HOT_UPDATE_MANIFEST_NOT_FOUND")
-        val manifestFile = File(staging, "manifest.json")
-        zip.getInputStream(manifestEntry).use { input ->
-          manifestFile.outputStream().use { output -> input.copyTo(output) }
-        }
-        check(sha256(manifestFile).equals(manifestSha256, ignoreCase = true)) { "HOT_UPDATE_MANIFEST_HASH_MISMATCH" }
-
-        val manifest = JSONObject(manifestFile.readText(Charsets.UTF_8))
-        val packageObject = manifest.getJSONObject("package")
-        val entryName = packageObject.getString("entry")
-        val entry = zip.getEntry(entryName) ?: error("HOT_UPDATE_ENTRY_NOT_FOUND")
-        val entryFile = File(staging, "index.android.bundle")
-        zip.getInputStream(entry).use { input ->
-          entryFile.outputStream().use { output -> input.copyTo(output) }
-        }
-        val expectedEntrySha = packageObject.getString("sha256")
-        check(sha256(entryFile).equals(expectedEntrySha, ignoreCase = true)) { "HOT_UPDATE_ENTRY_HASH_MISMATCH" }
-
-        root.deleteRecursively()
-        check(staging.renameTo(root)) { "HOT_UPDATE_PROMOTE_FAILED" }
-
-        Arguments.createMap().apply {
-          putString("installDir", root.absolutePath)
-          putString("entryFile", "index.android.bundle")
-          putString("manifestPath", File(root, "manifest.json").absolutePath)
-          putString("packageSha256", actualPackageSha)
-          putString("manifestSha256", manifestSha256)
-        }
-      }
-    }.onSuccess {
-      promise.resolve(it)
-    }.onFailure {
-      promise.reject("HOT_UPDATE_ERROR", it.message, it)
+    }.onFailure { error ->
+      activeDownloads.remove(taskId)
+      rejectPromise(promise, "HOT_UPDATE_ERROR", error.message, error)
     }
   }
 
@@ -118,18 +115,18 @@ class HotUpdateTurboModule(reactContext: ReactApplicationContext) :
     promise: Promise
   ) {
     runCatching {
-      val marker = JSONObject()
-        .put("releaseId", releaseId)
-        .put("packageId", packageId)
-        .put("bundleVersion", bundleVersion)
-        .put("installDir", installDir)
-        .put("entryFile", entryFile ?: "index.android.bundle")
-        .put("manifestSha256", manifestSha256)
-        .put("bootAttempt", 0)
-        .put("maxLaunchFailures", maxLaunchFailures.toInt())
-        .put("updatedAt", System.currentTimeMillis())
       val store = HotUpdateBootMarkerStore(reactApplicationContext.applicationContext)
-      val file = store.writeActive(marker)
+      val file = store.writeActive(
+        HotUpdateMarker(
+          releaseId = releaseId,
+          packageId = packageId,
+          bundleVersion = bundleVersion,
+          installDir = installDir,
+          entryFile = entryFile ?: "index.android.bundle",
+          manifestSha256 = manifestSha256,
+          maxLaunchFailures = maxLaunchFailures.toInt(),
+        ),
+      )
       Arguments.createMap().apply {
         putString("bootMarkerPath", file.absolutePath)
       }
@@ -142,13 +139,7 @@ class HotUpdateTurboModule(reactContext: ReactApplicationContext) :
 
   override fun readActiveMarker(promise: Promise) {
     runCatching {
-      HotUpdateBootMarkerStore(reactApplicationContext.applicationContext).readActive()?.let { marker ->
-        Arguments.createMap().apply {
-          marker.keys().forEach { key ->
-            putString(key, marker.opt(key)?.toString())
-          }
-        }
-      }
+      HotUpdateBootMarkerStore(reactApplicationContext.applicationContext).readActive()?.toWritableMap()
     }.onSuccess {
       promise.resolve(it)
     }.onFailure {
@@ -158,13 +149,7 @@ class HotUpdateTurboModule(reactContext: ReactApplicationContext) :
 
   override fun readBootMarker(promise: Promise) {
     runCatching {
-      HotUpdateBootMarkerStore(reactApplicationContext.applicationContext).readBoot()?.let { marker ->
-        Arguments.createMap().apply {
-          marker.keys().forEach { key ->
-            putString(key, marker.opt(key)?.toString())
-          }
-        }
-      }
+      HotUpdateBootMarkerStore(reactApplicationContext.applicationContext).readBoot()?.toWritableMap()
     }.onSuccess {
       promise.resolve(it)
     }.onFailure {
@@ -174,13 +159,7 @@ class HotUpdateTurboModule(reactContext: ReactApplicationContext) :
 
   override fun readRollbackMarker(promise: Promise) {
     runCatching {
-      HotUpdateBootMarkerStore(reactApplicationContext.applicationContext).readRollback()?.let { marker ->
-        Arguments.createMap().apply {
-          marker.keys().forEach { key ->
-            putString(key, marker.opt(key)?.toString())
-          }
-        }
-      }
+      HotUpdateBootMarkerStore(reactApplicationContext.applicationContext).readRollback()?.toWritableMap()
     }.onSuccess {
       promise.resolve(it)
     }.onFailure {
@@ -200,13 +179,7 @@ class HotUpdateTurboModule(reactContext: ReactApplicationContext) :
 
   override fun confirmLoadComplete(promise: Promise) {
     runCatching {
-      HotUpdateBootMarkerStore(reactApplicationContext.applicationContext).confirmLoadComplete()?.let { marker ->
-        Arguments.createMap().apply {
-          marker.keys().forEach { key ->
-            putString(key, marker.opt(key)?.toString())
-          }
-        }
-      }
+      HotUpdateBootMarkerStore(reactApplicationContext.applicationContext).confirmLoadComplete()?.toWritableMap()
     }.onSuccess {
       promise.resolve(it)
     }.onFailure {
@@ -214,16 +187,62 @@ class HotUpdateTurboModule(reactContext: ReactApplicationContext) :
     }
   }
 
-  private fun sha256(file: File): String {
-    val digest = MessageDigest.getInstance("SHA-256")
-    file.inputStream().use { input ->
-      val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
-      while (true) {
-        val read = input.read(buffer)
-        if (read <= 0) break
-        digest.update(buffer, 0, read)
+  override fun invalidate() {
+    invalidated = true
+    activeDownloads.values.forEach { task ->
+      task.cancelled.set(true)
+      rejectPromise(task.promise, "HOT_UPDATE_ERROR", "HotUpdateTurboModule invalidated")
+    }
+    activeDownloads.clear()
+    downloadExecutor.shutdownNow()
+    super.invalidate()
+  }
+
+  private fun resolvePromise(promise: Promise, value: Any?) {
+    reactApplicationContext.runOnNativeModulesQueueThread {
+      promise.resolve(value)
+    }
+  }
+
+  private fun rejectPromise(
+    promise: Promise,
+    code: String,
+    message: String?,
+    throwable: Throwable? = null,
+  ) {
+    reactApplicationContext.runOnNativeModulesQueueThread {
+      if (throwable != null) {
+        promise.reject(code, message, throwable)
+      } else {
+        promise.reject(code, message)
       }
     }
-    return digest.digest().joinToString("") { "%02x".format(it) }
+  }
+
+  private fun HotUpdateMarker.toWritableMap() = Arguments.createMap().apply {
+    putString("releaseId", releaseId)
+    putString("packageId", packageId)
+    putString("bundleVersion", bundleVersion)
+    putString("installDir", installDir)
+    putString("entryFile", entryFile)
+    putString("manifestSha256", manifestSha256)
+    putString("bootAttempt", bootAttempt.toString())
+    putString("maxLaunchFailures", maxLaunchFailures.toString())
+    putString("updatedAt", updatedAt.toString())
+    lastBootAt?.let { putString("lastBootAt", it.toString()) }
+    lastSuccessfulBootAt?.let { putString("lastSuccessfulBootAt", it.toString()) }
+    rollbackReason?.let { putString("rollbackReason", it) }
+    failedBootAttempt?.let { putString("failedBootAttempt", it.toString()) }
+    rolledBackAt?.let { putString("rolledBackAt", it.toString()) }
+  }
+
+  private class HotUpdateTaskThreadFactory : ThreadFactory {
+    private val sequence = AtomicLong(0L)
+
+    override fun newThread(runnable: Runnable): Thread {
+      return Thread(runnable, "mixc-retail-assembly-rn84-hot-update-${sequence.incrementAndGet()}").apply {
+        isDaemon = true
+      }
+    }
   }
 }

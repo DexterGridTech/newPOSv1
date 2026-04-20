@@ -14,6 +14,7 @@ import {createAssemblyRuntimeInitializeActor} from '../features/actors'
 import {assemblyRuntimeModuleManifest} from './moduleManifest'
 import {nativeDevice} from '../turbomodules/device'
 import {handleAssemblyPowerDisplaySwitch} from './topology'
+import {syncHotUpdateStateFromNativeBoot} from './syncHotUpdateStateFromNativeBoot'
 
 export const assemblyRuntimePreSetup = async (
     context: RuntimeModulePreSetupContextV2,
@@ -27,6 +28,12 @@ export const createModule = (
     ...assemblyRuntimeModuleManifest,
     actorDefinitions: [createAssemblyRuntimeInitializeActor(props)],
     preSetup: assemblyRuntimePreSetup,
+    async onApplicationReset(context, input) {
+        await syncHotUpdateStateFromNativeBoot(context, {
+            initializeEmbeddedCurrent: false,
+            previousState: input?.previousState,
+        })
+    },
     install(context: RuntimeModuleContextV2) {
         createRuntimeModuleLifecycleLogger({moduleName, context}).logInstall({
             displayIndex: props.displayIndex,

@@ -21,6 +21,7 @@ const {
     createAssemblyTopologyInputMock,
     createReactotronEnhancerMock,
     createAssemblyAutomationMock,
+    getAssemblyAdbSocketDebugConfigMock,
     reportTerminalVersionMock,
     syncHotUpdateStateFromNativeBootMock,
     selectTdpHotUpdateCurrentMock,
@@ -92,6 +93,11 @@ const {
             },
             attachRuntime: vi.fn(() => () => {}),
             dispose: vi.fn(),
+        })),
+        getAssemblyAdbSocketDebugConfigMock: vi.fn((environmentMode: 'DEV' | 'PROD') => ({
+            enabled: true,
+            buildProfile: environmentMode === 'DEV' ? 'debug' : 'internal',
+            scriptExecutionAvailable: true,
         })),
         reportTerminalVersionMock: vi.fn(async () => undefined),
         syncHotUpdateStateFromNativeBootMock: vi.fn(async () => null),
@@ -213,6 +219,7 @@ vi.mock('../../src/platform-ports/reactotronConfig', () => ({
 
 vi.mock('../../src/application/automation', () => ({
     createAssemblyAutomation: createAssemblyAutomationMock,
+    getAssemblyAdbSocketDebugConfig: getAssemblyAdbSocketDebugConfigMock,
     getAssemblyAutomationHostConfig: (displayIndex: number) => ({
         host: '127.0.0.1',
         port: displayIndex > 0 ? 18585 : 18584,
@@ -255,6 +262,11 @@ describe('assembly createApp', () => {
         createRetailShellModuleMock.mockReturnValue(retailShellModule)
         createAssemblyRuntimeModuleMock.mockReturnValue({kind: 'assembly-runtime-module'})
         createAssemblyAutomationMock.mockClear()
+        getAssemblyAdbSocketDebugConfigMock.mockImplementation((environmentMode: 'DEV' | 'PROD') => ({
+            enabled: true,
+            buildProfile: environmentMode === 'DEV' ? 'debug' : 'internal',
+            scriptExecutionAvailable: true,
+        }))
         selectTcpIsActivatedMock.mockReturnValue(false)
         selectTcpTerminalIdMock.mockReturnValue(null)
         nativeTopologyHostStartMock.mockClear()
@@ -321,7 +333,19 @@ describe('assembly createApp', () => {
             assembly: {kind: 'tdp-sync-assembly'},
             hotUpdate: {
                 getPort: expect.any(Function),
+                getCurrentFacts: expect.any(Function),
             },
+        })
+        const tdpSyncInput = createTdpSyncRuntimeModuleV2Mock.mock.calls.at(0)?.[0] as any
+        expect(tdpSyncInput.hotUpdate.getCurrentFacts()).toEqual({
+            appId: releaseInfo.appId,
+            platform: 'android',
+            product: 'mixc-retail',
+            runtimeVersion: releaseInfo.runtimeVersion,
+            assemblyVersion: releaseInfo.assemblyVersion,
+            buildNumber: releaseInfo.buildNumber,
+            channel: releaseInfo.channel,
+            capabilities: [],
         })
         expect(createAssemblyAdminConsoleInputMock).toHaveBeenCalledWith(
             expect.objectContaining({
@@ -376,6 +400,7 @@ describe('assembly createApp', () => {
 
         await result.start()
         expect(startMock).toHaveBeenCalledTimes(1)
+        expect(getAssemblyAdbSocketDebugConfigMock).toHaveBeenCalledWith('DEV')
         expect(createAssemblyAutomationMock).toHaveBeenCalledWith(expect.objectContaining({
             buildProfile: 'debug',
             automationEnabled: true,
@@ -384,6 +409,56 @@ describe('assembly createApp', () => {
         expect(result.uiRuntimeProviderProps).toMatchObject({
             automationRuntimeId: 'primary-runtime',
         })
+    })
+
+    it('enables automation in production when the package switch is on', () => {
+        ;(globalThis as any).__DEV__ = false
+
+        const result = createApp({
+            deviceId: 'device-1',
+            screenMode: 'desktop',
+            displayCount: 1,
+            displayIndex: 0,
+            isEmulator: true,
+        })
+
+        expect(createAssemblyPlatformPortsMock).toHaveBeenCalledWith(
+            'PROD',
+            expect.objectContaining({
+                shouldDisableStatePersistence: expect.any(Function),
+            }),
+        )
+        expect(createReactotronEnhancerMock).not.toHaveBeenCalled()
+        expect(getAssemblyAdbSocketDebugConfigMock).toHaveBeenCalledWith('PROD')
+        expect(createAssemblyAutomationMock).toHaveBeenCalledWith(expect.objectContaining({
+            buildProfile: 'internal',
+            automationEnabled: true,
+            scriptExecutionAvailable: true,
+        }))
+        expect(result.automation).toBeDefined()
+        expect(result.uiRuntimeProviderProps).toMatchObject({
+            automationRuntimeId: 'primary-runtime',
+        })
+    })
+
+    it('does not create automation in any build when the package switch is off', () => {
+        getAssemblyAdbSocketDebugConfigMock.mockReturnValue({
+            enabled: false,
+            buildProfile: 'product',
+            scriptExecutionAvailable: false,
+        })
+
+        const result = createApp({
+            deviceId: 'device-1',
+            screenMode: 'desktop',
+            displayCount: 1,
+            displayIndex: 0,
+            isEmulator: true,
+        })
+
+        expect(createAssemblyAutomationMock).not.toHaveBeenCalled()
+        expect(result.automation).toBeUndefined()
+        expect(result.uiRuntimeProviderProps).toBeUndefined()
     })
 
     it('passes topology-aware storage gate and dynamic binding source through assembly app setup', () => {

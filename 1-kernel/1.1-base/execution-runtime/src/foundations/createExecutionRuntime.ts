@@ -119,7 +119,7 @@ export const createExecutionRuntime = (
     input: CreateExecutionRuntimeInput,
 ): ExecutionRuntime => {
     const handlers = new Map<string, ExecutionHandler>()
-    const journal = createExecutionJournal()
+    const journal = createExecutionJournal(input.maxJournalRecords)
     const middlewares = [...(input.middlewares ?? [])]
     const normalizeError = createNormalizeError(input.logger)
 

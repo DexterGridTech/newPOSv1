@@ -1,8 +1,12 @@
 package com.impos2.mixcretailassemblyrn84
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
+import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
@@ -11,7 +15,9 @@ import com.facebook.react.defaults.DefaultReactActivityDelegate
 import com.impos2.adapterv2.appcontrol.AppControlManager
 import com.impos2.mixcretailassemblyrn84.restart.AppRestartManager
 import com.impos2.mixcretailassemblyrn84.startup.LaunchOptionsFactory
+import com.impos2.mixcretailassemblyrn84.startup.ReactLifecycleGate
 import com.impos2.mixcretailassemblyrn84.startup.SecondaryDisplayLauncher
+import com.impos2.mixcretailassemblyrn84.startup.SecondaryProcessController
 import com.impos2.mixcretailassemblyrn84.startup.StartupAuditLogger
 import com.impos2.mixcretailassemblyrn84.startup.StartupCoordinator
 import com.impos2.mixcretailassemblyrn84.startup.StartupOverlayManager
@@ -29,6 +35,14 @@ import com.impos2.mixcretailassemblyrn84.turbomodules.ConnectorTurboModule
  * - 负责在生命周期中反复重放全屏 / 锁定等系统 UI 状态。
  */
 class MainActivity : ReactActivity() {
+  private val secondaryStateReceiver = object : BroadcastReceiver() {
+    override fun onReceive(context: Context?, intent: Intent?) {
+      when {
+        SecondaryProcessController.isSecondaryStartedAction(intent) -> onSecondaryActivityCreated()
+        SecondaryProcessController.isSecondaryStoppedAction(intent) -> onSecondaryActivityDestroyed()
+      }
+    }
+  }
 
   companion object {
     private const val TAG = "MainActivity"
@@ -85,6 +99,30 @@ class MainActivity : ReactActivity() {
   override fun createReactActivityDelegate(): ReactActivityDelegate =
     object : DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled) {
       override fun getLaunchOptions(): Bundle = LaunchOptionsFactory.create(this@MainActivity, 0)
+
+      private val isReactContextReady: Boolean
+        get() = reactHost?.currentReactContext != null
+
+      override fun onNewIntent(intent: Intent?): Boolean {
+        intent ?: return false
+        if (!ReactLifecycleGate.shouldForwardToReact(isReactContextReady)) {
+          this@MainActivity.setIntent(intent)
+          Log.d(TAG, "Skipped RN onNewIntent before React context is ready")
+          return false
+        }
+        return super.onNewIntent(intent)
+      }
+
+      override fun onWindowFocusChanged(hasFocus: Boolean) {
+        if (!ReactLifecycleGate.shouldForwardToReact(isReactContextReady)) {
+          Log.d(
+            TAG,
+            "Skipped RN onWindowFocusChanged before React context is ready: hasFocus=$hasFocus",
+          )
+          return
+        }
+        super.onWindowFocusChanged(hasFocus)
+      }
     }
 
   /**
@@ -105,6 +143,7 @@ class MainActivity : ReactActivity() {
     super.onCreate(savedInstanceState)
     secondaryDisplayLauncher = SecondaryDisplayLauncher(this)
     appRestartManager = AppRestartManager(this)
+    registerSecondaryStateReceiver()
     runCatching { appControlManager.setFullscreen(true) }
       .onFailure { Log.e(TAG, "Failed to enable fullscreen on create", it) }
     runCatching { appControlManager.reapplyCurrentState() }
@@ -117,6 +156,8 @@ class MainActivity : ReactActivity() {
    * 销毁时移除启动遮罩，并清掉全局实例引用，避免后续重启时持有已失效 Activity。
    */
   override fun onDestroy() {
+    appRestartManager.clear()
+    runCatching { unregisterReceiver(secondaryStateReceiver) }
     StartupOverlayManager.detach(this)
     if (instance === this) {
       instance = null
@@ -159,17 +200,6 @@ class MainActivity : ReactActivity() {
   }
 
   /**
-   * 触发主进程 ReactHost 重载。
-   *
-   * 这是“重启”中真正让主屏 JS runtime 被重新创建的动作。副屏不会直接调用它，避免副屏反向
-   * 控制主进程宿主。
-   */
-  fun reloadReactHostForRestart() {
-    StartupAuditLogger.logMainReload()
-    reactHost.reload("user restart")
-  }
-
-  /**
    * 尝试在第二块屏幕上拉起副屏 Activity。
    */
   fun launchSecondaryIfAvailable() {
@@ -202,6 +232,15 @@ class MainActivity : ReactActivity() {
    */
   val isSecondaryDisplayActive: Boolean
     get() = secondaryDisplayLauncher.isSecondaryActive
+
+  private fun registerSecondaryStateReceiver() {
+    ContextCompat.registerReceiver(
+      this,
+      secondaryStateReceiver,
+      SecondaryProcessController.createSecondaryStateFilter(),
+      ContextCompat.RECEIVER_NOT_EXPORTED,
+    )
+  }
 
   /**
    * 将宿主按键事件转发给 Connector。

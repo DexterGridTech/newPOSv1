@@ -221,4 +221,25 @@ describe('assembly automation dispatcher', () => {
             source: 'return 1',
         })).rejects.toThrow(/not available/i)
     })
+
+    it('allows scripts.execute in internal mode', async () => {
+        const dispatcher = createAutomationRequestDispatcher({
+            app: {} as any,
+            buildProfile: 'internal',
+            automationEnabled: true,
+            scriptExecutionAvailable: true,
+        })
+        const client = createAutomationJsonRpcClient(dispatcher)
+
+        await expect(client.call('scripts.execute', {
+            source: 'return 1',
+            timeoutMs: 1_000,
+        })).resolves.toMatchObject({
+            ok: true,
+        })
+        expect(nativeScriptExecuteMock).toHaveBeenCalledWith(expect.objectContaining({
+            source: 'return 1',
+            timeoutMs: 1_000,
+        }))
+    })
 })

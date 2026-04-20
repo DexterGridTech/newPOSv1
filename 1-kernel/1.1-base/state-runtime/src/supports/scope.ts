@@ -11,6 +11,13 @@ export const createModuleStateKeys = <TModuleName extends string, TKey extends s
     ) as {[K in TKey]: `${TModuleName}.${K}`}
 }
 
+/**
+ * 模块级 state key 只负责声明“这一族 slice 的基础命名空间”。
+ * 真正按 workspace / instanceMode / displayMode 展开为多份实际 slice，
+ * 由 create*StateSlice / to*StateDescriptors 完成。
+ */
+const createModuleScopedStateKeys = createModuleStateKeys
+
 export const createScopedStateKey = (
     baseKey: string,
     scope: StateScopeDescriptor,
@@ -19,17 +26,17 @@ export const createScopedStateKey = (
 export const createModuleWorkspaceStateKeys = <TModuleName extends string, TKey extends string>(
     moduleName: TModuleName,
     keys: readonly TKey[],
-) => createModuleStateKeys(moduleName, keys)
+) => createModuleScopedStateKeys(moduleName, keys)
 
 export const createModuleInstanceModeStateKeys = <TModuleName extends string, TKey extends string>(
     moduleName: TModuleName,
     keys: readonly TKey[],
-) => createModuleStateKeys(moduleName, keys)
+) => createModuleScopedStateKeys(moduleName, keys)
 
 export const createModuleDisplayModeStateKeys = <TModuleName extends string, TKey extends string>(
     moduleName: TModuleName,
     keys: readonly TKey[],
-) => createModuleStateKeys(moduleName, keys)
+) => createModuleScopedStateKeys(moduleName, keys)
 
 export const createScopedStatePath = (
     baseKey: string,

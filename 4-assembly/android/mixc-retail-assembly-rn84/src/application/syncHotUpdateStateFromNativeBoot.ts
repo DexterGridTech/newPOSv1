@@ -1,4 +1,8 @@
-import type {KernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
+import type {
+    KernelRuntimeV2,
+    RuntimeModuleContextV2,
+} from '@impos2/kernel-base-runtime-shell-v2'
+import type {RootState} from '@impos2/kernel-base-state-runtime'
 import {
     selectTdpHotUpdateCurrent,
     tdpHotUpdateActions,
@@ -11,9 +15,41 @@ export interface ReportAppLoadCompleteResult {
     reason?: string
 }
 
+type HotUpdateStateSyncRuntime = Pick<KernelRuntimeV2, 'getState' | 'getStore'>
+    | Pick<RuntimeModuleContextV2, 'getState' | 'getStore'>
+
+const createEmbeddedReleaseCurrent = (appliedAt: number) => ({
+    source: 'embedded' as const,
+    appId: releaseInfo.appId,
+    assemblyVersion: releaseInfo.assemblyVersion,
+    buildNumber: releaseInfo.buildNumber,
+    runtimeVersion: releaseInfo.runtimeVersion,
+    bundleVersion: releaseInfo.bundleVersion,
+    appliedAt,
+})
+
+const shouldSyncEmbeddedReleaseCurrent = (
+    current: ReturnType<typeof selectTdpHotUpdateCurrent>,
+): boolean => {
+    return (
+        current?.source !== 'embedded'
+        || current.appId !== releaseInfo.appId
+        || current.assemblyVersion !== releaseInfo.assemblyVersion
+        || current.buildNumber !== releaseInfo.buildNumber
+        || current.runtimeVersion !== releaseInfo.runtimeVersion
+        || current.bundleVersion !== releaseInfo.bundleVersion
+    )
+}
+
 export const syncHotUpdateStateFromNativeBoot = async (
-    runtime: KernelRuntimeV2,
+    runtime: HotUpdateStateSyncRuntime,
+    options: {
+        initializeEmbeddedCurrent?: boolean
+        previousState?: RootState
+    } = {},
 ): Promise<ReportAppLoadCompleteResult | null> => {
+    const initializeEmbeddedCurrent = options.initializeEmbeddedCurrent ?? true
+    const now = Date.now()
     const rollbackMarker = await nativeHotUpdate.readRollbackMarker().catch(() => null)
     if (rollbackMarker?.rollbackReason) {
         const previous = selectTdpHotUpdateCurrent(runtime.getState())
@@ -26,9 +62,9 @@ export const syncHotUpdateStateFromNativeBoot = async (
                 buildNumber: releaseInfo.buildNumber,
                 runtimeVersion: releaseInfo.runtimeVersion,
                 bundleVersion: releaseInfo.bundleVersion,
-                appliedAt: Date.now(),
+                appliedAt: now,
             },
-            now: Date.now(),
+            now,
         }))
         runtime.getStore().dispatch(tdpHotUpdateActions.markFailed({
             code: String(rollbackMarker.rollbackReason),
@@ -55,8 +91,46 @@ export const syncHotUpdateStateFromNativeBoot = async (
                 packageId: typeof activeMarker.packageId === 'string' ? activeMarker.packageId : undefined,
                 releaseId: typeof activeMarker.releaseId === 'string' ? activeMarker.releaseId : undefined,
                 installDir: String(activeMarker.installDir),
-                appliedAt: Date.now(),
+                appliedAt: now,
             },
+        }))
+        return null
+    }
+
+    if (!initializeEmbeddedCurrent) {
+        const previousCurrent = options.previousState
+            ? selectTdpHotUpdateCurrent(options.previousState)
+            : undefined
+        const current = selectTdpHotUpdateCurrent(runtime.getState())
+        if (
+            previousCurrent
+            && (
+                previousCurrent.source === 'hot-update'
+                || previousCurrent.source === 'rollback'
+            )
+            && (
+                current?.source !== previousCurrent.source
+                || current.bundleVersion !== previousCurrent.bundleVersion
+                || current.packageId !== previousCurrent.packageId
+                || current.releaseId !== previousCurrent.releaseId
+                || current.installDir !== previousCurrent.installDir
+            )
+        ) {
+            runtime.getStore().dispatch(tdpHotUpdateActions.markApplied({
+                previous: current,
+                current: previousCurrent,
+                now,
+            }))
+            return null
+        }
+    }
+
+    const current = selectTdpHotUpdateCurrent(runtime.getState())
+    if (shouldSyncEmbeddedReleaseCurrent(current)) {
+        runtime.getStore().dispatch(tdpHotUpdateActions.markApplied({
+            previous: current,
+            current: createEmbeddedReleaseCurrent(now),
+            now,
         }))
     }
 

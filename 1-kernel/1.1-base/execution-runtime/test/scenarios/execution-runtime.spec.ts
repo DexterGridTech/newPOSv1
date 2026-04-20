@@ -115,6 +115,47 @@ describe('execution-runtime', () => {
         expect(runtime.getJournal().list().map(event => event.internal)).toEqual([true, true])
     })
 
+    it('bounds journal growth and keeps the newest lifecycle records', async () => {
+        const runtime = createExecutionRuntime({
+            logger: createTestLogger(),
+            maxJournalRecords: 3,
+        })
+
+        runtime.registerHandler('kernel.base.execution-runtime.test.trim', async context => ({
+            ok: context.command.commandId,
+        }))
+
+        const first = createTestCommand({
+            commandName: 'kernel.base.execution-runtime.test.trim',
+        })
+        const second = createTestCommand({
+            commandName: 'kernel.base.execution-runtime.test.trim',
+        })
+
+        await runtime.execute(first)
+        await runtime.execute(second)
+
+        const journal = runtime.getJournal().list()
+        expect(journal).toHaveLength(3)
+        expect(journal.map(event => ({
+            commandId: event.commandId,
+            eventType: event.eventType,
+        }))).toEqual([
+            {
+                commandId: first.commandId,
+                eventType: 'completed',
+            },
+            {
+                commandId: second.commandId,
+                eventType: 'started',
+            },
+            {
+                commandId: second.commandId,
+                eventType: 'completed',
+            },
+        ])
+    })
+
     it('runs middleware around handlers in deterministic nested order', async () => {
         const order: string[] = []
         const middlewares: ExecutionMiddleware[] = [

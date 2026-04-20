@@ -13,6 +13,7 @@ export interface CreateExecutionRuntimeInput {
     logger: LoggerPort
     middlewares?: readonly ExecutionMiddleware[]
     onLifecycleEvent?: (event: ExecutionLifecycleEvent) => void
+    maxJournalRecords?: number
 }
 
 export interface ExecuteCommandOptions {

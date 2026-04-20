@@ -110,18 +110,24 @@ const createZip = (entries: Array<{ name: string; content: Buffer | string }>) =
 
 const sha256 = (buffer: Buffer) => createHash('sha256').update(buffer).digest('hex')
 
-const createHotUpdateZip = () => {
-  const payload = Buffer.from('console.log("hot update bundle");\n')
+const createHotUpdateZip = (options?: {
+  bundleVersion?: string
+  buildNumber?: number
+  channel?: string
+  releaseNotes?: string[]
+  payloadText?: string
+}) => {
+  const payload = Buffer.from(options?.payloadText ?? 'console.log("hot update bundle");\n')
   const manifest = {
     manifestVersion: 1,
     appId: 'assembly-android-mixc-retail-rn84',
     platform: 'android',
     product: 'mixc-retail',
-    channel: 'development',
-    bundleVersion: '1.0.0+ota.9',
+    channel: options?.channel ?? 'development',
+    bundleVersion: options?.bundleVersion ?? '1.0.0+ota.9',
     runtimeVersion: 'android-mixc-retail-rn84@1.0',
     assemblyVersion: '1.0.0',
-    buildNumber: 1000001,
+    buildNumber: options?.buildNumber ?? 1000001,
     builtAt: '2026-04-18T00:00:00.000Z',
     git: {
       commit: 'test-commit',
@@ -158,7 +164,7 @@ const createHotUpdateZip = () => {
     security: {
       hashAlgorithm: 'sha256',
     },
-    releaseNotes: ['test release'],
+    releaseNotes: options?.releaseNotes ?? ['test release'],
   }
 
   return createZip([
@@ -469,5 +475,146 @@ describe('mock-terminal-platform hot update api', () => {
       'payload/main/index.js',
       'payload/renderer/secondary_window/index.js',
     ])
+  })
+
+  it('allows activating a new terminal-scoped release after pausing the previous one', async () => {
+    const server = createMockTerminalPlatformTestServer()
+    servers.push(server)
+    await server.start()
+
+    const prepareResponse = await fetch(`${server.getHttpBaseUrl()}/mock-debug/kernel-base-test/prepare`, {
+      method: 'POST',
+    })
+    const preparePayload = await json<{ data: { sandboxId: string } }>(prepareResponse)
+    const sandboxId = preparePayload.data.sandboxId
+
+    const activationResponse = await fetch(`${server.getHttpBaseUrl()}/api/v1/terminals/activate`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        sandboxId,
+        activationCode: '200000000001',
+        deviceFingerprint: 'device-hot-update-api-switch-001',
+        deviceInfo: {
+          id: 'device-hot-update-api-switch-001',
+          model: 'Mixc Retail Android RN84',
+          platform: 'android',
+          runtimeInfo: {
+            assemblyAppId: 'assembly-android-mixc-retail-rn84',
+            runtimeVersion: 'android-mixc-retail-rn84@1.0',
+            bundleVersion: '1.0.0+ota.0',
+            assemblyVersion: '1.0.0',
+          },
+        },
+      }),
+    })
+    const activationPayload = await json<{ data: { terminalId: string } }>(activationResponse)
+    const terminalId = activationPayload.data.terminalId
+
+    const uploadFirstResponse = await fetch(`${server.getHttpBaseUrl()}/api/v1/admin/hot-updates/packages/upload`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        sandboxId,
+        fileName: 'hot-update-first.zip',
+        contentBase64: createHotUpdateZip().toString('base64'),
+      }),
+    })
+    const uploadFirstPayload = await json<{ data: { packageId: string } }>(uploadFirstResponse)
+
+    const firstReleaseResponse = await fetch(`${server.getHttpBaseUrl()}/api/v1/admin/hot-updates/releases`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        sandboxId,
+        packageId: uploadFirstPayload.data.packageId,
+        scopeType: 'TERMINAL',
+        scopeKey: terminalId,
+        createdBy: 'vitest',
+      }),
+    })
+    const firstReleasePayload = await json<{ data: { releaseId: string } }>(firstReleaseResponse)
+
+    const activateFirstResponse = await fetch(`${server.getHttpBaseUrl()}/api/v1/admin/hot-updates/releases/${firstReleasePayload.data.releaseId}/activate`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ sandboxId }),
+    })
+    expect(activateFirstResponse.status).toBe(200)
+
+    const pauseFirstResponse = await fetch(`${server.getHttpBaseUrl()}/api/v1/admin/hot-updates/releases/${firstReleasePayload.data.releaseId}/pause`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ sandboxId }),
+    })
+    const pauseFirstPayload = await json<{ data: { enabled: boolean; status: string } }>(pauseFirstResponse)
+    expect(pauseFirstResponse.status).toBe(200)
+    expect(pauseFirstPayload.data).toMatchObject({
+      enabled: false,
+      status: 'PAUSED',
+    })
+
+    const uploadSecondResponse = await fetch(`${server.getHttpBaseUrl()}/api/v1/admin/hot-updates/packages/upload`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        sandboxId,
+        fileName: 'hot-update-second.zip',
+        contentBase64: createHotUpdateZip({
+          bundleVersion: '1.0.0+ota.10',
+          buildNumber: 1000002,
+          releaseNotes: ['test release second'],
+          payloadText: 'console.log("hot update bundle second");\n',
+        }).toString('base64'),
+      }),
+    })
+    const uploadSecondPayload = await json<{ data: { packageId: string } }>(uploadSecondResponse)
+    expect(uploadSecondResponse.status).toBe(201)
+
+    const secondReleaseResponse = await fetch(`${server.getHttpBaseUrl()}/api/v1/admin/hot-updates/releases`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        sandboxId,
+        packageId: uploadSecondPayload.data.packageId,
+        scopeType: 'TERMINAL',
+        scopeKey: terminalId,
+        createdBy: 'vitest',
+      }),
+    })
+    const secondReleasePayload = await json<{ data: { releaseId: string } }>(secondReleaseResponse)
+    expect(secondReleaseResponse.status).toBe(201)
+
+    const activateSecondResponse = await fetch(`${server.getHttpBaseUrl()}/api/v1/admin/hot-updates/releases/${secondReleasePayload.data.releaseId}/activate`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ sandboxId }),
+    })
+    const activateSecondPayload = await json<{ data: { status: string; policyId: string } }>(activateSecondResponse)
+    expect(activateSecondResponse.status).toBe(200)
+    expect(activateSecondPayload.data).toMatchObject({
+      status: 'ACTIVE',
+    })
+
+    const snapshotResponse = await fetch(`${server.getHttpBaseUrl()}/api/v1/tdp/terminals/${terminalId}/snapshot?sandboxId=${sandboxId}`)
+    const snapshotPayload = await json<{
+      data: Array<{
+        topic: string
+        itemKey: string
+        payload: {
+          releaseId?: string
+          packageId?: string
+          rollout?: { mode: string }
+          bundleVersion?: string
+        }
+      }>
+    }>(snapshotResponse)
+    const desired = snapshotPayload.data.find(item => item.topic === 'terminal.hot-update.desired' && item.itemKey === 'main')
+    expect(desired?.payload).toMatchObject({
+      releaseId: secondReleasePayload.data.releaseId,
+      packageId: uploadSecondPayload.data.packageId,
+      bundleVersion: '1.0.0+ota.10',
+      rollout: { mode: 'active' },
+    })
   })
 })

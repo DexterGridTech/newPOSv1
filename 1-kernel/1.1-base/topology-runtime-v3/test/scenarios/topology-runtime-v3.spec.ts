@@ -799,7 +799,7 @@ describe('topology-runtime-v3 context derivation', () => {
                         ownerNodeId: 'master-node',
                         rootCommandId: 'root1',
                         sessionId: 's1',
-                        status: 'complete',
+                        status: 'completed',
                         startedAt: 1,
                         updatedAt: 2,
                         commands: [],
@@ -815,7 +815,7 @@ describe('topology-runtime-v3 context derivation', () => {
             requests: {
                 r1: {
                     requestId: 'r1',
-                    status: 'complete',
+                    status: 'completed',
                 },
             },
         })

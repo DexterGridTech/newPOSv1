@@ -1,8 +1,8 @@
-import {KernelMixcUserLoginInstanceState, KernelMixcUserLoginState, KernelMixcUserLoginWorkspaceState} from "./moduleState";
+import {KernelMixcUserLoginState} from "./moduleState";
 
 declare module '@impos2/kernel-core-base' {
     // 扩展 RootState 接口
-    export interface RootState extends KernelMixcUserLoginState,KernelMixcUserLoginWorkspaceState,KernelMixcUserLoginInstanceState {
+    export interface RootState extends KernelMixcUserLoginState {
 
     }
 }

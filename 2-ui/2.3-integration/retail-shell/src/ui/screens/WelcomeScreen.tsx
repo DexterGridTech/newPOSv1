@@ -12,6 +12,8 @@ const welcomeCardShadowStyle = {
     boxShadow: '0px 16px 40px rgba(15, 23, 42, 0.08)',
 } as const
 
+const welcomeTitle = '欢迎进入零售终端 · OTA E2E V9'
+
 export const WelcomeScreen: React.FC<RetailWelcomeScreenProps> = ({
     terminalId,
 }) => {
@@ -35,7 +37,7 @@ export const WelcomeScreen: React.FC<RetailWelcomeScreenProps> = ({
                 testID: 'ui-integration-retail-shell:welcome',
                 semanticId: 'ui-integration-retail-shell:welcome',
                 role: 'screen',
-                text: '欢迎进入零售终端',
+                text: welcomeTitle,
                 visible: true,
                 enabled: true,
                 availableActions: [],
@@ -49,7 +51,7 @@ export const WelcomeScreen: React.FC<RetailWelcomeScreenProps> = ({
                 testID: 'ui-integration-retail-shell:welcome:title',
                 semanticId: 'ui-integration-retail-shell:welcome:title',
                 role: 'text',
-                text: '欢迎进入零售终端',
+                text: welcomeTitle,
                 visible: true,
                 enabled: true,
                 availableActions: [],
@@ -129,7 +131,7 @@ export const WelcomeScreen: React.FC<RetailWelcomeScreenProps> = ({
                         testID="ui-integration-retail-shell:welcome:title"
                         style={{fontSize: 34, lineHeight: 42, fontWeight: '800', color: '#0f172a'}}
                     >
-                        欢迎进入零售终端
+                        {welcomeTitle}
                     </Text>
                     <Text
                         testID="ui-integration-retail-shell:welcome:subtitle"

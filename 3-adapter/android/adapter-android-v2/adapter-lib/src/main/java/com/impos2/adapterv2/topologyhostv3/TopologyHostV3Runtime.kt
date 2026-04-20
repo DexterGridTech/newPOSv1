@@ -2,7 +2,9 @@ package com.impos2.adapterv2.topologyhostv3
 
 import org.json.JSONObject
 
-internal class TopologyHostV3Runtime {
+internal class TopologyHostV3Runtime(
+  private val heartbeatTimeoutMs: Long = TopologyHostV3Defaults.DEFAULT_HEARTBEAT_TIMEOUT_MS,
+) {
   private val lock = Any()
   private val faultRules = linkedMapOf<String, TopologyHostV3FaultRule>()
   private val peersByRole = linkedMapOf<String, TopologyHostV3PeerRecord>()
@@ -44,9 +46,12 @@ internal class TopologyHostV3Runtime {
         )
       }
 
+      val now = System.currentTimeMillis()
       peersByRole[role] = TopologyHostV3PeerRecord(
         runtime = hello.runtime,
         connectionId = connectionId,
+        connectedAt = now,
+        lastSeenAt = now,
       )
       if (sessionId == null) {
         sessionId = TopologyHostV3Ids.createSessionId()
@@ -79,6 +84,26 @@ internal class TopologyHostV3Runtime {
       if (peersByRole.isEmpty()) {
         sessionId = null
       }
+    }
+  }
+
+  fun recordInboundFrame(connectionId: String, seenAt: Long = System.currentTimeMillis()) {
+    synchronized(lock) {
+      peersByRole.values.firstOrNull { it.connectionId == connectionId }?.lastSeenAt = seenAt
+    }
+  }
+
+  fun recordHeartbeatSent(connectionId: String, sentAt: Long = System.currentTimeMillis()) {
+    synchronized(lock) {
+      peersByRole.values.firstOrNull { it.connectionId == connectionId }?.lastHeartbeatSentAt = sentAt
+    }
+  }
+
+  fun collectTimedOutConnections(now: Long = System.currentTimeMillis()): List<String> {
+    synchronized(lock) {
+      return peersByRole.values
+        .filter { now - it.lastSeenAt >= heartbeatTimeoutMs }
+        .map { it.connectionId }
     }
   }
 
@@ -124,8 +149,11 @@ internal class TopologyHostV3Runtime {
 
   fun getStats(): TopologyHostV3Stats {
     synchronized(lock) {
+      val now = System.currentTimeMillis()
       return TopologyHostV3Stats(
         sessionCount = if (sessionId == null) 0 else 1,
+        peerCount = peersByRole.size,
+        stalePeerCount = peersByRole.values.count { now - it.lastSeenAt >= heartbeatTimeoutMs },
         activeFaultRuleCount = faultRules.size,
       )
     }
@@ -133,6 +161,7 @@ internal class TopologyHostV3Runtime {
 
   fun getDiagnosticsSnapshot(): TopologyHostV3DiagnosticsSnapshot {
     synchronized(lock) {
+      val now = System.currentTimeMillis()
       return TopologyHostV3DiagnosticsSnapshot(
         moduleName = TOPOLOGY_HOST_V3_MODULE_NAME,
         state = state,
@@ -143,6 +172,9 @@ internal class TopologyHostV3Runtime {
             role = role,
             nodeId = record.runtime.nodeId,
             deviceId = record.runtime.deviceId,
+            lastSeenAt = record.lastSeenAt,
+            lastHeartbeatSentAt = record.lastHeartbeatSentAt,
+            stale = now - record.lastSeenAt >= heartbeatTimeoutMs,
           )
         },
         faultRules = faultRules.values.toList(),

@@ -203,6 +203,43 @@ describe('assembly native JS wrappers', () => {
         )
     })
 
+    it('fails fast when a native function callback tries to start another script execution', async () => {
+        scriptsExecuteScriptMock.mockImplementation(async (script: string) => {
+            if (script === 'return outer()') {
+                emit('onNativeCall', {
+                    callId: 'call-nested',
+                    funcName: 'outer',
+                    argsJson: JSON.stringify([]),
+                })
+            }
+            return {success: true, resultJson: JSON.stringify('done')}
+        })
+
+        const {nativeScriptExecutor} = await import('../../src/turbomodules/scripts')
+        await nativeScriptExecutor.execute({
+            source: 'return outer()',
+            nativeFunctions: {
+                outer: async () => {
+                    await expect(
+                        nativeScriptExecutor.execute({source: 'return 1'}),
+                    ).rejects.toThrow(
+                        'nativeScriptExecutor.execute cannot be called from a native function callback',
+                    )
+                    return 'outer-finished'
+                },
+            },
+        })
+
+        expect(scriptsExecuteScriptMock).toHaveBeenCalledTimes(1)
+        expect(scriptsRejectNativeCallMock).not.toHaveBeenCalled()
+        await vi.waitFor(() => {
+            expect(scriptsResolveNativeCallMock).toHaveBeenCalledWith(
+                'call-nested',
+                JSON.stringify('outer-finished'),
+            )
+        })
+    })
+
     it('wraps automation host lifecycle and message callbacks', async () => {
         const {nativeAutomationHost} = await import('../../src/turbomodules/automation')
         const listener = vi.fn()

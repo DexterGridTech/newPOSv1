@@ -113,6 +113,18 @@ const createTestRuntime = (input: {
                     getPort(context) {
                         return context.platformPorts.hotUpdate
                     },
+                    getCurrentFacts() {
+                        return {
+                            appId: 'assembly-android-mixc-retail-rn84',
+                            platform: 'android' as const,
+                            product: 'mixc-retail',
+                            runtimeVersion: 'android-mixc-retail-rn84@1.0',
+                            assemblyVersion: '1.0.0',
+                            buildNumber: 1,
+                            channel: 'development',
+                            capabilities: [],
+                        }
+                    },
                 },
             }),
         ],

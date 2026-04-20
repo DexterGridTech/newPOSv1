@@ -45,6 +45,6 @@ export const createTdpSyncActorDefinitionsV2 = (
     createTdpCommandInboxActorDefinitionV2(),
     createTdpCommandAckActorDefinitionV2(),
     createTdpSessionStateActorDefinitionV2(),
-    createTdpTopicChangeActorDefinitionV2(fingerprintRef),
+    createTdpTopicChangeActorDefinitionV2(fingerprintRef, moduleInput),
     createTdpSystemCatalogBridgeActorDefinitionV2(),
 ]

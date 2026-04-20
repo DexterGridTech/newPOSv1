@@ -1,9 +1,9 @@
-import {KernelPayBaseState,KernelPayBaseWorkspaceState,KernelPayBaseInstanceState} from "./moduleState";
+import {KernelPayBaseState,KernelPayBaseWorkspaceState} from "./moduleState";
 
 declare module '@impos2/kernel-core-base' {
     // 扩展 RootState 接口
 
-    export interface RootState extends KernelPayBaseState,KernelPayBaseWorkspaceState,KernelPayBaseInstanceState {
+    export interface RootState extends KernelPayBaseState,KernelPayBaseWorkspaceState {
 
     }
 }

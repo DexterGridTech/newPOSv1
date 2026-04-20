@@ -1,9 +1,12 @@
+import React from 'react'
+import TestRenderer, {act} from 'react-test-renderer'
 import {describe, expect, it} from 'vitest'
 import {
     applyVirtualKeyToValue,
     createInputController,
     shouldRestoreInputValue,
     toPersistedInputValue,
+    useInputController,
 } from '../../src'
 
 describe('input controller', () => {
@@ -52,5 +55,89 @@ describe('input controller', () => {
             mode: 'system-password',
             persistence: 'secure-never-persist',
         })).toBeNull()
+    })
+
+    it('syncs controller behavior when hook inputs change over time', () => {
+        let latest: ReturnType<typeof useInputController> | null = null
+
+        const HookProbe: React.FC<{
+            mode: 'virtual-pin' | 'virtual-activation-code'
+            maxLength?: number
+        }> = ({mode, maxLength}) => {
+            latest = useInputController({
+                mode,
+                maxLength,
+            })
+            return null
+        }
+
+        const renderer = TestRenderer.create(
+            React.createElement(HookProbe, {
+                mode: 'virtual-pin',
+                maxLength: 2,
+            }),
+        )
+
+        act(() => {
+            latest?.applyVirtualKey('1')
+            latest?.applyVirtualKey('2')
+            latest?.applyVirtualKey('3')
+        })
+
+        expect(latest?.state.value).toBe('12')
+
+        act(() => {
+            renderer.update(React.createElement(HookProbe, {
+                mode: 'virtual-activation-code',
+                maxLength: 4,
+            }))
+        })
+
+        act(() => {
+            latest?.clear()
+            latest?.applyVirtualKey('A')
+            latest?.applyVirtualKey('B')
+            latest?.applyVirtualKey('C')
+            latest?.applyVirtualKey('D')
+            latest?.applyVirtualKey('E')
+        })
+
+        expect(latest?.state.mode).toBe('virtual-activation-code')
+        expect(latest?.state.maxLength).toBe(4)
+        expect(latest?.state.value).toBe('ABCD')
+    })
+
+    it('keeps hook action references stable across rerenders', () => {
+        const snapshots: Array<ReturnType<typeof useInputController>> = []
+
+        const HookProbe: React.FC<{
+            mode: 'virtual-pin'
+            maxLength?: number
+            initialValue?: string
+        }> = input => {
+            snapshots.push(useInputController(input))
+            return null
+        }
+
+        const renderer = TestRenderer.create(
+            React.createElement(HookProbe, {
+                mode: 'virtual-pin',
+                maxLength: 6,
+                initialValue: '1',
+            }),
+        )
+
+        act(() => {
+            renderer.update(React.createElement(HookProbe, {
+                mode: 'virtual-pin',
+                maxLength: 6,
+                initialValue: '1',
+            }))
+        })
+
+        expect(snapshots).toHaveLength(2)
+        expect(snapshots[1]?.setValue).toBe(snapshots[0]?.setValue)
+        expect(snapshots[1]?.applyVirtualKey).toBe(snapshots[0]?.applyVirtualKey)
+        expect(snapshots[1]?.clear).toBe(snapshots[0]?.clear)
     })
 })

@@ -5,6 +5,3 @@ export interface KeyedDefinition {
     name: string
     moduleName?: string
 }
-
-export type ErrorDefinitionEntry = ErrorDefinition
-export type ParameterDefinitionEntry = ParameterDefinition

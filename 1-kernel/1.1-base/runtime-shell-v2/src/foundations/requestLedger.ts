@@ -35,6 +35,12 @@ interface MutableRequestRecord {
     commands: MutableCommandRecord[]
 }
 
+const isCompletedCommandSnapshotStatus = (status: string) =>
+    status === 'completed' || status === 'complete'
+
+const isCompletedRequestSnapshotStatus = (status: string) =>
+    status === 'completed' || status === 'complete'
+
 const toRequestStatus = (commands: readonly MutableCommandRecord[]): RequestQueryStatus => {
     if (commands.some(command => command.status === 'TIMEOUT')) {
         return 'TIMEOUT'
@@ -279,6 +285,26 @@ export const createRequestLedger = () => {
                 }
             }
 
+            if (envelope.eventType === 'resultPatch') {
+                const patchResult: ActorExecutionResult = {
+                    actorKey,
+                    status: 'RUNNING',
+                    startedAt: commandRecord.startedAt,
+                    result: envelope.resultPatch,
+                }
+                const existingIndex = commandRecord.actorResults.findIndex(result => result.actorKey === actorKey)
+                if (existingIndex >= 0) {
+                    commandRecord.actorResults[existingIndex] = {
+                        ...commandRecord.actorResults[existingIndex],
+                        ...patchResult,
+                    }
+                } else {
+                    commandRecord.actorResults.push(patchResult)
+                }
+                touch(record)
+                return
+            }
+
             const completedResult: ActorExecutionResult = {
                 actorKey,
                 status: envelope.eventType === 'failed' ? 'FAILED' : 'COMPLETED',
@@ -300,7 +326,7 @@ export const createRequestLedger = () => {
         applyRequestLifecycleSnapshot(snapshot: RequestLifecycleSnapshot) {
             const commands: MutableCommandRecord[] = snapshot.commands.map(command => {
                 const actorResults: ActorExecutionResult[] = []
-                if (command.status === 'complete' || command.status === 'error') {
+                if (isCompletedCommandSnapshotStatus(command.status) || command.status === 'error') {
                     actorResults.push({
                         actorKey: 'runtime-shell-v2.snapshot',
                         status: command.status === 'error' ? 'FAILED' : 'COMPLETED',
@@ -322,13 +348,13 @@ export const createRequestLedger = () => {
                         dispatchedAt: command.startedAt ?? snapshot.startedAt,
                     },
                     startedAt: command.startedAt ?? snapshot.startedAt,
-                    completedAt: command.status === 'complete' || command.status === 'error'
+                    completedAt: isCompletedCommandSnapshotStatus(command.status) || command.status === 'error'
                         ? command.updatedAt
                         : undefined,
                     actorResults,
                     status: command.status === 'error'
                         ? 'FAILED'
-                        : command.status === 'complete'
+                        : isCompletedCommandSnapshotStatus(command.status)
                             ? 'COMPLETED'
                             : 'RUNNING',
                 }
@@ -338,7 +364,7 @@ export const createRequestLedger = () => {
                 rootCommandId: snapshot.rootCommandId,
                 startedAt: snapshot.startedAt,
                 updatedAt: snapshot.updatedAt,
-                status: snapshot.status === 'complete'
+                status: isCompletedRequestSnapshotStatus(snapshot.status)
                     ? 'COMPLETED'
                     : snapshot.status === 'error'
                         ? 'FAILED'

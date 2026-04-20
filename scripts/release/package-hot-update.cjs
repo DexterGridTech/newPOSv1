@@ -3,7 +3,14 @@ const path = require('path')
 const crypto = require('crypto')
 const readline = require('readline')
 const {execSync} = require('child_process')
-const {getManifestPath, parseArgs, printUsageAndExit, readJson, resolveRepoPath} = require('./shared.cjs')
+const {
+  getManifestPath,
+  getTrackedPackagePathsByAppId,
+  parseArgs,
+  printUsageAndExit,
+  readJson,
+  resolveRepoPath,
+} = require('./shared.cjs')
 
 function sha256(input) {
   return crypto.createHash('sha256').update(input).digest('hex')
@@ -142,6 +149,19 @@ function run(command) {
   execSync(command, {stdio: 'inherit'})
 }
 
+function parseBooleanArg(value) {
+  if (typeof value !== 'string') {
+    return null
+  }
+  if (value === 'true') {
+    return true
+  }
+  if (value === 'false') {
+    return false
+  }
+  return null
+}
+
 function getLocalBuildCommand(appId) {
   if (appId === 'assembly-android-mixc-retail-rn84') {
     return [
@@ -232,6 +252,81 @@ function resolveBundleFiles(appId) {
   throw new Error(`unsupported hot update packaging app: ${appId}`)
 }
 
+function walkSourceFiles(directory, files) {
+  if (!fs.existsSync(directory)) {
+    return
+  }
+  const entries = fs.readdirSync(directory, {withFileTypes: true})
+  entries.forEach(entry => {
+    const fullPath = path.join(directory, entry.name)
+    if (entry.isDirectory()) {
+      walkSourceFiles(fullPath, files)
+      return
+    }
+    if (/\.(ts|tsx|js|jsx|json)$/.test(entry.name)) {
+      files.push(fullPath)
+    }
+  })
+}
+
+function collectBundleSourceFiles(appId) {
+  const roots = new Set([
+    resolveRepoPath('4-assembly/android/mixc-retail-assembly-rn84'),
+    ...getTrackedPackagePathsByAppId(appId).map(relativePath =>
+      path.dirname(resolveRepoPath(relativePath))),
+  ])
+
+  const files = []
+  roots.forEach(root => {
+    walkSourceFiles(path.join(root, 'src'), files)
+    ;[
+      'App.tsx',
+      'App.js',
+      'index.ts',
+      'index.tsx',
+      'index.js',
+      'metro.config.js',
+      'babel.config.js',
+      'package.json',
+    ].forEach(relativePath => {
+      const filePath = path.join(root, relativePath)
+      if (fs.existsSync(filePath)) {
+        files.push(filePath)
+      }
+    })
+  })
+
+  return files
+}
+
+function getStaleBuildReason(appId, bundleFiles) {
+  if (!bundleFiles || !fs.existsSync(bundleFiles.entry)) {
+    return null
+  }
+
+  const bundleStat = fs.statSync(bundleFiles.entry)
+  let newestSource = null
+  collectBundleSourceFiles(appId).forEach(filePath => {
+    const stat = fs.statSync(filePath)
+    if (!newestSource || stat.mtimeMs > newestSource.stat.mtimeMs) {
+      newestSource = {filePath, stat}
+    }
+  })
+
+  if (!newestSource) {
+    return null
+  }
+
+  if (newestSource.stat.mtimeMs <= bundleStat.mtimeMs) {
+    return null
+  }
+
+  return [
+    `source changed after release bundle: ${path.relative(process.cwd(), newestSource.filePath)}`,
+    `(${newestSource.stat.mtime.toISOString()} > ${bundleStat.mtime.toISOString()})`,
+  ].join(' ')
+}
+
 function readReleaseManifestArtifacts(releaseManifest) {
   if (!releaseManifest || typeof releaseManifest !== 'object') {
     return []
@@ -256,7 +351,7 @@ function readReleaseManifestArtifacts(releaseManifest) {
 async function main() {
   const args = parseArgs(process.argv.slice(2))
   if (args.help || args.h) {
-    console.log('Usage: node scripts/release/package-hot-update.cjs --app <appId> [--channel <channel>] [--restartMode <mode>] [--operatorInstruction <text>] [--releaseNotes <a,b>] [--build-if-missing true|false]')
+    console.log('Usage: node scripts/release/package-hot-update.cjs --app <appId> [--channel <channel>] [--restartMode <mode>] [--operatorInstruction <text>] [--releaseNotes <a,b>] [--build-if-missing true|false] [--force-build true|false]')
     process.exit(0)
   }
   let appId = typeof args.app === 'string' ? args.app : ''
@@ -278,22 +373,34 @@ async function main() {
     ? args.releaseNotes
     : await prompt('Release notes（逗号分隔，可空）: ')
   const buildIfMissingArg = args.buildIfMissing ?? args['build-if-missing']
-  const buildIfMissing = typeof buildIfMissingArg === 'string'
-    ? buildIfMissingArg === 'true'
+  const buildIfMissing = parseBooleanArg(buildIfMissingArg) !== null
+    ? parseBooleanArg(buildIfMissingArg)
     : await promptYesNo('如果产物缺失，是否自动执行对应构建命令？', true)
+  const forceBuildArg = args.forceBuild ?? args['force-build']
+  const forceBuild = parseBooleanArg(forceBuildArg) === true
 
   let bundleFiles
+  let buildReason = forceBuild ? 'forced by --force-build' : null
   try {
     bundleFiles = resolveBundleFiles(appId)
   } catch (error) {
     if (!buildIfMissing) {
       throw error
     }
+    buildReason = error instanceof Error ? error.message : String(error)
+  }
+
+  if (!buildReason) {
+    buildReason = getStaleBuildReason(appId, bundleFiles)
+  }
+
+  if (buildReason) {
     const fallbackManifestApp = requireString(releaseManifest.appId, 'appId')
-    const fallbackBuildCommand = getLocalBuildCommand(fallbackManifestApp)
+    const fallbackBuildCommand = bundleFiles?.buildCommand || getLocalBuildCommand(fallbackManifestApp)
     if (!fallbackBuildCommand) {
-      throw error
+      throw new Error(`no build command available for ${fallbackManifestApp}`)
     }
+    console.log(`[hot-update] rebuilding bundle: ${buildReason}`)
     run(fallbackBuildCommand)
     bundleFiles = resolveBundleFiles(appId)
   }

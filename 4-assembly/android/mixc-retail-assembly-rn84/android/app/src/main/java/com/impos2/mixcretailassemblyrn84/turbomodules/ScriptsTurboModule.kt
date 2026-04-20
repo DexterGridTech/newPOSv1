@@ -179,8 +179,15 @@ class ScriptsTurboModule(reactContext: ReactApplicationContext) :
     pendingNativeCalls[callId] = pendingCall
     sendNativeCallEvent(callId, funcName, argsJson)
 
-    val completed = pendingCall.latch.await(timeoutMs, TimeUnit.MILLISECONDS)
-    pendingNativeCalls.remove(callId)
+    val completed = try {
+      pendingCall.latch.await(timeoutMs, TimeUnit.MILLISECONDS)
+    } catch (error: InterruptedException) {
+      Thread.currentThread().interrupt()
+      pendingCall.errorMessage = "nativeFunction '$funcName' interrupted"
+      true
+    } finally {
+      pendingNativeCalls.remove(callId)
+    }
 
     if (!completed) {
       throw IllegalStateException("nativeFunction '$funcName' timeout after ${timeoutMs}ms")

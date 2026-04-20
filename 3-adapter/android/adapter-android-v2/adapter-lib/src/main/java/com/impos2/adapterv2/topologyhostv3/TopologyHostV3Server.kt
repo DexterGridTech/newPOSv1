@@ -16,15 +16,18 @@ import java.security.MessageDigest
 import java.util.Base64
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.TimeUnit
 
 class TopologyHostV3Server(
   private val context: Context,
   private val config: TopologyHostV3Config,
   private val logger: LogManager,
 ) {
-  private val runtime = TopologyHostV3Runtime()
+  private val runtime = TopologyHostV3Runtime(config.heartbeatTimeoutMs)
   private val socketSessions = ConcurrentHashMap<String, TopologyHostWsSession>()
   private val executor = Executors.newCachedThreadPool()
+  private val heartbeatScheduler: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
 
   @Volatile
   private var serverSocket: ServerSocket? = null
@@ -40,6 +43,7 @@ class TopologyHostV3Server(
     serverSocket = socket
     running = true
     runtime.markRunning()
+    startHeartbeatLoop()
     executor.submit {
       while (running) {
         val client = runCatching { serverSocket?.accept() }.getOrNull() ?: break
@@ -55,6 +59,7 @@ class TopologyHostV3Server(
     serverSocket = null
     socketSessions.values.forEach { it.close() }
     socketSessions.clear()
+    heartbeatScheduler.shutdownNow()
     executor.shutdownNow()
   }
 
@@ -155,11 +160,19 @@ class TopologyHostV3Server(
 
     executor.submit {
       try {
-        val frameReader = TopologyHostWsFrameReader(socket.getInputStream()) { payload ->
-          session.sendPong(payload)
-        }
+        val frameReader = TopologyHostWsFrameReader(
+          socket.getInputStream(),
+          onPing = { payload ->
+            runtime.recordInboundFrame(connectionId)
+            session.sendPong(payload)
+          },
+          onPong = {
+            runtime.recordInboundFrame(connectionId)
+          },
+        )
         while (running && session.isOpen) {
           val text = frameReader.readFrame() ?: break
+          runtime.recordInboundFrame(connectionId)
           handleIncomingMessage(connectionId, JSONObject(text))
         }
       } finally {
@@ -167,6 +180,30 @@ class TopologyHostV3Server(
         socketSessions.remove(connectionId)?.close()
       }
     }
+  }
+
+  private fun startHeartbeatLoop() {
+    heartbeatScheduler.scheduleAtFixedRate(
+      {
+        if (!running) {
+          return@scheduleAtFixedRate
+        }
+        val now = System.currentTimeMillis()
+        socketSessions.forEach { (connectionId, session) ->
+          if (session.isOpen) {
+            runtime.recordHeartbeatSent(connectionId, now)
+            session.sendPing(now.toString().toByteArray(Charsets.UTF_8))
+          }
+        }
+        runtime.collectTimedOutConnections(now).forEach { connectionId ->
+          socketSessions.remove(connectionId)?.close()
+          runtime.detachConnection(connectionId)
+        }
+      },
+      config.heartbeatIntervalMs,
+      config.heartbeatIntervalMs,
+      TimeUnit.MILLISECONDS,
+    )
   }
 
   private fun handleIncomingMessage(connectionId: String, message: JSONObject) {

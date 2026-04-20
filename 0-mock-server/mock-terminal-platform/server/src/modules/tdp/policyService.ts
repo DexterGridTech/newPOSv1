@@ -48,20 +48,32 @@ export const createProjectionPolicy = (input: {
   }
 
   const timestamp = now()
-  const policyId = createId('policy')
-  db.insert(projectionPoliciesTable).values({
-    policyId,
-    sandboxId,
-    topicKey: input.topicKey,
-    itemKey: input.itemKey,
-    scopeType: input.scopeType,
-    scopeKey: input.scopeKey,
-    enabled: enabled ? 1 : 0,
-    payloadJson: JSON.stringify(input.payloadJson ?? {}),
-    description: input.description?.trim() ?? '',
-    createdAt: timestamp,
-    updatedAt: timestamp,
-  }).run()
+  const policyId = existing?.policyId ?? createId('policy')
+  if (existing) {
+    db.update(projectionPoliciesTable).set({
+      enabled: enabled ? 1 : 0,
+      payloadJson: JSON.stringify(input.payloadJson ?? {}),
+      description: input.description?.trim() ?? '',
+      updatedAt: timestamp,
+    }).where(and(
+      eq(projectionPoliciesTable.sandboxId, sandboxId),
+      eq(projectionPoliciesTable.policyId, policyId),
+    )).run()
+  } else {
+    db.insert(projectionPoliciesTable).values({
+      policyId,
+      sandboxId,
+      topicKey: input.topicKey,
+      itemKey: input.itemKey,
+      scopeType: input.scopeType,
+      scopeKey: input.scopeKey,
+      enabled: enabled ? 1 : 0,
+      payloadJson: JSON.stringify(input.payloadJson ?? {}),
+      description: input.description?.trim() ?? '',
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    }).run()
+  }
 
   const targetTerminalIds = enabled
     ? getTargetTerminalIdsForPolicy({ sandboxId, scopeType: input.scopeType, scopeKey: input.scopeKey })

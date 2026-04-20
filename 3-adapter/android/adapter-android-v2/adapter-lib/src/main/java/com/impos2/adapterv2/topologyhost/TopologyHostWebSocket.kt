@@ -60,6 +60,22 @@ internal class TopologyHostWsSession(private val socket: Socket) {
     }
   }
 
+  fun sendPing(payload: ByteArray = ByteArray(0)) {
+    if (!isOpen) return
+    try {
+      val frame = ByteArrayOutputStream()
+      frame.write(0x89)
+      frame.write(payload.size)
+      frame.write(payload)
+      synchronized(out) {
+        out.write(frame.toByteArray())
+        out.flush()
+      }
+    } catch (_: Exception) {
+      isOpen = false
+    }
+  }
+
   fun close() {
     isOpen = false
     try {
@@ -79,6 +95,7 @@ internal class TopologyHostWsSession(private val socket: Socket) {
 internal class TopologyHostWsFrameReader(
   private val input: InputStream,
   private val onPing: (ByteArray) -> Unit,
+  private val onPong: (ByteArray) -> Unit = {},
 ) {
   fun readFrame(): String? {
     while (true) {
@@ -115,6 +132,10 @@ internal class TopologyHostWsFrameReader(
         }
         if (opcode == 0x9) {
           onPing(data)
+          continue
+        }
+        if (opcode == 0xA) {
+          onPong(data)
           continue
         }
         String(data, Charsets.UTF_8)

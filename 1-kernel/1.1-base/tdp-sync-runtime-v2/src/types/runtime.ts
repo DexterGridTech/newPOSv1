@@ -11,6 +11,7 @@ import type {
     TdpServerMessage,
     TdpSnapshotResponse,
 } from './protocol'
+import type {HotUpdateCurrentFacts} from './hotUpdate'
 
 export interface TdpTopicDataChangeItem {
     operation: 'upsert' | 'delete'
@@ -70,5 +71,6 @@ export interface CreateTdpSyncRuntimeModuleV2Input {
     }
     hotUpdate?: {
         getPort?(context: RuntimeModuleContextV2): HotUpdatePort | undefined
+        getCurrentFacts?(context: Pick<RuntimeModuleContextV2, 'displayContext' | 'getState'>): HotUpdateCurrentFacts | undefined
     }
 }

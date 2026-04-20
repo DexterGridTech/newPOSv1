@@ -17,7 +17,7 @@ export const bootstrapAssemblyRuntime = async (
         ))
     }
 
-    if (props.displayIndex > 0) {
+    if (props.displayIndex > 0 && !isManagedSecondary) {
         await runtime.dispatchCommand(createCommand(
             topologyRuntimeV3CommandDefinitions.setInstanceMode,
             {instanceMode: 'SLAVE'},

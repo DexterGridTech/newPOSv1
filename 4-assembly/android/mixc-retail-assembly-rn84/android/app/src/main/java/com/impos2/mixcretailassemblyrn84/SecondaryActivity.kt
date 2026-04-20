@@ -3,14 +3,16 @@ package com.impos2.mixcretailassemblyrn84
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.os.Process
+import android.util.Log
+import androidx.core.content.ContextCompat
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
 import com.facebook.react.defaults.DefaultReactActivityDelegate
 import com.impos2.mixcretailassemblyrn84.startup.LaunchOptionsFactory
+import com.impos2.mixcretailassemblyrn84.startup.ReactLifecycleGate
 import com.impos2.mixcretailassemblyrn84.startup.SecondaryProcessController
 import com.impos2.mixcretailassemblyrn84.startup.StartupAuditLogger
 import java.util.concurrent.atomic.AtomicBoolean
@@ -26,6 +28,9 @@ import java.util.concurrent.atomic.AtomicBoolean
  * - 最后主动结束本进程，确保后续启动时拿到全新的运行环境。
  */
 class SecondaryActivity : ReactActivity() {
+  companion object {
+    private const val TAG = "SecondaryActivity"
+  }
 
   /**
    * 标记当前销毁是否由“受控重启”触发。
@@ -62,6 +67,30 @@ class SecondaryActivity : ReactActivity() {
   override fun createReactActivityDelegate(): ReactActivityDelegate =
     object : DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled) {
       override fun getLaunchOptions(): Bundle = LaunchOptionsFactory.create(this@SecondaryActivity, 1)
+
+      private val isReactContextReady: Boolean
+        get() = reactHost?.currentReactContext != null
+
+      override fun onNewIntent(intent: Intent?): Boolean {
+        intent ?: return false
+        if (!ReactLifecycleGate.shouldForwardToReact(isReactContextReady)) {
+          this@SecondaryActivity.setIntent(intent)
+          Log.d(TAG, "Skipped RN onNewIntent before React context is ready")
+          return false
+        }
+        return super.onNewIntent(intent)
+      }
+
+      override fun onWindowFocusChanged(hasFocus: Boolean) {
+        if (!ReactLifecycleGate.shouldForwardToReact(isReactContextReady)) {
+          Log.d(
+            TAG,
+            "Skipped RN onWindowFocusChanged before React context is ready: hasFocus=$hasFocus",
+          )
+          return
+        }
+        super.onWindowFocusChanged(hasFocus)
+      }
     }
 
   /**
@@ -76,13 +105,13 @@ class SecondaryActivity : ReactActivity() {
     super.onCreate(savedInstanceState)
     StartupAuditLogger.logActivityCreated("SecondaryActivity", 1)
     SecondaryProcessController.markSecondaryStarted()
-    val filter = SecondaryProcessController.createRestartRequestFilter()
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-      registerReceiver(restartReceiver, filter, Context.RECEIVER_NOT_EXPORTED)
-    } else {
-      @Suppress("DEPRECATION")
-      registerReceiver(restartReceiver, filter)
-    }
+    sendBroadcast(SecondaryProcessController.createSecondaryStartedIntent(this))
+    ContextCompat.registerReceiver(
+      this,
+      restartReceiver,
+      SecondaryProcessController.createRestartRequestFilter(),
+      ContextCompat.RECEIVER_NOT_EXPORTED,
+    )
   }
 
   /**
@@ -97,6 +126,7 @@ class SecondaryActivity : ReactActivity() {
   override fun onDestroy() {
     runCatching { unregisterReceiver(restartReceiver) }
     SecondaryProcessController.markSecondaryStopped()
+    sendBroadcast(SecondaryProcessController.createSecondaryStoppedIntent(this))
     if (shutdownRequested.get()) {
       sendBroadcast(SecondaryProcessController.createRestartAckIntent(this))
       StartupAuditLogger.logSecondaryProcessExit()

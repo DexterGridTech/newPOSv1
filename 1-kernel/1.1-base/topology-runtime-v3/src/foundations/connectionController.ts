@@ -43,6 +43,9 @@ const isErrorEvent = (
     event: {type: string},
 ): event is Extract<{type: string}, {type: 'error'}> => event.type === 'error'
 
+const normalizeRequestMirrorStatus = (status: string) =>
+    status === 'complete' ? 'completed' : status
+
 const resolveReconnectDelayMs = (context: RuntimeModuleContextV2, override?: number) => {
     if (typeof override === 'number' && Number.isFinite(override) && override >= 0) {
         return override
@@ -293,7 +296,7 @@ export const createTopologyPeerOrchestratorV3 = (input: {
                     ] as any)?.requests,
                     [message.envelope.snapshot.requestId]: {
                         requestId: message.envelope.snapshot.requestId,
-                        status: message.envelope.snapshot.status,
+                        status: normalizeRequestMirrorStatus(message.envelope.snapshot.status),
                         payload: message.envelope.snapshot,
                     },
                 },

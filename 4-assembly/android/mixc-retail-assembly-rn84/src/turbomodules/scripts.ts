@@ -16,6 +16,9 @@ type NativeScriptResult = {
 const emitter = new NativeEventEmitter(NativeScriptsTurboModule as any)
 
 let nativeFunctionQueue: Promise<void> = Promise.resolve()
+// Native callback runs before the current script execution can finish, so nested execute()
+// would wait on itself and never get a chance to start.
+let activeNativeCallDepth = 0
 
 const runExclusive = async <T,>(work: () => Promise<T>): Promise<T> => {
     const previous = nativeFunctionQueue
@@ -39,8 +42,14 @@ export const nativeScriptExecutor = {
         nativeFunctions?: Record<string, (...args: any[]) => unknown>
         timeoutMs?: number
     }): Promise<T> {
+        if (activeNativeCallDepth > 0) {
+            throw new Error(
+                'nativeScriptExecutor.execute cannot be called from a native function callback',
+            )
+        }
         const execute = async () => {
             const subscription = emitter.addListener('onNativeCall', async (event: NativeCallEvent) => {
+                let enteredNativeCall = false
                 try {
                     const fn = input.nativeFunctions?.[event.funcName]
                     if (!fn) {
@@ -52,6 +61,8 @@ export const nativeScriptExecutor = {
                     }
 
                     const args = JSON.parse(event.argsJson) as any[]
+                    activeNativeCallDepth += 1
+                    enteredNativeCall = true
                     const result = await fn(...args)
                     await NativeScriptsTurboModule.resolveNativeCall(
                         event.callId,
@@ -62,6 +73,10 @@ export const nativeScriptExecutor = {
                         event.callId,
                         error instanceof Error ? error.message : String(error),
                     )
+                } finally {
+                    if (enteredNativeCall) {
+                        activeNativeCallDepth -= 1
+                    }
                 }
             })
             try {

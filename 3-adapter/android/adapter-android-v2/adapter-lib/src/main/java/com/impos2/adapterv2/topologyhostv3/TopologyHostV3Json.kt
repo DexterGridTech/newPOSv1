@@ -125,6 +125,8 @@ fun TopologyHostV3AddressInfo.toJson(): JSONObject {
 fun TopologyHostV3Stats.toJson(): JSONObject {
   return JSONObject()
     .put("sessionCount", sessionCount)
+    .put("peerCount", peerCount)
+    .put("stalePeerCount", stalePeerCount)
     .put("activeFaultRuleCount", activeFaultRuleCount)
 }
 
@@ -151,7 +153,10 @@ fun TopologyHostV3DiagnosticsSnapshot.toJson(): JSONObject {
       array.put(JSONObject()
         .put("role", peer.role)
         .put("nodeId", peer.nodeId)
-        .put("deviceId", peer.deviceId),
+        .put("deviceId", peer.deviceId)
+        .put("lastSeenAt", peer.lastSeenAt)
+        .put("lastHeartbeatSentAt", peer.lastHeartbeatSentAt)
+        .put("stale", peer.stale),
       )
     }
   })

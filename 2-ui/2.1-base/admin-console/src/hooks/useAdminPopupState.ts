@@ -1,4 +1,4 @@
-import {useMemo, useState} from 'react'
+import {useCallback, useMemo, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import {selectAdminConsoleSelectedTab} from '../selectors'
 import {adminConsoleStateActions} from '../features/slices'
@@ -14,9 +14,9 @@ export const useAdminPopupState = () => {
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
 
-    const setSelectedTab = (tab: AdminConsoleTab) => {
+    const setSelectedTab = useCallback((tab: AdminConsoleTab) => {
         dispatch(adminConsoleStateActions.setSelectedTab(tab))
-    }
+    }, [dispatch])
 
     return useMemo(() => ({
         screen,
@@ -27,5 +27,5 @@ export const useAdminPopupState = () => {
         setPassword,
         error,
         setError,
-    }), [error, password, screen, selectedTab])
+    }), [error, password, screen, selectedTab, setSelectedTab])
 }

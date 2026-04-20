@@ -1,4 +1,6 @@
-import {AppRegistry} from 'react-native';
-import App from './App';
+globalThis.global = globalThis.global ?? globalThis;
+
+const {AppRegistry} = require('react-native');
+const App = require('./App').default;
 
 AppRegistry.registerComponent('MixcRetailAssemblyRN84', () => App);

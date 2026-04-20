@@ -4,9 +4,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import androidx.core.content.ContextCompat
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -22,13 +22,15 @@ object SecondaryProcessController {
 
   private const val ACTION_RESTART_REQUEST = "com.impos2.mixcretailassemblyrn84.action.SECONDARY_RESTART_REQUEST"
   private const val ACTION_RESTART_ACK = "com.impos2.mixcretailassemblyrn84.action.SECONDARY_RESTART_ACK"
+  private const val ACTION_SECONDARY_STARTED = "com.impos2.mixcretailassemblyrn84.action.SECONDARY_STARTED"
+  private const val ACTION_SECONDARY_STOPPED = "com.impos2.mixcretailassemblyrn84.action.SECONDARY_STOPPED"
   private const val ACK_TIMEOUT_MS = 4000L
 
   /**
-   * 记录副进程是否存活。
+   * 记录当前进程内是否存在副屏实例。
    *
-   * 这个状态既由主进程的启动器读取，也由副进程自身在创建/销毁时更新。目的是在重启和二次启动时
-   * 避免重复拉起或错误等待。
+   * 注意：这是进程内状态，不是跨进程真相源。主进程和副进程会各自持有一份独立值，因此它只能用于
+   * 副进程自身的本地判断，不能被主进程拿来判断“另一进程里的副屏是否仍然存活”。
    */
   private val secondaryAlive = AtomicBoolean(false)
   private val ackReceiverRef = java.util.concurrent.atomic.AtomicReference<BroadcastReceiver?>(null)
@@ -50,7 +52,7 @@ object SecondaryProcessController {
   }
 
   /**
-   * 返回当前副进程是否仍被认为存活。
+   * 返回当前进程内是否仍被认为存在副屏实例。
    */
   fun isSecondaryAlive(): Boolean = secondaryAlive.get()
 
@@ -63,6 +65,29 @@ object SecondaryProcessController {
    * 构造副进程发给主进程的 ACK Intent。
    */
   fun createRestartAckIntent(context: Context): Intent = Intent(ACTION_RESTART_ACK).setPackage(context.packageName)
+
+  fun createSecondaryStartedIntent(context: Context): Intent {
+    return Intent(ACTION_SECONDARY_STARTED).setPackage(context.packageName)
+  }
+
+  fun createSecondaryStoppedIntent(context: Context): Intent {
+    return Intent(ACTION_SECONDARY_STOPPED).setPackage(context.packageName)
+  }
+
+  fun createSecondaryStateFilter(): IntentFilter {
+    return IntentFilter().apply {
+      addAction(ACTION_SECONDARY_STARTED)
+      addAction(ACTION_SECONDARY_STOPPED)
+    }
+  }
+
+  fun isSecondaryStartedAction(intent: Intent?): Boolean {
+    return intent?.action == ACTION_SECONDARY_STARTED
+  }
+
+  fun isSecondaryStoppedAction(intent: Intent?): Boolean {
+    return intent?.action == ACTION_SECONDARY_STOPPED
+  }
 
   /**
    * 如果当前存在副屏实例，则请求它优雅退出并等待 ACK；否则直接继续后续流程。
@@ -77,7 +102,7 @@ object SecondaryProcessController {
     hasSecondaryInstance: Boolean,
     onComplete: () -> Unit,
   ) {
-    if (!hasSecondaryInstance && !secondaryAlive.get()) {
+    if (!hasSecondaryInstance) {
       onComplete()
       return
     }
@@ -106,13 +131,12 @@ object SecondaryProcessController {
     }
     ackReceiverRef.set(ackReceiver)
 
-    val filter = IntentFilter(ACTION_RESTART_ACK)
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-      applicationContext.registerReceiver(ackReceiver, filter, Context.RECEIVER_NOT_EXPORTED)
-    } else {
-      @Suppress("DEPRECATION")
-      applicationContext.registerReceiver(ackReceiver, filter)
-    }
+    ContextCompat.registerReceiver(
+      applicationContext,
+      ackReceiver,
+      IntentFilter(ACTION_RESTART_ACK),
+      ContextCompat.RECEIVER_NOT_EXPORTED,
+    )
 
     StartupAuditLogger.logSecondaryShutdownRequested()
     applicationContext.sendBroadcast(Intent(ACTION_RESTART_REQUEST).setPackage(applicationContext.packageName))

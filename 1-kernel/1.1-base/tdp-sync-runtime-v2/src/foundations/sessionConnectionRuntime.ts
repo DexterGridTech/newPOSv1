@@ -19,7 +19,7 @@ import {
 import {tdpSyncV2CommandDefinitions} from '../features/commands'
 import {tdpSyncV2StateActions} from '../features/slices'
 import {TDP_SYNC_V2_SOCKET_PROFILE_NAME, tdpSyncV2SocketProfile} from './socketBinding'
-import {selectTdpSyncState} from '../selectors'
+import {selectTdpSessionState, selectTdpSyncState} from '../selectors'
 import {tdpSyncV2ErrorDefinitions, tdpSyncV2ParameterDefinitions} from '../supports'
 import type {
     CreateTdpSyncRuntimeModuleV2Input,
@@ -187,6 +187,15 @@ export const installTdpSessionConnectionRuntimeV2 = (input: {
     const performSocketConnection = async (options?: {isReconnect?: boolean}) => {
         const currentState = socketBinding.socketRuntime.getConnectionState(socketBinding.profileName)
         if (currentState === 'connected' || currentState === 'connecting') {
+            const sessionStatus = selectTdpSessionState(input.context.getState())?.status
+            if (currentState === 'connected' && sessionStatus !== 'READY' && sessionStatus !== 'HANDSHAKING') {
+                sendHandshake()
+                return {
+                    rehandshaken: true,
+                    lastCursor: selectTdpSyncState(input.context.getState())?.lastCursor,
+                    previousSessionStatus: sessionStatus,
+                }
+            }
             return {
                 alreadyConnected: currentState === 'connected',
                 alreadyConnecting: currentState === 'connecting',

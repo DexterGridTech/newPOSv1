@@ -11,6 +11,11 @@ import type {CreateTdpSyncRuntimeModuleV2Input} from '../../types'
 
 const defineActor = createModuleActorFactory(moduleName)
 
+const createDisconnectCommand = () => createCommand(
+    tdpSyncV2CommandDefinitions.disconnectTdpSession,
+    {},
+)
+
 export const createTdpAutoConnectActorDefinitionV2 = (
     input: CreateTdpSyncRuntimeModuleV2Input,
 ): ActorDefinition => defineActor(
@@ -21,6 +26,14 @@ export const createTdpAutoConnectActorDefinitionV2 = (
                 return {}
             }
             await context.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.connectTdpSession, {}))
+            return {}
+        }),
+        onCommand(tcpControlV2CommandDefinitions.deactivateTerminalSucceeded, async context => {
+            await context.dispatchCommand(createDisconnectCommand())
+            return {}
+        }),
+        onCommand(tcpControlV2CommandDefinitions.resetTcpControl, async context => {
+            await context.dispatchCommand(createDisconnectCommand())
             return {}
         }),
     ],

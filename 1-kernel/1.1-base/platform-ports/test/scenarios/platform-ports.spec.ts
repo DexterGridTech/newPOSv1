@@ -51,8 +51,30 @@ describe('kernel-base-platform-ports', () => {
 
         expect(packageVersion).toBeTruthy()
         expect(ports.logger).toBe(logger)
+        expect(Object.isFrozen(ports)).toBe(true)
         expect(ports.scriptExecutor).toBeTruthy()
         await expect(ports.scriptExecutor?.execute()).resolves.toEqual({ok: true})
+    })
+
+    it('rejects invalid platform ports contracts instead of acting as a no-op wrapper', () => {
+        expect(() => createPlatformPorts({
+            environmentMode: 'TEST',
+            logger: undefined as any,
+        })).toThrowError('[createPlatformPorts] logger is required')
+
+        expect(() => createPlatformPorts({
+            environmentMode: 'TEST',
+            logger: {
+                emit() {},
+                debug() {},
+                info() {},
+                warn() {},
+                error() {},
+                scope() {
+                    return this as any
+                },
+            } as any,
+        })).toThrowError('[createPlatformPorts] logger.withContext must be a function')
     })
 
     it('keeps sensitive fields raw outside PROD and merges scope plus context bindings', () => {

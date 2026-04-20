@@ -33,7 +33,9 @@ export const reportAppLoadComplete = async (
     )
 
     await nativeAppControl.hideLoading(displayIndex)
-    const bootState = await syncHotUpdateStateFromNativeBoot(runtime)
+    const bootState = await syncHotUpdateStateFromNativeBoot(runtime, {
+        initializeEmbeddedCurrent: false,
+    })
     if (bootState?.terminalState === 'ROLLED_BACK') {
         nativeLogger.log(
             'assembly.android.mixc-retail-rn84.boot',

@@ -21,6 +21,7 @@ import java.util.concurrent.TimeoutException
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
+import java.util.concurrent.locks.ReentrantLock
 
 /**
  * 脚本执行引擎管理器。
@@ -224,6 +225,8 @@ class ScriptEngineManager private constructor(private val context: Context) : IS
 
   // 保护 runtime 的创建、回收与替换，确保任何时刻只有一个活跃 runtime 被对外使用。
   private val runtimeLock = Any()
+  // 对外执行入口必须与单线程 runtime 保持一致，避免排队任务提前消耗 timeout 并 poison 当前执行。
+  private val executionGate = ScriptExecutionGate()
   // 字节码缓存只服务于重复脚本，目标是降低编译成本，而不是跨版本长期持久化。
   private val bytecodeCache = ScriptBytecodeCache(BYTECODE_CACHE_SIZE)
   private val totalCount = AtomicInteger(0)
@@ -252,6 +255,12 @@ class ScriptEngineManager private constructor(private val context: Context) : IS
   @Volatile private var lastResultPreview: String = "--"
 
   override fun executeScript(options: ScriptExecutionOptions): ScriptExecutionResult {
+    return executionGate.runExclusive {
+      executeScriptSerial(options)
+    }
+  }
+
+  private fun executeScriptSerial(options: ScriptExecutionOptions): ScriptExecutionResult {
     val validationError = validate(options)
     if (validationError != null) {
       val invalidContext = createExecutionContext(options)
@@ -441,7 +450,7 @@ class ScriptEngineManager private constructor(private val context: Context) : IS
             return try {
               val resultJson = invoker.invoke(safeName, argsJson, executionContext.timeoutMs.toLong())
               executionContext.state = ExecutionState.RUNNING
-              parseJsonLiteral(resultJson)
+              parseScriptJsonLiteral(resultJson)
             } catch (error: Exception) {
               executionContext.state = ExecutionState.FAILED
               nativeCallFailureCount.incrementAndGet()
@@ -728,18 +737,6 @@ class ScriptEngineManager private constructor(private val context: Context) : IS
     }
   }
 
-  private fun parseJsonLiteral(value: String): Any? {
-    return when {
-      value == "null" -> null
-      value == "true" -> true
-      value == "false" -> false
-      value.startsWith("\"") && value.endsWith("\"") && value.length >= 2 ->
-        value.substring(1, value.length - 1)
-      value.contains('.') -> value.toDoubleOrNull() ?: value
-      else -> value.toLongOrNull() ?: value
-    }
-  }
-
   private fun sha256(value: String): String {
     val digest = MessageDigest.getInstance("SHA-256").digest(value.toByteArray())
     return digest.joinToString(separator = "") { byte -> "%02x".format(byte) }
@@ -773,4 +770,75 @@ class ScriptEngineManager private constructor(private val context: Context) : IS
       }
     }
   }
+}
+
+internal class ScriptExecutionGate {
+  private val lock = ReentrantLock(true)
+
+  fun <T> runExclusive(block: () -> T): T {
+    lock.lock()
+    return try {
+      block()
+    } finally {
+      lock.unlock()
+    }
+  }
+}
+
+internal fun parseScriptJsonLiteral(value: String): Any? {
+  return when {
+    value == "null" -> null
+    value == "true" -> true
+    value == "false" -> false
+    value.startsWith("\"") && value.endsWith("\"") && value.length >= 2 ->
+      decodeJsonStringLiteral(value)
+    value.contains('.') -> value.toDoubleOrNull() ?: value
+    else -> value.toLongOrNull() ?: value
+  }
+}
+
+private fun decodeJsonStringLiteral(value: String): String {
+  val contentEnd = value.length - 1
+  val decoded = StringBuilder(value.length - 2)
+  var index = 1
+
+  while (index < contentEnd) {
+    val ch = value[index]
+    if (ch != '\\') {
+      decoded.append(ch)
+      index += 1
+      continue
+    }
+
+    if (index + 1 >= contentEnd) {
+      throw IllegalArgumentException("Invalid JSON string escape")
+    }
+
+    when (val escaped = value[index + 1]) {
+      '"' -> decoded.append('"')
+      '\\' -> decoded.append('\\')
+      '/' -> decoded.append('/')
+      'b' -> decoded.append('\b')
+      'f' -> decoded.append('\u000C')
+      'n' -> decoded.append('\n')
+      'r' -> decoded.append('\r')
+      't' -> decoded.append('\t')
+      'u' -> {
+        if (index + 5 >= contentEnd) {
+          throw IllegalArgumentException("Invalid JSON unicode escape")
+        }
+        val hex = value.substring(index + 2, index + 6)
+        val codePoint = hex.toIntOrNull(16)
+          ?: throw IllegalArgumentException("Invalid JSON unicode escape: $hex")
+        decoded.append(codePoint.toChar())
+        index += 6
+        continue
+      }
+      else -> throw IllegalArgumentException("Invalid JSON string escape: \\$escaped")
+    }
+
+    index += 2
+  }
+
+  return decoded.toString()
 }

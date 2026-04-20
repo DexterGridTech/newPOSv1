@@ -3,10 +3,10 @@
   "platform": "android",
   "product": "mixc-retail",
   "assemblyVersion": "1.0.0",
-  "buildNumber": 1,
-  "bundleVersion": "1.0.0+ota.1",
+  "buildNumber": 2,
+  "bundleVersion": "1.0.0+ota.9",
   "runtimeVersion": "android-mixc-retail-rn84@1.0",
-  "channel": "development",
+  "channel": "production",
   "minSupportedAppVersion": "1.0.0",
   "targetPackages": {
     "@impos2/kernel-base-contracts": "1.0.0",
@@ -25,23 +25,28 @@
     "@impos2/adapter-android-v2": "1.0.0"
   },
   "git": {
-    "commit": "629e9f6a0b57ed0f03967dc971afebc7a8b28d8e",
+    "commit": "b34ddf0828f7663aa21b958611b95941ca001fef",
     "branch": "main"
   },
-  "updatedAt": "2026-04-19T02:18:33.933Z",
+  "updatedAt": "2026-04-20T21:30:58.021Z",
   "artifacts": {
-    "apk": null,
+    "apk": {
+      "path": "4-assembly/android/mixc-retail-assembly-rn84/android/app/build/outputs/apk/release/app-release.apk",
+      "size": 83340649,
+      "sha256": "0c500e3f99350ec0c2ea35da2a66ad0f0a1b9cbfed7eac4d0b137d5627648627",
+      "modifiedAt": "2026-04-20T17:43:50.149Z"
+    },
     "bundle": {
       "path": "4-assembly/android/mixc-retail-assembly-rn84/android/app/build/generated/assets/react/release/index.android.bundle",
-      "size": 2741064,
-      "sha256": "d577207a1a783361dfd1e252003203943cf15172c07e6392746f7b2e0e9625f7",
-      "modifiedAt": "2026-04-19T02:18:33.216Z"
+      "size": 2735136,
+      "sha256": "0bfb314ba2b5ab8228c49790803734e9b9fa568ac6bd438657980e25a9aae6ac",
+      "modifiedAt": "2026-04-20T18:05:14.524Z"
     },
     "sourceMap": {
       "path": "4-assembly/android/mixc-retail-assembly-rn84/android/app/build/intermediates/sourcemaps/react/release/index.android.bundle.packager.map",
-      "size": 10512436,
-      "sha256": "8fcc96267bddb3bae77fa9e96d4f563eb027618a6e2d4fee8d1e02359cc38e25",
-      "modifiedAt": "2026-04-19T02:18:29.940Z"
+      "size": 10498418,
+      "sha256": "461f0e08b4501bbccd1699dfd9c2c46ab89a8c3f88b24189ae75ea3a7693c6fe",
+      "modifiedAt": "2026-04-20T18:05:12.153Z"
     }
   }
 }

@@ -443,6 +443,7 @@ describe('runtime-shell-v2', () => {
 
     it('resets application state, clears request ledger, and re-broadcasts initialize', async () => {
         const events: string[] = []
+        let observedPreviousState: Record<string, unknown> | undefined
         const resettableSlice = createSlice({
             name: `${testModuleName}.resettable`,
             initialState: {value: 1},
@@ -471,6 +472,11 @@ describe('runtime-shell-v2', () => {
                     ],
                 },
             ],
+            onApplicationReset(context, input) {
+                observedPreviousState = input?.previousState as Record<string, unknown> | undefined
+                events.push(`reset:${input?.reason ?? ''}`)
+                context.dispatchAction(resettableSlice.actions.setValue(7))
+            },
             actorDefinitions: [
                 {
                     moduleName: testModuleName,
@@ -505,8 +511,9 @@ describe('runtime-shell-v2', () => {
 
         expect(runtime.queryRequest(requestId)).toBeUndefined()
         expect((runtime.getState()[resettableSlice.name as keyof ReturnType<typeof runtime.getState>] as {value: number}).value)
-            .toBe(1)
-        expect(events).toEqual(['initialize', 'initialize'])
+            .toBe(7)
+        expect(observedPreviousState?.[resettableSlice.name]).toEqual({value: 42})
+        expect(events).toEqual(['initialize', 'reset:test-reset', 'initialize'])
     })
 
     it('rejects start when initialize actors fail and keeps the request in the ledger', async () => {
@@ -575,6 +582,80 @@ describe('runtime-shell-v2', () => {
                             actorKey: 'runtime-shell-v2.remote-event',
                             status: 'COMPLETED',
                             result: {ok: true},
+                        }),
+                    ],
+                },
+            ],
+        })
+    })
+
+    it('keeps mirrored remote commands RUNNING on resultPatch and only completes on completed', async () => {
+        const runtime = createKernelRuntimeV2({modules: [createModule([])]})
+        await runtime.start()
+
+        const requestId = createRequestId()
+        const commandId = createCommandId()
+        runtime.registerMirroredCommand({
+            requestId,
+            commandId,
+            commandName: 'kernel.base.runtime-shell-v2.test.remote-command-result-patch',
+            target: 'peer',
+        })
+
+        runtime.applyRemoteCommandEvent({
+            envelopeId: 'env_remote_result_patch' as any,
+            sessionId: 'session_remote_patch' as any,
+            requestId,
+            commandId,
+            ownerNodeId: runtime.localNodeId,
+            sourceNodeId: 'peer-node' as any,
+            eventType: 'resultPatch',
+            resultPatch: {progress: 50},
+            occurredAt: 15 as any,
+        })
+
+        expect(runtime.queryRequest(requestId)).toMatchObject({
+            status: 'RUNNING',
+            commands: [
+                {
+                    commandId,
+                    status: 'RUNNING',
+                    completedAt: undefined,
+                    actorResults: [
+                        expect.objectContaining({
+                            actorKey: 'runtime-shell-v2.remote-event',
+                            status: 'RUNNING',
+                            startedAt: expect.any(Number),
+                            result: {progress: 50},
+                        }),
+                    ],
+                },
+            ],
+        })
+
+        runtime.applyRemoteCommandEvent({
+            envelopeId: 'env_remote_result_completed' as any,
+            sessionId: 'session_remote_patch' as any,
+            requestId,
+            commandId,
+            ownerNodeId: runtime.localNodeId,
+            sourceNodeId: 'peer-node' as any,
+            eventType: 'completed',
+            result: {progress: 100, ok: true},
+            occurredAt: 18 as any,
+        })
+
+        expect(runtime.queryRequest(requestId)).toMatchObject({
+            status: 'COMPLETED',
+            commands: [
+                {
+                    commandId,
+                    status: 'COMPLETED',
+                    actorResults: [
+                        expect.objectContaining({
+                            actorKey: 'runtime-shell-v2.remote-event',
+                            status: 'COMPLETED',
+                            result: {progress: 100, ok: true},
                         }),
                     ],
                 },
@@ -713,7 +794,7 @@ describe('runtime-shell-v2', () => {
             ownerNodeId: runtime.localNodeId,
             rootCommandId,
             sessionId: 'session_snapshot' as any,
-            status: 'complete',
+            status: 'completed',
             startedAt: Date.now() as any,
             updatedAt: Date.now() as any,
             commands: [
@@ -723,7 +804,7 @@ describe('runtime-shell-v2', () => {
                     sourceNodeId: runtime.localNodeId,
                     targetNodeId: 'peer-node' as any,
                     commandName: 'kernel.base.runtime-shell-v2.test.snapshot-root',
-                    status: 'complete',
+                    status: 'completed',
                     result: {root: true},
                     updatedAt: Date.now() as any,
                 },
@@ -734,7 +815,7 @@ describe('runtime-shell-v2', () => {
                     sourceNodeId: 'peer-node' as any,
                     targetNodeId: runtime.localNodeId,
                     commandName: 'kernel.base.runtime-shell-v2.test.snapshot-child',
-                    status: 'complete',
+                    status: 'completed',
                     result: {child: true},
                     updatedAt: Date.now() as any,
                 },
@@ -769,7 +850,7 @@ describe('runtime-shell-v2', () => {
             ownerNodeId: runtime.localNodeId,
             rootCommandId,
             sessionId: 'session_snapshot_replay' as any,
-            status: 'complete',
+            status: 'completed',
             startedAt: Date.now() as any,
             updatedAt: Date.now() as any,
             commands: [
@@ -779,7 +860,7 @@ describe('runtime-shell-v2', () => {
                     sourceNodeId: runtime.localNodeId,
                     targetNodeId: runtime.localNodeId,
                     commandName: 'kernel.base.runtime-shell-v2.test.snapshot-replay',
-                    status: 'complete',
+                    status: 'completed',
                     updatedAt: Date.now() as any,
                 },
             ],
@@ -800,6 +881,45 @@ describe('runtime-shell-v2', () => {
 
         expect(replayedRequestStatuses).toEqual(['COMPLETED'])
         expect(replayedAllStatuses).toEqual(['COMPLETED'])
+    })
+
+    it('accepts legacy complete snapshot statuses while normalizing them to completed semantics', async () => {
+        const runtime = createKernelRuntimeV2({modules: [createModule([])]})
+        await runtime.start()
+
+        const requestId = createRequestId()
+        const rootCommandId = createCommandId()
+        runtime.applyRequestLifecycleSnapshot({
+            requestId,
+            ownerNodeId: runtime.localNodeId,
+            rootCommandId,
+            sessionId: 'session_snapshot_legacy_complete' as any,
+            status: 'complete' as any,
+            startedAt: Date.now() as any,
+            updatedAt: Date.now() as any,
+            commands: [
+                {
+                    commandId: rootCommandId,
+                    ownerNodeId: runtime.localNodeId,
+                    sourceNodeId: runtime.localNodeId,
+                    targetNodeId: runtime.localNodeId,
+                    commandName: 'kernel.base.runtime-shell-v2.test.snapshot-legacy-complete',
+                    status: 'complete' as any,
+                    updatedAt: Date.now() as any,
+                },
+            ],
+            commandResults: [],
+        })
+
+        expect(runtime.queryRequest(requestId)).toMatchObject({
+            status: 'COMPLETED',
+            commands: [
+                expect.objectContaining({
+                    commandId: rootCommandId,
+                    status: 'COMPLETED',
+                }),
+            ],
+        })
     })
 
     it('keeps snapshot commands RUNNING while remote snapshot is still in progress', async () => {

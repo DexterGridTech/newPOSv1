@@ -67,6 +67,13 @@ export interface KernelRuntimeModuleV2 extends AppModule {
     errorDefinitions?: readonly ErrorDefinition[]
     parameterDefinitions?: readonly ParameterDefinition<any>[]
     install?: (context: RuntimeModuleContextV2) => Promise<void> | void
+    onApplicationReset?: (
+        context: RuntimeModuleContextV2,
+        input?: {
+            reason?: string
+            previousState?: RootState
+        },
+    ) => Promise<void> | void
     preSetup?: (context: RuntimeModulePreSetupContextV2) => Promise<void> | void
 }
 

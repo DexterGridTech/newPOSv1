@@ -5,6 +5,7 @@ import {selectTdpProjectionState} from '../selectors'
 import {reconcileHotUpdateDesiredFromResolvedProjection} from './hotUpdateProjectionReducer'
 import {TDP_HOT_UPDATE_TOPIC} from './hotUpdateTopic'
 import type {
+    HotUpdateCurrentFacts,
     TdpProjectionEnvelope,
     TdpTopicDataChangeItem,
     TdpTopicDataChangedPayload,
@@ -105,6 +106,9 @@ export const publishTopicDataChangesV2 = async (
         dispatchCommand<TPayload = unknown>(command: ReturnType<typeof createCommand<TPayload>>): Promise<unknown>
     },
     fingerprintRef: TopicChangePublisherFingerprintV2,
+    options: {
+        currentFacts?: HotUpdateCurrentFacts
+    } = {},
 ): Promise<{
     changedTopicCount: number
     changedTopics: string[]
@@ -147,7 +151,9 @@ export const publishTopicDataChangesV2 = async (
         changedTopics.includes(TDP_HOT_UPDATE_TOPIC)
         || changedTopics.includes('terminal.group.membership')
     ) {
-        await reconcileHotUpdateDesiredFromResolvedProjection(runtime as any)
+        await reconcileHotUpdateDesiredFromResolvedProjection(runtime as any, {
+            currentFacts: options.currentFacts,
+        })
     }
 
     return {

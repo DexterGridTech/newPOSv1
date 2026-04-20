@@ -149,6 +149,7 @@ module.exports = {
   assertFileExists,
   collectWorkspacePackageVersions,
   getManifestPath,
+  getTrackedPackagePathsByAppId,
   getPackageJsonPathByAppId,
   parseArgs,
   printUsageAndExit,

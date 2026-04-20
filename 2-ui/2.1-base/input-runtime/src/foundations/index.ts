@@ -1,5 +1,4 @@
 export * from './defaultFields'
-export * from './inputFieldFactory'
 export * from './keyboardLayouts'
 export * from './inputModes'
 export * from './inputPolicies'

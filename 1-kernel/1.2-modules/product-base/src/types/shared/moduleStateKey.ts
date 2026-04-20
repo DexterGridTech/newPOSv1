@@ -1,9 +1,5 @@
 import {moduleName} from "../../moduleName";
 import {createModuleStateKeys} from "@impos2/kernel-core-base";
-import {
-    createModuleInstanceModeStateKeys,
-    createModuleWorkspaceStateKeys
-} from "@impos2/kernel-core-interconnection";
 import {createUnitDataStateKeys} from "@impos2/kernel-core-terminal";
 
 
@@ -21,13 +17,3 @@ export const kernelProductBaseUnitDataState = createUnitDataStateKeys(
     [
     ] as const
 );
-export const kernelProductBaseInstanceState= createModuleInstanceModeStateKeys(
-    moduleName,
-    [
-    ] as const
-)
-export const kernelProductBaseWorkspaceState = createModuleWorkspaceStateKeys(
-    moduleName,
-    [
-    ] as const
-)

@@ -38,6 +38,7 @@ import {syncHotUpdateStateFromNativeBoot} from './syncHotUpdateStateFromNativeBo
 import { reportTerminalVersion } from './reportTerminalVersion'
 import {
     createAssemblyAutomation,
+    getAssemblyAdbSocketDebugConfig,
     getAssemblyAutomationHostConfig,
     type AssemblyAutomationRuntime,
 } from './automation'
@@ -49,6 +50,7 @@ import {
     type AssemblyTopologyStorageGateSnapshot,
 } from './topology'
 import {nativeTopologyHost} from '../turbomodules/topologyHost'
+import {releaseInfo} from '../generated/releaseInfo'
 
 export interface AssemblyRuntimeApp {
     readonly app: KernelRuntimeAppV2
@@ -131,6 +133,18 @@ const createKernelRuntimeAppForAssembly = (
                 hotUpdate: {
                     getPort(context) {
                         return context.platformPorts.hotUpdate
+                    },
+                    getCurrentFacts() {
+                        return {
+                            appId: releaseInfo.appId,
+                            platform: 'android',
+                            product: 'mixc-retail',
+                            runtimeVersion: releaseInfo.runtimeVersion,
+                            assemblyVersion: releaseInfo.assemblyVersion,
+                            buildNumber: releaseInfo.buildNumber,
+                            channel: releaseInfo.channel,
+                            capabilities: [],
+                        }
                     },
                 },
             }),
@@ -216,6 +230,7 @@ export const createApp = (
     } = {},
 ): AssemblyRuntimeApp => {
     const environmentMode = __DEV__ ? 'DEV' : 'PROD'
+    const adbSocketDebugConfig = getAssemblyAdbSocketDebugConfig(environmentMode)
     const topologyBindingSource = createAssemblyTopologyBindingSource(createInitialTopologyBindingState(props))
     const latestTopologyContext = createInitialTopologyContextSnapshot(props)
     let latestRuntime: import('@impos2/kernel-base-runtime-shell-v2').KernelRuntimeV2 | undefined
@@ -241,13 +256,12 @@ export const createApp = (
             },
         },
     )
-    const automationEnabled = environmentMode !== 'PROD'
-    const automation = automationEnabled
+    const automation = adbSocketDebugConfig.enabled
         ? createAssemblyAutomation({
             app,
-            buildProfile: environmentMode === 'DEV' ? 'debug' : 'product',
-            automationEnabled,
-            scriptExecutionAvailable: true,
+            buildProfile: adbSocketDebugConfig.buildProfile,
+            automationEnabled: adbSocketDebugConfig.enabled,
+            scriptExecutionAvailable: adbSocketDebugConfig.scriptExecutionAvailable,
         })
         : undefined
     const automationTarget = getAssemblyAutomationHostConfig(props.displayIndex).target

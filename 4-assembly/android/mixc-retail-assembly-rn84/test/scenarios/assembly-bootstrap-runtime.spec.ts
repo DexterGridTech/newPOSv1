@@ -62,16 +62,8 @@ describe('assembly bootstrap runtime', () => {
             },
         })
 
-        expect(dispatchCommand).toHaveBeenCalledTimes(5)
+        expect(dispatchCommand).toHaveBeenCalledTimes(3)
         expect((dispatchCommand.mock.calls as any[]).map(call => call[0])).toEqual([
-            {
-                definition: topologyCommandDefinitions.setInstanceMode,
-                payload: {instanceMode: 'SLAVE'},
-            },
-            {
-                definition: topologyCommandDefinitions.setDisplayMode,
-                payload: {displayMode: 'SECONDARY'},
-            },
             {
                 definition: topologyCommandDefinitions.setMasterLocator,
                 payload: {

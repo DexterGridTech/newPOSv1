@@ -279,6 +279,18 @@ describe('host-runtime', () => {
 
         const snapshot = runtime.getSnapshot()
         expect(snapshot.tickets).toHaveLength(1)
+        expect(snapshot.tickets[0].occupiedRoles.master).toMatchObject({
+            nodeId: masterNodeId,
+            sessionId: masterHello.ack.sessionId,
+            connected: true,
+            updatedAt: 2_000,
+        })
+        expect(snapshot.tickets[0].occupiedRoles.slave).toMatchObject({
+            nodeId: slaveNodeId,
+            sessionId: masterHello.ack.sessionId,
+            connected: true,
+            updatedAt: 3_000,
+        })
         expect(snapshot.sessions).toHaveLength(1)
         expect(snapshot.recentEvents.some(event => event.event === 'accepted')).toBe(true)
     })

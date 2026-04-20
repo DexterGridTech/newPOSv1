@@ -1,9 +1,9 @@
-import {KernelProductFromContractState,KernelProductFromContractWorkspaceState,KernelProductFromContractInstanceState} from "./moduleState";
+import {KernelProductFromContractState} from "./moduleState";
 
 declare module '@impos2/kernel-core-base' {
     // 扩展 RootState 接口
 
-    export interface RootState extends KernelProductFromContractState,KernelProductFromContractWorkspaceState,KernelProductFromContractInstanceState {
+    export interface RootState extends KernelProductFromContractState {
 
     }
 }

@@ -82,7 +82,7 @@ export default function App(rawProps: Partial<AppProps>): React.JSX.Element {
                 const runtime = await runtimeApp.start()
                 logStage('runtime.start:done')
 
-                if (runtimeApp.automation && __DEV__) {
+                if (runtimeApp.automation) {
                     const automationHostAddress = await nativeAutomationHost.start({
                         port: automationHostConfig.port,
                     })

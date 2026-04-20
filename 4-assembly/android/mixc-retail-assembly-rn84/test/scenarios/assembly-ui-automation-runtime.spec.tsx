@@ -410,7 +410,7 @@ describe('assembly ui automation runtime', () => {
                 testID: 'ui-integration-retail-shell:welcome:title',
                 timeoutMs: 3_000,
             })).resolves.toMatchObject({
-                text: '欢迎进入零售终端',
+                text: '欢迎进入零售终端 · OTA E2E V6',
             })
         } finally {
             await mounted.unmount()

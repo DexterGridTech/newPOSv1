@@ -11,6 +11,10 @@ import java.util.concurrent.TimeUnit
 /**
  * topology host 的应用层门面。
  *
+ * Legacy notice:
+ * 当前工程的活跃双屏拓扑能力已经迁移到 `topologyhostv3`。本类仅保留给旧链路兼容与对照，不应再被
+ * dev-app 或 assembly 的新验证面接入。
+ *
  * 对上层隐藏 Service 绑定细节，统一暴露：
  * - start / stop
  * - status / stats / diagnostics
