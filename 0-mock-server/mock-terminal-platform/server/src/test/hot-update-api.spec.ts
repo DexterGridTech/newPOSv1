@@ -617,4 +617,47 @@ describe('mock-terminal-platform hot update api', () => {
       rollout: { mode: 'active' },
     })
   })
+
+  it('returns the existing package when uploading the same archive twice', async () => {
+    const server = createMockTerminalPlatformTestServer()
+    servers.push(server)
+    await server.start()
+
+    const prepareResponse = await fetch(`${server.getHttpBaseUrl()}/mock-debug/kernel-base-test/prepare`, {
+      method: 'POST',
+    })
+    const preparePayload = await json<{ data: { sandboxId: string } }>(prepareResponse)
+    const sandboxId = preparePayload.data.sandboxId
+    const zip = createHotUpdateZip()
+
+    const uploadOnceResponse = await fetch(`${server.getHttpBaseUrl()}/api/v1/admin/hot-updates/packages/upload`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        sandboxId,
+        fileName: 'hot-update-test.zip',
+        contentBase64: zip.toString('base64'),
+      }),
+    })
+    const uploadOncePayload = await json<{ data: { packageId: string; sha256: string } }>(uploadOnceResponse)
+
+    const uploadTwiceResponse = await fetch(`${server.getHttpBaseUrl()}/api/v1/admin/hot-updates/packages/upload`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        sandboxId,
+        fileName: 'hot-update-test.zip',
+        contentBase64: zip.toString('base64'),
+      }),
+    })
+    const uploadTwicePayload = await json<{ data: { packageId: string; sha256: string } }>(uploadTwiceResponse)
+
+    expect(uploadOnceResponse.status).toBe(201)
+    expect(uploadTwiceResponse.status).toBe(201)
+    expect(uploadTwicePayload.data).toEqual(uploadOncePayload.data)
+
+    const packagesResponse = await fetch(`${server.getHttpBaseUrl()}/api/v1/admin/hot-updates/packages?sandboxId=${sandboxId}`)
+    const packagesPayload = await json<{ data: Array<{ packageId: string }> }>(packagesResponse)
+    expect(packagesPayload.data.filter(item => item.packageId === uploadOncePayload.data.packageId)).toHaveLength(1)
+  })
 })

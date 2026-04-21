@@ -28,6 +28,7 @@
     "@impos2/kernel-base-state-runtime": "workspace:*",
     "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*",
     "@impos2/kernel-base-topology-runtime-v3": "workspace:*",
+    "@impos2/kernel-base-workflow-runtime-v2": "workspace:*",
     "@impos2/ui-base-input-runtime": "workspace:*",
     "@impos2/ui-base-runtime-react": "workspace:*",
     "react-native-qrcode-svg": "^6.3.21"

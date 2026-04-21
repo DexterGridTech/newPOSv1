@@ -1,4 +1,5 @@
 export * from './defaults'
+export * from './builtinTasks'
 export * from './definitionResolver'
 export * from './scriptRuntime'
 export * from './connectorRuntime'

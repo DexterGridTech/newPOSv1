@@ -116,6 +116,117 @@ describe('transport-runtime socket', () => {
         )).toBe('wss://127.0.0.1:8888/mockMasterServer/ws?ticket=ticket-001&values=a&values=b')
     })
 
+    it('keeps explicitly replaced servers across connect-time refreshes', async () => {
+        const connections: string[] = []
+        const runtime = createSocketRuntime({
+            logger: createLoggerPort({
+                environmentMode: 'DEV',
+                write: () => {},
+                scope: {
+                    moduleName: 'kernel.base.transport-runtime.test',
+                    layer: 'kernel',
+                },
+            }),
+            transport: {
+                async connect(connection, handlers) {
+                    connections.push(connection.url)
+                    handlers.onOpen()
+                    return {
+                        sendRaw() {},
+                        disconnect() {},
+                    }
+                },
+            },
+            servers: [],
+        })
+
+        runtime.registerProfile(defineSocketProfile<void, void, void, {kind: string}, {kind: string}>({
+            name: 'demo.socket',
+            serverName: 'socket-demo',
+            pathTemplate: '/socket',
+            messages: {
+                incoming: typed<{kind: string}>('demo.socket.incoming'),
+                outgoing: typed<{kind: string}>('demo.socket.outgoing'),
+            },
+            codec: new JsonSocketCodec<{kind: string}, {kind: string}>(),
+            meta: {},
+        }))
+        runtime.replaceServers([{
+            serverName: 'socket-demo',
+            addresses: [
+                {addressName: 'dynamic', baseUrl: 'http://127.0.0.1:18889'},
+            ],
+        }])
+
+        await runtime.connect('demo.socket')
+
+        expect(connections).toEqual(['ws://127.0.0.1:18889/socket'])
+    })
+
+    it('updates an existing profile without dropping listeners', async () => {
+        const events: string[] = []
+        const connections: string[] = []
+        const runtime = createSocketRuntime({
+            logger: createLoggerPort({
+                environmentMode: 'DEV',
+                write: () => {},
+                scope: {
+                    moduleName: 'kernel.base.transport-runtime.test',
+                    layer: 'kernel',
+                },
+            }),
+            transport: {
+                async connect(connection, handlers) {
+                    connections.push(connection.url)
+                    handlers.onOpen()
+                    return {
+                        sendRaw() {},
+                        disconnect() {},
+                    }
+                },
+            },
+            servers: [
+                {
+                    serverName: 'socket-demo',
+                    addresses: [
+                        {addressName: 'primary', baseUrl: 'http://127.0.0.1:18889'},
+                    ],
+                },
+            ],
+        })
+
+        runtime.registerProfile(defineSocketProfile<void, void, void, {kind: string}, {kind: string}>({
+            name: 'demo.socket',
+            serverName: 'socket-demo',
+            pathTemplate: '/old',
+            messages: {
+                incoming: typed<{kind: string}>('demo.socket.incoming'),
+                outgoing: typed<{kind: string}>('demo.socket.outgoing'),
+            },
+            codec: new JsonSocketCodec<{kind: string}, {kind: string}>(),
+            meta: {},
+        }))
+        runtime.on('demo.socket', 'connected', () => {
+            events.push('connected')
+        })
+        runtime.registerProfile(defineSocketProfile<void, void, void, {kind: string}, {kind: string}>({
+            name: 'demo.socket',
+            serverName: 'socket-demo',
+            pathTemplate: '/new',
+            messages: {
+                incoming: typed<{kind: string}>('demo.socket.incoming'),
+                outgoing: typed<{kind: string}>('demo.socket.outgoing'),
+            },
+            codec: new JsonSocketCodec<{kind: string}, {kind: string}>(),
+            meta: {},
+        }))
+
+        await runtime.connect('demo.socket')
+
+        expect(connections).toEqual(['ws://127.0.0.1:18889/new'])
+        expect(events).toEqual(['connected'])
+    })
+
     it('throws structured runtime error when profile is not registered', async () => {
         const runtime = createSocketRuntime({
             logger: createLoggerPort({

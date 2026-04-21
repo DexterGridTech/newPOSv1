@@ -14,16 +14,19 @@ import {
     topologyRuntimeV3StateActions,
 } from '@impos2/kernel-base-topology-runtime-v3'
 import {
+    createWorkflowRuntimeModuleV2,
+} from '@impos2/kernel-base-workflow-runtime-v2'
+import {
     AdapterDiagnosticsScreen,
     AdminTerminalSection,
     AdminTopologySection,
+    adminConsoleCommandDefinitions,
 } from '../../src'
 import {
     createAdminConsoleHarness,
     renderWithAutomation,
     renderWithStore,
 } from '../support/adminConsoleHarness'
-import {InputField} from '../../../input-runtime/src'
 
 describe('admin built-in sections', () => {
     it('renders terminal section from tcp-control state', async () => {
@@ -167,39 +170,61 @@ describe('admin built-in sections', () => {
         expect(reconnect).toHaveBeenCalledTimes(1)
     })
 
-    it('imports topology share payload from pasted json and routes host stop to enableSlave=false', async () => {
-        const importSharePayload = vi.fn(async () => {})
+    it('dispatches admin topology scan command without calling workflow task directly from UI', async () => {
         const stop = vi.fn(async () => {})
         const harness = await createAdminConsoleHarness({
             hostTools: {
                 topology: {
-                    importSharePayload,
+                    importSharePayload: vi.fn(async () => {}),
                     stop,
                 },
             } as any,
         })
+        const dispatchSpy = vi.spyOn(harness.runtime, 'dispatchCommand')
+            .mockResolvedValue({
+                status: 'COMPLETED',
+                requestId: 'request-admin-scan',
+                actorResults: [{
+                    result: {
+                        sharePayload: {
+                            formatVersion: '2026.04',
+                            deviceId: 'MASTER-001',
+                            masterNodeId: 'NODE-001',
+                            wsUrl: 'ws://127.0.0.1:18586/ws',
+                        },
+                    },
+                }],
+            } as any)
         const renderer = renderWithStore(
             <AdminTopologySection runtime={harness.runtime} store={harness.store} />,
             harness.store,
             harness.runtime,
         )
-        const input = renderer.root.findByType(InputField)
         await act(async () => {
-            input.props.onChangeText('{"formatVersion":"2026.04","deviceId":"MASTER-001","masterNodeId":"NODE-001"}')
+            harness.store.dispatch(topologyRuntimeV3StateActions.patchConfigState({
+                instanceMode: 'SLAVE',
+            }))
         })
 
-        const buttons = renderer.root.findAllByProps({testID: 'ui-base-admin-section:topology:import-json'})
+        const buttons = renderer.root.findAllByProps({testID: 'ui-base-admin-section:topology:scan-master'})
         const stopButtons = renderer.root.findAllByProps({testID: 'ui-base-admin-section:topology:host-stop'})
         await act(async () => {
-            buttons[0].props.onPress()
-            stopButtons[0].props.onPress()
+            await buttons[0].props.onPress()
+            await Promise.resolve()
+            await stopButtons[0].props.onPress()
         })
 
-        expect(importSharePayload).toHaveBeenCalledWith({
-            formatVersion: '2026.04',
-            deviceId: 'MASTER-001',
-            masterNodeId: 'NODE-001',
-        })
+        expect(dispatchSpy).toHaveBeenCalledWith(createCommand(
+            adminConsoleCommandDefinitions.scanAndImportTopologyMaster,
+            {
+                scanMode: 'QR_CODE_MODE',
+                timeoutMs: 60_000,
+                reconnect: true,
+            },
+        ))
+        expect(dispatchSpy.mock.calls.map(call => call[0]?.definition?.commandName)).not.toContain(
+            'kernel.base.workflow-runtime-v2.run-workflow',
+        )
         expect(stop).toHaveBeenCalledTimes(1)
     })
 
@@ -255,6 +280,31 @@ describe('admin built-in sections', () => {
         await expect(topologyTree.queryNodesByText('对端节点')).resolves.toHaveLength(1)
         await expect(topologyTree.queryNodesByText('PEER-DEVICE-001')).resolves.toHaveLength(1)
         await expect(topologyTree.queryNodesByText('重连次数')).resolves.toHaveLength(1)
+    })
+
+    it('renders master pairing qr after share payload is generated', async () => {
+        const harness = await createAdminConsoleHarness({
+            hostTools: {
+                topology: {
+                    getSharePayload: vi.fn(async () => ({
+                        formatVersion: '2026.04',
+                        deviceId: 'MASTER-QR-001',
+                        masterNodeId: 'NODE-QR-001',
+                        wsUrl: 'ws://127.0.0.1:18586/ws',
+                    })),
+                },
+            } as any,
+        })
+        const topologyTree = renderWithAutomation(
+            <AdminTopologySection runtime={harness.runtime} store={harness.store} />,
+            harness.store,
+            harness.runtime,
+        )
+
+        await topologyTree.press('ui-base-admin-section:topology:share-payload')
+
+        await expect(topologyTree.queryNodesByText('主机配对二维码')).resolves.toHaveLength(1)
+        await expect(topologyTree.queryNodesByText('请使用副机上的“扫码添加主机”完成配对')).resolves.toHaveLength(1)
     })
 
     it('shows slave secondary display as main workspace to preserve old topology semantics', async () => {

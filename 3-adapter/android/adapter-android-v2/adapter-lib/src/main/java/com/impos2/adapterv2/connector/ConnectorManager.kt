@@ -565,6 +565,7 @@ class ConnectorManager private constructor(private val context: Context) : IConn
       }
       task.cancelAction = {
         canceledTaskCount.incrementAndGet()
+        cameraScanner.cancelActiveScan()
       }
       cameraScanner.startScan(activity, request.params, request.timeoutMs) { result ->
         callback(result)

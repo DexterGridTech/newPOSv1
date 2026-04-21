@@ -60,6 +60,7 @@ export interface HotUpdatePort {
         entryFile?: string
         manifestSha256: string
         maxLaunchFailures: number
+        healthCheckTimeoutMs?: number
     }): Promise<{bootMarkerPath: string}>
     readBootMarker?(): Promise<Record<string, unknown> | null>
     clearBootMarker?(): Promise<void>

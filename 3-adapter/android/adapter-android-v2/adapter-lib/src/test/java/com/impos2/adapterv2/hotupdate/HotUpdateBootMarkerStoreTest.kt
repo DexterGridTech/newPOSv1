@@ -3,6 +3,7 @@ package com.impos2.adapterv2.hotupdate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.nio.file.Files
 
@@ -62,6 +63,20 @@ class HotUpdateBootMarkerStoreTest {
     } finally {
       rootDir.deleteRecursively()
     }
+  }
+
+  @Test
+  fun persistsHealthCheckTimeoutAcrossCodecRoundTrip() {
+    val marker = createMarker().copy(
+      healthCheckTimeoutMs = 15_000L,
+    )
+
+    val encoded = HotUpdateMarkerCodec.encode(marker)
+    val decoded = HotUpdateMarkerCodec.decode(encoded)
+
+    assertNotNull(decoded)
+    assertEquals(15_000L, decoded?.healthCheckTimeoutMs)
+    assertTrue(encoded.contains("\"healthCheckTimeoutMs\":15000"))
   }
 
   private fun createMarker(): HotUpdateMarker {

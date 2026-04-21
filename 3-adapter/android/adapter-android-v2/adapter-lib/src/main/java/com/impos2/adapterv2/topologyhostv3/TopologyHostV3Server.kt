@@ -3,13 +3,13 @@ package com.impos2.adapterv2.topologyhostv3
 import android.content.Context
 import com.impos2.adapterv2.device.DeviceManager
 import com.impos2.adapterv2.logger.LogManager
-import com.impos2.adapterv2.topologyhost.TopologyHostWsFrameReader
-import com.impos2.adapterv2.topologyhost.TopologyHostWsSession
 import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.io.OutputStream
 import java.net.InetAddress
+import java.net.Inet4Address
+import java.net.NetworkInterface
 import java.net.ServerSocket
 import java.net.Socket
 import java.security.MessageDigest
@@ -25,7 +25,7 @@ class TopologyHostV3Server(
   private val logger: LogManager,
 ) {
   private val runtime = TopologyHostV3Runtime(config.heartbeatTimeoutMs)
-  private val socketSessions = ConcurrentHashMap<String, TopologyHostWsSession>()
+  private val socketSessions = ConcurrentHashMap<String, TopologyHostV3WsSession>()
   private val executor = Executors.newCachedThreadPool()
   private val heartbeatScheduler: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
 
@@ -38,7 +38,7 @@ class TopologyHostV3Server(
 
   fun start() {
     runtime.setHostRuntime(createHostRuntimeInfo())
-    val socket = ServerSocket(config.port, 50, InetAddress.getByName("127.0.0.1"))
+    val socket = ServerSocket(config.port, 50, InetAddress.getByName("0.0.0.0"))
     socket.reuseAddress = true
     serverSocket = socket
     running = true
@@ -65,12 +65,18 @@ class TopologyHostV3Server(
 
   fun getAddressInfo(): TopologyHostV3AddressInfo {
     val address = serverSocket?.localPort ?: config.port
+    val localHttpBaseUrl = "http://127.0.0.1:$address${config.basePath}"
+    val localWsUrl = "ws://127.0.0.1:$address${config.basePath}/ws"
+    val advertisedHost = resolveAdvertisedHost()
     return TopologyHostV3AddressInfo(
-      host = "127.0.0.1",
+      host = advertisedHost,
       port = address,
       basePath = config.basePath,
-      httpBaseUrl = "http://127.0.0.1:$address${config.basePath}",
-      wsUrl = "ws://127.0.0.1:$address${config.basePath}/ws",
+      httpBaseUrl = "http://$advertisedHost:$address${config.basePath}",
+      wsUrl = "ws://$advertisedHost:$address${config.basePath}/ws",
+      bindHost = "0.0.0.0",
+      localHttpBaseUrl = localHttpBaseUrl,
+      localWsUrl = localWsUrl,
     )
   }
 
@@ -154,13 +160,13 @@ class TopologyHostV3Server(
     socket.getOutputStream().write(response.toByteArray(Charsets.UTF_8))
     socket.getOutputStream().flush()
 
-    val session = TopologyHostWsSession(socket)
+    val session = TopologyHostV3WsSession(socket)
     val connectionId = TopologyHostV3Ids.createConnectionId()
     socketSessions[connectionId] = session
 
     executor.submit {
       try {
-        val frameReader = TopologyHostWsFrameReader(
+        val frameReader = TopologyHostV3WsFrameReader(
           socket.getInputStream(),
           onPing = { payload ->
             runtime.recordInboundFrame(connectionId)
@@ -322,5 +328,20 @@ class TopologyHostV3Server(
       protocolVersion = TopologyHostV3Defaults.DEFAULT_PROTOCOL_VERSION,
       capabilities = listOf("state-sync", "command-relay", "request-mirror"),
     )
+  }
+
+  private fun resolveAdvertisedHost(): String {
+    return runCatching {
+      NetworkInterface.getNetworkInterfaces()
+        ?.asSequence()
+        ?.filter { it.isUp && !it.isLoopback && !it.name.startsWith("lo") }
+        ?.flatMap { iface -> iface.inetAddresses.asSequence() }
+        ?.firstOrNull { address ->
+          address is Inet4Address && !address.isLoopbackAddress && !address.hostAddress.isNullOrBlank()
+        }
+        ?.hostAddress
+        ?.takeIf { it.isNotBlank() }
+    }.getOrNull()
+      ?: "127.0.0.1"
   }
 }

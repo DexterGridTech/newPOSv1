@@ -7,6 +7,7 @@ import {
     createRuntimeModuleLifecycleLogger,
     defineKernelRuntimeModuleV2,
 } from '@impos2/kernel-base-runtime-shell-v2'
+import {createAdminTopologyActor} from '../features/actors'
 import {moduleName} from '../moduleName'
 import {createAdminHostTools} from '../supports/adminHostToolsFactory'
 import {installAdminHostTools} from '../supports/adminHostToolsRegistry'
@@ -34,6 +35,7 @@ export const createModule = (
 ): KernelRuntimeModuleV2 =>
     defineKernelRuntimeModuleV2({
         ...adminConsoleModuleManifest,
+        actorDefinitions: [createAdminTopologyActor()],
         preSetup: adminConsolePreSetup,
         install(context: RuntimeModuleContextV2) {
             if (input.adapterDiagnosticScenarios) {

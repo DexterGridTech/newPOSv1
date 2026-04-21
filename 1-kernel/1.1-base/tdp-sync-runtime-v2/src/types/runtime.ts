@@ -72,6 +72,7 @@ export interface CreateTdpSyncRuntimeModuleV2Input {
     hotUpdate?: {
         getPort?(context: RuntimeModuleContextV2): HotUpdatePort | undefined
         getCurrentFacts?(context: Pick<RuntimeModuleContextV2, 'displayContext' | 'getState'>): HotUpdateCurrentFacts | undefined
+        downloadRetryDelayMs?: number
         prepareRestart?(input: {
             context: RuntimeModuleContextV2
             displayIndex: number

@@ -54,11 +54,18 @@ export const createTdpSyncRuntimeModuleV2 = (
     const installingPackageIds = new Set<string>()
     const restartingPackageIds = new Set<string>()
     let idleRestartTimer: ReturnType<typeof setTimeout> | null = null
+    let downloadRetryTimer: ReturnType<typeof setTimeout> | null = null
 
     const clearIdleRestartTimer = () => {
         if (idleRestartTimer) {
             clearTimeout(idleRestartTimer)
             idleRestartTimer = null
+        }
+    }
+    const clearDownloadRetryTimer = () => {
+        if (downloadRetryTimer) {
+            clearTimeout(downloadRetryTimer)
+            downloadRetryTimer = null
         }
     }
 
@@ -82,6 +89,28 @@ export const createTdpSyncRuntimeModuleV2 = (
                     return resolved.value
                 }
                 return tdpSyncV2ParameterDefinitions.hotUpdateIdleThresholdMs.defaultValue
+            }
+            const scheduleDownloadRetry = (packageId: string) => {
+                clearDownloadRetryTimer()
+                const delay = Math.max(0, input.hotUpdate?.downloadRetryDelayMs ?? 1_000)
+                downloadRetryTimer = setTimeout(() => {
+                    downloadRetryTimer = null
+                    const state = context.getState()
+                    const desired = selectTdpHotUpdateDesired(state)
+                    const candidate = selectTdpHotUpdateCandidate(state)
+                    if (
+                        desired?.packageId === packageId
+                        && candidate?.packageId === packageId
+                        && candidate.status === 'failed'
+                        && (candidate.attempts ?? 0) < desired.safety.maxDownloadAttempts
+                    ) {
+                        context.dispatchAction(tdpHotUpdateActions.markDownloadRetryPending({
+                            releaseId: desired.releaseId,
+                            packageId: desired.packageId,
+                            bundleVersion: desired.bundleVersion,
+                        }))
+                    }
+                }, delay)
             }
             const restartNow = async (restartMode: 'immediate' | 'idle') => {
                 const state = context.getState()
@@ -206,6 +235,7 @@ export const createTdpSyncRuntimeModuleV2 = (
                                     entryFile: result.entryFile,
                                     manifestSha256: result.manifestSha256,
                                     maxLaunchFailures: desired.safety.maxLaunchFailures,
+                                    healthCheckTimeoutMs: desired.safety.healthCheckTimeoutMs,
                                 })
                                 context.dispatchAction(tdpHotUpdateActions.markApplying({
                                     releaseId: desired.releaseId,
@@ -221,10 +251,14 @@ export const createTdpSyncRuntimeModuleV2 = (
                                     }))
                                 }
                             } catch (error) {
+                                const attempts = selectTdpHotUpdateCandidate(context.getState())?.attempts ?? nextAttempt
                                 context.dispatchAction(tdpHotUpdateActions.markFailed({
                                     code: error instanceof Error ? error.message : 'HOT_UPDATE_INSTALL_FAILED',
                                     message: error instanceof Error ? error.message : String(error),
                                 }))
+                                if (attempts < maxAttempts) {
+                                    scheduleDownloadRetry(candidate.packageId)
+                                }
                             } finally {
                                 installingPackageIds.delete(candidate.packageId)
                             }

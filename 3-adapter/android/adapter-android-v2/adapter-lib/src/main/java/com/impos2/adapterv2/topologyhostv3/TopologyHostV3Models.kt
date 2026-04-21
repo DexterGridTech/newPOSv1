@@ -32,6 +32,9 @@ data class TopologyHostV3AddressInfo(
   val basePath: String,
   val httpBaseUrl: String,
   val wsUrl: String,
+  val bindHost: String,
+  val localHttpBaseUrl: String,
+  val localWsUrl: String,
 )
 
 data class TopologyHostV3Stats(

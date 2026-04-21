@@ -593,6 +593,97 @@ describe('topology-runtime-v3 context derivation', () => {
         })
     })
 
+    it('refreshes socket binding on start so late master locator updates can connect', async () => {
+        const socketRuntimeSpy = createSocketRuntimeSpy()
+        let resolveCount = 0
+        const runtime = createKernelRuntimeV2({
+            localNodeId: createNodeId(),
+            displayContext: {
+                displayIndex: 0,
+                displayCount: 1,
+            },
+            platformPorts: createPlatformPorts({
+                environmentMode: 'DEV',
+                logger: createTestLogger('kernel.base.topology-runtime-v3.test.dynamic-binding-refresh'),
+            }),
+            modules: [createTopologyRuntimeModuleV3({
+                assembly: {
+                    resolveSocketBinding() {
+                        resolveCount += 1
+                        if (resolveCount === 1) {
+                            return {
+                                socketRuntime: socketRuntimeSpy.socketRuntime,
+                                profileName: 'dual-topology.ws.topology-runtime-v3',
+                                profile: {
+                                    protocol: 'ws',
+                                    name: 'dual-topology.ws.topology-runtime-v3',
+                                    serverName: 'dual-topology-host-v3',
+                                    pathTemplate: '/missing',
+                                    handshake: {},
+                                    messages: {},
+                                    codec: {
+                                        serialize: JSON.stringify,
+                                        deserialize: JSON.parse,
+                                    },
+                                    meta: {},
+                                } as any,
+                            }
+                        }
+                        socketRuntimeSpy.socketRuntime.replaceServers([{
+                            serverName: 'dual-topology-host-v3',
+                            addresses: [{addressName: 'dynamic', baseUrl: 'http://127.0.0.1:18889/mockMasterServer'}],
+                        }])
+                        return {
+                            socketRuntime: socketRuntimeSpy.socketRuntime,
+                            profileName: 'dual-topology.ws.topology-runtime-v3',
+                            profile: {
+                                protocol: 'ws',
+                                name: 'dual-topology.ws.topology-runtime-v3',
+                                serverName: 'dual-topology-host-v3',
+                                pathTemplate: '/ws',
+                                handshake: {},
+                                messages: {},
+                                codec: {
+                                    serialize: JSON.stringify,
+                                    deserialize: JSON.parse,
+                                },
+                                meta: {},
+                            } as any,
+                        }
+                    },
+                    createHelloRuntime() {
+                        return {
+                            nodeId: 'node-1',
+                            deviceId: 'device-1',
+                            instanceMode: 'MASTER',
+                            displayMode: 'PRIMARY',
+                            standalone: true,
+                            protocolVersion: '2026.04-v3',
+                            capabilities: ['state-sync'],
+                        }
+                    },
+                },
+            })],
+        })
+
+        await runtime.start()
+        await runtime.dispatchCommand(createCommand(
+            topologyRuntimeV3CommandDefinitions.startTopologyConnection,
+            {},
+        ))
+
+        expect(resolveCount).toBeGreaterThanOrEqual(2)
+        expect(socketRuntimeSpy.sendMock).toHaveBeenCalledWith(
+            'dual-topology.ws.topology-runtime-v3',
+            expect.objectContaining({
+                type: 'hello',
+            }),
+        )
+        expect(selectTopologyRuntimeV3Connection(runtime.getState())).toMatchObject({
+            serverConnectionStatus: 'CONNECTING',
+        })
+    })
+
     it('projects hello-ack from built-in orchestrator into runtime state', async () => {
         const socketRuntimeSpy = createSocketRuntimeSpy()
         const runtime = createKernelRuntimeV2({

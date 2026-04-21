@@ -26,7 +26,7 @@ import {transportRuntimeErrorDefinitions} from '../supports'
  * 各上层包通过不同的 socket profile 和消息 codec 复用这套基础设施，保证重连与消息收发语义一致。
  */
 interface ManagedSocketConnection {
-    readonly profile: SocketConnectionProfile<any, any, any, any, any>
+    profile: SocketConnectionProfile<any, any, any, any, any>
     readonly connectionId: ReturnType<typeof createConnectionId>
     state: SocketConnectionState
     resolved?: SocketResolvedConnection<any, any, any, any, any>
@@ -75,9 +75,10 @@ export const createSocketRuntime = (
     const serverCatalog = createServerCatalog()
     const logger = createSocketLogger(input.logger)
     const connections = new Map<string, ManagedSocketConnection>()
+    let currentServers = input.servers
 
     const refreshServers = () => {
-        const servers = input.servers ?? input.serverProvider?.() ?? []
+        const servers = currentServers ?? input.serverProvider?.() ?? []
         serverCatalog.replaceServers(servers)
     }
 
@@ -228,6 +229,11 @@ export const createSocketRuntime = (
 
     return {
         registerProfile(profile) {
+            const existingConnection = connections.get(profile.name)
+            if (existingConnection) {
+                existingConnection.profile = profile
+                return
+            }
             connections.set(profile.name, {
                 connectionId: createConnectionId(),
                 profile,
@@ -264,6 +270,7 @@ export const createSocketRuntime = (
             getConnection(profileName).listeners.get(eventType)?.delete(listener)
         },
         replaceServers(servers) {
+            currentServers = servers
             serverCatalog.replaceServers(servers)
         },
         getServerCatalog() {

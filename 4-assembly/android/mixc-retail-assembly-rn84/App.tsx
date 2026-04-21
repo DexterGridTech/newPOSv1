@@ -144,22 +144,39 @@ export default function App(rawProps: Partial<AppProps>): React.JSX.Element {
         let cancelled = false
 
         void (async () => {
+            let result: Awaited<ReturnType<typeof reportAppLoadComplete>>
             try {
-                const result = await reportAppLoadComplete(ready.runtime, props.displayIndex)
+                result = await reportAppLoadComplete(ready.runtime, props.displayIndex)
+            } catch (error) {
+                void reportTerminalVersion(
+                    ready.runtime,
+                    props,
+                    'FAILED',
+                    error instanceof Error ? error.message : String(error),
+                ).catch(() => {})
+                nativeLogger.error(
+                    'assembly.android.mixc-retail-rn84.boot',
+                    error instanceof Error ? error.stack ?? error.message : String(error),
+                )
+                return
+            }
+
+            try {
                 await reportTerminalVersion(
                     ready.runtime,
                     props,
                     result.terminalState,
                     result.reason,
                 )
+            } catch (error) {
+                nativeLogger.error(
+                    'assembly.android.mixc-retail-rn84.version-report',
+                    error instanceof Error ? error.stack ?? error.message : String(error),
+                )
+            } finally {
                 if (!cancelled) {
                     setLoadCompleteReported(true)
                 }
-            } catch (error) {
-                nativeLogger.error(
-                    'assembly.android.mixc-retail-rn84.boot',
-                    error instanceof Error ? error.stack ?? error.message : String(error),
-                )
             }
         })()
 

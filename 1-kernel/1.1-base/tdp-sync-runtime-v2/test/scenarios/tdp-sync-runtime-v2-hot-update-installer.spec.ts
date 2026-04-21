@@ -190,6 +190,9 @@ describe('tdp hot update installer watcher', () => {
             ],
         }))
         expect(writeBootMarker).toHaveBeenCalledTimes(1)
+        expect(writeBootMarker).toHaveBeenCalledWith(expect.objectContaining({
+            healthCheckTimeoutMs: 5_000,
+        }))
         await vi.waitFor(() => expect(selectTdpHotUpdateState(runtime.getState())).toMatchObject({
             ready: {
                 packageId: 'package-001',
@@ -272,5 +275,53 @@ describe('tdp hot update installer watcher', () => {
                 reason: 'download failed',
             },
         })
+    })
+
+    it('retries failed downloads up to max attempts and succeeds on a later attempt', async () => {
+        vi.useFakeTimers()
+        try {
+            const downloadPackage = vi.fn()
+                .mockRejectedValueOnce(new Error('transient network error'))
+                .mockResolvedValueOnce({
+                    installDir: '/tmp/hot-updates/package-001',
+                    entryFile: 'index.android.bundle',
+                    manifestPath: '/tmp/hot-updates/package-001/manifest.json',
+                    packageSha256: 'package-sha',
+                    manifestSha256: 'manifest-sha',
+                })
+            const writeBootMarker = vi.fn(async () => ({
+                bootMarkerPath: '/tmp/hot-updates/boot-marker.json',
+            }))
+            const runtime = createTestRuntime({
+                hotUpdatePort: {
+                    downloadPackage,
+                    writeBootMarker,
+                },
+            })
+
+            await runtime.start()
+            runtime.getStore().dispatch(tdpHotUpdateActions.reconcileDesired({desired, now: 1}))
+
+            await vi.waitFor(() => expect(downloadPackage).toHaveBeenCalledTimes(1))
+            await vi.waitFor(() => expect(selectTdpHotUpdateState(runtime.getState())?.candidate).toMatchObject({
+                status: 'failed',
+                attempts: 1,
+            }))
+
+            await vi.advanceTimersByTimeAsync(1_000)
+
+            await vi.waitFor(() => expect(downloadPackage).toHaveBeenCalledTimes(2))
+            await vi.waitFor(() => expect(selectTdpHotUpdateState(runtime.getState())).toMatchObject({
+                ready: {
+                    packageId: 'package-001',
+                },
+                applying: {
+                    packageId: 'package-001',
+                },
+            }))
+            expect(writeBootMarker).toHaveBeenCalledTimes(1)
+        } finally {
+            vi.useRealTimers()
+        }
     })
 })

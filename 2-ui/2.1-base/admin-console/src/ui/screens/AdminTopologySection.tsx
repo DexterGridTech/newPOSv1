@@ -1,8 +1,11 @@
-import React, {useEffect, useState} from 'react'
+import React, {useCallback, useEffect, useState} from 'react'
 import {Text, View} from 'react-native'
+import QRCode from 'react-native-qrcode-svg'
 import type {EnhancedStore} from '@reduxjs/toolkit'
-import {createCommand, type KernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
-import {InputField} from '@impos2/ui-base-input-runtime'
+import {
+    createCommand,
+    type KernelRuntimeV2,
+} from '@impos2/kernel-base-runtime-shell-v2'
 import {
     selectTopologyRuntimeV3Connection,
     selectTopologyRuntimeV3Context,
@@ -22,6 +25,7 @@ import {
 import {
     selectTcpIdentitySnapshot,
 } from '@impos2/kernel-base-tcp-control-runtime-v2'
+import {adminConsoleCommandDefinitions} from '../../features/commands'
 import {formatAdminStatus, formatAdminTimestamp} from '../../supports/adminFormatting'
 import {getAdminHostTools} from '../../supports/adminHostToolsRegistry'
 import {
@@ -38,6 +42,19 @@ import type {AdminTopologySharePayload} from '../../types'
 export interface AdminTopologySectionProps {
     runtime: KernelRuntimeV2
     store: EnhancedStore
+}
+
+const createCompactTopologyQrPayload = (
+    payload: AdminTopologySharePayload,
+): Record<string, string> => {
+    const wsUrl = payload.wsUrl ?? payload.serverAddress?.find(item => item.address)?.address
+    return {
+        v: payload.formatVersion,
+        d: payload.deviceId,
+        n: payload.masterNodeId,
+        ...(wsUrl ? {w: wsUrl} : {}),
+        ...(!wsUrl && payload.httpBaseUrl ? {h: payload.httpBaseUrl} : {}),
+    }
 }
 
 export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
@@ -79,7 +96,9 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
     const [hostStatus, setHostStatus] = useState<Record<string, unknown> | null>(null)
     const [hostDiagnostics, setHostDiagnostics] = useState<Record<string, unknown> | null>(null)
     const [sharePayload, setSharePayload] = useState<AdminTopologySharePayload | null>(null)
-    const [sharePayloadJson, setSharePayloadJson] = useState('')
+    const [scanRunning, setScanRunning] = useState(false)
+    const [scanStatusLabel, setScanStatusLabel] = useState('未开始')
+    const [scanDetail, setScanDetail] = useState<string | undefined>()
     const [message, setMessage] = useState<string | undefined>()
     const {
         context,
@@ -138,61 +157,6 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
         }
     }
 
-    const importSharePayloadJson = async () => {
-        if (!topologyHost?.importSharePayload) {
-            throw new Error('当前宿主不支持导入 topology 分享信息')
-        }
-        const parsed = JSON.parse(sharePayloadJson) as Record<string, unknown>
-        const readString = (...keys: string[]): string | undefined => {
-            for (const key of keys) {
-                const value = parsed[key]
-                if (typeof value === 'string') {
-                    return value
-                }
-            }
-            return undefined
-        }
-        const readNumber = (...keys: string[]): number | undefined => {
-            for (const key of keys) {
-                const value = parsed[key]
-                if (typeof value === 'number') {
-                    return value
-                }
-            }
-            return undefined
-        }
-        const readServerAddress = (...keys: string[]): readonly {address: string}[] | undefined => {
-            for (const key of keys) {
-                const value = parsed[key]
-                if (
-                    Array.isArray(value)
-                    && value.every(item => item && typeof item === 'object' && typeof (item as {address?: unknown}).address === 'string')
-                ) {
-                    return value as readonly {address: string}[]
-                }
-            }
-            return undefined
-        }
-        const normalized = {
-            formatVersion: readString('formatVersion', 'FORMATVERSION'),
-            deviceId: readString('deviceId', 'DEVICEID'),
-            masterNodeId: readString('masterNodeId', 'MASTERNODEID'),
-            exportedAt: readNumber('exportedAt', 'EXPORTEDAT'),
-            wsUrl: readString('wsUrl', 'WSURL'),
-            httpBaseUrl: readString('httpBaseUrl', 'HTTPBASEURL'),
-            serverAddress: readServerAddress('serverAddress', 'SERVERADDRESS'),
-        } satisfies Partial<AdminTopologySharePayload>
-        if (
-            normalized.formatVersion !== '2026.04'
-            || typeof normalized.deviceId !== 'string'
-            || typeof normalized.masterNodeId !== 'string'
-        ) {
-            throw new Error('分享 JSON 格式不正确')
-        }
-        await topologyHost.importSharePayload(normalized as AdminTopologySharePayload)
-        setSharePayload(normalized as AdminTopologySharePayload)
-    }
-
     useEffect(() => {
         const updateSnapshot = () => setSnapshot(readSnapshot())
         updateSnapshot()
@@ -202,6 +166,49 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
     useEffect(() => {
         void refreshHostStatus()
     }, [topologyHost])
+
+    const handleScanMaster = async () => {
+        if (scanRunning) {
+            return
+        }
+        if (!topologyHost?.importSharePayload) {
+            throw new Error('当前宿主不支持导入 topology 分享信息')
+        }
+        setMessage('已发起扫码任务，请对准主机二维码')
+        setSharePayload(null)
+        setScanRunning(true)
+        setScanStatusLabel('扫码中')
+        setScanDetail(undefined)
+        try {
+            const result = await runtime.dispatchCommand(createCommand(
+                adminConsoleCommandDefinitions.scanAndImportTopologyMaster,
+                {
+                    scanMode: 'QR_CODE_MODE',
+                    timeoutMs: 60_000,
+                    reconnect: true,
+                },
+            ))
+            const actorResult = result.actorResults[0]?.result as {
+                sharePayload?: AdminTopologySharePayload
+            } | undefined
+            if (result.status !== 'COMPLETED' || !actorResult?.sharePayload) {
+                throw new Error(result.actorResults[0]?.error?.message ?? '扫码任务执行失败')
+            }
+            setSharePayload(actorResult.sharePayload)
+            setScanStatusLabel('已完成')
+            setScanDetail(result.requestId)
+            setMessage('扫码成功，已导入主机信息')
+            await refreshHostStatus()
+        } catch (error) {
+            setScanStatusLabel('失败')
+            setScanDetail(error instanceof Error ? error.message : '扫码结果处理失败')
+            setMessage(error instanceof Error ? error.message : '扫码结果处理失败')
+        } finally {
+            setScanRunning(false)
+        }
+    }
+
+    const qrValue = sharePayload ? JSON.stringify(createCompactTopologyQrPayload(sharePayload)) : null
 
     return (
         <AdminSectionShell
@@ -354,7 +361,7 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
             </AdminBlock>
             <AdminBlock
                 title="配对控制"
-                description="导出/导入配对信息、清空 locator、启动/重连/断开 topology 连接。"
+                description="主机生成二维码供副机扫码；副机通过通用扫码 task 获取主机信息后完成配对。"
             >
                 <AdminActionGroup>
                     <AdminActionButton
@@ -464,23 +471,22 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
                             }, '已生成 topology 分享信息')}
                         />
                     ) : null}
-                    {topologyHost?.importSharePayload && sharePayload ? (
+                    {instanceMode === 'SLAVE' ? (
+                        <AdminActionButton
+                            testID="ui-base-admin-section:topology:scan-master"
+                            label={scanRunning ? '扫码进行中' : '扫码添加主机'}
+                            tone="primary"
+                            disabled={scanRunning}
+                            onPress={() => void handleScanMaster()}
+                        />
+                    ) : null}
+                    {instanceMode === 'SLAVE' && topologyHost?.importSharePayload && sharePayload ? (
                         <AdminActionButton
                             testID="ui-base-admin-section:topology:import-payload"
-                            label="导入当前分享"
+                            label="重新导入当前扫码结果"
                             onPress={() => void runHostAction(
                                 () => topologyHost.importSharePayload?.(sharePayload),
                                 '已导入 topology 分享信息',
-                            )}
-                        />
-                    ) : null}
-                    {topologyHost?.importSharePayload ? (
-                        <AdminActionButton
-                            testID="ui-base-admin-section:topology:import-json"
-                            label="导入JSON"
-                            onPress={() => void runHostAction(
-                                importSharePayloadJson,
-                                '已导入 topology 分享 JSON',
                             )}
                         />
                     ) : null}
@@ -495,26 +501,18 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
                         />
                     ) : null}
                 </AdminActionGroup>
-                {topologyHost?.importSharePayload ? (
-                    <View style={{gap: 8}}>
-                        <Text style={{fontSize: 13, color: '#526072', fontWeight: '700'}}>
-                            分享 JSON
-                        </Text>
-                        <InputField
-                            testID="ui-base-admin-section:topology:share-json-input"
-                            value={sharePayloadJson}
-                            onChangeText={setSharePayloadJson}
-                            mode="virtual-json"
-                            placeholder="粘贴 topology 分享 JSON"
-                        />
-                    </View>
-                ) : null}
                 <AdminSummaryGrid>
                     <AdminSummaryCard
                         label="分享格式"
                         value={sharePayload?.formatVersion ?? '未生成'}
-                        detail={sharePayload ? JSON.stringify(sharePayload) : '点击“生成分享”读取 host 可配对信息。'}
+                        detail={sharePayload ? JSON.stringify(sharePayload) : '主机点击“生成分享”后可展示二维码，副机扫码后会记录当前结果。'}
                         tone={sharePayload ? 'ok' : 'neutral'}
+                    />
+                    <AdminSummaryCard
+                        label="扫码任务"
+                        value={scanStatusLabel}
+                        detail={scanDetail ?? '副机通过 admin command 间接执行通用扫码 task 获取主机信息。'}
+                        tone={scanRunning ? 'warn' : scanStatusLabel === '已完成' ? 'ok' : scanStatusLabel === '失败' ? 'danger' : 'neutral'}
                     />
                     <AdminSummaryCard
                         label="诊断快照"
@@ -523,6 +521,32 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
                         tone={hostDiagnostics ? 'primary' : 'neutral'}
                     />
                 </AdminSummaryGrid>
+                {instanceMode === 'MASTER' && qrValue ? (
+                    <View style={{gap: 8}}>
+                        <Text style={{fontSize: 13, color: '#526072', fontWeight: '700'}}>
+                            主机配对二维码
+                        </Text>
+                        <View
+                            style={{
+                                alignSelf: 'flex-start',
+                                padding: 14,
+                                borderRadius: 16,
+                                backgroundColor: '#ffffff',
+                                borderWidth: 1,
+                                borderColor: '#d7e1ec',
+                                gap: 8,
+                            }}
+                        >
+                            <QRCode
+                                value={qrValue}
+                                size={180}
+                            />
+                            <Text style={{fontSize: 12, color: '#526072'}}>
+                                请使用副机上的“扫码添加主机”完成配对
+                            </Text>
+                        </View>
+                    </View>
+                ) : null}
             </AdminBlock>
             <AdminBlock
                 title="显示模式"

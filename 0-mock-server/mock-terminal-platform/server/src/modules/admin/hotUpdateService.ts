@@ -239,7 +239,7 @@ export const uploadHotUpdatePackage = (input: {
     eq(hotUpdatePackagesTable.sha256, archiveSha256),
   )).get()
   if (duplicated) {
-    throw new Error('HOT_UPDATE_PACKAGE_ALREADY_EXISTS')
+    return mapPackageRecord(duplicated)
   }
 
   const packageId = createId('pkg')
@@ -419,46 +419,49 @@ export const activateHotUpdateRelease = (input: { sandboxId: string; releaseId: 
       }),
     }
   }
-  const desiredPayload = {
-    ...current.desiredPayload,
-    rollout: {
-      ...current.desiredPayload.rollout,
-      mode: 'active' as const,
-      publishedAt: new Date(now()).toISOString(),
-    },
-  }
-  let policyId = current.policyId ?? undefined
-  if (policyId) {
-    updateProjectionPolicy({
-      sandboxId: input.sandboxId,
+  let policyId: string | undefined
+  sqlite.transaction(() => {
+    const desiredPayload = {
+      ...current.desiredPayload,
+      rollout: {
+        ...current.desiredPayload.rollout,
+        mode: 'active' as const,
+        publishedAt: new Date(now()).toISOString(),
+      },
+    }
+    policyId = current.policyId ?? undefined
+    if (policyId) {
+      updateProjectionPolicy({
+        sandboxId: input.sandboxId,
+        policyId,
+        enabled: true,
+        payloadJson: desiredPayload,
+        description: `hot update release ${current.releaseId}`,
+      })
+    } else {
+      const policy = createProjectionPolicy({
+        sandboxId: input.sandboxId,
+        topicKey: HOT_UPDATE_TOPIC_KEY,
+        itemKey: HOT_UPDATE_ITEM_KEY,
+        scopeType: current.scopeType,
+        scopeKey: current.scopeKey,
+        enabled: true,
+        payloadJson: desiredPayload,
+        description: `hot update release ${current.releaseId}`,
+      })
+      policyId = policy.policyId
+    }
+    db.update(hotUpdateReleasesTable).set({
+      enabled: 1,
       policyId,
-      enabled: true,
-      payloadJson: desiredPayload,
-      description: `hot update release ${current.releaseId}`,
-    })
-  } else {
-    const policy = createProjectionPolicy({
-      sandboxId: input.sandboxId,
-      topicKey: HOT_UPDATE_TOPIC_KEY,
-      itemKey: HOT_UPDATE_ITEM_KEY,
-      scopeType: current.scopeType,
-      scopeKey: current.scopeKey,
-      enabled: true,
-      payloadJson: desiredPayload,
-      description: `hot update release ${current.releaseId}`,
-    })
-    policyId = policy.policyId
-  }
-  db.update(hotUpdateReleasesTable).set({
-    enabled: 1,
-    policyId,
-    status: 'ACTIVE',
-    desiredPayloadJson: JSON.stringify(desiredPayload),
-    updatedAt: now(),
-  }).where(and(
-    eq(hotUpdateReleasesTable.sandboxId, input.sandboxId),
-    eq(hotUpdateReleasesTable.releaseId, input.releaseId),
-  )).run()
+      status: 'ACTIVE',
+      desiredPayloadJson: JSON.stringify(desiredPayload),
+      updatedAt: now(),
+    }).where(and(
+      eq(hotUpdateReleasesTable.sandboxId, input.sandboxId),
+      eq(hotUpdateReleasesTable.releaseId, input.releaseId),
+    )).run()
+  })()
 
   return {
     ...getHotUpdateRelease(input),
@@ -479,33 +482,35 @@ const updateReleaseLifecycle = (input: {
   enabled: boolean
 }) => {
   const current = getHotUpdateRelease(input)
-  const desiredPayload = {
-    ...current.desiredPayload,
-    rollout: {
-      ...current.desiredPayload.rollout,
-      mode: input.rolloutMode,
-      publishedAt: new Date(now()).toISOString(),
-    },
-  }
-  if (current.policyId) {
-    updateProjectionPolicy({
-      sandboxId: input.sandboxId,
-      policyId: current.policyId,
-      enabled: input.enabled,
-      payloadJson: desiredPayload,
-      description: `hot update release ${current.releaseId}`,
-    })
-  }
-  db.update(hotUpdateReleasesTable).set({
-    enabled: input.enabled ? 1 : 0,
-    policyId: input.enabled ? current.policyId : null,
-    status: input.status,
-    desiredPayloadJson: JSON.stringify(desiredPayload),
-    updatedAt: now(),
-  }).where(and(
-    eq(hotUpdateReleasesTable.sandboxId, input.sandboxId),
-    eq(hotUpdateReleasesTable.releaseId, input.releaseId),
-  )).run()
+  sqlite.transaction(() => {
+    const desiredPayload = {
+      ...current.desiredPayload,
+      rollout: {
+        ...current.desiredPayload.rollout,
+        mode: input.rolloutMode,
+        publishedAt: new Date(now()).toISOString(),
+      },
+    }
+    if (current.policyId) {
+      updateProjectionPolicy({
+        sandboxId: input.sandboxId,
+        policyId: current.policyId,
+        enabled: input.enabled,
+        payloadJson: desiredPayload,
+        description: `hot update release ${current.releaseId}`,
+      })
+    }
+    db.update(hotUpdateReleasesTable).set({
+      enabled: input.enabled ? 1 : 0,
+      policyId: input.enabled ? current.policyId : null,
+      status: input.status,
+      desiredPayloadJson: JSON.stringify(desiredPayload),
+      updatedAt: now(),
+    }).where(and(
+      eq(hotUpdateReleasesTable.sandboxId, input.sandboxId),
+      eq(hotUpdateReleasesTable.releaseId, input.releaseId),
+    )).run()
+  })()
   return getHotUpdateRelease(input)
 }
 
@@ -519,21 +524,23 @@ export const pauseHotUpdateRelease = (input: { sandboxId: string; releaseId: str
 
 export const cancelHotUpdateRelease = (input: { sandboxId: string; releaseId: string }) => {
   const current = getHotUpdateRelease(input)
-  if (current.policyId) {
-    deleteProjectionPolicy({
-      sandboxId: input.sandboxId,
-      policyId: current.policyId,
-    })
-  }
-  db.update(hotUpdateReleasesTable).set({
-    enabled: 0,
-    policyId: null,
-    status: 'CANCELLED',
-    updatedAt: now(),
-  }).where(and(
-    eq(hotUpdateReleasesTable.sandboxId, input.sandboxId),
-    eq(hotUpdateReleasesTable.releaseId, input.releaseId),
-  )).run()
+  sqlite.transaction(() => {
+    if (current.policyId) {
+      deleteProjectionPolicy({
+        sandboxId: input.sandboxId,
+        policyId: current.policyId,
+      })
+    }
+    db.update(hotUpdateReleasesTable).set({
+      enabled: 0,
+      policyId: null,
+      status: 'CANCELLED',
+      updatedAt: now(),
+    }).where(and(
+      eq(hotUpdateReleasesTable.sandboxId, input.sandboxId),
+      eq(hotUpdateReleasesTable.releaseId, input.releaseId),
+    )).run()
+  })()
   return getHotUpdateRelease(input)
 }
 

@@ -3,6 +3,8 @@ import {beforeEach, describe, expect, it, vi} from 'vitest'
 const {
     createKernelRuntimeAppMock,
     createTopologyRuntimeModuleV3Mock,
+    createCommandMock,
+    topologyRuntimeV3CommandDefinitionsMock,
     selectTopologyRuntimeV3ContextMock,
     createTcpControlRuntimeModuleV2Mock,
     createTdpSyncRuntimeModuleV2Mock,
@@ -50,6 +52,10 @@ const {
     return {
         createKernelRuntimeAppMock: vi.fn((..._args: any[]) => runtimeApp),
         createTopologyRuntimeModuleV3Mock: vi.fn((..._args: any[]) => ({kind: 'topology-module'})),
+        createCommandMock: vi.fn((definition: any, payload: any) => ({definition, payload})),
+        topologyRuntimeV3CommandDefinitionsMock: {
+            startTopologyConnection: {commandName: 'kernel.base.topology-runtime-v3.start-topology-connection'},
+        },
         selectTopologyRuntimeV3ContextMock: vi.fn(() => null),
         createTcpControlRuntimeModuleV2Mock: vi.fn((..._args: any[]) => ({kind: 'tcp-control-module'})),
         createTdpSyncRuntimeModuleV2Mock: vi.fn((..._args: any[]) => ({kind: 'tdp-sync-module'})),
@@ -127,12 +133,18 @@ const {
     }
 })
 
-vi.mock('@impos2/kernel-base-runtime-shell-v2', () => ({
-    createKernelRuntimeApp: createKernelRuntimeAppMock,
-}))
+vi.mock('@impos2/kernel-base-runtime-shell-v2', async importOriginal => {
+    const actual = await importOriginal<typeof import('@impos2/kernel-base-runtime-shell-v2')>()
+    return {
+        ...actual,
+        createKernelRuntimeApp: createKernelRuntimeAppMock,
+        createCommand: createCommandMock,
+    }
+})
 
 vi.mock('@impos2/kernel-base-topology-runtime-v3', () => ({
     createTopologyRuntimeModuleV3: createTopologyRuntimeModuleV3Mock,
+    topologyRuntimeV3CommandDefinitions: topologyRuntimeV3CommandDefinitionsMock,
     selectTopologyRuntimeV3Context: selectTopologyRuntimeV3ContextMock,
 }))
 
@@ -143,8 +155,12 @@ vi.mock('@impos2/kernel-base-tcp-control-runtime-v2', () => ({
 }))
 
 vi.mock('@impos2/kernel-base-tdp-sync-runtime-v2', () => ({
+    moduleName: 'kernel.base.tdp-sync-runtime-v2',
     createTdpSyncRuntimeModuleV2: createTdpSyncRuntimeModuleV2Mock,
     selectTdpHotUpdateCurrent: selectTdpHotUpdateCurrentMock,
+    tdpSyncV2CommandDefinitions: {
+        tdpTopicDataChanged: {commandName: 'kernel.base.tdp-sync-runtime-v2.tdp-topic-data-changed'},
+    },
 }))
 
 vi.mock('@impos2/kernel-base-ui-runtime-v2', () => ({
@@ -316,6 +332,9 @@ describe('assembly createApp', () => {
             topologyModule,
             tcpControlModule,
             tdpSyncModule,
+            expect.objectContaining({
+                moduleName: 'kernel.base.workflow-runtime-v2',
+            }),
             uiRuntimeModule,
             runtimeReactModule,
             inputRuntimeModule,
@@ -537,6 +556,7 @@ describe('assembly createApp', () => {
         const runtime = {
             runtimeId: 'runtime-id',
             getState: vi.fn(() => ({state: true})),
+            dispatchCommand: vi.fn(async () => ({status: 'COMPLETED'})),
             subscribeState: vi.fn((listener: () => void) => {
                 listeners.push(listener)
                 return () => {}
@@ -569,6 +589,10 @@ describe('assembly createApp', () => {
                 deviceId: 'device-1',
             })
         })
+        expect(runtime.dispatchCommand).toHaveBeenCalledWith({
+            definition: topologyRuntimeV3CommandDefinitionsMock.startTopologyConnection,
+            payload: {},
+        })
 
         currentContext = {
             instanceMode: 'SLAVE',
@@ -578,5 +602,29 @@ describe('assembly createApp', () => {
         await vi.waitFor(() => {
             expect(nativeTopologyHostStopMock).toHaveBeenCalledTimes(1)
         })
+    })
+
+    it('reports FAILED when native hot-update boot sync fails after runtime start', async () => {
+        const runtime = {
+            runtimeId: 'runtime-id',
+            getState: vi.fn(() => ({state: true})),
+            subscribeState: vi.fn(() => () => {}),
+        }
+        startMock.mockResolvedValueOnce(runtime as any)
+        syncHotUpdateStateFromNativeBootMock.mockRejectedValueOnce(new Error('native boot sync failed'))
+
+        const result = createApp({
+            deviceId: 'device-1',
+            screenMode: 'desktop',
+            displayCount: 1,
+            displayIndex: 0,
+            isEmulator: true,
+        })
+
+        await expect(result.start()).rejects.toThrow('native boot sync failed')
+
+        expect(reportTerminalVersionMock).toHaveBeenCalledTimes(1)
+        expect((reportTerminalVersionMock.mock.calls[0] as unknown[] | undefined)?.[2]).toBe('FAILED')
+        expect((reportTerminalVersionMock.mock.calls[0] as unknown[] | undefined)?.[3]).toBe('native boot sync failed')
     })
 })

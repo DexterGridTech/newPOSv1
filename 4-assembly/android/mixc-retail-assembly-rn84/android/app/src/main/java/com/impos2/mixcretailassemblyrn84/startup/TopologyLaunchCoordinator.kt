@@ -55,8 +55,8 @@ object TopologyLaunchCoordinator {
     return PreparedTopologyLaunch(
       masterNodeId = masterNodeId,
       masterDeviceId = masterDeviceId,
-      wsUrl = address.wsUrl,
-      httpBaseUrl = address.httpBaseUrl,
+      wsUrl = address.localWsUrl,
+      httpBaseUrl = address.localHttpBaseUrl,
     )
   }
 

@@ -120,6 +120,9 @@ fun TopologyHostV3AddressInfo.toJson(): JSONObject {
     .put("basePath", basePath)
     .put("httpBaseUrl", httpBaseUrl)
     .put("wsUrl", wsUrl)
+    .put("bindHost", bindHost)
+    .put("localHttpBaseUrl", localHttpBaseUrl)
+    .put("localWsUrl", localWsUrl)
 }
 
 fun TopologyHostV3Stats.toJson(): JSONObject {

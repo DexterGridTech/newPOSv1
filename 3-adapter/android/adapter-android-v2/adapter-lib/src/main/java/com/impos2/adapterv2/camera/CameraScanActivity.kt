@@ -6,13 +6,18 @@ import android.animation.ValueAnimator
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.os.ResultReceiver
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ExperimentalGetImage
@@ -37,6 +42,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 class CameraScanActivity : AppCompatActivity() {
 
   companion object {
+    private const val TAG = "CameraScanActivity"
     const val ACTION = "com.impos2.posadapter.action.CAMERA_SCAN"
     const val EXTRA_SCAN_RESULT = "SCAN_RESULT"
     const val EXTRA_SCAN_FORMAT = "SCAN_RESULT_FORMAT"
@@ -45,19 +51,59 @@ class CameraScanActivity : AppCompatActivity() {
     const val RESULT_CODE_SUCCESS = 1
     const val RESULT_CODE_FAILURE = 2
     private const val REQ_CAMERA = 2001
+    private const val DEFAULT_HINT = "将条码/二维码对准扫描框"
+    private const val PICKER_HINT = "请选择一张包含条码/二维码的图片"
+    private const val PICKER_PROCESSING_HINT = "正在识别图片..."
+    private const val PICKER_EMPTY_HINT = "图片中未识别到条码/二维码，请重试"
+    private const val PICKER_FAILED_HINT = "图片识别失败，请重试"
+    private const val CAMERA_PERMISSION_HINT = "未授予相机权限，可使用“选图片”识别"
+
+    @Volatile
+    private var activeInstance: CameraScanActivity? = null
+
+    fun cancelActiveScan() {
+      val activity = activeInstance ?: return
+      activity.runOnUiThread {
+        if (activity.detected.compareAndSet(false, true)) {
+          Log.i(TAG, "cancelActiveScan invoked")
+          activity.finishWithError("CANCELED")
+        }
+      }
+    }
   }
 
   private lateinit var previewView: PreviewView
   private lateinit var overlayView: ScanOverlayView
   private lateinit var scanLine: View
+  private lateinit var hintText: TextView
+  private lateinit var pickImageButton: Button
   private lateinit var cameraExecutor: ExecutorService
   private val detected = AtomicBoolean(false)
+  private val pickerActive = AtomicBoolean(false)
   private var scanLineAnimator: ObjectAnimator? = null
   private var cameraProvider: ProcessCameraProvider? = null
+  private var cameraScanner: com.google.mlkit.vision.barcode.BarcodeScanner? = null
   private var resultReceiver: ResultReceiver? = null
+  private val openImageDocument =
+    registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+      if (isFinishing || isDestroyed || detected.get()) {
+        return@registerForActivityResult
+      }
+
+      if (uri == null) {
+        pickerActive.set(false)
+        setImagePickerBusy(false)
+        updateHint(defaultHintText())
+        resumeCameraPreviewIfAvailable()
+        return@registerForActivityResult
+      }
+
+      analyzePickedImage(uri)
+    }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    activeInstance = this
     WindowCompat.setDecorFitsSystemWindows(window, false)
     WindowInsetsControllerCompat(window, window.decorView).apply {
       hide(WindowInsetsCompat.Type.systemBars())
@@ -114,8 +160,8 @@ class CameraScanActivity : AppCompatActivity() {
     }
     root.addView(scanLine)
 
-    val hint = TextView(this).apply {
-      text = "将条码/二维码对准扫描框"
+    hintText = TextView(this).apply {
+      text = DEFAULT_HINT
       setTextColor(0xFFFFFFFF.toInt())
       textSize = 14f
       layoutParams = FrameLayout.LayoutParams(
@@ -126,7 +172,48 @@ class CameraScanActivity : AppCompatActivity() {
         topMargin = (resources.displayMetrics.heightPixels * 0.25f).toInt()
       }
     }
-    root.addView(hint)
+    root.addView(hintText)
+
+    val buttonBar = LinearLayout(this).apply {
+      orientation = LinearLayout.HORIZONTAL
+      gravity = Gravity.CENTER
+      layoutParams = FrameLayout.LayoutParams(
+        FrameLayout.LayoutParams.WRAP_CONTENT,
+        FrameLayout.LayoutParams.WRAP_CONTENT,
+        Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
+      ).apply {
+        bottomMargin = (80 * resources.displayMetrics.density).toInt()
+      }
+    }
+
+    pickImageButton = Button(this).apply {
+      text = "选图片"
+      setTextColor(0xFFFFFFFF.toInt())
+      setBackgroundColor(0xCC1B5E20.toInt())
+      isClickable = true
+      isFocusable = true
+      val p = (16 * resources.displayMetrics.density).toInt()
+      setPadding(p * 2, p, p * 2, p)
+      layoutParams = LinearLayout.LayoutParams(
+        LinearLayout.LayoutParams.WRAP_CONTENT,
+        LinearLayout.LayoutParams.WRAP_CONTENT
+      ).apply {
+        marginEnd = (12 * resources.displayMetrics.density).toInt()
+      }
+      setOnClickListener {
+        if (pickerActive.compareAndSet(false, true)) {
+          pauseCameraPreview()
+          setImagePickerBusy(true)
+          updateHint(PICKER_HINT)
+          runCatching {
+            openImageDocument.launch(arrayOf("image/*"))
+          }.onFailure { error ->
+            handlePickedImageFailure(error.message ?: "IMAGE_PICKER_OPEN_FAILED")
+          }
+        }
+      }
+    }
+    buttonBar.addView(pickImageButton)
 
     val cancelBtn = Button(this).apply {
       text = "取消"
@@ -136,20 +223,18 @@ class CameraScanActivity : AppCompatActivity() {
       isFocusable = true
       val p = (16 * resources.displayMetrics.density).toInt()
       setPadding(p * 2, p, p * 2, p)
-      layoutParams = FrameLayout.LayoutParams(
+      layoutParams = LinearLayout.LayoutParams(
         FrameLayout.LayoutParams.WRAP_CONTENT,
-        FrameLayout.LayoutParams.WRAP_CONTENT,
-        Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
-      ).apply {
-        bottomMargin = (80 * resources.displayMetrics.density).toInt()
-      }
+        FrameLayout.LayoutParams.WRAP_CONTENT
+      )
       setOnClickListener {
         if (!detected.getAndSet(true)) {
           finishWithError("CANCELED")
         }
       }
     }
-    root.addView(cancelBtn)
+    buttonBar.addView(cancelBtn)
+    root.addView(buttonBar)
 
     overlayView.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
       startScanLineAnimation()
@@ -194,14 +279,8 @@ class CameraScanActivity : AppCompatActivity() {
 
     cameraProvider = provider
     val preview = Preview.Builder().build().also { it.setSurfaceProvider(previewView.surfaceProvider) }
-
-    val formats = parseScanMode(intent.getStringExtra("SCAN_MODE"))
-    val options = if (formats.isNotEmpty()) {
-      BarcodeScannerOptions.Builder().setBarcodeFormats(formats[0], *formats.drop(1).toIntArray()).build()
-    } else {
-      BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_ALL_FORMATS).build()
-    }
-    val scanner = BarcodeScanning.getClient(options)
+    cameraScanner?.close()
+    val scanner = createScanner().also { cameraScanner = it }
 
     val analysis = ImageAnalysis.Builder()
       .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
@@ -220,7 +299,7 @@ class CameraScanActivity : AppCompatActivity() {
 
   @ExperimentalGetImage
   private fun analyzeFrame(proxy: ImageProxy, scanner: com.google.mlkit.vision.barcode.BarcodeScanner) {
-    if (detected.get()) {
+    if (detected.get() || pickerActive.get()) {
       proxy.close()
       return
     }
@@ -239,21 +318,7 @@ class CameraScanActivity : AppCompatActivity() {
         }
         val barcode = barcodes.firstOrNull { !it.rawValue.isNullOrEmpty() }
         if (barcode != null && detected.compareAndSet(false, true)) {
-          setResult(
-            RESULT_OK,
-            Intent().apply {
-              putExtra(EXTRA_SCAN_RESULT, barcode.rawValue ?: "")
-              putExtra(EXTRA_SCAN_FORMAT, formatName(barcode.format))
-            }
-          )
-          resultReceiver?.send(
-            RESULT_CODE_SUCCESS,
-            Bundle().apply {
-              putString(EXTRA_SCAN_RESULT, barcode.rawValue ?: "")
-              putString(EXTRA_SCAN_FORMAT, formatName(barcode.format))
-            }
-          )
-          finish()
+          finishWithSuccess(barcode.rawValue ?: "", barcode.format)
         }
       }
       .addOnFailureListener {
@@ -276,6 +341,109 @@ class CameraScanActivity : AppCompatActivity() {
     )
 
     else -> emptyList()
+  }
+
+  private fun createScanner(): com.google.mlkit.vision.barcode.BarcodeScanner {
+    val formats = parseScanMode(intent.getStringExtra("SCAN_MODE"))
+    val options = if (formats.isNotEmpty()) {
+      BarcodeScannerOptions.Builder().setBarcodeFormats(formats[0], *formats.drop(1).toIntArray()).build()
+    } else {
+      BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_ALL_FORMATS).build()
+    }
+    return BarcodeScanning.getClient(options)
+  }
+
+  private fun analyzePickedImage(uri: Uri) {
+    updateHint(PICKER_PROCESSING_HINT)
+
+    cameraExecutor.execute {
+      val image = runCatching {
+        contentResolver.openInputStream(uri)?.use { input ->
+          val bitmap = BitmapFactory.decodeStream(input) ?: error("IMAGE_DECODE_FAILED")
+          InputImage.fromBitmap(bitmap, 0)
+        } ?: error("IMAGE_READ_FAILED")
+      }.getOrElse { error ->
+        runOnUiThread {
+          handlePickedImageFailure(error.message ?: "IMAGE_READ_FAILED")
+        }
+        return@execute
+      }
+
+      val scanner = createScanner()
+      scanner.process(image)
+        .addOnSuccessListener(ContextCompat.getMainExecutor(this)) { barcodes ->
+          val barcode = barcodes.firstOrNull { !it.rawValue.isNullOrEmpty() }
+          if (barcode != null && detected.compareAndSet(false, true)) {
+            finishWithSuccess(barcode.rawValue ?: "", barcode.format)
+          } else {
+            handlePickedImageFailure("NO_BARCODE_FOUND", PICKER_EMPTY_HINT)
+          }
+        }
+        .addOnFailureListener(ContextCompat.getMainExecutor(this)) { error ->
+          handlePickedImageFailure(error.message ?: "IMAGE_SCAN_FAILED")
+        }
+        .addOnCompleteListener {
+          scanner.close()
+        }
+    }
+  }
+
+  private fun handlePickedImageFailure(error: String, hint: String = PICKER_FAILED_HINT) {
+    Log.w(TAG, "picked image scan failed: $error")
+    pickerActive.set(false)
+    setImagePickerBusy(false)
+    updateHint(hint)
+    resumeCameraPreviewIfAvailable()
+  }
+
+  private fun pauseCameraPreview() {
+    cameraProvider?.unbindAll()
+    scanLineAnimator?.cancel()
+  }
+
+  private fun resumeCameraPreviewIfAvailable() {
+    if (detected.get()) {
+      return
+    }
+    if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+      startCamera()
+    }
+  }
+
+  private fun setImagePickerBusy(busy: Boolean) {
+    pickImageButton.isEnabled = !busy
+    pickImageButton.alpha = if (busy) 0.6f else 1f
+    pickImageButton.text = if (busy) "识别中..." else "选图片"
+  }
+
+  private fun defaultHintText(): String {
+    return if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+      DEFAULT_HINT
+    } else {
+      CAMERA_PERMISSION_HINT
+    }
+  }
+
+  private fun updateHint(text: String) {
+    hintText.text = text
+  }
+
+  private fun finishWithSuccess(result: String, format: Int) {
+    setResult(
+      RESULT_OK,
+      Intent().apply {
+        putExtra(EXTRA_SCAN_RESULT, result)
+        putExtra(EXTRA_SCAN_FORMAT, formatName(format))
+      }
+    )
+    resultReceiver?.send(
+      RESULT_CODE_SUCCESS,
+      Bundle().apply {
+        putString(EXTRA_SCAN_RESULT, result)
+        putString(EXTRA_SCAN_FORMAT, formatName(format))
+      }
+    )
+    finish()
   }
 
   private fun formatName(format: Int): String = when (format) {
@@ -318,15 +486,19 @@ class CameraScanActivity : AppCompatActivity() {
       if (grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) {
         startCamera()
       } else {
-        finishWithError("CAMERA_PERMISSION_DENIED")
+        updateHint(CAMERA_PERMISSION_HINT)
       }
     }
   }
 
   override fun onDestroy() {
     super.onDestroy()
+    if (activeInstance === this) {
+      activeInstance = null
+    }
     scanLineAnimator?.cancel()
     cameraProvider?.unbindAll()
+    cameraScanner?.close()
     cameraExecutor.shutdown()
   }
 }

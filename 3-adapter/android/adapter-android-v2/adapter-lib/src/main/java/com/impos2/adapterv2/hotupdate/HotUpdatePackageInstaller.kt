@@ -15,6 +15,7 @@ data class HotUpdatePackageRequest(
   val packageSha256: String,
   val manifestSha256: String,
   val packageSize: Long,
+  val maxRetainedPackages: Int = 2,
 )
 
 data class HotUpdatePackageInstallResult(
@@ -55,53 +56,71 @@ class HotUpdatePackageInstaller(
     stagingDir.mkdirs()
     installDir.parentFile?.mkdirs()
 
-    val archive = File(stagingDir, "${input.packageId}.zip")
-    downloadArchive(input.packageUrls, archive, isCancelled)
+    try {
+      val archive = File(stagingDir, "${input.packageId}.zip")
+      downloadArchive(input.packageUrls, archive, isCancelled)
 
-    val actualPackageSha = sha256(archive)
-    check(actualPackageSha.equals(input.packageSha256, ignoreCase = true)) {
-      "HOT_UPDATE_PACKAGE_HASH_MISMATCH"
+      val actualPackageSha = sha256(archive)
+      check(actualPackageSha.equals(input.packageSha256, ignoreCase = true)) {
+        "HOT_UPDATE_PACKAGE_HASH_MISMATCH"
+      }
+      if (input.packageSize > 0) {
+        check(archive.length() == input.packageSize) { "HOT_UPDATE_PACKAGE_SIZE_MISMATCH" }
+      }
+
+      ZipFile(archive).use { zip ->
+        val manifestEntry = zip.getEntry("manifest/hot-update-manifest.json")
+          ?: error("HOT_UPDATE_MANIFEST_NOT_FOUND")
+        val manifestFile = File(stagingDir, "manifest.json")
+        zip.getInputStream(manifestEntry).use { inputStream ->
+          manifestFile.outputStream().use { output -> copyToWithCancellation(inputStream, output, isCancelled) }
+        }
+        check(sha256(manifestFile).equals(input.manifestSha256, ignoreCase = true)) {
+          "HOT_UPDATE_MANIFEST_HASH_MISMATCH"
+        }
+
+        val manifestPackage = HotUpdateManifestCodec.decodePackage(
+          manifestFile.readText(Charsets.UTF_8),
+        ) ?: error("HOT_UPDATE_MANIFEST_INVALID")
+        val entryName = manifestPackage.entry
+        val entry = zip.getEntry(entryName) ?: error("HOT_UPDATE_ENTRY_NOT_FOUND")
+        val entryFile = File(stagingDir, "index.android.bundle")
+        zip.getInputStream(entry).use { inputStream ->
+          entryFile.outputStream().use { output -> copyToWithCancellation(inputStream, output, isCancelled) }
+        }
+        val expectedEntrySha = manifestPackage.sha256
+        check(sha256(entryFile).equals(expectedEntrySha, ignoreCase = true)) {
+          "HOT_UPDATE_ENTRY_HASH_MISMATCH"
+        }
+
+        installDir.deleteRecursively()
+        check(stagingDir.renameTo(installDir)) { "HOT_UPDATE_PROMOTE_FAILED" }
+        pruneRetainedPackages(input.packageId, input.maxRetainedPackages)
+
+        return HotUpdatePackageInstallResult(
+          installDir = installDir,
+          entryFile = "index.android.bundle",
+          manifestPath = File(installDir, "manifest.json"),
+          packageSha256 = actualPackageSha,
+          manifestSha256 = input.manifestSha256,
+        )
+      }
+    } catch (error: Throwable) {
+      stagingDir.deleteRecursively()
+      throw error
     }
-    if (input.packageSize > 0) {
-      check(archive.length() == input.packageSize) { "HOT_UPDATE_PACKAGE_SIZE_MISMATCH" }
-    }
+  }
 
-    ZipFile(archive).use { zip ->
-      val manifestEntry = zip.getEntry("manifest/hot-update-manifest.json")
-        ?: error("HOT_UPDATE_MANIFEST_NOT_FOUND")
-      val manifestFile = File(stagingDir, "manifest.json")
-      zip.getInputStream(manifestEntry).use { inputStream ->
-        manifestFile.outputStream().use { output -> copyToWithCancellation(inputStream, output, isCancelled) }
-      }
-      check(sha256(manifestFile).equals(input.manifestSha256, ignoreCase = true)) {
-        "HOT_UPDATE_MANIFEST_HASH_MISMATCH"
-      }
-
-      val manifestPackage = HotUpdateManifestCodec.decodePackage(
-        manifestFile.readText(Charsets.UTF_8),
-      ) ?: error("HOT_UPDATE_MANIFEST_INVALID")
-      val entryName = manifestPackage.entry
-      val entry = zip.getEntry(entryName) ?: error("HOT_UPDATE_ENTRY_NOT_FOUND")
-      val entryFile = File(stagingDir, "index.android.bundle")
-      zip.getInputStream(entry).use { inputStream ->
-        entryFile.outputStream().use { output -> copyToWithCancellation(inputStream, output, isCancelled) }
-      }
-      val expectedEntrySha = manifestPackage.sha256
-      check(sha256(entryFile).equals(expectedEntrySha, ignoreCase = true)) {
-        "HOT_UPDATE_ENTRY_HASH_MISMATCH"
-      }
-
-      installDir.deleteRecursively()
-      check(stagingDir.renameTo(installDir)) { "HOT_UPDATE_PROMOTE_FAILED" }
-
-      return HotUpdatePackageInstallResult(
-        installDir = installDir,
-        entryFile = "index.android.bundle",
-        manifestPath = File(installDir, "manifest.json"),
-        packageSha256 = actualPackageSha,
-        manifestSha256 = input.manifestSha256,
-      )
-    }
+  private fun pruneRetainedPackages(currentPackageId: String, maxRetainedPackages: Int) {
+    val retainCount = maxRetainedPackages.coerceAtLeast(1)
+    val packageDirs = packagesRootDir.listFiles()
+      ?.filter { it.isDirectory }
+      ?.sortedByDescending { it.lastModified() }
+      ?: return
+    packageDirs
+      .filter { it.name != currentPackageId }
+      .drop((retainCount - 1).coerceAtLeast(0))
+      .forEach { it.deleteRecursively() }
   }
 
   private fun downloadArchive(

@@ -114,6 +114,7 @@ class HotUpdatePackageInstallerTest {
       }
 
       assertFalse(File(packagesRootDir, "pkg-bad").exists())
+      assertFalse(File(stagingRootDir, "pkg-bad").exists())
     } finally {
       packagesRootDir.deleteRecursively()
       stagingRootDir.deleteRecursively()
@@ -164,6 +165,35 @@ class HotUpdatePackageInstallerTest {
       } catch (error: IllegalStateException) {
         assertEquals("HOT_UPDATE_DOWNLOAD_CANCELLED", error.message)
       }
+      assertFalse(File(stagingRootDir, "pkg-cancel").exists())
+    } finally {
+      packagesRootDir.deleteRecursively()
+      stagingRootDir.deleteRecursively()
+      archiveRootDir.deleteRecursively()
+    }
+  }
+
+  @Test
+  fun prunesOlderPackagesAfterSuccessfulPromotion() {
+    val packagesRootDir = Files.createTempDirectory("hot-update-packages-prune").toFile()
+    val stagingRootDir = Files.createTempDirectory("hot-update-staging-prune").toFile()
+    val archiveRootDir = Files.createTempDirectory("hot-update-archive-prune").toFile()
+
+    try {
+      val installer = HotUpdatePackageInstaller(
+        packagesRootDir = packagesRootDir,
+        stagingRootDir = stagingRootDir,
+      )
+
+      installPackage(installer, archiveRootDir, "pkg-1", "console.log('one')", 2)
+      Thread.sleep(2)
+      installPackage(installer, archiveRootDir, "pkg-2", "console.log('two')", 2)
+      Thread.sleep(2)
+      installPackage(installer, archiveRootDir, "pkg-3", "console.log('three')", 2)
+
+      assertFalse(File(packagesRootDir, "pkg-1").exists())
+      assertTrue(File(packagesRootDir, "pkg-2").exists())
+      assertTrue(File(packagesRootDir, "pkg-3").exists())
     } finally {
       packagesRootDir.deleteRecursively()
       stagingRootDir.deleteRecursively()
@@ -179,6 +209,42 @@ class HotUpdatePackageInstallerTest {
         zip.closeEntry()
       }
     }
+  }
+
+  private fun installPackage(
+    installer: HotUpdatePackageInstaller,
+    archiveRootDir: File,
+    packageId: String,
+    entryContent: String,
+    maxRetainedPackages: Int,
+  ) {
+    val manifestContent = """
+      {
+        "package": {
+          "entry": "index.bundle",
+          "sha256": "${sha256(entryContent.toByteArray(Charsets.UTF_8))}"
+        }
+      }
+    """.trimIndent()
+    val archive = File(archiveRootDir, "$packageId.zip")
+    writeZip(
+      archive = archive,
+      entries = mapOf(
+        "manifest/hot-update-manifest.json" to manifestContent,
+        "index.bundle" to entryContent,
+      ),
+    )
+
+    installer.downloadPackage(
+      HotUpdatePackageRequest(
+        packageId = packageId,
+        packageUrls = listOf(archive.toURI().toURL().toString()),
+        packageSha256 = sha256(archive),
+        manifestSha256 = sha256(manifestContent.toByteArray(Charsets.UTF_8)),
+        packageSize = archive.length(),
+        maxRetainedPackages = maxRetainedPackages,
+      ),
+    )
   }
 
   private fun sha256(file: File): String {

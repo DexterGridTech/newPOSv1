@@ -1,4 +1,3 @@
-import {setTimeout as delay} from 'node:timers/promises'
 import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
 import type {
     RunWorkflowInput,
@@ -10,6 +9,9 @@ import {aggregateCommandStepOutput} from './engineStep'
 import {ensureCommandStepRunnable} from './engineTransitions'
 import {withTimeout} from './engineObservation'
 import type {WorkflowRunRecord} from './engineRunState'
+
+const delay = (timeoutMs: number): Promise<void> =>
+    new Promise(resolve => setTimeout(resolve, timeoutMs))
 
 export interface ResolvedWorkflowStepInput {
     commandName?: string

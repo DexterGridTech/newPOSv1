@@ -138,6 +138,7 @@ export interface HotUpdateHistoryItem {
         | 'download-pending'
         | 'download-started'
         | 'download-failed'
+        | 'download-retry-pending'
         | 'ready'
         | 'applying'
         | 'applied'

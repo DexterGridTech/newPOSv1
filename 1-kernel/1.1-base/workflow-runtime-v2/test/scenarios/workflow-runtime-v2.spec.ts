@@ -7,6 +7,7 @@ import {
     createWorkflowRuntimeModuleV2,
     selectWorkflowDefinition,
     selectWorkflowObservationByRequestId,
+    workflowBuiltinTaskKeys,
     workflowRuntimeV2CommandDefinitions,
     workflowRuntimeV2ParameterDefinitions,
     type WorkflowObservation,
@@ -20,6 +21,83 @@ import {
 } from '../helpers/workflowRuntimeV2Harness'
 
 describe('workflow-runtime-v2', () => {
+    it('registers and executes the built-in camera barcode scan task', async () => {
+        const requestId = createRequestId()
+        const calls: Array<{
+            channel: Record<string, unknown>
+            action: string
+            params?: Record<string, unknown>
+            timeoutMs?: number
+        }> = []
+
+        const runtime = createTestRuntime([
+            createWorkflowRuntimeModuleV2(),
+        ], {
+            connector: {
+                async call(input) {
+                    calls.push(input)
+                    return {
+                        success: true,
+                        code: 0,
+                        message: 'OK',
+                        data: {
+                            SCAN_RESULT: '{"formatVersion":"2026.04","deviceId":"MASTER-001","masterNodeId":"NODE-001","wsUrl":"ws://127.0.0.1:18586/ws"}',
+                            SCAN_RESULT_FORMAT: 'QR_CODE',
+                        },
+                    }
+                },
+            },
+        })
+        await runtime.start()
+
+        expect(selectWorkflowDefinition(
+            runtime.getState(),
+            workflowBuiltinTaskKeys.singleReadBarcodeFromCamera,
+        )).toHaveLength(1)
+
+        const result = await runtime.dispatchCommand(createCommand(
+            workflowRuntimeV2CommandDefinitions.runWorkflow,
+            {
+                workflowKey: workflowBuiltinTaskKeys.singleReadBarcodeFromCamera,
+                input: {
+                    timeoutMs: 1234,
+                },
+            },
+        ), {
+            requestId,
+        })
+
+        expect(result.status).toBe('COMPLETED')
+        expect(calls).toEqual([
+            {
+                channel: {
+                    type: 'INTENT',
+                    target: 'camera',
+                    mode: 'request-response',
+                },
+                action: 'com.impos2.posadapter.action.CAMERA_SCAN',
+                params: {
+                    SCAN_MODE: 'QR_CODE_MODE',
+                    waitResult: true,
+                },
+                timeoutMs: 1234,
+            },
+        ])
+        expect((result.actorResults[0]?.result as any)?.result?.output).toEqual({
+            barcode: '{"formatVersion":"2026.04","deviceId":"MASTER-001","masterNodeId":"NODE-001","wsUrl":"ws://127.0.0.1:18586/ws"}',
+            format: 'QR_CODE',
+            raw: {
+                success: true,
+                code: 0,
+                message: 'OK',
+                data: {
+                    SCAN_RESULT: '{"formatVersion":"2026.04","deviceId":"MASTER-001","masterNodeId":"NODE-001","wsUrl":"ws://127.0.0.1:18586/ws"}',
+                    SCAN_RESULT_FORMAT: 'QR_CODE',
+                },
+            },
+        })
+    })
+
     it('keeps selector observation shape aligned with run$ terminal observation', async () => {
         const requestId = createRequestId()
         let workflowRuntime: WorkflowRuntimeFacadeV2 | undefined

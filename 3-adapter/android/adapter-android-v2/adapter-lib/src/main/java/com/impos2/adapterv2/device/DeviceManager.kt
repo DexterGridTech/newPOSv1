@@ -257,7 +257,14 @@ class DeviceManager private constructor(private val context: Context) : IDeviceM
         "/sys/devices/system/cpu/cpu$i/cpufreq/cpuinfo_max_freq",
         "/sys/devices/system/cpu/cpu$i/cpufreq/scaling_max_freq"
       ).firstNotNullOfOrNull { path ->
-        File(path).takeIf { it.exists() }?.readText()?.trim()?.toLongOrNull()?.takeIf { it > 1000 }
+        runCatching {
+          File(path)
+            .takeIf { it.exists() && it.canRead() }
+            ?.readText()
+            ?.trim()
+            ?.toLongOrNull()
+            ?.takeIf { it > 1000 }
+        }.getOrNull()
       }
     }.maxOrNull()
 

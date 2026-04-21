@@ -25,6 +25,7 @@ export const createAdminConsoleHarness = async (
     input: CreateAdminConsoleModuleInput & {
         platformPorts?: Partial<PlatformPorts>
         modules?: readonly KernelRuntimeModuleV2[]
+        topology?: Parameters<typeof createRuntimeReactHarness>[0]['topology']
         displayContext?: {
             displayIndex?: number
             displayCount?: number
@@ -35,6 +36,7 @@ export const createAdminConsoleHarness = async (
         displayContext,
         modules,
         platformPorts,
+        topology,
         ...moduleInput
     } = input
 
@@ -52,6 +54,7 @@ export const createAdminConsoleHarness = async (
             secureStateStorage: createMemoryStorage().storage,
             ...platformPorts,
         },
+        topology,
         displayContext,
     })
 }

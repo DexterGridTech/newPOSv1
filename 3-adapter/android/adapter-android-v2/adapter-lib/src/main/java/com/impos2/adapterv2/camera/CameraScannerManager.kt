@@ -60,6 +60,7 @@ class CameraScannerManager private constructor() {
   @Volatile private var lastCompletedAt: Long = 0L
   @Volatile private var lastError: String? = null
   @Volatile private var lastResultSummary: String = "--"
+  @Volatile private var activeActivity: ComponentActivity? = null
 
   fun startScan(
     activity: ComponentActivity,
@@ -96,6 +97,7 @@ class CameraScannerManager private constructor() {
       activeRequestId = requestId
       activeStartedAt = System.currentTimeMillis()
       lastError = null
+      activeActivity = activity
       startCount.incrementAndGet()
     }
 
@@ -118,6 +120,7 @@ class CameraScannerManager private constructor() {
     runCatching {
       val intent = Intent(activity, CameraScanActivity::class.java).apply {
         action = CameraScanActivity.ACTION
+        addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
         putExtra("SCAN_MODE", scanMode)
         putExtra("WAIT_RESULT", waitResult)
         putExtra("TIMEOUT", normalizedTimeout)
@@ -141,6 +144,24 @@ class CameraScannerManager private constructor() {
       )
       Log.e(TAG, "startScan failed: requestId=$requestId", error)
       completeOnce(response)
+    }
+  }
+
+  fun cancelActiveScan() {
+    val activity = synchronized(lock) {
+      if (state == ScanState.IDLE || activeRequestId == null) {
+        return
+      }
+      activeActivity
+    } ?: return
+
+    activity.runOnUiThread {
+      runCatching {
+        CameraScanActivity.cancelActiveScan()
+        Log.i(TAG, "cancelActiveScan dispatched")
+      }.onFailure { error ->
+        Log.w(TAG, "cancelActiveScan failed: ${error.message}")
+      }
     }
   }
 
@@ -177,6 +198,7 @@ class CameraScannerManager private constructor() {
       }
       state = ScanState.IDLE
       activeRequestId = null
+      activeActivity = null
       lastCompletedAt = System.currentTimeMillis()
       if (response.success) {
         successCount.incrementAndGet()

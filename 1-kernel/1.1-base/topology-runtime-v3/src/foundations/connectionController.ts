@@ -7,6 +7,7 @@ import {topologyRuntimeV3ErrorDefinitions, topologyRuntimeV3ParameterDefinitions
 import type {
     TopologyPeerOrchestratorV3,
     TopologyRuntimeV3Assembly,
+    TopologyRuntimeV3SocketBinding,
     TopologyV3HelloAckMessage,
     TopologyV3IncomingMessage,
 } from '../types/runtime'
@@ -118,8 +119,8 @@ export const createTopologyPeerOrchestratorV3 = (input: {
     reconnectAttemptsOverride?: number
     reconnectDelayMsOverride?: number
 }): TopologyPeerOrchestratorV3 => {
-    const socketBinding = input.assembly.resolveSocketBinding(input.context)
-    if (!socketBinding) {
+    const initialSocketBinding = input.assembly.resolveSocketBinding(input.context)
+    if (!initialSocketBinding) {
         throw createAppError(topologyRuntimeV3ErrorDefinitions.socketBindingRequired, {
             context: {
                 nodeId: input.context.localNodeId,
@@ -127,18 +128,50 @@ export const createTopologyPeerOrchestratorV3 = (input: {
         })
     }
 
-    const profile = socketBinding.profile ?? {
+    const createProfile = (socketBinding: TopologyRuntimeV3SocketBinding) => socketBinding.profile ?? {
         ...topologyRuntimeV3SocketProfile,
         name: socketBinding.profileName || TOPOLOGY_RUNTIME_V3_SOCKET_PROFILE_NAME,
     }
-    socketBinding.socketRuntime.registerProfile({
-        ...profile,
+    const registerSocketBinding = (
+        socketBinding: TopologyRuntimeV3SocketBinding,
+    ): TopologyRuntimeV3SocketBinding => {
+        const profile = createProfile(socketBinding)
+        socketBinding.socketRuntime.registerProfile({
+            ...profile,
+            meta: {
+                ...profile.meta,
+                reconnectAttempts: input.reconnectAttemptsOverride ?? profile.meta.reconnectAttempts,
+                reconnectDelayMs: resolveReconnectDelayMs(input.context, input.reconnectDelayMsOverride),
+            },
+        })
+        return {
+            ...socketBinding,
+            profileName: profile.name,
+            profile,
+        }
+    }
+    let socketBinding = registerSocketBinding(initialSocketBinding)
+    const refreshSocketBinding = () => {
+        const latestSocketBinding = input.assembly.resolveSocketBinding(input.context)
+        if (!latestSocketBinding) {
+            throw createAppError(topologyRuntimeV3ErrorDefinitions.socketBindingRequired, {
+                context: {
+                    nodeId: input.context.localNodeId,
+                },
+            })
+        }
+        socketBinding = registerSocketBinding(latestSocketBinding)
+        return socketBinding
+    }
+
+    const profile = {
+        ...socketBinding.profile!,
         meta: {
-            ...profile.meta,
-            reconnectAttempts: input.reconnectAttemptsOverride ?? profile.meta.reconnectAttempts,
+            ...socketBinding.profile!.meta,
+            reconnectAttempts: input.reconnectAttemptsOverride ?? socketBinding.profile!.meta.reconnectAttempts,
             reconnectDelayMs: resolveReconnectDelayMs(input.context, input.reconnectDelayMsOverride),
         },
-    })
+    }
 
     const sendHello = () => {
         const runtime = input.assembly.createHelloRuntime(input.context)
@@ -163,7 +196,8 @@ export const createTopologyPeerOrchestratorV3 = (input: {
     let previousState = input.context.getState()
 
     const performSocketConnection = async () => {
-        const currentState = socketBinding.socketRuntime.getConnectionState(socketBinding.profileName)
+        const currentBinding = refreshSocketBinding()
+        const currentState = currentBinding.socketRuntime.getConnectionState(currentBinding.profileName)
         const stateRecord = input.context.getState() as Record<string, unknown>
         const syncState = stateRecord['kernel.base.topology-runtime-v3.sync'] as {
             activeSessionId?: string
@@ -188,7 +222,7 @@ export const createTopologyPeerOrchestratorV3 = (input: {
             status: 'connecting',
         }))
 
-        await socketBinding.socketRuntime.connect(socketBinding.profileName)
+        await currentBinding.socketRuntime.connect(currentBinding.profileName)
         sendHello()
     }
 

@@ -114,4 +114,44 @@ describe('assembly topology input', () => {
         }
         expect(binding.profile.pathTemplate).toBe('/ws')
     })
+
+    it('prefers runtime wsUrl when resolving a dynamic topology socket path', () => {
+        const logger = {
+            scope: vi.fn(() => logger),
+            info: vi.fn(),
+            debug: vi.fn(),
+            warn: vi.fn(),
+            error: vi.fn(),
+        }
+        const bindingSource = createAssemblyTopologyBindingSource({
+            role: 'slave',
+            localNodeId: 'slave-device-001',
+        })
+        const input = createAssemblyTopologyInput({
+            deviceId: 'device-001',
+            screenMode: 'desktop',
+            displayCount: 1,
+            displayIndex: 0,
+            isEmulator: true,
+        }, logger as any, {bindingSource})
+
+        bindingSource.set({
+            role: 'slave',
+            localNodeId: 'slave-device-001',
+            masterNodeId: 'master-node-001',
+            masterDeviceId: 'master-device-001',
+            wsUrl: 'ws://127.0.0.1:9999/customTopology/ws',
+            httpBaseUrl: 'http://127.0.0.1:9999/mockMasterServer',
+        })
+
+        const binding = input?.assembly?.resolveSocketBinding({
+            localNodeId: 'slave-device-001',
+        } as any)
+
+        expect(binding?.socketRuntime.getServerCatalog().resolveAddresses(SERVER_NAME_DUAL_TOPOLOGY_HOST_V3)).toEqual([{
+            addressName: 'dynamic-topology-host',
+            baseUrl: 'http://127.0.0.1:9999/customTopology',
+        }])
+        expect(binding?.profile?.pathTemplate).toBe('/ws')
+    })
 })

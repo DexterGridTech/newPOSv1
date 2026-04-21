@@ -470,6 +470,35 @@ const hotUpdateSlice = createSlice({
                 at,
             })
         },
+        markDownloadRetryPending(state, action: PayloadAction<{
+            releaseId: string
+            packageId: string
+            bundleVersion: string
+            at?: number
+        }>) {
+            const at = action.payload.at ?? Date.now()
+            if (
+                !state.desired
+                || state.desired.packageId !== action.payload.packageId
+                || state.candidate?.packageId !== action.payload.packageId
+                || state.candidate.status !== 'failed'
+            ) {
+                return
+            }
+            state.candidate = {
+                ...state.candidate,
+                status: 'download-pending',
+                reason: undefined,
+                updatedAt: at,
+            }
+            state.history = appendHistory(state, {
+                event: 'download-retry-pending',
+                releaseId: action.payload.releaseId,
+                packageId: action.payload.packageId,
+                bundleVersion: action.payload.bundleVersion,
+                at,
+            })
+        },
         markDownloading(state, action: PayloadAction<{
             releaseId: string
             packageId: string

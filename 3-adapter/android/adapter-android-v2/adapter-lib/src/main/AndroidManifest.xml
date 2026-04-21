@@ -17,11 +17,6 @@
       android:exported="false"
       android:theme="@android:style/Theme.Translucent.NoTitleBar" />
     <service
-      android:name=".topologyhost.TopologyHostService"
-      android:enabled="true"
-      android:exported="false"
-      android:foregroundServiceType="dataSync" />
-    <service
       android:name=".topologyhostv3.TopologyHostV3Service"
       android:enabled="true"
       android:exported="false"

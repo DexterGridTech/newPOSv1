@@ -1,4 +1,4 @@
-import {createKernelRuntimeApp} from '@impos2/kernel-base-runtime-shell-v2'
+import {createCommand, createKernelRuntimeApp} from '@impos2/kernel-base-runtime-shell-v2'
 import {
     selectTcpIsActivated,
     selectTcpTerminalId,
@@ -6,6 +6,7 @@ import {
 import {
     createTopologyRuntimeModuleV3,
     selectTopologyRuntimeV3Context,
+    topologyRuntimeV3CommandDefinitions,
 } from '@impos2/kernel-base-topology-runtime-v3'
 import {
     createTdpSyncRuntimeModuleV2,
@@ -13,6 +14,7 @@ import {
 } from '@impos2/kernel-base-tdp-sync-runtime-v2'
 import {createTcpControlRuntimeModuleV2} from '@impos2/kernel-base-tcp-control-runtime-v2'
 import {createUiRuntimeModuleV2} from '@impos2/kernel-base-ui-runtime-v2'
+import {createWorkflowRuntimeModuleV2} from '@impos2/kernel-base-workflow-runtime-v2'
 import {createHttpRuntime} from '@impos2/kernel-base-transport-runtime'
 import {createModule as createRuntimeReactModule} from '@impos2/ui-base-runtime-react'
 import type {UiRuntimeProviderProps} from '@impos2/ui-base-runtime-react'
@@ -158,6 +160,7 @@ const createKernelRuntimeAppForAssembly = (
                     },
                 },
             }),
+            createWorkflowRuntimeModuleV2(),
             createUiRuntimeModuleV2(),
             createRuntimeReactModule(),
             createInputRuntimeModule(),
@@ -230,6 +233,24 @@ const updateTopologyRuntimeEnvironment = (
         wsUrl: typeof serverAddress?.address === 'string'
             ? serverAddress.address
             : current.wsUrl,
+    })
+}
+
+const syncMasterTopologyBindingFromHost = (
+    bindingSource: ReturnType<typeof createAssemblyTopologyBindingSource>,
+    addressInfo: Record<string, unknown> | undefined,
+) => {
+    if (!addressInfo) {
+        return
+    }
+    const localWsUrl = typeof addressInfo.localWsUrl === 'string' ? addressInfo.localWsUrl : undefined
+    const localHttpBaseUrl = typeof addressInfo.localHttpBaseUrl === 'string' ? addressInfo.localHttpBaseUrl : undefined
+    if (!localWsUrl && !localHttpBaseUrl) {
+        return
+    }
+    bindingSource.set({
+        wsUrl: localWsUrl,
+        httpBaseUrl: localHttpBaseUrl,
     })
 }
 
@@ -322,12 +343,20 @@ export const createApp = (
                         reason: decision.reason,
                     },
                 })
-                await nativeTopologyHost.start({
+                const hostAddressInfo = await nativeTopologyHost.start({
                     displayCount: props.displayCount,
                     displayIndex: props.displayIndex,
                     deviceId: props.deviceId,
                 })
+                syncMasterTopologyBindingFromHost(
+                    topologyBindingSource,
+                    hostAddressInfo as unknown as Record<string, unknown>,
+                )
                 topologyHostRunning = true
+                await runtime.dispatchCommand(createCommand(
+                    topologyRuntimeV3CommandDefinitions.startTopologyConnection,
+                    {},
+                ))
                 return
             }
 
@@ -402,7 +431,18 @@ export const createApp = (
         async start() {
             const runtime = await app.start()
             latestRuntime = runtime
-            const bootState = await syncHotUpdateStateFromNativeBoot(runtime)
+            let bootState: Awaited<ReturnType<typeof syncHotUpdateStateFromNativeBoot>>
+            try {
+                bootState = await syncHotUpdateStateFromNativeBoot(runtime)
+            } catch (error) {
+                void reportTerminalVersion(
+                    runtime,
+                    props,
+                    'FAILED',
+                    error instanceof Error ? error.message : String(error),
+                ).catch(() => {})
+                throw error
+            }
             void reportTerminalVersion(runtime, props, 'BOOTING').catch(() => {})
             if (bootState?.terminalState === 'ROLLED_BACK') {
                 void reportTerminalVersion(runtime, props, 'ROLLED_BACK', bootState.reason).catch(() => {})

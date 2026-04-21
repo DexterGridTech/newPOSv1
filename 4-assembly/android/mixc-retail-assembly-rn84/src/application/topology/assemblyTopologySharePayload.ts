@@ -1,11 +1,16 @@
 import type {AssemblyTopologyBindingState} from './assemblyTopologyBinding'
 
 export interface AssemblyTopologySharePayload {
-    formatVersion: '2026.04' | string
-    deviceId: string
-    masterNodeId: string
+    formatVersion?: '2026.04' | string
+    deviceId?: string
+    masterNodeId?: string
     wsUrl?: string
     httpBaseUrl?: string
+    v?: string
+    d?: string
+    n?: string
+    w?: string
+    h?: string
 }
 
 export interface AssemblyTopologyMasterLocator {
@@ -52,31 +57,36 @@ export const importAssemblyTopologySharePayload = (
     masterLocator: AssemblyTopologyMasterLocator
     bindingSeed: Omit<AssemblyTopologyBindingState, 'localNodeId'>
 } => {
-    if (!payload.deviceId) {
+    const deviceId = payload.deviceId ?? payload.d
+    const masterNodeId = payload.masterNodeId ?? payload.n
+    const payloadWsUrl = payload.wsUrl ?? payload.w
+    const payloadHttpBaseUrl = payload.httpBaseUrl ?? payload.h
+
+    if (!deviceId) {
         throw new Error('Topology share payload deviceId is required')
     }
-    if (!payload.masterNodeId) {
+    if (!masterNodeId) {
         throw new Error('Topology share payload masterNodeId is required')
     }
-    if (!payload.wsUrl && !payload.httpBaseUrl) {
+    if (!payloadWsUrl && !payloadHttpBaseUrl) {
         throw new Error('Topology share payload requires wsUrl or httpBaseUrl')
     }
 
-    const httpBaseUrl = payload.httpBaseUrl ?? normalizeHttpBaseUrlFromWsUrl(String(payload.wsUrl))
-    const wsUrl = payload.wsUrl ?? normalizeWsUrlFromHttpBaseUrl(httpBaseUrl)
+    const httpBaseUrl = payloadHttpBaseUrl ?? normalizeHttpBaseUrlFromWsUrl(String(payloadWsUrl))
+    const wsUrl = payloadWsUrl ?? normalizeWsUrlFromHttpBaseUrl(httpBaseUrl)
 
     return {
         masterLocator: {
-            masterDeviceId: payload.deviceId,
+            masterDeviceId: deviceId,
             addedAt: Date.now() as any,
             serverAddress: [{address: wsUrl}],
-            masterNodeId: payload.masterNodeId,
+            masterNodeId,
             httpBaseUrl,
         },
         bindingSeed: {
             role: 'slave',
-            masterNodeId: payload.masterNodeId,
-            masterDeviceId: payload.deviceId,
+            masterNodeId,
+            masterDeviceId: deviceId,
             wsUrl,
             httpBaseUrl,
         },

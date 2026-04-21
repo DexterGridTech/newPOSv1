@@ -58,6 +58,8 @@ type TopologyHostStatus = {
     addressInfo?: {
         httpBaseUrl?: string
         wsUrl?: string
+        localHttpBaseUrl?: string
+        localWsUrl?: string
     }
 }
 

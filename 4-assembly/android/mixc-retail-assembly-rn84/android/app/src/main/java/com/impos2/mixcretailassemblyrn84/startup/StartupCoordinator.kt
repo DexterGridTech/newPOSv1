@@ -2,6 +2,7 @@ package com.impos2.mixcretailassemblyrn84.startup
 
 import android.os.Handler
 import android.os.Looper
+import com.impos2.adapterv2.hotupdate.HotUpdateBootMarkerStore
 import com.impos2.mixcretailassemblyrn84.MainActivity
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -35,6 +36,7 @@ object StartupCoordinator {
   private val mainHandler = Handler(Looper.getMainLooper())
   private var pendingOverlayHide: Runnable? = null
   private var pendingSecondaryStart: Runnable? = null
+  private var pendingHealthCheckTimeout: Runnable? = null
 
   /**
    * 主屏 Activity 挂接时调用。
@@ -47,6 +49,7 @@ object StartupCoordinator {
   fun attachPrimary(activity: MainActivity) {
     primaryReady.set(false)
     cancelPendingActions()
+    scheduleHotUpdateHealthCheckIfNeeded(activity)
     if (startupMode == StartupMode.COLD_START) {
       StartupOverlayManager.show(activity)
     } else {
@@ -68,6 +71,7 @@ object StartupCoordinator {
     if (!primaryReady.compareAndSet(false, true)) {
       return
     }
+    cancelHealthCheckTimeout("load-complete")
     scheduleOverlayHide()
     scheduleSecondaryStart(activity)
     startupMode = StartupMode.COLD_START
@@ -129,5 +133,40 @@ object StartupCoordinator {
     pendingOverlayHide = null
     pendingSecondaryStart?.let { mainHandler.removeCallbacks(it) }
     pendingSecondaryStart = null
+    cancelHealthCheckTimeout("reset")
+  }
+
+  private fun scheduleHotUpdateHealthCheckIfNeeded(activity: MainActivity) {
+    val marker = HotUpdateBootMarkerStore(activity.applicationContext).readBoot() ?: return
+    val timeoutMs = marker.healthCheckTimeoutMs.coerceAtLeast(1L)
+    StartupAuditLogger.logHotUpdateHealthCheckScheduled(
+      timeoutMs = timeoutMs,
+      bundleVersion = marker.bundleVersion,
+      packageId = marker.packageId,
+    )
+    pendingHealthCheckTimeout = Runnable {
+      pendingHealthCheckTimeout = null
+      if (primaryReady.get()) {
+        return@Runnable
+      }
+      StartupAuditLogger.logHotUpdateHealthCheckTimedOut(
+        timeoutMs = timeoutMs,
+        bundleVersion = marker.bundleVersion,
+        packageId = marker.packageId,
+      )
+      HotUpdateBootMarkerStore(activity.applicationContext)
+        .rollbackActive("HOT_UPDATE_HEALTH_CHECK_TIMEOUT")
+      activity.restartApp()
+    }.also {
+      mainHandler.postDelayed(it, timeoutMs)
+    }
+  }
+
+  private fun cancelHealthCheckTimeout(reason: String) {
+    pendingHealthCheckTimeout?.let {
+      mainHandler.removeCallbacks(it)
+      StartupAuditLogger.logHotUpdateHealthCheckCancelled(reason)
+    }
+    pendingHealthCheckTimeout = null
   }
 }

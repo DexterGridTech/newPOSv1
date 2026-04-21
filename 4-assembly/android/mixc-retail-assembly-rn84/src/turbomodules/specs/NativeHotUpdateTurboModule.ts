@@ -8,7 +8,7 @@ export interface Spec extends TurboModule {
     packageSha256: string
     manifestSha256: string
   }>
-  writeBootMarker(releaseId: string, packageId: string, bundleVersion: string, installDir: string, entryFile: string | null, manifestSha256: string, maxLaunchFailures: number): Promise<{
+  writeBootMarker(releaseId: string, packageId: string, bundleVersion: string, installDir: string, entryFile: string | null, manifestSha256: string, maxLaunchFailures: number, healthCheckTimeoutMs: number | null): Promise<{
     bootMarkerPath: string
   }>
   readActiveMarker(): Promise<Record<string, unknown> | null>

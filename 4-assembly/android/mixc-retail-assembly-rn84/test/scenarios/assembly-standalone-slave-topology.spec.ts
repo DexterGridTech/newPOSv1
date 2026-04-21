@@ -29,6 +29,29 @@ describe('assembly standalone slave topology', () => {
         })
     })
 
+    it('normalizes a compact master share payload into masterLocator and binding seed', () => {
+        const imported = importAssemblyTopologySharePayload({
+            v: '2026.04',
+            d: 'MASTER-001',
+            n: 'master-node-001',
+            w: 'ws://127.0.0.1:8888/mockMasterServer/ws',
+        })
+
+        expect(imported.masterLocator).toMatchObject({
+            masterDeviceId: 'MASTER-001',
+            masterNodeId: 'master-node-001',
+            httpBaseUrl: 'http://127.0.0.1:8888/mockMasterServer',
+            serverAddress: [{address: 'ws://127.0.0.1:8888/mockMasterServer/ws'}],
+        })
+        expect(imported.bindingSeed).toMatchObject({
+            role: 'slave',
+            masterNodeId: 'master-node-001',
+            masterDeviceId: 'MASTER-001',
+            wsUrl: 'ws://127.0.0.1:8888/mockMasterServer/ws',
+            httpBaseUrl: 'http://127.0.0.1:8888/mockMasterServer',
+        })
+    })
+
     it('clears runtime-only binding fields but keeps local identity', async () => {
         const bindingSource = createAssemblyTopologyBindingSource({
             role: 'slave',

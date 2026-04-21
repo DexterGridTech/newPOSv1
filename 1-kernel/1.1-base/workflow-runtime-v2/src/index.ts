@@ -37,6 +37,10 @@ export {
     selectWorkflowObservationStatusByRequestId,
     selectWorkflowQueueState,
 } from './selectors'
+export {
+    createWorkflowBuiltinTaskDefinitions,
+    workflowBuiltinTaskKeys,
+} from './foundations/builtinTasks'
 export type {
     CreateWorkflowRuntimeModuleV2Input,
     RunWorkflowSummary,

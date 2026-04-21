@@ -166,6 +166,12 @@ export interface AdminTopologySharePayload {
     httpBaseUrl?: string
 }
 
+export interface AdminBarcodeScanTaskResult {
+    barcode: string
+    format?: string
+    raw?: Record<string, unknown>
+}
+
 export interface AdminTopologyHost {
     getSharePayload?(): Promise<AdminTopologySharePayload | null>
     importSharePayload?(payload: AdminTopologySharePayload): Promise<void>

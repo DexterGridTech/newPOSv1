@@ -12,6 +12,7 @@ import {moduleName} from '../moduleName'
 import {createWorkflowActorDefinitionsV2} from '../features/actors'
 import type {CreateWorkflowRuntimeModuleV2Input} from '../types'
 import {createWorkflowEngineV2} from '../foundations/engine'
+import {createWorkflowBuiltinTaskDefinitions} from '../foundations/builtinTasks'
 import type {WorkflowRuntimeRegistryRecord} from '../foundations/runtime'
 import {workflowRuntimeV2ModuleManifest} from './moduleManifest'
 
@@ -57,9 +58,10 @@ export const createWorkflowRuntimeModuleV2 = (
                 engine.runtime.cancel(inputValue)
             }
 
-            if (input.initialDefinitions && input.initialDefinitions.length > 0) {
-                engine.registerDefinitions([...input.initialDefinitions], 'module')
-            }
+            engine.registerDefinitions([
+                ...createWorkflowBuiltinTaskDefinitions(),
+                ...(input.initialDefinitions ?? []),
+            ], 'module')
 
             input.onRuntimeReady?.(engine.runtime)
 

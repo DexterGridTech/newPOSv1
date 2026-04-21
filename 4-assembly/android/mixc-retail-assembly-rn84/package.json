@@ -22,6 +22,7 @@
     "@impos2/kernel-base-topology-runtime-v3": "workspace:*",
     "@impos2/kernel-base-transport-runtime": "workspace:*",
     "@impos2/kernel-base-ui-runtime-v2": "workspace:*",
+    "@impos2/kernel-base-workflow-runtime-v2": "workspace:*",
     "@impos2/kernel-server-config-v2": "workspace:*",
     "@impos2/ui-base-admin-console": "workspace:*",
     "@impos2/ui-base-automation-runtime": "workspace:*",

@@ -57,7 +57,7 @@
 ### Android adapter
 
 - No code change by default.
-- Reference: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/topologyhost/TopologyHostServer.kt`
+- Reference: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/topologyhostv3/TopologyHostV3Server.kt`
 - Reference: `4-assembly/android/mixc-retail-assembly-rn84/src/turbomodules/topologyHost.ts`
 
 ---

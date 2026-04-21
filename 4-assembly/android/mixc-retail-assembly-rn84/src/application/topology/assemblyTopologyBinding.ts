@@ -103,11 +103,11 @@ export const createAssemblyTopologyBindingSource = (
             }
         },
         resolveServer() {
-            if (current.httpBaseUrl) {
-                return resolveServerFromHttpBaseUrl(current.httpBaseUrl)
-            }
             if (current.wsUrl) {
                 return resolveServerFromWsUrl(current.wsUrl)
+            }
+            if (current.httpBaseUrl) {
+                return resolveServerFromHttpBaseUrl(current.httpBaseUrl)
             }
             return undefined
         },

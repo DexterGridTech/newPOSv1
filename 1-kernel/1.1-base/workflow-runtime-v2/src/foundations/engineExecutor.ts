@@ -1,4 +1,3 @@
-import {setTimeout as delay} from 'node:timers/promises'
 import {
     createAppError,
     isAppError,
@@ -48,6 +47,9 @@ import {
 } from './engineObservation'
 import type {WorkflowEngineConfig} from './engineConfig'
 import type {WorkflowRunRecord} from './engineRunState'
+
+const delay = (timeoutMs: number): Promise<void> =>
+    new Promise(resolve => setTimeout(resolve, timeoutMs))
 
 export interface WorkflowExecutionResult {
     status: 'terminal' | 'failed-before-start' | 'settled'

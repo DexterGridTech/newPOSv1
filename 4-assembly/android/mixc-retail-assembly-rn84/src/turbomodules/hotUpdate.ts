@@ -31,6 +31,7 @@ export const nativeHotUpdate = {
     entryFile?: string
     manifestSha256: string
     maxLaunchFailures: number
+    healthCheckTimeoutMs?: number
   }) {
     if (!NativeHotUpdateTurboModule?.writeBootMarker) {
       return Promise.reject(new Error('HOT_UPDATE_MODULE_UNAVAILABLE'))
@@ -43,6 +44,7 @@ export const nativeHotUpdate = {
       input.entryFile ?? null,
       input.manifestSha256,
       input.maxLaunchFailures,
+      input.healthCheckTimeoutMs ?? null,
     )
   },
   readActiveMarker() {

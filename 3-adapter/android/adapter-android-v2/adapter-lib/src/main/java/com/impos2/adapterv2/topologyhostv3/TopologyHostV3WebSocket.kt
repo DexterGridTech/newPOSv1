@@ -1,11 +1,11 @@
-package com.impos2.adapterv2.topologyhost
+package com.impos2.adapterv2.topologyhostv3
 
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.net.Socket
 import java.util.UUID
 
-internal class TopologyHostWsSession(private val socket: Socket) {
+internal class TopologyHostV3WsSession(private val socket: Socket) {
   val key: String = UUID.randomUUID().toString()
   private val out = socket.getOutputStream()
 
@@ -92,7 +92,7 @@ internal class TopologyHostWsSession(private val socket: Socket) {
   }
 }
 
-internal class TopologyHostWsFrameReader(
+internal class TopologyHostV3WsFrameReader(
   private val input: InputStream,
   private val onPing: (ByteArray) -> Unit,
   private val onPong: (ByteArray) -> Unit = {},

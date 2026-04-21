@@ -86,7 +86,7 @@ v2 测试已经明确覆盖：
 
 ### 2.4 当前 Android topology host 也是 pair-oriented
 
-当前 Android `TopologyHostRuntime` 的核心真相源是：
+当前 Android `TopologyHostV3Runtime` 的核心真相源是：
 
 1. ticket -> session
 2. session -> nodes
@@ -94,7 +94,7 @@ v2 测试已经明确覆盖：
 4. `master` role 必须和 ticket owner 匹配
 5. 某个 role 已被占用时拒绝新的 hello
 
-参考：`3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/topologyhost/TopologyHostRuntime.kt:120`
+参考：`3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/topologyhostv3/TopologyHostV3Runtime.kt`
 
 这其实已经说明当前 host 的业务模型也是：
 

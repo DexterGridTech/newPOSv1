@@ -1,5 +1,5 @@
 import React, {useMemo} from 'react'
-import {Pressable, ScrollView, Text, View} from 'react-native'
+import {Pressable, ScrollView, Text, View, useWindowDimensions} from 'react-native'
 import QRCode from 'react-native-qrcode-svg'
 import {InputField} from '@impos2/ui-base-input-runtime'
 import {useOptionalInputRuntime} from '@impos2/ui-base-input-runtime'
@@ -40,6 +40,12 @@ const colors = {
 const selectedTabShadowStyle = {
     boxShadow: '0px 10px 20px rgba(11, 95, 255, 0.18)',
 } as const
+
+const PANEL_WIDTH = '96%'
+const PANEL_MAX_WIDTH = 1380
+const SIDEBAR_WIDTH = 228
+const COMPACT_SIDEBAR_WIDTH = 208
+const PANEL_BREAKPOINT = 980
 
 const Shell: React.FC<{
     testID: string
@@ -117,6 +123,7 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
     deviceId,
     onClose,
 }) => {
+    const {width: windowWidth} = useWindowDimensions()
     const runtime = useUiRuntime()
     const inputRuntime = useOptionalInputRuntime()
     const automationBridge = useOptionalUiAutomationBridge()
@@ -133,6 +140,7 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
         }
         return `开发密码提示：${verifier.deriveFor(new Date())}`
     }, [runtime.environmentMode, verifier])
+    const isCompactPanel = windowWidth < PANEL_BREAKPOINT
     const sections = getAdminConsoleSectionRegistry().list()
     const activeSection = sections.find(section => section.tab === popupState.selectedTab)
 
@@ -411,8 +419,8 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
         <Shell testID="ui-base-admin-popup:panel">
             <View
                 style={{
-                    width: '100%',
-                    maxWidth: 1180,
+                    width: PANEL_WIDTH,
+                    maxWidth: PANEL_MAX_WIDTH,
                     height: '92%',
                     borderRadius: 28,
                     backgroundColor: colors.page,
@@ -447,23 +455,38 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
                         }}
                     />
                 </View>
-                <View style={{flex: 1, flexDirection: 'row'}}>
+                <View
+                    style={{
+                        flex: 1,
+                        flexDirection: isCompactPanel ? 'column' : 'row',
+                        minWidth: 0,
+                    }}
+                >
                     <ScrollView
                         style={{
-                            width: 260,
-                            borderRightWidth: 1,
+                            width: '100%',
+                            maxWidth: isCompactPanel ? undefined : SIDEBAR_WIDTH,
+                            minWidth: isCompactPanel ? undefined : COMPACT_SIDEBAR_WIDTH,
+                            borderRightWidth: isCompactPanel ? 0 : 1,
                             borderRightColor: colors.border,
+                            borderBottomWidth: isCompactPanel ? 1 : 0,
+                            borderBottomColor: colors.border,
                             backgroundColor: '#f8fbff',
+                            flexShrink: 1,
+                            maxHeight: isCompactPanel ? 236 : undefined,
                         }}
-                        contentContainerStyle={{padding: 14, gap: 12}}
+                        contentContainerStyle={{
+                            padding: 12,
+                            gap: 10,
+                        }}
                     >
                         {adminConsoleGroups.map(group => (
                             <View
                                 key={group.key}
                                 style={{
-                                    gap: 8,
-                                    padding: 12,
-                                    borderRadius: 20,
+                                    gap: 6,
+                                    padding: 10,
+                                    borderRadius: 18,
                                     backgroundColor: '#ffffff',
                                     borderWidth: 1,
                                     borderColor: colors.border,
@@ -495,20 +518,20 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
                                                 testID={`ui-base-admin-popup:tab:${tab.key}`}
                                                 onPress={() => popupState.setSelectedTab(tab.key)}
                                                 style={{
-                                                    borderRadius: 18,
-                                                    paddingHorizontal: 14,
-                                                    paddingVertical: 12,
+                                                    borderRadius: 16,
+                                                    paddingHorizontal: 12,
+                                                    paddingVertical: 11,
                                                     backgroundColor: selected ? colors.primary : '#ffffff',
                                                     borderWidth: 1,
                                                     borderColor: selected ? colors.primary : colors.borderStrong,
-                                                    gap: 4,
+                                                    gap: 3,
                                                     ...(selected ? selectedTabShadowStyle : {}),
                                                 }}
                                             >
                                                 <Text
                                                     style={{
                                                         color: selected ? '#bfdbfe' : colors.primary,
-                                                        fontSize: 11,
+                                                        fontSize: 10,
                                                         fontWeight: '800',
                                                         letterSpacing: 0.6,
                                                     }}
@@ -518,14 +541,15 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
                                                 <Text style={{
                                                     color: selected ? '#ffffff' : colors.text,
                                                     fontWeight: '800',
+                                                    fontSize: 14,
                                                 }}
                                                 >
                                                     {tab.title}
                                                 </Text>
                                                 <Text style={{
                                                     color: selected ? '#dbeafe' : colors.muted,
-                                                    fontSize: 12,
-                                                    lineHeight: 17,
+                                                    fontSize: 11,
+                                                    lineHeight: 16,
                                                 }}
                                                 >
                                                     {tab.hint}
@@ -537,8 +561,13 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
                         ))}
                     </ScrollView>
                     <ScrollView
-                        style={{flex: 1}}
-                        contentContainerStyle={{padding: 20, gap: 14}}
+                        style={{flex: 1, minWidth: 0}}
+                        contentContainerStyle={{
+                            paddingHorizontal: isCompactPanel ? 16 : 18,
+                            paddingVertical: isCompactPanel ? 16 : 18,
+                            gap: 14,
+                            minWidth: 0,
+                        }}
                     >
                         <Text
                             testID="ui-base-admin-popup:selected-tab"

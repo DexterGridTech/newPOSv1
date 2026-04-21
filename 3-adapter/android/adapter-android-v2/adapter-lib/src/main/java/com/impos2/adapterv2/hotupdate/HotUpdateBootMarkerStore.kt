@@ -14,6 +14,7 @@ data class HotUpdateMarker(
   val manifestSha256: String,
   val bootAttempt: Int = 0,
   val maxLaunchFailures: Int = 1,
+  val healthCheckTimeoutMs: Long = 5_000L,
   val updatedAt: Long = System.currentTimeMillis(),
   val lastBootAt: Long? = null,
   val lastSuccessfulBootAt: Long? = null,
@@ -213,6 +214,7 @@ object HotUpdateMarkerCodec {
       appendJsonField("manifestSha256", marker.manifestSha256)
       appendJsonNumberField("bootAttempt", marker.bootAttempt)
       appendJsonNumberField("maxLaunchFailures", marker.maxLaunchFailures)
+      appendJsonNumberField("healthCheckTimeoutMs", marker.healthCheckTimeoutMs)
       appendJsonNumberField("updatedAt", marker.updatedAt)
       appendJsonOptionalNumberField("lastBootAt", marker.lastBootAt)
       appendJsonOptionalNumberField("lastSuccessfulBootAt", marker.lastSuccessfulBootAt)
@@ -234,6 +236,7 @@ object HotUpdateMarkerCodec {
         manifestSha256 = requireString(input, "manifestSha256"),
         bootAttempt = findInt(input, "bootAttempt") ?: 0,
         maxLaunchFailures = findInt(input, "maxLaunchFailures") ?: 1,
+        healthCheckTimeoutMs = findLong(input, "healthCheckTimeoutMs") ?: 5_000L,
         updatedAt = findLong(input, "updatedAt") ?: 0L,
         lastBootAt = findLong(input, "lastBootAt"),
         lastSuccessfulBootAt = findLong(input, "lastSuccessfulBootAt"),

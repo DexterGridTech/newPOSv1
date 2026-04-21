@@ -193,7 +193,7 @@
 
 Android topology host 已提供 `POST /tickets`：
 
-参考：`3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/topologyhost/TopologyHostServer.kt`
+参考：`3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/topologyhostv3/TopologyHostV3Server.kt`
 
 请求要求：
 

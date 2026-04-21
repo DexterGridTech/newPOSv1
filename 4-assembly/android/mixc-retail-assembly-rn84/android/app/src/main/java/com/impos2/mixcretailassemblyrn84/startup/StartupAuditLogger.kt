@@ -27,13 +27,15 @@ object StartupAuditLogger {
   private const val TAG = "StartupAudit"
   private val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US)
 
+  private fun formatNow(): String = formatter.format(Date())
+
   /**
    * 记录某个 Activity 已创建。
    */
   fun logActivityCreated(activityName: String, displayIndex: Int) {
     Log.i(
       TAG,
-      "activity_created activity=$activityName displayIndex=$displayIndex pid=${Process.myPid()} time=${formatter.format(Date())}",
+      "activity_created activity=$activityName displayIndex=$displayIndex pid=${Process.myPid()} time=${formatNow()}",
     )
   }
 
@@ -43,7 +45,7 @@ object StartupAuditLogger {
   fun logLoadComplete(displayIndex: Int) {
     Log.i(
       TAG,
-      "app_load_complete displayIndex=$displayIndex pid=${Process.myPid()} time=${formatter.format(Date())}",
+      "app_load_complete displayIndex=$displayIndex pid=${Process.myPid()} time=${formatNow()}",
     )
   }
 
@@ -53,7 +55,7 @@ object StartupAuditLogger {
   fun logSecondaryLaunchScheduled() {
     Log.i(
       TAG,
-      "secondary_launch_scheduled pid=${Process.myPid()} time=${formatter.format(Date())}",
+      "secondary_launch_scheduled pid=${Process.myPid()} time=${formatNow()}",
     )
   }
 
@@ -63,7 +65,7 @@ object StartupAuditLogger {
   fun logSecondaryLaunchAttempt(displayCount: Int, displayId: Int) {
     Log.i(
       TAG,
-      "secondary_launch_attempt displayCount=$displayCount displayId=$displayId pid=${Process.myPid()} time=${formatter.format(Date())}",
+      "secondary_launch_attempt displayCount=$displayCount displayId=$displayId pid=${Process.myPid()} time=${formatNow()}",
     )
   }
 
@@ -73,7 +75,7 @@ object StartupAuditLogger {
   fun logRestartRequested(hasSecondary: Boolean) {
     Log.i(
       TAG,
-      "restart_requested hasSecondary=$hasSecondary pid=${Process.myPid()} time=${formatter.format(Date())}",
+      "restart_requested hasSecondary=$hasSecondary pid=${Process.myPid()} time=${formatNow()}",
     )
   }
 
@@ -83,7 +85,7 @@ object StartupAuditLogger {
   fun logTopologyHostStopping() {
     Log.i(
       TAG,
-      "topology_host_stopping pid=${Process.myPid()} time=${formatter.format(Date())}",
+      "topology_host_stopping pid=${Process.myPid()} time=${formatNow()}",
     )
   }
 
@@ -93,7 +95,7 @@ object StartupAuditLogger {
   fun logTopologyHostStopped() {
     Log.i(
       TAG,
-      "topology_host_stopped pid=${Process.myPid()} time=${formatter.format(Date())}",
+      "topology_host_stopped pid=${Process.myPid()} time=${formatNow()}",
     )
   }
 
@@ -103,7 +105,7 @@ object StartupAuditLogger {
   fun logSecondaryShutdownRequested() {
     Log.i(
       TAG,
-      "secondary_shutdown_requested pid=${Process.myPid()} time=${formatter.format(Date())}",
+      "secondary_shutdown_requested pid=${Process.myPid()} time=${formatNow()}",
     )
   }
 
@@ -113,7 +115,7 @@ object StartupAuditLogger {
   fun logSecondaryAckReceived() {
     Log.i(
       TAG,
-      "secondary_ack_received pid=${Process.myPid()} time=${formatter.format(Date())}",
+      "secondary_ack_received pid=${Process.myPid()} time=${formatNow()}",
     )
   }
 
@@ -123,7 +125,7 @@ object StartupAuditLogger {
   fun logSecondaryShutdownTimeout() {
     Log.w(
       TAG,
-      "secondary_shutdown_timeout pid=${Process.myPid()} time=${formatter.format(Date())}",
+      "secondary_shutdown_timeout pid=${Process.myPid()} time=${formatNow()}",
     )
   }
 
@@ -133,7 +135,7 @@ object StartupAuditLogger {
   fun logSecondaryProcessExit() {
     Log.i(
       TAG,
-      "secondary_process_exit pid=${Process.myPid()} time=${formatter.format(Date())}",
+      "secondary_process_exit pid=${Process.myPid()} time=${formatNow()}",
     )
   }
 
@@ -143,7 +145,7 @@ object StartupAuditLogger {
   fun logReactHostReloadRequested(reason: String) {
     Log.i(
       TAG,
-      "react_host_reload_requested reason=$reason pid=${Process.myPid()} time=${formatter.format(Date())}",
+      "react_host_reload_requested reason=$reason pid=${Process.myPid()} time=${formatNow()}",
     )
   }
 
@@ -153,7 +155,7 @@ object StartupAuditLogger {
   fun logReactHostBundleReloadRequested(bundleFile: String) {
     Log.i(
       TAG,
-      "react_host_bundle_reload_requested bundleFile=$bundleFile pid=${Process.myPid()} time=${formatter.format(Date())}",
+      "react_host_bundle_reload_requested bundleFile=$bundleFile pid=${Process.myPid()} time=${formatNow()}",
     )
   }
 
@@ -163,7 +165,28 @@ object StartupAuditLogger {
   fun logHotUpdateProcessRelaunchRequested(bundleFile: String) {
     Log.i(
       TAG,
-      "hot_update_process_relaunch_requested bundleFile=$bundleFile pid=${Process.myPid()} time=${formatter.format(Date())}",
+      "hot_update_process_relaunch_requested bundleFile=$bundleFile pid=${Process.myPid()} time=${formatNow()}",
+    )
+  }
+
+  fun logHotUpdateHealthCheckScheduled(timeoutMs: Long, bundleVersion: String, packageId: String) {
+    Log.i(
+      TAG,
+      "hot_update_health_check_scheduled timeoutMs=$timeoutMs bundleVersion=$bundleVersion packageId=$packageId pid=${Process.myPid()} time=${formatNow()}",
+    )
+  }
+
+  fun logHotUpdateHealthCheckCancelled(reason: String) {
+    Log.i(
+      TAG,
+      "hot_update_health_check_cancelled reason=$reason pid=${Process.myPid()} time=${formatNow()}",
+    )
+  }
+
+  fun logHotUpdateHealthCheckTimedOut(timeoutMs: Long, bundleVersion: String, packageId: String) {
+    Log.w(
+      TAG,
+      "hot_update_health_check_timeout timeoutMs=$timeoutMs bundleVersion=$bundleVersion packageId=$packageId pid=${Process.myPid()} time=${formatNow()}",
     )
   }
 }

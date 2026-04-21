@@ -75,6 +75,7 @@ class HotUpdateTurboModule(reactContext: ReactApplicationContext) :
                   packageSha256 = packageSha256,
                   manifestSha256 = manifestSha256,
                   packageSize = packageSize.toLong(),
+                  maxRetainedPackages = 2,
                 ),
                 isCancelled = { task.cancelled.get() || invalidated },
               )
@@ -112,6 +113,7 @@ class HotUpdateTurboModule(reactContext: ReactApplicationContext) :
     entryFile: String?,
     manifestSha256: String,
     maxLaunchFailures: Double,
+    healthCheckTimeoutMs: Double?,
     promise: Promise
   ) {
     runCatching {
@@ -125,6 +127,7 @@ class HotUpdateTurboModule(reactContext: ReactApplicationContext) :
           entryFile = entryFile ?: "index.android.bundle",
           manifestSha256 = manifestSha256,
           maxLaunchFailures = maxLaunchFailures.toInt(),
+          healthCheckTimeoutMs = (healthCheckTimeoutMs ?: 5_000.0).toLong().coerceAtLeast(1L),
         ),
       )
       Arguments.createMap().apply {

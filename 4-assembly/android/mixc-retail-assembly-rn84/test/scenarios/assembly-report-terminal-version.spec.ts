@@ -4,10 +4,12 @@ const {
     buildHotUpdateVersionReportPayloadMock,
     createAssemblyFetchTransportMock,
     resolveAssemblyTransportServersMock,
+    createNativeStateStorageMock,
 } = vi.hoisted(() => ({
     buildHotUpdateVersionReportPayloadMock: vi.fn(),
     createAssemblyFetchTransportMock: vi.fn(),
     resolveAssemblyTransportServersMock: vi.fn(),
+    createNativeStateStorageMock: vi.fn(),
 }))
 
 vi.mock('@impos2/kernel-base-tdp-sync-runtime-v2', () => ({
@@ -19,13 +21,32 @@ vi.mock('../../src/platform-ports', () => ({
     resolveAssemblyTransportServers: resolveAssemblyTransportServersMock,
 }))
 
+vi.mock('../../src/turbomodules/stateStorage', () => ({
+    createNativeStateStorage: createNativeStateStorageMock,
+}))
+
 vi.mock('@impos2/kernel-server-config-v2', () => ({
     SERVER_NAME_MOCK_TERMINAL_PLATFORM: 'mock-terminal-platform',
 }))
 
 describe('assembly reportTerminalVersion', () => {
+    const storageState = new Map<string, string>()
+
     beforeEach(() => {
         vi.clearAllMocks()
+        storageState.clear()
+        vi.resetModules()
+        createNativeStateStorageMock.mockReturnValue({
+            async getItem(key: string) {
+                return storageState.get(key) ?? null
+            },
+            async setItem(key: string, value: string) {
+                storageState.set(key, value)
+            },
+            async removeItem(key: string) {
+                storageState.delete(key)
+            },
+        })
     })
 
     it('uses mock-terminal-platform base url instead of topology httpBaseUrl', async () => {
@@ -88,5 +109,95 @@ describe('assembly reportTerminalVersion', () => {
                 baseUrl: 'http://127.0.0.1:5810',
             }),
         }))
+    })
+
+    it('persists failed reports in outbox and flushes them before newer reports', async () => {
+        const execute = vi.fn()
+            .mockRejectedValueOnce(new Error('network down'))
+            .mockResolvedValue({
+                data: {success: true},
+                status: 200,
+                statusText: 'OK',
+                headers: {},
+            })
+            .mockResolvedValue({
+                data: {success: true},
+                status: 200,
+                statusText: 'OK',
+                headers: {},
+            })
+        createAssemblyFetchTransportMock.mockReturnValue({execute})
+        resolveAssemblyTransportServersMock.mockReturnValue([
+            {
+                serverName: 'mock-terminal-platform',
+                addresses: [{addressName: 'local', baseUrl: 'http://127.0.0.1:5810'}],
+            },
+        ])
+        buildHotUpdateVersionReportPayloadMock
+            .mockReturnValueOnce({
+                terminalId: 'terminal-001',
+                sandboxId: 'sandbox-001',
+                payload: {
+                    displayIndex: 0,
+                    displayRole: 'primary',
+                    appId: 'assembly-android-mixc-retail-rn84',
+                    assemblyVersion: '1.0.0',
+                    buildNumber: 1,
+                    runtimeVersion: 'android-mixc-retail-rn84@1.0',
+                    bundleVersion: '1.0.0+ota.0',
+                    source: 'embedded',
+                    state: 'BOOTING',
+                },
+            })
+            .mockReturnValueOnce({
+                terminalId: 'terminal-001',
+                sandboxId: 'sandbox-001',
+                payload: {
+                    displayIndex: 0,
+                    displayRole: 'primary',
+                    appId: 'assembly-android-mixc-retail-rn84',
+                    assemblyVersion: '1.0.0',
+                    buildNumber: 1,
+                    runtimeVersion: 'android-mixc-retail-rn84@1.0',
+                    bundleVersion: '1.0.0+ota.1',
+                    source: 'hot-update',
+                    packageId: 'pkg-1',
+                    releaseId: 'rel-1',
+                    state: 'RUNNING',
+                },
+            })
+
+        const {reportTerminalVersion} = await import('../../src/application/reportTerminalVersion')
+
+        await expect(reportTerminalVersion(
+            {getState: () => ({})} as any,
+            {
+                displayIndex: 0,
+                displayCount: 1,
+                deviceId: 'device-1',
+                isEmulator: true,
+                screenMode: 'desktop',
+            } as any,
+            'BOOTING',
+        )).rejects.toThrow('network down')
+
+        expect(storageState.get('hot-update:version-report-outbox')).toContain('"state":"BOOTING"')
+
+        await reportTerminalVersion(
+            {getState: () => ({})} as any,
+            {
+                displayIndex: 0,
+                displayCount: 1,
+                deviceId: 'device-1',
+                isEmulator: true,
+                screenMode: 'desktop',
+            } as any,
+            'RUNNING',
+        )
+
+        expect(execute).toHaveBeenCalledTimes(3)
+        expect(execute.mock.calls[1]?.[0]?.input?.body?.state).toBe('BOOTING')
+        expect(execute.mock.calls[2]?.[0]?.input?.body?.state).toBe('RUNNING')
+        expect(storageState.has('hot-update:version-report-outbox')).toBe(false)
     })
 })
