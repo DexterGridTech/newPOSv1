@@ -6,12 +6,14 @@ export const ASSEMBLY_AUTOMATION_MESSAGE_EVENT = 'onAutomationMessage'
 export interface NativeAutomationHostAddressInfo {
     host: string
     port: number
+    generation?: string
 }
 
 export interface NativeAutomationMessageEvent {
     callId: string
     sessionId: string
     messageJson: string
+    generation?: string
 }
 
 const emitter = new NativeEventEmitter(NativeAutomationTurboModule as any)
@@ -37,4 +39,3 @@ export const nativeAutomationHost = {
         await NativeAutomationTurboModule.rejectAutomationMessage(callId, errorMessage)
     },
 }
-

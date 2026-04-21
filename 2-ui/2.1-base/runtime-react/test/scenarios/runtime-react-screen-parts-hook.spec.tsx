@@ -35,6 +35,7 @@ describe('useScreenPartsByContainer', () => {
         })
 
         expect(renderEvents).toEqual([[
+            'ui.base.empty-screen',
             'ui.base.runtime-react.test.home',
             'ui.base.runtime-react.test.detail',
         ]])
@@ -49,6 +50,7 @@ describe('useScreenPartsByContainer', () => {
         })
 
         expect(renderEvents).toEqual([[
+            'ui.base.empty-screen',
             'ui.base.runtime-react.test.home',
             'ui.base.runtime-react.test.detail',
         ]])

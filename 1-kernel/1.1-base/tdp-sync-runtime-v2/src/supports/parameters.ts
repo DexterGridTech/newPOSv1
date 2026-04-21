@@ -36,6 +36,11 @@ export const tdpSyncV2ParameterDefinitions = {
         defaultValue: 45_000,
         validate: positiveFiniteNumber,
     }),
+    hotUpdateIdleThresholdMs: defineParameter.number('hot-update-idle-threshold-ms', {
+        name: 'Hot update idle threshold in milliseconds',
+        defaultValue: 300_000,
+        validate: positiveFiniteNumber,
+    }),
 } as const
 
 export const tdpSyncV2ParameterDefinitionList = listDefinitions(tdpSyncV2ParameterDefinitions)

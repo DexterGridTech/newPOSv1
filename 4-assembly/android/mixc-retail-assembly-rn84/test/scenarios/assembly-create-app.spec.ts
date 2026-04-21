@@ -334,6 +334,7 @@ describe('assembly createApp', () => {
             hotUpdate: {
                 getPort: expect.any(Function),
                 getCurrentFacts: expect.any(Function),
+                prepareRestart: expect.any(Function),
             },
         })
         const tdpSyncInput = createTdpSyncRuntimeModuleV2Mock.mock.calls.at(0)?.[0] as any

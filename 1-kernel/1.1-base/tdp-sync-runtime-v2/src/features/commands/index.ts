@@ -26,6 +26,9 @@ export const tdpSyncV2CommandDefinitions = {
         cursor: number
     }>('report-applied-cursor'),
     sendPing: defineModuleCommand<Record<string, never>>('send-ping'),
+    recordUserOperation: defineModuleCommand<{
+        at?: number
+    }>('record-user-operation'),
     tdpTopicDataChanged: defineModuleCommand<TdpTopicDataChangedPayload>('topic-data-changed', {
         allowNoActor: true,
     }),
@@ -117,6 +120,7 @@ export const tdpSyncV2CommandNames = {
     acknowledgeCursor: tdpSyncV2CommandDefinitions.acknowledgeCursor.commandName,
     reportAppliedCursor: tdpSyncV2CommandDefinitions.reportAppliedCursor.commandName,
     sendPing: tdpSyncV2CommandDefinitions.sendPing.commandName,
+    recordUserOperation: tdpSyncV2CommandDefinitions.recordUserOperation.commandName,
     tdpTopicDataChanged: tdpSyncV2CommandDefinitions.tdpTopicDataChanged.commandName,
     recomputeResolvedTopicChanges: tdpSyncV2CommandDefinitions.recomputeResolvedTopicChanges.commandName,
     tdpSnapshotLoaded: tdpSyncV2CommandDefinitions.tdpSnapshotLoaded.commandName,

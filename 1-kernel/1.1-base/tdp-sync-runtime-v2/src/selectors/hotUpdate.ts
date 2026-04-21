@@ -16,3 +16,9 @@ export const selectTdpHotUpdateReady = (state: RootState) =>
 
 export const selectTdpHotUpdateCurrent = (state: RootState) =>
     selectTdpHotUpdateState(state)?.current
+
+export const selectTdpHotUpdateRestartIntent = (state: RootState) =>
+    selectTdpHotUpdateState(state)?.restartIntent
+
+export const selectTdpHotUpdateLastUserOperationAt = (state: RootState) =>
+    selectTdpHotUpdateState(state)?.lastUserOperationAt

@@ -3,12 +3,14 @@ import type {
     StateRuntimeSliceDescriptor,
     SyncValueEnvelope,
 } from '@impos2/kernel-base-state-runtime'
+import {createSyncTombstone} from '@impos2/kernel-base-state-runtime'
 import {TDP_HOT_UPDATE_STATE_KEY} from '../../foundations/stateKeys'
 import {evaluateHotUpdateCompatibility} from '../../foundations/hotUpdateCompatibility'
 import type {
     HotUpdateAppliedVersion,
     HotUpdateCurrentFacts,
     HotUpdateHistoryItem,
+    HotUpdateRestartIntentState,
     HotUpdateState,
     TerminalHotUpdateDesiredV1,
 } from '../../types'
@@ -55,12 +57,46 @@ const deriveCurrentFactsFromState = (state: HotUpdateState): HotUpdateCurrentFac
     capabilities: [],
 })
 
+const createRestartIntent = (input: {
+    desired: TerminalHotUpdateDesiredV1
+    now: number
+    idleThresholdMs?: number
+    lastUserOperationAt?: number
+}): HotUpdateRestartIntentState => {
+    const mode = input.desired.restart.mode === 'idle' ? 'idle' : 'immediate'
+    const idleThresholdMs = mode === 'idle'
+        ? Math.max(
+            1,
+            input.desired.restart.idleWindowMs
+            ?? input.idleThresholdMs
+            ?? 300_000,
+        )
+        : undefined
+    const nextEligibleAt = mode === 'idle' && idleThresholdMs != null
+        ? (input.lastUserOperationAt ?? input.now) + idleThresholdMs
+        : undefined
+
+    return {
+        releaseId: input.desired.releaseId,
+        packageId: input.desired.packageId,
+        bundleVersion: input.desired.bundleVersion,
+        mode,
+        status: mode === 'idle' ? 'waiting-idle' : 'pending',
+        requestedAt: input.now,
+        updatedAt: input.now,
+        idleThresholdMs,
+        lastUserOperationAt: input.lastUserOperationAt,
+        nextEligibleAt,
+    }
+}
+
 export const reduceHotUpdateDesired = (
     state: HotUpdateState,
     input: {
         desired?: TerminalHotUpdateDesiredV1
         currentFacts: HotUpdateCurrentFacts
         now: number
+        idleThresholdMs?: number
     },
 ): HotUpdateState => {
     if (!input.desired) {
@@ -74,6 +110,7 @@ export const reduceHotUpdateDesired = (
             candidate: undefined,
             ready: undefined,
             applying: undefined,
+            restartIntent: undefined,
             history: appendHistory(state, {
                 event: 'desired-cleared',
                 releaseId: state.desired?.releaseId ?? state.candidate?.releaseId ?? state.ready?.releaseId,
@@ -90,6 +127,7 @@ export const reduceHotUpdateDesired = (
             ...state,
             desired,
             candidate: undefined,
+            restartIntent: undefined,
             history: appendHistory(state, {
                 event: 'paused',
                 releaseId: desired.releaseId,
@@ -128,6 +166,7 @@ export const reduceHotUpdateDesired = (
             },
             ready: undefined,
             applying: undefined,
+            restartIntent: undefined,
             history: appendHistory(state, {
                 event: 'compatibility-rejected',
                 releaseId: desired.releaseId,
@@ -153,6 +192,7 @@ export const reduceHotUpdateDesired = (
             candidate: undefined,
             ready: undefined,
             applying: undefined,
+            restartIntent: undefined,
         }
     }
 
@@ -189,11 +229,13 @@ const hotUpdateSlice = createSlice({
             desired?: TerminalHotUpdateDesiredV1
             currentFacts?: HotUpdateCurrentFacts
             now?: number
+            idleThresholdMs?: number
         }>) {
             return reduceHotUpdateDesired(state, {
                 desired: action.payload.desired,
                 currentFacts: action.payload.currentFacts ?? deriveCurrentFactsFromState(state),
                 now: action.payload.now ?? Date.now(),
+                idleThresholdMs: action.payload.idleThresholdMs,
             })
         },
         markReady(state, action: PayloadAction<{
@@ -258,6 +300,111 @@ const hotUpdateSlice = createSlice({
                 at: startedAt,
             })
         },
+        markRestartPending(state, action: PayloadAction<{
+            desired: TerminalHotUpdateDesiredV1
+            now?: number
+            idleThresholdMs?: number
+        }>) {
+            const now = action.payload.now ?? Date.now()
+            state.restartIntent = createRestartIntent({
+                desired: action.payload.desired,
+                now,
+                idleThresholdMs: action.payload.idleThresholdMs,
+                lastUserOperationAt: state.lastUserOperationAt,
+            })
+            state.history = appendHistory(state, {
+                event: state.restartIntent.mode === 'idle'
+                    ? 'restart-waiting-idle'
+                    : 'restart-pending',
+                releaseId: state.restartIntent.releaseId,
+                packageId: state.restartIntent.packageId,
+                bundleVersion: state.restartIntent.bundleVersion,
+                at: now,
+            })
+        },
+        updateRestartWaitingIdle(state, action: PayloadAction<{
+            now?: number
+            idleThresholdMs?: number
+        }>) {
+            if (!state.restartIntent || state.restartIntent.mode !== 'idle') {
+                return
+            }
+            const now = action.payload.now ?? Date.now()
+            const idleThresholdMs = Math.max(
+                1,
+                action.payload.idleThresholdMs
+                ?? state.restartIntent.idleThresholdMs
+                ?? 300_000,
+            )
+            state.restartIntent.status = 'waiting-idle'
+            state.restartIntent.idleThresholdMs = idleThresholdMs
+            state.restartIntent.updatedAt = now
+            state.restartIntent.lastUserOperationAt = state.lastUserOperationAt
+            state.restartIntent.nextEligibleAt = (state.lastUserOperationAt ?? now) + idleThresholdMs
+        },
+        markRestartPreparing(state, action: PayloadAction<{
+            now?: number
+        }>) {
+            if (!state.restartIntent) {
+                return
+            }
+            const now = action.payload.now ?? Date.now()
+            state.restartIntent.status = 'preparing'
+            state.restartIntent.updatedAt = now
+            state.history = appendHistory(state, {
+                event: 'restart-preparing',
+                releaseId: state.restartIntent.releaseId,
+                packageId: state.restartIntent.packageId,
+                bundleVersion: state.restartIntent.bundleVersion,
+                at: now,
+            })
+        },
+        markRestartReady(state, action: PayloadAction<{
+            now?: number
+        }>) {
+            if (!state.restartIntent) {
+                return
+            }
+            const now = action.payload.now ?? Date.now()
+            state.restartIntent.status = 'ready-to-restart'
+            state.restartIntent.updatedAt = now
+            state.history = appendHistory(state, {
+                event: 'restart-ready',
+                releaseId: state.restartIntent.releaseId,
+                packageId: state.restartIntent.packageId,
+                bundleVersion: state.restartIntent.bundleVersion,
+                at: now,
+            })
+        },
+        clearRestartIntent(state) {
+            state.restartIntent = undefined
+        },
+        recordUserOperation(state, action: PayloadAction<{
+            at?: number
+        }>) {
+            const at = action.payload.at ?? Date.now()
+            state.lastUserOperationAt = at
+            if (
+                state.restartIntent?.mode === 'idle'
+                && state.restartIntent.status !== 'preparing'
+                && state.restartIntent.status !== 'ready-to-restart'
+            ) {
+                const idleThresholdMs = Math.max(1, state.restartIntent.idleThresholdMs ?? 300_000)
+                const currentEligibleAt = state.restartIntent.nextEligibleAt
+                    ?? (state.restartIntent.lastUserOperationAt ?? state.restartIntent.requestedAt) + idleThresholdMs
+
+                if (at < currentEligibleAt) {
+                    state.restartIntent.status = 'waiting-idle'
+                    state.restartIntent.updatedAt = at
+                    state.restartIntent.lastUserOperationAt = at
+                    state.restartIntent.nextEligibleAt = at + idleThresholdMs
+                }
+            }
+            state.history = appendHistory(state, {
+                event: 'user-operation-recorded',
+                at,
+            })
+        },
         markApplied(state, action: PayloadAction<{
             current: HotUpdateAppliedVersion
             previous?: HotUpdateAppliedVersion
@@ -280,6 +427,7 @@ const hotUpdateSlice = createSlice({
                 state.candidate = undefined
                 state.ready = undefined
                 state.applying = undefined
+                state.restartIntent = undefined
                 return
             }
 
@@ -288,6 +436,7 @@ const hotUpdateSlice = createSlice({
             state.candidate = undefined
             state.ready = undefined
             state.applying = undefined
+            state.restartIntent = undefined
             state.history = appendHistory(state, {
                 event: 'applied',
                 releaseId: action.payload.current.releaseId,
@@ -375,26 +524,52 @@ export const tdpHotUpdateActions = hotUpdateSlice.actions
 const syncDescriptor = {
     kind: 'record' as const,
     getEntries(state: HotUpdateState) {
+        const currentUpdatedAt = state.current.appliedAt
+        const desiredUpdatedAt = state.desired
+            ? Date.parse(state.desired.rollout.publishedAt) || currentUpdatedAt
+            : currentUpdatedAt
+        const candidateUpdatedAt = state.candidate?.updatedAt
+            ?? state.lastError?.at
+            ?? currentUpdatedAt
+        const readyUpdatedAt = state.ready?.readyAt
+            ?? currentUpdatedAt
+        const applyingUpdatedAt = state.applying?.startedAt
+            ?? currentUpdatedAt
+        const restartIntentUpdatedAt = state.restartIntent?.updatedAt
+            ?? currentUpdatedAt
+        const lastUserOperationUpdatedAt = state.lastUserOperationAt
+            ?? currentUpdatedAt
+        const previousUpdatedAt = state.previous?.appliedAt
+            ?? currentUpdatedAt
+        const lastErrorUpdatedAt = state.lastError?.at
+            ?? currentUpdatedAt
+
         return {
-            current: {value: state.current, updatedAt: state.current.appliedAt},
+            current: {value: state.current, updatedAt: currentUpdatedAt},
             desired: state.desired
-                ? {value: state.desired, updatedAt: Date.parse(state.desired.rollout.publishedAt) || 0}
-                : undefined,
+                ? {value: state.desired, updatedAt: desiredUpdatedAt}
+                : createSyncTombstone(desiredUpdatedAt),
             candidate: state.candidate
-                ? {value: state.candidate, updatedAt: state.candidate.updatedAt}
-                : undefined,
+                ? {value: state.candidate, updatedAt: candidateUpdatedAt}
+                : createSyncTombstone(candidateUpdatedAt),
             ready: state.ready
-                ? {value: state.ready, updatedAt: state.ready.readyAt}
-                : undefined,
+                ? {value: state.ready, updatedAt: readyUpdatedAt}
+                : createSyncTombstone(readyUpdatedAt),
             applying: state.applying
-                ? {value: state.applying, updatedAt: state.applying.startedAt}
-                : undefined,
+                ? {value: state.applying, updatedAt: applyingUpdatedAt}
+                : createSyncTombstone(applyingUpdatedAt),
+            restartIntent: state.restartIntent
+                ? {value: state.restartIntent, updatedAt: restartIntentUpdatedAt}
+                : createSyncTombstone(restartIntentUpdatedAt),
+            lastUserOperationAt: state.lastUserOperationAt != null
+                ? {value: state.lastUserOperationAt, updatedAt: lastUserOperationUpdatedAt}
+                : createSyncTombstone(lastUserOperationUpdatedAt),
             previous: state.previous
-                ? {value: state.previous, updatedAt: state.previous.appliedAt}
-                : undefined,
+                ? {value: state.previous, updatedAt: previousUpdatedAt}
+                : createSyncTombstone(previousUpdatedAt),
             lastError: state.lastError
-                ? {value: state.lastError, updatedAt: state.lastError.at}
-                : undefined,
+                ? {value: state.lastError, updatedAt: lastErrorUpdatedAt}
+                : createSyncTombstone(lastErrorUpdatedAt),
         }
     },
     applyEntries(
@@ -418,6 +593,12 @@ const syncDescriptor = {
             applying: entries.applying?.tombstone
                 ? undefined
                 : (entries.applying?.value as HotUpdateState['applying'] | undefined) ?? state.applying,
+            restartIntent: entries.restartIntent?.tombstone
+                ? undefined
+                : (entries.restartIntent?.value as HotUpdateState['restartIntent'] | undefined) ?? state.restartIntent,
+            lastUserOperationAt: entries.lastUserOperationAt?.tombstone
+                ? undefined
+                : (entries.lastUserOperationAt?.value as HotUpdateState['lastUserOperationAt'] | undefined) ?? state.lastUserOperationAt,
             previous: entries.previous?.tombstone
                 ? undefined
                 : (entries.previous?.value as HotUpdateState['previous'] | undefined) ?? state.previous,
@@ -439,6 +620,8 @@ export const tdpHotUpdateSliceDescriptor: StateRuntimeSliceDescriptor<HotUpdateS
         {kind: 'field', stateKey: 'candidate', flushMode: 'immediate'},
         {kind: 'field', stateKey: 'ready', flushMode: 'immediate'},
         {kind: 'field', stateKey: 'applying', flushMode: 'immediate'},
+        {kind: 'field', stateKey: 'restartIntent', flushMode: 'immediate'},
+        {kind: 'field', stateKey: 'lastUserOperationAt', flushMode: 'immediate'},
         {kind: 'field', stateKey: 'previous', flushMode: 'immediate'},
         {kind: 'field', stateKey: 'history', flushMode: 'immediate'},
         {kind: 'field', stateKey: 'lastError', flushMode: 'immediate'},

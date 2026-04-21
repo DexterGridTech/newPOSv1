@@ -42,6 +42,14 @@ function requireString(value, field) {
   return value.trim()
 }
 
+function normalizeRestartMode(value) {
+  const normalized = typeof value === 'string' ? value.trim().toLowerCase() : ''
+  if (['immediate', 'idle', 'manual', 'next-launch'].includes(normalized)) {
+    return normalized
+  }
+  throw new Error(`invalid restartMode: ${String(value)}`)
+}
+
 function createZip(entries) {
   const zlib = require('zlib')
   const localParts = []
@@ -365,7 +373,11 @@ async function main() {
   const manifestPath = getManifestPath(appId)
   const releaseManifest = readJson(manifestPath)
   const channel = typeof args.channel === 'string' ? args.channel : (await prompt(`Channel [${releaseManifest.channel}]: `) || releaseManifest.channel)
-  const restartMode = typeof args.restartMode === 'string' ? args.restartMode : (await prompt('Restart mode [manual]: ') || 'manual')
+  const restartMode = normalizeRestartMode(
+    typeof args.restartMode === 'string'
+      ? args.restartMode
+      : (await prompt('Restart mode [manual|immediate|idle|next-launch]: ') || 'manual'),
+  )
   const operatorInstruction = typeof args.operatorInstruction === 'string'
     ? args.operatorInstruction
     : (await prompt('Operator instruction [cashier idle restart]: ') || 'cashier idle restart')

@@ -29,8 +29,10 @@ describe('runtime-react screen part registration', () => {
         expect(registry.resolve('sample')).toBe(SampleScreen)
     })
 
-    it('ships stable default parts for empty screen and alert rendering', () => {
+    it('ships stable default parts for empty screen, alert and hot update modal rendering', () => {
         expect(runtimeReactDefaultParts.emptyScreen.definition.partKey).toBe('ui.base.empty-screen')
         expect(runtimeReactDefaultParts.defaultAlert.definition.partKey).toBe('ui.base.default-alert')
+        expect(runtimeReactDefaultParts.hotUpdateProgressModal.definition.partKey)
+            .toBe('ui.base.hot-update-progress-modal')
     })
 })

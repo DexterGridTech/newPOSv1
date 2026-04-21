@@ -409,9 +409,10 @@ describe('assembly ui automation runtime', () => {
                 target: 'primary',
                 testID: 'ui-integration-retail-shell:welcome:title',
                 timeoutMs: 3_000,
-            })).resolves.toMatchObject({
-                text: '欢迎进入零售终端 · OTA E2E V6',
-            })
+            })).resolves.toSatisfy((node: {text?: string}) =>
+                typeof node.text === 'string'
+                && node.text.startsWith('欢迎进入零售终端 · OTA E2E V'),
+            )
         } finally {
             await mounted.unmount()
         }

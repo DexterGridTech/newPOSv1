@@ -16,6 +16,11 @@ export const kernelBaseDevServerConfig: TransportServerConfig = {
                     serverName: SERVER_NAME_MOCK_TERMINAL_PLATFORM,
                     addresses: [
                         {
+                            addressName: 'lan',
+                            baseUrl: 'http://192.168.0.172:5810',
+                            timeoutMs: 3_000,
+                        },
+                        {
                             addressName: 'local',
                             baseUrl: 'http://127.0.0.1:5810',
                             timeoutMs: 3_000,

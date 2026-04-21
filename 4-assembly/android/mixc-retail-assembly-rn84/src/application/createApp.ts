@@ -36,6 +36,7 @@ import {createModule as createAssemblyRuntimeModule} from './createModule'
 import {createAssemblyAdminConsoleInput} from './adminConsoleConfig'
 import {syncHotUpdateStateFromNativeBoot} from './syncHotUpdateStateFromNativeBoot'
 import { reportTerminalVersion } from './reportTerminalVersion'
+import {prepareHotUpdateRestart} from './prepareHotUpdateRestart'
 import {
     createAssemblyAutomation,
     getAssemblyAdbSocketDebugConfig,
@@ -145,6 +146,15 @@ const createKernelRuntimeAppForAssembly = (
                             channel: releaseInfo.channel,
                             capabilities: [],
                         }
+                    },
+                    prepareRestart({context, releaseId, packageId, bundleVersion, mode}) {
+                        return prepareHotUpdateRestart({
+                            context,
+                            releaseId,
+                            packageId,
+                            bundleVersion,
+                            mode,
+                        })
                     },
                 },
             }),

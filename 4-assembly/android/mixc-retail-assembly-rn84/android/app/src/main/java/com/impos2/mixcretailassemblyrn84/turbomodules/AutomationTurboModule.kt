@@ -39,6 +39,7 @@ class AutomationTurboModule(reactContext: ReactApplicationContext) :
   private val pendingCalls = ConcurrentHashMap<String, PendingAutomationCall>()
   private val sequence = AtomicLong(0L)
   @Volatile private var server: AutomationSocketServer? = null
+  @Volatile private var generation: String = createGeneration()
 
   override fun getName(): String = NAME
 
@@ -46,6 +47,7 @@ class AutomationTurboModule(reactContext: ReactApplicationContext) :
     runCatching {
       val json = if (configJson.isBlank()) JSONObject() else JSONObject(configJson)
       val port = json.optInt("port", 18_584)
+      generation = createGeneration()
       val startedServer = server ?: AutomationSocketServer(
         AutomationSocketServerConfig(port = port),
         AutomationHostBridge { session, message -> dispatchToJs(session, message) },
@@ -56,6 +58,7 @@ class AutomationTurboModule(reactContext: ReactApplicationContext) :
       JSONObject()
         .put("host", address.host)
         .put("port", address.port)
+        .put("generation", generation)
         .toString()
     }.onSuccess {
       promise.resolve(it)
@@ -87,6 +90,7 @@ class AutomationTurboModule(reactContext: ReactApplicationContext) :
         .put("running", status?.running ?: false)
         .put("host", status?.host ?: "127.0.0.1")
         .put("port", status?.port ?: 18_584)
+        .put("generation", generation)
         .put("activeSessionCount", status?.activeSessionCount ?: 0)
         .put("acceptedSessionCount", status?.acceptedSessionCount ?: 0L)
         .put("receivedMessageCount", status?.receivedMessageCount ?: 0L)
@@ -161,6 +165,7 @@ class AutomationTurboModule(reactContext: ReactApplicationContext) :
       putString("callId", pending.callId)
       putString("sessionId", pending.sessionId)
       putString("messageJson", pending.messageJson)
+      putString("generation", generation)
     }
     reactApplicationContext
       .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
@@ -177,5 +182,9 @@ class AutomationTurboModule(reactContext: ReactApplicationContext) :
         ?: DEFAULT_DISPATCH_TIMEOUT_MS
       max(DEFAULT_DISPATCH_TIMEOUT_MS, requestedTimeout + DISPATCH_TIMEOUT_PADDING_MS)
     }.getOrDefault(DEFAULT_DISPATCH_TIMEOUT_MS)
+  }
+
+  private fun createGeneration(): String {
+    return "automation-host-${sequence.incrementAndGet()}-${System.nanoTime()}"
   }
 }

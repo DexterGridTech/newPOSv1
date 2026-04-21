@@ -87,12 +87,17 @@ export default function App(rawProps: Partial<AppProps>): React.JSX.Element {
                         port: automationHostConfig.port,
                     })
                     automationHostStarted = true
+                    const automationGeneration = automationHostAddress.generation ?? null
                     logStage('automation.host:start', {
                         target: automationHostConfig.target,
                         host: automationHostAddress.host,
                         port: automationHostAddress.port,
+                        generation: automationGeneration,
                     })
                     unsubscribeAutomationMessages = nativeAutomationHost.subscribeMessages(async event => {
+                        if (automationGeneration != null && event.generation != null && event.generation !== automationGeneration) {
+                            return
+                        }
                         try {
                             const response = await runtimeApp.automation!.controller.dispatchMessage(event.messageJson)
                             await nativeAutomationHost.resolveMessage(event.callId, response)

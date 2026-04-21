@@ -17,6 +17,7 @@ def releaseStoreFile = project.findProperty("MIXC_RELEASE_STORE_FILE")
 def releaseStorePassword = project.findProperty("MIXC_RELEASE_STORE_PASSWORD")
 def releaseKeyAlias = project.findProperty("MIXC_RELEASE_KEY_ALIAS")
 def releaseKeyPassword = project.findProperty("MIXC_RELEASE_KEY_PASSWORD")
+def allowLocalReleaseDebugSigning = (project.findProperty("MIXC_ALLOW_LOCAL_RELEASE_DEBUG_SIGNING")?.toString() == "true")
 def hasReleaseSigning = [releaseStoreFile, releaseStorePassword, releaseKeyAlias, releaseKeyPassword].every {
   it != null && it.toString().trim()
 }
@@ -60,6 +61,8 @@ android {
     release {
       if (hasReleaseSigning) {
         signingConfig signingConfigs.release
+      } else if (allowLocalReleaseDebugSigning) {
+        signingConfig signingConfigs.debug
       }
       minifyEnabled enableProguardInReleaseBuilds
       buildConfigField "boolean", "ENABLE_HOT_UPDATE_BUNDLE_RESOLVER", "true"
@@ -83,8 +86,8 @@ gradle.taskGraph.whenReady { taskGraph ->
   def releaseArtifactTaskRequested = taskGraph.allTasks.any { task ->
     task.project == project && requiresReleaseSigning(task.name)
   }
-  if (releaseArtifactTaskRequested && !hasReleaseSigning) {
-    throw new GradleException("Release build requires MIXC_RELEASE_STORE_FILE / MIXC_RELEASE_STORE_PASSWORD / MIXC_RELEASE_KEY_ALIAS / MIXC_RELEASE_KEY_PASSWORD")
+  if (releaseArtifactTaskRequested && !hasReleaseSigning && !allowLocalReleaseDebugSigning) {
+    throw new GradleException("Release build requires MIXC_RELEASE_STORE_FILE / MIXC_RELEASE_STORE_PASSWORD / MIXC_RELEASE_KEY_ALIAS / MIXC_RELEASE_KEY_PASSWORD, or set MIXC_ALLOW_LOCAL_RELEASE_DEBUG_SIGNING=true for local E2E builds")
   }
 }
 

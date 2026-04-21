@@ -15,6 +15,7 @@ import {
 import {createTdpSessionStateActorDefinitionV2} from './sessionStateActor'
 import {createTdpTopicChangeActorDefinitionV2} from './topicChangeActor'
 import {createTdpSystemCatalogBridgeActorDefinitionV2} from './systemCatalogBridgeActor'
+import {createTdpUserOperationActorDefinitionV2} from './userOperationActor'
 import type {CreateTdpSyncRuntimeModuleV2Input} from '../../types'
 
 export * from './initializeActor'
@@ -29,6 +30,7 @@ export * from './sessionConnectionActor'
 export * from './sessionStateActor'
 export * from './topicChangeActor'
 export * from './systemCatalogBridgeActor'
+export * from './userOperationActor'
 
 export const createTdpSyncActorDefinitionsV2 = (
     fingerprintRef: TopicChangePublisherFingerprintV2,
@@ -47,4 +49,5 @@ export const createTdpSyncActorDefinitionsV2 = (
     createTdpSessionStateActorDefinitionV2(),
     createTdpTopicChangeActorDefinitionV2(fingerprintRef, moduleInput),
     createTdpSystemCatalogBridgeActorDefinitionV2(),
+    createTdpUserOperationActorDefinitionV2(),
 ]

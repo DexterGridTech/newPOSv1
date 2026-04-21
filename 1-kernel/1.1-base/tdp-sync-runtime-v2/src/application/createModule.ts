@@ -26,12 +26,14 @@ import {
     selectTdpHotUpdateCandidate,
     selectTdpHotUpdateCurrent,
     selectTdpHotUpdateDesired,
+    selectTdpHotUpdateRestartIntent,
     selectTdpHotUpdateReady,
 } from '../selectors'
 import {tdpHotUpdateActions} from '../features/slices'
 import {SERVER_NAME_MOCK_TERMINAL_PLATFORM} from '@impos2/kernel-server-config-v2'
 import type {CreateTdpSyncRuntimeModuleV2Input} from '../types'
 import {tdpSyncRuntimeV2ModuleManifest} from './moduleManifest'
+import {tdpSyncV2ParameterDefinitions} from '../supports/parameters'
 
 /**
  * 设计意图：
@@ -50,6 +52,15 @@ export const createTdpSyncRuntimeModuleV2 = (
     const fingerprintRef = createTopicChangePublisherFingerprintV2()
     const connectionRuntimeRef = {}
     const installingPackageIds = new Set<string>()
+    const restartingPackageIds = new Set<string>()
+    let idleRestartTimer: ReturnType<typeof setTimeout> | null = null
+
+    const clearIdleRestartTimer = () => {
+        if (idleRestartTimer) {
+            clearTimeout(idleRestartTimer)
+            idleRestartTimer = null
+        }
+    }
 
     return defineKernelRuntimeModuleV2({
         ...tdpSyncRuntimeV2ModuleManifest,
@@ -62,6 +73,64 @@ export const createTdpSyncRuntimeModuleV2 = (
         install(context: RuntimeModuleContextV2) {
             const hotUpdatePort = input.hotUpdate?.getPort?.(context)
             const httpRuntime = input.assembly?.createHttpRuntime(context) ?? createDefaultTdpSyncHttpRuntimeV2(context)
+            const resolveIdleThresholdMs = () => {
+                const resolved = context.resolveParameter({
+                    key: tdpSyncV2ParameterDefinitions.hotUpdateIdleThresholdMs.key,
+                    definition: tdpSyncV2ParameterDefinitions.hotUpdateIdleThresholdMs,
+                })
+                if (typeof resolved.value === 'number' && Number.isFinite(resolved.value) && resolved.value > 0) {
+                    return resolved.value
+                }
+                return tdpSyncV2ParameterDefinitions.hotUpdateIdleThresholdMs.defaultValue
+            }
+            const restartNow = async (restartMode: 'immediate' | 'idle') => {
+                const state = context.getState()
+                const desired = selectTdpHotUpdateDesired(state)
+                const ready = selectTdpHotUpdateReady(state)
+                const applying = state['kernel.base.tdp-sync-runtime-v2.hot-update' as keyof typeof state] as {applying?: {packageId?: string}} | undefined
+                if (!desired || !ready) {
+                    return
+                }
+                if (desired.packageId !== ready.packageId || applying?.applying?.packageId !== desired.packageId) {
+                    return
+                }
+                if (restartingPackageIds.has(desired.packageId)) {
+                    return
+                }
+
+                restartingPackageIds.add(desired.packageId)
+                clearIdleRestartTimer()
+                context.dispatchAction(tdpHotUpdateActions.markRestartPreparing({}))
+
+                try {
+                    await input.hotUpdate?.prepareRestart?.({
+                        context,
+                        displayIndex: context.displayContext.displayIndex ?? 0,
+                        releaseId: desired.releaseId,
+                        packageId: desired.packageId,
+                        bundleVersion: desired.bundleVersion,
+                        mode: restartMode,
+                    })
+                    context.dispatchAction(tdpHotUpdateActions.markRestartReady({}))
+                    await context.platformPorts.appControl?.restartApp?.()
+                } catch (error) {
+                    context.dispatchAction(tdpHotUpdateActions.markFailed({
+                        code: error instanceof Error ? error.message : 'HOT_UPDATE_RESTART_PREPARE_FAILED',
+                        message: error instanceof Error ? error.message : String(error),
+                    }))
+                    context.dispatchAction(tdpHotUpdateActions.clearRestartIntent())
+                } finally {
+                    restartingPackageIds.delete(desired.packageId)
+                }
+            }
+            const scheduleIdleRestart = (nextEligibleAt: number) => {
+                clearIdleRestartTimer()
+                const delay = Math.max(0, nextEligibleAt - Date.now())
+                idleRestartTimer = setTimeout(() => {
+                    idleRestartTimer = null
+                    void restartNow('idle')
+                }, delay)
+            }
 
             createTdpSyncHttpServiceV2(httpRuntime)
             installTdpSessionConnectionRuntimeV2({
@@ -74,7 +143,8 @@ export const createTdpSyncRuntimeModuleV2 = (
                     return
                 }
 
-                const topology = selectTopologyRuntimeV3Context(context.getState())
+                const state = context.getState()
+                const topology = selectTopologyRuntimeV3Context(state)
                 const isPrimaryOwner = topology == null
                     ? (context.displayContext.displayIndex ?? 0) === 0
                     : topology.instanceMode !== 'SLAVE'
@@ -83,92 +153,112 @@ export const createTdpSyncRuntimeModuleV2 = (
                     return
                 }
 
-                const desired = selectTdpHotUpdateDesired(context.getState())
-                const candidate = selectTdpHotUpdateCandidate(context.getState())
-                if (!desired || !candidate) {
-                    return
-                }
-
-                if (candidate.status !== 'download-pending') {
-                    return
-                }
-
-                if (installingPackageIds.has(candidate.packageId)) {
-                    return
-                }
-
-                const nextAttempt = (candidate.attempts ?? 0) + 1
-                const maxAttempts = desired.safety.maxDownloadAttempts
-                if (nextAttempt > maxAttempts) {
-                    context.dispatchAction(tdpHotUpdateActions.markFailed({
-                        code: 'HOT_UPDATE_MAX_ATTEMPTS_EXCEEDED',
-                        message: `Hot update max attempts exceeded for ${candidate.packageId}`,
-                    }))
-                    return
-                }
-
-                installingPackageIds.add(candidate.packageId)
-                context.dispatchAction(tdpHotUpdateActions.markDownloading({
-                    releaseId: candidate.releaseId,
-                    packageId: candidate.packageId,
-                    bundleVersion: candidate.bundleVersion,
-                    attempts: nextAttempt,
-                }))
-
-                void (async () => {
-                    try {
-                        const packageUrls = resolveHttpUrlCandidates({
-                            runtime: httpRuntime,
-                            serverName: SERVER_NAME_MOCK_TERMINAL_PLATFORM,
-                            pathOrUrl: desired.packageUrl,
-                        })
-                        const result = await hotUpdatePort.downloadPackage({
-                            packageId: desired.packageId,
-                            releaseId: desired.releaseId,
-                            bundleVersion: desired.bundleVersion,
-                            packageUrls,
-                            packageSha256: desired.packageSha256,
-                            manifestSha256: desired.manifestSha256,
-                            packageSize: desired.packageSize,
-                        })
-                        context.dispatchAction(tdpHotUpdateActions.markReady({
-                            releaseId: desired.releaseId,
-                            packageId: desired.packageId,
-                            bundleVersion: desired.bundleVersion,
-                            installDir: result.installDir,
-                            entryFile: result.entryFile,
-                            packageSha256: result.packageSha256,
-                            manifestSha256: result.manifestSha256,
-                        }))
-
-                        const marker = await hotUpdatePort.writeBootMarker({
-                            releaseId: desired.releaseId,
-                            packageId: desired.packageId,
-                            bundleVersion: desired.bundleVersion,
-                            installDir: result.installDir,
-                            entryFile: result.entryFile,
-                            manifestSha256: result.manifestSha256,
-                            maxLaunchFailures: desired.safety.maxLaunchFailures,
-                        })
-                        context.dispatchAction(tdpHotUpdateActions.markApplying({
-                            releaseId: desired.releaseId,
-                            packageId: desired.packageId,
-                            bundleVersion: desired.bundleVersion,
-                            bootMarkerPath: marker.bootMarkerPath,
-                        }))
-
-                        if (desired.restart.mode === 'immediate') {
-                            await context.platformPorts.appControl?.restartApp?.()
-                        }
-                    } catch (error) {
+                const desired = selectTdpHotUpdateDesired(state)
+                const candidate = selectTdpHotUpdateCandidate(state)
+                if (desired && candidate?.status === 'download-pending' && !installingPackageIds.has(candidate.packageId)) {
+                    const nextAttempt = (candidate.attempts ?? 0) + 1
+                    const maxAttempts = desired.safety.maxDownloadAttempts
+                    if (nextAttempt > maxAttempts) {
                         context.dispatchAction(tdpHotUpdateActions.markFailed({
-                            code: error instanceof Error ? error.message : 'HOT_UPDATE_INSTALL_FAILED',
-                            message: error instanceof Error ? error.message : String(error),
+                            code: 'HOT_UPDATE_MAX_ATTEMPTS_EXCEEDED',
+                            message: `Hot update max attempts exceeded for ${candidate.packageId}`,
                         }))
-                    } finally {
-                        installingPackageIds.delete(candidate.packageId)
+                    } else {
+                        installingPackageIds.add(candidate.packageId)
+                        context.dispatchAction(tdpHotUpdateActions.markDownloading({
+                            releaseId: candidate.releaseId,
+                            packageId: candidate.packageId,
+                            bundleVersion: candidate.bundleVersion,
+                            attempts: nextAttempt,
+                        }))
+
+                        void (async () => {
+                            try {
+                                const packageUrls = resolveHttpUrlCandidates({
+                                    runtime: httpRuntime,
+                                    serverName: SERVER_NAME_MOCK_TERMINAL_PLATFORM,
+                                    pathOrUrl: desired.packageUrl,
+                                })
+                                const result = await hotUpdatePort.downloadPackage({
+                                    packageId: desired.packageId,
+                                    releaseId: desired.releaseId,
+                                    bundleVersion: desired.bundleVersion,
+                                    packageUrls,
+                                    packageSha256: desired.packageSha256,
+                                    manifestSha256: desired.manifestSha256,
+                                    packageSize: desired.packageSize,
+                                })
+                                context.dispatchAction(tdpHotUpdateActions.markReady({
+                                    releaseId: desired.releaseId,
+                                    packageId: desired.packageId,
+                                    bundleVersion: desired.bundleVersion,
+                                    installDir: result.installDir,
+                                    entryFile: result.entryFile,
+                                    packageSha256: result.packageSha256,
+                                    manifestSha256: result.manifestSha256,
+                                }))
+
+                                const marker = await hotUpdatePort.writeBootMarker({
+                                    releaseId: desired.releaseId,
+                                    packageId: desired.packageId,
+                                    bundleVersion: desired.bundleVersion,
+                                    installDir: result.installDir,
+                                    entryFile: result.entryFile,
+                                    manifestSha256: result.manifestSha256,
+                                    maxLaunchFailures: desired.safety.maxLaunchFailures,
+                                })
+                                context.dispatchAction(tdpHotUpdateActions.markApplying({
+                                    releaseId: desired.releaseId,
+                                    packageId: desired.packageId,
+                                    bundleVersion: desired.bundleVersion,
+                                    bootMarkerPath: marker.bootMarkerPath,
+                                }))
+
+                                if (desired.restart.mode === 'immediate' || desired.restart.mode === 'idle') {
+                                    context.dispatchAction(tdpHotUpdateActions.markRestartPending({
+                                        desired,
+                                        idleThresholdMs: resolveIdleThresholdMs(),
+                                    }))
+                                }
+                            } catch (error) {
+                                context.dispatchAction(tdpHotUpdateActions.markFailed({
+                                    code: error instanceof Error ? error.message : 'HOT_UPDATE_INSTALL_FAILED',
+                                    message: error instanceof Error ? error.message : String(error),
+                                }))
+                            } finally {
+                                installingPackageIds.delete(candidate.packageId)
+                            }
+                        })()
                     }
-                })()
+                }
+
+                const restartIntent = selectTdpHotUpdateRestartIntent(context.getState())
+                const ready = selectTdpHotUpdateReady(context.getState())
+                if (!restartIntent || !ready || restartIntent.packageId !== ready.packageId) {
+                    clearIdleRestartTimer()
+                    return
+                }
+
+                if (restartIntent.status === 'preparing' || restartIntent.status === 'ready-to-restart') {
+                    clearIdleRestartTimer()
+                    return
+                }
+
+                if (restartIntent.mode === 'immediate' && restartIntent.status === 'pending') {
+                    void restartNow('immediate')
+                    return
+                }
+
+                if (restartIntent.mode === 'idle') {
+                    const idleThresholdMs = Math.max(1, restartIntent.idleThresholdMs ?? resolveIdleThresholdMs())
+                    const nextEligibleAt = (restartIntent.lastUserOperationAt ?? restartIntent.requestedAt) + idleThresholdMs
+                    if (nextEligibleAt <= Date.now()) {
+                        void restartNow('idle')
+                        return
+                    }
+                    scheduleIdleRestart(nextEligibleAt)
+                    return
+                }
             })
             createRuntimeModuleLifecycleLogger({moduleName, context}).logInstall({
                 stateSlices: tdpSyncRuntimeV2ModuleManifest.stateSliceNames,

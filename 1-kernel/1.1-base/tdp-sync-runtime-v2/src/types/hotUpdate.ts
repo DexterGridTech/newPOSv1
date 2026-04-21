@@ -105,6 +105,19 @@ export interface HotUpdateApplyingState {
     startedAt: number
 }
 
+export interface HotUpdateRestartIntentState {
+    releaseId: string
+    packageId: string
+    bundleVersion: string
+    mode: 'immediate' | 'idle'
+    status: 'pending' | 'waiting-idle' | 'preparing' | 'ready-to-restart'
+    requestedAt: number
+    updatedAt: number
+    idleThresholdMs?: number
+    lastUserOperationAt?: number
+    nextEligibleAt?: number
+}
+
 export interface HotUpdateAppliedVersion {
     source: 'embedded' | 'hot-update' | 'rollback'
     appId: string
@@ -133,6 +146,11 @@ export interface HotUpdateHistoryItem {
         | 'rollback'
         | 'package-pruned'
         | 'version-reported'
+        | 'restart-pending'
+        | 'restart-waiting-idle'
+        | 'restart-preparing'
+        | 'restart-ready'
+        | 'user-operation-recorded'
     releaseId?: string
     packageId?: string
     bundleVersion?: string
@@ -146,6 +164,8 @@ export interface HotUpdateState {
     candidate?: HotUpdateCandidateState
     ready?: HotUpdateReadyState
     applying?: HotUpdateApplyingState
+    restartIntent?: HotUpdateRestartIntentState
+    lastUserOperationAt?: number
     previous?: HotUpdateAppliedVersion
     history: HotUpdateHistoryItem[]
     lastError?: {code: string; message: string; at: number}
