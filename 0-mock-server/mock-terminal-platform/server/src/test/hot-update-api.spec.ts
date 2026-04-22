@@ -660,4 +660,32 @@ describe('mock-terminal-platform hot update api', () => {
     const packagesPayload = await json<{ data: Array<{ packageId: string }> }>(packagesResponse)
     expect(packagesPayload.data.filter(item => item.packageId === uploadOncePayload.data.packageId)).toHaveLength(1)
   })
+
+  it('stores uploaded hot update archives under the test server temp directory', async () => {
+    const server = createMockTerminalPlatformTestServer()
+    servers.push(server)
+    await server.start()
+
+    const prepareResponse = await fetch(`${server.getHttpBaseUrl()}/mock-debug/kernel-base-test/prepare`, {
+      method: 'POST',
+    })
+    const preparePayload = await json<{ data: { sandboxId: string } }>(prepareResponse)
+    const sandboxId = preparePayload.data.sandboxId
+    const zip = createHotUpdateZip()
+
+    const uploadResponse = await fetch(`${server.getHttpBaseUrl()}/api/v1/admin/hot-updates/packages/upload`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        sandboxId,
+        fileName: 'hot-update-isolated.zip',
+        contentBase64: zip.toString('base64'),
+      }),
+    })
+    const uploadPayload = await json<{ data: { packageId: string; storagePath: string } }>(uploadResponse)
+
+    expect(uploadResponse.status).toBe(201)
+    expect(uploadPayload.data.storagePath.startsWith(server.getTempDir())).toBe(true)
+    expect(uploadPayload.data.storagePath).toContain(`/hot-updates/${sandboxId}/`)
+  })
 })

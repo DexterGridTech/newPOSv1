@@ -8,20 +8,27 @@ import { createId, now, parseJson } from '../shared/utils.js'
 
 const currentDir = path.dirname(fileURLToPath(import.meta.url))
 const defaultDataFile = path.resolve(currentDir, '../../data/mock-terminal-platform.sqlite')
+const defaultDataRoot = path.dirname(defaultDataFile)
 const resolveDataFile = (override?: string) => override?.trim()
   ? path.resolve(override.trim())
   : (process.env.MOCK_TERMINAL_PLATFORM_DB_FILE?.trim()
       ? path.resolve(process.env.MOCK_TERMINAL_PLATFORM_DB_FILE.trim())
       : defaultDataFile)
+const resolveDataRoot = (dataFile?: string) => path.dirname(resolveDataFile(dataFile))
 
 export let sqlite = new Database(resolveDataFile())
 export let db = drizzle(sqlite)
+export let dataRoot = resolveDataRoot()
 
 export const resetDatabaseConnection = (input?: { dataFile?: string }) => {
   sqlite.close()
-  sqlite = new Database(resolveDataFile(input?.dataFile))
+  const nextDataFile = resolveDataFile(input?.dataFile)
+  sqlite = new Database(nextDataFile)
   db = drizzle(sqlite)
+  dataRoot = resolveDataRoot(nextDataFile)
 }
+
+export const getDataRoot = () => dataRoot || defaultDataRoot
 
 const RUNTIME_CONTEXT_KEY = 'global'
 

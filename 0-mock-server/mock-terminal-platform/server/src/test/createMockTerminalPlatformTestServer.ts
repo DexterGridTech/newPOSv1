@@ -13,6 +13,7 @@ export interface MockTerminalPlatformTestServer {
   close(): Promise<void>
   getAddressInfo(): AddressInfo
   getHttpBaseUrl(): string
+  getTempDir(): string
 }
 
 export const createMockTerminalPlatformTestServer = (): MockTerminalPlatformTestServer => {
@@ -83,6 +84,9 @@ export const createMockTerminalPlatformTestServer = (): MockTerminalPlatformTest
     getHttpBaseUrl() {
       const address = this.getAddressInfo()
       return `http://${address.address}:${address.port}`
+    },
+    getTempDir() {
+      return tempDir
     },
   }
 }

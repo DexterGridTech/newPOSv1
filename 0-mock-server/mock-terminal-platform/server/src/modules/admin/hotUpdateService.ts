@@ -4,7 +4,7 @@ import { createHash } from 'node:crypto'
 import { inflateRawSync } from 'node:zlib'
 import { and, desc, eq } from 'drizzle-orm'
 import { fileURLToPath } from 'node:url'
-import { db, sqlite } from '../../database/index.js'
+import { db, getDataRoot, sqlite } from '../../database/index.js'
 import {
   hotUpdatePackagesTable,
   hotUpdateReleasesTable,
@@ -25,10 +25,14 @@ const HOT_UPDATE_ITEM_KEY = 'main'
 const DEFAULT_ANDROID_HOT_UPDATE_HEALTH_CHECK_TIMEOUT_MS = 30_000
 
 const currentDir = path.dirname(fileURLToPath(import.meta.url))
-const storageRoot = path.resolve(currentDir, '../../../data/hot-updates')
+const defaultStorageRoot = path.resolve(currentDir, '../../../data/hot-updates')
+const getStorageRoot = () => {
+  const root = getDataRoot()
+  return root ? path.resolve(root, 'hot-updates') : defaultStorageRoot
+}
 
 const ensureStorageDir = (sandboxId: string) => {
-  const dir = path.join(storageRoot, sandboxId)
+  const dir = path.join(getStorageRoot(), sandboxId)
   fs.mkdirSync(dir, { recursive: true })
   return dir
 }
@@ -587,6 +591,9 @@ export const resolveHotUpdateDownload = (input: {
   })
   if (input.token !== expected) {
     throw new Error('HOT_UPDATE_DOWNLOAD_TOKEN_INVALID')
+  }
+  if (!fs.existsSync(record.storagePath)) {
+    throw new Error('HOT_UPDATE_PACKAGE_FILE_MISSING')
   }
   return {
     filePath: record.storagePath,
