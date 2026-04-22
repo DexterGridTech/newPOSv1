@@ -3,6 +3,7 @@ import {nativeAppControl} from '../turbomodules/appControl'
 import {nativeConnector} from '../turbomodules/connector'
 import {nativeDevice} from '../turbomodules/device'
 import {nativeScriptExecutor} from '../turbomodules/scripts'
+import {nativeTopologyHost} from '../turbomodules/topologyHost'
 import {createAssemblyLogger} from './logger'
 import {createAssemblyHotUpdatePort} from './hotUpdate'
 import {createAssemblyStateStorage} from './stateStorage'
@@ -35,6 +36,20 @@ export const createAssemblyPlatformPorts = (
             async clearDataCache() {
                 await stateStorage.clear?.()
                 await secureStateStorage.clear?.()
+            },
+        },
+        topologyHost: {
+            async start(config) {
+                return await nativeTopologyHost.start(config)
+            },
+            async stop() {
+                await nativeTopologyHost.stop()
+            },
+            async getStatus() {
+                return await nativeTopologyHost.getStatus()
+            },
+            async getDiagnosticsSnapshot() {
+                return await nativeTopologyHost.getDiagnosticsSnapshot()
             },
         },
         hotUpdate: createAssemblyHotUpdatePort(),

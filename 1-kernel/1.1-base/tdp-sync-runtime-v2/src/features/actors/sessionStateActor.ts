@@ -1,17 +1,30 @@
 import {nowTimestampMs, createAppError} from '@impos2/kernel-base-contracts'
 import {
+    createCommand,
     createModuleActorFactory,
     onCommand,
     type ActorDefinition,
 } from '@impos2/kernel-base-runtime-shell-v2'
+import {
+    selectTcpCredentialSnapshot,
+    tcpControlV2CommandDefinitions,
+} from '@impos2/kernel-base-tcp-control-runtime-v2'
 import {moduleName} from '../../moduleName'
 import {tdpSyncV2CommandDefinitions} from '../commands'
 import {tdpSyncV2DomainActions} from '../slices'
 import {tdpSyncV2ErrorDefinitions} from '../../supports'
+import type {TdpSessionConnectionRuntimeRefV2} from './sessionConnectionActor'
 
 const defineActor = createModuleActorFactory(moduleName)
 
-export const createTdpSessionStateActorDefinitionV2 = (): ActorDefinition => defineActor(
+const recoverableCredentialProtocolErrorCodes = new Set([
+    'TOKEN_EXPIRED',
+    'INVALID_TOKEN',
+])
+
+export const createTdpSessionStateActorDefinitionV2 = (
+    connectionRuntimeRef?: TdpSessionConnectionRuntimeRefV2,
+): ActorDefinition => defineActor(
     'TdpSessionStateActor',
     [
         onCommand(tdpSyncV2CommandDefinitions.tdpSessionReady, context => {
@@ -45,6 +58,17 @@ export const createTdpSessionStateActorDefinitionV2 = (): ActorDefinition => def
                     details: payload.details,
                 }),
             ))
+            const credential = selectTcpCredentialSnapshot(context.getState())
+            if (
+                recoverableCredentialProtocolErrorCodes.has(payload.code)
+                && credential.refreshToken
+                && credential.status !== 'REFRESHING'
+            ) {
+                connectionRuntimeRef?.current?.disconnect(`credential-protocol-error:${payload.code}`)
+                void context.dispatchCommand(
+                    createCommand(tcpControlV2CommandDefinitions.refreshCredential, {}),
+                ).catch(() => {})
+            }
             return {}
         }),
     ],

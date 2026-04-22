@@ -9,6 +9,7 @@ const {
     selectTopologyRuntimeV3ConnectionMock,
     createTcpControlRuntimeModuleV2Mock,
     createTdpSyncRuntimeModuleV2Mock,
+    createTransportRuntimeModuleMock,
     createUiRuntimeModuleV2Mock,
     createRuntimeReactModuleMock,
     createInputRuntimeModuleMock,
@@ -18,6 +19,8 @@ const {
     createAssemblyRuntimeModuleMock,
     createAssemblyAdminConsoleInputMock,
     createHttpRuntimeMock,
+    resolveTransportServersMock,
+    selectTransportSelectedServerSpaceMock,
     createAssemblyFetchTransportMock,
     createAssemblyPlatformPortsMock,
     createAssemblyTdpSyncRuntimeAssemblyMock,
@@ -30,11 +33,10 @@ const {
     selectTdpHotUpdateCurrentMock,
     selectTcpIsActivatedMock,
     selectTcpTerminalIdMock,
-    nativeTopologyHostStartMock,
-    nativeTopologyHostStopMock,
     startMock,
     runtimeApp,
     topologyModule,
+    transportModule,
     tcpControlModule,
     tdpSyncModule,
     uiRuntimeModule,
@@ -64,6 +66,7 @@ const {
         })),
         createTcpControlRuntimeModuleV2Mock: vi.fn((..._args: any[]) => ({kind: 'tcp-control-module'})),
         createTdpSyncRuntimeModuleV2Mock: vi.fn((..._args: any[]) => ({kind: 'tdp-sync-module'})),
+        createTransportRuntimeModuleMock: vi.fn((..._args: any[]) => ({kind: 'transport-module'})),
         createUiRuntimeModuleV2Mock: vi.fn((..._args: any[]) => ({kind: 'ui-runtime-module'})),
         createRuntimeReactModuleMock: vi.fn((..._args: any[]) => ({kind: 'runtime-react-module'})),
         createInputRuntimeModuleMock: vi.fn((..._args: any[]) => ({kind: 'input-runtime-module'})),
@@ -73,6 +76,20 @@ const {
         createAssemblyRuntimeModuleMock: vi.fn((..._args: any[]) => ({kind: 'assembly-runtime-module'})),
         createAssemblyAdminConsoleInputMock: vi.fn(() => ({kind: 'assembly-admin-console-input'})),
         createHttpRuntimeMock: vi.fn((..._args: any[]) => ({kind: 'http-runtime'})),
+        resolveTransportServersMock: vi.fn((config: any, options: any = {}) => {
+            const selectedSpace = options.selectedSpace ?? config.selectedSpace
+            const space = config.spaces.find((item: any) => item.name === selectedSpace)
+            return space.servers.map((server: any) => {
+                const baseUrlOverride = options.baseUrlOverrides?.[server.serverName]
+                return {
+                    ...server,
+                    addresses: baseUrlOverride
+                        ? [{...server.addresses[0], baseUrl: baseUrlOverride}]
+                        : server.addresses,
+                }
+            })
+        }),
+        selectTransportSelectedServerSpaceMock: vi.fn((state: any) => state?.selectedServerSpace),
         createAssemblyFetchTransportMock: vi.fn((..._args: any[]) => ({kind: 'fetch-transport'})),
         createAssemblyPlatformPortsMock: vi.fn((..._args: any[]) => ({
             environmentMode: 'DEV',
@@ -118,14 +135,10 @@ const {
         })),
         selectTcpIsActivatedMock: vi.fn((): boolean => false),
         selectTcpTerminalIdMock: vi.fn((): string | null => null),
-        nativeTopologyHostStartMock: vi.fn(async () => ({
-            httpBaseUrl: 'http://127.0.0.1:9999/mockMasterServer',
-            wsUrl: 'ws://127.0.0.1:9999/mockMasterServer/ws',
-        })),
-        nativeTopologyHostStopMock: vi.fn(async () => undefined),
         startMock,
         runtimeApp,
         topologyModule: {kind: 'topology-module'},
+        transportModule: {kind: 'transport-module'},
         tcpControlModule: {kind: 'tcp-control-module'},
         tdpSyncModule: {kind: 'tdp-sync-module'},
         uiRuntimeModule: {kind: 'ui-runtime-module'},
@@ -175,6 +188,9 @@ vi.mock('@impos2/kernel-base-ui-runtime-v2', () => ({
 
 vi.mock('@impos2/kernel-base-transport-runtime', () => ({
     createHttpRuntime: createHttpRuntimeMock,
+    createTransportRuntimeModule: createTransportRuntimeModuleMock,
+    resolveTransportServers: resolveTransportServersMock,
+    selectTransportSelectedServerSpace: selectTransportSelectedServerSpaceMock,
 }))
 
 vi.mock('@impos2/kernel-server-config-v2', () => ({
@@ -187,13 +203,13 @@ vi.mock('@impos2/kernel-server-config-v2', () => ({
                 {
                     serverName: 'mock-terminal-platform',
                     addresses: [
-                        {name: 'primary', baseUrl: 'http://mock-terminal-platform:old'},
-                        {name: 'secondary', baseUrl: 'http://mock-terminal-platform:secondary'},
+                        {addressName: 'primary', baseUrl: 'http://mock-terminal-platform:old'},
+                        {addressName: 'secondary', baseUrl: 'http://mock-terminal-platform:secondary'},
                     ],
                 },
                 {
                     serverName: 'other-server',
-                    addresses: [{name: 'primary', baseUrl: 'http://other-server'}],
+                    addresses: [{addressName: 'primary', baseUrl: 'http://other-server'}],
                 },
             ],
         }],
@@ -257,13 +273,6 @@ vi.mock('../../src/application/syncHotUpdateStateFromNativeBoot', () => ({
     syncHotUpdateStateFromNativeBoot: syncHotUpdateStateFromNativeBootMock,
 }))
 
-vi.mock('../../src/turbomodules/topologyHost', () => ({
-    nativeTopologyHost: {
-        start: nativeTopologyHostStartMock,
-        stop: nativeTopologyHostStopMock,
-    },
-}))
-
 import {createApp} from '../../src/application/createApp'
 import {releaseInfo} from '../../src/generated/releaseInfo'
 
@@ -273,6 +282,7 @@ describe('assembly createApp', () => {
         ;(globalThis as any).__DEV__ = true
         createKernelRuntimeAppMock.mockReturnValue(runtimeApp)
         createTopologyRuntimeModuleV3Mock.mockReturnValue(topologyModule)
+        createTransportRuntimeModuleMock.mockReturnValue(transportModule)
         selectTopologyRuntimeV3ContextMock.mockReturnValue(null)
         selectTopologyRuntimeV3ConnectionMock.mockReturnValue({
             serverConnectionStatus: 'DISCONNECTED',
@@ -295,8 +305,6 @@ describe('assembly createApp', () => {
         }))
         selectTcpIsActivatedMock.mockReturnValue(false)
         selectTcpTerminalIdMock.mockReturnValue(null)
-        nativeTopologyHostStartMock.mockClear()
-        nativeTopologyHostStopMock.mockClear()
         selectTdpHotUpdateCurrentMock.mockReturnValue({
             source: 'embedded',
             bundleVersion: '1.0.0+ota.0',
@@ -339,6 +347,7 @@ describe('assembly createApp', () => {
         })
         expect(runtimeConfig.modules).toEqual([
             {kind: 'assembly-runtime-module'},
+            transportModule,
             topologyModule,
             tcpControlModule,
             tdpSyncModule,
@@ -357,6 +366,7 @@ describe('assembly createApp', () => {
         expect(createAssemblyTdpSyncRuntimeAssemblyMock).toHaveBeenCalledWith({
             logger: expect.any(Object),
             mockTerminalPlatformBaseUrl: 'http://127.0.0.1:9100',
+            resolveServers: expect.any(Function),
         })
         expect(createTdpSyncRuntimeModuleV2Mock).toHaveBeenCalledWith({
             assembly: {kind: 'tdp-sync-assembly'},
@@ -418,13 +428,12 @@ describe('assembly createApp', () => {
             {
                 serverName: 'mock-terminal-platform',
                 addresses: [
-                    {name: 'primary', baseUrl: 'http://127.0.0.1:9100'},
-                    {name: 'secondary', baseUrl: 'http://mock-terminal-platform:secondary'},
+                    {addressName: 'primary', baseUrl: 'http://127.0.0.1:9100'},
                 ],
             },
             {
                 serverName: 'other-server',
-                addresses: [{name: 'primary', baseUrl: 'http://other-server'}],
+                addresses: [{addressName: 'primary', baseUrl: 'http://other-server'}],
             },
         ])
 
@@ -557,7 +566,7 @@ describe('assembly createApp', () => {
         expect((reportTerminalVersionMock.mock.calls[1] as unknown[] | undefined)?.[2]).toBe('RUNNING')
     })
 
-    it('starts and stops native topology host from topology context subscription', async () => {
+    it('does not own topology host lifecycle decisions in assembly createApp', async () => {
         const listeners: Array<() => void> = []
         let currentContext: any = {
             instanceMode: 'MASTER',
@@ -584,37 +593,19 @@ describe('assembly createApp', () => {
         })
 
         await result.start()
-        expect(nativeTopologyHostStartMock).not.toHaveBeenCalled()
-        expect(nativeTopologyHostStopMock).not.toHaveBeenCalled()
 
         currentContext = {
             instanceMode: 'MASTER',
             enableSlave: true,
         }
         listeners.forEach(listener => listener())
-        await vi.waitFor(() => {
-            expect(nativeTopologyHostStartMock).toHaveBeenCalledWith({
-                displayCount: 1,
-                displayIndex: 0,
-                deviceId: 'device-1',
-            })
-        })
-        expect(runtime.dispatchCommand).toHaveBeenCalledWith({
+        expect(runtime.dispatchCommand).not.toHaveBeenCalledWith({
             definition: topologyRuntimeV3CommandDefinitionsMock.startTopologyConnection,
             payload: {},
         })
-
-        currentContext = {
-            instanceMode: 'SLAVE',
-            enableSlave: true,
-        }
-        listeners.forEach(listener => listener())
-        await vi.waitFor(() => {
-            expect(nativeTopologyHostStopMock).toHaveBeenCalledTimes(1)
-        })
     })
 
-    it('auto-starts topology connection for standalone slave recovery with persisted master locator', async () => {
+    it('does not auto-start standalone slave topology connection from assembly createApp', async () => {
         const listeners: Array<() => void> = []
         const runtime = {
             runtimeId: 'runtime-id',
@@ -657,11 +648,9 @@ describe('assembly createApp', () => {
         })
 
         await result.start()
-        await vi.waitFor(() => {
-            expect(runtime.dispatchCommand).toHaveBeenCalledWith({
-                definition: topologyRuntimeV3CommandDefinitionsMock.startTopologyConnection,
-                payload: {},
-            })
+        expect(runtime.dispatchCommand).not.toHaveBeenCalledWith({
+            definition: topologyRuntimeV3CommandDefinitionsMock.startTopologyConnection,
+            payload: {},
         })
 
         const dispatchCallsAfterStart = runtime.dispatchCommand.mock.calls.length

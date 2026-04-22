@@ -1,8 +1,8 @@
 {
   "fileName": "hot-update-assembly-android-mixc-retail-rn84-1.0.0+ota.5.zip",
   "outputPath": "/Users/dexter/Documents/workspace/idea/newPOSv1/dist/hot-updates/hot-update-assembly-android-mixc-retail-rn84-1.0.0+ota.5.zip",
-  "fileSize": 3567954,
-  "sha256": "c02d80eea10dcceaa95d578ebb98071af5d9f3b569db55984f006f74a943b6c9",
+  "fileSize": 3587624,
+  "sha256": "e2e514c1f80e25830874a62db3349f27059d253294c4b6e93d3d0c757f375821",
   "manifest": {
     "manifestVersion": 1,
     "appId": "assembly-android-mixc-retail-rn84",
@@ -13,7 +13,7 @@
     "runtimeVersion": "android-mixc-retail-rn84@1.0",
     "assemblyVersion": "1.0.0",
     "buildNumber": 8,
-    "builtAt": "2026-04-21T23:27:32.997Z",
+    "builtAt": "2026-04-22T06:46:39.364Z",
     "git": {
       "commit": "9ff682189520949eb679d1847b2e33d6eaa4ab78",
       "branch": "main"
@@ -52,18 +52,18 @@
       "entry": "payload/index.android.bundle",
       "sourceMap": "payload/source-map/index.android.bundle.map",
       "compression": "zip",
-      "size": 3039528,
-      "sha256": "a914d71c7eef569da418c09aaae10865113c396f982ad9f3ea4ed54025ce964c",
+      "size": 3063120,
+      "sha256": "ccc120503f90b573de8199bb3487651d4621959b82ba34e4c18e3347c3e897a6",
       "files": [
         {
           "path": "payload/index.android.bundle",
-          "size": 3039528,
-          "sha256": "a914d71c7eef569da418c09aaae10865113c396f982ad9f3ea4ed54025ce964c"
+          "size": 3063120,
+          "sha256": "ccc120503f90b573de8199bb3487651d4621959b82ba34e4c18e3347c3e897a6"
         },
         {
           "path": "payload/source-map/index.android.bundle.map",
-          "size": 11365409,
-          "sha256": "f393bb1872b1416e828d59aa3a1431e4833ab5a9e07f5d342873feffa074de67"
+          "size": 11425576,
+          "sha256": "1712b61682479014efd698cdcb2ca2ba159eb016fb0cb85e76ad774e39572205"
         }
       ]
     },
@@ -74,7 +74,7 @@
     },
     "restart": {
       "mode": "immediate",
-      "operatorInstruction": "auto ota restart"
+      "operatorInstruction": "auto ota restart reconnect-fix verification"
     },
     "rollout": {
       "defaultStrategy": "manual-policy"
@@ -84,8 +84,8 @@
     },
     "releaseNotes": [
       "master-slave",
-      "post-ota-reconnect",
-      "v21"
+      "thin-assembly",
+      "reconnect-fix"
     ],
     "artifacts": [
       {

@@ -3,19 +3,9 @@ import {beforeEach, describe, expect, it, vi} from 'vitest'
 const {
     hideLoadingMock,
     loggerLogMock,
-    readActiveMarkerMock,
-    readBootMarkerMock,
-    readRollbackMarkerMock,
-    clearBootMarkerMock,
-    confirmLoadCompleteMock,
 } = vi.hoisted(() => ({
     hideLoadingMock: vi.fn(async () => undefined),
     loggerLogMock: vi.fn(),
-    readActiveMarkerMock: vi.fn<() => Promise<Record<string, unknown> | null>>(async () => null),
-    readBootMarkerMock: vi.fn<() => Promise<Record<string, unknown> | null>>(async () => null),
-    readRollbackMarkerMock: vi.fn<() => Promise<Record<string, unknown> | null>>(async () => null),
-    clearBootMarkerMock: vi.fn(async () => undefined),
-    confirmLoadCompleteMock: vi.fn<() => Promise<Record<string, unknown> | null>>(async () => null),
 }))
 
 vi.mock('../../src/turbomodules', () => ({
@@ -27,31 +17,33 @@ vi.mock('../../src/turbomodules', () => ({
     },
 }))
 
-vi.mock('../../src/turbomodules/hotUpdate', () => ({
-    nativeHotUpdate: {
-        readActiveMarker: readActiveMarkerMock,
-        readBootMarker: readBootMarkerMock,
-        readRollbackMarker: readRollbackMarkerMock,
-        clearBootMarker: clearBootMarkerMock,
-        confirmLoadComplete: confirmLoadCompleteMock,
-    },
-}))
-
+import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
+import {tdpSyncV2CommandDefinitions} from '@impos2/kernel-base-tdp-sync-runtime-v2'
 import {reportAppLoadComplete} from '../../src/application/reportAppLoadComplete'
 import {syncHotUpdateStateFromNativeBoot} from '../../src/application/syncHotUpdateStateFromNativeBoot'
 import {releaseInfo} from '../../src/generated/releaseInfo'
+
+const embeddedRelease = {
+    appId: releaseInfo.appId,
+    assemblyVersion: releaseInfo.assemblyVersion,
+    buildNumber: releaseInfo.buildNumber,
+    runtimeVersion: releaseInfo.runtimeVersion,
+    bundleVersion: releaseInfo.bundleVersion,
+}
 
 describe('assembly report app load complete', () => {
     beforeEach(() => {
         vi.clearAllMocks()
     })
 
-    it('notifies native startup coordinator through hideLoading and emits boot logs', async () => {
+    it('notifies native startup coordinator and delegates hot-update reconciliation to public commands', async () => {
+        const dispatchCommand = vi.fn(async () => ({
+            status: 'COMPLETED',
+            actorResults: [{result: {terminalState: 'RUNNING'}}],
+        }))
+
         const result = await reportAppLoadComplete({
-            getState: vi.fn(() => ({})),
-            getStore: vi.fn(() => ({
-                dispatch: vi.fn(),
-            })),
+            dispatchCommand,
         } as any, 1)
 
         expect(hideLoadingMock).toHaveBeenCalledTimes(1)
@@ -62,139 +54,95 @@ describe('assembly report app load complete', () => {
         expect(loggerLogMock.mock.calls[0]?.[1]).toContain('"stage":"app-load-complete:start"')
         expect(loggerLogMock.mock.calls[1]?.[1]).toContain('"stage":"app-load-complete:done"')
         expect(result).toEqual({terminalState: 'RUNNING'})
-        expect(readRollbackMarkerMock).toHaveBeenCalledTimes(1)
-        expect(confirmLoadCompleteMock).toHaveBeenCalledTimes(1)
-        expect(readActiveMarkerMock).toHaveBeenCalledTimes(1)
-        expect(clearBootMarkerMock).not.toHaveBeenCalled()
+        expect(dispatchCommand).toHaveBeenNthCalledWith(1, createCommand(
+            tdpSyncV2CommandDefinitions.syncHotUpdateCurrentFromNativeBoot,
+            {
+                embeddedRelease,
+                initializeEmbeddedCurrent: false,
+                previousCurrent: undefined,
+            },
+        ))
+        expect(dispatchCommand).toHaveBeenNthCalledWith(2, createCommand(
+            tdpSyncV2CommandDefinitions.confirmHotUpdateLoadComplete,
+            {
+                embeddedRelease,
+                displayIndex: 1,
+            },
+        ))
     })
 
-    it('marks hot update applied when native confirms active package on load complete', async () => {
-        const dispatch = vi.fn()
-        confirmLoadCompleteMock.mockResolvedValueOnce({
-            bundleVersion: '1.0.0+ota.3',
-            installDir: '/data/user/0/app/files/hot-updates/packages/pkg-3',
-            packageId: 'pkg-3',
-            releaseId: 'rel-3',
-        })
+    it('does not confirm load complete when boot reconciliation reports rollback', async () => {
+        const dispatchCommand = vi.fn(async () => ({
+            status: 'COMPLETED',
+            actorResults: [{
+                result: {
+                    terminalState: 'ROLLED_BACK',
+                    reason: 'HOT_UPDATE_MAX_LAUNCH_FAILURES',
+                },
+            }],
+        }))
 
         const result = await reportAppLoadComplete({
-            getState: vi.fn(() => ({})),
-            getStore: vi.fn(() => ({dispatch})),
-        } as any, 0)
-
-        expect(result).toEqual({terminalState: 'RUNNING'})
-        expect(dispatch).toHaveBeenCalledTimes(2)
-        expect(dispatch.mock.calls.map(call => call[0]?.type)).toEqual([
-            expect.stringContaining('markApplied'),
-            expect.stringContaining('markApplied'),
-        ])
-        expect(dispatch.mock.calls[1]?.[0]?.payload?.current).toMatchObject({
-            source: 'hot-update',
-            bundleVersion: '1.0.0+ota.3',
-            installDir: '/data/user/0/app/files/hot-updates/packages/pkg-3',
-            packageId: 'pkg-3',
-            releaseId: 'rel-3',
-        })
-    })
-
-    it('marks rollback and returns rolled back state when native reports rollback marker', async () => {
-        const dispatch = vi.fn()
-        readRollbackMarkerMock.mockResolvedValueOnce({
-            rollbackReason: 'HOT_UPDATE_MAX_LAUNCH_FAILURES',
-            packageId: 'pkg-bad',
-            releaseId: 'rel-bad',
-        })
-
-        const result = await reportAppLoadComplete({
-            getState: vi.fn(() => ({})),
-            getStore: vi.fn(() => ({dispatch})),
+            dispatchCommand,
         } as any, 0)
 
         expect(result).toEqual({
             terminalState: 'ROLLED_BACK',
             reason: 'HOT_UPDATE_MAX_LAUNCH_FAILURES',
         })
-        expect(confirmLoadCompleteMock).not.toHaveBeenCalled()
-        expect(dispatch).toHaveBeenCalledTimes(2)
-        expect(dispatch.mock.calls[0]?.[0]?.type).toContain('markApplied')
-        expect(dispatch.mock.calls[1]?.[0]?.type).toContain('markFailed')
+        expect(dispatchCommand).toHaveBeenCalledTimes(1)
+        expect(loggerLogMock.mock.calls[1]?.[1]).toContain('"terminalState":"ROLLED_BACK"')
     })
 
-    it('syncs boot state from native active marker before load-complete', async () => {
-        const dispatch = vi.fn()
-        readActiveMarkerMock.mockResolvedValueOnce({
-            bundleVersion: '1.0.0+ota.5',
-            installDir: '/tmp/pkg-5',
-            packageId: 'pkg-5',
-            releaseId: 'rel-5',
-        })
-
-        const result = await syncHotUpdateStateFromNativeBoot({
-            getState: vi.fn(() => ({})),
-            getStore: vi.fn(() => ({dispatch})),
-        } as any)
-
-        expect(result).toBeNull()
-        expect(dispatch).toHaveBeenCalledTimes(1)
-        expect(dispatch.mock.calls[0]?.[0]?.type).toContain('markApplied')
-    })
-
-    it('initializes embedded hot update facts from release info when no native marker exists', async () => {
-        const dispatch = vi.fn()
-
-        const result = await syncHotUpdateStateFromNativeBoot({
-            getState: vi.fn(() => ({})),
-            getStore: vi.fn(() => ({dispatch})),
-        } as any)
-
-        expect(result).toBeNull()
-        expect(dispatch).toHaveBeenCalledTimes(1)
-        expect(dispatch.mock.calls[0]?.[0]).toMatchObject({
-            type: expect.stringContaining('markApplied'),
-            payload: {
-                current: {
-                    source: 'embedded',
-                    appId: releaseInfo.appId,
-                    assemblyVersion: releaseInfo.assemblyVersion,
-                    buildNumber: releaseInfo.buildNumber,
-                    runtimeVersion: releaseInfo.runtimeVersion,
-                    bundleVersion: releaseInfo.bundleVersion,
+    it('syncs boot state through the tdp-sync-runtime-v2 public command', async () => {
+        const dispatchCommand = vi.fn(async () => ({
+            status: 'COMPLETED',
+            actorResults: [{
+                result: {
+                    terminalState: 'RUNNING',
+                    source: 'hot-update',
                 },
+            }],
+        }))
+
+        const result = await syncHotUpdateStateFromNativeBoot({
+            dispatchCommand,
+        } as any)
+
+        expect(result).toEqual({
+            terminalState: 'RUNNING',
+            source: 'hot-update',
+        } as any)
+        expect(dispatchCommand).toHaveBeenCalledWith(createCommand(
+            tdpSyncV2CommandDefinitions.syncHotUpdateCurrentFromNativeBoot,
+            {
+                embeddedRelease,
+                initializeEmbeddedCurrent: true,
+                previousCurrent: undefined,
             },
-        })
+        ))
     })
 
-    it('keeps previous hot update current on reset when native marker is temporarily unavailable', async () => {
-        const dispatch = vi.fn()
+    it('passes previous hot-update current through the public reset command payload', async () => {
+        const dispatchCommand = vi.fn(async () => ({
+            status: 'COMPLETED',
+            actorResults: [{result: {terminalState: 'RUNNING'}}],
+        }))
         const previousCurrent = {
-            source: 'hot-update',
-            appId: 'assembly-android-mixc-retail-rn84',
-            assemblyVersion: '1.0.0',
-            buildNumber: 2,
-            runtimeVersion: 'android-mixc-retail-rn84@1.0',
+            source: 'hot-update' as const,
+            appId: releaseInfo.appId,
+            assemblyVersion: releaseInfo.assemblyVersion,
+            buildNumber: releaseInfo.buildNumber,
+            runtimeVersion: releaseInfo.runtimeVersion,
             bundleVersion: '1.0.0+ota.6',
-            packageId: 'pkg_4aoicn6ofwj3',
-            releaseId: 'release_ie198l30h7rm',
+            packageId: 'pkg-6',
+            releaseId: 'rel-6',
             installDir: '/tmp/pkg-6',
             appliedAt: 123,
         }
 
-        const result = await syncHotUpdateStateFromNativeBoot({
-            getState: vi.fn(() => ({
-                'kernel.base.tdp-sync-runtime-v2.hot-update': {
-                    current: {
-                        source: 'embedded',
-                        appId: 'assembly-android-mixc-retail-rn84',
-                        assemblyVersion: '1.0.0',
-                        buildNumber: 1,
-                        runtimeVersion: 'android-mixc-retail-rn84@1.0',
-                        bundleVersion: '1.0.0+ota.0',
-                        appliedAt: 0,
-                    },
-                    history: [],
-                },
-            })),
-            getStore: vi.fn(() => ({dispatch})),
+        await syncHotUpdateStateFromNativeBoot({
+            dispatchCommand,
         } as any, {
             initializeEmbeddedCurrent: false,
             previousState: {
@@ -205,67 +153,13 @@ describe('assembly report app load complete', () => {
             } as any,
         })
 
-        expect(result).toBeNull()
-        expect(dispatch).toHaveBeenCalledTimes(1)
-        expect(dispatch.mock.calls[0]?.[0]).toMatchObject({
-            type: expect.stringContaining('markApplied'),
-            payload: {
-                current: previousCurrent,
+        expect(dispatchCommand).toHaveBeenCalledWith(createCommand(
+            tdpSyncV2CommandDefinitions.syncHotUpdateCurrentFromNativeBoot,
+            {
+                embeddedRelease,
+                initializeEmbeddedCurrent: false,
+                previousCurrent,
             },
-        })
-    })
-
-    it('restores current embedded release facts on reset when native marker is unavailable', async () => {
-        const dispatch = vi.fn()
-
-        const result = await syncHotUpdateStateFromNativeBoot({
-            getState: vi.fn(() => ({
-                'kernel.base.tdp-sync-runtime-v2.hot-update': {
-                    current: {
-                        source: 'embedded',
-                        appId: 'assembly-android-mixc-retail-rn84',
-                        assemblyVersion: '1.0.0',
-                        buildNumber: 1,
-                        runtimeVersion: 'android-mixc-retail-rn84@1.0',
-                        bundleVersion: '1.0.0+ota.0',
-                        appliedAt: 0,
-                    },
-                    history: [],
-                },
-            })),
-            getStore: vi.fn(() => ({dispatch})),
-        } as any, {
-            initializeEmbeddedCurrent: false,
-            previousState: {
-                'kernel.base.tdp-sync-runtime-v2.hot-update': {
-                    current: {
-                        source: 'embedded',
-                        appId: releaseInfo.appId,
-                        assemblyVersion: releaseInfo.assemblyVersion,
-                        buildNumber: releaseInfo.buildNumber,
-                        runtimeVersion: releaseInfo.runtimeVersion,
-                        bundleVersion: releaseInfo.bundleVersion,
-                        appliedAt: 123,
-                    },
-                    history: [],
-                },
-            } as any,
-        })
-
-        expect(result).toBeNull()
-        expect(dispatch).toHaveBeenCalledTimes(1)
-        expect(dispatch.mock.calls[0]?.[0]).toMatchObject({
-            type: expect.stringContaining('markApplied'),
-            payload: {
-                current: {
-                    source: 'embedded',
-                    appId: releaseInfo.appId,
-                    assemblyVersion: releaseInfo.assemblyVersion,
-                    buildNumber: releaseInfo.buildNumber,
-                    runtimeVersion: releaseInfo.runtimeVersion,
-                    bundleVersion: releaseInfo.bundleVersion,
-                },
-            },
-        })
+        ))
     })
 })

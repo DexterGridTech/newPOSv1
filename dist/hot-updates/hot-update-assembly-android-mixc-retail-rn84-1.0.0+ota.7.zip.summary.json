@@ -1,8 +1,8 @@
 {
   "fileName": "hot-update-assembly-android-mixc-retail-rn84-1.0.0+ota.7.zip",
   "outputPath": "/Users/dexter/Documents/workspace/idea/newPOSv1/dist/hot-updates/hot-update-assembly-android-mixc-retail-rn84-1.0.0+ota.7.zip",
-  "fileSize": 3286309,
-  "sha256": "7a7307203bbe526506f3ed4a5065b38a565c2444e6832a30c20ecdaa3d7b4687",
+  "fileSize": 3598596,
+  "sha256": "c94cd2951720226a9fb307d8139ce123a756b33c056a34222da29a13c3ecfbc1",
   "manifest": {
     "manifestVersion": 1,
     "appId": "assembly-android-mixc-retail-rn84",
@@ -12,10 +12,10 @@
     "bundleVersion": "1.0.0+ota.7",
     "runtimeVersion": "android-mixc-retail-rn84@1.0",
     "assemblyVersion": "1.0.0",
-    "buildNumber": 2,
-    "builtAt": "2026-04-20T20:18:54.464Z",
+    "buildNumber": 8,
+    "builtAt": "2026-04-22T10:41:27.076Z",
     "git": {
-      "commit": "b34ddf0828f7663aa21b958611b95941ca001fef",
+      "commit": "9ff682189520949eb679d1847b2e33d6eaa4ab78",
       "branch": "main"
     },
     "compatibility": {
@@ -25,8 +25,8 @@
       "runtimeVersion": "android-mixc-retail-rn84@1.0",
       "minAssemblyVersion": "1.0.0",
       "maxAssemblyVersion": "1.0.0",
-      "minBuildNumber": 2,
-      "maxBuildNumber": 2,
+      "minBuildNumber": 8,
+      "maxBuildNumber": 8,
       "allowedChannels": [
         "production"
       ],
@@ -52,18 +52,18 @@
       "entry": "payload/index.android.bundle",
       "sourceMap": "payload/source-map/index.android.bundle.map",
       "compression": "zip",
-      "size": 2737336,
-      "sha256": "f422605ed8953bc4052c6f1c0ad8ea9b94ef196ec810dddbcfebd1d19b27e92a",
+      "size": 3078828,
+      "sha256": "a4ee18e1094a3ad0160a129a31daf3e090fe67859ad3ef743fdab7b4d8b8224c",
       "files": [
         {
           "path": "payload/index.android.bundle",
-          "size": 2737336,
-          "sha256": "f422605ed8953bc4052c6f1c0ad8ea9b94ef196ec810dddbcfebd1d19b27e92a"
+          "size": 3078828,
+          "sha256": "a4ee18e1094a3ad0160a129a31daf3e090fe67859ad3ef743fdab7b4d8b8224c"
         },
         {
           "path": "payload/source-map/index.android.bundle.map",
-          "size": 10502589,
-          "sha256": "8c9a6514d284e9ebb6a8c3a287e6b874f4bcc709a10119c0b1e826a845b78ae5"
+          "size": 11458528,
+          "sha256": "8c53a2322d698490625dd4ee7f57afea6868e8c671eabd8bcfe398ce47ac3c9a"
         }
       ]
     },
@@ -74,7 +74,7 @@
     },
     "restart": {
       "mode": "immediate",
-      "operatorInstruction": "restart immediately for OTA E2E V7 verification"
+      "operatorInstruction": "risk cleanup secondary version report"
     },
     "rollout": {
       "defaultStrategy": "manual-policy"
@@ -83,29 +83,30 @@
       "hashAlgorithm": "sha256"
     },
     "releaseNotes": [
-      "OTA E2E V7 visible welcome title verification"
+      "secondary version report role fix",
+      "version drift grouping fix"
     ],
     "artifacts": [
       {
         "name": "apk",
         "path": "4-assembly/android/mixc-retail-assembly-rn84/android/app/build/outputs/apk/release/app-release.apk",
-        "size": 83340649,
-        "sha256": "0c500e3f99350ec0c2ea35da2a66ad0f0a1b9cbfed7eac4d0b137d5627648627",
-        "modifiedAt": "2026-04-20T17:43:50.149Z"
+        "size": 83625181,
+        "sha256": "c9a27e2135d0bf1973632d4547897b391675049120820574fcd1e7fb2446118a",
+        "modifiedAt": "2026-04-21T21:05:26.200Z"
       },
       {
         "name": "bundle",
         "path": "4-assembly/android/mixc-retail-assembly-rn84/android/app/build/generated/assets/react/release/index.android.bundle",
-        "size": 2735136,
-        "sha256": "0bfb314ba2b5ab8228c49790803734e9b9fa568ac6bd438657980e25a9aae6ac",
-        "modifiedAt": "2026-04-20T18:05:14.524Z"
+        "size": 3036080,
+        "sha256": "af32479bf7cacfd59c777138f03afb33904b56d7e0b6c6f2fc198c7ac30616a7",
+        "modifiedAt": "2026-04-21T21:05:09.254Z"
       },
       {
         "name": "sourceMap",
         "path": "4-assembly/android/mixc-retail-assembly-rn84/android/app/build/intermediates/sourcemaps/react/release/index.android.bundle.packager.map",
-        "size": 10498418,
-        "sha256": "461f0e08b4501bbccd1699dfd9c2c46ab89a8c3f88b24189ae75ea3a7693c6fe",
-        "modifiedAt": "2026-04-20T18:05:12.153Z"
+        "size": 11354056,
+        "sha256": "808d8615e8e941bcc77732847c3d004c35e5b7dbe8b8fbc71a8f70264b5a223b",
+        "modifiedAt": "2026-04-21T21:05:06.256Z"
       }
     ]
   }

@@ -64,7 +64,14 @@ export const createSocketLifecycleController = (
             await input.connect({isReconnect})
         } catch (error) {
             input.onConnectFailed?.({isReconnect, error})
-            throw error
+            if (token !== connectionToken || manualStop) {
+                throw error
+            }
+            if (input.shouldReconnectOnConnectError?.(error) === false) {
+                throw error
+            }
+            controller.scheduleReconnect(error instanceof Error ? error.message : String(error))
+            return
         }
         // token 防止“旧 connect 慢返回”覆盖新的 stop/restart 决策，避免重连竞态造成幽灵连接。
         if (token !== connectionToken || manualStop) {

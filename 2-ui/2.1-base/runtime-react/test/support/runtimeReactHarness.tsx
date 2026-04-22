@@ -13,6 +13,7 @@ import {createUiRuntimeModuleV2} from '@impos2/kernel-base-ui-runtime-v2'
 import type {PlatformPorts} from '@impos2/kernel-base-platform-ports'
 import type {EnhancedStore} from '@reduxjs/toolkit'
 import {createModule, UiRuntimeProvider} from '../../src'
+import type {CreateRuntimeReactModuleInput} from '../../src'
 import {createBrowserConsoleLogger} from './browserConsoleLogger'
 export {renderWithAutomation} from './renderWithAutomation'
 
@@ -31,6 +32,7 @@ export const createRuntimeReactHarness = async (
             displayCount?: number
         }
         topology?: CreateTopologyRuntimeModuleV3Input
+        runtimeReact?: CreateRuntimeReactModuleInput
         localNodeId?: string
     } = {},
 ): Promise<RuntimeReactHarness> => {
@@ -40,7 +42,7 @@ export const createRuntimeReactHarness = async (
         modules: [
             createTopologyRuntimeModuleV3(input.topology),
             createUiRuntimeModuleV2(),
-            createModule(),
+            createModule(input.runtimeReact),
             ...(input.modules ?? []),
         ],
         platformPorts: {

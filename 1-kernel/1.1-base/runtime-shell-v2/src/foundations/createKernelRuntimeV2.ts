@@ -69,6 +69,7 @@ export const createKernelRuntimeV2 = (
     const dispatcher = createRuntimeCommandDispatcher({
         runtimeId,
         localNodeId,
+        platformPorts,
         store,
         dispatchAction,
         subscribeState,

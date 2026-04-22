@@ -1,11 +1,10 @@
 import type {KernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
+import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
 import {
-    selectTdpHotUpdateCurrent,
-    tdpHotUpdateActions,
+    tdpSyncV2CommandDefinitions,
 } from '@impos2/kernel-base-tdp-sync-runtime-v2'
 import {releaseInfo} from '../generated/releaseInfo'
 import {nativeAppControl, nativeLogger} from '../turbomodules'
-import {nativeHotUpdate} from '../turbomodules/hotUpdate'
 import {
     syncHotUpdateStateFromNativeBoot,
     type ReportAppLoadCompleteResult,
@@ -49,25 +48,19 @@ export const reportAppLoadComplete = async (
         return bootState
     }
 
-    const bootMarker = await nativeHotUpdate.confirmLoadComplete().catch(() => null)
-    if (bootMarker?.bundleVersion && bootMarker.installDir) {
-        const previous = selectTdpHotUpdateCurrent(runtime.getState())
-        runtime.getStore().dispatch(tdpHotUpdateActions.markApplied({
-            previous,
-            current: {
-                source: 'hot-update',
+    await runtime.dispatchCommand(createCommand(
+        tdpSyncV2CommandDefinitions.confirmHotUpdateLoadComplete,
+        {
+            embeddedRelease: {
                 appId: releaseInfo.appId,
                 assemblyVersion: releaseInfo.assemblyVersion,
                 buildNumber: releaseInfo.buildNumber,
                 runtimeVersion: releaseInfo.runtimeVersion,
-                bundleVersion: String(bootMarker.bundleVersion),
-                packageId: typeof bootMarker.packageId === 'string' ? bootMarker.packageId : undefined,
-                releaseId: typeof bootMarker.releaseId === 'string' ? bootMarker.releaseId : undefined,
-                installDir: String(bootMarker.installDir),
-                appliedAt: Date.now(),
+                bundleVersion: releaseInfo.bundleVersion,
             },
-        }))
-    }
+            displayIndex,
+        },
+    ))
 
     nativeLogger.log(
         'assembly.android.mixc-retail-rn84.boot',

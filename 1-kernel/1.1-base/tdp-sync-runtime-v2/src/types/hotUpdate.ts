@@ -64,6 +64,14 @@ export interface HotUpdateCurrentFacts {
     capabilities: string[]
 }
 
+export interface HotUpdateEmbeddedReleaseFacts {
+    appId: string
+    assemblyVersion: string
+    buildNumber: number
+    runtimeVersion: string
+    bundleVersion: string
+}
+
 export type HotUpdateCandidateStatus =
     | 'desired-received'
     | 'compatibility-rejected'

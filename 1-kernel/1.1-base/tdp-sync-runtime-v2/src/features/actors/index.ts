@@ -16,6 +16,7 @@ import {createTdpSessionStateActorDefinitionV2} from './sessionStateActor'
 import {createTdpTopicChangeActorDefinitionV2} from './topicChangeActor'
 import {createTdpSystemCatalogBridgeActorDefinitionV2} from './systemCatalogBridgeActor'
 import {createTdpUserOperationActorDefinitionV2} from './userOperationActor'
+import {createTdpHotUpdateNativeBootActorDefinitionV2} from './hotUpdateNativeBootActor'
 import type {CreateTdpSyncRuntimeModuleV2Input} from '../../types'
 
 export * from './initializeActor'
@@ -31,6 +32,7 @@ export * from './sessionStateActor'
 export * from './topicChangeActor'
 export * from './systemCatalogBridgeActor'
 export * from './userOperationActor'
+export * from './hotUpdateNativeBootActor'
 
 export const createTdpSyncActorDefinitionsV2 = (
     fingerprintRef: TopicChangePublisherFingerprintV2,
@@ -46,8 +48,9 @@ export const createTdpSyncActorDefinitionsV2 = (
     createTdpCursorFeedbackActorDefinitionV2(),
     createTdpCommandInboxActorDefinitionV2(),
     createTdpCommandAckActorDefinitionV2(),
-    createTdpSessionStateActorDefinitionV2(),
+    createTdpSessionStateActorDefinitionV2(connectionRuntimeRef),
     createTdpTopicChangeActorDefinitionV2(fingerprintRef, moduleInput),
     createTdpSystemCatalogBridgeActorDefinitionV2(),
     createTdpUserOperationActorDefinitionV2(),
+    createTdpHotUpdateNativeBootActorDefinitionV2(),
 ]

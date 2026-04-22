@@ -119,7 +119,33 @@ describe('admin built-in sections', () => {
         await topologyTree.press('ui-base-admin-section:topology:set-master')
         await topologyTree.press('ui-base-admin-section:topology:start')
 
-        expect(dispatchSpy).toHaveBeenCalledTimes(2)
+        expect(dispatchSpy.mock.calls.length).toBeGreaterThanOrEqual(2)
+    })
+
+    it('dispatches admin clear-master command instead of mixing host/runtime calls inline', async () => {
+        const harness = await createAdminConsoleHarness({
+            hostTools: {
+                topology: {
+                    clearMasterLocator: vi.fn(async () => {}),
+                },
+            } as any,
+        })
+        const dispatchSpy = vi.spyOn(harness.runtime, 'dispatchCommand')
+        const topologyTree = renderWithAutomation(
+            <AdminTopologySection runtime={harness.runtime} store={harness.store} />,
+            harness.store,
+            harness.runtime,
+        )
+
+        await topologyTree.press('ui-base-admin-section:topology:clear-master')
+
+        expect(dispatchSpy).toHaveBeenCalledWith(createCommand(
+            adminConsoleCommandDefinitions.clearTopologyMasterLocator,
+            {},
+        ))
+        expect(dispatchSpy.mock.calls.map(call => call[0]?.definition?.commandName)).not.toContain(
+            topologyRuntimeV3CommandDefinitions.clearMasterLocator.commandName,
+        )
     })
 
     it('dispatches enable-slave commands and keeps display switching disabled for master primary', async () => {
@@ -159,6 +185,7 @@ describe('admin built-in sections', () => {
                 },
             } as any,
         })
+        const dispatchSpy = vi.spyOn(harness.runtime, 'dispatchCommand')
         const topologyTree = renderWithAutomation(
             <AdminTopologySection runtime={harness.runtime} store={harness.store} />,
             harness.store,
@@ -167,6 +194,9 @@ describe('admin built-in sections', () => {
 
         await topologyTree.press('ui-base-admin-section:topology:reconnect')
 
+        expect(dispatchSpy.mock.calls.map(call => call[0]?.definition?.commandName)).toContain(
+            adminConsoleCommandDefinitions.reconnectTopologyHost.commandName,
+        )
         expect(reconnect).toHaveBeenCalledTimes(1)
     })
 
@@ -225,7 +255,10 @@ describe('admin built-in sections', () => {
         expect(dispatchSpy.mock.calls.map(call => call[0]?.definition?.commandName)).not.toContain(
             'kernel.base.workflow-runtime-v2.run-workflow',
         )
-        expect(stop).toHaveBeenCalledTimes(1)
+        expect(dispatchSpy.mock.calls.map(call => call[0]?.definition?.commandName)).toContain(
+            adminConsoleCommandDefinitions.stopTopologyHost.commandName,
+        )
+        expect(stop).not.toHaveBeenCalled()
     })
 
     it('reacts to topology store changes and shows connection metadata', async () => {

@@ -68,7 +68,6 @@ describe('admin host tools factory', () => {
         const source = {
             restartApp: vi.fn().mockResolvedValue(undefined),
             clearDataCache: vi.fn().mockResolvedValue(undefined),
-            switchServerSpace: vi.fn().mockResolvedValue(undefined),
             getServerSpaceSnapshot: vi.fn().mockResolvedValue({
                 selectedSpace: 'prod',
                 availableSpaces: ['prod', 'dev'],
@@ -90,10 +89,9 @@ describe('admin host tools factory', () => {
         expect(host.setFullScreen).toBeUndefined()
         await host.restartApp?.()
         await host.clearCache?.()
-        await host.switchServerSpace?.('dev')
         expect(source.restartApp).toHaveBeenCalledTimes(1)
         expect(source.clearDataCache).toHaveBeenCalledTimes(1)
-        expect(source.switchServerSpace).toHaveBeenCalledWith('dev')
+        expect(host).not.toHaveProperty('switchServerSpace')
     })
 
     it('builds connector channels from static definitions and dynamic targets', async () => {

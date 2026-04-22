@@ -1,7 +1,13 @@
 import {describe, expect, it, vi} from 'vitest'
 import {createNodeId} from '@impos2/kernel-base-contracts'
 import {createLoggerPort, createPlatformPorts} from '@impos2/kernel-base-platform-ports'
-import {createCommand, createKernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
+import {
+    createCommand,
+    createKernelRuntimeV2,
+    createModuleActorFactory,
+    defineKernelRuntimeModuleV2,
+    onCommand,
+} from '@impos2/kernel-base-runtime-shell-v2'
 import type {StateRuntimeSliceDescriptor, SyncValueEnvelope} from '@impos2/kernel-base-state-runtime'
 import {createMemoryStorage} from '../../../../test-support/storageHarness'
 import {createSlice, type PayloadAction} from '@reduxjs/toolkit'
@@ -24,6 +30,7 @@ import {
     selectTopologyRuntimeV3Context,
     selectTopologyRuntimeV3DisplayModeEligibility,
     selectTopologyRuntimeV3EnableSlaveEligibility,
+    selectTopologyRuntimeV3Host,
     selectTopologyRuntimeV3MasterLocator,
     selectTopologyRuntimeV3Peer,
     selectTopologyRuntimeV3RequestMirror,
@@ -146,6 +153,28 @@ const createTestLogger = (moduleName: string) => {
             moduleName,
             layer: 'kernel',
         },
+    })
+}
+
+const createPowerDisplaySwitchProbeModule = (events: Array<{
+    displayMode: 'PRIMARY' | 'SECONDARY'
+    reason: 'power-status-change'
+    powerConnected: boolean
+}>) => {
+    const defineActor = createModuleActorFactory('kernel.base.topology-runtime-v3.test.power-probe')
+    return defineKernelRuntimeModuleV2({
+        moduleName: 'kernel.base.topology-runtime-v3.test.power-probe',
+        packageVersion: '0.0.1',
+        actorDefinitions: [
+            defineActor('PowerDisplaySwitchProbeActor', [
+                onCommand(topologyRuntimeV3CommandDefinitions.requestPowerDisplayModeSwitchConfirmation, context => {
+                    events.push(context.command.payload)
+                    return {
+                        captured: true,
+                    }
+                }),
+            ]),
+        ],
     })
 }
 
@@ -477,6 +506,299 @@ describe('topology-runtime-v3 context derivation', () => {
             'stop:command-stop',
             'restart:command-restart',
         ])
+    })
+
+    it('owns topology host lifecycle in lower layer instead of assembly subscribers', async () => {
+        const topologyHost = {
+            start: vi.fn(async () => ({
+                localWsUrl: 'ws://127.0.0.1:18888/mockMasterServer/ws',
+                localHttpBaseUrl: 'http://127.0.0.1:18888/mockMasterServer',
+            })),
+            stop: vi.fn(async () => undefined),
+            getStatus: vi.fn(async () => ({state: 'RUNNING'})),
+            getDiagnosticsSnapshot: vi.fn(async () => null),
+        }
+        const orchestrator = {
+            startConnection: vi.fn(async () => undefined),
+            stopConnection: vi.fn(),
+            restartConnection: vi.fn(async () => undefined),
+        }
+
+        const runtime = createKernelRuntimeV2({
+            localNodeId: createNodeId(),
+            displayContext: {
+                displayIndex: 0,
+                displayCount: 1,
+            },
+            platformPorts: createPlatformPorts({
+                environmentMode: 'DEV',
+                logger: createTestLogger('kernel.base.topology-runtime-v3.test.host-lifecycle'),
+                topologyHost,
+            }),
+            modules: [createTopologyRuntimeModuleV3({orchestrator})],
+        })
+
+        await runtime.start()
+        expect(topologyHost.start).not.toHaveBeenCalled()
+
+        const enableSlaveResult = await runtime.dispatchCommand(createCommand(
+            topologyRuntimeV3CommandDefinitions.setEnableSlave,
+            {enableSlave: true},
+        ))
+        expect(enableSlaveResult.status).toBe('COMPLETED')
+        expect(selectTopologyRuntimeV3Host(runtime.getState())).toMatchObject({
+            desiredRunning: true,
+        })
+
+        await vi.waitFor(() => {
+            expect(topologyHost.start).toHaveBeenCalledTimes(1)
+            expect(orchestrator.startConnection).toHaveBeenCalledTimes(1)
+            expect(selectTopologyRuntimeV3Host(runtime.getState())).toMatchObject({
+                desiredRunning: true,
+                actualRunning: true,
+            })
+        })
+        expect(selectTopologyRuntimeV3MasterLocator(runtime.getState())).toMatchObject({
+            masterNodeId: String(runtime.localNodeId),
+            httpBaseUrl: 'http://127.0.0.1:18888/mockMasterServer',
+            serverAddress: [{address: 'ws://127.0.0.1:18888/mockMasterServer/ws'}],
+        })
+
+        await runtime.dispatchCommand(createCommand(
+            topologyRuntimeV3CommandDefinitions.setInstanceMode,
+            {instanceMode: 'SLAVE'},
+        ))
+        await vi.waitFor(() => {
+            expect(topologyHost.stop).toHaveBeenCalledTimes(1)
+            expect(selectTopologyRuntimeV3Host(runtime.getState())).toMatchObject({
+                desiredRunning: false,
+                actualRunning: false,
+            })
+        })
+    })
+
+    it('auto-starts standalone slave topology recovery inside topology runtime', async () => {
+        const orchestrator = {
+            startConnection: vi.fn(async () => undefined),
+            stopConnection: vi.fn(),
+            restartConnection: vi.fn(async () => undefined),
+        }
+        const runtime = createKernelRuntimeV2({
+            localNodeId: createNodeId(),
+            displayContext: {
+                displayIndex: 0,
+                displayCount: 1,
+            },
+            platformPorts: createPlatformPorts({
+                environmentMode: 'DEV',
+                logger: createTestLogger('kernel.base.topology-runtime-v3.test.slave-autostart'),
+            }),
+            modules: [createTopologyRuntimeModuleV3({orchestrator})],
+        })
+
+        await runtime.start()
+        await runtime.dispatchCommand(createCommand(
+            topologyRuntimeV3CommandDefinitions.setInstanceMode,
+            {instanceMode: 'SLAVE'},
+        ))
+        await runtime.dispatchCommand(createCommand(
+            topologyRuntimeV3CommandDefinitions.setMasterLocator,
+            {
+                masterLocator: {
+                    masterNodeId: 'master-node-001',
+                    masterDeviceId: 'master-device-001',
+                    httpBaseUrl: 'http://127.0.0.1:18889/mockMasterServer',
+                    serverAddress: [{address: 'ws://127.0.0.1:18889/mockMasterServer/ws'}],
+                    addedAt: Date.now(),
+                },
+            },
+        ))
+
+        await vi.waitFor(() => {
+            expect(orchestrator.startConnection).toHaveBeenCalledTimes(1)
+            expect(selectTopologyRuntimeV3Host(runtime.getState())).toMatchObject({
+                lastAutoStartKey: expect.any(String),
+            })
+        })
+
+        await runtime.dispatchCommand(createCommand(
+            topologyRuntimeV3CommandDefinitions.syncTopologyHostLifecycle,
+            {},
+        ))
+        expect(orchestrator.startConnection).toHaveBeenCalledTimes(1)
+    })
+
+    it('seeds initial power status without requesting a display switch, then requests switch for standalone slave changes', async () => {
+        let powerListener: ((event: Record<string, unknown>) => void) | undefined
+        const powerEvents: Array<{
+            displayMode: 'PRIMARY' | 'SECONDARY'
+            reason: 'power-status-change'
+            powerConnected: boolean
+        }> = []
+
+        const runtime = createKernelRuntimeV2({
+            localNodeId: createNodeId(),
+            displayContext: {
+                displayIndex: 0,
+                displayCount: 1,
+            },
+            platformPorts: createPlatformPorts({
+                environmentMode: 'DEV',
+                logger: createTestLogger('kernel.base.topology-runtime-v3.test.power-seed'),
+                device: {
+                    async getDeviceId() {
+                        return 'device-001'
+                    },
+                    async getPlatform() {
+                        return 'android'
+                    },
+                    addPowerStatusChangeListener(listener) {
+                        powerListener = listener
+                        return () => undefined
+                    },
+                },
+            }),
+            modules: [
+                createTopologyRuntimeModuleV3(),
+                createPowerDisplaySwitchProbeModule(powerEvents),
+            ],
+        })
+
+        await runtime.start()
+        await runtime.dispatchCommand(createCommand(
+            topologyRuntimeV3CommandDefinitions.setInstanceMode,
+            {instanceMode: 'SLAVE'},
+        ))
+        await runtime.dispatchCommand(createCommand(
+            topologyRuntimeV3CommandDefinitions.setDisplayMode,
+            {displayMode: 'PRIMARY'},
+        ))
+
+        expect(powerListener).toBeTypeOf('function')
+
+        await powerListener?.({powerConnected: false})
+        expect(powerEvents).toEqual([])
+
+        await powerListener?.({powerConnected: true})
+        expect(powerEvents).toEqual([{
+            displayMode: 'SECONDARY',
+            powerConnected: true,
+            reason: 'power-status-change',
+        }])
+    })
+
+    it('ignores power-triggered display switching for managed secondary and masters', async () => {
+        const createRuntimeForContext = async (input: {
+            displayIndex: number
+            displayCount: number
+            instanceMode?: 'MASTER' | 'SLAVE'
+            displayMode?: 'PRIMARY' | 'SECONDARY'
+        }) => {
+            let powerListener: ((event: Record<string, unknown>) => void) | undefined
+            const powerEvents: Array<{
+                displayMode: 'PRIMARY' | 'SECONDARY'
+                reason: 'power-status-change'
+                powerConnected: boolean
+            }> = []
+
+            const runtime = createKernelRuntimeV2({
+                localNodeId: createNodeId(),
+                displayContext: {
+                    displayIndex: input.displayIndex,
+                    displayCount: input.displayCount,
+                },
+                platformPorts: createPlatformPorts({
+                    environmentMode: 'DEV',
+                    logger: createTestLogger('kernel.base.topology-runtime-v3.test.power-guards'),
+                    device: {
+                        async getDeviceId() {
+                            return 'device-guard'
+                        },
+                        async getPlatform() {
+                            return 'android'
+                        },
+                        addPowerStatusChangeListener(listener) {
+                            powerListener = listener
+                            return () => undefined
+                        },
+                    },
+                }),
+                modules: [
+                    createTopologyRuntimeModuleV3(),
+                    createPowerDisplaySwitchProbeModule(powerEvents),
+                ],
+            })
+
+            await runtime.start()
+            if (input.instanceMode) {
+                await runtime.dispatchCommand(createCommand(
+                    topologyRuntimeV3CommandDefinitions.setInstanceMode,
+                    {instanceMode: input.instanceMode},
+                ))
+            }
+            if (input.displayMode) {
+                await runtime.dispatchCommand(createCommand(
+                    topologyRuntimeV3CommandDefinitions.setDisplayMode,
+                    {displayMode: input.displayMode},
+                ))
+            }
+            return {powerListener, powerEvents}
+        }
+
+        const managedSecondary = await createRuntimeForContext({
+            displayIndex: 1,
+            displayCount: 2,
+        })
+        await managedSecondary.powerListener?.({powerConnected: false})
+        await managedSecondary.powerListener?.({powerConnected: true})
+        expect(managedSecondary.powerEvents).toEqual([])
+
+        const standaloneMaster = await createRuntimeForContext({
+            displayIndex: 0,
+            displayCount: 1,
+            instanceMode: 'MASTER',
+            displayMode: 'PRIMARY',
+        })
+        await standaloneMaster.powerListener?.({powerConnected: false})
+        await standaloneMaster.powerListener?.({powerConnected: true})
+        expect(standaloneMaster.powerEvents).toEqual([])
+    })
+
+    it('confirms power display switch through the public command instead of direct mutation from assembly', async () => {
+        const runtime = createKernelRuntimeV2({
+            localNodeId: createNodeId(),
+            displayContext: {
+                displayIndex: 0,
+                displayCount: 1,
+            },
+            platformPorts: createPlatformPorts({
+                environmentMode: 'DEV',
+                logger: createTestLogger('kernel.base.topology-runtime-v3.test.power-confirm'),
+            }),
+            modules: [createTopologyRuntimeModuleV3()],
+        })
+
+        await runtime.start()
+        await runtime.dispatchCommand(createCommand(
+            topologyRuntimeV3CommandDefinitions.setInstanceMode,
+            {instanceMode: 'SLAVE'},
+        ))
+        await runtime.dispatchCommand(createCommand(
+            topologyRuntimeV3CommandDefinitions.setDisplayMode,
+            {displayMode: 'PRIMARY'},
+        ))
+
+        const confirmResult = await runtime.dispatchCommand(createCommand(
+            topologyRuntimeV3CommandDefinitions.confirmPowerDisplayModeSwitch,
+            {displayMode: 'SECONDARY'},
+        ))
+
+        expect(confirmResult.status).toBe('COMPLETED')
+        expect(selectTopologyRuntimeV3Context(runtime.getState())).toMatchObject({
+            standalone: true,
+            instanceMode: 'SLAVE',
+            displayMode: 'SECONDARY',
+        })
     })
 
     it('creates built-in orchestrator from assembly and sends hello on start', async () => {

@@ -3,6 +3,7 @@ export const TOPOLOGY_V3_CONTEXT_STATE_KEY = 'kernel.base.topology-runtime-v3.co
 export const TOPOLOGY_V3_CONNECTION_STATE_KEY = 'kernel.base.topology-runtime-v3.connection'
 export const TOPOLOGY_V3_PEER_STATE_KEY = 'kernel.base.topology-runtime-v3.peer'
 export const TOPOLOGY_V3_SYNC_STATE_KEY = 'kernel.base.topology-runtime-v3.sync'
+export const TOPOLOGY_V3_HOST_STATE_KEY = 'kernel.base.topology-runtime-v3.host'
 export const TOPOLOGY_V3_REQUEST_MIRROR_STATE_KEY = 'kernel.base.topology-runtime-v3.request-mirror'
 export const TOPOLOGY_V3_DEMO_MASTER_STATE_KEY = 'kernel.base.topology-runtime-v3.demo.master'
 export const TOPOLOGY_V3_DEMO_SLAVE_STATE_KEY = 'kernel.base.topology-runtime-v3.demo.slave'

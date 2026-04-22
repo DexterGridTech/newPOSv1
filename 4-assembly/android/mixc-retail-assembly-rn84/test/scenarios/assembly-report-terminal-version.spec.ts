@@ -3,12 +3,14 @@ import {beforeEach, describe, expect, it, vi} from 'vitest'
 const {
     buildHotUpdateVersionReportPayloadMock,
     createAssemblyFetchTransportMock,
-    resolveAssemblyTransportServersMock,
+    resolveTransportServersMock,
+    selectTransportSelectedServerSpaceMock,
     createNativeStateStorageMock,
 } = vi.hoisted(() => ({
     buildHotUpdateVersionReportPayloadMock: vi.fn(),
     createAssemblyFetchTransportMock: vi.fn(),
-    resolveAssemblyTransportServersMock: vi.fn(),
+    resolveTransportServersMock: vi.fn(),
+    selectTransportSelectedServerSpaceMock: vi.fn(() => undefined),
     createNativeStateStorageMock: vi.fn(),
 }))
 
@@ -18,7 +20,11 @@ vi.mock('@impos2/kernel-base-tdp-sync-runtime-v2', () => ({
 
 vi.mock('../../src/platform-ports', () => ({
     createAssemblyFetchTransport: createAssemblyFetchTransportMock,
-    resolveAssemblyTransportServers: resolveAssemblyTransportServersMock,
+}))
+
+vi.mock('@impos2/kernel-base-transport-runtime', () => ({
+    resolveTransportServers: resolveTransportServersMock,
+    selectTransportSelectedServerSpace: selectTransportSelectedServerSpaceMock,
 }))
 
 vi.mock('../../src/turbomodules/stateStorage', () => ({
@@ -27,6 +33,15 @@ vi.mock('../../src/turbomodules/stateStorage', () => ({
 
 vi.mock('@impos2/kernel-server-config-v2', () => ({
     SERVER_NAME_MOCK_TERMINAL_PLATFORM: 'mock-terminal-platform',
+    kernelBaseDevServerConfig: {
+        selectedSpace: 'kernel-base-dev',
+        spaces: [
+            {
+                name: 'kernel-base-dev',
+                servers: [],
+            },
+        ],
+    },
 }))
 
 describe('assembly reportTerminalVersion', () => {
@@ -57,7 +72,7 @@ describe('assembly reportTerminalVersion', () => {
             headers: {},
         }))
         createAssemblyFetchTransportMock.mockReturnValue({execute})
-        resolveAssemblyTransportServersMock.mockReturnValue([
+        resolveTransportServersMock.mockReturnValue([
             {
                 serverName: 'mock-terminal-platform',
                 addresses: [{addressName: 'local', baseUrl: 'http://127.0.0.1:5810'}],
@@ -119,7 +134,7 @@ describe('assembly reportTerminalVersion', () => {
             headers: {},
         }))
         createAssemblyFetchTransportMock.mockReturnValue({execute})
-        resolveAssemblyTransportServersMock.mockReturnValue([
+        resolveTransportServersMock.mockReturnValue([
             {
                 serverName: 'mock-terminal-platform',
                 addresses: [
@@ -182,7 +197,7 @@ describe('assembly reportTerminalVersion', () => {
                 headers: {},
             })
         createAssemblyFetchTransportMock.mockReturnValue({execute})
-        resolveAssemblyTransportServersMock.mockReturnValue([
+        resolveTransportServersMock.mockReturnValue([
             {
                 serverName: 'mock-terminal-platform',
                 addresses: [
@@ -246,7 +261,7 @@ describe('assembly reportTerminalVersion', () => {
                 headers: {},
             })
         createAssemblyFetchTransportMock.mockReturnValue({execute})
-        resolveAssemblyTransportServersMock.mockReturnValue([
+        resolveTransportServersMock.mockReturnValue([
             {
                 serverName: 'mock-terminal-platform',
                 addresses: [{addressName: 'local', baseUrl: 'http://127.0.0.1:5810'}],
@@ -318,5 +333,116 @@ describe('assembly reportTerminalVersion', () => {
         expect(execute.mock.calls[2]?.[0]?.input?.body?.state).toBe('BOOTING')
         expect(execute.mock.calls[3]?.[0]?.input?.body?.state).toBe('RUNNING')
         expect(storageState.has('hot-update:version-report-outbox')).toBe(false)
+    })
+
+    it('reports topology-derived display roles for paired master and standalone slave', async () => {
+        const execute = vi.fn(async () => ({
+            data: {success: true},
+            status: 200,
+            statusText: 'OK',
+            headers: {},
+        }))
+        createAssemblyFetchTransportMock.mockReturnValue({execute})
+        resolveTransportServersMock.mockReturnValue([
+            {
+                serverName: 'mock-terminal-platform',
+                addresses: [{addressName: 'local', baseUrl: 'http://127.0.0.1:5810'}],
+            },
+        ])
+        buildHotUpdateVersionReportPayloadMock.mockImplementation((state: any) => ({
+            terminalId: state['kernel.base.topology-runtime-v3.context']?.displayMode === 'SECONDARY'
+                ? 'terminal-standalone-slave'
+                : 'terminal-paired-master',
+            sandboxId: 'sandbox-topology',
+            payload: {
+                displayIndex: state['kernel.base.topology-runtime-v3.context']?.displayIndex ?? 0,
+                displayRole: state['kernel.base.topology-runtime-v3.context']?.displayMode === 'SECONDARY'
+                    ? 'secondary'
+                    : (
+                        state['kernel.base.topology-runtime-v3.context']?.enableSlave === true
+                            ? 'primary'
+                            : 'single'
+                    ),
+                appId: 'assembly-android-mixc-retail-rn84',
+                assemblyVersion: '1.0.0',
+                buildNumber: 8,
+                runtimeVersion: 'android-mixc-retail-rn84@1.0',
+                bundleVersion: '1.0.0+ota.6',
+                source: 'hot-update',
+                packageId: 'pkg-standalone-slave',
+                releaseId: 'release-standalone-slave',
+                state: 'RUNNING',
+            },
+        }))
+
+        const {reportTerminalVersion} = await import('../../src/application/reportTerminalVersion')
+
+        await reportTerminalVersion(
+            {
+                getState: () => ({
+                    'kernel.base.topology-runtime-v3.context': {
+                        displayIndex: 0,
+                        displayCount: 1,
+                        instanceMode: 'MASTER',
+                        displayMode: 'PRIMARY',
+                        workspace: 'MAIN',
+                        standalone: true,
+                        enableSlave: true,
+                        localNodeId: 'master:primary-node',
+                    },
+                }),
+            } as any,
+            {
+                displayIndex: 0,
+                displayCount: 1,
+                deviceId: 'paired-master-device',
+                isEmulator: true,
+                screenMode: 'desktop',
+            } as any,
+            'RUNNING',
+        )
+
+        await reportTerminalVersion(
+            {
+                getState: () => ({
+                    'kernel.base.topology-runtime-v3.context': {
+                        displayIndex: 0,
+                        displayCount: 1,
+                        instanceMode: 'SLAVE',
+                        displayMode: 'SECONDARY',
+                        workspace: 'MAIN',
+                        standalone: true,
+                        enableSlave: false,
+                        localNodeId: 'master:slave-node',
+                    },
+                }),
+            } as any,
+            {
+                displayIndex: 0,
+                displayCount: 1,
+                deviceId: 'standalone-slave-device',
+                isEmulator: true,
+                screenMode: 'desktop',
+            } as any,
+            'RUNNING',
+        )
+
+        expect(execute).toHaveBeenCalledTimes(2)
+        const masterRequest = (execute as any).mock.calls[0]?.[0] as any
+        const slaveRequest = (execute as any).mock.calls[1]?.[0] as any
+        expect(masterRequest.input.body).toMatchObject({
+            displayIndex: 0,
+            displayRole: 'primary',
+            sandboxId: 'sandbox-topology',
+            bundleVersion: '1.0.0+ota.6',
+            source: 'hot-update',
+        })
+        expect(slaveRequest.input.body).toMatchObject({
+            displayIndex: 0,
+            displayRole: 'secondary',
+            sandboxId: 'sandbox-topology',
+            bundleVersion: '1.0.0+ota.6',
+            source: 'hot-update',
+        })
     })
 })

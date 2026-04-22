@@ -20,12 +20,14 @@ import {
 } from '@impos2/kernel-base-transport-runtime'
 import {
     createTcpControlRuntimeModuleV2,
+    selectTcpCredentialSnapshot,
     selectTcpBindingSnapshot,
     selectTcpTerminalId,
     tcpControlV2CommandDefinitions,
 } from '@impos2/kernel-base-tcp-control-runtime-v2'
 import {
     createTdpSyncRuntimeModuleV2,
+    buildHotUpdateVersionReportPayload,
     selectTdpHotUpdateState,
     selectTdpCommandInboxState,
     selectTdpProjectionByTopicAndBucket,
@@ -70,6 +72,122 @@ const createMemoryStorage = () => {
         },
     }
 }
+
+describe('tdp-sync-runtime-v2 hot update version reporter', () => {
+    it('derives standalone slave display role from topology runtime state', () => {
+        const report = buildHotUpdateVersionReportPayload({
+            'kernel.base.tcp-control-runtime-v2.identity': {
+                terminalId: 'terminal-001',
+                activationStatus: 'ACTIVATED',
+            },
+            'kernel.base.tcp-control-runtime-v2.sandbox': {
+                sandboxId: 'sandbox-001',
+            },
+            'kernel.base.topology-runtime-v3.context': {
+                localNodeId: 'master:slave-node',
+                displayIndex: 0,
+                displayCount: 1,
+                instanceMode: 'SLAVE',
+                displayMode: 'SECONDARY',
+                workspace: 'MAIN',
+                standalone: true,
+                enableSlave: false,
+            },
+            'kernel.base.tdp-sync-runtime-v2.hot-update': {
+                current: {
+                    source: 'hot-update',
+                    appId: 'assembly-android-mixc-retail-rn84',
+                    assemblyVersion: '1.0.0',
+                    buildNumber: 8,
+                    runtimeVersion: 'android-mixc-retail-rn84@1.0',
+                    bundleVersion: '1.0.0+ota.6',
+                    packageId: 'pkg-001',
+                    releaseId: 'release-001',
+                    appliedAt: 123,
+                },
+                history: [],
+            },
+        }, {
+            appId: 'assembly-android-mixc-retail-rn84',
+            assemblyVersion: '1.0.0',
+            buildNumber: 8,
+            runtimeVersion: 'android-mixc-retail-rn84@1.0',
+            displayIndex: 0,
+            displayRole: 'single',
+            state: 'RUNNING',
+        })
+
+        expect(report).toMatchObject({
+            terminalId: 'terminal-001',
+            sandboxId: 'sandbox-001',
+            payload: {
+                displayIndex: 0,
+                displayRole: 'secondary',
+                bundleVersion: '1.0.0+ota.6',
+                source: 'hot-update',
+                packageId: 'pkg-001',
+                releaseId: 'release-001',
+            },
+        })
+    })
+
+    it('derives paired master display role as primary from topology runtime state', () => {
+        const report = buildHotUpdateVersionReportPayload({
+            'kernel.base.tcp-control-runtime-v2.identity': {
+                terminalId: 'terminal-002',
+                activationStatus: 'ACTIVATED',
+            },
+            'kernel.base.tcp-control-runtime-v2.sandbox': {
+                sandboxId: 'sandbox-002',
+            },
+            'kernel.base.topology-runtime-v3.context': {
+                localNodeId: 'master:primary-node',
+                displayIndex: 0,
+                displayCount: 1,
+                instanceMode: 'MASTER',
+                displayMode: 'PRIMARY',
+                workspace: 'MAIN',
+                standalone: true,
+                enableSlave: true,
+            },
+            'kernel.base.tdp-sync-runtime-v2.hot-update': {
+                current: {
+                    source: 'hot-update',
+                    appId: 'assembly-android-mixc-retail-rn84',
+                    assemblyVersion: '1.0.0',
+                    buildNumber: 8,
+                    runtimeVersion: 'android-mixc-retail-rn84@1.0',
+                    bundleVersion: '1.0.0+ota.7',
+                    packageId: 'pkg-002',
+                    releaseId: 'release-002',
+                    appliedAt: 456,
+                },
+                history: [],
+            },
+        }, {
+            appId: 'assembly-android-mixc-retail-rn84',
+            assemblyVersion: '1.0.0',
+            buildNumber: 8,
+            runtimeVersion: 'android-mixc-retail-rn84@1.0',
+            displayIndex: 0,
+            displayRole: 'single',
+            state: 'RUNNING',
+        })
+
+        expect(report).toMatchObject({
+            terminalId: 'terminal-002',
+            sandboxId: 'sandbox-002',
+            payload: {
+                displayIndex: 0,
+                displayRole: 'primary',
+                bundleVersion: '1.0.0+ota.7',
+                source: 'hot-update',
+                packageId: 'pkg-002',
+                releaseId: 'release-002',
+            },
+        })
+    })
+})
 
 const createMockTcpTransport = (): HttpTransport => ({
     async execute(request) {
@@ -126,6 +244,7 @@ const createMockTcpTransport = (): HttpTransport => ({
 
 const createSocketRuntimeSpy = () => {
     const sentMessages: unknown[] = []
+    const disconnects: Array<{profileName: string; reason?: string}> = []
     const connectionStateByProfile = new Map<string, 'connected' | 'connecting' | 'disconnected'>()
 
     const socketRuntime: SocketRuntime = {
@@ -137,7 +256,8 @@ const createSocketRuntimeSpy = () => {
         send(profileName, message) {
             sentMessages.push({profileName, message})
         },
-        disconnect(profileName) {
+        disconnect(profileName, reason) {
+            disconnects.push({profileName, reason})
             connectionStateByProfile.set(profileName, 'disconnected')
         },
         getConnectionState(profileName) {
@@ -154,6 +274,7 @@ const createSocketRuntimeSpy = () => {
     return {
         socketRuntime,
         sentMessages,
+        disconnects,
     }
 }
 
@@ -914,6 +1035,66 @@ describe('tdp-sync-runtime-v2', () => {
                 key: 'kernel.base.tdp-sync-runtime-v2.credential_missing',
             },
         })
+    })
+
+    it.each([
+        ['TOKEN_EXPIRED', '终端 token 已过期'],
+        ['INVALID_TOKEN', '终端 token 无效'],
+    ])('refreshes tcp credential when tdp protocol reports %s', async (code, message) => {
+        const socketRuntimeSpy = createSocketRuntimeSpy()
+        const runtime = createRuntime({
+            localNodeId: `node_tdp_v2_refresh_on_${code.toLowerCase()}`,
+            stateStorage: createMemoryStorage(),
+            secureStateStorage: createMemoryStorage(),
+            socketRuntimeSpy,
+        })
+
+        await runtime.start()
+        await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.bootstrapTcpControl, {
+            deviceInfo: {
+                id: 'device-test-token-expired-001',
+                model: 'Mock POS',
+            },
+        }))
+        await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.activateTerminal, {
+            sandboxId: 'sandbox-test-001',
+            activationCode: 'ACT-TDP-V2-TOKEN-EXPIRED-001',
+            deviceFingerprint: 'device-test-token-expired-001',
+            deviceInfo: {
+                id: 'device-test-token-expired-001',
+                model: 'Mock POS',
+            },
+        }))
+
+        const result = await runtime.dispatchCommand(createCommand(
+            tdpSyncV2CommandDefinitions.tdpProtocolFailed,
+            {
+                code,
+                message,
+                details: {
+                    code,
+                },
+            },
+        ))
+
+        expect(result.status).toBe('COMPLETED')
+        expect(selectTdpSessionState(runtime.getState())).toMatchObject({
+            status: 'ERROR',
+        })
+        expect(selectTcpCredentialSnapshot(runtime.getState())).toMatchObject({
+            accessToken: 'access-token-002',
+            refreshToken: 'refresh-token-001',
+            status: 'READY',
+        })
+        expect(socketRuntimeSpy.disconnects).toContainEqual({
+            profileName: 'kernel.base.tdp-sync-runtime-v2.test.socket',
+            reason: `credential-protocol-error:${code}`,
+        })
+        expect(runtime.queryRequest(result.requestId ?? '')?.commands.map(item => item.commandName)).toEqual([
+            tdpSyncV2CommandDefinitions.tdpProtocolFailed.commandName,
+            tcpControlV2CommandDefinitions.refreshCredential.commandName,
+            tcpControlV2CommandDefinitions.credentialRefreshed.commandName,
+        ])
     })
 
     it('auto acknowledges and reports applied cursor for projection stream messages', async () => {

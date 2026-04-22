@@ -3,6 +3,7 @@ export * from './contextState'
 export * from './connectionState'
 export * from './peerState'
 export * from './syncState'
+export * from './hostState'
 export * from './requestMirrorState'
 export * from './demoSyncState'
 
@@ -11,6 +12,7 @@ import {topologyRuntimeV3ContextStateActions, topologyRuntimeV3ContextStateSlice
 import {topologyRuntimeV3ConnectionStateActions, topologyRuntimeV3ConnectionStateSliceDescriptor} from './connectionState'
 import {topologyRuntimeV3PeerStateActions, topologyRuntimeV3PeerStateSliceDescriptor} from './peerState'
 import {topologyRuntimeV3SyncStateActions, topologyRuntimeV3SyncStateSliceDescriptor} from './syncState'
+import {topologyRuntimeV3HostStateActions, topologyRuntimeV3HostStateSliceDescriptor} from './hostState'
 import {topologyRuntimeV3RequestMirrorStateActions, topologyRuntimeV3RequestMirrorStateSliceDescriptor} from './requestMirrorState'
 import {
     topologyRuntimeV3DemoMasterStateSliceDescriptor,
@@ -24,6 +26,7 @@ export const topologyRuntimeV3StateActions = {
     ...topologyRuntimeV3ConnectionStateActions,
     ...topologyRuntimeV3PeerStateActions,
     ...topologyRuntimeV3SyncStateActions,
+    ...topologyRuntimeV3HostStateActions,
     ...topologyRuntimeV3RequestMirrorStateActions,
     ...topologyRuntimeV3DemoSyncStateActions,
 }
@@ -34,6 +37,7 @@ export const topologyRuntimeV3StateSlices = [
     topologyRuntimeV3ConnectionStateSliceDescriptor,
     topologyRuntimeV3PeerStateSliceDescriptor,
     topologyRuntimeV3SyncStateSliceDescriptor,
+    topologyRuntimeV3HostStateSliceDescriptor,
     topologyRuntimeV3RequestMirrorStateSliceDescriptor,
     topologyRuntimeV3DemoMasterStateSliceDescriptor,
     topologyRuntimeV3DemoSlaveStateSliceDescriptor,

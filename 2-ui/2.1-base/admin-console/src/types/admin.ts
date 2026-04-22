@@ -132,7 +132,6 @@ export interface AdminAppControlHost {
     setFullScreen?(next: boolean): Promise<void>
     setAppLocked?(next: boolean): Promise<void>
     restartApp?(): Promise<void>
-    switchServerSpace?(space: string): Promise<void>
     clearCache?(): Promise<void>
 }
 

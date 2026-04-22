@@ -6,8 +6,12 @@ import {
     type ActorDefinition,
 } from '@impos2/kernel-base-runtime-shell-v2'
 import {
+    parseTopologyV3SharePayload,
     topologyRuntimeV3CommandDefinitions,
 } from '@impos2/kernel-base-topology-runtime-v3'
+import {
+    transportRuntimeCommandDefinitions,
+} from '@impos2/kernel-base-transport-runtime'
 import {
     workflowBuiltinTaskKeys,
     workflowRuntimeV2CommandDefinitions,
@@ -35,28 +39,6 @@ const readString = (
     return typeof value === 'string' && value.length > 0 ? value : undefined
 }
 
-const readNumber = (
-    record: Record<string, unknown>,
-    key: string,
-): number | undefined => {
-    const value = record[key]
-    return typeof value === 'number' && Number.isFinite(value) ? value : undefined
-}
-
-const readServerAddress = (
-    record: Record<string, unknown>,
-    key: string,
-): readonly {address: string}[] | undefined => {
-    const value = record[key]
-    if (
-        Array.isArray(value)
-        && value.every(item => item && typeof item === 'object' && typeof (item as {address?: unknown}).address === 'string')
-    ) {
-        return value as readonly {address: string}[]
-    }
-    return undefined
-}
-
 const parseBarcodeTaskOutput = (value: unknown): AdminBarcodeScanTaskResult => {
     const output = toRecord(value)
     const barcode = output ? readString(output, 'barcode') : undefined
@@ -68,48 +50,6 @@ const parseBarcodeTaskOutput = (value: unknown): AdminBarcodeScanTaskResult => {
         format: output ? readString(output, 'format') : undefined,
         raw: output ? toRecord(output.raw) : undefined,
     }
-}
-
-const normalizeSharePayloadFromBarcode = (
-    barcode: string,
-): AdminTopologySharePayload => {
-    const parsed = JSON.parse(barcode) as unknown
-    const record = toRecord(parsed)
-    if (!record) {
-        throw new Error('二维码内容不是 topology 分享 JSON')
-    }
-    const payload = {
-        formatVersion: readString(record, 'formatVersion')
-            ?? readString(record, 'FORMATVERSION')
-            ?? readString(record, 'v'),
-        deviceId: readString(record, 'deviceId')
-            ?? readString(record, 'DEVICEID')
-            ?? readString(record, 'd'),
-        masterNodeId: readString(record, 'masterNodeId')
-            ?? readString(record, 'MASTERNODEID')
-            ?? readString(record, 'n'),
-        exportedAt: readNumber(record, 'exportedAt')
-            ?? readNumber(record, 'EXPORTEDAT')
-            ?? readNumber(record, 't'),
-        wsUrl: readString(record, 'wsUrl')
-            ?? readString(record, 'WSURL')
-            ?? readString(record, 'w'),
-        httpBaseUrl: readString(record, 'httpBaseUrl')
-            ?? readString(record, 'HTTPBASEURL')
-            ?? readString(record, 'h'),
-        serverAddress: readServerAddress(record, 'serverAddress')
-            ?? readServerAddress(record, 'SERVERADDRESS')
-            ?? readServerAddress(record, 's'),
-    } satisfies Partial<AdminTopologySharePayload>
-    if (
-        payload.formatVersion !== '2026.04'
-        || typeof payload.deviceId !== 'string'
-        || typeof payload.masterNodeId !== 'string'
-        || (!payload.wsUrl && !payload.httpBaseUrl)
-    ) {
-        throw new Error('二维码中的 topology 分享信息不完整')
-    }
-    return payload as AdminTopologySharePayload
 }
 
 const getErrorMessage = (error: unknown): string =>
@@ -160,7 +100,7 @@ export const createAdminTopologyActor = (): ActorDefinition => defineActor('Admi
         }
 
         const barcodeResult = parseBarcodeTaskOutput(workflowOutput)
-        const sharePayload = normalizeSharePayloadFromBarcode(barcodeResult.barcode)
+        const sharePayload = parseTopologyV3SharePayload(barcodeResult.barcode) as AdminTopologySharePayload
         await topologyHost.importSharePayload(sharePayload)
 
         if (context.command.payload.reconnect ?? true) {
@@ -186,6 +126,123 @@ export const createAdminTopologyActor = (): ActorDefinition => defineActor('Admi
             barcodeResult,
             sharePayload,
             topologyHostStatus: statusSnapshot ?? undefined,
+        }
+    }),
+    onCommand(adminConsoleCommandDefinitions.clearTopologyMasterLocator, async context => {
+        const topologyHost = getAdminHostTools().topology
+        await topologyHost?.clearMasterLocator?.()
+
+        const clearResult = await context.dispatchCommand(createCommand(
+            topologyRuntimeV3CommandDefinitions.clearMasterLocator,
+            {} as Record<string, never>,
+        ))
+        if (clearResult.status !== 'COMPLETED') {
+            const clearError = clearResult.actorResults.find(result => result.error)?.error
+            throw new Error(
+                getErrorMessage(clearError)
+                || '清空主机信息失败',
+            )
+        }
+
+        const statusSnapshot = topologyHost?.getTopologyHostStatus
+            ? await topologyHost.getTopologyHostStatus()
+            : null
+
+        return {
+            status: 'COMPLETED',
+            topologyHostStatus: statusSnapshot ?? undefined,
+        }
+    }),
+    onCommand(adminConsoleCommandDefinitions.refreshTopologyHostStatus, async () => {
+        const topologyHost = getAdminHostTools().topology
+        const [statusSnapshot, diagnosticsSnapshot] = await Promise.all([
+            topologyHost?.getTopologyHostStatus
+                ? topologyHost.getTopologyHostStatus()
+                : Promise.resolve(null),
+            topologyHost?.getTopologyHostDiagnostics
+                ? topologyHost.getTopologyHostDiagnostics()
+                : Promise.resolve(null),
+        ])
+        return {
+            status: 'COMPLETED',
+            topologyHostStatus: statusSnapshot ?? undefined,
+            topologyHostDiagnostics: diagnosticsSnapshot ?? undefined,
+        }
+    }),
+    onCommand(adminConsoleCommandDefinitions.generateTopologySharePayload, async () => {
+        const topologyHost = getAdminHostTools().topology
+        if (!topologyHost?.getSharePayload) {
+            throw new Error('当前 host 未提供可分享的配对信息')
+        }
+        const sharePayload = await topologyHost.getSharePayload()
+        if (!sharePayload) {
+            throw new Error('当前 host 未提供可分享的配对信息')
+        }
+        const statusSnapshot = topologyHost.getTopologyHostStatus
+            ? await topologyHost.getTopologyHostStatus()
+            : null
+        return {
+            status: 'COMPLETED',
+            sharePayload,
+            topologyHostStatus: statusSnapshot ?? undefined,
+        }
+    }),
+    onCommand(adminConsoleCommandDefinitions.importTopologySharePayload, async context => {
+        const topologyHost = getAdminHostTools().topology
+        if (!topologyHost?.importSharePayload) {
+            throw new Error('当前宿主不支持导入 topology 分享信息')
+        }
+        await topologyHost.importSharePayload(context.command.payload.sharePayload)
+        const statusSnapshot = topologyHost.getTopologyHostStatus
+            ? await topologyHost.getTopologyHostStatus()
+            : null
+        return {
+            status: 'COMPLETED',
+            sharePayload: context.command.payload.sharePayload,
+            topologyHostStatus: statusSnapshot ?? undefined,
+        }
+    }),
+    onCommand(adminConsoleCommandDefinitions.reconnectTopologyHost, async () => {
+        const topologyHost = getAdminHostTools().topology
+        if (topologyHost?.reconnect) {
+            await topologyHost.reconnect()
+        } else {
+            await topologyHost?.getTopologyHostStatus?.()
+        }
+        const statusSnapshot = topologyHost?.getTopologyHostStatus
+            ? await topologyHost.getTopologyHostStatus()
+            : null
+        return {
+            status: 'COMPLETED',
+            topologyHostStatus: statusSnapshot ?? undefined,
+        }
+    }),
+    onCommand(adminConsoleCommandDefinitions.stopTopologyHost, async () => {
+        const topologyHost = getAdminHostTools().topology
+        await topologyHost?.stop?.()
+        const statusSnapshot = topologyHost?.getTopologyHostStatus
+            ? await topologyHost.getTopologyHostStatus()
+            : null
+        return {
+            status: 'COMPLETED',
+            topologyHostStatus: statusSnapshot ?? undefined,
+        }
+    }),
+    onCommand(adminConsoleCommandDefinitions.switchServerSpace, async context => {
+        const controlHost = getAdminHostTools().control
+        await context.dispatchCommand(createCommand(
+            transportRuntimeCommandDefinitions.setSelectedServerSpace,
+            {
+                selectedSpace: context.command.payload.selectedSpace,
+            },
+        ))
+        await controlHost?.restartApp?.()
+        const controlSnapshot = controlHost?.getSnapshot
+            ? await controlHost.getSnapshot()
+            : undefined
+        return {
+            status: 'COMPLETED',
+            controlSnapshot,
         }
     }),
 ])

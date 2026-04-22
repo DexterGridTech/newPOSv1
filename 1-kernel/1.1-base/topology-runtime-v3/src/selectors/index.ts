@@ -5,6 +5,7 @@ import {
     TOPOLOGY_V3_CONTEXT_STATE_KEY,
     TOPOLOGY_V3_DEMO_MASTER_STATE_KEY,
     TOPOLOGY_V3_DEMO_SLAVE_STATE_KEY,
+    TOPOLOGY_V3_HOST_STATE_KEY,
     TOPOLOGY_V3_PEER_STATE_KEY,
     TOPOLOGY_V3_REQUEST_MIRROR_STATE_KEY,
     TOPOLOGY_V3_SYNC_STATE_KEY,
@@ -14,6 +15,7 @@ import type {
     TopologyV3ConnectionState,
     TopologyV3ContextState,
     TopologyV3DemoRecordState,
+    TopologyV3HostState,
     TopologyV3PeerState,
     TopologyV3RequestMirrorState,
     TopologyV3SyncState,
@@ -40,6 +42,9 @@ export const selectTopologyRuntimeV3Peer = (state: RootState) =>
 
 export const selectTopologyRuntimeV3Sync = (state: RootState) =>
     state[TOPOLOGY_V3_SYNC_STATE_KEY as keyof RootState] as TopologyV3SyncState | undefined
+
+export const selectTopologyRuntimeV3Host = (state: RootState) =>
+    state[TOPOLOGY_V3_HOST_STATE_KEY as keyof RootState] as TopologyV3HostState | undefined
 
 export const selectTopologyRuntimeV3RequestMirror = (state: RootState) =>
     state[TOPOLOGY_V3_REQUEST_MIRROR_STATE_KEY as keyof RootState] as TopologyV3RequestMirrorState | undefined

@@ -5,6 +5,7 @@ import {
     AdminControlSection,
     AdminDeviceSection,
     AdminLogsSection,
+    adminConsoleCommandDefinitions,
     createModule,
 } from '../../src'
 import {
@@ -174,13 +175,18 @@ describe('admin host-backed sections', () => {
             setFullScreen: vi.fn().mockResolvedValue(undefined),
             setAppLocked: vi.fn().mockResolvedValue(undefined),
             restartApp: vi.fn().mockResolvedValue(undefined),
-            switchServerSpace: vi.fn().mockResolvedValue(undefined),
             clearCache: vi.fn().mockResolvedValue(undefined),
         }
         const harness = await createAdminConsoleHarness({
             hostTools: {control: controlHost},
         })
-        const tree = renderWithAutomation(<AdminControlSection />, harness.store, harness.runtime)
+        const dispatchSpy = vi.spyOn(harness.runtime, 'dispatchCommand')
+            .mockResolvedValue({status: 'COMPLETED', actorResults: []} as any)
+        const tree = renderWithAutomation(
+            <AdminControlSection runtime={harness.runtime} />,
+            harness.store,
+            harness.runtime,
+        )
 
         await tree.waitForText('全屏 / 锁定 / 清缓存 / 重启')
         await expect(tree.queryNodesByText('全屏 / 锁定 / 清缓存 / 重启')).resolves.toHaveLength(1)
@@ -210,7 +216,12 @@ describe('admin host-backed sections', () => {
         })
 
         await tree.press('ui-base-admin-section:control:switch-space:uat')
-        expect(controlHost.switchServerSpace).toHaveBeenCalledWith('uat')
+        expect(dispatchSpy).toHaveBeenCalledWith(expect.objectContaining({
+            definition: adminConsoleCommandDefinitions.switchServerSpace,
+            payload: {
+                selectedSpace: 'uat',
+            },
+        }))
         await expect(tree.getNode('ui-base-admin-section:message')).resolves.toMatchObject({
             text: '已切换到 uat 空间',
         })

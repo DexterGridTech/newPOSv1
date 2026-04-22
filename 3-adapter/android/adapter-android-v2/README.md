@@ -1,14 +1,15 @@
 # adapter-android-v2
 
-`adapter-android-v2` 是新的 Android 原生适配层基础包。
+`adapter-android-v2` 是 Android 原生适配层，职责是沉淀可复用的设备能力与宿主无关的 manager / service，不承载 RN84 业务编排。
 
-当前阶段只先搭建与旧 `adapterPure` 对齐的工程骨架：
+当前包已经不是“纯骨架”：
 
-1. `adapter-lib`
-2. `dev-app`
+1. 提供可复用的 native managers / services，供 assembly 通过 TurboModule 或 bridge 组合暴露；
+2. 承接 `topologyHost`、存储、设备、日志、连接器等底层能力实现；
+3. 为后续 `dev-app` / automation diagnostics 提供可复用的原生调试基础。
 
-后续会在这个骨架上继续完成：
+分层约束：
 
-1. 旧原生能力的复用迁移
-2. 新的 `topologyHost` 原生服务实现
-3. `dev-app` 的原生诊断与自动化测试壳
+1. adapter 只提供原生能力与事实，不决定 RN84 的拓扑、激活、热更新、serverSpace 等业务流程；
+2. 业务状态机、public command / actor、UI bridge 应继续放在 kernel / ui-base / assembly wiring；
+3. assembly 应作为 “RN84 bridge over adapter managers”，而不是把 adapter 反向包进 assembly 业务层。

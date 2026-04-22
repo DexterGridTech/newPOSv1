@@ -1,4 +1,8 @@
 import { selectTcpSandboxId, selectTcpTerminalId } from '@impos2/kernel-base-tcp-control-runtime-v2'
+import {
+  selectTopologyRuntimeV3Context,
+  selectTopologyRuntimeV3DisplayMode,
+} from '@impos2/kernel-base-topology-runtime-v3'
 import { selectTdpHotUpdateState } from '../selectors'
 
 export const buildHotUpdateVersionReportPayload = (state: unknown, input: {
@@ -14,15 +18,31 @@ export const buildHotUpdateVersionReportPayload = (state: unknown, input: {
   const terminalId = selectTcpTerminalId(state as any)
   const sandboxId = selectTcpSandboxId(state as any)
   const hotUpdate = selectTdpHotUpdateState(state as any)
+  const topologyContext = selectTopologyRuntimeV3Context(state as any)
+  const topologyDisplayMode = selectTopologyRuntimeV3DisplayMode(state as any)
   if (!terminalId || !sandboxId) {
     return null
   }
+
+  const resolvedDisplayIndex = topologyContext?.displayIndex ?? input.displayIndex ?? 0
+  const topologyHasPairedDisplayRole = Boolean(
+    topologyContext
+    && (topologyContext.displayCount > 1 || topologyContext.enableSlave === true),
+  )
+  const resolvedDisplayRole = topologyDisplayMode === 'SECONDARY'
+    ? 'secondary'
+    : (
+      topologyDisplayMode === 'PRIMARY' && topologyHasPairedDisplayRole
+        ? 'primary'
+        : (input.displayRole ?? 'single')
+    )
+
   return {
     terminalId,
     sandboxId,
     payload: {
-      displayIndex: input.displayIndex ?? 0,
-      displayRole: input.displayRole ?? 'single',
+      displayIndex: resolvedDisplayIndex,
+      displayRole: resolvedDisplayRole,
       appId: input.appId,
       assemblyVersion: input.assemblyVersion,
       buildNumber: input.buildNumber,

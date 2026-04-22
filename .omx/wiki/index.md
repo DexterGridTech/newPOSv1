@@ -1,6 +1,6 @@
 # Wiki Index
 
-> 5 pages | Last updated: 2026-04-21T06:30:09.000Z
+> 7 pages | Last updated: 2026-04-22T12:45:00.000Z
 
 ## architecture
 
@@ -13,5 +13,7 @@
 
 ## session-log
 
+- [2026-04-22-current-work-recovery](2026-04-22-current-work-recovery.md) — # 2026-04-22 Current Work Recovery
+- [2026-04-22-thin-assembly-refactor-handoff](2026-04-22-thin-assembly-refactor-handoff.md) — # 2026-04-22 Thin Assembly Refactor Handoff
 - [2026-04-22-rn84-master-slave-ota-reconnect-followup](2026-04-22-rn84-master-slave-ota-reconnect-followup.md) — # 2026-04-22-rn84-master-slave-ota-reconnect-followup
 - [2026-04-18-ui-automation-migration-progress](2026-04-18-ui-automation-migration-progress.md) — # 2026-04-18-ui-automation-migration-progress

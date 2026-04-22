@@ -213,6 +213,7 @@ export interface CreateSocketLifecycleControllerInput {
     attachListeners(handlers: SocketLifecycleControllerHandlers): void
     resolveReconnectPolicy(): SocketLifecycleReconnectPolicy
     shouldReconnect(): boolean
+    shouldReconnectOnConnectError?(error: unknown): boolean
     onConnectStarting?(input: {isReconnect: boolean}): void
     onConnectResolved?(input: {isReconnect: boolean}): void | Promise<void>
     onConnectFailed?(input: {isReconnect: boolean; error: unknown}): void

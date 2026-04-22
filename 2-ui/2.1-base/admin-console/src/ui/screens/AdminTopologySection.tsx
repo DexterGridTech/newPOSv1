@@ -7,6 +7,7 @@ import {
     type KernelRuntimeV2,
 } from '@impos2/kernel-base-runtime-shell-v2'
 import {
+    createTopologyV3CompactSharePayload,
     selectTopologyRuntimeV3Connection,
     selectTopologyRuntimeV3Context,
     selectTopologyRuntimeV3DisplayMode,
@@ -42,19 +43,6 @@ import type {AdminTopologySharePayload} from '../../types'
 export interface AdminTopologySectionProps {
     runtime: KernelRuntimeV2
     store: EnhancedStore
-}
-
-const createCompactTopologyQrPayload = (
-    payload: AdminTopologySharePayload,
-): Record<string, string> => {
-    const wsUrl = payload.wsUrl ?? payload.serverAddress?.find(item => item.address)?.address
-    return {
-        v: payload.formatVersion,
-        d: payload.deviceId,
-        n: payload.masterNodeId,
-        ...(wsUrl ? {w: wsUrl} : {}),
-        ...(!wsUrl && payload.httpBaseUrl ? {h: payload.httpBaseUrl} : {}),
-    }
 }
 
 export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
@@ -136,12 +124,16 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
                     : tcpActivationEligibility.reasonCode
 
     const refreshHostStatus = async () => {
-        const [nextStatus, nextDiagnostics] = await Promise.all([
-            topologyHost?.getTopologyHostStatus?.() ?? Promise.resolve(null),
-            topologyHost?.getTopologyHostDiagnostics?.() ?? Promise.resolve(null),
-        ])
-        setHostStatus(nextStatus)
-        setHostDiagnostics(nextDiagnostics)
+        const result = await runtime.dispatchCommand(createCommand(
+            adminConsoleCommandDefinitions.refreshTopologyHostStatus,
+            {},
+        ))
+        const payload = result.actorResults[0]?.result as {
+            topologyHostStatus?: Record<string, unknown> | null
+            topologyHostDiagnostics?: Record<string, unknown> | null
+        } | undefined
+        setHostStatus(payload?.topologyHostStatus ?? null)
+        setHostDiagnostics(payload?.topologyHostDiagnostics ?? null)
     }
 
     const runHostAction = async (
@@ -208,7 +200,7 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
         }
     }
 
-    const qrValue = sharePayload ? JSON.stringify(createCompactTopologyQrPayload(sharePayload)) : null
+    const qrValue = sharePayload ? JSON.stringify(createTopologyV3CompactSharePayload(sharePayload)) : null
 
     return (
         <AdminSectionShell
@@ -428,13 +420,10 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
                         testID="ui-base-admin-section:topology:clear-master"
                         label="清空主机"
                         tone="danger"
-                        onPress={() => {
-                            void topologyHost?.clearMasterLocator?.()
-                            void runtime.dispatchCommand(createCommand(
-                                topologyRuntimeV3CommandDefinitions.clearMasterLocator,
-                                {},
-                            ))
-                        }}
+                        onPress={() => void runtime.dispatchCommand(createCommand(
+                            adminConsoleCommandDefinitions.clearTopologyMasterLocator,
+                            {},
+                        ))}
                     />
                     {topologyHost?.reconnect ? (
                         <AdminActionButton
@@ -442,7 +431,15 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
                             label="重新连接"
                             tone="primary"
                             onPress={() => void runHostAction(
-                                () => topologyHost.reconnect?.(),
+                                async () => {
+                                    const result = await runtime.dispatchCommand(createCommand(
+                                        adminConsoleCommandDefinitions.reconnectTopologyHost,
+                                        {},
+                                    ))
+                                    if (result.status !== 'COMPLETED') {
+                                        throw new Error(result.actorResults[0]?.error?.message ?? '重连 host 失败')
+                                    }
+                                },
                                 '已请求 host 重新连接',
                             )}
                         />
@@ -453,7 +450,15 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
                             label="停止Host"
                             tone="danger"
                             onPress={() => void runHostAction(
-                                () => topologyHost.stop?.(),
+                                async () => {
+                                    const result = await runtime.dispatchCommand(createCommand(
+                                        adminConsoleCommandDefinitions.stopTopologyHost,
+                                        {},
+                                    ))
+                                    if (result.status !== 'COMPLETED') {
+                                        throw new Error(result.actorResults[0]?.error?.message ?? '停止 host 失败')
+                                    }
+                                },
                                 '已请求停止 topology host',
                             )}
                         />
@@ -463,7 +468,13 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
                             testID="ui-base-admin-section:topology:share-payload"
                             label="生成分享"
                             onPress={() => void runHostAction(async () => {
-                                const payload = await topologyHost.getSharePayload?.() ?? null
+                                const result = await runtime.dispatchCommand(createCommand(
+                                    adminConsoleCommandDefinitions.generateTopologySharePayload,
+                                    {},
+                                ))
+                                const payload = (result.actorResults[0]?.result as {
+                                    sharePayload?: AdminTopologySharePayload
+                                } | undefined)?.sharePayload ?? null
                                 setSharePayload(payload)
                                 if (!payload) {
                                     throw new Error('当前 host 未提供可分享的配对信息')
@@ -485,7 +496,15 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
                             testID="ui-base-admin-section:topology:import-payload"
                             label="重新导入当前扫码结果"
                             onPress={() => void runHostAction(
-                                () => topologyHost.importSharePayload?.(sharePayload),
+                                async () => {
+                                    const result = await runtime.dispatchCommand(createCommand(
+                                        adminConsoleCommandDefinitions.importTopologySharePayload,
+                                        {sharePayload},
+                                    ))
+                                    if (result.status !== 'COMPLETED') {
+                                        throw new Error(result.actorResults[0]?.error?.message ?? '导入 topology 分享信息失败')
+                                    }
+                                },
                                 '已导入 topology 分享信息',
                             )}
                         />

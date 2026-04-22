@@ -1,6 +1,8 @@
 import {createModuleCommandFactory} from '@impos2/kernel-base-runtime-shell-v2'
 import {moduleName} from '../../moduleName'
 import type {
+    HotUpdateAppliedVersion,
+    HotUpdateEmbeddedReleaseFacts,
     TdpCommandInboxItem,
     TdpProjectionEnvelope,
     TdpServerMessage,
@@ -29,6 +31,15 @@ export const tdpSyncV2CommandDefinitions = {
     recordUserOperation: defineModuleCommand<{
         at?: number
     }>('record-user-operation'),
+    syncHotUpdateCurrentFromNativeBoot: defineModuleCommand<{
+        embeddedRelease: HotUpdateEmbeddedReleaseFacts
+        initializeEmbeddedCurrent?: boolean
+        previousCurrent?: HotUpdateAppliedVersion
+    }>('sync-hot-update-current-from-native-boot'),
+    confirmHotUpdateLoadComplete: defineModuleCommand<{
+        embeddedRelease: HotUpdateEmbeddedReleaseFacts
+        displayIndex?: number
+    }>('confirm-hot-update-load-complete'),
     tdpTopicDataChanged: defineModuleCommand<TdpTopicDataChangedPayload>('topic-data-changed', {
         allowNoActor: true,
     }),
@@ -121,6 +132,8 @@ export const tdpSyncV2CommandNames = {
     reportAppliedCursor: tdpSyncV2CommandDefinitions.reportAppliedCursor.commandName,
     sendPing: tdpSyncV2CommandDefinitions.sendPing.commandName,
     recordUserOperation: tdpSyncV2CommandDefinitions.recordUserOperation.commandName,
+    syncHotUpdateCurrentFromNativeBoot: tdpSyncV2CommandDefinitions.syncHotUpdateCurrentFromNativeBoot.commandName,
+    confirmHotUpdateLoadComplete: tdpSyncV2CommandDefinitions.confirmHotUpdateLoadComplete.commandName,
     tdpTopicDataChanged: tdpSyncV2CommandDefinitions.tdpTopicDataChanged.commandName,
     recomputeResolvedTopicChanges: tdpSyncV2CommandDefinitions.recomputeResolvedTopicChanges.commandName,
     tdpSnapshotLoaded: tdpSyncV2CommandDefinitions.tdpSnapshotLoaded.commandName,

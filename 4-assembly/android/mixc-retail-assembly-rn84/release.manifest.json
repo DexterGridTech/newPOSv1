@@ -4,7 +4,7 @@
   "product": "mixc-retail",
   "assemblyVersion": "1.0.0",
   "buildNumber": 8,
-  "bundleVersion": "1.0.0+ota.5",
+  "bundleVersion": "1.0.0+ota.8",
   "runtimeVersion": "android-mixc-retail-rn84@1.0",
   "channel": "production",
   "minSupportedAppVersion": "1.0.0",
@@ -28,7 +28,7 @@
     "commit": "9ff682189520949eb679d1847b2e33d6eaa4ab78",
     "branch": "main"
   },
-  "updatedAt": "2026-04-21T23:22:19.697Z",
+  "updatedAt": "2026-04-22T10:51:14.753Z",
   "artifacts": {
     "apk": {
       "path": "4-assembly/android/mixc-retail-assembly-rn84/android/app/build/outputs/apk/release/app-release.apk",

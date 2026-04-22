@@ -1,9 +1,16 @@
 import { buildHotUpdateVersionReportPayload } from '@impos2/kernel-base-tdp-sync-runtime-v2'
 import type { KernelRuntimeV2 } from '@impos2/kernel-base-runtime-shell-v2'
-import type { TransportServerAddress } from '@impos2/kernel-base-transport-runtime'
+import {
+  resolveTransportServers,
+  selectTransportSelectedServerSpace,
+  type TransportServerAddress,
+} from '@impos2/kernel-base-transport-runtime'
 import type { AppProps } from '../types'
-import { createAssemblyFetchTransport, resolveAssemblyTransportServers } from '../platform-ports'
-import { SERVER_NAME_MOCK_TERMINAL_PLATFORM } from '@impos2/kernel-server-config-v2'
+import { createAssemblyFetchTransport } from '../platform-ports'
+import {
+  kernelBaseDevServerConfig,
+  SERVER_NAME_MOCK_TERMINAL_PLATFORM,
+} from '@impos2/kernel-server-config-v2'
 import { releaseInfo } from '../generated/releaseInfo'
 import {
   enqueueTerminalVersionReport,
@@ -47,9 +54,13 @@ const scoreMockTerminalPlatformAddress = (
 }
 
 const resolveMockTerminalPlatformAddresses = (
+  runtime: KernelRuntimeV2,
   isEmulator: boolean,
 ): TransportServerAddress[] => {
-  const resolvedAddresses = resolveAssemblyTransportServers()
+  const resolvedAddresses = resolveTransportServers(kernelBaseDevServerConfig, {
+    selectedSpace: selectTransportSelectedServerSpace(runtime.getState())
+      ?? kernelBaseDevServerConfig.selectedSpace,
+  })
     .find(server => server.serverName === SERVER_NAME_MOCK_TERMINAL_PLATFORM)
     ?.addresses
     ?? []
@@ -131,12 +142,15 @@ export const reportTerminalVersion = async (
       isEmulator: props.isEmulator,
     },
   })
-  await flushTerminalVersionReportOutbox(sendTerminalVersionReport)
+  await flushTerminalVersionReportOutbox(item => sendTerminalVersionReport(runtime, item))
 }
 
-const sendTerminalVersionReport = async (item: TerminalVersionReportOutboxItem): Promise<void> => {
+const sendTerminalVersionReport = async (
+  runtime: KernelRuntimeV2,
+  item: TerminalVersionReportOutboxItem,
+): Promise<void> => {
   const {isEmulator: rawIsEmulator, ...payload} = item.payload
-  const addresses = resolveMockTerminalPlatformAddresses(rawIsEmulator === true)
+  const addresses = resolveMockTerminalPlatformAddresses(runtime, rawIsEmulator === true)
   const transport = createAssemblyFetchTransport()
   let lastError: unknown
 

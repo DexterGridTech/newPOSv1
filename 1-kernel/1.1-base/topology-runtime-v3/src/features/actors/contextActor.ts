@@ -1,4 +1,5 @@
 import {
+    createCommand,
     createModuleActorFactory,
     onCommand,
     type ActorDefinition,
@@ -63,10 +64,17 @@ const assertActionAllowed = (
     })
 }
 
+const syncHostLifecycle = (
+    context: Parameters<NonNullable<ActorDefinition['handlers']>[number]['handle']>[0],
+) => context.dispatchCommand(createCommand(
+    topologyRuntimeV3CommandDefinitions.syncTopologyHostLifecycle,
+    {},
+))
+
 export const createTopologyRuntimeV3ContextActor = (): ActorDefinition => defineActor(
     'TopologyContextActor',
     [
-        onCommand(topologyRuntimeV3CommandDefinitions.setInstanceMode, context => {
+        onCommand(topologyRuntimeV3CommandDefinitions.setInstanceMode, async context => {
             if (context.command.payload.instanceMode === 'SLAVE') {
                 const eligibility = getTopologyV3SwitchToSlaveEligibility({
                     context: buildContextState(context),
@@ -81,6 +89,7 @@ export const createTopologyRuntimeV3ContextActor = (): ActorDefinition => define
                 instanceMode: context.command.payload.instanceMode,
             }))
             context.dispatchAction(topologyRuntimeV3StateActions.replaceContextState(buildContextState(context)))
+            await syncHostLifecycle(context)
         }),
         onCommand(topologyRuntimeV3CommandDefinitions.setDisplayMode, context => {
             const eligibility = getTopologyV3DisplayModeEligibility({
@@ -95,7 +104,7 @@ export const createTopologyRuntimeV3ContextActor = (): ActorDefinition => define
             }))
             context.dispatchAction(topologyRuntimeV3StateActions.replaceContextState(buildContextState(context)))
         }),
-        onCommand(topologyRuntimeV3CommandDefinitions.setEnableSlave, context => {
+        onCommand(topologyRuntimeV3CommandDefinitions.setEnableSlave, async context => {
             const eligibility = getTopologyV3EnableSlaveEligibility({
                 context: buildContextState(context),
             })
@@ -107,18 +116,21 @@ export const createTopologyRuntimeV3ContextActor = (): ActorDefinition => define
                 enableSlave: context.command.payload.enableSlave,
             }))
             context.dispatchAction(topologyRuntimeV3StateActions.replaceContextState(buildContextState(context)))
+            await syncHostLifecycle(context)
         }),
-        onCommand(topologyRuntimeV3CommandDefinitions.setMasterLocator, context => {
+        onCommand(topologyRuntimeV3CommandDefinitions.setMasterLocator, async context => {
             context.dispatchAction(topologyRuntimeV3StateActions.patchConfigState({
                 masterLocator: context.command.payload.masterLocator,
             }))
             context.dispatchAction(topologyRuntimeV3StateActions.replaceContextState(buildContextState(context)))
+            await syncHostLifecycle(context)
         }),
-        onCommand(topologyRuntimeV3CommandDefinitions.clearMasterLocator, context => {
+        onCommand(topologyRuntimeV3CommandDefinitions.clearMasterLocator, async context => {
             context.dispatchAction(topologyRuntimeV3StateActions.patchConfigState({
                 masterLocator: null,
             }))
             context.dispatchAction(topologyRuntimeV3StateActions.replaceContextState(buildContextState(context)))
+            await syncHostLifecycle(context)
         }),
         onCommand(topologyRuntimeV3CommandDefinitions.refreshTopologyContext, context => {
             const nextContext = buildContextState(context)

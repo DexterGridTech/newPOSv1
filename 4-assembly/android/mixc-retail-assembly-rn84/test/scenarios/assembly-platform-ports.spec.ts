@@ -12,6 +12,7 @@ const {
     nativeDevice,
     nativeHotUpdate,
     nativeScriptExecutor,
+    nativeTopologyHost,
 } = vi.hoisted(() => ({
     createAssemblyLoggerMock: vi.fn((environmentMode: string) => ({
         kind: 'assembly-logger',
@@ -37,6 +38,12 @@ const {
         confirmLoadComplete: vi.fn(),
     },
     nativeScriptExecutor: {kind: 'native-script-executor'},
+    nativeTopologyHost: {
+        start: vi.fn(async () => ({wsUrl: 'ws://127.0.0.1:8888/ws'})),
+        stop: vi.fn(async () => undefined),
+        getStatus: vi.fn(async () => ({state: 'STOPPED'})),
+        getDiagnosticsSnapshot: vi.fn(async () => null),
+    },
 }))
 
 vi.mock('../../src/platform-ports/logger', () => ({
@@ -73,6 +80,10 @@ vi.mock('../../src/turbomodules/scripts', () => ({
     nativeScriptExecutor,
 }))
 
+vi.mock('../../src/turbomodules/topologyHost', () => ({
+    nativeTopologyHost,
+}))
+
 import {createAssemblyPlatformPorts} from '../../src/platform-ports/createPlatformPorts'
 
 describe('assembly platform ports', () => {
@@ -96,6 +107,7 @@ describe('assembly platform ports', () => {
         expect(ports.connector).toBe(nativeConnector)
         expect(ports.device).toBe(nativeDevice)
         expect(ports.scriptExecutor).toBe(nativeScriptExecutor)
+        expect(ports.topologyHost).toBeDefined()
         expect(ports.hotUpdate).toBeDefined()
         await ports.hotUpdate?.reportLoadComplete?.({displayIndex: 0})
         expect(nativeHotUpdate.confirmLoadComplete).toHaveBeenCalledTimes(1)
@@ -123,15 +135,19 @@ describe('assembly platform ports', () => {
 
         await ports.appControl?.clearDataCache?.()
         await ports.appControl?.restartApp()
+        await ports.topologyHost?.start?.()
+        await ports.topologyHost?.stop?.()
 
         expect(stateStorage?.clear).toHaveBeenCalledTimes(1)
         expect(secureStateStorage?.clear).toHaveBeenCalledTimes(1)
         expect(nativeAppControlRestartAppMock).toHaveBeenCalledTimes(1)
+        expect(nativeTopologyHost.start).toHaveBeenCalledTimes(1)
+        expect(nativeTopologyHost.stop).toHaveBeenCalledTimes(1)
     })
 
     it('leaves server space switching to the assembly admin host input', async () => {
         const ports = createAssemblyPlatformPorts('DEV')
 
-        expect(ports.appControl?.switchServerSpace).toBeUndefined()
+        expect('switchServerSpace' in (ports.appControl ?? {})).toBe(false)
     })
 })

@@ -7,6 +7,7 @@ const {
     selectUiScreenMock,
     selectUiOverlaysMock,
     selectTopologyDisplayModeMock,
+    topologyCommandDefinitions,
 } = vi.hoisted(() => ({
     defineCommandMock: vi.fn((input: Record<string, unknown>) => input),
     createCommandMock: vi.fn((definition: unknown, payload: unknown) => ({
@@ -22,6 +23,14 @@ const {
     })),
     selectUiOverlaysMock: vi.fn(() => []),
     selectTopologyDisplayModeMock: vi.fn(() => 'PRIMARY'),
+    topologyCommandDefinitions: {
+        requestPowerDisplayModeSwitchConfirmation: {
+            commandName: 'kernel.base.topology-runtime-v3.request-power-display-mode-switch-confirmation',
+        },
+        confirmPowerDisplayModeSwitch: {
+            commandName: 'kernel.base.topology-runtime-v3.confirm-power-display-mode-switch',
+        },
+    },
 }))
 
 vi.mock('@impos2/kernel-base-runtime-shell-v2', async importOriginal => ({
@@ -38,6 +47,7 @@ vi.mock('@impos2/kernel-base-ui-runtime-v2', async importOriginal => ({
 
 vi.mock('@impos2/kernel-base-topology-runtime-v3', () => ({
     selectTopologyDisplayMode: selectTopologyDisplayModeMock,
+    topologyRuntimeV3CommandDefinitions: topologyCommandDefinitions,
 }))
 
 vi.mock('../../src/turbomodules/scripts', () => ({

@@ -5,9 +5,7 @@ import {
 } from '@impos2/kernel-base-tcp-control-runtime-v2'
 import {
     createTopologyRuntimeModuleV3,
-    selectTopologyRuntimeV3Connection,
     selectTopologyRuntimeV3Context,
-    topologyRuntimeV3CommandDefinitions,
 } from '@impos2/kernel-base-topology-runtime-v3'
 import {
     createTdpSyncRuntimeModuleV2,
@@ -16,7 +14,16 @@ import {
 import {createTcpControlRuntimeModuleV2} from '@impos2/kernel-base-tcp-control-runtime-v2'
 import {createUiRuntimeModuleV2} from '@impos2/kernel-base-ui-runtime-v2'
 import {createWorkflowRuntimeModuleV2} from '@impos2/kernel-base-workflow-runtime-v2'
-import {createHttpRuntime} from '@impos2/kernel-base-transport-runtime'
+import {
+    createHttpRuntime,
+    createTransportRuntimeModule,
+    resolveTransportServers,
+    selectTransportSelectedServerSpace,
+} from '@impos2/kernel-base-transport-runtime'
+import {
+    kernelBaseDevServerConfig,
+    SERVER_NAME_MOCK_TERMINAL_PLATFORM,
+} from '@impos2/kernel-server-config-v2'
 import {createModule as createRuntimeReactModule} from '@impos2/ui-base-runtime-react'
 import type {UiRuntimeProviderProps} from '@impos2/ui-base-runtime-react'
 import {createModule as createInputRuntimeModule} from '@impos2/ui-base-input-runtime'
@@ -33,7 +40,6 @@ import {
     createAssemblyTopologyInput,
 } from '../platform-ports'
 import {createReactotronEnhancer} from '../platform-ports/reactotronConfig'
-import {resolveAssemblyTransportServers} from '../platform-ports/serverSpaceState'
 import {moduleName} from '../moduleName'
 import {createModule as createAssemblyRuntimeModule} from './createModule'
 import {createAssemblyAdminConsoleInput} from './adminConsoleConfig'
@@ -48,12 +54,10 @@ import {
 } from './automation'
 import {
     createAssemblyTopologyBindingSource,
-    decideAssemblyTopologyHostLifecycle,
     shouldDisableAssemblyStatePersistence,
     type AssemblyTopologyBindingState,
     type AssemblyTopologyStorageGateSnapshot,
 } from './topology'
-import {nativeTopologyHost} from '../turbomodules/topologyHost'
 import {releaseInfo} from '../generated/releaseInfo'
 
 export interface AssemblyRuntimeApp {
@@ -90,12 +94,29 @@ const createKernelRuntimeAppForAssembly = (
     options: {
         mockTerminalPlatformBaseUrl?: string
         topologyAdminInput?: NonNullable<Parameters<typeof createAssemblyAdminConsoleInput>[0]>['topology']
+        getRuntime?: () => import('@impos2/kernel-base-runtime-shell-v2').KernelRuntimeV2 | undefined
     },
 ): KernelRuntimeAppV2 => {
     const httpTransport = createAssemblyFetchTransport()
+    const resolveAssemblyTransportServers = (
+        context?: Pick<import('@impos2/kernel-base-runtime-shell-v2').KernelRuntimeV2, 'getState'>,
+    ) => {
+        const selectedSpace = context && typeof context.getState === 'function'
+            ? selectTransportSelectedServerSpace(context.getState())
+            : undefined
+        return resolveTransportServers(kernelBaseDevServerConfig, {
+            selectedSpace: selectedSpace ?? kernelBaseDevServerConfig.selectedSpace,
+            baseUrlOverrides: options.mockTerminalPlatformBaseUrl
+                ? {
+                    [SERVER_NAME_MOCK_TERMINAL_PLATFORM]: options.mockTerminalPlatformBaseUrl,
+                }
+                : undefined,
+        })
+    }
     const tdpSyncAssembly = createAssemblyTdpSyncRuntimeAssembly({
         logger: platformPorts.logger,
         mockTerminalPlatformBaseUrl: options.mockTerminalPlatformBaseUrl,
+        resolveServers: context => resolveAssemblyTransportServers(context ?? options.getRuntime?.()),
     })
 
     return createKernelRuntimeApp({
@@ -109,6 +130,7 @@ const createKernelRuntimeAppForAssembly = (
         },
         modules: [
             createAssemblyRuntimeModule(props),
+            createTransportRuntimeModule({serverConfig: kernelBaseDevServerConfig}),
             createTopologyRuntimeModuleV3(topologyInput),
             createTcpControlRuntimeModuleV2({
                 assembly: {
@@ -121,9 +143,7 @@ const createKernelRuntimeAppForAssembly = (
                                 component: 'TcpControlHttpRuntime',
                             }),
                             transport: httpTransport,
-                            serverProvider: () => resolveAssemblyTransportServers({
-                                mockTerminalPlatformBaseUrl: options.mockTerminalPlatformBaseUrl,
-                            }),
+                            serverProvider: () => resolveAssemblyTransportServers(context),
                             executionPolicy: {
                                 retryRounds: 1,
                                 failoverStrategy: 'ordered',
@@ -167,6 +187,7 @@ const createKernelRuntimeAppForAssembly = (
             createInputRuntimeModule(),
             createAdminConsoleModule(createAssemblyAdminConsoleInput({
                 topology: options.topologyAdminInput,
+                getRuntime: options.getRuntime,
             })),
             createTerminalConsoleModule(),
             createRetailShellModule(),
@@ -237,69 +258,6 @@ const updateTopologyRuntimeEnvironment = (
     })
 }
 
-const syncMasterTopologyBindingFromHost = (
-    bindingSource: ReturnType<typeof createAssemblyTopologyBindingSource>,
-    addressInfo: Record<string, unknown> | undefined,
-) => {
-    if (!addressInfo) {
-        return
-    }
-    const nestedAddressInfo = typeof addressInfo.addressInfo === 'object' && addressInfo.addressInfo != null
-        ? addressInfo.addressInfo as Record<string, unknown>
-        : undefined
-    const resolvedAddressInfo = nestedAddressInfo ?? addressInfo
-    const localWsUrl = typeof resolvedAddressInfo.localWsUrl === 'string'
-        ? resolvedAddressInfo.localWsUrl
-        : typeof resolvedAddressInfo.wsUrl === 'string'
-            ? resolvedAddressInfo.wsUrl
-            : undefined
-    const localHttpBaseUrl = typeof resolvedAddressInfo.localHttpBaseUrl === 'string'
-        ? resolvedAddressInfo.localHttpBaseUrl
-        : typeof resolvedAddressInfo.httpBaseUrl === 'string'
-            ? resolvedAddressInfo.httpBaseUrl
-            : undefined
-    if (!localWsUrl && !localHttpBaseUrl) {
-        return
-    }
-    bindingSource.set({
-        wsUrl: localWsUrl,
-        httpBaseUrl: localHttpBaseUrl,
-    })
-}
-
-const createStandaloneSlaveTopologyAutoStartKey = (
-    context: ReturnType<typeof selectTopologyRuntimeV3Context>,
-): string | null => {
-    if (!context || context.standalone !== true || context.instanceMode !== 'SLAVE') {
-        return null
-    }
-
-    const masterLocator = context.masterLocator as Record<string, unknown> | null | undefined
-    const serverAddress = Array.isArray(masterLocator?.serverAddress)
-        ? masterLocator.serverAddress
-            .map(entry => typeof (entry as Record<string, unknown>)?.address === 'string'
-                ? (entry as Record<string, unknown>).address as string
-                : null)
-            .filter((address): address is string => Boolean(address))
-        : []
-    const httpBaseUrl = typeof masterLocator?.httpBaseUrl === 'string'
-        ? masterLocator.httpBaseUrl
-        : ''
-
-    if (serverAddress.length === 0 && !httpBaseUrl) {
-        return null
-    }
-
-    return JSON.stringify({
-        localNodeId: context.localNodeId,
-        displayMode: context.displayMode,
-        masterNodeId: typeof masterLocator?.masterNodeId === 'string' ? masterLocator.masterNodeId : '',
-        masterDeviceId: typeof masterLocator?.masterDeviceId === 'string' ? masterLocator.masterDeviceId : '',
-        serverAddress,
-        httpBaseUrl,
-    })
-}
-
 export const createApp = (
     props: AppProps,
     options: {
@@ -331,6 +289,7 @@ export const createApp = (
                 getTopologyContextSnapshot: () => ({...latestTopologyContext}),
                 getRuntime: () => latestRuntime,
             },
+            getRuntime: () => latestRuntime,
         },
     )
     const automation = adbSocketDebugConfig.enabled
@@ -342,166 +301,6 @@ export const createApp = (
         })
         : undefined
     const automationTarget = getAssemblyAutomationHostConfig(props.displayIndex).target
-    let topologyHostRunning = false
-    let topologyHostTransition: Promise<void> | null = null
-    let standaloneSlaveTopologyAutoStartKey: string | null = null
-
-    const syncNativeTopologyHostLifecycle = async (
-        runtime: import('@impos2/kernel-base-runtime-shell-v2').KernelRuntimeV2,
-    ): Promise<void> => {
-        const context = selectTopologyRuntimeV3Context(runtime.getState())
-        const decision = decideAssemblyTopologyHostLifecycle({
-            displayCount: props.displayCount,
-            displayIndex: props.displayIndex,
-            instanceMode: context?.instanceMode,
-            enableSlave: context?.enableSlave,
-        })
-
-        if (decision.shouldRun === topologyHostRunning) {
-            platformPorts.logger.info({
-                category: 'assembly.topology',
-                event: 'topology-host-lifecycle-skip',
-                message: 'Native topology host already matches desired lifecycle state',
-                data: {
-                    displayCount: props.displayCount,
-                    displayIndex: props.displayIndex,
-                    deviceId: props.deviceId,
-                    instanceMode: context?.instanceMode,
-                    enableSlave: context?.enableSlave,
-                    running: topologyHostRunning,
-                    reason: decision.reason,
-                },
-            })
-            return
-        }
-
-        try {
-            if (decision.shouldRun) {
-                platformPorts.logger.info({
-                    category: 'assembly.topology',
-                    event: 'topology-host-start',
-                    message: 'Starting native topology host from assembly lifecycle',
-                    data: {
-                        displayCount: props.displayCount,
-                        displayIndex: props.displayIndex,
-                        deviceId: props.deviceId,
-                        instanceMode: context?.instanceMode,
-                        enableSlave: context?.enableSlave,
-                        reason: decision.reason,
-                    },
-                })
-                const hostAddressInfo = await nativeTopologyHost.start({
-                    displayCount: props.displayCount,
-                    displayIndex: props.displayIndex,
-                    deviceId: props.deviceId,
-                })
-                syncMasterTopologyBindingFromHost(
-                    topologyBindingSource,
-                    hostAddressInfo as unknown as Record<string, unknown>,
-                )
-                topologyHostRunning = true
-                await runtime.dispatchCommand(createCommand(
-                    topologyRuntimeV3CommandDefinitions.startTopologyConnection,
-                    {},
-                ))
-                return
-            }
-
-            platformPorts.logger.info({
-                category: 'assembly.topology',
-                event: 'topology-host-stop',
-                message: 'Stopping native topology host from assembly lifecycle',
-                data: {
-                    displayCount: props.displayCount,
-                    displayIndex: props.displayIndex,
-                    deviceId: props.deviceId,
-                    instanceMode: context?.instanceMode,
-                    enableSlave: context?.enableSlave,
-                    reason: decision.reason,
-                },
-            })
-            await nativeTopologyHost.stop()
-            topologyHostRunning = false
-        } catch (error) {
-            platformPorts.logger.error({
-                category: 'assembly.topology',
-                event: 'topology-host-lifecycle-error',
-                message: 'Native topology host lifecycle transition failed',
-                data: {
-                    displayCount: props.displayCount,
-                    displayIndex: props.displayIndex,
-                    deviceId: props.deviceId,
-                    instanceMode: context?.instanceMode,
-                    enableSlave: context?.enableSlave,
-                    running: topologyHostRunning,
-                    desiredRunning: decision.shouldRun,
-                    reason: decision.reason,
-                },
-                error: {
-                    name: error instanceof Error ? error.name : undefined,
-                    message: error instanceof Error ? error.message : String(error),
-                    stack: error instanceof Error ? error.stack : undefined,
-                },
-            })
-            throw error
-        }
-    }
-
-    const maybeAutoStartStandaloneSlaveTopologyConnection = async (
-        runtime: import('@impos2/kernel-base-runtime-shell-v2').KernelRuntimeV2,
-    ): Promise<void> => {
-        const state = runtime.getState()
-        const context = selectTopologyRuntimeV3Context(state)
-        const connection = selectTopologyRuntimeV3Connection(state)
-        const autoStartKey = createStandaloneSlaveTopologyAutoStartKey(context)
-
-        if (!autoStartKey) {
-            standaloneSlaveTopologyAutoStartKey = null
-            return
-        }
-        if (connection?.serverConnectionStatus && connection.serverConnectionStatus !== 'DISCONNECTED') {
-            return
-        }
-        if (standaloneSlaveTopologyAutoStartKey === autoStartKey) {
-            return
-        }
-
-        standaloneSlaveTopologyAutoStartKey = autoStartKey
-        platformPorts.logger.info({
-            category: 'assembly.topology',
-            event: 'topology-slave-autostart',
-            message: 'Auto-starting topology connection for standalone slave recovery',
-            data: {
-                displayCount: props.displayCount,
-                displayIndex: props.displayIndex,
-                deviceId: props.deviceId,
-                displayMode: context?.displayMode,
-                localNodeId: context?.localNodeId,
-                masterNodeId: context?.masterLocator?.masterNodeId,
-                masterDeviceId: context?.masterLocator?.masterDeviceId,
-            },
-        })
-        await runtime.dispatchCommand(createCommand(
-            topologyRuntimeV3CommandDefinitions.startTopologyConnection,
-            {},
-        ))
-    }
-
-    const scheduleTopologyHostLifecycleSync = (
-        runtime: import('@impos2/kernel-base-runtime-shell-v2').KernelRuntimeV2,
-    ) => {
-        const next = (topologyHostTransition ?? Promise.resolve())
-            .catch(() => undefined)
-            .then(async () => {
-                await syncNativeTopologyHostLifecycle(runtime)
-                await maybeAutoStartStandaloneSlaveTopologyConnection(runtime)
-            })
-        topologyHostTransition = next.finally(() => {
-            if (topologyHostTransition === next) {
-                topologyHostTransition = null
-            }
-        })
-    }
 
     return {
         app,
@@ -566,10 +365,8 @@ export const createApp = (
                 }
 
                 updateTopologyRuntimeEnvironment(runtime, topologyBindingSource, latestTopologyContext)
-                scheduleTopologyHostLifecycleSync(runtime)
                 runtime.subscribeState(() => {
                     updateTopologyRuntimeEnvironment(runtime, topologyBindingSource, latestTopologyContext)
-                    scheduleTopologyHostLifecycleSync(runtime)
                     maybeReportActivatedVersion()
                 })
                 maybeReportActivatedVersion()

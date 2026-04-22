@@ -25,6 +25,7 @@ export const createDefaultRuntimePlatformPortsV2 = (
     device: ports?.device,
     appControl: ports?.appControl,
     hotUpdate: ports?.hotUpdate,
+    topologyHost: ports?.topologyHost,
     localWebServer: ports?.localWebServer,
     connector: ports?.connector,
 })

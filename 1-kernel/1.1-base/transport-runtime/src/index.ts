@@ -9,5 +9,9 @@ export * from './moduleName'
 export {packageVersion}
 
 export * from './application'
+export * from './features/commands'
+export * from './features/slices'
 export * from './supports'
+export * from './selectors'
 export * from './types'
+export * from './foundations'

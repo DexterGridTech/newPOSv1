@@ -154,4 +154,73 @@ describe('assembly topology input', () => {
         }])
         expect(binding?.profile?.pathTemplate).toBe('/ws')
     })
+
+    it('prefers topology runtime state over stale binding cache during first connection', () => {
+        const logger = {
+            scope: vi.fn(() => logger),
+            info: vi.fn(),
+            debug: vi.fn(),
+            warn: vi.fn(),
+            error: vi.fn(),
+        }
+        const bindingSource = createAssemblyTopologyBindingSource({
+            role: 'master',
+            localNodeId: 'master-device-001',
+        })
+        const input = createAssemblyTopologyInput({
+            deviceId: 'device-001',
+            screenMode: 'desktop',
+            displayCount: 1,
+            displayIndex: 0,
+            isEmulator: true,
+        }, logger as any, {bindingSource})
+
+        const runtimeContext = {
+            localNodeId: 'master-device-001',
+            instanceMode: 'MASTER',
+            displayMode: 'PRIMARY',
+            standalone: true,
+            masterLocator: {
+                masterNodeId: 'master-device-001',
+                masterDeviceId: 'device-001',
+                httpBaseUrl: 'http://127.0.0.1:8888/mockMasterServer',
+                serverAddress: [{address: 'ws://127.0.0.1:8888/mockMasterServer/ws'}],
+                addedAt: 1776811534054,
+            },
+        }
+
+        const binding = input?.assembly?.resolveSocketBinding({
+            localNodeId: 'master-device-001',
+            getState: () => ({
+                'kernel.base.topology-runtime-v3.context': runtimeContext,
+            }),
+        } as any)
+
+        expect(binding?.socketRuntime.getServerCatalog().resolveAddresses(SERVER_NAME_DUAL_TOPOLOGY_HOST_V3)).toEqual([{
+            addressName: 'dynamic-topology-host',
+            baseUrl: 'http://127.0.0.1:8888/mockMasterServer',
+        }])
+        expect(bindingSource.get()).toMatchObject({
+            role: 'master',
+            localNodeId: 'master-device-001',
+            masterNodeId: 'master-device-001',
+            masterDeviceId: 'device-001',
+            wsUrl: 'ws://127.0.0.1:8888/mockMasterServer/ws',
+            httpBaseUrl: 'http://127.0.0.1:8888/mockMasterServer',
+        })
+
+        const hello = input?.assembly?.createHelloRuntime({
+            localNodeId: 'master-device-001',
+            getState: () => ({
+                'kernel.base.topology-runtime-v3.context': runtimeContext,
+            }),
+        } as any)
+
+        expect(hello).toMatchObject({
+            nodeId: 'master-device-001',
+            instanceMode: 'MASTER',
+            displayMode: 'PRIMARY',
+            standalone: true,
+        })
+    })
 })

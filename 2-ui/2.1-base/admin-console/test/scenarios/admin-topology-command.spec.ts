@@ -138,6 +138,30 @@ describe('admin topology command', () => {
         })
     })
 
+    it('clears topology master through a single admin command lane', async () => {
+        const clearMasterLocator = vi.fn(async () => {})
+        const harness = await createAdminConsoleHarness({
+            hostTools: {
+                topology: {
+                    clearMasterLocator,
+                },
+            } as any,
+        })
+
+        const result = await harness.runtime.dispatchCommand(createCommand(
+            adminConsoleCommandDefinitions.clearTopologyMasterLocator,
+            {},
+        ))
+
+        expect(result.status).toBe('COMPLETED')
+        expect(clearMasterLocator).toHaveBeenCalledTimes(1)
+        expect(harness.runtime.queryRequest(result.requestId)?.commands.map(item => item.commandName)).toEqual([
+            adminConsoleCommandDefinitions.clearTopologyMasterLocator.commandName,
+            topologyRuntimeV3CommandDefinitions.clearMasterLocator.commandName,
+            topologyRuntimeV3CommandDefinitions.syncTopologyHostLifecycle.commandName,
+        ])
+    })
+
     it('passes optional imageUri into the scan workflow input', async () => {
         const importSharePayload = vi.fn(async () => {})
         const connectorCall = vi.fn(async () => ({

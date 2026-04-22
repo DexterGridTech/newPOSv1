@@ -1,5 +1,6 @@
 import type {UnknownAction} from '@reduxjs/toolkit'
 import type {RootState} from '@impos2/kernel-base-state-runtime'
+import type {PlatformPorts} from '@impos2/kernel-base-platform-ports'
 import type {
     NodeId,
     ParameterDefinition,
@@ -25,6 +26,7 @@ export interface ActorInfo {
 export interface ActorExecutionContext<TPayload = unknown> {
     readonly runtimeId: RuntimeInstanceId
     readonly localNodeId: NodeId
+    readonly platformPorts: PlatformPorts
     readonly displayContext: RuntimeDisplayContextV2
     readonly command: DispatchedCommand<TPayload>
     readonly actor: ActorInfo

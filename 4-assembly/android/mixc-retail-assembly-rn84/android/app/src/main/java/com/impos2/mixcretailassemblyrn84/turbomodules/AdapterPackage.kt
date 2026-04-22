@@ -7,12 +7,15 @@ import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
 
 /**
- * 整合层 BaseReactPackage。
+ * RN84 assembly TurboModule package。
  *
- * 这个包是 JS 与整合层原生能力建立连接的总入口。它把当前工程需要暴露给 JS 的 TurboModule
- * 集中注册到 RN 新架构宿主中。
+ * 这个包是 JS 与 RN84 assembly 原生桥接建立连接的总入口。它把当前工程真正需要暴露给 JS 的
+ * assembly-level bridge modules 集中注册到 RN 新架构宿主中。
  *
- * 这里不直接包含 adapterPure 的所有能力实现，而是只暴露“整合层真正需要提供给 JS 的桥接模块”：
+ * 注意：这里注册的是 assembly bridge，不代表这些能力“属于 assembly”。
+ * 实际原生实现大多来自 adapter managers / services；assembly 只是把 RN84 当前需要的桥接面接到宿主里。
+ *
+ * 这里不直接包含 adapter 层的全部实现，而是只暴露“RN84 宿主真正需要提供给 JS 的桥接模块”：
  * - 设备信息
  * - 日志
  * - 脚本执行

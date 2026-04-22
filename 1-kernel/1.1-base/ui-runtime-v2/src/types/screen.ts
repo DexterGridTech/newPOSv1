@@ -46,6 +46,7 @@ export interface UiAlertInfo {
     title?: string
     message?: string
     level?: 'info' | 'warning' | 'error' | 'success'
+    autoConfirmAfterMs?: number
     confirmText?: string
     cancelText?: string
     confirmAction?: UiAlertAction

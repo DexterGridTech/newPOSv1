@@ -54,8 +54,8 @@ class MainApplication : Application(), ReactApplication {
       /**
        * 返回 RN 可见的 Native Package 列表。
        *
-       * 这里保留自动链接产生的默认列表，同时手动追加整合层自己的 [AdapterPackage]。
-       * [AdapterPackage] 内部再把整合层定义的 TurboModule 暴露给 JS。
+       * 这里保留自动链接产生的默认列表，同时手动追加 assembly 自己的 [AdapterPackage]。
+       * [AdapterPackage] 只负责把 RN84 宿主需要的桥接模块暴露给 JS，不承载 adapter / domain 业务编排。
        */
       override fun getPackages() =
         PackageList(this@MainApplication).packages.apply {

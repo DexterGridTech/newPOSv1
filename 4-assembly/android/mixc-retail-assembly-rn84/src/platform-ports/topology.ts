@@ -4,7 +4,13 @@ import {
     JsonSocketCodec,
     typed,
 } from '@impos2/kernel-base-transport-runtime'
-import type {TopologyRuntimeV3Assembly, CreateTopologyRuntimeModuleV3Input, TopologyV3HelloRuntime} from '@impos2/kernel-base-topology-runtime-v3'
+import {
+    resolveTopologyV3SocketServerFromUrls,
+    selectTopologyRuntimeV3Context,
+    type TopologyRuntimeV3Assembly,
+    type CreateTopologyRuntimeModuleV3Input,
+    type TopologyV3HelloRuntime,
+} from '@impos2/kernel-base-topology-runtime-v3'
 import type {LoggerPort} from '@impos2/kernel-base-platform-ports'
 import {
     createAssemblyTopologyBindingSource,
@@ -22,12 +28,14 @@ const createRuntimeInfo = (
     props: AppProps,
     localNodeId: string,
     role: NonNullable<AssemblyTopologyLaunchOptions['role']>,
+    displayMode?: 'PRIMARY' | 'SECONDARY',
+    standalone?: boolean,
 ): TopologyV3HelloRuntime => ({
     nodeId: localNodeId as any,
     deviceId: props.deviceId,
     instanceMode: role === 'slave' ? 'SLAVE' : 'MASTER',
-    displayMode: props.displayIndex === 0 ? 'PRIMARY' : 'SECONDARY',
-    standalone: props.displayIndex === 0,
+    displayMode: displayMode ?? (props.displayIndex === 0 ? 'PRIMARY' : 'SECONDARY'),
+    standalone: standalone ?? (props.displayIndex === 0),
     protocolVersion: '2026.04-v3',
     capabilities: ['state-sync', 'command-relay', 'request-mirror'],
 })
@@ -49,21 +57,68 @@ const createBindingSeedFromLaunch = (
 }
 
 const createTopologyServerDefinition = (
-    bindingSource: AssemblyTopologyBindingSource,
+    snapshot: AssemblyTopologyBindingState,
 ) => {
-    const server = bindingSource.resolveServer()
+    const server = resolveTopologyV3SocketServerFromUrls({
+        wsUrl: snapshot.wsUrl,
+        httpBaseUrl: snapshot.httpBaseUrl,
+    })
     if (!server) {
         return undefined
     }
-        return {
-            serverName: SERVER_NAME_DUAL_TOPOLOGY_HOST_V3,
-            addresses: [
-                {
-                    addressName: 'dynamic-topology-host',
+    return {
+        serverName: SERVER_NAME_DUAL_TOPOLOGY_HOST_V3,
+        addresses: [
+            {
+                addressName: 'dynamic-topology-host',
                 baseUrl: server.baseUrl,
             },
         ],
         pathTemplate: server.pathTemplate,
+    }
+}
+
+const resolveRuntimeBindingState = (
+    bindingSource: AssemblyTopologyBindingSource,
+    context?: Parameters<TopologyRuntimeV3Assembly['resolveSocketBinding']>[0],
+): {
+    snapshot: AssemblyTopologyBindingState
+    runtimeContext: ReturnType<typeof selectTopologyRuntimeV3Context>
+} => {
+    const current = bindingSource.get()
+    const runtimeContext = context && typeof context.getState === 'function'
+        ? selectTopologyRuntimeV3Context(context.getState())
+        : undefined
+    const masterLocator = runtimeContext?.masterLocator as Record<string, unknown> | null | undefined
+    const serverAddress = Array.isArray(masterLocator?.serverAddress)
+        ? masterLocator.serverAddress[0] as Record<string, unknown> | undefined
+        : undefined
+    const snapshot: AssemblyTopologyBindingState = {
+        role: runtimeContext?.instanceMode === 'SLAVE'
+            ? 'slave'
+            : runtimeContext?.instanceMode === 'MASTER'
+                ? 'master'
+                : current.role,
+        localNodeId: typeof runtimeContext?.localNodeId === 'string' && runtimeContext.localNodeId.length > 0
+            ? runtimeContext.localNodeId
+            : current.localNodeId || String(context?.localNodeId ?? ''),
+        masterNodeId: typeof masterLocator?.masterNodeId === 'string'
+            ? masterLocator.masterNodeId
+            : current.masterNodeId,
+        masterDeviceId: typeof masterLocator?.masterDeviceId === 'string'
+            ? masterLocator.masterDeviceId
+            : current.masterDeviceId,
+        wsUrl: typeof serverAddress?.address === 'string'
+            ? serverAddress.address
+            : current.wsUrl,
+        httpBaseUrl: typeof masterLocator?.httpBaseUrl === 'string'
+            ? masterLocator.httpBaseUrl
+            : current.httpBaseUrl,
+    }
+    bindingSource.set(snapshot)
+    return {
+        snapshot,
+        runtimeContext,
     }
 }
 
@@ -90,7 +145,7 @@ export const createAssemblyTopologyInput = (
         return undefined
     }
 
-    const serverDefinition = createTopologyServerDefinition(bindingSource)
+    const serverDefinition = createTopologyServerDefinition(current)
     const initialPath = serverDefinition?.pathTemplate ?? '/ws'
 
     const socketRuntime = createSocketRuntime({
@@ -124,15 +179,21 @@ export const createAssemblyTopologyInput = (
         },
     })
     const assembly: TopologyRuntimeV3Assembly = {
-        resolveSocketBinding() {
-            const nextServer = createTopologyServerDefinition(bindingSource)
+        resolveSocketBinding(context) {
+            const {snapshot} = resolveRuntimeBindingState(bindingSource, context)
+            const nextServer = createTopologyServerDefinition(snapshot)
             if (nextServer) {
                 socketRuntime.replaceServers([{
                     serverName: nextServer.serverName,
                     addresses: nextServer.addresses,
                 }])
             }
-            const snapshot = bindingSource.get()
+            const nextProfile = nextServer?.pathTemplate && nextServer.pathTemplate !== profile.pathTemplate
+                ? {
+                    ...profile,
+                    pathTemplate: nextServer.pathTemplate,
+                }
+                : profile
             logger.info({
                 category: 'assembly.topology',
                 event: 'topology-socket-binding-created',
@@ -145,21 +206,27 @@ export const createAssemblyTopologyInput = (
                     wsUrl: snapshot.wsUrl,
                     httpBaseUrl: snapshot.httpBaseUrl,
                     resolvedServerBaseUrl: nextServer?.addresses[0]?.baseUrl,
-                    resolvedPathTemplate: profile.pathTemplate,
+                    resolvedPathTemplate: nextProfile.pathTemplate,
                 },
             })
             return {
                 socketRuntime,
-                profileName: profile.name,
-                profile,
+                profileName: nextProfile.name,
+                profile: nextProfile,
             }
         },
         createHelloRuntime(context): TopologyV3HelloRuntime | undefined {
-            const snapshot = bindingSource.get()
+            const {snapshot, runtimeContext} = resolveRuntimeBindingState(bindingSource, context)
             return createRuntimeInfo(
                 props,
                 snapshot.localNodeId || String(context.localNodeId),
-                snapshot.role,
+                runtimeContext?.instanceMode === 'SLAVE'
+                    ? 'slave'
+                    : runtimeContext?.instanceMode === 'MASTER'
+                        ? 'master'
+                        : snapshot.role,
+                runtimeContext?.displayMode,
+                runtimeContext?.standalone,
             )
         },
     }

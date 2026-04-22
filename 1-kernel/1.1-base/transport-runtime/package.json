@@ -20,7 +20,10 @@
   },
   "dependencies": {
     "@impos2/kernel-base-contracts": "workspace:*",
-    "@impos2/kernel-base-platform-ports": "workspace:*"
+    "@impos2/kernel-base-platform-ports": "workspace:*",
+    "@impos2/kernel-base-runtime-shell-v2": "workspace:*",
+    "@impos2/kernel-base-state-runtime": "workspace:*",
+    "@reduxjs/toolkit": "^2.10.0"
   },
   "devDependencies": {
     "@impos2/kernel-server-config-v2": "workspace:*",

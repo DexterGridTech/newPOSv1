@@ -175,4 +175,69 @@ describe('transport-runtime socket lifecycle controller', () => {
         await vi.advanceTimersByTimeAsync(25)
         expect(connect).toHaveBeenCalledTimes(2)
     })
+
+    it('schedules reconnect when initial connect throws before any socket event arrives', async () => {
+        const connect = vi.fn()
+            .mockRejectedValueOnce(new Error('dial failed'))
+            .mockResolvedValueOnce(undefined)
+        const onConnectFailed = vi.fn()
+        const onReconnectScheduled = vi.fn()
+
+        const controller = createSocketLifecycleController({
+            connect,
+            disconnect() {},
+            attachListeners() {},
+            resolveReconnectPolicy() {
+                return {attempts: 3, delayMs: 25}
+            },
+            shouldReconnect() {
+                return true
+            },
+            onConnectFailed,
+            onReconnectScheduled,
+        })
+
+        await expect(controller.start()).resolves.toBeUndefined()
+
+        expect(connect).toHaveBeenCalledTimes(1)
+        expect(onConnectFailed).toHaveBeenCalledTimes(1)
+        expect(onConnectFailed.mock.calls[0]?.[0]).toMatchObject({
+            isReconnect: false,
+        })
+        expect(onReconnectScheduled).toHaveBeenCalledWith({
+            reason: 'dial failed',
+            attempt: 1,
+            delayMs: 25,
+        })
+        expect(controller.getReconnectAttempt()).toBe(1)
+
+        await vi.advanceTimersByTimeAsync(25)
+        expect(connect).toHaveBeenCalledTimes(2)
+    })
+
+    it('rethrows initial connect failure when connect error is marked non-retriable', async () => {
+        const connect = vi.fn().mockRejectedValue(new Error('credential missing'))
+        const onReconnectScheduled = vi.fn()
+
+        const controller = createSocketLifecycleController({
+            connect,
+            disconnect() {},
+            attachListeners() {},
+            resolveReconnectPolicy() {
+                return {attempts: 3, delayMs: 25}
+            },
+            shouldReconnect() {
+                return true
+            },
+            shouldReconnectOnConnectError() {
+                return false
+            },
+            onReconnectScheduled,
+        })
+
+        await expect(controller.start()).rejects.toThrow('credential missing')
+        expect(onReconnectScheduled).not.toHaveBeenCalled()
+        expect(connect).toHaveBeenCalledTimes(1)
+        expect(controller.getReconnectAttempt()).toBe(0)
+    })
 })

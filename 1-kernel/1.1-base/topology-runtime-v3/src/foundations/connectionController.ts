@@ -1,5 +1,5 @@
 import {createEnvelopeId, nowTimestampMs} from '@impos2/kernel-base-contracts'
-import {createAppError} from '@impos2/kernel-base-contracts'
+import {createAppError, isAppError} from '@impos2/kernel-base-contracts'
 import type {RuntimeModuleContextV2} from '@impos2/kernel-base-runtime-shell-v2'
 import {createSocketLifecycleController} from '@impos2/kernel-base-transport-runtime'
 import {topologyRuntimeV3StateActions} from '../features/slices'
@@ -258,6 +258,12 @@ export const createTopologyPeerOrchestratorV3 = (input: {
         },
         shouldReconnect() {
             return true
+        },
+        shouldReconnectOnConnectError(error) {
+            if (!isAppError(error)) {
+                return true
+            }
+            return error.key === 'kernel.base.transport-runtime.socket_runtime_failed'
         },
         onDisconnected() {
             applyDisconnectToState(input.context, lifecycle.getReconnectAttempt())

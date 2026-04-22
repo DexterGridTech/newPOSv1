@@ -33,7 +33,26 @@ export interface DevicePort {
 export interface AppControlPort {
     restartApp(): Promise<void>
     clearDataCache?(): Promise<void>
-    switchServerSpace?(serverSpace: string): Promise<void>
+}
+
+export interface TopologyHostAddressInfo {
+    httpBaseUrl?: string
+    wsUrl?: string
+    localHttpBaseUrl?: string
+    localWsUrl?: string
+}
+
+export interface TopologyHostStatus {
+    state?: string
+    addressInfo?: TopologyHostAddressInfo | null
+    [key: string]: unknown
+}
+
+export interface TopologyHostPort {
+    start(config?: Record<string, unknown>): Promise<TopologyHostAddressInfo | Record<string, unknown>>
+    stop(): Promise<void>
+    getStatus?(): Promise<TopologyHostStatus | Record<string, unknown> | null>
+    getDiagnosticsSnapshot?(): Promise<Record<string, unknown> | null>
 }
 
 export interface HotUpdatePort {
@@ -63,7 +82,15 @@ export interface HotUpdatePort {
         healthCheckTimeoutMs?: number
     }): Promise<{bootMarkerPath: string}>
     readBootMarker?(): Promise<Record<string, unknown> | null>
+    readActiveMarker?(): Promise<Record<string, unknown> | null>
+    readRollbackMarker?(): Promise<Record<string, unknown> | null>
     clearBootMarker?(): Promise<void>
+    confirmLoadComplete?(input?: {
+        displayIndex?: number
+        releaseId?: string
+        packageId?: string
+        bundleVersion?: string
+    }): Promise<Record<string, unknown> | null>
     reportLoadComplete?(input: {
         displayIndex: number
         releaseId?: string
@@ -110,6 +137,7 @@ export interface PlatformPorts {
     device?: DevicePort
     appControl?: AppControlPort
     hotUpdate?: HotUpdatePort
+    topologyHost?: TopologyHostPort
     localWebServer?: LocalWebServerPort
     connector?: ConnectorPort
 }

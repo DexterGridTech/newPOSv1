@@ -85,8 +85,9 @@ export const listHotUpdateVersionDrift = (sandboxId: string) => {
     .all()
   const latestByTerminal = new Map<string, typeof rows[number]>()
   rows.forEach(row => {
-    if (!latestByTerminal.has(row.terminalId)) {
-      latestByTerminal.set(row.terminalId, row)
+    const key = `${row.terminalId}:${row.displayRole}:${row.displayIndex}`
+    if (!latestByTerminal.has(key)) {
+      latestByTerminal.set(key, row)
     }
   })
   return Array.from(latestByTerminal.values()).map(row => ({

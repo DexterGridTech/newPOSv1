@@ -196,3 +196,5 @@ pnpm-lock.yaml
 .playwright-cli/
 .superpowers/
 
+/.turbo/
+/ai-result/

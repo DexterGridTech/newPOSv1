@@ -1,5 +1,2 @@
 export * from './assemblyTopologyBinding'
-export * from './assemblyTopologyHostLifecycle'
-export * from './assemblyPowerDisplaySwitch'
-export * from './assemblyTopologySharePayload'
 export * from './assemblyTopologyStorageGate'

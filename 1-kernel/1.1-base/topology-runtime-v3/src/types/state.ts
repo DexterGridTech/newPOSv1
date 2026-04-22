@@ -37,6 +37,17 @@ export interface TopologyV3SyncState {
     activeSessionId?: string
     status: 'idle' | 'connecting' | 'active'
     lastSnapshotAppliedAt?: number
+    standaloneSlaveAutoStartKey?: string
+}
+
+export interface TopologyV3HostState {
+    desiredRunning: boolean
+    actualRunning: boolean
+    transitionStatus: 'idle' | 'starting' | 'stopping'
+    lastAutoStartKey?: string
+    lastError?: string
+    statusSnapshot?: Record<string, unknown> | null
+    diagnosticsSnapshot?: Record<string, unknown> | null
 }
 
 export interface TopologyV3RequestMirrorState {

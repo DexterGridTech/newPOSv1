@@ -42,7 +42,9 @@
       "workflow-runtime-v2 的运行真相是 observation；run 返回 Observable，selector by requestId 也必须看到同一份 observation 视图。",
       "所有时间相关存储统一用 long(ms timestamp)；展示和日志再格式化。运行时 ID / request ID / command ID 必须使用统一 ID 生成能力。",
       "基础包的错误定义和系统参数要显式沉淀到 supports/errors.ts、supports/parameters.ts，不能把魔法字符串散落在业务逻辑里。",
-      "src/application 是模块装配主入口；src/index.ts 应优先展示 module/application/commands/slices/selectors/supports 等稳定公开面，不默认整层导出 foundations。"
+      "src/application 是模块装配主入口；src/index.ts 应优先展示 module/application/commands/slices/selectors/supports 等稳定公开面，不默认整层导出 foundations。",
+      "新工程四层通信标准：adapter 只提供原生事实/能力；assembly 只做 host 组合与产品显式策略；kernel 只通过 public command/actor 持有领域决策与状态迁移；2-ui 只渲染状态、调用 host interface、响应交互并发 public command。跨层写操作禁止直接 import 他包 slice action；平台事实统一走 platform-ports；需要用户确认的领域行为必须拆成“请求确认 command -> UI bridge/modal -> 执行 command”。",
+      "Android assembly 采用“应迁尽迁、越薄越好”的硬约束：凡是可抽象为平台事实、宿主能力、领域决策、交互请求、通用 host bridge 的逻辑，都不应长期留在 assembly。若 platform-ports、kernel command/actor、2-ui bridge 或 adapter 能力不足，应先补能力再迁移，而不是把缺口沉淀成 assembly 业务逻辑。assembly 最终只保留产品参数选择、RN 宿主启动/重启机制与最后一层 wiring。"
     ]
   },
   "structure": {
@@ -193,7 +195,7 @@
     },
     {
       "category": "architecture",
-      "content": "2026-04-18 topology-aware automation conventions: managed secondary disables local business state persistence only when `displayMode === 'SECONDARY' && standalone === false`; standalone slave stays locally persistent even when displayMode is SECONDARY. External master attach is assembly/admin-driven: import share payload -> set masterInfo -> POST `/tickets` -> update dynamic binding -> restart topology connection. Power-triggered display switch is assembly-only and applies only to `standalone && instanceMode === 'SLAVE'`.",
+      "content": "2026-04-18 topology-aware automation conventions: managed secondary disables local business state persistence only when `displayMode === 'SECONDARY' && standalone === false`; standalone slave stays locally persistent even when displayMode is SECONDARY. External master attach is assembly/admin-driven in the historical baseline: import share payload -> set masterInfo -> POST `/tickets` -> update dynamic binding -> restart topology connection. Superseded by 2026-04-22 layered-runtime standard: power-triggered display switch should no longer be assembly-only; it must migrate to platform-ports -> topology-runtime-v3 command/actor -> UI bridge.",
       "timestamp": "2026-04-18T10:31:41.832Z"
     },
     {
@@ -274,7 +276,7 @@
     {
       "category": "architecture",
       "title": "rn84-standalone-slave-topology-autostart",
-      "content": "RN84 assembly 的 standalone slave 冷启动拓扑恢复编排现在放在 4-assembly/android/mixc-retail-assembly-rn84/src/application/createApp.ts：当 topology context 为 standalone=true 且 instanceMode=SLAVE，masterLocator 已存在且 connection=DISCONNECTED 时，assembly 会自动 dispatch startTopologyConnection，并用 autoStartKey 去重。这是为修复双机 OTA 后 slave UI/版本已更新但 topology 不自动重连的问题。对应回归测试在 test/scenarios/assembly-create-app.spec.ts。",
+      "content": "RN84 assembly 的 standalone slave 冷启动拓扑恢复编排当前历史实现放在 4-assembly/android/mixc-retail-assembly-rn84/src/application/createApp.ts：当 topology context 为 standalone=true 且 instanceMode=SLAVE，masterLocator 已存在且 connection=DISCONNECTED 时，assembly 会自动 dispatch startTopologyConnection，并用 autoStartKey 去重。这是为修复双机 OTA 后 slave UI/版本已更新但 topology 不自动重连的问题。按 2026-04-22 layered-runtime 标准，该策略应迁入 topology-runtime-v3 public command/actor；assembly 只保留宿主启动 wiring。对应现有回归测试在 test/scenarios/assembly-create-app.spec.ts，迁移时要同步搬迁/改写。",
       "timestamp": "2026-04-22T00:00:00.000Z"
     },
     {
@@ -282,6 +284,16 @@
       "title": "rn84-master-slave-ota-followup-status",
       "content": "RN84 双单屏模拟器 master/slave + OTA E2E 当前现场：run 目录 ai-result/master-slave-ota-e2e-20260422-063503；A=emulator-5554，B=emulator-5556。mock-terminal-platform 正确端口是 5810；relay 仍需 18889 -> 18888。当前代码已 bump 到 bundleVersion 1.0.0+ota.5，dist/hot-updates/hot-update-assembly-android-mixc-retail-rn84-1.0.0+ota.5.zip 已成功生成，但还没继续做 upload/release/live verification。继续验证前先 force-stop 两台 app，再恢复 adb forward/reverse。",
       "timestamp": "2026-04-22T00:00:00.000Z"
+    },
+    {
+      "category": "architecture",
+      "title": "layered-runtime-communication-standard",
+      "content": "2026-04-22 起，`spec/layered-runtime-communication-standard.md` 成为新工程四层边界总规范。扫描结论：adapter-lib 基本保持纯原生能力层；主要治理对象在 assembly 和 admin-console。优先治理候选包括：1) standalone slave power display switch 从 assembly 迁回 topology-runtime-v3 + UI bridge；2) assembly hot-update native boot sync / reportAppLoadComplete 不再直接 dispatch tdp hot-update slice action，而改为 kernel public command；3) admin topology UI 中 runtime command 与 host 调用的混合按钮逻辑收敛到 admin actor/command；4) adminConsoleConfig 中可复用 host bridge 尽量从 assembly 下沉。"
+    },
+    {
+      "category": "session-log",
+      "title": "2026-04-22-current-work-recovery",
+      "content": "2026-04-22 当前待续工作分成两条连续主线：A. 继续 RN84 双单屏 master/slave OTA E2E，从 `ota.5` 的 upload/release/live verification 开始，重点验收 slave OTA 重启后的 topology reconnect；B. 按 `spec/layered-runtime-communication-standard.md` 推进 thin-assembly 第一批重构：serverSpace kernel 化、standalone slave power display switch 迁到 `platform-ports -> topology-runtime-v3 -> runtime-react UI bridge`、hot-update boot/load-complete state mutation 迁到 `tdp-sync-runtime-v2` public command/actor、admin topology/serverSpace 编排收口。当前仅完成规范/记忆/handoff 文档，尚未开始第一批代码迁移。恢复入口优先读 `.omx/wiki/2026-04-22-current-work-recovery.md`、`.omx/wiki/2026-04-22-thin-assembly-refactor-handoff.md`、`.omx/wiki/2026-04-22-rn84-master-slave-ota-reconnect-followup.md`。"
     }
   ],
   "directives": [
@@ -389,7 +401,7 @@
       "timestamp": "2026-04-18T05:57:29.261Z"
     },
     {
-      "directive": "未来所有与 topology、双屏、standalone slave、外部 master 接入相关的 UI 自动化测试，默认必须走 `ui-automation-runtime` + `admin-console` 的统一协议路径。managed secondary 不得假设本地 stateStorage；standalone slave 即使 SECONDARY 也保持本地持久化。powerConnected 切屏只对 `standalone && instanceMode === 'SLAVE'` 生效。",
+      "directive": "未来所有与 topology、双屏、standalone slave、外部 master 接入相关的 UI 自动化测试，默认必须走 `ui-automation-runtime` + `admin-console` 的统一协议路径。managed secondary 不得假设本地 stateStorage；standalone slave 即使 SECONDARY 也保持本地持久化。powerConnected 切屏业务条件仍是 `standalone && instanceMode === 'SLAVE'`，但实现归属必须按 2026-04-22 layered-runtime 标准迁到 platform-ports -> topology-runtime-v3 -> UI bridge，不再把 assembly-only 当作目标架构。",
       "priority": "high",
       "context": "2-ui / 4-assembly topology-aware UI automation",
       "timestamp": "2026-04-18T10:31:41.835Z"
@@ -459,6 +471,18 @@
       "priority": "high",
       "context": "RN84 Android topology-host-v3 master startup",
       "timestamp": "2026-04-21T12:31:21.862Z"
+    },
+    {
+      "directive": "新工程四层（1-kernel/1.1-base、2-ui/2.1-base、3-adapter/android/adapter-android-v2、4-assembly/android/mixc-retail-assembly-rn84）后续开发与重构，默认遵守 `spec/layered-runtime-communication-standard.md`：禁止跨层直接改他包 slice；禁止 assembly/UI 直接拼完整业务编排；平台事实走 ports，领域决策走 public command，确认交互拆成 request command + UI bridge + execute command。",
+      "priority": "high",
+      "context": "Layered runtime communication standard",
+      "timestamp": "2026-04-22T03:45:08.029Z"
+    },
+    {
+      "directive": "恢复 2026-04-22 当前主线任务时，不要重新从零分析或停下来等待确认。先完成 `.omx/wiki/2026-04-22-rn84-master-slave-ota-reconnect-followup.md` 中 ota.5 upload/release/live verification，再直接进入 thin-assembly 第一批重构。若 lower layer 能力不足，优先补 `platform-ports`、kernel public command/actor、UI bridge 或 adapter 能力，而不是把业务逻辑继续留在 assembly。",
+      "priority": "high",
+      "context": "2026-04-22 task recovery and thin-assembly execution order",
+      "timestamp": "2026-04-22T12:45:00.000Z"
     }
   ]
 }

@@ -12,8 +12,7 @@ const {
     nativeAppControlSetFullScreenMock,
     nativeAppControlSetAppLockedMock,
     createAssemblyStateStorageMock,
-    getAssemblyServerSpaceSnapshotMock,
-    setAssemblySelectedServerSpaceMock,
+    selectTransportServerSpaceStateMock,
 } = vi.hoisted(() => ({
     createCommandMock: vi.fn((definition, payload) => ({
         definition,
@@ -21,6 +20,12 @@ const {
     })),
     topologyCommandDefinitions: {
         setInstanceMode: {commandName: 'kernel.base.topology-runtime-v3.set-instance-mode'},
+        requestPowerDisplayModeSwitchConfirmation: {
+            commandName: 'kernel.base.topology-runtime-v3.request-power-display-mode-switch-confirmation',
+        },
+        confirmPowerDisplayModeSwitch: {
+            commandName: 'kernel.base.topology-runtime-v3.confirm-power-display-mode-switch',
+        },
         setMasterLocator: {commandName: 'kernel.base.topology-runtime-v3.set-master-locator'},
         clearMasterLocator: {commandName: 'kernel.base.topology-runtime-v3.clear-master-locator'},
         restartTopologyConnection: {commandName: 'kernel.base.topology-runtime-v3.restart-topology-connection'},
@@ -42,10 +47,7 @@ const {
     createAssemblyStateStorageMock: vi.fn(() => ({
         clear: vi.fn(async () => undefined),
     })),
-    getAssemblyServerSpaceSnapshotMock: vi.fn(async () => ({
-        selectedSpace: 'kernel-base-dev',
-    })),
-    setAssemblySelectedServerSpaceMock: vi.fn(),
+    selectTransportServerSpaceStateMock: vi.fn((state: any) => state?.transportServerSpace),
 }))
 
 vi.mock('@impos2/kernel-base-runtime-shell-v2', async importOriginal => ({
@@ -53,8 +55,25 @@ vi.mock('@impos2/kernel-base-runtime-shell-v2', async importOriginal => ({
     createCommand: createCommandMock,
 }))
 
-vi.mock('@impos2/kernel-base-topology-runtime-v3', () => ({
+vi.mock('@impos2/kernel-base-topology-runtime-v3', async importOriginal => ({
+    ...await importOriginal<typeof import('@impos2/kernel-base-topology-runtime-v3')>(),
     topologyRuntimeV3CommandDefinitions: topologyCommandDefinitions,
+}))
+
+vi.mock('@impos2/kernel-base-transport-runtime', async importOriginal => ({
+    ...await importOriginal<typeof import('@impos2/kernel-base-transport-runtime')>(),
+    selectTransportServerSpaceState: selectTransportServerSpaceStateMock,
+}))
+
+vi.mock('@impos2/kernel-server-config-v2', async importOriginal => ({
+    ...await importOriginal<typeof import('@impos2/kernel-server-config-v2')>(),
+    kernelBaseDevServerConfig: {
+        selectedSpace: 'kernel-base-dev',
+        spaces: [
+            {name: 'kernel-base-dev', servers: []},
+            {name: 'kernel-base-uat', servers: []},
+        ],
+    },
 }))
 
 vi.mock('../../src/turbomodules/topologyHost', () => ({
@@ -104,11 +123,6 @@ vi.mock('../../src/turbomodules/scripts', () => ({
     nativeScriptExecutor: {
         execute: vi.fn(async () => 5),
     },
-}))
-
-vi.mock('../../src/platform-ports/serverSpaceState', () => ({
-    getAssemblyServerSpaceSnapshot: getAssemblyServerSpaceSnapshotMock,
-    setAssemblySelectedServerSpace: setAssemblySelectedServerSpaceMock,
 }))
 
 vi.mock('../../src/platform-ports/stateStorage', () => ({
@@ -175,5 +189,36 @@ describe('assembly admin console config', () => {
                 },
             },
         ])
+    })
+
+    it('exposes server space snapshot without owning the switch orchestration', async () => {
+        const input = createAssemblyAdminConsoleInput({
+            getRuntime: () => ({
+                getState: () => ({
+                    transportServerSpace: {
+                        selectedSpace: 'kernel-base-uat',
+                        availableSpaces: ['kernel-base-dev', 'kernel-base-uat'],
+                    },
+                }),
+            } as any),
+        })
+
+        const snapshot = await input.hostToolSources?.control?.getServerSpaceSnapshot?.()
+
+        expect(input.hostToolSources?.control).not.toHaveProperty('switchServerSpace')
+        expect(nativeAppControlRestartAppMock).not.toHaveBeenCalled()
+        expect(snapshot).toEqual({
+            selectedSpace: 'kernel-base-uat',
+            availableSpaces: ['kernel-base-dev', 'kernel-base-uat'],
+        })
+    })
+
+    it('falls back to static server space config before runtime is available', async () => {
+        const input = createAssemblyAdminConsoleInput()
+
+        await expect(input.hostToolSources?.control?.getServerSpaceSnapshot?.()).resolves.toEqual({
+            selectedSpace: 'kernel-base-dev',
+            availableSpaces: ['kernel-base-dev', 'kernel-base-uat'],
+        })
     })
 })

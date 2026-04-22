@@ -9,6 +9,12 @@ import type {
 import type {CreateAdminConsoleModuleInput} from '@impos2/ui-base-admin-console/application'
 import {createCommand, type KernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
 import {
+    selectTransportServerSpaceState,
+} from '@impos2/kernel-base-transport-runtime'
+import {kernelBaseDevServerConfig} from '@impos2/kernel-server-config-v2'
+import {
+    createTopologyV3MasterLocatorFromSharePayload,
+    createTopologyV3SharePayload,
     topologyRuntimeV3CommandDefinitions,
 } from '@impos2/kernel-base-topology-runtime-v3'
 import {nativeLogger} from '../turbomodules/logger'
@@ -17,13 +23,8 @@ import {nativeConnector} from '../turbomodules/connector'
 import {nativeDevice} from '../turbomodules/device'
 import {nativeScriptExecutor} from '../turbomodules/scripts'
 import {nativeTopologyHost} from '../turbomodules/topologyHost'
-import {
-    getAssemblyServerSpaceSnapshot,
-    setAssemblySelectedServerSpace,
-} from '../platform-ports/serverSpaceState'
 import {createAssemblyStateStorage} from '../platform-ports/stateStorage'
 import {
-    importAssemblyTopologySharePayload,
     AssemblyTopologyBindingSource,
     AssemblyTopologyStorageGateSnapshot,
 } from './topology'
@@ -39,6 +40,11 @@ const ADAPTER_KEY_APPCONTROL = 'app-control'
 export interface AssemblyAdminTopologyInput {
     bindingSource?: AssemblyTopologyBindingSource
     getTopologyContextSnapshot?: () => AssemblyTopologyStorageGateSnapshot
+    getRuntime?: () => KernelRuntimeV2 | undefined
+}
+
+interface CreateAssemblyAdminConsoleInputOptions {
+    topology?: AssemblyAdminTopologyInput
     getRuntime?: () => KernelRuntimeV2 | undefined
 }
 
@@ -96,19 +102,22 @@ const createAssemblyAdminTopologyHost = (
             if (!nodeId || !deviceId || (!httpBaseUrl && !wsUrl)) {
                 return null
             }
-            return {
-                formatVersion: '2026.04',
+            return createTopologyV3SharePayload({
                 deviceId,
                 masterNodeId: nodeId,
-                exportedAt: Date.now(),
-                serverAddress: wsUrl ? [{address: wsUrl}] : [],
                 wsUrl,
                 httpBaseUrl,
-            }
+            }) as AdminTopologySharePayload
         },
         async importSharePayload(payload): Promise<void> {
-            const imported = importAssemblyTopologySharePayload(payload)
-            bindingSource.set(imported.bindingSeed)
+            const masterLocator = createTopologyV3MasterLocatorFromSharePayload(payload)
+            bindingSource.set({
+                role: 'slave',
+                masterNodeId: masterLocator.masterNodeId,
+                masterDeviceId: masterLocator.masterDeviceId,
+                wsUrl: masterLocator.serverAddress[0]?.address,
+                httpBaseUrl: masterLocator.httpBaseUrl,
+            })
             await dispatchTopologyCommand(createCommand(
                 topologyRuntimeV3CommandDefinitions.setInstanceMode,
                 {
@@ -118,7 +127,7 @@ const createAssemblyAdminTopologyHost = (
             await dispatchTopologyCommand(createCommand(
                 topologyRuntimeV3CommandDefinitions.setMasterLocator,
                 {
-                    masterLocator: imported.masterLocator as any,
+                    masterLocator: masterLocator as any,
                 },
             ))
         },
@@ -298,9 +307,7 @@ const createAdapterDiagnosticScenarios = (): readonly AdapterDiagnosticScenario[
 }
 
 export const createAssemblyAdminConsoleInput = (
-    input: {
-        topology?: AssemblyAdminTopologyInput
-    } = {},
+    input: CreateAssemblyAdminConsoleInputOptions = {},
 ): CreateAdminConsoleModuleInput => ({
     ...createAdminConsoleModuleInputFromHost({
         device: {
@@ -324,11 +331,18 @@ export const createAssemblyAdminConsoleInput = (
                 await stateStorage.clear?.()
                 await secureStateStorage.clear?.()
             },
-            switchServerSpace: async (space: string) => {
-                setAssemblySelectedServerSpace(space)
-                await nativeAppControl.restartApp()
+            getServerSpaceSnapshot: async () => {
+                const runtime = input.getRuntime?.()
+                const runtimeState = runtime?.getState()
+                const serverSpace = runtimeState
+                    ? selectTransportServerSpaceState(runtimeState)
+                    : undefined
+                return {
+                    selectedSpace: serverSpace?.selectedSpace ?? kernelBaseDevServerConfig.selectedSpace,
+                    availableSpaces: serverSpace?.availableSpaces
+                        ?? kernelBaseDevServerConfig.spaces.map(space => space.name),
+                }
             },
-            getServerSpaceSnapshot: async () => getAssemblyServerSpaceSnapshot(),
             isFullScreen: () => nativeAppControl.isFullScreen(),
             isAppLocked: () => nativeAppControl.isAppLocked(),
             setFullScreen: (next: boolean) => nativeAppControl.setFullScreen(next),

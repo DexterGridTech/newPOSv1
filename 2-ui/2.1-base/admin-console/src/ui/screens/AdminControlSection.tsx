@@ -1,8 +1,13 @@
 import React, {useEffect, useState} from 'react'
+import {
+    createCommand,
+    type KernelRuntimeV2,
+} from '@impos2/kernel-base-runtime-shell-v2'
 import type {
     AdminAppControlHost,
     AdminControlSnapshot,
 } from '../../types'
+import {adminConsoleCommandDefinitions} from '../../features/commands'
 import {getAdminHostTools} from '../../supports/adminHostToolsRegistry'
 import {
     AdminActionGroup,
@@ -16,10 +21,12 @@ import {
 } from './AdminSectionPrimitives'
 
 export interface AdminControlSectionProps {
+    runtime?: KernelRuntimeV2
     host?: AdminAppControlHost
 }
 
 export const AdminControlSection: React.FC<AdminControlSectionProps> = ({
+    runtime,
     host = getAdminHostTools().control,
 }) => {
     const [snapshot, setSnapshot] = useState<AdminControlSnapshot | undefined>()
@@ -153,9 +160,21 @@ export const AdminControlSection: React.FC<AdminControlSectionProps> = ({
                                         ? `当前空间：${space}`
                                         : `切换到 ${space}`
                                 }
-                                disabled={loading || !host.switchServerSpace || space === snapshot.selectedSpace}
+                                disabled={loading || !runtime || !host.restartApp || space === snapshot.selectedSpace}
                                 onPress={() => runAction(
-                                    async () => host.switchServerSpace?.(space),
+                                    async () => {
+                                        if (!runtime) {
+                                            throw new Error('Runtime command dispatcher is unavailable')
+                                        }
+                                        const result = await runtime.dispatchCommand(createCommand(
+                                            adminConsoleCommandDefinitions.switchServerSpace,
+                                            {selectedSpace: space},
+                                        ))
+                                        if (result.status !== 'COMPLETED') {
+                                            throw new Error(result.actorResults[0]?.error?.message ?? '空间切换失败')
+                                        }
+                                        setSnapshot(await host.getSnapshot())
+                                    },
                                     `已切换到 ${space} 空间`,
                                 )}
                             />

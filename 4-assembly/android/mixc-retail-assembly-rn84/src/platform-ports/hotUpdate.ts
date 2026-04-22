@@ -11,8 +11,17 @@ export const createAssemblyHotUpdatePort = (): HotUpdatePort => ({
   readBootMarker() {
     return nativeHotUpdate.readBootMarker()
   },
+  readActiveMarker() {
+    return nativeHotUpdate.readActiveMarker()
+  },
+  readRollbackMarker() {
+    return nativeHotUpdate.readRollbackMarker()
+  },
   clearBootMarker() {
     return nativeHotUpdate.clearBootMarker()
+  },
+  confirmLoadComplete() {
+    return nativeHotUpdate.confirmLoadComplete()
   },
   reportLoadComplete() {
     return Promise.resolve(nativeHotUpdate.confirmLoadComplete()).then(() => undefined)

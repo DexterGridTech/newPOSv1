@@ -9,6 +9,7 @@ import {
     type NodeId,
     type RuntimeInstanceId,
 } from '@impos2/kernel-base-contracts'
+import type {PlatformPorts} from '@impos2/kernel-base-platform-ports'
 import type {EnhancedStore, UnknownAction} from '@reduxjs/toolkit'
 import {moduleName} from '../moduleName'
 import type {
@@ -72,6 +73,7 @@ const aggregateStatus = (
 interface CreateRuntimeCommandDispatcherInput {
     runtimeId: RuntimeInstanceId
     localNodeId: NodeId
+    platformPorts: PlatformPorts
     store: EnhancedStore
     dispatchAction: (action: UnknownAction) => UnknownAction
     subscribeState: (listener: () => void) => () => void
@@ -214,6 +216,7 @@ export const createRuntimeCommandDispatcher = (
                 const context: ActorExecutionContext<TPayload> = {
                     runtimeId: input.runtimeId,
                     localNodeId: input.localNodeId,
+                    platformPorts: input.platformPorts,
                     displayContext: input.displayContext,
                     command: dispatched,
                     actor: handler.actor,

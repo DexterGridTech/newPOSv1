@@ -45,7 +45,7 @@ const createDefaultAdminConsoleSections = (): readonly AdminConsoleSection[] => 
         tab: 'control',
         group: 'runtime',
         title: '应用控制',
-        render: () => <AdminControlSection />,
+        render: ({runtime}) => <AdminControlSection runtime={runtime} />,
     },
     {
         tab: 'logs',

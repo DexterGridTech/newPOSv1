@@ -271,9 +271,6 @@ export const createAdminControlHost = (
     restartApp: source.restartApp
         ? () => source.restartApp?.() ?? Promise.resolve()
         : undefined,
-    switchServerSpace: source.switchServerSpace
-        ? space => source.switchServerSpace?.(space) ?? Promise.resolve()
-        : undefined,
     clearCache: source.clearDataCache
         ? () => source.clearDataCache?.() ?? Promise.resolve()
         : source.clearCache

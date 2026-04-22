@@ -1,7 +1,9 @@
 import type {LoggerPort} from '@impos2/kernel-base-platform-ports'
+import type {RuntimeModuleContextV2} from '@impos2/kernel-base-runtime-shell-v2'
 import {
     createHttpRuntime,
     createSocketRuntime,
+    type TransportServerDefinition,
 } from '@impos2/kernel-base-transport-runtime'
 import {
     tdpSyncV2SocketProfile,
@@ -12,25 +14,13 @@ import {
     createAssemblyFetchTransport,
     createAssemblyWebSocketTransport,
 } from './transport'
-import {resolveAssemblyTransportServers} from './serverSpaceState'
 
 export const createAssemblyTdpSyncRuntimeAssembly = (input: {
     logger: LoggerPort
     mockTerminalPlatformBaseUrl?: string
+    resolveServers: (context?: Pick<RuntimeModuleContextV2, 'getState'>) => readonly TransportServerDefinition[]
 }): TdpSyncRuntimeAssemblyV2 => {
     const httpTransport = createAssemblyFetchTransport()
-    const socketRuntime = createSocketRuntime({
-        logger: input.logger.scope({
-            moduleName,
-            layer: 'assembly',
-            subsystem: 'tdp-sync',
-            component: 'SocketRuntime',
-        }),
-        transport: createAssemblyWebSocketTransport(),
-        serverProvider: () => resolveAssemblyTransportServers({
-            mockTerminalPlatformBaseUrl: input.mockTerminalPlatformBaseUrl,
-        }),
-    })
 
     return {
         createHttpRuntime(context) {
@@ -42,16 +32,24 @@ export const createAssemblyTdpSyncRuntimeAssembly = (input: {
                     component: 'TdpSyncHttpRuntime',
                 }),
                 transport: httpTransport,
-                serverProvider: () => resolveAssemblyTransportServers({
-                    mockTerminalPlatformBaseUrl: input.mockTerminalPlatformBaseUrl,
-                }),
+                serverProvider: () => input.resolveServers(context),
                 executionPolicy: {
                     retryRounds: 1,
                     failoverStrategy: 'ordered',
                 },
             })
         },
-        resolveSocketBinding() {
+        resolveSocketBinding(context) {
+            const socketRuntime = createSocketRuntime({
+                logger: input.logger.scope({
+                    moduleName,
+                    layer: 'assembly',
+                    subsystem: 'tdp-sync',
+                    component: 'SocketRuntime',
+                }),
+                transport: createAssemblyWebSocketTransport(),
+                serverProvider: () => input.resolveServers(context),
+            })
             return {
                 socketRuntime,
                 profileName: tdpSyncV2SocketProfile.name,

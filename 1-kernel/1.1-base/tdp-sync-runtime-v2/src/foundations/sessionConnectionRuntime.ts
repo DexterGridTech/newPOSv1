@@ -1,5 +1,6 @@
 import {
     createAppError,
+    isAppError,
     packageVersion,
     protocolVersion,
 } from '@impos2/kernel-base-contracts'
@@ -272,6 +273,9 @@ export const installTdpSessionConnectionRuntimeV2 = (input: {
         },
         shouldReconnect() {
             return true
+        },
+        shouldReconnectOnConnectError(error) {
+            return !isAppError(error)
         },
         onConnected() {},
         onDisconnected(reason) {

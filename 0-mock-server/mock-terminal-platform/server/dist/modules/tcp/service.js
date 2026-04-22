@@ -103,8 +103,16 @@ export const refreshTerminalToken = (input) => {
     const sandboxId = input.sandboxId;
     assertSandboxUsable(sandboxId);
     const credential = sqlite
-        .prepare('SELECT * FROM terminal_credentials WHERE refresh_token = ? AND revoked_at IS NULL ORDER BY issued_at DESC LIMIT 1')
-        .get(input.refreshToken);
+        .prepare(`
+      SELECT *
+      FROM terminal_credentials
+      WHERE refresh_token = ?
+        AND revoked_at IS NULL
+        AND refresh_expires_at > ?
+      ORDER BY issued_at DESC
+      LIMIT 1
+    `)
+        .get(input.refreshToken, now());
     if (!credential) {
         throw new Error('refreshToken 无效');
     }
@@ -114,9 +122,16 @@ export const refreshTerminalToken = (input) => {
     }
     const token = createId('token');
     const timestamp = now();
-    sqlite
-        .prepare('UPDATE terminal_credentials SET token = ?, issued_at = ?, expires_at = ? WHERE refresh_token = ?')
-        .run(token, timestamp, timestamp + 2 * 3600_000, input.refreshToken);
+    db.insert(credentialsTable).values({
+        credentialId: createId('cred'),
+        terminalId: credential.terminal_id,
+        token,
+        refreshToken: input.refreshToken,
+        issuedAt: timestamp,
+        expiresAt: timestamp + 2 * 3600_000,
+        refreshExpiresAt: timestamp + 30 * 24 * 3600_000,
+        revokedAt: null,
+    }).run();
     return {
         token,
         expiresIn: 7200,
