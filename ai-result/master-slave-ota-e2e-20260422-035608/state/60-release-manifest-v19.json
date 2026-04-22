@@ -1,0 +1,52 @@
+{
+  "appId": "assembly-android-mixc-retail-rn84",
+  "platform": "android",
+  "product": "mixc-retail",
+  "assemblyVersion": "1.0.0",
+  "buildNumber": 6,
+  "bundleVersion": "1.0.0+ota.19",
+  "runtimeVersion": "android-mixc-retail-rn84@1.0",
+  "channel": "production",
+  "minSupportedAppVersion": "1.0.0",
+  "targetPackages": {
+    "@impos2/kernel-base-contracts": "1.0.0",
+    "@impos2/kernel-base-platform-ports": "1.0.0",
+    "@impos2/kernel-base-runtime-shell-v2": "1.0.0",
+    "@impos2/kernel-base-tcp-control-runtime-v2": "1.0.0",
+    "@impos2/kernel-base-topology-runtime-v3": "1.0.0",
+    "@impos2/kernel-base-transport-runtime": "1.0.0",
+    "@impos2/kernel-base-ui-runtime-v2": "1.0.0",
+    "@impos2/kernel-server-config-v2": "1.0.0",
+    "@impos2/ui-base-admin-console": "1.0.0",
+    "@impos2/ui-base-input-runtime": "1.0.0",
+    "@impos2/ui-base-runtime-react": "1.0.0",
+    "@impos2/ui-base-terminal-console": "1.0.0",
+    "@impos2/ui-integration-retail-shell": "1.0.0",
+    "@impos2/adapter-android-v2": "1.0.0"
+  },
+  "git": {
+    "commit": "9ff682189520949eb679d1847b2e33d6eaa4ab78",
+    "branch": "main"
+  },
+  "updatedAt": "2026-04-21T20:47:02.252Z",
+  "artifacts": {
+    "apk": {
+      "path": "4-assembly/android/mixc-retail-assembly-rn84/android/app/build/outputs/apk/release/app-release.apk",
+      "size": 83624693,
+      "sha256": "3064e3a70100a7bc7043906292191e9e537f6028dd381711ede890ddd486f7c9",
+      "modifiedAt": "2026-04-21T15:12:39.761Z"
+    },
+    "bundle": {
+      "path": "4-assembly/android/mixc-retail-assembly-rn84/android/app/build/generated/assets/react/release/index.android.bundle",
+      "size": 3035592,
+      "sha256": "4f0bc8eae2ffeb4c86d56ab6ca24c1c4151e727df41025f603b6c7fecfbeaf8f",
+      "modifiedAt": "2026-04-21T15:12:20.586Z"
+    },
+    "sourceMap": {
+      "path": "4-assembly/android/mixc-retail-assembly-rn84/android/app/build/intermediates/sourcemaps/react/release/index.android.bundle.packager.map",
+      "size": 11354988,
+      "sha256": "d262fbe7c51dde0ae4c63976695544806ed067d9fe69231ce7b793158c3ffeb7",
+      "modifiedAt": "2026-04-21T15:12:17.461Z"
+    }
+  }
+}

@@ -68,6 +68,9 @@ describe('workflow-runtime-v2', () => {
         })
 
         expect(result.status).toBe('COMPLETED')
+        expect((result.actorResults[0]?.result as any)).toMatchObject({
+            status: 'COMPLETED',
+        })
         expect(calls).toEqual([
             {
                 channel: {
@@ -96,6 +99,128 @@ describe('workflow-runtime-v2', () => {
                 },
             },
         })
+    })
+
+    it('passes optional imageUri through the built-in camera barcode scan task', async () => {
+        const calls: Array<{
+            channel: Record<string, unknown>
+            action: string
+            params?: Record<string, unknown>
+            timeoutMs?: number
+        }> = []
+
+        const runtime = createTestRuntime([
+            createWorkflowRuntimeModuleV2(),
+        ], {
+            connector: {
+                async call(input) {
+                    calls.push(input)
+                    return {
+                        success: true,
+                        code: 0,
+                        message: 'OK',
+                        data: {
+                            SCAN_RESULT: '{"v":"2026.04","d":"MASTER-001","n":"NODE-001","w":"ws://127.0.0.1:18586/ws"}',
+                            SCAN_RESULT_FORMAT: 'QR_CODE',
+                        },
+                    }
+                },
+            },
+        })
+        await runtime.start()
+
+        const result = await runtime.dispatchCommand(createCommand(
+            workflowRuntimeV2CommandDefinitions.runWorkflow,
+            {
+                workflowKey: workflowBuiltinTaskKeys.singleReadBarcodeFromCamera,
+                input: {
+                    imageUri: 'content://com.impos2.test/topology-share-qr.png',
+                    timeoutMs: 4321,
+                },
+            },
+        ))
+
+        expect(result.status).toBe('COMPLETED')
+        expect((result.actorResults[0]?.result as any)).toMatchObject({
+            status: 'COMPLETED',
+        })
+        expect(calls).toEqual([
+            {
+                channel: {
+                    type: 'INTENT',
+                    target: 'camera',
+                    mode: 'request-response',
+                },
+                action: 'com.impos2.posadapter.action.CAMERA_SCAN',
+                params: {
+                    SCAN_MODE: 'QR_CODE_MODE',
+                    IMAGE_URI: 'content://com.impos2.test/topology-share-qr.png',
+                    waitResult: true,
+                },
+                timeoutMs: 4321,
+            },
+        ])
+    })
+
+    it('passes optional imageBase64 through the built-in camera barcode scan task', async () => {
+        const calls: Array<{
+            channel: Record<string, unknown>
+            action: string
+            params?: Record<string, unknown>
+            timeoutMs?: number
+        }> = []
+
+        const runtime = createTestRuntime([
+            createWorkflowRuntimeModuleV2(),
+        ], {
+            connector: {
+                async call(input) {
+                    calls.push(input)
+                    return {
+                        success: true,
+                        code: 0,
+                        message: 'OK',
+                        data: {
+                            SCAN_RESULT: '{"v":"2026.04","d":"MASTER-001","n":"NODE-001","w":"ws://127.0.0.1:18586/ws"}',
+                            SCAN_RESULT_FORMAT: 'QR_CODE',
+                        },
+                    }
+                },
+            },
+        })
+        await runtime.start()
+
+        const result = await runtime.dispatchCommand(createCommand(
+            workflowRuntimeV2CommandDefinitions.runWorkflow,
+            {
+                workflowKey: workflowBuiltinTaskKeys.singleReadBarcodeFromCamera,
+                input: {
+                    imageBase64: 'ZmFrZS1xci1pbWFnZS1iYXNlNjQ=',
+                    timeoutMs: 4321,
+                },
+            },
+        ))
+
+        expect(result.status).toBe('COMPLETED')
+        expect((result.actorResults[0]?.result as any)).toMatchObject({
+            status: 'COMPLETED',
+        })
+        expect(calls).toEqual([
+            {
+                channel: {
+                    type: 'INTENT',
+                    target: 'camera',
+                    mode: 'request-response',
+                },
+                action: 'com.impos2.posadapter.action.CAMERA_SCAN',
+                params: {
+                    SCAN_MODE: 'QR_CODE_MODE',
+                    IMAGE_BASE64: 'ZmFrZS1xci1pbWFnZS1iYXNlNjQ=',
+                    waitResult: true,
+                },
+                timeoutMs: 4321,
+            },
+        ])
     })
 
     it('keeps selector observation shape aligned with run$ terminal observation', async () => {

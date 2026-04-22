@@ -1,0 +1,112 @@
+{
+  "fileName": "hot-update-assembly-android-mixc-retail-rn84-1.0.0+ota.17.zip",
+  "outputPath": "/Users/dexter/Documents/workspace/idea/newPOSv1/dist/hot-updates/hot-update-assembly-android-mixc-retail-rn84-1.0.0+ota.17.zip",
+  "fileSize": 3563477,
+  "sha256": "510bbb17b422c53cc672c9da938e3cb6d70a671fbcf8efb4cdfc027020659491",
+  "manifest": {
+    "manifestVersion": 1,
+    "appId": "assembly-android-mixc-retail-rn84",
+    "platform": "android",
+    "product": "mixc-retail",
+    "channel": "production",
+    "bundleVersion": "1.0.0+ota.17",
+    "runtimeVersion": "android-mixc-retail-rn84@1.0",
+    "assemblyVersion": "1.0.0",
+    "buildNumber": 6,
+    "builtAt": "2026-04-21T16:48:32.798Z",
+    "git": {
+      "commit": "9ff682189520949eb679d1847b2e33d6eaa4ab78",
+      "branch": "main"
+    },
+    "compatibility": {
+      "appId": "assembly-android-mixc-retail-rn84",
+      "platform": "android",
+      "product": "mixc-retail",
+      "runtimeVersion": "android-mixc-retail-rn84@1.0",
+      "minAssemblyVersion": "1.0.0",
+      "maxAssemblyVersion": "1.0.0",
+      "minBuildNumber": 6,
+      "maxBuildNumber": 6,
+      "allowedChannels": [
+        "production"
+      ],
+      "targetPackages": {
+        "@impos2/kernel-base-contracts": "1.0.0",
+        "@impos2/kernel-base-platform-ports": "1.0.0",
+        "@impos2/kernel-base-runtime-shell-v2": "1.0.0",
+        "@impos2/kernel-base-tcp-control-runtime-v2": "1.0.0",
+        "@impos2/kernel-base-topology-runtime-v3": "1.0.0",
+        "@impos2/kernel-base-transport-runtime": "1.0.0",
+        "@impos2/kernel-base-ui-runtime-v2": "1.0.0",
+        "@impos2/kernel-server-config-v2": "1.0.0",
+        "@impos2/ui-base-admin-console": "1.0.0",
+        "@impos2/ui-base-input-runtime": "1.0.0",
+        "@impos2/ui-base-runtime-react": "1.0.0",
+        "@impos2/ui-base-terminal-console": "1.0.0",
+        "@impos2/ui-integration-retail-shell": "1.0.0",
+        "@impos2/adapter-android-v2": "1.0.0"
+      }
+    },
+    "package": {
+      "type": "full-js-bundle",
+      "entry": "payload/index.android.bundle",
+      "sourceMap": "payload/source-map/index.android.bundle.map",
+      "compression": "zip",
+      "size": 3035780,
+      "sha256": "92e0dd205e5e54b756e9c605131fe87a67e2611ac0554951354b3535177fd805",
+      "files": [
+        {
+          "path": "payload/index.android.bundle",
+          "size": 3035780,
+          "sha256": "92e0dd205e5e54b756e9c605131fe87a67e2611ac0554951354b3535177fd805"
+        },
+        {
+          "path": "payload/source-map/index.android.bundle.map",
+          "size": 11355681,
+          "sha256": "ba8854b2d2391bc804b67475da57e343db1fd16652864ad93a19563ecbfc3fa2"
+        }
+      ]
+    },
+    "install": {
+      "strategy": "replace-bundle",
+      "requiresRuntimeRestart": true,
+      "maxRetainedPackages": 2
+    },
+    "restart": {
+      "mode": "immediate",
+      "operatorInstruction": "dual-emulator ota e2e v17"
+    },
+    "rollout": {
+      "defaultStrategy": "manual-policy"
+    },
+    "security": {
+      "hashAlgorithm": "sha256"
+    },
+    "releaseNotes": [
+      "OTA E2E V17 dual emulator sync"
+    ],
+    "artifacts": [
+      {
+        "name": "apk",
+        "path": "4-assembly/android/mixc-retail-assembly-rn84/android/app/build/outputs/apk/release/app-release.apk",
+        "size": 83624693,
+        "sha256": "3064e3a70100a7bc7043906292191e9e537f6028dd381711ede890ddd486f7c9",
+        "modifiedAt": "2026-04-21T15:12:39.761Z"
+      },
+      {
+        "name": "bundle",
+        "path": "4-assembly/android/mixc-retail-assembly-rn84/android/app/build/generated/assets/react/release/index.android.bundle",
+        "size": 3035592,
+        "sha256": "4f0bc8eae2ffeb4c86d56ab6ca24c1c4151e727df41025f603b6c7fecfbeaf8f",
+        "modifiedAt": "2026-04-21T15:12:20.586Z"
+      },
+      {
+        "name": "sourceMap",
+        "path": "4-assembly/android/mixc-retail-assembly-rn84/android/app/build/intermediates/sourcemaps/react/release/index.android.bundle.packager.map",
+        "size": 11354988,
+        "sha256": "d262fbe7c51dde0ae4c63976695544806ed067d9fe69231ce7b793158c3ffeb7",
+        "modifiedAt": "2026-04-21T15:12:17.461Z"
+      }
+    ]
+  }
+}

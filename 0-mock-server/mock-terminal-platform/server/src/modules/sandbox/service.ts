@@ -1,3 +1,6 @@
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { desc, eq } from 'drizzle-orm'
 import { db, sqlite } from '../../database/index.js'
 import {
@@ -30,6 +33,8 @@ const GLOBAL_CONTEXT_KEY = 'global'
 export const KERNEL_BASE_TEST_SANDBOX_ID = 'sandbox-kernel-base-test'
 const KERNEL_BASE_TEST_SANDBOX_NAME = 'kernel-base-test'
 const KERNEL_BASE_TEST_SEED = 20260411
+const currentDir = path.dirname(fileURLToPath(import.meta.url))
+const hotUpdateStorageRoot = path.resolve(currentDir, '../../../data/hot-updates')
 
 export type SandboxCreationMode = 'EMPTY' | 'CLONE_BASELINE'
 
@@ -512,6 +517,8 @@ const deleteSandboxRows = (sandboxId: string) => {
     'tdp_topics',
     'tdp_sessions',
     'task_releases',
+    'hot_update_releases',
+    'hot_update_packages',
     'activation_codes',
     'terminal_instances',
     'terminal_templates',
@@ -541,6 +548,8 @@ const deleteSandboxRows = (sandboxId: string) => {
       deleteTaskInstance.run(release.release_id)
     }
   }
+
+  fs.rmSync(path.join(hotUpdateStorageRoot, sandboxId), { recursive: true, force: true })
 }
 
 const seedKernelBaseTestSandboxData = (timestamp: number) => {

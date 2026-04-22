@@ -1,0 +1,3 @@
+--------- beginning of main
+04-21 21:30:41.402  6198  6248 I ReactNativeJS: Running "MixcRetailAssemblyRN84"
+04-21 21:30:41.516  6198  6248 I ReactNativeJS: '[tcp-bootstrap-state-written]', '{"nodeId":"master:6Z2H3BSGEY","runtimeId":"run_mo8nw1c4_mpgqqbfxwm81yltf","displayIndex":0,"requestId":"req_mo8nw1d7_bu0c664d8l8ce9nx","commandId":"cmd_mo8nw1d7_eyeswqtb2i9okzqa","nextDeviceFingerprint":"6Z2H3BSGEY","nextDeviceInfo":{"id":"6Z2H3BSGEY","model":"Mixc Retail Android RN84"},"previousIdentity":{"activationStatus":"UNACTIVATED"}}'

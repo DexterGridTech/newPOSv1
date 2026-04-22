@@ -1,0 +1,41 @@
+{
+  "success": true,
+  "data": [
+    {
+      "reportId": "ver_hu4yd7t7uyal",
+      "sandboxId": "sandbox-kernel-base-test",
+      "terminalId": "terminal_gietoxqiuy9c",
+      "displayIndex": 1,
+      "displayRole": "secondary",
+      "appId": "assembly-android-mixc-retail-rn84",
+      "assemblyVersion": "1.0.0",
+      "buildNumber": 2,
+      "runtimeVersion": "android-mixc-retail-rn84@1.0",
+      "bundleVersion": "1.0.0+ota.6",
+      "source": "embedded",
+      "packageId": null,
+      "releaseId": null,
+      "state": "RUNNING",
+      "reason": null,
+      "reportedAt": 1776714365469
+    },
+    {
+      "reportId": "ver_ucsnw4nquya2",
+      "sandboxId": "sandbox-kernel-base-test",
+      "terminalId": "terminal_gietoxqiuy9c",
+      "displayIndex": 0,
+      "displayRole": "primary",
+      "appId": "assembly-android-mixc-retail-rn84",
+      "assemblyVersion": "1.0.0",
+      "buildNumber": 2,
+      "runtimeVersion": "android-mixc-retail-rn84@1.0",
+      "bundleVersion": "1.0.0+ota.6",
+      "source": "embedded",
+      "packageId": null,
+      "releaseId": null,
+      "state": "RUNNING",
+      "reason": null,
+      "reportedAt": 1776714365450
+    }
+  ]
+}

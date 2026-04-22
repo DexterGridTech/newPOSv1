@@ -1,0 +1,15 @@
+619:04-21 23:30:48.371 I/ConnectorManager(13909): connector initialized
+679:04-21 23:30:48.396 I/assembly.assembly.android.mixc-retail-rn84(13909): [assembly.topology] Create assembly topology socket binding {"displayIndex":0,"role":"master","localNodeId":"master:ZJ63NQELD9","resolvedPathTemplate":"/ws"}
+718:04-21 23:30:48.414 I/assembly.assembly.android.mixc-retail-rn84(13909): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"MASTER","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+3303:04-21 23:32:48.655 I/ConnectorManager(14139): connector initialized
+3363:04-21 23:32:48.679 I/assembly.assembly.android.mixc-retail-rn84(14139): [assembly.topology] Create assembly topology socket binding {"displayIndex":0,"role":"master","localNodeId":"master:ZJ63NQELD9","resolvedPathTemplate":"/ws"}
+3402:04-21 23:32:48.716 I/assembly.assembly.android.mixc-retail-rn84(14139): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"MASTER","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+6599:04-21 23:36:30.013 D/AndroidRuntime(14465): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+6600:04-21 23:36:30.014 I/AndroidRuntime(14465): Using default boot image
+6601:04-21 23:36:30.014 I/AndroidRuntime(14465): Leaving lock profiling enabled
+6611:04-21 23:36:30.062 D/AndroidRuntime(14465): Calling main entry com.android.commands.content.Content
+6834:04-21 23:36:30.067 D/AndroidRuntime(14465): Shutting down VM
+7291:04-21 23:36:59.018 I/assembly.assembly.android.mixc-retail-rn84(14139): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"MASTER","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+7308:04-21 23:36:59.132 I/assembly.assembly.android.mixc-retail-rn84(14139): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+7311:04-21 23:36:59.135 I/assembly.assembly.android.mixc-retail-rn84(14139): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+7312:04-21 23:36:59.135 I/assembly.assembly.android.mixc-retail-rn84(14139): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}

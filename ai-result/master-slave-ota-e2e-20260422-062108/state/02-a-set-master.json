@@ -1,0 +1,21 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "requestId": "req_mo96z3hk_bipq67cvohekz8b3",
+    "commandId": "cmd_mo96z3hk_qp6i1dcebtu2448s",
+    "commandName": "kernel.base.topology-runtime-v3.set-instance-mode",
+    "target": "local",
+    "status": "COMPLETED",
+    "startedAt": 1776810296936,
+    "completedAt": 1776810296938,
+    "actorResults": [
+      {
+        "actorKey": "kernel.base.topology-runtime-v3.TopologyContextActor",
+        "status": "COMPLETED",
+        "startedAt": 1776810296936,
+        "completedAt": 1776810296937
+      }
+    ]
+  },
+  "id": "1776810297075-5b60bed97cd09"
+}

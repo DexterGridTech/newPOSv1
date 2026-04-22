@@ -1,0 +1,7 @@
+{
+  "baseUrl": "http://127.0.0.1:5810",
+  "sandboxId": "sandbox-kernel-base-test",
+  "activationCode": "200000000001",
+  "created": false,
+  "preparedKernelSandbox": false
+}

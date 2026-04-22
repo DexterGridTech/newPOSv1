@@ -1,0 +1,47 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.impos2.mixcretailassemblyrn84.app-mergeDebugResources-39:/values-v31/values-v31.xml",
+            "map": [
+                {
+                    "source": "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/res/values-v31/styles.xml",
+                    "from": {
+                        "startLines": "1",
+                        "startColumns": "4",
+                        "startOffsets": "16",
+                        "endLines": "5",
+                        "endColumns": "12",
+                        "endOffsets": "328"
+                    },
+                    "to": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "6",
+                        "endColumns": "12",
+                        "endOffsets": "367"
+                    }
+                },
+                {
+                    "source": "/Users/dexter/.gradle/caches/8.13/transforms/4c418725fa0a5591577c91c3be928795/transformed/core-splashscreen-1.0.1/res/values-v31/values-v31.xml",
+                    "from": {
+                        "startLines": "2,9",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,473",
+                        "endLines": "8,13",
+                        "endColumns": "12,12",
+                        "endOffsets": "468,697"
+                    },
+                    "to": {
+                        "startLines": "7,14",
+                        "startColumns": "4,4",
+                        "startOffsets": "372,790",
+                        "endLines": "13,18",
+                        "endColumns": "12,12",
+                        "endOffsets": "785,1014"
+                    }
+                }
+            ]
+        }
+    ]
+}

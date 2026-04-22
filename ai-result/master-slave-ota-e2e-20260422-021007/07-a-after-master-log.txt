@@ -1,0 +1,500 @@
+04-22 02:13:09.430 I/assembly.assembly.android.mixc-retail-rn84(17825): [runtime.load] pre-setup kernel.base.workflow-runtime-v2 {"moduleName":"kernel.base.workflow-runtime-v2","runtimeNodeId":"master:6Z2H3BSGEY","knownModules":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+04-22 02:13:09.430 I/assembly.kernel.base.runtime-shell-v2.application.KernelRuntimeAppV2(17825): [runtime.load] completed module pre-setup {"moduleName":"kernel.base.workflow-runtime-v2","packageVersion":"0.0.1","dependencies":["kernel.base.tdp-sync-runtime-v2"],"stateSliceNames":["kernel.base.workflow-runtime-v2.definitions","kernel.base.workflow-runtime-v2.observations","kernel.base.workflow-runtime-v2.queue"],"commandNames":["kernel.base.workflow-runtime-v2.run-workflow","kernel.base.workflow-runtime-v2.cancel-workflow-run","kernel.base.workflow-runtime-v2.register-workflow-definitions","kernel.base.workflow-runtime-v2.remove-workflow-definition"],"actorKeys":["kernel.base.workflow-runtime-v2.WorkflowDefinitionMutationActor","kernel.base.workflow-runtime-v2.WorkflowControlActor","kernel.base.workflow-runtime-v2.WorkflowRunActor","kernel.base.workflow-runtime-v2.WorkflowRemoteDefinitionActor"],"errorKeys":["kernel.base.workflow-runtime-v2.workflow_definition_not_found","kernel.base.workflow-runtime-v2.workflow_definition_disabled","kernel.base.workflow-runtime-v2.duplicate_request","kernel.base.workflow-runtime-v2.workflow_run_not_found","kernel.base.workflow-runtime-v2.workflow_execution_failed","kernel.base.workflow-runtime-v2.workflow_step_failed","kernel.base.workflow-runtime-v2.workflow_script_failed","kernel.base.workflow-runtime-v2.workflow_queue_corrupted"],"parameterKeys":["kernel.base.workflow-runtime-v2.default-workflow-timeout-ms","kernel.base.workflow-runtime-v2.default-step-timeout-ms","kernel.base.workflow-runtime-v2.event-history-limit","kernel.base.workflow-runtime-v2.completed-observation-limit","kernel.base.workflow-runtime-v2.queue-size-limit"],"hasInstall":true,"hasPreSetup":true}
+04-22 02:13:09.430 I/assembly.assembly.android.mixc-retail-rn84(17825): [runtime.load] pre-setup kernel.base.ui-runtime-v2 {"moduleName":"kernel.base.ui-runtime-v2","runtimeNodeId":"master:6Z2H3BSGEY","knownModules":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+04-22 02:13:09.430 I/assembly.kernel.base.runtime-shell-v2.application.KernelRuntimeAppV2(17825): [runtime.load] completed module pre-setup {"moduleName":"kernel.base.ui-runtime-v2","packageVersion":"0.0.1","dependencies":[],"stateSliceNames":["kernel.base.ui-runtime-v2.screen.main","kernel.base.ui-runtime-v2.screen.branch","kernel.base.ui-runtime-v2.overlay.main","kernel.base.ui-runtime-v2.overlay.branch","kernel.base.ui-runtime-v2.ui-variable.main","kernel.base.ui-runtime-v2.ui-variable.branch"],"commandNames":["kernel.base.ui-runtime-v2.register-screen-definitions","kernel.base.ui-runtime-v2.show-screen","kernel.base.ui-runtime-v2.replace-screen","kernel.base.ui-runtime-v2.reset-screen","kernel.base.ui-runtime-v2.open-overlay","kernel.base.ui-runtime-v2.close-overlay","kernel.base.ui-runtime-v2.clear-overlays","kernel.base.ui-runtime-v2.set-ui-variables","kernel.base.ui-runtime-v2.clear-ui-variables"],"actorKeys":["kernel.base.ui-runtime-v2.UiRuntimeScreenRegistryActor","kernel.base.ui-runtime-v2.UiRuntimeScreenRuntimeActor","kernel.base.ui-runtime-v2.UiRuntimeOverlayRuntimeActor","kernel.base.ui-runtime-v2.UiRuntimeVariableRuntimeActor"],"errorKeys":["kernel.base.ui-runtime-v2.invalid_screen_target","kernel.base.ui-runtime-v2.duplicated_screen_definition","kernel.base.ui-runtime-v2.overlay_id_required"],"parameterKeys":["kernel.base.ui-runtime-v2.registry.cache-size-hint"],"hasInstall":true,"hasPreSetup":true}
+04-22 02:13:09.430 I/assembly.assembly.android.mixc-retail-rn84(17825): [runtime.load] pre-setup ui.base.runtime-react {"moduleName":"ui.base.runtime-react","runtimeNodeId":"master:6Z2H3BSGEY","knownModules":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+04-22 02:13:09.431 I/assembly.kernel.base.runtime-shell-v2.application.KernelRuntimeAppV2(17825): [runtime.load] completed module pre-setup {"moduleName":"ui.base.runtime-react","packageVersion":"0.0.1","dependencies":["kernel.base.ui-runtime-v2"],"stateSliceNames":[],"commandNames":[],"actorKeys":[],"errorKeys":[],"parameterKeys":[],"hasInstall":true,"hasPreSetup":true}
+04-22 02:13:09.431 I/assembly.assembly.android.mixc-retail-rn84(17825): [runtime.load] pre-setup ui.base.input-runtime {"moduleName":"ui.base.input-runtime","runtimeNodeId":"master:6Z2H3BSGEY","knownModules":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+04-22 02:13:09.432 I/assembly.kernel.base.runtime-shell-v2.application.KernelRuntimeAppV2(17825): [runtime.load] completed module pre-setup {"moduleName":"ui.base.input-runtime","packageVersion":"0.0.1","dependencies":[],"stateSliceNames":[],"commandNames":[],"actorKeys":[],"errorKeys":[],"parameterKeys":[],"hasInstall":true,"hasPreSetup":true}
+04-22 02:13:09.432 I/assembly.assembly.android.mixc-retail-rn84(17825): [runtime.load] pre-setup ui.base.admin-console {"moduleName":"ui.base.admin-console","runtimeNodeId":"master:6Z2H3BSGEY","knownModules":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+04-22 02:13:09.433 I/assembly.kernel.base.runtime-shell-v2.application.KernelRuntimeAppV2(17825): [runtime.load] completed module pre-setup {"moduleName":"ui.base.admin-console","packageVersion":"0.0.1","dependencies":[],"stateSliceNames":["ui.base.admin-console.console"],"commandNames":["ui.base.admin-console.scan-and-import-topology-master"],"actorKeys":["ui.base.admin-console.AdminTopologyActor"],"errorKeys":[],"parameterKeys":[],"hasInstall":true,"hasPreSetup":true}
+04-22 02:13:09.433 I/assembly.assembly.android.mixc-retail-rn84(17825): [runtime.load] pre-setup ui.base.terminal-console {"moduleName":"ui.base.terminal-console","runtimeNodeId":"master:6Z2H3BSGEY","knownModules":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+04-22 02:13:09.434 I/assembly.kernel.base.runtime-shell-v2.application.KernelRuntimeAppV2(17825): [runtime.load] completed module pre-setup {"moduleName":"ui.base.terminal-console","packageVersion":"0.0.1","dependencies":[],"stateSliceNames":[],"commandNames":[],"actorKeys":[],"errorKeys":[],"parameterKeys":[],"hasInstall":true,"hasPreSetup":true}
+04-22 02:13:09.434 I/assembly.assembly.android.mixc-retail-rn84(17825): [runtime.load] pre-setup ui.integration.retail-shell {"moduleName":"ui.integration.retail-shell","runtimeNodeId":"master:6Z2H3BSGEY","knownModules":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+04-22 02:13:09.434 I/assembly.kernel.base.runtime-shell-v2.application.KernelRuntimeAppV2(17825): [runtime.load] completed module pre-setup {"moduleName":"ui.integration.retail-shell","packageVersion":"1.0.0","dependencies":["kernel.base.ui-runtime-v2","kernel.base.tcp-control-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console"],"stateSliceNames":[],"commandNames":[],"actorKeys":["ui.integration.retail-shell.RetailShellRuntimeInitializeActor","ui.integration.retail-shell.RetailShellTcpLifecycleActor"],"errorKeys":[],"parameterKeys":[],"hasInstall":true,"hasPreSetup":true}
+04-22 02:13:09.434 I/assembly.kernel.base.runtime-shell-v2.application.KernelRuntimeAppV2(17825): [runtime.load] start kernel runtime app v2 runtime {"runtimeName":"assembly.android.mixc-retail-rn84","runtimeId":"run_mo8xzag9_6j8ay3m7wuc3chw4","localNodeId":"master:6Z2H3BSGEY","moduleCount":11}
+04-22 02:13:09.434 I/assembly.assembly.android.mixc-retail-rn84(17825): [runtime.load] start runtime-shell-v2 {"runtimeId":"run_mo8xzag9_6j8ay3m7wuc3chw4","localNodeId":"master:6Z2H3BSGEY","modules":["kernel.base.runtime-shell-v2","assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"],"actorCount":80}
+04-22 02:13:09.437 D/b/260135164( 1043): updateIconAlphaForHome - setIconsAlpha(0), isTaskbarPresent: true
+04-22 02:13:09.441 I/MMKV    (17825): current API level = 33, libc++_shared=0
+04-22 02:13:09.441 I/MMKV    (17825): <MMKV.cpp:175::initialize> version v2.4.0, page size 4096, arch arm64-v8a
+04-22 02:13:09.441 I/MMKV    (17825): <MMKV.cpp:186::initialize> armv8 AES instructions is supported
+04-22 02:13:09.441 I/MMKV    (17825): <MMKV.cpp:194::initialize> armv8 CRC32 instructions is supported
+04-22 02:13:09.443 I/MMKV    (17825): <MMKV.cpp:232::initializeMMKV> root dir: /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv
+04-22 02:13:09.443 I/MMKV    (17825): <MMKV_Android.cpp:378::enableDisableProcessMode> process mode check enable/disable: 0
+04-22 02:13:09.443 I/MMKV    (17825): Disable checkProcessMode()
+04-22 02:13:09.443 I/MMKV    (17825): <MemoryFile.cpp:103::open> open fd[107], flag 0x7, /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-22 02:13:09.443 I/MMKV    (17825): <MemoryFile.cpp:250::mmapOrCleanup> mmap to address [0x7688eda000], oldPtr [0x0], [/data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe]
+04-22 02:13:09.443 I/MMKV    (17825): <MemoryFile.cpp:109::close> closing fd[107], /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-22 02:13:09.443 I/MMKV    (17825): <MemoryFile.cpp:103::open> open fd[107], flag 0x7, /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe.crc
+04-22 02:13:09.443 I/MMKV    (17825): <MemoryFile.cpp:250::mmapOrCleanup> mmap to address [0x7688ed9000], oldPtr [0x0], [/data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe.crc]
+04-22 02:13:09.443 I/MMKV    (17825): <MemoryFile.cpp:103::open> open fd[108], flag 0x7, /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-22 02:13:09.443 I/MMKV    (17825): <MemoryFile.cpp:109::close> closing fd[108], /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-22 02:13:09.443 I/MMKV    (17825): <MMKV_IO.cpp:94::loadFromFile> loading [mixc-retail-assembly-rn84::state] with 0 actual size, file size 4096, InterProcess 0, meta info version:0
+04-22 02:13:09.443 I/MMKV    (17825): <MMKV_IO.cpp:145::loadFromFile> loaded [mixc-retail-assembly-rn84::state] with 0 key-values
+04-22 02:13:09.449 I/MMKV    (17825): <MemoryFile.cpp:103::open> open fd[108], flag 0x7, /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/c08c20d895f199f98a40164528d2f6a6
+04-22 02:13:09.449 I/MMKV    (17825): <MemoryFile.cpp:250::mmapOrCleanup> mmap to address [0x7688ed8000], oldPtr [0x0], [/data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/c08c20d895f199f98a40164528d2f6a6]
+04-22 02:13:09.449 I/MMKV    (17825): <MemoryFile.cpp:109::close> closing fd[108], /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/c08c20d895f199f98a40164528d2f6a6
+04-22 02:13:09.449 I/MMKV    (17825): <MemoryFile.cpp:103::open> open fd[108], flag 0x7, /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/c08c20d895f199f98a40164528d2f6a6.crc
+04-22 02:13:09.449 I/MMKV    (17825): <MemoryFile.cpp:250::mmapOrCleanup> mmap to address [0x7688ed7000], oldPtr [0x0], [/data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/c08c20d895f199f98a40164528d2f6a6.crc]
+04-22 02:13:09.449 I/MMKV    (17825): <MemoryFile.cpp:103::open> open fd[112], flag 0x7, /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/c08c20d895f199f98a40164528d2f6a6
+04-22 02:13:09.449 I/MMKV    (17825): <MemoryFile.cpp:109::close> closing fd[112], /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/c08c20d895f199f98a40164528d2f6a6
+04-22 02:13:09.449 I/MMKV    (17825): <MMKV_IO.cpp:94::loadFromFile> loading [mixc-retail-assembly-rn84::secure-state] with 0 actual size, file size 4096, InterProcess 0, meta info version:0
+04-22 02:13:09.449 I/MMKV    (17825): <MMKV_IO.cpp:145::loadFromFile> loaded [mixc-retail-assembly-rn84::secure-state] with 0 key-values
+04-22 02:13:09.454 D/b/260135164( 1043): updateIconAlphaForHome - setIconsAlpha(0), isTaskbarPresent: true
+04-22 02:13:09.463 D/BtGatt.ScanManager(  790): uid 10116 isForeground true scanMode -1
+04-22 02:13:09.466 I/assembly.assembly.android.mixc-retail-rn84(17825): [runtime.load] install assembly.android.mixc-retail-rn84 {"moduleName":"assembly.android.mixc-retail-rn84","displayIndex":0,"displayCount":1}
+04-22 02:13:09.468 I/assembly.assembly.android.mixc-retail-rn84(17825): [assembly.topology] Create assembly topology socket binding {"displayIndex":0,"role":"master","localNodeId":"master:6Z2H3BSGEY","resolvedPathTemplate":"/ws"}
+04-22 02:13:09.468 I/assembly.assembly.android.mixc-retail-rn84(17825): [runtime.load] install kernel.base.topology-runtime-v3 {"moduleName":"kernel.base.topology-runtime-v3","stateSlices":["kernel.base.topology-runtime-v3.config","kernel.base.topology-runtime-v3.context","kernel.base.topology-runtime-v3.connection","kernel.base.topology-runtime-v3.peer","kernel.base.topology-runtime-v3.sync","kernel.base.topology-runtime-v3.request-mirror","kernel.base.topology-runtime-v3.demo.master","kernel.base.topology-runtime-v3.demo.slave"],"commandNames":["kernel.base.topology-runtime-v3.set-instance-mode","kernel.base.topology-runtime-v3.set-display-mode","kernel.base.topology-runtime-v3.set-enable-slave","kernel.base.topology-runtime-v3.set-master-locator","kernel.base.topology-runtime-v3.clear-master-locator","kernel.base.topology-runtime-v3.refresh-topology-context","kernel.base.topology-runtime-v3.start-topology-connection","kernel.base.topology-runtime-v3.stop-topology-connection","kernel.base.topology-runtime-v3.restart-topology-connection","kernel.base.topology-runtime-v3.upsert-demo-master-entry","kernel.base.topology-runtime-v3.remove-demo-master-entry","kernel.base.topology-runtime-v3.reset-demo-master-state","kernel.base.topology-runtime-v3.upsert-demo-slave-entry","kernel.base.topology-runtime-v3.remove-demo-slave-entry","kernel.base.topology-runtime-v3.reset-demo-slave-state"]}
+04-22 02:13:09.468 I/assembly.assembly.android.mixc-retail-rn84(17825): [runtime.load] install kernel.base.tcp-control-runtime-v2 {"moduleName":"kernel.base.tcp-control-runtime-v2","stateSlices":["kernel.base.tcp-control-runtime-v2.identity","kernel.base.tcp-control-runtime-v2.credential","kernel.base.tcp-control-runtime-v2.binding","kernel.base.tcp-control-runtime-v2.sandbox","kernel.base.tcp-control-runtime-v2.runtime"],"commandNames":["kernel.base.tcp-control-runtime-v2.bootstrap-tcp-control","kernel.base.tcp-control-runtime-v2.bootstrap-tcp-control-succeeded","kernel.base.tcp-control-runtime-v2.activate-terminal","kernel.base.tcp-control-runtime-v2.activate-terminal-succeeded","kernel.base.tcp-control-runtime-v2.refresh-credential","kernel.base.tcp-control-runtime-v2.credential-refreshed","kernel.base.tcp-control-runtime-v2.deactivate-terminal","kernel.base.tcp-control-runtime-v2.deactivate-terminal-succeeded","kernel.base.tcp-control-runtime-v2.report-task-result","kernel.base.tcp-control-runtime-v2.task-result-reported","kernel.base.tcp-control-runtime-v2.reset-tcp-control"]}
+04-22 02:13:09.468 I/assembly.assembly.android.mixc-retail-rn84(17825): [runtime.load] install kernel.base.tdp-sync-runtime-v2 {"moduleName":"kernel.base.tdp-sync-runtime-v2","stateSlices":["kernel.base.tdp-sync-runtime-v2.session","kernel.base.tdp-sync-runtime-v2.sync","kernel.base.tdp-sync-runtime-v2.projection","kernel.base.tdp-sync-runtime-v2.command-inbox","kernel.base.tdp-sync-runtime-v2.control-signals","kernel.base.tdp-sync-runtime-v2.hot-update"],"commandNames":["kernel.base.tdp-sync-runtime-v2.bootstrap-tdp-sync","kernel.base.tdp-sync-runtime-v2.bootstrap-tdp-sync-succeeded","kernel.base.tdp-sync-runtime-v2.connect-tdp-session","kernel.base.tdp-sync-runtime-v2.disconnect-tdp-session","kernel.base.tdp-sync-runtime-v2.acknowledge-cursor","kernel.base.tdp-sync-runtime-v2.report-applied-cursor","kernel.base.tdp-sync-runtime-v2.send-ping","kernel.base.tdp-sync-runtime-v2.record-user-operation","kernel.base.tdp-sync-runtime-v2.topic-data-changed","kernel.base.tdp-sync-runtime-v2.recompute-resolved-topic-changes","kernel.base.tdp-sync-runtime-v2.snapshot-loaded","kernel.base.tdp-sync-runtime-v2.changes-loaded","kernel.base.tdp-sync-runtime-v2.projection-received","kernel.base.tdp-sync-runtime-v2.projection-batch-received","kernel.base.tdp-sync-runtime-v2.command-delivered","kernel.base.tdp-sync-runtime-v2.session-ready","kernel.base.tdp-sync-runtime-v2.pong-received","kernel.base.tdp-sync-runtime-v2.edge-degraded","kernel.base.tdp-sync-runtime-v2.session-rehome-required","kernel.base.tdp-sync-runtime-v2.protocol-failed","kernel.base.tdp-sync-runtime-v2.message-received"],"hasAssembly":true}
+04-22 02:13:09.468 I/assembly.assembly.android.mixc-retail-rn84(17825): [runtime.load] install kernel.base.workflow-runtime-v2 {"moduleName":"kernel.base.workflow-runtime-v2","stateSlices":["kernel.base.workflow-runtime-v2.definitions","kernel.base.workflow-runtime-v2.observations","kernel.base.workflow-runtime-v2.queue"],"commandNames":["kernel.base.workflow-runtime-v2.run-workflow","kernel.base.workflow-runtime-v2.cancel-workflow-run","kernel.base.workflow-runtime-v2.register-workflow-definitions","kernel.base.workflow-runtime-v2.remove-workflow-definition"],"remoteDefinitionTopicKey":"kernel.workflow.definition"}
+04-22 02:13:09.468 I/assembly.assembly.android.mixc-retail-rn84(17825): [runtime.load] install kernel.base.ui-runtime-v2 {"moduleName":"kernel.base.ui-runtime-v2","stateSlices":["kernel.base.ui-runtime-v2.screen.main","kernel.base.ui-runtime-v2.screen.branch","kernel.base.ui-runtime-v2.overlay.main","kernel.base.ui-runtime-v2.overlay.branch","kernel.base.ui-runtime-v2.ui-variable.main","kernel.base.ui-runtime-v2.ui-variable.branch"],"commandNames":["kernel.base.ui-runtime-v2.register-screen-definitions","kernel.base.ui-runtime-v2.show-screen","kernel.base.ui-runtime-v2.replace-screen","kernel.base.ui-runtime-v2.reset-screen","kernel.base.ui-runtime-v2.open-overlay","kernel.base.ui-runtime-v2.close-overlay","kernel.base.ui-runtime-v2.clear-overlays","kernel.base.ui-runtime-v2.set-ui-variables","kernel.base.ui-runtime-v2.clear-ui-variables"]}
+04-22 02:13:09.468 I/MMKV    (17825): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 1, crc 4191934609, actualSize 4
+04-22 02:13:09.469 I/MMKV    (17825): <MMKV_IO.cpp:530::expandAndWriteBack> extending [mixc-retail-assembly-rn84::state] file size from 4096 to 8192, incoming size:130, future usage:2752
+04-22 02:13:09.469 I/MMKV    (17825): <MemoryFile.cpp:103::open> open fd[111], flag 0x7, /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-22 02:13:09.469 I/MMKV    (17825): <MemoryFile.cpp:250::mmapOrCleanup> mmap to address [0x7682200000], oldPtr [0x7688eda000], [/data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe]
+04-22 02:13:09.469 I/MMKV    (17825): <MemoryFile.cpp:109::close> closing fd[111], /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-22 02:13:09.469 I/MMKV    (17825): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 2, crc 1050418643, actualSize 3988
+04-22 02:13:09.469 I/MMKV    (17825): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 02:13:09.472 W/TransactionTracing(  335): Could not find layer handle 0xb400006eb98b55f0
+04-22 02:13:09.472 W/TransactionTracing(  335): Could not find layer handle 0xb400006eb98b2530
+04-22 02:13:09.477 D/b/260135164( 1043): updateIconAlphaForHome - setIconsAlpha(0), isTaskbarPresent: true
+04-22 02:13:09.486 I/assembly.assembly.android.mixc-retail-rn84(17825): [runtime.load] install ui.base.runtime-react {"moduleName":"ui.base.runtime-react"}
+04-22 02:13:09.486 I/assembly.assembly.android.mixc-retail-rn84(17825): [runtime.load] install ui.base.input-runtime {"moduleName":"ui.base.input-runtime"}
+04-22 02:13:09.486 I/assembly.assembly.android.mixc-retail-rn84(17825): [runtime.load] install ui.base.admin-console {"moduleName":"ui.base.admin-console"}
+04-22 02:13:09.488 I/assembly.assembly.android.mixc-retail-rn84(17825): [runtime.load] install ui.base.terminal-console {"moduleName":"ui.base.terminal-console"}
+04-22 02:13:09.491 D/OneSearchSuggestProvider( 1043): Shut down the binder channel
+04-22 02:13:09.492 I/assembly.assembly.android.mixc-retail-rn84(17825): [runtime.load] install ui.integration.retail-shell {"moduleName":"ui.integration.retail-shell"}
+04-22 02:13:09.493 D/b/260135164( 1043): updateIconAlphaForHome - setIconsAlpha(0), isTaskbarPresent: true
+04-22 02:13:09.494 I/s.nexuslauncher( 1043): oneway function results for code 2 on binder at 0xb4000073f59c10c0 will be dropped but finished with status UNKNOWN_TRANSACTION
+04-22 02:13:09.498 I/ReactNativeJS(17825): '[tcp-bootstrap-state-written]', '{"nodeId":"master:6Z2H3BSGEY","runtimeId":"run_mo8xzag9_6j8ay3m7wuc3chw4","displayIndex":0,"requestId":"req_mo8xzaih_bui9p43umi0toxjt","commandId":"cmd_mo8xzaii_7w1e2q1gthrdw6r2","nextDeviceFingerprint":"6Z2H3BSGEY","nextDeviceInfo":{"id":"6Z2H3BSGEY","model":"Mixc Retail Android RN84"},"previousIdentity":{"activationStatus":"UNACTIVATED"}}'
+04-22 02:13:09.499 I/assembly.kernel.base.runtime-shell-v2.application.KernelRuntimeAppV2(17825): [runtime.load] kernel runtime app v2 started {"runtimeName":"assembly.android.mixc-retail-rn84","moduleDescriptors":[{"moduleName":"assembly.android.mixc-retail-rn84","packageVersion":"1.0.0","dependencies":[],"stateSliceNames":[],"commandNames":[],"actorKeys":["assembly.android.mixc-retail-rn84.AssemblyRuntimeInitializeActor"],"errorKeys":[],"parameterKeys":[],"hasInstall":true,"hasPreSetup":true},{"moduleName":"kernel.base.topology-runtime-v3","packageVersion":"0.0.1","dependencies":[],"stateSliceNames":["kernel.base.topology-runtime-v3.config","kernel.base.topology-runtime-v3.context","kernel.base.topology-runtime-v3.connection","kernel.base.topology-runtime-v3.peer","kernel.base.topology-runtime-v3.sync","kernel.base.topology-runtime-v3.request-mirror","kernel.base.topology-runtime-v3.demo.master","kernel.base.topology-runtime-v3.demo.slave"],"commandNames":["kernel.base.topology-runtime-v3.set-instance-mode","kernel.base.topology-runtime-v3.set-display-mode","kernel.base.topology-runtime-v3.set-enable-slave","kernel.base.topology-runtime-v3.set-master-locator","kernel.base.topology-runtime-v3.clear-master-locator","kernel.base.topology-runtime-v3.refresh-topology-context","kernel.base.topology-runtime-v3.start-topology-connection","kernel.base.topology-runtime-v3.stop-topology-connection","kernel.base.topology-runtime-v3.restart-topology-connection","kernel.base.topology-runtime-v3.upsert-demo-master-entry","kernel.base.topology-runtime-v3.remove-demo-master-entry","kernel.base.topology-runtime-v3.reset-demo-master-state","kernel.base.topology-runtime-v3.upsert-demo-slave-entry","kernel.base.topology-runtime-v3.remove-demo-slave-entry","kernel.base.topology-runtime-v3.reset-demo-slave-state"],"actorKeys":["kernel.base.topology-runtime-v3.TopologyContextActor","kernel.base.topology-runtime-v3.TopologyConnectionActor","kernel.base.topology-runtime-v3.TopologyDemoSyncActor"],"errorKeys":["kernel.base.topology-runtime-v3.display_context_required","kernel.base.topology-runtime-v3.orchestrator_required","kernel.base.topology-runtime-v3.socket_binding_required","kernel.base.topology-runtime-v3.hello_runtime_required","kernel.base.topology-runtime-v3.action_not_allowed"],"parameterKeys":["kernel.base.topology-runtime-v3.reconnect-interval-ms"],"hasInstall":true,"hasPreSetup":true},{"moduleName":"kernel.base.tcp-control-runtime-v2","packageVersion":"0.0.1","dependencies":[],"stateSliceNames":["kernel.base.tcp-control-runtime-v2.identity","kernel.base.tcp-control-runtime-v2.credential","kernel.base.tcp-control-runtime-v2.binding","kernel.base.tcp-control-runtime-v2.sandbox","kernel.base.tcp-control-runtime-v2.runtime"],"commandNames":["kernel.base.tcp-control-runtime-v2.bootstrap-tcp-control","kernel.base.tcp-control-runtime-v2.bootstrap-tcp-control-succeeded","kernel.base.tcp-control-runtime-v2.activate-terminal","kernel.base.tcp-control-runtime-v2.activate-terminal-succeeded","kernel.base.tcp-control-runtime-v2.refresh-credential","kernel.base.tcp-control-runtime-v2.credential-refreshed","kernel.base.tcp-control-runtime-v2.deactivate-terminal","kernel.base.tcp-control-runtime-v2.deactivate-terminal-succeeded","kernel.base.tcp-control-runtime-v2.report-task-result","kernel.base.tcp-control-runtime-v2.task-result-reported","kernel.base.tcp-control-runtime-v2.reset-tcp-control"],"actorKeys":["kernel.base.tcp-control-runtime-v2.TcpBootstrapActor","kernel.base.tcp-control-runtime-v2.TcpActivationActor","kernel.base.tcp-control-runtime-v2.TcpCredentialActor","kernel.base.tcp-control-runtime-v2.TcpDeactivationActor","kernel.base.tcp-control-runtime-v2.TcpTaskReportActor","kernel.base.tcp-control-runtime-v2.TcpStateMutationActor"],"errorKeys":["kernel.base.tcp-control-runtime-v2.activation_code_invalid","kernel.base.tcp-control-runtime-v2.activation_failed","kernel.base.tcp-control-runtime-v2.credential_missing","kernel.base.tcp-control-runtime-v2.credential_expired","kernel.base.tcp-control-runtime-v2.refresh_failed","kernel.base.tcp
+04-22 02:13:09.500 I/MMKV    (17825): <MMKV_IO.cpp:530::expandAndWriteBack> extending [mixc-retail-assembly-rn84::state] file size from 8192 to 16384, incoming size:318, future usage:4172
+04-22 02:13:09.500 I/MMKV    (17825): <MemoryFile.cpp:103::open> open fd[111], flag 0x7, /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-22 02:13:09.500 I/MMKV    (17825): <MemoryFile.cpp:250::mmapOrCleanup> mmap to address [0x767f7bf000], oldPtr [0x7682200000], [/data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe]
+04-22 02:13:09.500 I/MMKV    (17825): <MemoryFile.cpp:109::close> closing fd[111], /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-22 02:13:09.500 I/MMKV    (17825): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 3, crc 1515526760, actualSize 7996
+04-22 02:13:09.500 I/MMKV    (17825): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 02:13:09.502 I/MMKV    (17825): <MMKV_IO.cpp:530::expandAndWriteBack> extending [mixc-retail-assembly-rn84::state] file size from 16384 to 32768, incoming size:297, future usage:8154
+04-22 02:13:09.502 I/MMKV    (17825): <MemoryFile.cpp:103::open> open fd[111], flag 0x7, /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-22 02:13:09.502 I/MMKV    (17825): <MemoryFile.cpp:250::mmapOrCleanup> mmap to address [0x767f6dd000], oldPtr [0x767f7bf000], [/data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe]
+04-22 02:13:09.502 I/MMKV    (17825): <MemoryFile.cpp:109::close> closing fd[111], /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-22 02:13:09.502 I/MMKV    (17825): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 4, crc 1022046764, actualSize 16300
+04-22 02:13:09.502 I/MMKV    (17825): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 02:13:09.503 D/b/260135164( 1043): updateIconAlphaForHome - setIconsAlpha(0), isTaskbarPresent: true
+04-22 02:13:09.504 W/TransactionTracing(  335): Could not find layer handle 0xb400006eb98b33d0
+04-22 02:13:09.504 W/TransactionTracing(  335): Could not find layer handle 0xb400006eb98a9f50
+04-22 02:13:09.509 I/MMKV    (17825): <MMKV_IO.cpp:530::expandAndWriteBack> extending [mixc-retail-assembly-rn84::state] file size from 32768 to 65536, incoming size:338, future usage:10880
+04-22 02:13:09.509 I/MMKV    (17825): <MemoryFile.cpp:103::open> open fd[111], flag 0x7, /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-22 02:13:09.510 I/MMKV    (17825): <MemoryFile.cpp:250::mmapOrCleanup> mmap to address [0x76758ba000], oldPtr [0x767f6dd000], [/data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe]
+04-22 02:13:09.510 I/MMKV    (17825): <MemoryFile.cpp:109::close> closing fd[111], /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-22 02:13:09.510 I/MMKV    (17825): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 5, crc 2978337092, actualSize 21709
+04-22 02:13:09.510 I/MMKV    (17825): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 02:13:09.513 I/assembly.android.mixc-retail-rn84.boot(17825): {"stage":"runtime.start:done","displayIndex":0,"displayCount":1}
+04-22 02:13:09.514 D/TrafficStats(17825): tagSocket(111) with statsTag=0xffffffff, statsUid=-1
+04-22 02:13:09.514 I/assembly.assembly.android.mixc-retail-rn84(17825): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"6Z2H3BSGEY","instanceMode":"MASTER","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-22 02:13:09.515 I/assembly.android.mixc-retail-rn84.boot(17825): {"stage":"automation.host:start","displayIndex":0,"displayCount":1,"target":"primary","host":"127.0.0.1","port":18584,"generation":"automation-host-2-20646207542343"}
+04-22 02:13:09.522 D/b/260135164( 1043): updateIconAlphaForHome - setIconsAlpha(0), isTaskbarPresent: true
+04-22 02:13:09.530 I/MMKV    (17825): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 6, crc 3254400587, actualSize 21721
+04-22 02:13:09.530 I/MMKV    (17825): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 02:13:09.532 I/assembly.android.mixc-retail-rn84.boot(17825): {"stage":"app-load-complete:start","displayIndex":0}
+04-22 02:13:09.532 I/StartupAudit(17825): app_load_complete displayIndex=0 pid=17825 time=2026-04-22 02:13:09.532
+04-22 02:13:09.532 I/StartupAudit(17825): secondary_launch_scheduled pid=17825 time=2026-04-22 02:13:09.532
+04-22 02:13:09.535 I/MMKV    (17825): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 7, crc 859725487, actualSize 21721
+04-22 02:13:09.535 I/MMKV    (17825): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 02:13:09.538 D/b/260135164( 1043): updateIconAlphaForHome - setIconsAlpha(0), isTaskbarPresent: true
+04-22 02:13:09.546 I/MMKV    (17825): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 8, crc 1406251945, actualSize 21721
+04-22 02:13:09.546 I/MMKV    (17825): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 02:13:09.548 I/assembly.android.mixc-retail-rn84.boot(17825): {"stage":"app-load-complete:done","displayIndex":0}
+04-22 02:13:09.551 I/MMKV    (17825): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 9, crc 3895439149, actualSize 21721
+04-22 02:13:09.551 I/MMKV    (17825): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 02:13:09.553 D/b/260135164( 1043): updateIconAlphaForHome - setIconsAlpha(0), isTaskbarPresent: true
+04-22 02:13:09.558 I/MMKV    (17825): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 10, crc 503932941, actualSize 21721
+04-22 02:13:09.558 I/MMKV    (17825): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 02:13:09.565 I/MMKV    (17825): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 11, crc 617069178, actualSize 21721
+04-22 02:13:09.565 I/MMKV    (17825): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 02:13:09.570 D/b/260135164( 1043): updateIconAlphaForHome - setIconsAlpha(0), isTaskbarPresent: true
+04-22 02:13:09.572 I/MMKV    (17825): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 12, crc 3006148979, actualSize 21721
+04-22 02:13:09.572 I/MMKV    (17825): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 02:13:09.579 I/MMKV    (17825): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 13, crc 2565948369, actualSize 21721
+04-22 02:13:09.579 I/MMKV    (17825): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 02:13:09.585 I/MMKV    (17825): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 14, crc 2461973194, actualSize 21721
+04-22 02:13:09.585 I/MMKV    (17825): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 02:13:09.587 D/b/260135164( 1043): updateIconAlphaForHome - setIconsAlpha(0), isTaskbarPresent: true
+04-22 02:13:09.592 I/MMKV    (17825): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 15, crc 613353216, actualSize 21721
+04-22 02:13:09.592 I/MMKV    (17825): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 02:13:09.598 I/MMKV    (17825): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 16, crc 3881417111, actualSize 21721
+04-22 02:13:09.598 I/MMKV    (17825): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 02:13:09.603 D/b/260135164( 1043): updateIconAlphaForHome - setIconsAlpha(0), isTaskbarPresent: true
+04-22 02:13:09.605 I/MMKV    (17825): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 17, crc 2751948026, actualSize 21721
+04-22 02:13:09.605 I/MMKV    (17825): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 02:13:09.612 I/MMKV    (17825): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 18, crc 2039382445, actualSize 21721
+04-22 02:13:09.613 I/MMKV    (17825): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 02:13:09.618 I/MMKV    (17825): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 19, crc 1303185205, actualSize 21721
+04-22 02:13:09.618 I/MMKV    (17825): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 02:13:09.620 D/b/260135164( 1043): updateIconAlphaForHome - setIconsAlpha(0), isTaskbarPresent: true
+04-22 02:13:09.627 I/MMKV    (17825): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 20, crc 182700786, actualSize 21721
+04-22 02:13:09.627 I/MMKV    (17825): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 02:13:09.632 I/MMKV    (17825): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 21, crc 3690967722, actualSize 21721
+04-22 02:13:09.632 I/MMKV    (17825): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 02:13:09.637 D/b/260135164( 1043): updateIconAlphaForHome - setIconsAlpha(0), isTaskbarPresent: true
+04-22 02:13:09.640 I/MMKV    (17825): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 22, crc 1328254575, actualSize 21721
+04-22 02:13:09.640 I/MMKV    (17825): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 02:13:09.647 I/MMKV    (17825): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 23, crc 2195164816, actualSize 21721
+04-22 02:13:09.647 I/MMKV    (17825): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 02:13:09.653 I/MMKV    (17825): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 24, crc 3197878797, actualSize 21721
+04-22 02:13:09.653 I/MMKV    (17825): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 02:13:09.654 D/b/260135164( 1043): updateIconAlphaForHome - setIconsAlpha(0), isTaskbarPresent: true
+04-22 02:13:09.663 I/MMKV    (17825): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 25, crc 1396034037, actualSize 21721
+04-22 02:13:09.663 I/MMKV    (17825): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 02:13:09.670 D/b/260135164( 1043): updateIconAlphaForHome - setIconsAlpha(0), isTaskbarPresent: true
+04-22 02:13:09.674 I/MMKV    (17825): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 26, crc 1754642636, actualSize 21721
+04-22 02:13:09.674 I/MMKV    (17825): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 02:13:09.682 I/MMKV    (17825): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 27, crc 938349899, actualSize 21721
+04-22 02:13:09.682 I/MMKV    (17825): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 02:13:09.687 D/b/260135164( 1043): updateIconAlphaForHome - setIconsAlpha(0), isTaskbarPresent: true
+04-22 02:13:09.706 D/b/260135164( 1043): updateIconAlphaForHome - setIconsAlpha(0), isTaskbarPresent: true
+04-22 02:13:09.710 D/CoreBackPreview(  519): Window{b12586a u0 Splash Screen com.impos2.mixcretailassemblyrn84 EXITING}: Setting back callback null
+04-22 02:13:09.710 W/InputManager-JNI(  519): Input channel object 'b12586a Splash Screen com.impos2.mixcretailassemblyrn84 (client)' was disposed without first being removed with the input manager!
+04-22 02:13:09.721 D/b/260135164( 1043): updateIconAlphaForHome - setIconsAlpha(0), isTaskbarPresent: true
+04-22 02:13:09.737 D/b/260135164( 1043): updateIconAlphaForHome - setIconsAlpha(0), isTaskbarPresent: true
+04-22 02:13:09.754 D/b/260135164( 1043): updateIconAlphaForHome - setIconsAlpha(0), isTaskbarPresent: true
+04-22 02:13:09.772 D/b/260135164( 1043): updateIconAlphaForHome - setIconsAlpha(0), isTaskbarPresent: true
+04-22 02:13:09.776 E/OpenGLRenderer( 1043): Unable to match the desired swap behavior.
+04-22 02:13:09.776 D/BtGatt.ScanManager(  790): uid 10116 isForeground true scanMode -1
+04-22 02:13:09.777 I/FontLog ( 1251): Received query Noto Color Emoji Compat, URI content://com.google.android.gms.fonts [CONTEXT service_id=132 ]
+04-22 02:13:09.777 I/FontLog ( 1251): Query [emojicompat-emoji-font] resolved to {Noto Color Emoji Compat, wdth 100.0, wght 400, ital 0.0, bestEffort false} [CONTEXT service_id=132 ]
+04-22 02:13:09.779 I/FontLog ( 1251): Fetch {Noto Color Emoji Compat, wdth 100.0, wght 400, ital 0.0, bestEffort false} end status Status{statusCode=SUCCESS, resolution=null} [CONTEXT service_id=132 ]
+04-22 02:13:09.780 I/FontLog ( 1251): Pulling font file for id = 109, cache size = 6 [CONTEXT service_id=132 ]
+04-22 02:13:09.781 I/FontLog ( 1251): Pulling font file for id = 109, cache size = 6 [CONTEXT service_id=132 ]
+04-22 02:13:11.082 D/EGL_emulation(17825): app_time_stats: avg=249.17ms min=24.92ms max=1442.52ms count=7
+04-22 02:13:13.235 E/android.hardware.power.stats@1.0-service-mock(  317): Failed to getEnergyData
+04-22 02:13:14.789 D/ProfileInstaller(17825): Installing profile for com.impos2.mixcretailassemblyrn84
+04-22 02:13:15.792 D/BtGatt.ScanManager(  790): uid 10116 isForeground true scanMode -1
+04-22 02:13:20.338 W/A       ( 1921): v2 eligibility check failed
+04-22 02:13:20.338 W/A       ( 1921): com.google.android.libraries.search.r.a.b: com.google.frameworks.client.data.android.ac: Http networking stack error
+04-22 02:13:20.338 W/A       ( 1921): 	at com.google.android.libraries.search.r.a.f.apply(PG:3)
+04-22 02:13:20.338 W/A       ( 1921): 	at com.google.apps.tiktok.tracing.ew.apply(PG:3)
+04-22 02:13:20.338 W/A       ( 1921): 	at com.google.common.w.a.a.e(PG:2)
+04-22 02:13:20.338 W/A       ( 1921): 	at com.google.common.w.a.c.run(PG:11)
+04-22 02:13:20.338 W/A       ( 1921): 	at com.google.android.libraries.i.z.run(PG:1)
+04-22 02:13:20.338 W/A       ( 1921): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1137)
+04-22 02:13:20.338 W/A       ( 1921): 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:637)
+04-22 02:13:20.338 W/A       ( 1921): 	at com.google.android.libraries.i.h.run(PG:2)
+04-22 02:13:20.338 W/A       ( 1921): 	at java.lang.Thread.run(Thread.java:1012)
+04-22 02:13:20.338 W/A       ( 1921): 	at com.google.android.libraries.i.ai.run(PG:5)
+04-22 02:13:20.338 W/A       ( 1921): Caused by: com.google.frameworks.client.data.android.ac: Http networking stack error
+04-22 02:13:20.338 W/A       ( 1921): 	at com.google.frameworks.client.data.android.y.run(PG:7)
+04-22 02:13:20.338 W/A       ( 1921): 	... 6 more
+04-22 02:13:20.338 W/A       ( 1921): Caused by: iq: Exception in CronetUrlRequest: net::ERR_CONNECTION_REFUSED, ErrorCode=7, InternalErrorCode=-102, Retryable=false
+04-22 02:13:20.338 W/A       ( 1921): 	at org.chromium.net.impl.CronetUrlRequest.onError(:com.google.android.gms.dynamite_cronetdynamite@231818044@23.18.18 (190400-0):5)
+04-22 02:13:20.402 D/TrafficStats(12431): tagSocket(5) with statsTag=0x1803, statsUid=10116
+04-22 02:13:20.639 D/TrafficStats(12431): tagSocket(58) with statsTag=0x1803, statsUid=10116
+04-22 02:13:20.705 D/TrafficStats(12431): tagSocket(81) with statsTag=0x1803, statsUid=10116
+04-22 02:13:20.950 D/TrafficStats(12431): tagSocket(100) with statsTag=0x1803, statsUid=10116
+04-22 02:13:21.465 D/BoundBrokerSvc( 1251): onUnbind: Intent { act=com.google.android.gms.scheduler.ACTION_PROXY_SCHEDULE dat=chimera-action:/... cmp=com.google.android.gms/.chimera.PersistentApiService }
+04-22 02:13:21.466 D/BoundBrokerSvc( 1251): onUnbind: Intent { act=com.google.android.gms.icing.LIGHTWEIGHT_INDEX_SERVICE dat=chimera-action:/... cmp=com.google.android.gms/.chimera.PersistentApiService }
+04-22 02:13:21.467 D/BoundBrokerSvc( 4339): onUnbind: Intent { act=com.google.android.gms.feedback.internal.IFeedbackService dat=chimera-action:/... cmp=com.google.android.gms/.chimera.GmsBoundBrokerService }
+04-22 02:13:32.825 D/CompatibilityChangeReporter(  519): Compat change id reported: 161252188; UID 10175; state: DISABLED
+04-22 02:13:32.825 I/ActivityTaskManager(  519): START u0 {flg=0x10000000 cmp=com.impos2.mixcretailassemblyrn84/.MainActivity} from uid 2000
+04-22 02:13:32.825 D/CompatibilityChangeReporter(  519): Compat change id reported: 265464455; UID 10175; state: DISABLED
+04-22 02:13:32.825 D/CompatibilityChangeReporter(  519): Compat change id reported: 265452344; UID 10175; state: DISABLED
+04-22 02:13:32.825 D/CompatibilityChangeReporter(  519): Compat change id reported: 266124927; UID 10175; state: DISABLED
+04-22 02:13:32.825 D/CompatibilityChangeReporter(  519): Compat change id reported: 265451093; UID 10175; state: DISABLED
+04-22 02:13:32.825 D/CompatibilityChangeReporter(  519): Compat change id reported: 265456536; UID 10175; state: DISABLED
+04-22 02:13:32.825 D/CompatibilityChangeReporter(  519): Compat change id reported: 255940284; UID 10175; state: DISABLED
+04-22 02:13:32.825 D/CompatibilityChangeReporter(  519): Compat change id reported: 236283604; UID 10175; state: DISABLED
+04-22 02:13:32.825 D/CompatibilityChangeReporter(  519): Compat change id reported: 263959004; UID 10175; state: DISABLED
+04-22 02:13:32.825 D/CompatibilityChangeReporter(  519): Compat change id reported: 264304459; UID 10175; state: DISABLED
+04-22 02:13:32.825 D/CompatibilityChangeReporter(  519): Compat change id reported: 264301586; UID 10175; state: DISABLED
+04-22 02:13:32.825 D/CompatibilityChangeReporter(  519): Compat change id reported: 254631730; UID 10175; state: DISABLED
+04-22 02:13:32.825 D/CompatibilityChangeReporter(  519): Compat change id reported: 273509367; UID 10175; state: DISABLED
+04-22 02:13:32.825 D/CompatibilityChangeReporter(  519): Compat change id reported: 263259275; UID 10175; state: DISABLED
+04-22 02:13:32.825 D/CompatibilityChangeReporter(  519): Compat change id reported: 194480991; UID 10175; state: ENABLED
+04-22 02:13:32.825 D/CompatibilityChangeReporter(  519): Compat change id reported: 174042980; UID 10175; state: DISABLED
+04-22 02:13:32.825 D/CompatibilityChangeReporter(  519): Compat change id reported: 197654537; UID 10175; state: ENABLED
+04-22 02:13:32.826 D/CompatibilityChangeReporter(  519): Compat change id reported: 181136395; UID 10175; state: DISABLED
+04-22 02:13:32.826 D/CompatibilityChangeReporter(  519): Compat change id reported: 174042936; UID 10175; state: DISABLED
+04-22 02:13:32.826 W/unknown:BridgelessReact(17825): ReactHost{0}.onHostPause(activity)
+04-22 02:13:32.826 W/unknown:BridgelessReact(17825): ReactHost{0}.ReactContext.onHostPause()
+04-22 02:13:32.827 W/unknown:BridgelessReact(17825): ReactHost{0}.onHostResume(activity)
+04-22 02:13:32.827 W/unknown:BridgelessReact(17825): ReactHost{0}.ReactContext.onHostResume()
+04-22 02:13:32.842 D/TrafficStats(17825): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 02:13:32.877 I/ActivityTaskManager(  519): START u0 {flg=0x10000000 cmp=com.impos2.mixcretailassemblyrn84/.MainActivity} from uid 2000
+04-22 02:13:32.879 W/unknown:BridgelessReact(17825): ReactHost{0}.onHostPause(activity)
+04-22 02:13:32.879 W/unknown:BridgelessReact(17825): ReactHost{0}.ReactContext.onHostPause()
+04-22 02:13:32.879 W/unknown:BridgelessReact(17825): ReactHost{0}.onHostResume(activity)
+04-22 02:13:32.879 W/unknown:BridgelessReact(17825): ReactHost{0}.ReactContext.onHostResume()
+04-22 02:13:32.894 D/TrafficStats(17825): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 02:13:32.897 D/TrafficStats(17825): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 02:13:37.939 D/EGL_emulation(  728): app_time_stats: avg=2202.34ms min=8.86ms max=28430.88ms count=13
+04-22 02:14:00.030 I/AiAiEcho( 1598): Predicting[0]: 
+04-22 02:14:00.030 I/AiAiEcho( 1598): Ranked targets strategy: SORT, count: 0, ranking metadata: 
+04-22 02:14:00.030 I/AiAiEcho( 1598): #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0
+04-22 02:14:00.030 I/AiAiEcho( 1598): #postPredictionTargets: Sending updates to UISurface home with targets# 0
+04-22 02:14:00.030 I/AiAiEcho( 1598): #postPredictionTargets: Sending updates to UISurface media_data_manager with targets# 0
+04-22 02:14:00.039 D/SsMediaDataProvider(  728): Forwarding Smartspace updates []
+04-22 02:14:00.051 D/EGL_emulation(  728): app_time_stats: avg=22112.26ms min=22112.26ms max=22112.26ms count=1
+04-22 02:14:03.137 I/ActivityTaskManager(  519): START u0 {flg=0x10000000 cmp=com.impos2.mixcretailassemblyrn84/.MainActivity} from uid 2000
+04-22 02:14:03.139 W/unknown:BridgelessReact(17825): ReactHost{0}.onHostPause(activity)
+04-22 02:14:03.139 W/unknown:BridgelessReact(17825): ReactHost{0}.ReactContext.onHostPause()
+04-22 02:14:03.139 W/unknown:BridgelessReact(17825): ReactHost{0}.onHostResume(activity)
+04-22 02:14:03.139 W/unknown:BridgelessReact(17825): ReactHost{0}.ReactContext.onHostResume()
+04-22 02:14:03.154 D/TrafficStats(17825): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 02:14:03.157 W/ProcessState(17894): Extra binder thread started, but 0 threads requested. Do not use *startThreadPool when zero threads are requested.
+04-22 02:14:03.160 D/TrafficStats(17825): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 02:14:03.169 I/hwservicemanager(  149): getTransport: Cannot find entry android.hardware.graphics.mapper@4.0::IMapper/default in either framework or device VINTF manifest.
+04-22 02:14:03.169 I/Gralloc4(17894): mapper 4.x is not supported
+04-22 02:14:03.176 D/HostConnection(17894): HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_native_sync_v3 ANDROID_EMU_native_sync_v4 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_has_shared_slots_host_memory_allocator ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_vulkan_queue_submit_with_commands ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_read_color_buffer_dma ANDROID_EMU_hwc_multi_configs ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+04-22 02:14:17.132 W/BestClock(  519): java.time.DateTimeException: Missing NTP fix
+04-22 02:14:17.149 I/netd    (  293): tetherGetStats() -> {[]} <1.60ms>
+04-22 02:14:17.150 W/BestClock(  519): java.time.DateTimeException: Missing NTP fix
+04-22 02:14:17.151 I/netd    (  293): bandwidthSetGlobalAlert(2097152) <0.17ms>
+04-22 02:14:17.151 W/BestClock(  519): java.time.DateTimeException: Missing NTP fix
+04-22 02:14:17.152 W/BestClock(  519): java.time.DateTimeException: Missing NTP fix
+04-22 02:14:17.152 W/BestClock(  519): java.time.DateTimeException: Missing NTP fix
+04-22 02:14:17.153 I/netd    (  293): bandwidthRemoveInterfaceQuota(eth0) <1.07ms>
+04-22 02:14:17.154 I/netd    (  293): bandwidthSetInterfaceQuota(eth0, 9223372036854775807) <0.88ms>
+04-22 02:14:17.155 W/BestClock(  519): java.time.DateTimeException: Missing NTP fix
+04-22 02:14:17.156 W/BestClock(  519): java.time.DateTimeException: Missing NTP fix
+04-22 02:14:17.156 W/BestClock(  519): java.time.DateTimeException: Missing NTP fix
+04-22 02:14:17.168 I/NetworkScheduler.Stats( 1251): Task com.google.android.gms/com.google.android.gms.checkin.EventLogService started execution. cause:4 exec_start_elapsed_seconds: 20713 [CONTEXT service_id=218 ]
+04-22 02:14:17.171 I/Checkin ( 4339): [EventLogChimeraService] Opted in for usage reporting: false
+04-22 02:14:17.171 I/Checkin ( 4339): [EventLogChimeraService] Aggregate from 1776792446825 (log), 1776792446825 (data)
+--------- beginning of kernel
+04-22 02:14:17.175 I/logd    (  158): logdr: UID=10116 GID=10116 PID=4339 n tail=0 logMask=4 pid=0 start=0ns deadline=0ns
+04-22 02:14:17.177 I/DropBoxManagerService(  519): add tag=event_data isTagEnabled=true flags=0x2
+04-22 02:14:17.179 W/BroadcastQueue(  519): Background execution not allowed: receiving Intent { act=android.intent.action.DROPBOX_ENTRY_ADDED flg=0x10 (has extras) } to com.google.android.gms/.stats.service.DropBoxEntryAddedReceiver
+04-22 02:14:17.179 W/BroadcastQueue(  519): Background execution not allowed: receiving Intent { act=android.intent.action.DROPBOX_ENTRY_ADDED flg=0x10 (has extras) } to com.google.android.gms/.chimera.GmsIntentOperationService$PersistentTrustedReceiver
+04-22 02:14:17.186 I/NetworkScheduler.Stats( 1251): Task com.google.android.gms/com.google.android.gms.checkin.EventLogService finished executing. cause:4 result: 1 elapsed_millis: 22 uptime_millis: 22 exec_start_elapsed_seconds: 20713 [CONTEXT service_id=218 ]
+04-22 02:14:20.442 D/TrafficStats( 1251): tagSocket(90) with statsTag=0x20008100, statsUid=-1
+04-22 02:14:20.926 D/WifiNl80211Manager(  519): Scan result ready event
+04-22 02:14:20.927 D/WifiNative(  519): Scan result ready event
+04-22 02:14:33.375 I/logd    (  158): logdr: UID=2000 GID=2000 PID=17911 n tail=0 logMask=99 pid=0 start=0ns deadline=0ns
+04-22 02:14:33.390 I/ActivityTaskManager(  519): START u0 {flg=0x10000000 cmp=com.impos2.mixcretailassemblyrn84/.MainActivity} from uid 2000
+04-22 02:14:33.390 W/unknown:BridgelessReact(17825): ReactHost{0}.onHostPause(activity)
+04-22 02:14:33.390 W/unknown:BridgelessReact(17825): ReactHost{0}.ReactContext.onHostPause()
+04-22 02:14:33.391 W/unknown:BridgelessReact(17825): ReactHost{0}.onHostResume(activity)
+04-22 02:14:33.391 W/unknown:BridgelessReact(17825): ReactHost{0}.ReactContext.onHostResume()
+04-22 02:14:33.405 D/TrafficStats(17825): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 02:14:33.408 D/TrafficStats(17825): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 02:14:35.405 D/TrafficStats(12431): tagSocket(5) with statsTag=0x1803, statsUid=10116
+04-22 02:14:35.640 D/TrafficStats(12431): tagSocket(58) with statsTag=0x1803, statsUid=10116
+04-22 02:14:35.710 D/TrafficStats(12431): tagSocket(81) with statsTag=0x1803, statsUid=10116
+04-22 02:14:35.954 D/TrafficStats(12431): tagSocket(100) with statsTag=0x1803, statsUid=10116
+04-22 02:14:49.547 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffff81, statsUid=-1
+04-22 02:14:49.547 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 02:14:49.548 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffff81, statsUid=-1
+04-22 02:14:49.549 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 02:14:49.551 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 02:14:49.551 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 02:14:49.553 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 02:14:49.555 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 02:14:49.568 I/resolv  (  293): res_nsend: used send_dg 63 terrno: 0
+04-22 02:14:49.569 I/resolv  (  293): res_nsend: used send_dg 60 terrno: 0
+04-22 02:14:49.569 I/resolv  (  293): res_nsend: used send_dg 48 terrno: 0
+04-22 02:14:49.569 I/resolv  (  293): res_nsend: used send_dg 117 terrno: 0
+04-22 02:14:49.569 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 02:14:49.570 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 02:14:49.570 D/NetworkMonitor/100(  784): PROBE_DNS connectivitycheck.gstatic.com 23ms OK 114.250.65.34
+04-22 02:14:49.570 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 02:14:49.571 I/resolv  (  293): GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+04-22 02:14:49.571 D/NetworkMonitor/100(  784): PROBE_DNS www.google.com 24ms OK 69.171.235.22,2001::1
+04-22 02:14:49.571 I/resolv  (  293): GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+04-22 02:14:49.572 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 02:14:49.572 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d9da7f310
+04-22 02:14:49.572 I/resolv  (  293): doQuery: rcode=0, ancount=0, return value=117
+04-22 02:14:49.572 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 02:14:49.572 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d7da78790
+04-22 02:14:49.572 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=60
+04-22 02:14:49.572 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 02:14:49.573 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d6da7a5b0
+04-22 02:14:49.573 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=48
+04-22 02:14:49.573 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 02:14:49.573 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d8da71d30
+04-22 02:14:49.573 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=63
+04-22 02:14:49.573 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 02:14:49.574 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffff81, statsUid=-1
+04-22 02:14:49.704 D/NetworkMonitor/100(  784): PROBE_HTTP http://connectivitycheck.gstatic.com/generate_204 time=133ms ret=204 request={Connection=[close], User-Agent=[Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.32 Safari/537.36]} headers={null=[HTTP/1.1 204 No Content], Connection=[close], Content-Length=[0], Cross-Origin-Resource-Policy=[cross-origin], Date=[Tue, 21 Apr 2026 18:14:49 GMT], X-Android-Received-Millis=[1776795289702], X-Android-Response-Source=[NETWORK 204], X-Android-Selected-Protocol=[http/1.1], X-Android-Sent-Millis=[1776795289618]}
+04-22 02:14:52.548 I/resolv  (  293): GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+04-22 02:14:52.548 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 02:14:52.549 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 02:14:52.549 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d9da7f430
+04-22 02:14:52.549 I/resolv  (  293): doQuery: rcode=0, ancount=4, return value=149
+04-22 02:14:52.569 I/resolv  (  293): res_nsend: used send_dg 101 terrno: 0
+04-22 02:14:52.569 I/resolv  (  293): doQuery: rcode=0, ancount=4, return value=101
+04-22 02:14:52.570 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffff81, statsUid=-1
+04-22 02:14:52.644 D/NetworkMonitor/100(  784): PROBE_FALLBACK http://play.googleapis.com/generate_204 time=95ms ret=204 request={Connection=[close], User-Agent=[Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.32 Safari/537.36]} headers={null=[HTTP/1.1 204 No Content], Connection=[close], Cross-Origin-Resource-Policy=[cross-origin], Date=[Tue, 21 Apr 2026 18:14:52 GMT], X-Android-Received-Millis=[1776795292643], X-Android-Response-Source=[NETWORK 204], X-Android-Selected-Protocol=[http/1.1], X-Android-Sent-Millis=[1776795292571]}
+04-22 02:14:59.584 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 02:15:00.005 I/AiAiEcho( 1598): Predicting[0]: 
+04-22 02:15:00.006 I/AiAiEcho( 1598): Ranked targets strategy: SORT, count: 0, ranking metadata: 
+04-22 02:15:00.006 I/AiAiEcho( 1598): #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0
+04-22 02:15:00.006 I/AiAiEcho( 1598): #postPredictionTargets: Sending updates to UISurface home with targets# 0
+04-22 02:15:00.006 I/AiAiEcho( 1598): #postPredictionTargets: Sending updates to UISurface media_data_manager with targets# 0
+04-22 02:15:00.027 D/SsMediaDataProvider(  728): Forwarding Smartspace updates []
+04-22 02:15:00.092 D/EGL_emulation(  728): app_time_stats: avg=60040.44ms min=60040.44ms max=60040.44ms count=1
+04-22 02:15:00.678 D/TrafficStats(17825): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:00.679 D/TrafficStats(17825): tagSocket(70) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:00.682 D/TrafficStats(17825): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:00.683 D/TrafficStats(17825): tagSocket(70) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:00.687 I/ActivityTaskManager(  519): START u0 {flg=0x10000000 cmp=com.impos2.mixcretailassemblyrn84/.MainActivity} from uid 2000
+04-22 02:15:00.689 W/unknown:BridgelessReact(17825): ReactHost{0}.onHostPause(activity)
+04-22 02:15:00.689 W/unknown:BridgelessReact(17825): ReactHost{0}.ReactContext.onHostPause()
+04-22 02:15:00.689 W/unknown:BridgelessReact(17825): ReactHost{0}.onHostResume(activity)
+04-22 02:15:00.689 W/unknown:BridgelessReact(17825): ReactHost{0}.ReactContext.onHostResume()
+04-22 02:15:00.709 D/TrafficStats(17825): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:00.713 D/TrafficStats(17825): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:00.715 D/TrafficStats(17825): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:00.717 D/TrafficStats(17825): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:00.731 D/TrafficStats(17825): tagSocket(70) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:00.734 D/TrafficStats(17825): tagSocket(70) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:00.757 D/TrafficStats(17825): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:00.764 D/EGL_emulation(17825): app_time_stats: avg=7298.85ms min=1.18ms max=109459.73ms count=15
+04-22 02:15:00.787 D/TrafficStats(17825): tagSocket(74) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:00.789 D/TrafficStats(17825): tagSocket(74) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:00.823 D/TrafficStats(17825): tagSocket(74) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:00.826 D/TrafficStats(17825): tagSocket(74) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:00.828 D/TrafficStats(17825): tagSocket(74) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:00.830 D/TrafficStats(17825): tagSocket(74) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:00.885 D/TrafficStats(17825): tagSocket(109) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:00.888 D/TrafficStats(17825): tagSocket(109) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:00.890 D/TrafficStats(17825): tagSocket(109) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:00.943 D/TrafficStats(17825): tagSocket(105) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:00.946 D/TrafficStats(17825): tagSocket(105) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:00.948 D/TrafficStats(17825): tagSocket(105) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:00.950 D/TrafficStats(17825): tagSocket(105) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:00.952 D/TrafficStats(17825): tagSocket(119) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:01.006 D/TrafficStats(17825): tagSocket(98) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:01.009 D/TrafficStats(17825): tagSocket(98) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:01.011 D/TrafficStats(17825): tagSocket(121) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:01.066 D/TrafficStats(17825): tagSocket(99) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:01.069 D/TrafficStats(17825): tagSocket(99) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:01.071 D/TrafficStats(17825): tagSocket(129) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:01.073 D/TrafficStats(17825): tagSocket(99) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:01.076 D/TrafficStats(17825): tagSocket(99) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:01.411 D/TrafficStats(17825): tagSocket(99) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:01.415 D/TrafficStats(17825): tagSocket(99) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:01.417 D/TrafficStats(17825): tagSocket(99) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:01.438 D/CompatibilityChangeReporter(17825): Compat change id reported: 171228096; UID 10175; state: ENABLED
+04-22 02:15:03.051 D/EGL_emulation(17825): app_time_stats: avg=228.17ms min=1.50ms max=1562.34ms count=10
+04-22 02:15:09.594 D/NetworkMonitor/100(  784): PROBE_HTTPS https://www.google.com/generate_204 Probe failed with exception java.net.SocketTimeoutException: failed to connect to www.google.com/2001::1 (port 443) from /fec0::5054:ff:fe12:3456 (port 44922) after 10000ms
+04-22 02:15:09.596 D/NetworkMonitor/100(  784): isCaptivePortal: isSuccessful()=false isPortal()=false RedirectUrl=null isPartialConnectivity()=true Time=20050ms
+04-22 02:15:09.596 D/ConnectivityService(  519): [100 CELLULAR] validation failed
+04-22 02:15:09.597 I/ConnectivityService(  519): Update capabilities for net 100 : +PARTIAL_CONNECTIVITY
+04-22 02:15:09.599 W/BestClock(  519): java.time.DateTimeException: Missing NTP fix
+04-22 02:15:09.599 W/BestClock(  519): java.time.DateTimeException: Missing NTP fix
+04-22 02:15:09.600 I/CarrierServices( 1480): [51] etr.c: Connected state: [1], networkType: [MOBILE]
+04-22 02:15:09.600 I/CarrierServices( 1480): [50] fne.handleMessage: RcsEngineImpl[DUAL_REG]:[7f3bf928-8b36]>Handler: handleMessage processing message:[NOTIFY_UPTIME_IGNORE_STATE_CHANGED] with [non-null]:RcsEngineImpl reference
+04-22 02:15:09.601 D/NetworkNotificationManager(  519): showNotification tag=ConnectivityNotification:100 event=PARTIAL_CONNECTIVITY transport=mobile data name=epc.tmobile.com highPriority=false
+04-22 02:15:09.603 I/CarrierServices( 1480): [50] fjp.f: No RCS Configuration was found in Bugle for simID: redacted-pii:sim_id[chars:20,last3:897]
+04-22 02:15:09.741 W/adbd    (  382): timeout expired while flushing socket, closing
+04-22 02:15:13.235 E/android.hardware.power.stats@1.0-service-mock(  317): Failed to getEnergyData
+04-22 02:15:17.992 D/EGL_emulation(  728): app_time_stats: avg=17899.97ms min=17899.97ms max=17899.97ms count=1
+04-22 02:15:35.451 D/TrafficStats( 1251): tagSocket(82) with statsTag=0x20008100, statsUid=-1
+04-22 02:15:39.519 E/WifiScoringParams(  519): Invalid frequency(-1), using 5G as default rssi array
+04-22 02:15:40.178 I/ActivityTaskManager(  519): START u0 {flg=0x10000000 cmp=com.impos2.mixcretailassemblyrn84/.MainActivity} from uid 2000
+04-22 02:15:40.179 W/ProcessState(17947): Extra binder thread started, but 0 threads requested. Do not use *startThreadPool when zero threads are requested.
+04-22 02:15:40.180 W/unknown:BridgelessReact(17825): ReactHost{0}.onHostPause(activity)
+04-22 02:15:40.180 W/unknown:BridgelessReact(17825): ReactHost{0}.ReactContext.onHostPause()
+04-22 02:15:40.180 W/unknown:BridgelessReact(17825): ReactHost{0}.onHostResume(activity)
+04-22 02:15:40.180 W/unknown:BridgelessReact(17825): ReactHost{0}.ReactContext.onHostResume()
+04-22 02:15:40.191 I/hwservicemanager(  149): getTransport: Cannot find entry android.hardware.graphics.mapper@4.0::IMapper/default in either framework or device VINTF manifest.
+04-22 02:15:40.191 I/Gralloc4(17947): mapper 4.x is not supported
+04-22 02:15:40.196 D/HostConnection(17947): HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_native_sync_v3 ANDROID_EMU_native_sync_v4 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_has_shared_slots_host_memory_allocator ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_vulkan_queue_submit_with_commands ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_read_color_buffer_dma ANDROID_EMU_hwc_multi_configs ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+04-22 02:15:40.204 D/TrafficStats(17825): tagSocket(70) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:40.209 D/TrafficStats(17825): tagSocket(70) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:40.254 D/TrafficStats(17825): tagSocket(70) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:40.257 D/TrafficStats(17825): tagSocket(70) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:40.301 D/TrafficStats(17825): tagSocket(70) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:40.306 D/TrafficStats(17825): tagSocket(70) with statsTag=0xffffffff, statsUid=-1
+04-22 02:15:40.337 I/logd    (  158): logdr: UID=2000 GID=2000 PID=17955 n tail=0 logMask=99 pid=0 start=0ns deadline=0ns
+04-22 02:15:43.306 D/WifiNl80211Manager(  519): Scan result ready event
+04-22 02:15:43.306 D/WifiNative(  519): Scan result ready event
+04-22 02:15:50.408 D/TrafficStats(12431): tagSocket(5) with statsTag=0x1803, statsUid=10116
+04-22 02:15:50.645 D/TrafficStats(12431): tagSocket(58) with statsTag=0x1803, statsUid=10116
+04-22 02:15:50.713 D/TrafficStats(12431): tagSocket(81) with statsTag=0x1803, statsUid=10116
+04-22 02:15:50.959 D/TrafficStats(12431): tagSocket(100) with statsTag=0x1803, statsUid=10116
+04-22 02:15:58.023 D/EGL_emulation(  728): app_time_stats: avg=40031.23ms min=40031.23ms max=40031.23ms count=1
+04-22 02:16:00.007 I/AiAiEcho( 1598): Predicting[0]: 
+04-22 02:16:00.007 I/AiAiEcho( 1598): Ranked targets strategy: SORT, count: 0, ranking metadata: 
+04-22 02:16:00.007 I/AiAiEcho( 1598): #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0
+04-22 02:16:00.007 I/AiAiEcho( 1598): #postPredictionTargets: Sending updates to UISurface home with targets# 0
+04-22 02:16:00.007 I/AiAiEcho( 1598): #postPredictionTargets: Sending updates to UISurface media_data_manager with targets# 0
+04-22 02:16:00.023 D/SsMediaDataProvider(  728): Forwarding Smartspace updates []
+04-22 02:16:00.031 D/EGL_emulation(  728): app_time_stats: avg=2008.17ms min=2008.17ms max=2008.17ms count=1
+04-22 02:16:09.438 D/TrafficStats(17825): tagSocket(70) with statsTag=0xffffffff, statsUid=-1
+04-22 02:16:09.442 D/TrafficStats(17825): tagSocket(70) with statsTag=0xffffffff, statsUid=-1
+04-22 02:16:09.463 I/assembly.assembly.android.mixc-retail-rn84(17825): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"6Z2H3BSGEY","instanceMode":"MASTER","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-22 02:16:09.499 D/TrafficStats(17825): tagSocket(70) with statsTag=0xffffffff, statsUid=-1
+04-22 02:16:09.502 D/EGL_emulation(17825): app_time_stats: avg=3691.71ms min=5.02ms max=66179.02ms count=18
+04-22 02:16:09.503 D/TrafficStats(17825): tagSocket(74) with statsTag=0xffffffff, statsUid=-1
+04-22 02:16:09.506 I/assembly.assembly.android.mixc-retail-rn84(17825): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"6Z2H3BSGEY","instanceMode":"MASTER","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-22 02:16:09.507 I/MMKV    (17825): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 28, crc 3527382929, actualSize 21721
+04-22 02:16:09.507 I/MMKV    (17825): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 02:16:09.508 D/TrafficStats(17825): tagSocket(99) with statsTag=0xffffffff, statsUid=-1
+04-22 02:16:09.509 I/assembly.assembly.android.mixc-retail-rn84(17825): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"6Z2H3BSGEY","instanceMode":"MASTER","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-22 02:16:09.511 D/TrafficStats(17825): tagSocket(74) with statsTag=0xffffffff, statsUid=-1
+04-22 02:16:09.556 D/TrafficStats(17825): tagSocket(74) with statsTag=0xffffffff, statsUid=-1
+04-22 02:16:09.556 D/TrafficStats(17825): tagSocket(99) with statsTag=0xffffffff, statsUid=-1
+04-22 02:16:09.559 D/TrafficStats(17825): tagSocket(74) with statsTag=0xffffffff, statsUid=-1
+04-22 02:16:09.560 D/TrafficStats(17825): tagSocket(99) with statsTag=0xffffffff, statsUid=-1
+04-22 02:16:09.562 I/assembly.assembly.android.mixc-retail-rn84(17825): [assembly.topology] Starting native topology host from assembly lifecycle {"displayCount":1,"displayIndex":0,"deviceId":"6Z2H3BSGEY","instanceMode":"MASTER","enableSlave":true,"reason":"master-primary-enable-slave"}
+04-22 02:16:09.563 D/CompatibilityChangeReporter(  519): Compat change id reported: 168419799; UID 10175; state: DISABLED
+04-22 02:16:09.563 D/CompatibilityChangeReporter(  519): Compat change id reported: 273564678; UID 10175; state: DISABLED
+04-22 02:16:09.567 D/TrafficStats(17825): tagSocket(74) with statsTag=0xffffffff, statsUid=-1
+04-22 02:16:09.568 I/assembly.assembly.android.mixc-retail-rn84(17825): [assembly.topology] Create assembly topology socket binding {"displayIndex":0,"role":"master","localNodeId":"master:6Z2H3BSGEY","wsUrl":"ws://127.0.0.1:8888/mockMasterServer/ws","httpBaseUrl":"http://127.0.0.1:8888/mockMasterServer","resolvedServerBaseUrl":"http://127.0.0.1:8888/mockMasterServer","resolvedPathTemplate":"/ws"}
+04-22 02:16:09.569 I/ReactNativeJS(17825): '[assembly.android.mixc-retail-rn84.websocket] connect', { url: 'ws://127.0.0.1:8888/mockMasterServer/ws',
+04-22 02:16:09.569 I/ReactNativeJS(17825):   protocol: 'ws',
+04-22 02:16:09.569 I/ReactNativeJS(17825):   host: '127.0.0.1:8888',
+04-22 02:16:09.569 I/ReactNativeJS(17825):   pathname: '/mockMasterServer/ws' }
+04-22 02:16:09.569 I/assembly.assembly.android.mixc-retail-rn84.transport.ws.SocketRuntime(17825): [transport.ws] Socket connect started: assembly.android.mixc-retail-rn84.topology {"profileName":"assembly.android.mixc-retail-rn84.topology","serverName":"dual-topology-host-v3","addressName":"dynamic-topology-host"}
+04-22 02:16:09.573 I/WebViewFactory(17825): Loading com.google.android.webview version 109.0.5414.123 (code 541412334)
+04-22 02:16:09.575 W/ziparchive(17825): Unable to open '/data/app/~~2XlbTKbdSL4ytKc6vI96fw==/com.google.android.trichromelibrary_541412334-XVCZJKNYM7pdXgwa6ezTsQ==/TrichromeLibrary.dm': No such file or directory
+04-22 02:16:09.575 W/ziparchive(17825): Unable to open '/data/app/~~2XlbTKbdSL4ytKc6vI96fw==/com.google.android.trichromelibrary_541412334-XVCZJKNYM7pdXgwa6ezTsQ==/TrichromeLibrary.dm': No such file or directory
+04-22 02:16:09.575 W/ailassemblyrn84(17825): Entry not found
+04-22 02:16:09.575 D/nativeloader(17825): Configuring classloader-namespace for other apk /data/app/~~2XlbTKbdSL4ytKc6vI96fw==/com.google.android.trichromelibrary_541412334-XVCZJKNYM7pdXgwa6ezTsQ==/TrichromeLibrary.apk. target_sdk_version=33, uses_libraries=ALL, library_path=/data/app/~~Q0ddWPLbjoO_UEypAkbhRg==/com.google.android.webview-PdQqPxJT8P1ba_nJ4hr2mw==/lib/arm64:/data/app/~~Q0ddWPLbjoO_UEypAkbhRg==/com.google.android.webview-PdQqPxJT8P1ba_nJ4hr2mw==/WebViewGoogle.apk!/lib/arm64-v8a:/data/app/~~2XlbTKbdSL4ytKc6vI96fw==/com.google.android.trichromelibrary_541412334-XVCZJKNYM7pdXgwa6ezTsQ==/TrichromeLibrary.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand
+04-22 02:16:09.576 D/nativeloader(17825): Configuring classloader-namespace for other apk /data/app/~~Q0ddWPLbjoO_UEypAkbhRg==/com.google.android.webview-PdQqPxJT8P1ba_nJ4hr2mw==/WebViewGoogle.apk. target_sdk_version=33, uses_libraries=, library_path=/data/app/~~Q0ddWPLbjoO_UEypAkbhRg==/com.google.android.webview-PdQqPxJT8P1ba_nJ4hr2mw==/lib/arm64:/data/app/~~Q0ddWPLbjoO_UEypAkbhRg==/com.google.android.webview-PdQqPxJT8P1ba_nJ4hr2mw==/WebViewGoogle.apk!/lib/arm64-v8a:/data/app/~~2XlbTKbdSL4ytKc6vI96fw==/com.google.android.trichromelibrary_541412334-XVCZJKNYM7pdXgwa6ezTsQ==/TrichromeLibrary.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand
+04-22 02:16:09.583 I/cr_WVCFactoryProvider(17825): Loaded version=109.0.5414.123 minSdkVersion=29 isBundle=false multiprocess=true packageId=2
+04-22 02:16:09.585 I/cr_VariationsUtils(17825): Failed reading seed file "/data/user/0/com.impos2.mixcretailassemblyrn84/app_webview/variations_seed_new"
+04-22 02:16:09.585 I/cr_VariationsUtils(17825): Failed reading seed file "/data/user/0/com.impos2.mixcretailassemblyrn84/app_webview/variations_seed"
+04-22 02:16:09.586 I/cr_VariationsUtils(17825): Requesting new seed from IVariationsSeedServer
+04-22 02:16:09.587 D/CompatibilityChangeReporter(  519): Compat change id reported: 135634846; UID 10141; state: DISABLED
+04-22 02:16:09.587 D/CompatibilityChangeReporter(  519): Compat change id reported: 177438394; UID 10141; state: DISABLED
+04-22 02:16:09.587 D/CompatibilityChangeReporter(  519): Compat change id reported: 135772972; UID 10141; state: DISABLED
+04-22 02:16:09.587 D/CompatibilityChangeReporter(  519): Compat change id reported: 135754954; UID 10141; state: ENABLED
+04-22 02:16:09.587 D/CompatibilityChangeReporter(  519): Compat change id reported: 143937733; UID 10141; state: ENABLED
+04-22 02:16:09.587 I/cr_LibraryLoader(17825): Successfully loaded native library
+04-22 02:16:09.588 I/cr_CachingUmaRecorder(17825): Flushed 9 samples from 9 histograms.
+04-22 02:16:09.591 D/Zygote  (  294): Forked child process 17967
+04-22 02:16:09.591 I/ActivityManager(  519): Start proc 17967:com.google.android.webview:webview_service/u0a141 for service {com.google.android.webview/org.chromium.android_webview.services.VariationsSeedServer}
+04-22 02:16:09.595 I/webview_service(17967): Using CollectorTypeCC GC.
+04-22 02:16:09.599 I/adbd    (  382): jdwp connection from 17967
+04-22 02:16:09.605 D/TrafficStats(17825): tagSocket(121) with statsTag=0xffffffff, statsUid=-1
+04-22 02:16:09.606 D/TrafficStats(17825): tagSocket(138) with statsTag=0xffffffff, statsUid=-1
+04-22 02:16:09.606 D/CompatibilityChangeReporter(17967): Compat change id reported: 171979766; UID 10141; state: ENABLED
+04-22 02:16:09.608 I/assembly.assembly.android.mixc-retail-rn84(17825): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"6Z2H3BSGEY","instanceMode":"MASTER","enableSlave":true,"running":true,"reason":"master-primary-enable-slave"}
+04-22 02:16:09.608 I/assembly.assembly.android.mixc-retail-rn84(17825): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"6Z2H3BSGEY","instanceMode":"MASTER","enableSlave":true,"running":true,"reason":"master-primary-enable-slave"}
+04-22 02:16:09.608 I/assembly.assembly.android.mixc-retail-rn84(17825): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"6Z2H3BSGEY","instanceMode":"MASTER","enableSlave":true,"running":true,"reason":"master-primary-enable-slave"}
+04-22 02:16:09.609 W/ziparchive(17967): Unable to open '/data/app/~~2XlbTKbdSL4ytKc6vI96fw==/com.google.android.trichromelibrary_541412334-XVCZJKNYM7pdXgwa6ezTsQ==/TrichromeLibrary.dm': No such file or directory
+04-22 02:16:09.609 I/assembly.assembly.android.mixc-retail-rn84(17825): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"6Z2H3BSGEY","instanceMode":"MASTER","enableSlave":true,"running":true,"reason":"master-primary-enable-slave"}
+04-22 02:16:09.609 I/assembly.assembly.android.mixc-retail-rn84(17825): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"6Z2H3BSGEY","instanceMode":"MASTER","enableSlave":true,"running":true,"reason":"master-primary-enable-slave"}
+04-22 02:16:09.609 W/ziparchive(17967): Unable to open '/data/app/~~2XlbTKbdSL4ytKc6vI96fw==/com.google.android.trichromelibrary_541412334-XVCZJKNYM7pdXgwa6ezTsQ==/TrichromeLibrary.dm': No such file or directory
+04-22 02:16:09.609 W/webview_service(17967): Entry not found
+04-22 02:16:09.610 D/nativeloader(17967): Configuring classloader-namespace for other apk /data/app/~~2XlbTKbdSL4ytKc6vI96fw==/com.google.android.trichromelibrary_541412334-XVCZJKNYM7pdXgwa6ezTsQ==/TrichromeLibrary.apk. target_sdk_version=33, uses_libraries=ALL, library_path=/data/app/~~Q0ddWPLbjoO_UEypAkbhRg==/com.google.android.webview-PdQqPxJT8P1ba_nJ4hr2mw==/lib/arm64:/data/app/~~Q0ddWPLbjoO_UEypAkbhRg==/com.google.android.webview-PdQqPxJT8P1ba_nJ4hr2mw==/WebViewGoogle.apk!/lib/arm64-v8a:/data/app/~~2XlbTKbdSL4ytKc6vI96fw==/com.google.android.trichromelibrary_541412334-XVCZJKNYM7pdXgwa6ezTsQ==/TrichromeLibrary.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.google.android.webview
+04-22 02:16:09.610 D/nativeloader(17967): Configuring classloader-namespace for other apk /data/app/~~Q0ddWPLbjoO_UEypAkbhRg==/com.google.android.webview-PdQqPxJT8P1ba_nJ4hr2mw==/WebViewGoogle.apk. target_sdk_version=33, uses_libraries=, library_path=/data/app/~~Q0ddWPLbjoO_UEypAkbhRg==/com.google.android.webview-PdQqPxJT8P1ba_nJ4hr2mw==/lib/arm64:/data/app/~~Q0ddWPLbjoO_UEypAkbhRg==/com.google.android.webview-PdQqPxJT8P1ba_nJ4hr2mw==/WebViewGoogle.apk!/lib/arm64-v8a:/data/app/~~2XlbTKbdSL4ytKc6vI96fw==/com.google.android.trichromelibrary_541412334-XVCZJKNYM7pdXgwa6ezTsQ==/TrichromeLibrary.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.google.android.webview
+04-22 02:16:09.613 I/assembly.assembly.android.mixc-retail-rn84(17825): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"6Z2H3BSGEY","instanceMode":"MASTER","enableSlave":true,"running":true,"reason":"master-primary-enable-slave"}
+04-22 02:16:09.613 I/assembly.assembly.android.mixc-retail-rn84(17825): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"6Z2H3BSGEY","instanceMode":"MASTER","enableSlave":true,"running":true,"reason":"master-primary-enable-slave"}
+04-22 02:16:09.614 I/assembly.assembly.android.mixc-retail-rn84(17825): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"6Z2H3BSGEY","instanceMode":"MASTER","enableSlave":true,"running":true,"reason":"master-primary-enable-slave"}
+04-22 02:16:09.643 V/GraphicsEnvironment(17967): ANGLE Developer option for 'com.google.android.webview' set to: 'default'
+04-22 02:16:09.643 V/GraphicsEnvironment(17967): ANGLE GameManagerService for com.google.android.webview: false
+04-22 02:16:09.643 V/GraphicsEnvironment(17967): Neither updatable production driver nor prerelease driver is supported.
+04-22 02:16:09.645 I/LoadedApk(17967): No resource references to update in package com.google.android.trichromelibrary
+04-22 02:16:09.645 D/NetworkSecurityConfig(17967): No Network Security Config specified, using platform default
+04-22 02:16:09.645 D/NetworkSecurityConfig(17967): No Network Security Config specified, using platform default
+04-22 02:16:09.646 I/cr_WebViewApkApp(17967): Launched version=109.0.5414.123 minSdkVersion=29 isBundle=false processName=com.google.android.webview:webview_service
+04-22 02:16:09.655 I/cr_VariationsUtils(17967): Seed download job already scheduled
+04-22 02:16:11.616 D/TrafficStats(17825): tagSocket(98) with statsTag=0xffffffff, statsUid=-1
+04-22 02:16:11.622 D/TrafficStats(17825): tagSocket(98) with statsTag=0xffffffff, statsUid=-1
+04-22 02:16:11.624 I/assembly.assembly.android.mixc-retail-rn84(17825): [assembly.topology] Create assembly topology socket binding {"displayIndex":0,"role":"master","localNodeId":"master:6Z2H3BSGEY","wsUrl":"ws://127.0.0.1:8888/mockMasterServer/ws","httpBaseUrl":"http://127.0.0.1:8888/mockMasterServer","resolvedServerBaseUrl":"http://127.0.0.1:8888/mockMasterServer","resolvedPathTemplate":"/ws"}
+04-22 02:16:35.366 D/TrafficStats(17825): tagSocket(98) with statsTag=0xffffffff, statsUid=-1
+04-22 02:16:35.369 D/TrafficStats(17825): tagSocket(98) with statsTag=0xffffffff, statsUid=-1

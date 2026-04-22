@@ -1,0 +1,67 @@
+../../../1-kernel/1.1-cores/base/src/foundations/command.ts(66,30): error TS2802: Type 'MapIterator<[string, string]>' can only be iterated through when using the '--downlevelIteration' flag or with a '--target' of 'es2015' or higher.
+../../../1-kernel/1.1-cores/base/src/foundations/http/ApiManager.ts(690,37): error TS2802: Type 'MapIterator<[string, { requests: number; failures: number; totalResponseTime: number; lastAccessTime: number; }]>' can only be iterated through when using the '--downlevelIteration' flag or with a '--target' of 'es2015' or higher.
+../../../1-kernel/1.1-cores/base/src/foundations/screen.ts(3,39): error TS2307: Cannot find module '@impos2/kernel-core-interconnection' or its corresponding type declarations.
+  There are types at '/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/@impos2/kernel-core-interconnection/src/index.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+../../../2-ui/2.1-cores/adapter-test/index.ts(2,22): error TS6142: Module './dev/App' was resolved to '/Users/dexter/Documents/workspace/idea/newPOSv1/2-ui/2.1-cores/adapter-test/dev/App.tsx', but '--jsx' is not set.
+../../../2-ui/2.1-cores/base/src/contexts/index.ts(1,15): error TS6142: Module './FancyKeyboardContext' was resolved to '/Users/dexter/Documents/workspace/idea/newPOSv1/2-ui/2.1-cores/base/src/contexts/FancyKeyboardContext.tsx', but '--jsx' is not set.
+../../../2-ui/2.1-cores/base/src/contexts/index.ts(2,15): error TS6142: Module './FancyKeyboardContextV2' was resolved to '/Users/dexter/Documents/workspace/idea/newPOSv1/2-ui/2.1-cores/base/src/contexts/FancyKeyboardContextV2.tsx', but '--jsx' is not set.
+../../../2-ui/2.1-cores/base/src/hooks/useFancyInput.ts(4,31): error TS6142: Module '../contexts/FancyKeyboardContext' was resolved to '/Users/dexter/Documents/workspace/idea/newPOSv1/2-ui/2.1-cores/base/src/contexts/FancyKeyboardContext.tsx', but '--jsx' is not set.
+../../../2-ui/2.1-cores/base/src/hooks/useFancyInput.ts(56,9): error TS2322: Type 'import("/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/@types/react/index").RefObject<import("/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/react-native/Libraries/Components/TextInput/TextInput").TextInput>' is not assignable to type 'React.RefObject<import("/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/react-native/Libraries/Components/TextInput/TextInput").TextInput>'.
+  Types of property 'current' are incompatible.
+    Type 'TextInput | null' is not assignable to type 'TextInput'.
+      Type 'null' is not assignable to type 'TextInput'.
+../../../2-ui/2.1-cores/base/src/hooks/useFancyKeyboard.ts(2,63): error TS6142: Module '../contexts/FancyKeyboardContext' was resolved to '/Users/dexter/Documents/workspace/idea/newPOSv1/2-ui/2.1-cores/base/src/contexts/FancyKeyboardContext.tsx', but '--jsx' is not set.
+../../../2-ui/2.1-cores/base/src/hooks/useFancyKeyboardV2.ts(2,67): error TS6142: Module '../contexts/FancyKeyboardContextV2' was resolved to '/Users/dexter/Documents/workspace/idea/newPOSv1/2-ui/2.1-cores/base/src/contexts/FancyKeyboardContextV2.tsx', but '--jsx' is not set.
+../../../2-ui/2.1-cores/base/src/index.ts(11,42): error TS2307: Cannot find module '@impos2/kernel-core-navigation' or its corresponding type declarations.
+  There are types at '/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/@impos2/kernel-core-navigation/src/index.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+../../../2-ui/2.1-cores/base/src/index.ts(13,36): error TS2307: Cannot find module '@impos2/kernel-core-task' or its corresponding type declarations.
+  There are types at '/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/@impos2/kernel-core-task/src/index.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+../../../2-ui/2.1-cores/base/src/index.ts(14,47): error TS2307: Cannot find module '@impos2/kernel-core-interconnection' or its corresponding type declarations.
+  There are types at '/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/@impos2/kernel-core-interconnection/src/index.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+../../../2-ui/2.1-cores/base/src/types/moduleState.ts(8,8): error TS2307: Cannot find module '@impos2/kernel-core-interconnection' or its corresponding type declarations.
+  There are types at '/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/@impos2/kernel-core-interconnection/src/index.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+../../../2-ui/2.1-cores/base/src/ui/components/index.ts(1,15): error TS6142: Module './ModalContainer' was resolved to '/Users/dexter/Documents/workspace/idea/newPOSv1/2-ui/2.1-cores/base/src/ui/components/ModalContainer.tsx', but '--jsx' is not set.
+../../../2-ui/2.1-cores/base/src/ui/components/index.ts(2,15): error TS6142: Module './StackContainer' was resolved to '/Users/dexter/Documents/workspace/idea/newPOSv1/2-ui/2.1-cores/base/src/ui/components/StackContainer.tsx', but '--jsx' is not set.
+../../../2-ui/2.1-cores/base/src/ui/components/index.ts(3,15): error TS6142: Module './FancyContainerV2' was resolved to '/Users/dexter/Documents/workspace/idea/newPOSv1/2-ui/2.1-cores/base/src/ui/components/FancyContainerV2.tsx', but '--jsx' is not set.
+../../../2-ui/2.1-cores/base/src/ui/components/index.ts(4,15): error TS6142: Module './FancyInputV2' was resolved to '/Users/dexter/Documents/workspace/idea/newPOSv1/2-ui/2.1-cores/base/src/ui/components/FancyInputV2/index.tsx', but '--jsx' is not set.
+../../../2-ui/2.1-cores/base/src/ui/components/index.ts(5,15): error TS6142: Module './FancyFullKeyBoardV2' was resolved to '/Users/dexter/Documents/workspace/idea/newPOSv1/2-ui/2.1-cores/base/src/ui/components/FancyFullKeyBoardV2/index.tsx', but '--jsx' is not set.
+../../../2-ui/2.1-cores/base/src/ui/components/index.ts(6,15): error TS6142: Module './FancyNumberKeyBoardV2' was resolved to '/Users/dexter/Documents/workspace/idea/newPOSv1/2-ui/2.1-cores/base/src/ui/components/FancyNumberKeyBoardV2/index.tsx', but '--jsx' is not set.
+../../../2-ui/2.1-cores/base/src/ui/components/index.ts(7,15): error TS6142: Module './FancyKeyboardOverlayV2' was resolved to '/Users/dexter/Documents/workspace/idea/newPOSv1/2-ui/2.1-cores/base/src/ui/components/FancyKeyboardOverlayV2/index.tsx', but '--jsx' is not set.
+../../../2-ui/2.1-cores/base/src/ui/modals/index.ts(1,15): error TS6142: Module './DefaultAlert' was resolved to '/Users/dexter/Documents/workspace/idea/newPOSv1/2-ui/2.1-cores/base/src/ui/modals/DefaultAlert.tsx', but '--jsx' is not set.
+../../../2-ui/2.1-cores/base/src/ui/moduleScreenParts.ts(1,32): error TS6142: Module './modals/DefaultAlert' was resolved to '/Users/dexter/Documents/workspace/idea/newPOSv1/2-ui/2.1-cores/base/src/ui/modals/DefaultAlert.tsx', but '--jsx' is not set.
+../../../2-ui/2.1-cores/base/src/ui/moduleScreenParts.ts(2,31): error TS6142: Module './screens/EmptyScreen' was resolved to '/Users/dexter/Documents/workspace/idea/newPOSv1/2-ui/2.1-cores/base/src/ui/screens/EmptyScreen.tsx', but '--jsx' is not set.
+../../../2-ui/2.1-cores/base/src/ui/moduleScreenParts.ts(3,42): error TS6142: Module './screens/SSDefaultWelcomeScreen' was resolved to '/Users/dexter/Documents/workspace/idea/newPOSv1/2-ui/2.1-cores/base/src/ui/screens/SSDefaultWelcomeScreen.tsx', but '--jsx' is not set.
+../../../2-ui/2.1-cores/base/src/ui/screens/index.ts(1,15): error TS6142: Module './EmptyScreen' was resolved to '/Users/dexter/Documents/workspace/idea/newPOSv1/2-ui/2.1-cores/base/src/ui/screens/EmptyScreen.tsx', but '--jsx' is not set.
+../../../2-ui/2.1-cores/base/src/ui/screens/index.ts(2,40): error TS6142: Module './LoadingScreen' was resolved to '/Users/dexter/Documents/workspace/idea/newPOSv1/2-ui/2.1-cores/base/src/ui/screens/LoadingScreen.tsx', but '--jsx' is not set.
+../../../2-ui/2.1-cores/base/src/ui/variables/index.ts(1,9): error TS2305: Module '"../screens"' has no exported member 'emptyScreenPart'.
+App.tsx(2,9): error TS2305: Module '"@impos2/ui-core-adapter-test"' has no exported member 'DevHome'.
+App.tsx(23,13): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+App.tsx(24,17): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+App.tsx(30,9): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+App.tsx(31,13): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+App.tsx(36,17): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+dev/store.ts(3,30): error TS2307: Cannot find module '@impos2/kernel-server-config' or its corresponding type declarations.
+  There are types at '/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/@impos2/kernel-server-config/src/index.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+src/application/modulePreSetup.ts(12,38): error TS2307: Cannot find module '@impos2/kernel-core-interconnection' or its corresponding type declarations.
+  There are types at '/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/@impos2/kernel-core-interconnection/src/index.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+src/foundations/externalConnector.ts(22,9): error TS2322: Type 'Promise<Object>' is not assignable to type 'Promise<ConnectorResponse<T>>'.
+  The 'Object' type is assignable to very few other types. Did you mean to use the 'any' type instead?
+    Type 'Object' is missing the following properties from type 'ConnectorResponse<T>': success, code, message, duration, timestamp
+src/foundations/externalConnector.ts(65,9): error TS2322: Type 'Promise<readonly string[]>' is not assignable to type 'Promise<string[]>'.
+  The type 'readonly string[]' is 'readonly' and cannot be assigned to the mutable type 'string[]'.
+src/foundations/localWebServer.ts(1,107): error TS2307: Cannot find module '@impos2/kernel-core-interconnection' or its corresponding type declarations.
+  There are types at '/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/@impos2/kernel-core-interconnection/src/index.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+src/foundations/localWebServer.ts(15,23): error TS2339: Property 'addresses' does not exist on type 'Object'.
+src/foundations/localWebServer.ts(25,24): error TS2339: Property 'status' does not exist on type 'Object'.
+src/foundations/localWebServer.ts(26,26): error TS2339: Property 'addresses' does not exist on type 'Object'.
+src/foundations/localWebServer.ts(27,23): error TS2339: Property 'config' does not exist on type 'Object'.
+src/foundations/localWebServer.ts(28,22): error TS2339: Property 'error' does not exist on type 'Object'.
+src/foundations/stateStorage.ts(1,9): error TS2305: Module '"react-native-mmkv"' has no exported member 'createMMKV'.
+src/foundations/taskDefinitions/index.ts(1,43): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+src/foundations/taskDefinitions/singleReadBarCodeFromCamera.ts(2,37): error TS2307: Cannot find module '@impos2/kernel-core-task' or its corresponding type declarations.
+  There are types at '/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/@impos2/kernel-core-task/src/index.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+src/types/moduleState.ts(8,8): error TS2307: Cannot find module '@impos2/kernel-core-interconnection' or its corresponding type declarations.
+  There are types at '/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/@impos2/kernel-core-interconnection/src/index.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+src/types/shared/moduleStateKey.ts(6,8): error TS2307: Cannot find module '@impos2/kernel-core-interconnection' or its corresponding type declarations.
+  There are types at '/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/@impos2/kernel-core-interconnection/src/index.ts', but this result could not be resolved under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+tsconfig.json(2,14): error TS6053: File '@react-native/typescript-config/tsconfig.json' not found.

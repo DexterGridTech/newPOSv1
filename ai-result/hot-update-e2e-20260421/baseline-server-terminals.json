@@ -1,0 +1,82 @@
+[
+  {
+    "terminalId": "terminal_92mgecnjo5me",
+    "lifecycleStatus": "ACTIVE",
+    "presenceStatus": "OFFLINE",
+    "currentAppVersion": "1.0.0",
+    "currentBundleVersion": "1.0.0+ota.1",
+    "runtimeInfo": null
+  },
+  {
+    "terminalId": "terminal_q6igf9fqd2tn",
+    "lifecycleStatus": "DEACTIVATED",
+    "presenceStatus": "OFFLINE",
+    "currentAppVersion": "1.0.0",
+    "currentBundleVersion": "1.0.0+ota.0",
+    "runtimeInfo": null
+  },
+  {
+    "terminalId": "terminal_tzf9dweg4c44",
+    "lifecycleStatus": "DEACTIVATED",
+    "presenceStatus": "OFFLINE",
+    "currentAppVersion": "1.0.0",
+    "currentBundleVersion": "1.0.0+ota.0",
+    "runtimeInfo": null
+  },
+  {
+    "terminalId": "terminal_6t63p1zkigg0",
+    "lifecycleStatus": "ACTIVE",
+    "presenceStatus": "OFFLINE",
+    "currentAppVersion": "0.0.1",
+    "currentBundleVersion": "1.0.0+ota.0",
+    "runtimeInfo": null
+  },
+  {
+    "terminalId": "terminal_o335j8epav6m",
+    "lifecycleStatus": "DEACTIVATED",
+    "presenceStatus": "OFFLINE",
+    "currentAppVersion": "0.0.1",
+    "currentBundleVersion": "bundle-2026.04.06",
+    "runtimeInfo": null
+  },
+  {
+    "terminalId": "terminal_xuckdofy5lnr",
+    "lifecycleStatus": "DEACTIVATED",
+    "presenceStatus": "OFFLINE",
+    "currentAppVersion": "0.0.1",
+    "currentBundleVersion": "bundle-2026.04.06",
+    "runtimeInfo": null
+  },
+  {
+    "terminalId": "terminal_sdr7x7pazmrq",
+    "lifecycleStatus": "ACTIVE",
+    "presenceStatus": "OFFLINE",
+    "currentAppVersion": "0.0.1",
+    "currentBundleVersion": "bundle-2026.04.06",
+    "runtimeInfo": null
+  },
+  {
+    "terminalId": "terminal_pdiee89wsth0",
+    "lifecycleStatus": "DEACTIVATED",
+    "presenceStatus": "OFFLINE",
+    "currentAppVersion": "0.0.1",
+    "currentBundleVersion": "bundle-2026.04.06",
+    "runtimeInfo": null
+  },
+  {
+    "terminalId": "terminal_qkxyxz5jzd9h",
+    "lifecycleStatus": "ACTIVE",
+    "presenceStatus": "ONLINE",
+    "currentAppVersion": "1.0.0",
+    "currentBundleVersion": "1.0.0+ota.9",
+    "runtimeInfo": null
+  },
+  {
+    "terminalId": "terminal_s7dgksie2org",
+    "lifecycleStatus": "DEACTIVATED",
+    "presenceStatus": "OFFLINE",
+    "currentAppVersion": "1.0.0",
+    "currentBundleVersion": "1.0.0+ota.9",
+    "runtimeInfo": null
+  }
+]

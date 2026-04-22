@@ -1,0 +1,10 @@
+# C/C++ build system timings
+generate_cxx_metadata
+  generate-prefab-packages
+    exec-prefab 344ms
+  generate-prefab-packages completed in 346ms
+  execute-generate-process
+    exec-configure 168ms
+  execute-generate-process completed in 175ms
+generate_cxx_metadata completed in 528ms
+

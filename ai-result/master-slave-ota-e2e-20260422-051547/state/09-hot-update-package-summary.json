@@ -1,0 +1,12 @@
+{
+  "fileName": "hot-update-assembly-android-mixc-retail-rn84-1.0.0+ota.2.zip",
+  "outputPath": "/Users/dexter/Documents/workspace/idea/newPOSv1/dist/hot-updates/hot-update-assembly-android-mixc-retail-rn84-1.0.0+ota.2.zip",
+  "fileSize": 3563110,
+  "sha256": "f9c87e5b09f12d294193e4a6b9f5c82c495672d9c301f78c09b05c4943b24257",
+  "bundleVersion": "1.0.0+ota.2",
+  "restart": {
+    "mode": "immediate",
+    "operatorInstruction": "ota e2e immediate restart"
+  },
+  "channel": "production"
+}

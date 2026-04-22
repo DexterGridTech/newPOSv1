@@ -1,0 +1,1 @@
+/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/build/intermediates/cxx/RelWithDebInfo/4t5p1x4y/obj/arm64-v8a

@@ -7,6 +7,7 @@ import {
     type RequestQueryResult,
 } from '@impos2/kernel-base-runtime-shell-v2'
 import type {RequestId} from '@impos2/kernel-base-contracts'
+import {selectTopologyDisplayMode} from '@impos2/kernel-base-topology-runtime-v3'
 import {
     selectUiOverlays,
     selectUiScreen,
@@ -67,14 +68,25 @@ const commandDefinitionCache = new Map<string, CommandDefinition<unknown>>()
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
+const resolveAutomationDisplay = (
+    runtime: KernelRuntimeV2,
+): 'primary' | 'secondary' => {
+    if ((runtime.displayContext.displayIndex ?? 0) > 0) {
+        return 'secondary'
+    }
+    return selectTopologyDisplayMode(runtime.getState()) === 'SECONDARY'
+        ? 'secondary'
+        : 'primary'
+}
+
 const getCurrentScreenSummary = (runtime: KernelRuntimeV2) => {
     const state = runtime.getState()
-    const displayIndex = runtime.displayContext.displayIndex ?? 0
-    const containerKey = displayIndex > 0
+    const display = resolveAutomationDisplay(runtime)
+    const containerKey = display === 'secondary'
         ? uiRuntimeRootVariables.secondaryRootContainer.key
         : uiRuntimeRootVariables.primaryRootContainer.key
     const screen = selectUiScreen(state, containerKey)
-    const overlays = selectUiOverlays(state, displayIndex > 0 ? 'SECONDARY' : 'PRIMARY')
+    const overlays = selectUiOverlays(state, display === 'secondary' ? 'SECONDARY' : 'PRIMARY')
     return {
         containerKey,
         screen: screen

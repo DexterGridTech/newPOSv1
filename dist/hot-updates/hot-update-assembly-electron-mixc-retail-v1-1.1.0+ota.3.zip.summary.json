@@ -1,0 +1,108 @@
+{
+  "fileName": "hot-update-assembly-electron-mixc-retail-v1-1.1.0+ota.3.zip",
+  "outputPath": "/Users/dexter/Documents/workspace/idea/newPOSv1/dist/hot-updates/hot-update-assembly-electron-mixc-retail-v1-1.1.0+ota.3.zip",
+  "fileSize": 726070,
+  "sha256": "59697f06fb41b2b1e9d7a1037311e4bbaafe5bda60353ea2905c4138857550c8",
+  "manifest": {
+    "manifestVersion": 1,
+    "appId": "assembly-electron-mixc-retail-v1",
+    "platform": "electron",
+    "product": "mixc-retail",
+    "channel": "test",
+    "bundleVersion": "1.1.0+ota.3",
+    "runtimeVersion": "electron-mixc-retail-v1@1.1",
+    "assemblyVersion": "1.1.0",
+    "buildNumber": 1000002,
+    "builtAt": "2026-04-19T02:22:14.140Z",
+    "git": {
+      "commit": "629e9f6a0b57ed0f03967dc971afebc7a8b28d8e",
+      "branch": "main"
+    },
+    "compatibility": {
+      "appId": "assembly-electron-mixc-retail-v1",
+      "platform": "electron",
+      "product": "mixc-retail",
+      "runtimeVersion": "electron-mixc-retail-v1@1.1",
+      "minAssemblyVersion": "1.1.0",
+      "maxAssemblyVersion": "1.1.0",
+      "minBuildNumber": 1000002,
+      "maxBuildNumber": 1000002,
+      "allowedChannels": [
+        "test"
+      ],
+      "targetPackages": {
+        "@impos2/kernel-core-base": "1.0.0",
+        "@impos2/kernel-core-communication": "1.0.0",
+        "@impos2/kernel-core-interconnection": "1.0.0",
+        "@impos2/kernel-core-navigation": "1.0.0",
+        "@impos2/kernel-core-task": "1.0.0",
+        "@impos2/kernel-core-terminal": "1.0.0",
+        "@impos2/kernel-mixc-user-login": "1.0.0",
+        "@impos2/ui-integration-mixc-retail": "1.0.0",
+        "@impos2/adapter-electron-v1": "1.0.0"
+      }
+    },
+    "package": {
+      "type": "electron-webpack-bundle",
+      "entry": "payload/renderer/primary_window/index.js",
+      "compression": "zip",
+      "size": 974781,
+      "sha256": "c9c2243fd2aff84ab3747404ed386b2b8f5fa0a3dcb5f55455ded305ef56f352",
+      "files": [
+        {
+          "path": "payload/renderer/primary_window/index.js",
+          "size": 974781,
+          "sha256": "c9c2243fd2aff84ab3747404ed386b2b8f5fa0a3dcb5f55455ded305ef56f352"
+        },
+        {
+          "path": "payload/main/index.js",
+          "size": 576047,
+          "sha256": "439cd86c244fbd500aa55dc2fb3854d703bee1d1648b5aa3b727053eb49d09e4"
+        },
+        {
+          "path": "payload/preload/primary.js",
+          "size": 41932,
+          "sha256": "fc0ce8110965a5159a49c6daaefb76f5cb8c7400f5e5fc4f5ab8ff134535d996"
+        },
+        {
+          "path": "payload/renderer/secondary_window/index.js",
+          "size": 974783,
+          "sha256": "03299edfff083f8f3c9ed1e8778cdcf2174b40bafe4cbc83e6edb244253dd35c"
+        },
+        {
+          "path": "payload/preload/secondary.js",
+          "size": 41934,
+          "sha256": "2fb5cac2f341aa26f97382a0c4c7b176a05542d8211d0beb44365ff8fe6eae86"
+        }
+      ]
+    },
+    "install": {
+      "strategy": "replace-bundle",
+      "requiresRuntimeRestart": true,
+      "maxRetainedPackages": 2
+    },
+    "restart": {
+      "mode": "manual",
+      "operatorInstruction": "cashier idle restart"
+    },
+    "rollout": {
+      "defaultStrategy": "manual-policy"
+    },
+    "security": {
+      "hashAlgorithm": "sha256"
+    },
+    "releaseNotes": [
+      "ralph",
+      "electron"
+    ],
+    "artifacts": [
+      {
+        "name": "packagedAppVersion",
+        "path": "4-assembly/electron/mixc-retail-v1/out/mixc-retail-v1-darwin-arm64/version",
+        "size": 7,
+        "sha256": "47f4288ea96685258e59698f1d89eb4c54acc475ecff35e7af0b3b5fe93a68f3",
+        "modifiedAt": "2026-04-19T02:20:58.452Z"
+      }
+    ]
+  }
+}

@@ -1,0 +1,1 @@
+{"version":3,"file":"accessory.d.ts","sourceRoot":"","sources":["../../src/foundations/accessory.ts"],"names":[],"mappings":"AAAA,OAAO,EAAC,WAAW,EAAE,YAAY,EAAkC,SAAS,EAAC,MAAM,UAAU,CAAC;AAI9F,eAAO,MAAM,eAAe,QAAO,YAElC,CAAA;AACD,eAAO,MAAM,cAAc,QAAO,WAEjC,CAAA;AACD,eAAO,MAAM,aAAa,QAAO,OAEhC,CAAA;AACD,eAAO,MAAM,YAAY,QAAO,SAE/B,CAAA;AACD,eAAO,MAAM,cAAc,QAAO,OAEjC,CAAA"}

@@ -1,0 +1,25 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "runtimeId": "run_mo5uqphj_3ilhiu4zirm4i1wc",
+    "localNodeId": "master:J9RZPWR3HK",
+    "environmentMode": "DEV",
+    "displayContext": {
+      "displayIndex": 0,
+      "displayCount": 2
+    },
+    "currentScreen": {
+      "containerKey": "primary.root.container",
+      "screen": {
+        "partKey": "ui.integration.retail-shell.welcome",
+        "rendererKey": "ui.integration.retail-shell.welcome",
+        "props": {
+          "terminalId": "terminal_sdr7x7pazmrq"
+        }
+      },
+      "overlayCount": 0
+    }
+  },
+  "id": "1776693484923-8062e0b0161a08"
+}

@@ -1,0 +1,169 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						2
+					],
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"build" : "RNMmkvSpec_autolinked_build",
+					"jsonFile" : "directory-RNMmkvSpec_autolinked_build-Debug-a907c5dac9604b927c02.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/react-native-mmkv/android/build/generated/source/codegen/jni",
+					"targetIndexes" : 
+					[
+						3
+					]
+				},
+				{
+					"build" : "RNMmkvSpec_cxxmodule_autolinked_build",
+					"childIndexes" : 
+					[
+						3
+					],
+					"jsonFile" : "directory-RNMmkvSpec_cxxmodule_autolinked_build-Debug-becec6f5652afde96024.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9.0"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/react-native-mmkv/android",
+					"targetIndexes" : 
+					[
+						2
+					]
+				},
+				{
+					"build" : "RNMmkvSpec_cxxmodule_autolinked_build/core",
+					"jsonFile" : "directory-RNMmkvSpec_cxxmodule_autolinked_build.core-Debug-607d002c7f7ce13e7186.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10.0"
+					},
+					"parentIndex" : 2,
+					"projectIndex" : 2,
+					"source" : "/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/react-native-mmkv/MMKV/Core",
+					"targetIndexes" : 
+					[
+						1
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1
+					],
+					"directoryIndexes" : 
+					[
+						0,
+						1
+					],
+					"name" : "appmodules",
+					"targetIndexes" : 
+					[
+						0,
+						3
+					]
+				},
+				{
+					"childIndexes" : 
+					[
+						2
+					],
+					"directoryIndexes" : 
+					[
+						2
+					],
+					"name" : "ReactNativeMmkv",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						2
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						3
+					],
+					"name" : "core",
+					"parentIndex" : 1,
+					"targetIndexes" : 
+					[
+						1
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "appmodules::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-appmodules-Debug-2584f04a9de196ee1efa.json",
+					"name" : "appmodules",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "core::@1b9a7d546b295b7d0867",
+					"jsonFile" : "target-core-Debug-02d64914807a44508722.json",
+					"name" : "core",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "react-native-mmkv::@4ae6a1e65d3e68ba0197",
+					"jsonFile" : "target-react-native-mmkv-Debug-fc5545a3f07ddbb813fe.json",
+					"name" : "react-native-mmkv",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "react_codegen_RNMmkvSpec::@7541eabbae598da31a69",
+					"jsonFile" : "target-react_codegen_RNMmkvSpec-Debug-be6f8a40cbcf58be4f3f.json",
+					"name" : "react_codegen_RNMmkvSpec",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/app/.cxx/Debug/561o4n1o/armeabi-v7a",
+		"source" : "/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/react-native/ReactAndroid/cmake-utils/default-app-setup"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 3
+	}
+}

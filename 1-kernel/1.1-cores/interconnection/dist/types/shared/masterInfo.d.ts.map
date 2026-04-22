@@ -1,0 +1,1 @@
+{"version":3,"file":"masterInfo.d.ts","sourceRoot":"","sources":["../../../src/types/shared/masterInfo.ts"],"names":[],"mappings":"AAAA,OAAO,EAAC,aAAa,EAAC,MAAM,cAAc,CAAC;AAE3C,MAAM,WAAW,UAAU;IACvB,QAAQ,EAAE,MAAM,CAAC;IACjB,aAAa,EAAE,aAAa,EAAE,CAAC;IAC/B,OAAO,EAAE,MAAM,CAAA;CAClB"}

@@ -1,0 +1,22 @@
+# ninja log v5
+3	1263	1774797343184037497	CMakeFiles/appmodules.dir/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/app/build/generated/autolinking/src/main/jni/autolinking.cpp.o	caef1b827a3dbd27
+5	1304	1774797343225017113	codegen_app_build/CMakeFiles/react_codegen_AdapterRN84Spec.dir/react/renderer/components/AdapterRN84Spec/Props.cpp.o	12ad099c4682c779
+1600	1638	1774797343560185967	/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/app/build/intermediates/cxx/Debug/621q6w40/obj/arm64-v8a/libappmodules.so	eca6be3da64b55f2
+3	1307	1774797343228237699	NitroModulesSpec_autolinked_build/CMakeFiles/react_codegen_NitroModulesSpec.dir/react/renderer/components/NitroModulesSpec/ComponentDescriptors.cpp.o	43f9c8d6ba51a017
+3	977	1774797342897228766	NitroModulesSpec_autolinked_build/CMakeFiles/react_codegen_NitroModulesSpec.dir/react/renderer/components/NitroModulesSpec/EventEmitters.cpp.o	15b4e20518b97445
+3	1125	1774797343044001009	NitroModulesSpec_autolinked_build/CMakeFiles/react_codegen_NitroModulesSpec.dir/NitroModulesSpec-generated.cpp.o	9e58a85e36a70867
+0	6	1774848948207120000	/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/app/.cxx/Debug/621q6w40/arm64-v8a/CMakeFiles/cmake.verify_globs	b91295bf2aaf82a6
+3	1269	1774797343190374627	NitroModulesSpec_autolinked_build/CMakeFiles/react_codegen_NitroModulesSpec.dir/react/renderer/components/NitroModulesSpec/ShadowNodes.cpp.o	84aa96fc13f5a0d0
+3	1600	1774797343519652559	CMakeFiles/appmodules.dir/OnLoad.cpp.o	3bcb68a28d5aa794
+5	932	1774797342854337565	codegen_app_build/CMakeFiles/react_codegen_AdapterRN84Spec.dir/react/renderer/components/AdapterRN84Spec/EventEmitters.cpp.o	b699db292ba208bb
+0	5	0	clean	86269a812c6ed3c4
+7	116	1774848948295756329	build.ninja	37724eac66913f5
+3	1292	1774797343213134312	NitroModulesSpec_autolinked_build/CMakeFiles/react_codegen_NitroModulesSpec.dir/react/renderer/components/NitroModulesSpec/Props.cpp.o	87b20e4a29e47170
+5	880	1774797342800900563	NitroModulesSpec_autolinked_build/CMakeFiles/react_codegen_NitroModulesSpec.dir/react/renderer/components/NitroModulesSpec/States.cpp.o	a7de1c8eb8f27519
+5	1161	1774797343080897581	codegen_app_build/CMakeFiles/react_codegen_AdapterRN84Spec.dir/AdapterRN84Spec-generated.cpp.o	341d09d4bd3c2b5b
+5	1318	1774797343239249958	codegen_app_build/CMakeFiles/react_codegen_AdapterRN84Spec.dir/react/renderer/components/AdapterRN84Spec/ComponentDescriptors.cpp.o	252cb97dd2399d25
+5	929	1774797342850076145	codegen_app_build/CMakeFiles/react_codegen_AdapterRN84Spec.dir/react/renderer/components/AdapterRN84Spec/States.cpp.o	5ff1f6eb93a4de64
+5	1256	1774797343177008783	codegen_app_build/CMakeFiles/react_codegen_AdapterRN84Spec.dir/react/renderer/components/AdapterRN84Spec/ShadowNodes.cpp.o	5dc37a9f1298483c
+6	101	1774848948295756329	build.ninja	37724eac66913f5
+0	6	0	/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/app/.cxx/Debug/621q6w40/arm64-v8a/CMakeFiles/cmake.verify_globs	b91295bf2aaf82a6
+0	3	0	clean	86269a812c6ed3c4

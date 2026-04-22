@@ -1,3 +1,5 @@
+import type {CommandIntent} from '@impos2/kernel-base-runtime-shell-v2'
+
 export interface UiScreenDefinition<TProps = unknown> {
     partKey: string
     rendererKey: string
@@ -46,5 +48,12 @@ export interface UiAlertInfo {
     level?: 'info' | 'warning' | 'error' | 'success'
     confirmText?: string
     cancelText?: string
+    confirmAction?: UiAlertAction
+    cancelAction?: UiAlertAction
+    metadata?: Record<string, unknown>
+}
+
+export interface UiAlertAction {
+    commands?: readonly CommandIntent[]
     metadata?: Record<string, unknown>
 }

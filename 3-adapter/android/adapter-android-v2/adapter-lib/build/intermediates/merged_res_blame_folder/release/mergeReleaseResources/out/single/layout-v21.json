@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "com.impos2.adapterv2.adapter-android-v2-release-33:/layout-v21/notification_template_icon_group.xml",
+        "source": "com.impos2.adapterv2.adapter-android-v2-core-1.13.1-21:/layout-v21/notification_template_icon_group.xml"
+    },
+    {
+        "merged": "com.impos2.adapterv2.adapter-android-v2-release-33:/layout-v21/notification_template_custom_big.xml",
+        "source": "com.impos2.adapterv2.adapter-android-v2-core-1.13.1-21:/layout-v21/notification_template_custom_big.xml"
+    },
+    {
+        "merged": "com.impos2.adapterv2.adapter-android-v2-release-33:/layout-v21/notification_action.xml",
+        "source": "com.impos2.adapterv2.adapter-android-v2-core-1.13.1-21:/layout-v21/notification_action.xml"
+    },
+    {
+        "merged": "com.impos2.adapterv2.adapter-android-v2-release-33:/layout-v21/notification_action_tombstone.xml",
+        "source": "com.impos2.adapterv2.adapter-android-v2-core-1.13.1-21:/layout-v21/notification_action_tombstone.xml"
+    }
+]

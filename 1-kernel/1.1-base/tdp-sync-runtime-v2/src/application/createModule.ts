@@ -174,16 +174,28 @@ export const createTdpSyncRuntimeModuleV2 = (
 
                 const state = context.getState()
                 const topology = selectTopologyRuntimeV3Context(state)
-                const isPrimaryOwner = topology == null
+                const isInstallOwner = topology == null
                     ? (context.displayContext.displayIndex ?? 0) === 0
-                    : topology.instanceMode !== 'SLAVE'
+                    : topology.standalone
 
-                if (!isPrimaryOwner) {
+                if (!isInstallOwner) {
                     return
                 }
 
                 const desired = selectTdpHotUpdateDesired(state)
                 const candidate = selectTdpHotUpdateCandidate(state)
+                if (
+                    desired
+                    && !candidate
+                    && selectTdpHotUpdateCurrent(state)?.packageId !== desired.packageId
+                ) {
+                    context.dispatchAction(tdpHotUpdateActions.reconcileDesired({
+                        desired,
+                        currentFacts: input.hotUpdate?.getCurrentFacts?.(context),
+                        idleThresholdMs: resolveIdleThresholdMs(),
+                    }))
+                    return
+                }
                 if (desired && candidate?.status === 'download-pending' && !installingPackageIds.has(candidate.packageId)) {
                     const nextAttempt = (candidate.attempts ?? 0) + 1
                     const maxAttempts = desired.safety.maxDownloadAttempts

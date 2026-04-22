@@ -1,0 +1,30 @@
+{
+  "startedAt": 1776748988565,
+  "endedAt": 1776749014612,
+  "samples": [
+    {
+      "i": 0,
+      "elapsedMs": 410
+    },
+    {
+      "i": 4,
+      "elapsedMs": 5460
+    },
+    {
+      "i": 8,
+      "elapsedMs": 10598
+    },
+    {
+      "i": 12,
+      "elapsedMs": 15726
+    },
+    {
+      "i": 16,
+      "elapsedMs": 20866
+    },
+    {
+      "i": 19,
+      "elapsedMs": 25045
+    }
+  ]
+}

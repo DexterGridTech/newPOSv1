@@ -1,0 +1,15 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "containerKey": "primary.root.container",
+    "screen": {
+      "partKey": "ui.integration.retail-shell.welcome",
+      "rendererKey": "ui.integration.retail-shell.welcome",
+      "props": {
+        "terminalId": "terminal_1s3odbjv486g"
+      }
+    },
+    "overlayCount": 0
+  },
+  "id": "1776719841919-e5510a01f46b5"
+}

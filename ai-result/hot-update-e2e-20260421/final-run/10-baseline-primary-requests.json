@@ -1,0 +1,298 @@
+{
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "requestId": "req_mo6b8833_2s2gp0yfbnqqll6u",
+      "rootCommandId": "cmd_mo6b8833_0jfevf09rmsb2jhl",
+      "status": "COMPLETED",
+      "startedAt": 1776636042735,
+      "updatedAt": 1776636042769,
+      "commands": [
+        {
+          "requestId": "req_mo6b8833_2s2gp0yfbnqqll6u",
+          "commandId": "cmd_mo6b8833_0jfevf09rmsb2jhl",
+          "commandName": "kernel.base.runtime-shell-v2.initialize",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776636042735,
+          "completedAt": 1776636042738,
+          "actorResults": [
+            {
+              "actorKey": "assembly.android.mixc-retail-rn84.AssemblyRuntimeInitializeActor",
+              "status": "COMPLETED",
+              "startedAt": 1776636042735,
+              "completedAt": 1776636042738,
+              "result": {
+                "displayIndex": 0,
+                "displayCount": 2,
+                "topologyRole": "master"
+              }
+            },
+            {
+              "actorKey": "kernel.base.tdp-sync-runtime-v2.TdpInitializeActor",
+              "status": "COMPLETED",
+              "startedAt": 1776636042735,
+              "completedAt": 1776636042736,
+              "result": {}
+            },
+            {
+              "actorKey": "ui.integration.retail-shell.RetailShellRuntimeInitializeActor",
+              "status": "COMPLETED",
+              "startedAt": 1776636042735,
+              "completedAt": 1776636042736,
+              "result": {
+                "displayIndex": 0,
+                "activated": false
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo6b8833_2s2gp0yfbnqqll6u",
+          "commandId": "cmd_mo6b8833_p6lbdclf78jgbt12",
+          "parentCommandId": "cmd_mo6b8833_0jfevf09rmsb2jhl",
+          "commandName": "kernel.base.topology-runtime-v3.set-enable-slave",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776636042735,
+          "completedAt": 1776636042735,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.topology-runtime-v3.TopologyContextActor",
+              "status": "COMPLETED",
+              "startedAt": 1776636042735,
+              "completedAt": 1776636042735
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo6b8833_2s2gp0yfbnqqll6u",
+          "commandId": "cmd_mo6b8833_kak27ikwbuftxoj2",
+          "parentCommandId": "cmd_mo6b8833_0jfevf09rmsb2jhl",
+          "commandName": "kernel.base.tdp-sync-runtime-v2.bootstrap-tdp-sync",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776636042735,
+          "completedAt": 1776636042735,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tdp-sync-runtime-v2.TdpBootstrapActor",
+              "status": "COMPLETED",
+              "startedAt": 1776636042735,
+              "completedAt": 1776636042735,
+              "result": {}
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo6b8833_2s2gp0yfbnqqll6u",
+          "commandId": "cmd_mo6b8833_7vgzamhvc80wf2k0",
+          "parentCommandId": "cmd_mo6b8833_kak27ikwbuftxoj2",
+          "commandName": "kernel.base.tdp-sync-runtime-v2.bootstrap-tdp-sync-succeeded",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776636042735,
+          "completedAt": 1776636042735,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tdp-sync-runtime-v2.TdpBootstrapActor",
+              "status": "COMPLETED",
+              "startedAt": 1776636042735,
+              "completedAt": 1776636042735,
+              "result": {}
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo6b8833_2s2gp0yfbnqqll6u",
+          "commandId": "cmd_mo6b8833_0bw5iumij8h075t5",
+          "parentCommandId": "cmd_mo6b8833_0jfevf09rmsb2jhl",
+          "commandName": "kernel.base.ui-runtime-v2.replace-screen",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776636042735,
+          "completedAt": 1776636042735,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.ui-runtime-v2.UiRuntimeScreenRuntimeActor",
+              "status": "COMPLETED",
+              "startedAt": 1776636042735,
+              "completedAt": 1776636042735,
+              "result": {
+                "containerKey": "primary.root.container"
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo6b8833_2s2gp0yfbnqqll6u",
+          "commandId": "cmd_mo6b8833_49mr7bkq7oejineq",
+          "parentCommandId": "cmd_mo6b8833_0jfevf09rmsb2jhl",
+          "commandName": "kernel.base.topology-runtime-v3.refresh-topology-context",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776636042735,
+          "completedAt": 1776636042735,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.topology-runtime-v3.TopologyContextActor",
+              "status": "COMPLETED",
+              "startedAt": 1776636042735,
+              "completedAt": 1776636042735,
+              "result": {
+                "context": {
+                  "displayIndex": 0,
+                  "displayCount": 2,
+                  "instanceMode": "MASTER",
+                  "displayMode": "PRIMARY",
+                  "workspace": "MAIN",
+                  "standalone": true,
+                  "enableSlave": true,
+                  "localNodeId": "master:J9RZPWR3HK"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo6b8833_2s2gp0yfbnqqll6u",
+          "commandId": "cmd_mo6b8833_3zxta5epmhdo4qyq",
+          "parentCommandId": "cmd_mo6b8833_0jfevf09rmsb2jhl",
+          "commandName": "kernel.base.ui-runtime-v2.replace-screen",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776636042735,
+          "completedAt": 1776636042735,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.ui-runtime-v2.UiRuntimeScreenRuntimeActor",
+              "status": "COMPLETED",
+              "startedAt": 1776636042735,
+              "completedAt": 1776636042735,
+              "result": {
+                "containerKey": "secondary.root.container"
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo6b8833_2s2gp0yfbnqqll6u",
+          "commandId": "cmd_mo6b8833_oaeugrc0f5clmz8a",
+          "parentCommandId": "cmd_mo6b8833_0jfevf09rmsb2jhl",
+          "commandName": "kernel.base.tcp-control-runtime-v2.bootstrap-tcp-control",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776636042735,
+          "completedAt": 1776636042736,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tcp-control-runtime-v2.TcpBootstrapActor",
+              "status": "COMPLETED",
+              "startedAt": 1776636042735,
+              "completedAt": 1776636042736,
+              "result": {
+                "deviceFingerprint": "J9RZPWR3HK"
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo6b8833_2s2gp0yfbnqqll6u",
+          "commandId": "cmd_mo6b8834_sya8i4dvx9z3r3ip",
+          "parentCommandId": "cmd_mo6b8833_oaeugrc0f5clmz8a",
+          "commandName": "kernel.base.tcp-control-runtime-v2.bootstrap-tcp-control-succeeded",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776636042736,
+          "completedAt": 1776636042736,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tcp-control-runtime-v2.TcpStateMutationActor",
+              "status": "COMPLETED",
+              "startedAt": 1776636042736,
+              "completedAt": 1776636042736,
+              "result": {}
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo6b8833_2s2gp0yfbnqqll6u",
+          "commandId": "cmd_mo6b8834_dfesxagk0nfw5qyw",
+          "parentCommandId": "cmd_mo6b8833_0jfevf09rmsb2jhl",
+          "commandName": "kernel.base.topology-runtime-v3.start-topology-connection",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776636042736,
+          "completedAt": 1776636042769,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.topology-runtime-v3.TopologyConnectionActor",
+              "status": "COMPLETED",
+              "startedAt": 1776636042736,
+              "completedAt": 1776636042769
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requestId": "req_mo6b8832_nrp6z3w9ntbcl3s7",
+      "rootCommandId": "cmd_mo6b8832_esldfyzxllganrgy",
+      "status": "COMPLETED",
+      "startedAt": 1776636042734,
+      "updatedAt": 1776636042734,
+      "commands": [
+        {
+          "requestId": "req_mo6b8832_nrp6z3w9ntbcl3s7",
+          "commandId": "cmd_mo6b8832_esldfyzxllganrgy",
+          "commandName": "kernel.base.ui-runtime-v2.register-screen-definitions",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776636042734,
+          "completedAt": 1776636042734,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.ui-runtime-v2.UiRuntimeScreenRegistryActor",
+              "status": "COMPLETED",
+              "startedAt": 1776636042734,
+              "completedAt": 1776636042734,
+              "result": {
+                "registeredCount": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requestId": "req_mo6b8831_e7ifb6nxagwnqdz3",
+      "rootCommandId": "cmd_mo6b8831_4liivdrzucqw21mv",
+      "status": "COMPLETED",
+      "startedAt": 1776636042733,
+      "updatedAt": 1776636042733,
+      "commands": [
+        {
+          "requestId": "req_mo6b8831_e7ifb6nxagwnqdz3",
+          "commandId": "cmd_mo6b8831_4liivdrzucqw21mv",
+          "commandName": "kernel.base.ui-runtime-v2.register-screen-definitions",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776636042733,
+          "completedAt": 1776636042733,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.ui-runtime-v2.UiRuntimeScreenRegistryActor",
+              "status": "COMPLETED",
+              "startedAt": 1776636042733,
+              "completedAt": 1776636042733,
+              "result": {
+                "registeredCount": 3
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "id": "1776721217611-e13711d7e2312"
+}

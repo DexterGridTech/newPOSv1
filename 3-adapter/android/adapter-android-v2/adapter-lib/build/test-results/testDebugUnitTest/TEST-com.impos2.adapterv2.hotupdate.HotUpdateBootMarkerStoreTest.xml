@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.impos2.adapterv2.hotupdate.HotUpdateBootMarkerStoreTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-04-21T19:28:22.809Z" hostname="DexterdeMacBook-Pro.local" time="0.032">
+  <properties/>
+  <testcase name="rollsBackWhenLaunchFailuresAreExceeded" classname="com.impos2.adapterv2.hotupdate.HotUpdateBootMarkerStoreTest" time="0.027"/>
+  <testcase name="derivesBootMarkerFromActiveAndConfirmsStableBoot" classname="com.impos2.adapterv2.hotupdate.HotUpdateBootMarkerStoreTest" time="0.004"/>
+  <testcase name="persistsHealthCheckTimeoutAcrossCodecRoundTrip" classname="com.impos2.adapterv2.hotupdate.HotUpdateBootMarkerStoreTest" time="0.001"/>
+  <testcase name="usesProductionSafeHealthCheckTimeoutWhenLegacyMarkerOmitsIt" classname="com.impos2.adapterv2.hotupdate.HotUpdateBootMarkerStoreTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

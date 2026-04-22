@@ -1,0 +1,145 @@
+Activity Resolver Table:
+  Non-Data Actions:
+      android.intent.action.MAIN:
+        4e3640d com.impos2.mixcretailassemblyrn84/.MainActivity filter c5bbfc2
+          Action: "android.intent.action.MAIN"
+          Category: "android.intent.category.LAUNCHER"
+
+Receiver Resolver Table:
+  Non-Data Actions:
+      androidx.profileinstaller.action.SAVE_PROFILE:
+        989f1d3 com.impos2.mixcretailassemblyrn84/androidx.profileinstaller.ProfileInstallReceiver filter 72a160e
+          Action: "androidx.profileinstaller.action.SAVE_PROFILE"
+      androidx.profileinstaller.action.INSTALL_PROFILE:
+        989f1d3 com.impos2.mixcretailassemblyrn84/androidx.profileinstaller.ProfileInstallReceiver filter 39c7110
+          Action: "androidx.profileinstaller.action.INSTALL_PROFILE"
+      androidx.profileinstaller.action.SKIP_FILE:
+        989f1d3 com.impos2.mixcretailassemblyrn84/androidx.profileinstaller.ProfileInstallReceiver filter 66f3409
+          Action: "androidx.profileinstaller.action.SKIP_FILE"
+      androidx.profileinstaller.action.BENCHMARK_OPERATION:
+        989f1d3 com.impos2.mixcretailassemblyrn84/androidx.profileinstaller.ProfileInstallReceiver filter c77d82f
+          Action: "androidx.profileinstaller.action.BENCHMARK_OPERATION"
+
+Domain verification status:
+
+Permissions:
+  Permission [com.impos2.mixcretailassemblyrn84.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION] (844ed0e):
+    sourcePackage=com.impos2.mixcretailassemblyrn84
+    uid=10175 gids=[] type=0 prot=signature
+    perm=PermissionInfo{c67632f com.impos2.mixcretailassemblyrn84.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION}
+
+Registered ContentProviders:
+  com.impos2.mixcretailassemblyrn84/com.google.mlkit.common.internal.MlKitInitProvider:
+    Provider{d97bd3c com.impos2.mixcretailassemblyrn84/com.google.mlkit.common.internal.MlKitInitProvider}
+  com.impos2.mixcretailassemblyrn84/androidx.startup.InitializationProvider:
+    Provider{dac0ac5 com.impos2.mixcretailassemblyrn84/androidx.startup.InitializationProvider}
+
+ContentProvider Authorities:
+  [com.impos2.mixcretailassemblyrn84.mlkitinitprovider]:
+    Provider{d97bd3c com.impos2.mixcretailassemblyrn84/com.google.mlkit.common.internal.MlKitInitProvider}
+      applicationInfo=ApplicationInfo{6e6cc1a com.impos2.mixcretailassemblyrn84}
+  [com.impos2.mixcretailassemblyrn84.androidx-startup]:
+    Provider{dac0ac5 com.impos2.mixcretailassemblyrn84/androidx.startup.InitializationProvider}
+      applicationInfo=ApplicationInfo{891034b com.impos2.mixcretailassemblyrn84}
+
+Key Set Manager:
+  [com.impos2.mixcretailassemblyrn84]
+      Signing KeySets: 54
+
+Packages:
+  Package [com.impos2.mixcretailassemblyrn84] (bc17128):
+    userId=10175
+    pkg=Package{ec78e41 com.impos2.mixcretailassemblyrn84}
+    codePath=/data/app/~~fMx48HqhHxoyHrqq3AoZBQ==/com.impos2.mixcretailassemblyrn84-zSnEaRE0CqDaLG7OcxUzzA==
+    resourcePath=/data/app/~~fMx48HqhHxoyHrqq3AoZBQ==/com.impos2.mixcretailassemblyrn84-zSnEaRE0CqDaLG7OcxUzzA==
+    legacyNativeLibraryDir=/data/app/~~fMx48HqhHxoyHrqq3AoZBQ==/com.impos2.mixcretailassemblyrn84-zSnEaRE0CqDaLG7OcxUzzA==/lib
+    extractNativeLibs=false
+    primaryCpuAbi=arm64-v8a
+    secondaryCpuAbi=null
+    cpuAbiOverride=null
+    versionCode=6 minSdk=24 targetSdk=36
+    minExtensionVersions=[]
+    versionName=1.0.0
+    usesNonSdkApi=false
+    splits=[base]
+    apkSigningVersion=2
+    flags=[ HAS_CODE ALLOW_CLEAR_USER_DATA LARGE_HEAP ]
+    privateFlags=[ PRIVATE_FLAG_ACTIVITIES_RESIZE_MODE_RESIZEABLE_VIA_SDK_VERSION ALLOW_AUDIO_PLAYBACK_CAPTURE PARTIALLY_DIRECT_BOOT_AWARE PRIVATE_FLAG_ALLOW_NATIVE_HEAP_POINTER_TAGGING ]
+    forceQueryable=false
+    dataDir=/data/user/0/com.impos2.mixcretailassemblyrn84
+    supportsScreens=[small, medium, large, xlarge, resizeable, anyDensity]
+    timeStamp=2026-04-22 02:48:24
+    lastUpdateTime=2026-04-22 02:48:24
+    packageSource=0
+    signatures=PackageSignatures{5cc7879 version:2, signatures:[51ed3f60], past signatures:[]}
+    installPermissionsFixed=true
+    pkgFlags=[ HAS_CODE ALLOW_CLEAR_USER_DATA LARGE_HEAP ]
+    declared permissions:
+      com.impos2.mixcretailassemblyrn84.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION: prot=signature, INSTALLED
+    requested permissions:
+      android.permission.INTERNET
+      android.permission.POST_NOTIFICATIONS
+      android.permission.CAMERA
+      android.permission.FOREGROUND_SERVICE
+      android.permission.FOREGROUND_SERVICE_DATA_SYNC
+      com.impos2.mixcretailassemblyrn84.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+      android.permission.ACCESS_NETWORK_STATE
+    install permissions:
+      android.permission.FOREGROUND_SERVICE: granted=true
+      android.permission.INTERNET: granted=true
+      android.permission.ACCESS_NETWORK_STATE: granted=true
+      com.impos2.mixcretailassemblyrn84.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION: granted=true
+    User 0: ceDataInode=139520 installed=true hidden=false suspended=false distractionFlags=0 stopped=false notLaunched=false enabled=0 instant=false virtual=false
+      installReason=0
+      firstInstallTime=2026-04-21 23:12:57
+      uninstallReason=0
+      overlay paths:
+        /product/overlay/NavigationBarModeGestural/NavigationBarModeGesturalOverlay.apk
+        /data/resource-cache/com.android.systemui-neutral-ubet.frro
+        /data/resource-cache/com.android.systemui-accent-fXut.frro
+      legacy overlay paths:
+        /product/overlay/NavigationBarModeGestural/NavigationBarModeGesturalOverlay.apk
+      gids=[3003]
+      runtime permissions:
+        android.permission.POST_NOTIFICATIONS: granted=false, flags=[ USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED]
+        android.permission.CAMERA: granted=false, flags=[ USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED]
+
+Queries:
+  system apps queryable: false
+  queries via forceQueryable:
+  queries via package name:
+  queries via component:
+    com.google.android.settings.intelligence:
+      com.impos2.mixcretailassemblyrn84
+  queryable via interaction:
+    User 0:
+      [com.android.wallpaperbackup,com.android.providers.settings,com.android.keychain,android,com.android.emulator.multidisplay,com.android.inputdevices,com.android.dynsystem,com.android.server.telecom,com.android.settings,com.android.localtransport,com.android.location.fused]:
+        com.impos2.mixcretailassemblyrn84
+      [com.google.android.gsf,com.google.android.gms]:
+        com.impos2.mixcretailassemblyrn84
+      com.google.android.inputmethod.latin:
+        com.impos2.mixcretailassemblyrn84
+  queryable via uses-library:
+
+Dexopt state:
+  [com.impos2.mixcretailassemblyrn84]
+    path: /data/app/~~fMx48HqhHxoyHrqq3AoZBQ==/com.impos2.mixcretailassemblyrn84-zSnEaRE0CqDaLG7OcxUzzA==/base.apk
+      arm64: [status=verify] [reason=install]
+  BgDexopt state:
+    enabled:true
+    mDexOptThread:null
+    mDexOptCancellingThread:null
+    mFinishedPostBootUpdate:false
+    mLastExecutionStatus:0
+    mLastExecutionStartTimeMs:0
+    mLastExecutionDurationIncludingSleepMs:0
+    mLastExecutionStartUptimeMs:0
+    mLastExecutionDurationMs:0
+    now:22867556
+    mLastCancelledPackages:
+    mFailedPackageNamesPrimary:
+    mFailedPackageNamesSecondary:
+
+Compiler stats:
+  [com.impos2.mixcretailassemblyrn84]
+     base.apk - 145

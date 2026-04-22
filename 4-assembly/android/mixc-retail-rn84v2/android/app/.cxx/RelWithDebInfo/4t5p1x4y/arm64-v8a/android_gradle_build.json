@@ -1,0 +1,73 @@
+{
+  "buildFiles": [
+    "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/build/generated/source/codegen/jni/CMakeLists.txt",
+    "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/node_modules/react-native-bootsplash/android/build/generated/source/codegen/jni/CMakeLists.txt",
+    "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/node_modules/react-native-nitro-modules/android/build/generated/source/codegen/jni/CMakeLists.txt",
+    "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/node_modules/react-native-svg/android/src/main/jni/CMakeLists.txt",
+    "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/node_modules/react-native/ReactAndroid/cmake-utils/default-app-setup/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/dexter/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/.cxx/RelWithDebInfo/4t5p1x4y/arm64-v8a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/dexter/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/.cxx/RelWithDebInfo/4t5p1x4y/arm64-v8a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "appmodules::@6890427a1f51a3e7e1df": {
+      "toolchain": "toolchain",
+      "abi": "arm64-v8a",
+      "artifactName": "appmodules",
+      "output": "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/build/intermediates/cxx/RelWithDebInfo/4t5p1x4y/obj/arm64-v8a/libappmodules.so",
+      "runtimeFiles": [
+        "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/build/intermediates/cxx/RelWithDebInfo/4t5p1x4y/obj/arm64-v8a/libreact_codegen_rnsvg.so",
+        "/Users/dexter/.gradle/caches/9.0.0/transforms/6cb94eb4240b26bae55579cb79d8f81a/transformed/fbjni-0.7.0/prefab/modules/fbjni/libs/android.arm64-v8a/libfbjni.so",
+        "/Users/dexter/.gradle/caches/9.0.0/transforms/4524a298039f3f6c65513efd568c050a/transformed/react-android-0.84.1-release/prefab/modules/jsi/libs/android.arm64-v8a/libjsi.so",
+        "/Users/dexter/.gradle/caches/9.0.0/transforms/4524a298039f3f6c65513efd568c050a/transformed/react-android-0.84.1-release/prefab/modules/reactnative/libs/android.arm64-v8a/libreactnative.so"
+      ]
+    },
+    "react_codegen_MixcRetailRN84v2Spec::@d7e081e776fcf37281b1": {
+      "toolchain": "toolchain",
+      "abi": "arm64-v8a",
+      "artifactName": "react_codegen_MixcRetailRN84v2Spec"
+    },
+    "react_codegen_NitroModulesSpec::@472a82f9c57d3d3b8644": {
+      "toolchain": "toolchain",
+      "abi": "arm64-v8a",
+      "artifactName": "react_codegen_NitroModulesSpec"
+    },
+    "react_codegen_RNBootSplashSpec::@05d5bd8b08339ce1ebaa": {
+      "toolchain": "toolchain",
+      "abi": "arm64-v8a",
+      "artifactName": "react_codegen_RNBootSplashSpec"
+    },
+    "react_codegen_rnsvg::@4f40eb209d0c0b4a3b65": {
+      "toolchain": "toolchain",
+      "abi": "arm64-v8a",
+      "artifactName": "react_codegen_rnsvg",
+      "output": "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/build/intermediates/cxx/RelWithDebInfo/4t5p1x4y/obj/arm64-v8a/libreact_codegen_rnsvg.so",
+      "runtimeFiles": [
+        "/Users/dexter/.gradle/caches/9.0.0/transforms/4524a298039f3f6c65513efd568c050a/transformed/react-android-0.84.1-release/prefab/modules/reactnative/libs/android.arm64-v8a/libreactnative.so",
+        "/Users/dexter/.gradle/caches/9.0.0/transforms/4524a298039f3f6c65513efd568c050a/transformed/react-android-0.84.1-release/prefab/modules/jsi/libs/android.arm64-v8a/libjsi.so",
+        "/Users/dexter/.gradle/caches/9.0.0/transforms/6cb94eb4240b26bae55579cb79d8f81a/transformed/fbjni-0.7.0/prefab/modules/fbjni/libs/android.arm64-v8a/libfbjni.so"
+      ]
+    }
+  },
+  "toolchains": {
+    "toolchain": {
+      "cCompilerExecutable": "/Users/dexter/Library/Android/sdk/ndk/27.1.12297006/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang.lld",
+      "cppCompilerExecutable": "/Users/dexter/Library/Android/sdk/ndk/27.1.12297006/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++.lld"
+    }
+  },
+  "cFileExtensions": [],
+  "cppFileExtensions": [
+    "cpp"
+  ]
+}

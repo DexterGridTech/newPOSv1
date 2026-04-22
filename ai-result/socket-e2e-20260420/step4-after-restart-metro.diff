@@ -1,0 +1,11 @@
+--- ai-result/socket-e2e-20260420/metro-before-restart.log	2026-04-20 21:44:15
++++ ai-result/socket-e2e-20260420/metro.log	2026-04-20 21:44:24
+@@ -24,3 +24,8 @@
+  INFO  [1m[7m💡 JavaScript logs have moved![22m They can now be viewed in React Native DevTools. Tip: Type [1mj[22m in the terminal to open.[27m
+  INFO  Dev server ready. Press Ctrl+C to exit.
+  INFO  Interactive mode is not supported in this environment
++ BUNDLE  ./index.js ░░░░░░░░░░░░░░░░ 0% (0/1)
++ BUNDLE  ./index.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 94% (1164/1255)
++ BUNDLE  ./index.js 
++ BUNDLE  ./index.js ░░░░░░░░░░░░░░░░ 0% (0/1)
++ BUNDLE  ./index.js 

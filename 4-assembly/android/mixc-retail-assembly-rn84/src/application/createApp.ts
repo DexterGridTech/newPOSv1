@@ -5,6 +5,7 @@ import {
 } from '@impos2/kernel-base-tcp-control-runtime-v2'
 import {
     createTopologyRuntimeModuleV3,
+    selectTopologyRuntimeV3Connection,
     selectTopologyRuntimeV3Context,
     topologyRuntimeV3CommandDefinitions,
 } from '@impos2/kernel-base-topology-runtime-v3'
@@ -243,14 +244,59 @@ const syncMasterTopologyBindingFromHost = (
     if (!addressInfo) {
         return
     }
-    const localWsUrl = typeof addressInfo.localWsUrl === 'string' ? addressInfo.localWsUrl : undefined
-    const localHttpBaseUrl = typeof addressInfo.localHttpBaseUrl === 'string' ? addressInfo.localHttpBaseUrl : undefined
+    const nestedAddressInfo = typeof addressInfo.addressInfo === 'object' && addressInfo.addressInfo != null
+        ? addressInfo.addressInfo as Record<string, unknown>
+        : undefined
+    const resolvedAddressInfo = nestedAddressInfo ?? addressInfo
+    const localWsUrl = typeof resolvedAddressInfo.localWsUrl === 'string'
+        ? resolvedAddressInfo.localWsUrl
+        : typeof resolvedAddressInfo.wsUrl === 'string'
+            ? resolvedAddressInfo.wsUrl
+            : undefined
+    const localHttpBaseUrl = typeof resolvedAddressInfo.localHttpBaseUrl === 'string'
+        ? resolvedAddressInfo.localHttpBaseUrl
+        : typeof resolvedAddressInfo.httpBaseUrl === 'string'
+            ? resolvedAddressInfo.httpBaseUrl
+            : undefined
     if (!localWsUrl && !localHttpBaseUrl) {
         return
     }
     bindingSource.set({
         wsUrl: localWsUrl,
         httpBaseUrl: localHttpBaseUrl,
+    })
+}
+
+const createStandaloneSlaveTopologyAutoStartKey = (
+    context: ReturnType<typeof selectTopologyRuntimeV3Context>,
+): string | null => {
+    if (!context || context.standalone !== true || context.instanceMode !== 'SLAVE') {
+        return null
+    }
+
+    const masterLocator = context.masterLocator as Record<string, unknown> | null | undefined
+    const serverAddress = Array.isArray(masterLocator?.serverAddress)
+        ? masterLocator.serverAddress
+            .map(entry => typeof (entry as Record<string, unknown>)?.address === 'string'
+                ? (entry as Record<string, unknown>).address as string
+                : null)
+            .filter((address): address is string => Boolean(address))
+        : []
+    const httpBaseUrl = typeof masterLocator?.httpBaseUrl === 'string'
+        ? masterLocator.httpBaseUrl
+        : ''
+
+    if (serverAddress.length === 0 && !httpBaseUrl) {
+        return null
+    }
+
+    return JSON.stringify({
+        localNodeId: context.localNodeId,
+        displayMode: context.displayMode,
+        masterNodeId: typeof masterLocator?.masterNodeId === 'string' ? masterLocator.masterNodeId : '',
+        masterDeviceId: typeof masterLocator?.masterDeviceId === 'string' ? masterLocator.masterDeviceId : '',
+        serverAddress,
+        httpBaseUrl,
     })
 }
 
@@ -298,6 +344,7 @@ export const createApp = (
     const automationTarget = getAssemblyAutomationHostConfig(props.displayIndex).target
     let topologyHostRunning = false
     let topologyHostTransition: Promise<void> | null = null
+    let standaloneSlaveTopologyAutoStartKey: string | null = null
 
     const syncNativeTopologyHostLifecycle = async (
         runtime: import('@impos2/kernel-base-runtime-shell-v2').KernelRuntimeV2,
@@ -400,6 +447,46 @@ export const createApp = (
         }
     }
 
+    const maybeAutoStartStandaloneSlaveTopologyConnection = async (
+        runtime: import('@impos2/kernel-base-runtime-shell-v2').KernelRuntimeV2,
+    ): Promise<void> => {
+        const state = runtime.getState()
+        const context = selectTopologyRuntimeV3Context(state)
+        const connection = selectTopologyRuntimeV3Connection(state)
+        const autoStartKey = createStandaloneSlaveTopologyAutoStartKey(context)
+
+        if (!autoStartKey) {
+            standaloneSlaveTopologyAutoStartKey = null
+            return
+        }
+        if (connection?.serverConnectionStatus && connection.serverConnectionStatus !== 'DISCONNECTED') {
+            return
+        }
+        if (standaloneSlaveTopologyAutoStartKey === autoStartKey) {
+            return
+        }
+
+        standaloneSlaveTopologyAutoStartKey = autoStartKey
+        platformPorts.logger.info({
+            category: 'assembly.topology',
+            event: 'topology-slave-autostart',
+            message: 'Auto-starting topology connection for standalone slave recovery',
+            data: {
+                displayCount: props.displayCount,
+                displayIndex: props.displayIndex,
+                deviceId: props.deviceId,
+                displayMode: context?.displayMode,
+                localNodeId: context?.localNodeId,
+                masterNodeId: context?.masterLocator?.masterNodeId,
+                masterDeviceId: context?.masterLocator?.masterDeviceId,
+            },
+        })
+        await runtime.dispatchCommand(createCommand(
+            topologyRuntimeV3CommandDefinitions.startTopologyConnection,
+            {},
+        ))
+    }
+
     const scheduleTopologyHostLifecycleSync = (
         runtime: import('@impos2/kernel-base-runtime-shell-v2').KernelRuntimeV2,
     ) => {
@@ -407,6 +494,7 @@ export const createApp = (
             .catch(() => undefined)
             .then(async () => {
                 await syncNativeTopologyHostLifecycle(runtime)
+                await maybeAutoStartStandaloneSlaveTopologyConnection(runtime)
             })
         topologyHostTransition = next.finally(() => {
             if (topologyHostTransition === next) {

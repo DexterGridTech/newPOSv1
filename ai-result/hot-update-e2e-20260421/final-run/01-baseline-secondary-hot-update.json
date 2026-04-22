@@ -1,0 +1,31 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "current": {
+      "source": "embedded",
+      "appId": "assembly-android-mixc-retail-rn84",
+      "assemblyVersion": "1.0.0",
+      "buildNumber": 2,
+      "runtimeVersion": "android-mixc-retail-rn84@1.0",
+      "bundleVersion": "1.0.0+ota.8",
+      "appliedAt": 1776634660384
+    },
+    "history": [
+      {
+        "event": "applied",
+        "bundleVersion": "1.0.0+ota.8",
+        "at": 1776634663607
+      }
+    ],
+    "previous": {
+      "source": "embedded",
+      "appId": "assembly-android-mixc-retail-rn84",
+      "assemblyVersion": "1.0.0",
+      "buildNumber": 1,
+      "runtimeVersion": "android-mixc-retail-rn84@1.0",
+      "bundleVersion": "1.0.0+ota.0",
+      "appliedAt": 0
+    }
+  },
+  "id": "1776719766593-db4a8ebbfb6d18"
+}

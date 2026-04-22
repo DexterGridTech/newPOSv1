@@ -1,0 +1,1 @@
+{"version":3,"file":"slaveInfo.d.ts","sourceRoot":"","sources":["../../../src/types/shared/slaveInfo.ts"],"names":[],"mappings":"AAAA,MAAM,WAAW,SAAS;IACtB,QAAQ,EAAE,MAAM,CAAA;IAChB,QAAQ,EAAE,OAAO,CAAA;IACjB,OAAO,EAAE,MAAM,CAAA;CAClB;AAGD,MAAM,WAAW,eAAe;IAC5B,QAAQ,EAAE,MAAM,CAAA;IAChB,WAAW,EAAE,MAAM,CAAA;IACnB,cAAc,CAAC,EAAE,MAAM,CAAA;CAC1B"}

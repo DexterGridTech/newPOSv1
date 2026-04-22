@@ -1,0 +1,704 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:1:1-67:12
+INJECTED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:1:1-67:12
+INJECTED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:1:1-67:12
+INJECTED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:1:1-67:12
+MERGED from [:impos2_adapter-android-rn84] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/turbomodule-lib/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:2:1-37:12
+MERGED from [:react-native-mmkv] /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/node_modules/react-native-mmkv/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:2:1-7:12
+MERGED from [:react-native-nitro-modules] /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/node_modules/react-native-nitro-modules/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:2:1-7:12
+MERGED from [:react-native-splash-screen] /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/node_modules/react-native-splash-screen/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:2:1-7:12
+MERGED from [:react-native-svg] /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/node_modules/react-native-svg/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:2:1-7:12
+MERGED from [com.facebook.react:react-android:0.84.1] /Users/dexter/.gradle/caches/8.13/transforms/34327d8e45a7655b9a1c4eb72223df88/transformed/jetified-react-android-0.84.1-debug/AndroidManifest.xml:2:1-24:12
+MERGED from [androidx.core:core-splashscreen:1.0.1] /Users/dexter/.gradle/caches/8.13/transforms/3e77e70ae60fbb47332f43f24d995ad3/transformed/jetified-core-splashscreen-1.0.1/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.camera:camera-video:1.3.4] /Users/dexter/.gradle/caches/8.13/transforms/9d7b9047042a217a14dae76a14cdd199/transformed/jetified-camera-video-1.3.4/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.camera:camera-view:1.3.4] /Users/dexter/.gradle/caches/8.13/transforms/a3eab981c6f4212a6765d0e5a3d844af/transformed/jetified-camera-view-1.3.4/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.camera:camera-lifecycle:1.3.4] /Users/dexter/.gradle/caches/8.13/transforms/83d7901927a1b89e3fe326e66bfa4c53/transformed/jetified-camera-lifecycle-1.3.4/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.camera:camera-camera2:1.3.4] /Users/dexter/.gradle/caches/8.13/transforms/c6edc87bd0553645b5a02ba0ed7efd5c/transformed/jetified-camera-camera2-1.3.4/AndroidManifest.xml:17:1-36:12
+MERGED from [androidx.camera:camera-core:1.3.4] /Users/dexter/.gradle/caches/8.13/transforms/444827fbd24daab587b226ffe74a1253/transformed/jetified-camera-core-1.3.4/AndroidManifest.xml:17:1-36:12
+MERGED from [com.facebook.fresco:fresco:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/57620c3cb3e0dc52b1f976f3ab077ec2/transformed/jetified-fresco-3.6.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.facebook.fresco:imagepipeline-okhttp3:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/3262707a51636152f7bb4bcfef35650d/transformed/jetified-imagepipeline-okhttp3-3.6.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.facebook.fresco:drawee:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/312c38adeac9a63c5df1c5ceeb88a449/transformed/jetified-drawee-3.6.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.facebook.fresco:nativeimagefilters:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/678e3f3ceebf462fb63c2925b3741a30/transformed/jetified-nativeimagefilters-3.6.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.facebook.fresco:memory-type-native:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/4a1c8fa3745b1386032b3319d5e1b62e/transformed/jetified-memory-type-native-3.6.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.facebook.fresco:memory-type-java:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/88dc342a6ff3e6a1bcb2ad8693f909b2/transformed/jetified-memory-type-java-3.6.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.facebook.fresco:imagepipeline-native:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/05400b6799c136966105f18a7445c7ad/transformed/jetified-imagepipeline-native-3.6.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.facebook.fresco:memory-type-ashmem:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/18141368972d9e5c23f44f8230e9bf62/transformed/jetified-memory-type-ashmem-3.6.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.facebook.fresco:imagepipeline:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/19e10230253cb831b967e177b53b3bf4/transformed/jetified-imagepipeline-3.6.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.facebook.fresco:nativeimagetranscoder:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/dd847b932f3fccdb81fc60631bdfd8bc/transformed/jetified-nativeimagetranscoder-3.6.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.facebook.fresco:imagepipeline-base:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/c20e8dae837ab7dad51352c214afd970/transformed/jetified-imagepipeline-base-3.6.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.facebook.fresco:urimod:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/510dad3cf369748ded9e31759a9ad586/transformed/jetified-urimod-3.6.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.facebook.fresco:vito-source:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/558eefd3503e9d65f1fa63a63ea08349/transformed/jetified-vito-source-3.6.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.facebook.fresco:middleware:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/6267ce496923c2ba74f26dcc8c12ea67/transformed/jetified-middleware-3.6.0/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.appcompat:appcompat-resources:1.7.0] /Users/dexter/.gradle/caches/8.13/transforms/697a0b29d30b5cf0b1f34e84756e00cb/transformed/jetified-appcompat-resources-1.7.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.google.mlkit:barcode-scanning:17.3.0] /Users/dexter/.gradle/caches/8.13/transforms/04444bcdbc9eeabe8cb6449b6843e87b/transformed/jetified-barcode-scanning-17.3.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/dexter/.gradle/caches/8.13/transforms/1e24d23557b272745b2da1543ff3e08d/transformed/jetified-play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:2:1-18:12
+MERGED from [com.google.mlkit:barcode-scanning-common:17.0.0] /Users/dexter/.gradle/caches/8.13/transforms/65fbbabd11fe4771ce60cc0b1bb0f976/transformed/jetified-barcode-scanning-common-17.0.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.google.mlkit:vision-common:17.3.0] /Users/dexter/.gradle/caches/8.13/transforms/bbda258e5a940b6ba6dacb00b78c62b3/transformed/jetified-vision-common-17.3.0/AndroidManifest.xml:2:1-18:12
+MERGED from [com.google.mlkit:common:18.11.0] /Users/dexter/.gradle/caches/8.13/transforms/20f7bd32bb9c6048bc71842db34cd3e2/transformed/jetified-common-18.11.0/AndroidManifest.xml:2:1-26:12
+MERGED from [androidx.appcompat:appcompat:1.7.0] /Users/dexter/.gradle/caches/8.13/transforms/6d000423bb7f2c6c3ea50adaad3b9649/transformed/appcompat-1.7.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.facebook.fresco:ui-common:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/3cfc5ac0d53f9099bc84a3d9779fa305/transformed/jetified-ui-common-3.6.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.google.android.gms:play-services-base:18.5.0] /Users/dexter/.gradle/caches/8.13/transforms/746d24ad358c16934d6ba1eacb396257/transformed/jetified-play-services-base-18.5.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.google.mlkit:vision-interfaces:16.3.0] /Users/dexter/.gradle/caches/8.13/transforms/f09c41fac5e7e872def42f36c72bc5a8/transformed/jetified-vision-interfaces-16.3.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.google.android.gms:play-services-tasks:18.2.0] /Users/dexter/.gradle/caches/8.13/transforms/39c6c93eab159a2326c7e06cd4fc69d6/transformed/jetified-play-services-tasks-18.2.0/AndroidManifest.xml:2:1-5:12
+MERGED from [com.google.android.gms:play-services-basement:18.4.0] /Users/dexter/.gradle/caches/8.13/transforms/edd07ebaea047d96cc9ec408657d321c/transformed/jetified-play-services-basement-18.4.0/AndroidManifest.xml:2:1-9:12
+MERGED from [androidx.fragment:fragment:1.5.4] /Users/dexter/.gradle/caches/8.13/transforms/aa347e8a433c80b37160c2ebd7ea7882/transformed/fragment-1.5.4/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.activity:activity:1.7.0] /Users/dexter/.gradle/caches/8.13/transforms/31a20adcbfca1b3b3f9a7bef7f74ebdf/transformed/jetified-activity-1.7.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.autofill:autofill:1.1.0] /Users/dexter/.gradle/caches/8.13/transforms/af9536f59c0f125841cc70c8ae0695c4/transformed/jetified-autofill-1.1.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.swiperefreshlayout:swiperefreshlayout:1.1.0] /Users/dexter/.gradle/caches/8.13/transforms/b2337e4014ac1d493ae809cfad9ec816/transformed/swiperefreshlayout-1.1.0/AndroidManifest.xml:17:1-24:12
+MERGED from [com.facebook.fresco:soloader:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/6a0639fa704ef312f937cb59da269526/transformed/jetified-soloader-3.6.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.facebook.fresco:fbcore:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/e786125e4676564119392a9875d05327/transformed/jetified-fbcore-3.6.0/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.drawerlayout:drawerlayout:1.0.0] /Users/dexter/.gradle/caches/8.13/transforms/5de253474891016aa33d96c8a4d02dda/transformed/drawerlayout-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.emoji2:emoji2-views-helper:1.3.0] /Users/dexter/.gradle/caches/8.13/transforms/4dd5b0c956ae6bbbee4ebc133ff237e4/transformed/jetified-emoji2-views-helper-1.3.0/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.emoji2:emoji2:1.3.0] /Users/dexter/.gradle/caches/8.13/transforms/46b209fb4841f6de75171092dd86dc67/transformed/jetified-emoji2-1.3.0/AndroidManifest.xml:17:1-35:12
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] /Users/dexter/.gradle/caches/8.13/transforms/b1b9467164e73a1126ebe6ef93595ec9/transformed/vectordrawable-animated-1.1.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] /Users/dexter/.gradle/caches/8.13/transforms/298cb8a7d2b4130384c9ccdbca9904e9/transformed/vectordrawable-1.1.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.viewpager:viewpager:1.0.0] /Users/dexter/.gradle/caches/8.13/transforms/3f14dcfb170c417bf401677caf4ed0cd/transformed/viewpager-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.customview:customview:1.0.0] /Users/dexter/.gradle/caches/8.13/transforms/6c89e18be965c60a802e373e3967c51b/transformed/customview-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.loader:loader:1.0.0] /Users/dexter/.gradle/caches/8.13/transforms/9baf2f0581b1077500ddd9a22007935f/transformed/loader-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.core:core-ktx:1.13.1] /Users/dexter/.gradle/caches/8.13/transforms/84d854874fe3014f5ed7dd1d0f93c8e8/transformed/jetified-core-ktx-1.13.1/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.core:core:1.13.1] /Users/dexter/.gradle/caches/8.13/transforms/a5420fec8d08a55848303848a4cdbc89/transformed/core-1.13.1/AndroidManifest.xml:17:1-30:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.6.2] /Users/dexter/.gradle/caches/8.13/transforms/6cc8bba5ca05ffc8e41dc4bbcab2b675/transformed/lifecycle-viewmodel-2.6.2/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] /Users/dexter/.gradle/caches/8.13/transforms/bf7336c06d95aca8e3e04d915c5ba2cd/transformed/jetified-lifecycle-process-2.6.2/AndroidManifest.xml:17:1-35:12
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.6.2] /Users/dexter/.gradle/caches/8.13/transforms/4dd56ed963d0df4d90e51f7b1f12b9fb/transformed/lifecycle-livedata-core-2.6.2/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.6.2] /Users/dexter/.gradle/caches/8.13/transforms/5fecec6cf2849d1238a23031341b1959/transformed/lifecycle-livedata-2.6.2/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.6.2] /Users/dexter/.gradle/caches/8.13/transforms/374d24c3d9a4b876cc03569568ed88ba/transformed/lifecycle-runtime-2.6.2/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.2] /Users/dexter/.gradle/caches/8.13/transforms/82a42062cb411ffb36aae2ef9d047dfb/transformed/jetified-lifecycle-viewmodel-savedstate-2.6.2/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.savedstate:savedstate:1.2.1] /Users/dexter/.gradle/caches/8.13/transforms/583f8290db7bc65f0499b6c2dfcb9932/transformed/jetified-savedstate-1.2.1/AndroidManifest.xml:17:1-22:12
+MERGED from [com.facebook.fresco:ui-core:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/814ac6f99dad11ea8e17bf2e3593b913/transformed/jetified-ui-core-3.6.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.facebook.hermes:hermes-android:250829098.0.9] /Users/dexter/.gradle/caches/8.13/transforms/04d2fcbfca8714d95627b25f132ce6a1/transformed/jetified-hermes-android-250829098.0.9-debug/AndroidManifest.xml:2:1-7:12
+MERGED from [io.github.zhongwuzw:mmkv:2.4.0] /Users/dexter/.gradle/caches/8.13/transforms/a009c676b7380b14c472361d85f31c39/transformed/jetified-mmkv-2.4.0/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/8.13/transforms/6766a76c70371760a95af4f1f24ac116/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:17:1-55:12
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/dexter/.gradle/caches/8.13/transforms/cca9453cc004c65f377b213b64afbea5/transformed/jetified-startup-runtime-1.1.1/AndroidManifest.xml:17:1-33:12
+MERGED from [androidx.tracing:tracing:1.1.0] /Users/dexter/.gradle/caches/8.13/transforms/907553d70c42f52038ad76285961223d/transformed/jetified-tracing-1.1.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.exifinterface:exifinterface:1.3.2] /Users/dexter/.gradle/caches/8.13/transforms/38e52533057ee77d2a74aeba1fe55ec3/transformed/exifinterface-1.3.2/AndroidManifest.xml:17:1-24:12
+MERGED from [io.github.zhongwuzw:annotation:2.4.0] /Users/dexter/.gradle/caches/8.13/transforms/5becfc11e0c55fd79876dfbaeb9d785b/transformed/jetified-annotation-2.4.0/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] /Users/dexter/.gradle/caches/8.13/transforms/3767da8f40b2030ed7c0c0c10be27679/transformed/cursoradapter-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.interpolator:interpolator:1.0.0] /Users/dexter/.gradle/caches/8.13/transforms/191f7f771f0185e15156827a7c5264ef/transformed/interpolator-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/dexter/.gradle/caches/8.13/transforms/521f56bf90813af890bf26cc413b1b3c/transformed/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:15:1-38:12
+MERGED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/dexter/.gradle/caches/8.13/transforms/32fedb24903d66b0705ab1df936e5867/transformed/jetified-transport-runtime-2.2.6/AndroidManifest.xml:15:1-41:12
+MERGED from [com.google.android.datatransport:transport-api:2.2.1] /Users/dexter/.gradle/caches/8.13/transforms/a294a7b55c5de95f7ddf5228eb100d93/transformed/jetified-transport-api-2.2.1/AndroidManifest.xml:15:1-22:12
+MERGED from [com.google.firebase:firebase-components:16.1.0] /Users/dexter/.gradle/caches/8.13/transforms/f1481daa6fe1f4fa478d9f56a7cb50d7/transformed/jetified-firebase-components-16.1.0/AndroidManifest.xml:15:1-23:12
+MERGED from [com.google.firebase:firebase-encoders-json:17.1.0] /Users/dexter/.gradle/caches/8.13/transforms/d135f45b4bb2072296edd9f82d03e7a8/transformed/jetified-firebase-encoders-json-17.1.0/AndroidManifest.xml:15:1-23:12
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/dexter/.gradle/caches/8.13/transforms/1d0d5cd0c3f0cefb9c611681b87ccdf4/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:17:1-27:12
+MERGED from [androidx.arch.core:core-runtime:2.2.0] /Users/dexter/.gradle/caches/8.13/transforms/6cb573aa60fc457aa94064e4e0abf85a/transformed/core-runtime-2.2.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.annotation:annotation-experimental:1.4.0] /Users/dexter/.gradle/caches/8.13/transforms/16b9aa4a1ef1c54b4f643ea8e9f4b357/transformed/jetified-annotation-experimental-1.4.0/AndroidManifest.xml:2:1-7:12
+MERGED from [wang.harlon.quickjs:wrapper-android:3.2.3] /Users/dexter/.gradle/caches/8.13/transforms/f5a64147707b12bd4cca5c3f63877154/transformed/jetified-wrapper-android-3.2.3/AndroidManifest.xml:2:1-7:12
+MERGED from [com.facebook.fbjni:fbjni:0.7.0] /Users/dexter/.gradle/caches/8.13/transforms/34dda157d506ce7d0de690b58113d724/transformed/jetified-fbjni-0.7.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.facebook.soloader:soloader:0.12.1] /Users/dexter/.gradle/caches/8.13/transforms/7b304b17d5601cb97c621ecced846a00/transformed/jetified-soloader-0.12.1/AndroidManifest.xml:2:1-17:12
+MERGED from [com.google.android.odml:image:1.0.0-beta1] /Users/dexter/.gradle/caches/8.13/transforms/1e7abec3680f31ddbb12f50e8cff98cb/transformed/jetified-image-1.0.0-beta1/AndroidManifest.xml:2:1-9:12
+	package
+		INJECTED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml
+	android:versionName
+		INJECTED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml
+	android:versionCode
+		INJECTED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:1:11-69
+uses-permission#android.permission.INTERNET
+ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:3:5-67
+MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/dexter/.gradle/caches/8.13/transforms/521f56bf90813af890bf26cc413b1b3c/transformed/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:26:5-67
+MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/dexter/.gradle/caches/8.13/transforms/521f56bf90813af890bf26cc413b1b3c/transformed/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:26:5-67
+	android:name
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:3:22-64
+uses-permission#android.permission.ACCESS_NETWORK_STATE
+ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:4:5-79
+MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/dexter/.gradle/caches/8.13/transforms/521f56bf90813af890bf26cc413b1b3c/transformed/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:25:5-79
+MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/dexter/.gradle/caches/8.13/transforms/521f56bf90813af890bf26cc413b1b3c/transformed/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:25:5-79
+MERGED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/dexter/.gradle/caches/8.13/transforms/32fedb24903d66b0705ab1df936e5867/transformed/jetified-transport-runtime-2.2.6/AndroidManifest.xml:22:5-79
+MERGED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/dexter/.gradle/caches/8.13/transforms/32fedb24903d66b0705ab1df936e5867/transformed/jetified-transport-runtime-2.2.6/AndroidManifest.xml:22:5-79
+	android:name
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:4:22-76
+uses-permission#android.permission.ACCESS_WIFI_STATE
+ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:5:5-76
+	android:name
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:5:22-73
+uses-permission#android.permission.CAMERA
+ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:8:5-65
+MERGED from [:impos2_adapter-android-rn84] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/turbomodule-lib/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:7:5-65
+MERGED from [:impos2_adapter-android-rn84] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/turbomodule-lib/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:7:5-65
+	android:name
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:8:22-62
+uses-feature#android.hardware.camera
+ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:9:5-85
+MERGED from [:impos2_adapter-android-rn84] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/turbomodule-lib/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:9:5-11:36
+MERGED from [:impos2_adapter-android-rn84] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/turbomodule-lib/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:9:5-11:36
+	android:required
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:9:58-82
+	android:name
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:9:19-57
+uses-permission#android.permission.BLUETOOTH
+ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:12:5-95
+	android:maxSdkVersion
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:12:66-92
+	android:name
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:12:22-65
+uses-permission#android.permission.BLUETOOTH_ADMIN
+ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:13:5-101
+	android:maxSdkVersion
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:13:72-98
+	android:name
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:13:22-71
+uses-permission#android.permission.BLUETOOTH_CONNECT
+ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:14:5-76
+	android:name
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:14:22-73
+uses-permission#android.permission.BLUETOOTH_SCAN
+ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:15:5-73
+	android:name
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:15:22-70
+uses-feature#android.hardware.usb.host
+ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:18:5-87
+	android:required
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:18:60-84
+	android:name
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:18:19-59
+uses-permission#android.permission.FOREGROUND_SERVICE
+ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:21:5-77
+	android:name
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:21:22-74
+uses-permission#android.permission.FOREGROUND_SERVICE_DATA_SYNC
+ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:22:5-87
+	android:name
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:22:22-84
+application
+ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:24:5-66:19
+INJECTED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:24:5-66:19
+MERGED from [:impos2_adapter-android-rn84] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/turbomodule-lib/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:13:5-35:19
+MERGED from [:impos2_adapter-android-rn84] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/turbomodule-lib/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:13:5-35:19
+MERGED from [com.facebook.react:react-android:0.84.1] /Users/dexter/.gradle/caches/8.13/transforms/34327d8e45a7655b9a1c4eb72223df88/transformed/jetified-react-android-0.84.1-debug/AndroidManifest.xml:18:5-22:19
+MERGED from [com.facebook.react:react-android:0.84.1] /Users/dexter/.gradle/caches/8.13/transforms/34327d8e45a7655b9a1c4eb72223df88/transformed/jetified-react-android-0.84.1-debug/AndroidManifest.xml:18:5-22:19
+MERGED from [androidx.camera:camera-camera2:1.3.4] /Users/dexter/.gradle/caches/8.13/transforms/c6edc87bd0553645b5a02ba0ed7efd5c/transformed/jetified-camera-camera2-1.3.4/AndroidManifest.xml:23:5-34:19
+MERGED from [androidx.camera:camera-camera2:1.3.4] /Users/dexter/.gradle/caches/8.13/transforms/c6edc87bd0553645b5a02ba0ed7efd5c/transformed/jetified-camera-camera2-1.3.4/AndroidManifest.xml:23:5-34:19
+MERGED from [androidx.camera:camera-core:1.3.4] /Users/dexter/.gradle/caches/8.13/transforms/444827fbd24daab587b226ffe74a1253/transformed/jetified-camera-core-1.3.4/AndroidManifest.xml:23:5-34:19
+MERGED from [androidx.camera:camera-core:1.3.4] /Users/dexter/.gradle/caches/8.13/transforms/444827fbd24daab587b226ffe74a1253/transformed/jetified-camera-core-1.3.4/AndroidManifest.xml:23:5-34:19
+MERGED from [com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/dexter/.gradle/caches/8.13/transforms/1e24d23557b272745b2da1543ff3e08d/transformed/jetified-play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:8:5-16:19
+MERGED from [com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/dexter/.gradle/caches/8.13/transforms/1e24d23557b272745b2da1543ff3e08d/transformed/jetified-play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:8:5-16:19
+MERGED from [com.google.mlkit:vision-common:17.3.0] /Users/dexter/.gradle/caches/8.13/transforms/bbda258e5a940b6ba6dacb00b78c62b3/transformed/jetified-vision-common-17.3.0/AndroidManifest.xml:8:5-16:19
+MERGED from [com.google.mlkit:vision-common:17.3.0] /Users/dexter/.gradle/caches/8.13/transforms/bbda258e5a940b6ba6dacb00b78c62b3/transformed/jetified-vision-common-17.3.0/AndroidManifest.xml:8:5-16:19
+MERGED from [com.google.mlkit:common:18.11.0] /Users/dexter/.gradle/caches/8.13/transforms/20f7bd32bb9c6048bc71842db34cd3e2/transformed/jetified-common-18.11.0/AndroidManifest.xml:8:5-24:19
+MERGED from [com.google.mlkit:common:18.11.0] /Users/dexter/.gradle/caches/8.13/transforms/20f7bd32bb9c6048bc71842db34cd3e2/transformed/jetified-common-18.11.0/AndroidManifest.xml:8:5-24:19
+MERGED from [com.google.android.gms:play-services-base:18.5.0] /Users/dexter/.gradle/caches/8.13/transforms/746d24ad358c16934d6ba1eacb396257/transformed/jetified-play-services-base-18.5.0/AndroidManifest.xml:4:5-6:19
+MERGED from [com.google.android.gms:play-services-base:18.5.0] /Users/dexter/.gradle/caches/8.13/transforms/746d24ad358c16934d6ba1eacb396257/transformed/jetified-play-services-base-18.5.0/AndroidManifest.xml:4:5-6:19
+MERGED from [com.google.android.gms:play-services-tasks:18.2.0] /Users/dexter/.gradle/caches/8.13/transforms/39c6c93eab159a2326c7e06cd4fc69d6/transformed/jetified-play-services-tasks-18.2.0/AndroidManifest.xml:4:5-20
+MERGED from [com.google.android.gms:play-services-tasks:18.2.0] /Users/dexter/.gradle/caches/8.13/transforms/39c6c93eab159a2326c7e06cd4fc69d6/transformed/jetified-play-services-tasks-18.2.0/AndroidManifest.xml:4:5-20
+MERGED from [com.google.android.gms:play-services-basement:18.4.0] /Users/dexter/.gradle/caches/8.13/transforms/edd07ebaea047d96cc9ec408657d321c/transformed/jetified-play-services-basement-18.4.0/AndroidManifest.xml:5:5-7:19
+MERGED from [com.google.android.gms:play-services-basement:18.4.0] /Users/dexter/.gradle/caches/8.13/transforms/edd07ebaea047d96cc9ec408657d321c/transformed/jetified-play-services-basement-18.4.0/AndroidManifest.xml:5:5-7:19
+MERGED from [androidx.emoji2:emoji2:1.3.0] /Users/dexter/.gradle/caches/8.13/transforms/46b209fb4841f6de75171092dd86dc67/transformed/jetified-emoji2-1.3.0/AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.emoji2:emoji2:1.3.0] /Users/dexter/.gradle/caches/8.13/transforms/46b209fb4841f6de75171092dd86dc67/transformed/jetified-emoji2-1.3.0/AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.core:core:1.13.1] /Users/dexter/.gradle/caches/8.13/transforms/a5420fec8d08a55848303848a4cdbc89/transformed/core-1.13.1/AndroidManifest.xml:28:5-89
+MERGED from [androidx.core:core:1.13.1] /Users/dexter/.gradle/caches/8.13/transforms/a5420fec8d08a55848303848a4cdbc89/transformed/core-1.13.1/AndroidManifest.xml:28:5-89
+MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] /Users/dexter/.gradle/caches/8.13/transforms/bf7336c06d95aca8e3e04d915c5ba2cd/transformed/jetified-lifecycle-process-2.6.2/AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] /Users/dexter/.gradle/caches/8.13/transforms/bf7336c06d95aca8e3e04d915c5ba2cd/transformed/jetified-lifecycle-process-2.6.2/AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/8.13/transforms/6766a76c70371760a95af4f1f24ac116/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:23:5-53:19
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/8.13/transforms/6766a76c70371760a95af4f1f24ac116/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:23:5-53:19
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/dexter/.gradle/caches/8.13/transforms/cca9453cc004c65f377b213b64afbea5/transformed/jetified-startup-runtime-1.1.1/AndroidManifest.xml:25:5-31:19
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/dexter/.gradle/caches/8.13/transforms/cca9453cc004c65f377b213b64afbea5/transformed/jetified-startup-runtime-1.1.1/AndroidManifest.xml:25:5-31:19
+MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/dexter/.gradle/caches/8.13/transforms/521f56bf90813af890bf26cc413b1b3c/transformed/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:28:5-36:19
+MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/dexter/.gradle/caches/8.13/transforms/521f56bf90813af890bf26cc413b1b3c/transformed/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:28:5-36:19
+MERGED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/dexter/.gradle/caches/8.13/transforms/32fedb24903d66b0705ab1df936e5867/transformed/jetified-transport-runtime-2.2.6/AndroidManifest.xml:25:5-39:19
+MERGED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/dexter/.gradle/caches/8.13/transforms/32fedb24903d66b0705ab1df936e5867/transformed/jetified-transport-runtime-2.2.6/AndroidManifest.xml:25:5-39:19
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/dexter/.gradle/caches/8.13/transforms/1d0d5cd0c3f0cefb9c611681b87ccdf4/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:24:5-25:19
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/dexter/.gradle/caches/8.13/transforms/1d0d5cd0c3f0cefb9c611681b87ccdf4/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:24:5-25:19
+MERGED from [com.facebook.soloader:soloader:0.12.1] /Users/dexter/.gradle/caches/8.13/transforms/7b304b17d5601cb97c621ecced846a00/transformed/jetified-soloader-0.12.1/AndroidManifest.xml:11:5-15:19
+MERGED from [com.facebook.soloader:soloader:0.12.1] /Users/dexter/.gradle/caches/8.13/transforms/7b304b17d5601cb97c621ecced846a00/transformed/jetified-soloader-0.12.1/AndroidManifest.xml:11:5-15:19
+MERGED from [com.google.android.odml:image:1.0.0-beta1] /Users/dexter/.gradle/caches/8.13/transforms/1e7abec3680f31ddbb12f50e8cff98cb/transformed/jetified-image-1.0.0-beta1/AndroidManifest.xml:7:5-20
+MERGED from [com.google.android.odml:image:1.0.0-beta1] /Users/dexter/.gradle/caches/8.13/transforms/1e7abec3680f31ddbb12f50e8cff98cb/transformed/jetified-image-1.0.0-beta1/AndroidManifest.xml:7:5-20
+	android:extractNativeLibs
+		INJECTED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml
+	android:appComponentFactory
+		ADDED from [androidx.core:core:1.13.1] /Users/dexter/.gradle/caches/8.13/transforms/a5420fec8d08a55848303848a4cdbc89/transformed/core-1.13.1/AndroidManifest.xml:28:18-86
+	android:supportsRtl
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:34:7-33
+	android:label
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:26:7-39
+	android:hardwareAccelerated
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:31:7-41
+	android:roundIcon
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:28:7-52
+	android:largeHeap
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:32:7-31
+	android:icon
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:27:7-41
+	android:allowBackup
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:29:7-34
+	android:theme
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:30:7-38
+	android:networkSecurityConfig
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:33:7-67
+	android:name
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:25:7-38
+activity#com.impos2.mixcretailrn84.MainActivity
+ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:35:7-47:18
+	android:label
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:37:9-41
+	android:launchMode
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:39:9-40
+	android:windowSoftInputMode
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:40:9-48
+	android:exported
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:42:9-32
+	android:configChanges
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:38:9-118
+	android:theme
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:41:9-43
+	android:name
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:36:9-37
+intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
+ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:43:9-46:25
+action#android.intent.action.MAIN
+ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:44:13-65
+	android:name
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:44:21-62
+category#android.intent.category.LAUNCHER
+ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:45:13-73
+	android:name
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:45:23-70
+activity#com.impos2.mixcretailrn84.loading.LoadingActivity
+ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:51:7-56:36
+	android:excludeFromRecents
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:55:9-42
+	android:launchMode
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:54:9-40
+	android:exported
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:56:9-33
+	android:theme
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:53:9-44
+	android:name
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:52:9-48
+activity#com.impos2.mixcretailrn84.SecondaryActivity
+ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:58:7-64:36
+	android:process
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:63:9-37
+	android:windowSoftInputMode
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:61:9-48
+	android:exported
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:64:9-33
+	android:configChanges
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:60:9-118
+	android:theme
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:62:9-40
+	android:name
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml:59:9-42
+uses-sdk
+INJECTED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml
+INJECTED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml
+MERGED from [:impos2_adapter-android-rn84] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/turbomodule-lib/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:5:5-44
+MERGED from [:impos2_adapter-android-rn84] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/turbomodule-lib/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:5:5-44
+MERGED from [:react-native-mmkv] /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/node_modules/react-native-mmkv/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:5:5-44
+MERGED from [:react-native-mmkv] /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/node_modules/react-native-mmkv/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:5:5-44
+MERGED from [:react-native-nitro-modules] /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/node_modules/react-native-nitro-modules/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:5:5-44
+MERGED from [:react-native-nitro-modules] /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/node_modules/react-native-nitro-modules/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:5:5-44
+MERGED from [:react-native-splash-screen] /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/node_modules/react-native-splash-screen/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:5:5-44
+MERGED from [:react-native-splash-screen] /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/node_modules/react-native-splash-screen/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:5:5-44
+MERGED from [:react-native-svg] /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/node_modules/react-native-svg/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:5:5-44
+MERGED from [:react-native-svg] /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/node_modules/react-native-svg/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.react:react-android:0.84.1] /Users/dexter/.gradle/caches/8.13/transforms/34327d8e45a7655b9a1c4eb72223df88/transformed/jetified-react-android-0.84.1-debug/AndroidManifest.xml:10:5-44
+MERGED from [com.facebook.react:react-android:0.84.1] /Users/dexter/.gradle/caches/8.13/transforms/34327d8e45a7655b9a1c4eb72223df88/transformed/jetified-react-android-0.84.1-debug/AndroidManifest.xml:10:5-44
+MERGED from [androidx.core:core-splashscreen:1.0.1] /Users/dexter/.gradle/caches/8.13/transforms/3e77e70ae60fbb47332f43f24d995ad3/transformed/jetified-core-splashscreen-1.0.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.core:core-splashscreen:1.0.1] /Users/dexter/.gradle/caches/8.13/transforms/3e77e70ae60fbb47332f43f24d995ad3/transformed/jetified-core-splashscreen-1.0.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.camera:camera-video:1.3.4] /Users/dexter/.gradle/caches/8.13/transforms/9d7b9047042a217a14dae76a14cdd199/transformed/jetified-camera-video-1.3.4/AndroidManifest.xml:5:5-44
+MERGED from [androidx.camera:camera-video:1.3.4] /Users/dexter/.gradle/caches/8.13/transforms/9d7b9047042a217a14dae76a14cdd199/transformed/jetified-camera-video-1.3.4/AndroidManifest.xml:5:5-44
+MERGED from [androidx.camera:camera-view:1.3.4] /Users/dexter/.gradle/caches/8.13/transforms/a3eab981c6f4212a6765d0e5a3d844af/transformed/jetified-camera-view-1.3.4/AndroidManifest.xml:5:5-44
+MERGED from [androidx.camera:camera-view:1.3.4] /Users/dexter/.gradle/caches/8.13/transforms/a3eab981c6f4212a6765d0e5a3d844af/transformed/jetified-camera-view-1.3.4/AndroidManifest.xml:5:5-44
+MERGED from [androidx.camera:camera-lifecycle:1.3.4] /Users/dexter/.gradle/caches/8.13/transforms/83d7901927a1b89e3fe326e66bfa4c53/transformed/jetified-camera-lifecycle-1.3.4/AndroidManifest.xml:5:5-44
+MERGED from [androidx.camera:camera-lifecycle:1.3.4] /Users/dexter/.gradle/caches/8.13/transforms/83d7901927a1b89e3fe326e66bfa4c53/transformed/jetified-camera-lifecycle-1.3.4/AndroidManifest.xml:5:5-44
+MERGED from [androidx.camera:camera-camera2:1.3.4] /Users/dexter/.gradle/caches/8.13/transforms/c6edc87bd0553645b5a02ba0ed7efd5c/transformed/jetified-camera-camera2-1.3.4/AndroidManifest.xml:21:5-44
+MERGED from [androidx.camera:camera-camera2:1.3.4] /Users/dexter/.gradle/caches/8.13/transforms/c6edc87bd0553645b5a02ba0ed7efd5c/transformed/jetified-camera-camera2-1.3.4/AndroidManifest.xml:21:5-44
+MERGED from [androidx.camera:camera-core:1.3.4] /Users/dexter/.gradle/caches/8.13/transforms/444827fbd24daab587b226ffe74a1253/transformed/jetified-camera-core-1.3.4/AndroidManifest.xml:21:5-44
+MERGED from [androidx.camera:camera-core:1.3.4] /Users/dexter/.gradle/caches/8.13/transforms/444827fbd24daab587b226ffe74a1253/transformed/jetified-camera-core-1.3.4/AndroidManifest.xml:21:5-44
+MERGED from [com.facebook.fresco:fresco:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/57620c3cb3e0dc52b1f976f3ab077ec2/transformed/jetified-fresco-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:fresco:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/57620c3cb3e0dc52b1f976f3ab077ec2/transformed/jetified-fresco-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:imagepipeline-okhttp3:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/3262707a51636152f7bb4bcfef35650d/transformed/jetified-imagepipeline-okhttp3-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:imagepipeline-okhttp3:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/3262707a51636152f7bb4bcfef35650d/transformed/jetified-imagepipeline-okhttp3-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:drawee:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/312c38adeac9a63c5df1c5ceeb88a449/transformed/jetified-drawee-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:drawee:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/312c38adeac9a63c5df1c5ceeb88a449/transformed/jetified-drawee-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:nativeimagefilters:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/678e3f3ceebf462fb63c2925b3741a30/transformed/jetified-nativeimagefilters-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:nativeimagefilters:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/678e3f3ceebf462fb63c2925b3741a30/transformed/jetified-nativeimagefilters-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:memory-type-native:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/4a1c8fa3745b1386032b3319d5e1b62e/transformed/jetified-memory-type-native-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:memory-type-native:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/4a1c8fa3745b1386032b3319d5e1b62e/transformed/jetified-memory-type-native-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:memory-type-java:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/88dc342a6ff3e6a1bcb2ad8693f909b2/transformed/jetified-memory-type-java-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:memory-type-java:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/88dc342a6ff3e6a1bcb2ad8693f909b2/transformed/jetified-memory-type-java-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:imagepipeline-native:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/05400b6799c136966105f18a7445c7ad/transformed/jetified-imagepipeline-native-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:imagepipeline-native:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/05400b6799c136966105f18a7445c7ad/transformed/jetified-imagepipeline-native-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:memory-type-ashmem:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/18141368972d9e5c23f44f8230e9bf62/transformed/jetified-memory-type-ashmem-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:memory-type-ashmem:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/18141368972d9e5c23f44f8230e9bf62/transformed/jetified-memory-type-ashmem-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:imagepipeline:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/19e10230253cb831b967e177b53b3bf4/transformed/jetified-imagepipeline-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:imagepipeline:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/19e10230253cb831b967e177b53b3bf4/transformed/jetified-imagepipeline-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:nativeimagetranscoder:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/dd847b932f3fccdb81fc60631bdfd8bc/transformed/jetified-nativeimagetranscoder-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:nativeimagetranscoder:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/dd847b932f3fccdb81fc60631bdfd8bc/transformed/jetified-nativeimagetranscoder-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:imagepipeline-base:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/c20e8dae837ab7dad51352c214afd970/transformed/jetified-imagepipeline-base-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:imagepipeline-base:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/c20e8dae837ab7dad51352c214afd970/transformed/jetified-imagepipeline-base-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:urimod:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/510dad3cf369748ded9e31759a9ad586/transformed/jetified-urimod-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:urimod:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/510dad3cf369748ded9e31759a9ad586/transformed/jetified-urimod-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:vito-source:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/558eefd3503e9d65f1fa63a63ea08349/transformed/jetified-vito-source-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:vito-source:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/558eefd3503e9d65f1fa63a63ea08349/transformed/jetified-vito-source-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:middleware:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/6267ce496923c2ba74f26dcc8c12ea67/transformed/jetified-middleware-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:middleware:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/6267ce496923c2ba74f26dcc8c12ea67/transformed/jetified-middleware-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.appcompat:appcompat-resources:1.7.0] /Users/dexter/.gradle/caches/8.13/transforms/697a0b29d30b5cf0b1f34e84756e00cb/transformed/jetified-appcompat-resources-1.7.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.appcompat:appcompat-resources:1.7.0] /Users/dexter/.gradle/caches/8.13/transforms/697a0b29d30b5cf0b1f34e84756e00cb/transformed/jetified-appcompat-resources-1.7.0/AndroidManifest.xml:5:5-44
+MERGED from [com.google.mlkit:barcode-scanning:17.3.0] /Users/dexter/.gradle/caches/8.13/transforms/04444bcdbc9eeabe8cb6449b6843e87b/transformed/jetified-barcode-scanning-17.3.0/AndroidManifest.xml:5:5-44
+MERGED from [com.google.mlkit:barcode-scanning:17.3.0] /Users/dexter/.gradle/caches/8.13/transforms/04444bcdbc9eeabe8cb6449b6843e87b/transformed/jetified-barcode-scanning-17.3.0/AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/dexter/.gradle/caches/8.13/transforms/1e24d23557b272745b2da1543ff3e08d/transformed/jetified-play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:6:5-44
+MERGED from [com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/dexter/.gradle/caches/8.13/transforms/1e24d23557b272745b2da1543ff3e08d/transformed/jetified-play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:6:5-44
+MERGED from [com.google.mlkit:barcode-scanning-common:17.0.0] /Users/dexter/.gradle/caches/8.13/transforms/65fbbabd11fe4771ce60cc0b1bb0f976/transformed/jetified-barcode-scanning-common-17.0.0/AndroidManifest.xml:5:5-44
+MERGED from [com.google.mlkit:barcode-scanning-common:17.0.0] /Users/dexter/.gradle/caches/8.13/transforms/65fbbabd11fe4771ce60cc0b1bb0f976/transformed/jetified-barcode-scanning-common-17.0.0/AndroidManifest.xml:5:5-44
+MERGED from [com.google.mlkit:vision-common:17.3.0] /Users/dexter/.gradle/caches/8.13/transforms/bbda258e5a940b6ba6dacb00b78c62b3/transformed/jetified-vision-common-17.3.0/AndroidManifest.xml:6:5-44
+MERGED from [com.google.mlkit:vision-common:17.3.0] /Users/dexter/.gradle/caches/8.13/transforms/bbda258e5a940b6ba6dacb00b78c62b3/transformed/jetified-vision-common-17.3.0/AndroidManifest.xml:6:5-44
+MERGED from [com.google.mlkit:common:18.11.0] /Users/dexter/.gradle/caches/8.13/transforms/20f7bd32bb9c6048bc71842db34cd3e2/transformed/jetified-common-18.11.0/AndroidManifest.xml:6:5-44
+MERGED from [com.google.mlkit:common:18.11.0] /Users/dexter/.gradle/caches/8.13/transforms/20f7bd32bb9c6048bc71842db34cd3e2/transformed/jetified-common-18.11.0/AndroidManifest.xml:6:5-44
+MERGED from [androidx.appcompat:appcompat:1.7.0] /Users/dexter/.gradle/caches/8.13/transforms/6d000423bb7f2c6c3ea50adaad3b9649/transformed/appcompat-1.7.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.appcompat:appcompat:1.7.0] /Users/dexter/.gradle/caches/8.13/transforms/6d000423bb7f2c6c3ea50adaad3b9649/transformed/appcompat-1.7.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:ui-common:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/3cfc5ac0d53f9099bc84a3d9779fa305/transformed/jetified-ui-common-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:ui-common:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/3cfc5ac0d53f9099bc84a3d9779fa305/transformed/jetified-ui-common-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.gms:play-services-base:18.5.0] /Users/dexter/.gradle/caches/8.13/transforms/746d24ad358c16934d6ba1eacb396257/transformed/jetified-play-services-base-18.5.0/AndroidManifest.xml:3:5-44
+MERGED from [com.google.android.gms:play-services-base:18.5.0] /Users/dexter/.gradle/caches/8.13/transforms/746d24ad358c16934d6ba1eacb396257/transformed/jetified-play-services-base-18.5.0/AndroidManifest.xml:3:5-44
+MERGED from [com.google.mlkit:vision-interfaces:16.3.0] /Users/dexter/.gradle/caches/8.13/transforms/f09c41fac5e7e872def42f36c72bc5a8/transformed/jetified-vision-interfaces-16.3.0/AndroidManifest.xml:5:5-44
+MERGED from [com.google.mlkit:vision-interfaces:16.3.0] /Users/dexter/.gradle/caches/8.13/transforms/f09c41fac5e7e872def42f36c72bc5a8/transformed/jetified-vision-interfaces-16.3.0/AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.gms:play-services-tasks:18.2.0] /Users/dexter/.gradle/caches/8.13/transforms/39c6c93eab159a2326c7e06cd4fc69d6/transformed/jetified-play-services-tasks-18.2.0/AndroidManifest.xml:3:5-44
+MERGED from [com.google.android.gms:play-services-tasks:18.2.0] /Users/dexter/.gradle/caches/8.13/transforms/39c6c93eab159a2326c7e06cd4fc69d6/transformed/jetified-play-services-tasks-18.2.0/AndroidManifest.xml:3:5-44
+MERGED from [com.google.android.gms:play-services-basement:18.4.0] /Users/dexter/.gradle/caches/8.13/transforms/edd07ebaea047d96cc9ec408657d321c/transformed/jetified-play-services-basement-18.4.0/AndroidManifest.xml:3:5-44
+MERGED from [com.google.android.gms:play-services-basement:18.4.0] /Users/dexter/.gradle/caches/8.13/transforms/edd07ebaea047d96cc9ec408657d321c/transformed/jetified-play-services-basement-18.4.0/AndroidManifest.xml:3:5-44
+MERGED from [androidx.fragment:fragment:1.5.4] /Users/dexter/.gradle/caches/8.13/transforms/aa347e8a433c80b37160c2ebd7ea7882/transformed/fragment-1.5.4/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.fragment:fragment:1.5.4] /Users/dexter/.gradle/caches/8.13/transforms/aa347e8a433c80b37160c2ebd7ea7882/transformed/fragment-1.5.4/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.activity:activity:1.7.0] /Users/dexter/.gradle/caches/8.13/transforms/31a20adcbfca1b3b3f9a7bef7f74ebdf/transformed/jetified-activity-1.7.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.activity:activity:1.7.0] /Users/dexter/.gradle/caches/8.13/transforms/31a20adcbfca1b3b3f9a7bef7f74ebdf/transformed/jetified-activity-1.7.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.autofill:autofill:1.1.0] /Users/dexter/.gradle/caches/8.13/transforms/af9536f59c0f125841cc70c8ae0695c4/transformed/jetified-autofill-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.autofill:autofill:1.1.0] /Users/dexter/.gradle/caches/8.13/transforms/af9536f59c0f125841cc70c8ae0695c4/transformed/jetified-autofill-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.swiperefreshlayout:swiperefreshlayout:1.1.0] /Users/dexter/.gradle/caches/8.13/transforms/b2337e4014ac1d493ae809cfad9ec816/transformed/swiperefreshlayout-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.swiperefreshlayout:swiperefreshlayout:1.1.0] /Users/dexter/.gradle/caches/8.13/transforms/b2337e4014ac1d493ae809cfad9ec816/transformed/swiperefreshlayout-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [com.facebook.fresco:soloader:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/6a0639fa704ef312f937cb59da269526/transformed/jetified-soloader-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:soloader:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/6a0639fa704ef312f937cb59da269526/transformed/jetified-soloader-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:fbcore:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/e786125e4676564119392a9875d05327/transformed/jetified-fbcore-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:fbcore:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/e786125e4676564119392a9875d05327/transformed/jetified-fbcore-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.drawerlayout:drawerlayout:1.0.0] /Users/dexter/.gradle/caches/8.13/transforms/5de253474891016aa33d96c8a4d02dda/transformed/drawerlayout-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.drawerlayout:drawerlayout:1.0.0] /Users/dexter/.gradle/caches/8.13/transforms/5de253474891016aa33d96c8a4d02dda/transformed/drawerlayout-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.emoji2:emoji2-views-helper:1.3.0] /Users/dexter/.gradle/caches/8.13/transforms/4dd5b0c956ae6bbbee4ebc133ff237e4/transformed/jetified-emoji2-views-helper-1.3.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.emoji2:emoji2-views-helper:1.3.0] /Users/dexter/.gradle/caches/8.13/transforms/4dd5b0c956ae6bbbee4ebc133ff237e4/transformed/jetified-emoji2-views-helper-1.3.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.emoji2:emoji2:1.3.0] /Users/dexter/.gradle/caches/8.13/transforms/46b209fb4841f6de75171092dd86dc67/transformed/jetified-emoji2-1.3.0/AndroidManifest.xml:21:5-44
+MERGED from [androidx.emoji2:emoji2:1.3.0] /Users/dexter/.gradle/caches/8.13/transforms/46b209fb4841f6de75171092dd86dc67/transformed/jetified-emoji2-1.3.0/AndroidManifest.xml:21:5-44
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] /Users/dexter/.gradle/caches/8.13/transforms/b1b9467164e73a1126ebe6ef93595ec9/transformed/vectordrawable-animated-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] /Users/dexter/.gradle/caches/8.13/transforms/b1b9467164e73a1126ebe6ef93595ec9/transformed/vectordrawable-animated-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] /Users/dexter/.gradle/caches/8.13/transforms/298cb8a7d2b4130384c9ccdbca9904e9/transformed/vectordrawable-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] /Users/dexter/.gradle/caches/8.13/transforms/298cb8a7d2b4130384c9ccdbca9904e9/transformed/vectordrawable-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.viewpager:viewpager:1.0.0] /Users/dexter/.gradle/caches/8.13/transforms/3f14dcfb170c417bf401677caf4ed0cd/transformed/viewpager-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.viewpager:viewpager:1.0.0] /Users/dexter/.gradle/caches/8.13/transforms/3f14dcfb170c417bf401677caf4ed0cd/transformed/viewpager-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.customview:customview:1.0.0] /Users/dexter/.gradle/caches/8.13/transforms/6c89e18be965c60a802e373e3967c51b/transformed/customview-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.customview:customview:1.0.0] /Users/dexter/.gradle/caches/8.13/transforms/6c89e18be965c60a802e373e3967c51b/transformed/customview-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.loader:loader:1.0.0] /Users/dexter/.gradle/caches/8.13/transforms/9baf2f0581b1077500ddd9a22007935f/transformed/loader-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.loader:loader:1.0.0] /Users/dexter/.gradle/caches/8.13/transforms/9baf2f0581b1077500ddd9a22007935f/transformed/loader-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.core:core-ktx:1.13.1] /Users/dexter/.gradle/caches/8.13/transforms/84d854874fe3014f5ed7dd1d0f93c8e8/transformed/jetified-core-ktx-1.13.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.core:core-ktx:1.13.1] /Users/dexter/.gradle/caches/8.13/transforms/84d854874fe3014f5ed7dd1d0f93c8e8/transformed/jetified-core-ktx-1.13.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.core:core:1.13.1] /Users/dexter/.gradle/caches/8.13/transforms/a5420fec8d08a55848303848a4cdbc89/transformed/core-1.13.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.core:core:1.13.1] /Users/dexter/.gradle/caches/8.13/transforms/a5420fec8d08a55848303848a4cdbc89/transformed/core-1.13.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.6.2] /Users/dexter/.gradle/caches/8.13/transforms/6cc8bba5ca05ffc8e41dc4bbcab2b675/transformed/lifecycle-viewmodel-2.6.2/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.6.2] /Users/dexter/.gradle/caches/8.13/transforms/6cc8bba5ca05ffc8e41dc4bbcab2b675/transformed/lifecycle-viewmodel-2.6.2/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] /Users/dexter/.gradle/caches/8.13/transforms/bf7336c06d95aca8e3e04d915c5ba2cd/transformed/jetified-lifecycle-process-2.6.2/AndroidManifest.xml:21:5-44
+MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] /Users/dexter/.gradle/caches/8.13/transforms/bf7336c06d95aca8e3e04d915c5ba2cd/transformed/jetified-lifecycle-process-2.6.2/AndroidManifest.xml:21:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.6.2] /Users/dexter/.gradle/caches/8.13/transforms/4dd56ed963d0df4d90e51f7b1f12b9fb/transformed/lifecycle-livedata-core-2.6.2/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.6.2] /Users/dexter/.gradle/caches/8.13/transforms/4dd56ed963d0df4d90e51f7b1f12b9fb/transformed/lifecycle-livedata-core-2.6.2/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.6.2] /Users/dexter/.gradle/caches/8.13/transforms/5fecec6cf2849d1238a23031341b1959/transformed/lifecycle-livedata-2.6.2/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.6.2] /Users/dexter/.gradle/caches/8.13/transforms/5fecec6cf2849d1238a23031341b1959/transformed/lifecycle-livedata-2.6.2/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.6.2] /Users/dexter/.gradle/caches/8.13/transforms/374d24c3d9a4b876cc03569568ed88ba/transformed/lifecycle-runtime-2.6.2/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.6.2] /Users/dexter/.gradle/caches/8.13/transforms/374d24c3d9a4b876cc03569568ed88ba/transformed/lifecycle-runtime-2.6.2/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.2] /Users/dexter/.gradle/caches/8.13/transforms/82a42062cb411ffb36aae2ef9d047dfb/transformed/jetified-lifecycle-viewmodel-savedstate-2.6.2/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.2] /Users/dexter/.gradle/caches/8.13/transforms/82a42062cb411ffb36aae2ef9d047dfb/transformed/jetified-lifecycle-viewmodel-savedstate-2.6.2/AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate:1.2.1] /Users/dexter/.gradle/caches/8.13/transforms/583f8290db7bc65f0499b6c2dfcb9932/transformed/jetified-savedstate-1.2.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate:1.2.1] /Users/dexter/.gradle/caches/8.13/transforms/583f8290db7bc65f0499b6c2dfcb9932/transformed/jetified-savedstate-1.2.1/AndroidManifest.xml:20:5-44
+MERGED from [com.facebook.fresco:ui-core:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/814ac6f99dad11ea8e17bf2e3593b913/transformed/jetified-ui-core-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:ui-core:3.6.0] /Users/dexter/.gradle/caches/8.13/transforms/814ac6f99dad11ea8e17bf2e3593b913/transformed/jetified-ui-core-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.hermes:hermes-android:250829098.0.9] /Users/dexter/.gradle/caches/8.13/transforms/04d2fcbfca8714d95627b25f132ce6a1/transformed/jetified-hermes-android-250829098.0.9-debug/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.hermes:hermes-android:250829098.0.9] /Users/dexter/.gradle/caches/8.13/transforms/04d2fcbfca8714d95627b25f132ce6a1/transformed/jetified-hermes-android-250829098.0.9-debug/AndroidManifest.xml:5:5-44
+MERGED from [io.github.zhongwuzw:mmkv:2.4.0] /Users/dexter/.gradle/caches/8.13/transforms/a009c676b7380b14c472361d85f31c39/transformed/jetified-mmkv-2.4.0/AndroidManifest.xml:5:5-44
+MERGED from [io.github.zhongwuzw:mmkv:2.4.0] /Users/dexter/.gradle/caches/8.13/transforms/a009c676b7380b14c472361d85f31c39/transformed/jetified-mmkv-2.4.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/8.13/transforms/6766a76c70371760a95af4f1f24ac116/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:21:5-44
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/8.13/transforms/6766a76c70371760a95af4f1f24ac116/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:21:5-44
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/dexter/.gradle/caches/8.13/transforms/cca9453cc004c65f377b213b64afbea5/transformed/jetified-startup-runtime-1.1.1/AndroidManifest.xml:21:5-23:41
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/dexter/.gradle/caches/8.13/transforms/cca9453cc004c65f377b213b64afbea5/transformed/jetified-startup-runtime-1.1.1/AndroidManifest.xml:21:5-23:41
+MERGED from [androidx.tracing:tracing:1.1.0] /Users/dexter/.gradle/caches/8.13/transforms/907553d70c42f52038ad76285961223d/transformed/jetified-tracing-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.tracing:tracing:1.1.0] /Users/dexter/.gradle/caches/8.13/transforms/907553d70c42f52038ad76285961223d/transformed/jetified-tracing-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.exifinterface:exifinterface:1.3.2] /Users/dexter/.gradle/caches/8.13/transforms/38e52533057ee77d2a74aeba1fe55ec3/transformed/exifinterface-1.3.2/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.exifinterface:exifinterface:1.3.2] /Users/dexter/.gradle/caches/8.13/transforms/38e52533057ee77d2a74aeba1fe55ec3/transformed/exifinterface-1.3.2/AndroidManifest.xml:20:5-22:41
+MERGED from [io.github.zhongwuzw:annotation:2.4.0] /Users/dexter/.gradle/caches/8.13/transforms/5becfc11e0c55fd79876dfbaeb9d785b/transformed/jetified-annotation-2.4.0/AndroidManifest.xml:5:5-44
+MERGED from [io.github.zhongwuzw:annotation:2.4.0] /Users/dexter/.gradle/caches/8.13/transforms/5becfc11e0c55fd79876dfbaeb9d785b/transformed/jetified-annotation-2.4.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] /Users/dexter/.gradle/caches/8.13/transforms/3767da8f40b2030ed7c0c0c10be27679/transformed/cursoradapter-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] /Users/dexter/.gradle/caches/8.13/transforms/3767da8f40b2030ed7c0c0c10be27679/transformed/cursoradapter-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.interpolator:interpolator:1.0.0] /Users/dexter/.gradle/caches/8.13/transforms/191f7f771f0185e15156827a7c5264ef/transformed/interpolator-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.interpolator:interpolator:1.0.0] /Users/dexter/.gradle/caches/8.13/transforms/191f7f771f0185e15156827a7c5264ef/transformed/interpolator-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/dexter/.gradle/caches/8.13/transforms/521f56bf90813af890bf26cc413b1b3c/transformed/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:19:5-21:41
+MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/dexter/.gradle/caches/8.13/transforms/521f56bf90813af890bf26cc413b1b3c/transformed/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:19:5-21:41
+MERGED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/dexter/.gradle/caches/8.13/transforms/32fedb24903d66b0705ab1df936e5867/transformed/jetified-transport-runtime-2.2.6/AndroidManifest.xml:18:5-20:41
+MERGED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/dexter/.gradle/caches/8.13/transforms/32fedb24903d66b0705ab1df936e5867/transformed/jetified-transport-runtime-2.2.6/AndroidManifest.xml:18:5-20:41
+MERGED from [com.google.android.datatransport:transport-api:2.2.1] /Users/dexter/.gradle/caches/8.13/transforms/a294a7b55c5de95f7ddf5228eb100d93/transformed/jetified-transport-api-2.2.1/AndroidManifest.xml:18:5-20:41
+MERGED from [com.google.android.datatransport:transport-api:2.2.1] /Users/dexter/.gradle/caches/8.13/transforms/a294a7b55c5de95f7ddf5228eb100d93/transformed/jetified-transport-api-2.2.1/AndroidManifest.xml:18:5-20:41
+MERGED from [com.google.firebase:firebase-components:16.1.0] /Users/dexter/.gradle/caches/8.13/transforms/f1481daa6fe1f4fa478d9f56a7cb50d7/transformed/jetified-firebase-components-16.1.0/AndroidManifest.xml:19:5-21:41
+MERGED from [com.google.firebase:firebase-components:16.1.0] /Users/dexter/.gradle/caches/8.13/transforms/f1481daa6fe1f4fa478d9f56a7cb50d7/transformed/jetified-firebase-components-16.1.0/AndroidManifest.xml:19:5-21:41
+MERGED from [com.google.firebase:firebase-encoders-json:17.1.0] /Users/dexter/.gradle/caches/8.13/transforms/d135f45b4bb2072296edd9f82d03e7a8/transformed/jetified-firebase-encoders-json-17.1.0/AndroidManifest.xml:19:5-21:41
+MERGED from [com.google.firebase:firebase-encoders-json:17.1.0] /Users/dexter/.gradle/caches/8.13/transforms/d135f45b4bb2072296edd9f82d03e7a8/transformed/jetified-firebase-encoders-json-17.1.0/AndroidManifest.xml:19:5-21:41
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/dexter/.gradle/caches/8.13/transforms/1d0d5cd0c3f0cefb9c611681b87ccdf4/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/dexter/.gradle/caches/8.13/transforms/1d0d5cd0c3f0cefb9c611681b87ccdf4/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.arch.core:core-runtime:2.2.0] /Users/dexter/.gradle/caches/8.13/transforms/6cb573aa60fc457aa94064e4e0abf85a/transformed/core-runtime-2.2.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.arch.core:core-runtime:2.2.0] /Users/dexter/.gradle/caches/8.13/transforms/6cb573aa60fc457aa94064e4e0abf85a/transformed/core-runtime-2.2.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.annotation:annotation-experimental:1.4.0] /Users/dexter/.gradle/caches/8.13/transforms/16b9aa4a1ef1c54b4f643ea8e9f4b357/transformed/jetified-annotation-experimental-1.4.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.annotation:annotation-experimental:1.4.0] /Users/dexter/.gradle/caches/8.13/transforms/16b9aa4a1ef1c54b4f643ea8e9f4b357/transformed/jetified-annotation-experimental-1.4.0/AndroidManifest.xml:5:5-44
+MERGED from [wang.harlon.quickjs:wrapper-android:3.2.3] /Users/dexter/.gradle/caches/8.13/transforms/f5a64147707b12bd4cca5c3f63877154/transformed/jetified-wrapper-android-3.2.3/AndroidManifest.xml:5:5-44
+MERGED from [wang.harlon.quickjs:wrapper-android:3.2.3] /Users/dexter/.gradle/caches/8.13/transforms/f5a64147707b12bd4cca5c3f63877154/transformed/jetified-wrapper-android-3.2.3/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fbjni:fbjni:0.7.0] /Users/dexter/.gradle/caches/8.13/transforms/34dda157d506ce7d0de690b58113d724/transformed/jetified-fbjni-0.7.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fbjni:fbjni:0.7.0] /Users/dexter/.gradle/caches/8.13/transforms/34dda157d506ce7d0de690b58113d724/transformed/jetified-fbjni-0.7.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.soloader:soloader:0.12.1] /Users/dexter/.gradle/caches/8.13/transforms/7b304b17d5601cb97c621ecced846a00/transformed/jetified-soloader-0.12.1/AndroidManifest.xml:7:5-9:41
+MERGED from [com.facebook.soloader:soloader:0.12.1] /Users/dexter/.gradle/caches/8.13/transforms/7b304b17d5601cb97c621ecced846a00/transformed/jetified-soloader-0.12.1/AndroidManifest.xml:7:5-9:41
+MERGED from [com.google.android.odml:image:1.0.0-beta1] /Users/dexter/.gradle/caches/8.13/transforms/1e7abec3680f31ddbb12f50e8cff98cb/transformed/jetified-image-1.0.0-beta1/AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.odml:image:1.0.0-beta1] /Users/dexter/.gradle/caches/8.13/transforms/1e7abec3680f31ddbb12f50e8cff98cb/transformed/jetified-image-1.0.0-beta1/AndroidManifest.xml:5:5-44
+	android:targetSdkVersion
+		INJECTED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/src/main/AndroidManifest.xml
+activity#com.adapterrn84.turbomodules.connector.channels.ResultBridgeActivity
+ADDED from [:impos2_adapter-android-rn84] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/turbomodule-lib/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:14:9-18:75
+	android:excludeFromRecents
+		ADDED from [:impos2_adapter-android-rn84] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/turbomodule-lib/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:16:13-46
+	android:exported
+		ADDED from [:impos2_adapter-android-rn84] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/turbomodule-lib/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:17:13-37
+	android:theme
+		ADDED from [:impos2_adapter-android-rn84] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/turbomodule-lib/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:18:13-72
+	android:name
+		ADDED from [:impos2_adapter-android-rn84] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/turbomodule-lib/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:15:13-96
+activity#com.adapterrn84.turbomodules.connector.channels.CameraScanActivity
+ADDED from [:impos2_adapter-android-rn84] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/turbomodule-lib/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:19:9-29:20
+	android:exported
+		ADDED from [:impos2_adapter-android-rn84] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/turbomodule-lib/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:22:13-37
+	android:configChanges
+		ADDED from [:impos2_adapter-android-rn84] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/turbomodule-lib/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:21:13-59
+	android:theme
+		ADDED from [:impos2_adapter-android-rn84] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/turbomodule-lib/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:23:13-63
+	android:name
+		ADDED from [:impos2_adapter-android-rn84] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/turbomodule-lib/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:20:13-94
+intent-filter#action:name:com.impos2.posadapter.action.CAMERA_SCAN+category:name:android.intent.category.DEFAULT
+ADDED from [:impos2_adapter-android-rn84] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/turbomodule-lib/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:24:13-28:29
+action#com.impos2.posadapter.action.CAMERA_SCAN
+ADDED from [:impos2_adapter-android-rn84] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/turbomodule-lib/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:25:17-83
+	android:name
+		ADDED from [:impos2_adapter-android-rn84] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/turbomodule-lib/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:25:25-80
+category#android.intent.category.DEFAULT
+ADDED from [:impos2_adapter-android-rn84] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/turbomodule-lib/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:27:17-76
+	android:name
+		ADDED from [:impos2_adapter-android-rn84] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/turbomodule-lib/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:27:27-73
+service#com.adapterrn84.turbomodules.localwebserver.LocalWebServerService
+ADDED from [:impos2_adapter-android-rn84] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/turbomodule-lib/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:31:9-34:56
+	android:exported
+		ADDED from [:impos2_adapter-android-rn84] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/turbomodule-lib/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:33:13-37
+	android:foregroundServiceType
+		ADDED from [:impos2_adapter-android-rn84] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/turbomodule-lib/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:34:13-53
+	android:name
+		ADDED from [:impos2_adapter-android-rn84] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/turbomodule-lib/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:32:13-93
+uses-permission#android.permission.SYSTEM_ALERT_WINDOW
+ADDED from [com.facebook.react:react-android:0.84.1] /Users/dexter/.gradle/caches/8.13/transforms/34327d8e45a7655b9a1c4eb72223df88/transformed/jetified-react-android-0.84.1-debug/AndroidManifest.xml:16:5-78
+	android:name
+		ADDED from [com.facebook.react:react-android:0.84.1] /Users/dexter/.gradle/caches/8.13/transforms/34327d8e45a7655b9a1c4eb72223df88/transformed/jetified-react-android-0.84.1-debug/AndroidManifest.xml:16:22-75
+activity#com.facebook.react.devsupport.DevSettingsActivity
+ADDED from [com.facebook.react:react-android:0.84.1] /Users/dexter/.gradle/caches/8.13/transforms/34327d8e45a7655b9a1c4eb72223df88/transformed/jetified-react-android-0.84.1-debug/AndroidManifest.xml:19:9-21:40
+	android:exported
+		ADDED from [com.facebook.react:react-android:0.84.1] /Users/dexter/.gradle/caches/8.13/transforms/34327d8e45a7655b9a1c4eb72223df88/transformed/jetified-react-android-0.84.1-debug/AndroidManifest.xml:21:13-37
+	android:name
+		ADDED from [com.facebook.react:react-android:0.84.1] /Users/dexter/.gradle/caches/8.13/transforms/34327d8e45a7655b9a1c4eb72223df88/transformed/jetified-react-android-0.84.1-debug/AndroidManifest.xml:20:13-77
+service#androidx.camera.core.impl.MetadataHolderService
+ADDED from [androidx.camera:camera-camera2:1.3.4] /Users/dexter/.gradle/caches/8.13/transforms/c6edc87bd0553645b5a02ba0ed7efd5c/transformed/jetified-camera-camera2-1.3.4/AndroidManifest.xml:24:9-33:19
+MERGED from [androidx.camera:camera-core:1.3.4] /Users/dexter/.gradle/caches/8.13/transforms/444827fbd24daab587b226ffe74a1253/transformed/jetified-camera-core-1.3.4/AndroidManifest.xml:29:9-33:78
+MERGED from [androidx.camera:camera-core:1.3.4] /Users/dexter/.gradle/caches/8.13/transforms/444827fbd24daab587b226ffe74a1253/transformed/jetified-camera-core-1.3.4/AndroidManifest.xml:29:9-33:78
+	tools:node
+		ADDED from [androidx.camera:camera-camera2:1.3.4] /Users/dexter/.gradle/caches/8.13/transforms/c6edc87bd0553645b5a02ba0ed7efd5c/transformed/jetified-camera-camera2-1.3.4/AndroidManifest.xml:29:13-31
+	android:enabled
+		ADDED from [androidx.camera:camera-camera2:1.3.4] /Users/dexter/.gradle/caches/8.13/transforms/c6edc87bd0553645b5a02ba0ed7efd5c/transformed/jetified-camera-camera2-1.3.4/AndroidManifest.xml:26:13-36
+	android:exported
+		ADDED from [androidx.camera:camera-camera2:1.3.4] /Users/dexter/.gradle/caches/8.13/transforms/c6edc87bd0553645b5a02ba0ed7efd5c/transformed/jetified-camera-camera2-1.3.4/AndroidManifest.xml:27:13-37
+	tools:ignore
+		ADDED from [androidx.camera:camera-camera2:1.3.4] /Users/dexter/.gradle/caches/8.13/transforms/c6edc87bd0553645b5a02ba0ed7efd5c/transformed/jetified-camera-camera2-1.3.4/AndroidManifest.xml:28:13-75
+	android:name
+		ADDED from [androidx.camera:camera-camera2:1.3.4] /Users/dexter/.gradle/caches/8.13/transforms/c6edc87bd0553645b5a02ba0ed7efd5c/transformed/jetified-camera-camera2-1.3.4/AndroidManifest.xml:25:13-75
+meta-data#androidx.camera.core.impl.MetadataHolderService.DEFAULT_CONFIG_PROVIDER
+ADDED from [androidx.camera:camera-camera2:1.3.4] /Users/dexter/.gradle/caches/8.13/transforms/c6edc87bd0553645b5a02ba0ed7efd5c/transformed/jetified-camera-camera2-1.3.4/AndroidManifest.xml:30:13-32:89
+	android:value
+		ADDED from [androidx.camera:camera-camera2:1.3.4] /Users/dexter/.gradle/caches/8.13/transforms/c6edc87bd0553645b5a02ba0ed7efd5c/transformed/jetified-camera-camera2-1.3.4/AndroidManifest.xml:32:17-86
+	android:name
+		ADDED from [androidx.camera:camera-camera2:1.3.4] /Users/dexter/.gradle/caches/8.13/transforms/c6edc87bd0553645b5a02ba0ed7efd5c/transformed/jetified-camera-camera2-1.3.4/AndroidManifest.xml:31:17-103
+service#com.google.mlkit.common.internal.MlKitComponentDiscoveryService
+ADDED from [com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/dexter/.gradle/caches/8.13/transforms/1e24d23557b272745b2da1543ff3e08d/transformed/jetified-play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:9:9-15:19
+MERGED from [com.google.mlkit:vision-common:17.3.0] /Users/dexter/.gradle/caches/8.13/transforms/bbda258e5a940b6ba6dacb00b78c62b3/transformed/jetified-vision-common-17.3.0/AndroidManifest.xml:9:9-15:19
+MERGED from [com.google.mlkit:vision-common:17.3.0] /Users/dexter/.gradle/caches/8.13/transforms/bbda258e5a940b6ba6dacb00b78c62b3/transformed/jetified-vision-common-17.3.0/AndroidManifest.xml:9:9-15:19
+MERGED from [com.google.mlkit:common:18.11.0] /Users/dexter/.gradle/caches/8.13/transforms/20f7bd32bb9c6048bc71842db34cd3e2/transformed/jetified-common-18.11.0/AndroidManifest.xml:15:9-23:19
+MERGED from [com.google.mlkit:common:18.11.0] /Users/dexter/.gradle/caches/8.13/transforms/20f7bd32bb9c6048bc71842db34cd3e2/transformed/jetified-common-18.11.0/AndroidManifest.xml:15:9-23:19
+	android:exported
+		ADDED from [com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/dexter/.gradle/caches/8.13/transforms/1e24d23557b272745b2da1543ff3e08d/transformed/jetified-play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:11:13-37
+	tools:targetApi
+		ADDED from [com.google.mlkit:common:18.11.0] /Users/dexter/.gradle/caches/8.13/transforms/20f7bd32bb9c6048bc71842db34cd3e2/transformed/jetified-common-18.11.0/AndroidManifest.xml:19:13-32
+	android:directBootAware
+		ADDED from [com.google.mlkit:common:18.11.0] /Users/dexter/.gradle/caches/8.13/transforms/20f7bd32bb9c6048bc71842db34cd3e2/transformed/jetified-common-18.11.0/AndroidManifest.xml:17:13-43
+	android:name
+		ADDED from [com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/dexter/.gradle/caches/8.13/transforms/1e24d23557b272745b2da1543ff3e08d/transformed/jetified-play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:10:13-91
+meta-data#com.google.firebase.components:com.google.mlkit.vision.barcode.internal.BarcodeRegistrar
+ADDED from [com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/dexter/.gradle/caches/8.13/transforms/1e24d23557b272745b2da1543ff3e08d/transformed/jetified-play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:12:13-14:85
+	android:value
+		ADDED from [com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/dexter/.gradle/caches/8.13/transforms/1e24d23557b272745b2da1543ff3e08d/transformed/jetified-play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:14:17-82
+	android:name
+		ADDED from [com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/dexter/.gradle/caches/8.13/transforms/1e24d23557b272745b2da1543ff3e08d/transformed/jetified-play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:13:17-120
+meta-data#com.google.firebase.components:com.google.mlkit.vision.common.internal.VisionCommonRegistrar
+ADDED from [com.google.mlkit:vision-common:17.3.0] /Users/dexter/.gradle/caches/8.13/transforms/bbda258e5a940b6ba6dacb00b78c62b3/transformed/jetified-vision-common-17.3.0/AndroidManifest.xml:12:13-14:85
+	android:value
+		ADDED from [com.google.mlkit:vision-common:17.3.0] /Users/dexter/.gradle/caches/8.13/transforms/bbda258e5a940b6ba6dacb00b78c62b3/transformed/jetified-vision-common-17.3.0/AndroidManifest.xml:14:17-82
+	android:name
+		ADDED from [com.google.mlkit:vision-common:17.3.0] /Users/dexter/.gradle/caches/8.13/transforms/bbda258e5a940b6ba6dacb00b78c62b3/transformed/jetified-vision-common-17.3.0/AndroidManifest.xml:13:17-124
+provider#com.google.mlkit.common.internal.MlKitInitProvider
+ADDED from [com.google.mlkit:common:18.11.0] /Users/dexter/.gradle/caches/8.13/transforms/20f7bd32bb9c6048bc71842db34cd3e2/transformed/jetified-common-18.11.0/AndroidManifest.xml:9:9-13:38
+	android:authorities
+		ADDED from [com.google.mlkit:common:18.11.0] /Users/dexter/.gradle/caches/8.13/transforms/20f7bd32bb9c6048bc71842db34cd3e2/transformed/jetified-common-18.11.0/AndroidManifest.xml:11:13-69
+	android:exported
+		ADDED from [com.google.mlkit:common:18.11.0] /Users/dexter/.gradle/caches/8.13/transforms/20f7bd32bb9c6048bc71842db34cd3e2/transformed/jetified-common-18.11.0/AndroidManifest.xml:12:13-37
+	android:initOrder
+		ADDED from [com.google.mlkit:common:18.11.0] /Users/dexter/.gradle/caches/8.13/transforms/20f7bd32bb9c6048bc71842db34cd3e2/transformed/jetified-common-18.11.0/AndroidManifest.xml:13:13-35
+	android:name
+		ADDED from [com.google.mlkit:common:18.11.0] /Users/dexter/.gradle/caches/8.13/transforms/20f7bd32bb9c6048bc71842db34cd3e2/transformed/jetified-common-18.11.0/AndroidManifest.xml:10:13-78
+meta-data#com.google.firebase.components:com.google.mlkit.common.internal.CommonComponentRegistrar
+ADDED from [com.google.mlkit:common:18.11.0] /Users/dexter/.gradle/caches/8.13/transforms/20f7bd32bb9c6048bc71842db34cd3e2/transformed/jetified-common-18.11.0/AndroidManifest.xml:20:13-22:85
+	android:value
+		ADDED from [com.google.mlkit:common:18.11.0] /Users/dexter/.gradle/caches/8.13/transforms/20f7bd32bb9c6048bc71842db34cd3e2/transformed/jetified-common-18.11.0/AndroidManifest.xml:22:17-82
+	android:name
+		ADDED from [com.google.mlkit:common:18.11.0] /Users/dexter/.gradle/caches/8.13/transforms/20f7bd32bb9c6048bc71842db34cd3e2/transformed/jetified-common-18.11.0/AndroidManifest.xml:21:17-120
+activity#com.google.android.gms.common.api.GoogleApiActivity
+ADDED from [com.google.android.gms:play-services-base:18.5.0] /Users/dexter/.gradle/caches/8.13/transforms/746d24ad358c16934d6ba1eacb396257/transformed/jetified-play-services-base-18.5.0/AndroidManifest.xml:5:9-173
+	android:exported
+		ADDED from [com.google.android.gms:play-services-base:18.5.0] /Users/dexter/.gradle/caches/8.13/transforms/746d24ad358c16934d6ba1eacb396257/transformed/jetified-play-services-base-18.5.0/AndroidManifest.xml:5:146-170
+	android:theme
+		ADDED from [com.google.android.gms:play-services-base:18.5.0] /Users/dexter/.gradle/caches/8.13/transforms/746d24ad358c16934d6ba1eacb396257/transformed/jetified-play-services-base-18.5.0/AndroidManifest.xml:5:86-145
+	android:name
+		ADDED from [com.google.android.gms:play-services-base:18.5.0] /Users/dexter/.gradle/caches/8.13/transforms/746d24ad358c16934d6ba1eacb396257/transformed/jetified-play-services-base-18.5.0/AndroidManifest.xml:5:19-85
+meta-data#com.google.android.gms.version
+ADDED from [com.google.android.gms:play-services-basement:18.4.0] /Users/dexter/.gradle/caches/8.13/transforms/edd07ebaea047d96cc9ec408657d321c/transformed/jetified-play-services-basement-18.4.0/AndroidManifest.xml:6:9-122
+	android:value
+		ADDED from [com.google.android.gms:play-services-basement:18.4.0] /Users/dexter/.gradle/caches/8.13/transforms/edd07ebaea047d96cc9ec408657d321c/transformed/jetified-play-services-basement-18.4.0/AndroidManifest.xml:6:66-119
+	android:name
+		ADDED from [com.google.android.gms:play-services-basement:18.4.0] /Users/dexter/.gradle/caches/8.13/transforms/edd07ebaea047d96cc9ec408657d321c/transformed/jetified-play-services-basement-18.4.0/AndroidManifest.xml:6:20-65
+provider#androidx.startup.InitializationProvider
+ADDED from [androidx.emoji2:emoji2:1.3.0] /Users/dexter/.gradle/caches/8.13/transforms/46b209fb4841f6de75171092dd86dc67/transformed/jetified-emoji2-1.3.0/AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] /Users/dexter/.gradle/caches/8.13/transforms/bf7336c06d95aca8e3e04d915c5ba2cd/transformed/jetified-lifecycle-process-2.6.2/AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] /Users/dexter/.gradle/caches/8.13/transforms/bf7336c06d95aca8e3e04d915c5ba2cd/transformed/jetified-lifecycle-process-2.6.2/AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/8.13/transforms/6766a76c70371760a95af4f1f24ac116/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/8.13/transforms/6766a76c70371760a95af4f1f24ac116/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/dexter/.gradle/caches/8.13/transforms/cca9453cc004c65f377b213b64afbea5/transformed/jetified-startup-runtime-1.1.1/AndroidManifest.xml:26:9-30:34
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/dexter/.gradle/caches/8.13/transforms/cca9453cc004c65f377b213b64afbea5/transformed/jetified-startup-runtime-1.1.1/AndroidManifest.xml:26:9-30:34
+	tools:node
+		ADDED from [androidx.emoji2:emoji2:1.3.0] /Users/dexter/.gradle/caches/8.13/transforms/46b209fb4841f6de75171092dd86dc67/transformed/jetified-emoji2-1.3.0/AndroidManifest.xml:28:13-31
+	android:authorities
+		ADDED from [androidx.emoji2:emoji2:1.3.0] /Users/dexter/.gradle/caches/8.13/transforms/46b209fb4841f6de75171092dd86dc67/transformed/jetified-emoji2-1.3.0/AndroidManifest.xml:26:13-68
+	android:exported
+		ADDED from [androidx.emoji2:emoji2:1.3.0] /Users/dexter/.gradle/caches/8.13/transforms/46b209fb4841f6de75171092dd86dc67/transformed/jetified-emoji2-1.3.0/AndroidManifest.xml:27:13-37
+	android:name
+		ADDED from [androidx.emoji2:emoji2:1.3.0] /Users/dexter/.gradle/caches/8.13/transforms/46b209fb4841f6de75171092dd86dc67/transformed/jetified-emoji2-1.3.0/AndroidManifest.xml:25:13-67
+meta-data#androidx.emoji2.text.EmojiCompatInitializer
+ADDED from [androidx.emoji2:emoji2:1.3.0] /Users/dexter/.gradle/caches/8.13/transforms/46b209fb4841f6de75171092dd86dc67/transformed/jetified-emoji2-1.3.0/AndroidManifest.xml:29:13-31:52
+	android:value
+		ADDED from [androidx.emoji2:emoji2:1.3.0] /Users/dexter/.gradle/caches/8.13/transforms/46b209fb4841f6de75171092dd86dc67/transformed/jetified-emoji2-1.3.0/AndroidManifest.xml:31:17-49
+	android:name
+		ADDED from [androidx.emoji2:emoji2:1.3.0] /Users/dexter/.gradle/caches/8.13/transforms/46b209fb4841f6de75171092dd86dc67/transformed/jetified-emoji2-1.3.0/AndroidManifest.xml:30:17-75
+permission#${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.13.1] /Users/dexter/.gradle/caches/8.13/transforms/a5420fec8d08a55848303848a4cdbc89/transformed/core-1.13.1/AndroidManifest.xml:22:5-24:47
+	android:protectionLevel
+		ADDED from [androidx.core:core:1.13.1] /Users/dexter/.gradle/caches/8.13/transforms/a5420fec8d08a55848303848a4cdbc89/transformed/core-1.13.1/AndroidManifest.xml:24:9-44
+	android:name
+		ADDED from [androidx.core:core:1.13.1] /Users/dexter/.gradle/caches/8.13/transforms/a5420fec8d08a55848303848a4cdbc89/transformed/core-1.13.1/AndroidManifest.xml:23:9-81
+permission#com.impos2.mixcretailrn84.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.13.1] /Users/dexter/.gradle/caches/8.13/transforms/a5420fec8d08a55848303848a4cdbc89/transformed/core-1.13.1/AndroidManifest.xml:22:5-24:47
+	android:protectionLevel
+		ADDED from [androidx.core:core:1.13.1] /Users/dexter/.gradle/caches/8.13/transforms/a5420fec8d08a55848303848a4cdbc89/transformed/core-1.13.1/AndroidManifest.xml:24:9-44
+	android:name
+		ADDED from [androidx.core:core:1.13.1] /Users/dexter/.gradle/caches/8.13/transforms/a5420fec8d08a55848303848a4cdbc89/transformed/core-1.13.1/AndroidManifest.xml:23:9-81
+uses-permission#${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.13.1] /Users/dexter/.gradle/caches/8.13/transforms/a5420fec8d08a55848303848a4cdbc89/transformed/core-1.13.1/AndroidManifest.xml:26:5-97
+	android:name
+		ADDED from [androidx.core:core:1.13.1] /Users/dexter/.gradle/caches/8.13/transforms/a5420fec8d08a55848303848a4cdbc89/transformed/core-1.13.1/AndroidManifest.xml:26:22-94
+uses-permission#com.impos2.mixcretailrn84.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.13.1] /Users/dexter/.gradle/caches/8.13/transforms/a5420fec8d08a55848303848a4cdbc89/transformed/core-1.13.1/AndroidManifest.xml:26:5-97
+	android:name
+		ADDED from [androidx.core:core:1.13.1] /Users/dexter/.gradle/caches/8.13/transforms/a5420fec8d08a55848303848a4cdbc89/transformed/core-1.13.1/AndroidManifest.xml:26:22-94
+meta-data#androidx.lifecycle.ProcessLifecycleInitializer
+ADDED from [androidx.lifecycle:lifecycle-process:2.6.2] /Users/dexter/.gradle/caches/8.13/transforms/bf7336c06d95aca8e3e04d915c5ba2cd/transformed/jetified-lifecycle-process-2.6.2/AndroidManifest.xml:29:13-31:52
+	android:value
+		ADDED from [androidx.lifecycle:lifecycle-process:2.6.2] /Users/dexter/.gradle/caches/8.13/transforms/bf7336c06d95aca8e3e04d915c5ba2cd/transformed/jetified-lifecycle-process-2.6.2/AndroidManifest.xml:31:17-49
+	android:name
+		ADDED from [androidx.lifecycle:lifecycle-process:2.6.2] /Users/dexter/.gradle/caches/8.13/transforms/bf7336c06d95aca8e3e04d915c5ba2cd/transformed/jetified-lifecycle-process-2.6.2/AndroidManifest.xml:30:17-78
+meta-data#androidx.profileinstaller.ProfileInstallerInitializer
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/8.13/transforms/6766a76c70371760a95af4f1f24ac116/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:29:13-31:52
+	android:value
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/8.13/transforms/6766a76c70371760a95af4f1f24ac116/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:31:17-49
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/8.13/transforms/6766a76c70371760a95af4f1f24ac116/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:30:17-85
+receiver#androidx.profileinstaller.ProfileInstallReceiver
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/8.13/transforms/6766a76c70371760a95af4f1f24ac116/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:34:9-52:20
+	android:enabled
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/8.13/transforms/6766a76c70371760a95af4f1f24ac116/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:37:13-35
+	android:exported
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/8.13/transforms/6766a76c70371760a95af4f1f24ac116/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:38:13-36
+	android:permission
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/8.13/transforms/6766a76c70371760a95af4f1f24ac116/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:39:13-57
+	android:directBootAware
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/8.13/transforms/6766a76c70371760a95af4f1f24ac116/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:36:13-44
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/8.13/transforms/6766a76c70371760a95af4f1f24ac116/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:35:13-76
+intent-filter#action:name:androidx.profileinstaller.action.INSTALL_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/8.13/transforms/6766a76c70371760a95af4f1f24ac116/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:40:13-42:29
+action#androidx.profileinstaller.action.INSTALL_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/8.13/transforms/6766a76c70371760a95af4f1f24ac116/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:41:17-91
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/8.13/transforms/6766a76c70371760a95af4f1f24ac116/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:41:25-88
+intent-filter#action:name:androidx.profileinstaller.action.SKIP_FILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/8.13/transforms/6766a76c70371760a95af4f1f24ac116/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:43:13-45:29
+action#androidx.profileinstaller.action.SKIP_FILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/8.13/transforms/6766a76c70371760a95af4f1f24ac116/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:44:17-85
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/8.13/transforms/6766a76c70371760a95af4f1f24ac116/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:44:25-82
+intent-filter#action:name:androidx.profileinstaller.action.SAVE_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/8.13/transforms/6766a76c70371760a95af4f1f24ac116/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:46:13-48:29
+action#androidx.profileinstaller.action.SAVE_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/8.13/transforms/6766a76c70371760a95af4f1f24ac116/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:47:17-88
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/8.13/transforms/6766a76c70371760a95af4f1f24ac116/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:47:25-85
+intent-filter#action:name:androidx.profileinstaller.action.BENCHMARK_OPERATION
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/8.13/transforms/6766a76c70371760a95af4f1f24ac116/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:49:13-51:29
+action#androidx.profileinstaller.action.BENCHMARK_OPERATION
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/8.13/transforms/6766a76c70371760a95af4f1f24ac116/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:50:17-95
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/8.13/transforms/6766a76c70371760a95af4f1f24ac116/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:50:25-92
+service#com.google.android.datatransport.runtime.backends.TransportBackendDiscovery
+ADDED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/dexter/.gradle/caches/8.13/transforms/521f56bf90813af890bf26cc413b1b3c/transformed/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:29:9-35:19
+MERGED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/dexter/.gradle/caches/8.13/transforms/32fedb24903d66b0705ab1df936e5867/transformed/jetified-transport-runtime-2.2.6/AndroidManifest.xml:36:9-38:40
+MERGED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/dexter/.gradle/caches/8.13/transforms/32fedb24903d66b0705ab1df936e5867/transformed/jetified-transport-runtime-2.2.6/AndroidManifest.xml:36:9-38:40
+	android:exported
+		ADDED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/dexter/.gradle/caches/8.13/transforms/521f56bf90813af890bf26cc413b1b3c/transformed/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:31:13-37
+	android:name
+		ADDED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/dexter/.gradle/caches/8.13/transforms/521f56bf90813af890bf26cc413b1b3c/transformed/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:30:13-103
+meta-data#backend:com.google.android.datatransport.cct.CctBackendFactory
+ADDED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/dexter/.gradle/caches/8.13/transforms/521f56bf90813af890bf26cc413b1b3c/transformed/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:32:13-34:39
+	android:value
+		ADDED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/dexter/.gradle/caches/8.13/transforms/521f56bf90813af890bf26cc413b1b3c/transformed/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:34:17-36
+	android:name
+		ADDED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/dexter/.gradle/caches/8.13/transforms/521f56bf90813af890bf26cc413b1b3c/transformed/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:33:17-94
+service#com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService
+ADDED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/dexter/.gradle/caches/8.13/transforms/32fedb24903d66b0705ab1df936e5867/transformed/jetified-transport-runtime-2.2.6/AndroidManifest.xml:26:9-30:19
+	android:exported
+		ADDED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/dexter/.gradle/caches/8.13/transforms/32fedb24903d66b0705ab1df936e5867/transformed/jetified-transport-runtime-2.2.6/AndroidManifest.xml:28:13-37
+	android:permission
+		ADDED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/dexter/.gradle/caches/8.13/transforms/32fedb24903d66b0705ab1df936e5867/transformed/jetified-transport-runtime-2.2.6/AndroidManifest.xml:29:13-69
+	android:name
+		ADDED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/dexter/.gradle/caches/8.13/transforms/32fedb24903d66b0705ab1df936e5867/transformed/jetified-transport-runtime-2.2.6/AndroidManifest.xml:27:13-117
+receiver#com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver
+ADDED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/dexter/.gradle/caches/8.13/transforms/32fedb24903d66b0705ab1df936e5867/transformed/jetified-transport-runtime-2.2.6/AndroidManifest.xml:32:9-34:40
+	android:exported
+		ADDED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/dexter/.gradle/caches/8.13/transforms/32fedb24903d66b0705ab1df936e5867/transformed/jetified-transport-runtime-2.2.6/AndroidManifest.xml:34:13-37
+	android:name
+		ADDED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/dexter/.gradle/caches/8.13/transforms/32fedb24903d66b0705ab1df936e5867/transformed/jetified-transport-runtime-2.2.6/AndroidManifest.xml:33:13-132
+meta-data#com.facebook.soloader.enabled
+ADDED from [com.facebook.soloader:soloader:0.12.1] /Users/dexter/.gradle/caches/8.13/transforms/7b304b17d5601cb97c621ecced846a00/transformed/jetified-soloader-0.12.1/AndroidManifest.xml:12:9-14:37
+	android:value
+		ADDED from [com.facebook.soloader:soloader:0.12.1] /Users/dexter/.gradle/caches/8.13/transforms/7b304b17d5601cb97c621ecced846a00/transformed/jetified-soloader-0.12.1/AndroidManifest.xml:14:13-34
+	android:name
+		ADDED from [com.facebook.soloader:soloader:0.12.1] /Users/dexter/.gradle/caches/8.13/transforms/7b304b17d5601cb97c621ecced846a00/transformed/jetified-soloader-0.12.1/AndroidManifest.xml:13:13-57

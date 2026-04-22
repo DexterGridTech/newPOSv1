@@ -1,0 +1,567 @@
+--- poll 1 ---
+u0_a217      14394   389   37875356 184392 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   17448304  83016 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+--- poll 2 ---
+u0_a217      14394   389   37875356 184392 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   17448304  83016 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+--- poll 3 ---
+u0_a217      14394   389   37875356 184520 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38194492 194676 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 4 ---
+u0_a217      14394   389   38015516 190388 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38229952 196852 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 5 ---
+u0_a217      14394   389   38015516 187152 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38229952 196976 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 6 ---
+u0_a217      14394   389   38015516 187152 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38229952 196976 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 7 ---
+u0_a217      14394   389   38015516 187152 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38229164 188552 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 8 ---
+u0_a217      14394   389   38015516 187152 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38211644 188552 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 9 ---
+u0_a217      14394   389   38015516 187152 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38211644 188552 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 10 ---
+u0_a217      14394   389   38068076 187280 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38229164 188936 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 11 ---
+u0_a217      14394   389   38068076 187280 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38229164 188936 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 12 ---
+u0_a217      14394   389   38068076 187280 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38229164 188936 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 13 ---
+u0_a217      14394   389   38068076 187280 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38229164 188936 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 14 ---
+u0_a217      14394   389   38068076 187280 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38229164 188936 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 15 ---
+u0_a217      14394   389   38068076 187280 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38229164 189064 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 16 ---
+u0_a217      14394   389   38068076 187280 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38229164 189192 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 17 ---
+u0_a217      14394   389   38068076 187280 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38176604 189320 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 18 ---
+u0_a217      14394   389   38068076 187280 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38176604 189320 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 19 ---
+u0_a217      14394   389   38068076 187280 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38176604 189320 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 20 ---
+u0_a217      14394   389   38068076 187280 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38176604 189320 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 21 ---
+u0_a217      14394   389   38068076 187280 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38176604 189320 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 22 ---
+u0_a217      14394   389   38068076 187408 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38176604 189320 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 23 ---
+u0_a217      14394   389   38068076 187596 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38176604 189320 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 24 ---
+u0_a217      14394   389   38068076 187724 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38176604 189320 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 25 ---
+u0_a217      14394   389   38068076 187724 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38176604 189320 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 26 ---
+u0_a217      14394   389   38068076 187724 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38176604 189448 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 27 ---
+u0_a217      14394   389   38068076 187724 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38176604 189448 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 28 ---
+u0_a217      14394   389   38068076 187724 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38176604 189576 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 29 ---
+u0_a217      14394   389   38068076 187724 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38176604 189576 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 30 ---
+u0_a217      14394   389   38068076 187724 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38176604 189576 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 31 ---
+u0_a217      14394   389   38068076 187724 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38124044 189704 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 32 ---
+u0_a217      14394   389   38068076 187724 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38124044 189704 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 33 ---
+u0_a217      14394   389   37962956 187724 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38106524 189704 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 34 ---
+u0_a217      14394   389   37962956 187724 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38106524 189704 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 35 ---
+u0_a217      14394   389   37962956 187724 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38106524 189704 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 36 ---
+u0_a217      14394   389   37962956 187724 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38106524 189704 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 37 ---
+u0_a217      14394   389   37962956 187724 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38106524 189704 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 38 ---
+u0_a217      14394   389   37875356 187612 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38053964 189524 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 39 ---
+u0_a217      14394   389   37875356 187612 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38053964 189524 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 40 ---
+u0_a217      14394   389   37875356 187612 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38053964 189524 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 41 ---
+u0_a217      14394   389   37875356 187612 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38053964 189524 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 42 ---
+u0_a217      14394   389   37875356 187740 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38053964 189524 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 43 ---
+u0_a217      14394   389   37875356 187740 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38053964 189524 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 44 ---
+u0_a217      14394   389   37875356 187740 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38053964 189524 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+--- poll 45 ---
+u0_a217      14394   389   37875356 187740 0                   0 S com.impos2.mixcretailassemblyrn84:secondary
+u0_a217      14504   389   38053964 189652 0                   0 S com.impos2.mixcretailassemblyrn84
+forwarded tcp:18584 -> tcp:18584
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",

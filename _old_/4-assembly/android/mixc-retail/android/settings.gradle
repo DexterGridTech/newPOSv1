@@ -1,0 +1,27 @@
+pluginManagement { includeBuild("../../../../node_modules/@react-native/gradle-plugin") }
+plugins { id("com.facebook.react.settings") }
+// Monorepo 中禁用 autolinking，手动配置依赖
+// extensions.configure(com.facebook.react.ReactSettingsExtension) { ex -> ex.autolinkLibrariesFromCommand() }
+rootProject.name = 'PosDesktop'
+include ':app'
+includeBuild('../../../../node_modules/@react-native/gradle-plugin')
+
+// 引入 adapter-v1 的 TurboModule 库
+def adapterV1TurboModuleDir = file("../../../../3-adapter/android/adapter-v1/android/turbomodule-lib")
+include ':adapter-v1-turbomodule'
+project(':adapter-v1-turbomodule').projectDir = adapterV1TurboModuleDir
+
+// 引入 react-native-mmkv
+def mmkvDir = file("../../../../node_modules/react-native-mmkv/android")
+include ':react-native-mmkv'
+project(':react-native-mmkv').projectDir = mmkvDir
+
+// 引入 react-native-splash-screen
+def splashScreenDir = file("../../../../node_modules/react-native-splash-screen/android")
+include ':react-native-splash-screen'
+project(':react-native-splash-screen').projectDir = splashScreenDir
+
+// 引入 react-native-svg
+def svgDir = file("../../../../node_modules/react-native-svg/android")
+include ':react-native-svg'
+project(':react-native-svg').projectDir = svgDir

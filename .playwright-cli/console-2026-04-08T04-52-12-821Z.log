@@ -1,0 +1,56 @@
+[     163ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://127.0.0.1:5820/node_modules/.vite/deps/chunk-JW6MRLDH.js?v=018a9784:21606
+[     210ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:5820/favicon.ico:0
+[  131634ms] [LOG] [vite] server connection lost. Polling for restart... @ http://127.0.0.1:5820/@vite/client:864
+[  142335ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://127.0.0.1:5820/node_modules/.vite/deps/chunk-JW6MRLDH.js?v=71cea409:21606
+[  142458ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/overview:0
+[  142458ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/runtime-context:0
+[  142458ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/sandboxes:0
+[  142458ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/audit-logs?page=1&pageSize=10:0
+[  142458ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/templates/topic-library:0
+[  142462ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/templates/fault-library:0
+[  142464ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/terminals:0
+[  142464ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/activation-codes:0
+[  142464ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/tasks/releases:0
+[  142464ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/tasks/instances:0
+[  142464ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/tdp/sessions:0
+[  142473ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/tdp/topics:0
+[  142473ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/tdp/scopes:0
+[  142473ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/tdp/projections:0
+[  142473ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/tdp/change-logs:0
+[  142473ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/tdp/commands:0
+[  142473ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/mock-admin/scenes/templates:0
+[  142480ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/mock-admin/fault-rules:0
+[  142480ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/master-data/platforms:0
+[  142480ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/master-data/tenants:0
+[  142481ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/master-data/brands:0
+[  142481ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/master-data/projects:0
+[  142481ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/master-data/stores:0
+[  142490ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/master-data/contracts:0
+[  142490ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/master-data/profiles:0
+[  142490ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/master-data/templates:0
+[  142490ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/overview:0
+[  142491ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/runtime-context:0
+[  142493ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/sandboxes:0
+[  142495ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/audit-logs?page=1&pageSize=10:0
+[  142496ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/templates/topic-library:0
+[  142496ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/templates/fault-library:0
+[  142496ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/terminals:0
+[  142496ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/activation-codes:0
+[  142497ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/tasks/releases:0
+[  142501ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/tasks/instances:0
+[  142501ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/tdp/sessions:0
+[  142501ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/tdp/topics:0
+[  142501ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/tdp/scopes:0
+[  142501ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/tdp/projections:0
+[  142501ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/tdp/change-logs:0
+[  142503ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/tdp/commands:0
+[  142503ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/mock-admin/scenes/templates:0
+[  142504ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/mock-admin/fault-rules:0
+[  142504ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/master-data/platforms:0
+[  142504ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/master-data/tenants:0
+[  142504ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/master-data/brands:0
+[  142505ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/master-data/projects:0
+[  142506ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/master-data/stores:0
+[  142506ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/master-data/contracts:0
+[  142506ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/master-data/profiles:0
+[  142506ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:5820/api/v1/admin/master-data/templates:0

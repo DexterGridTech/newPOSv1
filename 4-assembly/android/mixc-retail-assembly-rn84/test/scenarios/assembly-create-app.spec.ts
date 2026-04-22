@@ -6,6 +6,7 @@ const {
     createCommandMock,
     topologyRuntimeV3CommandDefinitionsMock,
     selectTopologyRuntimeV3ContextMock,
+    selectTopologyRuntimeV3ConnectionMock,
     createTcpControlRuntimeModuleV2Mock,
     createTdpSyncRuntimeModuleV2Mock,
     createUiRuntimeModuleV2Mock,
@@ -57,6 +58,10 @@ const {
             startTopologyConnection: {commandName: 'kernel.base.topology-runtime-v3.start-topology-connection'},
         },
         selectTopologyRuntimeV3ContextMock: vi.fn(() => null),
+        selectTopologyRuntimeV3ConnectionMock: vi.fn(() => ({
+            serverConnectionStatus: 'DISCONNECTED',
+            reconnectAttempt: 0,
+        })),
         createTcpControlRuntimeModuleV2Mock: vi.fn((..._args: any[]) => ({kind: 'tcp-control-module'})),
         createTdpSyncRuntimeModuleV2Mock: vi.fn((..._args: any[]) => ({kind: 'tdp-sync-module'})),
         createUiRuntimeModuleV2Mock: vi.fn((..._args: any[]) => ({kind: 'ui-runtime-module'})),
@@ -146,6 +151,7 @@ vi.mock('@impos2/kernel-base-topology-runtime-v3', () => ({
     createTopologyRuntimeModuleV3: createTopologyRuntimeModuleV3Mock,
     topologyRuntimeV3CommandDefinitions: topologyRuntimeV3CommandDefinitionsMock,
     selectTopologyRuntimeV3Context: selectTopologyRuntimeV3ContextMock,
+    selectTopologyRuntimeV3Connection: selectTopologyRuntimeV3ConnectionMock,
 }))
 
 vi.mock('@impos2/kernel-base-tcp-control-runtime-v2', () => ({
@@ -268,6 +274,10 @@ describe('assembly createApp', () => {
         createKernelRuntimeAppMock.mockReturnValue(runtimeApp)
         createTopologyRuntimeModuleV3Mock.mockReturnValue(topologyModule)
         selectTopologyRuntimeV3ContextMock.mockReturnValue(null)
+        selectTopologyRuntimeV3ConnectionMock.mockReturnValue({
+            serverConnectionStatus: 'DISCONNECTED',
+            reconnectAttempt: 0,
+        })
         createTcpControlRuntimeModuleV2Mock.mockReturnValue(tcpControlModule)
         createTdpSyncRuntimeModuleV2Mock.mockReturnValue(tdpSyncModule)
         createUiRuntimeModuleV2Mock.mockReturnValue(uiRuntimeModule)
@@ -601,6 +611,64 @@ describe('assembly createApp', () => {
         listeners.forEach(listener => listener())
         await vi.waitFor(() => {
             expect(nativeTopologyHostStopMock).toHaveBeenCalledTimes(1)
+        })
+    })
+
+    it('auto-starts topology connection for standalone slave recovery with persisted master locator', async () => {
+        const listeners: Array<() => void> = []
+        const runtime = {
+            runtimeId: 'runtime-id',
+            getState: vi.fn(() => ({state: true})),
+            dispatchCommand: vi.fn(async () => ({status: 'COMPLETED'})),
+            subscribeState: vi.fn((listener: () => void) => {
+                listeners.push(listener)
+                return () => {}
+            }),
+        }
+        startMock.mockResolvedValueOnce(runtime as any)
+        selectTopologyRuntimeV3ContextMock.mockImplementation(() => ({
+            displayIndex: 0,
+            displayCount: 1,
+            instanceMode: 'SLAVE',
+            displayMode: 'SECONDARY',
+            workspace: 'BRANCH',
+            standalone: true,
+            enableSlave: false,
+            localNodeId: 'slave-local-node',
+            masterLocator: {
+                masterNodeId: 'master-node-001',
+                masterDeviceId: 'master-device-001',
+                httpBaseUrl: 'http://127.0.0.1:18889/mockMasterServer',
+                serverAddress: [{address: 'ws://127.0.0.1:18889/mockMasterServer/ws'}],
+                addedAt: 1776811534054,
+            },
+        } as any))
+        selectTopologyRuntimeV3ConnectionMock.mockReturnValue({
+            serverConnectionStatus: 'DISCONNECTED',
+            reconnectAttempt: 0,
+        })
+
+        const result = createApp({
+            deviceId: 'device-slave-1',
+            screenMode: 'desktop',
+            displayCount: 1,
+            displayIndex: 0,
+            isEmulator: true,
+        })
+
+        await result.start()
+        await vi.waitFor(() => {
+            expect(runtime.dispatchCommand).toHaveBeenCalledWith({
+                definition: topologyRuntimeV3CommandDefinitionsMock.startTopologyConnection,
+                payload: {},
+            })
+        })
+
+        const dispatchCallsAfterStart = runtime.dispatchCommand.mock.calls.length
+        listeners.forEach(listener => listener())
+        listeners.forEach(listener => listener())
+        await vi.waitFor(() => {
+            expect(runtime.dispatchCommand.mock.calls.length).toBe(dispatchCallsAfterStart)
         })
     })
 

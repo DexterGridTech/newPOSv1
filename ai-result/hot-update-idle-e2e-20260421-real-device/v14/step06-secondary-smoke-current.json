@@ -1,0 +1,60 @@
+{
+  "serial": "D409P5C2J0285",
+  "target": "secondary",
+  "hostPort": 18585,
+  "devicePort": 18585,
+  "hello": {
+    "jsonrpc": "2.0",
+    "result": {
+      "protocolVersion": 1,
+      "capabilities": [
+        "runtime.query",
+        "ui.semanticRegistry",
+        "wait",
+        "trace",
+        "scripts.execute"
+      ],
+      "availableTargets": [
+        "host",
+        "secondary"
+      ],
+      "buildProfile": "internal",
+      "productMode": false,
+      "scriptExecutionAvailable": true
+    },
+    "id": "1776748784018-f11b1dcdc5bcb"
+  },
+  "info": {
+    "jsonrpc": "2.0",
+    "result": {
+      "protocolVersion": 1,
+      "runtimeId": "run_mo86baf7_38ndsthshptjolvo",
+      "localNodeId": "master:2N4QS8GYRS:display-1",
+      "environmentMode": "PROD",
+      "displayContext": {
+        "displayIndex": 1,
+        "displayCount": 2
+      },
+      "currentScreen": {
+        "containerKey": "secondary.root.container",
+        "screen": {
+          "partKey": "ui.integration.retail-shell.secondary-welcome",
+          "rendererKey": "ui.integration.retail-shell.secondary-welcome",
+          "props": {
+            "terminalId": "terminal_1x7upxfgvjw7"
+          }
+        },
+        "overlayCount": 0
+      }
+    },
+    "id": "1776748784029-3bd35734de61e"
+  },
+  "treeNodeCount": 9,
+  "idle": {
+    "jsonrpc": "2.0",
+    "result": {
+      "ok": true
+    },
+    "id": "1776748784044-b9273bb0ee263"
+  }
+}

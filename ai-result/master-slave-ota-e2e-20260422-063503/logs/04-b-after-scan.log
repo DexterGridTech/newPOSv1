@@ -1,0 +1,550 @@
+198:04-22 06:37:34.893 E/GoogleApiManager( 6460): java.lang.SecurityException: Unknown calling package name 'com.google.android.gms'.
+199:04-22 06:37:34.893 E/GoogleApiManager( 6460): 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3340)
+200:04-22 06:37:34.893 E/GoogleApiManager( 6460): 	at android.os.Parcel.createException(Parcel.java:3324)
+201:04-22 06:37:34.893 E/GoogleApiManager( 6460): 	at android.os.Parcel.readException(Parcel.java:3307)
+202:04-22 06:37:34.893 E/GoogleApiManager( 6460): 	at android.os.Parcel.readException(Parcel.java:3249)
+215:04-22 06:37:34.912 W/BestClock(  683): java.time.DateTimeException: No network time available
+221:04-22 06:37:34.932 W/BestClock(  683): java.time.DateTimeException: No network time available
+223:04-22 06:37:34.937 W/BestClock(  683): java.time.DateTimeException: No network time available
+224:04-22 06:37:34.937 W/BestClock(  683): java.time.DateTimeException: No network time available
+225:04-22 06:37:34.937 W/BestClock(  683): java.time.DateTimeException: No network time available
+226:04-22 06:37:34.938 W/BestClock(  683): java.time.DateTimeException: No network time available
+227:04-22 06:37:34.938 W/BestClock(  683): java.time.DateTimeException: No network time available
+228:04-22 06:37:34.938 W/BestClock(  683): java.time.DateTimeException: No network time available
+232:04-22 06:37:34.945 W/BestClock(  683): java.time.DateTimeException: No network time available
+241:04-22 06:37:34.955 W/BestClock(  683): java.time.DateTimeException: No network time available
+242:04-22 06:37:34.956 W/BestClock(  683): java.time.DateTimeException: No network time available
+243:04-22 06:37:34.956 W/BestClock(  683): java.time.DateTimeException: No network time available
+244:04-22 06:37:34.956 W/BestClock(  683): java.time.DateTimeException: No network time available
+245:04-22 06:37:34.956 W/BestClock(  683): java.time.DateTimeException: No network time available
+248:04-22 06:37:34.957 W/BestClock(  683): java.time.DateTimeException: No network time available
+249:04-22 06:37:34.957 W/BestClock(  683): java.time.DateTimeException: No network time available
+253:04-22 06:37:34.966 W/BestClock(  683): java.time.DateTimeException: No network time available
+262:04-22 06:37:34.985 W/BestClock(  683): java.time.DateTimeException: No network time available
+425:04-22 06:37:35.609 E/SystemServiceRegistry(  683): android.os.ServiceManager$ServiceNotFoundException: No service published for: persistent_data_block
+967:04-22 06:37:37.063 W/BestClock(  683): java.time.DateTimeException: No network time available
+968:04-22 06:37:37.063 W/BestClock(  683): java.time.DateTimeException: No network time available
+969:04-22 06:37:37.063 W/BestClock(  683): java.time.DateTimeException: No network time available
+970:04-22 06:37:37.064 W/BestClock(  683): java.time.DateTimeException: No network time available
+971:04-22 06:37:37.064 W/BestClock(  683): java.time.DateTimeException: No network time available
+1012:04-22 06:37:40.071 W/BestClock(  683): java.time.DateTimeException: No network time available
+1013:04-22 06:37:40.071 W/BestClock(  683): java.time.DateTimeException: No network time available
+1014:04-22 06:37:40.071 W/BestClock(  683): java.time.DateTimeException: No network time available
+1015:04-22 06:37:40.071 W/BestClock(  683): java.time.DateTimeException: No network time available
+1016:04-22 06:37:40.071 W/BestClock(  683): java.time.DateTimeException: No network time available
+1034:04-22 06:37:43.075 W/BestClock(  683): java.time.DateTimeException: No network time available
+1035:04-22 06:37:43.075 W/BestClock(  683): java.time.DateTimeException: No network time available
+1036:04-22 06:37:43.075 W/BestClock(  683): java.time.DateTimeException: No network time available
+1037:04-22 06:37:43.075 W/BestClock(  683): java.time.DateTimeException: No network time available
+1038:04-22 06:37:43.076 W/BestClock(  683): java.time.DateTimeException: No network time available
+1061:04-22 06:37:44.849 W/FileUtils(  683): Failed to chmod(AtomicFile[/data/system_de/0/system/game-manager-service.xml]): android.system.ErrnoException: chmod failed: ENOENT (No such file or directory)
+1078:04-22 06:37:46.087 W/BestClock(  683): java.time.DateTimeException: No network time available
+1079:04-22 06:37:46.087 W/BestClock(  683): java.time.DateTimeException: No network time available
+1080:04-22 06:37:46.087 W/BestClock(  683): java.time.DateTimeException: No network time available
+1081:04-22 06:37:46.087 W/BestClock(  683): java.time.DateTimeException: No network time available
+1082:04-22 06:37:46.087 W/BestClock(  683): java.time.DateTimeException: No network time available
+1109:04-22 06:37:49.094 W/BestClock(  683): java.time.DateTimeException: No network time available
+1110:04-22 06:37:49.094 W/BestClock(  683): java.time.DateTimeException: No network time available
+1111:04-22 06:37:49.094 W/BestClock(  683): java.time.DateTimeException: No network time available
+1112:04-22 06:37:49.094 W/BestClock(  683): java.time.DateTimeException: No network time available
+1113:04-22 06:37:49.094 W/BestClock(  683): java.time.DateTimeException: No network time available
+1131:04-22 06:37:52.108 W/BestClock(  683): java.time.DateTimeException: No network time available
+1132:04-22 06:37:52.108 W/BestClock(  683): java.time.DateTimeException: No network time available
+1133:04-22 06:37:52.108 W/BestClock(  683): java.time.DateTimeException: No network time available
+1134:04-22 06:37:52.108 W/BestClock(  683): java.time.DateTimeException: No network time available
+1135:04-22 06:37:52.108 W/BestClock(  683): java.time.DateTimeException: No network time available
+1152:04-22 06:37:52.282 W/BestClock(  683): java.time.DateTimeException: No network time available
+1164:04-22 06:37:52.302 W/BestClock(  683): java.time.DateTimeException: No network time available
+1194:04-22 06:37:53.527 W/GLSUser ( 1283): [AppCertManager] Exception while requesting key: 
+1195:04-22 06:37:53.527 W/GLSUser ( 1283): java.util.concurrent.ExecutionException: cilm: Failed to process request
+1220:04-22 06:37:53.527 W/GLSUser ( 1283): Caused by: m1.mq: Exception in CronetUrlRequest: net::ERR_CONNECTION_CLOSED, ErrorCode=5, InternalErrorCode=-100, Retryable=true
+1225:04-22 06:37:53.530 E/humr    ( 1591): java.lang.RuntimeException: ManagedChannel allocation site
+1255:04-22 06:37:55.113 W/BestClock(  683): java.time.DateTimeException: No network time available
+1256:04-22 06:37:55.114 W/BestClock(  683): java.time.DateTimeException: No network time available
+1257:04-22 06:37:55.114 W/BestClock(  683): java.time.DateTimeException: No network time available
+1258:04-22 06:37:55.114 W/BestClock(  683): java.time.DateTimeException: No network time available
+1259:04-22 06:37:55.114 W/BestClock(  683): java.time.DateTimeException: No network time available
+1494:04-22 06:37:55.729 E/FeatureFlagsImplExport( 7427): android.os.flagging.AconfigStorageReadException: ERROR_PACKAGE_NOT_FOUND: package android.xr cannot be found on the device
+1724:04-22 06:37:55.933 I/ReactNativeJS( 7439): Running "MixcRetailAssemblyRN84"
+1793:04-22 06:37:56.006 I/EmojiCompatManager( 1576): java.lang.IllegalStateException: EmojiCompat is not initialized. Please call EmojiCompat.init() first
+1841:04-22 06:37:56.051 I/assembly.android.mixc-retail-rn84.boot( 7439): {"stage":"resolve-topology:start","displayIndex":0,"displayCount":1}
+1842:04-22 06:37:56.051 I/assembly.android.mixc-retail-rn84.boot( 7439): {"stage":"resolve-topology:done","displayIndex":0,"displayCount":1}
+1844:04-22 06:37:56.056 I/assembly.kernel.base.runtime-shell-v2.state-runtime( 7439): [runtime.load] load kernel.base.runtime-shell-v2 {"slices":["kernel.base.runtime-shell-v2.error-catalog","kernel.base.runtime-shell-v2.parameter-catalog","kernel.base.topology-runtime-v3.config","kernel.base.topology-runtime-v3.context","kernel.base.topology-runtime-v3.connection","kernel.base.topology-runtime-v3.peer","kernel.base.topology-runtime-v3.sync","kernel.base.topology-runtime-v3.request-mirror","kernel.base.topology-runtime-v3.demo.master","kernel.base.topology-runtime-v3.demo.slave","kernel.base.tcp-control-runtime-v2.identity","kernel.base.tcp-control-runtime-v2.credential","kernel.base.tcp-control-runtime-v2.binding","kernel.base.tcp-control-runtime-v2.sandbox","kernel.base.tcp-control-runtime-v2.runtime","kernel.base.tdp-sync-runtime-v2.session","kernel.base.tdp-sync-runtime-v2.sync","kernel.base.tdp-sync-runtime-v2.projection","kernel.base.tdp-sync-runtime-v2.command-inbox","kernel.base.tdp-sync-runtime-v2.control-signals","kernel.base.tdp-sync-runtime-v2.hot-update","kernel.base.workflow-runtime-v2.definitions","kernel.base.workflow-runtime-v2.observations","kernel.base.workflow-runtime-v2.queue","kernel.base.ui-runtime-v2.screen.main","kernel.base.ui-runtime-v2.screen.branch","kernel.base.ui-runtime-v2.overlay.main","kernel.base.ui-runtime-v2.overlay.branch","kernel.base.ui-runtime-v2.ui-variable.main","kernel.base.ui-runtime-v2.ui-variable.branch","ui.base.admin-console.console"],"persistableSlices":["kernel.base.runtime-shell-v2.error-catalog","kernel.base.runtime-shell-v2.parameter-catalog","kernel.base.topology-runtime-v3.config","kernel.base.tcp-control-runtime-v2.identity","kernel.base.tcp-control-runtime-v2.credential","kernel.base.tcp-control-runtime-v2.binding","kernel.base.tcp-control-runtime-v2.sandbox","kernel.base.tdp-sync-runtime-v2.sync","kernel.base.tdp-sync-runtime-v2.projection","kernel.base.tdp-sync-runtime-v2.hot-update","kernel.base.workflow-runtime-v2.definitions","kernel.base.ui-runtime-v2.screen.main","kernel.base.ui-runtime-v2.screen.branch","kernel.base.ui-runtime-v2.overlay.main","kernel.base.ui-runtime-v2.overlay.branch","kernel.base.ui-runtime-v2.ui-variable.main","kernel.base.ui-runtime-v2.ui-variable.branch","ui.base.admin-console.console"],"persistenceEnabled":true}
+1847:04-22 06:37:56.057 I/assembly.kernel.base.runtime-shell-v2.application.KernelRuntimeAppV2( 7439): [runtime.load] created kernel runtime app v2 {"runtimeName":"assembly.android.mixc-retail-rn84","runtimeId":"run_mo97fsnr_p00ntgpbl19yzwgg","localNodeId":"master:ZJ63NQELD9","moduleNames":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+1848:04-22 06:37:56.058 I/assembly.kernel.base.runtime-shell-v2.application.KernelRuntimeAppV2( 7439): [runtime.load] start kernel runtime app v2 pre-setup {"runtimeName":"assembly.android.mixc-retail-rn84","moduleNames":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+1849:04-22 06:37:56.059 I/assembly.assembly.android.mixc-retail-rn84( 7439): [runtime.load] pre-setup assembly.android.mixc-retail-rn84 {"moduleName":"assembly.android.mixc-retail-rn84","runtimeNodeId":"master:ZJ63NQELD9","knownModules":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+1851:04-22 06:37:56.060 I/assembly.assembly.android.mixc-retail-rn84( 7439): [runtime.load] pre-setup kernel.base.topology-runtime-v3 {"moduleName":"kernel.base.topology-runtime-v3","runtimeNodeId":"master:ZJ63NQELD9","knownModules":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+1852:04-22 06:37:56.060 I/assembly.kernel.base.runtime-shell-v2.application.KernelRuntimeAppV2( 7439): [runtime.load] completed module pre-setup {"moduleName":"kernel.base.topology-runtime-v3","packageVersion":"0.0.1","dependencies":[],"stateSliceNames":["kernel.base.topology-runtime-v3.config","kernel.base.topology-runtime-v3.context","kernel.base.topology-runtime-v3.connection","kernel.base.topology-runtime-v3.peer","kernel.base.topology-runtime-v3.sync","kernel.base.topology-runtime-v3.request-mirror","kernel.base.topology-runtime-v3.demo.master","kernel.base.topology-runtime-v3.demo.slave"],"commandNames":["kernel.base.topology-runtime-v3.set-instance-mode","kernel.base.topology-runtime-v3.set-display-mode","kernel.base.topology-runtime-v3.set-enable-slave","kernel.base.topology-runtime-v3.set-master-locator","kernel.base.topology-runtime-v3.clear-master-locator","kernel.base.topology-runtime-v3.refresh-topology-context","kernel.base.topology-runtime-v3.start-topology-connection","kernel.base.topology-runtime-v3.stop-topology-connection","kernel.base.topology-runtime-v3.restart-topology-connection","kernel.base.topology-runtime-v3.upsert-demo-master-entry","kernel.base.topology-runtime-v3.remove-demo-master-entry","kernel.base.topology-runtime-v3.reset-demo-master-state","kernel.base.topology-runtime-v3.upsert-demo-slave-entry","kernel.base.topology-runtime-v3.remove-demo-slave-entry","kernel.base.topology-runtime-v3.reset-demo-slave-state"],"actorKeys":["kernel.base.topology-runtime-v3.TopologyContextActor","kernel.base.topology-runtime-v3.TopologyConnectionActor","kernel.base.topology-runtime-v3.TopologyDemoSyncActor"],"errorKeys":["kernel.base.topology-runtime-v3.display_context_required","kernel.base.topology-runtime-v3.orchestrator_required","kernel.base.topology-runtime-v3.socket_binding_required","kernel.base.topology-runtime-v3.hello_runtime_required","kernel.base.topology-runtime-v3.action_not_allowed"],"parameterKeys":["kernel.base.topology-runtime-v3.reconnect-interval-ms"],"hasInstall":true,"hasPreSetup":true}
+1853:04-22 06:37:56.060 I/assembly.assembly.android.mixc-retail-rn84( 7439): [runtime.load] pre-setup kernel.base.tcp-control-runtime-v2 {"moduleName":"kernel.base.tcp-control-runtime-v2","runtimeNodeId":"master:ZJ63NQELD9","knownModules":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+1855:04-22 06:37:56.060 I/assembly.assembly.android.mixc-retail-rn84( 7439): [runtime.load] pre-setup kernel.base.tdp-sync-runtime-v2 {"moduleName":"kernel.base.tdp-sync-runtime-v2","runtimeNodeId":"master:ZJ63NQELD9","knownModules":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+1857:04-22 06:37:56.060 I/assembly.assembly.android.mixc-retail-rn84( 7439): [runtime.load] pre-setup kernel.base.workflow-runtime-v2 {"moduleName":"kernel.base.workflow-runtime-v2","runtimeNodeId":"master:ZJ63NQELD9","knownModules":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+1859:04-22 06:37:56.064 I/assembly.assembly.android.mixc-retail-rn84( 7439): [runtime.load] pre-setup kernel.base.ui-runtime-v2 {"moduleName":"kernel.base.ui-runtime-v2","runtimeNodeId":"master:ZJ63NQELD9","knownModules":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+1861:04-22 06:37:56.065 I/assembly.assembly.android.mixc-retail-rn84( 7439): [runtime.load] pre-setup ui.base.runtime-react {"moduleName":"ui.base.runtime-react","runtimeNodeId":"master:ZJ63NQELD9","knownModules":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+1863:04-22 06:37:56.065 I/assembly.assembly.android.mixc-retail-rn84( 7439): [runtime.load] pre-setup ui.base.input-runtime {"moduleName":"ui.base.input-runtime","runtimeNodeId":"master:ZJ63NQELD9","knownModules":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+1865:04-22 06:37:56.065 I/assembly.assembly.android.mixc-retail-rn84( 7439): [runtime.load] pre-setup ui.base.admin-console {"moduleName":"ui.base.admin-console","runtimeNodeId":"master:ZJ63NQELD9","knownModules":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+1866:04-22 06:37:56.065 I/assembly.kernel.base.runtime-shell-v2.application.KernelRuntimeAppV2( 7439): [runtime.load] completed module pre-setup {"moduleName":"ui.base.admin-console","packageVersion":"0.0.1","dependencies":[],"stateSliceNames":["ui.base.admin-console.console"],"commandNames":["ui.base.admin-console.scan-and-import-topology-master"],"actorKeys":["ui.base.admin-console.AdminTopologyActor"],"errorKeys":[],"parameterKeys":[],"hasInstall":true,"hasPreSetup":true}
+1867:04-22 06:37:56.066 I/assembly.assembly.android.mixc-retail-rn84( 7439): [runtime.load] pre-setup ui.base.terminal-console {"moduleName":"ui.base.terminal-console","runtimeNodeId":"master:ZJ63NQELD9","knownModules":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+1869:04-22 06:37:56.066 I/assembly.assembly.android.mixc-retail-rn84( 7439): [runtime.load] pre-setup ui.integration.retail-shell {"moduleName":"ui.integration.retail-shell","runtimeNodeId":"master:ZJ63NQELD9","knownModules":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+1872:04-22 06:37:56.067 I/assembly.assembly.android.mixc-retail-rn84( 7439): [runtime.load] start runtime-shell-v2 {"runtimeId":"run_mo97fsnr_p00ntgpbl19yzwgg","localNodeId":"master:ZJ63NQELD9","modules":["kernel.base.runtime-shell-v2","assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"],"actorCount":80}
+1900:04-22 06:37:56.084 I/assembly.assembly.android.mixc-retail-rn84( 7439): [assembly.topology] Create assembly topology socket binding {"displayIndex":0,"role":"master","localNodeId":"master:ZJ63NQELD9","resolvedPathTemplate":"/ws"}
+1901:04-22 06:37:56.084 I/assembly.assembly.android.mixc-retail-rn84( 7439): [runtime.load] install kernel.base.topology-runtime-v3 {"moduleName":"kernel.base.topology-runtime-v3","stateSlices":["kernel.base.topology-runtime-v3.config","kernel.base.topology-runtime-v3.context","kernel.base.topology-runtime-v3.connection","kernel.base.topology-runtime-v3.peer","kernel.base.topology-runtime-v3.sync","kernel.base.topology-runtime-v3.request-mirror","kernel.base.topology-runtime-v3.demo.master","kernel.base.topology-runtime-v3.demo.slave"],"commandNames":["kernel.base.topology-runtime-v3.set-instance-mode","kernel.base.topology-runtime-v3.set-display-mode","kernel.base.topology-runtime-v3.set-enable-slave","kernel.base.topology-runtime-v3.set-master-locator","kernel.base.topology-runtime-v3.clear-master-locator","kernel.base.topology-runtime-v3.refresh-topology-context","kernel.base.topology-runtime-v3.start-topology-connection","kernel.base.topology-runtime-v3.stop-topology-connection","kernel.base.topology-runtime-v3.restart-topology-connection","kernel.base.topology-runtime-v3.upsert-demo-master-entry","kernel.base.topology-runtime-v3.remove-demo-master-entry","kernel.base.topology-runtime-v3.reset-demo-master-state","kernel.base.topology-runtime-v3.upsert-demo-slave-entry","kernel.base.topology-runtime-v3.remove-demo-slave-entry","kernel.base.topology-runtime-v3.reset-demo-slave-state"]}
+1922:04-22 06:37:56.095 I/ReactNativeJS( 7439): '[tcp-bootstrap-state-written]', '{"nodeId":"master:ZJ63NQELD9","runtimeId":"run_mo97fsnr_p00ntgpbl19yzwgg","displayIndex":0,"requestId":"req_mo97fsou_lz5z4pqjt70sogb4","commandId":"cmd_mo97fsov_n552pa45axqcc6rh","nextDeviceFingerprint":"ZJ63NQELD9","nextDeviceInfo":{"id":"ZJ63NQELD9","model":"Mixc Retail Android RN84"},"previousIdentity":{"activationStatus":"UNACTIVATED"}}'
+1924:04-22 06:37:56.099 I/assembly.kernel.base.runtime-shell-v2.application.KernelRuntimeAppV2( 7439): [runtime.load] kernel runtime app v2 started {"runtimeName":"assembly.android.mixc-retail-rn84","moduleDescriptors":[{"moduleName":"assembly.android.mixc-retail-rn84","packageVersion":"1.0.0","dependencies":[],"stateSliceNames":[],"commandNames":[],"actorKeys":["assembly.android.mixc-retail-rn84.AssemblyRuntimeInitializeActor"],"errorKeys":[],"parameterKeys":[],"hasInstall":true,"hasPreSetup":true},{"moduleName":"kernel.base.topology-runtime-v3","packageVersion":"0.0.1","dependencies":[],"stateSliceNames":["kernel.base.topology-runtime-v3.config","kernel.base.topology-runtime-v3.context","kernel.base.topology-runtime-v3.connection","kernel.base.topology-runtime-v3.peer","kernel.base.topology-runtime-v3.sync","kernel.base.topology-runtime-v3.request-mirror","kernel.base.topology-runtime-v3.demo.master","kernel.base.topology-runtime-v3.demo.slave"],"commandNames":["kernel.base.topology-runtime-v3.set-instance-mode","kernel.base.topology-runtime-v3.set-display-mode","kernel.base.topology-runtime-v3.set-enable-slave","kernel.base.topology-runtime-v3.set-master-locator","kernel.base.topology-runtime-v3.clear-master-locator","kernel.base.topology-runtime-v3.refresh-topology-context","kernel.base.topology-runtime-v3.start-topology-connection","kernel.base.topology-runtime-v3.stop-topology-connection","kernel.base.topology-runtime-v3.restart-topology-connection","kernel.base.topology-runtime-v3.upsert-demo-master-entry","kernel.base.topology-runtime-v3.remove-demo-master-entry","kernel.base.topology-runtime-v3.reset-demo-master-state","kernel.base.topology-runtime-v3.upsert-demo-slave-entry","kernel.base.topology-runtime-v3.remove-demo-slave-entry","kernel.base.topology-runtime-v3.reset-demo-slave-state"],"actorKeys":["kernel.base.topology-runtime-v3.TopologyContextActor","kernel.base.topology-runtime-v3.TopologyConnectionActor","kernel.base.topology-runtime-v3.TopologyDemoSyncActor"],"errorKeys":["kernel.base.topology-runtime-v3.display_context_required","kernel.base.topology-runtime-v3.orchestrator_required","kernel.base.topology-runtime-v3.socket_binding_required","kernel.base.topology-runtime-v3.hello_runtime_required","kernel.base.topology-runtime-v3.action_not_allowed"],"parameterKeys":["kernel.base.topology-runtime-v3.reconnect-interval-ms"],"hasInstall":true,"hasPreSetup":true},{"moduleName":"kernel.base.tcp-control-runtime-v2","packageVersion":"0.0.1","dependencies":[],"stateSliceNames":["kernel.base.tcp-control-runtime-v2.identity","kernel.base.tcp-control-runtime-v2.credential","kernel.base.tcp-control-runtime-v2.binding","kernel.base.tcp-control-runtime-v2.sandbox","kernel.base.tcp-control-runtime-v2.runtime"],"commandNames":["kernel.base.tcp-control-runtime-v2.bootstrap-tcp-control","kernel.base.tcp-control-runtime-v2.bootstrap-tcp-control-succeeded","kernel.base.tcp-control-runtime-v2.activate-terminal","kernel.base.tcp-control-runtime-v2.activate-terminal-succeeded","kernel.base.tcp-control-runtime-v2.refresh-credential","kernel.base.tcp-control-runtime-v2.credential-refreshed","kernel.base.tcp-control-runtime-v2.deactivate-terminal","kernel.base.tcp-control-runtime-v2.deactivate-terminal-succeeded","kernel.base.tcp-control-runtime-v2.report-task-result","kernel.base.tcp-control-runtime-v2.task-result-reported","kernel.base.tcp-control-runtime-v2.reset-tcp-control"],"actorKeys":["kernel.base.tcp-control-runtime-v2.TcpBootstrapActor","kernel.base.tcp-control-runtime-v2.TcpActivationActor","kernel.base.tcp-control-runtime-v2.TcpCredentialActor","kernel.base.tcp-control-runtime-v2.TcpDeactivationActor","kernel.base.tcp-control-runtime-v2.TcpTaskReportActor","kernel.base.tcp-control-runtime-v2.TcpStateMutationActor"],"errorKeys":["kernel.base.tcp-control-runtime-v2.activation_code_invalid","kernel.base.tcp-control-runtime-v2.activation_failed","kernel.base.tcp-control-runtime-v2.credential_missing","kernel.base.tcp-control-runtime-v2.credential_expired","kernel.base.tcp-control-runtime-v2.refresh_failed","kernel.base.tcp
+1939:04-22 06:37:56.116 I/assembly.assembly.android.mixc-retail-rn84( 7439): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"MASTER","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+2045:04-22 06:37:58.119 W/BestClock(  683): java.time.DateTimeException: No network time available
+2046:04-22 06:37:58.119 W/BestClock(  683): java.time.DateTimeException: No network time available
+2047:04-22 06:37:58.119 W/BestClock(  683): java.time.DateTimeException: No network time available
+2048:04-22 06:37:58.119 W/BestClock(  683): java.time.DateTimeException: No network time available
+2049:04-22 06:37:58.119 W/BestClock(  683): java.time.DateTimeException: No network time available
+2072:04-22 06:38:01.122 W/BestClock(  683): java.time.DateTimeException: No network time available
+2073:04-22 06:38:01.122 W/BestClock(  683): java.time.DateTimeException: No network time available
+2074:04-22 06:38:01.122 W/BestClock(  683): java.time.DateTimeException: No network time available
+2075:04-22 06:38:01.124 W/BestClock(  683): java.time.DateTimeException: No network time available
+2076:04-22 06:38:01.124 W/BestClock(  683): java.time.DateTimeException: No network time available
+2100:04-22 06:38:04.128 W/BestClock(  683): java.time.DateTimeException: No network time available
+2101:04-22 06:38:04.128 W/BestClock(  683): java.time.DateTimeException: No network time available
+2102:04-22 06:38:04.128 W/BestClock(  683): java.time.DateTimeException: No network time available
+2103:04-22 06:38:04.128 W/BestClock(  683): java.time.DateTimeException: No network time available
+2104:04-22 06:38:04.128 W/BestClock(  683): java.time.DateTimeException: No network time available
+2133:04-22 06:38:07.137 W/BestClock(  683): java.time.DateTimeException: No network time available
+2134:04-22 06:38:07.137 W/BestClock(  683): java.time.DateTimeException: No network time available
+2135:04-22 06:38:07.137 W/BestClock(  683): java.time.DateTimeException: No network time available
+2136:04-22 06:38:07.137 W/BestClock(  683): java.time.DateTimeException: No network time available
+2137:04-22 06:38:07.137 W/BestClock(  683): java.time.DateTimeException: No network time available
+2195:04-22 06:38:10.145 W/BestClock(  683): java.time.DateTimeException: No network time available
+2196:04-22 06:38:10.146 W/BestClock(  683): java.time.DateTimeException: No network time available
+2197:04-22 06:38:10.146 W/BestClock(  683): java.time.DateTimeException: No network time available
+2198:04-22 06:38:10.146 W/BestClock(  683): java.time.DateTimeException: No network time available
+2199:04-22 06:38:10.146 W/BestClock(  683): java.time.DateTimeException: No network time available
+2234:04-22 06:38:13.153 W/BestClock(  683): java.time.DateTimeException: No network time available
+2235:04-22 06:38:13.154 W/BestClock(  683): java.time.DateTimeException: No network time available
+2236:04-22 06:38:13.154 W/BestClock(  683): java.time.DateTimeException: No network time available
+2237:04-22 06:38:13.154 W/BestClock(  683): java.time.DateTimeException: No network time available
+2238:04-22 06:38:13.154 W/BestClock(  683): java.time.DateTimeException: No network time available
+2261:04-22 06:38:16.162 W/BestClock(  683): java.time.DateTimeException: No network time available
+2262:04-22 06:38:16.163 W/BestClock(  683): java.time.DateTimeException: No network time available
+2263:04-22 06:38:16.163 W/BestClock(  683): java.time.DateTimeException: No network time available
+2264:04-22 06:38:16.163 W/BestClock(  683): java.time.DateTimeException: No network time available
+2265:04-22 06:38:16.163 W/BestClock(  683): java.time.DateTimeException: No network time available
+2288:04-22 06:38:19.169 W/BestClock(  683): java.time.DateTimeException: No network time available
+2289:04-22 06:38:19.169 W/BestClock(  683): java.time.DateTimeException: No network time available
+2290:04-22 06:38:19.169 W/BestClock(  683): java.time.DateTimeException: No network time available
+2291:04-22 06:38:19.169 W/BestClock(  683): java.time.DateTimeException: No network time available
+2292:04-22 06:38:19.169 W/BestClock(  683): java.time.DateTimeException: No network time available
+2309:04-22 06:38:20.565 D/NetworkMonitor/101( 1052): PROBE_HTTPS https://www.google.com/generate_204 Probe failed with exception javax.net.ssl.SSLHandshakeException: connection closed
+2337:04-22 06:38:22.174 W/BestClock(  683): java.time.DateTimeException: No network time available
+2338:04-22 06:38:22.174 W/BestClock(  683): java.time.DateTimeException: No network time available
+2339:04-22 06:38:22.174 W/BestClock(  683): java.time.DateTimeException: No network time available
+2340:04-22 06:38:22.174 W/BestClock(  683): java.time.DateTimeException: No network time available
+2341:04-22 06:38:22.174 W/BestClock(  683): java.time.DateTimeException: No network time available
+2374:04-22 06:38:25.180 W/BestClock(  683): java.time.DateTimeException: No network time available
+2375:04-22 06:38:25.181 W/BestClock(  683): java.time.DateTimeException: No network time available
+2376:04-22 06:38:25.181 W/BestClock(  683): java.time.DateTimeException: No network time available
+2377:04-22 06:38:25.181 W/BestClock(  683): java.time.DateTimeException: No network time available
+2378:04-22 06:38:25.181 W/BestClock(  683): java.time.DateTimeException: No network time available
+2395:04-22 06:38:28.190 W/BestClock(  683): java.time.DateTimeException: No network time available
+2396:04-22 06:38:28.190 W/BestClock(  683): java.time.DateTimeException: No network time available
+2397:04-22 06:38:28.190 W/BestClock(  683): java.time.DateTimeException: No network time available
+2398:04-22 06:38:28.190 W/BestClock(  683): java.time.DateTimeException: No network time available
+2399:04-22 06:38:28.190 W/BestClock(  683): java.time.DateTimeException: No network time available
+2417:04-22 06:38:31.196 W/BestClock(  683): java.time.DateTimeException: No network time available
+2418:04-22 06:38:31.197 W/BestClock(  683): java.time.DateTimeException: No network time available
+2419:04-22 06:38:31.197 W/BestClock(  683): java.time.DateTimeException: No network time available
+2420:04-22 06:38:31.197 W/BestClock(  683): java.time.DateTimeException: No network time available
+2421:04-22 06:38:31.197 W/BestClock(  683): java.time.DateTimeException: No network time available
+2442:04-22 06:38:32.585 D/NetworkMonitor/101( 1052): PROBE_HTTPS https://www.google.com/generate_204 Probe failed with exception javax.net.ssl.SSLHandshakeException: connection closed
+2445:04-22 06:38:34.204 W/BestClock(  683): java.time.DateTimeException: No network time available
+2446:04-22 06:38:34.204 W/BestClock(  683): java.time.DateTimeException: No network time available
+2447:04-22 06:38:34.204 W/BestClock(  683): java.time.DateTimeException: No network time available
+2448:04-22 06:38:34.204 W/BestClock(  683): java.time.DateTimeException: No network time available
+2449:04-22 06:38:34.204 W/BestClock(  683): java.time.DateTimeException: No network time available
+2493:04-22 06:38:37.207 W/BestClock(  683): java.time.DateTimeException: No network time available
+2494:04-22 06:38:37.207 W/BestClock(  683): java.time.DateTimeException: No network time available
+2495:04-22 06:38:37.207 W/BestClock(  683): java.time.DateTimeException: No network time available
+2496:04-22 06:38:37.207 W/BestClock(  683): java.time.DateTimeException: No network time available
+2497:04-22 06:38:37.207 W/BestClock(  683): java.time.DateTimeException: No network time available
+2551:04-22 06:38:40.210 W/BestClock(  683): java.time.DateTimeException: No network time available
+2552:04-22 06:38:40.210 W/BestClock(  683): java.time.DateTimeException: No network time available
+2553:04-22 06:38:40.210 W/BestClock(  683): java.time.DateTimeException: No network time available
+2554:04-22 06:38:40.210 W/BestClock(  683): java.time.DateTimeException: No network time available
+2555:04-22 06:38:40.210 W/BestClock(  683): java.time.DateTimeException: No network time available
+2584:04-22 06:38:43.219 W/BestClock(  683): java.time.DateTimeException: No network time available
+2585:04-22 06:38:43.219 W/BestClock(  683): java.time.DateTimeException: No network time available
+2586:04-22 06:38:43.219 W/BestClock(  683): java.time.DateTimeException: No network time available
+2587:04-22 06:38:43.219 W/BestClock(  683): java.time.DateTimeException: No network time available
+2588:04-22 06:38:43.220 W/BestClock(  683): java.time.DateTimeException: No network time available
+2605:04-22 06:38:45.110 D/NetworkMonitor/101( 1052): PROBE_HTTPS https://www.google.com/generate_204 Probe failed with exception javax.net.ssl.SSLHandshakeException: connection closed
+2608:04-22 06:38:46.225 W/BestClock(  683): java.time.DateTimeException: No network time available
+2609:04-22 06:38:46.225 W/BestClock(  683): java.time.DateTimeException: No network time available
+2610:04-22 06:38:46.225 W/BestClock(  683): java.time.DateTimeException: No network time available
+2611:04-22 06:38:46.225 W/BestClock(  683): java.time.DateTimeException: No network time available
+2612:04-22 06:38:46.225 W/BestClock(  683): java.time.DateTimeException: No network time available
+2634:04-22 06:38:48.842 D/NetworkMonitor/100( 1052): PROBE_HTTP http://connectivitycheck.gstatic.com/generate_204 Probe failed with exception java.net.SocketTimeoutException: failed to connect to connectivitycheck.gstatic.com/114.250.66.34 (port 80) from /10.0.2.15 (port 51974) after 10000ms
+2659:04-22 06:38:49.235 W/BestClock(  683): java.time.DateTimeException: No network time available
+2660:04-22 06:38:49.235 W/BestClock(  683): java.time.DateTimeException: No network time available
+2661:04-22 06:38:49.235 W/BestClock(  683): java.time.DateTimeException: No network time available
+2662:04-22 06:38:49.235 W/BestClock(  683): java.time.DateTimeException: No network time available
+2663:04-22 06:38:49.235 W/BestClock(  683): java.time.DateTimeException: No network time available
+2688:04-22 06:38:52.241 W/BestClock(  683): java.time.DateTimeException: No network time available
+2689:04-22 06:38:52.241 W/BestClock(  683): java.time.DateTimeException: No network time available
+2690:04-22 06:38:52.241 W/BestClock(  683): java.time.DateTimeException: No network time available
+2691:04-22 06:38:52.241 W/BestClock(  683): java.time.DateTimeException: No network time available
+2692:04-22 06:38:52.241 W/BestClock(  683): java.time.DateTimeException: No network time available
+2710:04-22 06:38:55.246 W/BestClock(  683): java.time.DateTimeException: No network time available
+2711:04-22 06:38:55.246 W/BestClock(  683): java.time.DateTimeException: No network time available
+2712:04-22 06:38:55.246 W/BestClock(  683): java.time.DateTimeException: No network time available
+2713:04-22 06:38:55.246 W/BestClock(  683): java.time.DateTimeException: No network time available
+2714:04-22 06:38:55.246 W/BestClock(  683): java.time.DateTimeException: No network time available
+2735:04-22 06:38:58.251 W/BestClock(  683): java.time.DateTimeException: No network time available
+2736:04-22 06:38:58.251 W/BestClock(  683): java.time.DateTimeException: No network time available
+2737:04-22 06:38:58.251 W/BestClock(  683): java.time.DateTimeException: No network time available
+2738:04-22 06:38:58.251 W/BestClock(  683): java.time.DateTimeException: No network time available
+2739:04-22 06:38:58.251 W/BestClock(  683): java.time.DateTimeException: No network time available
+2757:04-22 06:38:58.856 D/NetworkMonitor/100( 1052): PROBE_HTTPS https://www.google.com/generate_204 Probe failed with exception java.net.SocketTimeoutException: failed to connect to www.google.com/2001::1 (port 443) from /fec0::5054:ff:fe12:3456 (port 35152) after 10000ms
+2760:04-22 06:38:59.646 D/NetworkMonitor/101( 1052): PROBE_HTTPS https://www.google.com/generate_204 Probe failed with exception javax.net.ssl.SSLHandshakeException: connection closed
+2763:04-22 06:39:01.257 W/BestClock(  683): java.time.DateTimeException: No network time available
+2764:04-22 06:39:01.257 W/BestClock(  683): java.time.DateTimeException: No network time available
+2765:04-22 06:39:01.257 W/BestClock(  683): java.time.DateTimeException: No network time available
+2766:04-22 06:39:01.258 W/BestClock(  683): java.time.DateTimeException: No network time available
+2767:04-22 06:39:01.258 W/BestClock(  683): java.time.DateTimeException: No network time available
+2784:04-22 06:39:04.267 W/BestClock(  683): java.time.DateTimeException: No network time available
+2785:04-22 06:39:04.267 W/BestClock(  683): java.time.DateTimeException: No network time available
+2786:04-22 06:39:04.267 W/BestClock(  683): java.time.DateTimeException: No network time available
+2787:04-22 06:39:04.267 W/BestClock(  683): java.time.DateTimeException: No network time available
+2788:04-22 06:39:04.267 W/BestClock(  683): java.time.DateTimeException: No network time available
+2809:04-22 06:39:07.277 W/BestClock(  683): java.time.DateTimeException: No network time available
+2810:04-22 06:39:07.277 W/BestClock(  683): java.time.DateTimeException: No network time available
+2811:04-22 06:39:07.277 W/BestClock(  683): java.time.DateTimeException: No network time available
+2812:04-22 06:39:07.277 W/BestClock(  683): java.time.DateTimeException: No network time available
+2813:04-22 06:39:07.277 W/BestClock(  683): java.time.DateTimeException: No network time available
+2857:04-22 06:39:10.282 W/BestClock(  683): java.time.DateTimeException: No network time available
+2858:04-22 06:39:10.283 W/BestClock(  683): java.time.DateTimeException: No network time available
+2859:04-22 06:39:10.283 W/BestClock(  683): java.time.DateTimeException: No network time available
+2860:04-22 06:39:10.283 W/BestClock(  683): java.time.DateTimeException: No network time available
+2861:04-22 06:39:10.283 W/BestClock(  683): java.time.DateTimeException: No network time available
+2894:04-22 06:39:13.292 W/BestClock(  683): java.time.DateTimeException: No network time available
+2895:04-22 06:39:13.292 W/BestClock(  683): java.time.DateTimeException: No network time available
+2896:04-22 06:39:13.292 W/BestClock(  683): java.time.DateTimeException: No network time available
+2897:04-22 06:39:13.292 W/BestClock(  683): java.time.DateTimeException: No network time available
+2898:04-22 06:39:13.292 W/BestClock(  683): java.time.DateTimeException: No network time available
+2918:04-22 06:39:16.299 W/BestClock(  683): java.time.DateTimeException: No network time available
+2919:04-22 06:39:16.299 W/BestClock(  683): java.time.DateTimeException: No network time available
+2920:04-22 06:39:16.299 W/BestClock(  683): java.time.DateTimeException: No network time available
+2921:04-22 06:39:16.299 W/BestClock(  683): java.time.DateTimeException: No network time available
+2922:04-22 06:39:16.299 W/BestClock(  683): java.time.DateTimeException: No network time available
+2941:04-22 06:39:18.679 D/NetworkMonitor/101( 1052): PROBE_HTTPS https://www.google.com/generate_204 Probe failed with exception javax.net.ssl.SSLHandshakeException: connection closed
+2944:04-22 06:39:19.303 W/BestClock(  683): java.time.DateTimeException: No network time available
+2945:04-22 06:39:19.303 W/BestClock(  683): java.time.DateTimeException: No network time available
+2946:04-22 06:39:19.304 W/BestClock(  683): java.time.DateTimeException: No network time available
+2947:04-22 06:39:19.304 W/BestClock(  683): java.time.DateTimeException: No network time available
+2948:04-22 06:39:19.304 W/BestClock(  683): java.time.DateTimeException: No network time available
+2969:04-22 06:39:22.309 W/BestClock(  683): java.time.DateTimeException: No network time available
+2970:04-22 06:39:22.309 W/BestClock(  683): java.time.DateTimeException: No network time available
+2971:04-22 06:39:22.309 W/BestClock(  683): java.time.DateTimeException: No network time available
+2972:04-22 06:39:22.309 W/BestClock(  683): java.time.DateTimeException: No network time available
+2973:04-22 06:39:22.309 W/BestClock(  683): java.time.DateTimeException: No network time available
+2990:04-22 06:39:25.315 W/BestClock(  683): java.time.DateTimeException: No network time available
+2991:04-22 06:39:25.315 W/BestClock(  683): java.time.DateTimeException: No network time available
+2992:04-22 06:39:25.315 W/BestClock(  683): java.time.DateTimeException: No network time available
+2993:04-22 06:39:25.315 W/BestClock(  683): java.time.DateTimeException: No network time available
+2994:04-22 06:39:25.315 W/BestClock(  683): java.time.DateTimeException: No network time available
+3011:04-22 06:39:28.323 W/BestClock(  683): java.time.DateTimeException: No network time available
+3012:04-22 06:39:28.323 W/BestClock(  683): java.time.DateTimeException: No network time available
+3013:04-22 06:39:28.324 W/BestClock(  683): java.time.DateTimeException: No network time available
+3014:04-22 06:39:28.324 W/BestClock(  683): java.time.DateTimeException: No network time available
+3015:04-22 06:39:28.324 W/BestClock(  683): java.time.DateTimeException: No network time available
+3037:04-22 06:39:31.331 W/BestClock(  683): java.time.DateTimeException: No network time available
+3038:04-22 06:39:31.331 W/BestClock(  683): java.time.DateTimeException: No network time available
+3039:04-22 06:39:31.331 W/BestClock(  683): java.time.DateTimeException: No network time available
+3040:04-22 06:39:31.331 W/BestClock(  683): java.time.DateTimeException: No network time available
+3041:04-22 06:39:31.331 W/BestClock(  683): java.time.DateTimeException: No network time available
+3059:04-22 06:39:34.341 W/BestClock(  683): java.time.DateTimeException: No network time available
+3060:04-22 06:39:34.341 W/BestClock(  683): java.time.DateTimeException: No network time available
+3061:04-22 06:39:34.341 W/BestClock(  683): java.time.DateTimeException: No network time available
+3062:04-22 06:39:34.342 W/BestClock(  683): java.time.DateTimeException: No network time available
+3063:04-22 06:39:34.342 W/BestClock(  683): java.time.DateTimeException: No network time available
+3118:04-22 06:39:37.351 W/BestClock(  683): java.time.DateTimeException: No network time available
+3119:04-22 06:39:37.351 W/BestClock(  683): java.time.DateTimeException: No network time available
+3120:04-22 06:39:37.351 W/BestClock(  683): java.time.DateTimeException: No network time available
+3121:04-22 06:39:37.351 W/BestClock(  683): java.time.DateTimeException: No network time available
+3122:04-22 06:39:37.351 W/BestClock(  683): java.time.DateTimeException: No network time available
+3148:04-22 06:39:40.359 W/BestClock(  683): java.time.DateTimeException: No network time available
+3149:04-22 06:39:40.359 W/BestClock(  683): java.time.DateTimeException: No network time available
+3150:04-22 06:39:40.359 W/BestClock(  683): java.time.DateTimeException: No network time available
+3151:04-22 06:39:40.359 W/BestClock(  683): java.time.DateTimeException: No network time available
+3152:04-22 06:39:40.359 W/BestClock(  683): java.time.DateTimeException: No network time available
+3169:04-22 06:39:43.366 W/BestClock(  683): java.time.DateTimeException: No network time available
+3170:04-22 06:39:43.366 W/BestClock(  683): java.time.DateTimeException: No network time available
+3171:04-22 06:39:43.366 W/BestClock(  683): java.time.DateTimeException: No network time available
+3172:04-22 06:39:43.366 W/BestClock(  683): java.time.DateTimeException: No network time available
+3173:04-22 06:39:43.366 W/BestClock(  683): java.time.DateTimeException: No network time available
+3194:04-22 06:39:45.230 D/NetworkMonitor/101( 1052): PROBE_HTTPS https://www.google.com/generate_204 Probe failed with exception javax.net.ssl.SSLHandshakeException: connection closed
+3197:04-22 06:39:46.372 W/BestClock(  683): java.time.DateTimeException: No network time available
+3198:04-22 06:39:46.372 W/BestClock(  683): java.time.DateTimeException: No network time available
+3199:04-22 06:39:46.373 W/BestClock(  683): java.time.DateTimeException: No network time available
+3200:04-22 06:39:46.373 W/BestClock(  683): java.time.DateTimeException: No network time available
+3201:04-22 06:39:46.373 W/BestClock(  683): java.time.DateTimeException: No network time available
+3219:04-22 06:39:49.382 W/BestClock(  683): java.time.DateTimeException: No network time available
+3220:04-22 06:39:49.383 W/BestClock(  683): java.time.DateTimeException: No network time available
+3221:04-22 06:39:49.383 W/BestClock(  683): java.time.DateTimeException: No network time available
+3222:04-22 06:39:49.383 W/BestClock(  683): java.time.DateTimeException: No network time available
+3223:04-22 06:39:49.384 W/BestClock(  683): java.time.DateTimeException: No network time available
+3244:04-22 06:39:52.391 W/BestClock(  683): java.time.DateTimeException: No network time available
+3245:04-22 06:39:52.391 W/BestClock(  683): java.time.DateTimeException: No network time available
+3246:04-22 06:39:52.391 W/BestClock(  683): java.time.DateTimeException: No network time available
+3247:04-22 06:39:52.391 W/BestClock(  683): java.time.DateTimeException: No network time available
+3248:04-22 06:39:52.391 W/BestClock(  683): java.time.DateTimeException: No network time available
+3269:04-22 06:39:55.398 W/BestClock(  683): java.time.DateTimeException: No network time available
+3270:04-22 06:39:55.398 W/BestClock(  683): java.time.DateTimeException: No network time available
+3271:04-22 06:39:55.398 W/BestClock(  683): java.time.DateTimeException: No network time available
+3272:04-22 06:39:55.398 W/BestClock(  683): java.time.DateTimeException: No network time available
+3273:04-22 06:39:55.398 W/BestClock(  683): java.time.DateTimeException: No network time available
+3301:04-22 06:39:58.403 W/BestClock(  683): java.time.DateTimeException: No network time available
+3302:04-22 06:39:58.403 W/BestClock(  683): java.time.DateTimeException: No network time available
+3303:04-22 06:39:58.403 W/BestClock(  683): java.time.DateTimeException: No network time available
+3304:04-22 06:39:58.403 W/BestClock(  683): java.time.DateTimeException: No network time available
+3305:04-22 06:39:58.403 W/BestClock(  683): java.time.DateTimeException: No network time available
+3356:04-22 06:40:00.544 W/BestClock(  683): java.time.DateTimeException: No network time available
+3357:04-22 06:40:00.547 W/BestClock(  683): java.time.DateTimeException: No network time available
+3358:04-22 06:40:00.547 W/BestClock(  683): java.time.DateTimeException: No network time available
+3484:04-22 06:40:01.411 W/BestClock(  683): java.time.DateTimeException: No network time available
+3485:04-22 06:40:01.411 W/BestClock(  683): java.time.DateTimeException: No network time available
+3486:04-22 06:40:01.411 W/BestClock(  683): java.time.DateTimeException: No network time available
+3487:04-22 06:40:01.411 W/BestClock(  683): java.time.DateTimeException: No network time available
+3504:04-22 06:40:04.423 W/BestClock(  683): java.time.DateTimeException: No network time available
+3505:04-22 06:40:04.423 W/BestClock(  683): java.time.DateTimeException: No network time available
+3506:04-22 06:40:04.423 W/BestClock(  683): java.time.DateTimeException: No network time available
+3507:04-22 06:40:04.423 W/BestClock(  683): java.time.DateTimeException: No network time available
+3508:04-22 06:40:04.423 W/BestClock(  683): java.time.DateTimeException: No network time available
+3525:04-22 06:40:07.429 W/BestClock(  683): java.time.DateTimeException: No network time available
+3526:04-22 06:40:07.429 W/BestClock(  683): java.time.DateTimeException: No network time available
+3527:04-22 06:40:07.429 W/BestClock(  683): java.time.DateTimeException: No network time available
+3528:04-22 06:40:07.429 W/BestClock(  683): java.time.DateTimeException: No network time available
+3529:04-22 06:40:07.429 W/BestClock(  683): java.time.DateTimeException: No network time available
+3551:04-22 06:40:10.439 W/BestClock(  683): java.time.DateTimeException: No network time available
+3552:04-22 06:40:10.439 W/BestClock(  683): java.time.DateTimeException: No network time available
+3553:04-22 06:40:10.439 W/BestClock(  683): java.time.DateTimeException: No network time available
+3554:04-22 06:40:10.439 W/BestClock(  683): java.time.DateTimeException: No network time available
+3555:04-22 06:40:10.439 W/BestClock(  683): java.time.DateTimeException: No network time available
+3572:04-22 06:40:13.446 W/BestClock(  683): java.time.DateTimeException: No network time available
+3573:04-22 06:40:13.446 W/BestClock(  683): java.time.DateTimeException: No network time available
+3574:04-22 06:40:13.446 W/BestClock(  683): java.time.DateTimeException: No network time available
+3575:04-22 06:40:13.446 W/BestClock(  683): java.time.DateTimeException: No network time available
+3576:04-22 06:40:13.446 W/BestClock(  683): java.time.DateTimeException: No network time available
+3596:04-22 06:40:16.454 W/BestClock(  683): java.time.DateTimeException: No network time available
+3597:04-22 06:40:16.454 W/BestClock(  683): java.time.DateTimeException: No network time available
+3598:04-22 06:40:16.454 W/BestClock(  683): java.time.DateTimeException: No network time available
+3599:04-22 06:40:16.454 W/BestClock(  683): java.time.DateTimeException: No network time available
+3600:04-22 06:40:16.454 W/BestClock(  683): java.time.DateTimeException: No network time available
+3649:04-22 06:40:19.461 W/BestClock(  683): java.time.DateTimeException: No network time available
+3650:04-22 06:40:19.461 W/BestClock(  683): java.time.DateTimeException: No network time available
+3651:04-22 06:40:19.461 W/BestClock(  683): java.time.DateTimeException: No network time available
+3652:04-22 06:40:19.461 W/BestClock(  683): java.time.DateTimeException: No network time available
+3653:04-22 06:40:19.461 W/BestClock(  683): java.time.DateTimeException: No network time available
+3678:04-22 06:40:22.467 W/BestClock(  683): java.time.DateTimeException: No network time available
+3679:04-22 06:40:22.467 W/BestClock(  683): java.time.DateTimeException: No network time available
+3680:04-22 06:40:22.467 W/BestClock(  683): java.time.DateTimeException: No network time available
+3681:04-22 06:40:22.467 W/BestClock(  683): java.time.DateTimeException: No network time available
+3682:04-22 06:40:22.467 W/BestClock(  683): java.time.DateTimeException: No network time available
+3703:04-22 06:40:25.475 W/BestClock(  683): java.time.DateTimeException: No network time available
+3704:04-22 06:40:25.475 W/BestClock(  683): java.time.DateTimeException: No network time available
+3705:04-22 06:40:25.475 W/BestClock(  683): java.time.DateTimeException: No network time available
+3706:04-22 06:40:25.475 W/BestClock(  683): java.time.DateTimeException: No network time available
+3707:04-22 06:40:25.476 W/BestClock(  683): java.time.DateTimeException: No network time available
+3724:04-22 06:40:27.801 D/NetworkMonitor/101( 1052): PROBE_HTTPS https://www.google.com/generate_204 Probe failed with exception javax.net.ssl.SSLHandshakeException: connection closed
+3727:04-22 06:40:28.480 W/BestClock(  683): java.time.DateTimeException: No network time available
+3728:04-22 06:40:28.480 W/BestClock(  683): java.time.DateTimeException: No network time available
+3729:04-22 06:40:28.480 W/BestClock(  683): java.time.DateTimeException: No network time available
+3730:04-22 06:40:28.480 W/BestClock(  683): java.time.DateTimeException: No network time available
+3731:04-22 06:40:28.481 W/BestClock(  683): java.time.DateTimeException: No network time available
+3749:04-22 06:40:31.486 W/BestClock(  683): java.time.DateTimeException: No network time available
+3750:04-22 06:40:31.487 W/BestClock(  683): java.time.DateTimeException: No network time available
+3751:04-22 06:40:31.487 W/BestClock(  683): java.time.DateTimeException: No network time available
+3752:04-22 06:40:31.487 W/BestClock(  683): java.time.DateTimeException: No network time available
+3753:04-22 06:40:31.487 W/BestClock(  683): java.time.DateTimeException: No network time available
+3774:04-22 06:40:34.493 W/BestClock(  683): java.time.DateTimeException: No network time available
+3775:04-22 06:40:34.493 W/BestClock(  683): java.time.DateTimeException: No network time available
+3776:04-22 06:40:34.493 W/BestClock(  683): java.time.DateTimeException: No network time available
+3777:04-22 06:40:34.494 W/BestClock(  683): java.time.DateTimeException: No network time available
+3778:04-22 06:40:34.494 W/BestClock(  683): java.time.DateTimeException: No network time available
+3795:04-22 06:40:37.509 W/BestClock(  683): java.time.DateTimeException: No network time available
+3796:04-22 06:40:37.509 W/BestClock(  683): java.time.DateTimeException: No network time available
+3797:04-22 06:40:37.509 W/BestClock(  683): java.time.DateTimeException: No network time available
+3798:04-22 06:40:37.509 W/BestClock(  683): java.time.DateTimeException: No network time available
+3799:04-22 06:40:37.509 W/BestClock(  683): java.time.DateTimeException: No network time available
+3821:04-22 06:40:40.513 W/BestClock(  683): java.time.DateTimeException: No network time available
+3822:04-22 06:40:40.513 W/BestClock(  683): java.time.DateTimeException: No network time available
+3823:04-22 06:40:40.514 W/BestClock(  683): java.time.DateTimeException: No network time available
+3824:04-22 06:40:40.514 W/BestClock(  683): java.time.DateTimeException: No network time available
+3825:04-22 06:40:40.514 W/BestClock(  683): java.time.DateTimeException: No network time available
+3843:04-22 06:40:43.519 W/BestClock(  683): java.time.DateTimeException: No network time available
+3844:04-22 06:40:43.519 W/BestClock(  683): java.time.DateTimeException: No network time available
+3845:04-22 06:40:43.519 W/BestClock(  683): java.time.DateTimeException: No network time available
+3846:04-22 06:40:43.519 W/BestClock(  683): java.time.DateTimeException: No network time available
+3847:04-22 06:40:43.519 W/BestClock(  683): java.time.DateTimeException: No network time available
+3864:04-22 06:40:46.524 W/BestClock(  683): java.time.DateTimeException: No network time available
+3865:04-22 06:40:46.525 W/BestClock(  683): java.time.DateTimeException: No network time available
+3866:04-22 06:40:46.525 W/BestClock(  683): java.time.DateTimeException: No network time available
+3867:04-22 06:40:46.525 W/BestClock(  683): java.time.DateTimeException: No network time available
+3868:04-22 06:40:46.525 W/BestClock(  683): java.time.DateTimeException: No network time available
+3890:04-22 06:40:49.532 W/BestClock(  683): java.time.DateTimeException: No network time available
+3891:04-22 06:40:49.532 W/BestClock(  683): java.time.DateTimeException: No network time available
+3892:04-22 06:40:49.532 W/BestClock(  683): java.time.DateTimeException: No network time available
+3893:04-22 06:40:49.532 W/BestClock(  683): java.time.DateTimeException: No network time available
+3894:04-22 06:40:49.532 W/BestClock(  683): java.time.DateTimeException: No network time available
+3911:04-22 06:40:52.537 W/BestClock(  683): java.time.DateTimeException: No network time available
+3912:04-22 06:40:52.537 W/BestClock(  683): java.time.DateTimeException: No network time available
+3913:04-22 06:40:52.537 W/BestClock(  683): java.time.DateTimeException: No network time available
+3914:04-22 06:40:52.537 W/BestClock(  683): java.time.DateTimeException: No network time available
+3915:04-22 06:40:52.537 W/BestClock(  683): java.time.DateTimeException: No network time available
+3932:04-22 06:40:55.543 W/BestClock(  683): java.time.DateTimeException: No network time available
+3933:04-22 06:40:55.543 W/BestClock(  683): java.time.DateTimeException: No network time available
+3934:04-22 06:40:55.543 W/BestClock(  683): java.time.DateTimeException: No network time available
+3935:04-22 06:40:55.543 W/BestClock(  683): java.time.DateTimeException: No network time available
+3936:04-22 06:40:55.543 W/BestClock(  683): java.time.DateTimeException: No network time available
+3957:04-22 06:40:58.550 W/BestClock(  683): java.time.DateTimeException: No network time available
+3958:04-22 06:40:58.550 W/BestClock(  683): java.time.DateTimeException: No network time available
+3959:04-22 06:40:58.550 W/BestClock(  683): java.time.DateTimeException: No network time available
+3960:04-22 06:40:58.550 W/BestClock(  683): java.time.DateTimeException: No network time available
+3961:04-22 06:40:58.550 W/BestClock(  683): java.time.DateTimeException: No network time available
+3979:04-22 06:41:01.559 W/BestClock(  683): java.time.DateTimeException: No network time available
+3980:04-22 06:41:01.559 W/BestClock(  683): java.time.DateTimeException: No network time available
+3981:04-22 06:41:01.559 W/BestClock(  683): java.time.DateTimeException: No network time available
+3982:04-22 06:41:01.559 W/BestClock(  683): java.time.DateTimeException: No network time available
+3983:04-22 06:41:01.559 W/BestClock(  683): java.time.DateTimeException: No network time available
+4010:04-22 06:41:04.570 W/BestClock(  683): java.time.DateTimeException: No network time available
+4011:04-22 06:41:04.570 W/BestClock(  683): java.time.DateTimeException: No network time available
+4012:04-22 06:41:04.570 W/BestClock(  683): java.time.DateTimeException: No network time available
+4013:04-22 06:41:04.570 W/BestClock(  683): java.time.DateTimeException: No network time available
+4014:04-22 06:41:04.570 W/BestClock(  683): java.time.DateTimeException: No network time available
+4031:04-22 06:41:07.577 W/BestClock(  683): java.time.DateTimeException: No network time available
+4032:04-22 06:41:07.578 W/BestClock(  683): java.time.DateTimeException: No network time available
+4033:04-22 06:41:07.578 W/BestClock(  683): java.time.DateTimeException: No network time available
+4034:04-22 06:41:07.578 W/BestClock(  683): java.time.DateTimeException: No network time available
+4035:04-22 06:41:07.578 W/BestClock(  683): java.time.DateTimeException: No network time available
+4053:04-22 06:41:10.587 W/BestClock(  683): java.time.DateTimeException: No network time available
+4054:04-22 06:41:10.587 W/BestClock(  683): java.time.DateTimeException: No network time available
+4055:04-22 06:41:10.587 W/BestClock(  683): java.time.DateTimeException: No network time available
+4056:04-22 06:41:10.588 W/BestClock(  683): java.time.DateTimeException: No network time available
+4057:04-22 06:41:10.588 W/BestClock(  683): java.time.DateTimeException: No network time available
+4078:04-22 06:41:13.594 W/BestClock(  683): java.time.DateTimeException: No network time available
+4079:04-22 06:41:13.594 W/BestClock(  683): java.time.DateTimeException: No network time available
+4080:04-22 06:41:13.594 W/BestClock(  683): java.time.DateTimeException: No network time available
+4081:04-22 06:41:13.594 W/BestClock(  683): java.time.DateTimeException: No network time available
+4082:04-22 06:41:13.594 W/BestClock(  683): java.time.DateTimeException: No network time available
+4107:04-22 06:41:16.601 W/BestClock(  683): java.time.DateTimeException: No network time available
+4108:04-22 06:41:16.601 W/BestClock(  683): java.time.DateTimeException: No network time available
+4109:04-22 06:41:16.601 W/BestClock(  683): java.time.DateTimeException: No network time available
+4110:04-22 06:41:16.601 W/BestClock(  683): java.time.DateTimeException: No network time available
+4111:04-22 06:41:16.601 W/BestClock(  683): java.time.DateTimeException: No network time available
+4165:04-22 06:41:19.608 W/BestClock(  683): java.time.DateTimeException: No network time available
+4166:04-22 06:41:19.609 W/BestClock(  683): java.time.DateTimeException: No network time available
+4167:04-22 06:41:19.609 W/BestClock(  683): java.time.DateTimeException: No network time available
+4168:04-22 06:41:19.609 W/BestClock(  683): java.time.DateTimeException: No network time available
+4169:04-22 06:41:19.609 W/BestClock(  683): java.time.DateTimeException: No network time available
+4198:04-22 06:41:22.616 W/BestClock(  683): java.time.DateTimeException: No network time available
+4199:04-22 06:41:22.616 W/BestClock(  683): java.time.DateTimeException: No network time available
+4200:04-22 06:41:22.616 W/BestClock(  683): java.time.DateTimeException: No network time available
+4201:04-22 06:41:22.616 W/BestClock(  683): java.time.DateTimeException: No network time available
+4202:04-22 06:41:22.616 W/BestClock(  683): java.time.DateTimeException: No network time available
+4219:04-22 06:41:25.622 W/BestClock(  683): java.time.DateTimeException: No network time available
+4220:04-22 06:41:25.622 W/BestClock(  683): java.time.DateTimeException: No network time available
+4221:04-22 06:41:25.622 W/BestClock(  683): java.time.DateTimeException: No network time available
+4222:04-22 06:41:25.622 W/BestClock(  683): java.time.DateTimeException: No network time available
+4223:04-22 06:41:25.622 W/BestClock(  683): java.time.DateTimeException: No network time available
+4240:04-22 06:41:28.281 D/NetworkMonitor/101( 1052): PROBE_HTTPS https://www.google.com/generate_204 Probe failed with exception javax.net.ssl.SSLHandshakeException: connection closed
+4247:04-22 06:41:28.628 W/BestClock(  683): java.time.DateTimeException: No network time available
+4248:04-22 06:41:28.628 W/BestClock(  683): java.time.DateTimeException: No network time available
+4249:04-22 06:41:28.628 W/BestClock(  683): java.time.DateTimeException: No network time available
+4250:04-22 06:41:28.628 W/BestClock(  683): java.time.DateTimeException: No network time available
+4251:04-22 06:41:28.628 W/BestClock(  683): java.time.DateTimeException: No network time available
+4294:04-22 06:41:31.636 W/BestClock(  683): java.time.DateTimeException: No network time available
+4295:04-22 06:41:31.636 W/BestClock(  683): java.time.DateTimeException: No network time available
+4296:04-22 06:41:31.636 W/BestClock(  683): java.time.DateTimeException: No network time available
+4297:04-22 06:41:31.636 W/BestClock(  683): java.time.DateTimeException: No network time available
+4298:04-22 06:41:31.636 W/BestClock(  683): java.time.DateTimeException: No network time available
+4326:04-22 06:41:34.643 W/BestClock(  683): java.time.DateTimeException: No network time available
+4327:04-22 06:41:34.644 W/BestClock(  683): java.time.DateTimeException: No network time available
+4328:04-22 06:41:34.644 W/BestClock(  683): java.time.DateTimeException: No network time available
+4329:04-22 06:41:34.644 W/BestClock(  683): java.time.DateTimeException: No network time available
+4330:04-22 06:41:34.644 W/BestClock(  683): java.time.DateTimeException: No network time available
+4351:04-22 06:41:37.651 W/BestClock(  683): java.time.DateTimeException: No network time available
+4352:04-22 06:41:37.651 W/BestClock(  683): java.time.DateTimeException: No network time available
+4353:04-22 06:41:37.651 W/BestClock(  683): java.time.DateTimeException: No network time available
+4354:04-22 06:41:37.651 W/BestClock(  683): java.time.DateTimeException: No network time available
+4355:04-22 06:41:37.651 W/BestClock(  683): java.time.DateTimeException: No network time available
+4373:04-22 06:41:39.813 D/NetworkMonitor/101( 1052): PROBE_HTTPS https://www.google.com/generate_204 Probe failed with exception javax.net.ssl.SSLHandshakeException: connection closed
+4376:04-22 06:41:40.656 W/BestClock(  683): java.time.DateTimeException: No network time available
+4377:04-22 06:41:40.657 W/BestClock(  683): java.time.DateTimeException: No network time available
+4378:04-22 06:41:40.657 W/BestClock(  683): java.time.DateTimeException: No network time available
+4379:04-22 06:41:40.657 W/BestClock(  683): java.time.DateTimeException: No network time available
+4380:04-22 06:41:40.657 W/BestClock(  683): java.time.DateTimeException: No network time available
+4422:04-22 06:41:43.663 W/BestClock(  683): java.time.DateTimeException: No network time available
+4423:04-22 06:41:43.663 W/BestClock(  683): java.time.DateTimeException: No network time available
+4424:04-22 06:41:43.663 W/BestClock(  683): java.time.DateTimeException: No network time available
+4425:04-22 06:41:43.663 W/BestClock(  683): java.time.DateTimeException: No network time available
+4426:04-22 06:41:43.663 W/BestClock(  683): java.time.DateTimeException: No network time available
+4447:04-22 06:41:44.369 I/assembly.assembly.android.mixc-retail-rn84( 7439): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+4450:04-22 06:41:44.372 I/assembly.assembly.android.mixc-retail-rn84( 7439): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+4451:04-22 06:41:44.372 I/assembly.assembly.android.mixc-retail-rn84( 7439): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+4460:04-22 06:41:46.673 W/BestClock(  683): java.time.DateTimeException: No network time available
+4461:04-22 06:41:46.673 W/BestClock(  683): java.time.DateTimeException: No network time available
+4462:04-22 06:41:46.673 W/BestClock(  683): java.time.DateTimeException: No network time available
+4463:04-22 06:41:46.673 W/BestClock(  683): java.time.DateTimeException: No network time available
+4464:04-22 06:41:46.673 W/BestClock(  683): java.time.DateTimeException: No network time available
+4482:04-22 06:41:49.679 W/BestClock(  683): java.time.DateTimeException: No network time available
+4483:04-22 06:41:49.679 W/BestClock(  683): java.time.DateTimeException: No network time available
+4484:04-22 06:41:49.679 W/BestClock(  683): java.time.DateTimeException: No network time available
+4485:04-22 06:41:49.679 W/BestClock(  683): java.time.DateTimeException: No network time available
+4486:04-22 06:41:49.679 W/BestClock(  683): java.time.DateTimeException: No network time available
+4507:04-22 06:41:52.349 D/NetworkMonitor/101( 1052): PROBE_HTTPS https://www.google.com/generate_204 Probe failed with exception javax.net.ssl.SSLHandshakeException: connection closed
+4514:04-22 06:41:52.684 W/BestClock(  683): java.time.DateTimeException: No network time available
+4515:04-22 06:41:52.684 W/BestClock(  683): java.time.DateTimeException: No network time available
+4516:04-22 06:41:52.684 W/BestClock(  683): java.time.DateTimeException: No network time available
+4517:04-22 06:41:52.684 W/BestClock(  683): java.time.DateTimeException: No network time available
+4518:04-22 06:41:52.684 W/BestClock(  683): java.time.DateTimeException: No network time available
+4535:04-22 06:41:55.691 W/BestClock(  683): java.time.DateTimeException: No network time available
+4536:04-22 06:41:55.692 W/BestClock(  683): java.time.DateTimeException: No network time available
+4537:04-22 06:41:55.692 W/BestClock(  683): java.time.DateTimeException: No network time available
+4538:04-22 06:41:55.692 W/BestClock(  683): java.time.DateTimeException: No network time available
+4539:04-22 06:41:55.692 W/BestClock(  683): java.time.DateTimeException: No network time available
+4581:04-22 06:41:58.697 W/BestClock(  683): java.time.DateTimeException: No network time available
+4582:04-22 06:41:58.698 W/BestClock(  683): java.time.DateTimeException: No network time available
+4583:04-22 06:41:58.698 W/BestClock(  683): java.time.DateTimeException: No network time available
+4584:04-22 06:41:58.700 W/BestClock(  683): java.time.DateTimeException: No network time available
+4585:04-22 06:41:58.700 W/BestClock(  683): java.time.DateTimeException: No network time available
+4615:04-22 06:42:01.704 W/BestClock(  683): java.time.DateTimeException: No network time available
+4616:04-22 06:42:01.704 W/BestClock(  683): java.time.DateTimeException: No network time available
+4617:04-22 06:42:01.705 W/BestClock(  683): java.time.DateTimeException: No network time available
+4618:04-22 06:42:01.705 W/BestClock(  683): java.time.DateTimeException: No network time available
+4619:04-22 06:42:01.705 W/BestClock(  683): java.time.DateTimeException: No network time available
+4636:04-22 06:42:04.711 W/BestClock(  683): java.time.DateTimeException: No network time available
+4637:04-22 06:42:04.711 W/BestClock(  683): java.time.DateTimeException: No network time available
+4638:04-22 06:42:04.711 W/BestClock(  683): java.time.DateTimeException: No network time available
+4639:04-22 06:42:04.711 W/BestClock(  683): java.time.DateTimeException: No network time available
+4640:04-22 06:42:04.711 W/BestClock(  683): java.time.DateTimeException: No network time available
+4658:04-22 06:42:06.890 D/NetworkMonitor/101( 1052): PROBE_HTTPS https://www.google.com/generate_204 Probe failed with exception javax.net.ssl.SSLHandshakeException: connection closed
+4661:04-22 06:42:07.716 W/BestClock(  683): java.time.DateTimeException: No network time available
+4662:04-22 06:42:07.716 W/BestClock(  683): java.time.DateTimeException: No network time available
+4663:04-22 06:42:07.716 W/BestClock(  683): java.time.DateTimeException: No network time available
+4664:04-22 06:42:07.716 W/BestClock(  683): java.time.DateTimeException: No network time available
+4665:04-22 06:42:07.716 W/BestClock(  683): java.time.DateTimeException: No network time available
+4687:04-22 06:42:10.722 W/BestClock(  683): java.time.DateTimeException: No network time available
+4688:04-22 06:42:10.723 W/BestClock(  683): java.time.DateTimeException: No network time available
+4689:04-22 06:42:10.723 W/BestClock(  683): java.time.DateTimeException: No network time available
+4690:04-22 06:42:10.723 W/BestClock(  683): java.time.DateTimeException: No network time available
+4691:04-22 06:42:10.723 W/BestClock(  683): java.time.DateTimeException: No network time available
+4708:04-22 06:42:13.729 W/BestClock(  683): java.time.DateTimeException: No network time available
+4709:04-22 06:42:13.729 W/BestClock(  683): java.time.DateTimeException: No network time available
+4710:04-22 06:42:13.729 W/BestClock(  683): java.time.DateTimeException: No network time available
+4711:04-22 06:42:13.729 W/BestClock(  683): java.time.DateTimeException: No network time available
+4712:04-22 06:42:13.729 W/BestClock(  683): java.time.DateTimeException: No network time available
+4758:04-22 06:42:16.736 W/BestClock(  683): java.time.DateTimeException: No network time available
+4759:04-22 06:42:16.736 W/BestClock(  683): java.time.DateTimeException: No network time available
+4760:04-22 06:42:16.736 W/BestClock(  683): java.time.DateTimeException: No network time available
+4761:04-22 06:42:16.736 W/BestClock(  683): java.time.DateTimeException: No network time available
+4762:04-22 06:42:16.736 W/BestClock(  683): java.time.DateTimeException: No network time available
+4779:04-22 06:42:17.748 I/assembly.assembly.android.mixc-retail-rn84( 7439): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+4780:04-22 06:42:17.749 I/assembly.assembly.android.mixc-retail-rn84( 7439): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+4782:04-22 06:42:17.749 I/assembly.assembly.android.mixc-retail-rn84( 7439): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+4783:04-22 06:42:17.750 I/assembly.assembly.android.mixc-retail-rn84( 7439): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}

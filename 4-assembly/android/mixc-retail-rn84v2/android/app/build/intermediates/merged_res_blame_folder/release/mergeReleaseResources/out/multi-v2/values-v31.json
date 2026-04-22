@@ -1,0 +1,66 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.impos2.mixcretailrn84v2.app-mergeReleaseResources-40:/values-v31/values-v31.xml",
+            "map": [
+                {
+                    "source": "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/res/values-v31/styles.xml",
+                    "from": {
+                        "startLines": "1",
+                        "startColumns": "4",
+                        "startOffsets": "16",
+                        "endLines": "5",
+                        "endColumns": "12",
+                        "endOffsets": "336"
+                    },
+                    "to": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "6",
+                        "endColumns": "12",
+                        "endOffsets": "375"
+                    }
+                },
+                {
+                    "source": "/Users/dexter/.gradle/caches/9.0.0/transforms/986cc003143287cdbc98f3ccebbb0469/transformed/core-splashscreen-1.0.1/res/values-v31/values-v31.xml",
+                    "from": {
+                        "startLines": "2,9",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,473",
+                        "endLines": "8,13",
+                        "endColumns": "12,12",
+                        "endOffsets": "468,697"
+                    },
+                    "to": {
+                        "startLines": "12,19",
+                        "startColumns": "4,4",
+                        "startOffsets": "714,1132",
+                        "endLines": "18,23",
+                        "endColumns": "12,12",
+                        "endOffsets": "1127,1356"
+                    }
+                },
+                {
+                    "source": "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/node_modules/react-native-bootsplash/android/build/intermediates/packaged_res/release/packageReleaseResources/values-v31/values-v31.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "6",
+                        "endColumns": "12",
+                        "endOffsets": "384"
+                    },
+                    "to": {
+                        "startLines": "7",
+                        "startColumns": "4",
+                        "startOffsets": "380",
+                        "endLines": "11",
+                        "endColumns": "12",
+                        "endOffsets": "709"
+                    }
+                }
+            ]
+        }
+    ]
+}

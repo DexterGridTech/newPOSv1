@@ -1,0 +1,22 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "peerNodeId": "master:ZJ63NQELD9",
+    "peerDeviceId": "ZJ63NQELD9",
+    "peerRuntime": {
+      "nodeId": "master:ZJ63NQELD9",
+      "deviceId": "ZJ63NQELD9",
+      "instanceMode": "SLAVE",
+      "displayMode": "PRIMARY",
+      "standalone": true,
+      "protocolVersion": "2026.04-v3",
+      "capabilities": [
+        "state-sync",
+        "command-relay",
+        "request-mirror"
+      ]
+    },
+    "connectedAt": 1776802283545
+  },
+  "id": "1776802310418-1c42515f950d98"
+}

@@ -1,0 +1,300 @@
+04-22 00:28:43.773 D/TrafficStats(14623): tagSocket(5) with statsTag=0x8001, statsUid=-1
+04-22 00:28:53.789 D/TrafficStats(14623): tagSocket(5) with statsTag=0x8001, statsUid=-1
+04-22 00:28:57.155 E/WifiScoringParams(  519): Invalid frequency(-1), using 5G as default rssi array
+04-22 00:29:00.006 I/AiAiEcho( 1598): Predicting[0]: 
+04-22 00:29:00.006 I/AiAiEcho( 1598): Ranked targets strategy: SORT, count: 0, ranking metadata: 
+04-22 00:29:00.008 I/AiAiEcho( 1598): #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0
+04-22 00:29:00.008 I/AiAiEcho( 1598): #postPredictionTargets: Sending updates to UISurface home with targets# 0
+04-22 00:29:00.008 I/AiAiEcho( 1598): #postPredictionTargets: Sending updates to UISurface media_data_manager with targets# 0
+04-22 00:29:00.022 D/SsMediaDataProvider(  728): Forwarding Smartspace updates []
+04-22 00:29:00.037 D/EGL_emulation(  728): app_time_stats: avg=25605.59ms min=25605.59ms max=25605.59ms count=1
+04-22 00:29:00.934 D/WifiNl80211Manager(  519): Scan result ready event
+04-22 00:29:00.934 D/WifiNative(  519): Scan result ready event
+04-22 00:29:03.333 W/BatteryExternalStatsWorker(  519): error reading Bluetooth stats: 11
+04-22 00:29:03.334 D/TelephonyManager(  519): requestModemActivityInfo: Sending result to app: ModemActivityInfo{ mTimestamp=14400027 mSleepTimeMs=0 mIdleTimeMs=14399958 mActivityStatsTechSpecificInfo=[{mRat=UNKNOWN,mFrequencyRange=UNKNOWN,mTxTimeMs[]=[0, 0, 0, 0, 0],mRxTimeMs=0}]}
+04-22 00:29:03.359 W/system_server(  519): Reducing the number of considered missed Gc histogram windows from 149 to 100
+04-22 00:29:03.370 I/netd    (  293): tetherGetStats() -> {[]} <0.45ms>
+04-22 00:29:03.803 D/TrafficStats(14623): tagSocket(5) with statsTag=0x8001, statsUid=-1
+04-22 00:29:06.895 W/healthd (  312): battery l=100 v=5000 t=25.0 h=2 st=4 c=900000 fc=3000000 cc=10 chg=
+04-22 00:29:09.588 I/UsageStatsService(  519): User[0] Flushing usage stats to disk
+04-22 00:29:10.290 E/bluetooth(  790): packages/modules/Bluetooth/system/gd/os/linux_generic/files.cc:202 FileCreatedTime: unable to read '/data/misc/bluetooth/logs/btsnooz_hci.log' file metadata, error: No such file or directory
+04-22 00:29:11.534 D/ControlsListingControllerImpl(  728): Subscribing callback, service count: 0
+04-22 00:29:11.541 D/ControlsListingControllerImpl(  728): Unsubscribing callback
+04-22 00:29:13.159 E/android.hardware.power.stats@1.0-service-mock(  317): Failed to getEnergyData
+04-22 00:29:13.820 D/TrafficStats(14623): tagSocket(5) with statsTag=0x8001, statsUid=-1
+04-22 00:29:13.983 W/BatteryExternalStatsWorker(  519): error reading Bluetooth stats: 11
+04-22 00:29:13.988 D/TelephonyManager(  519): requestModemActivityInfo: Sending result to app: ModemActivityInfo{ mTimestamp=14410681 mSleepTimeMs=0 mIdleTimeMs=14410610 mActivityStatsTechSpecificInfo=[{mRat=UNKNOWN,mFrequencyRange=UNKNOWN,mTxTimeMs[]=[0, 0, 0, 0, 0],mRxTimeMs=0}]}
+04-22 00:29:14.044 I/netd    (  293): tetherGetStats() -> {[]} <1.57ms>
+04-22 00:29:14.046 W/CpuPowerCalculator(  519): UID 50175 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 50174 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 50173 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 50172 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 50170 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 50166 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 50165 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 50164 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 50162 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 50161 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 50160 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 50159 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 50141 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 50138 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 50110 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10175 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10175 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10175 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10172 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10172 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10172 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10172 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10166 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10166 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10166 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10162 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10162 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10162 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10161 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10161 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10161 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10157 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10157 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10157 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10156 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10156 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10156 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10154 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10154 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10152 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10152 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10152 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10152 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10151 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10151 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10151 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10150 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10150 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10150 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10146 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10146 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10146 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10146 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10145 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10145 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10145 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10144 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10144 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10144 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10144 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10143 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10143 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10143 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10142 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10142 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10142 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10142 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10141 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10141 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10141 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10138 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10138 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10138 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10134 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10134 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10134 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.047 W/CpuPowerCalculator(  519): UID 10134 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10133 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10133 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10131 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10131 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10131 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10129 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10129 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10129 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10129 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10127 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10127 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10127 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10126 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10126 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10126 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10126 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10125 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10125 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10125 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10123 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10123 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10123 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10120 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10120 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10120 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10120 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10118 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10118 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10118 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10117 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10117 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10117 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10117 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10116 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10116 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10116 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10116 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10115 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10115 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10115 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.048 W/CpuPowerCalculator(  519): UID 10113 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.049 W/CpuPowerCalculator(  519): UID 10113 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.049 W/CpuPowerCalculator(  519): UID 10113 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.049 W/CpuPowerCalculator(  519): UID 10113 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.049 W/CpuPowerCalculator(  519): UID 10112 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.049 W/CpuPowerCalculator(  519): UID 10112 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.049 W/CpuPowerCalculator(  519): UID 10112 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.049 W/CpuPowerCalculator(  519): UID 10111 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.049 W/CpuPowerCalculator(  519): UID 10111 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.049 W/CpuPowerCalculator(  519): UID 10111 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.049 W/CpuPowerCalculator(  519): UID 10111 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10110 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10110 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10110 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10110 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10110 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10109 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10109 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10109 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10108 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10108 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10108 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10107 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10107 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10107 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10107 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10106 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10106 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10106 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10105 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10105 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10105 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10104 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10104 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10104 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10101 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10101 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10101 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10100 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10100 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10100 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10096 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10096 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10096 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10084 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10084 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10084 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10079 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10079 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.050 W/CpuPowerCalculator(  519): UID 10079 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 10076 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 10076 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 10076 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 10076 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 10075 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 10075 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 10075 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 10074 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 10074 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 10074 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 10074 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 10073 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 10073 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 10073 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 10072 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 10072 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 10072 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 10070 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 10070 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 10070 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 10070 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 9999 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 2000 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 2000 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 2000 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 1092 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 1073 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 1073 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 1073 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 1072 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 1069 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 1068 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 1068 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 1068 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 1066 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 1053 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 1047 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 1046 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 1041 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 1040 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 1036 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 1027 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 1027 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 1027 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 1021 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 1020 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 1019 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.051 W/CpuPowerCalculator(  519): UID 1017 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.052 W/CpuPowerCalculator(  519): UID 1013 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.052 W/CpuPowerCalculator(  519): UID 1010 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.052 W/CpuPowerCalculator(  519): UID 1003 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.052 W/CpuPowerCalculator(  519): UID 1002 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.052 W/CpuPowerCalculator(  519): UID 1002 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.052 W/CpuPowerCalculator(  519): UID 1002 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.052 W/CpuPowerCalculator(  519): UID 1001 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.052 W/CpuPowerCalculator(  519): UID 1001 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.052 W/CpuPowerCalculator(  519): UID 1001 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.052 W/CpuPowerCalculator(  519): UID 1000 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.052 W/CpuPowerCalculator(  519): UID 1000 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.052 W/CpuPowerCalculator(  519): UID 1000 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.052 W/CpuPowerCalculator(  519): UID 0 CPU freq # mismatch: Power Profile # 2 actual # 8
+04-22 00:29:14.067 V/ClearcutMetricXmitter( 1480): Transmission is done.
+04-22 00:29:14.332 W/CarrierServices( 1634): [72] bemz.x: Unable to send diagnostic log
+04-22 00:29:15.293 I/AiAiStatsd( 1598): No op: the most recent atoms from the date 2026-04-20 have been uploaded.
+04-22 00:29:15.314 I/A       ( 1921): Cobalt: try to find ProjectConfig for given tags
+04-22 00:29:15.315 I/A       ( 1921): (REDACTED) Cobalt: found ProjectConfig for tag %s
+04-22 00:29:15.316 I/A       ( 1921): Cobalt: start enqueuing upload task
+04-22 00:29:15.317 I/A       ( 1921): Cobalt: finish enqueuing upload task
+04-22 00:29:15.322 I/WM-WorkerWrapper( 1921): Worker result SUCCESS for Work [ id=3f402dc3-bc63-4236-b18f-9a228de133a8, tags={ com.google.android.libraries.privatetelemetry.tqcobalt.worker.LogUploadTimer, 200001-2 } ]
+04-22 00:29:15.327 I/A       ( 1921): Cobalt: try to find ProjectConfig for given tags
+04-22 00:29:15.327 I/A       ( 1921): (REDACTED) Cobalt: found ProjectConfig for tag %s
+04-22 00:29:15.348 I/A       ( 1921): Cobalt: start sending logs to the Cobalt Server
+04-22 00:29:15.349 I/A       ( 1921): (REDACTED) Cobalt: start uploading logic for customerId = %d, projectId = %d
+04-22 00:29:15.351 I/native  ( 1921): I0000 00:00:1776788955.350936   14759 observation_generator.cc:118] Generating aggregated observations for periods ending before system time: 1776788955 (day index 20564, hour ID 987105 in UTC)
+04-22 00:29:15.353 I/A       ( 1921): (REDACTED) Cobalt: finished sending logs to the Cobalt Server for customerId = %d, projectId = %d
+04-22 00:29:15.354 I/WM-WorkerWrapper( 1921): Worker result SUCCESS for Work [ id=0b943cfb-1191-4687-bb57-58fca29e1935, tags={ com.google.android.libraries.privatetelemetry.tqcobalt.worker.LogUploader, 200001-2 } ]
+04-22 00:29:17.124 W/BestClock(  519): java.time.DateTimeException: Missing NTP fix
+04-22 00:29:17.160 I/netd    (  293): tetherGetStats() -> {[]} <0.56ms>
+04-22 00:29:17.161 W/BestClock(  519): java.time.DateTimeException: Missing NTP fix
+04-22 00:29:17.162 I/netd    (  293): bandwidthSetGlobalAlert(2097152) <0.16ms>
+04-22 00:29:17.163 W/BestClock(  519): java.time.DateTimeException: Missing NTP fix
+04-22 00:29:17.163 W/BestClock(  519): java.time.DateTimeException: Missing NTP fix
+04-22 00:29:17.163 W/BestClock(  519): java.time.DateTimeException: Missing NTP fix
+04-22 00:29:17.165 I/netd    (  293): bandwidthRemoveInterfaceQuota(eth0) <0.71ms>
+04-22 00:29:17.166 I/netd    (  293): bandwidthSetInterfaceQuota(eth0, 9223372036854775807) <0.80ms>
+04-22 00:29:17.166 W/BestClock(  519): java.time.DateTimeException: Missing NTP fix
+04-22 00:29:17.167 W/BestClock(  519): java.time.DateTimeException: Missing NTP fix
+04-22 00:29:17.167 W/BestClock(  519): java.time.DateTimeException: Missing NTP fix
+04-22 00:29:19.392 I/PhenotypeProcessReaper( 1251): Memory state is: 125
+04-22 00:29:20.940 D/WifiNl80211Manager(  519): Scan result ready event
+04-22 00:29:20.940 D/WifiNative(  519): Scan result ready event
+04-22 00:29:23.836 I/resolv  (  293): GetAddrInfoHandler::run: {100 100 100 983140 10125 0}
+04-22 00:29:23.836 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 00:29:23.837 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 00:29:23.885 I/resolv  (  293): res_tls_send: TLS query result: 0
+04-22 00:29:23.885 I/resolv  (  293): doQuery: rcode=0, ancount=4, return value=177
+04-22 00:29:23.885 I/resolv  (  293): res_tls_send: TLS query result: 0
+04-22 00:29:23.885 I/resolv  (  293): doQuery: rcode=0, ancount=8, return value=193
+04-22 00:29:23.886 D/TrafficStats(14623): tagSocket(5) with statsTag=0x8001, statsUid=-1
+04-22 00:29:30.971 D/TrafficStats(14284): tagSocket(101) with statsTag=0xffffffff, statsUid=-1
+04-22 00:29:30.973 D/TrafficStats(14284): tagSocket(108) with statsTag=0xffffffff, statsUid=-1
+04-22 00:29:30.973 D/TrafficStats(14284): tagSocket(127) with statsTag=0xffffffff, statsUid=-1
+04-22 00:29:30.977 D/TrafficStats(14284): tagSocket(101) with statsTag=0xffffffff, statsUid=-1
+04-22 00:29:30.978 D/TrafficStats(14284): tagSocket(127) with statsTag=0xffffffff, statsUid=-1
+04-22 00:29:30.979 D/TrafficStats(14284): tagSocket(108) with statsTag=0xffffffff, statsUid=-1
+04-22 00:29:31.465 I/logd    (  158): logdr: UID=2000 GID=2000 PID=14771 n tail=0 logMask=99 pid=0 start=0ns deadline=0ns

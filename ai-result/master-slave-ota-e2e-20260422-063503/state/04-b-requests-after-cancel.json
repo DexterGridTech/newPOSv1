@@ -1,0 +1,290 @@
+{
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "requestId": "req_mo97nfyu_ookkmu858bps4z12",
+      "rootCommandId": "cmd_mo97nfyu_m8evb1cpmnxtsuti",
+      "status": "COMPLETED",
+      "startedAt": 1776811432854,
+      "updatedAt": 1776811432855,
+      "commands": [
+        {
+          "requestId": "req_mo97nfyu_ookkmu858bps4z12",
+          "commandId": "cmd_mo97nfyu_m8evb1cpmnxtsuti",
+          "commandName": "kernel.base.runtime-shell-v2.initialize",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776811432854,
+          "completedAt": 1776811432855,
+          "actorResults": [
+            {
+              "actorKey": "assembly.android.mixc-retail-rn84.AssemblyRuntimeInitializeActor",
+              "status": "COMPLETED",
+              "startedAt": 1776811432854,
+              "completedAt": 1776811432855,
+              "result": {
+                "displayIndex": 0,
+                "displayCount": 1
+              }
+            },
+            {
+              "actorKey": "kernel.base.tdp-sync-runtime-v2.TdpInitializeActor",
+              "status": "COMPLETED",
+              "startedAt": 1776811432854,
+              "completedAt": 1776811432855,
+              "result": {}
+            },
+            {
+              "actorKey": "ui.integration.retail-shell.RetailShellRuntimeInitializeActor",
+              "status": "COMPLETED",
+              "startedAt": 1776811432854,
+              "completedAt": 1776811432855,
+              "result": {
+                "displayIndex": 0,
+                "activated": false
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo97nfyu_ookkmu858bps4z12",
+          "commandId": "cmd_mo97nfyu_pp4ix7p8zrohjxcr",
+          "parentCommandId": "cmd_mo97nfyu_m8evb1cpmnxtsuti",
+          "commandName": "kernel.base.topology-runtime-v3.refresh-topology-context",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776811432854,
+          "completedAt": 1776811432854,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.topology-runtime-v3.TopologyContextActor",
+              "status": "COMPLETED",
+              "startedAt": 1776811432854,
+              "completedAt": 1776811432854,
+              "result": {
+                "context": {
+                  "displayIndex": 0,
+                  "displayCount": 1,
+                  "instanceMode": "SLAVE",
+                  "displayMode": "PRIMARY",
+                  "workspace": "BRANCH",
+                  "standalone": true,
+                  "enableSlave": false,
+                  "localNodeId": "master:ZJ63NQELD9"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo97nfyu_ookkmu858bps4z12",
+          "commandId": "cmd_mo97nfyu_zdth0hyd7gnbevra",
+          "parentCommandId": "cmd_mo97nfyu_m8evb1cpmnxtsuti",
+          "commandName": "kernel.base.tdp-sync-runtime-v2.bootstrap-tdp-sync",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776811432854,
+          "completedAt": 1776811432855,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tdp-sync-runtime-v2.TdpBootstrapActor",
+              "status": "COMPLETED",
+              "startedAt": 1776811432854,
+              "completedAt": 1776811432855,
+              "result": {}
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo97nfyu_ookkmu858bps4z12",
+          "commandId": "cmd_mo97nfyu_vua4akpn68cygkz1",
+          "parentCommandId": "cmd_mo97nfyu_zdth0hyd7gnbevra",
+          "commandName": "kernel.base.tdp-sync-runtime-v2.bootstrap-tdp-sync-succeeded",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776811432854,
+          "completedAt": 1776811432854,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tdp-sync-runtime-v2.TdpBootstrapActor",
+              "status": "COMPLETED",
+              "startedAt": 1776811432854,
+              "completedAt": 1776811432854,
+              "result": {}
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo97nfyu_ookkmu858bps4z12",
+          "commandId": "cmd_mo97nfyu_ya1uqjtc4avjc1q4",
+          "parentCommandId": "cmd_mo97nfyu_m8evb1cpmnxtsuti",
+          "commandName": "kernel.base.ui-runtime-v2.replace-screen",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776811432854,
+          "completedAt": 1776811432854,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.ui-runtime-v2.UiRuntimeScreenRuntimeActor",
+              "status": "COMPLETED",
+              "startedAt": 1776811432854,
+              "completedAt": 1776811432854,
+              "result": {
+                "containerKey": "primary.root.container"
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo97nfyu_ookkmu858bps4z12",
+          "commandId": "cmd_mo97nfyu_tjt09tacacycu0fv",
+          "parentCommandId": "cmd_mo97nfyu_m8evb1cpmnxtsuti",
+          "commandName": "kernel.base.tcp-control-runtime-v2.bootstrap-tcp-control",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776811432854,
+          "completedAt": 1776811432855,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tcp-control-runtime-v2.TcpBootstrapActor",
+              "status": "COMPLETED",
+              "startedAt": 1776811432854,
+              "completedAt": 1776811432855,
+              "result": {
+                "deviceFingerprint": "ZJ63NQELD9"
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo97nfyu_ookkmu858bps4z12",
+          "commandId": "cmd_mo97nfyu_b7mwdqciw2rrgytr",
+          "parentCommandId": "cmd_mo97nfyu_tjt09tacacycu0fv",
+          "commandName": "kernel.base.tcp-control-runtime-v2.bootstrap-tcp-control-succeeded",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776811432854,
+          "completedAt": 1776811432855,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tcp-control-runtime-v2.TcpStateMutationActor",
+              "status": "COMPLETED",
+              "startedAt": 1776811432855,
+              "completedAt": 1776811432855,
+              "result": {}
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo97nfyu_ookkmu858bps4z12",
+          "commandId": "cmd_mo97nfyv_zirnubjgzgn3f8mn",
+          "parentCommandId": "cmd_mo97nfyu_m8evb1cpmnxtsuti",
+          "commandName": "kernel.base.ui-runtime-v2.replace-screen",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776811432855,
+          "completedAt": 1776811432855,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.ui-runtime-v2.UiRuntimeScreenRuntimeActor",
+              "status": "COMPLETED",
+              "startedAt": 1776811432855,
+              "completedAt": 1776811432855,
+              "result": {
+                "containerKey": "secondary.root.container"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requestId": "req_mo97nfyr_zgh4kk8ngol90gff",
+      "rootCommandId": "cmd_mo97nfyr_mdf9yj0sjpghelih",
+      "status": "COMPLETED",
+      "startedAt": 1776811432851,
+      "updatedAt": 1776811432851,
+      "commands": [
+        {
+          "requestId": "req_mo97nfyr_zgh4kk8ngol90gff",
+          "commandId": "cmd_mo97nfyr_mdf9yj0sjpghelih",
+          "commandName": "kernel.base.ui-runtime-v2.register-screen-definitions",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776811432851,
+          "completedAt": 1776811432851,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.ui-runtime-v2.UiRuntimeScreenRegistryActor",
+              "status": "COMPLETED",
+              "startedAt": 1776811432851,
+              "completedAt": 1776811432851,
+              "result": {
+                "registeredCount": 3
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requestId": "req_mo97nfyr_sof3jjo5ym586i99",
+      "rootCommandId": "cmd_mo97nfyr_otnezgczad4bm1p3",
+      "status": "COMPLETED",
+      "startedAt": 1776811432851,
+      "updatedAt": 1776811432851,
+      "commands": [
+        {
+          "requestId": "req_mo97nfyr_sof3jjo5ym586i99",
+          "commandId": "cmd_mo97nfyr_otnezgczad4bm1p3",
+          "commandName": "kernel.base.ui-runtime-v2.register-screen-definitions",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776811432851,
+          "completedAt": 1776811432851,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.ui-runtime-v2.UiRuntimeScreenRegistryActor",
+              "status": "COMPLETED",
+              "startedAt": 1776811432851,
+              "completedAt": 1776811432851,
+              "result": {
+                "registeredCount": 3
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requestId": "req_mo97nfyr_ran1i3j5zu2e6su3",
+      "rootCommandId": "cmd_mo97nfyr_4pcoy8wc3qgp92x8",
+      "status": "COMPLETED",
+      "startedAt": 1776811432851,
+      "updatedAt": 1776811432851,
+      "commands": [
+        {
+          "requestId": "req_mo97nfyr_ran1i3j5zu2e6su3",
+          "commandId": "cmd_mo97nfyr_4pcoy8wc3qgp92x8",
+          "commandName": "kernel.base.ui-runtime-v2.register-screen-definitions",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776811432851,
+          "completedAt": 1776811432851,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.ui-runtime-v2.UiRuntimeScreenRegistryActor",
+              "status": "COMPLETED",
+              "startedAt": 1776811432851,
+              "completedAt": 1776811432851,
+              "result": {
+                "registeredCount": 2
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "id": "1776811472329-47437e6884d0c"
+}

@@ -1,0 +1,296 @@
+--------- beginning of system
+04-19 22:07:06.879 D/CoreBackPreview(  590): Window{dc038f8 u0 PopupWindow:91fce17}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@75ea0d, mPriority=0, mIsAnimationCallback=false}
+04-19 22:07:06.880 D/CoreBackPreview(  590): Window{ada8f37 u0 PopupWindow:aa8eae9}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@292cdc2, mPriority=0, mIsAnimationCallback=false}
+--------- beginning of main
+04-19 22:07:06.922 W/WindowOnBackDispatcher( 7877): sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda11@79c4ca5
+04-19 22:07:06.923 W/WindowOnBackDispatcher( 7785): sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda11@f4934b3
+04-19 22:07:06.925 D/CoreBackPreview(  590): Window{dc038f8 u0 PopupWindow:91fce17}: Setting back callback null
+04-19 22:07:06.926 D/CoreBackPreview(  590): Window{ada8f37 u0 PopupWindow:aa8eae9}: Setting back callback null
+04-19 22:07:06.926 W/InputManager-JNI(  590): Input channel object 'dc038f8 PopupWindow:91fce17 (client)' was disposed without first being removed with the input manager!
+04-19 22:07:06.930 W/InputManager-JNI(  590): Input channel object 'ada8f37 PopupWindow:aa8eae9 (client)' was disposed without first being removed with the input manager!
+04-19 22:07:07.011 D/CoreBackPreview(  590): Window{8517e4b u0 PopupWindow:917a2cc}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@4b80141, mPriority=0, mIsAnimationCallback=false}
+04-19 22:07:07.017 D/CoreBackPreview(  590): Window{f8e2c3c u0 PopupWindow:c549759}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@c0086e6, mPriority=0, mIsAnimationCallback=false}
+04-19 22:07:07.045 W/WindowOnBackDispatcher( 7877): sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda11@3821fb8
+04-19 22:07:07.046 D/CoreBackPreview(  590): Window{8517e4b u0 PopupWindow:917a2cc}: Setting back callback null
+04-19 22:07:07.055 W/InputManager-JNI(  590): Input channel object '8517e4b PopupWindow:917a2cc (client)' was disposed without first being removed with the input manager!
+04-19 22:07:07.056 W/WindowOnBackDispatcher( 7785): sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda11@92e5015
+04-19 22:07:07.061 D/CoreBackPreview(  590): Window{f8e2c3c u0 PopupWindow:c549759}: Setting back callback null
+04-19 22:07:07.062 W/InputManager-JNI(  590): Input channel object 'f8e2c3c PopupWindow:c549759 (client)' was disposed without first being removed with the input manager!
+04-19 22:07:07.573 I/BistoHotwordHelper( 1413): (REDACTED) getHotwordActive::active query: %s, watch: %s, devices connected: %s
+04-19 22:07:28.673 W/ActivityTaskManager(  590): callingPackage for (uid=2000, pid=7974) has no WPC
+04-19 22:07:28.673 W/OptProp (  590): Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_USER_ASPECT_RATIO_OVERRIDE
+04-19 22:07:28.673 W/OptProp (  590): Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_USER_ASPECT_RATIO_FULLSCREEN_OVERRIDE
+04-19 22:07:28.673 W/OptProp (  590): Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_ORIENTATION_OVERRIDE
+04-19 22:07:28.674 V/GrammaticalInflectionUtils(  590): AttributionSource: AttributionSource { uid = 10212, packageName = null, attributionTag = null, token = android.os.Binder@bdb3573, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+04-19 22:07:28.674 W/OptProp (  590): Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_RESIZEABLE_ACTIVITY_OVERRIDES
+04-19 22:07:28.674 W/OptProp (  590): Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_MIN_ASPECT_RATIO_OVERRIDE
+04-19 22:07:28.674 W/InputDispatcher(  590): Focused display #0 does not have a focused window.
+04-19 22:07:28.674 E/InputDispatcher(  590): But another display has a focused window
+04-19 22:07:28.674 E/InputDispatcher(  590):   FocusedWindows:
+04-19 22:07:28.674 E/InputDispatcher(  590):     displayId=2, name='b838565 com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.SecondaryActivity'
+04-19 22:07:28.675 D/KeyguardService(  836): setOccluded(false)
+04-19 22:07:28.675 D/KeyguardViewMediator(  836): setOccluded(false)
+04-19 22:07:28.675 I/ActivityTaskManager(  590): START u0 {flg=0x10000000 cmp=com.impos2.mixcretailassemblyrn84/.MainActivity} with LAUNCH_SINGLE_TASK from uid 2000 (BAL_ALLOW_PERMISSION) result code=3
+04-19 22:07:28.675 D/KeyguardViewMediator(  836): handleSetOccluded(false)
+04-19 22:07:28.676 D/KeyguardViewMediator(  836): KeyguardViewMediator queue processing message: SET_OCCLUDED
+04-19 22:07:28.676 W/unknown:BridgelessReact( 7785): ReactHost{0}.onHostPause(activity)
+04-19 22:07:28.678 W/ProcessStats(  590): Tracking association SourceState{e668274 com.google.android.googlequicksearchbox:search/10144 Service #16610} whose proc state 8 is better than process ProcessState{cc910ab com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/10144 pkg=com.google.android.googlequicksearchbox} proc state 15 (12 skipped)
+04-19 22:07:28.678 W/unknown:BridgelessReact( 7785): ReactHost{0}.ReactContext.onHostPause()
+04-19 22:07:28.679 D/WindowManagerShell(  836): onActivityRestartAttempt: ComponentInfo{com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity}
+04-19 22:07:28.679 W/unknown:BridgelessReact( 7785): ReactHost{0}.onHostResume(activity)
+04-19 22:07:28.681 W/unknown:BridgelessReact( 7785): ReactHost{0}.ReactContext.onHostResume()
+04-19 22:07:28.684 I/resolv  (  388): GetAddrInfoHandler::run: {0 0 0 983040 10212 0}
+04-19 22:07:28.684 D/TrafficStats( 7785): tagSocket(101) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:28.691 D/TrafficStats( 7785): tagSocket(131) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:28.695 D/TrafficStats( 7785): tagSocket(131) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:28.709 I/ImeTracker(  590): com.impos2.mixcretailassemblyrn84:b81e1532: onRequestHide at ORIGIN_SERVER reason HIDE_UNSPECIFIED_WINDOW fromUser false
+04-19 22:07:28.709 I/ImeTracker(  590): com.impos2.mixcretailassemblyrn84:b81e1532: onCancelled at PHASE_SERVER_SHOULD_HIDE
+04-19 22:07:28.716 I/GoogleInputMethodService(20885): GoogleInputMethodService.onFinishInput():3157 
+04-19 22:07:28.717 I/GoogleInputMethodService(20885): GoogleInputMethodService.updateDeviceLockedStatus():2248 repeatCheckTimes = 0, locked = false
+04-19 22:07:28.717 I/GoogleInputMethodService(20885): GoogleInputMethodService.onStartInput():1986 onStartInput(EditorInfo{EditorInfo{packageName=com.impos2.mixcretailassemblyrn84, inputType=0, inputTypeString=NULL, enableLearning=false, autoCorrection=false, autoComplete=false, imeOptions=0, privateImeOptions=null, actionName=UNSPECIFIED, actionLabel=null, initialSelStart=-1, initialSelEnd=-1, initialCapsMode=0, label=null, fieldId=0, fieldName=null, extras=null, hintText=null, hintLocales=[]}}, false)
+04-19 22:07:28.717 I/GoogleInputMethodService(20885): GoogleInputMethodService.updateDeviceLockedStatus():2248 repeatCheckTimes = 1, locked = false
+04-19 22:07:28.717 I/AndroidIME(20885): InputBundleManager.loadActiveInputBundleId():450 loadActiveInputBundleId: und-Latn-x-password, password
+04-19 22:07:28.717 W/PackageConfigPersister(  590): App-specific configuration not found for packageName: com.impos2.mixcretailassemblyrn84 and userId: 0
+04-19 22:07:28.725 D/EGL_emulation( 7785): app_time_stats: avg=6000.12ms min=1.92ms max=83963.95ms count=14
+04-19 22:07:28.757 D/TrafficStats( 7785): tagSocket(131) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:28.760 D/CoreBackPreview(  590): Window{fb712a5 u0 PopupWindow:ff9c9e7}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@a4d7046, mPriority=0, mIsAnimationCallback=false}
+04-19 22:07:28.764 D/TrafficStats( 7785): tagSocket(150) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:28.783 D/CoreBackPreview(  590): Window{fb68288 u0 PopupWindow:9c235c2}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@7525207, mPriority=0, mIsAnimationCallback=false}
+04-19 22:07:28.790 W/WindowOnBackDispatcher( 7877): sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda11@e8f1d83
+04-19 22:07:28.790 D/CoreBackPreview(  590): Window{fb712a5 u0 PopupWindow:ff9c9e7}: Setting back callback null
+04-19 22:07:28.791 W/InputManager-JNI(  590): Input channel object 'fb712a5 PopupWindow:ff9c9e7 (client)' was disposed without first being removed with the input manager!
+04-19 22:07:28.799 D/TrafficStats( 7785): tagSocket(150) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:28.804 D/TrafficStats( 7785): tagSocket(150) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:28.815 W/WindowOnBackDispatcher( 7785): sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda11@8404a95
+04-19 22:07:28.816 D/CoreBackPreview(  590): Window{fb68288 u0 PopupWindow:9c235c2}: Setting back callback null
+04-19 22:07:28.816 W/InputManager-JNI(  590): Input channel object 'fb68288 PopupWindow:9c235c2 (client)' was disposed without first being removed with the input manager!
+04-19 22:07:28.836 D/TrafficStats( 7785): tagSocket(131) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:28.855 D/TrafficStats( 7785): tagSocket(131) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:28.881 D/TrafficStats( 7785): tagSocket(129) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:28.897 D/TrafficStats( 7785): tagSocket(128) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:28.924 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:28.941 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:28.970 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:28.984 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.011 D/TrafficStats( 7785): tagSocket(153) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.030 D/TrafficStats( 7785): tagSocket(150) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.056 D/TrafficStats( 7785): tagSocket(150) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.070 D/TrafficStats( 7785): tagSocket(131) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.095 D/TrafficStats( 7785): tagSocket(129) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.109 D/TrafficStats( 7785): tagSocket(129) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.135 D/TrafficStats( 7785): tagSocket(128) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.138 D/TrafficStats( 7785): tagSocket(128) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.161 D/TrafficStats( 7785): tagSocket(121) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.177 D/TrafficStats( 7785): tagSocket(121) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.203 D/TrafficStats( 7785): tagSocket(155) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.221 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.247 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.262 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.289 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.307 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.333 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.350 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.376 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.391 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.420 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.422 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.438 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.448 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.464 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.473 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.490 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.500 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.516 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.527 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.544 D/TrafficStats( 7785): tagSocket(157) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.547 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.563 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.570 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.585 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.599 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.615 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.625 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.641 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.648 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.656 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.965 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:29.969 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.012 W/ActivityTaskManager(  590): callingPackage for (uid=2000, pid=7984) has no WPC
+04-19 22:07:30.013 W/OptProp (  590): Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_USER_ASPECT_RATIO_OVERRIDE
+04-19 22:07:30.013 W/OptProp (  590): Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_USER_ASPECT_RATIO_FULLSCREEN_OVERRIDE
+04-19 22:07:30.013 W/OptProp (  590): Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_ORIENTATION_OVERRIDE
+04-19 22:07:30.013 V/GrammaticalInflectionUtils(  590): AttributionSource: AttributionSource { uid = 10212, packageName = null, attributionTag = null, token = android.os.Binder@bdb3573, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+04-19 22:07:30.013 W/OptProp (  590): Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_RESIZEABLE_ACTIVITY_OVERRIDES
+04-19 22:07:30.013 W/OptProp (  590): Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_MIN_ASPECT_RATIO_OVERRIDE
+04-19 22:07:30.013 D/KeyguardService(  836): setOccluded(false)
+04-19 22:07:30.013 D/KeyguardViewMediator(  836): setOccluded(false)
+04-19 22:07:30.013 I/ActivityTaskManager(  590): START u0 {flg=0x10000000 cmp=com.impos2.mixcretailassemblyrn84/.MainActivity} with LAUNCH_SINGLE_TASK from uid 2000 (BAL_ALLOW_PERMISSION) result code=3
+04-19 22:07:30.013 D/KeyguardViewMediator(  836): handleSetOccluded(false)
+04-19 22:07:30.014 D/KeyguardViewMediator(  836): KeyguardViewMediator queue processing message: SET_OCCLUDED
+04-19 22:07:30.014 D/WindowManagerShell(  836): onActivityRestartAttempt: ComponentInfo{com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity}
+04-19 22:07:30.017 W/unknown:BridgelessReact( 7785): ReactHost{0}.onHostPause(activity)
+04-19 22:07:30.018 W/unknown:BridgelessReact( 7785): ReactHost{0}.ReactContext.onHostPause()
+04-19 22:07:30.018 W/unknown:BridgelessReact( 7785): ReactHost{0}.onHostResume(activity)
+04-19 22:07:30.021 W/unknown:BridgelessReact( 7785): ReactHost{0}.ReactContext.onHostResume()
+04-19 22:07:30.023 D/TrafficStats( 7785): tagSocket(101) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.032 D/TrafficStats( 7785): tagSocket(103) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.033 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.035 D/TrafficStats( 7785): tagSocket(103) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.035 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.046 W/InputManager-JNI(  590): Input channel object 'f7876f6 PopupWindow:23828a9 (client)' was disposed without first being removed with the input manager!
+04-19 22:07:30.060 D/TrafficStats( 7785): tagSocket(177) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.063 D/EGL_emulation( 7785): app_time_stats: avg=31.85ms min=13.30ms max=398.14ms count=42
+04-19 22:07:30.065 D/TrafficStats( 7785): tagSocket(155) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.066 W/InputManager-JNI(  590): Input channel object 'e2d0c82 PopupWindow:600ac8a (client)' was disposed without first being removed with the input manager!
+04-19 22:07:30.100 D/TrafficStats( 7785): tagSocket(128) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.103 D/TrafficStats( 7785): tagSocket(128) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.132 D/TrafficStats( 7785): tagSocket(128) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.134 D/TrafficStats( 7785): tagSocket(121) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.160 D/TrafficStats( 7785): tagSocket(121) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.165 D/TrafficStats( 7785): tagSocket(121) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.190 D/TrafficStats( 7785): tagSocket(121) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.193 D/TrafficStats( 7785): tagSocket(121) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.219 D/TrafficStats( 7785): tagSocket(121) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.221 D/TrafficStats( 7785): tagSocket(121) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.245 D/TrafficStats( 7785): tagSocket(121) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.248 D/TrafficStats( 7785): tagSocket(121) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.272 D/TrafficStats( 7785): tagSocket(121) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.274 D/TrafficStats( 7785): tagSocket(121) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.299 D/TrafficStats( 7785): tagSocket(121) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.302 D/TrafficStats( 7785): tagSocket(121) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.325 D/TrafficStats( 7785): tagSocket(103) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.328 D/TrafficStats( 7785): tagSocket(121) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.358 D/TrafficStats( 7785): tagSocket(121) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.362 D/TrafficStats( 7785): tagSocket(155) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.387 D/TrafficStats( 7785): tagSocket(155) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.390 D/TrafficStats( 7785): tagSocket(155) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.414 D/TrafficStats( 7785): tagSocket(128) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.417 D/TrafficStats( 7785): tagSocket(128) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.423 D/TrafficStats( 7785): tagSocket(128) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.736 D/TrafficStats( 7785): tagSocket(122) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.740 D/TrafficStats( 7785): tagSocket(122) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.747 I/ReactNativeJS( 7877): '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.tcp-control-runtime-v2.identity"],"appliedSliceNames":["kernel.base.tcp-control-runtime-v2.identity"],"skippedSliceReasons":[]}'
+04-19 22:07:30.753 I/assembly.assembly.android.mixc-retail-rn84( 7877): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.753 I/assembly.assembly.android.mixc-retail-rn84( 7877): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.761 I/assembly.assembly.android.mixc-retail-rn84.transport.http.HttpRuntime( 7785): [transport.http] HTTP request started: kernel.base.tcp-control-runtime-v2.activate-terminal {"endpointName":"kernel.base.tcp-control-runtime-v2.activate-terminal","serverName":"mock-terminal-platform","addressName":"local","method":"POST","roundIndex":0,"attemptIndex":1}
+04-19 22:07:30.778 I/assembly.assembly.android.mixc-retail-rn84( 7785): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.779 I/MMKV    ( 7785): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 11766, crc 1918060527, actualSize 14730
+04-19 22:07:30.779 I/MMKV    ( 7785): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-19 22:07:30.782 D/TrafficStats( 7785): tagSocket(158) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.782 I/assembly.assembly.android.mixc-retail-rn84( 7785): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.782 I/assembly.assembly.android.mixc-retail-rn84( 7785): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.782 I/assembly.assembly.android.mixc-retail-rn84( 7785): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.785 D/TrafficStats( 7785): tagSocket(180) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.801 I/assembly.assembly.android.mixc-retail-rn84.transport.http.HttpRuntime( 7785): [transport.http] HTTP request completed: kernel.base.tcp-control-runtime-v2.activate-terminal {"endpointName":"kernel.base.tcp-control-runtime-v2.activate-terminal","serverName":"mock-terminal-platform","addressName":"local","status":201}
+04-19 22:07:30.803 I/ReactNativeJS( 7877): '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.tcp-control-runtime-v2.sandbox"],"appliedSliceNames":["kernel.base.tcp-control-runtime-v2.sandbox"],"skippedSliceReasons":[]}'
+04-19 22:07:30.805 I/ReactNativeJS( 7785): '[tcp-activation-state-written]', '{"nodeId":"master:J9RZPWR3HK","sandboxId":"sandbox-kernel-base-test","terminalId":"terminal_sdr7x7pazmrq","bindingKeys":["platformId","tenantId","brandId","projectId","storeId","profileId","templateId"],"activatedAt":1776607650801}'
+04-19 22:07:30.808 I/assembly.assembly.android.mixc-retail-rn84( 7877): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.808 I/assembly.assembly.android.mixc-retail-rn84( 7877): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.808 I/ReactNativeJS( 7877): '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.tcp-control-runtime-v2.identity"],"appliedSliceNames":["kernel.base.tcp-control-runtime-v2.identity"],"skippedSliceReasons":[]}'
+04-19 22:07:30.813 I/assembly.assembly.android.mixc-retail-rn84.transport.ws.SocketRuntime( 7785): [transport.ws] Socket connect started: kernel.base.tdp-sync-runtime-v2.socket {"profileName":"kernel.base.tdp-sync-runtime-v2.socket","serverName":"mock-terminal-platform","addressName":"local"}
+04-19 22:07:30.813 I/ReactNativeJS( 7785): '[assembly.android.mixc-retail-rn84.websocket] connect', { url: 'ws://127.0.0.1:5810/api/v1/tdp/ws/connect?sandboxId=sandbox-kernel-base-test&terminalId=terminal_sdr7x7pazmrq&token=token_xzqorfc6zmrq',
+04-19 22:07:30.813 I/ReactNativeJS( 7785):   protocol: 'ws',
+04-19 22:07:30.813 I/ReactNativeJS( 7785):   host: '127.0.0.1:5810',
+04-19 22:07:30.813 I/ReactNativeJS( 7785):   pathname: '/api/v1/tdp/ws/connect' }
+04-19 22:07:30.816 D/TrafficStats( 7785): tagSocket(149) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.830 D/TrafficStats( 7877): tagSocket(102) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.831 I/assembly.assembly.android.mixc-retail-rn84( 7785): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.831 I/assembly.assembly.android.mixc-retail-rn84( 7877): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.832 I/assembly.assembly.android.mixc-retail-rn84( 7877): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.832 I/ReactNativeJS( 7877): '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.tcp-control-runtime-v2.credential"],"appliedSliceNames":["kernel.base.tcp-control-runtime-v2.credential"],"skippedSliceReasons":[]}'
+04-19 22:07:30.833 I/MMKV    ( 7785): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 11767, crc 2710117016, actualSize 14729
+04-19 22:07:30.833 I/MMKV    ( 7785): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-19 22:07:30.835 I/assembly.assembly.android.mixc-retail-rn84( 7877): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.835 I/assembly.assembly.android.mixc-retail-rn84( 7877): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.836 I/ReactNativeJS( 7877): '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.tcp-control-runtime-v2.binding"],"appliedSliceNames":["kernel.base.tcp-control-runtime-v2.binding"],"skippedSliceReasons":[]}'
+04-19 22:07:30.837 I/assembly.assembly.android.mixc-retail-rn84( 7785): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.837 I/assembly.assembly.android.mixc-retail-rn84( 7877): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.837 I/assembly.assembly.android.mixc-retail-rn84( 7785): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.837 I/assembly.assembly.android.mixc-retail-rn84( 7785): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.837 I/assembly.assembly.android.mixc-retail-rn84( 7785): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.837 I/assembly.assembly.android.mixc-retail-rn84( 7785): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.837 I/assembly.assembly.android.mixc-retail-rn84( 7785): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.837 I/ReactNativeJS( 7877): '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.ui-runtime-v2.screen.main"],"appliedSliceNames":["kernel.base.ui-runtime-v2.screen.main"],"skippedSliceReasons":[]}'
+04-19 22:07:30.838 I/assembly.assembly.android.mixc-retail-rn84( 7877): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.838 I/assembly.assembly.android.mixc-retail-rn84( 7785): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.838 I/assembly.assembly.android.mixc-retail-rn84( 7877): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.838 I/assembly.assembly.android.mixc-retail-rn84( 7877): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.840 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.844 I/ReactNativeJS( 7877): '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.ui-runtime-v2.screen.main"],"appliedSliceNames":["kernel.base.ui-runtime-v2.screen.main"],"skippedSliceReasons":[]}'
+04-19 22:07:30.844 I/assembly.assembly.android.mixc-retail-rn84( 7785): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.849 I/MMKV    ( 7785): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::secure-state] increase sequence to 192, crc 2636864288, actualSize 4
+04-19 22:07:30.851 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.852 I/MMKV    ( 7785): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 11768, crc 264379836, actualSize 16561
+04-19 22:07:30.852 I/MMKV    ( 7785): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-19 22:07:30.855 I/MMKV    ( 7785): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 11769, crc 1951047019, actualSize 16628
+04-19 22:07:30.856 I/MMKV    ( 7785): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-19 22:07:30.856 I/assembly.assembly.android.mixc-retail-rn84( 7877): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.857 I/assembly.assembly.android.mixc-retail-rn84( 7877): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.862 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:30.863 I/MMKV    ( 7785): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 11770, crc 2799144145, actualSize 16628
+04-19 22:07:30.863 I/MMKV    ( 7785): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-19 22:07:30.868 I/assembly.assembly.android.mixc-retail-rn84( 7785): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.877 I/assembly.assembly.android.mixc-retail-rn84( 7785): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.877 I/assembly.assembly.android.mixc-retail-rn84( 7785): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.882 I/assembly.assembly.android.mixc-retail-rn84( 7785): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.882 I/assembly.assembly.android.mixc-retail-rn84( 7785): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-19 22:07:30.887 I/MMKV    ( 7785): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 11771, crc 3861603809, actualSize 16628
+04-19 22:07:30.887 I/MMKV    ( 7785): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-19 22:07:30.887 D/EGL_emulation( 7877): app_time_stats: avg=14038.97ms min=1.01ms max=83039.84ms count=6
+04-19 22:07:30.891 I/MMKV    ( 7785): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 11772, crc 2064904454, actualSize 17361
+04-19 22:07:30.891 I/MMKV    ( 7785): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-19 22:07:30.962 D/CoreBackPreview(  590): Window{d86c785 u0 PopupWindow:6e27cba}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@53ee0b, mPriority=0, mIsAnimationCallback=false}
+04-19 22:07:30.962 D/CoreBackPreview(  590): Window{7a36ece u0 PopupWindow:9aaf460}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@dc5e4e8, mPriority=0, mIsAnimationCallback=false}
+04-19 22:07:30.969 W/WindowOnBackDispatcher( 7877): sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda11@fabaa86
+04-19 22:07:30.970 D/CoreBackPreview(  590): Window{d86c785 u0 PopupWindow:6e27cba}: Setting back callback null
+04-19 22:07:30.970 W/WindowOnBackDispatcher( 7785): sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda11@43af68c
+04-19 22:07:30.971 D/CoreBackPreview(  590): Window{7a36ece u0 PopupWindow:9aaf460}: Setting back callback null
+04-19 22:07:30.971 W/InputManager-JNI(  590): Input channel object 'd86c785 PopupWindow:6e27cba (client)' was disposed without first being removed with the input manager!
+04-19 22:07:30.971 W/InputManager-JNI(  590): Input channel object '7a36ece PopupWindow:9aaf460 (client)' was disposed without first being removed with the input manager!
+04-19 22:07:31.196 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:31.198 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:31.201 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:31.204 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:07:31.311 D/CoreBackPreview(  590): Window{d60e539 u0 PopupWindow:c401ecb}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@a9064df, mPriority=0, mIsAnimationCallback=false}
+04-19 22:07:31.312 D/CoreBackPreview(  590): Window{7c59a32 u0 PopupWindow:96372d1}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@1b1152c, mPriority=0, mIsAnimationCallback=false}
+04-19 22:07:31.320 W/WindowOnBackDispatcher( 7877): sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda11@adb6b0d
+04-19 22:07:31.320 W/WindowOnBackDispatcher( 7785): sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda11@8afdca7
+04-19 22:07:31.320 D/CoreBackPreview(  590): Window{7c59a32 u0 PopupWindow:96372d1}: Setting back callback null
+04-19 22:07:31.320 D/CoreBackPreview(  590): Window{d60e539 u0 PopupWindow:c401ecb}: Setting back callback null
+04-19 22:07:31.321 W/InputManager-JNI(  590): Input channel object '7c59a32 PopupWindow:96372d1 (client)' was disposed without first being removed with the input manager!
+04-19 22:07:31.321 W/InputManager-JNI(  590): Input channel object 'd60e539 PopupWindow:c401ecb (client)' was disposed without first being removed with the input manager!
+04-19 22:07:31.684 E/TaskPersister(  590): File error accessing recents directory (directory doesn't exist?).
+04-19 22:07:37.814 W/adbd    (  443): timeout expired while flushing socket, closing
+04-19 22:07:37.842 W/adbd    (  443): timeout expired while flushing socket, closing
+04-19 22:07:40.293 E/WifiScoringParams(  590): Invalid frequency(-1), using 5G as default rssi array
+04-19 22:07:44.090 D/WifiNl80211Manager(  590): Scan result ready event
+04-19 22:07:44.090 D/WifiNative(  590): Scan result ready event
+04-19 22:07:44.101 I/HalDevMgr(  590): bestIfaceCreationProposal is null, requestIface=STA, existingIface=[name=wlan0 type=STA]
+--------- beginning of kernel
+04-19 22:07:59.749 W/healthd (  397): battery l=47 v=5000 t=25.0 h=2 st=4 c=900000 fc=3000000 cc=10 chg=a
+04-19 22:08:00.011 I/AiAiEcho( 1389): Predicting[0]:  [CONTEXT sampling_count=5 ]
+04-19 22:08:00.011 I/AiAiEcho( 1389): EchoTargets: 
+04-19 22:08:00.011 I/AiAiEcho( 1389): Filtered by AiAi flag check: 
+04-19 22:08:00.011 I/AiAiEcho( 1389): [CONTEXT ratelimit_period="10 SECONDS" ]
+04-19 22:08:00.011 I/AiAiEcho( 1389): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+04-19 22:08:00.011 I/AiAiEcho( 1389): #remoteViewsTwiddler: feature disabled.
+04-19 22:08:00.011 I/AiAiEcho( 1389): Predicting[0]:  [CONTEXT sampling_count=5 ]
+04-19 22:08:00.011 I/AiAiEcho( 1389): EchoTargets: 
+04-19 22:08:00.011 I/AiAiEcho( 1389): Filtered by AiAi flag check: 
+04-19 22:08:00.011 I/AiAiEcho( 1389): [CONTEXT ratelimit_period="10 SECONDS" ]
+04-19 22:08:00.011 I/AiAiEcho( 1389): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+04-19 22:08:00.011 I/AiAiEcho( 1389): #remoteViewsTwiddler: feature disabled.
+04-19 22:08:00.012 I/AiAiEcho( 1389): #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+04-19 22:08:00.012 I/AiAiEcho( 1389): #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+04-19 22:08:00.012 D/SsBaseTemplateCard( 1099): No text view can be set up
+04-19 22:08:00.013 D/SsBaseTemplateCard( 1099): Passed-in item info is null
+04-19 22:08:00.013 D/SsBaseTemplateCard( 1099): Passed-in item info is null
+04-19 22:08:00.013 D/SsBaseTemplateCard( 1099): Passed-in item info is null
+04-19 22:08:00.013 I/SsBaseTemplateCard( 1099): Secondary card pane is null
+04-19 22:08:00.013 W/PageIndicator(  836): Total number of pages invalid: 0. Assuming 1 page.
+04-19 22:08:00.029 D/EGL_emulation(  836): app_time_stats: avg=59997.02ms min=59997.02ms max=59997.02ms count=1
+04-19 22:08:04.194 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:08:04.197 D/TrafficStats( 7785): tagSocket(153) with statsTag=0xffffffff, statsUid=-1
+04-19 22:08:04.202 D/TrafficStats( 7785): tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-19 22:08:04.203 D/TrafficStats( 7785): tagSocket(153) with statsTag=0xffffffff, statsUid=-1
+04-19 22:08:04.206 I/logd    (  167): logdr: UID=2000 GID=2000 PID=8008 n tail=0 logMask=99 pid=0 start=0ns deadline=0ns

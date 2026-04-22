@@ -1,0 +1,81 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'com.facebook.react'
+    id 'maven-publish'
+}
+
+android {
+    namespace 'com.adapterrn84.turbomodules'
+    compileSdk 35
+
+    defaultConfig {
+        minSdk 24
+        targetSdk 35
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
+}
+
+react {
+    libraryName = "AdapterRN84Spec"
+    codegenJavaPackageName = "com.adapterrn84.turbomodules"
+    // 使用 node_modules 中的包路径，确保在任何项目中都能正确解析
+    def nodeModulesDir = rootProject.projectDir.toPath()
+        .resolve("node_modules/@impos2/adapter-android-rn84")
+        .toFile()
+    jsRootDir = nodeModulesDir.exists() ? nodeModulesDir : file("../../")
+}
+
+dependencies {
+    implementation 'com.facebook.react:react-android'
+    implementation 'com.facebook.react:hermes-android'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
+    implementation 'wang.harlon.quickjs:wrapper-android:3.2.3'
+    implementation "androidx.camera:camera-core:1.3.4"
+    implementation "androidx.camera:camera-camera2:1.3.4"
+    implementation "androidx.camera:camera-lifecycle:1.3.4"
+    implementation "androidx.camera:camera-view:1.3.4"
+    implementation "com.google.mlkit:barcode-scanning:17.3.0"
+}
+
+// 配置 AAR 输出
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.adapterrn84'
+                artifactId = 'turbomodule-lib'
+                version = '1.0.0'
+            }
+        }
+        repositories {
+            maven {
+                name = 'local'
+                url = "${rootProject.projectDir}/local-maven"
+            }
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "containerKey": "primary.root.container",
+    "screen": {
+      "partKey": "ui.base.terminal.activate-device",
+      "rendererKey": "ui.base.terminal.activate-device",
+      "props": null
+    },
+    "overlayCount": 0
+  },
+  "id": "1776786284912-0ffac56a0eccf"
+}

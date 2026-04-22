@@ -1,0 +1,8 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "ok": true,
+    "nodeId": "ui-base-admin-section:topology:enable-slave"
+  },
+  "id": "1776785093696-36a6cf2a5daa28"
+}

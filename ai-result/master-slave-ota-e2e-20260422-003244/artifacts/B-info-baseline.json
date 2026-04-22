@@ -1,0 +1,19 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "runtimeId": "run_mo8te6cc_2c42hk1ywozkuirp",
+    "localNodeId": "master:ZJ63NQELD9",
+    "environmentMode": "PROD",
+    "displayContext": {
+      "displayIndex": 0,
+      "displayCount": 1
+    },
+    "currentScreen": {
+      "containerKey": "primary.root.container",
+      "screen": null,
+      "overlayCount": 0
+    }
+  },
+  "id": "1776789264505-54d12df14208d8"
+}

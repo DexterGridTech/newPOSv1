@@ -1,0 +1,112 @@
+{
+  "fileName": "hot-update-assembly-android-mixc-retail-rn84-1.0.0+ota.9.zip",
+  "outputPath": "/Users/dexter/Documents/workspace/idea/newPOSv1/dist/hot-updates/hot-update-assembly-android-mixc-retail-rn84-1.0.0+ota.9.zip",
+  "fileSize": 3286325,
+  "sha256": "8db73f9277a1201de5605866d65d39432eea35ae48e0f5573c1cd889559fd30b",
+  "manifest": {
+    "manifestVersion": 1,
+    "appId": "assembly-android-mixc-retail-rn84",
+    "platform": "android",
+    "product": "mixc-retail",
+    "channel": "production",
+    "bundleVersion": "1.0.0+ota.9",
+    "runtimeVersion": "android-mixc-retail-rn84@1.0",
+    "assemblyVersion": "1.0.0",
+    "buildNumber": 2,
+    "builtAt": "2026-04-20T21:31:33.487Z",
+    "git": {
+      "commit": "b34ddf0828f7663aa21b958611b95941ca001fef",
+      "branch": "main"
+    },
+    "compatibility": {
+      "appId": "assembly-android-mixc-retail-rn84",
+      "platform": "android",
+      "product": "mixc-retail",
+      "runtimeVersion": "android-mixc-retail-rn84@1.0",
+      "minAssemblyVersion": "1.0.0",
+      "maxAssemblyVersion": "1.0.0",
+      "minBuildNumber": 2,
+      "maxBuildNumber": 2,
+      "allowedChannels": [
+        "production"
+      ],
+      "targetPackages": {
+        "@impos2/kernel-base-contracts": "1.0.0",
+        "@impos2/kernel-base-platform-ports": "1.0.0",
+        "@impos2/kernel-base-runtime-shell-v2": "1.0.0",
+        "@impos2/kernel-base-tcp-control-runtime-v2": "1.0.0",
+        "@impos2/kernel-base-topology-runtime-v3": "1.0.0",
+        "@impos2/kernel-base-transport-runtime": "1.0.0",
+        "@impos2/kernel-base-ui-runtime-v2": "1.0.0",
+        "@impos2/kernel-server-config-v2": "1.0.0",
+        "@impos2/ui-base-admin-console": "1.0.0",
+        "@impos2/ui-base-input-runtime": "1.0.0",
+        "@impos2/ui-base-runtime-react": "1.0.0",
+        "@impos2/ui-base-terminal-console": "1.0.0",
+        "@impos2/ui-integration-retail-shell": "1.0.0",
+        "@impos2/adapter-android-v2": "1.0.0"
+      }
+    },
+    "package": {
+      "type": "full-js-bundle",
+      "entry": "payload/index.android.bundle",
+      "sourceMap": "payload/source-map/index.android.bundle.map",
+      "compression": "zip",
+      "size": 2737344,
+      "sha256": "e628c6178aef459210737cde607c3343a5caa727eebf80983e61cbe9571c02df",
+      "files": [
+        {
+          "path": "payload/index.android.bundle",
+          "size": 2737344,
+          "sha256": "e628c6178aef459210737cde607c3343a5caa727eebf80983e61cbe9571c02df"
+        },
+        {
+          "path": "payload/source-map/index.android.bundle.map",
+          "size": 10502632,
+          "sha256": "c0e765a4c071d6210de7e2a6fea7ea1e2783f018521a44b7981a34417f837766"
+        }
+      ]
+    },
+    "install": {
+      "strategy": "replace-bundle",
+      "requiresRuntimeRestart": true,
+      "maxRetainedPackages": 2
+    },
+    "restart": {
+      "mode": "immediate",
+      "operatorInstruction": "restart immediately for OTA E2E V9 verification"
+    },
+    "rollout": {
+      "defaultStrategy": "manual-policy"
+    },
+    "security": {
+      "hashAlgorithm": "sha256"
+    },
+    "releaseNotes": [
+      "OTA E2E V9 visible welcome title verification"
+    ],
+    "artifacts": [
+      {
+        "name": "apk",
+        "path": "4-assembly/android/mixc-retail-assembly-rn84/android/app/build/outputs/apk/release/app-release.apk",
+        "size": 83340649,
+        "sha256": "0c500e3f99350ec0c2ea35da2a66ad0f0a1b9cbfed7eac4d0b137d5627648627",
+        "modifiedAt": "2026-04-20T17:43:50.149Z"
+      },
+      {
+        "name": "bundle",
+        "path": "4-assembly/android/mixc-retail-assembly-rn84/android/app/build/generated/assets/react/release/index.android.bundle",
+        "size": 2735136,
+        "sha256": "0bfb314ba2b5ab8228c49790803734e9b9fa568ac6bd438657980e25a9aae6ac",
+        "modifiedAt": "2026-04-20T18:05:14.524Z"
+      },
+      {
+        "name": "sourceMap",
+        "path": "4-assembly/android/mixc-retail-assembly-rn84/android/app/build/intermediates/sourcemaps/react/release/index.android.bundle.packager.map",
+        "size": 10498418,
+        "sha256": "461f0e08b4501bbccd1699dfd9c2c46ab89a8c3f88b24189ae75ea3a7693c6fe",
+        "modifiedAt": "2026-04-20T18:05:12.153Z"
+      }
+    ]
+  }
+}

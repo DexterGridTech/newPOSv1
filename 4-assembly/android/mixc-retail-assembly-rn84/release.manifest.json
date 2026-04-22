@@ -3,8 +3,8 @@
   "platform": "android",
   "product": "mixc-retail",
   "assemblyVersion": "1.0.0",
-  "buildNumber": 2,
-  "bundleVersion": "1.0.0+ota.15",
+  "buildNumber": 8,
+  "bundleVersion": "1.0.0+ota.5",
   "runtimeVersion": "android-mixc-retail-rn84@1.0",
   "channel": "production",
   "minSupportedAppVersion": "1.0.0",
@@ -25,28 +25,28 @@
     "@impos2/adapter-android-v2": "1.0.0"
   },
   "git": {
-    "commit": "1daceffca0723b81cc106cd59dd46de95e060aac",
+    "commit": "9ff682189520949eb679d1847b2e33d6eaa4ab78",
     "branch": "main"
   },
-  "updatedAt": "2026-04-21T05:21:52.828Z",
+  "updatedAt": "2026-04-21T23:22:19.697Z",
   "artifacts": {
     "apk": {
       "path": "4-assembly/android/mixc-retail-assembly-rn84/android/app/build/outputs/apk/release/app-release.apk",
-      "size": 83356425,
-      "sha256": "f1f9cfb91582c865c97e64da26bacb06a62451c82fa997a45f74c15bf63b7124",
-      "modifiedAt": "2026-04-21T05:08:25.314Z"
+      "size": 83625181,
+      "sha256": "c9a27e2135d0bf1973632d4547897b391675049120820574fcd1e7fb2446118a",
+      "modifiedAt": "2026-04-21T21:05:26.200Z"
     },
     "bundle": {
       "path": "4-assembly/android/mixc-retail-assembly-rn84/android/app/build/generated/assets/react/release/index.android.bundle",
-      "size": 2750916,
-      "sha256": "72e269b5888d8fe2b9b62963d40695acd694b02295ae54e5b7ecb1e66dedfd7a",
-      "modifiedAt": "2026-04-21T05:16:48.940Z"
+      "size": 3036080,
+      "sha256": "af32479bf7cacfd59c777138f03afb33904b56d7e0b6c6f2fc198c7ac30616a7",
+      "modifiedAt": "2026-04-21T21:05:09.254Z"
     },
     "sourceMap": {
       "path": "4-assembly/android/mixc-retail-assembly-rn84/android/app/build/intermediates/sourcemaps/react/release/index.android.bundle.packager.map",
-      "size": 10547700,
-      "sha256": "bfdc950581a069c98d7fa5d07e7a0e6fa66b64f06c95dae2c4cb6f6137354b69",
-      "modifiedAt": "2026-04-21T05:16:46.416Z"
+      "size": 11354056,
+      "sha256": "808d8615e8e941bcc77732847c3d004c35e5b7dbe8b8fbc71a8f70264b5a223b",
+      "modifiedAt": "2026-04-21T21:05:06.256Z"
     }
   }
 }

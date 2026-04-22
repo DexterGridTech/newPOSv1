@@ -1,0 +1,912 @@
+--------- beginning of system
+04-22 01:25:36.145   683  9615 I ActivityManager: Force stopping com.impos2.mixcretailassemblyrn84 appid=10214 user=0: from pid 20883
+--------- beginning of main
+04-22 01:25:36.145   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.145   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.145   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.145   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.145   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.145   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.145   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.145   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.145   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.145   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.145   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.145   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.145   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.145   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.146   683  9615 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.155   683   891 I AppWidgetServiceImpl: Received broadcast: android.intent.action.PACKAGE_RESTARTED on user 0
+04-22 01:25:36.156  1086  1086 D CarrierSvcBindHelper: onHandleForceStop: [com.impos2.mixcretailassemblyrn84]
+04-22 01:25:36.155   683   891 I AppWidgetServiceImpl: Updating package stopped masked state for uid 10214 package com.impos2.mixcretailassemblyrn84 isStopped true
+04-22 01:25:36.157   683   830 I system_server: AssetManager2(0xb400007aa8cea898) locale list changing from [] to [en-US]
+04-22 01:25:36.158   683   830 I system_server: AssetManager2(0xb400007aa8c820b8) locale list changing from [] to [en-US]
+04-22 01:25:36.160  1086  1086 D CarrierSvcBindHelper: No carrier app for: 0
+04-22 01:25:36.181   683  1759 I ActivityManager: Force stopping com.impos2.mixcretailassemblyrn84 appid=10214 user=0: clear data
+04-22 01:25:36.182   683  1715 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+04-22 01:25:36.183   683   767 E AppOps  : package pm not found, can't check for attributionTag null
+04-22 01:25:36.183   683   767 E AppOps  : Bad call made by uid 1000. Package "pm" does not belong to uid 1000.
+04-22 01:25:36.183   683   767 E AppOps  : Cannot noteOperation: non-application UID 1000
+04-22 01:25:36.183   683   767 I ActivityManager: Force stopping com.impos2.mixcretailassemblyrn84 appid=10214 user=-1: clearApplicationUserData
+04-22 01:25:36.187   252  3606 I keystore2: system/security/keystore2/src/maintenance.rs:607 - clearNamespace(r#APP, nspace=10214)
+04-22 01:25:36.192   683   740 D ActivityManager: sync unfroze 8919 com.google.android.documentsui for 3
+04-22 01:25:36.192  8919  8919 D ActivityThread: Package [com.impos2.mixcretailassemblyrn84] reported as REPLACED, but missing application info. Assuming REMOVED.
+04-22 01:25:36.193  8919  8919 D ActivityThread: Package [com.impos2.mixcretailassemblyrn84] reported as REPLACED, but missing application info. Assuming REMOVED.
+04-22 01:25:36.197   683   891 I AppWidgetServiceImpl: Received broadcast: android.intent.action.PACKAGE_DATA_CLEARED on user 0
+04-22 01:25:36.198   683   891 I AppWidgetServiceImpl: Received broadcast: android.intent.action.PACKAGE_RESTARTED on user 0
+04-22 01:25:36.198   683   891 I AppWidgetServiceImpl: Updating package stopped masked state for uid 10214 package com.impos2.mixcretailassemblyrn84 isStopped true
+04-22 01:25:36.199   683   911 D ShortcutService: received package broadcast intent: Intent { act=android.intent.action.PACKAGE_DATA_CLEARED dat=package: flg=0x5000010 (has extras) }
+04-22 01:25:36.199   683   911 D ShortcutService: clearing data for package: com.impos2.mixcretailassemblyrn84 userId=0
+04-22 01:25:36.200  1086  1086 D CarrierSvcBindHelper: onHandleForceStop: [com.impos2.mixcretailassemblyrn84]
+04-22 01:25:36.200  1086  1086 D CarrierSvcBindHelper: No carrier app for: 0
+04-22 01:25:36.201   683   740 D ActivityManager: sync unfroze 3020 com.android.chrome for 3
+04-22 01:25:36.201   683   740 D ActivityManager: sync unfroze 1396 com.google.android.permissioncontroller for 3
+04-22 01:25:36.202  3020  3020 D ActivityThread: Package [com.impos2.mixcretailassemblyrn84] reported as REPLACED, but missing application info. Assuming REMOVED.
+04-22 01:25:36.203  3020  3020 D ActivityThread: Package [com.impos2.mixcretailassemblyrn84] reported as REPLACED, but missing application info. Assuming REMOVED.
+04-22 01:25:36.206   683  1874 D ActivityManager: sync unfroze 1591 com.google.android.gms for 6
+04-22 01:25:36.210   683   857 I system_server: AssetManager2(0xb400007aa8ce0c58) locale list changing from [] to [en-US]
+04-22 01:25:36.211   683   912 D BackgroundInstallControlService: Package event received: 0
+04-22 01:25:36.212   683  1755 V GrammaticalInflectionUtils: AttributionSource: AttributionSource { uid = 10157, packageName = null, attributionTag = null, token = android.os.Binder@d3d534, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+04-22 01:25:36.212   683  1755 D CompatChangeReporter: Compat change id reported: 151861875; UID 10157; state: ENABLED
+04-22 01:25:36.215   683  1874 W ActivityTaskManager: callingPackage for (uid=2000, pid=20899) has no WPC
+04-22 01:25:36.215   683  1759 W JobInfo : Job 'com.google.android.providers.media.module/com.android.providers.media.MediaService#-300' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
+04-22 01:25:36.216   683  1874 I system_server: AssetManager2(0xb400007aa8ce2eb8) locale list changing from [] to [en-US]
+04-22 01:25:36.217   683  1874 V GrammaticalInflectionUtils: AttributionSource: AttributionSource { uid = 10214, packageName = null, attributionTag = null, token = android.os.Binder@d3d534, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+04-22 01:25:36.217   683  1874 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_USER_ASPECT_RATIO_OVERRIDE
+04-22 01:25:36.217   683  1874 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_USER_ASPECT_RATIO_FULLSCREEN_OVERRIDE
+04-22 01:25:36.217   683  1874 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_RESIZEABLE_ACTIVITY_OVERRIDES
+04-22 01:25:36.218   462   462 D Zygote  : Forked child process 20905
+04-22 01:25:36.218   683  1874 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_MIN_ASPECT_RATIO_OVERRIDE
+04-22 01:25:36.219   683   741 I ActivityManager: Start proc 20905:com.google.android.apps.docs/u0a157 for content provider {com.google.android.apps.docs/com.google.android.apps.docs.common.storagebackend.StorageBackendContentProvider}
+04-22 01:25:36.221   683  1874 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_ORIENTATION_OVERRIDE
+04-22 01:25:36.221  1283 20902 I Fitness : FitCleanupIntentOperation received Intent android.intent.action.PACKAGE_DATA_CLEARED [CONTEXT service_id=17 ]
+04-22 01:25:36.224   957  1163 I ndroid.systemui: AssetManager2(0xb400007aa8c6e838) locale list changing from [] to [en-US]
+04-22 01:25:36.224   683  1874 I ActivityTaskManager: START u0 {flg=0x10000000 xflg=0x5 cmp=com.impos2.mixcretailassemblyrn84/.MainActivity} with LAUNCH_SINGLE_TASK from uid 2000 (BAL_ALLOW_PERMISSION) result code=0
+04-22 01:25:36.224   957  1041 V WindowManagerShell: Transition requested (#113): android.os.BinderProxy@947509e TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=34 effectiveUid=10214 displayId=0 isRunning=true baseIntent=Intent { flg=0x10000000 cmp=com.impos2.mixcretailassemblyrn84/.MainActivity } baseActivity=ComponentInfo{com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity} topActivity=ComponentInfo{com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity} origActivity=null realActivity=ComponentInfo{com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity} numActivities=1 lastActiveTime=17793768 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{android.window.IWindowContainerToken$Stub$Proxy@621a77f} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=Rect(0, 0 - 0, 0) topActivityInfo=ActivityInfo{897334c com.impos2.mixcretailassemblyrn84.MainActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isVisible=false isVisibleRequested=false isTopActivityNoDisplay=false isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false isActivityStackTransparent=false lastNonFullscreenBounds=Rect(892, 102 - 1668, 1482) capturedLink=null capturedLinkTimestamp=0 requestedVisibleTypes=-9 topActivityRequestOpenInBrowserEducationTimestamp=0 appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false eligibleForLetterboxEducation= false isLetterboxEducationEnabled= true isLetterboxDoubleTapEnabled= false eligibleForUserAspectRatioButton= true topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 topActivityAppBounds=Rect(0, 0 - 2560, 1600) isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false hasMinAspectRatioOverride=false topActivityLetterboxBounds=null cameraCompatTaskInfo=CameraCompatTaskInfo { freeformCameraCompatMode=inactive}} topActivityMainWindowFrame=null}, pipChange = null, remoteTransition = null, displayChange = null, flags = 0, debugId = 113 }
+04-22 01:25:36.225   957  1041 D ShellSplitScreen: logExit: no-op, mLoggerSessionId is null
+04-22 01:25:36.226   683  9615 D CompatChangeReporter: Compat change id reported: 377864165; UID 10214; state: ENABLED
+04-22 01:25:36.226   683   741 I ActivityManager: ProcessObserver broadcast disabled
+04-22 01:25:36.227   957  1164 D SplashScreenView: Build android.window.SplashScreenView{6aa3838 V.E...... ......ID 0,0-0,0}
+04-22 01:25:36.227   957  1164 D SplashScreenView: Icon: view: android.widget.ImageView{6eb3011 V.ED..... ......I. 0,0-0,0 #1020542 android:id/splashscreen_icon_view} drawable: com.android.wm.shell.startingsurface.SplashscreenIconDrawableFactory$ImmobileIconDrawable@8eed576 size: 384
+04-22 01:25:36.227   957  1164 D SplashScreenView: Branding: view: android.view.View{1ff0777 G.ED..... ......I. 0,0-0,0 #1020541 android:id/splashscreen_branding_view} drawable: null size w: 0 h: 0
+04-22 01:25:36.227   683  9615 D SafetySourceDataValidat: No cert check requested for package com.google.android.permissioncontroller
+04-22 01:25:36.230   459   537 I netd    : tetherGetStats() -> {[]} <0.14ms>
+04-22 01:25:36.231   582  5370 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.231 20905 20905 I droid.apps.docs: Using CollectorTypeCMC GC.
+04-22 01:25:36.231  1096  1096 W SplitSelectStateCtor: Missing session instanceIds
+04-22 01:25:36.231  1096  1096 D StatsLog: LAUNCHER_SPLIT_SELECTION_EXIT_INTERRUPTED
+04-22 01:25:36.232   957  1041 D WindowManagerShell: setLauncherKeepClearAreaHeight: visible=false, height=202
+04-22 01:25:36.233  1591 20906 I Blockstore: [PackageIntentOperation] Checking IS_RESTORE extra. [CONTEXT service_id=258 ]
+04-22 01:25:36.233 20905 20905 E droid.apps.docs: Not starting debugger since process cannot load the jdwp agent.
+04-22 01:25:36.234 20905 20905 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+04-22 01:25:36.235   683   734 V GrammaticalInflectionUtils: AttributionSource: AttributionSource { uid = 10214, packageName = null, attributionTag = null, token = android.os.Binder@d3d534, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+04-22 01:25:36.239   462   462 D Zygote  : Forked child process 20922
+04-22 01:25:36.240   515   515 I BpBinder: onLastStrongRef automatically unlinking death recipients: 
+04-22 01:25:36.242   683  1759 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_DISPLAY_ORIENTATION_OVERRIDE
+04-22 01:25:36.245 20922 20922 I ailassemblyrn84: Using CollectorTypeCMC GC.
+04-22 01:25:36.246 20922 20922 E ailassemblyrn84: Not starting debugger since process cannot load the jdwp agent.
+04-22 01:25:36.247 20922 20922 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+04-22 01:25:36.251   683   891 I AppWidgetServiceImpl: Received broadcast: android.intent.action.PACKAGE_UNSTOPPED on user 0
+04-22 01:25:36.251   683   891 I AppWidgetServiceImpl: Updating package stopped masked state for uid 10214 package com.impos2.mixcretailassemblyrn84 isStopped false
+04-22 01:25:36.253   683   731 V WindowManager: Sent Transition (#113) createdAt=04-22 01:25:36.218 via request=TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=34 effectiveUid=10214 displayId=0 isRunning=true baseIntent=Intent { flg=0x10000000 cmp=com.impos2.mixcretailassemblyrn84/.MainActivity } baseActivity=ComponentInfo{com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity} topActivity=ComponentInfo{com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity} origActivity=null realActivity=ComponentInfo{com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity} numActivities=1 lastActiveTime=17793768 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{RemoteToken{ccea655 Task{21e1d0a #34 type=standard A=10214:com.impos2.mixcretailassemblyrn84}}} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=Rect(0, 0 - 0, 0) topActivityInfo=ActivityInfo{568e86a com.impos2.mixcretailassemblyrn84.MainActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isVisible=false isVisibleRequested=false isTopActivityNoDisplay=false isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false isActivityStackTransparent=false lastNonFullscreenBounds=Rect(892, 102 - 1668, 1482) capturedLink=null capturedLinkTimestamp=0 requestedVisibleTypes=-9 topActivityRequestOpenInBrowserEducationTimestamp=0 appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false eligibleForLetterboxEducation= false isLetterboxEducationEnabled= true isLetterboxDoubleTapEnabled= false eligibleForUserAspectRatioButton= true topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 topActivityAppBounds=Rect(0, 0 - 2560, 1600) isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false hasMinAspectRatioOverride=false topActivityLetterboxBounds=null cameraCompatTaskInfo=CameraCompatTaskInfo { freeformCameraCompatMode=inactive}} topActivityMainWindowFrame=null}, pipChange = null, remoteTransition = null, displayChange = null, flags = 0, debugId = 113 }
+04-22 01:25:36.253   683   731 V WindowManager:     startWCT=WindowContainerTransaction { changes= {} hops= [] errorCallbackToken=null taskFragmentOrganizer=null }
+04-22 01:25:36.253   683   731 V WindowManager:     info={id=113 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[
+04-22 01:25:36.253   683   731 V WindowManager:         {WCT{RemoteToken{ccea655 Task{21e1d0a #34 type=standard A=10214:com.impos2.mixcretailassemblyrn84}}} m=OPEN f=NONE leash=Surface(name=Task=34)/@0x9100999 sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=0 taskParent=-1},
+04-22 01:25:36.253   683   731 V WindowManager:         {WCT{RemoteToken{d207d2d Task{be313b9 #1 type=home}}} m=TO_BACK f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0x1052c0a sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=0 taskParent=-1},
+04-22 01:25:36.253   683   731 V WindowManager:         {m=TO_BACK f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{d943a30 showWhenLocked=false})/@0x2293475 sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=0}
+04-22 01:25:36.253   683   731 V WindowManager:     ]}
+04-22 01:25:36.255   957  1517 V WindowManagerShell: onTransitionReady(transaction=2933462668057)
+04-22 01:25:36.256  1626  2010 I MediaProvider: Begin Intent { act=android.intent.action.PACKAGE_DATA_CLEARED dat=package: flg=0x5000010 cmp=com.google.android.providers.media.module/com.android.providers.media.MediaService (has extras) }
+04-22 01:25:36.260 20905 20905 D ApplicationLoaders: Returning zygote-cached class loader: /system/framework/org.apache.http.legacy.jar
+04-22 01:25:36.260 20905 20905 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar
+04-22 01:25:36.260 20905 20905 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.sidecar.jar
+04-22 01:25:36.260   683   741 I ActivityManager: Start proc 20922:com.impos2.mixcretailassemblyrn84/u0a214 for next-top-activity {com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity}
+04-22 01:25:36.260   683   741 I ActivityManager: ProcessObserver broadcast disabled
+04-22 01:25:36.261   683   912 D BackgroundInstallControlService: Package event received: 0
+04-22 01:25:36.262   957  1041 V WindowManagerShell: onTransitionReady (#113) android.os.BinderProxy@947509e: {id=113 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[
+04-22 01:25:36.262   957  1041 V WindowManagerShell:         {m=OPEN f=NONE leash=Surface(name=Task=34)/@0x198828b sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=0 taskParent=-1},
+04-22 01:25:36.262   957  1041 V WindowManagerShell:         {m=TO_BACK f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0x8381f68 sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=0 taskParent=-1},
+04-22 01:25:36.262   957  1041 V WindowManagerShell:         {m=TO_BACK f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{d943a30 showWhenLocked=false})/@0xbe73f81 sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=0}
+04-22 01:25:36.262   957  1041 V WindowManagerShell:     ]}
+04-22 01:25:36.262   957  1041 V WindowManagerShell: Playing animation for (#113) android.os.BinderProxy@947509e@0
+04-22 01:25:36.262   957  1041 V ShellRecents: RecentsTransitionHandler.startAnimation: no controller found
+04-22 01:25:36.262   957  1041 V WindowManagerShell: Transition doesn't have explicit remote, search filters for match for {id=113 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{m=OPEN f=NONE leash=Surface(name=Task=34)/@0x198828b sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=0 taskParent=-1},{m=TO_BACK f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0x8381f68 sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=0 taskParent=-1},{m=TO_BACK f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{d943a30 showWhenLocked=false})/@0xbe73f81 sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=0}]}
+04-22 01:25:36.262   957  1041 V WindowManagerShell:  Checking filter Pair{{types=[] flags=0x0] notFlags=0x0 checks=[{atype=undefined independent=true modes=[CLOSE,TO_BACK] flags=IN_TASK_WITH_EMBEDDED_ACTIVITY mustBeTask=false order=ANY topActivity=null launchCookie=null taskFragmentToken=android.os.BinderProxy@c0a78a1 windowingMode=undefined}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@ebc9ac6, appThread = android.app.IApplicationThread$Stub$Proxy@89a6a87, debugName = overlayBackTransition }}
+04-22 01:25:36.262   957  1041 V WindowManagerShell:  Checking filter Pair{{types=[] flags=0x0] notFlags=0x0 checks=[{atype=dream independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined},{atype=home independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@19eadb4, appThread = android.app.IApplicationThread$Stub$Proxy@6b4fddd, debugName = LauncherToDream }}
+04-22 01:25:36.262   957  1041 V WindowManagerShell:  Checking filter Pair{{types=[] flags=0x0] notFlags=0x100 checks=[{atype=home independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=TOP topActivity=ComponentInfo{com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity} launchCookie=null windowingMode=undefined},{atype=standard independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined},{NOT atype=undefined independent=true modes=[] flags=NONE mustBeTask=true order=ANY topActivity=null launchCookie=null customAnim=true windowingMode=undefined}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@6579d52, appThread = android.app.IApplicationThread$Stub$Proxy@4a92823, debugName = QuickstepLaunchHome }}
+04-22 01:25:36.262   957  1041 V WindowManagerShell:  Delegate animation for (#113) to null
+04-22 01:25:36.262   957  1041 V WindowManagerShell: start default transition animation, info = {id=113 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{m=OPEN f=NONE leash=Surface(name=Task=34)/@0x198828b sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=0 taskParent=-1},{m=TO_BACK f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0x8381f68 sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=0 taskParent=-1},{m=TO_BACK f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{d943a30 showWhenLocked=false})/@0xbe73f81 sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=0}]}
+04-22 01:25:36.262   957  1041 V WindowManagerShell: loadAnimation: anim=android.view.animation.AnimationSet@623ca14 animAttr=0x13 type=OPEN isEntrance=false
+04-22 01:25:36.262   957  1041 V WindowManagerShell: loadAnimation: anim=android.view.animation.AnimationSet@27cb803 animAttr=0x12 type=OPEN isEntrance=true
+04-22 01:25:36.264   683   912 D BackgroundInstallControlService: Package event received: 0
+04-22 01:25:36.265  1591  1591 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.backup.GMS_MODULE_RESTORE dat=chimera-action:/... xflg=0x4 cmp=com.google.android.gms/.chimera.GmsInternalBoundBrokerService }
+04-22 01:25:36.265  1591  1591 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.backup.GMS_MODULE_RESTORE dat=chimera-action:/... xflg=0x4 cmp=com.google.android.gms/.chimera.GmsInternalBoundBrokerService }
+04-22 01:25:36.265 20905 20905 D nativeloader: InitLlndkLibrariesProduct: libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libRS.so:libandroid_net.so:libapexsupport.so:libavf.so:libbinder_ndk.so:libc.so:libcgrouprc.so:libclang_rt.asan-aarch64-android.so:libclang_rt.hwasan-aarch64-android.so:libcom.android.tethering.connectivity_native.so:libdl.so:libft2.so:liblog.so:libm.so:libmediandk.so:libnativewindow.so:libneuralnetworks.so:libselinux.so:libsync.so:libvendorsupport.so:libvndksupport.so:libvulkan.so
+04-22 01:25:36.265 20905 20905 D nativeloader: Configuring product-clns-9 for unbundled product apk /product/app/Drive/Drive.apk. target_sdk_version=35, uses_libraries=, library_path=/product/app/Drive/lib/arm64:/product/app/Drive/Drive.apk!/lib/arm64-v8a:/product/lib64:/system/product/lib64, permitted_path=/data:/mnt/expand:/data/user/0/com.google.android.apps.docs:/product/lib64:/system/product/lib64
+04-22 01:25:36.266  1591 20167 I Icing   : doRemovePackageData com.impos2.mixcretailassemblyrn84
+04-22 01:25:36.266 20905 20905 D nativeloader: InitVndkspLibrariesProduct: VNDK is deprecated with product
+04-22 01:25:36.266 20905 20905 D CompatChangeReporter: Compat change id reported: 202956589; UID 10157; state: ENABLED
+04-22 01:25:36.267 20905 20905 I droid.apps.docs: AssetManager2(0xb400007aa8c1a238) locale list changing from [] to [en-US]
+04-22 01:25:36.269 20905 20905 V GraphicsEnvironment: Currently set values for:
+04-22 01:25:36.269 20905 20905 V GraphicsEnvironment:   angle_gl_driver_selection_pkgs=[]
+04-22 01:25:36.269 20905 20905 V GraphicsEnvironment:   angle_gl_driver_selection_values=[]
+04-22 01:25:36.269 20905 20905 V GraphicsEnvironment: com.google.android.apps.docs is not listed in per-application setting
+04-22 01:25:36.269 20905 20905 V GraphicsEnvironment: ANGLE allowlist from config: com.dreamgames.royalmatch com.dts.freefiremax com.dxx.firenow com.gramgames.mergedragons com.ludo.king com.mojang.minecraftpe com.my.defense com.nintendo.zaka com.os.airforce com.playrix.fishdomdd.gplay io.teslatech.callbreak jp.konami.prospia net.peakgames.toonblast
+04-22 01:25:36.269 20905 20905 V GraphicsEnvironment: com.google.android.apps.docs is not listed in ANGLE allowlist or settings, returning default
+04-22 01:25:36.269 20905 20905 V GraphicsEnvironment: Neither updatable production driver nor prerelease driver is supported.
+04-22 01:25:36.272  1626  2010 D MediaProvider: Deleted 0 Android/media items belonging to com.impos2.mixcretailassemblyrn84 on /data/user/0/com.google.android.providers.media.module/databases/external.db
+04-22 01:25:36.272  1626  2010 I FuseDaemon: Successfully deleted rows in leveldb for owner_id:  and ownerPackageIdentifier: com.impos2.mixcretailassemblyrn84::0
+04-22 01:25:36.273   957  1041 V WindowManagerShell:  animated by com.android.wm.shell.transition.DefaultTransitionHandler@419789b
+04-22 01:25:36.273  1626  2010 D MediaGrants: Removed 0 media_grants for 0 user for [com.impos2.mixcretailassemblyrn84, com.impos2.mixcretailassemblyrn84]. Reason: Package orphaned
+04-22 01:25:36.273  1626  2010 I MediaProvider: End Intent { act=android.intent.action.PACKAGE_DATA_CLEARED dat=package: flg=0x5000010 cmp=com.google.android.providers.media.module/com.android.providers.media.MediaService (has extras) }
+04-22 01:25:36.278  1396  1396 D PersistedStoragePackageUninstalledReceiver: Received android.intent.action.PACKAGE_DATA_CLEARED for com.impos2.mixcretailassemblyrn84 for u0
+04-22 01:25:36.286 20922 20922 D nativeloader: Configuring clns-9 for other apk /data/app/~~adpBZNME1nQLrJPd8kjG5g==/com.impos2.mixcretailassemblyrn84-MQAHSo5DMwp3QYE1rBrvEQ==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~adpBZNME1nQLrJPd8kjG5g==/com.impos2.mixcretailassemblyrn84-MQAHSo5DMwp3QYE1rBrvEQ==/lib/arm64:/data/app/~~adpBZNME1nQLrJPd8kjG5g==/com.impos2.mixcretailassemblyrn84-MQAHSo5DMwp3QYE1rBrvEQ==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.impos2.mixcretailassemblyrn84
+04-22 01:25:36.292 20905 20947 D nativeloader: Load /product/app/Drive/Drive.apk!/lib/arm64-v8a/libnative_crash_handler_jni.so using class loader ns product-clns-9 (caller=/product/app/Drive/Drive.apk!classes2.dex): ok
+04-22 01:25:36.294   683   929 D PackageManager: Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+04-22 01:25:36.294   683   929 D PackageManager: Clear ephemeral installer activity
+04-22 01:25:36.296 20922 20922 I ailassemblyrn84: AssetManager2(0xb400007aa8c1a238) locale list changing from [] to [en-US]
+04-22 01:25:36.300 20905 20957 W CacheStorage: cache doesn't exist
+04-22 01:25:36.300   683   912 D BackgroundInstallControlService: Package event received: 0
+04-22 01:25:36.301 20905 20958 E DocsApplication: from onCreate Completable for sending summary about blocked SyncRequests
+04-22 01:25:36.301 20905 20958 E DocsApplication: java.lang.IllegalStateException
+04-22 01:25:36.301 20905 20958 E DocsApplication: 	at gcl.i(PG:64)
+04-22 01:25:36.301 20905 20958 E DocsApplication: 	at fpw.lambda$onCreate$2(PG:281)
+04-22 01:25:36.301 20905 20958 E DocsApplication: 	at fpw.$r8$lambda$M-tqsz8QJK2QrqieVTlg-c3Lhbo(PG:1)
+04-22 01:25:36.301 20905 20958 E DocsApplication: 	at fpv.run(PG:717)
+04-22 01:25:36.301 20905 20958 E DocsApplication: 	at wql.d(PG:13)
+04-22 01:25:36.301 20905 20958 E DocsApplication: 	at wnv.e(PG:3)
+04-22 01:25:36.301 20905 20958 E DocsApplication: 	at wqt$a.run(PG:3)
+04-22 01:25:36.301 20905 20958 E DocsApplication: 	at wog$a.run(PG:10)
+04-22 01:25:36.301 20905 20958 E DocsApplication: 	at wuv.run(PG:14)
+04-22 01:25:36.301 20905 20958 E DocsApplication: 	at wuv.call(PG:1)
+04-22 01:25:36.301 20905 20958 E DocsApplication: 	at java.util.concurrent.FutureTask.run(FutureTask.java:317)
+04-22 01:25:36.301 20905 20958 E DocsApplication: 	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:348)
+04-22 01:25:36.301 20905 20958 E DocsApplication: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1156)
+04-22 01:25:36.301 20905 20958 E DocsApplication: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:651)
+04-22 01:25:36.301 20905 20958 E DocsApplication: 	at java.lang.Thread.run(Thread.java:1119)
+04-22 01:25:36.303 20922 20922 V GraphicsEnvironment: Currently set values for:
+04-22 01:25:36.303 20922 20922 V GraphicsEnvironment:   angle_gl_driver_selection_pkgs=[]
+04-22 01:25:36.303 20922 20922 V GraphicsEnvironment:   angle_gl_driver_selection_values=[]
+04-22 01:25:36.303 20922 20922 V GraphicsEnvironment: com.impos2.mixcretailassemblyrn84 is not listed in per-application setting
+04-22 01:25:36.303 20922 20922 V GraphicsEnvironment: ANGLE allowlist from config: com.dreamgames.royalmatch com.dts.freefiremax com.dxx.firenow com.gramgames.mergedragons com.ludo.king com.mojang.minecraftpe com.my.defense com.nintendo.zaka com.os.airforce com.playrix.fishdomdd.gplay io.teslatech.callbreak jp.konami.prospia net.peakgames.toonblast
+04-22 01:25:36.303 20922 20922 V GraphicsEnvironment: com.impos2.mixcretailassemblyrn84 is not listed in ANGLE allowlist or settings, returning default
+04-22 01:25:36.303 20922 20922 V GraphicsEnvironment: Neither updatable production driver nor prerelease driver is supported.
+04-22 01:25:36.303   683  9615 I AppWidgetServiceImpl: getAppWidgetIds() 0
+04-22 01:25:36.305   683  9615 I AppWidgetServiceImpl: getInstalledProvidersForProfiles() 0
+04-22 01:25:36.306   683  9615 I AppWidgetServiceImpl: notifyProviderInheritance() 0
+04-22 01:25:36.307   683  9615 I WifiService: getVerboseLoggingLevel uid=10157
+04-22 01:25:36.307 20905 20905 D CompatChangeReporter: Compat change id reported: 279646685; UID 10157; state: ENABLED
+04-22 01:25:36.313   683 14033 D ConnectivityService: requestNetwork for uid/pid:10157/20905 activeRequest: null callbackRequest: 158 [NetworkRequest [ REQUEST id=159, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10157 RequestorUid: 10157 RequestorPkg: com.google.android.apps.docs UnderlyingNetworks: Null] ]] callback flags: 0 order: 2147483647 isUidTracked: false declaredMethods: AVAIL|LOST|UNAVAIL|NC
+04-22 01:25:36.314  1283  1825 I FontLog : Received query Noto Color Emoji Compat, URI content://com.google.android.gms.fonts [CONTEXT service_id=132 ]
+04-22 01:25:36.314   683  9615 D FileUtils: Rounded bytes from 3120066560 to 4000000000
+04-22 01:25:36.314  1283  1825 I FontLog : Query [Noto Color Emoji Compat] resolved to {Noto Color Emoji Compat, wdth 100.0, wght 400, ital 0.0, bestEffort false}, isVf false} [CONTEXT service_id=132 ]
+04-22 01:25:36.315  1283  1825 I FontLog : Fetch {Noto Color Emoji Compat, wdth 100.0, wght 400, ital 0.0, bestEffort false}, isVf false} end status Status{statusCode=SUCCESS, resolution=null} [CONTEXT service_id=132 ]
+04-22 01:25:36.315 20922 20922 W SoLoader: Initializing SoLoader: 0
+04-22 01:25:36.315 20922 20922 W SoLoader: Recording new base apk path: /data/app/~~adpBZNME1nQLrJPd8kjG5g==/com.impos2.mixcretailassemblyrn84-MQAHSo5DMwp3QYE1rBrvEQ==/base.apk
+04-22 01:25:36.315 20922 20922 W SoLoader: Previously recorded 0 base apk paths.
+04-22 01:25:36.316  1283  2206 I FontLog : Pulling font file for id = 31, cache size = 4 [CONTEXT service_id=132 ]
+04-22 01:25:36.317 20922 20922 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+04-22 01:25:36.317 20922 20922 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+04-22 01:25:36.317 20922 20922 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~adpBZNME1nQLrJPd8kjG5g==/com.impos2.mixcretailassemblyrn84-MQAHSo5DMwp3QYE1rBrvEQ==/base.apk!/lib/arm64-v8a]]
+04-22 01:25:36.317  1283  2206 I FontLog : Pulling font file for id = 31, cache size = 4 [CONTEXT service_id=132 ]
+04-22 01:25:36.317 20922 20922 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~adpBZNME1nQLrJPd8kjG5g==/com.impos2.mixcretailassemblyrn84-MQAHSo5DMwp3QYE1rBrvEQ==/lib/arm64 flags = 0]]
+04-22 01:25:36.318 20922 20922 I SoLoader: init finish: 4 SO sources prepared
+04-22 01:25:36.318 20922 20922 W SoLoader: SoLoader initialized: 8
+04-22 01:25:36.318 20905 20968 E ashmem  : Pinning is deprecated since Android Q. Please use trim or other methods.
+04-22 01:25:36.319 20922 20922 D nativeloader: Load /data/app/~~adpBZNME1nQLrJPd8kjG5g==/com.impos2.mixcretailassemblyrn84-MQAHSo5DMwp3QYE1rBrvEQ==/base.apk!/lib/arm64-v8a/libc++_shared.so using class loader ns clns-9 (caller=/data/app/~~adpBZNME1nQLrJPd8kjG5g==/com.impos2.mixcretailassemblyrn84-MQAHSo5DMwp3QYE1rBrvEQ==/base.apk): ok
+04-22 01:25:36.319 20922 20922 D nativeloader: Load /data/app/~~adpBZNME1nQLrJPd8kjG5g==/com.impos2.mixcretailassemblyrn84-MQAHSo5DMwp3QYE1rBrvEQ==/base.apk!/lib/arm64-v8a/libjsi.so using class loader ns clns-9 (caller=/data/app/~~adpBZNME1nQLrJPd8kjG5g==/com.impos2.mixcretailassemblyrn84-MQAHSo5DMwp3QYE1rBrvEQ==/base.apk): ok
+04-22 01:25:36.321   683   864 D ConnectivityService: NetReassign [159 : null → 101] [c 1] [a 0] [i 0]
+04-22 01:25:36.323 20922 20922 D nativeloader: Load /data/app/~~adpBZNME1nQLrJPd8kjG5g==/com.impos2.mixcretailassemblyrn84-MQAHSo5DMwp3QYE1rBrvEQ==/base.apk!/lib/arm64-v8a/libfbjni.so using class loader ns clns-9 (caller=/data/app/~~adpBZNME1nQLrJPd8kjG5g==/com.impos2.mixcretailassemblyrn84-MQAHSo5DMwp3QYE1rBrvEQ==/base.apk): ok
+04-22 01:25:36.325   683   858 D WifiNetworkFactory: got request NetworkRequest [ REQUEST id=159, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10157 RequestorUid: 10157 RequestorPkg: com.google.android.apps.docs UnderlyingNetworks: Null] ]
+04-22 01:25:36.327 20922 20922 D nativeloader: Load /data/app/~~adpBZNME1nQLrJPd8kjG5g==/com.impos2.mixcretailassemblyrn84-MQAHSo5DMwp3QYE1rBrvEQ==/base.apk!/lib/arm64-v8a/libreactnative.so using class loader ns clns-9 (caller=/data/app/~~adpBZNME1nQLrJPd8kjG5g==/com.impos2.mixcretailassemblyrn84-MQAHSo5DMwp3QYE1rBrvEQ==/base.apk): ok
+04-22 01:25:36.328 20922 20922 D jni_lib_merge: Entering merged library JNI_OnLoad.
+04-22 01:25:36.328 20922 20922 D jni_lib_merge: Preparing 12 pre-merged libs (including stub)
+04-22 01:25:36.328 20922 20922 D jni_lib_merge: Preparing to register libfabricjni_so.  onload_func: 0x786dd60a50
+04-22 01:25:36.329 20922 20922 D jni_lib_merge: Preparing to register libreact_devsupportjni_so.  onload_func: 0x786de2436c
+04-22 01:25:36.329 20922 20922 D jni_lib_merge: Preparing to register libreact_featureflagsjni_so.  onload_func: 0x786de3eba8
+04-22 01:25:36.329 20922 20922 D jni_lib_merge: Preparing to register libreact_newarchdefaults_so.  onload_func: 0x786de7cd74
+04-22 01:25:36.329 20922 20922 D jni_lib_merge: Preparing to register libreactnativeblob_so.  onload_func: 0x786df1da4c
+04-22 01:25:36.329 20922 20922 D jni_lib_merge: Preparing to register libreactnativejni_so.  onload_func: 0x786df329e4
+04-22 01:25:36.329 20922 20922 D jni_lib_merge: Preparing to register libreactnativejni_common_so.  onload_func: 0x786df35be0
+04-22 01:25:36.329 20922 20922 D jni_lib_merge: Preparing to register librninstance_so.  onload_func: 0x786df52778
+04-22 01:25:36.329 20922 20922 D jni_lib_merge: Preparing to register libturbomodulejsijni_so.  onload_func: 0x786dffc0e0
+04-22 01:25:36.329 20922 20922 D jni_lib_merge: Preparing to register libuimanagerjni_so.  onload_func: 0x786e002b00
+04-22 01:25:36.329 20922 20922 D jni_lib_merge: Preparing to register libyoga_so.  onload_func: 0x786e00a0c4
+04-22 01:25:36.329 20922 20922 D jni_lib_merge: About to register 11 actual methods.
+04-22 01:25:36.331 20905 20905 D CompatChangeReporter: Compat change id reported: 270674727; UID 10157; state: ENABLED
+04-22 01:25:36.332 20922 20922 D nativeloader: Load /data/app/~~adpBZNME1nQLrJPd8kjG5g==/com.impos2.mixcretailassemblyrn84-MQAHSo5DMwp3QYE1rBrvEQ==/base.apk!/lib/arm64-v8a/libreact_codegen_rnsvg.so using class loader ns clns-9 (caller=/data/app/~~adpBZNME1nQLrJPd8kjG5g==/com.impos2.mixcretailassemblyrn84-MQAHSo5DMwp3QYE1rBrvEQ==/base.apk): ok
+04-22 01:25:36.332 20922 20922 D jni_lib_merge: Entering merged library JNI_OnLoad.
+04-22 01:25:36.332 20922 20922 D jni_lib_merge: Preparing 12 pre-merged libs (including stub)
+04-22 01:25:36.332 20922 20922 D jni_lib_merge: Preparing to register libfabricjni_so.  onload_func: 0x786dd60a50
+04-22 01:25:36.332 20922 20922 D jni_lib_merge: Preparing to register libreact_devsupportjni_so.  onload_func: 0x786de2436c
+04-22 01:25:36.332 20922 20922 D jni_lib_merge: Preparing to register libreact_featureflagsjni_so.  onload_func: 0x786de3eba8
+04-22 01:25:36.332 20922 20922 D jni_lib_merge: Preparing to register libreact_newarchdefaults_so.  onload_func: 0x786de7cd74
+04-22 01:25:36.332 20922 20922 D jni_lib_merge: Preparing to register libreactnativeblob_so.  onload_func: 0x786df1da4c
+04-22 01:25:36.332 20922 20922 D jni_lib_merge: Preparing to register libreactnativejni_so.  onload_func: 0x786df329e4
+04-22 01:25:36.332 20922 20922 D jni_lib_merge: Preparing to register libreactnativejni_common_so.  onload_func: 0x786df35be0
+04-22 01:25:36.332 20922 20922 D jni_lib_merge: Preparing to register librninstance_so.  onload_func: 0x786df52778
+04-22 01:25:36.332 20922 20922 D jni_lib_merge: Preparing to register libturbomodulejsijni_so.  onload_func: 0x786dffc0e0
+04-22 01:25:36.332 20922 20922 D jni_lib_merge: Preparing to register libuimanagerjni_so.  onload_func: 0x786e002b00
+04-22 01:25:36.332 20922 20922 D jni_lib_merge: Preparing to register libyoga_so.  onload_func: 0x786e00a0c4
+04-22 01:25:36.332 20922 20922 D jni_lib_merge: About to register 11 actual methods.
+04-22 01:25:36.333 20922 20922 D nativeloader: Load /data/app/~~adpBZNME1nQLrJPd8kjG5g==/com.impos2.mixcretailassemblyrn84-MQAHSo5DMwp3QYE1rBrvEQ==/base.apk!/lib/arm64-v8a/libappmodules.so using class loader ns clns-9 (caller=/data/app/~~adpBZNME1nQLrJPd8kjG5g==/com.impos2.mixcretailassemblyrn84-MQAHSo5DMwp3QYE1rBrvEQ==/base.apk): ok
+04-22 01:25:36.335   683   858 V WifiNetworkFactory: Accepted network request NetworkRequest [ REQUEST id=159, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10157 RequestorUid: 10157 RequestorPkg: com.google.android.apps.docs UnderlyingNetworks: Null] ]
+04-22 01:25:36.335   683   858 D UntrustedWifiNetworkFactory: got request NetworkRequest [ REQUEST id=159, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10157 RequestorUid: 10157 RequestorPkg: com.google.android.apps.docs UnderlyingNetworks: Null] ]
+04-22 01:25:36.335   683   858 D OemPaidWifiNetworkFactory: got request NetworkRequest [ REQUEST id=159, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10157 RequestorUid: 10157 RequestorPkg: com.google.android.apps.docs UnderlyingNetworks: Null] ]
+04-22 01:25:36.335   683   858 D MultiInternetWifiNetworkFactory: got request NetworkRequest [ REQUEST id=159, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10157 RequestorUid: 10157 RequestorPkg: com.google.android.apps.docs UnderlyingNetworks: Null] ]
+04-22 01:25:36.335   683  1149 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ENABLE_FAKE_FOCUS
+04-22 01:25:36.335   683  9615 D FileUtils: Rounded bytes from 3120066560 to 4000000000
+04-22 01:25:36.337 20922 20977 I DisplayManager: Choreographer implicitly registered for the refresh rate.
+04-22 01:25:36.338  8919  8935 I ProvidersCache: Provider returned no roots. Possibly naughty: com.google.android.apps.docs.storage
+04-22 01:25:36.338 20922 20922 I ailassemblyrn84: AssetManager2(0xb400007aa8c1d118) locale list changing from [] to [en-US]
+04-22 01:25:36.339 20922 20922 D AppCompatDelegate: Checking for metadata for AppLocalesMetadataHolderService : Service not found
+04-22 01:25:36.339 20922 20922 I ailassemblyrn84: AssetManager2(0xb400007aa8c1bb38) locale list changing from [] to [en-US]
+04-22 01:25:36.339  8919  8940 W oid.documentsui: Long monitor contention with owner pool-3-thread-2 (8936) at void com.android.documentsui.roots.ProvidersCache$MultiProviderUpdateTask.handleDocumentsProvider(android.content.pm.ProviderInfo, com.android.documentsui.base.UserId)(ProvidersCache.java:648) waiters=3 in void com.android.documentsui.roots.ProvidersCache$MultiProviderUpdateTask.handleDocumentsProvider(android.content.pm.ProviderInfo, com.android.documentsui.base.UserId) for 143ms
+04-22 01:25:36.340   683   912 D BackgroundInstallControlService: Package event received: 0
+04-22 01:25:36.343   683   912 D BackgroundInstallControlService: Package event received: 0
+04-22 01:25:36.343   683   912 D BackgroundInstallControlService: Package event received: 0
+04-22 01:25:36.343 20922 20922 E ashmem  : Pinning is deprecated since Android Q. Please use trim or other methods.
+04-22 01:25:36.347 20922 20922 D CompatChangeReporter: Compat change id reported: 377864165; UID 10214; state: ENABLED
+04-22 01:25:36.347 20922 20922 D DesktopModeFlags: Toggle override initialized to: OVERRIDE_UNSET
+04-22 01:25:36.348 20922 20922 I StartupAudit: activity_created activity=MainActivity displayIndex=0 pid=20922 time=2026-04-22 01:25:36.348
+04-22 01:25:36.354   683  6693 D FileUtils: Rounded bytes from 3120066560 to 4000000000
+04-22 01:25:36.359 20922 20922 D nativeloader: Load /data/app/~~adpBZNME1nQLrJPd8kjG5g==/com.impos2.mixcretailassemblyrn84-MQAHSo5DMwp3QYE1rBrvEQ==/base.apk!/lib/arm64-v8a/libhermesvm.so using class loader ns clns-9 (caller=/data/app/~~adpBZNME1nQLrJPd8kjG5g==/com.impos2.mixcretailassemblyrn84-MQAHSo5DMwp3QYE1rBrvEQ==/base.apk): ok
+04-22 01:25:36.359 20922 20922 D nativeloader: Load /data/app/~~adpBZNME1nQLrJPd8kjG5g==/com.impos2.mixcretailassemblyrn84-MQAHSo5DMwp3QYE1rBrvEQ==/base.apk!/lib/arm64-v8a/libhermestooling.so using class loader ns clns-9 (caller=/data/app/~~adpBZNME1nQLrJPd8kjG5g==/com.impos2.mixcretailassemblyrn84-MQAHSo5DMwp3QYE1rBrvEQ==/base.apk): ok
+04-22 01:25:36.359 20922 20922 D jni_lib_merge: Entering merged library JNI_OnLoad.
+04-22 01:25:36.359 20922 20922 D jni_lib_merge: Preparing 4 pre-merged libs (including stub)
+04-22 01:25:36.359 20922 20922 D jni_lib_merge: Preparing to register libhermes_executor_so.  onload_func: 0x787729e728
+04-22 01:25:36.359 20922 20922 D jni_lib_merge: Preparing to register libhermesinstancejni_so.  onload_func: 0x78772a5d44
+04-22 01:25:36.359 20922 20922 D jni_lib_merge: Preparing to register libjsijniprofiler_so.  onload_func: 0x78772a6530
+04-22 01:25:36.359 20922 20922 D jni_lib_merge: About to register 3 actual methods.
+04-22 01:25:36.360  1283  1898 I .gms.persistent: AssetManager2(0xb400007aa8c1f058) locale list changing from [] to [en-US]
+04-22 01:25:36.364   683  1827 D PackageManager: Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+04-22 01:25:36.364   683  1827 D PackageManager: Clear ephemeral installer activity
+04-22 01:25:36.364 20922 20922 I HotUpdateBundleResolver: no_active_marker isPrimaryProcess=true pid=20922
+04-22 01:25:36.364 20922 20922 I MainApplication: getJSBundleFile process=com.impos2.mixcretailassemblyrn84 isPrimaryProcess=true resolvedBundle=null fallbackBundle=null selectedBundle=null
+04-22 01:25:36.367 20922 20922 W unknown:BridgelessReact: ReactHost{0}.startSurface(surfaceId = 0): Schedule
+04-22 01:25:36.367 20922 20922 W unknown:BridgelessReact: ReactHost{0}.attachSurface(surfaceId = 0)
+04-22 01:25:36.368 20922 20977 I EGL_emulation: Opening libGLESv1_CM_emulation.so
+04-22 01:25:36.369 20922 20977 I EGL_emulation: Opening libGLESv2_emulation.so
+04-22 01:25:36.369 20922 20987 W unknown:BridgelessReact: ReactHost{0}.getOrCreateReactInstanceTask()
+04-22 01:25:36.369 20922 20987 W unknown:BridgelessReact: ReactHost{0}.getOrCreateReactInstanceTask(): Start
+04-22 01:25:36.370 20922 20987 W unknown:BridgelessReact: ReactHost{0}.getJSBundleLoader()
+04-22 01:25:36.370 20922 20987 W unknown:BridgelessReact: ReactHost{0}.getOrCreateReactInstanceTask(): Creating BridgelessReactContext
+04-22 01:25:36.370 20922 20987 W unknown:BridgelessReact: ReactHost{0}.getOrCreateReactInstanceTask(): Creating ReactInstance
+04-22 01:25:36.374 20922 20977 W HWUI    : Failed to choose config with EGL_SWAP_BEHAVIOR_PRESERVED, retrying without...
+04-22 01:25:36.374 20922 20977 W HWUI    : Failed to initialize 101010-2 format, error = EGL_SUCCESS
+04-22 01:25:36.381 20922 20922 W unknown:BridgelessReact: ReactHost{0}.onHostResume(activity)
+04-22 01:25:36.381 20922 20922 W unknown:BridgelessReact: ReactHost{0}.ReactContext.onHostResume()
+04-22 01:25:36.383 20922 20922 W HWUI    : Unknown dataspace 0
+--------- beginning of kernel
+04-22 01:25:36.387   224   224 I servicemanager: Caller(pid=20922,uid=10214,sid=u:r:untrusted_app:s0:c214,c256,c512,c768) Found android.hardware.graphics.allocator.IAllocator/default in device VINTF manifest.
+04-22 01:25:36.389   224   224 I servicemanager: Caller(pid=20922,uid=10214,sid=u:r:untrusted_app:s0:c214,c256,c512,c768) Found android.hardware.graphics.allocator.IAllocator/default in device VINTF manifest.
+04-22 01:25:36.389   224   224 I servicemanager: Caller(pid=20922,uid=10214,sid=u:r:untrusted_app:s0:c214,c256,c512,c768) Found mapper/ranchu in device VINTF manifest.
+04-22 01:25:36.388 20922 20987 W unknown:BridgelessReact: ReactHost{0}.getOrCreateReactInstanceTask(): Loading JS Bundle
+04-22 01:25:36.388 20922 20987 W unknown:BridgelessReact: ReactHost{0}.getOrCreateReactInstanceTask(): DevSupportManager.onNewReactContextCreated()
+04-22 01:25:36.388 20922 20987 W unknown:BridgelessReact: ReactHost{0}.startSurface(surfaceId = 0): Execute
+04-22 01:25:36.392 20922 20988 I ReactNativeJS: Running "MixcRetailAssemblyRN84"
+04-22 01:25:36.393   683  1149 D CoreBackPreview: Window{61fd324 u0 com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@b55842, mPriority=-1, mIsAnimationCallback=false, mOverrideBehavior=0}
+04-22 01:25:36.393   683  1149 D CoreBackPreview: Window{61fd324 u0 com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@326e053, mPriority=0, mIsAnimationCallback=true, mOverrideBehavior=0}
+04-22 01:25:36.393 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$DefsViewManager
+04-22 01:25:36.401 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.VirtualViewManager$c
+04-22 01:25:36.402 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$FeMergeManager
+04-22 01:25:36.402 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.safeareaview.ReactSafeAreaViewManager
+04-22 01:25:36.402 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.uimanager.V
+04-22 01:25:36.402 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$LinearGradientManager
+04-22 01:25:36.402 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$FeGaussianBlurManager
+04-22 01:25:36.403 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.progressbar.ReactProgressBarViewManager
+04-22 01:25:36.403 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.progressbar.b
+04-22 01:25:36.403 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.scroll.ReactHorizontalScrollViewManager
+04-22 01:25:36.403 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.text.ReactTextViewManager
+04-22 01:25:36.404 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.text.j
+04-22 01:25:36.404 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$FeColorMatrixManager
+04-22 01:25:36.406 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.scroll.ReactHorizontalScrollContainerViewManager
+04-22 01:25:36.407 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$ClipPathViewManager
+04-22 01:25:36.412 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$SymbolManager
+04-22 01:25:36.412 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$PatternManager
+04-22 01:25:36.413 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$FeBlendManager
+04-22 01:25:36.413 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.view.ReactViewManager
+04-22 01:25:36.413 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.SvgViewManager
+04-22 01:25:36.414 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.switchview.ReactSwitchManager
+04-22 01:25:36.414 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.switchview.d
+04-22 01:25:36.414 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$UseViewManager
+04-22 01:25:36.414 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$CircleViewManager
+04-22 01:25:36.415 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$TSpanViewManager
+04-22 01:25:36.415 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$FilterManager
+04-22 01:25:36.416 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$MarkerManager
+04-22 01:25:36.416 20922 20922 W unknown:BridgelessReact: ReactHost{0}.ReactContext.onHostResume()
+04-22 01:25:36.416 20922 20922 W unknown:BridgelessReact: ReactHost{0}.getOrCreateReactInstanceTask(): Executing ReactInstanceEventListeners
+04-22 01:25:36.416 20922 20922 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.uimanager.RootViewManager
+04-22 01:25:36.416 20922 20922 D InsetsController: Setting requestedVisibleTypes to -12 (was -9)
+04-22 01:25:36.417 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.modal.ReactModalHostManager
+04-22 01:25:36.418 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$ForeignObjectManager
+04-22 01:25:36.419   683   731 I ActivityTaskManager: Displayed com.impos2.mixcretailassemblyrn84/.MainActivity for user 0: +204ms
+04-22 01:25:36.421 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$EllipseViewManager
+04-22 01:25:36.422 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$LineViewManager
+04-22 01:25:36.423 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.text.frescosupport.FrescoBasedReactTextInlineImageViewManager
+04-22 01:25:36.423 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.text.frescosupport.a
+04-22 01:25:36.428 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$FeFloodManager
+04-22 01:25:36.429 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$GroupViewManager
+04-22 01:25:36.429   515   566 I BpBinder: onLastStrongRef automatically unlinking death recipients: 
+04-22 01:25:36.430 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$TextViewManager
+04-22 01:25:36.431 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$ImageViewManager
+04-22 01:25:36.431 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$FeCompositeManager
+04-22 01:25:36.432 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.image.ReactImageManager
+04-22 01:25:36.433 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$RadialGradientManager
+04-22 01:25:36.433 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$MaskManager
+04-22 01:25:36.433 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.unimplementedview.ReactUnimplementedViewManager
+04-22 01:25:36.434 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$RectViewManager
+04-22 01:25:36.434 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$TextPathViewManager
+04-22 01:25:36.434 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.scroll.ReactScrollViewManager
+04-22 01:25:36.435 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$FeOffsetManager
+04-22 01:25:36.435 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$PathViewManager
+04-22 01:25:36.435 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.drawer.ReactDrawerLayoutManager
+04-22 01:25:36.437 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.swiperefresh.SwipeRefreshLayoutManager
+04-22 01:25:36.437 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.textinput.ReactTextInputManager
+04-22 01:25:36.438 20922 20988 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.textinput.F
+04-22 01:25:36.443 20922 20988 I ConnectorManager: connector initialized
+04-22 01:25:36.445   683   829 I ImeTracker: com.impos2.mixcretailassemblyrn84:659750b8: onRequestHide at ORIGIN_SERVER reason HIDE_UNSPECIFIED_WINDOW fromUser false
+04-22 01:25:36.446 20922 20922 D InsetsController: hide(ime(), fromIme=false)
+04-22 01:25:36.446 20922 20922 I ImeTracker: com.impos2.mixcretailassemblyrn84:659750b8: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+04-22 01:25:36.447 20922 20989 I assembly.android.mixc-retail-rn84.boot: {"stage":"resolve-topology:start","displayIndex":0,"displayCount":1}
+04-22 01:25:36.447 20922 20989 I assembly.android.mixc-retail-rn84.boot: {"stage":"resolve-topology:done","displayIndex":0,"displayCount":1}
+04-22 01:25:36.447 20922 20989 I assembly.android.mixc-retail-rn84.boot: {"stage":"create-app:start","displayIndex":0,"displayCount":1}
+04-22 01:25:36.450  1576  1576 I GoogleInputMethodService: GoogleInputMethodService.onFinishInput():2043 
+04-22 01:25:36.450   683  1874 I ImeTracker: system_server:f54b8c84: onRequestHide at ORIGIN_SERVER reason IME_REQUESTED_CHANGED_LISTENER fromUser false
+04-22 01:25:36.451   683   734 I ImeTracker: system_server:f54b8c84: onCancelled at PHASE_SERVER_SHOULD_HIDE
+04-22 01:25:36.451  1576  1576 I Module  : DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatus():100 repeatCheckTimes = 0, locked = false
+04-22 01:25:36.451  1576  1576 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():1293 onStartInput(EditorInfo{EditorInfo{packageName=com.impos2.mixcretailassemblyrn84, inputType=0, inputTypeString=NULL, enableLearning=false, autoCorrection=false, autoComplete=false, imeOptions=0, privateImeOptions=null, actionName=UNSPECIFIED, actionLabel=null, initialSelStart=-1, initialSelEnd=-1, initialCapsMode=0, label=null, fieldId=0, fieldName=null, extras=null, hintText=null, hintLocales=[]}}, false)
+04-22 01:25:36.451  1576  1576 I Module  : DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatus():100 repeatCheckTimes = 1, locked = false
+04-22 01:25:36.452  1576  1576 I EmojiCompatManager: EmojiCompatManager.getEmojiCompatIfLoaded():343 EmojiCompat.init() was never called.
+04-22 01:25:36.452  1576  1576 I EmojiCompatManager: java.lang.IllegalStateException: EmojiCompat is not initialized. Please call EmojiCompat.init() first
+04-22 01:25:36.452  1576  1576 I EmojiCompatManager: 	at asx.p(PG:6)
+04-22 01:25:36.452  1576  1576 I EmojiCompatManager: 	at axb.b(PG:13)
+04-22 01:25:36.452  1576  1576 I EmojiCompatManager: 	at jnr.b(PG:2)
+04-22 01:25:36.452  1576  1576 I EmojiCompatManager: 	at jnr.c(PG:4)
+04-22 01:25:36.452  1576  1576 I EmojiCompatManager: 	at jnr.f(PG:3)
+04-22 01:25:36.452  1576  1576 I EmojiCompatManager: 	at jnx.c(PG:3)
+04-22 01:25:36.452  1576  1576 I EmojiCompatManager: 	at kif.cz(PG:47)
+04-22 01:25:36.452  1576  1576 I EmojiCompatManager: 	at lhl.run(PG:1025)
+04-22 01:25:36.452  1576  1576 I EmojiCompatManager: 	at jaf.execute(PG:12)
+04-22 01:25:36.452  1576  1576 I EmojiCompatManager: 	at nco.v(PG:13)
+04-22 01:25:36.452  1576  1576 I EmojiCompatManager: 	at lhn.m(PG:96)
+04-22 01:25:36.452  1576  1576 I EmojiCompatManager: 	at lhn.k(PG:25)
+04-22 01:25:36.452  1576  1576 I EmojiCompatManager: 	at kgn.onStartInput(PG:250)
+04-22 01:25:36.452  1576  1576 I EmojiCompatManager: 	at android.inputmethodservice.InputMethodService.doStartInput(InputMethodService.java:3521)
+04-22 01:25:36.452  1576  1576 I EmojiCompatManager: 	at android.inputmethodservice.InputMethodService$InputMethodImpl.startInput(InputMethodService.java:879)
+04-22 01:25:36.452  1576  1576 I EmojiCompatManager: 	at android.inputmethodservice.InputMethodService$InputMethodImpl.dispatchStartInput(InputMethodService.java:908)
+04-22 01:25:36.452  1576  1576 I EmojiCompatManager: 	at android.inputmethodservice.IInputMethodWrapper.executeMessage(IInputMethodWrapper.java:201)
+04-22 01:25:36.452  1576  1576 I EmojiCompatManager: 	at com.android.internal.os.HandlerCaller$MyHandler.handleMessage(HandlerCaller.java:44)
+04-22 01:25:36.452  1576  1576 I EmojiCompatManager: 	at android.os.Handler.dispatchMessage(Handler.java:110)
+04-22 01:25:36.452  1576  1576 I EmojiCompatManager: 	at android.os.Looper.loopOnce(Looper.java:248)
+04-22 01:25:36.452  1576  1576 I EmojiCompatManager: 	at android.os.Looper.loop(Looper.java:338)
+04-22 01:25:36.452  1576  1576 I EmojiCompatManager: 	at android.app.ActivityThread.main(ActivityThread.java:9067)
+04-22 01:25:36.452  1576  1576 I EmojiCompatManager: 	at java.lang.reflect.Method.invoke(Native Method)
+04-22 01:25:36.452  1576  1576 I EmojiCompatManager: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:593)
+04-22 01:25:36.452  1576  1576 I EmojiCompatManager: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:932)
+04-22 01:25:36.452   683  1874 W PackageConfigPersister: App-specific configuration not found for packageName: com.impos2.mixcretailassemblyrn84 and userId: 0
+04-22 01:25:36.455 20922 20989 I assembly.kernel.base.runtime-shell-v2.state-runtime: [runtime.load] load kernel.base.runtime-shell-v2 {"slices":["kernel.base.runtime-shell-v2.error-catalog","kernel.base.runtime-shell-v2.parameter-catalog","kernel.base.topology-runtime-v3.config","kernel.base.topology-runtime-v3.context","kernel.base.topology-runtime-v3.connection","kernel.base.topology-runtime-v3.peer","kernel.base.topology-runtime-v3.sync","kernel.base.topology-runtime-v3.request-mirror","kernel.base.topology-runtime-v3.demo.master","kernel.base.topology-runtime-v3.demo.slave","kernel.base.tcp-control-runtime-v2.identity","kernel.base.tcp-control-runtime-v2.credential","kernel.base.tcp-control-runtime-v2.binding","kernel.base.tcp-control-runtime-v2.sandbox","kernel.base.tcp-control-runtime-v2.runtime","kernel.base.tdp-sync-runtime-v2.session","kernel.base.tdp-sync-runtime-v2.sync","kernel.base.tdp-sync-runtime-v2.projection","kernel.base.tdp-sync-runtime-v2.command-inbox","kernel.base.tdp-sync-runtime-v2.control-signals","kernel.base.tdp-sync-runtime-v2.hot-update","kernel.base.workflow-runtime-v2.definitions","kernel.base.workflow-runtime-v2.observations","kernel.base.workflow-runtime-v2.queue","kernel.base.ui-runtime-v2.screen.main","kernel.base.ui-runtime-v2.screen.branch","kernel.base.ui-runtime-v2.overlay.main","kernel.base.ui-runtime-v2.overlay.branch","kernel.base.ui-runtime-v2.ui-variable.main","kernel.base.ui-runtime-v2.ui-variable.branch","ui.base.admin-console.console"],"persistableSlices":["kernel.base.runtime-shell-v2.error-catalog","kernel.base.runtime-shell-v2.parameter-catalog","kernel.base.topology-runtime-v3.config","kernel.base.tcp-control-runtime-v2.identity","kernel.base.tcp-control-runtime-v2.credential","kernel.base.tcp-control-runtime-v2.binding","kernel.base.tcp-control-runtime-v2.sandbox","kernel.base.tdp-sync-runtime-v2.sync","kernel.base.tdp-sync-runtime-v2.projection","kernel.base.tdp-sync-runtime-v2.hot-update","kernel.base.workflow-runtime-v2.definitions","kernel.base.ui-runtime-v2.screen.main","kernel.base.ui-runtime-v2.screen.branch","kernel.base.ui-runtime-v2.overlay.main","kernel.base.ui-runtime-v2.overlay.branch","kernel.base.ui-runtime-v2.ui-variable.main","kernel.base.ui-runtime-v2.ui-variable.branch","ui.base.admin-console.console"],"persistenceEnabled":true}
+04-22 01:25:36.457 20922 20989 I assembly.android.mixc-retail-rn84.boot: {"stage":"create-app:done","displayIndex":0,"displayCount":1}
+04-22 01:25:36.458 20922 20989 I assembly.android.mixc-retail-rn84.boot: {"stage":"runtime.start:start","displayIndex":0,"displayCount":1}
+04-22 01:25:36.460 20922 20989 I assembly.kernel.base.runtime-shell-v2.application.KernelRuntimeAppV2: [runtime.load] created kernel runtime app v2 {"runtimeName":"assembly.android.mixc-retail-rn84","runtimeId":"run_mo8wa538_n2k4inomvvh3daza","localNodeId":"master:ZJ63NQELD9","moduleNames":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+04-22 01:25:36.460 20922 20989 I assembly.kernel.base.runtime-shell-v2.application.KernelRuntimeAppV2: [runtime.load] start kernel runtime app v2 pre-setup {"runtimeName":"assembly.android.mixc-retail-rn84","moduleNames":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+04-22 01:25:36.460 20922 20989 I assembly.assembly.android.mixc-retail-rn84: [runtime.load] pre-setup assembly.android.mixc-retail-rn84 {"moduleName":"assembly.android.mixc-retail-rn84","runtimeNodeId":"master:ZJ63NQELD9","knownModules":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+04-22 01:25:36.460 20922 20989 I assembly.kernel.base.runtime-shell-v2.application.KernelRuntimeAppV2: [runtime.load] completed module pre-setup {"moduleName":"assembly.android.mixc-retail-rn84","packageVersion":"1.0.0","dependencies":[],"stateSliceNames":[],"commandNames":[],"actorKeys":["assembly.android.mixc-retail-rn84.AssemblyRuntimeInitializeActor"],"errorKeys":[],"parameterKeys":[],"hasInstall":true,"hasPreSetup":true}
+04-22 01:25:36.460 20922 20989 I assembly.assembly.android.mixc-retail-rn84: [runtime.load] pre-setup kernel.base.topology-runtime-v3 {"moduleName":"kernel.base.topology-runtime-v3","runtimeNodeId":"master:ZJ63NQELD9","knownModules":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+04-22 01:25:36.462 20922 20989 I assembly.kernel.base.runtime-shell-v2.application.KernelRuntimeAppV2: [runtime.load] completed module pre-setup {"moduleName":"kernel.base.topology-runtime-v3","packageVersion":"0.0.1","dependencies":[],"stateSliceNames":["kernel.base.topology-runtime-v3.config","kernel.base.topology-runtime-v3.context","kernel.base.topology-runtime-v3.connection","kernel.base.topology-runtime-v3.peer","kernel.base.topology-runtime-v3.sync","kernel.base.topology-runtime-v3.request-mirror","kernel.base.topology-runtime-v3.demo.master","kernel.base.topology-runtime-v3.demo.slave"],"commandNames":["kernel.base.topology-runtime-v3.set-instance-mode","kernel.base.topology-runtime-v3.set-display-mode","kernel.base.topology-runtime-v3.set-enable-slave","kernel.base.topology-runtime-v3.set-master-locator","kernel.base.topology-runtime-v3.clear-master-locator","kernel.base.topology-runtime-v3.refresh-topology-context","kernel.base.topology-runtime-v3.start-topology-connection","kernel.base.topology-runtime-v3.stop-topology-connection","kernel.base.topology-runtime-v3.restart-topology-connection","kernel.base.topology-runtime-v3.upsert-demo-master-entry","kernel.base.topology-runtime-v3.remove-demo-master-entry","kernel.base.topology-runtime-v3.reset-demo-master-state","kernel.base.topology-runtime-v3.upsert-demo-slave-entry","kernel.base.topology-runtime-v3.remove-demo-slave-entry","kernel.base.topology-runtime-v3.reset-demo-slave-state"],"actorKeys":["kernel.base.topology-runtime-v3.TopologyContextActor","kernel.base.topology-runtime-v3.TopologyConnectionActor","kernel.base.topology-runtime-v3.TopologyDemoSyncActor"],"errorKeys":["kernel.base.topology-runtime-v3.display_context_required","kernel.base.topology-runtime-v3.orchestrator_required","kernel.base.topology-runtime-v3.socket_binding_required","kernel.base.topology-runtime-v3.hello_runtime_required","kernel.base.topology-runtime-v3.action_not_allowed"],"parameterKeys":["kernel.base.topology-runtime-v3.reconnect-interval-ms"],"hasInstall":true,"hasPreSetup":true}
+04-22 01:25:36.462 20922 20989 I assembly.assembly.android.mixc-retail-rn84: [runtime.load] pre-setup kernel.base.tcp-control-runtime-v2 {"moduleName":"kernel.base.tcp-control-runtime-v2","runtimeNodeId":"master:ZJ63NQELD9","knownModules":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+04-22 01:25:36.462 20922 20989 I assembly.kernel.base.runtime-shell-v2.application.KernelRuntimeAppV2: [runtime.load] completed module pre-setup {"moduleName":"kernel.base.tcp-control-runtime-v2","packageVersion":"0.0.1","dependencies":[],"stateSliceNames":["kernel.base.tcp-control-runtime-v2.identity","kernel.base.tcp-control-runtime-v2.credential","kernel.base.tcp-control-runtime-v2.binding","kernel.base.tcp-control-runtime-v2.sandbox","kernel.base.tcp-control-runtime-v2.runtime"],"commandNames":["kernel.base.tcp-control-runtime-v2.bootstrap-tcp-control","kernel.base.tcp-control-runtime-v2.bootstrap-tcp-control-succeeded","kernel.base.tcp-control-runtime-v2.activate-terminal","kernel.base.tcp-control-runtime-v2.activate-terminal-succeeded","kernel.base.tcp-control-runtime-v2.refresh-credential","kernel.base.tcp-control-runtime-v2.credential-refreshed","kernel.base.tcp-control-runtime-v2.deactivate-terminal","kernel.base.tcp-control-runtime-v2.deactivate-terminal-succeeded","kernel.base.tcp-control-runtime-v2.report-task-result","kernel.base.tcp-control-runtime-v2.task-result-reported","kernel.base.tcp-control-runtime-v2.reset-tcp-control"],"actorKeys":["kernel.base.tcp-control-runtime-v2.TcpBootstrapActor","kernel.base.tcp-control-runtime-v2.TcpActivationActor","kernel.base.tcp-control-runtime-v2.TcpCredentialActor","kernel.base.tcp-control-runtime-v2.TcpDeactivationActor","kernel.base.tcp-control-runtime-v2.TcpTaskReportActor","kernel.base.tcp-control-runtime-v2.TcpStateMutationActor"],"errorKeys":["kernel.base.tcp-control-runtime-v2.activation_code_invalid","kernel.base.tcp-control-runtime-v2.activation_failed","kernel.base.tcp-control-runtime-v2.credential_missing","kernel.base.tcp-control-runtime-v2.credential_expired","kernel.base.tcp-control-runtime-v2.refresh_failed","kernel.base.tcp-control-runtime-v2.deactivation_failed","kernel.base.tcp-control-runtime-v2.task_result_report_failed","kernel.base.tcp-control-runtime-v2.bootstrap_hydration_failed"],"parameterKeys":["kernel.base.tcp-control-runtime-v2.credential-refresh-lead-time-ms"],"hasInstall":true,"hasPreSetup":true}
+04-22 01:25:36.463 20922 20989 I assembly.assembly.android.mixc-retail-rn84: [runtime.load] pre-setup kernel.base.tdp-sync-runtime-v2 {"moduleName":"kernel.base.tdp-sync-runtime-v2","runtimeNodeId":"master:ZJ63NQELD9","knownModules":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+04-22 01:25:36.463 20922 20989 I assembly.kernel.base.runtime-shell-v2.application.KernelRuntimeAppV2: [runtime.load] completed module pre-setup {"moduleName":"kernel.base.tdp-sync-runtime-v2","packageVersion":"0.0.1","dependencies":["kernel.base.tcp-control-runtime-v2"],"stateSliceNames":["kernel.base.tdp-sync-runtime-v2.session","kernel.base.tdp-sync-runtime-v2.sync","kernel.base.tdp-sync-runtime-v2.projection","kernel.base.tdp-sync-runtime-v2.command-inbox","kernel.base.tdp-sync-runtime-v2.control-signals","kernel.base.tdp-sync-runtime-v2.hot-update"],"commandNames":["kernel.base.tdp-sync-runtime-v2.bootstrap-tdp-sync","kernel.base.tdp-sync-runtime-v2.bootstrap-tdp-sync-succeeded","kernel.base.tdp-sync-runtime-v2.connect-tdp-session","kernel.base.tdp-sync-runtime-v2.disconnect-tdp-session","kernel.base.tdp-sync-runtime-v2.acknowledge-cursor","kernel.base.tdp-sync-runtime-v2.report-applied-cursor","kernel.base.tdp-sync-runtime-v2.send-ping","kernel.base.tdp-sync-runtime-v2.record-user-operation","kernel.base.tdp-sync-runtime-v2.topic-data-changed","kernel.base.tdp-sync-runtime-v2.recompute-resolved-topic-changes","kernel.base.tdp-sync-runtime-v2.snapshot-loaded","kernel.base.tdp-sync-runtime-v2.changes-loaded","kernel.base.tdp-sync-runtime-v2.projection-received","kernel.base.tdp-sync-runtime-v2.projection-batch-received","kernel.base.tdp-sync-runtime-v2.command-delivered","kernel.base.tdp-sync-runtime-v2.session-ready","kernel.base.tdp-sync-runtime-v2.pong-received","kernel.base.tdp-sync-runtime-v2.edge-degraded","kernel.base.tdp-sync-runtime-v2.session-rehome-required","kernel.base.tdp-sync-runtime-v2.protocol-failed","kernel.base.tdp-sync-runtime-v2.message-received"],"actorKeys":["kernel.base.tdp-sync-runtime-v2.TdpInitializeActor","kernel.base.tdp-sync-runtime-v2.TdpAutoConnectActor","kernel.base.tdp-sync-runtime-v2.TdpBootstrapActor","kernel.base.tdp-sync-runtime-v2.TdpSessionConnectionActor","kernel.base.tdp-sync-runtime-v2.TdpMessageActor","kernel.base.tdp-sync-runtime-v2.TdpProjectionRepositoryActor","kernel.base.tdp-sync-runtime-v2.TdpCursorFeedbackActor","kernel.base.tdp-sync-runtime-v2.TdpCommandInboxActor","kernel.base.tdp-sync-runtime-v2.TdpCommandAckActor","kernel.base.tdp-sync-runtime-v2.TdpSessionStateActor","kernel.base.tdp-sync-runtime-v2.TdpTopicChangeActor","kernel.base.tdp-sync-runtime-v2.TdpSystemCatalogBridgeActor","kernel.base.tdp-sync-runtime-v2.TdpUserOperationActor"],"errorKeys":["kernel.base.tdp-sync-runtime-v2.credential_missing","kernel.base.tdp-sync-runtime-v2.handshake_failed","kernel.base.tdp-sync-runtime-v2.protocol_error","kernel.base.tdp-sync-runtime-v2.projection_apply_failed","kernel.base.tdp-sync-runtime-v2.assembly_required"],"parameterKeys":["kernel.base.tdp-sync-runtime-v2.ping-interval-ms","kernel.base.tdp-sync-runtime-v2.reconnect-interval-ms","kernel.base.tdp-sync-runtime-v2.reconnect-attempts","kernel.base.tdp-sync-runtime-v2.connection-timeout-ms","kernel.base.tdp-sync-runtime-v2.heartbeat-timeout-ms","kernel.base.tdp-sync-runtime-v2.hot-update-idle-threshold-ms"],"hasInstall":true,"hasPreSetup":true}
+04-22 01:25:36.465 20922 20989 I assembly.assembly.android.mixc-retail-rn84: [runtime.load] pre-setup kernel.base.workflow-runtime-v2 {"moduleName":"kernel.base.workflow-runtime-v2","runtimeNodeId":"master:ZJ63NQELD9","knownModules":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+04-22 01:25:36.465 20922 20989 I assembly.kernel.base.runtime-shell-v2.application.KernelRuntimeAppV2: [runtime.load] completed module pre-setup {"moduleName":"kernel.base.workflow-runtime-v2","packageVersion":"0.0.1","dependencies":["kernel.base.tdp-sync-runtime-v2"],"stateSliceNames":["kernel.base.workflow-runtime-v2.definitions","kernel.base.workflow-runtime-v2.observations","kernel.base.workflow-runtime-v2.queue"],"commandNames":["kernel.base.workflow-runtime-v2.run-workflow","kernel.base.workflow-runtime-v2.cancel-workflow-run","kernel.base.workflow-runtime-v2.register-workflow-definitions","kernel.base.workflow-runtime-v2.remove-workflow-definition"],"actorKeys":["kernel.base.workflow-runtime-v2.WorkflowDefinitionMutationActor","kernel.base.workflow-runtime-v2.WorkflowControlActor","kernel.base.workflow-runtime-v2.WorkflowRunActor","kernel.base.workflow-runtime-v2.WorkflowRemoteDefinitionActor"],"errorKeys":["kernel.base.workflow-runtime-v2.workflow_definition_not_found","kernel.base.workflow-runtime-v2.workflow_definition_disabled","kernel.base.workflow-runtime-v2.duplicate_request","kernel.base.workflow-runtime-v2.workflow_run_not_found","kernel.base.workflow-runtime-v2.workflow_execution_failed","kernel.base.workflow-runtime-v2.workflow_step_failed","kernel.base.workflow-runtime-v2.workflow_script_failed","kernel.base.workflow-runtime-v2.workflow_queue_corrupted"],"parameterKeys":["kernel.base.workflow-runtime-v2.default-workflow-timeout-ms","kernel.base.workflow-runtime-v2.default-step-timeout-ms","kernel.base.workflow-runtime-v2.event-history-limit","kernel.base.workflow-runtime-v2.completed-observation-limit","kernel.base.workflow-runtime-v2.queue-size-limit"],"hasInstall":true,"hasPreSetup":true}
+04-22 01:25:36.466 20922 20989 I assembly.assembly.android.mixc-retail-rn84: [runtime.load] pre-setup kernel.base.ui-runtime-v2 {"moduleName":"kernel.base.ui-runtime-v2","runtimeNodeId":"master:ZJ63NQELD9","knownModules":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+04-22 01:25:36.466 20922 20989 I assembly.kernel.base.runtime-shell-v2.application.KernelRuntimeAppV2: [runtime.load] completed module pre-setup {"moduleName":"kernel.base.ui-runtime-v2","packageVersion":"0.0.1","dependencies":[],"stateSliceNames":["kernel.base.ui-runtime-v2.screen.main","kernel.base.ui-runtime-v2.screen.branch","kernel.base.ui-runtime-v2.overlay.main","kernel.base.ui-runtime-v2.overlay.branch","kernel.base.ui-runtime-v2.ui-variable.main","kernel.base.ui-runtime-v2.ui-variable.branch"],"commandNames":["kernel.base.ui-runtime-v2.register-screen-definitions","kernel.base.ui-runtime-v2.show-screen","kernel.base.ui-runtime-v2.replace-screen","kernel.base.ui-runtime-v2.reset-screen","kernel.base.ui-runtime-v2.open-overlay","kernel.base.ui-runtime-v2.close-overlay","kernel.base.ui-runtime-v2.clear-overlays","kernel.base.ui-runtime-v2.set-ui-variables","kernel.base.ui-runtime-v2.clear-ui-variables"],"actorKeys":["kernel.base.ui-runtime-v2.UiRuntimeScreenRegistryActor","kernel.base.ui-runtime-v2.UiRuntimeScreenRuntimeActor","kernel.base.ui-runtime-v2.UiRuntimeOverlayRuntimeActor","kernel.base.ui-runtime-v2.UiRuntimeVariableRuntimeActor"],"errorKeys":["kernel.base.ui-runtime-v2.invalid_screen_target","kernel.base.ui-runtime-v2.duplicated_screen_definition","kernel.base.ui-runtime-v2.overlay_id_required"],"parameterKeys":["kernel.base.ui-runtime-v2.registry.cache-size-hint"],"hasInstall":true,"hasPreSetup":true}
+04-22 01:25:36.466 20922 20989 I assembly.assembly.android.mixc-retail-rn84: [runtime.load] pre-setup ui.base.runtime-react {"moduleName":"ui.base.runtime-react","runtimeNodeId":"master:ZJ63NQELD9","knownModules":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+04-22 01:25:36.467 20922 20989 I assembly.kernel.base.runtime-shell-v2.application.KernelRuntimeAppV2: [runtime.load] completed module pre-setup {"moduleName":"ui.base.runtime-react","packageVersion":"0.0.1","dependencies":["kernel.base.ui-runtime-v2"],"stateSliceNames":[],"commandNames":[],"actorKeys":[],"errorKeys":[],"parameterKeys":[],"hasInstall":true,"hasPreSetup":true}
+04-22 01:25:36.467 20922 20989 I assembly.assembly.android.mixc-retail-rn84: [runtime.load] pre-setup ui.base.input-runtime {"moduleName":"ui.base.input-runtime","runtimeNodeId":"master:ZJ63NQELD9","knownModules":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+04-22 01:25:36.467 20922 20989 I assembly.kernel.base.runtime-shell-v2.application.KernelRuntimeAppV2: [runtime.load] completed module pre-setup {"moduleName":"ui.base.input-runtime","packageVersion":"0.0.1","dependencies":[],"stateSliceNames":[],"commandNames":[],"actorKeys":[],"errorKeys":[],"parameterKeys":[],"hasInstall":true,"hasPreSetup":true}
+04-22 01:25:36.467 20922 20989 I assembly.assembly.android.mixc-retail-rn84: [runtime.load] pre-setup ui.base.admin-console {"moduleName":"ui.base.admin-console","runtimeNodeId":"master:ZJ63NQELD9","knownModules":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+04-22 01:25:36.467 20922 20989 I assembly.kernel.base.runtime-shell-v2.application.KernelRuntimeAppV2: [runtime.load] completed module pre-setup {"moduleName":"ui.base.admin-console","packageVersion":"0.0.1","dependencies":[],"stateSliceNames":["ui.base.admin-console.console"],"commandNames":["ui.base.admin-console.scan-and-import-topology-master"],"actorKeys":["ui.base.admin-console.AdminTopologyActor"],"errorKeys":[],"parameterKeys":[],"hasInstall":true,"hasPreSetup":true}
+04-22 01:25:36.467 20922 20989 I assembly.assembly.android.mixc-retail-rn84: [runtime.load] pre-setup ui.base.terminal-console {"moduleName":"ui.base.terminal-console","runtimeNodeId":"master:ZJ63NQELD9","knownModules":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+04-22 01:25:36.467 20922 20989 I assembly.kernel.base.runtime-shell-v2.application.KernelRuntimeAppV2: [runtime.load] completed module pre-setup {"moduleName":"ui.base.terminal-console","packageVersion":"0.0.1","dependencies":[],"stateSliceNames":[],"commandNames":[],"actorKeys":[],"errorKeys":[],"parameterKeys":[],"hasInstall":true,"hasPreSetup":true}
+04-22 01:25:36.467 20922 20989 I assembly.assembly.android.mixc-retail-rn84: [runtime.load] pre-setup ui.integration.retail-shell {"moduleName":"ui.integration.retail-shell","runtimeNodeId":"master:ZJ63NQELD9","knownModules":["assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"]}
+04-22 01:25:36.467 20922 20989 I assembly.kernel.base.runtime-shell-v2.application.KernelRuntimeAppV2: [runtime.load] completed module pre-setup {"moduleName":"ui.integration.retail-shell","packageVersion":"1.0.0","dependencies":["kernel.base.ui-runtime-v2","kernel.base.tcp-control-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console"],"stateSliceNames":[],"commandNames":[],"actorKeys":["ui.integration.retail-shell.RetailShellRuntimeInitializeActor","ui.integration.retail-shell.RetailShellTcpLifecycleActor"],"errorKeys":[],"parameterKeys":[],"hasInstall":true,"hasPreSetup":true}
+04-22 01:25:36.468 20922 20989 I assembly.kernel.base.runtime-shell-v2.application.KernelRuntimeAppV2: [runtime.load] start kernel runtime app v2 runtime {"runtimeName":"assembly.android.mixc-retail-rn84","runtimeId":"run_mo8wa538_n2k4inomvvh3daza","localNodeId":"master:ZJ63NQELD9","moduleCount":11}
+04-22 01:25:36.468 20922 20989 I assembly.assembly.android.mixc-retail-rn84: [runtime.load] start runtime-shell-v2 {"runtimeId":"run_mo8wa538_n2k4inomvvh3daza","localNodeId":"master:ZJ63NQELD9","modules":["kernel.base.runtime-shell-v2","assembly.android.mixc-retail-rn84","kernel.base.topology-runtime-v3","kernel.base.tcp-control-runtime-v2","kernel.base.tdp-sync-runtime-v2","kernel.base.workflow-runtime-v2","kernel.base.ui-runtime-v2","ui.base.runtime-react","ui.base.input-runtime","ui.base.admin-console","ui.base.terminal-console","ui.integration.retail-shell"],"actorCount":80}
+04-22 01:25:36.469 20922 20989 D nativeloader: Load /data/app/~~adpBZNME1nQLrJPd8kjG5g==/com.impos2.mixcretailassemblyrn84-MQAHSo5DMwp3QYE1rBrvEQ==/base.apk!/lib/arm64-v8a/libmmkv.so using class loader ns clns-9 (caller=/data/app/~~adpBZNME1nQLrJPd8kjG5g==/com.impos2.mixcretailassemblyrn84-MQAHSo5DMwp3QYE1rBrvEQ==/base.apk): ok
+04-22 01:25:36.470 20922 20989 I MMKV    : current API level = 36, libc++_shared=0
+04-22 01:25:36.470 20922 20989 I MMKV    : <MMKV.cpp:175::initialize> version v2.4.0, page size 4096, arch arm64-v8a
+04-22 01:25:36.470 20922 20989 I MMKV    : <MMKV.cpp:186::initialize> armv8 AES instructions is supported
+04-22 01:25:36.470 20922 20989 I MMKV    : <MMKV.cpp:194::initialize> armv8 CRC32 instructions is supported
+04-22 01:25:36.470 20922 20989 I MMKV    : <MMKV.cpp:232::initializeMMKV> root dir: /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv
+04-22 01:25:36.470 20922 20989 I MMKV    : <MMKV_Android.cpp:378::enableDisableProcessMode> process mode check enable/disable: 0
+04-22 01:25:36.470 20922 20989 I MMKV    : Disable checkProcessMode()
+04-22 01:25:36.471 20922 20989 I MMKV    : <MemoryFile.cpp:103::open> open fd[125], flag 0x7, /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-22 01:25:36.471 20922 20989 I MMKV    : <MemoryFile.cpp:250::mmapOrCleanup> mmap to address [0x7bc4a02000], oldPtr [0x0], [/data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe]
+04-22 01:25:36.471 20922 20989 I MMKV    : <MemoryFile.cpp:109::close> closing fd[125], /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-22 01:25:36.471 20922 20989 I MMKV    : <MemoryFile.cpp:103::open> open fd[125], flag 0x7, /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe.crc
+04-22 01:25:36.471 20922 20989 I MMKV    : <MemoryFile.cpp:250::mmapOrCleanup> mmap to address [0x7bc4a01000], oldPtr [0x0], [/data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe.crc]
+04-22 01:25:36.471 20922 20989 I MMKV    : <MemoryFile.cpp:103::open> open fd[126], flag 0x7, /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-22 01:25:36.471 20922 20989 I MMKV    : <MemoryFile.cpp:109::close> closing fd[126], /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-22 01:25:36.471 20922 20989 I MMKV    : <MMKV_IO.cpp:94::loadFromFile> loading [mixc-retail-assembly-rn84::state] with 0 actual size, file size 4096, InterProcess 0, meta info version:0
+04-22 01:25:36.471 20922 20989 I MMKV    : <MMKV_IO.cpp:145::loadFromFile> loaded [mixc-retail-assembly-rn84::state] with 0 key-values
+04-22 01:25:36.471 20922 20989 I MMKV    : <MemoryFile.cpp:103::open> open fd[126], flag 0x7, /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/c08c20d895f199f98a40164528d2f6a6
+04-22 01:25:36.471 20922 20989 I MMKV    : <MemoryFile.cpp:250::mmapOrCleanup> mmap to address [0x7bc4a00000], oldPtr [0x0], [/data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/c08c20d895f199f98a40164528d2f6a6]
+04-22 01:25:36.471 20922 20989 I MMKV    : <MemoryFile.cpp:109::close> closing fd[126], /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/c08c20d895f199f98a40164528d2f6a6
+04-22 01:25:36.472 20922 20989 I MMKV    : <MemoryFile.cpp:103::open> open fd[126], flag 0x7, /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/c08c20d895f199f98a40164528d2f6a6.crc
+04-22 01:25:36.472 20922 20989 I MMKV    : <MemoryFile.cpp:250::mmapOrCleanup> mmap to address [0x7bc2001000], oldPtr [0x0], [/data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/c08c20d895f199f98a40164528d2f6a6.crc]
+04-22 01:25:36.472 20922 20989 I MMKV    : <MemoryFile.cpp:103::open> open fd[127], flag 0x7, /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/c08c20d895f199f98a40164528d2f6a6
+04-22 01:25:36.472 20922 20989 I MMKV    : <MemoryFile.cpp:109::close> closing fd[127], /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/c08c20d895f199f98a40164528d2f6a6
+04-22 01:25:36.472 20922 20989 I MMKV    : <MMKV_IO.cpp:94::loadFromFile> loading [mixc-retail-assembly-rn84::secure-state] with 0 actual size, file size 4096, InterProcess 0, meta info version:0
+04-22 01:25:36.472 20922 20989 I MMKV    : <MMKV_IO.cpp:145::loadFromFile> loaded [mixc-retail-assembly-rn84::secure-state] with 0 key-values
+04-22 01:25:36.475 20922 20989 I assembly.assembly.android.mixc-retail-rn84: [runtime.load] install assembly.android.mixc-retail-rn84 {"moduleName":"assembly.android.mixc-retail-rn84","displayIndex":0,"displayCount":1}
+04-22 01:25:36.482 20922 20988 I ReactNativeJS: '[tcp-bootstrap-state-written]', '{"nodeId":"master:ZJ63NQELD9","runtimeId":"run_mo8wa538_n2k4inomvvh3daza","displayIndex":0,"requestId":"req_mo8wa542_6vs99ll3eishzsap","commandId":"cmd_mo8wa542_0dkjbdidbxn6ltwq","nextDeviceFingerprint":"ZJ63NQELD9","nextDeviceInfo":{"id":"ZJ63NQELD9","model":"Mixc Retail Android RN84"},"previousIdentity":{"activationStatus":"UNACTIVATED"}}'
+04-22 01:25:36.492 20922 20989 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Create assembly topology socket binding {"displayIndex":0,"role":"master","localNodeId":"master:ZJ63NQELD9","resolvedPathTemplate":"/ws"}
+04-22 01:25:36.492 20922 20989 I assembly.assembly.android.mixc-retail-rn84: [runtime.load] install kernel.base.topology-runtime-v3 {"moduleName":"kernel.base.topology-runtime-v3","stateSlices":["kernel.base.topology-runtime-v3.config","kernel.base.topology-runtime-v3.context","kernel.base.topology-runtime-v3.connection","kernel.base.topology-runtime-v3.peer","kernel.base.topology-runtime-v3.sync","kernel.base.topology-runtime-v3.request-mirror","kernel.base.topology-runtime-v3.demo.master","kernel.base.topology-runtime-v3.demo.slave"],"commandNames":["kernel.base.topology-runtime-v3.set-instance-mode","kernel.base.topology-runtime-v3.set-display-mode","kernel.base.topology-runtime-v3.set-enable-slave","kernel.base.topology-runtime-v3.set-master-locator","kernel.base.topology-runtime-v3.clear-master-locator","kernel.base.topology-runtime-v3.refresh-topology-context","kernel.base.topology-runtime-v3.start-topology-connection","kernel.base.topology-runtime-v3.stop-topology-connection","kernel.base.topology-runtime-v3.restart-topology-connection","kernel.base.topology-runtime-v3.upsert-demo-master-entry","kernel.base.topology-runtime-v3.remove-demo-master-entry","kernel.base.topology-runtime-v3.reset-demo-master-state","kernel.base.topology-runtime-v3.upsert-demo-slave-entry","kernel.base.topology-runtime-v3.remove-demo-slave-entry","kernel.base.topology-runtime-v3.reset-demo-slave-state"]}
+04-22 01:25:36.492 20922 20989 I assembly.assembly.android.mixc-retail-rn84: [runtime.load] install kernel.base.tcp-control-runtime-v2 {"moduleName":"kernel.base.tcp-control-runtime-v2","stateSlices":["kernel.base.tcp-control-runtime-v2.identity","kernel.base.tcp-control-runtime-v2.credential","kernel.base.tcp-control-runtime-v2.binding","kernel.base.tcp-control-runtime-v2.sandbox","kernel.base.tcp-control-runtime-v2.runtime"],"commandNames":["kernel.base.tcp-control-runtime-v2.bootstrap-tcp-control","kernel.base.tcp-control-runtime-v2.bootstrap-tcp-control-succeeded","kernel.base.tcp-control-runtime-v2.activate-terminal","kernel.base.tcp-control-runtime-v2.activate-terminal-succeeded","kernel.base.tcp-control-runtime-v2.refresh-credential","kernel.base.tcp-control-runtime-v2.credential-refreshed","kernel.base.tcp-control-runtime-v2.deactivate-terminal","kernel.base.tcp-control-runtime-v2.deactivate-terminal-succeeded","kernel.base.tcp-control-runtime-v2.report-task-result","kernel.base.tcp-control-runtime-v2.task-result-reported","kernel.base.tcp-control-runtime-v2.reset-tcp-control"]}
+04-22 01:25:36.492 20922 20989 I assembly.assembly.android.mixc-retail-rn84: [runtime.load] install kernel.base.tdp-sync-runtime-v2 {"moduleName":"kernel.base.tdp-sync-runtime-v2","stateSlices":["kernel.base.tdp-sync-runtime-v2.session","kernel.base.tdp-sync-runtime-v2.sync","kernel.base.tdp-sync-runtime-v2.projection","kernel.base.tdp-sync-runtime-v2.command-inbox","kernel.base.tdp-sync-runtime-v2.control-signals","kernel.base.tdp-sync-runtime-v2.hot-update"],"commandNames":["kernel.base.tdp-sync-runtime-v2.bootstrap-tdp-sync","kernel.base.tdp-sync-runtime-v2.bootstrap-tdp-sync-succeeded","kernel.base.tdp-sync-runtime-v2.connect-tdp-session","kernel.base.tdp-sync-runtime-v2.disconnect-tdp-session","kernel.base.tdp-sync-runtime-v2.acknowledge-cursor","kernel.base.tdp-sync-runtime-v2.report-applied-cursor","kernel.base.tdp-sync-runtime-v2.send-ping","kernel.base.tdp-sync-runtime-v2.record-user-operation","kernel.base.tdp-sync-runtime-v2.topic-data-changed","kernel.base.tdp-sync-runtime-v2.recompute-resolved-topic-changes","kernel.base.tdp-sync-runtime-v2.snapshot-loaded","kernel.base.tdp-sync-runtime-v2.changes-loaded","kernel.base.tdp-sync-runtime-v2.projection-received","kernel.base.tdp-sync-runtime-v2.projection-batch-received","kernel.base.tdp-sync-runtime-v2.command-delivered","kernel.base.tdp-sync-runtime-v2.session-ready","kernel.base.tdp-sync-runtime-v2.pong-received","kernel.base.tdp-sync-runtime-v2.edge-degraded","kernel.base.tdp-sync-runtime-v2.session-rehome-required","kernel.base.tdp-sync-runtime-v2.protocol-failed","kernel.base.tdp-sync-runtime-v2.message-received"],"hasAssembly":true}
+04-22 01:25:36.492 20922 20989 I assembly.assembly.android.mixc-retail-rn84: [runtime.load] install kernel.base.workflow-runtime-v2 {"moduleName":"kernel.base.workflow-runtime-v2","stateSlices":["kernel.base.workflow-runtime-v2.definitions","kernel.base.workflow-runtime-v2.observations","kernel.base.workflow-runtime-v2.queue"],"commandNames":["kernel.base.workflow-runtime-v2.run-workflow","kernel.base.workflow-runtime-v2.cancel-workflow-run","kernel.base.workflow-runtime-v2.register-workflow-definitions","kernel.base.workflow-runtime-v2.remove-workflow-definition"],"remoteDefinitionTopicKey":"kernel.workflow.definition"}
+04-22 01:25:36.493 20922 20989 I assembly.assembly.android.mixc-retail-rn84: [runtime.load] install kernel.base.ui-runtime-v2 {"moduleName":"kernel.base.ui-runtime-v2","stateSlices":["kernel.base.ui-runtime-v2.screen.main","kernel.base.ui-runtime-v2.screen.branch","kernel.base.ui-runtime-v2.overlay.main","kernel.base.ui-runtime-v2.overlay.branch","kernel.base.ui-runtime-v2.ui-variable.main","kernel.base.ui-runtime-v2.ui-variable.branch"],"commandNames":["kernel.base.ui-runtime-v2.register-screen-definitions","kernel.base.ui-runtime-v2.show-screen","kernel.base.ui-runtime-v2.replace-screen","kernel.base.ui-runtime-v2.reset-screen","kernel.base.ui-runtime-v2.open-overlay","kernel.base.ui-runtime-v2.close-overlay","kernel.base.ui-runtime-v2.clear-overlays","kernel.base.ui-runtime-v2.set-ui-variables","kernel.base.ui-runtime-v2.clear-ui-variables"]}
+04-22 01:25:36.493 20922 20989 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 1, crc 1331902005, actualSize 4
+04-22 01:25:36.493 20922 20989 I MMKV    : <MMKV_IO.cpp:530::expandAndWriteBack> extending [mixc-retail-assembly-rn84::state] file size from 4096 to 8192, incoming size:130, future usage:2752
+04-22 01:25:36.493 20922 20989 I MMKV    : <MemoryFile.cpp:103::open> open fd[127], flag 0x7, /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-22 01:25:36.493 20922 20989 I MMKV    : <MemoryFile.cpp:250::mmapOrCleanup> mmap to address [0x7bc1fff000], oldPtr [0x7bc4a02000], [/data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe]
+04-22 01:25:36.493 20922 20989 I MMKV    : <MemoryFile.cpp:109::close> closing fd[127], /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-22 01:25:36.493 20922 20989 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 2, crc 3203466632, actualSize 3988
+04-22 01:25:36.493 20922 20989 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 01:25:36.497 20922 20989 I assembly.assembly.android.mixc-retail-rn84: [runtime.load] install ui.base.runtime-react {"moduleName":"ui.base.runtime-react"}
+04-22 01:25:36.497 20922 20989 I assembly.assembly.android.mixc-retail-rn84: [runtime.load] install ui.base.input-runtime {"moduleName":"ui.base.input-runtime"}
+04-22 01:25:36.497 20922 20989 I assembly.assembly.android.mixc-retail-rn84: [runtime.load] install ui.base.admin-console {"moduleName":"ui.base.admin-console"}
+04-22 01:25:36.497 20922 20989 I assembly.assembly.android.mixc-retail-rn84: [runtime.load] install ui.base.terminal-console {"moduleName":"ui.base.terminal-console"}
+04-22 01:25:36.497 20922 20989 I assembly.assembly.android.mixc-retail-rn84: [runtime.load] install ui.integration.retail-shell {"moduleName":"ui.integration.retail-shell"}
+04-22 01:25:36.497 20922 20989 I assembly.kernel.base.runtime-shell-v2.application.KernelRuntimeAppV2: [runtime.load] kernel runtime app v2 started {"runtimeName":"assembly.android.mixc-retail-rn84","moduleDescriptors":[{"moduleName":"assembly.android.mixc-retail-rn84","packageVersion":"1.0.0","dependencies":[],"stateSliceNames":[],"commandNames":[],"actorKeys":["assembly.android.mixc-retail-rn84.AssemblyRuntimeInitializeActor"],"errorKeys":[],"parameterKeys":[],"hasInstall":true,"hasPreSetup":true},{"moduleName":"kernel.base.topology-runtime-v3","packageVersion":"0.0.1","dependencies":[],"stateSliceNames":["kernel.base.topology-runtime-v3.config","kernel.base.topology-runtime-v3.context","kernel.base.topology-runtime-v3.connection","kernel.base.topology-runtime-v3.peer","kernel.base.topology-runtime-v3.sync","kernel.base.topology-runtime-v3.request-mirror","kernel.base.topology-runtime-v3.demo.master","kernel.base.topology-runtime-v3.demo.slave"],"commandNames":["kernel.base.topology-runtime-v3.set-instance-mode","kernel.base.topology-runtime-v3.set-display-mode","kernel.base.topology-runtime-v3.set-enable-slave","kernel.base.topology-runtime-v3.set-master-locator","kernel.base.topology-runtime-v3.clear-master-locator","kernel.base.topology-runtime-v3.refresh-topology-context","kernel.base.topology-runtime-v3.start-topology-connection","kernel.base.topology-runtime-v3.stop-topology-connection","kernel.base.topology-runtime-v3.restart-topology-connection","kernel.base.topology-runtime-v3.upsert-demo-master-entry","kernel.base.topology-runtime-v3.remove-demo-master-entry","kernel.base.topology-runtime-v3.reset-demo-master-state","kernel.base.topology-runtime-v3.upsert-demo-slave-entry","kernel.base.topology-runtime-v3.remove-demo-slave-entry","kernel.base.topology-runtime-v3.reset-demo-slave-state"],"actorKeys":["kernel.base.topology-runtime-v3.TopologyContextActor","kernel.base.topology-runtime-v3.TopologyConnectionActor","kernel.base.topology-runtime-v3.TopologyDemoSyncActor"],"errorKeys":["kernel.base.topology-runtime-v3.display_context_required","kernel.base.topology-runtime-v3.orchestrator_required","kernel.base.topology-runtime-v3.socket_binding_required","kernel.base.topology-runtime-v3.hello_runtime_required","kernel.base.topology-runtime-v3.action_not_allowed"],"parameterKeys":["kernel.base.topology-runtime-v3.reconnect-interval-ms"],"hasInstall":true,"hasPreSetup":true},{"moduleName":"kernel.base.tcp-control-runtime-v2","packageVersion":"0.0.1","dependencies":[],"stateSliceNames":["kernel.base.tcp-control-runtime-v2.identity","kernel.base.tcp-control-runtime-v2.credential","kernel.base.tcp-control-runtime-v2.binding","kernel.base.tcp-control-runtime-v2.sandbox","kernel.base.tcp-control-runtime-v2.runtime"],"commandNames":["kernel.base.tcp-control-runtime-v2.bootstrap-tcp-control","kernel.base.tcp-control-runtime-v2.bootstrap-tcp-control-succeeded","kernel.base.tcp-control-runtime-v2.activate-terminal","kernel.base.tcp-control-runtime-v2.activate-terminal-succeeded","kernel.base.tcp-control-runtime-v2.refresh-credential","kernel.base.tcp-control-runtime-v2.credential-refreshed","kernel.base.tcp-control-runtime-v2.deactivate-terminal","kernel.base.tcp-control-runtime-v2.deactivate-terminal-succeeded","kernel.base.tcp-control-runtime-v2.report-task-result","kernel.base.tcp-control-runtime-v2.task-result-reported","kernel.base.tcp-control-runtime-v2.reset-tcp-control"],"actorKeys":["kernel.base.tcp-control-runtime-v2.TcpBootstrapActor","kernel.base.tcp-control-runtime-v2.TcpActivationActor","kernel.base.tcp-control-runtime-v2.TcpCredentialActor","kernel.base.tcp-control-runtime-v2.TcpDeactivationActor","kernel.base.tcp-control-runtime-v2.TcpTaskReportActor","kernel.base.tcp-control-runtime-v2.TcpStateMutationActor"],"errorKeys":["kernel.base.tcp-control-runtime-v2.activation_code_invalid","kernel.base.tcp-control-runtime-v2.activation_failed","kernel.base.tcp-control-runtime-v2.credential_missing","kernel.base.tcp-control-runtime-v2.credential_expired","kernel.base.tcp-control-runtime-v2.refresh_failed","kernel.base.tcp
+04-22 01:25:36.498 20922 20989 I MMKV    : <MMKV_IO.cpp:530::expandAndWriteBack> extending [mixc-retail-assembly-rn84::state] file size from 8192 to 16384, incoming size:318, future usage:4172
+04-22 01:25:36.498 20922 20989 I MMKV    : <MemoryFile.cpp:103::open> open fd[127], flag 0x7, /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-22 01:25:36.498 20922 20989 I MMKV    : <MemoryFile.cpp:250::mmapOrCleanup> mmap to address [0x7bc1fbc000], oldPtr [0x7bc1fff000], [/data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe]
+04-22 01:25:36.498 20922 20989 I MMKV    : <MemoryFile.cpp:109::close> closing fd[127], /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-22 01:25:36.498 20922 20989 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 3, crc 638428435, actualSize 7996
+04-22 01:25:36.498 20922 20989 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 01:25:36.501 20922 20989 I MMKV    : <MMKV_IO.cpp:530::expandAndWriteBack> extending [mixc-retail-assembly-rn84::state] file size from 16384 to 32768, incoming size:297, future usage:8154
+04-22 01:25:36.501 20922 20989 I MMKV    : <MemoryFile.cpp:103::open> open fd[127], flag 0x7, /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-22 01:25:36.501 20922 20989 I MMKV    : <MemoryFile.cpp:250::mmapOrCleanup> mmap to address [0x7bbd5d7000], oldPtr [0x7bc1fbc000], [/data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe]
+04-22 01:25:36.501 20922 20989 I MMKV    : <MemoryFile.cpp:109::close> closing fd[127], /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-22 01:25:36.501 20922 20989 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 4, crc 2265338044, actualSize 16300
+04-22 01:25:36.501 20922 20989 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 01:25:36.503 20922 20989 I MMKV    : <MMKV_IO.cpp:530::expandAndWriteBack> extending [mixc-retail-assembly-rn84::state] file size from 32768 to 65536, incoming size:338, future usage:10880
+04-22 01:25:36.503 20922 20989 I MMKV    : <MemoryFile.cpp:103::open> open fd[127], flag 0x7, /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-22 01:25:36.503 20922 20989 I MMKV    : <MemoryFile.cpp:250::mmapOrCleanup> mmap to address [0x7bb58a4000], oldPtr [0x7bbd5d7000], [/data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe]
+04-22 01:25:36.503 20922 20989 I MMKV    : <MemoryFile.cpp:109::close> closing fd[127], /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-22 01:25:36.503 20922 20989 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 5, crc 246862548, actualSize 21709
+04-22 01:25:36.503 20922 20989 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 01:25:36.505 20922 20989 I assembly.android.mixc-retail-rn84.boot: {"stage":"runtime.start:done","displayIndex":0,"displayCount":1}
+04-22 01:25:36.505 20922 20989 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"MASTER","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-22 01:25:36.509 20922 20989 I assembly.android.mixc-retail-rn84.boot: {"stage":"automation.host:start","displayIndex":0,"displayCount":1,"target":"primary","host":"127.0.0.1","port":18584,"generation":"automation-host-2-17794049491359"}
+04-22 01:25:36.517 20922 20989 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 6, crc 3122401677, actualSize 21721
+04-22 01:25:36.517 20922 20989 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 01:25:36.519 20922 20989 I assembly.android.mixc-retail-rn84.boot: {"stage":"app-load-complete:start","displayIndex":0}
+04-22 01:25:36.519 20922 20989 I StartupAudit: app_load_complete displayIndex=0 pid=20922 time=2026-04-22 01:25:36.519
+04-22 01:25:36.519 20922 20989 I StartupAudit: secondary_launch_scheduled pid=20922 time=2026-04-22 01:25:36.519
+04-22 01:25:36.522 20922 20989 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 7, crc 2505621423, actualSize 21721
+04-22 01:25:36.522 20922 20989 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 01:25:36.530 20922 20989 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 8, crc 3506537414, actualSize 21721
+04-22 01:25:36.530 20922 20989 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 01:25:36.531 20922 20989 I assembly.android.mixc-retail-rn84.boot: {"stage":"app-load-complete:done","displayIndex":0}
+04-22 01:25:36.533 20922 20989 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 9, crc 3864608021, actualSize 21721
+04-22 01:25:36.533 20922 20989 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 01:25:36.537 20922 20989 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 10, crc 2181422203, actualSize 21721
+04-22 01:25:36.537 20922 20989 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 01:25:36.543 20922 20989 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 11, crc 1683659854, actualSize 21721
+04-22 01:25:36.543 20922 20989 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 01:25:36.548 20922 20989 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 12, crc 1123302048, actualSize 21721
+04-22 01:25:36.548 20922 20989 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 01:25:36.552 20922 20989 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 13, crc 2113808647, actualSize 21721
+04-22 01:25:36.552 20922 20989 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 01:25:36.558   957  1041 V WindowManagerShell: Transition animation finished (aborted=false), notifying core (#113) android.os.BinderProxy@947509e@0
+04-22 01:25:36.560 20922 20989 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 14, crc 180159668, actualSize 21721
+04-22 01:25:36.560 20922 20989 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 01:25:36.563  1096  1096 D VRI[NexusLauncherActivity]: visibilityChanged oldVisibility=true newVisibility=false
+04-22 01:25:36.563   683   731 V WindowManager: Finish Transition (#113): created at 04-22 01:25:36.218 collect-started=0.01ms request-sent=6.105ms started=7.315ms ready=33.88ms sent=34.435ms commit=21.495ms finished=344.331ms
+04-22 01:25:36.564   957  1041 V WindowManagerShell: Track 0 became idle
+04-22 01:25:36.564   957  1041 V WindowManagerShell: All active transition animations finished
+04-22 01:25:36.568 20922 20989 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 15, crc 1225816883, actualSize 21721
+04-22 01:25:36.568 20922 20989 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 01:25:36.573 20922 20989 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 16, crc 2398489643, actualSize 21721
+04-22 01:25:36.573 20922 20989 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 01:25:36.577  1096  1096 D NexusLauncherModelDelegate: notifySmartspaceEvent: SmartspaceTargetEvent{mSmartspaceTarget=null, mSmartspaceActionId='null', mEventType=7}
+04-22 01:25:36.581  1096  1114 W System  : A resource failed to call release. 
+04-22 01:25:36.581  1096  1114 W System  : A resource failed to call release. 
+04-22 01:25:36.581  1096  1114 W System  : A resource failed to call release. 
+04-22 01:25:36.581 20922 20989 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 17, crc 3940735298, actualSize 21721
+04-22 01:25:36.581 20922 20989 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 01:25:36.587 20922 20989 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 18, crc 1190680530, actualSize 21721
+04-22 01:25:36.587 20922 20989 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 01:25:36.592  1096  1096 D BaseDepthController: setSurface:
+04-22 01:25:36.592  1096  1096 D BaseDepthController: 	mWaitingOnSurfaceValidity: false
+04-22 01:25:36.592  1096  1096 D BaseDepthController: 	mBaseSurface: null
+04-22 01:25:36.592  1096  1096 D BaseDepthController: mSurface is null and mCurrentBlur is: 0
+04-22 01:25:36.592  1096  1096 D StateManager: goToState - fromState: Normal, toState: Normal, partial trace:
+04-22 01:25:36.592  1096  1096 D StateManager: 	at com.android.launcher3.statemanager.StateManager.moveToRestState(go/retraceme 43e00d9cd0eb17b3d9dd30fc1741b1c71445c4c0f7c8c9b81300265c86c5b873:4)
+04-22 01:25:36.592  1096  1096 D StateManager: 	at com.android.launcher3.statemanager.StateManager.moveToRestState(go/retraceme 43e00d9cd0eb17b3d9dd30fc1741b1c71445c4c0f7c8c9b81300265c86c5b873:1)
+04-22 01:25:36.592  1096  1096 D StateManager: 	at com.android.launcher3.statemanager.StatefulActivity.onStop(go/retraceme 43e00d9cd0eb17b3d9dd30fc1741b1c71445c4c0f7c8c9b81300265c86c5b873:34)
+04-22 01:25:36.592  1096  1096 D StatsLog: LAUNCHER_ONSTOP
+04-22 01:25:36.592  1096  1096 D StatsLog: LAUNCHER_GOOGLE_SEARCH_RESTORE_LIST_SIZE_AFTER_ACTIVITY_RESTART
+04-22 01:25:36.592   683  1755 I AppWidgetServiceImpl: setAppWidgetHidden() 0
+04-22 01:25:36.595   683   912 D BackgroundInstallControlService: Package event received: 0
+04-22 01:25:36.596 20922 20989 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 19, crc 2944268416, actualSize 21721
+04-22 01:25:36.596 20922 20989 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 01:25:36.602 20922 20989 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 20, crc 2924517203, actualSize 21721
+04-22 01:25:36.602 20922 20989 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 01:25:36.606 20922 20989 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 21, crc 1584131508, actualSize 21721
+04-22 01:25:36.606 20922 20989 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 01:25:36.614 20922 20989 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 22, crc 39125540, actualSize 21721
+04-22 01:25:36.614 20922 20989 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 01:25:36.620 20922 20989 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 23, crc 4098851351, actualSize 21721
+04-22 01:25:36.620 20922 20989 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 01:25:36.627 20922 20989 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 24, crc 816536545, actualSize 21721
+04-22 01:25:36.627 20922 20989 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 01:25:36.633 20922 20989 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 25, crc 3853933593, actualSize 21721
+04-22 01:25:36.633 20922 20989 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 01:25:36.639 20922 20989 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 26, crc 1113712198, actualSize 21721
+04-22 01:25:36.639 20922 20989 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 01:25:36.646 20922 20989 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 27, crc 1331851842, actualSize 21721
+04-22 01:25:36.646 20922 20989 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 01:25:36.753  1096  1096 W FrameTracker: Missed App frame:UNKNOWN: 3, 6535405, 33644283, CUJ=J<TASKBAR_COLLAPSE::Home to App>
+04-22 01:25:36.753  1096  1096 W FrameTracker: Missed SF frame:UNKNOWN: 3, 6535405, 33644283, CUJ=J<TASKBAR_COLLAPSE::Home to App>
+04-22 01:25:36.753  1096  1096 W FrameTracker: Missed SF frame:JANK_COMPOSER, 6535434, 20812117, CUJ=J<TASKBAR_COLLAPSE::Home to App>
+04-22 01:25:36.753  1096  1096 W FrameTracker: Missed SF frame:JANK_COMPOSER, 6535463, 17355826, CUJ=J<TASKBAR_COLLAPSE::Home to App>
+04-22 01:25:36.753  1096  1096 W FrameTracker: Missed SF frame:JANK_COMPOSER, 6535485, 26683994, CUJ=J<TASKBAR_COLLAPSE::Home to App>
+04-22 01:25:36.753  1096  1096 W FrameTracker: Missed SF frame:JANK_COMPOSER, 6535528, 10020244, CUJ=J<TASKBAR_COLLAPSE::Home to App>
+04-22 01:25:36.753  1096  1096 W FrameTracker: Missed SF frame:JANK_COMPOSER, 6535550, 24297495, CUJ=J<TASKBAR_COLLAPSE::Home to App>
+04-22 01:25:36.753  1096  1096 W FrameTracker: Missed SF frame:JANK_COMPOSER, 6535579, 24338746, CUJ=J<TASKBAR_COLLAPSE::Home to App>
+04-22 01:25:36.753  1096  1096 W FrameTracker: Missed SF frame:JANK_COMPOSER, 6535601, 20497913, CUJ=J<TASKBAR_COLLAPSE::Home to App>
+04-22 01:25:36.753  1096  1096 W FrameTracker: Missed SF frame:JANK_COMPOSER, 6535644, 21713205, CUJ=J<TASKBAR_COLLAPSE::Home to App>
+04-22 01:25:36.753  1096  1096 W FrameTracker: Missed SF frame:JANK_COMPOSER, 6535673, 20319289, CUJ=J<TASKBAR_COLLAPSE::Home to App>
+04-22 01:25:36.753  1096  1096 W FrameTracker: Missed SF frame:JANK_COMPOSER, 6535716, 20634248, CUJ=J<TASKBAR_COLLAPSE::Home to App>
+04-22 01:25:36.753  1096  1096 W FrameTracker: Missed SF frame:JANK_COMPOSER, 6535759, 21502541, CUJ=J<TASKBAR_COLLAPSE::Home to App>
+04-22 01:25:36.753  1096  1096 W FrameTracker: Missed SF frame:JANK_COMPOSER, 6535802, 20698750, CUJ=J<TASKBAR_COLLAPSE::Home to App>
+04-22 01:25:36.753  1096  1096 W FrameTracker: Missed SF frame:JANK_COMPOSER, 6535852, 20451500, CUJ=J<TASKBAR_COLLAPSE::Home to App>
+04-22 01:25:36.753  1096  1096 W FrameTracker: Missed SF frame:JANK_COMPOSER, 6535888, 19930876, CUJ=J<TASKBAR_COLLAPSE::Home to App>
+04-22 01:25:36.753  1096  1096 W FrameTracker: Missed SF frame:JANK_COMPOSER, 6535924, 20847418, CUJ=J<TASKBAR_COLLAPSE::Home to App>
+04-22 01:25:36.753  1096  1096 W FrameTracker: Missed SF frame:JANK_COMPOSER, 6535960, 21575002, CUJ=J<TASKBAR_COLLAPSE::Home to App>
+04-22 01:25:36.753  1096  1096 W FrameTracker: Missed SF frame:JANK_COMPOSER, 6535996, 27449420, CUJ=J<TASKBAR_COLLAPSE::Home to App>
+04-22 01:25:36.753  1096  1096 W FrameTracker: Missed SF frame:JANK_COMPOSER, 6536039, 21941920, CUJ=J<TASKBAR_COLLAPSE::Home to App>
+04-22 01:25:36.753  1096  1096 W FrameTracker: Missed SF frame:JANK_COMPOSER, 6536068, 20482088, CUJ=J<TASKBAR_COLLAPSE::Home to App>
+04-22 01:25:36.753  1096  1096 W FrameTracker: Missed SF frame:JANK_COMPOSER, 6536104, 21070255, CUJ=J<TASKBAR_COLLAPSE::Home to App>
+04-22 01:25:36.753  1096  1096 W FrameTracker: Missed SF frame:JANK_COMPOSER, 6536147, 20441464, CUJ=J<TASKBAR_COLLAPSE::Home to App>
+04-22 01:25:36.753  1096  1096 W FrameTracker: Missed SF frame:JANK_COMPOSER, 6536176, 19734215, CUJ=J<TASKBAR_COLLAPSE::Home to App>
+04-22 01:25:36.753  1096  1096 W FrameTracker: Missed SF frame:JANK_COMPOSER, 6536205, 19964549, CUJ=J<TASKBAR_COLLAPSE::Home to App>
+04-22 01:25:36.753  1096  1096 W FrameTracker: Missed SF frame:JANK_COMPOSER, 6536234, 20337466, CUJ=J<TASKBAR_COLLAPSE::Home to App>
+04-22 01:25:36.753  1096  1096 W FrameTracker: Missed SF frame:JANK_COMPOSER, 6536263, 34995300, CUJ=J<TASKBAR_COLLAPSE::Home to App>
+04-22 01:25:36.753  1096  1133 V PerfettoTrigger: Not triggering com.android.telemetry.interaction-jank-monitor-61 - not enough time since last trigger
+04-22 01:25:36.777   582  5370 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:36.792 20922 20996 W InteractionJankMonitor: Initializing without READ_DEVICE_CONFIG permission. enabled=true, interval=1, missedFrameThreshold=3, frameTimeThreshold=64, package=com.impos2.mixcretailassemblyrn84
+04-22 01:25:36.886  1283  2168 I FontLog : Received query Noto Color Emoji Compat, URI content://com.google.android.gms.fonts [CONTEXT service_id=132 ]
+04-22 01:25:36.886  1283  2168 I FontLog : Query [emojicompat-emoji-font] resolved to {Noto Color Emoji Compat, wdth 100.0, wght 400, ital 0.0, bestEffort false}, isVf false} [CONTEXT service_id=132 ]
+04-22 01:25:36.886  1283  2168 I FontLog : Fetch {Noto Color Emoji Compat, wdth 100.0, wght 400, ital 0.0, bestEffort false}, isVf false} end status Status{statusCode=SUCCESS, resolution=null} [CONTEXT service_id=132 ]
+04-22 01:25:36.888  1283  2168 I FontLog : Pulling font file for id = 32, cache size = 4 [CONTEXT service_id=132 ]
+04-22 01:25:36.891  1283  2168 I FontLog : Pulling font file for id = 32, cache size = 4 [CONTEXT service_id=132 ]
+04-22 01:25:36.979   459 21015 I resolv  : ResNSendHandler::run: 0 / {101 983141 101 983141 1073 1}
+04-22 01:25:36.979   459 21016 I resolv  : ResNSendHandler::run: 0 / {101 983141 101 983141 1073 1}
+04-22 01:25:36.982   459 21017 I resolv  : ResNSendHandler::run: 0 / {101 983141 101 983141 1073 1}
+04-22 01:25:36.982   459 21018 I resolv  : ResNSendHandler::run: 0 / {101 983141 101 983141 1073 1}
+04-22 01:25:36.982   459 21017 I resolv  : resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d2ced1320
+04-22 01:25:36.982   459 21018 I resolv  : resolv_cache_lookup: FOUND IN CACHE entry=0xb400007e7cecea90
+04-22 01:25:37.298   683   739 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:37.298  1096  1142 D PackageUpdatedTask: Package updated: mOp=UPDATE packages=[com.google.android.apps.docs], user=UserHandle{0}
+04-22 01:25:37.299  1086  1086 D CarrierSvcBindHelper: onPackageModified: com.google.android.apps.docs
+04-22 01:25:37.299  1086  1086 D CarrierSvcBindHelper: No carrier app for: 0
+04-22 01:25:37.300  1638 21019 I AiAiEcho: AppIndexer Package:[com.google.android.apps.docs] UserProfile:[0] Enabled:[true].
+04-22 01:25:37.300  1638 21019 I AiAiEcho: AppFetcherImplV2 updateApps package:[com.google.android.apps.docs], userId:[0], reason:[package is updated.].
+04-22 01:25:37.300   683   833 I system_server: AssetManager2(0xb400007aa8cdae98) locale list changing from [] to [en-US]
+04-22 01:25:37.301  1086  1298 I SatelliteAppTracker: onPackageModified : com.google.android.apps.docs
+04-22 01:25:37.301   957   957 D ControlsListingControllerImpl: ServiceConfig reloaded, count: 0
+04-22 01:25:37.302  1086  1086 E SmsApplication: com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)
+04-22 01:25:37.302   683  1149 W AppOpService: Ignored setUidMode call for runtime permission app op: uid = 10146, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
+04-22 01:25:37.302   683   891 I AppWidgetServiceImpl: Received broadcast: android.intent.action.PACKAGE_CHANGED on user 0
+04-22 01:25:37.303   683   891 D AppWidgetServiceImpl: Trying to notify widget providers changed
+04-22 01:25:37.304   683   911 D ShortcutService: received package broadcast intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x45000010 (has extras) }
+04-22 01:25:37.304   683   911 D ShortcutService: changing package: com.google.android.apps.docs userId=0
+04-22 01:25:37.305   683   833 I system_server: AssetManager2(0xb400007aa8ce7698) locale list changing from [] to [en-US]
+04-22 01:25:37.305   683   911 I system_server: AssetManager2(0xb400007aa8ceabb8) locale list changing from [] to [en-US]
+04-22 01:25:37.306   683   911 E system_server: No package ID 7f found for resource ID 0x7f0803b2.
+04-22 01:25:37.306   683   911 E system_server: No package ID 7f found for resource ID 0x7f150798.
+04-22 01:25:37.306   683   833 I system_server: AssetManager2(0xb400007aa8cec7d8) locale list changing from [] to [en-US]
+04-22 01:25:37.306   683   911 E system_server: No package ID 7f found for resource ID 0x7f150798.
+04-22 01:25:37.307   683   911 E system_server: No package ID 7f found for resource ID 0x7f0803ae.
+04-22 01:25:37.308   683   911 E system_server: No package ID 7f found for resource ID 0x7f150796.
+04-22 01:25:37.308   683   911 E system_server: No package ID 7f found for resource ID 0x7f150796.
+04-22 01:25:37.308   683   911 E system_server: No package ID 7f found for resource ID 0x7f0803b0.
+04-22 01:25:37.308   683   911 E system_server: No package ID 7f found for resource ID 0x7f150797.
+04-22 01:25:37.308   683   911 E system_server: No package ID 7f found for resource ID 0x7f150797.
+04-22 01:25:37.308   683   911 W ShortcutService: Invalid tag 'capability' found at depth 2
+04-22 01:25:37.308   683   911 E ShortcutService: Ignoring excessive intent tag.
+04-22 01:25:37.308   683   911 W ShortcutService: Invalid tag 'parameter' found at depth 4
+04-22 01:25:37.308   683   911 W ShortcutService: Invalid tag 'capability' found at depth 2
+04-22 01:25:37.308   683   911 W ShortcutService: Invalid tag 'slice' found at depth 3
+04-22 01:25:37.308   683   911 W ShortcutService: Invalid tag 'url-template' found at depth 4
+04-22 01:25:37.308   683   912 D BackgroundInstallControlService: Package event received: 0
+04-22 01:25:37.309   683   912 D BackgroundInstallControlService: Package event received: 0
+04-22 01:25:37.309   683   734 I system_server: AssetManager2(0xb400007aa8ceaed8) locale list changing from [] to [en-US]
+04-22 01:25:37.310   683  6693 W AppOpService: Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_SMS, mode = allow, callingUid = 1001, oldMode = allow
+04-22 01:25:37.310   683   739 I system_server: AssetManager2(0xb400007aa8cdfcb8) locale list changing from [] to [en-US]
+04-22 01:25:37.310   683  1755 W AppOpService: Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_SMS, mode = allow, callingUid = 1001, oldMode = allow
+04-22 01:25:37.310  1396  1407 I PermissionControllerServiceImpl: Updating user sensitive for uid 10157
+04-22 01:25:37.310   683  1149 W AppOpService: Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_WAP_PUSH, mode = allow, callingUid = 1001, oldMode = allow
+04-22 01:25:37.311   683   833 I system_server: AssetManager2(0xb400007aa8ce8c78) locale list changing from [] to [en-US]
+04-22 01:25:37.311   683  1149 W AppOpService: Ignored setUidMode call for runtime permission app op: uid = 1001, code = SEND_SMS, mode = allow, callingUid = 1001, oldMode = allow
+04-22 01:25:37.311  1096  1142 I s.nexuslauncher: AssetManager2(0xb400007aa8c212b8) locale list changing from [] to [en-US]
+04-22 01:25:37.311   683   833 V AccessibilityManagerService: onUserStateChangedLocked for userId: 0, forceUpdate: false
+04-22 01:25:37.311   683  1755 W AppOpService: Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
+04-22 01:25:37.311   683   739 I system_server: AssetManager2(0xb400007aa8ce95d8) locale list changing from [] to [en-US]
+04-22 01:25:37.313  1096  1142 W HWUI    : Image decoding logging dropped!
+04-22 01:25:37.313   683   833 W MagnificationConnectionManager: requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+04-22 01:25:37.313   683   683 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:37.313   683   683 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:37.313   683   683 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:37.313   683   683 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:37.313   683   683 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:37.313   683   683 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:37.314   683   683 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:25:37.314  1086  1286 D ImsResolver: maybeAddedImsService, packageName: com.google.android.apps.docs
+04-22 01:25:37.314  1086  1286 V ImsResolver: searchForImsServices: package=com.google.android.apps.docs, users=[UserHandle{0}]
+04-22 01:25:37.315  1086  1286 V ImsResolver: searchForImsServices: package=com.google.android.apps.docs, users=[UserHandle{0}]
+04-22 01:25:37.316  1086  1086 D SatelliteController: packageStateChanged: package:com.google.android.apps.docs DefaultSmsPackageName:com.google.android.apps.messaging
+04-22 01:25:37.316  1086  1086 V SatelliteController: Neither SMS or SatelliteGateway package
+04-22 01:25:37.318  1086  1086 E SmsApplication: com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)
+04-22 01:25:37.319   683  1874 W AppOpService: Ignored setUidMode call for runtime permission app op: uid = 10146, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
+04-22 01:25:37.319   683  1874 W AppOpService: Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_SMS, mode = allow, callingUid = 1001, oldMode = allow
+04-22 01:25:37.320   683  1874 W AppOpService: Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_SMS, mode = allow, callingUid = 1001, oldMode = allow
+04-22 01:25:37.320   683  1149 W AppOpService: Ignored setUidMode call for runtime permission app op: uid = 1001, code = RECEIVE_WAP_PUSH, mode = allow, callingUid = 1001, oldMode = allow
+04-22 01:25:37.320   683  1149 W AppOpService: Ignored setUidMode call for runtime permission app op: uid = 1001, code = SEND_SMS, mode = allow, callingUid = 1001, oldMode = allow
+04-22 01:25:37.320   683  1149 W AppOpService: Ignored setUidMode call for runtime permission app op: uid = 1001, code = READ_CELL_BROADCASTS, mode = allow, callingUid = 1001, oldMode = allow
+04-22 01:25:37.321  1086  1086 D SatelliteAccessController: Current default SMS app:ComponentInfo{com.google.android.apps.messaging/com.google.android.apps.messaging.shared.receiver.SmsDeliverReceiver}
+04-22 01:25:37.321  1086  1086 D SatelliteController: getSelectedSatelliteSubId: subId=-1
+04-22 01:25:37.321  1086  1086 D SatelliteAccessController: supportedMsgApps:com.google.android.apps.messaging
+04-22 01:25:37.329   459   537 I netd    : tetherGetStats() -> {[]} <0.32ms>
+04-22 01:25:37.330  1096  1896 W HWUI    : Failed to choose config with EGL_SWAP_BEHAVIOR_PRESERVED, retrying without...
+04-22 01:25:37.330  1096  1896 W HWUI    : Failed to initialize 101010-2 format, error = EGL_SUCCESS
+04-22 01:25:37.332  1096  1142 W HWUI    : Image decoding logging dropped!
+04-22 01:25:37.332  1096  1142 D AlphabeticIndexCompat: computeSectionName: cs: Drive sectionName: D
+04-22 01:25:37.334  1096  1096 D AllAppsStore: setApps: apps.length=19
+04-22 01:25:37.334  1096  1096 D AllAppsStore: notifyUpdate: notifying listeners
+04-22 01:25:37.334  1096  1096 D ActivityAllAppsContainerView: onAppsUpdated; number of apps: 19
+04-22 01:25:37.334  1096  1096 D ActivityAllAppsContainerView: rebindAdapters: force: false
+04-22 01:25:37.334  1096  1096 D ActivityAllAppsContainerView: rebindAdapters: Not needed.
+04-22 01:25:37.334  1096  1096 D StatsLog: LAUNCHER_ALLAPPS_COUNT
+04-22 01:25:37.334  1096  1096 D AlphabeticalAppsList: Clearing FastScrollerSections.
+04-22 01:25:37.335  1096  1096 D AlphabeticalAppsList: Adding apps with sections. HasPrivateApps: false
+04-22 01:25:37.335  1096  1096 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: C with appInfoTitle: Calendar
+04-22 01:25:37.335  1096  1096 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: D with appInfoTitle: Drive
+04-22 01:25:37.335  1096  1096 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: F with appInfoTitle: Files
+04-22 01:25:37.335  1096  1096 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: G with appInfoTitle: Gmail
+04-22 01:25:37.335  1096  1096 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: M with appInfoTitle: Maps
+04-22 01:25:37.335  1096  1096 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: P with appInfoTitle: Phone
+04-22 01:25:37.335  1096  1096 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: S with appInfoTitle: Safety
+04-22 01:25:37.335  1096  1096 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: T with appInfoTitle: TMoble
+04-22 01:25:37.335  1096  1096 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: Y with appInfoTitle: YouTube
+04-22 01:25:37.335  1096  1096 D AlphabeticalAppsList: Adding FastScrollSection duplicate to scroll to the bottom.
+04-22 01:25:37.336  1096  1096 D AlphabeticalAppsList: Clearing FastScrollerSections.
+04-22 01:25:37.336  1096  1096 D AlphabeticalAppsList: Adding apps with sections. HasPrivateApps: false
+04-22 01:25:37.336  1096  1096 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: C with appInfoTitle: Calendar
+04-22 01:25:37.336  1096  1096 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: D with appInfoTitle: Drive
+04-22 01:25:37.336  1096  1096 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: F with appInfoTitle: Files
+04-22 01:25:37.336  1096  1096 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: G with appInfoTitle: Gmail
+04-22 01:25:37.336  1096  1096 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: M with appInfoTitle: Maps
+04-22 01:25:37.336  1096  1096 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: P with appInfoTitle: Phone
+04-22 01:25:37.336  1096  1096 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: S with appInfoTitle: Safety
+04-22 01:25:37.336  1096  1096 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: T with appInfoTitle: TMoble
+04-22 01:25:37.336  1096  1096 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: Y with appInfoTitle: YouTube
+04-22 01:25:37.336  1096  1096 D AlphabeticalAppsList: Adding FastScrollSection duplicate to scroll to the bottom.
+04-22 01:25:37.341   683  1149 I AppWidgetServiceImpl: getInstalledProvidersForProfiles() 0
+04-22 01:25:37.343   683  1149 W ParceledListSlice: Element #26 is 20848 bytes.
+04-22 01:25:37.343   683  1149 W ParceledListSlice: Element #27 is 20884 bytes.
+04-22 01:25:37.343   683  1149 W ParceledListSlice: Element #28 is 20724 bytes.
+04-22 01:25:37.343   683  1149 W ParceledListSlice: Element #29 is 20812 bytes.
+04-22 01:25:37.343   683  1149 W ParceledListSlice: Element #30 is 20748 bytes.
+04-22 01:25:37.343  1096  1096 D b/387844520: getOutlineOffsetX: measured width = 132, mNormalizedIconSize = 121, last updated width = 132
+04-22 01:25:37.343  1096  1096 D b/387844520: getOutlineOffsetX: measured width = 132, mNormalizedIconSize = 121, last updated width = 132
+04-22 01:25:37.345  1096  1142 W HWUI    : Image decoding logging dropped!
+04-22 01:25:37.346  1096  1142 W HWUI    : Image decoding logging dropped!
+04-22 01:25:37.348  1096  1142 I s.nexuslauncher: AssetManager2(0xb400007aa8c936d8) locale list changing from [] to [en-US]
+04-22 01:25:37.348  1096  1142 W HWUI    : Image decoding logging dropped!
+04-22 01:25:37.348  1096  1142 W HWUI    : Image decoding logging dropped!
+04-22 01:25:37.349  1096  1142 W HWUI    : Image decoding logging dropped!
+04-22 01:25:37.350  1096  1142 W HWUI    : Image decoding logging dropped!
+04-22 01:25:37.352  1096  1142 I s.nexuslauncher: AssetManager2(0xb400007aa8c87838) locale list changing from [] to [en-US]
+04-22 01:25:37.353  1096  1142 W HWUI    : Image decoding logging dropped!
+04-22 01:25:37.355  1096  1142 W HWUI    : Image decoding logging dropped!
+04-22 01:25:37.358  1096  1142 W HWUI    : Image decoding logging dropped!
+04-22 01:25:37.364  1096  1142 D AlphabeticIndexCompat: computeSectionName: cs: Settings sectionName: S
+04-22 01:25:37.364  1096  1142 D AlphabeticIndexCompat: computeSectionName: cs: Photos sectionName: P
+04-22 01:25:37.364  1096  1142 D AlphabeticIndexCompat: computeSectionName: cs: Battery sectionName: B
+04-22 01:25:37.365  1096  1142 D AlphabeticIndexCompat: computeSectionName: cs: Chrome sectionName: C
+04-22 01:25:37.365  1096  1142 D AlphabeticIndexCompat: computeSectionName: cs: Gmail sectionName: G
+04-22 01:25:37.365  1096  1142 D AlphabeticIndexCompat: computeSectionName: cs: Drive sectionName: D
+04-22 01:25:37.365  1096  1142 D AlphabeticIndexCompat: computeSectionName: cs: Clock sectionName: C
+04-22 01:25:37.365  1096  1142 D AlphabeticIndexCompat: computeSectionName: cs: Contacts sectionName: C
+04-22 01:25:37.365  1096  1142 D AlphabeticIndexCompat: computeSectionName: cs: Calendar sectionName: C
+04-22 01:25:37.365  1096  1142 D AlphabeticIndexCompat: computeSectionName: cs: Maps sectionName: M
+04-22 01:25:37.365  1096  1142 D AlphabeticIndexCompat: computeSectionName: cs: YouTube Music sectionName: Y
+04-22 01:25:37.366  1096  1142 D AlphabeticIndexCompat: computeSectionName: cs: YouTube sectionName: Y
+04-22 01:25:37.366  1096  1142 D AlphabeticIndexCompat: computeSectionName: cs: Google sectionName: G
+04-22 01:25:37.366  1096  1142 D AlphabeticIndexCompat: computeSectionName: cs: Digital Wellbeing sectionName: D
+04-22 01:25:37.366  1096  1142 D AlphabeticIndexCompat: computeSectionName: cs: Conversations sectionName: C
+04-22 01:25:37.474   459 21015 I resolv  : res_nsend: used send_dg 117 terrno: 0
+04-22 01:25:37.474   459 21016 I resolv  : res_nsend: used send_dg 60 terrno: 0
+04-22 01:25:37.476  1052 21013 D NetworkMonitor/101: PROBE_DNS www.google.com 499ms OK 69.171.235.22,2001::1
+04-22 01:25:37.476  1052 21014 D NetworkMonitor/101: PROBE_DNS connectivitycheck.gstatic.com 499ms OK 114.250.65.34
+04-22 01:25:37.477   459 21022 I resolv  : GetAddrInfoHandler::run: {101 983141 101 983141 1073 1}
+04-22 01:25:37.477   459 21023 I resolv  : GetAddrInfoHandler::run: {101 983141 101 983141 1073 1}
+04-22 01:25:37.477   459 21024 I resolv  : res_nmkquery: (QUERY, IN, AAAA)
+04-22 01:25:37.477   459 21024 I resolv  : resolv_cache_lookup: FOUND IN CACHE entry=0xb400007cdced0e50
+04-22 01:25:37.477   459 21024 I resolv  : doQuery: rcode=0, ancount=1, return value=60
+04-22 01:25:37.477   459 21025 I resolv  : res_nmkquery: (QUERY, IN, AAAA)
+04-22 01:25:37.477   459 21025 I resolv  : resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d0cedbed0
+04-22 01:25:37.477   459 21025 I resolv  : doQuery: rcode=0, ancount=0, return value=117
+04-22 01:25:37.477   459 21027 I resolv  : res_nmkquery: (QUERY, IN, A)
+04-22 01:25:37.477   459 21027 I resolv  : resolv_cache_lookup: FOUND IN CACHE entry=0xb400007e7cecea90
+04-22 01:25:37.477   459 21027 I resolv  : doQuery: rcode=0, ancount=1, return value=63
+04-22 01:25:37.478   459 21026 I resolv  : res_nmkquery: (QUERY, IN, A)
+04-22 01:25:37.478   459 21026 I resolv  : resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d2ced1320
+04-22 01:25:37.478   459 21026 I resolv  : doQuery: rcode=0, ancount=1, return value=48
+04-22 01:25:37.974  1052 21014 D NetworkMonitor/101: PROBE_HTTP http://connectivitycheck.gstatic.com/generate_204 time=498ms ret=204 request={Connection=[close], User-Agent=[Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.32 Safari/537.36]} headers={null=[HTTP/1.1 204 No Content], Connection=[close], Cross-Origin-Resource-Policy=[cross-origin], Date=[Tue, 21 Apr 2026 17:25:37 GMT], X-Android-Received-Millis=[1776792337974], X-Android-Response-Source=[NETWORK 204], X-Android-Selected-Protocol=[http/1.1], X-Android-Sent-Millis=[1776792337481]}
+04-22 01:25:38.656   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 01:25:38.657   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 01:25:38.657   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 01:25:38.657   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 01:25:38.657   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 01:25:38.658   683   858 D WifiClientModeImpl[9769:wlan0]: updateLinkLayerStatsRssiSpeedFrequencyCapabilities rssi=-50 TxLinkspeed=1 freq=2447 RxLinkSpeed=2
+04-22 01:25:38.658   683   858 D WifiDataStall: tx tput in kbps: 11000
+04-22 01:25:38.658   683   858 D WifiDataStall: rx tput in kbps: 11000
+04-22 01:25:38.658   683   858 V WifiConfigManager: Updating scan detail cache freq=2447 BSSID=00:13:10:85:fe:01 RSSI=-50 for "AndroidWifi"NONE
+04-22 01:25:38.658   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 01:25:38.658   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 01:25:38.658   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 01:25:38.658   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 01:25:38.659   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 01:25:38.659   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 01:25:38.659   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 01:25:38.659   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 01:25:38.659   683   858 D WifiScoreCard: BSSID update SIGNAL_POLL ID: 261501600 SSID: "AndroidWifi", BSSID: 00:13:10:85:fe:01, MAC: 02:15:b4:00:00:00, IP: /10.0.2.17, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: legacy, RSSI: -50, Link speed: 1Mbps, Tx Link speed: 1Mbps, Max Supported Tx Link speed: 11Mbps, Rx Link speed: 2Mbps, Max Supported Rx Link speed: 11Mbps, Frequency: 2447MHz, Net ID: 0, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"AndroidWifi"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+04-22 01:25:38.659   683   858 D WifiScoreCard: txRate: 3 txSpeed: 1
+04-22 01:25:38.659   683   858 D WifiScoreCard: network update SIGNAL_POLL "AndroidWifi" ID: 579418950 RSSI -50 txSpeed -1
+04-22 01:25:38.659   683   858 D WifiClientModeImpl[9769:wlan0]:  ClientModeImpl$L2ConnectedState screen=on 1 0 "AndroidWifi" 00:13:10:85:fe:01 rssi=-50 f=2447 sc=60 link=1 tx=2.3, 0.0, 0.0 rx=2.1 bcn=0 [on:0 tx:0 rx:0 period:3006] from screen [on:0 period:-1324121885] score=60
+04-22 01:25:38.948  1086  1298 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+04-22 01:25:39.232   683  1715 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+04-22 01:25:39.317 20905 20948 W DynamiteModule: Local module descriptor class for com.google.android.gms.providerinstaller.dynamite not found.
+04-22 01:25:39.318  1283  2168 W ProviderHelper: Unknown dynamite feature providerinstaller.dynamite
+04-22 01:25:39.318 20905 20948 W ProviderInstaller: Failed to load providerinstaller module: No acceptable module com.google.android.gms.providerinstaller.dynamite found. Local version is 0 and remote version is 0.
+04-22 01:25:39.321 20905 20948 I droid.apps.docs: AssetManager2(0xb400007aa8c23e78) locale list changing from [] to [en-US]
+04-22 01:25:39.321 20905 20948 D ApplicationLoaders: Returning zygote-cached class loader: /system/framework/org.apache.http.legacy.jar
+04-22 01:25:39.321 20905 20948 D ApplicationLoaders: Returning zygote-cached class loader: /system/framework/com.android.media.remotedisplay.jar
+04-22 01:25:39.321 20905 20948 D ApplicationLoaders: Returning zygote-cached class loader: /system/framework/com.android.location.provider.jar
+04-22 01:25:39.321 20905 20948 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar
+04-22 01:25:39.321 20905 20948 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.sidecar.jar
+04-22 01:25:39.323 20905 20948 D nativeloader: Configuring product-clns-10 for unbundled product apk /product/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk. target_sdk_version=36, uses_libraries=, library_path=/product/priv-app/PrebuiltGmsCore/lib/arm64:/product/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/arm64-v8a:/product/lib64:/system/product/lib64, permitted_path=/data:/mnt/expand:/data/user/0/com.google.android.gms:/product/lib64:/system/product/lib64
+04-22 01:25:39.330 20905 21030 E GoogleApiManager: Failed to get service from broker. 
+04-22 01:25:39.330 20905 21030 E GoogleApiManager: java.lang.SecurityException: Unknown calling package name 'com.google.android.gms'.
+04-22 01:25:39.330 20905 21030 E GoogleApiManager: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3340)
+04-22 01:25:39.330 20905 21030 E GoogleApiManager: 	at android.os.Parcel.createException(Parcel.java:3324)
+04-22 01:25:39.330 20905 21030 E GoogleApiManager: 	at android.os.Parcel.readException(Parcel.java:3307)
+04-22 01:25:39.330 20905 21030 E GoogleApiManager: 	at android.os.Parcel.readException(Parcel.java:3249)
+04-22 01:25:39.330 20905 21030 E GoogleApiManager: 	at aywe.a(:com.google.android.gms@252635035@25.26.35 (260400-783060121):36)
+04-22 01:25:39.330 20905 21030 E GoogleApiManager: 	at ayul.z(:com.google.android.gms@252635035@25.26.35 (260400-783060121):143)
+04-22 01:25:39.330 20905 21030 E GoogleApiManager: 	at aybk.run(:com.google.android.gms@252635035@25.26.35 (260400-783060121):42)
+04-22 01:25:39.330 20905 21030 E GoogleApiManager: 	at android.os.Handler.handleCallback(Handler.java:995)
+04-22 01:25:39.330 20905 21030 E GoogleApiManager: 	at android.os.Handler.dispatchMessage(Handler.java:103)
+04-22 01:25:39.330 20905 21030 E GoogleApiManager: 	at cirp.mw(:com.google.android.gms@252635035@25.26.35 (260400-783060121):1)
+04-22 01:25:39.330 20905 21030 E GoogleApiManager: 	at cirp.dispatchMessage(:com.google.android.gms@252635035@25.26.35 (260400-783060121):5)
+04-22 01:25:39.330 20905 21030 E GoogleApiManager: 	at android.os.Looper.loopOnce(Looper.java:248)
+04-22 01:25:39.330 20905 21030 E GoogleApiManager: 	at android.os.Looper.loop(Looper.java:338)
+04-22 01:25:39.330 20905 21030 E GoogleApiManager: 	at android.os.HandlerThread.run(HandlerThread.java:85)
+04-22 01:25:39.331 20905 21031 I fker    : Unable to retrieve flag snapshot for com.google.android.gms.providerinstaller#com.google.android.apps.docs, using defaults.
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: Failed to register com.google.android.gms.providerinstaller#com.google.android.apps.docs
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: fkfd: 17: 17: API: Phenotype.API is not available on this device. Connection failed with: ConnectionResult{statusCode=DEVELOPER_ERROR, resolution=null, message=null}
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: 	at fkff.a(:com.google.android.gms@252635035@25.26.35 (260400-783060121):13)
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: 	at ggal.d(:com.google.android.gms@252635035@25.26.35 (260400-783060121):3)
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: 	at ggan.run(:com.google.android.gms@252635035@25.26.35 (260400-783060121):130)
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: 	at ggcu.execute(:com.google.android.gms@252635035@25.26.35 (260400-783060121):1)
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: 	at ggav.f(:com.google.android.gms@252635035@25.26.35 (260400-783060121):1)
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: 	at ggav.m(:com.google.android.gms@252635035@25.26.35 (260400-783060121):99)
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: 	at ggav.r(:com.google.android.gms@252635035@25.26.35 (260400-783060121):17)
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: 	at fcoc.hJ(:com.google.android.gms@252635035@25.26.35 (260400-783060121):35)
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: 	at eqsr.run(:com.google.android.gms@252635035@25.26.35 (260400-783060121):12)
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: 	at ggcu.execute(:com.google.android.gms@252635035@25.26.35 (260400-783060121):1)
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: 	at eqss.b(:com.google.android.gms@252635035@25.26.35 (260400-783060121):18)
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: 	at eqth.b(:com.google.android.gms@252635035@25.26.35 (260400-783060121):36)
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: 	at eqtj.d(:com.google.android.gms@252635035@25.26.35 (260400-783060121):25)
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: 	at axyt.c(:com.google.android.gms@252635035@25.26.35 (260400-783060121):9)
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: 	at aybi.q(:com.google.android.gms@252635035@25.26.35 (260400-783060121):48)
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: 	at aybi.d(:com.google.android.gms@252635035@25.26.35 (260400-783060121):10)
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: 	at aybi.g(:com.google.android.gms@252635035@25.26.35 (260400-783060121):185)
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: 	at aybi.onConnectionFailed(:com.google.android.gms@252635035@25.26.35 (260400-783060121):2)
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: 	at aybk.run(:com.google.android.gms@252635035@25.26.35 (260400-783060121):70)
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: 	at android.os.Handler.handleCallback(Handler.java:995)
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: 	at android.os.Handler.dispatchMessage(Handler.java:103)
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: 	at cirp.mw(:com.google.android.gms@252635035@25.26.35 (260400-783060121):1)
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: 	at cirp.dispatchMessage(:com.google.android.gms@252635035@25.26.35 (260400-783060121):5)
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: 	at android.os.Looper.loopOnce(Looper.java:248)
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: 	at android.os.Looper.loop(Looper.java:338)
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: 	at android.os.HandlerThread.run(HandlerThread.java:85)
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: Caused by: axxh: 17: API: Phenotype.API is not available on this device. Connection failed with: ConnectionResult{statusCode=DEVELOPER_ERROR, resolution=null, message=null}
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: 	at aytx.a(:com.google.android.gms@252635035@25.26.35 (260400-783060121):15)
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: 	at axyw.a(:com.google.android.gms@252635035@25.26.35 (260400-783060121):1)
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: 	at axyt.c(:com.google.android.gms@252635035@25.26.35 (260400-783060121):5)
+04-22 01:25:39.331 20905 21029 W FlagRegistrar: 	... 12 more
+04-22 01:25:39.334 20905 20948 D nativeloader: Load /product/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/arm64-v8a/libconscrypt_gmscore_jni.so using class loader ns product-clns-10 (caller=/product/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk): ok
+04-22 01:25:39.334 20905 20948 V NativeCrypto: Registering com/google/android/gms/org/conscrypt/NativeCrypto's 315 native methods...
+04-22 01:25:39.338 20905 20948 I ProviderInstaller: Installed default security provider GmsCore_OpenSSL
+04-22 01:25:39.982   459 21032 I resolv  : GetAddrInfoHandler::run: {101 983141 101 983141 1073 1}
+04-22 01:25:39.982   459 21033 I resolv  : res_nmkquery: (QUERY, IN, AAAA)
+04-22 01:25:39.982   459 21033 I resolv  : resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d0ced8690
+04-22 01:25:39.982   459 21033 I resolv  : doQuery: rcode=0, ancount=4, return value=149
+04-22 01:25:39.983   459 21034 I resolv  : res_nmkquery: (QUERY, IN, A)
+04-22 01:25:39.983   459 21034 I resolv  : resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d0cedaf10
+04-22 01:25:39.983   459 21034 I resolv  : doQuery: rcode=0, ancount=4, return value=101
+04-22 01:25:40.479  1052 21012 D NetworkMonitor/101: PROBE_FALLBACK http://play.googleapis.com/generate_204 time=499ms ret=204 request={Connection=[close], User-Agent=[Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.32 Safari/537.36]} headers={null=[HTTP/1.1 204 No Content], Connection=[close], Cross-Origin-Resource-Policy=[cross-origin], Date=[Tue, 21 Apr 2026 17:25:40 GMT], X-Android-Received-Millis=[1776792340478], X-Android-Response-Source=[NETWORK 204], X-Android-Selected-Protocol=[http/1.1], X-Android-Sent-Millis=[1776792339990]}
+04-22 01:25:41.219   683   864 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+04-22 01:25:41.219   683   864 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+04-22 01:25:41.219   683   864 D InetDiagMessage: Destroyed live tcp sockets for uids={10153} in 0ms
+04-22 01:25:41.219   683   864 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+04-22 01:25:41.220   683   864 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+04-22 01:25:41.220   683   864 D InetDiagMessage: Destroyed live tcp sockets for uids={20153} in 1ms
+04-22 01:25:41.592 20922 21035 D ProfileInstaller: Installing profile for com.impos2.mixcretailassemblyrn84
+04-22 01:25:41.660   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 01:25:41.661   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 01:25:41.661   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 01:25:41.661   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 01:25:41.661   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 01:25:41.663   683   858 D WifiClientModeImpl[9769:wlan0]: updateLinkLayerStatsRssiSpeedFrequencyCapabilities rssi=-50 TxLinkspeed=1 freq=2447 RxLinkSpeed=2
+04-22 01:25:41.663   683   858 D WifiDataStall: tx tput in kbps: 11000
+04-22 01:25:41.663   683   858 D WifiDataStall: rx tput in kbps: 11000
+04-22 01:25:41.663   683   858 V WifiConfigManager: Updating scan detail cache freq=2447 BSSID=00:13:10:85:fe:01 RSSI=-50 for "AndroidWifi"NONE
+04-22 01:25:41.663   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 01:25:41.663   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 01:25:41.663   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 01:25:41.663   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 01:25:41.664   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 01:25:41.664   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 01:25:41.664   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 01:25:41.664   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 01:25:41.665   683   858 D WifiScoreCard: BSSID update SIGNAL_POLL ID: 261501600 SSID: "AndroidWifi", BSSID: 00:13:10:85:fe:01, MAC: 02:15:b4:00:00:00, IP: /10.0.2.17, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: legacy, RSSI: -50, Link speed: 1Mbps, Tx Link speed: 1Mbps, Max Supported Tx Link speed: 11Mbps, Rx Link speed: 2Mbps, Max Supported Rx Link speed: 11Mbps, Frequency: 2447MHz, Net ID: 0, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"AndroidWifi"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+04-22 01:25:41.665   683   858 D WifiScoreCard: txRate: 2 txSpeed: 1
+04-22 01:25:41.665   683   858 D WifiScoreCard: network update SIGNAL_POLL "AndroidWifi" ID: 579418950 RSSI -50 txSpeed -1
+04-22 01:25:41.665   683   858 D WifiClientModeImpl[9769:wlan0]:  ClientModeImpl$L2ConnectedState screen=on 1 0 "AndroidWifi" 00:13:10:85:fe:01 rssi=-50 f=2447 sc=60 link=1 tx=1.9, 0.0, 0.0 rx=1.8 bcn=0 [on:0 tx:0 rx:0 period:3006] from screen [on:0 period:-1324118879] score=60
+04-22 01:25:42.927   459   537 I netd    : tetherGetStats() -> {[]} <1.56ms>
+04-22 01:25:43.382   938   938 D wpa_supplicant: nl80211: Drv Event 64 (NL80211_CMD_NOTIFY_CQM) received for wlan0
+04-22 01:25:43.382   938   938 D wpa_supplicant: nl80211: Beacon loss event
+04-22 01:25:43.382   938   938 D wpa_supplicant: wlan0: Event BEACON_LOSS (53) received
+04-22 01:25:43.382   938   938 I wpa_supplicant: wlan0: CTRL-EVENT-BEACON-LOSS 
+04-22 01:25:44.530   235   235 I logd    : logdr: UID=2000 GID=2000 PID=21036 n tail=0 logMask=99 pid=0 start=0ns deadline=0ns

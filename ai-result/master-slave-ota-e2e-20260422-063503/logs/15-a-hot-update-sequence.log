@@ -1,0 +1,3 @@
+50:04-22 07:00:24.365 I/bluetooth(  790): packages/modules/Bluetooth/system/gd/hci/le_address_manager.cc:257 ack_pause: Client already in paused state
+127:04-22 07:01:08.304 D/WifiNl80211Manager(  519): Scan result ready event
+128:04-22 07:01:08.304 D/WifiNative(  519): Scan result ready event

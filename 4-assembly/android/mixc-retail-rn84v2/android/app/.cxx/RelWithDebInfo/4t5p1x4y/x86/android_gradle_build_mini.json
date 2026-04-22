@@ -1,0 +1,61 @@
+{
+  "buildFiles": [
+    "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/build/generated/source/codegen/jni/CMakeLists.txt",
+    "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/node_modules/react-native-bootsplash/android/build/generated/source/codegen/jni/CMakeLists.txt",
+    "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/node_modules/react-native-nitro-modules/android/build/generated/source/codegen/jni/CMakeLists.txt",
+    "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/node_modules/react-native-svg/android/src/main/jni/CMakeLists.txt",
+    "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/node_modules/react-native/ReactAndroid/cmake-utils/default-app-setup/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/dexter/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/.cxx/RelWithDebInfo/4t5p1x4y/x86",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/dexter/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/.cxx/RelWithDebInfo/4t5p1x4y/x86",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "appmodules::@6890427a1f51a3e7e1df": {
+      "artifactName": "appmodules",
+      "abi": "x86",
+      "output": "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/build/intermediates/cxx/RelWithDebInfo/4t5p1x4y/obj/x86/libappmodules.so",
+      "runtimeFiles": [
+        "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/build/intermediates/cxx/RelWithDebInfo/4t5p1x4y/obj/x86/libreact_codegen_rnsvg.so",
+        "/Users/dexter/.gradle/caches/9.0.0/transforms/6cb94eb4240b26bae55579cb79d8f81a/transformed/fbjni-0.7.0/prefab/modules/fbjni/libs/android.x86/libfbjni.so",
+        "/Users/dexter/.gradle/caches/9.0.0/transforms/4524a298039f3f6c65513efd568c050a/transformed/react-android-0.84.1-release/prefab/modules/jsi/libs/android.x86/libjsi.so",
+        "/Users/dexter/.gradle/caches/9.0.0/transforms/4524a298039f3f6c65513efd568c050a/transformed/react-android-0.84.1-release/prefab/modules/reactnative/libs/android.x86/libreactnative.so"
+      ]
+    },
+    "react_codegen_MixcRetailRN84v2Spec::@d7e081e776fcf37281b1": {
+      "artifactName": "react_codegen_MixcRetailRN84v2Spec",
+      "abi": "x86",
+      "runtimeFiles": []
+    },
+    "react_codegen_NitroModulesSpec::@472a82f9c57d3d3b8644": {
+      "artifactName": "react_codegen_NitroModulesSpec",
+      "abi": "x86",
+      "runtimeFiles": []
+    },
+    "react_codegen_rnsvg::@4f40eb209d0c0b4a3b65": {
+      "artifactName": "react_codegen_rnsvg",
+      "abi": "x86",
+      "output": "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/build/intermediates/cxx/RelWithDebInfo/4t5p1x4y/obj/x86/libreact_codegen_rnsvg.so",
+      "runtimeFiles": [
+        "/Users/dexter/.gradle/caches/9.0.0/transforms/4524a298039f3f6c65513efd568c050a/transformed/react-android-0.84.1-release/prefab/modules/reactnative/libs/android.x86/libreactnative.so",
+        "/Users/dexter/.gradle/caches/9.0.0/transforms/4524a298039f3f6c65513efd568c050a/transformed/react-android-0.84.1-release/prefab/modules/jsi/libs/android.x86/libjsi.so",
+        "/Users/dexter/.gradle/caches/9.0.0/transforms/6cb94eb4240b26bae55579cb79d8f81a/transformed/fbjni-0.7.0/prefab/modules/fbjni/libs/android.x86/libfbjni.so"
+      ]
+    },
+    "react_codegen_RNBootSplashSpec::@05d5bd8b08339ce1ebaa": {
+      "artifactName": "react_codegen_RNBootSplashSpec",
+      "abi": "x86",
+      "runtimeFiles": []
+    }
+  }
+}

@@ -1,0 +1,402 @@
+--------- beginning of main
+04-21 10:01:42.818   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:01:45.828   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:01:48.840   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:01:51.851   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:01:54.862   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:01:57.873   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+--------- beginning of system
+04-21 10:02:00.000   888   972 D AlarmManager: setImplLocked() callingPackage=android
+04-21 10:02:00.882   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:02:02.013   344   374 E android.hardware.graphics.composer3-service.rockchip: wait,line=113 wait callback timeout
+04-21 10:02:03.894   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:02:06.905   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:02:08.487   888  8342 D AlarmManager: setImplLocked() callingPackage=sunmi.remotemanager
+04-21 10:02:09.916   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:02:12.927   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:02:15.938   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:02:18.949   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:02:21.894   670  3934 D WifiHAL : Setting APF program, halHandle = 0xb400006f4f6eedc0
+04-21 10:02:21.894   670  3934 I WifiHAL : createRequest: APF set program request
+04-21 10:02:21.896   670  3934 I WifiHAL : Done!
+04-21 10:02:21.958   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:02:22.013   344   374 E android.hardware.graphics.composer3-service.rockchip: wait,line=113 wait callback timeout
+04-21 10:02:24.971   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:02:27.982   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:02:30.995   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:02:34.007   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:02:37.018   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:02:40.029   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:02:42.013   344   374 E android.hardware.graphics.composer3-service.rockchip: wait,line=113 wait callback timeout
+04-21 10:02:42.348  2731  2731 E SdkStatusContentProvider: SdkSettingPreferences onSharedPreferenceChanged key = isp
+04-21 10:02:42.349  2731  2731 E SdkStatusContentProvider: SdkSettingPreferences onSharedPreferenceChanged key = isp
+04-21 10:02:42.350  2731  2877 E ActivityThread: Failed to find provider info for com.alipay.iot.settings.SettingsProvider
+04-21 10:02:42.351  2731  2877 E ActivityThread: Failed to find provider info for com.alipay.iot.settings.SettingsProvider
+04-21 10:02:42.352   888 10785 I UsbExtImpl: default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use PC Camera
+04-21 10:02:42.353   888 10785 V UsbExtImpl: smconf processName:com.alipay.iot.service
+04-21 10:02:42.353   888 10785 I UsbExtImpl: smconf disallow  uid:10099pid:2731  processName=com.alipay.iot.service to use GD32-USB_Printer
+04-21 10:02:42.353   888 10785 I UsbExtImpl: default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use NS021 USB HID Keyboard
+04-21 10:02:42.355   888 10785 I UsbExtImpl: default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use PC Camera
+04-21 10:02:42.355   888 10785 V UsbExtImpl: smconf processName:com.alipay.iot.service
+04-21 10:02:42.355   888 10785 I UsbExtImpl: smconf disallow  uid:10099pid:2731  processName=com.alipay.iot.service to use GD32-USB_Printer
+04-21 10:02:42.355   888 10785 I UsbExtImpl: default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use NS021 USB HID Keyboard
+04-21 10:02:42.356   888 10785 I UsbExtImpl: default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use PC Camera
+04-21 10:02:42.357   888 10785 V UsbExtImpl: smconf processName:com.alipay.iot.service
+04-21 10:02:42.357   888 10785 I UsbExtImpl: smconf disallow  uid:10099pid:2731  processName=com.alipay.iot.service to use GD32-USB_Printer
+04-21 10:02:42.358   888 10785 I UsbExtImpl: default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use NS021 USB HID Keyboard
+04-21 10:02:42.359   888 10785 I UsbExtImpl: default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use PC Camera
+04-21 10:02:42.360   888 10785 V UsbExtImpl: smconf processName:com.alipay.iot.service
+04-21 10:02:42.360   888 10785 I UsbExtImpl: smconf disallow  uid:10099pid:2731  processName=com.alipay.iot.service to use GD32-USB_Printer
+04-21 10:02:42.360   888 10785 I UsbExtImpl: default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use NS021 USB HID Keyboard
+04-21 10:02:42.361   888 10785 I UsbExtImpl: default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use PC Camera
+04-21 10:02:42.361   888 10785 V UsbExtImpl: smconf processName:com.alipay.iot.service
+04-21 10:02:42.361   888 10785 I UsbExtImpl: smconf disallow  uid:10099pid:2731  processName=com.alipay.iot.service to use GD32-USB_Printer
+04-21 10:02:42.361   888 10785 I UsbExtImpl: default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use NS021 USB HID Keyboard
+04-21 10:02:43.041   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:02:46.051   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:02:49.062   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:02:52.074   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:02:55.087   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:02:58.099   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:03:00.000   888   972 D AlarmManager: setImplLocked() callingPackage=android
+04-21 10:03:01.111   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:03:02.014   344   374 E android.hardware.graphics.composer3-service.rockchip: wait,line=113 wait callback timeout
+04-21 10:03:04.122   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:03:07.133   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:03:08.554   888 10785 D AlarmManager: setImplLocked() callingPackage=sunmi.remotemanager
+04-21 10:03:10.144   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:03:13.156   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:03:13.781  1235  1244 I rkstack.process: Background concurrent mark compact GC freed 41631(3260KB) AllocSpace objects, 0(0B) LOS objects, 49% free, 3365KB/6730KB, paused 412us,5.057ms total 42.128ms
+04-21 10:03:16.169   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:03:19.182   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:03:22.014   344   374 E android.hardware.graphics.composer3-service.rockchip: wait,line=113 wait callback timeout
+04-21 10:03:22.193   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:03:25.205   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:03:25.872   888 10785 W APP_LOCK: ===isSecureForCommon  defaultLauncher:null===
+04-21 10:03:25.872   888 10785 W APP_LOCK: ===isSecureForCommon  callingPackage:com.android.shell===
+04-21 10:03:25.872   888 10785 W APP_LOCK: ===isSecureForCommon  === defaultLauncher:com.android.launcher3===
+04-21 10:03:25.873   888 10785 W APP_LOCK: ===isSecureForCommon  isDefaultApp:false=== packageName : com.impos2.mixcretailassemblyrn84
+04-21 10:03:25.873   888 10785 I Camera  : callprocess:com.impos2.mixcretailassemblyrn84
+04-21 10:03:25.874   888 10785 W ActivityTaskManager: callingPackage for (uid=2000, pid=28813) has no WPC
+04-21 10:03:25.878   888 10785 E ActivityTaskManager: startResult ================ 0
+04-21 10:03:25.881   888 10785 I Camera  : callprocess:com.impos2.mixcretailassemblyrn84
+04-21 10:03:25.881 28566 28566 W unknown:BridgelessReact: ReactHost{0}.onHostPause(activity)
+04-21 10:03:25.882 28566 28566 W unknown:BridgelessReact: ReactHost{0}.ReactContext.onHostPause()
+04-21 10:03:25.882   888 10785 I Camera  : callprocess:com.impos2.mixcretailassemblyrn84
+04-21 10:03:25.883   888 10785 I Camera  : callprocess:com.impos2.mixcretailassemblyrn84
+04-21 10:03:25.885   888  8106 V AtmsExtImpl_KioskMode: Kiosk Mode isKioskApp: false
+04-21 10:03:25.885  1104  6761 D KeyguardService: setOccluded(false)
+04-21 10:03:25.885  1104  6761 D KeyguardViewMediator: setOccluded(false)
+04-21 10:03:25.885 28566 28566 W unknown:BridgelessReact: ReactHost{0}.onHostResume(activity)
+04-21 10:03:25.885 28566 28566 W unknown:BridgelessReact: ReactHost{0}.ReactContext.onHostResume()
+04-21 10:03:25.886  1104  1104 D KeyguardViewMediator: handleSetOccluded(false)
+04-21 10:03:25.886  1104  1104 D KeyguardViewMediator: KeyguardViewMediator queue processing message: SET_OCCLUDED
+04-21 10:03:25.886   888 10785 I ActivityTaskManager: START u0 {flg=0x10000000 cmp=com.impos2.mixcretailassemblyrn84/.MainActivity} with LAUNCH_SINGLE_TASK from uid 2000 (BAL_ALLOW_PERMISSION) result code=3
+04-21 10:03:25.887  1104  1128 D WindowManagerShell: onActivityRestartAttempt: ComponentInfo{com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity}
+04-21 10:03:25.911 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:25.925 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:25.930   888 10785 V WindowManager: getPackagePerformanceMode -- ComponentInfo{com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.SecondaryActivity} -- com.impos2.mixcretailassemblyrn84 -- mode=0
+04-21 10:03:25.936 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:26.125 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:26.134 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:26.169 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:26.177 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:26.281 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:26.289 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:26.298 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:26.382 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:26.391 28566 28638 D TrafficStats: tagSocket(110) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:26.399 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:26.486 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:26.492 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:26.499 28566 28638 D TrafficStats: tagSocket(114) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:26.588 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:26.595 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:26.603 28566 28638 D TrafficStats: tagSocket(105) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:26.683 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:26.690 28566 28638 D TrafficStats: tagSocket(124) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:26.698 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:26.782 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:26.790 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:26.807 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:26.882 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:26.890 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:26.898 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:26.986 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:26.994 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:27.003 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:27.095 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:27.104 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:27.111 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:27.198 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:27.207 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:27.216 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:27.304 28566 28638 D TrafficStats: tagSocket(102) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:27.313 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:27.321 28566 28638 D TrafficStats: tagSocket(107) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:27.406 28566 28638 D TrafficStats: tagSocket(102) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:27.415 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:27.421 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:27.506 28566 28638 D TrafficStats: tagSocket(102) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:27.514 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:27.522 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:27.604 28566 28638 D TrafficStats: tagSocket(102) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:27.614 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:27.620 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:27.706 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:27.716 28566 28638 D TrafficStats: tagSocket(106) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:27.723 28566 28638 D TrafficStats: tagSocket(102) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:27.813 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:27.821 28566 28638 D TrafficStats: tagSocket(107) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:27.827 28566 28638 D TrafficStats: tagSocket(102) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:27.916 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:27.923 28566 28638 D TrafficStats: tagSocket(110) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:27.930 28566 28638 D TrafficStats: tagSocket(107) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:28.015 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:28.024 28566 28638 D TrafficStats: tagSocket(111) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:28.039 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:28.120 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:28.131 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:28.139 28566 28638 D TrafficStats: tagSocket(110) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:28.214   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:03:28.229 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:28.238 28566 28638 D TrafficStats: tagSocket(106) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:28.248 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:28.337 28566 28638 D TrafficStats: tagSocket(105) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:28.348 28566 28638 D TrafficStats: tagSocket(102) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:28.356 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:28.440 28566 28638 D TrafficStats: tagSocket(114) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:28.448 28566 28638 D TrafficStats: tagSocket(107) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:28.454 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:28.538 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:28.549 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:28.557 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:28.638 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:28.646 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:28.652 28566 28638 D TrafficStats: tagSocket(110) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:28.969 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:28.985 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:29.002 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:29.227 28566 28638 D TrafficStats: tagSocket(102) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:29.236 28566 28638 D TrafficStats: tagSocket(102) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:29.272 28566 28638 D TrafficStats: tagSocket(102) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:29.282 28566 28638 D TrafficStats: tagSocket(102) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:29.370 28566 28638 D TrafficStats: tagSocket(102) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:29.386 28566 28638 D TrafficStats: tagSocket(102) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:29.398 28566 28638 D TrafficStats: tagSocket(102) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:29.491 28566 28638 D TrafficStats: tagSocket(102) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:29.505 28566 28638 D TrafficStats: tagSocket(102) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:29.512 28566 28638 D TrafficStats: tagSocket(102) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:29.606 28566 28638 D TrafficStats: tagSocket(102) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:29.621 28566 28638 D TrafficStats: tagSocket(102) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:29.635 28566 28638 D TrafficStats: tagSocket(102) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:29.722 28566 28638 D TrafficStats: tagSocket(102) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:29.734 28566 28638 D TrafficStats: tagSocket(102) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:29.743 28566 28638 D TrafficStats: tagSocket(102) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:29.837 28566 28638 D TrafficStats: tagSocket(131) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:29.849 28566 28638 D TrafficStats: tagSocket(102) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:29.857 28566 28638 D TrafficStats: tagSocket(102) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:29.962 28566 28638 D TrafficStats: tagSocket(102) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:29.974 28566 28638 D TrafficStats: tagSocket(143) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:29.981 28566 28638 D TrafficStats: tagSocket(102) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:30.075 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:30.089 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:30.101 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:30.206 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:30.217 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:30.224 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:30.327 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:30.339 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:30.347 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:30.441 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:30.453 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:30.460 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:30.562 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:30.574 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:30.591 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:30.708 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:30.719 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:30.726 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:31.091 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:31.111 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:31.144 28642 28677 I ReactNativeJS: '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.tcp-control-runtime-v2.identity"],"appliedSliceNames":["kernel.base.tcp-control-runtime-v2.identity"],"skippedSliceReasons":[]}'
+04-21 10:03:31.167 28642 28678 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"2N4QS8GYRS","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 10:03:31.170 28642 28678 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"2N4QS8GYRS","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 10:03:31.200 28566 28602 I assembly.assembly.android.mixc-retail-rn84.transport.http.HttpRuntime: [transport.http] HTTP request started: kernel.base.tcp-control-runtime-v2.activate-terminal {"endpointName":"kernel.base.tcp-control-runtime-v2.activate-terminal","serverName":"mock-terminal-platform","addressName":"lan","method":"POST","roundIndex":0,"attemptIndex":1}
+04-21 10:03:31.205 28566 28602 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"2N4QS8GYRS","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 10:03:31.208 28566 28818 D TrafficStats: tagSocket(102) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:31.209 28566 28602 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 151, crc 3911775556, actualSize 14488
+04-21 10:03:31.209 28566 28602 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-21 10:03:31.218 28566 28602 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"2N4QS8GYRS","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 10:03:31.218 28566 28602 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"2N4QS8GYRS","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 10:03:31.219 28566 28602 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"2N4QS8GYRS","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 10:03:31.221   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:03:31.226 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:31.315 28566 28602 I assembly.assembly.android.mixc-retail-rn84.transport.http.HttpRuntime: [transport.http] HTTP request completed: kernel.base.tcp-control-runtime-v2.activate-terminal {"endpointName":"kernel.base.tcp-control-runtime-v2.activate-terminal","serverName":"mock-terminal-platform","addressName":"lan","status":400}
+04-21 10:03:31.327 28642 28677 I ReactNativeJS: '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.tcp-control-runtime-v2.identity"],"appliedSliceNames":["kernel.base.tcp-control-runtime-v2.identity"],"skippedSliceReasons":[]}'
+04-21 10:03:31.349 28642 28678 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"2N4QS8GYRS","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 10:03:31.351 28642 28678 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"2N4QS8GYRS","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 10:03:31.382 28566 28602 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"2N4QS8GYRS","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 10:03:31.387 28566 28602 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 152, crc 3516551054, actualSize 14483
+04-21 10:03:31.387 28566 28602 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-21 10:03:31.393 28566 28602 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"2N4QS8GYRS","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 10:03:31.707 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:33.224   888   888 D AlarmManager: setImplLocked() callingPackage=android
+04-21 10:03:33.263   888   918 W libprocessgroup: SetCgroup::ExecuteForProcess: failed to open /dev/stune/background/cgroup.procs: No such file or directory
+04-21 10:03:33.266   888   888 V BackupManagerService: [UserID:0] Scheduling immediate backup pass
+04-21 10:03:33.267   888   888 W BackupManagerService: [UserID:0] Backup pass but enabled=false setupComplete=true
+04-21 10:03:33.269   888   888 D AlarmManager: setImplLocked() callingPackage=android
+04-21 10:03:33.280   888  8106 I ActivityManager: Background started FGS: Allowed [callingPackage: woyou.market; callingUid: 10079; uidState: TRNB; uidBFSL: n/a; intent: Intent { cmp=woyou.market/com.sunmi.appstore.core.StoreService (has extras) }; code:SYSTEM_ALERT_WINDOW_PERMISSION; tempAllowListReason:<,reasonCode:SYSTEM_ALLOW_LISTED,duration:9223372036854775807,callingUid:-1>; targetSdkVersion:33; callerTargetSdkVersion:33; startForegroundCount:0; bindFromPackage:null: isBindService:false]
+04-21 10:03:33.284   888  8106 W ProcessStats: Tracking association SourceState{9a3b9a1 woyou.market/10079 Fgs #185240} whose proc state 3 is better than process ProcessState{2fa0cd1 com.sunmi.tmservice/10092 pkg=com.sunmi.tmservice} proc state 5 (7 skipped)
+04-21 10:03:33.298   888  8106 W JobScheduler: Job didn't exist in JobStore: a1683f7 #u0a79/1556 woyou.market/com.sunmi.appstore.core.TimeJobService
+04-21 10:03:33.305   888  8106 W ActivityManager: Foreground service started from background can not have location/camera/microphone access: service woyou.market/com.sunmi.appstore.core.StoreService
+04-21 10:03:33.306   888  8106 W ForegroundServiceTypeLoggerModule: Foreground service start for UID: 10079 does not have any types
+04-21 10:03:33.311   888 10785 W ActivityManager: Unable to start service Intent { act=com.sunmi.baseservice pkg=woyou.market } U=0: not found
+04-21 10:03:33.315   888 10785 D PkmsExtImpl: updateApplicationInfoForRemovable packageName :com.alipay.zoloz.smile
+04-21 10:03:33.316   888 10785 D PkmsExtImpl: updateApplicationInfoForRemovable packageName :com.alipay.iot.service
+04-21 10:03:33.337   888 10785 D PkmsExtImpl: updateApplicationInfoForRemovable packageName :com.alipay.zoloz.smile
+04-21 10:03:33.338   888 10785 D PkmsExtImpl: updateApplicationInfoForRemovable packageName :com.alipay.iot.service
+04-21 10:03:33.359  2353  2353 D ModuleInitHelper: re-init > standard > sInitCache = {STANDARD=true, OS_PLAT=true}
+04-21 10:03:33.371   888  8342 W ActivityManager: Foreground service started from background can not have location/camera/microphone access: service woyou.market/com.sunmi.appstore.core.StoreService
+04-21 10:03:33.378   888  8342 D PkmsExtImpl: updateApplicationInfoForRemovable packageName :com.alipay.zoloz.smile
+04-21 10:03:33.379   888  8342 D PkmsExtImpl: updateApplicationInfoForRemovable packageName :com.alipay.iot.service
+04-21 10:03:33.400  2124 16460 D TMS_CertificateManagerBinder: onTransact: code=2, newCode=2
+04-21 10:03:33.433   888  8342 W ActivityManager: Foreground service started from background can not have location/camera/microphone access: service woyou.market/com.sunmi.appstore.core.StoreService
+04-21 10:03:33.439  2124 16460 D TMS_CertificateManagerBinder: onTransact: code=2, newCode=2
+04-21 10:03:33.441  7016  7024 I woyou.market: Background concurrent mark compact GC freed 32772(3057KB) AllocSpace objects, 30(1196KB) LOS objects, 49% free, 4164KB/8328KB, paused 968us,6.069ms total 59.199ms
+04-21 10:03:33.441  7016  7024 W woyou.market: Reducing the number of considered missed Gc histogram windows from 3165 to 100
+04-21 10:03:33.476  7016  9314 D TrafficStats: tagSocket(92) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:33.480  7016  7042 D TrafficStats: tagSocket(93) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:33.802   888  5540 W ForegroundServiceTypeLoggerModule: FGS stop call for: 10079 has no types!
+04-21 10:03:33.805   888   918 W libprocessgroup: SetCgroup::ExecuteForProcess: failed to open /dev/stune/background/cgroup.procs: No such file or directory
+04-21 10:03:33.807   888   918 W libprocessgroup: SetCgroup::ExecuteForProcess: failed to open /dev/stune/background/cgroup.procs: No such file or directory
+04-21 10:03:34.226   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:03:34.361  2353  8003 I BaseService: [ (SourceFile:36)#OnTransact ] onTransact: callingName = woyou.market
+04-21 10:03:34.364  2353  8003 I BaseService: [ (SourceFile:36)#OnTransact ] onTransact: callingName = woyou.market
+04-21 10:03:34.365  2353  8003 I common_ability CommonAbility >>> : [ (SourceFile:7)#GetChannelApp ] getChannelApp
+04-21 10:03:34.392   888 11608 I ActivityManager: Background started FGS: Allowed [callingPackage: com.sunmi.baseservice; callingUid: 10081; uidState: SVC ; uidBFSL: n/a; intent: Intent { flg=0x10000000 cmp=com.sunmi.baseservice/.base_utils.alive.AliveService }; code:BACKGROUND_ACTIVITY_PERMISSION; tempAllowListReason:<,reasonCode:SYSTEM_ALLOW_LISTED,duration:9223372036854775807,callingUid:-1>; targetSdkVersion:33; callerTargetSdkVersion:33; startForegroundCount:0; bindFromPackage:null: isBindService:false]
+04-21 10:03:34.393   888 11608 W ForegroundServiceTypeLoggerModule: Foreground service start for UID: 10081 does not have any types
+04-21 10:03:34.399  2353  3761 D TrafficStats: tagSocket(93) with statsTag=0xffffffff, statsUid=-1
+04-21 10:03:34.669  2353  2353 I common_ability CommonAbility >>> : [ (SourceFile:22)#OnSuccess ] getChannelApp------{"code":1,"msg":"no channel msn","data":[]}
+04-21 10:03:34.676  2353  2353 I BaseService: [ (SourceFile:36)#OnTransact ] onTransact: callingName = woyou.market
+04-21 10:03:34.698  2353  2353 I LauncherUtils: [ (SourceFile:45)#SetSetDefaultStartApp ] 设置默启App:SunMi
+04-21 10:03:34.699  2353  2353 D SunmiCustomerManager: clearAutoStartApp:
+04-21 10:03:34.699   888 11608 D SunmiCustomerManagerService: onTransact
+04-21 10:03:34.700   888 11608 D SunmiCustomerManager.Utils: checkAccessPermission(), com.sunmi.baseservice is not in platform signatures white list
+04-21 10:03:34.700   888 11608 D SunmiCustomerManager.Utils: checkAccessPermission(), com.sunmi.baseservice is not in part privapp white list
+04-21 10:03:34.700   888 11608 D SunmiCustomerManager.Utils: checkAccessPermission(), com.sunmi.baseservice is SunmiSignatures, and in white list
+04-21 10:03:34.700   888 11608 D SunmiCustomerManager.Utils: checkAccessPermission() hasPermission=true
+04-21 10:03:34.704   888 11608 W ForegroundServiceTypeLoggerModule: FGS stop call for: 10081 has no types!
+04-21 10:03:34.708   888   918 W libprocessgroup: SetCgroup::ExecuteForProcess: failed to open /dev/stune/background/cgroup.procs: No such file or directory
+04-21 10:03:37.235   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:03:40.247   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:03:42.015   344   374 E android.hardware.graphics.composer3-service.rockchip: wait,line=113 wait callback timeout
+04-21 10:03:42.373  2731  2731 E SdkStatusContentProvider: SdkSettingPreferences onSharedPreferenceChanged key = isp
+04-21 10:03:42.373  2731  2731 E SdkStatusContentProvider: SdkSettingPreferences onSharedPreferenceChanged key = isp
+04-21 10:03:42.374  2731  2877 E ActivityThread: Failed to find provider info for com.alipay.iot.settings.SettingsProvider
+04-21 10:03:42.375  2731  2877 E ActivityThread: Failed to find provider info for com.alipay.iot.settings.SettingsProvider
+04-21 10:03:42.377   888 11608 I UsbExtImpl: default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use PC Camera
+04-21 10:03:42.377   888 11608 V UsbExtImpl: smconf processName:com.alipay.iot.service
+04-21 10:03:42.377   888 11608 I UsbExtImpl: smconf disallow  uid:10099pid:2731  processName=com.alipay.iot.service to use GD32-USB_Printer
+04-21 10:03:42.377   888 11608 I UsbExtImpl: default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use NS021 USB HID Keyboard
+04-21 10:03:42.379   888 11608 I UsbExtImpl: default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use PC Camera
+04-21 10:03:42.379   888 11608 V UsbExtImpl: smconf processName:com.alipay.iot.service
+04-21 10:03:42.379   888 11608 I UsbExtImpl: smconf disallow  uid:10099pid:2731  processName=com.alipay.iot.service to use GD32-USB_Printer
+04-21 10:03:42.380   888 11608 I UsbExtImpl: default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use NS021 USB HID Keyboard
+04-21 10:03:42.381   888 11608 I UsbExtImpl: default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use PC Camera
+04-21 10:03:42.381   888 11608 V UsbExtImpl: smconf processName:com.alipay.iot.service
+04-21 10:03:42.382   888 11608 I UsbExtImpl: smconf disallow  uid:10099pid:2731  processName=com.alipay.iot.service to use GD32-USB_Printer
+04-21 10:03:42.382   888 11608 I UsbExtImpl: default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use NS021 USB HID Keyboard
+04-21 10:03:42.383   888 11608 I UsbExtImpl: default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use PC Camera
+04-21 10:03:42.383   888 11608 V UsbExtImpl: smconf processName:com.alipay.iot.service
+04-21 10:03:42.383   888 11608 I UsbExtImpl: smconf disallow  uid:10099pid:2731  processName=com.alipay.iot.service to use GD32-USB_Printer
+04-21 10:03:42.384   888 11608 I UsbExtImpl: default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use NS021 USB HID Keyboard
+04-21 10:03:42.385   888 11608 I UsbExtImpl: default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use PC Camera
+04-21 10:03:42.385   888 11608 V UsbExtImpl: smconf processName:com.alipay.iot.service
+04-21 10:03:42.385   888 11608 I UsbExtImpl: smconf disallow  uid:10099pid:2731  processName=com.alipay.iot.service to use GD32-USB_Printer
+04-21 10:03:42.386   888 11608 I UsbExtImpl: default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use NS021 USB HID Keyboard
+04-21 10:03:43.258   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:03:46.270   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:03:49.281   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:03:52.293   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:03:55.305   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:03:58.316   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:04:00.000   888   972 D AlarmManager: setImplLocked() callingPackage=android
+04-21 10:04:01.327   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:04:02.015   344   374 E android.hardware.graphics.composer3-service.rockchip: wait,line=113 wait callback timeout
+04-21 10:04:04.339   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:04:07.350   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:04:08.616   888  4056 D AlarmManager: setImplLocked() callingPackage=sunmi.remotemanager
+04-21 10:04:10.359   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:04:13.371   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:04:16.382   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:04:19.391   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:04:22.015   344   374 E android.hardware.graphics.composer3-service.rockchip: wait,line=113 wait callback timeout
+04-21 10:04:22.399   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:04:25.407   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:04:28.419   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:04:31.431   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:04:33.256   649  1672 I libbt_vendor: AICBTDBG(LOGINFO)	op for 7
+04-21 10:04:33.256   649  1672 I bt_hwcfg_uart: AICBTDBG(LOGINFO)	set_wake_stat 1
+04-21 10:04:33.256   649  1672 I bt_upio : AICBTDBG(LOGINFO)	upio_set : pio 0 action 2, polarity 1
+04-21 10:04:33.256   649  1672 I bt_upio : AICBTDBG(LOGINFO)	upio_set: proc btwrite assertion, buffer: 1, timer_armed 0 0
+04-21 10:04:33.259  1282  1408 E bt_btm  : packages/modules/Bluetooth/system/main/bte_logmsg.cc:105 LogMsg: wrong length for btm_ble_cont_energy_cmpl_cback
+04-21 10:04:34.443   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:04:36.259   649  1548 I libbt_vendor: AICBTDBG(LOGINFO)	op for 7
+04-21 10:04:36.259   649  1548 I bt_hwcfg_uart: AICBTDBG(LOGINFO)	set_wake_stat 0
+04-21 10:04:36.259   649  1548 I bt_upio : AICBTDBG(LOGINFO)	upio_set : pio 0 action 1, polarity 1
+04-21 10:04:37.451   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:04:40.462   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:04:42.016   344   374 E android.hardware.graphics.composer3-service.rockchip: wait,line=113 wait callback timeout
+04-21 10:04:42.398  2731  2731 E SdkStatusContentProvider: SdkSettingPreferences onSharedPreferenceChanged key = isp
+04-21 10:04:42.398  2731  2731 E SdkStatusContentProvider: SdkSettingPreferences onSharedPreferenceChanged key = isp
+04-21 10:04:42.399  2731  2877 E ActivityThread: Failed to find provider info for com.alipay.iot.settings.SettingsProvider
+04-21 10:04:42.400  2731  2877 E ActivityThread: Failed to find provider info for com.alipay.iot.settings.SettingsProvider
+04-21 10:04:42.402   888  5540 I UsbExtImpl: default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use PC Camera
+04-21 10:04:42.402   888  5540 V UsbExtImpl: smconf processName:com.alipay.iot.service
+04-21 10:04:42.402   888  5540 I UsbExtImpl: smconf disallow  uid:10099pid:2731  processName=com.alipay.iot.service to use GD32-USB_Printer
+04-21 10:04:42.402   888  5540 I UsbExtImpl: default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use NS021 USB HID Keyboard
+04-21 10:04:42.404   888  5540 I UsbExtImpl: default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use PC Camera
+04-21 10:04:42.404   888  5540 V UsbExtImpl: smconf processName:com.alipay.iot.service
+04-21 10:04:42.404   888  5540 I UsbExtImpl: smconf disallow  uid:10099pid:2731  processName=com.alipay.iot.service to use GD32-USB_Printer
+04-21 10:04:42.405   888  5540 I UsbExtImpl: default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use NS021 USB HID Keyboard
+04-21 10:04:42.406   888  5540 I UsbExtImpl: default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use PC Camera
+04-21 10:04:42.406   888  5540 V UsbExtImpl: smconf processName:com.alipay.iot.service
+04-21 10:04:42.406   888  5540 I UsbExtImpl: smconf disallow  uid:10099pid:2731  processName=com.alipay.iot.service to use GD32-USB_Printer
+04-21 10:04:42.406   888  5540 I UsbExtImpl: default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use NS021 USB HID Keyboard
+04-21 10:04:42.408   888  5540 I UsbExtImpl: default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use PC Camera
+04-21 10:04:42.408   888  5540 V UsbExtImpl: smconf processName:com.alipay.iot.service
+04-21 10:04:42.408   888  5540 I UsbExtImpl: smconf disallow  uid:10099pid:2731  processName=com.alipay.iot.service to use GD32-USB_Printer
+04-21 10:04:42.408   888  5540 I UsbExtImpl: default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use NS021 USB HID Keyboard
+04-21 10:04:42.410   888  5540 I UsbExtImpl: default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use PC Camera
+04-21 10:04:42.410   888  5540 V UsbExtImpl: smconf processName:com.alipay.iot.service
+04-21 10:04:42.410   888  5540 I UsbExtImpl: smconf disallow  uid:10099pid:2731  processName=com.alipay.iot.service to use GD32-USB_Printer
+04-21 10:04:42.410   888  5540 I UsbExtImpl: default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use NS021 USB HID Keyboard
+04-21 10:04:43.475   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:04:46.487   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:04:49.498   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:04:52.507   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:04:55.519   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:04:58.531   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:05:00.000   888   972 D AlarmManager: setImplLocked() callingPackage=android
+04-21 10:05:01.543   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:05:02.016   344   374 E android.hardware.graphics.composer3-service.rockchip: wait,line=113 wait callback timeout
+04-21 10:05:04.555   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:05:07.566   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:05:08.676   888 11608 D AlarmManager: setImplLocked() callingPackage=sunmi.remotemanager
+04-21 10:05:10.576   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:05:13.587   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:05:16.599   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:05:19.611   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:05:22.017   344   374 E android.hardware.graphics.composer3-service.rockchip: wait,line=113 wait callback timeout
+04-21 10:05:22.621   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:05:25.631   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:05:28.575 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:05:28.592 28642 28711 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:05:28.608 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:05:28.611 28566 28638 D TrafficStats: tagSocket(105) with statsTag=0xffffffff, statsUid=-1
+04-21 10:05:28.621 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:05:28.623 28566 28638 D TrafficStats: tagSocket(105) with statsTag=0xffffffff, statsUid=-1
+04-21 10:05:28.641   888  1023 E WifiStaIfaceAidlImpl: getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 10:05:28.852 28566 28638 D TrafficStats: tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-21 10:05:28.854 28566 28638 D TrafficStats: tagSocket(105) with statsTag=0xffffffff, statsUid=-1

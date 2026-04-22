@@ -1,0 +1,17 @@
+[platform-ports-test-scenario] {
+  packageName: '@impos2/kernel-base-platform-ports',
+  packageVersion: '0.0.1',
+  eventCount: 1,
+  firstEvent: {
+    timestamp: 1775914870726,
+    level: 'info',
+    category: 'runtime.lifecycle',
+    event: 'test-verification',
+    message: 'hello',
+    scope: { moduleName: 'kernel.base.platform-ports.test', layer: 'kernel' },
+    context: undefined,
+    data: { token: '[MASKED]' },
+    error: undefined,
+    security: { containsSensitiveRaw: true, maskingMode: 'masked' }
+  }
+}

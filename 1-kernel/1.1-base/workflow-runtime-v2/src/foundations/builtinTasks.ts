@@ -20,10 +20,12 @@ export const createWorkflowBuiltinTaskDefinitions = (): readonly WorkflowDefinit
         tags: ['builtin', 'task', 'barcode', 'camera'],
         inputSchema: {
             schemaType: 'json-schema-lite',
-            properties: {
-                scanMode: {type: 'string'},
-                timeoutMs: {type: 'number'},
-            },
+                properties: {
+                    scanMode: {type: 'string'},
+                    imageUri: {type: 'string'},
+                    imageBase64: {type: 'string'},
+                    timeoutMs: {type: 'number'},
+                },
         },
         outputSchema: {
             schemaType: 'json-schema-lite',
@@ -60,10 +62,17 @@ export const createWorkflowBuiltinTaskDefinitions = (): readonly WorkflowDefinit
                         type: 'script',
                         language: 'javascript',
                         source: `
-                            return {
+                            const requestParams = {
                                 SCAN_MODE: input.scanMode || 'QR_CODE_MODE',
                                 waitResult: true
                             }
+                            if (typeof input.imageUri === 'string' && input.imageUri.length > 0) {
+                                requestParams.IMAGE_URI = input.imageUri
+                            }
+                            if (typeof input.imageBase64 === 'string' && input.imageBase64.length > 0) {
+                                requestParams.IMAGE_BASE64 = input.imageBase64
+                            }
+                            return requestParams
                         `,
                     },
                 },

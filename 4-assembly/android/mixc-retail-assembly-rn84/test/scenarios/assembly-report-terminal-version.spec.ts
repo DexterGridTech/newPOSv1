@@ -111,8 +111,127 @@ describe('assembly reportTerminalVersion', () => {
         }))
     })
 
+    it('prefers loopback mock-terminal-platform address on emulator even when lan is listed first', async () => {
+        const execute = vi.fn(async () => ({
+            data: {success: true},
+            status: 200,
+            statusText: 'OK',
+            headers: {},
+        }))
+        createAssemblyFetchTransportMock.mockReturnValue({execute})
+        resolveAssemblyTransportServersMock.mockReturnValue([
+            {
+                serverName: 'mock-terminal-platform',
+                addresses: [
+                    {addressName: 'lan', baseUrl: 'http://192.168.0.172:5810'},
+                    {addressName: 'local', baseUrl: 'http://127.0.0.1:5810'},
+                    {addressName: 'localhost', baseUrl: 'http://localhost:5810'},
+                ],
+            },
+        ])
+        buildHotUpdateVersionReportPayloadMock.mockReturnValue({
+            terminalId: 'terminal-001',
+            sandboxId: 'sandbox-001',
+            payload: {
+                displayIndex: 0,
+                displayRole: 'primary',
+                appId: 'assembly-android-mixc-retail-rn84',
+                assemblyVersion: '1.0.0',
+                buildNumber: 1,
+                runtimeVersion: 'android-mixc-retail-rn84@1.0',
+                bundleVersion: '1.0.0+ota.2',
+                source: 'hot-update',
+                state: 'RUNNING',
+            },
+        })
+
+        const {reportTerminalVersion} = await import('../../src/application/reportTerminalVersion')
+
+        await reportTerminalVersion(
+            {getState: () => ({})} as any,
+            {
+                displayIndex: 0,
+                displayCount: 1,
+                deviceId: 'device-1',
+                isEmulator: true,
+                screenMode: 'desktop',
+            } as any,
+            'RUNNING',
+        )
+
+        expect(execute).toHaveBeenCalledWith(expect.objectContaining({
+            url: 'http://127.0.0.1:5810/api/v1/terminals/terminal-001/version-reports',
+            selectedAddress: expect.objectContaining({
+                baseUrl: 'http://127.0.0.1:5810',
+            }),
+            input: expect.objectContaining({
+                body: expect.not.objectContaining({
+                    isEmulator: true,
+                }),
+            }),
+        }))
+    })
+
+    it('fails over to emulator host loopback when adb reverse address is unavailable', async () => {
+        const execute = vi.fn()
+            .mockRejectedValueOnce(new Error('Network request failed'))
+            .mockResolvedValueOnce({
+                data: {success: true},
+                status: 201,
+                statusText: 'Created',
+                headers: {},
+            })
+        createAssemblyFetchTransportMock.mockReturnValue({execute})
+        resolveAssemblyTransportServersMock.mockReturnValue([
+            {
+                serverName: 'mock-terminal-platform',
+                addresses: [
+                    {addressName: 'local', baseUrl: 'http://127.0.0.1:5810'},
+                ],
+            },
+        ])
+        buildHotUpdateVersionReportPayloadMock.mockReturnValue({
+            terminalId: 'terminal-001',
+            sandboxId: 'sandbox-001',
+            payload: {
+                displayIndex: 0,
+                displayRole: 'primary',
+                appId: 'assembly-android-mixc-retail-rn84',
+                assemblyVersion: '1.0.0',
+                buildNumber: 1,
+                runtimeVersion: 'android-mixc-retail-rn84@1.0',
+                bundleVersion: '1.0.0+ota.3',
+                source: 'hot-update',
+                state: 'RUNNING',
+            },
+        })
+
+        const {reportTerminalVersion} = await import('../../src/application/reportTerminalVersion')
+
+        await reportTerminalVersion(
+            {getState: () => ({})} as any,
+            {
+                displayIndex: 0,
+                displayCount: 1,
+                deviceId: 'device-1',
+                isEmulator: true,
+                screenMode: 'desktop',
+            } as any,
+            'RUNNING',
+        )
+
+        expect(execute).toHaveBeenCalledTimes(2)
+        expect(execute.mock.calls[0]?.[0]?.url).toBe(
+            'http://127.0.0.1:5810/api/v1/terminals/terminal-001/version-reports',
+        )
+        expect(execute.mock.calls[1]?.[0]?.url).toBe(
+            'http://10.0.2.2:5810/api/v1/terminals/terminal-001/version-reports',
+        )
+    })
+
     it('persists failed reports in outbox and flushes them before newer reports', async () => {
         const execute = vi.fn()
+            .mockRejectedValueOnce(new Error('network down'))
             .mockRejectedValueOnce(new Error('network down'))
             .mockResolvedValue({
                 data: {success: true},
@@ -195,9 +314,9 @@ describe('assembly reportTerminalVersion', () => {
             'RUNNING',
         )
 
-        expect(execute).toHaveBeenCalledTimes(3)
-        expect(execute.mock.calls[1]?.[0]?.input?.body?.state).toBe('BOOTING')
-        expect(execute.mock.calls[2]?.[0]?.input?.body?.state).toBe('RUNNING')
+        expect(execute).toHaveBeenCalledTimes(4)
+        expect(execute.mock.calls[2]?.[0]?.input?.body?.state).toBe('BOOTING')
+        expect(execute.mock.calls[3]?.[0]?.input?.body?.state).toBe('RUNNING')
         expect(storageState.has('hot-update:version-report-outbox')).toBe(false)
     })
 })

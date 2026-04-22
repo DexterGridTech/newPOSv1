@@ -9,10 +9,55 @@ const scriptDir = dirname(fileURLToPath(import.meta.url))
 const repoRoot = resolve(scriptDir, '..')
 
 let cachedDefaultBaseUrl = null
+let cachedCandidateBaseUrls = null
 
-export function resolveDefaultMockTerminalPlatformBaseUrl() {
-  if (cachedDefaultBaseUrl) {
-    return cachedDefaultBaseUrl
+function preferHostReachableBaseUrl(addresses) {
+  if (!Array.isArray(addresses) || addresses.length === 0) {
+    return ''
+  }
+
+  const scoredAddresses = addresses
+    .map((item, index) => {
+      const baseUrl =
+        typeof item === 'string'
+          ? item.trim()
+          : item?.baseUrl?.trim() ?? ''
+      if (!baseUrl) {
+        return null
+      }
+
+      let score = 0
+      try {
+        const url = new URL(baseUrl)
+        const hostname = url.hostname.toLowerCase()
+        if (hostname === '127.0.0.1' || hostname === 'localhost') {
+          score += 100
+        }
+        if (
+          typeof item !== 'string'
+          && (item?.addressName === 'local' || item?.addressName === 'localhost')
+        ) {
+          score += 10
+        }
+      } catch {
+        // Keep invalid URLs last and let the existing error handling report them if selected.
+      }
+
+      return {
+        baseUrl,
+        score,
+        index,
+      }
+    })
+    .filter(Boolean)
+    .sort((left, right) => right.score - left.score || left.index - right.index)
+
+  return scoredAddresses[0]?.baseUrl ?? ''
+}
+
+export function resolveDefaultMockTerminalPlatformBaseUrlCandidates() {
+  if (cachedCandidateBaseUrls) {
+    return cachedCandidateBaseUrls
   }
 
   const devConfigModuleUrl = pathToFileURL(
@@ -35,11 +80,13 @@ export function resolveDefaultMockTerminalPlatformBaseUrl() {
     const matchedServer = kernelBaseDevServerConfig?.spaces
       ?.flatMap(space => space.servers ?? [])
       ?.find(server => server.serverName === mockServerName);
-    const baseUrl = matchedServer?.addresses?.[0]?.baseUrl;
-    if (!baseUrl) {
+    const baseUrls = matchedServer?.addresses
+      ?.map(item => item?.baseUrl?.trim())
+      ?.filter(Boolean);
+    if (!baseUrls?.length) {
       throw new Error('Mock terminal platform baseUrl not found in 1-kernel/server-config-v2');
     }
-    console.log(baseUrl);
+    console.log(JSON.stringify(baseUrls));
   `
   const result = spawnSync(
     process.execPath,
@@ -62,7 +109,21 @@ export function resolveDefaultMockTerminalPlatformBaseUrl() {
     )
   }
 
-  cachedDefaultBaseUrl = result.stdout.trim()
+  cachedCandidateBaseUrls = JSON.parse(result.stdout.trim())
+  return cachedCandidateBaseUrls
+}
+
+export function resolveDefaultMockTerminalPlatformBaseUrl() {
+  if (cachedDefaultBaseUrl) {
+    return cachedDefaultBaseUrl
+  }
+
+  cachedDefaultBaseUrl = preferHostReachableBaseUrl(
+    resolveDefaultMockTerminalPlatformBaseUrlCandidates(),
+  )
+  if (!cachedDefaultBaseUrl) {
+    fail('Failed to resolve mock platform baseUrl from 1-kernel/server-config-v2')
+  }
   return cachedDefaultBaseUrl
 }
 
@@ -87,7 +148,7 @@ function parseArgs(argv) {
     const arg = argv[index]
     switch (arg) {
       case '--base-url':
-        options.baseUrl = argv[++index] ?? DEFAULT_BASE_URL
+        options.baseUrl = argv[++index] ?? options.baseUrl
         break
       case '--sandbox-id':
         options.sandboxId = argv[++index] ?? ''

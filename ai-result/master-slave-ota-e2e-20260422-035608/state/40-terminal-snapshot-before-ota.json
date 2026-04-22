@@ -1,0 +1,1 @@
+{"success":true,"data":[{"topic":"terminal.group.membership","itemKey":"terminal_7ffi8d5p90mj","operation":"upsert","scopeType":"TERMINAL","scopeId":"terminal_7ffi8d5p90mj","revision":1,"payload":{"membershipVersion":0,"groups":[]},"occurredAt":"2026-04-21T20:12:51.744Z","sourceReleaseId":null}]}

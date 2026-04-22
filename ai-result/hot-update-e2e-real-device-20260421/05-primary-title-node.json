@@ -1,0 +1,19 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "target": "primary",
+    "runtimeId": "primary-runtime",
+    "screenKey": "ui.base.terminal.activate-device",
+    "mountId": "ui.base.terminal.activate-device:title",
+    "nodeId": "ui-base-terminal-activate-device:title",
+    "testID": "ui-base-terminal-activate-device:title",
+    "semanticId": "ui-base-terminal-activate-device:title",
+    "role": "text",
+    "text": "设备激活",
+    "visible": true,
+    "enabled": true,
+    "availableActions": [],
+    "stale": false
+  },
+  "id": "1776735844766-d96d84cf2b849"
+}

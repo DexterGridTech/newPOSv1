@@ -1,0 +1,25 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "displayIndex": 0,
+    "displayCount": 1,
+    "instanceMode": "SLAVE",
+    "displayMode": "SECONDARY",
+    "workspace": "MAIN",
+    "standalone": true,
+    "enableSlave": false,
+    "masterLocator": {
+      "masterDeviceId": "6Z2H3BSGEY",
+      "addedAt": 1776781227650,
+      "serverAddress": [
+        {
+          "address": "ws://127.0.0.1:18889/mockMasterServer/ws"
+        }
+      ],
+      "masterNodeId": "master:6Z2H3BSGEY",
+      "httpBaseUrl": "http://127.0.0.1:18889/mockMasterServer"
+    },
+    "localNodeId": "master:ZJ63NQELD9"
+  },
+  "id": "1776781549783-a4be06e8e28ee"
+}

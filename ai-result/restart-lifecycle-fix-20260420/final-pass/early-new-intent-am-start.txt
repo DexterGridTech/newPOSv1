@@ -1,0 +1,2 @@
+Starting: Intent { cmp=com.impos2.mixcretailassemblyrn84/.MainActivity }
+Starting: Intent { cmp=com.impos2.mixcretailassemblyrn84/.MainActivity }

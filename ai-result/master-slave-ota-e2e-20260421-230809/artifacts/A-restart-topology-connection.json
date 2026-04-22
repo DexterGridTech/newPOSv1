@@ -1,0 +1,36 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "requestId": "req_mo8rwnev_du3qrcvo0v8itbww",
+    "commandId": "cmd_mo8rwnev_gssuh0qlv8t8q8yb",
+    "commandName": "kernel.base.topology-runtime-v3.restart-topology-connection",
+    "target": "local",
+    "status": "FAILED",
+    "startedAt": 1776784988551,
+    "completedAt": 1776784988552,
+    "actorResults": [
+      {
+        "actorKey": "kernel.base.topology-runtime-v3.TopologyConnectionActor",
+        "status": "FAILED",
+        "startedAt": 1776784988551,
+        "completedAt": 1776784988552,
+        "error": {
+          "name": "Transport Configuration Error",
+          "key": "kernel.base.transport-runtime.configuration_error",
+          "code": "kernel.base.transport-runtime.configuration_error",
+          "message": "Server not found: dual-topology-host-v3",
+          "category": "SYSTEM",
+          "severity": "HIGH",
+          "createdAt": 1776784988551,
+          "args": {
+            "message": "Server not found: dual-topology-host-v3"
+          },
+          "details": {
+            "serverName": "dual-topology-host-v3"
+          }
+        }
+      }
+    ]
+  },
+  "id": "1776784988693-bcc72c882d4708"
+}

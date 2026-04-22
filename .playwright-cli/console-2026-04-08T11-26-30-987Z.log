@@ -1,0 +1,2 @@
+[    3175ms] [WARNING] "shadow*" style props are deprecated. Use "boxShadow". @ http://localhost:8081/2-ui/2.1-cores/runtime-base/src/index.ts.bundle?platform=web&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.routerRoot=app&unstable_transformProfile=hermes-stable:62924
+[    3176ms] [WARNING] "textShadow*" style props are deprecated. Use "textShadow". @ http://localhost:8081/2-ui/2.1-cores/runtime-base/src/index.ts.bundle?platform=web&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.routerRoot=app&unstable_transformProfile=hermes-stable:62924

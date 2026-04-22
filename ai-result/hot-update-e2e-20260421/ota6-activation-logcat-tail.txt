@@ -1,0 +1,200 @@
+04-20 03:36:25.207 I/GoogleInputMethodService(20885): GoogleInputMethodService.discardAllKeyboardViewAndInputView():1818 discardAllKeyboardViewAndInputView()
+04-20 03:36:25.207 I/KeyboardModeManager(20885): KeyboardModeManager.setInputViewKeyboardViewHolderProvider():625 setInputView() : supportsOneHandedMode=false supportsSplitMode=true
+04-20 03:36:25.207 I/NormalModeController(20885): NormalModeController.getKeyboardBodyViewHolderPaddingBottom():104 currentPrimeKeyboardType:SOFT systemPaddingBottom:-1
+04-20 03:36:25.207 I/KeyboardModeManager(20885): KeyboardModeManager.setInputViewKeyboardViewHolderProvider():613 setInputView() : supportsOneHandedMode=false, supportSplitMode=true
+04-20 03:36:25.207 I/InputMethodEntryManager(20885): InputMethodEntryManager.notifyCurrentInputMethodEntryOnContextChanged():521 notifyCurrentInputMethodEntryOnContextChanged()
+04-20 03:36:25.207 I/InputMethodEntryManager(20885): InputMethodEntryManager.notifyCurrentInputMethodEntryOnContextChanged():542 Notify current input method entry changed on context change
+04-20 03:36:25.207 I/SystemSubtypesReportModule(20885): SystemSubtypesReportModule$3.onCurrentInputMethodEntryChanged():136 entry: en-US, source: UNSPECIFIED
+04-20 03:36:25.207 I/KeyboardThemeProvider(20885): KeyboardThemeProvider.reset():40 Reset keyboard theme
+04-20 03:36:25.208 I/KeyboardContextProvider(20885): KeyboardContextProvider.setBaseContextAndInvalidKeyboardContextCache():88 setBaseContextAndInvalidKeyboardContextCache(): null
+04-20 03:36:25.208 I/DeviceModeMonitor(20885): DeviceModeMonitor.calculateDeviceMode():76 Get device mode tablet_large by screen size and smallestScreenWidthDp: 723
+04-20 03:36:25.208 I/HardKeyTracker(20885): HardKeyTracker.unregisterKeySequence():183 Unregister key sequence lnk{labelResId=2132019809, callback=jjt@e694625, lastModifier=2, keyCodes=[47], actions=[0]}
+04-20 03:36:25.208 I/HardKeyTracker(20885): HardKeyTracker.unregisterKeySequence():183 Unregister key sequence lnk{labelResId=0, callback=jwl@d1fa1, lastModifier=0, keyCodes=[204], actions=[0]}
+04-20 03:36:25.208 W/AccessPointsManager(20885): AccessPointsManager.removeAccessPoint():834 The holder controller #0x7f0b2078 is not registered
+04-20 03:36:25.210 I/SP      (20885): Registering emoticon_content_description.2022081613, url: https://www.gstatic.com/android/keyboard/emoticon_content_desc/202208161305/superpacks_manifest.json, constraints: W:*:*:*, flags: bg, requested: 2022081613, current: -1
+04-20 03:36:25.210 I/AccessPointsListHolderController(20885): AccessPointsListHolderController.removeAccessPoint():304 The access point textediting is not added
+04-20 03:36:25.210 I/AccessPointsListHolderController(20885): AccessPointsListHolderController.removeAccessPoint():304 The access point settings is not added
+04-20 03:36:25.210 I/AccessPointsListHolderController(20885): AccessPointsListHolderController.removeAccessPoint():304 The access point theme_setting is not added
+04-20 03:36:25.211 I/OnDevicePackDownloadModule(20885): OnDevicePackDownloadModule.onDestroy():95 onDestroy()
+04-20 03:36:25.211 I/NewS3RecognizerModule(20885): NewS3RecognizerModule.onDestroy():21 onDestroy [news3]
+04-20 03:36:25.211 I/HardKeyTracker(20885): HardKeyTracker.unregisterKeySequence():183 Unregister key sequence lnk{labelResId=2132019800, callback=gnd@2d74ee7, lastModifier=0, keyCodes=[57, 57], actions=[1, 0]}
+04-20 03:36:25.211 I/HardKeyTracker(20885): HardKeyTracker.unregisterKeySequence():183 Unregister key sequence lnk{labelResId=0, callback=gnd@dfb9532, lastModifier=0, keyCodes=[58, 58], actions=[1, 0]}
+04-20 03:36:25.211 I/AbstractOpenableExtension(20885): AbstractOpenableExtension.maybeDestroyExistingKeyboardGroupManager():538 Destroy existing keyboard group manager in fvq
+04-20 03:36:25.217 I/MMKV    (15534): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 284, crc 219939831, actualSize 22957
+04-20 03:36:25.217 I/MMKV    (15534): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 03:36:25.217 I/EmojifyExtensionImpl(20885): EmojifyExtensionImpl.onDestroy():605 Destroying Emojify extension ehb@f174857.
+04-20 03:36:25.219 I/AbstractOpenableExtension(20885): AbstractOpenableExtension.maybeDestroyExistingKeyboardGroupManager():538 Destroy existing keyboard group manager in fxu
+04-20 03:36:25.219 I/JapaneseMozcExtension(20885): JapaneseMozcExtension.onDestroyServiceInternal():81 onDestroyServiceInternal()
+04-20 03:36:25.219 I/AbstractOpenableExtension(20885): AbstractOpenableExtension$3.onSuccess():552 KeyboardGroupManager destroyed in fvq.
+04-20 03:36:25.221 I/SP      (20885): Scheduling job with delay of 0s for {m:b:u:l, bg}, 2 candidates
+04-20 03:36:25.221 E/JobScheduler.JobStatus(  590): App com.google.android.inputmethod.latin became active but still in NEVER bucket
+04-20 03:36:25.222 D/WindowTokenClient(20885): Only apply configuration update to Resources because shouldReportConfigChange is false. context=com.android.inputmethod.latin.LatinIME@21a3653, config={1.3 ?mcc0mnc [en_US] ldltr sw723dp w1157dp h723dp 354dpi xlrg land finger qwerty/v/v dpad/v winConfig={ mBounds=Rect(0, 0 - 2560, 1600) mAppBounds=Rect(0, 0 - 2560, 1600) mMaxBounds=Rect(0, 0 - 2560, 1600) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} s.8 fontWeightAdjustment=0}, display ID=0
+04-20 03:36:25.222 D/WindowTokenClient(20885): android.window.WindowTokenClient.onConfigurationChanged:161 android.window.WindowTokenClientController.onWindowContextTokenAttached:197 android.window.WindowTokenClientController.attachToDisplayArea:116 android.window.WindowContextController.attachToDisplayArea:108 android.window.WindowProviderService.attachBaseContext:218 
+04-20 03:36:25.222 I/GoogleInputMethodService(20885): GoogleInputMethodService.onCreate():1025 
+04-20 03:36:25.222 E/JobScheduler.JobStatus(  590): App com.google.android.inputmethod.latin became active but still in NEVER bucket
+04-20 03:36:25.223 I/SP      (20885): Scheduling job with delay of 0s for {W:b:u:l, bg}, 1 candidates
+04-20 03:36:25.223 E/JobScheduler.JobStatus(  590): App com.google.android.inputmethod.latin became active but still in NEVER bucket
+04-20 03:36:25.223 E/JobScheduler.JobStatus(  590): App com.google.android.inputmethod.latin became active but still in NEVER bucket
+04-20 03:36:25.224 I/SP      (20885): Scheduling: download registered, 0 started, 0 paused, 3 scheduled, 3 pending: manifests:next-word-predictor-20210507 * {m:b:u:l, bg}, manifests:emoji-2023020111 * {m:b:u:l, bg}, manifests:emoticon_content_description-2022081613 * {W:b:u:l, bg}
+04-20 03:36:25.224 I/SuperpacksManagerImpl(20885): SuperpacksManagerImpl$3$1.onFailure():588 emoticon_content_description.registerManifest() cancelled
+04-20 03:36:25.225 I/WindowMetricsNotification(20885): WindowMetricsNotification.notify():106 WindowMetricsNotification{bounds=Rect(0, 53 - 2560, 1600), insets=Rect(0, 0 - 0, 0), densityDpi=354, smallestScreenWidthDp=723, displayWidth=2560, displayHeight=1600, xdpi=320.0, ydpi=320.0}; DisplayMetrics{density=2.2125, width=2560, height=1600, scaledDensity=2.2125, xdpi=320.0, ydpi=320.0}
+04-20 03:36:25.225 I/WindowMetricsHelper(20885): WindowMetricsHelper.predictAndNotify():140 Window metrics predicted.
+04-20 03:36:25.225 I/InputMethodEntryManager(20885): InputMethodEntryManager.notifyCurrentInputMethodEntryOnContextChanged():521 notifyCurrentInputMethodEntryOnContextChanged()
+04-20 03:36:25.225 I/InputMethodEntryManager(20885): InputMethodEntryManager.notifyCurrentInputMethodEntryOnContextChanged():542 Notify current input method entry changed on context change
+04-20 03:36:25.225 I/KeyboardContextProvider(20885): KeyboardContextProvider.setBaseContextAndInvalidKeyboardContextCache():88 setBaseContextAndInvalidKeyboardContextCache(): com.android.inputmethod.latin.LatinIME@21a3653
+04-20 03:36:25.226 E/GoogleInputMethodService(20885): GoogleInputMethodService.getAppEditorInfo():2810 App EditorInfo should never be null.
+04-20 03:36:25.226 I/StyledKeyboardThemeBuilder(20885): StyledKeyboardThemeBuilder.build():132 Pref: [], themeName: [silk:], darkMode: [false], cacheKey: [overlay_builtin_dynamic_color_light_base.binarypb:dynamic-gm3-light-fffefbff-ff495d92-88aedfe362701b9d56ce578190f21130]
+04-20 03:36:25.226 I/KeyboardThemeProvider(20885): KeyboardThemeProvider.applyKeyboardTheme():27 Apply keyboard theme: theme_border_stylesheet_noshadow_pgsans_pillkey_silkpopup_light_tablet_large_keyboard_width_tablet_small_navredesign_600_overlay_builtin_dynamic_color_light_base.binarypb:dynamic-gm3-light-fffefbff-ff495d92-88aedfe362701b9d56ce578190f21130_land
+04-20 03:36:25.227 I/KeyboardContextProvider(20885): KeyboardContextProvider$KeyboardContextCache.createKeyboardContext():173 createKeyboardContext(): en-US, jgg@1202fd8(com.android.inputmethod.latin.LatinIME@21a3653), {1.3 ?mcc0mnc [en_US] ldltr sw723dp w1157dp h723dp 354dpi xlrg land finger qwerty/v/v dpad/v winConfig={ mBounds=Rect(0, 0 - 2560, 1600) mAppBounds=Rect(0, 0 - 2560, 1600) mMaxBounds=Rect(0, 0 - 2560, 1600) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} s.8 fontWeightAdjustment=0}
+04-20 03:36:25.228 I/KeyboardHeightUtil(20885): KeyboardHeightUtil.calculateMaxKeyboardBodyHeight():45 leave 237 height for app when ime window height:1547, header height:106 and isFullscreenMode:false, so the max keyboard body height is:1204
+04-20 03:36:25.228 I/KeyboardHeightUtil(20885): KeyboardHeightUtil.calculateMaxKeyboardBodyHeight():45 leave 237 height for app when ime window height:1547, header height:106 and isFullscreenMode:false, so the max keyboard body height is:1204
+04-20 03:36:25.228 I/NormalModeController(20885): NormalModeController.getKeyboardBodyViewHolderPaddingBottom():104 currentPrimeKeyboardType:SOFT systemPaddingBottom:-1
+04-20 03:36:25.228 I/GoogleInputMethodService(20885): GoogleInputMethodService.onCurrentInputMethodEntryChanged():3655 onCurrentInputMethodEntryChanged(): imeDefsChanged=false, initializedEntryChanged=true, keyboardContextChanged=true
+04-20 03:36:25.228 I/GoogleInputMethodService(20885): GoogleInputMethodService.clearInputMethodServiceData():1613 clearInputMethodServiceData for entryChange
+04-20 03:36:25.228 I/KeyboardHeightUtil(20885): KeyboardHeightUtil.calculateMaxKeyboardBodyHeight():45 leave 237 height for app when ime window height:1547, header height:106 and isFullscreenMode:false, so the max keyboard body height is:1204
+04-20 03:36:25.228 I/KeyboardHeightUtil(20885): KeyboardHeightUtil.calculateMaxKeyboardBodyHeight():45 leave 237 height for app when ime window height:1547, header height:106 and isFullscreenMode:false, so the max keyboard body height is:1204
+04-20 03:36:25.228 I/KeyboardModeManager(20885): KeyboardModeManager.onCurrentInputMethodEntryChanged():1133 Reload data for context change
+04-20 03:36:25.228 I/GoogleInputMethodService(20885): GoogleInputMethodService.initializeInputMethodServiceData():1382 initializeInputMethodServiceData for kct{languageTag=en-US, variant=qwerty, hasLocalizedResources=true, conditionCacheKey=_cache_additional_ime_defs_for_condition_change=false_cache_ime_defs_for_condition_change=false_device=tablet_device_size=large_enable_flick_symbols=false_enable_more_candidates_view_for_multilingual=false_enable_number_row=false_enable_preemptive_decode=true_enable_secondary_digits=true_enable_secondary_symbols=false_enable_show_foldable_layout_on_small_tablet=false_expressions=normal_four_or_more_letter_rows=false_keyboard_mode=normal_language=en-US_orientation=landscape_physical_keyboard=qwerty_rtl_layout=false_show_secondary_digits=true_show_suggestions=true_split_with_duplicate_keys=true_variant=qwerty, imeDef.stringId=ime_english_united_states, imeDef.className=com.google.android.apps.inputmethod.libs.latin5.LatinIme, imeDef.languageTag=en-US}
+04-20 03:36:25.228 E/GoogleInputMethodService(20885): GoogleInputMethodService.getAppEditorInfo():2810 App EditorInfo should never be null.
+04-20 03:36:25.228 I/StyledKeyboardThemeBuilder(20885): StyledKeyboardThemeBuilder.build():132 Pref: [], themeName: [silk:], darkMode: [false], cacheKey: [overlay_builtin_dynamic_color_light_base.binarypb:dynamic-gm3-light-fffefbff-ff495d92-88aedfe362701b9d56ce578190f21130]
+04-20 03:36:25.228 I/KeyboardThemeProvider(20885): KeyboardThemeProvider.applyKeyboardTheme():27 Apply keyboard theme: theme_border_stylesheet_noshadow_pgsans_pillkey_silkpopup_light_tablet_large_keyboard_width_tablet_extra_large_navredesign_600_overlay_builtin_dynamic_color_light_base.binarypb:dynamic-gm3-light-fffefbff-ff495d92-88aedfe362701b9d56ce578190f21130_land
+04-20 03:36:25.229 I/AndroidIME(20885): InputBundleManager.loadActiveInputBundleId():450 loadActiveInputBundleId: und-Latn-x-password, password
+04-20 03:36:25.229 I/SystemSubtypesReportModule(20885): SystemSubtypesReportModule$4.onSetCurrentInputMethodSubtype():160 en_US
+04-20 03:36:25.230 I/JapaneseMozcExtension(20885): JapaneseMozcExtension.onCreateServiceInternal():76 onCreateServiceInternal()
+04-20 03:36:25.231 I/DeviceModeMonitor(20885): DeviceModeMonitor.calculateDeviceMode():76 Get device mode tablet_large by screen size and smallestScreenWidthDp: 723
+04-20 03:36:25.232 I/HardKeyTracker(20885): HardKeyTracker.registerKeySequence():139 Register key sequence lnk{labelResId=2132019809, callback=jjt@94f01e4, lastModifier=2, keyCodes=[47], actions=[0]}
+04-20 03:36:25.232 I/HardKeyTracker(20885): HardKeyTracker.registerKeySequence():139 Register key sequence lnk{labelResId=0, callback=jwl@9ec5850, lastModifier=0, keyCodes=[204], actions=[0]}
+04-20 03:36:25.233 I/NetworkInfoNotification(20885): NetworkInfoNotification$Listener.onReceive():112 onNetworkLost: networkState = NO_CONNECTION, isAirplaneModeOn = false
+04-20 03:36:25.233 I/OnDevicePackDownloadModule(20885): OnDevicePackDownloadModule.onCreate():60 onCreate()
+04-20 03:36:25.233 I/SP      (20885): Registering emoticon_content_description.2022081613, url: https://www.gstatic.com/android/keyboard/emoticon_content_desc/202208161305/superpacks_manifest.json, constraints: W:*:*:*, flags: bg, requested: 2022081613, current: -1
+04-20 03:36:25.233 I/NewS3RecognizerModule(20885): NewS3RecognizerModule.onCreate():14 onCreate [news3]
+04-20 03:36:25.234 I/EmojifyExtensionImpl(20885): EmojifyExtensionImpl.onCreate():599 Creating Emojify extension ehb@545fee9.
+04-20 03:36:25.234 I/AbstractOpenableExtension(20885): AbstractOpenableExtension.createKeyboardGroupManagerListenableFuture():120 Create keyboard group manager listenable future in fxu
+04-20 03:36:25.234 I/KeyboardGroupDefParser(20885): KeyboardGroupDefParser.parseKeyboardGroupDef():83 parseKeyboardGroupDef() 2132214040 -> 0_resource_name_obfuscated : WaitTime = 0 ms : RunTime = 0 ms
+04-20 03:36:25.235 I/NetworkInfoNotification(20885): NetworkInfoNotification$Listener.onReceive():112 onNetworkLost: networkState = NO_CONNECTION, isAirplaneModeOn = false
+04-20 03:36:25.235 I/Environment(20885): Environment.isPackageInstalled():234 com.bitstrips.imoji is not installed
+04-20 03:36:25.235 W/AndroidCreativeStickerFetcherFactory(20885): AndroidCreativeStickerFetcherFactory.createFetcher():19 Empty host or api key
+04-20 03:36:25.237 D/InputMethodManagerService(  590): Initializing Handwriting Spy
+04-20 03:36:25.237 W/InputManager-JNI(  590): Input channel object 'stylus-handwriting-event-receiver-0 (client)' was disposed without first being removed with the input manager!
+04-20 03:36:25.237 I/AbstractOpenableExtension(20885): AbstractOpenableExtension$3.onSuccess():552 KeyboardGroupManager destroyed in fxu.
+04-20 03:36:25.238 I/AbstractOpenableExtension(20885): AbstractOpenableExtension.createKeyboardGroupManagerListenableFuture():120 Create keyboard group manager listenable future in fvq
+04-20 03:36:25.238 I/KeyboardGroupDefParser(20885): KeyboardGroupDefParser.parseKeyboardGroupDef():83 parseKeyboardGroupDef() 2132214033 -> 0_resource_name_obfuscated : WaitTime = 0 ms : RunTime = 0 ms
+04-20 03:36:25.238 I/NetworkInfoNotification(20885): NetworkInfoNotification$Listener.onReceive():112 onNetworkLost: networkState = NO_CONNECTION, isAirplaneModeOn = false
+04-20 03:36:25.238 I/KeyboardGroupDefParser(20885): KeyboardGroupDefParser.parseKeyboardGroupDef():83 parseKeyboardGroupDef() 2132214034 -> 0_resource_name_obfuscated : WaitTime = 0 ms : RunTime = 0 ms
+04-20 03:36:25.238 I/AccessPointsListHolderController(20885): AccessPointsListHolderController.removeAccessPoint():304 The access point one_handed is not added
+04-20 03:36:25.238 I/AccessPointsListHolderController(20885): AccessPointsListHolderController.removeAccessPoint():304 The access point textediting is not added
+04-20 03:36:25.238 I/AccessPointsListHolderController(20885): AccessPointsListHolderController.removeAccessPoint():304 The access point settings is not added
+04-20 03:36:25.238 I/AccessPointsListHolderController(20885): AccessPointsListHolderController.removeAccessPoint():304 The access point theme_setting is not added
+04-20 03:36:25.238 I/ClipboardDataHandler(20885): ClipboardDataHandler.updateScreenshotsContentObserver():268 Disable the feature of handling screenshots in the clipboard.
+04-20 03:36:25.239 W/system_server(  590): Reducing the number of considered missed Gc histogram windows from 101 to 100
+04-20 03:36:25.240 I/SP      (20885): Scheduling job with delay of 0s for {m:b:u:l, bg}, 2 candidates
+04-20 03:36:25.240 I/NetworkInfoNotification(20885): NetworkInfoNotification$Listener.onReceive():112 onNetworkLost: networkState = NO_CONNECTION, isAirplaneModeOn = false
+04-20 03:36:25.240 I/NetworkInfoNotification(20885): NetworkInfoNotification$Listener.onReceive():112 onNetworkLost: networkState = NO_CONNECTION, isAirplaneModeOn = false
+04-20 03:36:25.240 E/JobScheduler.JobStatus(  590): App com.google.android.inputmethod.latin became active but still in NEVER bucket
+04-20 03:36:25.241 I/KeyboardGroupDefParser(20885): KeyboardGroupDefParser.parseKeyboardGroupDef():83 parseKeyboardGroupDef() 2132214028 -> 0_resource_name_obfuscated : WaitTime = 1 ms : RunTime = 0 ms
+04-20 03:36:25.241 I/SP      (20885): Scheduling job with delay of 0s for {W:b:u:l, bg}, 1 candidates
+04-20 03:36:25.241 I/GoogleInputMethodService(20885): GoogleInputMethodService$GoogleInputMethodImpl.attachToken():4209 
+04-20 03:36:25.241 E/JobScheduler.JobStatus(  590): App com.google.android.inputmethod.latin became active but still in NEVER bucket
+04-20 03:36:25.242 I/SP      (20885): Scheduling: download registered, 0 started, 0 paused, 3 scheduled, 3 pending: manifests:next-word-predictor-20210507 * {m:b:u:l, bg}, manifests:emoji-2023020111 * {m:b:u:l, bg}, manifests:emoticon_content_description-2022081613 * {W:b:u:l, bg}
+04-20 03:36:25.242 I/SP      (20885): Registering emoticon_content_description.2022081613, url: https://www.gstatic.com/android/keyboard/emoticon_content_desc/202208161305/superpacks_manifest.json, constraints: W:*:*:*, flags: bg, requested: 2022081613, current: -1
+04-20 03:36:25.242 I/SuperpacksManagerImpl(20885): SuperpacksManagerImpl$3$1.onFailure():588 emoticon_content_description.registerManifest() cancelled
+04-20 03:36:25.245 W/system_server(  590): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/LatinIMEGooglePrebuilt/LatinIMEGooglePrebuilt.apk' with 1 weak references
+04-20 03:36:25.246 W/system_server(  590): ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/GoogleTTS/GoogleTTS.apk' with 1 weak references
+04-20 03:36:25.247 I/SystemSubtypesReportModule(20885): SystemSubtypesReportModule$3.onCurrentInputMethodEntryChanged():136 entry: en-US, source: UNSPECIFIED
+04-20 03:36:25.247 I/SystemSubtypesReportModule(20885): SystemSubtypesReportModule.switchToSubtypeByEntry():205 en-US
+04-20 03:36:25.248 D/WindowTokenClient(20885): Configuration not dispatch to IME because configuration is up to date. Current config={1.3 ?mcc0mnc [en_US] ldltr sw723dp w1157dp h723dp 354dpi xlrg land finger qwerty/v/v dpad/v winConfig={ mBounds=Rect(0, 0 - 2560, 1600) mAppBounds=Rect(0, 0 - 2560, 1600) mMaxBounds=Rect(0, 0 - 2560, 1600) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} s.8 fontWeightAdjustment=0}, reported config={1.3 ?mcc0mnc [en_US] ldltr sw723dp w1157dp h723dp 354dpi xlrg land finger qwerty/v/v dpad/v winConfig={ mBounds=Rect(0, 0 - 2560, 1600) mAppBounds=Rect(0, 0 - 2560, 1600) mMaxBounds=Rect(0, 0 - 2560, 1600) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} s.8 fontWeightAdjustment=0}, updated config={1.3 ?mcc0mnc [en_US] ldltr sw723dp w1157dp h723dp 354dpi xlrg land finger qwerty/v/v dpad/v winConfig={ mBounds=Rect(0, 0 - 2560, 1600) mAppBounds=Rect(0, 0 - 2560, 1600) mMaxBounds=Rect(0, 0 - 2560, 1600) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} s.8 fontWeightAdjustment=0}, updated display ID=0
+04-20 03:36:25.248 D/WindowTokenClient(20885): Configuration not dispatch to IME because configuration is up to date. Current config={1.3 ?mcc0mnc [en_US] ldltr sw723dp w1157dp h723dp 354dpi xlrg land finger qwerty/v/v dpad/v winConfig={ mBounds=Rect(0, 0 - 2560, 1600) mAppBounds=Rect(0, 0 - 2560, 1600) mMaxBounds=Rect(0, 0 - 2560, 1600) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} s.8 fontWeightAdjustment=0}, reported config={1.3 ?mcc0mnc [en_US] ldltr sw723dp w1157dp h723dp 354dpi xlrg land finger qwerty/v/v dpad/v winConfig={ mBounds=Rect(0, 0 - 2560, 1600) mAppBounds=Rect(0, 0 - 2560, 1600) mMaxBounds=Rect(0, 0 - 2560, 1600) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} s.8 fontWeightAdjustment=0}, updated config={1.3 ?mcc0mnc [en_US] ldltr sw723dp w1157dp h723dp 354dpi xlrg land finger qwerty/v/v dpad/v winConfig={ mBounds=Rect(0, 0 - 2560, 1600) mAppBounds=Rect(0, 0 - 2560, 1600) mMaxBounds=Rect(0, 0 - 2560, 1600) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} s.8 fontWeightAdjustment=0}, updated display ID=0
+04-20 03:36:25.248 E/InputMethodWrapper(20885): startInput must be called after bindInput.
+04-20 03:36:25.249 I/GoogleInputMethodService(20885): GoogleInputMethodService.onStartInput():1986 onStartInput(EditorInfo{EditorInfo{packageName=com.impos2.mixcretailassemblyrn84, inputType=0, inputTypeString=NULL, enableLearning=false, autoCorrection=false, autoComplete=false, imeOptions=0, privateImeOptions=null, actionName=UNSPECIFIED, actionLabel=null, initialSelStart=-1, initialSelEnd=-1, initialCapsMode=0, label=null, fieldId=0, fieldName=null, extras=null, hintText=null, hintLocales=[]}}, false)
+04-20 03:36:25.249 I/GoogleInputMethodService(20885): GoogleInputMethodService.updateDeviceLockedStatus():2248 repeatCheckTimes = 1, locked = false
+04-20 03:36:25.249 I/AndroidIME(20885): InputBundleManager.loadActiveInputBundleId():450 loadActiveInputBundleId: und-Latn-x-password, password
+04-20 03:36:25.249 W/PackageConfigPersister(  590): App-specific configuration not found for packageName: com.impos2.mixcretailassemblyrn84 and userId: 0
+04-20 03:36:25.250 I/HardKeyTracker(20885): HardKeyTracker.registerKeySequence():139 Register key sequence lnk{labelResId=2132019800, callback=gnd@6aa906, lastModifier=0, keyCodes=[57, 57], actions=[1, 0]}
+04-20 03:36:25.250 I/HardKeyTracker(20885): HardKeyTracker.registerKeySequence():139 Register key sequence lnk{labelResId=0, callback=gnd@e7c111d, lastModifier=0, keyCodes=[58, 58], actions=[1, 0]}
+04-20 03:36:25.251 I/SP      (20885): Scheduling job with delay of 0s for {m:b:u:l, bg}, 2 candidates
+04-20 03:36:25.251 E/JobScheduler.JobStatus(  590): App com.google.android.inputmethod.latin became active but still in NEVER bucket
+04-20 03:36:25.251 I/SP      (20885): Scheduling job with delay of 0s for {W:b:u:l, bg}, 1 candidates
+04-20 03:36:25.252 E/JobScheduler.JobStatus(  590): App com.google.android.inputmethod.latin became active but still in NEVER bucket
+04-20 03:36:25.255 I/SP      (20885): Scheduling: download registered, 0 started, 0 paused, 3 scheduled, 3 pending: manifests:next-word-predictor-20210507 * {m:b:u:l, bg}, manifests:emoji-2023020111 * {m:b:u:l, bg}, manifests:emoticon_content_description-2022081613 * {W:b:u:l, bg}
+04-20 03:36:25.255 I/SuperpacksManagerImpl(20885): SuperpacksManagerImpl$3$1.onFailure():588 emoticon_content_description.registerManifest() cancelled
+04-20 03:36:25.462 W/WindowOnBackDispatcher(  836): sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda11@7f3a629
+04-20 03:36:25.463 W/InputManager-JNI(  590): Input channel object 'e2f0958 Splash Screen com.impos2.mixcretailassemblyrn84 (client)' was disposed without first being removed with the input manager!
+04-20 03:36:25.463 D/CoreBackPreview(  590): Window{e2f0958 u0 Splash Screen com.impos2.mixcretailassemblyrn84 EXITING}: Setting back callback null
+04-20 03:36:25.513 W/FrameTracker(  836): Missed SF frame:PREDICTION_ERROR, 172152125, 6930721, CUJ=J<SPLASHSCREEN_EXIT_ANIM>
+04-20 03:36:25.513 W/FrameTracker(  836): Missed SF frame:PREDICTION_ERROR, 172152161, 7930555, CUJ=J<SPLASHSCREEN_EXIT_ANIM>
+04-20 03:36:25.513 W/FrameTracker(  836): Missed SF frame:PREDICTION_ERROR, 172152247, 5450306, CUJ=J<SPLASHSCREEN_EXIT_ANIM>
+04-20 03:36:25.513 W/FrameTracker(  836): Missed SF frame:PREDICTION_ERROR, 172152665, 0, CUJ=J<SPLASHSCREEN_EXIT_ANIM>
+04-20 03:36:25.513 W/FrameTracker(  836): Missing HWUI jank callback for vsyncId: 172152665, CUJ=J<SPLASHSCREEN_EXIT_ANIM>
+04-20 03:36:25.513 V/PerfettoTrigger(  836): Triggering /system/bin/trigger_perfetto com.android.telemetry.interaction-jank-monitor-39
+04-20 03:36:25.676 V/WindowManagerShell(  836): Transition animation finished (aborted=false), notifying core (#559) android.os.BinderProxy@197f9d6@0
+04-20 03:36:25.677 V/WindowManager(  590): Finish Transition (#559): created at 04-20 03:36:25.115 collect-started=0.039ms request-sent=4.488ms started=6.326ms ready=9.37ms sent=33.585ms finished=561.45ms
+04-20 03:36:25.678 D/VRI[SecondaryActivity](15611): visibilityChanged oldVisibility=true newVisibility=false
+04-20 03:36:25.678 V/WindowManagerShell(  836): Track 0 became idle
+04-20 03:36:25.678 V/WindowManagerShell(  836): All active transition animations finished
+04-20 03:36:25.678 W/UserManagerService(  590): Requested status bar icon for non-badged user 0
+04-20 03:36:25.680 W/UserManagerService(  590): Requested status bar icon for non-badged user 0
+04-20 03:36:25.694 W/WindowManager(  590): Failed looking up window session=Session{330fbed 836:u0a10186} callers=com.android.server.wm.WindowManagerService.removeClientToken:2058 com.android.server.wm.Session.remove:274 android.view.IWindowSession$Stub.onTransact:685 
+04-20 03:36:28.127 E/TaskPersister(  590): File error accessing recents directory (directory doesn't exist?).
+04-20 03:36:28.920 W/adbd    (14705): timeout expired while flushing socket, closing
+04-20 03:36:28.996 W/adbd    (14705): timeout expired while flushing socket, closing
+04-20 03:36:29.111 W/adbd    (14705): timeout expired while flushing socket, closing
+04-20 03:36:29.122 W/adbd    (14705): timeout expired while flushing socket, closing
+04-20 03:36:32.209 W/adbd    (14705): timeout expired while flushing socket, closing
+04-20 03:36:42.029 I/ReactNativeJS(15611): '[assembly.android.mixc-retail-rn84.websocket] connect', { url: 'ws://127.0.0.1:8888/mockMasterServer/ws',
+04-20 03:36:42.029 I/ReactNativeJS(15611):   protocol: 'ws',
+04-20 03:36:42.029 I/ReactNativeJS(15611):   host: '127.0.0.1:8888',
+04-20 03:36:42.029 I/ReactNativeJS(15611):   pathname: '/mockMasterServer/ws' }
+04-20 03:36:42.029 I/assembly.assembly.android.mixc-retail-rn84.transport.ws.SocketRuntime(15611): [transport.ws] Socket connect started: assembly.android.mixc-retail-rn84.topology {"profileName":"assembly.android.mixc-retail-rn84.topology","serverName":"dual-topology-host-v3","addressName":"dynamic-topology-host"}
+04-20 03:36:42.033 I/assembly.assembly.android.mixc-retail-rn84(15611): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 03:36:42.033 I/assembly.assembly.android.mixc-retail-rn84(15611): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 03:36:42.034 D/TrafficStats(15611): tagSocket(112) with statsTag=0xffffffff, statsUid=-1
+04-20 03:36:42.036 D/TrafficStats(15534): tagSocket(134) with statsTag=0xffffffff, statsUid=-1
+04-20 03:36:42.038 I/assembly.assembly.android.mixc-retail-rn84(15611): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 03:36:42.039 I/assembly.assembly.android.mixc-retail-rn84(15611): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 03:36:42.039 I/assembly.assembly.android.mixc-retail-rn84(15611): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 03:36:42.040 I/assembly.assembly.android.mixc-retail-rn84(15611): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 03:36:42.040 I/assembly.assembly.android.mixc-retail-rn84(15534): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 03:36:42.041 I/assembly.assembly.android.mixc-retail-rn84(15534): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 03:36:42.041 I/assembly.assembly.android.mixc-retail-rn84(15534): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 03:36:42.042 I/ReactNativeJS(15534): '[runtime-state-sync-apply]', '{"direction":"slave-to-master","incomingSliceNames":["kernel.base.topology-runtime-v3.demo.slave","kernel.base.ui-runtime-v2.screen.branch","kernel.base.ui-runtime-v2.overlay.branch","kernel.base.ui-runtime-v2.ui-variable.branch"],"appliedSliceNames":["kernel.base.topology-runtime-v3.demo.slave","kernel.base.ui-runtime-v2.screen.branch","kernel.base.ui-runtime-v2.overlay.branch","kernel.base.ui-runtime-v2.ui-variable.branch"],"skippedSliceReasons":[]}'
+04-20 03:36:42.043 I/assembly.assembly.android.mixc-retail-rn84(15534): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 03:36:42.044 I/assembly.assembly.android.mixc-retail-rn84(15534): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 03:36:42.044 I/ReactNativeJS(15611): '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.topology-runtime-v3.demo.master","kernel.base.tcp-control-runtime-v2.identity","kernel.base.tcp-control-runtime-v2.credential","kernel.base.tcp-control-runtime-v2.binding","kernel.base.tcp-control-runtime-v2.sandbox","kernel.base.tdp-sync-runtime-v2.hot-update","kernel.base.ui-runtime-v2.screen.main","kernel.base.ui-runtime-v2.overlay.main","kernel.base.ui-runtime-v2.ui-variable.main"],"appliedSliceNames":["kernel.base.topology-runtime-v3.demo.master","kernel.base.tcp-control-runtime-v2.identity","kernel.base.tcp-control-runtime-v2.credential","kernel.base.tcp-control-runtime-v2.binding","kernel.base.tcp-control-runtime-v2.sandbox","kernel.base.tdp-sync-runtime-v2.hot-update","kernel.base.ui-runtime-v2.screen.main","kernel.base.ui-runtime-v2.overlay.main","kernel.base.ui-runtime-v2.ui-variable.main"],"skippedSliceReasons":[]}'
+04-20 03:36:42.046 I/assembly.assembly.android.mixc-retail-rn84(15611): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 03:36:42.046 D/TrafficStats(15611): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-20 03:36:42.046 I/assembly.assembly.android.mixc-retail-rn84(15611): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 03:36:49.059 W/adbd    (14705): timeout expired while flushing socket, closing
+04-20 03:36:59.748 W/healthd (  397): battery l=47 v=5000 t=25.0 h=2 st=4 c=900000 fc=3000000 cc=10 chg=a
+04-20 03:37:00.003 I/AiAiEcho( 1389): Predicting[0]:  [CONTEXT sampling_count=5 ]
+04-20 03:37:00.003 I/AiAiEcho( 1389): EchoTargets: 
+04-20 03:37:00.003 I/AiAiEcho( 1389): Filtered by AiAi flag check: 
+04-20 03:37:00.003 I/AiAiEcho( 1389): [CONTEXT ratelimit_period="10 SECONDS" ]
+04-20 03:37:00.004 I/AiAiEcho( 1389): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+04-20 03:37:00.004 I/AiAiEcho( 1389): #remoteViewsTwiddler: feature disabled.
+04-20 03:37:00.004 I/AiAiEcho( 1389): Predicting[0]:  [CONTEXT sampling_count=5 ]
+04-20 03:37:00.004 I/AiAiEcho( 1389): EchoTargets: 
+04-20 03:37:00.004 I/AiAiEcho( 1389): Filtered by AiAi flag check: 
+04-20 03:37:00.004 I/AiAiEcho( 1389): [CONTEXT ratelimit_period="10 SECONDS" ]
+04-20 03:37:00.004 I/AiAiEcho( 1389): Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+04-20 03:37:00.004 I/AiAiEcho( 1389): #remoteViewsTwiddler: feature disabled.
+04-20 03:37:00.005 I/AiAiEcho( 1389): #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+04-20 03:37:00.005 I/AiAiEcho( 1389): #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+04-20 03:37:00.006 D/SsBaseTemplateCard( 1099): No text view can be set up
+04-20 03:37:00.006 D/SsBaseTemplateCard( 1099): Passed-in item info is null
+04-20 03:37:00.006 D/SsBaseTemplateCard( 1099): Passed-in item info is null
+04-20 03:37:00.006 D/SsBaseTemplateCard( 1099): Passed-in item info is null
+04-20 03:37:00.006 I/SsBaseTemplateCard( 1099): Secondary card pane is null
+04-20 03:37:00.011 W/PageIndicator(  836): Total number of pages invalid: 0. Assuming 1 page.
+04-20 03:37:00.021 D/EGL_emulation(  836): app_time_stats: avg=60000.21ms min=60000.21ms max=60000.21ms count=1
+04-20 03:37:02.591 D/TrafficStats(15534): tagSocket(141) with statsTag=0xffffffff, statsUid=-1
+04-20 03:37:02.598 D/TrafficStats(15534): tagSocket(141) with statsTag=0xffffffff, statsUid=-1
+04-20 03:37:02.651 D/TrafficStats(15611): tagSocket(111) with statsTag=0xffffffff, statsUid=-1
+04-20 03:37:02.655 D/TrafficStats(15611): tagSocket(111) with statsTag=0xffffffff, statsUid=-1
+04-20 03:37:02.714 D/TrafficStats(15534): tagSocket(141) with statsTag=0xffffffff, statsUid=-1
+04-20 03:37:02.719 D/TrafficStats(15534): tagSocket(141) with statsTag=0xffffffff, statsUid=-1
+04-20 03:37:02.771 D/TrafficStats(15534): tagSocket(141) with statsTag=0xffffffff, statsUid=-1
+04-20 03:37:02.775 D/TrafficStats(15534): tagSocket(141) with statsTag=0xffffffff, statsUid=-1
+04-20 03:37:02.831 D/TrafficStats(15534): tagSocket(141) with statsTag=0xffffffff, statsUid=-1
+04-20 03:37:02.835 D/TrafficStats(15534): tagSocket(141) with statsTag=0xffffffff, statsUid=-1
+04-20 03:37:07.571 I/BistoHotwordHelper( 1413): (REDACTED) getHotwordActive::active query: %s, watch: %s, devices connected: %s
+04-20 03:37:17.314 I/UsageStatsService(  590): User[0] Flushing usage stats to disk

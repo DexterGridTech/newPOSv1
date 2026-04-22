@@ -2,10 +2,15 @@ import {describe, expect, it, vi} from 'vitest'
 import {createLoggerPort, createPlatformPorts} from '@impos2/kernel-base-platform-ports'
 import {
     createKernelRuntimeV2,
+    createCommand,
     type RuntimeModuleContextV2,
 } from '@impos2/kernel-base-runtime-shell-v2'
 import {createHttpRuntime, type HttpTransport} from '@impos2/kernel-base-transport-runtime'
 import {createTcpControlRuntimeModuleV2} from '@impos2/kernel-base-tcp-control-runtime-v2'
+import {
+    createTopologyRuntimeModuleV3,
+    topologyRuntimeV3CommandDefinitions,
+} from '@impos2/kernel-base-topology-runtime-v3'
 import {
     createTdpSyncRuntimeModuleV2,
     tdpHotUpdateActions,
@@ -38,6 +43,11 @@ const createTestRuntime = (input: {
     }
     restartApp?: ReturnType<typeof vi.fn>
     displayIndex?: number
+    topology?: {
+        instanceMode: 'MASTER' | 'SLAVE'
+        displayMode: 'PRIMARY' | 'SECONDARY'
+        enableSlave?: boolean
+    }
 }) => {
     const stateStorage = createMemoryStorage()
     const secureStateStorage = createMemoryStorage()
@@ -82,6 +92,7 @@ const createTestRuntime = (input: {
             },
         },
         modules: [
+            createTopologyRuntimeModuleV3(),
             createTcpControlRuntimeModuleV2({
                 assembly: {
                     createHttpRuntime(context: RuntimeModuleContextV2) {
@@ -217,6 +228,133 @@ describe('tdp hot update installer watcher', () => {
         })
 
         await runtime.start()
+        runtime.getStore().dispatch(tdpHotUpdateActions.reconcileDesired({desired, now: 1}))
+        await new Promise(resolve => setTimeout(resolve, 20))
+
+        expect(downloadPackage).not.toHaveBeenCalled()
+        expect(writeBootMarker).not.toHaveBeenCalled()
+    })
+
+    it('installs on standalone slave device when topology marks it as a separate node', async () => {
+        const downloadPackage = vi.fn(async () => ({
+            installDir: '/tmp/hot-updates/package-001',
+            entryFile: 'index.android.bundle',
+            manifestPath: '/tmp/hot-updates/package-001/manifest.json',
+            packageSha256: 'package-sha',
+            manifestSha256: 'manifest-sha',
+        }))
+        const writeBootMarker = vi.fn(async () => ({
+            bootMarkerPath: '/tmp/hot-updates/boot-marker.json',
+        }))
+        const runtime = createTestRuntime({
+            hotUpdatePort: {
+                downloadPackage,
+                writeBootMarker,
+            },
+            displayIndex: 0,
+            topology: {
+                instanceMode: 'SLAVE',
+                displayMode: 'SECONDARY',
+            },
+        })
+
+        await runtime.start()
+        await runtime.dispatchCommand(createCommand(
+            topologyRuntimeV3CommandDefinitions.setInstanceMode,
+            {instanceMode: 'SLAVE'},
+        ))
+        await runtime.dispatchCommand(createCommand(
+            topologyRuntimeV3CommandDefinitions.setDisplayMode,
+            {displayMode: 'SECONDARY'},
+        ))
+
+        runtime.getStore().dispatch(tdpHotUpdateActions.reconcileDesired({desired, now: 1}))
+        await vi.waitFor(() => expect(downloadPackage).toHaveBeenCalledTimes(1))
+        expect(writeBootMarker).toHaveBeenCalledTimes(1)
+    })
+
+    it('installs on standalone slave device after desired arrives through master-to-slave sync only', async () => {
+        const downloadPackage = vi.fn(async () => ({
+            installDir: '/tmp/hot-updates/package-001',
+            entryFile: 'index.android.bundle',
+            manifestPath: '/tmp/hot-updates/package-001/manifest.json',
+            packageSha256: 'package-sha',
+            manifestSha256: 'manifest-sha',
+        }))
+        const writeBootMarker = vi.fn(async () => ({
+            bootMarkerPath: '/tmp/hot-updates/boot-marker.json',
+        }))
+        const runtime = createTestRuntime({
+            hotUpdatePort: {
+                downloadPackage,
+                writeBootMarker,
+            },
+            displayIndex: 0,
+            topology: {
+                instanceMode: 'SLAVE',
+                displayMode: 'SECONDARY',
+            },
+        })
+
+        await runtime.start()
+        await runtime.dispatchCommand(createCommand(
+            topologyRuntimeV3CommandDefinitions.setInstanceMode,
+            {instanceMode: 'SLAVE'},
+        ))
+        await runtime.dispatchCommand(createCommand(
+            topologyRuntimeV3CommandDefinitions.setDisplayMode,
+            {displayMode: 'SECONDARY'},
+        ))
+
+        runtime.applyStateSyncDiff({
+            envelopeId: 'env-hot-update-sync-001' as any,
+            sessionId: 'session-hot-update-sync-001' as any,
+            sourceNodeId: 'master-node-hot-update-sync-001' as any,
+            targetNodeId: 'slave-node-hot-update-sync-001' as any,
+            direction: 'master-to-slave',
+            diffBySlice: {
+                'kernel.base.tdp-sync-runtime-v2.hot-update': [
+                    {
+                        key: 'desired',
+                        value: {
+                            value: desired,
+                            updatedAt: Date.parse(desired.rollout.publishedAt) as any,
+                        },
+                    },
+                ],
+            },
+            sentAt: Date.now() as any,
+        })
+
+        await vi.waitFor(() => expect(downloadPackage).toHaveBeenCalledTimes(1))
+        expect(writeBootMarker).toHaveBeenCalledTimes(1)
+    })
+
+    it('does not install on managed secondary display when topology marks it as non-standalone', async () => {
+        const downloadPackage = vi.fn()
+        const writeBootMarker = vi.fn()
+        const runtime = createTestRuntime({
+            hotUpdatePort: {
+                downloadPackage,
+                writeBootMarker,
+            },
+            displayIndex: 1,
+            topology: {
+                instanceMode: 'SLAVE',
+                displayMode: 'SECONDARY',
+            },
+        })
+
+        await runtime.start()
+        await runtime.dispatchCommand(createCommand(
+            topologyRuntimeV3CommandDefinitions.setInstanceMode,
+            {instanceMode: 'SLAVE'},
+        ))
+        await runtime.dispatchCommand(createCommand(
+            topologyRuntimeV3CommandDefinitions.setDisplayMode,
+            {displayMode: 'SECONDARY'},
+        ))
+
         runtime.getStore().dispatch(tdpHotUpdateActions.reconcileDesired({desired, now: 1}))
         await new Promise(resolve => setTimeout(resolve, 20))
 

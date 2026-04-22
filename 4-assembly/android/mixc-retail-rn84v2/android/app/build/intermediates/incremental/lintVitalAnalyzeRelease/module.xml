@@ -1,0 +1,19 @@
+<lint-module
+    format="1"
+    dir="/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app"
+    name=":app"
+    type="APP"
+    maven="MixcRetailRN84v2:app:unspecified"
+    agpVersion="8.12.0"
+    buildFolder="build"
+    bootClassPath="/Users/dexter/Library/Android/sdk/platforms/android-36/android.jar:/Users/dexter/Library/Android/sdk/build-tools/36.0.0/core-lambda-stubs.jar"
+    javaSourceLevel="17"
+    compileTarget="android-36"
+    neverShrinking="true">
+  <lintOptions
+      abortOnError="true"
+      absolutePaths="true"
+      checkReleaseBuilds="true"
+      explainIssues="true"/>
+  <variant name="release"/>
+</lint-module>

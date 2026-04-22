@@ -110,6 +110,12 @@ const createAssemblyAdminTopologyHost = (
             const imported = importAssemblyTopologySharePayload(payload)
             bindingSource.set(imported.bindingSeed)
             await dispatchTopologyCommand(createCommand(
+                topologyRuntimeV3CommandDefinitions.setInstanceMode,
+                {
+                    instanceMode: 'SLAVE',
+                },
+            ))
+            await dispatchTopologyCommand(createCommand(
                 topologyRuntimeV3CommandDefinitions.setMasterLocator,
                 {
                     masterLocator: imported.masterLocator as any,

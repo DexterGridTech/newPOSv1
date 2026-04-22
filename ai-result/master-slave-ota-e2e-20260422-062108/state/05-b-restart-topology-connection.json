@@ -1,0 +1,21 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "requestId": "req_mo979d61_qp19u7g5bzdcagaf",
+    "commandId": "cmd_mo979d61_b8mjimw2uj64oatt",
+    "commandName": "kernel.base.topology-runtime-v3.restart-topology-connection",
+    "target": "local",
+    "status": "COMPLETED",
+    "startedAt": 1776810776041,
+    "completedAt": 1776810776049,
+    "actorResults": [
+      {
+        "actorKey": "kernel.base.topology-runtime-v3.TopologyConnectionActor",
+        "status": "COMPLETED",
+        "startedAt": 1776810776041,
+        "completedAt": 1776810776049
+      }
+    ]
+  },
+  "id": "1776810776013-f330fc89fd66c"
+}

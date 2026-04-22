@@ -1,0 +1,150 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "current": {
+      "source": "hot-update",
+      "appId": "assembly-android-mixc-retail-rn84",
+      "assemblyVersion": "1.0.0",
+      "buildNumber": 8,
+      "runtimeVersion": "android-mixc-retail-rn84@1.0",
+      "bundleVersion": "1.0.0+ota.2",
+      "packageId": "pkg_9k94k0kk6ilf",
+      "releaseId": "release_jn5atz9q6xyk",
+      "installDir": "/data/user/0/com.impos2.mixcretailassemblyrn84/files/hot-updates/packages/pkg_9k94k0kk6ilf",
+      "appliedAt": 1776807343254
+    },
+    "desired": {
+      "schemaVersion": 1,
+      "releaseId": "release_jn5atz9q6xyk",
+      "packageId": "pkg_9k94k0kk6ilf",
+      "appId": "assembly-android-mixc-retail-rn84",
+      "platform": "android",
+      "product": "mixc-retail",
+      "bundleVersion": "1.0.0+ota.2",
+      "runtimeVersion": "android-mixc-retail-rn84@1.0",
+      "packageUrl": "/api/v1/hot-updates/packages/pkg_9k94k0kk6ilf/download?sandboxId=sandbox-kernel-base-test&token=29501c2f0d9ed66bfb2d6bd0842e9adb731073a32f36a6b3aa3cc0937fec57c0",
+      "packageSize": 3563110,
+      "packageSha256": "f9c87e5b09f12d294193e4a6b9f5c82c495672d9c301f78c09b05c4943b24257",
+      "manifestSha256": "0308635883abe77380c3e51415f630d0288b4cc4a49ee2e06971153af000ae65",
+      "compatibility": {
+        "appId": "assembly-android-mixc-retail-rn84",
+        "platform": "android",
+        "product": "mixc-retail",
+        "runtimeVersion": "android-mixc-retail-rn84@1.0",
+        "minAssemblyVersion": "1.0.0",
+        "maxAssemblyVersion": "1.0.0",
+        "minBuildNumber": 8,
+        "maxBuildNumber": 8,
+        "allowedChannels": [
+          "production"
+        ],
+        "targetPackages": {
+          "@impos2/kernel-base-contracts": "1.0.0",
+          "@impos2/kernel-base-platform-ports": "1.0.0",
+          "@impos2/kernel-base-runtime-shell-v2": "1.0.0",
+          "@impos2/kernel-base-tcp-control-runtime-v2": "1.0.0",
+          "@impos2/kernel-base-topology-runtime-v3": "1.0.0",
+          "@impos2/kernel-base-transport-runtime": "1.0.0",
+          "@impos2/kernel-base-ui-runtime-v2": "1.0.0",
+          "@impos2/kernel-server-config-v2": "1.0.0",
+          "@impos2/ui-base-admin-console": "1.0.0",
+          "@impos2/ui-base-input-runtime": "1.0.0",
+          "@impos2/ui-base-runtime-react": "1.0.0",
+          "@impos2/ui-base-terminal-console": "1.0.0",
+          "@impos2/ui-integration-retail-shell": "1.0.0",
+          "@impos2/adapter-android-v2": "1.0.0"
+        }
+      },
+      "restart": {
+        "mode": "immediate",
+        "operatorInstruction": "ota e2e immediate restart"
+      },
+      "rollout": {
+        "mode": "active",
+        "publishedAt": "2026-04-21T21:35:14.878Z"
+      },
+      "safety": {
+        "requireSignature": false,
+        "maxDownloadAttempts": 3,
+        "maxLaunchFailures": 2,
+        "healthCheckTimeoutMs": 30000
+      },
+      "metadata": {
+        "channel": "production",
+        "builtAt": "2026-04-21T21:34:03.205Z",
+        "releaseNotes": [
+          "ota-e2e",
+          "v20"
+        ]
+      }
+    },
+    "history": [
+      {
+        "event": "download-pending",
+        "releaseId": "release_jn5atz9q6xyk",
+        "packageId": "pkg_9k94k0kk6ilf",
+        "bundleVersion": "1.0.0+ota.2",
+        "at": 1776807314808
+      },
+      {
+        "event": "download-started",
+        "releaseId": "release_jn5atz9q6xyk",
+        "packageId": "pkg_9k94k0kk6ilf",
+        "bundleVersion": "1.0.0+ota.2",
+        "at": 1776807314808
+      },
+      {
+        "event": "ready",
+        "releaseId": "release_jn5atz9q6xyk",
+        "packageId": "pkg_9k94k0kk6ilf",
+        "bundleVersion": "1.0.0+ota.2",
+        "at": 1776807329863
+      },
+      {
+        "event": "applying",
+        "releaseId": "release_jn5atz9q6xyk",
+        "packageId": "pkg_9k94k0kk6ilf",
+        "bundleVersion": "1.0.0+ota.2",
+        "at": 1776807329866
+      },
+      {
+        "event": "restart-pending",
+        "releaseId": "release_jn5atz9q6xyk",
+        "packageId": "pkg_9k94k0kk6ilf",
+        "bundleVersion": "1.0.0+ota.2",
+        "at": 1776807329866
+      },
+      {
+        "event": "restart-preparing",
+        "releaseId": "release_jn5atz9q6xyk",
+        "packageId": "pkg_9k94k0kk6ilf",
+        "bundleVersion": "1.0.0+ota.2",
+        "at": 1776807329866
+      },
+      {
+        "event": "restart-ready",
+        "releaseId": "release_jn5atz9q6xyk",
+        "packageId": "pkg_9k94k0kk6ilf",
+        "bundleVersion": "1.0.0+ota.2",
+        "at": 1776807332892
+      },
+      {
+        "event": "applied",
+        "releaseId": "release_jn5atz9q6xyk",
+        "packageId": "pkg_9k94k0kk6ilf",
+        "bundleVersion": "1.0.0+ota.2",
+        "at": 1776807343215
+      }
+    ],
+    "previous": {
+      "source": "embedded",
+      "appId": "assembly-android-mixc-retail-rn84",
+      "assemblyVersion": "1.0.0",
+      "buildNumber": 8,
+      "runtimeVersion": "android-mixc-retail-rn84@1.0",
+      "bundleVersion": "1.0.0+ota.0",
+      "appliedAt": 1776806201196
+    }
+  },
+  "id": "1776807391280-3b7b4a12e38c2"
+}

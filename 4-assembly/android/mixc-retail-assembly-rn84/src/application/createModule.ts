@@ -47,10 +47,31 @@ export const createModule = (
             return
         }
 
+        let lastPowerConnected: boolean | null = null
+
         removePowerListener(event => {
+            const powerConnected = Boolean(event?.powerConnected)
+            if (lastPowerConnected === powerConnected) {
+                return
+            }
+            if (lastPowerConnected == null) {
+                lastPowerConnected = powerConnected
+                context.platformPorts.logger.info({
+                    category: 'assembly.topology',
+                    event: 'power-display-switch-seeded',
+                    message: 'Seeded standalone slave power state without changing display mode',
+                    data: {
+                        displayIndex: props.displayIndex,
+                        displayCount: props.displayCount,
+                        powerConnected,
+                    },
+                })
+                return
+            }
+            lastPowerConnected = powerConnected
             void handleAssemblyPowerDisplaySwitch({
                 context: selectTopologyRuntimeV3Context(context.getState()),
-                powerConnected: Boolean(event?.powerConnected),
+                powerConnected,
                 dispatchCommand: context.dispatchCommand,
             })
         })

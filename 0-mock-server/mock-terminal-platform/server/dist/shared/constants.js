@@ -1,0 +1,9 @@
+export const APP_NAME = 'Mock Terminal Platform';
+export const SERVER_PORT = 5810;
+export const API_PREFIX = '/api/v1';
+export const INTERNAL_PREFIX = '/internal';
+export const MOCK_ADMIN_PREFIX = '/mock-admin';
+export const MOCK_DEBUG_PREFIX = '/mock-debug';
+export const DEFAULT_SANDBOX_ID = 'sandbox-default';
+export const DEFAULT_OWNER_USER_ID = 'system';
+export const DEFAULT_OWNER_TEAM_ID = 'mock-platform';

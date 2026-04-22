@@ -1,0 +1,45 @@
+04-20 05:50:23.555 D/AndroidRuntime(19009): >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+04-20 05:50:23.557 I/AndroidRuntime(19009): Using default boot image
+04-20 05:50:23.557 I/AndroidRuntime(19009): Leaving lock profiling enabled
+04-20 05:50:23.635 D/AndroidRuntime(19009): Calling main entry com.android.commands.monkey.Monkey
+04-20 05:50:23.665 I/AndroidRuntime(19009): VM exiting with result code 0.
+04-20 05:50:23.741 I/StartupAudit(19041): activity_created activity=MainActivity displayIndex=0 pid=19041 time=2026-04-20 05:50:23.741
+04-20 05:50:23.755 I/HotUpdateBundleResolver(19041): no_active_marker isPrimaryProcess=true pid=19041
+04-20 05:50:23.756 I/MainApplication(19041): getJSBundleFile process=com.impos2.mixcretailassemblyrn84 isPrimaryProcess=true resolvedBundle=null fallbackBundle=null selectedBundle=null
+04-20 05:50:23.782 I/ReactNativeJS(19041): Running "MixcRetailAssemblyRN84"
+04-20 05:50:23.837 I/assembly.android.mixc-retail-rn84.boot(19041): {"stage":"resolve-topology:start","displayIndex":0,"displayCount":2}
+04-20 05:50:23.857 I/assembly.android.mixc-retail-rn84.boot(19041): {"stage":"resolve-topology:done","displayIndex":0,"displayCount":2,"resolvedRole":"master","resolvedWsUrl":"ws://127.0.0.1:8888/mockMasterServer/ws"}
+04-20 05:50:23.857 I/assembly.android.mixc-retail-rn84.boot(19041): {"stage":"create-app:start","displayIndex":0,"displayCount":2}
+04-20 05:50:23.867 I/assembly.android.mixc-retail-rn84.boot(19041): {"stage":"create-app:done","displayIndex":0,"displayCount":2}
+04-20 05:50:23.867 I/assembly.android.mixc-retail-rn84.boot(19041): {"stage":"runtime.start:start","displayIndex":0,"displayCount":2}
+04-20 05:50:23.897 I/ReactNativeJS(19041): '[tcp-bootstrap-state-written]', '{"nodeId":"master:J9RZPWR3HK","runtimeId":"run_mo6auyka_agaeyubpfow34fsk","displayIndex":0,"requestId":"req_mo6auyl1_nbrmssnghokkkyv4","commandId":"cmd_mo6auyl5_5apspc2kmr3c5b39","nextDeviceFingerprint":"J9RZPWR3HK","nextDeviceInfo":{"id":"J9RZPWR3HK","model":"Mixc Retail Android RN84"},"previousIdentity":{"activationStatus":"UNACTIVATED"}}'
+04-20 05:50:23.898 I/ReactNativeJS(19041): '[assembly.android.mixc-retail-rn84.websocket] connect', { url: 'ws://127.0.0.1:8888/mockMasterServer/ws',
+04-20 05:50:23.898 I/ReactNativeJS(19041):   protocol: 'ws',
+04-20 05:50:23.898 I/ReactNativeJS(19041):   host: '127.0.0.1:8888',
+04-20 05:50:23.898 I/ReactNativeJS(19041):   pathname: '/mockMasterServer/ws' }
+04-20 05:50:23.938 I/assembly.android.mixc-retail-rn84.boot(19041): {"stage":"runtime.start:done","displayIndex":0,"displayCount":2}
+04-20 05:50:23.947 I/assembly.android.mixc-retail-rn84.boot(19041): {"stage":"automation.host:start","displayIndex":0,"displayCount":2,"target":"primary","host":"127.0.0.1","port":18584}
+04-20 05:50:23.956 I/assembly.android.mixc-retail-rn84.boot(19041): {"stage":"app-load-complete:start","displayIndex":0}
+04-20 05:50:23.956 I/StartupAudit(19041): app_load_complete displayIndex=0 pid=19041 time=2026-04-20 05:50:23.956
+04-20 05:50:23.957 I/StartupAudit(19041): secondary_launch_scheduled pid=19041 time=2026-04-20 05:50:23.956
+04-20 05:50:23.964 I/assembly.android.mixc-retail-rn84.boot(19041): {"stage":"app-load-complete:done","displayIndex":0}
+04-20 05:50:26.961 I/StartupAudit(19041): secondary_launch_attempt displayCount=2 displayId=2 pid=19041 time=2026-04-20 05:50:26.961
+04-20 05:50:27.052 I/HotUpdateBundleResolver(19111): no_active_marker isPrimaryProcess=false pid=19111
+04-20 05:50:27.052 I/MainApplication(19111): getJSBundleFile process=com.impos2.mixcretailassemblyrn84:secondary isPrimaryProcess=false resolvedBundle=null fallbackBundle=null selectedBundle=null
+04-20 05:50:27.057 I/StartupAudit(19111): activity_created activity=SecondaryActivity displayIndex=1 pid=19111 time=2026-04-20 05:50:27.057
+04-20 05:50:27.069 I/ReactNativeJS(19111): Running "MixcRetailAssemblyRN84"
+04-20 05:50:27.116 I/assembly.android.mixc-retail-rn84.boot(19111): {"stage":"resolve-topology:start","displayIndex":1,"displayCount":2,"topologyRole":"slave","topologyWsUrl":"ws://127.0.0.1:8888/mockMasterServer/ws"}
+04-20 05:50:27.116 I/assembly.android.mixc-retail-rn84.boot(19111): {"stage":"resolve-topology:done","displayIndex":1,"displayCount":2,"topologyRole":"slave","topologyWsUrl":"ws://127.0.0.1:8888/mockMasterServer/ws","resolvedRole":"slave","resolvedWsUrl":"ws://127.0.0.1:8888/mockMasterServer/ws"}
+04-20 05:50:27.117 I/assembly.android.mixc-retail-rn84.boot(19111): {"stage":"create-app:start","displayIndex":1,"displayCount":2,"topologyRole":"slave","topologyWsUrl":"ws://127.0.0.1:8888/mockMasterServer/ws"}
+04-20 05:50:27.119 I/assembly.android.mixc-retail-rn84.boot(19111): {"stage":"create-app:done","displayIndex":1,"displayCount":2,"topologyRole":"slave","topologyWsUrl":"ws://127.0.0.1:8888/mockMasterServer/ws"}
+04-20 05:50:27.119 I/assembly.android.mixc-retail-rn84.boot(19111): {"stage":"runtime.start:start","displayIndex":1,"displayCount":2,"topologyRole":"slave","topologyWsUrl":"ws://127.0.0.1:8888/mockMasterServer/ws"}
+04-20 05:50:27.138 I/ReactNativeJS(19111): '[assembly.android.mixc-retail-rn84.websocket] connect', { url: 'ws://127.0.0.1:8888/mockMasterServer/ws',
+04-20 05:50:27.138 I/ReactNativeJS(19111):   protocol: 'ws',
+04-20 05:50:27.138 I/ReactNativeJS(19111):   host: '127.0.0.1:8888',
+04-20 05:50:27.138 I/ReactNativeJS(19111):   pathname: '/mockMasterServer/ws' }
+04-20 05:50:27.191 I/assembly.android.mixc-retail-rn84.boot(19111): {"stage":"runtime.start:done","displayIndex":1,"displayCount":2,"topologyRole":"slave","topologyWsUrl":"ws://127.0.0.1:8888/mockMasterServer/ws"}
+04-20 05:50:27.195 I/assembly.android.mixc-retail-rn84.boot(19111): {"stage":"automation.host:start","displayIndex":1,"displayCount":2,"topologyRole":"slave","topologyWsUrl":"ws://127.0.0.1:8888/mockMasterServer/ws","target":"secondary","host":"127.0.0.1","port":18585}
+04-20 05:50:27.203 I/assembly.android.mixc-retail-rn84.boot(19111): {"stage":"app-load-complete:start","displayIndex":1}
+04-20 05:50:27.204 I/ReactNativeJS(19041): '[runtime-state-sync-apply]', '{"direction":"slave-to-master","incomingSliceNames":["kernel.base.topology-runtime-v3.demo.slave","kernel.base.ui-runtime-v2.screen.branch","kernel.base.ui-runtime-v2.overlay.branch","kernel.base.ui-runtime-v2.ui-variable.branch"],"appliedSliceNames":["kernel.base.topology-runtime-v3.demo.slave","kernel.base.ui-runtime-v2.screen.branch","kernel.base.ui-runtime-v2.overlay.branch","kernel.base.ui-runtime-v2.ui-variable.branch"],"skippedSliceReasons":[]}'
+04-20 05:50:27.205 I/ReactNativeJS(19111): '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.topology-runtime-v3.demo.master","kernel.base.tcp-control-runtime-v2.identity","kernel.base.tcp-control-runtime-v2.credential","kernel.base.tcp-control-runtime-v2.binding","kernel.base.tcp-control-runtime-v2.sandbox","kernel.base.tdp-sync-runtime-v2.hot-update","kernel.base.ui-runtime-v2.screen.main","kernel.base.ui-runtime-v2.overlay.main","kernel.base.ui-runtime-v2.ui-variable.main"],"appliedSliceNames":["kernel.base.topology-runtime-v3.demo.master","kernel.base.tcp-control-runtime-v2.identity","kernel.base.tcp-control-runtime-v2.credential","kernel.base.tcp-control-runtime-v2.binding","kernel.base.tcp-control-runtime-v2.sandbox","kernel.base.tdp-sync-runtime-v2.hot-update","kernel.base.ui-runtime-v2.screen.main","kernel.base.ui-runtime-v2.overlay.main","kernel.base.ui-runtime-v2.ui-variable.main"],"skippedSliceReasons":[]}'
+04-20 05:50:27.209 I/assembly.android.mixc-retail-rn84.boot(19111): {"stage":"app-load-complete:done","displayIndex":1}

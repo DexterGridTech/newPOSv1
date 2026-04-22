@@ -1,0 +1,12 @@
+{
+  "sandboxId": "sandbox-kernel-base-test",
+  "packageId": "pkg_fqpt7kt34mhh",
+  "scopeType": "TERMINAL",
+  "scopeKey": "terminal_7xbkpcbp5fun",
+  "createdBy": "codex-e2e",
+  "restart": {
+    "mode": "immediate",
+    "operatorInstruction": "restart immediately for OTA E2E V7 verification"
+  },
+  "rolloutMode": "active"
+}

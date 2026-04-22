@@ -1,0 +1,27 @@
+04-20 06:00:42.439 19236 19236 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+04-20 06:00:42.441 19236 19236 I AndroidRuntime: Using default boot image
+04-20 06:00:42.441 19236 19236 I AndroidRuntime: Leaving lock profiling enabled
+04-20 06:00:42.489 19236 19236 D AndroidRuntime: Calling main entry com.android.commands.monkey.Monkey
+04-20 06:00:42.508 19236 19236 I AndroidRuntime: VM exiting with result code 0.
+04-20 06:00:42.572 19250 19250 I StartupAudit: activity_created activity=MainActivity displayIndex=0 pid=19250 time=2026-04-20 06:00:42.572
+04-20 06:00:42.582 19250 19250 I HotUpdateBundleResolver: no_active_marker isPrimaryProcess=true pid=19250
+04-20 06:00:42.582 19250 19250 I MainApplication: getJSBundleFile process=com.impos2.mixcretailassemblyrn84 isPrimaryProcess=true resolvedBundle=null fallbackBundle=null selectedBundle=null
+04-20 06:00:42.599 19250 19270 I ReactNativeJS: Running "MixcRetailAssemblyRN84"
+04-20 06:00:42.736 19250 19270 I ReactNativeJS: '[tcp-bootstrap-state-written]', '{"nodeId":"master:J9RZPWR3HK","runtimeId":"run_mo6b881l_005kuqpye1jxksmp","displayIndex":0,"requestId":"req_mo6b8833_2s2gp0yfbnqqll6u","commandId":"cmd_mo6b8833_oaeugrc0f5clmz8a","nextDeviceFingerprint":"J9RZPWR3HK","nextDeviceInfo":{"id":"J9RZPWR3HK","model":"Mixc Retail Android RN84"},"previousIdentity":{"deviceFingerprint":"J9RZPWR3HK","deviceInfo":{"id":"J9RZPWR3HK","model":"Mixc Retail Android RN84"},"activationStatus":"UNACTIVATED"}}'
+04-20 06:00:42.736 19250 19270 I ReactNativeJS: '[assembly.android.mixc-retail-rn84.websocket] connect', { url: 'ws://127.0.0.1:8888/mockMasterServer/ws',
+04-20 06:00:42.736 19250 19270 I ReactNativeJS:   protocol: 'ws',
+04-20 06:00:42.736 19250 19270 I ReactNativeJS:   host: '127.0.0.1:8888',
+04-20 06:00:42.736 19250 19270 I ReactNativeJS:   pathname: '/mockMasterServer/ws' }
+04-20 06:00:42.787 19250 19271 I StartupAudit: app_load_complete displayIndex=0 pid=19250 time=2026-04-20 06:00:42.787
+04-20 06:00:42.787 19250 19271 I StartupAudit: secondary_launch_scheduled pid=19250 time=2026-04-20 06:00:42.787
+04-20 06:00:45.792 19250 19250 I StartupAudit: secondary_launch_attempt displayCount=2 displayId=2 pid=19250 time=2026-04-20 06:00:45.791
+04-20 06:00:45.883 19313 19313 I HotUpdateBundleResolver: no_active_marker isPrimaryProcess=false pid=19313
+04-20 06:00:45.883 19313 19313 I MainApplication: getJSBundleFile process=com.impos2.mixcretailassemblyrn84:secondary isPrimaryProcess=false resolvedBundle=null fallbackBundle=null selectedBundle=null
+04-20 06:00:45.889 19313 19313 I StartupAudit: activity_created activity=SecondaryActivity displayIndex=1 pid=19313 time=2026-04-20 06:00:45.889
+04-20 06:00:45.899 19313 19332 I ReactNativeJS: Running "MixcRetailAssemblyRN84"
+04-20 06:00:45.947 19313 19332 I ReactNativeJS: '[assembly.android.mixc-retail-rn84.websocket] connect', { url: 'ws://127.0.0.1:8888/mockMasterServer/ws',
+04-20 06:00:45.947 19313 19332 I ReactNativeJS:   protocol: 'ws',
+04-20 06:00:45.947 19313 19332 I ReactNativeJS:   host: '127.0.0.1:8888',
+04-20 06:00:45.947 19313 19332 I ReactNativeJS:   pathname: '/mockMasterServer/ws' }
+04-20 06:00:46.017 19313 19332 I ReactNativeJS: '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.topology-runtime-v3.demo.master","kernel.base.tcp-control-runtime-v2.identity","kernel.base.tcp-control-runtime-v2.credential","kernel.base.tcp-control-runtime-v2.binding","kernel.base.tcp-control-runtime-v2.sandbox","kernel.base.tdp-sync-runtime-v2.hot-update","kernel.base.ui-runtime-v2.screen.main","kernel.base.ui-runtime-v2.overlay.main","kernel.base.ui-runtime-v2.ui-variable.main"],"appliedSliceNames":["kernel.base.topology-runtime-v3.demo.master","kernel.base.tcp-control-runtime-v2.identity","kernel.base.tcp-control-runtime-v2.credential","kernel.base.tcp-control-runtime-v2.binding","kernel.base.tcp-control-runtime-v2.sandbox","kernel.base.tdp-sync-runtime-v2.hot-update","kernel.base.ui-runtime-v2.screen.main","kernel.base.ui-runtime-v2.overlay.main","kernel.base.ui-runtime-v2.ui-variable.main"],"skippedSliceReasons":[]}'
+04-20 06:00:46.020 19250 19270 I ReactNativeJS: '[runtime-state-sync-apply]', '{"direction":"slave-to-master","incomingSliceNames":["kernel.base.topology-runtime-v3.demo.slave","kernel.base.ui-runtime-v2.screen.branch","kernel.base.ui-runtime-v2.overlay.branch","kernel.base.ui-runtime-v2.ui-variable.branch"],"appliedSliceNames":["kernel.base.topology-runtime-v3.demo.slave","kernel.base.ui-runtime-v2.screen.branch","kernel.base.ui-runtime-v2.overlay.branch","kernel.base.ui-runtime-v2.ui-variable.branch"],"skippedSliceReasons":[]}'

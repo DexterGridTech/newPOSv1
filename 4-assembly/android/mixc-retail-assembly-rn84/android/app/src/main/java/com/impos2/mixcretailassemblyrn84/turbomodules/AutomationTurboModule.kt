@@ -177,9 +177,14 @@ class AutomationTurboModule(reactContext: ReactApplicationContext) :
 
   private fun resolveDispatchTimeoutMs(messageJson: String): Long {
     return runCatching {
-      val params = JSONObject(messageJson).optJSONObject("params")
-      val requestedTimeout = params?.optLong("timeoutMs", DEFAULT_DISPATCH_TIMEOUT_MS)
-        ?: DEFAULT_DISPATCH_TIMEOUT_MS
+      val root = JSONObject(messageJson)
+      val params = root.optJSONObject("params")
+      val payload = params?.optJSONObject("payload")
+      val requestedTimeout = when {
+        params?.has("timeoutMs") == true -> params.optLong("timeoutMs", DEFAULT_DISPATCH_TIMEOUT_MS)
+        payload?.has("timeoutMs") == true -> payload.optLong("timeoutMs", DEFAULT_DISPATCH_TIMEOUT_MS)
+        else -> DEFAULT_DISPATCH_TIMEOUT_MS
+      }
       max(DEFAULT_DISPATCH_TIMEOUT_MS, requestedTimeout + DISPATCH_TIMEOUT_PADDING_MS)
     }.getOrDefault(DEFAULT_DISPATCH_TIMEOUT_MS)
   }

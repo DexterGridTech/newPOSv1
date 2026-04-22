@@ -1,0 +1,14 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "primaryOverlays": {
+      "value": [],
+      "updatedAt": 1776747269067
+    },
+    "secondaryOverlays": {
+      "value": [],
+      "updatedAt": 0
+    }
+  },
+  "id": "1776747338078-ebbf67eb4c1c38"
+}

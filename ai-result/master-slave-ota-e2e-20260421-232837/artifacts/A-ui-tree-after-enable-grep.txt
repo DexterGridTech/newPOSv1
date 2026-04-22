@@ -1,0 +1,8 @@
+1106:      "mountId": "admin-action:ui-base-admin-section:topology:share-payload",
+1107:      "nodeId": "ui-base-admin-section:topology:share-payload",
+1108:      "testID": "ui-base-admin-section:topology:share-payload",
+1109:      "semanticId": "ui-base-admin-section:topology:share-payload",
+1124:      "mountId": "admin-action:ui-base-admin-section:topology:host-status",
+1125:      "nodeId": "ui-base-admin-section:topology:host-status",
+1126:      "testID": "ui-base-admin-section:topology:host-status",
+1127:      "semanticId": "ui-base-admin-section:topology:host-status",

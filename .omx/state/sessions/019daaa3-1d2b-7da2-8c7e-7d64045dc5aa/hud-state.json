@@ -1,0 +1,6 @@
+{
+  "last_turn_at": "2026-04-20T11:25:47.389Z",
+  "turn_count": 1,
+  "last_progress_at": "2026-04-20T11:25:47.389Z",
+  "last_agent_output": "结论先说：\n\n`adapter-android-v2` 里的 `downloadPackage` 整条链路，在原生实现上是同步串行执行的；但从 `mixc-retail-assembly-rn84` "
+}

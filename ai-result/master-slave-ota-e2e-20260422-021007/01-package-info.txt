@@ -1,0 +1,10 @@
+=== emulator-5554 ===
+60:    versionCode=6 minSdk=24 targetSdk=36
+62:    versionName=1.0.0
+72:    lastUpdateTime=2026-04-22 02:12:53
+94:      firstInstallTime=2026-04-21 23:12:57
+=== emulator-5556 ===
+61:    versionCode=6 minSdk=24 targetSdk=36
+63:    versionName=1.0.0
+75:    lastUpdateTime=2026-04-22 02:12:54
+107:      firstInstallTime=2026-04-21 23:12:58

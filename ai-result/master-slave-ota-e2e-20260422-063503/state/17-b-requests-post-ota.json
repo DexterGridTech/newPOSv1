@@ -1,0 +1,704 @@
+{
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "requestId": "req_mo988392_77sjk8xjbgx52ucm",
+      "rootCommandId": "cmd_mo988392_g9l2hzummbubk4ww",
+      "status": "COMPLETED",
+      "startedAt": 1776812396150,
+      "updatedAt": 1776812396153,
+      "commands": [
+        {
+          "requestId": "req_mo988392_77sjk8xjbgx52ucm",
+          "commandId": "cmd_mo988392_g9l2hzummbubk4ww",
+          "commandName": "kernel.base.tdp-sync-runtime-v2.message-received",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776812396150,
+          "completedAt": 1776812396153,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tdp-sync-runtime-v2.TdpMessageActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812396150,
+              "completedAt": 1776812396153,
+              "result": {
+                "type": "PROJECTION_CHANGED"
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo988392_77sjk8xjbgx52ucm",
+          "commandId": "cmd_mo988392_ia0nuopwrbagfmhg",
+          "parentCommandId": "cmd_mo988392_g9l2hzummbubk4ww",
+          "commandName": "kernel.base.tdp-sync-runtime-v2.projection-received",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776812396150,
+          "completedAt": 1776812396153,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tdp-sync-runtime-v2.TdpProjectionRepositoryActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812396150,
+              "completedAt": 1776812396152,
+              "result": {
+                "cursor": 6,
+                "topic": "terminal.group.membership",
+                "itemKey": "terminal_j0o6hvtvwjkr"
+              }
+            },
+            {
+              "actorKey": "kernel.base.tdp-sync-runtime-v2.TdpCursorFeedbackActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812396150,
+              "completedAt": 1776812396152,
+              "result": {
+                "cursor": 6
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo988392_77sjk8xjbgx52ucm",
+          "commandId": "cmd_mo988392_eewug7nslq0ukb4i",
+          "parentCommandId": "cmd_mo988392_ia0nuopwrbagfmhg",
+          "commandName": "kernel.base.tdp-sync-runtime-v2.recompute-resolved-topic-changes",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776812396150,
+          "completedAt": 1776812396152,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tdp-sync-runtime-v2.TdpTopicChangeActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812396150,
+              "completedAt": 1776812396152,
+              "result": {
+                "changedTopicCount": 1,
+                "changedTopics": [
+                  "terminal.group.membership"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo988392_77sjk8xjbgx52ucm",
+          "commandId": "cmd_mo988392_jj9cvukunpy8tr4d",
+          "parentCommandId": "cmd_mo988392_eewug7nslq0ukb4i",
+          "commandName": "kernel.base.tdp-sync-runtime-v2.topic-data-changed",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776812396150,
+          "completedAt": 1776812396151,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tdp-sync-runtime-v2.TdpSystemCatalogBridgeActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812396150,
+              "completedAt": 1776812396150,
+              "result": {}
+            },
+            {
+              "actorKey": "kernel.base.workflow-runtime-v2.WorkflowRemoteDefinitionActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812396150,
+              "completedAt": 1776812396150,
+              "result": {}
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo988392_77sjk8xjbgx52ucm",
+          "commandId": "cmd_mo988392_ffqgb2bffaslz5v5",
+          "parentCommandId": "cmd_mo988392_ia0nuopwrbagfmhg",
+          "commandName": "kernel.base.tdp-sync-runtime-v2.acknowledge-cursor",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776812396150,
+          "completedAt": 1776812396151,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tdp-sync-runtime-v2.TdpSessionConnectionActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812396150,
+              "completedAt": 1776812396150,
+              "result": {
+                "cursor": 6
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo988392_77sjk8xjbgx52ucm",
+          "commandId": "cmd_mo988394_wedp19eoxhzcrm77",
+          "parentCommandId": "cmd_mo988392_ia0nuopwrbagfmhg",
+          "commandName": "kernel.base.tdp-sync-runtime-v2.report-applied-cursor",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776812396152,
+          "completedAt": 1776812396152,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tdp-sync-runtime-v2.TdpSessionConnectionActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812396152,
+              "completedAt": 1776812396152,
+              "result": {
+                "cursor": 6
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requestId": "req_mo98838z_jvytr14mfjn5qge1",
+      "rootCommandId": "cmd_mo98838z_yd8v8ai3v7q69mi6",
+      "status": "COMPLETED",
+      "startedAt": 1776812396147,
+      "updatedAt": 1776812396150,
+      "commands": [
+        {
+          "requestId": "req_mo98838z_jvytr14mfjn5qge1",
+          "commandId": "cmd_mo98838z_yd8v8ai3v7q69mi6",
+          "commandName": "kernel.base.tdp-sync-runtime-v2.message-received",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776812396147,
+          "completedAt": 1776812396150,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tdp-sync-runtime-v2.TdpMessageActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812396147,
+              "completedAt": 1776812396150,
+              "result": {
+                "type": "FULL_SNAPSHOT"
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo98838z_jvytr14mfjn5qge1",
+          "commandId": "cmd_mo98838z_hrcpf8re39m7o59f",
+          "parentCommandId": "cmd_mo98838z_yd8v8ai3v7q69mi6",
+          "commandName": "kernel.base.tdp-sync-runtime-v2.snapshot-loaded",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776812396147,
+          "completedAt": 1776812396150,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tdp-sync-runtime-v2.TdpProjectionRepositoryActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812396147,
+              "completedAt": 1776812396150,
+              "result": {
+                "count": 2,
+                "highWatermark": 5
+              }
+            },
+            {
+              "actorKey": "kernel.base.tdp-sync-runtime-v2.TdpCursorFeedbackActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812396148,
+              "completedAt": 1776812396150,
+              "result": {
+                "cursor": 5
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo98838z_jvytr14mfjn5qge1",
+          "commandId": "cmd_mo98838z_f56hkap0o2ogwz8c",
+          "parentCommandId": "cmd_mo98838z_hrcpf8re39m7o59f",
+          "commandName": "kernel.base.tdp-sync-runtime-v2.recompute-resolved-topic-changes",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776812396147,
+          "completedAt": 1776812396150,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tdp-sync-runtime-v2.TdpTopicChangeActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812396147,
+              "completedAt": 1776812396150,
+              "result": {
+                "changedTopicCount": 2,
+                "changedTopics": [
+                  "terminal.group.membership",
+                  "terminal.hot-update.desired"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo98838z_jvytr14mfjn5qge1",
+          "commandId": "cmd_mo988390_q0pa1otk4w03zoi1",
+          "parentCommandId": "cmd_mo98838z_f56hkap0o2ogwz8c",
+          "commandName": "kernel.base.tdp-sync-runtime-v2.topic-data-changed",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776812396148,
+          "completedAt": 1776812396148,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tdp-sync-runtime-v2.TdpSystemCatalogBridgeActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812396148,
+              "completedAt": 1776812396148,
+              "result": {}
+            },
+            {
+              "actorKey": "kernel.base.workflow-runtime-v2.WorkflowRemoteDefinitionActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812396148,
+              "completedAt": 1776812396148,
+              "result": {}
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo98838z_jvytr14mfjn5qge1",
+          "commandId": "cmd_mo988390_t9ck806q5d3xkqrw",
+          "parentCommandId": "cmd_mo98838z_hrcpf8re39m7o59f",
+          "commandName": "kernel.base.tdp-sync-runtime-v2.acknowledge-cursor",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776812396148,
+          "completedAt": 1776812396148,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tdp-sync-runtime-v2.TdpSessionConnectionActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812396148,
+              "completedAt": 1776812396148,
+              "result": {
+                "cursor": 5
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo98838z_jvytr14mfjn5qge1",
+          "commandId": "cmd_mo988390_cuib4t9sqvg02rek",
+          "parentCommandId": "cmd_mo98838z_f56hkap0o2ogwz8c",
+          "commandName": "kernel.base.tdp-sync-runtime-v2.topic-data-changed",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776812396148,
+          "completedAt": 1776812396148,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tdp-sync-runtime-v2.TdpSystemCatalogBridgeActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812396148,
+              "completedAt": 1776812396148,
+              "result": {}
+            },
+            {
+              "actorKey": "kernel.base.workflow-runtime-v2.WorkflowRemoteDefinitionActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812396148,
+              "completedAt": 1776812396148,
+              "result": {}
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo98838z_jvytr14mfjn5qge1",
+          "commandId": "cmd_mo988390_0qf7gzg55b4ju7rz",
+          "parentCommandId": "cmd_mo98838z_hrcpf8re39m7o59f",
+          "commandName": "kernel.base.tdp-sync-runtime-v2.report-applied-cursor",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776812396148,
+          "completedAt": 1776812396148,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tdp-sync-runtime-v2.TdpSessionConnectionActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812396148,
+              "completedAt": 1776812396148,
+              "result": {
+                "cursor": 5
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requestId": "req_mo98837r_4y29e8asu0swa4jw",
+      "rootCommandId": "cmd_mo98837r_bf2dezej69u713g1",
+      "status": "COMPLETED",
+      "startedAt": 1776812396103,
+      "updatedAt": 1776812396103,
+      "commands": [
+        {
+          "requestId": "req_mo98837r_4y29e8asu0swa4jw",
+          "commandId": "cmd_mo98837r_bf2dezej69u713g1",
+          "commandName": "kernel.base.tdp-sync-runtime-v2.message-received",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776812396103,
+          "completedAt": 1776812396103,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tdp-sync-runtime-v2.TdpMessageActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812396103,
+              "completedAt": 1776812396103,
+              "result": {
+                "type": "SESSION_READY"
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo98837r_4y29e8asu0swa4jw",
+          "commandId": "cmd_mo98837r_3urrgr9oebj44upo",
+          "parentCommandId": "cmd_mo98837r_bf2dezej69u713g1",
+          "commandName": "kernel.base.tdp-sync-runtime-v2.session-ready",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776812396103,
+          "completedAt": 1776812396103,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tdp-sync-runtime-v2.TdpSessionStateActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812396103,
+              "completedAt": 1776812396103,
+              "result": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requestId": "req_mo987vg1_4606svmddgj1d7wj",
+      "rootCommandId": "cmd_mo987vg1_oamq5z7vh3zxg90w",
+      "status": "COMPLETED",
+      "startedAt": 1776812386033,
+      "updatedAt": 1776812396098,
+      "commands": [
+        {
+          "requestId": "req_mo987vg1_4606svmddgj1d7wj",
+          "commandId": "cmd_mo987vg1_oamq5z7vh3zxg90w",
+          "commandName": "kernel.base.runtime-shell-v2.initialize",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776812386033,
+          "completedAt": 1776812396098,
+          "actorResults": [
+            {
+              "actorKey": "assembly.android.mixc-retail-rn84.AssemblyRuntimeInitializeActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812386033,
+              "completedAt": 1776812386035,
+              "result": {
+                "displayIndex": 0,
+                "displayCount": 1
+              }
+            },
+            {
+              "actorKey": "kernel.base.tdp-sync-runtime-v2.TdpInitializeActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812386034,
+              "completedAt": 1776812396098,
+              "result": {}
+            },
+            {
+              "actorKey": "ui.integration.retail-shell.RetailShellRuntimeInitializeActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812386034,
+              "completedAt": 1776812386035,
+              "result": {
+                "displayIndex": 0,
+                "activated": true
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo987vg1_4606svmddgj1d7wj",
+          "commandId": "cmd_mo987vg1_8hjd58irss60z25k",
+          "parentCommandId": "cmd_mo987vg1_oamq5z7vh3zxg90w",
+          "commandName": "kernel.base.topology-runtime-v3.refresh-topology-context",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776812386033,
+          "completedAt": 1776812386034,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.topology-runtime-v3.TopologyContextActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812386033,
+              "completedAt": 1776812386034,
+              "result": {
+                "context": {
+                  "displayIndex": 0,
+                  "displayCount": 1,
+                  "instanceMode": "SLAVE",
+                  "displayMode": "SECONDARY",
+                  "workspace": "MAIN",
+                  "standalone": true,
+                  "enableSlave": false,
+                  "masterLocator": {
+                    "masterDeviceId": "6Z2H3BSGEY",
+                    "addedAt": 1776811534054,
+                    "serverAddress": [
+                      {
+                        "address": "ws://127.0.0.1:18889/mockMasterServer/ws"
+                      }
+                    ],
+                    "masterNodeId": "master:6Z2H3BSGEY",
+                    "httpBaseUrl": "http://127.0.0.1:18889/mockMasterServer"
+                  },
+                  "localNodeId": "master:ZJ63NQELD9"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo987vg1_4606svmddgj1d7wj",
+          "commandId": "cmd_mo987vg2_w597fj8t5qquxg1q",
+          "parentCommandId": "cmd_mo987vg1_oamq5z7vh3zxg90w",
+          "commandName": "kernel.base.tdp-sync-runtime-v2.bootstrap-tdp-sync",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776812386034,
+          "completedAt": 1776812386034,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tdp-sync-runtime-v2.TdpBootstrapActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812386034,
+              "completedAt": 1776812386034,
+              "result": {}
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo987vg1_4606svmddgj1d7wj",
+          "commandId": "cmd_mo987vg2_v9l3kuadvwy0vt9t",
+          "parentCommandId": "cmd_mo987vg2_w597fj8t5qquxg1q",
+          "commandName": "kernel.base.tdp-sync-runtime-v2.bootstrap-tdp-sync-succeeded",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776812386034,
+          "completedAt": 1776812386034,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tdp-sync-runtime-v2.TdpBootstrapActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812386034,
+              "completedAt": 1776812386034,
+              "result": {}
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo987vg1_4606svmddgj1d7wj",
+          "commandId": "cmd_mo987vg2_zdaeol6zrhzp28eb",
+          "parentCommandId": "cmd_mo987vg1_oamq5z7vh3zxg90w",
+          "commandName": "kernel.base.ui-runtime-v2.replace-screen",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776812386034,
+          "completedAt": 1776812386034,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.ui-runtime-v2.UiRuntimeScreenRuntimeActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812386034,
+              "completedAt": 1776812386034,
+              "result": {
+                "containerKey": "primary.root.container"
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo987vg1_4606svmddgj1d7wj",
+          "commandId": "cmd_mo987vg2_3nclwy1o8xmgogrf",
+          "parentCommandId": "cmd_mo987vg1_oamq5z7vh3zxg90w",
+          "commandName": "kernel.base.tcp-control-runtime-v2.bootstrap-tcp-control",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776812386034,
+          "completedAt": 1776812386035,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tcp-control-runtime-v2.TcpBootstrapActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812386034,
+              "completedAt": 1776812386035,
+              "result": {
+                "deviceFingerprint": "6Z2H3BSGEY"
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo987vg1_4606svmddgj1d7wj",
+          "commandId": "cmd_mo987vg2_lpye93k9yk1l9rdk",
+          "parentCommandId": "cmd_mo987vg2_3nclwy1o8xmgogrf",
+          "commandName": "kernel.base.tcp-control-runtime-v2.bootstrap-tcp-control-succeeded",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776812386034,
+          "completedAt": 1776812386034,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tcp-control-runtime-v2.TcpStateMutationActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812386034,
+              "completedAt": 1776812386034,
+              "result": {}
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo987vg1_4606svmddgj1d7wj",
+          "commandId": "cmd_mo987vg2_rr6pmqxeujjih0t9",
+          "parentCommandId": "cmd_mo987vg1_oamq5z7vh3zxg90w",
+          "commandName": "kernel.base.ui-runtime-v2.replace-screen",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776812386034,
+          "completedAt": 1776812386034,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.ui-runtime-v2.UiRuntimeScreenRuntimeActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812386034,
+              "completedAt": 1776812386034,
+              "result": {
+                "containerKey": "secondary.root.container"
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo987vg1_4606svmddgj1d7wj",
+          "commandId": "cmd_mo987vg2_fms4l3zy9t2fo9fj",
+          "parentCommandId": "cmd_mo987vg1_oamq5z7vh3zxg90w",
+          "commandName": "kernel.base.tdp-sync-runtime-v2.connect-tdp-session",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776812386034,
+          "completedAt": 1776812396098,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tdp-sync-runtime-v2.TdpSessionConnectionActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812386034,
+              "completedAt": 1776812396098,
+              "result": {
+                "sandboxId": "sandbox-kernel-base-test",
+                "terminalId": "terminal_j0o6hvtvwjkr",
+                "accessToken": "token_0i7zfz6mwjks"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requestId": "req_mo987vfy_j6gvl8vxnji99h17",
+      "rootCommandId": "cmd_mo987vfy_iqpvs0j9liq4p4q2",
+      "status": "COMPLETED",
+      "startedAt": 1776812386030,
+      "updatedAt": 1776812386030,
+      "commands": [
+        {
+          "requestId": "req_mo987vfy_j6gvl8vxnji99h17",
+          "commandId": "cmd_mo987vfy_iqpvs0j9liq4p4q2",
+          "commandName": "kernel.base.ui-runtime-v2.register-screen-definitions",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776812386030,
+          "completedAt": 1776812386030,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.ui-runtime-v2.UiRuntimeScreenRegistryActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812386030,
+              "completedAt": 1776812386030,
+              "result": {
+                "registeredCount": 3
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requestId": "req_mo987vfy_4hg272njpvknmdwz",
+      "rootCommandId": "cmd_mo987vfy_aa1g9mbhpqgcdgm9",
+      "status": "COMPLETED",
+      "startedAt": 1776812386030,
+      "updatedAt": 1776812386030,
+      "commands": [
+        {
+          "requestId": "req_mo987vfy_4hg272njpvknmdwz",
+          "commandId": "cmd_mo987vfy_aa1g9mbhpqgcdgm9",
+          "commandName": "kernel.base.ui-runtime-v2.register-screen-definitions",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776812386030,
+          "completedAt": 1776812386030,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.ui-runtime-v2.UiRuntimeScreenRegistryActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812386030,
+              "completedAt": 1776812386030,
+              "result": {
+                "registeredCount": 3
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requestId": "req_mo987vfy_px33cd98liwme78f",
+      "rootCommandId": "cmd_mo987vfy_uam6sv3dxcvq5czf",
+      "status": "COMPLETED",
+      "startedAt": 1776812386030,
+      "updatedAt": 1776812386030,
+      "commands": [
+        {
+          "requestId": "req_mo987vfy_px33cd98liwme78f",
+          "commandId": "cmd_mo987vfy_uam6sv3dxcvq5czf",
+          "commandName": "kernel.base.ui-runtime-v2.register-screen-definitions",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776812386030,
+          "completedAt": 1776812386030,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.ui-runtime-v2.UiRuntimeScreenRegistryActor",
+              "status": "COMPLETED",
+              "startedAt": 1776812386030,
+              "completedAt": 1776812386030,
+              "result": {
+                "registeredCount": 2
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "id": "1776812659459-cd74ecd71b412"
+}

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.impos2.adapterv2.automation.AutomationSocketServerTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-04-21T06:22:51.292Z" hostname="DexterdeMacBook-Pro.local" time="0.024">
+  <properties/>
+  <testcase name="socketServerCanRestartOnSameInstance" classname="com.impos2.adapterv2.automation.AutomationSocketServerTest" time="0.023"/>
+  <testcase name="socketServerRelaysNewlineJsonMessages" classname="com.impos2.adapterv2.automation.AutomationSocketServerTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

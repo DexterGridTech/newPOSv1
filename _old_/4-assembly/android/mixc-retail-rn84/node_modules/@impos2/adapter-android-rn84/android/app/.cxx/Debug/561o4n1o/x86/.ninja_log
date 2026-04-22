@@ -1,0 +1,5 @@
+# ninja log v5
+0	7	0	/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/app/.cxx/Debug/561o4n1o/x86/CMakeFiles/cmake.verify_globs	287803537b4641df
+0	838	1774782130746555517	CMakeFiles/appmodules.dir/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/app/build/generated/autolinking/src/main/jni/autolinking.cpp.o	5530d78fa4907b30
+0	938	1774782130846454398	CMakeFiles/appmodules.dir/OnLoad.cpp.o	80a9f4aaef16d115
+938	982	1774782130892655423	/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/app/build/intermediates/cxx/Debug/561o4n1o/obj/x86/libappmodules.so	62efd3751804f4fb

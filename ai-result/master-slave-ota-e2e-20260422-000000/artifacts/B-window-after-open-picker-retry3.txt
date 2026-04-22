@@ -1,0 +1,21 @@
+  Window #8 Window{5343fa0 u0 com.google.android.documentsui/com.android.documentsui.picker.PickActivity}:
+    mBaseLayer=21000 mSubLayer=0    mToken=ActivityRecord{184665995 u0 com.google.android.documentsui/com.android.documentsui.picker.PickActivity t30}
+    mActivityRecord=ActivityRecord{184665995 u0 com.google.android.documentsui/com.android.documentsui.picker.PickActivity t30}
+    WindowStateAnimator{e45d47e com.google.android.documentsui/com.android.documentsui.picker.PickActivity}:
+      mSurface=Surface(name=com.google.android.documentsui/com.android.documentsui.picker.PickActivity)/@0x1ee0ddf
+  Window #9 Window{b5877c6 u0 com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity}:
+    mBaseLayer=21000 mSubLayer=0    mToken=ActivityRecord{184612346 u0 com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity t30}
+    mActivityRecord=ActivityRecord{184612346 u0 com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity t30}
+    WindowStateAnimator{4474ab9 com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity}:
+  Window #10 Window{b2afd06 u0 com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity}:
+    mBaseLayer=21000 mSubLayer=0    mToken=ActivityRecord{222698957 u0 com.impos2.mixcretailassemblyrn84/.MainActivity t30}
+    mActivityRecord=ActivityRecord{222698957 u0 com.impos2.mixcretailassemblyrn84/.MainActivity t30}
+    WindowStateAnimator{147538f com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity}:
+  #0 Window{5343fa0 u0 com.google.android.documentsui/com.android.documentsui.picker.PickActivity}:
+    mBaseLayer=21000 mSubLayer=0    mToken=ActivityRecord{184665995 u0 com.google.android.documentsui/com.android.documentsui.picker.PickActivity t30}
+    mActivityRecord=ActivityRecord{184665995 u0 com.google.android.documentsui/com.android.documentsui.picker.PickActivity t30}
+    WindowStateAnimator{e45d47e com.google.android.documentsui/com.android.documentsui.picker.PickActivity}:
+      mSurface=Surface(name=com.google.android.documentsui/com.android.documentsui.picker.PickActivity)/@0x1ee0ddf
+  imeLayeringTarget in display# 0 Window{5343fa0 u0 com.google.android.documentsui/com.android.documentsui.picker.PickActivity}
+  imeInputTarget in display# 0 Window{5343fa0 u0 com.google.android.documentsui/com.android.documentsui.picker.PickActivity}
+  imeControlTarget in display# 0 Window{5343fa0 u0 com.google.android.documentsui/com.android.documentsui.picker.PickActivity}

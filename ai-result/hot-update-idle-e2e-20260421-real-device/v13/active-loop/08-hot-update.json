@@ -1,0 +1,350 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "current": {
+      "source": "hot-update",
+      "appId": "assembly-android-mixc-retail-rn84",
+      "assemblyVersion": "1.0.0",
+      "buildNumber": 2,
+      "runtimeVersion": "android-mixc-retail-rn84@1.0",
+      "bundleVersion": "1.0.0+ota.12",
+      "packageId": "pkg_acctwvv7v3of",
+      "releaseId": "release_1kka6uz6vugy",
+      "installDir": "/data/user/0/com.impos2.mixcretailassemblyrn84/files/hot-updates/packages/pkg_acctwvv7v3of",
+      "appliedAt": 1776746400135
+    },
+    "desired": {
+      "schemaVersion": 1,
+      "releaseId": "release_dd8bdoa754o5",
+      "packageId": "pkg_g68snyt84bbd",
+      "appId": "assembly-android-mixc-retail-rn84",
+      "platform": "android",
+      "product": "mixc-retail",
+      "bundleVersion": "1.0.0+ota.13",
+      "runtimeVersion": "android-mixc-retail-rn84@1.0",
+      "packageUrl": "/api/v1/hot-updates/packages/pkg_g68snyt84bbd/download?sandboxId=sandbox-kernel-base-test&token=32f9cdff42a60193cad6dd52b16daccc51fd4fa916da6ab49968a4bc37be16c2",
+      "packageSize": 3300549,
+      "packageSha256": "ff573963382289b93d713587faf5dd904e6921a3fdb40dce05101426ba0302f5",
+      "manifestSha256": "5a2a33a2f2c29cebfec479dde6e62a78ac8f89d006dd56735e9cacacc928f608",
+      "compatibility": {
+        "appId": "assembly-android-mixc-retail-rn84",
+        "platform": "android",
+        "product": "mixc-retail",
+        "runtimeVersion": "android-mixc-retail-rn84@1.0",
+        "minAssemblyVersion": "1.0.0",
+        "maxAssemblyVersion": "1.0.0",
+        "minBuildNumber": 2,
+        "maxBuildNumber": 2,
+        "allowedChannels": [
+          "production"
+        ],
+        "targetPackages": {
+          "@impos2/kernel-base-contracts": "1.0.0",
+          "@impos2/kernel-base-platform-ports": "1.0.0",
+          "@impos2/kernel-base-runtime-shell-v2": "1.0.0",
+          "@impos2/kernel-base-tcp-control-runtime-v2": "1.0.0",
+          "@impos2/kernel-base-topology-runtime-v3": "1.0.0",
+          "@impos2/kernel-base-transport-runtime": "1.0.0",
+          "@impos2/kernel-base-ui-runtime-v2": "1.0.0",
+          "@impos2/kernel-server-config-v2": "1.0.0",
+          "@impos2/ui-base-admin-console": "1.0.0",
+          "@impos2/ui-base-input-runtime": "1.0.0",
+          "@impos2/ui-base-runtime-react": "1.0.0",
+          "@impos2/ui-base-terminal-console": "1.0.0",
+          "@impos2/ui-integration-retail-shell": "1.0.0",
+          "@impos2/adapter-android-v2": "1.0.0"
+        }
+      },
+      "restart": {
+        "mode": "idle",
+        "operatorInstruction": "idle hot update e2e v13"
+      },
+      "rollout": {
+        "mode": "active",
+        "publishedAt": "2026-04-21T04:53:45.769Z"
+      },
+      "safety": {
+        "requireSignature": false,
+        "maxDownloadAttempts": 3,
+        "maxLaunchFailures": 2,
+        "healthCheckTimeoutMs": 5000
+      },
+      "metadata": {
+        "channel": "production",
+        "builtAt": "2026-04-21T04:44:55.534Z",
+        "releaseNotes": [
+          "idle hot update e2e v13"
+        ]
+      }
+    },
+    "candidate": {
+      "releaseId": "release_dd8bdoa754o5",
+      "packageId": "pkg_g68snyt84bbd",
+      "bundleVersion": "1.0.0+ota.13",
+      "status": "ready",
+      "attempts": 1,
+      "packageSha256": "ff573963382289b93d713587faf5dd904e6921a3fdb40dce05101426ba0302f5",
+      "manifestSha256": "5a2a33a2f2c29cebfec479dde6e62a78ac8f89d006dd56735e9cacacc928f608",
+      "updatedAt": 1776747224765
+    },
+    "ready": {
+      "releaseId": "release_dd8bdoa754o5",
+      "packageId": "pkg_g68snyt84bbd",
+      "bundleVersion": "1.0.0+ota.13",
+      "installDir": "/data/user/0/com.impos2.mixcretailassemblyrn84/files/hot-updates/packages/pkg_g68snyt84bbd",
+      "packageSha256": "ff573963382289b93d713587faf5dd904e6921a3fdb40dce05101426ba0302f5",
+      "manifestSha256": "5a2a33a2f2c29cebfec479dde6e62a78ac8f89d006dd56735e9cacacc928f608",
+      "entryFile": "index.android.bundle",
+      "readyAt": 1776747224765
+    },
+    "applying": {
+      "releaseId": "release_dd8bdoa754o5",
+      "packageId": "pkg_g68snyt84bbd",
+      "bundleVersion": "1.0.0+ota.13",
+      "bootMarkerPath": "/data/user/0/com.impos2.mixcretailassemblyrn84/files/hot-updates/active-marker.json",
+      "startedAt": 1776747224791
+    },
+    "restartIntent": {
+      "releaseId": "release_dd8bdoa754o5",
+      "packageId": "pkg_g68snyt84bbd",
+      "bundleVersion": "1.0.0+ota.13",
+      "mode": "idle",
+      "status": "waiting-idle",
+      "requestedAt": 1776747224797,
+      "updatedAt": 1776747234785,
+      "idleThresholdMs": 15000,
+      "lastUserOperationAt": 1776747234785,
+      "nextEligibleAt": 1776747249785
+    },
+    "lastUserOperationAt": 1776747234785,
+    "previous": {
+      "source": "hot-update",
+      "appId": "assembly-android-mixc-retail-rn84",
+      "assemblyVersion": "1.0.0",
+      "buildNumber": 2,
+      "runtimeVersion": "android-mixc-retail-rn84@1.0",
+      "bundleVersion": "1.0.0+ota.11",
+      "packageId": "pkg_a2ngqcgssjlq",
+      "releaseId": "release_ldymb1zpx0z5",
+      "installDir": "/data/user/0/com.impos2.mixcretailassemblyrn84/files/hot-updates/packages/pkg_a2ngqcgssjlq",
+      "appliedAt": 1776744717947
+    },
+    "history": [
+      {
+        "event": "applied",
+        "bundleVersion": "1.0.0+ota.10",
+        "at": 1776744258133
+      },
+      {
+        "event": "user-operation-recorded",
+        "at": 1776744625000
+      },
+      {
+        "event": "download-pending",
+        "releaseId": "release_ldymb1zpx0z5",
+        "packageId": "pkg_a2ngqcgssjlq",
+        "bundleVersion": "1.0.0+ota.11",
+        "at": 1776744713312
+      },
+      {
+        "event": "download-started",
+        "releaseId": "release_ldymb1zpx0z5",
+        "packageId": "pkg_a2ngqcgssjlq",
+        "bundleVersion": "1.0.0+ota.11",
+        "at": 1776744713317
+      },
+      {
+        "event": "ready",
+        "releaseId": "release_ldymb1zpx0z5",
+        "packageId": "pkg_a2ngqcgssjlq",
+        "bundleVersion": "1.0.0+ota.11",
+        "at": 1776744713774
+      },
+      {
+        "event": "applying",
+        "releaseId": "release_ldymb1zpx0z5",
+        "packageId": "pkg_a2ngqcgssjlq",
+        "bundleVersion": "1.0.0+ota.11",
+        "at": 1776744713794
+      },
+      {
+        "event": "restart-waiting-idle",
+        "releaseId": "release_ldymb1zpx0z5",
+        "packageId": "pkg_a2ngqcgssjlq",
+        "bundleVersion": "1.0.0+ota.11",
+        "at": 1776744713798
+      },
+      {
+        "event": "restart-preparing",
+        "releaseId": "release_ldymb1zpx0z5",
+        "packageId": "pkg_a2ngqcgssjlq",
+        "bundleVersion": "1.0.0+ota.11",
+        "at": 1776744713802
+      },
+      {
+        "event": "restart-ready",
+        "releaseId": "release_ldymb1zpx0z5",
+        "packageId": "pkg_a2ngqcgssjlq",
+        "bundleVersion": "1.0.0+ota.11",
+        "at": 1776744716905
+      },
+      {
+        "event": "applied",
+        "releaseId": "release_ldymb1zpx0z5",
+        "packageId": "pkg_a2ngqcgssjlq",
+        "bundleVersion": "1.0.0+ota.11",
+        "at": 1776744717816
+      },
+      {
+        "event": "desired-cleared",
+        "releaseId": "release_ldymb1zpx0z5",
+        "packageId": "pkg_a2ngqcgssjlq",
+        "bundleVersion": "1.0.0+ota.11",
+        "at": 1776746376302
+      },
+      {
+        "event": "download-pending",
+        "releaseId": "release_1kka6uz6vugy",
+        "packageId": "pkg_acctwvv7v3of",
+        "bundleVersion": "1.0.0+ota.12",
+        "at": 1776746394888
+      },
+      {
+        "event": "download-started",
+        "releaseId": "release_1kka6uz6vugy",
+        "packageId": "pkg_acctwvv7v3of",
+        "bundleVersion": "1.0.0+ota.12",
+        "at": 1776746394892
+      },
+      {
+        "event": "ready",
+        "releaseId": "release_1kka6uz6vugy",
+        "packageId": "pkg_acctwvv7v3of",
+        "bundleVersion": "1.0.0+ota.12",
+        "at": 1776746395951
+      },
+      {
+        "event": "applying",
+        "releaseId": "release_1kka6uz6vugy",
+        "packageId": "pkg_acctwvv7v3of",
+        "bundleVersion": "1.0.0+ota.12",
+        "at": 1776746395973
+      },
+      {
+        "event": "restart-waiting-idle",
+        "releaseId": "release_1kka6uz6vugy",
+        "packageId": "pkg_acctwvv7v3of",
+        "bundleVersion": "1.0.0+ota.12",
+        "at": 1776746395977
+      },
+      {
+        "event": "restart-preparing",
+        "releaseId": "release_1kka6uz6vugy",
+        "packageId": "pkg_acctwvv7v3of",
+        "bundleVersion": "1.0.0+ota.12",
+        "at": 1776746395981
+      },
+      {
+        "event": "restart-ready",
+        "releaseId": "release_1kka6uz6vugy",
+        "packageId": "pkg_acctwvv7v3of",
+        "bundleVersion": "1.0.0+ota.12",
+        "at": 1776746399035
+      },
+      {
+        "event": "applied",
+        "releaseId": "release_1kka6uz6vugy",
+        "packageId": "pkg_acctwvv7v3of",
+        "bundleVersion": "1.0.0+ota.12",
+        "at": 1776746399963
+      },
+      {
+        "event": "user-operation-recorded",
+        "at": 1776746734074
+      },
+      {
+        "event": "user-operation-recorded",
+        "at": 1776746734202
+      },
+      {
+        "event": "user-operation-recorded",
+        "at": 1776746734328
+      },
+      {
+        "event": "desired-cleared",
+        "releaseId": "release_1kka6uz6vugy",
+        "packageId": "pkg_acctwvv7v3of",
+        "bundleVersion": "1.0.0+ota.12",
+        "at": 1776746767658
+      },
+      {
+        "event": "download-pending",
+        "releaseId": "release_dd8bdoa754o5",
+        "packageId": "pkg_g68snyt84bbd",
+        "bundleVersion": "1.0.0+ota.13",
+        "at": 1776747224282
+      },
+      {
+        "event": "download-started",
+        "releaseId": "release_dd8bdoa754o5",
+        "packageId": "pkg_g68snyt84bbd",
+        "bundleVersion": "1.0.0+ota.13",
+        "at": 1776747224288
+      },
+      {
+        "event": "user-operation-recorded",
+        "at": 1776747225790
+      },
+      {
+        "event": "ready",
+        "releaseId": "release_dd8bdoa754o5",
+        "packageId": "pkg_g68snyt84bbd",
+        "bundleVersion": "1.0.0+ota.13",
+        "at": 1776747224765
+      },
+      {
+        "event": "applying",
+        "releaseId": "release_dd8bdoa754o5",
+        "packageId": "pkg_g68snyt84bbd",
+        "bundleVersion": "1.0.0+ota.13",
+        "at": 1776747224791
+      },
+      {
+        "event": "restart-waiting-idle",
+        "releaseId": "release_dd8bdoa754o5",
+        "packageId": "pkg_g68snyt84bbd",
+        "bundleVersion": "1.0.0+ota.13",
+        "at": 1776747224797
+      },
+      {
+        "event": "user-operation-recorded",
+        "at": 1776747227011
+      },
+      {
+        "event": "user-operation-recorded",
+        "at": 1776747228286
+      },
+      {
+        "event": "user-operation-recorded",
+        "at": 1776747229553
+      },
+      {
+        "event": "user-operation-recorded",
+        "at": 1776747230848
+      },
+      {
+        "event": "user-operation-recorded",
+        "at": 1776747232165
+      },
+      {
+        "event": "user-operation-recorded",
+        "at": 1776747233447
+      },
+      {
+        "event": "user-operation-recorded",
+        "at": 1776747234785
+      }
+    ]
+  },
+  "id": "1776747234988-b105130cbf9a7"
+}

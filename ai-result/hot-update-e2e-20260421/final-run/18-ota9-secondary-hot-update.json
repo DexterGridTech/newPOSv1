@@ -1,0 +1,118 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "current": {
+      "source": "hot-update",
+      "appId": "assembly-android-mixc-retail-rn84",
+      "assemblyVersion": "1.0.0",
+      "buildNumber": 2,
+      "runtimeVersion": "android-mixc-retail-rn84@1.0",
+      "bundleVersion": "1.0.0+ota.9",
+      "packageId": "pkg_lnfhgby3gc5h",
+      "releaseId": "release_igpos0q0gw5h",
+      "installDir": "/data/user/0/com.impos2.mixcretailassemblyrn84/files/hot-updates/packages/pkg_lnfhgby3gc5h",
+      "appliedAt": 1776637009887
+    },
+    "history": [
+      {
+        "event": "applied",
+        "bundleVersion": "1.0.0+ota.8",
+        "at": 1776636428189
+      }
+    ],
+    "previous": {
+      "source": "embedded",
+      "appId": "assembly-android-mixc-retail-rn84",
+      "assemblyVersion": "1.0.0",
+      "buildNumber": 2,
+      "runtimeVersion": "android-mixc-retail-rn84@1.0",
+      "bundleVersion": "1.0.0+ota.8",
+      "appliedAt": 1776636744831
+    },
+    "candidate": {
+      "releaseId": "release_igpos0q0gw5h",
+      "packageId": "pkg_lnfhgby3gc5h",
+      "bundleVersion": "1.0.0+ota.9",
+      "status": "ready",
+      "attempts": 1,
+      "packageSha256": "8db73f9277a1201de5605866d65d39432eea35ae48e0f5573c1cd889559fd30b",
+      "manifestSha256": "3520edfa9ab68e76f00b0c25976f4aa7b5e6ac27df62c6dc1103ef384fc26c39",
+      "updatedAt": 1776637009621
+    },
+    "ready": {
+      "releaseId": "release_igpos0q0gw5h",
+      "packageId": "pkg_lnfhgby3gc5h",
+      "bundleVersion": "1.0.0+ota.9",
+      "installDir": "/data/user/0/com.impos2.mixcretailassemblyrn84/files/hot-updates/packages/pkg_lnfhgby3gc5h",
+      "packageSha256": "8db73f9277a1201de5605866d65d39432eea35ae48e0f5573c1cd889559fd30b",
+      "manifestSha256": "3520edfa9ab68e76f00b0c25976f4aa7b5e6ac27df62c6dc1103ef384fc26c39",
+      "entryFile": "index.android.bundle",
+      "readyAt": 1776637009621
+    },
+    "desired": {
+      "schemaVersion": 1,
+      "releaseId": "release_igpos0q0gw5h",
+      "packageId": "pkg_lnfhgby3gc5h",
+      "appId": "assembly-android-mixc-retail-rn84",
+      "platform": "android",
+      "product": "mixc-retail",
+      "bundleVersion": "1.0.0+ota.9",
+      "runtimeVersion": "android-mixc-retail-rn84@1.0",
+      "packageUrl": "/api/v1/hot-updates/packages/pkg_lnfhgby3gc5h/download?sandboxId=sandbox-kernel-base-test&token=cabcd6918800fc1e1908c36b7d2b46abd5c460a347c373036f82c10843fcf1aa",
+      "packageSize": 3286325,
+      "packageSha256": "8db73f9277a1201de5605866d65d39432eea35ae48e0f5573c1cd889559fd30b",
+      "manifestSha256": "3520edfa9ab68e76f00b0c25976f4aa7b5e6ac27df62c6dc1103ef384fc26c39",
+      "compatibility": {
+        "appId": "assembly-android-mixc-retail-rn84",
+        "platform": "android",
+        "product": "mixc-retail",
+        "runtimeVersion": "android-mixc-retail-rn84@1.0",
+        "minAssemblyVersion": "1.0.0",
+        "maxAssemblyVersion": "1.0.0",
+        "minBuildNumber": 2,
+        "maxBuildNumber": 2,
+        "allowedChannels": [
+          "production"
+        ],
+        "targetPackages": {
+          "@impos2/kernel-base-contracts": "1.0.0",
+          "@impos2/kernel-base-platform-ports": "1.0.0",
+          "@impos2/kernel-base-runtime-shell-v2": "1.0.0",
+          "@impos2/kernel-base-tcp-control-runtime-v2": "1.0.0",
+          "@impos2/kernel-base-topology-runtime-v3": "1.0.0",
+          "@impos2/kernel-base-transport-runtime": "1.0.0",
+          "@impos2/kernel-base-ui-runtime-v2": "1.0.0",
+          "@impos2/kernel-server-config-v2": "1.0.0",
+          "@impos2/ui-base-admin-console": "1.0.0",
+          "@impos2/ui-base-input-runtime": "1.0.0",
+          "@impos2/ui-base-runtime-react": "1.0.0",
+          "@impos2/ui-base-terminal-console": "1.0.0",
+          "@impos2/ui-integration-retail-shell": "1.0.0",
+          "@impos2/adapter-android-v2": "1.0.0"
+        }
+      },
+      "restart": {
+        "mode": "immediate",
+        "operatorInstruction": "restart immediately for OTA E2E V9 verification"
+      },
+      "rollout": {
+        "mode": "active",
+        "publishedAt": "2026-04-20T21:55:07.622Z"
+      },
+      "safety": {
+        "requireSignature": false,
+        "maxDownloadAttempts": 3,
+        "maxLaunchFailures": 2,
+        "healthCheckTimeoutMs": 5000
+      },
+      "metadata": {
+        "channel": "production",
+        "builtAt": "2026-04-20T21:31:33.487Z",
+        "releaseNotes": [
+          "OTA E2E V9 visible welcome title verification"
+        ]
+      }
+    }
+  },
+  "id": "1776722149812-15154b9f05aad8"
+}

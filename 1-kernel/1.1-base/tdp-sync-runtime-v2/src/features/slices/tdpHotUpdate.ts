@@ -196,6 +196,16 @@ export const reduceHotUpdateDesired = (
         }
     }
 
+    if (
+        state.desired?.packageId === desired.packageId
+        && state.candidate?.packageId === desired.packageId
+    ) {
+        return {
+            ...state,
+            desired,
+        }
+    }
+
     return {
         ...state,
         desired,
@@ -557,48 +567,11 @@ const syncDescriptor = {
         const desiredUpdatedAt = state.desired
             ? Date.parse(state.desired.rollout.publishedAt) || currentUpdatedAt
             : currentUpdatedAt
-        const candidateUpdatedAt = state.candidate?.updatedAt
-            ?? state.lastError?.at
-            ?? currentUpdatedAt
-        const readyUpdatedAt = state.ready?.readyAt
-            ?? currentUpdatedAt
-        const applyingUpdatedAt = state.applying?.startedAt
-            ?? currentUpdatedAt
-        const restartIntentUpdatedAt = state.restartIntent?.updatedAt
-            ?? currentUpdatedAt
-        const lastUserOperationUpdatedAt = state.lastUserOperationAt
-            ?? currentUpdatedAt
-        const previousUpdatedAt = state.previous?.appliedAt
-            ?? currentUpdatedAt
-        const lastErrorUpdatedAt = state.lastError?.at
-            ?? currentUpdatedAt
 
         return {
-            current: {value: state.current, updatedAt: currentUpdatedAt},
             desired: state.desired
                 ? {value: state.desired, updatedAt: desiredUpdatedAt}
                 : createSyncTombstone(desiredUpdatedAt),
-            candidate: state.candidate
-                ? {value: state.candidate, updatedAt: candidateUpdatedAt}
-                : createSyncTombstone(candidateUpdatedAt),
-            ready: state.ready
-                ? {value: state.ready, updatedAt: readyUpdatedAt}
-                : createSyncTombstone(readyUpdatedAt),
-            applying: state.applying
-                ? {value: state.applying, updatedAt: applyingUpdatedAt}
-                : createSyncTombstone(applyingUpdatedAt),
-            restartIntent: state.restartIntent
-                ? {value: state.restartIntent, updatedAt: restartIntentUpdatedAt}
-                : createSyncTombstone(restartIntentUpdatedAt),
-            lastUserOperationAt: state.lastUserOperationAt != null
-                ? {value: state.lastUserOperationAt, updatedAt: lastUserOperationUpdatedAt}
-                : createSyncTombstone(lastUserOperationUpdatedAt),
-            previous: state.previous
-                ? {value: state.previous, updatedAt: previousUpdatedAt}
-                : createSyncTombstone(previousUpdatedAt),
-            lastError: state.lastError
-                ? {value: state.lastError, updatedAt: lastErrorUpdatedAt}
-                : createSyncTombstone(lastErrorUpdatedAt),
         }
     },
     applyEntries(
@@ -607,33 +580,9 @@ const syncDescriptor = {
     ): HotUpdateState {
         return {
             ...state,
-            current: entries.current?.tombstone
-                ? state.current
-                : (entries.current?.value as HotUpdateState['current'] | undefined) ?? state.current,
             desired: entries.desired?.tombstone
                 ? undefined
                 : (entries.desired?.value as HotUpdateState['desired'] | undefined) ?? state.desired,
-            candidate: entries.candidate?.tombstone
-                ? undefined
-                : (entries.candidate?.value as HotUpdateState['candidate'] | undefined) ?? state.candidate,
-            ready: entries.ready?.tombstone
-                ? undefined
-                : (entries.ready?.value as HotUpdateState['ready'] | undefined) ?? state.ready,
-            applying: entries.applying?.tombstone
-                ? undefined
-                : (entries.applying?.value as HotUpdateState['applying'] | undefined) ?? state.applying,
-            restartIntent: entries.restartIntent?.tombstone
-                ? undefined
-                : (entries.restartIntent?.value as HotUpdateState['restartIntent'] | undefined) ?? state.restartIntent,
-            lastUserOperationAt: entries.lastUserOperationAt?.tombstone
-                ? undefined
-                : (entries.lastUserOperationAt?.value as HotUpdateState['lastUserOperationAt'] | undefined) ?? state.lastUserOperationAt,
-            previous: entries.previous?.tombstone
-                ? undefined
-                : (entries.previous?.value as HotUpdateState['previous'] | undefined) ?? state.previous,
-            lastError: entries.lastError?.tombstone
-                ? undefined
-                : (entries.lastError?.value as HotUpdateState['lastError'] | undefined) ?? state.lastError,
         }
     },
 }

@@ -1,0 +1,21 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "requestId": "req_mo8y35g9_317mk0wdts2lc2n7",
+    "commandId": "cmd_mo8y35g9_om1zcs36357kotmo",
+    "commandName": "kernel.base.topology-runtime-v3.set-enable-slave",
+    "target": "local",
+    "status": "COMPLETED",
+    "startedAt": 1776795369561,
+    "completedAt": 1776795369562,
+    "actorResults": [
+      {
+        "actorKey": "kernel.base.topology-runtime-v3.TopologyContextActor",
+        "status": "COMPLETED",
+        "startedAt": 1776795369561,
+        "completedAt": 1776795369561
+      }
+    ]
+  },
+  "id": "1776795369658-b8f54b1e0d288"
+}

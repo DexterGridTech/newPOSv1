@@ -1,0 +1,4 @@
+[      87ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://127.0.0.1:5820/node_modules/.vite/deps/chunk-JW6MRLDH.js?v=018a9784:21606
+[     136ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:5820/api/v1/admin/tdp/commands:0
+[     139ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:5820/favicon.ico:0
+[     156ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:5820/api/v1/admin/tdp/commands:0

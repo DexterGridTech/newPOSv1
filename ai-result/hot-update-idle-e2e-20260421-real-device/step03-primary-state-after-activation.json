@@ -1,0 +1,403 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "kernel.base.runtime-shell-v2.error-catalog": {
+      "kernel.base.topology-runtime-v3.display_context_required": {
+        "key": "kernel.base.topology-runtime-v3.display_context_required",
+        "template": "Topology runtime v3 requires displayIndex/displayCount",
+        "updatedAt": 1776744165132,
+        "source": "default"
+      },
+      "kernel.base.topology-runtime-v3.orchestrator_required": {
+        "key": "kernel.base.topology-runtime-v3.orchestrator_required",
+        "template": "Topology runtime v3 orchestrator is required for ${commandName}",
+        "updatedAt": 1776744165132,
+        "source": "default"
+      },
+      "kernel.base.topology-runtime-v3.socket_binding_required": {
+        "key": "kernel.base.topology-runtime-v3.socket_binding_required",
+        "template": "Topology runtime v3 socket binding is required",
+        "updatedAt": 1776744165133,
+        "source": "default"
+      },
+      "kernel.base.topology-runtime-v3.hello_runtime_required": {
+        "key": "kernel.base.topology-runtime-v3.hello_runtime_required",
+        "template": "Topology runtime v3 hello runtime is required",
+        "updatedAt": 1776744165134,
+        "source": "default"
+      },
+      "kernel.base.topology-runtime-v3.action_not_allowed": {
+        "key": "kernel.base.topology-runtime-v3.action_not_allowed",
+        "template": "Topology runtime v3 action ${commandName} is not allowed: ${reasonCode}",
+        "updatedAt": 1776744165135,
+        "source": "default"
+      },
+      "kernel.base.tcp-control-runtime-v2.activation_code_invalid": {
+        "key": "kernel.base.tcp-control-runtime-v2.activation_code_invalid",
+        "template": "Terminal activation code is invalid",
+        "updatedAt": 1776744165136,
+        "source": "default"
+      },
+      "kernel.base.tcp-control-runtime-v2.activation_failed": {
+        "key": "kernel.base.tcp-control-runtime-v2.activation_failed",
+        "template": "Terminal activation failed: ${error}",
+        "updatedAt": 1776744165136,
+        "source": "default"
+      },
+      "kernel.base.tcp-control-runtime-v2.credential_missing": {
+        "key": "kernel.base.tcp-control-runtime-v2.credential_missing",
+        "template": "Terminal credential is missing",
+        "updatedAt": 1776744165137,
+        "source": "default"
+      },
+      "kernel.base.tcp-control-runtime-v2.credential_expired": {
+        "key": "kernel.base.tcp-control-runtime-v2.credential_expired",
+        "template": "Terminal access credential has expired",
+        "updatedAt": 1776744165138,
+        "source": "default"
+      },
+      "kernel.base.tcp-control-runtime-v2.refresh_failed": {
+        "key": "kernel.base.tcp-control-runtime-v2.refresh_failed",
+        "template": "Terminal credential refresh failed: ${error}",
+        "updatedAt": 1776744165138,
+        "source": "default"
+      },
+      "kernel.base.tcp-control-runtime-v2.deactivation_failed": {
+        "key": "kernel.base.tcp-control-runtime-v2.deactivation_failed",
+        "template": "Terminal deactivation failed: ${error}",
+        "updatedAt": 1776744165139,
+        "source": "default"
+      },
+      "kernel.base.tcp-control-runtime-v2.task_result_report_failed": {
+        "key": "kernel.base.tcp-control-runtime-v2.task_result_report_failed",
+        "template": "Terminal task result report failed: ${error}",
+        "updatedAt": 1776744165139,
+        "source": "default"
+      },
+      "kernel.base.tcp-control-runtime-v2.bootstrap_hydration_failed": {
+        "key": "kernel.base.tcp-control-runtime-v2.bootstrap_hydration_failed",
+        "template": "Terminal control bootstrap failed: ${error}",
+        "updatedAt": 1776744165147,
+        "source": "default"
+      },
+      "kernel.base.tdp-sync-runtime-v2.credential_missing": {
+        "key": "kernel.base.tdp-sync-runtime-v2.credential_missing",
+        "template": "TDP credential or terminal identity is missing",
+        "updatedAt": 1776744165149,
+        "source": "default"
+      },
+      "kernel.base.tdp-sync-runtime-v2.handshake_failed": {
+        "key": "kernel.base.tdp-sync-runtime-v2.handshake_failed",
+        "template": "TDP handshake failed: ${error}",
+        "updatedAt": 1776744165149,
+        "source": "default"
+      },
+      "kernel.base.tdp-sync-runtime-v2.protocol_error": {
+        "key": "kernel.base.tdp-sync-runtime-v2.protocol_error",
+        "template": "TDP protocol error: ${error}",
+        "updatedAt": 1776744165150,
+        "source": "default"
+      },
+      "kernel.base.tdp-sync-runtime-v2.projection_apply_failed": {
+        "key": "kernel.base.tdp-sync-runtime-v2.projection_apply_failed",
+        "template": "TDP projection apply failed: ${error}",
+        "updatedAt": 1776744165150,
+        "source": "default"
+      },
+      "kernel.base.tdp-sync-runtime-v2.assembly_required": {
+        "key": "kernel.base.tdp-sync-runtime-v2.assembly_required",
+        "template": "TDP sync assembly is required for command ${commandName}",
+        "updatedAt": 1776744165151,
+        "source": "default"
+      },
+      "kernel.base.ui-runtime-v2.invalid_screen_target": {
+        "key": "kernel.base.ui-runtime-v2.invalid_screen_target",
+        "template": "UI runtime screen target is invalid",
+        "updatedAt": 1776744165155,
+        "source": "default"
+      },
+      "kernel.base.ui-runtime-v2.duplicated_screen_definition": {
+        "key": "kernel.base.ui-runtime-v2.duplicated_screen_definition",
+        "template": "Screen definition ${partKey} is already registered",
+        "updatedAt": 1776744165156,
+        "source": "default"
+      },
+      "kernel.base.ui-runtime-v2.overlay_id_required": {
+        "key": "kernel.base.ui-runtime-v2.overlay_id_required",
+        "template": "Overlay id is required",
+        "updatedAt": 1776744165156,
+        "source": "default"
+      }
+    },
+    "kernel.base.runtime-shell-v2.parameter-catalog": {
+      "kernel.base.topology-runtime-v3.reconnect-interval-ms": {
+        "key": "kernel.base.topology-runtime-v3.reconnect-interval-ms",
+        "rawValue": 20000,
+        "updatedAt": 1776744165135,
+        "source": "default"
+      },
+      "kernel.base.tcp-control-runtime-v2.credential-refresh-lead-time-ms": {
+        "key": "kernel.base.tcp-control-runtime-v2.credential-refresh-lead-time-ms",
+        "rawValue": 60000,
+        "updatedAt": 1776744165148,
+        "source": "default"
+      },
+      "kernel.base.tdp-sync-runtime-v2.ping-interval-ms": {
+        "key": "kernel.base.tdp-sync-runtime-v2.ping-interval-ms",
+        "rawValue": 30000,
+        "updatedAt": 1776744165152,
+        "source": "default"
+      },
+      "kernel.base.tdp-sync-runtime-v2.reconnect-interval-ms": {
+        "key": "kernel.base.tdp-sync-runtime-v2.reconnect-interval-ms",
+        "rawValue": 20000,
+        "updatedAt": 1776744165153,
+        "source": "default"
+      },
+      "kernel.base.tdp-sync-runtime-v2.reconnect-attempts": {
+        "key": "kernel.base.tdp-sync-runtime-v2.reconnect-attempts",
+        "rawValue": -1,
+        "updatedAt": 1776744165153,
+        "source": "default"
+      },
+      "kernel.base.tdp-sync-runtime-v2.connection-timeout-ms": {
+        "key": "kernel.base.tdp-sync-runtime-v2.connection-timeout-ms",
+        "rawValue": 10000,
+        "updatedAt": 1776744165154,
+        "source": "default"
+      },
+      "kernel.base.tdp-sync-runtime-v2.heartbeat-timeout-ms": {
+        "key": "kernel.base.tdp-sync-runtime-v2.heartbeat-timeout-ms",
+        "rawValue": 45000,
+        "updatedAt": 1776744165154,
+        "source": "default"
+      },
+      "kernel.base.tdp-sync-runtime-v2.hot-update-idle-threshold-ms": {
+        "key": "kernel.base.tdp-sync-runtime-v2.hot-update-idle-threshold-ms",
+        "rawValue": 300000,
+        "updatedAt": 1776744165155,
+        "source": "default"
+      },
+      "kernel.base.ui-runtime-v2.registry.cache-size-hint": {
+        "key": "kernel.base.ui-runtime-v2.registry.cache-size-hint",
+        "rawValue": 256,
+        "updatedAt": 1776744165157,
+        "source": "default"
+      }
+    },
+    "kernel.base.topology-runtime-v3.config": {
+      "enableSlave": true
+    },
+    "kernel.base.topology-runtime-v3.context": {
+      "displayIndex": 0,
+      "displayCount": 2,
+      "instanceMode": "MASTER",
+      "displayMode": "PRIMARY",
+      "workspace": "MAIN",
+      "standalone": true,
+      "enableSlave": true,
+      "localNodeId": "master:2N4QS8GYRS"
+    },
+    "kernel.base.topology-runtime-v3.connection": {
+      "serverConnectionStatus": "CONNECTED",
+      "reconnectAttempt": 0
+    },
+    "kernel.base.topology-runtime-v3.peer": {
+      "peerNodeId": "master:2N4QS8GYRS:display-1",
+      "peerDeviceId": "2N4QS8GYRS",
+      "peerRuntime": {
+        "nodeId": "master:2N4QS8GYRS:display-1",
+        "deviceId": "2N4QS8GYRS",
+        "instanceMode": "SLAVE",
+        "displayMode": "SECONDARY",
+        "standalone": false,
+        "protocolVersion": "2026.04-v3",
+        "capabilities": [
+          "state-sync",
+          "command-relay",
+          "request-mirror"
+        ]
+      },
+      "connectedAt": 1776744169372
+    },
+    "kernel.base.topology-runtime-v3.sync": {
+      "status": "active",
+      "activeSessionId": "v3ses_mo83lnz1_a34fe5f0",
+      "lastSnapshotAppliedAt": 1776744169379
+    },
+    "kernel.base.topology-runtime-v3.request-mirror": {
+      "requests": {}
+    },
+    "kernel.base.topology-runtime-v3.demo.master": {},
+    "kernel.base.topology-runtime-v3.demo.slave": {},
+    "kernel.base.tcp-control-runtime-v2.identity": {
+      "activationStatus": "ACTIVATED",
+      "deviceInfo": {
+        "id": "2N4QS8GYRS",
+        "model": "Mixc Retail Android RN84"
+      },
+      "deviceFingerprint": "2N4QS8GYRS",
+      "terminalId": "terminal_uytd2e4tmwh8",
+      "activatedAt": 1776744221482
+    },
+    "kernel.base.tcp-control-runtime-v2.credential": {
+      "status": "READY",
+      "accessToken": "token_bymqe5brmwhb",
+      "refreshToken": "refresh_jl12yps9mwhb",
+      "expiresAt": 1776751421482,
+      "refreshExpiresAt": 1779336221482,
+      "updatedAt": 1776744221482
+    },
+    "kernel.base.tcp-control-runtime-v2.binding": {
+      "platformId": "platform-kernel-base-test",
+      "tenantId": "tenant-kernel-base-test",
+      "brandId": "brand-kernel-base-test",
+      "projectId": "project-kernel-base-test",
+      "storeId": "store-kernel-base-test",
+      "profileId": "profile-kernel-base-android-pos",
+      "templateId": "template-kernel-base-android-pos-standard"
+    },
+    "kernel.base.tcp-control-runtime-v2.sandbox": {
+      "sandboxId": "sandbox-kernel-base-test",
+      "updatedAt": 1776744221482
+    },
+    "kernel.base.tcp-control-runtime-v2.runtime": {
+      "bootstrapped": true,
+      "lastError": null,
+      "lastActivationRequestId": "req_mo83mv7s_ey50knczrs8m47u9"
+    },
+    "kernel.base.tdp-sync-runtime-v2.session": {
+      "status": "READY",
+      "sessionId": "session_lqieej7nmwlj",
+      "nodeId": "mock-tdp-node-01",
+      "nodeState": "healthy",
+      "highWatermark": 2,
+      "syncMode": "full",
+      "alternativeEndpoints": [],
+      "connectedAt": 1776744221618,
+      "disconnectReason": null
+    },
+    "kernel.base.tdp-sync-runtime-v2.sync": {
+      "snapshotStatus": "ready",
+      "changesStatus": "ready",
+      "lastDeliveredCursor": 2,
+      "lastAckedCursor": 2,
+      "lastCursor": 2,
+      "lastAppliedCursor": 2
+    },
+    "kernel.base.tdp-sync-runtime-v2.projection": {
+      "terminal.group.membership:TERMINAL:terminal_uytd2e4tmwh8:terminal_uytd2e4tmwh8": {
+        "topic": "terminal.group.membership",
+        "itemKey": "terminal_uytd2e4tmwh8",
+        "operation": "upsert",
+        "scopeType": "TERMINAL",
+        "scopeId": "terminal_uytd2e4tmwh8",
+        "revision": 2,
+        "payload": {
+          "membershipVersion": 0,
+          "groups": []
+        },
+        "occurredAt": "2026-04-21T04:03:43.115Z",
+        "sourceReleaseId": null
+      }
+    },
+    "kernel.base.tdp-sync-runtime-v2.command-inbox": {
+      "itemsById": {},
+      "orderedIds": []
+    },
+    "kernel.base.tdp-sync-runtime-v2.control-signals": {
+      "lastProtocolError": null,
+      "lastEdgeDegraded": null,
+      "lastRehomeRequired": null,
+      "lastDisconnectReason": null
+    },
+    "kernel.base.tdp-sync-runtime-v2.hot-update": {
+      "current": {
+        "source": "embedded",
+        "appId": "assembly-android-mixc-retail-rn84",
+        "assemblyVersion": "1.0.0",
+        "buildNumber": 2,
+        "runtimeVersion": "android-mixc-retail-rn84@1.0",
+        "bundleVersion": "1.0.0+ota.10",
+        "appliedAt": 1776744165179
+      },
+      "history": [
+        {
+          "event": "applied",
+          "bundleVersion": "1.0.0+ota.10",
+          "at": 1776744165179
+        }
+      ],
+      "previous": {
+        "source": "embedded",
+        "appId": "assembly-android-mixc-retail-rn84",
+        "assemblyVersion": "1.0.0",
+        "buildNumber": 1,
+        "runtimeVersion": "android-mixc-retail-rn84@1.0",
+        "bundleVersion": "1.0.0+ota.0",
+        "appliedAt": 0
+      }
+    },
+    "kernel.base.ui-runtime-v2.screen.main": {
+      "primary.root.container": {
+        "value": {
+          "partKey": "ui.integration.retail-shell.welcome",
+          "rendererKey": "ui.integration.retail-shell.welcome",
+          "name": "retailShellWelcome",
+          "title": "零售欢迎页",
+          "description": "Retail shell 业务欢迎页",
+          "containerKey": "primary.root.container",
+          "props": {
+            "terminalId": "terminal_uytd2e4tmwh8"
+          },
+          "source": "ui.integration.retail-shell.activateTerminalSucceeded",
+          "operation": "replace"
+        },
+        "updatedAt": 1776744221511
+      },
+      "secondary.root.container": {
+        "value": {
+          "partKey": "ui.integration.retail-shell.secondary-welcome",
+          "rendererKey": "ui.integration.retail-shell.secondary-welcome",
+          "name": "retailShellSecondaryWelcome",
+          "title": "零售副屏欢迎页",
+          "description": "Retail shell 副屏欢迎页",
+          "containerKey": "secondary.root.container",
+          "props": {
+            "terminalId": "terminal_uytd2e4tmwh8"
+          },
+          "source": "ui.integration.retail-shell.activateTerminalSucceeded",
+          "operation": "replace"
+        },
+        "updatedAt": 1776744221573
+      }
+    },
+    "kernel.base.ui-runtime-v2.screen.branch": {},
+    "kernel.base.ui-runtime-v2.overlay.main": {
+      "primaryOverlays": {
+        "value": [],
+        "updatedAt": 0
+      },
+      "secondaryOverlays": {
+        "value": [],
+        "updatedAt": 0
+      }
+    },
+    "kernel.base.ui-runtime-v2.overlay.branch": {
+      "primaryOverlays": {
+        "value": [],
+        "updatedAt": 0
+      },
+      "secondaryOverlays": {
+        "value": [],
+        "updatedAt": 0
+      }
+    },
+    "kernel.base.ui-runtime-v2.ui-variable.main": {},
+    "kernel.base.ui-runtime-v2.ui-variable.branch": {},
+    "ui.base.admin-console.console": {
+      "selectedTab": "terminal"
+    }
+  },
+  "id": "1776744243786-69edb28a88b268"
+}

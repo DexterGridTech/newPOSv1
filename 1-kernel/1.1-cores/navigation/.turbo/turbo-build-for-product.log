@@ -1,0 +1,9 @@
+
+[96msrc/features/slices/uiVariables.ts[0m:[93m47[0m:[93m17[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'open' does not exist in type 'WritableNonArrayDraft<ModalScreen<any>>'.
+
+[7m47[0m                 open: true,
+[7m  [0m [91m                ~~~~[0m
+
+
+Found 1 error in src/features/slices/uiVariables.ts[90m:47[0m
+

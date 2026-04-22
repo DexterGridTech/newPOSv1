@@ -127,7 +127,9 @@ class HotUpdateTurboModule(reactContext: ReactApplicationContext) :
           entryFile = entryFile ?: "index.android.bundle",
           manifestSha256 = manifestSha256,
           maxLaunchFailures = maxLaunchFailures.toInt(),
-          healthCheckTimeoutMs = (healthCheckTimeoutMs ?: 5_000.0).toLong().coerceAtLeast(1L),
+          healthCheckTimeoutMs = (healthCheckTimeoutMs ?: HotUpdateBootMarkerStore.DEFAULT_HEALTH_CHECK_TIMEOUT_MS.toDouble())
+            .toLong()
+            .coerceAtLeast(HotUpdateBootMarkerStore.DEFAULT_HEALTH_CHECK_TIMEOUT_MS),
         ),
       )
       Arguments.createMap().apply {

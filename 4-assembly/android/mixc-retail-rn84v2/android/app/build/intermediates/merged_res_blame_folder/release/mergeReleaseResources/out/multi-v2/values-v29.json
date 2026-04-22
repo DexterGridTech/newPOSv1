@@ -1,0 +1,39 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.impos2.mixcretailrn84v2.app-mergeReleaseResources-40:/values-v29/values-v29.xml",
+            "map": [
+                {
+                    "source": "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/node_modules/react-native-bootsplash/android/build/intermediates/packaged_res/release/packageReleaseResources/values-v29/values-v29.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "6",
+                        "endColumns": "12",
+                        "endOffsets": "330"
+                    },
+                    "to": {
+                        "startLines": "9",
+                        "startColumns": "4",
+                        "startOffsets": "469",
+                        "endLines": "13",
+                        "endColumns": "12",
+                        "endOffsets": "744"
+                    }
+                },
+                {
+                    "source": "/Users/dexter/.gradle/caches/9.0.0/transforms/986cc003143287cdbc98f3ccebbb0469/transformed/core-splashscreen-1.0.1/res/values-v29/values-v29.xml",
+                    "from": {
+                        "startLines": "2,7",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,374",
+                        "endLines": "6,8",
+                        "endColumns": "12,12",
+                        "endOffsets": "369,464"
+                    }
+                }
+            ]
+        }
+    ]
+}

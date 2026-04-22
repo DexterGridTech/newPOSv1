@@ -1,0 +1,41 @@
+--------- beginning of main
+04-20 02:06:44.017  1099  1490 D EGL_emulation: app_time_stats: avg=1003.04ms min=1003.04ms max=1003.04ms count=1
+04-20 02:06:45.903   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:06:45.945   443   443 E adbd    : failed to connect to socket 'tcp:18585': Connection refused
+04-20 02:06:46.014  1099  1490 D EGL_emulation: app_time_stats: avg=998.11ms min=997.58ms max=998.64ms count=2
+04-20 02:06:47.015  1099  1490 D EGL_emulation: app_time_stats: avg=1001.69ms min=1001.69ms max=1001.69ms count=1
+04-20 02:06:49.015  1099  1490 D EGL_emulation: app_time_stats: avg=999.51ms min=999.31ms max=999.70ms count=2
+04-20 02:06:50.015  1099  1490 D EGL_emulation: app_time_stats: avg=1000.63ms min=1000.63ms max=1000.63ms count=1
+04-20 02:06:52.014  1099  1490 D EGL_emulation: app_time_stats: avg=999.52ms min=999.43ms max=999.61ms count=2
+04-20 02:06:52.414   388   472 I netd    : tetherGetStats() -> {[]} <0.33ms>
+04-20 02:06:53.014  1099  1490 D EGL_emulation: app_time_stats: avg=999.95ms min=999.95ms max=999.95ms count=1
+04-20 02:06:54.015  1099  1490 D EGL_emulation: app_time_stats: avg=1000.91ms min=1000.91ms max=1000.91ms count=1
+04-20 02:06:56.015  1099  1490 D EGL_emulation: app_time_stats: avg=999.90ms min=998.71ms max=1001.09ms count=2
+04-20 02:06:57.399  1099  1242 I IPCThreadState: oneway function results for code 2 on binder at 0xb4000075db326300 will be dropped but finished with status UNKNOWN_TRANSACTION
+04-20 02:06:57.434   388   472 I netd    : tetherGetStats() -> {[]} <0.58ms>
+04-20 02:06:58.015  1099  1490 D EGL_emulation: app_time_stats: avg=999.67ms min=999.09ms max=1000.25ms count=2
+--------- beginning of kernel
+04-20 02:06:59.749   397   397 W healthd : battery l=47 v=5000 t=25.0 h=2 st=4 c=900000 fc=3000000 cc=10 chg=a
+04-20 02:07:00.006  1389  1552 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+04-20 02:07:00.006  1389  1552 I AiAiEcho: EchoTargets: 
+04-20 02:07:00.006  1389  1552 I AiAiEcho: Filtered by AiAi flag check: 
+04-20 02:07:00.006  1389  1552 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+04-20 02:07:00.006  1389  1552 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+04-20 02:07:00.006  1389  1552 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+04-20 02:07:00.006  1389  1552 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+04-20 02:07:00.006  1389  1552 I AiAiEcho: EchoTargets: 
+04-20 02:07:00.006  1389  1552 I AiAiEcho: Filtered by AiAi flag check: 
+04-20 02:07:00.006  1389  1552 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+04-20 02:07:00.006  1389  1552 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+04-20 02:07:00.006  1389  1552 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+04-20 02:07:00.006  1389  1552 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+04-20 02:07:00.007  1389  1552 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+04-20 02:07:00.010  1099  1099 D SsBaseTemplateCard: No text view can be set up
+04-20 02:07:00.012   836   836 W PageIndicator: Total number of pages invalid: 0. Assuming 1 page.
+04-20 02:07:00.012  1099  1099 D SsBaseTemplateCard: Passed-in item info is null
+04-20 02:07:00.012  1099  1099 D SsBaseTemplateCard: Passed-in item info is null
+04-20 02:07:00.012  1099  1099 D SsBaseTemplateCard: Passed-in item info is null
+04-20 02:07:00.012  1099  1099 I SsBaseTemplateCard: Secondary card pane is null
+04-20 02:07:00.013  1099  1490 D EGL_emulation: app_time_stats: avg=998.95ms min=998.26ms max=999.64ms count=2
+04-20 02:07:00.017   836   978 D EGL_emulation: app_time_stats: avg=60000.03ms min=60000.03ms max=60000.03ms count=1
+04-20 02:07:00.780   167   167 I logd    : logdr: UID=2000 GID=2000 PID=14307 n tail=0 logMask=99 pid=0 start=0ns deadline=0ns

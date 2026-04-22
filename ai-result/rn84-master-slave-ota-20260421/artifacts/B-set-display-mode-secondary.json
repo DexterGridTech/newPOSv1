@@ -1,0 +1,21 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "requestId": "req_mo8meluz_9n6kw90ouxfign60",
+    "commandId": "cmd_mo8meluz_zm9cqjze21322974",
+    "commandName": "kernel.base.topology-runtime-v3.set-display-mode",
+    "target": "local",
+    "status": "COMPLETED",
+    "startedAt": 1776775748651,
+    "completedAt": 1776775748667,
+    "actorResults": [
+      {
+        "actorKey": "kernel.base.topology-runtime-v3.TopologyContextActor",
+        "status": "COMPLETED",
+        "startedAt": 1776775748651,
+        "completedAt": 1776775748665
+      }
+    ]
+  },
+  "id": "1776775748526-1696526e0da13"
+}

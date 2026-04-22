@@ -137,4 +137,100 @@ describe('admin topology command', () => {
             wsUrl: 'ws://127.0.0.1:18586/ws',
         })
     })
+
+    it('passes optional imageUri into the scan workflow input', async () => {
+        const importSharePayload = vi.fn(async () => {})
+        const connectorCall = vi.fn(async () => ({
+            success: true,
+            code: 0,
+            message: 'OK',
+            data: {
+                SCAN_RESULT: '{"v":"2026.04","d":"MASTER-001","n":"NODE-001","w":"ws://127.0.0.1:18586/ws"}',
+                SCAN_RESULT_FORMAT: 'QR_CODE',
+            },
+        }))
+        const harness = await createAdminConsoleHarness({
+            modules: [createWorkflowRuntimeModuleV2()],
+            topology: {
+                orchestrator: {
+                    startConnection: vi.fn(),
+                    stopConnection: vi.fn(),
+                    restartConnection: vi.fn(),
+                },
+            },
+            hostTools: {
+                topology: {
+                    importSharePayload,
+                },
+            } as any,
+            platformPorts: {
+                connector: {
+                    call: connectorCall,
+                },
+            },
+        })
+
+        const result = await harness.runtime.dispatchCommand(createCommand(
+            adminConsoleCommandDefinitions.scanAndImportTopologyMaster,
+            {
+                imageUri: 'content://com.impos2.test/topology-share-qr.png',
+                reconnect: false,
+            },
+        ))
+
+        expect(result.status).toBe('COMPLETED')
+        expect(connectorCall).toHaveBeenCalledWith(expect.objectContaining({
+            params: expect.objectContaining({
+                IMAGE_URI: 'content://com.impos2.test/topology-share-qr.png',
+            }),
+        }))
+    })
+
+    it('passes optional imageBase64 into the scan workflow input', async () => {
+        const importSharePayload = vi.fn(async () => {})
+        const connectorCall = vi.fn(async () => ({
+            success: true,
+            code: 0,
+            message: 'OK',
+            data: {
+                SCAN_RESULT: '{"v":"2026.04","d":"MASTER-001","n":"NODE-001","w":"ws://127.0.0.1:18586/ws"}',
+                SCAN_RESULT_FORMAT: 'QR_CODE',
+            },
+        }))
+        const harness = await createAdminConsoleHarness({
+            modules: [createWorkflowRuntimeModuleV2()],
+            topology: {
+                orchestrator: {
+                    startConnection: vi.fn(),
+                    stopConnection: vi.fn(),
+                    restartConnection: vi.fn(),
+                },
+            },
+            hostTools: {
+                topology: {
+                    importSharePayload,
+                },
+            } as any,
+            platformPorts: {
+                connector: {
+                    call: connectorCall,
+                },
+            },
+        })
+
+        const result = await harness.runtime.dispatchCommand(createCommand(
+            adminConsoleCommandDefinitions.scanAndImportTopologyMaster,
+            {
+                imageBase64: 'ZmFrZS1xci1pbWFnZS1iYXNlNjQ=',
+                reconnect: false,
+            },
+        ))
+
+        expect(result.status).toBe('COMPLETED')
+        expect(connectorCall).toHaveBeenCalledWith(expect.objectContaining({
+            params: expect.objectContaining({
+                IMAGE_BASE64: 'ZmFrZS1xci1pbWFnZS1iYXNlNjQ=',
+            }),
+        }))
+    })
 })

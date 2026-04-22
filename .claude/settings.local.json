@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(grep -n \"standalone\\\\|TopologyV2MasterInfo\\\\|masterNodeId\" /Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-base/topology-runtime-v2/src/types/*.ts)"
+    ]
+  }
+}

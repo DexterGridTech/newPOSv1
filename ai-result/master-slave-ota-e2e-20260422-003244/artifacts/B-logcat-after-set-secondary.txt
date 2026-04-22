@@ -1,0 +1,300 @@
+04-22 00:40:37.026 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:37.027 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:37.027 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:37.027 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:37.027 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:37.028 D/WifiClientModeImpl[9769:wlan0](  683): updateLinkLayerStatsRssiSpeedFrequencyCapabilities rssi=-50 TxLinkspeed=1 freq=2447 RxLinkSpeed=2
+04-22 00:40:37.029 D/WifiDataStall(  683): tx tput in kbps: 11000
+04-22 00:40:37.029 D/WifiDataStall(  683): rx tput in kbps: 11000
+04-22 00:40:37.029 V/WifiConfigManager(  683): Updating scan detail cache freq=2447 BSSID=00:13:10:85:fe:01 RSSI=-50 for "AndroidWifi"NONE
+04-22 00:40:37.029 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:37.029 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:37.029 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:37.029 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:37.029 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:37.029 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:37.029 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:37.029 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:37.030 D/WifiScoreCard(  683): BSSID update SIGNAL_POLL ID: 261501600 SSID: "AndroidWifi", BSSID: 00:13:10:85:fe:01, MAC: 02:15:b4:00:00:00, IP: /10.0.2.17, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: legacy, RSSI: -50, Link speed: 1Mbps, Tx Link speed: 1Mbps, Max Supported Tx Link speed: 11Mbps, Rx Link speed: 2Mbps, Max Supported Rx Link speed: 11Mbps, Frequency: 2447MHz, Net ID: 0, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"AndroidWifi"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+04-22 00:40:37.030 D/WifiScoreCard(  683): txRate: 2 txSpeed: 1
+04-22 00:40:37.030 D/WifiScoreCard(  683): network update SIGNAL_POLL "AndroidWifi" ID: 579418950 RSSI -50 txSpeed -1
+04-22 00:40:37.030 D/WifiClientModeImpl[9769:wlan0](  683):  ClientModeImpl$L2ConnectedState screen=on 1 0 "AndroidWifi" 00:13:10:85:fe:01 rssi=-50 f=2447 sc=60 link=1 tx=1.0, 0.0, 0.0 rx=1.1 bcn=0 [on:0 tx:0 rx:0 period:3008] from screen [on:0 period:-1326823514] score=60
+04-22 00:40:37.532 D/SatelliteController( 1086): iisInCarrierRoamingNbIotNtn: satellite is disabled
+04-22 00:40:39.508 D/wpa_supplicant(  938): nl80211: Drv Event 64 (NL80211_CMD_NOTIFY_CQM) received for wlan0
+04-22 00:40:39.508 D/wpa_supplicant(  938): nl80211: Beacon loss event
+04-22 00:40:39.508 D/wpa_supplicant(  938): wlan0: Event BEACON_LOSS (53) received
+04-22 00:40:39.508 I/wpa_supplicant(  938): wlan0: CTRL-EVENT-BEACON-LOSS 
+04-22 00:40:39.518 D/TelephonyManager(  683): requestModemActivityInfo: Sending result to app: ModemActivityInfo{ mTimestamp=15097061 mSleepTimeMs=1512 mIdleTimeMs=504 mActivityStatsTechSpecificInfo=[{mRat=UNKNOWN,mFrequencyRange=UNKNOWN,mTxTimeMs[]=[36, 108, 216, 288, 324],mRxTimeMs=324}]}
+04-22 00:40:39.538 I/netd    (  459): tetherGetStats() -> {[]} <0.64ms>
+04-22 00:40:40.035 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:40.035 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:40.035 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:40.035 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:40.035 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:40.036 D/WifiClientModeImpl[9769:wlan0](  683): updateLinkLayerStatsRssiSpeedFrequencyCapabilities rssi=-50 TxLinkspeed=1 freq=2447 RxLinkSpeed=2
+04-22 00:40:40.036 D/WifiDataStall(  683): tx tput in kbps: 11000
+04-22 00:40:40.036 D/WifiDataStall(  683): rx tput in kbps: 11000
+04-22 00:40:40.036 V/WifiConfigManager(  683): Updating scan detail cache freq=2447 BSSID=00:13:10:85:fe:01 RSSI=-50 for "AndroidWifi"NONE
+04-22 00:40:40.036 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:40.036 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:40.036 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:40.036 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:40.037 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:40.037 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:40.037 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:40.037 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:40.037 D/WifiScoreCard(  683): BSSID update SIGNAL_POLL ID: 261501600 SSID: "AndroidWifi", BSSID: 00:13:10:85:fe:01, MAC: 02:15:b4:00:00:00, IP: /10.0.2.17, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: legacy, RSSI: -50, Link speed: 1Mbps, Tx Link speed: 1Mbps, Max Supported Tx Link speed: 11Mbps, Rx Link speed: 2Mbps, Max Supported Rx Link speed: 11Mbps, Frequency: 2447MHz, Net ID: 0, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"AndroidWifi"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+04-22 00:40:40.037 D/WifiScoreCard(  683): txRate: 1 txSpeed: 1
+04-22 00:40:40.037 D/WifiScoreCard(  683): network update SIGNAL_POLL "AndroidWifi" ID: 579418950 RSSI -50 txSpeed -1
+04-22 00:40:40.038 D/WifiClientModeImpl[9769:wlan0](  683):  ClientModeImpl$L2ConnectedState screen=on 1 0 "AndroidWifi" 00:13:10:85:fe:01 rssi=-50 f=2447 sc=60 link=1 tx=0.3, 0.0, 0.0 rx=0.4 bcn=0 [on:0 tx:0 rx:0 period:3008] from screen [on:0 period:-1326820506] score=60
+04-22 00:40:41.263 D/NetworkMonitor/101( 1052): PROBE_HTTPS https://www.google.com/generate_204 Probe failed with exception javax.net.ssl.SSLHandshakeException: connection closed
+04-22 00:40:41.265 D/NetworkMonitor/101( 1052): isCaptivePortal: isSuccessful()=false isPortal()=false RedirectUrl=null isPartialConnectivity()=true Time=10538ms
+04-22 00:40:41.268 D/ConnectivityService(  683): [101 WIFI] validation failed
+04-22 00:40:43.041 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:43.041 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:43.041 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:43.042 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:43.042 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:43.042 D/WifiClientModeImpl[9769:wlan0](  683): updateLinkLayerStatsRssiSpeedFrequencyCapabilities rssi=-50 TxLinkspeed=1 freq=2447 RxLinkSpeed=2
+04-22 00:40:43.042 D/WifiDataStall(  683): tx tput in kbps: 11000
+04-22 00:40:43.042 D/WifiDataStall(  683): rx tput in kbps: 11000
+04-22 00:40:43.042 V/WifiConfigManager(  683): Updating scan detail cache freq=2447 BSSID=00:13:10:85:fe:01 RSSI=-50 for "AndroidWifi"NONE
+04-22 00:40:43.043 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:43.043 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:43.043 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:43.043 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:43.043 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:43.043 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:43.043 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:43.043 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:43.043 D/WifiScoreCard(  683): BSSID update SIGNAL_POLL ID: 261501600 SSID: "AndroidWifi", BSSID: 00:13:10:85:fe:01, MAC: 02:15:b4:00:00:00, IP: /10.0.2.17, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: legacy, RSSI: -50, Link speed: 1Mbps, Tx Link speed: 1Mbps, Max Supported Tx Link speed: 11Mbps, Rx Link speed: 2Mbps, Max Supported Rx Link speed: 11Mbps, Frequency: 2447MHz, Net ID: 0, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"AndroidWifi"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+04-22 00:40:43.043 D/WifiScoreCard(  683): txRate: 2 txSpeed: 1
+04-22 00:40:43.043 D/WifiScoreCard(  683): network update SIGNAL_POLL "AndroidWifi" ID: 579418950 RSSI -50 txSpeed -1
+04-22 00:40:43.044 D/WifiClientModeImpl[9769:wlan0](  683):  ClientModeImpl$L2ConnectedState screen=on 1 0 "AndroidWifi" 00:13:10:85:fe:01 rssi=-50 f=2447 sc=60 link=1 tx=1.3, 0.0, 0.0 rx=1.4 bcn=0 [on:0 tx:0 rx:0 period:3005] from screen [on:0 period:-1326817500] score=60
+04-22 00:40:46.048 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:46.048 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:46.048 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:46.048 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:46.048 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:46.049 D/WifiClientModeImpl[9769:wlan0](  683): updateLinkLayerStatsRssiSpeedFrequencyCapabilities rssi=-50 TxLinkspeed=1 freq=2447 RxLinkSpeed=2
+04-22 00:40:46.049 D/WifiDataStall(  683): tx tput in kbps: 11000
+04-22 00:40:46.049 D/WifiDataStall(  683): rx tput in kbps: 11000
+04-22 00:40:46.049 V/WifiConfigManager(  683): Updating scan detail cache freq=2447 BSSID=00:13:10:85:fe:01 RSSI=-50 for "AndroidWifi"NONE
+04-22 00:40:46.049 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:46.049 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:46.049 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:46.049 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:46.049 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:46.049 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:46.049 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:46.049 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:46.050 D/WifiScoreCard(  683): BSSID update SIGNAL_POLL ID: 261501600 SSID: "AndroidWifi", BSSID: 00:13:10:85:fe:01, MAC: 02:15:b4:00:00:00, IP: /10.0.2.17, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: legacy, RSSI: -50, Link speed: 1Mbps, Tx Link speed: 1Mbps, Max Supported Tx Link speed: 11Mbps, Rx Link speed: 2Mbps, Max Supported Rx Link speed: 11Mbps, Frequency: 2447MHz, Net ID: 0, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"AndroidWifi"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+04-22 00:40:46.050 D/WifiScoreCard(  683): txRate: 1 txSpeed: 1
+04-22 00:40:46.050 D/WifiScoreCard(  683): network update SIGNAL_POLL "AndroidWifi" ID: 579418950 RSSI -50 txSpeed -1
+04-22 00:40:46.050 D/WifiClientModeImpl[9769:wlan0](  683):  ClientModeImpl$L2ConnectedState screen=on 1 0 "AndroidWifi" 00:13:10:85:fe:01 rssi=-50 f=2447 sc=60 link=1 tx=0.5, 0.0, 0.0 rx=0.5 bcn=0 [on:0 tx:0 rx:0 period:3005] from screen [on:0 period:-1326814494] score=60
+04-22 00:40:47.445 D/wpa_supplicant(  938): nl80211: Drv Event 64 (NL80211_CMD_NOTIFY_CQM) received for wlan0
+04-22 00:40:47.445 D/wpa_supplicant(  938): nl80211: Beacon loss event
+04-22 00:40:47.445 D/wpa_supplicant(  938): wlan0: Event BEACON_LOSS (53) received
+04-22 00:40:47.445 I/wpa_supplicant(  938): wlan0: CTRL-EVENT-BEACON-LOSS 
+04-22 00:40:47.538 D/SatelliteController( 1086): iisInCarrierRoamingNbIotNtn: satellite is disabled
+04-22 00:40:49.059 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:49.059 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:49.059 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:49.061 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:49.063 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:49.066 D/WifiClientModeImpl[9769:wlan0](  683): updateLinkLayerStatsRssiSpeedFrequencyCapabilities rssi=-50 TxLinkspeed=1 freq=2447 RxLinkSpeed=2
+04-22 00:40:49.066 D/WifiDataStall(  683): tx tput in kbps: 11000
+04-22 00:40:49.066 D/WifiDataStall(  683): rx tput in kbps: 11000
+04-22 00:40:49.066 V/WifiConfigManager(  683): Updating scan detail cache freq=2447 BSSID=00:13:10:85:fe:01 RSSI=-50 for "AndroidWifi"NONE
+04-22 00:40:49.067 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:49.067 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:49.067 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:49.067 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:49.067 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:49.067 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:49.067 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:49.067 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:49.067 D/WifiScoreCard(  683): BSSID update SIGNAL_POLL ID: 261501600 SSID: "AndroidWifi", BSSID: 00:13:10:85:fe:01, MAC: 02:15:b4:00:00:00, IP: /10.0.2.17, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: legacy, RSSI: -50, Link speed: 1Mbps, Tx Link speed: 1Mbps, Max Supported Tx Link speed: 11Mbps, Rx Link speed: 2Mbps, Max Supported Rx Link speed: 11Mbps, Frequency: 2447MHz, Net ID: 0, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"AndroidWifi"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+04-22 00:40:49.067 D/WifiScoreCard(  683): txRate: 1 txSpeed: 1
+04-22 00:40:49.067 D/WifiScoreCard(  683): network update SIGNAL_POLL "AndroidWifi" ID: 579418950 RSSI -50 txSpeed -1
+04-22 00:40:49.067 D/WifiClientModeImpl[9769:wlan0](  683):  ClientModeImpl$L2ConnectedState screen=on 1 0 "AndroidWifi" 00:13:10:85:fe:01 rssi=-50 f=2447 sc=60 link=1 tx=0.1, 0.0, 0.0 rx=0.1 bcn=0 [on:0 tx:0 rx:0 period:3017] from screen [on:0 period:-1326811477] score=60
+04-22 00:40:52.076 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:52.076 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:52.077 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:52.077 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:52.077 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:52.077 D/WifiClientModeImpl[9769:wlan0](  683): updateLinkLayerStatsRssiSpeedFrequencyCapabilities rssi=-50 TxLinkspeed=1 freq=2447 RxLinkSpeed=2
+04-22 00:40:52.077 D/WifiDataStall(  683): tx tput in kbps: 11000
+04-22 00:40:52.077 D/WifiDataStall(  683): rx tput in kbps: 11000
+04-22 00:40:52.078 V/WifiConfigManager(  683): Updating scan detail cache freq=2447 BSSID=00:13:10:85:fe:01 RSSI=-50 for "AndroidWifi"NONE
+04-22 00:40:52.078 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:52.078 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:52.078 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:52.078 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:52.078 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:52.078 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:52.078 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:52.078 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:52.078 D/WifiScoreCard(  683): BSSID update SIGNAL_POLL ID: 261501600 SSID: "AndroidWifi", BSSID: 00:13:10:85:fe:01, MAC: 02:15:b4:00:00:00, IP: /10.0.2.17, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: legacy, RSSI: -50, Link speed: 1Mbps, Tx Link speed: 1Mbps, Max Supported Tx Link speed: 11Mbps, Rx Link speed: 2Mbps, Max Supported Rx Link speed: 11Mbps, Frequency: 2447MHz, Net ID: 0, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"AndroidWifi"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+04-22 00:40:52.078 D/WifiScoreCard(  683): txRate: 1 txSpeed: 1
+04-22 00:40:52.078 D/WifiScoreCard(  683): network update SIGNAL_POLL "AndroidWifi" ID: 579418950 RSSI -50 txSpeed -1
+04-22 00:40:52.078 D/WifiClientModeImpl[9769:wlan0](  683):  ClientModeImpl$L2ConnectedState screen=on 1 0 "AndroidWifi" 00:13:10:85:fe:01 rssi=-50 f=2447 sc=60 link=1 tx=0.0, 0.0, 0.0 rx=0.0 bcn=0 [on:0 tx:0 rx:0 period:3011] from screen [on:0 period:-1326808466] score=60
+04-22 00:40:55.084 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:55.084 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:55.084 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:55.084 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:55.085 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:55.086 D/WifiClientModeImpl[9769:wlan0](  683): updateLinkLayerStatsRssiSpeedFrequencyCapabilities rssi=-50 TxLinkspeed=1 freq=2447 RxLinkSpeed=2
+04-22 00:40:55.086 D/WifiDataStall(  683): tx tput in kbps: 11000
+04-22 00:40:55.086 D/WifiDataStall(  683): rx tput in kbps: 11000
+04-22 00:40:55.086 V/WifiConfigManager(  683): Updating scan detail cache freq=2447 BSSID=00:13:10:85:fe:01 RSSI=-50 for "AndroidWifi"NONE
+04-22 00:40:55.086 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:55.086 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:55.086 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:55.086 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:55.087 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:55.087 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:55.087 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:55.087 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:55.088 D/WifiScoreCard(  683): BSSID update SIGNAL_POLL ID: 261501600 SSID: "AndroidWifi", BSSID: 00:13:10:85:fe:01, MAC: 02:15:b4:00:00:00, IP: /10.0.2.17, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: legacy, RSSI: -50, Link speed: 1Mbps, Tx Link speed: 1Mbps, Max Supported Tx Link speed: 11Mbps, Rx Link speed: 2Mbps, Max Supported Rx Link speed: 11Mbps, Frequency: 2447MHz, Net ID: 0, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"AndroidWifi"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+04-22 00:40:55.088 D/WifiScoreCard(  683): txRate: 1 txSpeed: 1
+04-22 00:40:55.089 D/WifiScoreCard(  683): network update SIGNAL_POLL "AndroidWifi" ID: 579418950 RSSI -50 txSpeed -1
+04-22 00:40:55.089 D/WifiClientModeImpl[9769:wlan0](  683):  ClientModeImpl$L2ConnectedState screen=on 1 0 "AndroidWifi" 00:13:10:85:fe:01 rssi=-50 f=2447 sc=60 link=1 tx=0.0, 0.0, 0.0 rx=0.0 bcn=0 [on:0 tx:0 rx:0 period:3011] from screen [on:0 period:-1326805455] score=60
+04-22 00:40:55.383 D/wpa_supplicant(  938): nl80211: Drv Event 64 (NL80211_CMD_NOTIFY_CQM) received for wlan0
+04-22 00:40:55.383 D/wpa_supplicant(  938): nl80211: Beacon loss event
+04-22 00:40:55.383 D/wpa_supplicant(  938): wlan0: Event BEACON_LOSS (53) received
+04-22 00:40:55.383 I/wpa_supplicant(  938): wlan0: CTRL-EVENT-BEACON-LOSS 
+04-22 00:40:56.407 I/WifiService(  683): isFeatureSupported uid=1000 returns [WIFI_FEATURE_INFRA, WIFI_FEATURE_P2P, WIFI_FEATURE_MOBILE_HOTSPOT, WIFI_FEATURE_WPA3_SAE, WIFI_FEATURE_WPA3_SUITE_B, WIFI_FEATURE_OWE, WIFI_FEATURE_DPP, WIFI_FEATURE_AP_RAND_MAC, WIFI_FEATURE_MBO, WIFI_FEATURE_FILS_SHA256, WIFI_FEATURE_FILS_SHA384, WIFI_FEATURE_SAE_PK, WIFI_FEATURE_DPP_ENROLLEE_RESPONDER, WIFI_FEATURE_PASSPOINT_TERMS_AND_CONDITIONS, WIFI_FEATURE_WFD_R2, WIFI_FEATURE_DECORATED_IDENTITY, WIFI_FEATURE_TRUST_ON_FIRST_USE, WIFI_FEATURE_SET_TLS_MINIMUM_VERSION, WIFI_FEATURE_TLS_V1_3, WIFI_FEATURE_WEP, WIFI_FEATURE_WPA_PERSONAL]
+04-22 00:40:57.293 I/resolv  (  459): ResNSendHandler::run: 0 / {101 983141 101 983141 1073 1}
+04-22 00:40:57.294 I/resolv  (  459): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007cdced0e50
+04-22 00:40:57.294 I/resolv  (  459): ResNSendHandler::run: 0 / {101 983141 101 983141 1073 1}
+04-22 00:40:57.297 I/resolv  (  459): ResNSendHandler::run: 0 / {101 983141 101 983141 1073 1}
+04-22 00:40:57.297 I/resolv  (  459): ResNSendHandler::run: 0 / {101 983141 101 983141 1073 1}
+04-22 00:40:57.297 I/resolv  (  459): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007e7cecf350
+04-22 00:40:57.297 I/resolv  (  459): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d2ced1320
+04-22 00:40:57.298 I/WifiService(  683): isFeatureSupported uid=1000 returns [WIFI_FEATURE_INFRA, WIFI_FEATURE_P2P, WIFI_FEATURE_MOBILE_HOTSPOT, WIFI_FEATURE_WPA3_SAE, WIFI_FEATURE_WPA3_SUITE_B, WIFI_FEATURE_OWE, WIFI_FEATURE_DPP, WIFI_FEATURE_AP_RAND_MAC, WIFI_FEATURE_MBO, WIFI_FEATURE_FILS_SHA256, WIFI_FEATURE_FILS_SHA384, WIFI_FEATURE_SAE_PK, WIFI_FEATURE_DPP_ENROLLEE_RESPONDER, WIFI_FEATURE_PASSPOINT_TERMS_AND_CONDITIONS, WIFI_FEATURE_WFD_R2, WIFI_FEATURE_DECORATED_IDENTITY, WIFI_FEATURE_TRUST_ON_FIRST_USE, WIFI_FEATURE_SET_TLS_MINIMUM_VERSION, WIFI_FEATURE_TLS_V1_3, WIFI_FEATURE_WEP, WIFI_FEATURE_WPA_PERSONAL]
+04-22 00:40:57.301 D/NetworkMonitor/101( 1052): PROBE_DNS www.google.com 14ms OK 69.171.235.22,2001::1
+04-22 00:40:57.303 I/resolv  (  459): GetAddrInfoHandler::run: {101 983141 101 983141 1073 1}
+04-22 00:40:57.303 I/resolv  (  459): res_nmkquery: (QUERY, IN, A)
+04-22 00:40:57.303 I/resolv  (  459): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d2ced1320
+04-22 00:40:57.303 I/resolv  (  459): doQuery: rcode=0, ancount=1, return value=48
+04-22 00:40:57.304 I/resolv  (  459): res_nmkquery: (QUERY, IN, AAAA)
+04-22 00:40:57.304 I/resolv  (  459): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007cdced0e50
+04-22 00:40:57.304 I/resolv  (  459): doQuery: rcode=0, ancount=1, return value=60
+04-22 00:40:57.546 D/SatelliteController( 1086): iisInCarrierRoamingNbIotNtn: satellite is disabled
+04-22 00:40:57.776 I/resolv  (  459): res_nsend: used send_dg 117 terrno: 0
+04-22 00:40:57.780 D/NetworkMonitor/101( 1052): PROBE_DNS connectivitycheck.gstatic.com 492ms OK 114.250.65.34
+04-22 00:40:57.783 I/resolv  (  459): GetAddrInfoHandler::run: {101 983141 101 983141 1073 1}
+04-22 00:40:57.784 I/resolv  (  459): res_nmkquery: (QUERY, IN, AAAA)
+04-22 00:40:57.784 I/resolv  (  459): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d0cedc6b0
+04-22 00:40:57.784 I/resolv  (  459): doQuery: rcode=0, ancount=0, return value=117
+04-22 00:40:57.784 I/resolv  (  459): res_nmkquery: (QUERY, IN, A)
+04-22 00:40:57.784 I/resolv  (  459): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007e7cecf350
+04-22 00:40:57.784 I/resolv  (  459): doQuery: rcode=0, ancount=1, return value=63
+04-22 00:40:58.091 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:58.091 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:58.091 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:58.091 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:58.091 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:40:58.093 D/WifiClientModeImpl[9769:wlan0](  683): updateLinkLayerStatsRssiSpeedFrequencyCapabilities rssi=-50 TxLinkspeed=1 freq=2447 RxLinkSpeed=2
+04-22 00:40:58.093 D/WifiDataStall(  683): tx tput in kbps: 11000
+04-22 00:40:58.093 D/WifiDataStall(  683): rx tput in kbps: 11000
+04-22 00:40:58.093 V/WifiConfigManager(  683): Updating scan detail cache freq=2447 BSSID=00:13:10:85:fe:01 RSSI=-50 for "AndroidWifi"NONE
+04-22 00:40:58.093 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:58.093 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:58.093 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:58.093 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:58.095 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:58.095 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:58.095 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:40:58.095 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:40:58.098 D/WifiScoreCard(  683): BSSID update SIGNAL_POLL ID: 261501600 SSID: "AndroidWifi", BSSID: 00:13:10:85:fe:01, MAC: 02:15:b4:00:00:00, IP: /10.0.2.17, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: legacy, RSSI: -50, Link speed: 1Mbps, Tx Link speed: 1Mbps, Max Supported Tx Link speed: 11Mbps, Rx Link speed: 2Mbps, Max Supported Rx Link speed: 11Mbps, Frequency: 2447MHz, Net ID: 0, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"AndroidWifi"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+04-22 00:40:58.098 D/WifiScoreCard(  683): txRate: 2 txSpeed: 1
+04-22 00:40:58.098 D/WifiScoreCard(  683): network update SIGNAL_POLL "AndroidWifi" ID: 579418950 RSSI -50 txSpeed -1
+04-22 00:40:58.099 D/WifiClientModeImpl[9769:wlan0](  683):  ClientModeImpl$L2ConnectedState screen=on 1 0 "AndroidWifi" 00:13:10:85:fe:01 rssi=-50 f=2447 sc=60 link=1 tx=1.4, 0.0, 0.0 rx=1.0 bcn=0 [on:0 tx:0 rx:0 period:3010] from screen [on:0 period:-1326802445] score=60
+04-22 00:40:58.226 D/BoundBrokerSvc( 1283): onRebind: Intent { act=com.google.android.contextmanager.service.ContextManagerLogsUploadBoundService.ACTION_TASK_READY dat=chimera-action:/... xflg=0x4 cmp=com.google.android.gms/.chimera.PersistentInternalBoundBrokerService }
+04-22 00:40:58.228 I/NetworkScheduler.Stats( 1283): Task com.google.android.gms/com.google.android.contextmanager.service.ContextManagerLogsUploadBoundService started execution. cause:4 exec_start_elapsed_seconds: 15115 [CONTEXT service_id=218 ]
+04-22 00:40:58.234 I/NetworkScheduler.Stats( 1283): Task com.google.android.gms/com.google.android.contextmanager.service.ContextManagerLogsUploadBoundService finished executing. cause:4 result: 1 elapsed_millis: 8 uptime_millis: 8 exec_start_elapsed_seconds: 15115 [CONTEXT service_id=218 ]
+04-22 00:40:58.234 D/BoundBrokerSvc( 1283): onUnbind: Intent { act=com.google.android.contextmanager.service.ContextManagerLogsUploadBoundService.ACTION_TASK_READY dat=chimera-action:/... xflg=0x4 cmp=com.google.android.gms/.chimera.PersistentInternalBoundBrokerService }
+04-22 00:40:58.240 I/NetworkScheduler.Stats( 1283): Task com.google.android.gms/com.google.android.gms.auth.account.be.accountstate.GcmTaskService started execution. cause:4 exec_start_elapsed_seconds: 15115 [CONTEXT service_id=218 ]
+04-22 00:40:58.243 I/NetworkScheduler.Stats( 1283): Task com.google.android.gms/com.google.android.gms.auth.account.be.accountstate.GcmTaskService finished executing. cause:4 result: 1 elapsed_millis: 9 uptime_millis: 9 exec_start_elapsed_seconds: 15115 [CONTEXT service_id=218 ]
+04-22 00:40:58.253 I/NetworkScheduler.Stats( 1283): Task com.google.android.gms/com.google.android.gms.clearcut.uploader.QosUploaderService started execution. cause:5 exec_start_elapsed_seconds: 15115 [CONTEXT service_id=218 ]
+04-22 00:40:58.259 I/NetworkScheduler.Stats( 1283): Task com.google.android.gms/com.google.android.gms.clearcut.uploader.QosUploaderService started execution. cause:5 exec_start_elapsed_seconds: 15115 [CONTEXT service_id=218 ]
+04-22 00:40:58.263 I/NetworkScheduler.Stats( 1283): Task com.google.android.gms/com.google.android.gms.clearcut.uploader.QosUploaderService finished executing. cause:5 result: 1 elapsed_millis: 15 uptime_millis: 15 exec_start_elapsed_seconds: 15115 [CONTEXT service_id=218 ]
+04-22 00:40:58.273 I/resolv  (  459): GetAddrInfoHandler::run: {101 786533 101 983141 10144 0}
+04-22 00:40:58.273 I/resolv  (  459): res_nmkquery: (QUERY, IN, AAAA)
+04-22 00:40:58.273 I/resolv  (  459): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d0ced8690
+04-22 00:40:58.273 I/resolv  (  459): doQuery: rcode=0, ancount=4, return value=149
+04-22 00:40:58.273 I/resolv  (  459): res_nmkquery: (QUERY, IN, A)
+04-22 00:40:58.273 I/resolv  (  459): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d0ced7b50
+04-22 00:40:58.273 I/resolv  (  459): doQuery: rcode=0, ancount=4, return value=101
+04-22 00:40:58.275 D/ActivityManager(  683): sync unfroze 1591 com.google.android.gms for 6
+04-22 00:40:58.275 D/NetworkMonitor/101( 1052): PROBE_HTTP http://connectivitycheck.gstatic.com/generate_204 time=493ms ret=204 request={Connection=[close], User-Agent=[Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.32 Safari/537.36]} headers={null=[HTTP/1.1 204 No Content], Connection=[close], Cross-Origin-Resource-Policy=[cross-origin], Date=[Tue, 21 Apr 2026 16:40:57 GMT], X-Android-Received-Millis=[1776789658275], X-Android-Response-Source=[NETWORK 204], X-Android-Selected-Protocol=[http/1.1], X-Android-Sent-Millis=[1776789657787]}
+04-22 00:40:58.278 W/ProcessStats(  683): Tracking association SourceState{e4ca915 com.google.android.gms.persistent/10144 ImpBg #4550} whose proc state 6 is better than process ProcessState{df3470e com.google.android.gms/10144 pkg=com.google.android.gms} proc state 14 (23 skipped)
+04-22 00:40:58.281 I/NetworkScheduler.Stats( 1283): Task com.google.android.gms/com.google.android.gms.security.snet.SnetNormalTaskService started execution. cause:5 exec_start_elapsed_seconds: 15115 [CONTEXT service_id=218 ]
+04-22 00:40:58.283 I/NetworkScheduler.Stats( 1283): Task com.google.android.gms/com.google.android.gms.security.snet.SnetNormalTaskService finished executing. cause:5 result: 1 elapsed_millis: 11 uptime_millis: 11 exec_start_elapsed_seconds: 15115 [CONTEXT service_id=218 ]
+04-22 00:40:58.283 I/GmscoreIpa( 1591): Starting mediastore instant index [CONTEXT service_id=255 ]
+04-22 00:40:58.292 I/NetworkScheduler.Stats( 1283): Task com.google.android.gms/com.google.android.gms.tapandpay.gcmtask.TapAndPayGcmTaskService started execution. cause:5 exec_start_elapsed_seconds: 15115 [CONTEXT service_id=218 ]
+04-22 00:40:58.293 I/NetworkScheduler.Stats( 1283): Task com.google.android.gms/com.google.android.gms.tapandpay.gcmtask.TapAndPayGcmTaskService finished executing. cause:5 result: 1 elapsed_millis: 4 uptime_millis: 4 exec_start_elapsed_seconds: 15115 [CONTEXT service_id=218 ]
+04-22 00:40:58.778 E/chromium( 1283): [0422/004058.778370:ERROR:net/socket/ssl_client_socket_impl.cc:896] handshake failed; returned -1, SSL error code 1, net_error -100
+04-22 00:40:59.278 E/chromium( 1283): [0422/004059.278667:ERROR:net/socket/ssl_client_socket_impl.cc:896] handshake failed; returned -1, SSL error code 1, net_error -100
+04-22 00:41:00.292 I/resolv  (  459): GetAddrInfoHandler::run: {101 983141 101 983141 1073 1}
+04-22 00:41:00.293 I/resolv  (  459): res_nmkquery: (QUERY, IN, AAAA)
+04-22 00:41:00.293 I/resolv  (  459): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d0ced8690
+04-22 00:41:00.293 I/resolv  (  459): doQuery: rcode=0, ancount=4, return value=149
+04-22 00:41:00.293 I/resolv  (  459): res_nmkquery: (QUERY, IN, A)
+04-22 00:41:00.293 I/resolv  (  459): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d0ced7b50
+04-22 00:41:00.293 I/resolv  (  459): doQuery: rcode=0, ancount=4, return value=101
+04-22 00:41:00.696 I/assembly.assembly.android.mixc-retail-rn84(16193): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-22 00:41:00.697 I/MMKV    (16193): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 57, crc 290904888, actualSize 24048
+04-22 00:41:00.697 I/MMKV    (16193): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-22 00:41:00.699 I/assembly.assembly.android.mixc-retail-rn84(16193): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-22 00:41:00.699 I/assembly.assembly.android.mixc-retail-rn84(16193): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-22 00:41:00.780 D/NetworkMonitor/101( 1052): PROBE_FALLBACK http://play.googleapis.com/generate_204 time=488ms ret=204 request={Connection=[close], User-Agent=[Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.32 Safari/537.36]} headers={null=[HTTP/1.1 204 No Content], Connection=[close], Cross-Origin-Resource-Policy=[cross-origin], Date=[Tue, 21 Apr 2026 16:41:00 GMT], X-Android-Received-Millis=[1776789660780], X-Android-Response-Source=[NETWORK 204], X-Android-Selected-Protocol=[http/1.1], X-Android-Sent-Millis=[1776789660297]}
+04-22 00:41:01.103 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:41:01.103 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:41:01.103 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:41:01.103 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:41:01.103 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-22 00:41:01.104 D/WifiClientModeImpl[9769:wlan0](  683): updateLinkLayerStatsRssiSpeedFrequencyCapabilities rssi=-50 TxLinkspeed=1 freq=2447 RxLinkSpeed=2
+04-22 00:41:01.104 D/WifiDataStall(  683): tx tput in kbps: 11000
+04-22 00:41:01.105 D/WifiDataStall(  683): rx tput in kbps: 11000
+04-22 00:41:01.105 V/WifiConfigManager(  683): Updating scan detail cache freq=2447 BSSID=00:13:10:85:fe:01 RSSI=-50 for "AndroidWifi"NONE
+04-22 00:41:01.105 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:41:01.105 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:41:01.105 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:41:01.105 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:41:01.105 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:41:01.105 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:41:01.105 D/WifiThroughputPredictor(  683):  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 00:41:01.105 D/WifiThroughputPredictor(  683):  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 00:41:01.105 D/WifiScoreCard(  683): BSSID update SIGNAL_POLL ID: 261501600 SSID: "AndroidWifi", BSSID: 00:13:10:85:fe:01, MAC: 02:15:b4:00:00:00, IP: /10.0.2.17, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: legacy, RSSI: -50, Link speed: 1Mbps, Tx Link speed: 1Mbps, Max Supported Tx Link speed: 11Mbps, Rx Link speed: 2Mbps, Max Supported Rx Link speed: 11Mbps, Frequency: 2447MHz, Net ID: 0, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"AndroidWifi"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+04-22 00:41:01.105 D/WifiScoreCard(  683): txRate: 6 txSpeed: 1
+04-22 00:41:01.105 D/WifiScoreCard(  683): network update SIGNAL_POLL "AndroidWifi" ID: 579418950 RSSI -50 txSpeed 1
+04-22 00:41:01.106 D/WifiClientModeImpl[9769:wlan0](  683):  ClientModeImpl$L2ConnectedState screen=on 1 0 "AndroidWifi" 00:13:10:85:fe:01 rssi=-50 f=2447 sc=60 link=1 tx=5.1, 0.0, 0.0 rx=4.1 bcn=0 [on:0 tx:0 rx:0 period:3006] from screen [on:0 period:-1326799439] score=60
+04-22 00:41:02.277 W/CCTUploader( 1283): Clearcut transport failed to make network request after 4006 milliseconds.
+04-22 00:41:02.277 W/CCTUploader( 1283): java.io.IOException: cilx: Failed to process request
+04-22 00:41:02.277 W/CCTUploader( 1283): 	at axls.a(:com.google.android.gms@252635035@25.26.35 (260400-783060121):472)
+04-22 00:41:02.277 W/CCTUploader( 1283): 	at axmr.b(:com.google.android.gms@252635035@25.26.35 (260400-783060121):540)
+04-22 00:41:02.277 W/CCTUploader( 1283): 	at com.google.android.gms.clearcut.uploader.QosUploaderChimeraService.g(:com.google.android.gms@252635035@25.26.35 (260400-783060121):1622)
+04-22 00:41:02.277 W/CCTUploader( 1283): 	at com.google.android.gms.clearcut.uploader.QosUploaderChimeraService.a(:com.google.android.gms@252635035@25.26.35 (260400-783060121):37)
+04-22 00:41:02.277 W/CCTUploader( 1283): 	at cito.call(:com.google.android.gms@252635035@25.26.35 (260400-783060121):30)
+04-22 00:41:02.277 W/CCTUploader( 1283): 	at java.util.concurrent.FutureTask.run(FutureTask.java:317)
+04-22 00:41:02.277 W/CCTUploader( 1283): 	at azpf.c(:com.google.android.gms@252635035@25.26.35 (260400-783060121):50)
+04-22 00:41:02.277 W/CCTUploader( 1283): 	at azpf.run(:com.google.android.gms@252635035@25.26.35 (260400-783060121):89)
+04-22 00:41:02.277 W/CCTUploader( 1283): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1156)
+04-22 00:41:02.277 W/CCTUploader( 1283): 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:651)
+04-22 00:41:02.277 W/CCTUploader( 1283): 	at azuw.run(:com.google.android.gms@252635035@25.26.35 (260400-783060121):8)
+04-22 00:41:02.277 W/CCTUploader( 1283): 	at java.lang.Thread.run(Thread.java:1119)
+04-22 00:41:02.277 W/CCTUploader( 1283): Caused by: cilx: Failed to process request
+04-22 00:41:02.277 W/CCTUploader( 1283): 	at cils.a(:com.google.android.gms@252635035@25.26.35 (260400-783060121):10)
+04-22 00:41:02.277 W/CCTUploader( 1283): 	at cipl.b(:com.google.android.gms@252635035@25.26.35 (260400-783060121):15)
+04-22 00:41:02.277 W/CCTUploader( 1283): 	at ciqc.onFailed(:com.google.android.gms@252635035@25.26.35 (260400-783060121):15)
+04-22 00:41:02.277 W/CCTUploader( 1283): 	at m1.ng.onFailed(:com.google.android.gms.dynamite_cronetdynamite@252635035@25.26.35 (260400-0):3)
+04-22 00:41:02.277 W/CCTUploader( 1283): 	at m1.mg.run(:com.google.android.gms.dynamite_cronetdynamite@252635035@25.26.35 (260400-0):16)
+04-22 00:41:02.277 W/CCTUploader( 1283): 	at ggcu.execute(:com.google.android.gms@252635035@25.26.35 (260400-783060121):1)
+04-22 00:41:02.277 W/CCTUploader( 1283): 	at org.chromium.net.impl.CronetUrlRequest.onNativeAdapterDestroyed(:com.google.android.gms.dynamite_cronetdynamite@252635035@25.26.35 (260400-0):35)
+04-22 00:41:02.277 W/CCTUploader( 1283): Caused by: m1.mt: Exception in CronetUrlRequest: net::ERR_QUIC_PROTOCOL_ERROR, ErrorCode=10, InternalErrorCode=-356, Retryable=false, QuicDetailedErrorCode=25, Source=2
+04-22 00:41:02.277 W/CCTUploader( 1283): 	at org.chromium.net.impl.CronetUrlRequest.onError(:com.google.android.gms.dynamite_cronetdynamite@252635035@25.26.35 (260400-0):5)
+04-22 00:41:02.288 I/NetworkScheduler.Stats( 1283): Task com.google.android.gms/com.google.android.gms.clearcut.uploader.QosUploaderService finished executing. cause:5 result: 2 elapsed_millis: 4031 uptime_millis: 4031 exec_start_elapsed_seconds: 15115 [CONTEXT service_id=218 ]
+04-22 00:41:02.676 I/logd    (  235): logdr: UID=2000 GID=2000 PID=18696 n tail=0 logMask=99 pid=0 start=0ns deadline=0ns

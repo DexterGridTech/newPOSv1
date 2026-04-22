@@ -12,7 +12,7 @@ const welcomeCardShadowStyle = {
     boxShadow: '0px 16px 40px rgba(15, 23, 42, 0.08)',
 } as const
 
-const welcomeTitle = '欢迎进入零售终端 · OTA E2E V15'
+const welcomeTitle = '欢迎进入零售终端 · OTA E2E V21'
 
 export const WelcomeScreen: React.FC<RetailWelcomeScreenProps> = ({
     terminalId,

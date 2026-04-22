@@ -1,0 +1,24 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "requestId": "req_mo86h9ia_ac1olqx6374j59xx",
+    "commandId": "cmd_mo86h9ia_g6athsh6og5ipvpu",
+    "commandName": "kernel.base.tdp-sync-runtime-v2.record-user-operation",
+    "target": "local",
+    "status": "COMPLETED",
+    "startedAt": 1776748998754,
+    "completedAt": 1776748998821,
+    "actorResults": [
+      {
+        "actorKey": "kernel.base.tdp-sync-runtime-v2.TdpUserOperationActor",
+        "status": "COMPLETED",
+        "startedAt": 1776748998755,
+        "completedAt": 1776748998775,
+        "result": {
+          "recordedAt": 1776749000164
+        }
+      }
+    ]
+  },
+  "id": "1776749000293-ad7a032e03e34"
+}

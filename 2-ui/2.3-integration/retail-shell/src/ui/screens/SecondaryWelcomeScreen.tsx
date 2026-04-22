@@ -30,6 +30,7 @@ export const SecondaryWelcomeScreen: React.FC<RetailSecondaryWelcomeScreenProps>
     const automationRuntimeId = useOptionalUiAutomationRuntimeId() ?? runtime.runtimeId
     const automationTarget = useOptionalUiAutomationTarget() ?? 'secondary'
     const screenKey = 'ui.integration.retail-shell.secondary-welcome'
+    const secondaryWelcomeTitle = '欢迎来到万象城 · OTA E2E V21'
 
     useEffect(() => {
         if (!automationBridge) {
@@ -45,7 +46,7 @@ export const SecondaryWelcomeScreen: React.FC<RetailSecondaryWelcomeScreenProps>
                 testID: 'ui-integration-retail-shell:secondary-welcome',
                 semanticId: 'ui-integration-retail-shell:secondary-welcome',
                 role: 'screen',
-                text: '欢迎来到万象城',
+                text: secondaryWelcomeTitle,
                 visible: true,
                 enabled: true,
                 availableActions: [],
@@ -59,7 +60,7 @@ export const SecondaryWelcomeScreen: React.FC<RetailSecondaryWelcomeScreenProps>
                 testID: 'ui-integration-retail-shell:secondary-welcome:title',
                 semanticId: 'ui-integration-retail-shell:secondary-welcome:title',
                 role: 'text',
-                text: '欢迎来到万象城',
+                text: secondaryWelcomeTitle,
                 visible: true,
                 enabled: true,
                 availableActions: [],
@@ -87,6 +88,7 @@ export const SecondaryWelcomeScreen: React.FC<RetailSecondaryWelcomeScreenProps>
         automationBridge,
         automationRuntimeId,
         automationTarget,
+        secondaryWelcomeTitle,
         screenKey,
         terminalId,
     ])
@@ -165,7 +167,7 @@ export const SecondaryWelcomeScreen: React.FC<RetailSecondaryWelcomeScreenProps>
                             letterSpacing: 1.4,
                         }}
                     >
-                        欢迎来到万象城
+                        {secondaryWelcomeTitle}
                     </Text>
                     <Text
                         testID="ui-integration-retail-shell:secondary-welcome:subtitle"

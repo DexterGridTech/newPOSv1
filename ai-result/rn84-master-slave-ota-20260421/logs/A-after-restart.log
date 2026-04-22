@@ -1,0 +1,16 @@
+--------- beginning of main
+04-21 22:01:41.893  6717  6751 I ReactNativeJS: Running "MixcRetailAssemblyRN84"
+04-21 22:01:42.000  6717  6751 I ReactNativeJS: '[tcp-bootstrap-state-written]', '{"nodeId":"master:6Z2H3BSGEY","runtimeId":"run_mo8ozwvx_n6bxlumbu6ub76m8","displayIndex":0,"requestId":"req_mo8ozwxb_7ukjlh84sr135xg2","commandId":"cmd_mo8ozwxc_zp13jzdwj9g25k1b","nextDeviceFingerprint":"6Z2H3BSGEY","nextDeviceInfo":{"id":"6Z2H3BSGEY","model":"Mixc Retail Android RN84"},"previousIdentity":{"terminalId":"terminal_scwezgp1x6gb","deviceFingerprint":"6Z2H3BSGEY","deviceInfo":{"id":"6Z2H3BSGEY","model":"Mixc Retail Android RN84"},"activationStatus":"ACTIVATED","activatedAt":1776779974272}}'
+04-21 22:01:42.001  6717  6751 I ReactNativeJS: '[assembly.android.mixc-retail-rn84.websocket] connect', { url: 'ws://192.168.0.172:5810/api/v1/tdp/ws/connect?sandboxId=sandbox-kernel-base-test&terminalId=terminal_scwezgp1x6gb&token=token_kgdmcwofx6gd',
+04-21 22:01:42.001  6717  6751 I ReactNativeJS:   protocol: 'ws',
+04-21 22:01:42.001  6717  6751 I ReactNativeJS:   host: '192.168.0.172:5810',
+04-21 22:01:42.001  6717  6751 I ReactNativeJS:   pathname: '/api/v1/tdp/ws/connect' }
+04-21 22:01:52.044  6717  6751 I ReactNativeJS: '[assembly.android.mixc-retail-rn84.websocket] connect', { url: 'ws://127.0.0.1:5810/api/v1/tdp/ws/connect?sandboxId=sandbox-kernel-base-test&terminalId=terminal_scwezgp1x6gb&token=token_kgdmcwofx6gd',
+04-21 22:01:52.044  6717  6751 I ReactNativeJS:   protocol: 'ws',
+04-21 22:01:52.044  6717  6751 I ReactNativeJS:   host: '127.0.0.1:5810',
+04-21 22:01:52.044  6717  6751 I ReactNativeJS:   pathname: '/api/v1/tdp/ws/connect' }
+04-21 22:01:52.067  6717  6751 I ReactNativeJS: '[assembly.android.mixc-retail-rn84.websocket] connect', { url: 'ws://127.0.0.1:8888/mockMasterServer/ws',
+04-21 22:01:52.067  6717  6751 I ReactNativeJS:   protocol: 'ws',
+04-21 22:01:52.067  6717  6751 I ReactNativeJS:   host: '127.0.0.1:8888',
+04-21 22:01:52.067  6717  6751 I ReactNativeJS:   pathname: '/mockMasterServer/ws' }
+04-21 22:02:01.738  6717  6751 I ReactNativeJS: '[runtime-state-sync-apply]', '{"direction":"slave-to-master","incomingSliceNames":["kernel.base.topology-runtime-v3.demo.slave","kernel.base.ui-runtime-v2.screen.branch","kernel.base.ui-runtime-v2.overlay.branch","kernel.base.ui-runtime-v2.ui-variable.branch"],"appliedSliceNames":["kernel.base.topology-runtime-v3.demo.slave","kernel.base.ui-runtime-v2.screen.branch","kernel.base.ui-runtime-v2.overlay.branch","kernel.base.ui-runtime-v2.ui-variable.branch"],"skippedSliceReasons":[]}'

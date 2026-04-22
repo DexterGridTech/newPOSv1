@@ -1,0 +1,14 @@
+{
+  "submit": {
+    "ok": true,
+    "nodeId": "ui-base-terminal-activate-device:submit"
+  },
+  "idle": {
+    "ok": true
+  },
+  "activation": {
+    "activationStatus": "ACTIVATED",
+    "terminalId": "terminal_a19u5ymdikw6",
+    "sandboxId": "sandbox-kernel-base-test"
+  }
+}

@@ -14,7 +14,7 @@ import {waitFor} from '../helpers/liveHarness'
 import {createTerminalTopologyIntegrationHarnessV3} from '../helpers/terminalTopologyIntegrationHarnessV3'
 
 describe('tdp-sync-runtime-v2 live hot update master-slave sync', () => {
-    it('syncs authoritative hot update state from master to slave and keeps slave read-only', async () => {
+    it('syncs desired hot update intent from master to slave while keeping execution state local', async () => {
         const harness = await createTerminalTopologyIntegrationHarnessV3({
             includeDefaultBridgeModule: false,
             slaveModules: [createHotUpdateReadModelModule()],
@@ -81,7 +81,6 @@ describe('tdp-sync-runtime-v2 live hot update master-slave sync', () => {
             await waitFor(() => {
                 const hotUpdate = selectTdpHotUpdateState(harness.slaveRuntime.getState())
                 return hotUpdate?.desired?.releaseId === 'release-topology-hot-update-001'
-                    && hotUpdate.candidate?.status === 'download-pending'
             }, 10_000)
 
             expect(selectTdpHotUpdateState(harness.masterRuntime.getState())).toMatchObject({
@@ -101,11 +100,8 @@ describe('tdp-sync-runtime-v2 live hot update master-slave sync', () => {
                     packageId: 'package-topology-hot-update-001',
                     bundleVersion: '1.0.0+ota.3',
                 },
-                candidate: {
-                    packageId: 'package-topology-hot-update-001',
-                    status: 'download-pending',
-                },
             })
+            expect(selectTdpHotUpdateState(harness.slaveRuntime.getState())?.candidate).toBeUndefined()
 
             const rogueSlaveRuntime = createKernelRuntimeV2({
                 localNodeId: 'node_hot_update_slave_probe' as any,
@@ -153,6 +149,9 @@ describe('tdp-sync-runtime-v2 live hot update master-slave sync', () => {
             })
             expect(selectTdpHotUpdateState(harness.slaveRuntime.getState())?.desired?.releaseId).toBe(
                 'release-topology-hot-update-001',
+            )
+            expect(selectTdpHotUpdateState(harness.slaveRuntime.getState())?.current.bundleVersion).toBe(
+                '1.0.0+ota.0',
             )
             expect(selectTopologySync(harness.masterRuntime.getState())?.status).toBe('active')
             expect(selectTopologySync(harness.slaveRuntime.getState())?.status).toBe('active')

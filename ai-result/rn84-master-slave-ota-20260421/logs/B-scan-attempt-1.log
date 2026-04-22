@@ -1,0 +1,8 @@
+--------- beginning of main
+04-21 21:30:41.707  7229  7250 I ReactNativeJS: Running "MixcRetailAssemblyRN84"
+04-21 21:30:41.796  7229  7250 I ConnectorManager: connector initialized
+04-21 21:30:41.858  7229  7250 I ReactNativeJS: '[tcp-bootstrap-state-written]', '{"nodeId":"master:ZJ63NQELD9","runtimeId":"run_mo8nw1la_1fup6mg9e5wiay4c","displayIndex":0,"requestId":"req_mo8nw1mp_tw86dif5khj81k1j","commandId":"cmd_mo8nw1mq_hnbjed15wuchyf6b","nextDeviceFingerprint":"ZJ63NQELD9","nextDeviceInfo":{"id":"ZJ63NQELD9","model":"Mixc Retail Android RN84"},"previousIdentity":{"activationStatus":"UNACTIVATED"}}'
+04-21 21:38:42.136  7229  7251 I ConnectorManager: call start taskId=b6bb631c83464559a6e248665731af15 channel=INTENT/camera action=com.impos2.posadapter.action.CAMERA_SCAN timeout=60000
+04-21 21:39:42.137  7229  7658 W ConnectorManager: call timeout taskId=b6bb631c83464559a6e248665731af15 duration=60001
+04-21 21:39:42.137  7229  7229 I CameraScanActivity: cancelActiveScan invoked
+04-21 21:39:42.139  7229  7229 W ConnectorManager: duplicate or late callback ignored taskId=b6bb631c83464559a6e248665731af15

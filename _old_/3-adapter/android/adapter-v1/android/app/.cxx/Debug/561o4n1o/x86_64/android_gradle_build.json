@@ -1,0 +1,68 @@
+{
+  "buildFiles": [
+    "/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/react-native-mmkv/MMKV/Core/CMakeLists.txt",
+    "/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/react-native-mmkv/android/CMakeLists.txt",
+    "/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/react-native-mmkv/android/build/generated/source/codegen/jni/CMakeLists.txt",
+    "/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/react-native/ReactAndroid/cmake-utils/default-app-setup/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/dexter/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/app/.cxx/Debug/561o4n1o/x86_64",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/dexter/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/app/.cxx/Debug/561o4n1o/x86_64",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "appmodules::@6890427a1f51a3e7e1df": {
+      "toolchain": "toolchain",
+      "abi": "x86_64",
+      "artifactName": "appmodules",
+      "output": "/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/app/build/intermediates/cxx/Debug/561o4n1o/obj/x86_64/libappmodules.so",
+      "runtimeFiles": [
+        "/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/app/build/intermediates/cxx/Debug/561o4n1o/obj/x86_64/libreact-native-mmkv.so",
+        "/Users/dexter/.gradle/caches/8.10.2/transforms/d7d422c0963f92aa7b8a765f3bd54231/transformed/fbjni-0.7.0/prefab/modules/fbjni/libs/android.x86_64/libfbjni.so",
+        "/Users/dexter/.gradle/caches/8.10.2/transforms/d04e401f6db98d4307004fde50158b02/transformed/react-android-0.77.1-debug/prefab/modules/jsi/libs/android.x86_64/libjsi.so",
+        "/Users/dexter/.gradle/caches/8.10.2/transforms/d04e401f6db98d4307004fde50158b02/transformed/react-android-0.77.1-debug/prefab/modules/reactnative/libs/android.x86_64/libreactnative.so"
+      ]
+    },
+    "core::@1b9a7d546b295b7d0867": {
+      "toolchain": "toolchain",
+      "abi": "x86_64",
+      "artifactName": "core",
+      "output": "/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/app/.cxx/Debug/561o4n1o/x86_64/RNMmkvSpec_cxxmodule_autolinked_build/core/libcore.a"
+    },
+    "react-native-mmkv::@4ae6a1e65d3e68ba0197": {
+      "toolchain": "toolchain",
+      "abi": "x86_64",
+      "artifactName": "react-native-mmkv",
+      "output": "/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/app/build/intermediates/cxx/Debug/561o4n1o/obj/x86_64/libreact-native-mmkv.so",
+      "runtimeFiles": [
+        "/Users/dexter/.gradle/caches/8.10.2/transforms/d7d422c0963f92aa7b8a765f3bd54231/transformed/fbjni-0.7.0/prefab/modules/fbjni/libs/android.x86_64/libfbjni.so",
+        "/Users/dexter/.gradle/caches/8.10.2/transforms/d04e401f6db98d4307004fde50158b02/transformed/react-android-0.77.1-debug/prefab/modules/jsi/libs/android.x86_64/libjsi.so",
+        "/Users/dexter/.gradle/caches/8.10.2/transforms/d04e401f6db98d4307004fde50158b02/transformed/react-android-0.77.1-debug/prefab/modules/reactnative/libs/android.x86_64/libreactnative.so"
+      ]
+    },
+    "react_codegen_RNMmkvSpec::@7541eabbae598da31a69": {
+      "toolchain": "toolchain",
+      "abi": "x86_64",
+      "artifactName": "react_codegen_RNMmkvSpec"
+    }
+  },
+  "toolchains": {
+    "toolchain": {
+      "cCompilerExecutable": "/Users/dexter/Library/Android/sdk/ndk/27.1.12297006/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang.lld",
+      "cppCompilerExecutable": "/Users/dexter/Library/Android/sdk/ndk/27.1.12297006/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++.lld"
+    }
+  },
+  "cFileExtensions": [],
+  "cppFileExtensions": [
+    "cpp"
+  ]
+}

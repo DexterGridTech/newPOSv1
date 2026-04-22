@@ -1,0 +1,21 @@
+{
+  "active": false,
+  "mode": "ralph",
+  "current_phase": "complete",
+  "started_at": "2026-04-18T17:14:22.088Z",
+  "updated_at": "2026-04-18T17:14:22.088Z",
+  "session_id": "019d9c3e-0278-7ad1-ab24-fc8d9df21381",
+  "thread_id": "019d9c3e-0278-7ad1-ab24-fc8d9df21381",
+  "turn_id": "019da18d-5dfb-7020-9047-e836ac0cdd43",
+  "iteration": 50,
+  "max_iterations": 60,
+  "owner_omx_session_id": "019d9ec9-84cc-72b3-a1a2-76c2b34a706a",
+  "owner_codex_thread_id": "019d9ec9-84cc-72b3-a1a2-76c2b34a706a",
+  "last_turn_at": "2026-04-19T02:24:35.236Z",
+  "max_iterations_auto_expand_count": 1,
+  "max_iterations_auto_expanded_at": "2026-04-19T02:24:35.236Z",
+  "completed_at": "2026-04-19T03:10:00.000Z",
+  "task": "document hot update system in docs",
+  "evidence": "fresh verification gathered on 2026-04-19",
+  "artifact": "docs/hot-update-system-guide.md"
+}

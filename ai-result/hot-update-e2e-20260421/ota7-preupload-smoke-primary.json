@@ -1,0 +1,58 @@
+{
+  "serial": "emulator-5554",
+  "target": "primary",
+  "hostPort": 18584,
+  "devicePort": 18584,
+  "hello": {
+    "jsonrpc": "2.0",
+    "result": {
+      "protocolVersion": 1,
+      "capabilities": [
+        "runtime.query",
+        "ui.semanticRegistry",
+        "wait",
+        "trace",
+        "scripts.execute"
+      ],
+      "availableTargets": [
+        "host",
+        "primary"
+      ],
+      "buildProfile": "internal",
+      "productMode": false,
+      "scriptExecutionAvailable": true
+    },
+    "id": "1776716530561-ccd09165c53fb"
+  },
+  "info": {
+    "jsonrpc": "2.0",
+    "result": {
+      "protocolVersion": 1,
+      "runtimeId": "run_mo68hei7_9nmclkg30n3shd3a",
+      "localNodeId": "master:J9RZPWR3HK",
+      "environmentMode": "PROD",
+      "displayContext": {
+        "displayIndex": 0,
+        "displayCount": 2
+      },
+      "currentScreen": {
+        "containerKey": "primary.root.container",
+        "screen": {
+          "partKey": "ui.base.terminal.activate-device",
+          "rendererKey": "ui.base.terminal.activate-device",
+          "props": null
+        },
+        "overlayCount": 0
+      }
+    },
+    "id": "1776716530567-eb746e9e05491"
+  },
+  "treeNodeCount": 15,
+  "idle": {
+    "jsonrpc": "2.0",
+    "result": {
+      "ok": true
+    },
+    "id": "1776716530572-4138e35205cf3"
+  }
+}

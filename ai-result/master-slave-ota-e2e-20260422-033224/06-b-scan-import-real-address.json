@@ -1,0 +1,37 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "requestId": "req_mo91focy_toykuv2kfzj5cafa",
+    "commandId": "cmd_mo91focy_17hgw9xk2e172p8r",
+    "commandName": "ui.base.admin-console.scan-and-import-topology-master",
+    "target": "local",
+    "status": "FAILED",
+    "startedAt": 1776800992786,
+    "completedAt": 1776800992871,
+    "actorResults": [
+      {
+        "actorKey": "ui.base.admin-console.AdminTopologyActor",
+        "status": "FAILED",
+        "startedAt": 1776800992786,
+        "completedAt": 1776800992871,
+        "error": {
+          "name": "Runtime Shell V2 Command Execution Failed",
+          "key": "kernel.base.runtime-shell-v2.command_execution_failed",
+          "code": "ERR_RUNTIME_SHELL_V2_COMMAND_EXECUTION_FAILED",
+          "message": "Command ui.base.admin-console.scan-and-import-topology-master execution failed",
+          "category": "SYSTEM",
+          "severity": "MEDIUM",
+          "createdAt": 1776800992871,
+          "commandName": "ui.base.admin-console.scan-and-import-topology-master",
+          "commandId": "cmd_mo91focy_17hgw9xk2e172p8r",
+          "requestId": "req_mo91focy_toykuv2kfzj5cafa",
+          "args": {
+            "commandName": "ui.base.admin-console.scan-and-import-topology-master"
+          },
+          "cause": {}
+        }
+      }
+    ]
+  },
+  "id": "1776800992732-77d68bddd769f8"
+}

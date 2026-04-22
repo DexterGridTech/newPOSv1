@@ -1,0 +1,15 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "e2e-slave-probe": {
+      "value": {
+        "label": "slave-to-master-probe",
+        "phase": "UNACTIVATED",
+        "note": "before activation",
+        "updatedBy": "SLAVE"
+      },
+      "updatedAt": 1776811541000
+    }
+  },
+  "id": "1776811610003-81377a699a341"
+}

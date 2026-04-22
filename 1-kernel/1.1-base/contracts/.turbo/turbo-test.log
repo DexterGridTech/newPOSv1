@@ -1,0 +1,12 @@
+[contracts-test-scenario] {
+  packageName: '@impos2/kernel-base-contracts',
+  packageVersion: '0.0.1',
+  protocolVersion: '0.0.1',
+  runtimeId: 'run_mnuduz02_mqjpkckl',
+  requestId: 'req_mnuduz02_4tm5qw77',
+  commandId: 'cmd_mnuduz02_d9givzls',
+  internalRequestId: 'INTERNAL',
+  timestamp: 1775914869170,
+  formattedTimestamp: '2026-4-11 21:41:09 170',
+  errorMessage: 'request req_mnuduz02_4tm5qw77 failed'
+}

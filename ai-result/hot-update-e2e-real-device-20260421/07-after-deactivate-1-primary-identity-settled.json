@@ -1,0 +1,12 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "activationStatus": "UNACTIVATED",
+    "deviceInfo": {
+      "id": "2N4QS8GYRS",
+      "model": "Mixc Retail Android RN84"
+    },
+    "deviceFingerprint": "2N4QS8GYRS"
+  },
+  "id": "1776735984100-7db2910a1ddd8"
+}

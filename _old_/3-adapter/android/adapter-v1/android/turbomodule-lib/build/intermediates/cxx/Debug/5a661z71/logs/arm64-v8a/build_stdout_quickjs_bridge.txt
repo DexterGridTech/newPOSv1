@@ -1,0 +1,2 @@
+ninja: Entering directory `/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/.cxx/Debug/5a661z71/arm64-v8a'
+ninja: no work to do.

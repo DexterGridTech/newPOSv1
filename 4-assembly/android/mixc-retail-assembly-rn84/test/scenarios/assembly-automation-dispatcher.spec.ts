@@ -6,6 +6,7 @@ const {
     nativeScriptExecuteMock,
     selectUiScreenMock,
     selectUiOverlaysMock,
+    selectTopologyDisplayModeMock,
 } = vi.hoisted(() => ({
     defineCommandMock: vi.fn((input: Record<string, unknown>) => input),
     createCommandMock: vi.fn((definition: unknown, payload: unknown) => ({
@@ -20,6 +21,7 @@ const {
         props: null,
     })),
     selectUiOverlaysMock: vi.fn(() => []),
+    selectTopologyDisplayModeMock: vi.fn(() => 'PRIMARY'),
 }))
 
 vi.mock('@impos2/kernel-base-runtime-shell-v2', async importOriginal => ({
@@ -32,6 +34,10 @@ vi.mock('@impos2/kernel-base-ui-runtime-v2', async importOriginal => ({
     ...await importOriginal<typeof import('@impos2/kernel-base-ui-runtime-v2')>(),
     selectUiScreen: selectUiScreenMock,
     selectUiOverlays: selectUiOverlaysMock,
+}))
+
+vi.mock('@impos2/kernel-base-topology-runtime-v3', () => ({
+    selectTopologyDisplayMode: selectTopologyDisplayModeMock,
 }))
 
 vi.mock('../../src/turbomodules/scripts', () => ({
@@ -47,6 +53,7 @@ describe('assembly automation dispatcher', () => {
     beforeEach(() => {
         vi.clearAllMocks()
         nativeScriptExecuteMock.mockResolvedValue({ok: true})
+        selectTopologyDisplayModeMock.mockReturnValue('PRIMARY')
     })
 
     it('handles query, wait, command and script methods through JSON-RPC', async () => {
@@ -241,5 +248,48 @@ describe('assembly automation dispatcher', () => {
             source: 'return 1',
             timeoutMs: 1_000,
         }))
+    })
+
+    it('reports the secondary root for single-screen slave rendering when topology display mode is secondary', async () => {
+        selectTopologyDisplayModeMock.mockReturnValue('SECONDARY')
+
+        const runtime = {
+            runtimeId: 'primary-runtime',
+            localNodeId: 'node-primary',
+            environmentMode: 'TEST',
+            displayContext: {displayIndex: 0, displayCount: 1},
+            getState: () => ({kernel: {}}),
+            queryRequest: vi.fn(),
+            subscribeRequests: vi.fn(() => () => undefined),
+            subscribeState: vi.fn(() => () => undefined),
+            dispatchCommand: vi.fn(async () => ({status: 'COMPLETED'})),
+        }
+
+        const dispatcher = createAutomationRequestDispatcher({
+            app: {} as any,
+            buildProfile: 'test',
+            automationEnabled: true,
+            scriptExecutionAvailable: true,
+        })
+        dispatcher.attachRuntime({
+            target: 'primary',
+            runtimeId: 'primary-runtime',
+            runtime: runtime as any,
+        })
+        const client = createAutomationJsonRpcClient(dispatcher)
+
+        await expect(client.call('runtime.getCurrentScreen', {
+            target: 'primary',
+        })).resolves.toMatchObject({
+            containerKey: 'secondary.root.container',
+            screen: {
+                partKey: 'home',
+            },
+        })
+        expect(selectUiScreenMock).toHaveBeenCalledWith(
+            runtime.getState(),
+            'secondary.root.container',
+        )
+        expect(selectUiOverlaysMock).toHaveBeenCalledWith(runtime.getState(), 'SECONDARY')
     })
 })

@@ -140,6 +140,8 @@ export const createAdminTopologyActor = (): ActorDefinition => defineActor('Admi
                 workflowKey: workflowBuiltinTaskKeys.singleReadBarcodeFromCamera,
                 input: {
                     scanMode: context.command.payload.scanMode ?? 'QR_CODE_MODE',
+                    imageUri: context.command.payload.imageUri,
+                    imageBase64: context.command.payload.imageBase64,
                     timeoutMs: context.command.payload.timeoutMs ?? 60_000,
                 },
             },

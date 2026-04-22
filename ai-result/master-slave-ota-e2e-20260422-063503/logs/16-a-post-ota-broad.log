@@ -1,0 +1,5 @@
+23:04-22 07:00:17.619 I/ActivityTaskManager(  519): START u0 {flg=0x10000000 cmp=com.impos2.mixcretailassemblyrn84/.MainActivity} from uid 2000
+102:04-22 07:00:52.788 D/NetworkMonitor/100(  784): PROBE_HTTP http://connectivitycheck.gstatic.com/generate_204 Probe failed with exception java.net.SocketTimeoutException: failed to connect to connectivitycheck.gstatic.com/114.250.66.34 (port 80) from /10.0.2.15 (port 34428) after 10000ms
+116:04-22 07:01:02.791 D/NetworkMonitor/100(  784): PROBE_HTTPS https://www.google.com/generate_204 Probe failed with exception java.net.SocketTimeoutException: failed to connect to www.google.com/2001::1 (port 443) from /fec0::5054:ff:fe12:3456 (port 58304) after 10000ms
+120:04-22 07:01:02.794 W/BestClock(  519): java.time.DateTimeException: Missing NTP fix
+121:04-22 07:01:02.794 W/BestClock(  519): java.time.DateTimeException: Missing NTP fix

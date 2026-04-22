@@ -1,0 +1,9 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "containerKey": "primary.root.container",
+    "screen": null,
+    "overlayCount": 0
+  },
+  "id": "1776802425951-6982d73587cba"
+}

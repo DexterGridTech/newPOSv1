@@ -1,0 +1,94 @@
+--------- beginning of main
+04-21 12:11:34.062 I/assembly.assembly.android.mixc-retail-rn84(29943): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"2N4QS8GYRS","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 12:11:34.063 I/MMKV    (29943): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 84, crc 3100236572, actualSize 17663
+04-21 12:11:34.063 I/MMKV    (29943): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-21 12:11:34.074 I/MMKV    (29943): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 85, crc 4135541371, actualSize 18179
+04-21 12:11:34.074 I/MMKV    (29943): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-21 12:11:34.076 I/assembly.assembly.android.mixc-retail-rn84(29943): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"2N4QS8GYRS","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 12:11:34.077 I/assembly.assembly.android.mixc-retail-rn84(29943): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"2N4QS8GYRS","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 12:11:34.077 I/assembly.assembly.android.mixc-retail-rn84(29943): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"2N4QS8GYRS","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 12:11:34.110 I/MMKV    (29943): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 86, crc 3308825945, actualSize 18292
+04-21 12:11:34.110 I/MMKV    (29943): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-21 12:11:34.999 E/WifiStaIfaceAidlImpl(  888): getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 12:11:38.011 E/WifiStaIfaceAidlImpl(  888): getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 12:11:41.023 E/WifiStaIfaceAidlImpl(  888): getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 12:11:42.167 E/android.hardware.graphics.composer3-service.rockchip(  344): wait,line=113 wait callback timeout
+04-21 12:11:44.034 E/WifiStaIfaceAidlImpl(  888): getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 12:11:45.466 E/SdkStatusContentProvider( 2731): SdkSettingPreferences onSharedPreferenceChanged key = isp
+04-21 12:11:45.467 E/SdkStatusContentProvider( 2731): SdkSettingPreferences onSharedPreferenceChanged key = isp
+--------- beginning of system
+04-21 12:11:45.468 E/ActivityThread( 2731): Failed to find provider info for com.alipay.iot.settings.SettingsProvider
+04-21 12:11:45.469 E/ActivityThread( 2731): Failed to find provider info for com.alipay.iot.settings.SettingsProvider
+04-21 12:11:45.471 I/UsbExtImpl(  888): default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use PC Camera
+04-21 12:11:45.471 V/UsbExtImpl(  888): smconf processName:com.alipay.iot.service
+04-21 12:11:45.471 I/UsbExtImpl(  888): smconf disallow  uid:10099pid:2731  processName=com.alipay.iot.service to use GD32-USB_Printer
+04-21 12:11:45.471 I/UsbExtImpl(  888): default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use NS021 USB HID Keyboard
+04-21 12:11:45.473 I/UsbExtImpl(  888): default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use PC Camera
+04-21 12:11:45.473 V/UsbExtImpl(  888): smconf processName:com.alipay.iot.service
+04-21 12:11:45.473 I/UsbExtImpl(  888): smconf disallow  uid:10099pid:2731  processName=com.alipay.iot.service to use GD32-USB_Printer
+04-21 12:11:45.473 I/UsbExtImpl(  888): default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use NS021 USB HID Keyboard
+04-21 12:11:45.475 I/UsbExtImpl(  888): default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use PC Camera
+04-21 12:11:45.475 V/UsbExtImpl(  888): smconf processName:com.alipay.iot.service
+04-21 12:11:45.475 I/UsbExtImpl(  888): smconf disallow  uid:10099pid:2731  processName=com.alipay.iot.service to use GD32-USB_Printer
+04-21 12:11:45.475 I/UsbExtImpl(  888): default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use NS021 USB HID Keyboard
+04-21 12:11:45.477 I/UsbExtImpl(  888): default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use PC Camera
+04-21 12:11:45.477 V/UsbExtImpl(  888): smconf processName:com.alipay.iot.service
+04-21 12:11:45.477 I/UsbExtImpl(  888): smconf disallow  uid:10099pid:2731  processName=com.alipay.iot.service to use GD32-USB_Printer
+04-21 12:11:45.477 I/UsbExtImpl(  888): default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use NS021 USB HID Keyboard
+04-21 12:11:45.478 I/UsbExtImpl(  888): default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use PC Camera
+04-21 12:11:45.479 V/UsbExtImpl(  888): smconf processName:com.alipay.iot.service
+04-21 12:11:45.479 I/UsbExtImpl(  888): smconf disallow  uid:10099pid:2731  processName=com.alipay.iot.service to use GD32-USB_Printer
+04-21 12:11:45.480 I/UsbExtImpl(  888): default allow  uid:10099pid:2731  processName=com.alipay.iot.service to use NS021 USB HID Keyboard
+04-21 12:11:47.046 E/WifiStaIfaceAidlImpl(  888): getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 12:11:50.057 E/WifiStaIfaceAidlImpl(  888): getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 12:11:53.067 E/WifiStaIfaceAidlImpl(  888): getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 12:11:53.299 I/assembly.assembly.android.mixc-retail-rn84(29943): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"2N4QS8GYRS","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 12:11:53.305 I/MMKV    (29943): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 87, crc 2502083170, actualSize 18292
+04-21 12:11:53.305 I/MMKV    (29943): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-21 12:11:53.312 I/assembly.assembly.android.mixc-retail-rn84(29943): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"2N4QS8GYRS","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 12:11:53.320 I/ReactNativeJS(30017): '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.tdp-sync-runtime-v2.hot-update"],"appliedSliceNames":["kernel.base.tdp-sync-runtime-v2.hot-update"],"skippedSliceReasons":[]}'
+04-21 12:11:53.327 I/assembly.assembly.android.mixc-retail-rn84(30017): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"2N4QS8GYRS","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 12:11:53.328 I/assembly.assembly.android.mixc-retail-rn84(30017): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"2N4QS8GYRS","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 12:11:53.329 D/TrafficStats(29943): tagSocket(109) with statsTag=0xffffffff, statsUid=-1
+04-21 12:11:53.332 I/assembly.assembly.android.mixc-retail-rn84(29943): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"2N4QS8GYRS","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 12:11:53.335 I/assembly.assembly.android.mixc-retail-rn84(29943): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"2N4QS8GYRS","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 12:11:53.337 I/assembly.assembly.android.mixc-retail-rn84(29943): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"2N4QS8GYRS","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 12:11:53.360 I/MMKV    (29943): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 88, crc 1989754881, actualSize 20646
+04-21 12:11:53.361 I/MMKV    (29943): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-21 12:11:53.363 I/ReactNativeJS(30017): '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.tdp-sync-runtime-v2.hot-update"],"appliedSliceNames":["kernel.base.tdp-sync-runtime-v2.hot-update"],"skippedSliceReasons":[]}'
+04-21 12:11:53.366 I/MMKV    (29943): <MMKV_IO.cpp:530::expandAndWriteBack> extending [mixc-retail-assembly-rn84::state] file size from 32768 to 65536, incoming size:2288, future usage:11340
+04-21 12:11:53.366 I/MMKV    (29943): <MemoryFile.cpp:103::open> open fd[115], flag 0x7, /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-21 12:11:53.366 I/MMKV    (29943): <MemoryFile.cpp:250::mmapOrCleanup> mmap to address [0x7aade02000], oldPtr [0x7acbde6000], [/data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe]
+04-21 12:11:53.366 I/MMKV    (29943): <MemoryFile.cpp:109::close> closing fd[115], /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-21 12:11:53.366 I/MMKV    (29943): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 89, crc 209516541, actualSize 20646
+04-21 12:11:53.366 I/MMKV    (29943): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-21 12:11:53.368 I/assembly.assembly.android.mixc-retail-rn84(30017): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"2N4QS8GYRS","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 12:11:53.368 I/assembly.assembly.android.mixc-retail-rn84(30017): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"2N4QS8GYRS","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 12:11:53.779 I/ReactNativeJS(30017): '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.tdp-sync-runtime-v2.hot-update"],"appliedSliceNames":["kernel.base.tdp-sync-runtime-v2.hot-update"],"skippedSliceReasons":[]}'
+04-21 12:11:53.786 I/assembly.assembly.android.mixc-retail-rn84(30017): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"2N4QS8GYRS","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 12:11:53.787 I/assembly.assembly.android.mixc-retail-rn84(29943): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"2N4QS8GYRS","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 12:11:53.788 I/assembly.assembly.android.mixc-retail-rn84(30017): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"2N4QS8GYRS","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 12:11:53.791 I/MMKV    (29943): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 90, crc 2001628975, actualSize 23568
+04-21 12:11:53.791 I/MMKV    (29943): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-21 12:11:53.802 I/ReactNativeJS(30017): '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.tdp-sync-runtime-v2.hot-update"],"appliedSliceNames":["kernel.base.tdp-sync-runtime-v2.hot-update"],"skippedSliceReasons":[]}'
+04-21 12:11:53.809 I/assembly.assembly.android.mixc-retail-rn84(30017): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"2N4QS8GYRS","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 12:11:53.810 I/assembly.assembly.android.mixc-retail-rn84(30017): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"2N4QS8GYRS","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 12:11:53.814 I/ReactNativeJS(30017): '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.tdp-sync-runtime-v2.hot-update"],"appliedSliceNames":["kernel.base.tdp-sync-runtime-v2.hot-update"],"skippedSliceReasons":[]}'
+04-21 12:11:53.821 I/assembly.assembly.android.mixc-retail-rn84(30017): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"2N4QS8GYRS","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 12:11:53.821 I/assembly.assembly.android.mixc-retail-rn84(30017): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"2N4QS8GYRS","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 12:11:53.825 I/ReactNativeJS(30017): '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.tdp-sync-runtime-v2.hot-update"],"appliedSliceNames":["kernel.base.tdp-sync-runtime-v2.hot-update"],"skippedSliceReasons":[]}'
+04-21 12:11:53.831 I/assembly.assembly.android.mixc-retail-rn84(30017): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"2N4QS8GYRS","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 12:11:53.832 I/assembly.assembly.android.mixc-retail-rn84(30017): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"2N4QS8GYRS","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 12:11:53.835 I/ReactNativeJS(30017): '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.ui-runtime-v2.overlay.main"],"appliedSliceNames":["kernel.base.ui-runtime-v2.overlay.main"],"skippedSliceReasons":[]}'
+04-21 12:11:53.838 I/assembly.assembly.android.mixc-retail-rn84(30017): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"2N4QS8GYRS","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 12:11:53.838 I/assembly.assembly.android.mixc-retail-rn84(30017): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"2N4QS8GYRS","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 12:11:53.839 I/assembly.assembly.android.mixc-retail-rn84(29943): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"2N4QS8GYRS","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 12:11:53.841 I/assembly.assembly.android.mixc-retail-rn84(29943): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"2N4QS8GYRS","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 12:11:53.842 I/assembly.assembly.android.mixc-retail-rn84(29943): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"2N4QS8GYRS","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 12:11:53.842 I/assembly.assembly.android.mixc-retail-rn84(29943): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"2N4QS8GYRS","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 12:11:53.873 I/MMKV    (29943): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 91, crc 3789256206, actualSize 25408
+04-21 12:11:53.873 I/MMKV    (29943): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-21 12:11:53.900 I/MMKV    (29943): <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 92, crc 3467366456, actualSize 25408
+04-21 12:11:53.900 I/MMKV    (29943): <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-21 12:11:56.078 E/WifiStaIfaceAidlImpl(  888): getLinkLayerStats failed with service-specific exception: android.os.ServiceSpecificException: unknown error (code 9)
+04-21 12:11:56.469 D/TrafficStats(29943): tagSocket(110) with statsTag=0xffffffff, statsUid=-1

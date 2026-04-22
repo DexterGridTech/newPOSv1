@@ -1,0 +1,600 @@
+04-22 03:38:20.531 I/NetworkScheduler.Stats( 1251): Task com.google.android.gms/com.google.android.gms.chimera.container.ConfigService started execution. cause:5 exec_start_elapsed_seconds: 25757 [CONTEXT service_id=218 ]
+04-22 03:38:20.533 I/ChimeraConfigurator( 4339): Starting update, reason: 2 urgentFeatures: 
+04-22 03:38:20.534 D/BoundBrokerSvc( 1251): onBind: Intent { act=com.google.android.gms.scheduler.ACTION_PROXY_SCHEDULE dat=chimera-action:/... cmp=com.google.android.gms/.chimera.PersistentApiService }
+04-22 03:38:20.534 D/BoundBrokerSvc( 1251): Loading bound service for intent: Intent { act=com.google.android.gms.scheduler.ACTION_PROXY_SCHEDULE dat=chimera-action:/... cmp=com.google.android.gms/.chimera.PersistentApiService }
+04-22 03:38:20.538 I/resolv  (  293): GetAddrInfoHandler::run: {100 786532 100 983140 10116 0}
+04-22 03:38:20.538 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 03:38:20.538 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 03:38:20.546 I/GmsDebugLogger( 4339): [50] container:2318189190400+maps_core+mlkit.barcode.ui+mlkit.ocr.common+vision.barcode,tflite_dynamite:2521301025100400+tflite_dynamite,vision_ocr:2316024025100000+vision.ocr|6
+04-22 03:38:20.548 I/GmsModuleFndr( 4339): Beginning GMS chimera module scan
+04-22 03:38:20.549 I/ModuleSetMgr( 4339): Computing pending module set with APKs: [[AdsFdrDynamite.integ:231004600100000], [Cronetdynamite:231818190400], [Dynamiteloader:231818190000], [Dynamitemodulesa:231818190000], [Dynamitemodulesc:231818190000], [Googlecertificates:231818190000], [Mapsdynamite:231818190000], [Measurementdynamite:231818190000]]
+04-22 03:38:20.554 I/ModuleSetMgr( 4339): Pending container module APKs: []
+04-22 03:38:20.554 I/ModuleSetMgr( 4339): Pending non-container module APKs: []
+04-22 03:38:20.559 W/PackageParser( 4339): Unknown element under <manifest>: queries at /data/user_de/0/com.google.android.gms/app_chimera/m/00000000/AdsDynamite.apk Binary XML file line #15
+04-22 03:38:20.565 W/PackageParser( 4339): Unknown element under <manifest>: queries at /data/user_de/0/com.google.android.gms/app_chimera/m/00000004/DynamiteModulesC.apk Binary XML file line #15
+04-22 03:38:20.580 I/resolv  (  293): res_tls_send: TLS query result: 0
+04-22 03:38:20.580 I/resolv  (  293): res_tls_send: TLS query result: 0
+04-22 03:38:20.580 I/resolv  (  293): doQuery: rcode=0, ancount=4, return value=112
+04-22 03:38:20.581 I/resolv  (  293): doQuery: rcode=0, ancount=4, return value=160
+04-22 03:38:20.581 D/TrafficStats( 1251): tagSocket(160) with statsTag=0x1065fff, statsUid=-1
+04-22 03:38:20.601 I/GmsDebugLogger( 4339): [77] [VisionOcrDynamite.integ:231602402100000]
+04-22 03:38:20.602 I/GmsDebugLogger( 4339): [77] [TfliteDynamiteDynamite.integ:252130102100400]
+04-22 03:38:20.602 I/GmsDebugLogger( 4339): [77] [MapsCoreDynamite.integ:231112103100400]
+04-22 03:38:20.603 I/GmsDebugLogger( 4339): [73] 1801
+04-22 03:38:20.604 W/ZappDownloader( 4339): No successful module downloads for requested features [].
+04-22 03:38:20.604 I/GmsDebugLogger( 4339): [30] [VisionOcrDynamite.integ:231602402100000],[VisionBarcode.optional:231818100400],[TfliteDynamiteDynamite.integ:252130102100400],[MlkitOcrCommon.optional:231818100400],[MapsCoreDynamite.integ:231112103100400],[MlkitBarcodeUi.optional:231818100000]
+04-22 03:38:20.608 I/ChimeraConfigService( 4339): Scheduling checkin for one-off execution between [3300,43201] seconds from now (1776800300608) [CONTEXT service_id=264 ]
+04-22 03:38:20.611 I/ChimeraConfigService( 4339): Scheduling checkin every 43201 seconds, with flex of 21600 seconds [CONTEXT service_id=264 ]
+04-22 03:38:20.613 I/NetworkScheduler.Stats( 1251): Task com.google.android.gms/com.google.android.gms.chimera.container.ConfigService finished executing. cause:5 result: 2 elapsed_millis: 84 uptime_millis: 84 exec_start_elapsed_seconds: 25757 [CONTEXT service_id=218 ]
+04-22 03:38:20.791 D/TrafficStats( 1251): tagSocket(185) with statsTag=0x1065fff, statsUid=-1
+04-22 03:38:20.884 D/TrafficStats( 1251): tagSocket(186) with statsTag=0x1065fff, statsUid=-1
+04-22 03:38:21.098 D/TrafficStats( 1251): tagSocket(187) with statsTag=0x1065fff, statsUid=-1
+04-22 03:38:21.117 E/WifiScoringParams(  519): Invalid frequency(-1), using 5G as default rssi array
+04-22 03:38:24.900 D/WifiNl80211Manager(  519): Scan result ready event
+04-22 03:38:24.901 D/WifiNative(  519): Scan result ready event
+04-22 03:38:26.160 E/WakeLock( 1251): GCM_HB_ALARM release without a matched acquire!
+04-22 03:38:26.160 W/WakeLock( 1251): GCM_HB_ALARM counter does not exist
+04-22 03:38:26.164 I/resolv  (  293): GetAddrInfoHandler::run: {100 786532 100 983140 10116 0}
+04-22 03:38:26.165 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 03:38:26.166 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 03:38:26.381 I/resolv  (  293): res_tls_send: TLS query result: 0
+04-22 03:38:26.381 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=135
+04-22 03:38:26.382 I/resolv  (  293): res_tls_send: TLS query result: 0
+04-22 03:38:26.382 I/resolv  (  293): doQuery: rcode=0, ancount=2, return value=101
+04-22 03:38:26.383 D/TrafficStats( 1251): tagSocket(-1) with statsTag=0x20000407, statsUid=-1
+04-22 03:38:26.384 I/TrafficStats( 1251): tagSocketFd(-1, 536871943, -1) failed with errno-9
+04-22 03:38:26.384 D/TrafficStats( 1251): tagSocket(78) with statsTag=0x20000407, statsUid=-1
+04-22 03:38:26.857 D/TrafficStats( 1251): tagSocket(189) with statsTag=0x20000407, statsUid=-1
+04-22 03:38:26.862 E/GmsTaskScheduler( 1251): sendWakeUpEvent called on SchedulerClientBroadcastStrategy
+04-22 03:38:26.862 I/AlarmManager( 1251): setExactAndAllowWhileIdle [name: GCM_HB_ALARM type: 2 triggerAtMillis: 27473556]
+04-22 03:38:27.106 I/AlarmManager( 1251): setExactAndAllowWhileIdle [name: GCM_HB_ALARM type: 2 triggerAtMillis: 27473800]
+04-22 03:38:27.107 D/ConnectivityService(  519): reportNetworkConnectivity(100, true) by 10116
+04-22 03:38:27.107 D/NetworkMonitor/100(  784): Forcing reevaluation for UID 10116. Dns signal count: 0
+04-22 03:38:27.107 D/ConnectivityService(  519): reportNetworkConnectivity(100, true) by 10116
+04-22 03:38:27.108 I/AlarmManager( 1251): setExactAndAllowWhileIdle [name: GCM_HB_ALARM type: 2 triggerAtMillis: 27473802]
+04-22 03:38:27.108 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:38:27.108 D/TrafficStats(  784): tagSocket(68) with statsTag=0xffffff81, statsUid=-1
+04-22 03:38:27.108 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:38:27.108 E/GmsTaskScheduler( 1251): sendWakeUpEvent called on SchedulerClientBroadcastStrategy
+04-22 03:38:27.108 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffff81, statsUid=-1
+04-22 03:38:27.108 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:38:27.109 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:38:27.111 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:38:27.111 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:38:27.122 I/resolv  (  293): res_nsend: used send_dg 60 terrno: 0
+04-22 03:38:27.124 I/resolv  (  293): res_nsend: used send_dg 63 terrno: 0
+04-22 03:38:27.125 I/resolv  (  293): res_nsend: used send_dg 48 terrno: 0
+04-22 03:38:27.125 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffffff, statsUid=-1
+04-22 03:38:27.126 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffffff, statsUid=-1
+04-22 03:38:27.126 I/resolv  (  293): res_nsend: used send_dg 117 terrno: 0
+04-22 03:38:27.126 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 03:38:27.127 D/NetworkMonitor/100(  784): PROBE_DNS www.google.com 18ms OK 174.132.167.252,2001::1
+04-22 03:38:27.127 D/NetworkMonitor/100(  784): PROBE_DNS connectivitycheck.gstatic.com 19ms OK 114.250.65.34
+04-22 03:38:27.127 I/resolv  (  293): GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+04-22 03:38:27.127 I/resolv  (  293): GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+04-22 03:38:27.127 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 03:38:27.127 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d7da78790
+04-22 03:38:27.127 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=60
+04-22 03:38:27.128 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 03:38:27.128 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d9da801b0
+04-22 03:38:27.128 I/resolv  (  293): doQuery: rcode=0, ancount=0, return value=117
+04-22 03:38:27.128 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 03:38:27.128 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d6da7a5b0
+04-22 03:38:27.128 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=48
+04-22 03:38:27.128 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:38:27.130 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 03:38:27.130 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d8da71d30
+04-22 03:38:27.130 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=63
+04-22 03:38:27.131 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffff81, statsUid=-1
+04-22 03:38:27.254 D/NetworkMonitor/100(  784): PROBE_HTTP http://connectivitycheck.gstatic.com/generate_204 time=126ms ret=204 request={Connection=[close], User-Agent=[Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.32 Safari/537.36]} headers={null=[HTTP/1.1 204 No Content], Connection=[close], Content-Length=[0], Cross-Origin-Resource-Policy=[cross-origin], Date=[Tue, 21 Apr 2026 19:38:27 GMT], X-Android-Received-Millis=[1776800307253], X-Android-Response-Source=[NETWORK 204], X-Android-Selected-Protocol=[http/1.1], X-Android-Sent-Millis=[1776800307172]}
+04-22 03:38:30.109 I/resolv  (  293): GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+04-22 03:38:30.109 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 03:38:30.109 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d6da7a5b0
+04-22 03:38:30.109 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=48
+04-22 03:38:30.109 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 03:38:30.109 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d7da78790
+04-22 03:38:30.109 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=60
+04-22 03:38:30.110 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffff81, statsUid=-1
+04-22 03:38:30.376 D/NetworkMonitor/100(  784): PROBE_FALLBACK http://www.google.com/gen_204 time=268ms ret=204 request={Connection=[close], User-Agent=[Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.32 Safari/537.36]} headers={null=[HTTP/1.1 204 No Content], Connection=[close], Content-Security-Policy=[object-src 'none';base-uri 'self';script-src 'nonce-_1QG9uuhvQos0vrg8g-QdQ' 'strict-dynamic' 'report-sample' 'unsafe-eval' 'unsafe-inline' https: http:;report-uri https://csp.withgoogle.com/csp/gws/other], Content-Type=[text/html; charset=UTF-8], Date=[Tue, 21 Apr 2026 19:38:30 GMT], Permissions-Policy=[unload=()], Server=[gws], X-Android-Received-Millis=[1776800310376], X-Android-Response-Source=[NETWORK 204], X-Android-Selected-Protocol=[http/1.1], X-Android-Sent-Millis=[1776800310112], X-Frame-Options=[SAMEORIGIN], X-Xss-Protection=[0]}
+04-22 03:38:35.578 D/BoundBrokerSvc( 1251): onUnbind: Intent { act=com.google.android.gms.phenotype.service.START dat=chimera-action:/... cmp=com.google.android.gms/.chimera.PersistentApiService }
+04-22 03:38:35.626 D/BoundBrokerSvc( 1251): onUnbind: Intent { act=com.google.android.gms.scheduler.ACTION_PROXY_SCHEDULE dat=chimera-action:/... cmp=com.google.android.gms/.chimera.PersistentApiService }
+04-22 03:38:37.131 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:38:37.417 D/TrafficStats( 1251): tagSocket(83) with statsTag=0x20008100, statsUid=-1
+04-22 03:38:47.144 D/NetworkMonitor/100(  784): PROBE_HTTPS https://www.google.com/generate_204 Probe failed with exception java.net.SocketTimeoutException: failed to connect to www.google.com/2001::1 (port 443) from /fec0::5054:ff:fe12:3456 (port 60388) after 10000ms
+04-22 03:38:47.145 D/NetworkMonitor/100(  784): isCaptivePortal: isSuccessful()=false isPortal()=false RedirectUrl=null isPartialConnectivity()=true Time=20038ms
+04-22 03:38:47.146 D/ConnectivityService(  519): [100 CELLULAR] validation failed
+04-22 03:38:48.151 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:38:48.151 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffff81, statsUid=-1
+04-22 03:38:48.153 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffff81, statsUid=-1
+04-22 03:38:48.154 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:38:48.156 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:38:48.156 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:38:48.156 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d7da78790
+04-22 03:38:48.156 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d9da801b0
+04-22 03:38:48.158 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:38:48.158 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d8da71d30
+04-22 03:38:48.158 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:38:48.158 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 03:38:48.160 D/NetworkMonitor/100(  784): PROBE_DNS connectivitycheck.gstatic.com 8ms OK 114.250.65.34
+04-22 03:38:48.160 I/resolv  (  293): GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+04-22 03:38:48.160 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 03:38:48.160 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d9da801b0
+04-22 03:38:48.160 I/resolv  (  293): doQuery: rcode=0, ancount=0, return value=117
+04-22 03:38:48.162 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 03:38:48.162 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d8da71d30
+04-22 03:38:48.162 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=63
+04-22 03:38:48.162 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:38:48.175 I/resolv  (  293): res_nsend: used send_dg 48 terrno: 0
+04-22 03:38:48.176 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffffff, statsUid=-1
+04-22 03:38:48.177 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffffff, statsUid=-1
+04-22 03:38:48.178 D/NetworkMonitor/100(  784): PROBE_DNS www.google.com 26ms OK 157.240.7.20,2001::1
+04-22 03:38:48.179 I/resolv  (  293): GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+04-22 03:38:48.179 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 03:38:48.179 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d6da7a5b0
+04-22 03:38:48.179 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=48
+04-22 03:38:48.179 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 03:38:48.179 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d7da78790
+04-22 03:38:48.179 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=60
+04-22 03:38:48.180 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffff81, statsUid=-1
+04-22 03:38:48.295 D/NetworkMonitor/100(  784): PROBE_HTTP http://connectivitycheck.gstatic.com/generate_204 time=135ms ret=204 request={Connection=[close], User-Agent=[Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.32 Safari/537.36]} headers={null=[HTTP/1.1 204 No Content], Connection=[close], Content-Length=[0], Cross-Origin-Resource-Policy=[cross-origin], Date=[Tue, 21 Apr 2026 19:38:48 GMT], X-Android-Received-Millis=[1776800328295], X-Android-Response-Source=[NETWORK 204], X-Android-Selected-Protocol=[http/1.1], X-Android-Sent-Millis=[1776800328207]}
+04-22 03:38:51.155 I/resolv  (  293): GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+04-22 03:38:51.156 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 03:38:51.156 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d6da7a5b0
+04-22 03:38:51.156 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=48
+04-22 03:38:51.156 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 03:38:51.156 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d7da78790
+04-22 03:38:51.156 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=60
+04-22 03:38:51.156 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:38:51.268 D/NetworkMonitor/100(  784): PROBE_FALLBACK http://www.google.com/gen_204 time=114ms ret=204 request={Connection=[close], User-Agent=[Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.32 Safari/537.36]} headers={null=[HTTP/1.1 204 No Content], Connection=[close], Content-Security-Policy=[object-src 'none';base-uri 'self';script-src 'nonce-wlOYCU65r-UoYfO2vaKmvw' 'strict-dynamic' 'report-sample' 'unsafe-eval' 'unsafe-inline' https: http:;report-uri https://csp.withgoogle.com/csp/gws/other], Content-Type=[text/html; charset=UTF-8], Date=[Tue, 21 Apr 2026 19:38:51 GMT], Permissions-Policy=[unload=()], Server=[gws], X-Android-Received-Millis=[1776800331267], X-Android-Response-Source=[NETWORK 204], X-Android-Selected-Protocol=[http/1.1], X-Android-Sent-Millis=[1776800331159], X-Frame-Options=[SAMEORIGIN], X-Xss-Protection=[0]}
+04-22 03:38:51.605 D/ActivityManager(  519): freezing 19760 com.android.chrome
+04-22 03:38:51.984 D/ActivityManager(  519): freezing 19855 com.google.android.apps.docs
+04-22 03:38:58.191 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:39:00.006 I/AiAiEcho( 1598): Predicting[0]: 
+04-22 03:39:00.006 I/AiAiEcho( 1598): Ranked targets strategy: SORT, count: 0, ranking metadata: 
+04-22 03:39:00.006 I/AiAiEcho( 1598): #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0
+04-22 03:39:00.007 I/AiAiEcho( 1598): #postPredictionTargets: Sending updates to UISurface home with targets# 0
+04-22 03:39:00.007 I/AiAiEcho( 1598): #postPredictionTargets: Sending updates to UISurface media_data_manager with targets# 0
+04-22 03:39:00.020 D/SsMediaDataProvider(  728): Forwarding Smartspace updates []
+04-22 03:39:00.028 D/EGL_emulation(  728): app_time_stats: avg=59996.42ms min=59996.42ms max=59996.42ms count=1
+04-22 03:39:06.896 W/healthd (  312): battery l=100 v=5000 t=25.0 h=2 st=4 c=900000 fc=3000000 cc=10 chg=
+04-22 03:39:08.203 D/NetworkMonitor/100(  784): PROBE_HTTPS https://www.google.com/generate_204 Probe failed with exception java.net.SocketTimeoutException: failed to connect to www.google.com/2001::1 (port 443) from /fec0::5054:ff:fe12:3456 (port 34100) after 10000ms
+04-22 03:39:08.205 D/NetworkMonitor/100(  784): isCaptivePortal: isSuccessful()=false isPortal()=false RedirectUrl=null isPartialConnectivity()=true Time=20054ms
+04-22 03:39:08.206 D/ConnectivityService(  519): [100 CELLULAR] validation failed
+04-22 03:39:10.210 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffff81, statsUid=-1
+04-22 03:39:10.210 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:39:10.211 D/TrafficStats(  784): tagSocket(68) with statsTag=0xffffff81, statsUid=-1
+04-22 03:39:10.211 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:39:10.213 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:39:10.213 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:39:10.215 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:39:10.215 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:39:10.215 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d6da7a5b0
+04-22 03:39:10.216 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d8da71d30
+04-22 03:39:10.230 I/resolv  (  293): res_nsend: used send_dg 60 terrno: 0
+04-22 03:39:10.230 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 03:39:10.231 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 03:39:10.231 D/NetworkMonitor/100(  784): PROBE_DNS www.google.com 21ms OK 157.240.7.20,2001::1
+04-22 03:39:10.233 I/resolv  (  293): res_nsend: used send_dg 117 terrno: 0
+04-22 03:39:10.233 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffffff, statsUid=-1
+04-22 03:39:10.233 I/resolv  (  293): GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+04-22 03:39:10.234 D/NetworkMonitor/100(  784): PROBE_DNS connectivitycheck.gstatic.com 23ms OK 114.250.65.34
+04-22 03:39:10.234 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 03:39:10.234 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d7da78790
+04-22 03:39:10.234 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=60
+04-22 03:39:10.234 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 03:39:10.234 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d6da7a5b0
+04-22 03:39:10.234 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=48
+04-22 03:39:10.235 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:39:10.235 I/resolv  (  293): GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+04-22 03:39:10.235 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 03:39:10.235 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 03:39:10.235 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d8da71d30
+04-22 03:39:10.235 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=63
+04-22 03:39:10.235 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d9da801b0
+04-22 03:39:10.235 I/resolv  (  293): doQuery: rcode=0, ancount=0, return value=117
+04-22 03:39:10.235 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffff81, statsUid=-1
+04-22 03:39:10.364 D/NetworkMonitor/100(  784): PROBE_HTTP http://connectivitycheck.gstatic.com/generate_204 time=130ms ret=204 request={Connection=[close], User-Agent=[Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.32 Safari/537.36]} headers={null=[HTTP/1.1 204 No Content], Connection=[close], Content-Length=[0], Cross-Origin-Resource-Policy=[cross-origin], Date=[Tue, 21 Apr 2026 19:39:10 GMT], X-Android-Received-Millis=[1776800350363], X-Android-Response-Source=[NETWORK 204], X-Android-Selected-Protocol=[http/1.1], X-Android-Sent-Millis=[1776800350279]}
+04-22 03:39:11.875 D/ControlsListingControllerImpl(  728): Subscribing callback, service count: 0
+04-22 03:39:11.878 D/ControlsListingControllerImpl(  728): Unsubscribing callback
+04-22 03:39:13.211 I/resolv  (  293): GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+04-22 03:39:13.211 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 03:39:13.211 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d6da7a5b0
+04-22 03:39:13.211 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=48
+04-22 03:39:13.212 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 03:39:13.212 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d7da78790
+04-22 03:39:13.212 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=60
+04-22 03:39:13.212 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffff81, statsUid=-1
+04-22 03:39:13.323 E/android.hardware.power.stats@1.0-service-mock(  317): Failed to getEnergyData
+04-22 03:39:13.324 D/NetworkMonitor/100(  784): PROBE_FALLBACK http://www.google.com/gen_204 time=113ms ret=204 request={Connection=[close], User-Agent=[Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.32 Safari/537.36]} headers={null=[HTTP/1.1 204 No Content], Connection=[close], Content-Security-Policy=[object-src 'none';base-uri 'self';script-src 'nonce--lODn1vDPJ9VHEp700E83Q' 'strict-dynamic' 'report-sample' 'unsafe-eval' 'unsafe-inline' https: http:;report-uri https://csp.withgoogle.com/csp/gws/other], Content-Type=[text/html; charset=UTF-8], Date=[Tue, 21 Apr 2026 19:39:13 GMT], Permissions-Policy=[unload=()], Server=[gws], X-Android-Received-Millis=[1776800353324], X-Android-Response-Source=[NETWORK 204], X-Android-Selected-Protocol=[http/1.1], X-Android-Sent-Millis=[1776800353213], X-Frame-Options=[SAMEORIGIN], X-Xss-Protection=[0]}
+04-22 03:39:19.451 I/PhenotypeProcessReaper( 1251): Memory state is: 125
+04-22 03:39:20.237 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:39:20.537 W/CCTUploader( 1251): Clearcut transport failed to make network request after 60005 milliseconds.
+04-22 03:39:20.537 W/CCTUploader( 1251): java.net.SocketTimeoutException
+04-22 03:39:20.537 W/CCTUploader( 1251): 	at aakv.a(:com.google.android.gms@231818044@23.18.18 (190400-535401451):57)
+04-22 03:39:20.537 W/CCTUploader( 1251): 	at aali.b(:com.google.android.gms@231818044@23.18.18 (190400-535401451):31)
+04-22 03:39:20.537 W/CCTUploader( 1251): 	at com.google.android.gms.clearcut.uploader.QosUploaderChimeraService.g(:com.google.android.gms@231818044@23.18.18 (190400-535401451):103)
+04-22 03:39:20.537 W/CCTUploader( 1251): 	at com.google.android.gms.clearcut.uploader.QosUploaderChimeraService.a(:com.google.android.gms@231818044@23.18.18 (190400-535401451):2)
+04-22 03:39:20.537 W/CCTUploader( 1251): 	at avzs.call(:com.google.android.gms@231818044@23.18.18 (190400-535401451):4)
+04-22 03:39:20.537 W/CCTUploader( 1251): 	at java.util.concurrent.FutureTask.run(FutureTask.java:264)
+04-22 03:39:20.537 W/CCTUploader( 1251): 	at aced.c(:com.google.android.gms@231818044@23.18.18 (190400-535401451):6)
+04-22 03:39:20.537 W/CCTUploader( 1251): 	at aced.run(:com.google.android.gms@231818044@23.18.18 (190400-535401451):7)
+04-22 03:39:20.537 W/CCTUploader( 1251): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1137)
+04-22 03:39:20.537 W/CCTUploader( 1251): 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:637)
+04-22 03:39:20.537 W/CCTUploader( 1251): 	at acjn.run(:com.google.android.gms@231818044@23.18.18 (190400-535401451):0)
+04-22 03:39:20.537 W/CCTUploader( 1251): 	at java.lang.Thread.run(Thread.java:1012)
+04-22 03:39:20.543 I/NetworkScheduler.Stats( 1251): Task com.google.android.gms/com.google.android.gms.clearcut.uploader.QosUploaderService finished executing. cause:5 result: 2 elapsed_millis: 60037 uptime_millis: 60037 exec_start_elapsed_seconds: 25757 [CONTEXT service_id=218 ]
+04-22 03:39:20.599 D/EGL_emulation(  728): app_time_stats: avg=20570.85ms min=20570.85ms max=20570.85ms count=1
+04-22 03:39:22.073 D/ActivityManager(  519): freezing 17708 com.android.keychain
+04-22 03:39:22.109 D/ActivityManager(  519): freezing 17706 com.google.android.apps.wellbeing
+04-22 03:39:22.112 D/ActivityManager(  519): freezing 19195 com.android.settings
+04-22 03:39:30.250 D/NetworkMonitor/100(  784): PROBE_HTTPS https://www.google.com/generate_204 Probe failed with exception java.net.SocketTimeoutException: failed to connect to www.google.com/2001::1 (port 443) from /fec0::5054:ff:fe12:3456 (port 53952) after 10000ms
+04-22 03:39:30.251 D/NetworkMonitor/100(  784): isCaptivePortal: isSuccessful()=false isPortal()=false RedirectUrl=null isPartialConnectivity()=true Time=20041ms
+04-22 03:39:30.252 D/ConnectivityService(  519): [100 CELLULAR] validation failed
+04-22 03:39:34.254 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:39:34.255 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffff81, statsUid=-1
+04-22 03:39:34.256 D/TrafficStats(  784): tagSocket(68) with statsTag=0xffffff81, statsUid=-1
+04-22 03:39:34.257 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffff81, statsUid=-1
+04-22 03:39:34.260 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:39:34.260 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:39:34.260 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d9da801b0
+04-22 03:39:34.262 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:39:34.262 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d6da7a5b0
+04-22 03:39:34.262 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:39:34.262 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d8da71d30
+04-22 03:39:34.263 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffffff, statsUid=-1
+04-22 03:39:34.264 D/NetworkMonitor/100(  784): PROBE_DNS connectivitycheck.gstatic.com 9ms OK 114.250.65.34
+04-22 03:39:34.264 I/resolv  (  293): GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+04-22 03:39:34.264 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 03:39:34.264 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d8da71d30
+04-22 03:39:34.264 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=63
+04-22 03:39:34.264 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 03:39:34.264 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d9da801b0
+04-22 03:39:34.264 I/resolv  (  293): doQuery: rcode=0, ancount=0, return value=117
+04-22 03:39:34.265 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffff81, statsUid=-1
+04-22 03:39:34.278 I/resolv  (  293): res_nsend: used send_dg 60 terrno: 0
+04-22 03:39:34.278 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 03:39:34.279 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 03:39:34.280 D/NetworkMonitor/100(  784): PROBE_DNS www.google.com 25ms OK 157.240.7.20,2001::1
+04-22 03:39:34.281 I/resolv  (  293): GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+04-22 03:39:34.281 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 03:39:34.281 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d6da7a5b0
+04-22 03:39:34.281 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=48
+04-22 03:39:34.281 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 03:39:34.281 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d7da78790
+04-22 03:39:34.281 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=60
+04-22 03:39:34.282 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:39:34.391 D/NetworkMonitor/100(  784): PROBE_HTTP http://connectivitycheck.gstatic.com/generate_204 time=127ms ret=204 request={Connection=[close], User-Agent=[Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.32 Safari/537.36]} headers={null=[HTTP/1.1 204 No Content], Connection=[close], Content-Length=[0], Cross-Origin-Resource-Policy=[cross-origin], Date=[Tue, 21 Apr 2026 19:39:34 GMT], X-Android-Received-Millis=[1776800374391], X-Android-Response-Source=[NETWORK 204], X-Android-Selected-Protocol=[http/1.1], X-Android-Sent-Millis=[1776800374307]}
+04-22 03:39:35.587 D/TrafficStats( 1251): tagSocket(81) with statsTag=0x1065fff, statsUid=-1
+04-22 03:39:35.796 D/TrafficStats( 1251): tagSocket(97) with statsTag=0x1065fff, statsUid=-1
+04-22 03:39:35.890 D/TrafficStats( 1251): tagSocket(125) with statsTag=0x1065fff, statsUid=-1
+04-22 03:39:36.102 D/TrafficStats( 1251): tagSocket(147) with statsTag=0x1065fff, statsUid=-1
+04-22 03:39:37.256 I/resolv  (  293): GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+04-22 03:39:37.257 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 03:39:37.257 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 03:39:37.272 I/resolv  (  293): res_nsend: used send_dg 149 terrno: 0
+04-22 03:39:37.272 I/resolv  (  293): doQuery: rcode=0, ancount=4, return value=149
+04-22 03:39:37.273 I/resolv  (  293): res_nsend: used send_dg 101 terrno: 0
+04-22 03:39:37.273 I/resolv  (  293): doQuery: rcode=0, ancount=4, return value=101
+04-22 03:39:37.275 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffff81, statsUid=-1
+04-22 03:39:37.348 D/NetworkMonitor/100(  784): PROBE_FALLBACK http://play.googleapis.com/generate_204 time=93ms ret=204 request={Connection=[close], User-Agent=[Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.32 Safari/537.36]} headers={null=[HTTP/1.1 204 No Content], Connection=[close], Cross-Origin-Resource-Policy=[cross-origin], Date=[Tue, 21 Apr 2026 19:39:37 GMT], X-Android-Received-Millis=[1776800377347], X-Android-Response-Source=[NETWORK 204], X-Android-Selected-Protocol=[http/1.1], X-Android-Sent-Millis=[1776800377276]}
+04-22 03:39:44.298 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:39:52.422 I/resolv  (  293): GetAddrInfoHandler::run: {100 786532 100 983140 10116 0}
+04-22 03:39:52.422 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 03:39:52.422 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 03:39:52.423 D/TrafficStats( 1251): tagSocket(91) with statsTag=0x20008100, statsUid=-1
+04-22 03:39:52.475 I/resolv  (  293): res_tls_send: TLS query result: 0
+04-22 03:39:52.475 I/resolv  (  293): doQuery: rcode=0, ancount=4, return value=163
+04-22 03:39:52.475 I/resolv  (  293): res_tls_send: TLS query result: 0
+04-22 03:39:52.475 I/resolv  (  293): doQuery: rcode=0, ancount=4, return value=115
+04-22 03:39:53.412 D/ActivityManager(  519): freezing 19804 com.google.android.documentsui
+04-22 03:39:54.311 D/NetworkMonitor/100(  784): PROBE_HTTPS https://www.google.com/generate_204 Probe failed with exception java.net.SocketTimeoutException: failed to connect to www.google.com/2001::1 (port 443) from /fec0::5054:ff:fe12:3456 (port 37222) after 10000ms
+04-22 03:39:54.316 D/NetworkMonitor/100(  784): isCaptivePortal: isSuccessful()=false isPortal()=false RedirectUrl=null isPartialConnectivity()=true Time=20062ms
+04-22 03:39:54.317 D/ConnectivityService(  519): [100 CELLULAR] validation failed
+04-22 03:40:00.008 I/AiAiEcho( 1598): Predicting[0]: 
+04-22 03:40:00.009 I/AiAiEcho( 1598): Ranked targets strategy: SORT, count: 0, ranking metadata: 
+04-22 03:40:00.009 I/AiAiEcho( 1598): #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0
+04-22 03:40:00.010 I/AiAiEcho( 1598): #postPredictionTargets: Sending updates to UISurface home with targets# 0
+04-22 03:40:00.010 I/AiAiEcho( 1598): #postPredictionTargets: Sending updates to UISurface media_data_manager with targets# 0
+04-22 03:40:00.023 D/SsMediaDataProvider(  728): Forwarding Smartspace updates []
+04-22 03:40:00.033 D/EGL_emulation(  728): app_time_stats: avg=39433.71ms min=39433.71ms max=39433.71ms count=1
+04-22 03:40:02.328 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:40:02.328 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffff81, statsUid=-1
+04-22 03:40:02.330 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:40:02.330 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffff81, statsUid=-1
+04-22 03:40:02.333 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:40:02.333 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d9da801b0
+04-22 03:40:02.333 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:40:02.333 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d7da78790
+04-22 03:40:02.335 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:40:02.335 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d8da71d30
+04-22 03:40:02.335 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffffff, statsUid=-1
+04-22 03:40:02.335 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:40:02.335 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d6da7a5b0
+04-22 03:40:02.335 D/NetworkMonitor/100(  784): PROBE_DNS connectivitycheck.gstatic.com 6ms OK 114.250.65.34
+04-22 03:40:02.335 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 03:40:02.336 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 03:40:02.336 I/resolv  (  293): GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+04-22 03:40:02.336 D/NetworkMonitor/100(  784): PROBE_DNS www.google.com 8ms OK 157.240.7.20,2001::1
+04-22 03:40:02.337 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 03:40:02.337 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d9da801b0
+04-22 03:40:02.337 I/resolv  (  293): GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+04-22 03:40:02.337 I/resolv  (  293): doQuery: rcode=0, ancount=0, return value=117
+04-22 03:40:02.338 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 03:40:02.338 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d7da78790
+04-22 03:40:02.338 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=60
+04-22 03:40:02.338 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 03:40:02.338 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d6da7a5b0
+04-22 03:40:02.338 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=48
+04-22 03:40:02.338 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 03:40:02.338 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d8da71d30
+04-22 03:40:02.338 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=63
+04-22 03:40:02.338 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffff81, statsUid=-1
+04-22 03:40:02.338 D/TrafficStats(  784): tagSocket(68) with statsTag=0xffffff81, statsUid=-1
+04-22 03:40:02.479 D/NetworkMonitor/100(  784): PROBE_HTTP http://connectivitycheck.gstatic.com/generate_204 time=143ms ret=204 request={Connection=[close], User-Agent=[Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.32 Safari/537.36]} headers={null=[HTTP/1.1 204 No Content], Connection=[close], Content-Length=[0], Cross-Origin-Resource-Policy=[cross-origin], Date=[Tue, 21 Apr 2026 19:40:02 GMT], X-Android-Received-Millis=[1776800402478], X-Android-Response-Source=[NETWORK 204], X-Android-Selected-Protocol=[http/1.1], X-Android-Sent-Millis=[1776800402391]}
+04-22 03:40:05.331 I/resolv  (  293): GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+04-22 03:40:05.332 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 03:40:05.332 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 03:40:05.332 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d6da7a5b0
+04-22 03:40:05.332 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=48
+04-22 03:40:05.332 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d7da78790
+04-22 03:40:05.332 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=60
+04-22 03:40:05.332 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:40:05.438 D/NetworkMonitor/100(  784): PROBE_FALLBACK http://www.google.com/gen_204 time=107ms ret=204 request={Connection=[close], User-Agent=[Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.32 Safari/537.36]} headers={null=[HTTP/1.1 204 No Content], Connection=[close], Content-Security-Policy=[object-src 'none';base-uri 'self';script-src 'nonce-i1jOxS7uD6Rtg6GLZCCj4g' 'strict-dynamic' 'report-sample' 'unsafe-eval' 'unsafe-inline' https: http:;report-uri https://csp.withgoogle.com/csp/gws/other], Content-Type=[text/html; charset=UTF-8], Date=[Tue, 21 Apr 2026 19:40:05 GMT], Permissions-Policy=[unload=()], Server=[gws], X-Android-Received-Millis=[1776800405437], X-Android-Response-Source=[NETWORK 204], X-Android-Selected-Protocol=[http/1.1], X-Android-Sent-Millis=[1776800405334], X-Frame-Options=[SAMEORIGIN], X-Xss-Protection=[0]}
+04-22 03:40:08.539 D/ActivityManager(  519): freezing 17530 com.google.android.permissioncontroller
+04-22 03:40:12.350 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:40:22.355 D/NetworkMonitor/100(  784): PROBE_HTTPS https://www.google.com/generate_204 Probe failed with exception java.net.SocketTimeoutException: failed to connect to www.google.com/2001::1 (port 443) from /fec0::5054:ff:fe12:3456 (port 36030) after 10000ms
+04-22 03:40:22.357 D/NetworkMonitor/100(  784): isCaptivePortal: isSuccessful()=false isPortal()=false RedirectUrl=null isPartialConnectivity()=true Time=20030ms
+04-22 03:40:22.361 D/ConnectivityService(  519): [100 CELLULAR] validation failed
+04-22 03:40:38.379 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:40:38.380 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffff81, statsUid=-1
+04-22 03:40:38.381 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:40:38.381 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffff81, statsUid=-1
+04-22 03:40:38.383 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:40:38.383 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:40:38.383 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d7da78790
+04-22 03:40:38.385 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:40:38.385 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:40:38.385 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d6da7a5b0
+04-22 03:40:38.385 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffffff, statsUid=-1
+04-22 03:40:38.386 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffffff, statsUid=-1
+04-22 03:40:38.387 D/NetworkMonitor/100(  784): PROBE_DNS www.google.com 7ms OK 157.240.7.20,2001::1
+04-22 03:40:38.388 I/resolv  (  293): GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+04-22 03:40:38.388 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 03:40:38.388 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d6da7a5b0
+04-22 03:40:38.388 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=48
+04-22 03:40:38.388 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 03:40:38.388 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d7da78790
+04-22 03:40:38.388 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=60
+04-22 03:40:38.388 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffff81, statsUid=-1
+04-22 03:40:38.402 I/resolv  (  293): res_nsend: used send_dg 63 terrno: 0
+04-22 03:40:38.402 I/resolv  (  293): res_nsend: used send_dg 117 terrno: 0
+04-22 03:40:38.402 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 03:40:38.403 D/NetworkMonitor/100(  784): PROBE_DNS connectivitycheck.gstatic.com 23ms OK 114.250.65.34
+04-22 03:40:38.404 I/resolv  (  293): GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+04-22 03:40:38.404 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 03:40:38.404 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d8da71d30
+04-22 03:40:38.404 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=63
+04-22 03:40:38.404 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 03:40:38.404 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d9da7ff70
+04-22 03:40:38.404 I/resolv  (  293): doQuery: rcode=0, ancount=0, return value=117
+04-22 03:40:38.404 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:40:38.536 D/NetworkMonitor/100(  784): PROBE_HTTP http://connectivitycheck.gstatic.com/generate_204 time=133ms ret=204 request={Connection=[close], User-Agent=[Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.32 Safari/537.36]} headers={null=[HTTP/1.1 204 No Content], Connection=[close], Content-Length=[0], Cross-Origin-Resource-Policy=[cross-origin], Date=[Tue, 21 Apr 2026 19:40:38 GMT], X-Android-Received-Millis=[1776800438536], X-Android-Response-Source=[NETWORK 204], X-Android-Selected-Protocol=[http/1.1], X-Android-Sent-Millis=[1776800438449]}
+04-22 03:40:40.635 D/EGL_emulation(  728): app_time_stats: avg=20300.98ms min=573.36ms max=40028.61ms count=2
+04-22 03:40:41.382 I/resolv  (  293): GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+04-22 03:40:41.384 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 03:40:41.384 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 03:40:41.384 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d9da7ddb0
+04-22 03:40:41.384 I/resolv  (  293): doQuery: rcode=0, ancount=4, return value=101
+04-22 03:40:41.404 I/resolv  (  293): res_nsend: used send_dg 149 terrno: 0
+04-22 03:40:41.405 I/resolv  (  293): doQuery: rcode=0, ancount=4, return value=149
+04-22 03:40:41.406 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:40:41.480 D/NetworkMonitor/100(  784): PROBE_FALLBACK http://play.googleapis.com/generate_204 time=98ms ret=204 request={Connection=[close], User-Agent=[Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.32 Safari/537.36]} headers={null=[HTTP/1.1 204 No Content], Connection=[close], Cross-Origin-Resource-Policy=[cross-origin], Date=[Tue, 21 Apr 2026 19:40:41 GMT], X-Android-Received-Millis=[1776800441479], X-Android-Response-Source=[NETWORK 204], X-Android-Selected-Protocol=[http/1.1], X-Android-Sent-Millis=[1776800441409]}
+04-22 03:40:48.403 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:40:50.592 D/TrafficStats( 1251): tagSocket(81) with statsTag=0x1065fff, statsUid=-1
+04-22 03:40:50.802 D/TrafficStats( 1251): tagSocket(83) with statsTag=0x1065fff, statsUid=-1
+04-22 03:40:50.895 D/TrafficStats( 1251): tagSocket(97) with statsTag=0x1065fff, statsUid=-1
+04-22 03:40:51.105 D/TrafficStats( 1251): tagSocket(125) with statsTag=0x1065fff, statsUid=-1
+04-22 03:40:58.417 D/NetworkMonitor/100(  784): PROBE_HTTPS https://www.google.com/generate_204 Probe failed with exception java.net.SocketTimeoutException: failed to connect to www.google.com/2001::1 (port 443) from /fec0::5054:ff:fe12:3456 (port 43016) after 10000ms
+04-22 03:40:58.419 D/NetworkMonitor/100(  784): isCaptivePortal: isSuccessful()=false isPortal()=false RedirectUrl=null isPartialConnectivity()=true Time=20040ms
+04-22 03:40:58.421 D/ConnectivityService(  519): [100 CELLULAR] validation failed
+04-22 03:41:00.008 I/AiAiEcho( 1598): Predicting[0]: 
+04-22 03:41:00.008 I/AiAiEcho( 1598): Ranked targets strategy: SORT, count: 0, ranking metadata: 
+04-22 03:41:00.009 I/AiAiEcho( 1598): #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0
+04-22 03:41:00.009 I/AiAiEcho( 1598): #postPredictionTargets: Sending updates to UISurface home with targets# 0
+04-22 03:41:00.009 I/AiAiEcho( 1598): #postPredictionTargets: Sending updates to UISurface media_data_manager with targets# 0
+04-22 03:41:00.026 D/SsMediaDataProvider(  728): Forwarding Smartspace updates []
+04-22 03:41:00.039 D/EGL_emulation(  728): app_time_stats: avg=19404.13ms min=19404.13ms max=19404.13ms count=1
+04-22 03:41:01.120 E/WifiScoringParams(  519): Invalid frequency(-1), using 5G as default rssi array
+04-22 03:41:03.975 I/bluetooth(  790): packages/modules/Bluetooth/system/gd/hci/le_address_manager.cc:257 ack_pause: Client already in paused state
+04-22 03:41:03.982 I/bluetooth(  790): packages/modules/Bluetooth/system/gd/hci/le_address_manager.cc:576 OnCommandComplete: Received command complete with op_code LE_SET_RANDOM_ADDRESS
+04-22 03:41:03.982 I/bluetooth(  790): packages/modules/Bluetooth/system/gd/hci/le_address_manager.cc:595 OnCommandComplete: update random address : 7d:be:15:0d:3e:9e
+04-22 03:41:03.982 I/bluetooth(  790): packages/modules/Bluetooth/system/gd/hci/le_address_manager.cc:286 resume_registered_clients: Resuming registered clients
+04-22 03:41:04.924 D/WifiNl80211Manager(  519): Scan result ready event
+04-22 03:41:04.924 D/WifiNative(  519): Scan result ready event
+04-22 03:41:07.430 D/TrafficStats( 1251): tagSocket(91) with statsTag=0x20008100, statsUid=-1
+04-22 03:41:13.323 E/android.hardware.power.stats@1.0-service-mock(  317): Failed to getEnergyData
+04-22 03:41:30.454 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:41:30.455 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:41:30.455 D/TrafficStats(  784): tagSocket(68) with statsTag=0xffffff81, statsUid=-1
+04-22 03:41:30.456 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffff81, statsUid=-1
+04-22 03:41:30.456 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:41:30.456 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d7da78790
+04-22 03:41:30.458 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:41:30.459 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:41:30.460 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:41:30.460 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d8da71d30
+04-22 03:41:30.478 I/resolv  (  293): res_nsend: used send_dg 48 terrno: 0
+04-22 03:41:30.479 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 03:41:30.480 I/resolv  (  293): res_nsend: used send_dg 117 terrno: 0
+04-22 03:41:30.480 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 03:41:30.480 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 03:41:30.480 D/NetworkMonitor/100(  784): PROBE_DNS www.google.com 26ms OK 185.45.5.35,2001::1
+04-22 03:41:30.481 I/resolv  (  293): GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+04-22 03:41:30.481 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 03:41:30.481 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d6da7a5b0
+04-22 03:41:30.481 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=48
+04-22 03:41:30.482 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 03:41:30.482 D/NetworkMonitor/100(  784): PROBE_DNS connectivitycheck.gstatic.com 26ms OK 114.250.65.34
+04-22 03:41:30.482 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d7da78790
+04-22 03:41:30.482 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=60
+04-22 03:41:30.482 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:41:30.483 I/resolv  (  293): GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+04-22 03:41:30.483 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 03:41:30.483 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d8da71d30
+04-22 03:41:30.483 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=63
+04-22 03:41:30.483 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 03:41:30.483 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d9da7ff70
+04-22 03:41:30.483 I/resolv  (  293): doQuery: rcode=0, ancount=0, return value=117
+04-22 03:41:30.483 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffff81, statsUid=-1
+04-22 03:41:30.614 D/NetworkMonitor/100(  784): PROBE_HTTP http://connectivitycheck.gstatic.com/generate_204 time=130ms ret=204 request={Connection=[close], User-Agent=[Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.32 Safari/537.36]} headers={null=[HTTP/1.1 204 No Content], Connection=[close], Content-Length=[0], Cross-Origin-Resource-Policy=[cross-origin], Date=[Tue, 21 Apr 2026 19:41:30 GMT], X-Android-Received-Millis=[1776800490613], X-Android-Response-Source=[NETWORK 204], X-Android-Selected-Protocol=[http/1.1], X-Android-Sent-Millis=[1776800490529]}
+04-22 03:41:33.456 I/resolv  (  293): GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+04-22 03:41:33.457 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 03:41:33.457 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 03:41:33.457 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d9da7f430
+04-22 03:41:33.457 I/resolv  (  293): doQuery: rcode=0, ancount=4, return value=149
+04-22 03:41:33.458 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d9da7ddb0
+04-22 03:41:33.458 I/resolv  (  293): doQuery: rcode=0, ancount=4, return value=101
+04-22 03:41:33.458 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffff81, statsUid=-1
+04-22 03:41:33.531 D/NetworkMonitor/100(  784): PROBE_FALLBACK http://play.googleapis.com/generate_204 time=75ms ret=204 request={Connection=[close], User-Agent=[Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.32 Safari/537.36]} headers={null=[HTTP/1.1 204 No Content], Connection=[close], Cross-Origin-Resource-Policy=[cross-origin], Date=[Tue, 21 Apr 2026 19:41:33 GMT], X-Android-Received-Millis=[1776800493530], X-Android-Response-Source=[NETWORK 204], X-Android-Selected-Protocol=[http/1.1], X-Android-Sent-Millis=[1776800493461]}
+04-22 03:41:40.486 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:41:48.412 E/adbd    (  382): failed to connect to socket 'tcp:8888': Connection refused
+04-22 03:41:50.501 D/NetworkMonitor/100(  784): PROBE_HTTPS https://www.google.com/generate_204 Probe failed with exception java.net.SocketTimeoutException: failed to connect to www.google.com/2001::1 (port 443) from /fec0::5054:ff:fe12:3456 (port 40606) after 10000ms
+04-22 03:41:50.502 D/NetworkMonitor/100(  784): isCaptivePortal: isSuccessful()=false isPortal()=false RedirectUrl=null isPartialConnectivity()=true Time=20050ms
+04-22 03:41:50.503 D/ConnectivityService(  519): [100 CELLULAR] validation failed
+04-22 03:42:00.009 I/AiAiEcho( 1598): Predicting[0]: 
+04-22 03:42:00.009 I/AiAiEcho( 1598): Ranked targets strategy: SORT, count: 0, ranking metadata: 
+04-22 03:42:00.009 I/AiAiEcho( 1598): #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0
+04-22 03:42:00.009 I/AiAiEcho( 1598): #postPredictionTargets: Sending updates to UISurface home with targets# 0
+04-22 03:42:00.009 I/AiAiEcho( 1598): #postPredictionTargets: Sending updates to UISurface media_data_manager with targets# 0
+04-22 03:42:00.022 D/SsMediaDataProvider(  728): Forwarding Smartspace updates []
+04-22 03:42:00.031 D/EGL_emulation(  728): app_time_stats: avg=59991.98ms min=59991.98ms max=59991.98ms count=1
+04-22 03:42:05.597 D/TrafficStats( 1251): tagSocket(81) with statsTag=0x1065fff, statsUid=-1
+04-22 03:42:05.808 D/TrafficStats( 1251): tagSocket(83) with statsTag=0x1065fff, statsUid=-1
+04-22 03:42:05.900 D/TrafficStats( 1251): tagSocket(97) with statsTag=0x1065fff, statsUid=-1
+04-22 03:42:06.109 D/TrafficStats( 1251): tagSocket(125) with statsTag=0x1065fff, statsUid=-1
+04-22 03:42:10.755 D/TrafficStats(19981): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 03:42:10.755 D/TrafficStats(19981): tagSocket(70) with statsTag=0xffffffff, statsUid=-1
+04-22 03:42:10.760 D/TrafficStats(19981): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 03:42:10.760 D/TrafficStats(19981): tagSocket(70) with statsTag=0xffffffff, statsUid=-1
+04-22 03:42:20.666 D/EGL_emulation(  728): app_time_stats: avg=20634.81ms min=20634.81ms max=20634.81ms count=1
+04-22 03:42:22.437 D/TrafficStats( 1251): tagSocket(81) with statsTag=0x20008100, statsUid=-1
+04-22 03:42:41.623 D/TrafficStats(19981): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 03:42:41.628 D/TrafficStats(19981): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 03:42:41.831 D/TrafficStats(19981): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 03:42:41.835 D/TrafficStats(19981): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 03:42:42.035 D/TrafficStats(19981): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 03:42:42.040 D/TrafficStats(19981): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 03:42:42.043 I/assembly.assembly.android.mixc-retail-rn84(19981): [assembly.topology] Starting native topology host from assembly lifecycle {"displayCount":1,"displayIndex":0,"deviceId":"6Z2H3BSGEY","instanceMode":"MASTER","enableSlave":true,"reason":"master-primary-enable-slave"}
+04-22 03:42:42.045 D/CompatibilityChangeReporter(  519): Compat change id reported: 168419799; UID 10175; state: DISABLED
+04-22 03:42:42.045 D/CompatibilityChangeReporter(  519): Compat change id reported: 273564678; UID 10175; state: DISABLED
+04-22 03:42:42.047 D/CompatibilityChangeReporter(  519): Compat change id reported: 197654537; UID 10175; state: ENABLED
+04-22 03:42:42.050 D/TrafficStats(19981): tagSocket(70) with statsTag=0xffffffff, statsUid=-1
+04-22 03:42:42.051 I/assembly.assembly.android.mixc-retail-rn84(19981): [assembly.topology] Create assembly topology socket binding {"displayIndex":0,"role":"master","localNodeId":"master:6Z2H3BSGEY","wsUrl":"ws://127.0.0.1:8888/mockMasterServer/ws","httpBaseUrl":"http://127.0.0.1:8888/mockMasterServer","resolvedServerBaseUrl":"http://127.0.0.1:8888/mockMasterServer","resolvedPathTemplate":"/ws"}
+04-22 03:42:42.052 I/ReactNativeJS(19981): '[assembly.android.mixc-retail-rn84.websocket] connect', { url: 'ws://127.0.0.1:8888/mockMasterServer/ws',
+04-22 03:42:42.052 I/ReactNativeJS(19981):   protocol: 'ws',
+04-22 03:42:42.052 I/ReactNativeJS(19981):   host: '127.0.0.1:8888',
+04-22 03:42:42.052 I/ReactNativeJS(19981):   pathname: '/mockMasterServer/ws' }
+04-22 03:42:42.052 I/assembly.assembly.android.mixc-retail-rn84.transport.ws.SocketRuntime(19981): [transport.ws] Socket connect started: assembly.android.mixc-retail-rn84.topology {"profileName":"assembly.android.mixc-retail-rn84.topology","serverName":"dual-topology-host-v3","addressName":"dynamic-topology-host"}
+04-22 03:42:42.055 I/WebViewFactory(19981): Loading com.google.android.webview version 109.0.5414.123 (code 541412334)
+04-22 03:42:42.057 W/ziparchive(19981): Unable to open '/data/app/~~2XlbTKbdSL4ytKc6vI96fw==/com.google.android.trichromelibrary_541412334-XVCZJKNYM7pdXgwa6ezTsQ==/TrichromeLibrary.dm': No such file or directory
+04-22 03:42:42.057 W/ziparchive(19981): Unable to open '/data/app/~~2XlbTKbdSL4ytKc6vI96fw==/com.google.android.trichromelibrary_541412334-XVCZJKNYM7pdXgwa6ezTsQ==/TrichromeLibrary.dm': No such file or directory
+04-22 03:42:42.057 W/ailassemblyrn84(19981): Entry not found
+04-22 03:42:42.057 D/nativeloader(19981): Configuring classloader-namespace for other apk /data/app/~~2XlbTKbdSL4ytKc6vI96fw==/com.google.android.trichromelibrary_541412334-XVCZJKNYM7pdXgwa6ezTsQ==/TrichromeLibrary.apk. target_sdk_version=33, uses_libraries=ALL, library_path=/data/app/~~Q0ddWPLbjoO_UEypAkbhRg==/com.google.android.webview-PdQqPxJT8P1ba_nJ4hr2mw==/lib/arm64:/data/app/~~Q0ddWPLbjoO_UEypAkbhRg==/com.google.android.webview-PdQqPxJT8P1ba_nJ4hr2mw==/WebViewGoogle.apk!/lib/arm64-v8a:/data/app/~~2XlbTKbdSL4ytKc6vI96fw==/com.google.android.trichromelibrary_541412334-XVCZJKNYM7pdXgwa6ezTsQ==/TrichromeLibrary.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand
+04-22 03:42:42.058 D/nativeloader(19981): Configuring classloader-namespace for other apk /data/app/~~Q0ddWPLbjoO_UEypAkbhRg==/com.google.android.webview-PdQqPxJT8P1ba_nJ4hr2mw==/WebViewGoogle.apk. target_sdk_version=33, uses_libraries=, library_path=/data/app/~~Q0ddWPLbjoO_UEypAkbhRg==/com.google.android.webview-PdQqPxJT8P1ba_nJ4hr2mw==/lib/arm64:/data/app/~~Q0ddWPLbjoO_UEypAkbhRg==/com.google.android.webview-PdQqPxJT8P1ba_nJ4hr2mw==/WebViewGoogle.apk!/lib/arm64-v8a:/data/app/~~2XlbTKbdSL4ytKc6vI96fw==/com.google.android.trichromelibrary_541412334-XVCZJKNYM7pdXgwa6ezTsQ==/TrichromeLibrary.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand
+04-22 03:42:42.063 I/cr_WVCFactoryProvider(19981): Loaded version=109.0.5414.123 minSdkVersion=29 isBundle=false multiprocess=true packageId=2
+04-22 03:42:42.066 I/cr_VariationsUtils(19981): Failed reading seed file "/data/user/0/com.impos2.mixcretailassemblyrn84/app_webview/variations_seed_new"
+04-22 03:42:42.066 I/cr_VariationsUtils(19981): Failed reading seed file "/data/user/0/com.impos2.mixcretailassemblyrn84/app_webview/variations_seed"
+04-22 03:42:42.066 I/cr_VariationsUtils(19981): Requesting new seed from IVariationsSeedServer
+04-22 03:42:42.067 D/CompatibilityChangeReporter(  519): Compat change id reported: 135634846; UID 10141; state: DISABLED
+04-22 03:42:42.067 D/CompatibilityChangeReporter(  519): Compat change id reported: 177438394; UID 10141; state: DISABLED
+04-22 03:42:42.067 D/CompatibilityChangeReporter(  519): Compat change id reported: 135772972; UID 10141; state: DISABLED
+04-22 03:42:42.067 D/CompatibilityChangeReporter(  519): Compat change id reported: 135754954; UID 10141; state: ENABLED
+04-22 03:42:42.067 D/CompatibilityChangeReporter(  519): Compat change id reported: 143937733; UID 10141; state: ENABLED
+04-22 03:42:42.069 I/cr_LibraryLoader(19981): Successfully loaded native library
+04-22 03:42:42.069 I/cr_CachingUmaRecorder(19981): Flushed 9 samples from 9 histograms.
+04-22 03:42:42.069 D/Zygote  (  294): Forked child process 20246
+04-22 03:42:42.070 I/ActivityManager(  519): Start proc 20246:com.google.android.webview:webview_service/u0a141 for service {com.google.android.webview/org.chromium.android_webview.services.VariationsSeedServer}
+04-22 03:42:42.073 I/webview_service(20246): Using CollectorTypeCC GC.
+04-22 03:42:42.077 I/adbd    (  382): jdwp connection from 20246
+04-22 03:42:42.083 D/CompatibilityChangeReporter(  519): Compat change id reported: 181136395; UID 10175; state: DISABLED
+04-22 03:42:42.083 D/CompatibilityChangeReporter(  519): Compat change id reported: 174042936; UID 10175; state: DISABLED
+04-22 03:42:42.085 D/CompatibilityChangeReporter(20246): Compat change id reported: 171979766; UID 10141; state: ENABLED
+04-22 03:42:42.086 D/TrafficStats(19981): tagSocket(137) with statsTag=0xffffffff, statsUid=-1
+04-22 03:42:42.087 D/TrafficStats(19981): tagSocket(138) with statsTag=0xffffffff, statsUid=-1
+04-22 03:42:42.088 W/ziparchive(20246): Unable to open '/data/app/~~2XlbTKbdSL4ytKc6vI96fw==/com.google.android.trichromelibrary_541412334-XVCZJKNYM7pdXgwa6ezTsQ==/TrichromeLibrary.dm': No such file or directory
+04-22 03:42:42.088 W/ziparchive(20246): Unable to open '/data/app/~~2XlbTKbdSL4ytKc6vI96fw==/com.google.android.trichromelibrary_541412334-XVCZJKNYM7pdXgwa6ezTsQ==/TrichromeLibrary.dm': No such file or directory
+04-22 03:42:42.088 W/webview_service(20246): Entry not found
+04-22 03:42:42.088 D/nativeloader(20246): Configuring classloader-namespace for other apk /data/app/~~2XlbTKbdSL4ytKc6vI96fw==/com.google.android.trichromelibrary_541412334-XVCZJKNYM7pdXgwa6ezTsQ==/TrichromeLibrary.apk. target_sdk_version=33, uses_libraries=ALL, library_path=/data/app/~~Q0ddWPLbjoO_UEypAkbhRg==/com.google.android.webview-PdQqPxJT8P1ba_nJ4hr2mw==/lib/arm64:/data/app/~~Q0ddWPLbjoO_UEypAkbhRg==/com.google.android.webview-PdQqPxJT8P1ba_nJ4hr2mw==/WebViewGoogle.apk!/lib/arm64-v8a:/data/app/~~2XlbTKbdSL4ytKc6vI96fw==/com.google.android.trichromelibrary_541412334-XVCZJKNYM7pdXgwa6ezTsQ==/TrichromeLibrary.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.google.android.webview
+04-22 03:42:42.089 D/nativeloader(20246): Configuring classloader-namespace for other apk /data/app/~~Q0ddWPLbjoO_UEypAkbhRg==/com.google.android.webview-PdQqPxJT8P1ba_nJ4hr2mw==/WebViewGoogle.apk. target_sdk_version=33, uses_libraries=, library_path=/data/app/~~Q0ddWPLbjoO_UEypAkbhRg==/com.google.android.webview-PdQqPxJT8P1ba_nJ4hr2mw==/lib/arm64:/data/app/~~Q0ddWPLbjoO_UEypAkbhRg==/com.google.android.webview-PdQqPxJT8P1ba_nJ4hr2mw==/WebViewGoogle.apk!/lib/arm64-v8a:/data/app/~~2XlbTKbdSL4ytKc6vI96fw==/com.google.android.trichromelibrary_541412334-XVCZJKNYM7pdXgwa6ezTsQ==/TrichromeLibrary.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.google.android.webview
+04-22 03:42:42.089 I/assembly.assembly.android.mixc-retail-rn84(19981): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"6Z2H3BSGEY","instanceMode":"MASTER","enableSlave":true,"running":true,"reason":"master-primary-enable-slave"}
+04-22 03:42:42.089 I/assembly.assembly.android.mixc-retail-rn84(19981): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"6Z2H3BSGEY","instanceMode":"MASTER","enableSlave":true,"running":true,"reason":"master-primary-enable-slave"}
+04-22 03:42:42.089 I/assembly.assembly.android.mixc-retail-rn84(19981): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"6Z2H3BSGEY","instanceMode":"MASTER","enableSlave":true,"running":true,"reason":"master-primary-enable-slave"}
+04-22 03:42:42.089 I/assembly.assembly.android.mixc-retail-rn84(19981): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"6Z2H3BSGEY","instanceMode":"MASTER","enableSlave":true,"running":true,"reason":"master-primary-enable-slave"}
+04-22 03:42:42.090 I/assembly.assembly.android.mixc-retail-rn84(19981): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"6Z2H3BSGEY","instanceMode":"MASTER","enableSlave":true,"running":true,"reason":"master-primary-enable-slave"}
+04-22 03:42:42.091 I/assembly.assembly.android.mixc-retail-rn84(19981): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"6Z2H3BSGEY","instanceMode":"MASTER","enableSlave":true,"running":true,"reason":"master-primary-enable-slave"}
+04-22 03:42:42.092 I/assembly.assembly.android.mixc-retail-rn84(19981): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"6Z2H3BSGEY","instanceMode":"MASTER","enableSlave":true,"running":true,"reason":"master-primary-enable-slave"}
+04-22 03:42:42.092 I/assembly.assembly.android.mixc-retail-rn84(19981): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"6Z2H3BSGEY","instanceMode":"MASTER","enableSlave":true,"running":true,"reason":"master-primary-enable-slave"}
+04-22 03:42:42.105 V/GraphicsEnvironment(20246): ANGLE Developer option for 'com.google.android.webview' set to: 'default'
+04-22 03:42:42.105 V/GraphicsEnvironment(20246): ANGLE GameManagerService for com.google.android.webview: false
+04-22 03:42:42.105 V/GraphicsEnvironment(20246): Neither updatable production driver nor prerelease driver is supported.
+04-22 03:42:42.107 I/LoadedApk(20246): No resource references to update in package com.google.android.trichromelibrary
+04-22 03:42:42.107 D/NetworkSecurityConfig(20246): No Network Security Config specified, using platform default
+04-22 03:42:42.107 D/NetworkSecurityConfig(20246): No Network Security Config specified, using platform default
+04-22 03:42:42.108 I/cr_WebViewApkApp(20246): Launched version=109.0.5414.123 minSdkVersion=29 isBundle=false processName=com.google.android.webview:webview_service
+04-22 03:42:42.116 I/cr_VariationsUtils(20246): Seed download job already scheduled
+04-22 03:42:42.120 D/TrafficStats(19981): tagSocket(135) with statsTag=0xffffffff, statsUid=-1
+04-22 03:42:42.122 D/TrafficStats(19981): tagSocket(135) with statsTag=0xffffffff, statsUid=-1
+04-22 03:42:54.572 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:42:54.572 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffff81, statsUid=-1
+04-22 03:42:54.574 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:42:54.574 D/TrafficStats(  784): tagSocket(68) with statsTag=0xffffff81, statsUid=-1
+04-22 03:42:54.577 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:42:54.578 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:42:54.579 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:42:54.579 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d6da7a5b0
+04-22 03:42:54.579 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 03:42:54.579 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d8da71d30
+04-22 03:42:54.595 I/resolv  (  293): res_nsend: used send_dg 117 terrno: 0
+04-22 03:42:54.596 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffffff, statsUid=-1
+04-22 03:42:54.596 I/resolv  (  293): res_nsend: used send_dg 60 terrno: 0
+04-22 03:42:54.598 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 03:42:54.598 D/NetworkMonitor/100(  784): PROBE_DNS connectivitycheck.gstatic.com 26ms OK 114.250.65.34
+04-22 03:42:54.599 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 03:42:54.599 I/resolv  (  293): GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+04-22 03:42:54.599 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 03:42:54.599 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d8da71d30
+04-22 03:42:54.599 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=63
+04-22 03:42:54.599 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 03:42:54.599 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d9da7ff70
+04-22 03:42:54.599 I/resolv  (  293): doQuery: rcode=0, ancount=0, return value=117
+04-22 03:42:54.599 D/TrafficStats(  784): tagSocket(68) with statsTag=0xffffff81, statsUid=-1
+04-22 03:42:54.600 D/NetworkMonitor/100(  784): PROBE_DNS www.google.com 28ms OK 185.45.5.35,2001::1
+04-22 03:42:54.600 I/resolv  (  293): GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+04-22 03:42:54.601 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 03:42:54.601 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d7da78790
+04-22 03:42:54.601 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=60
+04-22 03:42:54.601 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 03:42:54.601 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d6da7a5b0
+04-22 03:42:54.601 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=48
+04-22 03:42:54.601 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:42:54.723 D/NetworkMonitor/100(  784): PROBE_HTTP http://connectivitycheck.gstatic.com/generate_204 time=125ms ret=204 request={Connection=[close], User-Agent=[Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.32 Safari/537.36]} headers={null=[HTTP/1.1 204 No Content], Connection=[close], Content-Length=[0], Cross-Origin-Resource-Policy=[cross-origin], Date=[Tue, 21 Apr 2026 19:42:54 GMT], X-Android-Received-Millis=[1776800574722], X-Android-Response-Source=[NETWORK 204], X-Android-Selected-Protocol=[http/1.1], X-Android-Sent-Millis=[1776800574640]}
+04-22 03:42:57.578 I/resolv  (  293): GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+04-22 03:42:57.578 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 03:42:57.578 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d6da7a5b0
+04-22 03:42:57.578 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=48
+04-22 03:42:57.579 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 03:42:57.580 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d7da78790
+04-22 03:42:57.580 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=60
+04-22 03:42:57.582 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffff81, statsUid=-1
+04-22 03:42:57.694 D/NetworkMonitor/100(  784): PROBE_FALLBACK http://www.google.com/gen_204 time=118ms ret=204 request={Connection=[close], User-Agent=[Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.32 Safari/537.36]} headers={null=[HTTP/1.1 204 No Content], Connection=[close], Content-Security-Policy=[object-src 'none';base-uri 'self';script-src 'nonce-zjLVXWyykiVgcrNWzx2OHA' 'strict-dynamic' 'report-sample' 'unsafe-eval' 'unsafe-inline' https: http:;report-uri https://csp.withgoogle.com/csp/gws/other], Content-Type=[text/html; charset=UTF-8], Date=[Tue, 21 Apr 2026 19:42:57 GMT], Permissions-Policy=[unload=()], Server=[gws], X-Android-Received-Millis=[1776800577694], X-Android-Response-Source=[NETWORK 204], X-Android-Selected-Protocol=[http/1.1], X-Android-Sent-Millis=[1776800577584], X-Frame-Options=[SAMEORIGIN], X-Xss-Protection=[0]}
+04-22 03:43:00.004 I/AiAiEcho( 1598): Predicting[0]: 
+04-22 03:43:00.004 I/AiAiEcho( 1598): Ranked targets strategy: SORT, count: 0, ranking metadata: 
+04-22 03:43:00.004 I/AiAiEcho( 1598): #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0
+04-22 03:43:00.005 I/AiAiEcho( 1598): #postPredictionTargets: Sending updates to UISurface home with targets# 0
+04-22 03:43:00.005 I/AiAiEcho( 1598): #postPredictionTargets: Sending updates to UISurface media_data_manager with targets# 0
+04-22 03:43:00.026 D/SsMediaDataProvider(  728): Forwarding Smartspace updates []
+04-22 03:43:00.037 D/EGL_emulation(  728): app_time_stats: avg=39371.02ms min=39371.02ms max=39371.02ms count=1
+04-22 03:43:04.604 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 03:43:05.782 I/logd    (  158): logdr: UID=2000 GID=2000 PID=20299 n tail=0 logMask=99 pid=0 start=0ns deadline=0ns
+04-22 03:43:05.793 D/TrafficStats(19981): tagSocket(135) with statsTag=0xffffffff, statsUid=-1
+04-22 03:43:05.798 D/TrafficStats(19981): tagSocket(139) with statsTag=0xffffffff, statsUid=-1

@@ -1,0 +1,12 @@
+# ninja log v5
+2149	2292	1774708111187182005	/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail/android/app/build/intermediates/cxx/Debug/561o4n1o/obj/arm64-v8a/libappmodules.so	a4f08f9da6d02ffe
+0	58	0	/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail/android/app/.cxx/Debug/561o4n1o/arm64-v8a/CMakeFiles/cmake.verify_globs	cb8e475ef2f19cb0
+5	2149	1774708111047567680	CMakeFiles/appmodules.dir/OnLoad.cpp.o	3c89939ebe41a35d
+4	2029	1774708110926455063	CMakeFiles/appmodules.dir/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail/android/app/build/generated/autolinking/src/main/jni/autolinking.cpp.o	a7d91ac389886378
+0	6	0	clean	86269a812c6ed3c4
+26	129	1774708419240026882	build.ninja	b5b975e498a7a71e
+59	139	1774708419240026882	build.ninja	b5b975e498a7a71e
+1	13	0	/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail/android/app/.cxx/Debug/561o4n1o/arm64-v8a/CMakeFiles/cmake.verify_globs	cb8e475ef2f19cb0
+3	2270	1774708421527323071	CMakeFiles/appmodules.dir/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail/android/app/build/generated/autolinking/src/main/jni/autolinking.cpp.o	a7d91ac389886378
+3	2405	1774708421658694230	CMakeFiles/appmodules.dir/OnLoad.cpp.o	3c89939ebe41a35d
+2406	2511	1774708421771360390	/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail/android/app/build/intermediates/cxx/Debug/561o4n1o/obj/arm64-v8a/libappmodules.so	a4f08f9da6d02ffe

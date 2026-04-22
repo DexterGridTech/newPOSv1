@@ -163,6 +163,61 @@ describe('transport-runtime socket', () => {
         expect(connections).toEqual(['ws://127.0.0.1:18889/socket'])
     })
 
+    it('fails over to the next address when the first socket address cannot connect', async () => {
+        const attempts: string[] = []
+        const runtime = createSocketRuntime({
+            logger: createLoggerPort({
+                environmentMode: 'DEV',
+                write: () => {},
+                scope: {
+                    moduleName: 'kernel.base.transport-runtime.test',
+                    layer: 'kernel',
+                },
+            }),
+            transport: {
+                async connect(connection, handlers) {
+                    attempts.push(connection.selectedAddress.addressName)
+                    if (connection.selectedAddress.addressName === 'lan') {
+                        throw new Error('lan unreachable')
+                    }
+                    handlers.onOpen()
+                    return {
+                        sendRaw() {},
+                        disconnect() {},
+                    }
+                },
+            },
+            servers: [
+                {
+                    serverName: 'socket-demo',
+                    addresses: [
+                        {addressName: 'lan', baseUrl: 'http://192.168.0.172:5810'},
+                        {addressName: 'local', baseUrl: 'http://127.0.0.1:5810'},
+                    ],
+                },
+            ],
+        })
+
+        runtime.registerProfile(defineSocketProfile<void, void, void, {kind: string}, {kind: string}>({
+            name: 'demo.socket',
+            serverName: 'socket-demo',
+            pathTemplate: '/socket',
+            messages: {
+                incoming: typed<{kind: string}>('demo.socket.incoming'),
+                outgoing: typed<{kind: string}>('demo.socket.outgoing'),
+            },
+            codec: new JsonSocketCodec<{kind: string}, {kind: string}>(),
+            meta: {},
+        }))
+
+        const firstResolved = await runtime.connect('demo.socket')
+        const secondResolved = await runtime.connect('demo.socket')
+
+        expect(firstResolved.selectedAddress.addressName).toBe('local')
+        expect(secondResolved.selectedAddress.addressName).toBe('local')
+        expect(attempts).toEqual(['lan', 'local', 'local'])
+    })
+
     it('updates an existing profile without dropping listeners', async () => {
         const events: string[] = []
         const connections: string[] = []

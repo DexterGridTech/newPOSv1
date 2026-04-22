@@ -1,0 +1,52 @@
+{
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "target": "primary",
+      "runtimeId": "primary-runtime",
+      "screenKey": "ui.integration.retail-shell.secondary-welcome",
+      "mountId": "ui.integration.retail-shell.secondary-welcome:root",
+      "nodeId": "ui-integration-retail-shell:secondary-welcome",
+      "testID": "ui-integration-retail-shell:secondary-welcome",
+      "semanticId": "ui-integration-retail-shell:secondary-welcome",
+      "role": "screen",
+      "text": "欢迎来到万象城 · OTA E2E V20",
+      "visible": true,
+      "enabled": true,
+      "availableActions": [],
+      "stale": false
+    },
+    {
+      "target": "primary",
+      "runtimeId": "primary-runtime",
+      "screenKey": "ui.integration.retail-shell.secondary-welcome",
+      "mountId": "ui.integration.retail-shell.secondary-welcome:title",
+      "nodeId": "ui-integration-retail-shell:secondary-welcome:title",
+      "testID": "ui-integration-retail-shell:secondary-welcome:title",
+      "semanticId": "ui-integration-retail-shell:secondary-welcome:title",
+      "role": "text",
+      "text": "欢迎来到万象城 · OTA E2E V20",
+      "visible": true,
+      "enabled": true,
+      "availableActions": [],
+      "stale": false
+    },
+    {
+      "target": "primary",
+      "runtimeId": "primary-runtime",
+      "screenKey": "ui.integration.retail-shell.secondary-welcome",
+      "mountId": "ui.integration.retail-shell.secondary-welcome:terminal-id",
+      "nodeId": "ui-integration-retail-shell:secondary-welcome:terminal-id",
+      "testID": "ui-integration-retail-shell:secondary-welcome:terminal-id",
+      "semanticId": "ui-integration-retail-shell:secondary-welcome:terminal-id",
+      "role": "text",
+      "text": "terminal_5re4fwuf4758",
+      "value": "terminal_5re4fwuf4758",
+      "visible": true,
+      "enabled": true,
+      "availableActions": [],
+      "stale": false
+    }
+  ],
+  "id": "1776809337317-3b8c10c50c5b6"
+}

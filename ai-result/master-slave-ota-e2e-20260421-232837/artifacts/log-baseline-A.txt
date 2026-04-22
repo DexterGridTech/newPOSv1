@@ -1,0 +1,4 @@
+137:04-21 23:30:47.897 I/HotUpdateBundleResolver(13241): no_active_marker isPrimaryProcess=true pid=13241
+224:04-21 23:30:47.964 I/ConnectorManager(13241): connector initialized
+298:04-21 23:30:48.010 I/assembly.assembly.android.mixc-retail-rn84(13241): [assembly.topology] Create assembly topology socket binding {"displayIndex":0,"role":"master","localNodeId":"master:6Z2H3BSGEY","resolvedPathTemplate":"/ws"}
+339:04-21 23:30:48.031 I/assembly.assembly.android.mixc-retail-rn84(13241): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"6Z2H3BSGEY","instanceMode":"MASTER","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}

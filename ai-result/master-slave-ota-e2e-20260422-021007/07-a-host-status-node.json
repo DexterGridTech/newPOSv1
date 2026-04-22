@@ -1,0 +1,22 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "target": "primary",
+    "runtimeId": "primary-runtime",
+    "screenKey": "admin-console",
+    "mountId": "admin-action:ui-base-admin-section:topology:host-status",
+    "nodeId": "ui-base-admin-section:topology:host-status",
+    "testID": "ui-base-admin-section:topology:host-status",
+    "semanticId": "ui-base-admin-section:topology:host-status",
+    "role": "button",
+    "text": "刷新Host",
+    "visible": true,
+    "enabled": true,
+    "persistent": true,
+    "availableActions": [
+      "press"
+    ],
+    "stale": false
+  },
+  "id": "1776795395484-5b89d61230f42"
+}

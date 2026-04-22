@@ -1,0 +1,21 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "capabilities": [
+      "runtime.query",
+      "ui.semanticRegistry",
+      "wait",
+      "trace",
+      "scripts.execute"
+    ],
+    "availableTargets": [
+      "host",
+      "secondary"
+    ],
+    "buildProfile": "internal",
+    "productMode": false,
+    "scriptExecutionAvailable": true
+  },
+  "id": "1776735811588-af81a13f730c4"
+}

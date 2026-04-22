@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "active": false,
+  "skill": "ralph",
+  "keyword": "code review",
+  "phase": "planning",
+  "activated_at": "2026-04-18T19:20:59.653Z",
+  "updated_at": "2026-04-20T02:30:08.636Z",
+  "source": "keyword-detector",
+  "session_id": "019d9c3e-0278-7ad1-ab24-fc8d9df21381",
+  "thread_id": "019d9ec9-84cc-72b3-a1a2-76c2b34a706a",
+  "turn_id": "019da196-89b8-7830-ad15-3dd4910e191f",
+  "active_skills": []
+}

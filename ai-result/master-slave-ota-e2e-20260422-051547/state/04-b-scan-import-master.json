@@ -1,0 +1,50 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "requestId": "req_mo94ozky_dft63fknk5zqdmpy",
+    "commandId": "cmd_mo94ozky_y5pnqr6vb2l3hogt",
+    "commandName": "ui.base.admin-console.scan-and-import-topology-master",
+    "target": "local",
+    "status": "COMPLETED",
+    "startedAt": 1776806466082,
+    "completedAt": 1776806466247,
+    "actorResults": [
+      {
+        "actorKey": "ui.base.admin-console.AdminTopologyActor",
+        "status": "COMPLETED",
+        "startedAt": 1776806466082,
+        "completedAt": 1776806466247,
+        "result": {
+          "status": "COMPLETED",
+          "barcodeResult": {
+            "barcode": "{\"v\":\"2026.04\",\"d\":\"6Z2H3BSGEY\",\"n\":\"master:6Z2H3BSGEY\",\"w\":\"ws://127.0.0.1:18889/mockMasterServer/ws\"}",
+            "format": "QR_CODE",
+            "raw": {
+              "message": "OK",
+              "data": {
+                "SCAN_RESULT_FORMAT": "QR_CODE",
+                "SCAN_RESULT": "{\"v\":\"2026.04\",\"d\":\"6Z2H3BSGEY\",\"n\":\"master:6Z2H3BSGEY\",\"w\":\"ws://127.0.0.1:18889/mockMasterServer/ws\"}"
+              },
+              "code": 0,
+              "success": true
+            }
+          },
+          "sharePayload": {
+            "formatVersion": "2026.04",
+            "deviceId": "6Z2H3BSGEY",
+            "masterNodeId": "master:6Z2H3BSGEY",
+            "wsUrl": "ws://127.0.0.1:18889/mockMasterServer/ws"
+          },
+          "topologyHostStatus": {
+            "state": "STOPPED",
+            "config": {
+              "port": 8888,
+              "basePath": "/mockMasterServer"
+            }
+          }
+        }
+      }
+    ]
+  },
+  "id": "1776806465953-ae91958072ee28"
+}

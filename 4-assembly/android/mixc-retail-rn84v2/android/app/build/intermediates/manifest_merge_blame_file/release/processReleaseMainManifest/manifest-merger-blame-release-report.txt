@@ -1,0 +1,317 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.impos2.mixcretailrn84v2"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="24"
+9        android:targetSdkVersion="36" />
+10
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:2:3-65
+11-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:2:20-62
+12    <uses-permission android:name="android.permission.CAMERA" />
+12-->[:adapter-pure] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterPure/adapter-lib/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:7:5-65
+12-->[:adapter-pure] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterPure/adapter-lib/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:7:22-62
+13    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+13-->[:adapter-pure] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterPure/adapter-lib/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:8:5-77
+13-->[:adapter-pure] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterPure/adapter-lib/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:8:22-74
+14    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+14-->[:adapter-pure] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterPure/adapter-lib/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:9:5-87
+14-->[:adapter-pure] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterPure/adapter-lib/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:9:22-84
+15
+16    <uses-feature
+16-->[:adapter-pure] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterPure/adapter-lib/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:11:5-13:36
+17        android:name="android.hardware.camera"
+17-->[:adapter-pure] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterPure/adapter-lib/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:12:9-47
+18        android:required="false" />
+18-->[:adapter-pure] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterPure/adapter-lib/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:13:9-33
+19
+20    <permission
+20-->[androidx.core:core:1.13.1] /Users/dexter/.gradle/caches/9.0.0/transforms/9a1bb3f563d0991b417c6cb567237184/transformed/core-1.13.1/AndroidManifest.xml:22:5-24:47
+21        android:name="com.impos2.mixcretailrn84v2.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+21-->[androidx.core:core:1.13.1] /Users/dexter/.gradle/caches/9.0.0/transforms/9a1bb3f563d0991b417c6cb567237184/transformed/core-1.13.1/AndroidManifest.xml:23:9-81
+22        android:protectionLevel="signature" />
+22-->[androidx.core:core:1.13.1] /Users/dexter/.gradle/caches/9.0.0/transforms/9a1bb3f563d0991b417c6cb567237184/transformed/core-1.13.1/AndroidManifest.xml:24:9-44
+23
+24    <uses-permission android:name="com.impos2.mixcretailrn84v2.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" /> <!-- Although the *SdkVersion is captured in gradle build files, this is required for non gradle builds -->
+24-->[androidx.core:core:1.13.1] /Users/dexter/.gradle/caches/9.0.0/transforms/9a1bb3f563d0991b417c6cb567237184/transformed/core-1.13.1/AndroidManifest.xml:26:5-97
+24-->[androidx.core:core:1.13.1] /Users/dexter/.gradle/caches/9.0.0/transforms/9a1bb3f563d0991b417c6cb567237184/transformed/core-1.13.1/AndroidManifest.xml:26:22-94
+25    <!-- <uses-sdk android:minSdkVersion="14"/> -->
+26    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+26-->[com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/dexter/.gradle/caches/9.0.0/transforms/882f2367b8565852f60c6780fde624e2/transformed/transport-backend-cct-2.3.3/AndroidManifest.xml:25:5-79
+26-->[com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/dexter/.gradle/caches/9.0.0/transforms/882f2367b8565852f60c6780fde624e2/transformed/transport-backend-cct-2.3.3/AndroidManifest.xml:25:22-76
+27
+28    <application
+28-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:4:3-37:17
+29        android:name="com.impos2.mixcretailrn84v2.MainApplication"
+29-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:5:5-36
+30        android:allowBackup="false"
+30-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:9:5-32
+31        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+31-->[androidx.core:core:1.13.1] /Users/dexter/.gradle/caches/9.0.0/transforms/9a1bb3f563d0991b417c6cb567237184/transformed/core-1.13.1/AndroidManifest.xml:28:18-86
+32        android:extractNativeLibs="false"
+33        android:hardwareAccelerated="true"
+33-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:13:5-39
+34        android:icon="@mipmap/ic_launcher"
+34-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:7:5-39
+35        android:label="@string/app_name"
+35-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:6:5-37
+36        android:largeHeap="true"
+36-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:14:5-29
+37        android:networkSecurityConfig="@xml/network_security_config"
+37-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:12:5-65
+38        android:roundIcon="@mipmap/ic_launcher_round"
+38-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:8:5-50
+39        android:supportsRtl="true"
+39-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:15:5-31
+40        android:theme="@style/AppTheme"
+40-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:10:5-36
+41        android:usesCleartextTraffic="true" >
+41-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:11:5-40
+42        <activity
+42-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:16:5-28:16
+43            android:name="com.impos2.mixcretailrn84v2.MainActivity"
+43-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:17:7-35
+44            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
+44-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:19:7-116
+45            android:exported="true"
+45-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:23:7-30
+46            android:label="@string/app_name"
+46-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:18:7-39
+47            android:launchMode="singleTask"
+47-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:20:7-38
+48            android:theme="@style/LaunchTheme"
+48-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:22:7-41
+49            android:windowSoftInputMode="adjustResize" >
+49-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:21:7-49
+50            <intent-filter>
+50-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:24:7-27:23
+51                <action android:name="android.intent.action.MAIN" />
+51-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:25:9-61
+51-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:25:17-58
+52
+53                <category android:name="android.intent.category.LAUNCHER" />
+53-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:26:9-69
+53-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:26:19-66
+54            </intent-filter>
+55        </activity>
+56        <activity
+56-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:30:5-36:34
+57            android:name="com.impos2.mixcretailrn84v2.SecondaryActivity"
+57-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:31:7-40
+58            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
+58-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:32:7-116
+59            android:exported="false"
+59-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:36:7-31
+60            android:process=":secondary"
+60-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:35:7-35
+61            android:theme="@style/AppTheme"
+61-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:34:7-38
+62            android:windowSoftInputMode="adjustResize" />
+62-->/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/android/app/src/main/AndroidManifest.xml:33:7-49
+63        <activity
+63-->[:adapter-pure] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterPure/adapter-lib/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:16:9-20:66
+64            android:name="com.impos2.adapter.camera.CameraScanActivity"
+64-->[:adapter-pure] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterPure/adapter-lib/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:17:13-72
+65            android:exported="false"
+65-->[:adapter-pure] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterPure/adapter-lib/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:18:13-37
+66            android:screenOrientation="portrait"
+66-->[:adapter-pure] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterPure/adapter-lib/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:19:13-49
+67            android:theme="@style/Theme.AppCompat.NoActionBar" />
+67-->[:adapter-pure] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterPure/adapter-lib/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:20:13-63
+68        <activity
+68-->[:adapter-pure] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterPure/adapter-lib/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:21:9-24:75
+69            android:name="com.impos2.adapter.connector.SystemFilePickerActivity"
+69-->[:adapter-pure] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterPure/adapter-lib/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:22:13-81
+70            android:exported="false"
+70-->[:adapter-pure] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterPure/adapter-lib/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:23:13-37
+71            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+71-->[:adapter-pure] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterPure/adapter-lib/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:24:13-72
+72
+73        <service
+73-->[:adapter-pure] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterPure/adapter-lib/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:26:9-30:56
+74            android:name="com.impos2.adapter.webserver.LocalWebServerService"
+74-->[:adapter-pure] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterPure/adapter-lib/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:27:13-78
+75            android:enabled="true"
+75-->[:adapter-pure] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterPure/adapter-lib/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:28:13-35
+76            android:exported="false"
+76-->[:adapter-pure] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterPure/adapter-lib/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:29:13-37
+77            android:foregroundServiceType="dataSync" />
+77-->[:adapter-pure] /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterPure/adapter-lib/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:30:13-53
+78        <service
+78-->[androidx.camera:camera-camera2:1.3.4] /Users/dexter/.gradle/caches/9.0.0/transforms/ec7ccfee3d8b5fe6377910f15d30b864/transformed/camera-camera2-1.3.4/AndroidManifest.xml:24:9-33:19
+79            android:name="androidx.camera.core.impl.MetadataHolderService"
+79-->[androidx.camera:camera-camera2:1.3.4] /Users/dexter/.gradle/caches/9.0.0/transforms/ec7ccfee3d8b5fe6377910f15d30b864/transformed/camera-camera2-1.3.4/AndroidManifest.xml:25:13-75
+80            android:enabled="false"
+80-->[androidx.camera:camera-camera2:1.3.4] /Users/dexter/.gradle/caches/9.0.0/transforms/ec7ccfee3d8b5fe6377910f15d30b864/transformed/camera-camera2-1.3.4/AndroidManifest.xml:26:13-36
+81            android:exported="false" >
+81-->[androidx.camera:camera-camera2:1.3.4] /Users/dexter/.gradle/caches/9.0.0/transforms/ec7ccfee3d8b5fe6377910f15d30b864/transformed/camera-camera2-1.3.4/AndroidManifest.xml:27:13-37
+82            <meta-data
+82-->[androidx.camera:camera-camera2:1.3.4] /Users/dexter/.gradle/caches/9.0.0/transforms/ec7ccfee3d8b5fe6377910f15d30b864/transformed/camera-camera2-1.3.4/AndroidManifest.xml:30:13-32:89
+83                android:name="androidx.camera.core.impl.MetadataHolderService.DEFAULT_CONFIG_PROVIDER"
+83-->[androidx.camera:camera-camera2:1.3.4] /Users/dexter/.gradle/caches/9.0.0/transforms/ec7ccfee3d8b5fe6377910f15d30b864/transformed/camera-camera2-1.3.4/AndroidManifest.xml:31:17-103
+84                android:value="androidx.camera.camera2.Camera2Config$DefaultProvider" />
+84-->[androidx.camera:camera-camera2:1.3.4] /Users/dexter/.gradle/caches/9.0.0/transforms/ec7ccfee3d8b5fe6377910f15d30b864/transformed/camera-camera2-1.3.4/AndroidManifest.xml:32:17-86
+85        </service>
+86        <service
+86-->[com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/dexter/.gradle/caches/9.0.0/transforms/6d6766d7408d4edce3d76db447dc769a/transformed/play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:9:9-15:19
+87            android:name="com.google.mlkit.common.internal.MlKitComponentDiscoveryService"
+87-->[com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/dexter/.gradle/caches/9.0.0/transforms/6d6766d7408d4edce3d76db447dc769a/transformed/play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:10:13-91
+88            android:directBootAware="true"
+88-->[com.google.mlkit:common:18.11.0] /Users/dexter/.gradle/caches/9.0.0/transforms/8630e1313a1e81f0bf3ff76b1161cd79/transformed/common-18.11.0/AndroidManifest.xml:17:13-43
+89            android:exported="false" >
+89-->[com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/dexter/.gradle/caches/9.0.0/transforms/6d6766d7408d4edce3d76db447dc769a/transformed/play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:11:13-37
+90            <meta-data
+90-->[com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/dexter/.gradle/caches/9.0.0/transforms/6d6766d7408d4edce3d76db447dc769a/transformed/play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:12:13-14:85
+91                android:name="com.google.firebase.components:com.google.mlkit.vision.barcode.internal.BarcodeRegistrar"
+91-->[com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/dexter/.gradle/caches/9.0.0/transforms/6d6766d7408d4edce3d76db447dc769a/transformed/play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:13:17-120
+92                android:value="com.google.firebase.components.ComponentRegistrar" />
+92-->[com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/dexter/.gradle/caches/9.0.0/transforms/6d6766d7408d4edce3d76db447dc769a/transformed/play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:14:17-82
+93            <meta-data
+93-->[com.google.mlkit:vision-common:17.3.0] /Users/dexter/.gradle/caches/9.0.0/transforms/b8ce4675bd74de206aee0c1598f35bfd/transformed/vision-common-17.3.0/AndroidManifest.xml:12:13-14:85
+94                android:name="com.google.firebase.components:com.google.mlkit.vision.common.internal.VisionCommonRegistrar"
+94-->[com.google.mlkit:vision-common:17.3.0] /Users/dexter/.gradle/caches/9.0.0/transforms/b8ce4675bd74de206aee0c1598f35bfd/transformed/vision-common-17.3.0/AndroidManifest.xml:13:17-124
+95                android:value="com.google.firebase.components.ComponentRegistrar" />
+95-->[com.google.mlkit:vision-common:17.3.0] /Users/dexter/.gradle/caches/9.0.0/transforms/b8ce4675bd74de206aee0c1598f35bfd/transformed/vision-common-17.3.0/AndroidManifest.xml:14:17-82
+96            <meta-data
+96-->[com.google.mlkit:common:18.11.0] /Users/dexter/.gradle/caches/9.0.0/transforms/8630e1313a1e81f0bf3ff76b1161cd79/transformed/common-18.11.0/AndroidManifest.xml:20:13-22:85
+97                android:name="com.google.firebase.components:com.google.mlkit.common.internal.CommonComponentRegistrar"
+97-->[com.google.mlkit:common:18.11.0] /Users/dexter/.gradle/caches/9.0.0/transforms/8630e1313a1e81f0bf3ff76b1161cd79/transformed/common-18.11.0/AndroidManifest.xml:21:17-120
+98                android:value="com.google.firebase.components.ComponentRegistrar" />
+98-->[com.google.mlkit:common:18.11.0] /Users/dexter/.gradle/caches/9.0.0/transforms/8630e1313a1e81f0bf3ff76b1161cd79/transformed/common-18.11.0/AndroidManifest.xml:22:17-82
+99        </service>
+100
+101        <provider
+101-->[com.google.mlkit:common:18.11.0] /Users/dexter/.gradle/caches/9.0.0/transforms/8630e1313a1e81f0bf3ff76b1161cd79/transformed/common-18.11.0/AndroidManifest.xml:9:9-13:38
+102            android:name="com.google.mlkit.common.internal.MlKitInitProvider"
+102-->[com.google.mlkit:common:18.11.0] /Users/dexter/.gradle/caches/9.0.0/transforms/8630e1313a1e81f0bf3ff76b1161cd79/transformed/common-18.11.0/AndroidManifest.xml:10:13-78
+103            android:authorities="com.impos2.mixcretailrn84v2.mlkitinitprovider"
+103-->[com.google.mlkit:common:18.11.0] /Users/dexter/.gradle/caches/9.0.0/transforms/8630e1313a1e81f0bf3ff76b1161cd79/transformed/common-18.11.0/AndroidManifest.xml:11:13-69
+104            android:exported="false"
+104-->[com.google.mlkit:common:18.11.0] /Users/dexter/.gradle/caches/9.0.0/transforms/8630e1313a1e81f0bf3ff76b1161cd79/transformed/common-18.11.0/AndroidManifest.xml:12:13-37
+105            android:initOrder="99" />
+105-->[com.google.mlkit:common:18.11.0] /Users/dexter/.gradle/caches/9.0.0/transforms/8630e1313a1e81f0bf3ff76b1161cd79/transformed/common-18.11.0/AndroidManifest.xml:13:13-35
+106
+107        <activity
+107-->[com.google.android.gms:play-services-base:18.5.0] /Users/dexter/.gradle/caches/9.0.0/transforms/bd70af6a2b324f420f05bc2fd0cee808/transformed/play-services-base-18.5.0/AndroidManifest.xml:5:9-173
+108            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+108-->[com.google.android.gms:play-services-base:18.5.0] /Users/dexter/.gradle/caches/9.0.0/transforms/bd70af6a2b324f420f05bc2fd0cee808/transformed/play-services-base-18.5.0/AndroidManifest.xml:5:19-85
+109            android:exported="false"
+109-->[com.google.android.gms:play-services-base:18.5.0] /Users/dexter/.gradle/caches/9.0.0/transforms/bd70af6a2b324f420f05bc2fd0cee808/transformed/play-services-base-18.5.0/AndroidManifest.xml:5:146-170
+110            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+110-->[com.google.android.gms:play-services-base:18.5.0] /Users/dexter/.gradle/caches/9.0.0/transforms/bd70af6a2b324f420f05bc2fd0cee808/transformed/play-services-base-18.5.0/AndroidManifest.xml:5:86-145
+111
+112        <meta-data
+112-->[com.google.android.gms:play-services-basement:18.4.0] /Users/dexter/.gradle/caches/9.0.0/transforms/4df68c968b050dc48fd52a74ab9d761d/transformed/play-services-basement-18.4.0/AndroidManifest.xml:6:9-122
+113            android:name="com.google.android.gms.version"
+113-->[com.google.android.gms:play-services-basement:18.4.0] /Users/dexter/.gradle/caches/9.0.0/transforms/4df68c968b050dc48fd52a74ab9d761d/transformed/play-services-basement-18.4.0/AndroidManifest.xml:6:20-65
+114            android:value="@integer/google_play_services_version" />
+114-->[com.google.android.gms:play-services-basement:18.4.0] /Users/dexter/.gradle/caches/9.0.0/transforms/4df68c968b050dc48fd52a74ab9d761d/transformed/play-services-basement-18.4.0/AndroidManifest.xml:6:66-119
+115
+116        <provider
+116-->[androidx.emoji2:emoji2:1.3.0] /Users/dexter/.gradle/caches/9.0.0/transforms/1bb6911876c3295b98172de2e4114b34/transformed/emoji2-1.3.0/AndroidManifest.xml:24:9-32:20
+117            android:name="androidx.startup.InitializationProvider"
+117-->[androidx.emoji2:emoji2:1.3.0] /Users/dexter/.gradle/caches/9.0.0/transforms/1bb6911876c3295b98172de2e4114b34/transformed/emoji2-1.3.0/AndroidManifest.xml:25:13-67
+118            android:authorities="com.impos2.mixcretailrn84v2.androidx-startup"
+118-->[androidx.emoji2:emoji2:1.3.0] /Users/dexter/.gradle/caches/9.0.0/transforms/1bb6911876c3295b98172de2e4114b34/transformed/emoji2-1.3.0/AndroidManifest.xml:26:13-68
+119            android:exported="false" >
+119-->[androidx.emoji2:emoji2:1.3.0] /Users/dexter/.gradle/caches/9.0.0/transforms/1bb6911876c3295b98172de2e4114b34/transformed/emoji2-1.3.0/AndroidManifest.xml:27:13-37
+120            <meta-data
+120-->[androidx.emoji2:emoji2:1.3.0] /Users/dexter/.gradle/caches/9.0.0/transforms/1bb6911876c3295b98172de2e4114b34/transformed/emoji2-1.3.0/AndroidManifest.xml:29:13-31:52
+121                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+121-->[androidx.emoji2:emoji2:1.3.0] /Users/dexter/.gradle/caches/9.0.0/transforms/1bb6911876c3295b98172de2e4114b34/transformed/emoji2-1.3.0/AndroidManifest.xml:30:17-75
+122                android:value="androidx.startup" />
+122-->[androidx.emoji2:emoji2:1.3.0] /Users/dexter/.gradle/caches/9.0.0/transforms/1bb6911876c3295b98172de2e4114b34/transformed/emoji2-1.3.0/AndroidManifest.xml:31:17-49
+123            <meta-data
+123-->[androidx.lifecycle:lifecycle-process:2.6.2] /Users/dexter/.gradle/caches/9.0.0/transforms/cc0613c863f47b1d0ed9c86ba3c340af/transformed/lifecycle-process-2.6.2/AndroidManifest.xml:29:13-31:52
+124                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+124-->[androidx.lifecycle:lifecycle-process:2.6.2] /Users/dexter/.gradle/caches/9.0.0/transforms/cc0613c863f47b1d0ed9c86ba3c340af/transformed/lifecycle-process-2.6.2/AndroidManifest.xml:30:17-78
+125                android:value="androidx.startup" />
+125-->[androidx.lifecycle:lifecycle-process:2.6.2] /Users/dexter/.gradle/caches/9.0.0/transforms/cc0613c863f47b1d0ed9c86ba3c340af/transformed/lifecycle-process-2.6.2/AndroidManifest.xml:31:17-49
+126            <meta-data
+126-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:29:13-31:52
+127                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+127-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:30:17-85
+128                android:value="androidx.startup" />
+128-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:31:17-49
+129        </provider>
+130
+131        <receiver
+131-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:34:9-52:20
+132            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+132-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:35:13-76
+133            android:directBootAware="false"
+133-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:36:13-44
+134            android:enabled="true"
+134-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:37:13-35
+135            android:exported="true"
+135-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:38:13-36
+136            android:permission="android.permission.DUMP" >
+136-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:39:13-57
+137            <intent-filter>
+137-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:40:13-42:29
+138                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+138-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:41:17-91
+138-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:41:25-88
+139            </intent-filter>
+140            <intent-filter>
+140-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:43:13-45:29
+141                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+141-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:44:17-85
+141-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:44:25-82
+142            </intent-filter>
+143            <intent-filter>
+143-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:46:13-48:29
+144                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+144-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:47:17-88
+144-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:47:25-85
+145            </intent-filter>
+146            <intent-filter>
+146-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:49:13-51:29
+147                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+147-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:50:17-95
+147-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/dexter/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:50:25-92
+148            </intent-filter>
+149        </receiver>
+150
+151        <service
+151-->[com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/dexter/.gradle/caches/9.0.0/transforms/882f2367b8565852f60c6780fde624e2/transformed/transport-backend-cct-2.3.3/AndroidManifest.xml:29:9-35:19
+152            android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery"
+152-->[com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/dexter/.gradle/caches/9.0.0/transforms/882f2367b8565852f60c6780fde624e2/transformed/transport-backend-cct-2.3.3/AndroidManifest.xml:30:13-103
+153            android:exported="false" >
+153-->[com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/dexter/.gradle/caches/9.0.0/transforms/882f2367b8565852f60c6780fde624e2/transformed/transport-backend-cct-2.3.3/AndroidManifest.xml:31:13-37
+154            <meta-data
+154-->[com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/dexter/.gradle/caches/9.0.0/transforms/882f2367b8565852f60c6780fde624e2/transformed/transport-backend-cct-2.3.3/AndroidManifest.xml:32:13-34:39
+155                android:name="backend:com.google.android.datatransport.cct.CctBackendFactory"
+155-->[com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/dexter/.gradle/caches/9.0.0/transforms/882f2367b8565852f60c6780fde624e2/transformed/transport-backend-cct-2.3.3/AndroidManifest.xml:33:17-94
+156                android:value="cct" />
+156-->[com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/dexter/.gradle/caches/9.0.0/transforms/882f2367b8565852f60c6780fde624e2/transformed/transport-backend-cct-2.3.3/AndroidManifest.xml:34:17-36
+157        </service>
+158        <service
+158-->[com.google.android.datatransport:transport-runtime:2.2.6] /Users/dexter/.gradle/caches/9.0.0/transforms/be3381cae8203f27a8931ec610a505d5/transformed/transport-runtime-2.2.6/AndroidManifest.xml:26:9-30:19
+159            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService"
+159-->[com.google.android.datatransport:transport-runtime:2.2.6] /Users/dexter/.gradle/caches/9.0.0/transforms/be3381cae8203f27a8931ec610a505d5/transformed/transport-runtime-2.2.6/AndroidManifest.xml:27:13-117
+160            android:exported="false"
+160-->[com.google.android.datatransport:transport-runtime:2.2.6] /Users/dexter/.gradle/caches/9.0.0/transforms/be3381cae8203f27a8931ec610a505d5/transformed/transport-runtime-2.2.6/AndroidManifest.xml:28:13-37
+161            android:permission="android.permission.BIND_JOB_SERVICE" >
+161-->[com.google.android.datatransport:transport-runtime:2.2.6] /Users/dexter/.gradle/caches/9.0.0/transforms/be3381cae8203f27a8931ec610a505d5/transformed/transport-runtime-2.2.6/AndroidManifest.xml:29:13-69
+162        </service>
+163
+164        <receiver
+164-->[com.google.android.datatransport:transport-runtime:2.2.6] /Users/dexter/.gradle/caches/9.0.0/transforms/be3381cae8203f27a8931ec610a505d5/transformed/transport-runtime-2.2.6/AndroidManifest.xml:32:9-34:40
+165            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"
+165-->[com.google.android.datatransport:transport-runtime:2.2.6] /Users/dexter/.gradle/caches/9.0.0/transforms/be3381cae8203f27a8931ec610a505d5/transformed/transport-runtime-2.2.6/AndroidManifest.xml:33:13-132
+166            android:exported="false" />
+166-->[com.google.android.datatransport:transport-runtime:2.2.6] /Users/dexter/.gradle/caches/9.0.0/transforms/be3381cae8203f27a8931ec610a505d5/transformed/transport-runtime-2.2.6/AndroidManifest.xml:34:13-37
+167
+168        <meta-data
+168-->[com.facebook.soloader:soloader:0.12.1] /Users/dexter/.gradle/caches/9.0.0/transforms/1cb5cf641f9f2cbd10c0ed7226292756/transformed/soloader-0.12.1/AndroidManifest.xml:12:9-14:37
+169            android:name="com.facebook.soloader.enabled"
+169-->[com.facebook.soloader:soloader:0.12.1] /Users/dexter/.gradle/caches/9.0.0/transforms/1cb5cf641f9f2cbd10c0ed7226292756/transformed/soloader-0.12.1/AndroidManifest.xml:13:13-57
+170            android:value="false" />
+170-->[com.facebook.soloader:soloader:0.12.1] /Users/dexter/.gradle/caches/9.0.0/transforms/1cb5cf641f9f2cbd10c0ed7226292756/transformed/soloader-0.12.1/AndroidManifest.xml:14:13-34
+171    </application>
+172
+173</manifest>

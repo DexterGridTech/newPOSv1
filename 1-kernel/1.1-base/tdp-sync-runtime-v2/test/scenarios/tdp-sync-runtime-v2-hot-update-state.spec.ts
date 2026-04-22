@@ -194,6 +194,51 @@ describe('tdp hot update state reducer', () => {
         expect(state.history.at(-1)?.event).not.toBe('download-pending')
     })
 
+    it('keeps local download progress when the same desired package is reconciled again', () => {
+        const state = reduceHotUpdateDesired(createTdpHotUpdateStateForTests({
+            desired: baseDesired,
+            candidate: {
+                releaseId: 'release-001',
+                packageId: 'package-001',
+                bundleVersion: '1.0.0+ota.1',
+                status: 'ready',
+                attempts: 1,
+                updatedAt: 500,
+            },
+            ready: {
+                releaseId: 'release-001',
+                packageId: 'package-001',
+                bundleVersion: '1.0.0+ota.1',
+                installDir: '/hot-update/package-001',
+                packageSha256: 'abc',
+                manifestSha256: 'def',
+                readyAt: 600,
+            },
+        }), {
+            desired: baseDesired,
+            currentFacts: {
+                appId: 'assembly-android-mixc-retail-rn84',
+                platform: 'android',
+                product: 'mixc-retail',
+                runtimeVersion: 'android-mixc-retail-rn84@1.0',
+                assemblyVersion: '1.0.0',
+                buildNumber: 1,
+                channel: 'development',
+                capabilities: [],
+            },
+            now: 700,
+        })
+
+        expect(state.desired?.packageId).toBe('package-001')
+        expect(state.candidate).toMatchObject({
+            packageId: 'package-001',
+            status: 'ready',
+            attempts: 1,
+        })
+        expect(state.ready?.installDir).toBe('/hot-update/package-001')
+        expect(state.history.at(-1)?.event).not.toBe('download-pending')
+    })
+
     it('records idle restart intent using configured threshold fallback', () => {
         const state = createTdpHotUpdateStateForTests({
             lastUserOperationAt: 1_000,
@@ -289,7 +334,7 @@ describe('tdp hot update state reducer', () => {
         })
     })
 
-    it('clears stale hot update fields under authoritative sync snapshots', () => {
+    it('only syncs desired across topology snapshots and keeps local execution state untouched', () => {
         const masterState = createTdpHotUpdateStateForTests({
             current: {
                 source: 'hot-update',
@@ -394,14 +439,17 @@ describe('tdp hot update state reducer', () => {
             {mode: 'authoritative'},
         )
 
-        expect(next.current.bundleVersion).toBe('1.0.0+ota.2')
+        expect(next.current.bundleVersion).toBe('1.0.0+ota.1')
         expect(next.desired?.packageId).toBe('package-002')
-        expect(next.candidate).toBeUndefined()
-        expect(next.ready).toBeUndefined()
-        expect(next.applying).toBeUndefined()
-        expect(next.restartIntent).toBeUndefined()
-        expect(next.lastUserOperationAt).toBeUndefined()
-        expect(next.previous).toBeUndefined()
-        expect(next.lastError).toBeUndefined()
+        expect(next.candidate).toMatchObject({
+            packageId: 'package-001',
+            status: 'ready',
+        })
+        expect(next.ready?.installDir).toBe('/hot-update/package-001')
+        expect(next.applying?.bootMarkerPath).toBe('/hot-update/active-marker.json')
+        expect(next.restartIntent?.status).toBe('ready-to-restart')
+        expect(next.lastUserOperationAt).toBe(9_000)
+        expect(next.previous?.bundleVersion).toBe('1.0.0+ota.0')
+        expect(next.lastError?.code).toBe('OLD_ERROR')
     })
 })

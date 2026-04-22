@@ -1,0 +1,20 @@
+{
+  "deviceId": "ZJ63NQELD9",
+  "password": "291940",
+  "panel": {
+    "target": "primary",
+    "runtimeId": "primary-runtime",
+    "screenKey": "admin-popup:panel",
+    "mountId": "admin-popup:panel:root",
+    "nodeId": "ui-base-admin-popup:panel",
+    "testID": "ui-base-admin-popup:panel",
+    "semanticId": "ui-base-admin-popup:panel",
+    "role": "dialog",
+    "text": "系统管理工作台",
+    "visible": true,
+    "enabled": true,
+    "persistent": true,
+    "availableActions": [],
+    "stale": false
+  }
+}

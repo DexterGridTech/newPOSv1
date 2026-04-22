@@ -1,0 +1,947 @@
+--------- beginning of main
+         1776812406.095   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812406.096   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812406.097   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812407.102   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812407.102   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812407.103   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812408.110   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812408.110   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812408.111   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812409.115   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812409.115   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812409.115   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812409.278  1086  1298 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+         1776812410.126   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812410.127   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812410.127   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812411.132   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812411.132   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812411.133   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812412.141   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812412.141   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812412.143   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812413.146   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812413.146   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812413.147   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812414.149   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812414.149   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812414.150   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812415.157   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812415.158   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812415.158   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812416.163   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812416.164   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812416.164   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812417.178   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812417.178   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812417.178   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812417.852  1652  2090 I bdee    : (REDACTED) getHotwordActive::active query: %s, watch: %s, devices connected: %s
+         1776812418.182   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812418.182   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812418.183   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812419.190   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812419.190   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812419.192   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812419.285  1086  1298 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+--------- beginning of system
+         1776812420.052   683   809 D ActivityManager: freezing 1197 com.android.settings
+         1776812420.055   683   809 D ActivityManager: freezing 4288 com.android.keychain
+         1776812420.055   683   809 D ActivityManager: freezing 2618 com.android.dynsystem:dynsystem
+         1776812420.055   683   809 D ActivityManager: freezing 2594 com.android.dynsystem
+         1776812420.056   683   809 D ActivityManager: freezing 2458 com.android.localtransport
+         1776812420.196   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812420.196   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812420.198   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812421.202   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812421.202   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812421.203   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812422.210   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812422.210   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812422.211   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812423.214   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812423.214   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812423.214   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812424.217   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812424.217   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812424.218   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812425.222   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812425.222   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812425.225   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812426.228   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812426.228   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812426.229   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812427.234   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812427.234   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812427.235   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812428.240   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812428.240   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812428.241   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812429.244   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812429.244   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812429.244   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812429.287  1086  1298 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+         1776812430.247   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812430.247   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812430.248   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812431.251   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812431.251   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812431.251   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812432.254   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812432.254   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812432.255   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812433.259   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812433.259   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812433.260   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812434.262   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812434.262   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812434.262   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812435.266   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812435.267   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812435.269   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812436.276   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812436.276   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812436.277   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812437.281   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812437.281   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812437.282   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812438.286   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812438.286   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812438.287   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812439.293   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812439.293   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812439.293   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812439.294  1086  1298 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+         1776812440.296   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812440.296   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812440.296   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812441.299   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812441.299   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812441.300   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812442.303   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812442.303   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812442.304   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812443.309   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812443.309   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812443.309   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812444.312   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812444.312   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812444.314   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812445.319   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812445.319   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812445.319   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812445.764   683   750 I WifiService: isFeatureSupported uid=1000 returns [WIFI_FEATURE_INFRA, WIFI_FEATURE_P2P, WIFI_FEATURE_MOBILE_HOTSPOT, WIFI_FEATURE_WPA3_SAE, WIFI_FEATURE_WPA3_SUITE_B, WIFI_FEATURE_OWE, WIFI_FEATURE_DPP, WIFI_FEATURE_AP_RAND_MAC, WIFI_FEATURE_MBO, WIFI_FEATURE_FILS_SHA256, WIFI_FEATURE_FILS_SHA384, WIFI_FEATURE_SAE_PK, WIFI_FEATURE_DPP_ENROLLEE_RESPONDER, WIFI_FEATURE_PASSPOINT_TERMS_AND_CONDITIONS, WIFI_FEATURE_WFD_R2, WIFI_FEATURE_DECORATED_IDENTITY, WIFI_FEATURE_TRUST_ON_FIRST_USE, WIFI_FEATURE_SET_TLS_MINIMUM_VERSION, WIFI_FEATURE_TLS_V1_3, WIFI_FEATURE_WEP, WIFI_FEATURE_WPA_PERSONAL]
+         1776812446.324   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812446.325   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812446.325   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812447.327   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812447.328   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812447.328   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812448.331   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812448.332   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812448.332   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812449.298  1086  1298 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+         1776812449.338   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812449.338   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812449.339   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812450.344   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812450.344   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812450.344   683  1871 W BestClock: java.time.DateTimeException: No network time available
+         1776812450.480   459  8313 I resolv  : ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+         1776812450.480   459  8312 I resolv  : ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+         1776812450.482   459  8314 I resolv  : ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+         1776812450.482   459  8315 I resolv  : ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+         1776812450.500   459  8315 I resolv  : res_nsend: used send_dg 63 terrno: 0
+         1776812450.500   459  8314 I resolv  : res_nsend: used send_dg 48 terrno: 0
+         1776812450.500   459  8312 I resolv  : res_nsend: used send_dg 60 terrno: 0
+         1776812450.501   459  8313 I resolv  : res_nsend: used send_dg 117 terrno: 0
+         1776812450.503  1052  8310 D NetworkMonitor/100: PROBE_DNS www.google.com 26ms OK 104.244.42.197,2001::1
+         1776812450.503  1052  8311 D NetworkMonitor/100: PROBE_DNS connectivitycheck.gstatic.com 26ms OK 114.250.66.34
+         1776812450.503   459  8316 I resolv  : GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+         1776812450.504   459  8317 I resolv  : res_nmkquery: (QUERY, IN, AAAA)
+         1776812450.504   459  8317 I resolv  : resolv_cache_lookup: FOUND IN CACHE entry=0xb400007cdced1090
+         1776812450.504   459  8317 I resolv  : doQuery: rcode=0, ancount=1, return value=60
+         1776812450.504   459  8318 I resolv  : res_nmkquery: (QUERY, IN, A)
+         1776812450.504   459  8318 I resolv  : resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d2ced29d0
+         1776812450.504   459  8318 I resolv  : doQuery: rcode=0, ancount=1, return value=48
+         1776812450.505   459  8320 I resolv  : GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+         1776812450.505   459  8321 I resolv  : res_nmkquery: (QUERY, IN, AAAA)
+         1776812450.506   459  8321 I resolv  : resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d0cedcc50
+         1776812450.506   459  8321 I resolv  : doQuery: rcode=0, ancount=0, return value=117
+         1776812450.506   459  8322 I resolv  : res_nmkquery: (QUERY, IN, A)
+         1776812450.506   459  8322 I resolv  : resolv_cache_lookup: FOUND IN CACHE entry=0xb400007e7ced3950
+         1776812450.506   459  8322 I resolv  : doQuery: rcode=0, ancount=1, return value=63
+         1776812451.348   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812451.349   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812451.350   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812452.355   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812452.355   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812452.356   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812453.360   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812453.360   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812453.360   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812453.477   459  8323 I resolv  : GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+         1776812453.478   459  8324 I resolv  : res_nmkquery: (QUERY, IN, AAAA)
+         1776812453.478   459  8324 I resolv  : resolv_cache_lookup: FOUND IN CACHE entry=0xb400007cdced1090
+         1776812453.478   459  8324 I resolv  : doQuery: rcode=0, ancount=1, return value=60
+         1776812453.478   459  8325 I resolv  : res_nmkquery: (QUERY, IN, A)
+         1776812453.478   459  8325 I resolv  : resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d2ced29d0
+         1776812453.478   459  8325 I resolv  : doQuery: rcode=0, ancount=1, return value=48
+         1776812453.588  1052  8309 D NetworkMonitor/100: PROBE_FALLBACK http://www.google.com/gen_204 time=111ms ret=204 request={Connection=[close], User-Agent=[Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.32 Safari/537.36]} headers={null=[HTTP/1.1 204 No Content], Connection=[close], Content-Security-Policy=[object-src 'none';base-uri 'self';script-src 'nonce-VMprMuOkeAF38OT9fWRw9A' 'strict-dynamic' 'report-sample' 'unsafe-eval' 'unsafe-inline' https: http:;report-uri https://csp.withgoogle.com/csp/gws/other], Content-Type=[text/html; charset=UTF-8], Date=[Tue, 21 Apr 2026 23:00:53 GMT], Permissions-Policy=[unload=()], Server=[gws], X-Android-Received-Millis=[1776812453587], X-Android-Response-Source=[NETWORK 204], X-Android-Selected-Protocol=[http/1.1], X-Android-Sent-Millis=[1776812453481], X-Frame-Options=[SAMEORIGIN], X-Xss-Protection=[0]}
+         1776812454.364   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812454.364   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812454.364   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812455.367   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812455.367   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812455.367   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812456.369   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812456.370   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812456.372   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812456.686  8328  8328 W screencap: Thread Pool max thread count is 0. Cannot cache binder as linkToDeath cannot be implemented. serviceName: SurfaceFlingerAIDL
+         1776812456.687  8328  8328 W BpBinder: Linking to death on android.gui.ISurfaceComposer but there are no threads (yet?) listening to incoming transactions. See ProcessState::startThreadPool and ProcessState::setThreadPoolMaxThreadCount. Generally you should setup the binder threadpool before other initialization steps.
+         1776812456.687  8328  8328 W ProcessState: Extra binder thread started, but 0 threads requested. Do not use *startThreadPool when zero threads are requested.
+         1776812456.690   515   566 E HwcComposer: getLuts failed Status(-8, EX_SERVICE_SPECIFIC): '8: '
+         1776812456.690   515   566 E HWComposer: getLuts: getLuts failed for display 4619827259835644672: UNSUPPORTED (8)
+--------- beginning of kernel
+         1776812456.703   224   224 I servicemanager: Caller(pid=8328,uid=2000,sid=u:r:shell:s0) Found android.hardware.graphics.allocator.IAllocator/default in device VINTF manifest.
+         1776812456.704   224   224 I servicemanager: Caller(pid=8328,uid=2000,sid=u:r:shell:s0) Found android.hardware.graphics.allocator.IAllocator/default in device VINTF manifest.
+         1776812456.704   224   224 I servicemanager: Caller(pid=8328,uid=2000,sid=u:r:shell:s0) Found mapper/ranchu in device VINTF manifest.
+         1776812457.374   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812457.374   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812457.375   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812458.377   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812458.377   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812458.377   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812459.307  1086  1298 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+         1776812459.379   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812459.379   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812459.379   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812460.383   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812460.383   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812460.384   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812460.518  1052  8311 D NetworkMonitor/100: PROBE_HTTP http://connectivitycheck.gstatic.com/generate_204 Probe failed with exception java.net.SocketTimeoutException: failed to connect to connectivitycheck.gstatic.com/114.250.66.34 (port 80) from /10.0.2.15 (port 33956) after 10000ms
+         1776812461.389   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812461.389   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812461.390   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812462.392   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812462.392   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812462.393   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812463.396   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812463.397   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812463.398   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812464.401   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812464.401   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812464.402   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812465.409   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812465.409   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812465.411   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812466.415   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812466.415   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812466.415   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812467.419   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812467.419   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812467.420   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812468.423   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812468.423   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812468.423   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812469.314  1086  1298 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+         1776812469.426   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812469.426   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812469.428   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812470.431   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812470.431   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812470.432   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812470.528  1052  8310 D NetworkMonitor/100: PROBE_HTTPS https://www.google.com/generate_204 Probe failed with exception java.net.SocketTimeoutException: failed to connect to www.google.com/2001::1 (port 443) from /fec0::5054:ff:fe12:3456 (port 58796) after 10000ms
+         1776812470.529  1052  8309 D NetworkMonitor/100: isCaptivePortal: isSuccessful()=false isPortal()=false RedirectUrl=null isPartialConnectivity()=false Time=20054ms
+         1776812470.530   683   864 D ConnectivityService: [100 CELLULAR] validation failed
+         1776812471.437   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812471.437   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812471.438   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812472.440   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812472.440   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812472.441   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812473.444   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812473.444   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812473.445   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812474.448   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812474.449   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812474.450   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812475.456   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812475.456   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812475.457   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812476.460   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812476.460   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812476.461   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812477.464   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812477.464   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812477.465   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812477.854  1652  2063 I bdee    : (REDACTED) getHotwordActive::active query: %s, watch: %s, devices connected: %s
+         1776812478.468   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812478.468   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812478.469   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812479.322  1086  1298 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+         1776812479.472   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812479.472   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812479.474   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812480.476   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812480.477   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812480.477   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812481.480   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812481.480   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812481.481   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812482.485   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812482.485   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812482.485   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812483.491   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812483.491   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812483.491   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812484.493   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812484.493   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812484.494   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812485.498   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812485.498   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812485.499   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812486.501   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812486.501   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812486.504   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812487.507   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812487.507   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812487.508   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812488.511   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812488.511   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812488.512   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812489.327  1086  1298 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+         1776812489.515   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812489.515   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812489.516   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812490.518   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812490.519   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812490.519   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812491.522   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812491.522   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812491.523   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812492.527   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812492.527   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812492.528   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812493.533   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812493.533   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812493.533   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812494.539   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812494.539   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812494.541   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812495.543   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812495.543   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812495.543   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812496.545   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812496.545   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812496.548   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812497.554   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812497.554   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812497.555   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812498.559   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812498.559   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812498.560   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812499.335  1086  1298 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+         1776812499.561   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812499.561   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812499.562   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812500.567   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812500.567   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812500.568   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812501.571   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812501.571   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812501.571   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812502.576   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812502.576   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812502.577   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812503.579   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812503.579   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812503.579   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812504.582   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812504.582   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812504.584   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812505.587   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812505.587   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812505.587   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812506.591   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812506.591   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812506.592   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812507.596   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812507.596   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812507.597   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812508.601   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812508.601   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812508.602   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812509.342  1086  1298 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+         1776812509.606   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812509.606   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812509.607   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812510.611   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812510.612   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812510.613   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812511.616   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812511.617   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812511.617   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812512.626   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812512.626   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812512.627   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812513.629   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812513.629   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812513.630   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812514.633   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812514.633   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812514.634   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812515.637   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812515.637   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812515.638   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812516.643   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812516.643   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812516.646   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812517.649   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812517.649   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812517.650   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812518.656   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812518.657   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812518.658   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812519.349  1086  1298 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+         1776812519.661   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812519.661   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812519.661   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812520.667   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812520.667   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812520.668   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812521.675   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812521.675   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812521.676   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812522.681   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812522.681   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812522.682   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812523.687   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812523.687   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812523.687   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812524.693   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812524.693   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812524.693   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812525.695   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812525.696   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812525.696   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812526.698   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812526.699   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812526.699   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812527.712   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812527.712   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812527.712   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812528.718   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812528.718   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812528.718   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812529.357  1086  1298 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+         1776812529.729   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812529.729   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812529.729   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812530.733   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812530.734   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812530.735   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812531.744   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812531.744   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812531.744   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812532.747   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812532.747   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812532.747   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812533.752   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812533.753   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812533.754   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812534.758   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812534.758   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812534.759   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812535.760   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812535.760   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812535.761   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812536.764   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812536.765   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812536.766   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812537.770   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812537.770   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812537.770   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812537.854  1652  2063 I bdee    : (REDACTED) getHotwordActive::active query: %s, watch: %s, devices connected: %s
+         1776812538.780   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812538.780   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812538.781   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812539.364  1086  1298 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+         1776812539.784   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812539.784   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812539.785   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812540.788   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812540.788   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812540.788   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812541.792   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812541.792   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812541.794   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812542.798   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812542.798   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812542.798   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812543.801   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812543.801   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812543.801   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812544.803   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812544.804   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812544.805   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812545.809   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812545.809   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812545.809   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812546.812   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812546.813   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812546.814   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812547.819   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812547.819   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812547.819   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812548.824   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812548.824   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812548.825   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812549.370  1086  1298 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+         1776812549.414   683   858 E WifiScoringParams: Invalid frequency(-1), using 5G as default rssi array
+         1776812549.414   683   858 V WifiConnectivityManager: schedulePeriodicScanTimer intervalMs 160000
+         1776812549.414   683   862 I WifiScanningService: Registering listener= com.android.server.wifi.scanner.WifiScannerInternal$ScanListener@17dd037 uid=1000 packageName=null workSource=WorkSource{1000}
+         1776812549.414   683   862 I WifiScanningService: start scan: ClientInfo[uid=1000, package=null, attributionTag=null, com.android.server.wifi.scanner.WifiScannerInternal$ScanListener@17dd037] package null AttributionTag null
+         1776812549.414   683   862 I WifiScanningService: addSingleScanRequest: ClientInfo[uid=1000, package=null, attributionTag=null, com.android.server.wifi.scanner.WifiScannerInternal$ScanListener@17dd037],WorkSource{1010}, ScanSettings {  type:HIGH ACCURACY band:24Ghz & 5Ghz (DFS incl) & 6Ghz ignoreLocationSettings:false period:0 reportEvents:3 numBssidsPerScan:0 maxScansToCache:0 rnrSetting:1 6GhzPscOnlyEnabled:true channels:[  ]  } 
+         1776812549.414   683   862 D WifiScanningService: replySucceeded onSuccess
+         1776812549.417   938   938 D wpa_supplicant: nl80211: Drv Event 33 (NL80211_CMD_TRIGGER_SCAN) received for wlan0
+         1776812549.418   938   938 D wpa_supplicant: wlan0: nl80211: Scan trigger
+         1776812549.418   938   938 D wpa_supplicant: wlan0: Event SCAN_STARTED (47) received
+         1776812549.418   938   938 D wpa_supplicant: wlan0: External program started a scan
+         1776812549.828   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812549.828   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812549.830   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812550.832   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812550.833   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812550.833   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812551.838   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812551.838   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812551.838   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812552.846   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812552.846   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812552.847   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812553.188   938   938 D wpa_supplicant: nl80211: Drv Event 34 (NL80211_CMD_NEW_SCAN_RESULTS) received for wlan0
+         1776812553.188   683 19931 D WifiNl80211Manager: Scan result ready event
+         1776812553.188   683 19931 D WifiNative: Scan result ready event
+         1776812553.189   683   862 D WifiNl80211Manager: get 1 scan results from wificond
+         1776812553.189   683   862 D WifiNative: get 1 scan results from wificond
+         1776812553.190   938   938 D wpa_supplicant: wlan0: nl80211: New scan results available
+         1776812553.190   938   938 D wpa_supplicant: nl80211: Scan probed for SSID ''
+         1776812553.190  1283  1687 I WifiScanner: onFullResults
+         1776812553.190   938   938 D wpa_supplicant: nl80211: Scan included frequencies: 2412 2417 2422 2427 2432 2437 2442 2447 2452 2457 2462 2467 2472 2484 5180 5200 5220 5240 5260 5280 5300 5320 5500 5520 5540 5560 5580 5600 5620 5640 5660 5680 5700 5745 5765 5785 5805 5825
+         1776812553.190   938   938 D wpa_supplicant: wlan0: Event SCAN_RESULTS (3) received
+         1776812553.190   938   938 D wpa_supplicant: nl80211: Received scan results (1 BSSes)
+         1776812553.190   938   938 D wpa_supplicant: wlan0: BSS: Start scan result update 244
+         1776812553.190   938   938 D wpa_supplicant: BSS: last_scan_res_used=1/32
+         1776812553.190   938   938 D wpa_supplicant: wlan0: New scan results available (own=0 ext=1)
+         1776812553.190   938   938 D wpa_supplicant: wlan0: Do not use results from externally requested scan operation for network selection
+         1776812553.190   938   938 D wpa_supplicant: p2p-dev-wlan0: Updating scan results from sibling
+         1776812553.190   683   862 I WifiScanningService: singleScanResults: ClientInfo[uid=1000, package=null, attributionTag=null, com.android.server.wifi.scanner.WifiScannerInternal$ScanListener@17dd037],results=1
+         1776812553.190   938   938 D wpa_supplicant: nl80211: Received scan results (1 BSSes)
+         1776812553.190   938   938 D wpa_supplicant: p2p-dev-wlan0: BSS: Start scan result update 244
+         1776812553.190   938   938 D wpa_supplicant: BSS: last_scan_res_used=1/32
+         1776812553.190   938   938 D wpa_supplicant: p2p-dev-wlan0: New scan results available (own=0 ext=1)
+         1776812553.190   938   938 D wpa_supplicant: p2p-dev-wlan0: Do not use results from externally requested scan operation for network selection
+         1776812553.190   683   862 I WifiScanningService: singleScanResults listener: ClientInfo[uid=1000, package=android, attributionTag=null, com.android.server.wifi.scanner.WifiScannerInternal$ScanListener@cd6e90e],results=1
+         1776812553.190   683   862 I WifiScanningService: singleScanResults listener: ClientInfo[uid=1000, package=android, attributionTag=null, com.android.server.wifi.scanner.WifiScannerInternal$ScanListener@a638d28],results=1
+         1776812553.190   683   862 I WifiScanningService: singleScanResults listener: ClientInfo[uid=1000, package=android, attributionTag=null, com.android.server.wifi.scanner.WifiScannerInternal$ScanListener@3c1c684],results=1
+         1776812553.190   683   862 I WifiScanningService: singleScanResults listener: ClientInfo[uid=10144, package=com.google.android.gms, attributionTag=network_location_provider, android.net.wifi.IWifiScannerListener$Stub$Proxy@acf3a9c],results=1
+         1776812553.190   683   862 I WifiScanningService: Unregistering listener= com.android.server.wifi.scanner.WifiScannerInternal$ScanListener@17dd037 uid=1000 packageName=null workSource=WorkSource{1000}
+         1776812553.191   683   858 D WifiScanRequestProxy: Scan results received
+         1776812553.191   683   858 D WifiScanRequestProxy: Received 1 scan results
+         1776812553.191   683   858 D WifiHealthMonitor:  2G scanResult count: 1, Above2g scanResult count: 0
+         1776812553.191   683   858 V WifiConfigManager: getSavedNetworkFromScanResult Found "AndroidWifi"NONE for AndroidWifi[[ESS]]
+         1776812553.191   683   858 W BestClock: java.time.DateTimeException: No network time available
+         1776812553.191   683   858 W BestClock: java.time.DateTimeException: No network time available
+         1776812553.191   683   858 W BestClock: java.time.DateTimeException: No network time available
+         1776812553.193   683  1148 I WifiService: getScanResults uid=10186
+         1776812553.193   683 19931 I WifiService: getScanResults uid=10186
+         1776812553.193   683   858 I HalDevMgr: bestIfaceCreationProposal is null, requestIface=STA, existingIface=[name=wlan0 type=STA]
+         1776812553.193   683   858 V WifiConnectivityManager: Clearing blocklist for REASON_FRAMEWORK_DISCONNECT_FAST_RECONNECT
+         1776812553.193   683   858 V WifiConnectivityManager: AllSingleScanListener onResults: start network selection
+         1776812553.194   683   858 V WifiConfigManager: getSavedNetworkFromScanResult Found "AndroidWifi"NONE for AndroidWifi[[ESS]]
+         1776812553.194   683   858 V WifiConfigManager: Clear network candidate scan result for 0
+         1776812553.194   683   858 D WifiNetworkSelector: Disabled configured networks:
+         1776812553.194   683   858 D WifiNetworkSelector:   "AndroidWifi":0 reason=NETWORK_SELECTION_DISABLED_NO_INTERNET_TEMPORARY, count=1; reason=NETWORK_SELECTION_DISABLED_NO_INTERNET_PERMANENT, count=1; 
+         1776812553.194   683   858 D WifiNetworkSelector: 
+         1776812553.194   683   858 D WifiNetworkSelector: About to run SavedNetworkNominator :
+         1776812553.195   683   858 V WifiConfigManager: getSavedNetworkFromScanResult Found "AndroidWifi"NONE for AndroidWifi[[ESS]]
+         1776812553.195   683   858 D WifiNetworkSelector: About to run NetworkSuggestionNominator :
+         1776812553.195   683   858 V WifiLastResortWatchdog: updateAvailableNetworks: size = 0
+         1776812553.195   683   858 V WifiLastResortWatchdog: mWatchdogFeatureEnabled: true
+         1776812553.195   683   858 V WifiLastResortWatchdog: mWatchdogAllowedToTrigger: true
+         1776812553.195   683   858 V WifiLastResortWatchdog: mRecentAvailableNetworks: 0
+         1776812553.195   683   858 V WifiLastResortWatchdog: mSsidFailureCount:
+         1776812553.195   683   858 V WifiConnectivityManager: AllSingleScanListener:  No candidates
+         1776812553.195   683   858 V WifiConfigManager: getSavedNetworkFromScanResult Found "AndroidWifi"NONE for AndroidWifi[[ESS]]
+         1776812553.850   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812553.851   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812553.851   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812554.854   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812554.854   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812554.854   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812555.859   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812555.859   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812555.859   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812556.862   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812556.862   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812556.862   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812557.865   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812557.865   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812557.866   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812558.872   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812558.872   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812558.872   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812559.371  1086  1298 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+         1776812559.876   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812559.876   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812559.876   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812560.880   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812560.880   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812560.881   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812561.884   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812561.885   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812561.885   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812562.891   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812562.891   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812562.892   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812563.896   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812563.896   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812563.897   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812564.899   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812564.899   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812564.901   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812565.907   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812565.907   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812565.908   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812566.912   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812566.912   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812566.913   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812567.916   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812567.917   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812567.917   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812568.921   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812568.921   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812568.921   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812569.073  1559  1684 I WM-WorkerWrapper: Worker result SUCCESS for Work [ id=84c52edc-cb16-457c-8463-1d19e492597b, tags={ com.google.apps.tiktok.contrib.work.TikTokListenableWorker,com.google.apps.tiktok.sync.impl.workmanager.SyncWorker,TikTokWorker#com.google.apps.tiktok.sync.impl.workmanager.SyncWorker } ]
+         1776812569.094   683   801 D ActivityManager: sync unfroze 3005 com.google.android.settings.intelligence for 6
+         1776812569.098   683  1148 W ProcessStats: Tracking association SourceState{ea716c5 system/1000 ImpBg #8358} whose proc state 6 is better than process ProcessState{3305cb1 com.google.android.settings.intelligence/10136 pkg=com.google.android.settings.intelligence} proc state 15 (4 skipped)
+         1776812569.099   683 19931 W JobInfo : Job 'com.google.android.settings.intelligence/.modules.routines.impl.RoutinesJobIntentService#1728' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
+         1776812569.105   683  1148 I WifiService: getVerboseLoggingLevel uid=10136
+         1776812569.117   459   537 I netd    : tetherGetStats() -> {[]} <0.33ms>
+         1776812569.371  1086  1298 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+         1776812569.925   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812569.925   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812569.925   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812570.357   235   235 I logd    : logdr: UID=2000 GID=2000 PID=8330 n tail=0 logMask=99 pid=0 start=0ns deadline=0ns
+         1776812570.927   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812570.927   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812570.930   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812571.937   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812571.937   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812571.940   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812572.945   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812572.945   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812572.946   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812573.949   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812573.949   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812573.949   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812574.127   683   864 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+         1776812574.128   683   864 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+         1776812574.128   683   864 D InetDiagMessage: Destroyed live tcp sockets for uids={10136} in 1ms
+         1776812574.128   683   864 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+         1776812574.128   683   864 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+         1776812574.128   683   864 D InetDiagMessage: Destroyed live tcp sockets for uids={20136} in 0ms
+         1776812574.951   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812574.951   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812574.952   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812575.957   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812575.957   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812575.957   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812576.959   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812576.959   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812576.959   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812577.963   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812577.963   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812577.965   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812578.967   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812578.967   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812578.967   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812579.158   683   809 D ActivityManager: freezing 3005 com.google.android.settings.intelligence
+         1776812579.161   683   864 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+         1776812579.161   683   864 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+         1776812579.161   683   864 D InetDiagMessage: Destroyed live tcp sockets for uids={10136} in 2ms
+         1776812579.377  1086  1298 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+         1776812579.971   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812579.971   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812579.972   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812580.975   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812580.975   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812580.975   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812581.979   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812581.979   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812581.980   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812582.985   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812582.985   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812582.987   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812583.260   683  1760 D TelephonyManager: requestModemActivityInfo: Sending result to app: ModemActivityInfo{ mTimestamp=38040804 mSleepTimeMs=3864 mIdleTimeMs=1288 mActivityStatsTechSpecificInfo=[{mRat=UNKNOWN,mFrequencyRange=UNKNOWN,mTxTimeMs[]=[92, 276, 552, 736, 828],mRxTimeMs=828}]}
+         1776812583.302   459   537 I netd    : tetherGetStats() -> {[]} <1.30ms>
+         1776812583.989   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812583.989   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812583.990   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812584.992   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812584.993   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812584.994   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812585.998   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812585.998   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812585.999   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812587.004   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812587.005   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812587.005   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812588.008   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812588.008   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812588.009   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812589.014   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812589.014   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812589.016   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812589.384  1086  1298 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+         1776812590.020   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812590.021   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812590.021   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812591.030   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812591.030   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812591.031   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812592.033   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812592.033   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812592.035   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812593.038   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812593.039   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812593.040   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812594.043   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812594.044   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812594.046   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812595.049   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812595.049   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812595.050   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812596.055   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812596.056   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812596.056   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812597.058   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812597.059   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812597.059   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812597.855  1652  2063 I bdee    : (REDACTED) getHotwordActive::active query: %s, watch: %s, devices connected: %s
+         1776812598.062   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812598.063   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812598.063   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812598.383  1283  6481 I AlarmManager: setExactAndAllowWhileIdle [name: GCM_HB_ALARM type: 2 triggerAtMillis: 38115926]
+         1776812598.383  1283  6481 E GmsTaskScheduler: sendWakeUpEvent called on SchedulerClientBroadcastStrategy
+         1776812598.384  1283  6481 W WakeLock: GCM_HB_ALARM release without a matched acquire!
+         1776812599.065   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812599.066   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812599.066   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812599.391  1086  1298 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+         1776812600.072   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812600.073   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812600.074   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812601.079   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812601.080   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812601.083   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812602.090   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812602.090   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812602.090   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812603.094   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812603.095   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812603.095   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812604.101   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812604.102   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812604.102   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812605.109   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812605.109   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812605.110   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812606.113   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812606.113   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812606.114   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812607.118   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812607.118   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812607.120   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812608.123   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812608.123   683  1827 W BestClock: java.time.DateTimeException: No network time available
+         1776812608.123   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812609.126   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812609.126   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812609.127   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812609.399  1086  1298 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+         1776812610.130   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812610.130   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812610.131   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812611.138   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812611.138   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812611.139   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812612.143   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812612.143   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812612.144   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812613.148   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812613.148   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812613.149   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812614.153   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812614.153   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812614.154   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812615.158   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812615.159   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812615.160   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812615.740   235   235 I logd    : logdr: UID=2000 GID=2000 PID=8334 n tail=0 logMask=99 pid=0 start=0ns deadline=0ns
+         1776812616.163   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812616.163   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812616.166   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812617.168   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812617.168   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812617.169   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812618.179   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812618.179   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812618.179   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812619.183   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812619.183   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812619.183   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812619.403  1086  1298 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+         1776812620.188   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812620.188   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812620.190   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812621.193   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812621.193   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812621.193   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812622.196   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812622.196   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812622.196   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812623.199   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812623.199   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812623.200   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812624.207   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812624.208   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812624.208   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812625.210   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812625.210   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812625.211   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812626.214   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812626.214   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812626.215   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812627.219   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812627.219   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812627.220   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812628.224   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812628.224   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812628.225   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812629.107   683   750 I WifiService: isFeatureSupported uid=1000 returns [WIFI_FEATURE_INFRA, WIFI_FEATURE_P2P, WIFI_FEATURE_MOBILE_HOTSPOT, WIFI_FEATURE_WPA3_SAE, WIFI_FEATURE_WPA3_SUITE_B, WIFI_FEATURE_OWE, WIFI_FEATURE_DPP, WIFI_FEATURE_AP_RAND_MAC, WIFI_FEATURE_MBO, WIFI_FEATURE_FILS_SHA256, WIFI_FEATURE_FILS_SHA384, WIFI_FEATURE_SAE_PK, WIFI_FEATURE_DPP_ENROLLEE_RESPONDER, WIFI_FEATURE_PASSPOINT_TERMS_AND_CONDITIONS, WIFI_FEATURE_WFD_R2, WIFI_FEATURE_DECORATED_IDENTITY, WIFI_FEATURE_TRUST_ON_FIRST_USE, WIFI_FEATURE_SET_TLS_MINIMUM_VERSION, WIFI_FEATURE_TLS_V1_3, WIFI_FEATURE_WEP, WIFI_FEATURE_WPA_PERSONAL]
+         1776812629.229   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812629.229   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812629.231   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812629.411  1086  1298 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+         1776812630.235   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812630.235   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812630.235   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812631.242   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812631.242   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812631.242   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812632.245   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812632.245   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812632.246   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812633.250   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812633.250   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812633.251   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812634.254   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812634.254   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812634.255   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812635.259   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812635.259   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812635.259   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812636.262   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812636.262   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812636.264   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812637.267   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812637.269   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812637.269   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812638.275   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812638.275   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812638.275   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812639.279   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812639.279   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812639.281   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812639.413  1086  1298 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+         1776812640.283   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812640.283   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812640.285   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812641.294   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812641.295   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812641.295   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812642.297   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812642.298   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812642.299   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812643.302   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812643.302   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812643.303   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812644.307   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812644.307   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812644.307   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812645.310   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812645.311   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812645.311   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812646.315   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812646.315   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812646.316   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812647.318   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812647.318   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812647.319   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812648.321   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812648.321   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812648.322   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812649.326   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812649.326   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812649.327   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812649.421  1086  1298 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+         1776812650.330   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812650.330   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812650.331   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812651.337   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812651.337   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812651.338   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812652.342   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812652.343   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812652.343   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812653.346   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812653.346   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812653.347   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812654.351   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812654.351   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812654.353   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812655.355   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812655.355   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812655.357   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812656.360   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812656.360   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812656.361   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812657.365   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812657.365   683  1760 W BestClock: java.time.DateTimeException: No network time available
+         1776812657.365   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812657.854  1652  2063 I bdee    : (REDACTED) getHotwordActive::active query: %s, watch: %s, devices connected: %s
+         1776812658.367   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812658.368   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812658.369   683 19931 W BestClock: java.time.DateTimeException: No network time available
+         1776812658.388  1283  6481 W GCM     : Heartbeat timeout, GCM connection reset -6
+         1776812658.391  1283  6481 W WakeLock: GCM_HB_ALARM release without a matched acquire!
+         1776812658.391  1283  6481 W WakeLock: GCM_HB_ALARM counter does not exist
+         1776812658.393   459  8337 I resolv  : GetAddrInfoHandler::run: {100 983140 100 983140 10144 0}
+         1776812658.393   459  8338 I resolv  : res_nmkquery: (QUERY, IN, AAAA)
+         1776812658.393   459  8338 I resolv  : Connecting to {10.0.2.3/} with mark 0xf0064
+         1776812658.393   459  8339 I resolv  : res_nmkquery: (QUERY, IN, A)
+         1776812658.394   459  8338 I resolv  :  SSL_connect returned -1 with mark 0xf0064
+         1776812658.408   459  8338 I resolv  :  SSL_connect returned -1 with mark 0xf0064
+         1776812658.424   459  8338 I resolv  :  SSL_connect returned -1 with mark 0xf0064
+         1776812658.426   459  8338 I resolv  :  SSL_connect returned 1 with mark 0xf0064
+         1776812658.441   459  8338 I resolv  : res_tls_send: TLS query result: 0
+         1776812658.441   459  8339 I resolv  : res_tls_send: TLS query result: 0
+         1776812658.441   459  8339 I resolv  : doQuery: rcode=0, ancount=2, return value=90
+         1776812658.444   459  8338 I resolv  : doQuery: rcode=0, ancount=2, return value=102
+         1776812658.446  1283  7367 I TrafficStats: tagSocketFd(-1, 1031, -1) failed with errno-9
+         1776812659.371   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812659.371   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812659.371   683  1148 W BestClock: java.time.DateTimeException: No network time available
+         1776812659.430  1086  1298 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled

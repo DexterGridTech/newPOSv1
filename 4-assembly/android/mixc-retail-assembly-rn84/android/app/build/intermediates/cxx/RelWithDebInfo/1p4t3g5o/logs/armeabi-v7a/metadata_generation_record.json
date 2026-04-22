@@ -1,0 +1,41 @@
+[
+  {
+    "level_": 0,
+    "message_": "Start JSON generation. Platform version: 24 min SDK version: armeabi-v7a",
+    "file_": "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/node_modules/react-native/ReactAndroid/cmake-utils/default-app-setup/CMakeLists.txt",
+    "tag_": "release|armeabi-v7a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 0
+  },
+  {
+    "level_": 0,
+    "message_": "JSON \u0027/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/android/app/.cxx/RelWithDebInfo/1p4t3g5o/armeabi-v7a/android_gradle_build.json\u0027 was up-to-date",
+    "file_": "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/node_modules/react-native/ReactAndroid/cmake-utils/default-app-setup/CMakeLists.txt",
+    "tag_": "release|armeabi-v7a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 0
+  },
+  {
+    "level_": 0,
+    "message_": "JSON generation completed without problems",
+    "file_": "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/node_modules/react-native/ReactAndroid/cmake-utils/default-app-setup/CMakeLists.txt",
+    "tag_": "release|armeabi-v7a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 0
+  }
+]

@@ -1,0 +1,705 @@
+{
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "requestId": "req_mo8u8r9m_j0psdu0wfv0sln1d",
+      "rootCommandId": "cmd_mo8u8r9m_mzqh8lw2i50a257k",
+      "status": "COMPLETED",
+      "startedAt": 1776788912650,
+      "updatedAt": 1776788918596,
+      "commands": [
+        {
+          "requestId": "req_mo8u8r9m_j0psdu0wfv0sln1d",
+          "commandId": "cmd_mo8u8r9m_mzqh8lw2i50a257k",
+          "commandName": "ui.base.admin-console.scan-and-import-topology-master",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776788912650,
+          "completedAt": 1776788918596,
+          "actorResults": [
+            {
+              "actorKey": "ui.base.admin-console.AdminTopologyActor",
+              "status": "COMPLETED",
+              "startedAt": 1776788912650,
+              "completedAt": 1776788918596,
+              "result": {
+                "status": "COMPLETED",
+                "barcodeResult": {
+                  "barcode": "{\"v\":\"2026.04\",\"d\":\"6Z2H3BSGEY\",\"n\":\"master:6Z2H3BSGEY\",\"w\":\"ws://127.0.0.1:18889/mockMasterServer/ws\"}",
+                  "format": "QR_CODE",
+                  "raw": {
+                    "message": "OK",
+                    "data": {
+                      "SCAN_RESULT_FORMAT": "QR_CODE",
+                      "SCAN_RESULT": "{\"v\":\"2026.04\",\"d\":\"6Z2H3BSGEY\",\"n\":\"master:6Z2H3BSGEY\",\"w\":\"ws://127.0.0.1:18889/mockMasterServer/ws\"}"
+                    },
+                    "code": 0,
+                    "success": true
+                  }
+                },
+                "sharePayload": {
+                  "formatVersion": "2026.04",
+                  "deviceId": "6Z2H3BSGEY",
+                  "masterNodeId": "master:6Z2H3BSGEY",
+                  "wsUrl": "ws://127.0.0.1:18889/mockMasterServer/ws"
+                },
+                "topologyHostStatus": {
+                  "state": "STOPPED",
+                  "config": {
+                    "port": 8888,
+                    "basePath": "/mockMasterServer"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo8u8r9m_j0psdu0wfv0sln1d",
+          "commandId": "cmd_mo8u8r9m_jdmufw5brogluhpk",
+          "parentCommandId": "cmd_mo8u8r9m_mzqh8lw2i50a257k",
+          "commandName": "kernel.base.workflow-runtime-v2.run-workflow",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776788912650,
+          "completedAt": 1776788918528,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.workflow-runtime-v2.WorkflowRunActor",
+              "status": "COMPLETED",
+              "startedAt": 1776788912650,
+              "completedAt": 1776788918527,
+              "result": {
+                "requestId": "req_mo8u8r9m_j0psdu0wfv0sln1d",
+                "workflowRunId": "env_mo8u8r9m_zuwmc1mp0ytakecj",
+                "workflowKey": "kernel.base.workflow-runtime-v2.builtin.single-read-barcode-from-camera",
+                "status": "COMPLETED",
+                "result": {
+                  "output": {
+                    "barcode": "{\"v\":\"2026.04\",\"d\":\"6Z2H3BSGEY\",\"n\":\"master:6Z2H3BSGEY\",\"w\":\"ws://127.0.0.1:18889/mockMasterServer/ws\"}",
+                    "format": "QR_CODE",
+                    "raw": {
+                      "message": "OK",
+                      "data": {
+                        "SCAN_RESULT_FORMAT": "QR_CODE",
+                        "SCAN_RESULT": "{\"v\":\"2026.04\",\"d\":\"6Z2H3BSGEY\",\"n\":\"master:6Z2H3BSGEY\",\"w\":\"ws://127.0.0.1:18889/mockMasterServer/ws\"}"
+                      },
+                      "code": 0,
+                      "success": true
+                    }
+                  },
+                  "variables": {},
+                  "stepOutputs": {
+                    "read-barcode": {
+                      "barcode": "{\"v\":\"2026.04\",\"d\":\"6Z2H3BSGEY\",\"n\":\"master:6Z2H3BSGEY\",\"w\":\"ws://127.0.0.1:18889/mockMasterServer/ws\"}",
+                      "format": "QR_CODE",
+                      "raw": {
+                        "message": "OK",
+                        "data": {
+                          "SCAN_RESULT_FORMAT": "QR_CODE",
+                          "SCAN_RESULT": "{\"v\":\"2026.04\",\"d\":\"6Z2H3BSGEY\",\"n\":\"master:6Z2H3BSGEY\",\"w\":\"ws://127.0.0.1:18889/mockMasterServer/ws\"}"
+                        },
+                        "code": 0,
+                        "success": true
+                      }
+                    }
+                  }
+                },
+                "completedAt": 1776788918525
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo8u8r9m_j0psdu0wfv0sln1d",
+          "commandId": "cmd_mo8u8vtb_ae7llazv3003w3u8",
+          "parentCommandId": "cmd_mo8u8r9m_mzqh8lw2i50a257k",
+          "commandName": "kernel.base.topology-runtime-v3.start-topology-connection",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776788918543,
+          "completedAt": 1776788918592,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.topology-runtime-v3.TopologyConnectionActor",
+              "status": "COMPLETED",
+              "startedAt": 1776788918543,
+              "completedAt": 1776788918591
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requestId": "req_mo8u8vsw_tztonqd23btigrzq",
+      "rootCommandId": "cmd_mo8u8vsw_63aordvvgq0nagq1",
+      "status": "COMPLETED",
+      "startedAt": 1776788918528,
+      "updatedAt": 1776788918543,
+      "commands": [
+        {
+          "requestId": "req_mo8u8vsw_tztonqd23btigrzq",
+          "commandId": "cmd_mo8u8vsw_63aordvvgq0nagq1",
+          "commandName": "kernel.base.topology-runtime-v3.set-master-locator",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776788918528,
+          "completedAt": 1776788918543,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.topology-runtime-v3.TopologyContextActor",
+              "status": "COMPLETED",
+              "startedAt": 1776788918528,
+              "completedAt": 1776788918539
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requestId": "req_mo8u66m6_ayf7061x9arybt0d",
+      "rootCommandId": "cmd_mo8u66m6_dpohexqbgmiwq5st",
+      "status": "PARTIAL_FAILED",
+      "startedAt": 1776788792574,
+      "updatedAt": 1776788852587,
+      "commands": [
+        {
+          "requestId": "req_mo8u66m6_ayf7061x9arybt0d",
+          "commandId": "cmd_mo8u66m6_dpohexqbgmiwq5st",
+          "commandName": "ui.base.admin-console.scan-and-import-topology-master",
+          "target": "local",
+          "status": "FAILED",
+          "startedAt": 1776788792574,
+          "completedAt": 1776788852587,
+          "actorResults": [
+            {
+              "actorKey": "ui.base.admin-console.AdminTopologyActor",
+              "status": "FAILED",
+              "startedAt": 1776788792574,
+              "completedAt": 1776788852587,
+              "error": {
+                "name": "Runtime Shell V2 Command Execution Failed",
+                "key": "kernel.base.runtime-shell-v2.command_execution_failed",
+                "code": "ERR_RUNTIME_SHELL_V2_COMMAND_EXECUTION_FAILED",
+                "message": "Command ui.base.admin-console.scan-and-import-topology-master execution failed",
+                "category": "SYSTEM",
+                "severity": "MEDIUM",
+                "createdAt": 1776788852587,
+                "commandName": "ui.base.admin-console.scan-and-import-topology-master",
+                "commandId": "cmd_mo8u66m6_dpohexqbgmiwq5st",
+                "requestId": "req_mo8u66m6_ayf7061x9arybt0d",
+                "args": {
+                  "commandName": "ui.base.admin-console.scan-and-import-topology-master"
+                },
+                "cause": {}
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo8u66m6_ayf7061x9arybt0d",
+          "commandId": "cmd_mo8u66m6_3j7xr12ib5bj3qzr",
+          "parentCommandId": "cmd_mo8u66m6_dpohexqbgmiwq5st",
+          "commandName": "kernel.base.workflow-runtime-v2.run-workflow",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776788792574,
+          "completedAt": 1776788852587,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.workflow-runtime-v2.WorkflowRunActor",
+              "status": "COMPLETED",
+              "startedAt": 1776788792574,
+              "completedAt": 1776788852587,
+              "result": {
+                "requestId": "req_mo8u66m6_ayf7061x9arybt0d",
+                "workflowRunId": "env_mo8u66m6_yao0xdqmj53y6n3g",
+                "workflowKey": "kernel.base.workflow-runtime-v2.builtin.single-read-barcode-from-camera",
+                "status": "FAILED",
+                "result": {
+                  "variables": {},
+                  "stepOutputs": {}
+                },
+                "error": {
+                  "key": "kernel.base.workflow-runtime-v2.workflow_script_failed",
+                  "code": "ERR_WORKFLOW_RUNTIME_V2_SCRIPT_FAILED",
+                  "message": "Workflow script execution failed",
+                  "category": "SYSTEM",
+                  "severity": "HIGH"
+                },
+                "completedAt": 1776788852585
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requestId": "req_mo8u0qzd_wx39xx1rsfv74ceh",
+      "rootCommandId": "cmd_mo8u0qzd_9wxba6kulyinbnk3",
+      "status": "PARTIAL_FAILED",
+      "startedAt": 1776788539033,
+      "updatedAt": 1776788629049,
+      "commands": [
+        {
+          "requestId": "req_mo8u0qzd_wx39xx1rsfv74ceh",
+          "commandId": "cmd_mo8u0qzd_9wxba6kulyinbnk3",
+          "commandName": "ui.base.admin-console.scan-and-import-topology-master",
+          "target": "local",
+          "status": "FAILED",
+          "startedAt": 1776788539033,
+          "completedAt": 1776788629049,
+          "actorResults": [
+            {
+              "actorKey": "ui.base.admin-console.AdminTopologyActor",
+              "status": "FAILED",
+              "startedAt": 1776788539033,
+              "completedAt": 1776788629049,
+              "error": {
+                "name": "Runtime Shell V2 Command Execution Failed",
+                "key": "kernel.base.runtime-shell-v2.command_execution_failed",
+                "code": "ERR_RUNTIME_SHELL_V2_COMMAND_EXECUTION_FAILED",
+                "message": "Command ui.base.admin-console.scan-and-import-topology-master execution failed",
+                "category": "SYSTEM",
+                "severity": "MEDIUM",
+                "createdAt": 1776788629049,
+                "commandName": "ui.base.admin-console.scan-and-import-topology-master",
+                "commandId": "cmd_mo8u0qzd_9wxba6kulyinbnk3",
+                "requestId": "req_mo8u0qzd_wx39xx1rsfv74ceh",
+                "args": {
+                  "commandName": "ui.base.admin-console.scan-and-import-topology-master"
+                },
+                "cause": {}
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo8u0qzd_wx39xx1rsfv74ceh",
+          "commandId": "cmd_mo8u0qzd_e33xd0b565c74961",
+          "parentCommandId": "cmd_mo8u0qzd_9wxba6kulyinbnk3",
+          "commandName": "kernel.base.workflow-runtime-v2.run-workflow",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776788539033,
+          "completedAt": 1776788629049,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.workflow-runtime-v2.WorkflowRunActor",
+              "status": "COMPLETED",
+              "startedAt": 1776788539033,
+              "completedAt": 1776788629049,
+              "result": {
+                "requestId": "req_mo8u0qzd_wx39xx1rsfv74ceh",
+                "workflowRunId": "env_mo8u0qzd_0wm30eg3uauy49k0",
+                "workflowKey": "kernel.base.workflow-runtime-v2.builtin.single-read-barcode-from-camera",
+                "status": "FAILED",
+                "result": {
+                  "variables": {},
+                  "stepOutputs": {}
+                },
+                "error": {
+                  "key": "kernel.base.workflow-runtime-v2.workflow_script_failed",
+                  "code": "ERR_WORKFLOW_RUNTIME_V2_SCRIPT_FAILED",
+                  "message": "Workflow script execution failed",
+                  "category": "SYSTEM",
+                  "severity": "HIGH"
+                },
+                "completedAt": 1776788629047
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requestId": "req_mo8tln2o_qcff3s3whhn0ddaz",
+      "rootCommandId": "cmd_mo8tln2o_mbses88biaxabbb0",
+      "status": "PARTIAL_FAILED",
+      "startedAt": 1776787834128,
+      "updatedAt": 1776787894148,
+      "commands": [
+        {
+          "requestId": "req_mo8tln2o_qcff3s3whhn0ddaz",
+          "commandId": "cmd_mo8tln2o_mbses88biaxabbb0",
+          "commandName": "ui.base.admin-console.scan-and-import-topology-master",
+          "target": "local",
+          "status": "FAILED",
+          "startedAt": 1776787834128,
+          "completedAt": 1776787894148,
+          "actorResults": [
+            {
+              "actorKey": "ui.base.admin-console.AdminTopologyActor",
+              "status": "FAILED",
+              "startedAt": 1776787834128,
+              "completedAt": 1776787894148,
+              "error": {
+                "name": "Runtime Shell V2 Command Execution Failed",
+                "key": "kernel.base.runtime-shell-v2.command_execution_failed",
+                "code": "ERR_RUNTIME_SHELL_V2_COMMAND_EXECUTION_FAILED",
+                "message": "Command ui.base.admin-console.scan-and-import-topology-master execution failed",
+                "category": "SYSTEM",
+                "severity": "MEDIUM",
+                "createdAt": 1776787894148,
+                "commandName": "ui.base.admin-console.scan-and-import-topology-master",
+                "commandId": "cmd_mo8tln2o_mbses88biaxabbb0",
+                "requestId": "req_mo8tln2o_qcff3s3whhn0ddaz",
+                "args": {
+                  "commandName": "ui.base.admin-console.scan-and-import-topology-master"
+                },
+                "cause": {}
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo8tln2o_qcff3s3whhn0ddaz",
+          "commandId": "cmd_mo8tln2o_shs1ye0ft1wfpp8o",
+          "parentCommandId": "cmd_mo8tln2o_mbses88biaxabbb0",
+          "commandName": "kernel.base.workflow-runtime-v2.run-workflow",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776787834128,
+          "completedAt": 1776787894148,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.workflow-runtime-v2.WorkflowRunActor",
+              "status": "COMPLETED",
+              "startedAt": 1776787834128,
+              "completedAt": 1776787894148,
+              "result": {
+                "requestId": "req_mo8tln2o_qcff3s3whhn0ddaz",
+                "workflowRunId": "env_mo8tln2o_2q93u3pxebl5ifeq",
+                "workflowKey": "kernel.base.workflow-runtime-v2.builtin.single-read-barcode-from-camera",
+                "status": "FAILED",
+                "result": {
+                  "variables": {},
+                  "stepOutputs": {}
+                },
+                "error": {
+                  "key": "kernel.base.workflow-runtime-v2.workflow_script_failed",
+                  "code": "ERR_WORKFLOW_RUNTIME_V2_SCRIPT_FAILED",
+                  "message": "Workflow script execution failed",
+                  "category": "SYSTEM",
+                  "severity": "HIGH"
+                },
+                "completedAt": 1776787894147
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requestId": "req_mo8tl4lx_phzwcbskw88sxc6k",
+      "rootCommandId": "cmd_mo8tl4lx_sbnktcy18b48lgvc",
+      "status": "COMPLETED",
+      "startedAt": 1776787810197,
+      "updatedAt": 1776787810203,
+      "commands": [
+        {
+          "requestId": "req_mo8tl4lx_phzwcbskw88sxc6k",
+          "commandId": "cmd_mo8tl4lx_sbnktcy18b48lgvc",
+          "commandName": "kernel.base.topology-runtime-v3.set-instance-mode",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776787810197,
+          "completedAt": 1776787810203,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.topology-runtime-v3.TopologyContextActor",
+              "status": "COMPLETED",
+              "startedAt": 1776787810197,
+              "completedAt": 1776787810202
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requestId": "req_mo8te6e4_sw6mewuw2h16pkkn",
+      "rootCommandId": "cmd_mo8te6e4_wzzjlrvlu59ju765",
+      "status": "COMPLETED",
+      "startedAt": 1776787485916,
+      "updatedAt": 1776787485919,
+      "commands": [
+        {
+          "requestId": "req_mo8te6e4_sw6mewuw2h16pkkn",
+          "commandId": "cmd_mo8te6e4_wzzjlrvlu59ju765",
+          "commandName": "kernel.base.runtime-shell-v2.initialize",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776787485916,
+          "completedAt": 1776787485919,
+          "actorResults": [
+            {
+              "actorKey": "assembly.android.mixc-retail-rn84.AssemblyRuntimeInitializeActor",
+              "status": "COMPLETED",
+              "startedAt": 1776787485916,
+              "completedAt": 1776787485919,
+              "result": {
+                "displayIndex": 0,
+                "displayCount": 1
+              }
+            },
+            {
+              "actorKey": "kernel.base.tdp-sync-runtime-v2.TdpInitializeActor",
+              "status": "COMPLETED",
+              "startedAt": 1776787485916,
+              "completedAt": 1776787485919,
+              "result": {}
+            },
+            {
+              "actorKey": "ui.integration.retail-shell.RetailShellRuntimeInitializeActor",
+              "status": "COMPLETED",
+              "startedAt": 1776787485917,
+              "completedAt": 1776787485919,
+              "result": {
+                "displayIndex": 0,
+                "activated": false
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo8te6e4_sw6mewuw2h16pkkn",
+          "commandId": "cmd_mo8te6e4_4v93yrix9j9tab0r",
+          "parentCommandId": "cmd_mo8te6e4_wzzjlrvlu59ju765",
+          "commandName": "kernel.base.topology-runtime-v3.refresh-topology-context",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776787485916,
+          "completedAt": 1776787485918,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.topology-runtime-v3.TopologyContextActor",
+              "status": "COMPLETED",
+              "startedAt": 1776787485916,
+              "completedAt": 1776787485918,
+              "result": {
+                "context": {
+                  "displayIndex": 0,
+                  "displayCount": 1,
+                  "instanceMode": "MASTER",
+                  "displayMode": "PRIMARY",
+                  "workspace": "MAIN",
+                  "standalone": true,
+                  "enableSlave": false,
+                  "localNodeId": "master:ZJ63NQELD9"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo8te6e4_sw6mewuw2h16pkkn",
+          "commandId": "cmd_mo8te6e4_utr00mfuia6ikt3u",
+          "parentCommandId": "cmd_mo8te6e4_wzzjlrvlu59ju765",
+          "commandName": "kernel.base.tdp-sync-runtime-v2.bootstrap-tdp-sync",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776787485916,
+          "completedAt": 1776787485918,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tdp-sync-runtime-v2.TdpBootstrapActor",
+              "status": "COMPLETED",
+              "startedAt": 1776787485916,
+              "completedAt": 1776787485918,
+              "result": {}
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo8te6e4_sw6mewuw2h16pkkn",
+          "commandId": "cmd_mo8te6e5_tqgicxsp82o2vlp1",
+          "parentCommandId": "cmd_mo8te6e4_utr00mfuia6ikt3u",
+          "commandName": "kernel.base.tdp-sync-runtime-v2.bootstrap-tdp-sync-succeeded",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776787485917,
+          "completedAt": 1776787485918,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tdp-sync-runtime-v2.TdpBootstrapActor",
+              "status": "COMPLETED",
+              "startedAt": 1776787485917,
+              "completedAt": 1776787485918,
+              "result": {}
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo8te6e4_sw6mewuw2h16pkkn",
+          "commandId": "cmd_mo8te6e5_9f5o94cdtlo4n2m5",
+          "parentCommandId": "cmd_mo8te6e4_wzzjlrvlu59ju765",
+          "commandName": "kernel.base.ui-runtime-v2.replace-screen",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776787485917,
+          "completedAt": 1776787485918,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.ui-runtime-v2.UiRuntimeScreenRuntimeActor",
+              "status": "COMPLETED",
+              "startedAt": 1776787485917,
+              "completedAt": 1776787485918,
+              "result": {
+                "containerKey": "primary.root.container"
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo8te6e4_sw6mewuw2h16pkkn",
+          "commandId": "cmd_mo8te6e6_ttyyzixbzd2oa2p0",
+          "parentCommandId": "cmd_mo8te6e4_wzzjlrvlu59ju765",
+          "commandName": "kernel.base.tcp-control-runtime-v2.bootstrap-tcp-control",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776787485918,
+          "completedAt": 1776787485919,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tcp-control-runtime-v2.TcpBootstrapActor",
+              "status": "COMPLETED",
+              "startedAt": 1776787485918,
+              "completedAt": 1776787485919,
+              "result": {
+                "deviceFingerprint": "ZJ63NQELD9"
+              }
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo8te6e4_sw6mewuw2h16pkkn",
+          "commandId": "cmd_mo8te6e6_3pr8ct10hmug1zdq",
+          "parentCommandId": "cmd_mo8te6e6_ttyyzixbzd2oa2p0",
+          "commandName": "kernel.base.tcp-control-runtime-v2.bootstrap-tcp-control-succeeded",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776787485918,
+          "completedAt": 1776787485918,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.tcp-control-runtime-v2.TcpStateMutationActor",
+              "status": "COMPLETED",
+              "startedAt": 1776787485918,
+              "completedAt": 1776787485918,
+              "result": {}
+            }
+          ]
+        },
+        {
+          "requestId": "req_mo8te6e4_sw6mewuw2h16pkkn",
+          "commandId": "cmd_mo8te6e6_pshffzaly7o7dmrh",
+          "parentCommandId": "cmd_mo8te6e4_wzzjlrvlu59ju765",
+          "commandName": "kernel.base.ui-runtime-v2.replace-screen",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776787485918,
+          "completedAt": 1776787485918,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.ui-runtime-v2.UiRuntimeScreenRuntimeActor",
+              "status": "COMPLETED",
+              "startedAt": 1776787485918,
+              "completedAt": 1776787485918,
+              "result": {
+                "containerKey": "secondary.root.container"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requestId": "req_mo8te6e1_zxvifm1pyr419xxw",
+      "rootCommandId": "cmd_mo8te6e1_ildptgqagmds5u84",
+      "status": "COMPLETED",
+      "startedAt": 1776787485913,
+      "updatedAt": 1776787485913,
+      "commands": [
+        {
+          "requestId": "req_mo8te6e1_zxvifm1pyr419xxw",
+          "commandId": "cmd_mo8te6e1_ildptgqagmds5u84",
+          "commandName": "kernel.base.ui-runtime-v2.register-screen-definitions",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776787485913,
+          "completedAt": 1776787485913,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.ui-runtime-v2.UiRuntimeScreenRegistryActor",
+              "status": "COMPLETED",
+              "startedAt": 1776787485913,
+              "completedAt": 1776787485913,
+              "result": {
+                "registeredCount": 3
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requestId": "req_mo8te6e1_stanz1l3ni0ug1i3",
+      "rootCommandId": "cmd_mo8te6e1_5dkhqmqa8ta5zeed",
+      "status": "COMPLETED",
+      "startedAt": 1776787485913,
+      "updatedAt": 1776787485913,
+      "commands": [
+        {
+          "requestId": "req_mo8te6e1_stanz1l3ni0ug1i3",
+          "commandId": "cmd_mo8te6e1_5dkhqmqa8ta5zeed",
+          "commandName": "kernel.base.ui-runtime-v2.register-screen-definitions",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776787485913,
+          "completedAt": 1776787485913,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.ui-runtime-v2.UiRuntimeScreenRegistryActor",
+              "status": "COMPLETED",
+              "startedAt": 1776787485913,
+              "completedAt": 1776787485913,
+              "result": {
+                "registeredCount": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requestId": "req_mo8te6dz_76sntv9zi54e0hdi",
+      "rootCommandId": "cmd_mo8te6dz_3zaephm499eude0p",
+      "status": "COMPLETED",
+      "startedAt": 1776787485911,
+      "updatedAt": 1776787485912,
+      "commands": [
+        {
+          "requestId": "req_mo8te6dz_76sntv9zi54e0hdi",
+          "commandId": "cmd_mo8te6dz_3zaephm499eude0p",
+          "commandName": "kernel.base.ui-runtime-v2.register-screen-definitions",
+          "target": "local",
+          "status": "COMPLETED",
+          "startedAt": 1776787485911,
+          "completedAt": 1776787485912,
+          "actorResults": [
+            {
+              "actorKey": "kernel.base.ui-runtime-v2.UiRuntimeScreenRegistryActor",
+              "status": "COMPLETED",
+              "startedAt": 1776787485911,
+              "completedAt": 1776787485912,
+              "result": {
+                "registeredCount": 3
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "id": "1776788928690-9f895a64804bc8"
+}

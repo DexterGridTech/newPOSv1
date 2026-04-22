@@ -1,0 +1,6 @@
+{
+  "last_turn_at": "2026-04-20T10:45:42.983Z",
+  "turn_count": 1,
+  "last_progress_at": "2026-04-20T10:45:42.983Z",
+  "last_agent_output": "这个判断成立，值得修。`bindConnectorEvents()` 只能解绑当前实例字段里的 listener remover，新 RN module 实例创建时确实无法触达旧实例字段，所以旧实例监"
+}

@@ -79,6 +79,31 @@ class HotUpdateBootMarkerStoreTest {
     assertTrue(encoded.contains("\"healthCheckTimeoutMs\":15000"))
   }
 
+  @Test
+  fun usesProductionSafeHealthCheckTimeoutWhenLegacyMarkerOmitsIt() {
+    val decoded = HotUpdateMarkerCodec.decode(
+      """
+        {
+          "releaseId":"rel-legacy",
+          "packageId":"pkg-legacy",
+          "bundleVersion":"1.0.0+ota.legacy",
+          "installDir":"/tmp/pkg-legacy",
+          "entryFile":"index.android.bundle",
+          "manifestSha256":"manifest-sha",
+          "bootAttempt":0,
+          "maxLaunchFailures":2,
+          "updatedAt":123
+        }
+      """.trimIndent(),
+    )
+
+    assertNotNull(decoded)
+    assertEquals(
+      HotUpdateBootMarkerStore.DEFAULT_HEALTH_CHECK_TIMEOUT_MS,
+      decoded?.healthCheckTimeoutMs,
+    )
+  }
+
   private fun createMarker(): HotUpdateMarker {
     return HotUpdateMarker(
       releaseId = "rel-1",

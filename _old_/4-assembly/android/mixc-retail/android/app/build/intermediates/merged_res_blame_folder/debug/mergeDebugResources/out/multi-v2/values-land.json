@@ -1,0 +1,36 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.impos2.posdesktop.app-mergeDebugResources-36:/values-land/values-land.xml",
+            "map": [
+                {
+                    "source": "/Users/dexter/.gradle/caches/8.10.2/transforms/a681786a77a89637ef87385409c27077/transformed/appcompat-1.7.0/res/values-land/values-land.xml",
+                    "from": {
+                        "startLines": "2,3,4",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,125,196",
+                        "endColumns": "69,70,67",
+                        "endOffsets": "120,191,259"
+                    },
+                    "to": {
+                        "startLines": "2,4,5",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,189,260",
+                        "endColumns": "69,70,67",
+                        "endOffsets": "120,255,323"
+                    }
+                },
+                {
+                    "source": "/Users/dexter/.gradle/caches/8.10.2/transforms/84af15e7357bda0693abc56dba67695c/transformed/appcompat-v7-26.1.0/res/values-land/values-land.xml",
+                    "from": {
+                        "startLines": "3",
+                        "startColumns": "4",
+                        "startOffsets": "125",
+                        "endColumns": "63",
+                        "endOffsets": "184"
+                    }
+                }
+            ]
+        }
+    ]
+}

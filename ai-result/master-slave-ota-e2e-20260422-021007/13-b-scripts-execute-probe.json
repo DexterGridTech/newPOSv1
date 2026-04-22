@@ -1,0 +1,8 @@
+{
+  "jsonrpc": "2.0",
+  "error": {
+    "code": -32603,
+    "message": "'state' is not defined\n    at <anonymous> (unknown.js:14)\n    at <anonymous> (unknown.js:15)\n    at <eval> (unknown.js:17)\n"
+  },
+  "id": "1776795692443-108d4ec4a5bb5"
+}

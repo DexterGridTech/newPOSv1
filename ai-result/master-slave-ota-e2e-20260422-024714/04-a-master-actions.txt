@@ -1,0 +1,16 @@
+{
+  "ok": true,
+  "nodeId": "ui-base-admin-popup:tab:topology"
+}
+{
+  "ok": true,
+  "nodeId": "ui-base-admin-section:topology:set-master"
+}
+{
+  "ok": true,
+  "nodeId": "ui-base-admin-section:topology:enable-slave"
+}
+{
+  "ok": true,
+  "nodeId": "ui-base-admin-section:topology:start"
+}

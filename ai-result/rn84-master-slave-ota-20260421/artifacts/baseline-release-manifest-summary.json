@@ -1,0 +1,10 @@
+{
+  "version": null,
+  "buildNumber": 3,
+  "bundleVersion": "1.0.0+ota.0",
+  "channel": "production",
+  "git": {
+    "commit": "9ff682189520949eb679d1847b2e33d6eaa4ab78",
+    "branch": "main"
+  }
+}

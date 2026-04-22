@@ -1,0 +1,3 @@
+/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/app/.cxx/Debug/561o4n1o/x86/CMakeFiles/appmodules.dir
+/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/app/.cxx/Debug/561o4n1o/x86/CMakeFiles/edit_cache.dir
+/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/app/.cxx/Debug/561o4n1o/x86/CMakeFiles/rebuild_cache.dir

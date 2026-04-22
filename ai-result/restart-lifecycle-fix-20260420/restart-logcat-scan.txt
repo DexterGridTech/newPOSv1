@@ -1,0 +1,36 @@
+193:04-19 22:19:10.596 W/unknown:BridgelessReact( 8172): ReactHost{0}.startSurface(surfaceId = 0): Schedule
+194:04-19 22:19:10.596 W/unknown:BridgelessReact( 8172): ReactHost{0}.attachSurface(surfaceId = 0)
+195:04-19 22:19:10.596 W/unknown:BridgelessReact( 8172): ReactHost{0}.getOrCreateReactInstanceTask()
+196:04-19 22:19:10.597 W/unknown:BridgelessReact( 8172): ReactHost{0}.getOrCreateReactInstanceTask(): Start
+197:04-19 22:19:10.597 W/unknown:BridgelessReact( 8172): ReactHost{0}.getJSBundleLoader()
+198:04-19 22:19:10.597 W/unknown:BridgelessReact( 8172): ReactHost{0}.isMetroRunning()
+200:04-19 22:19:10.604 W/unknown:BridgelessReact( 8172): ReactHost{0}.isMetroRunning(): Async result = true
+201:04-19 22:19:10.605 W/unknown:BridgelessReact( 8172): ReactHost{0}.loadJSBundleFromMetro()
+203:04-19 22:19:10.616 W/unknown:BridgelessReact( 8172): ReactHost{0}.onHostResume(activity)
+248:04-19 22:19:10.729 D/MainActivity( 8172): Skipped RN onWindowFocusChanged before React context is ready: hasFocus=true
+259:04-19 22:19:11.007 W/unknown:BridgelessReact( 8172): ReactHost{0}.loadJSBundleFromMetro(): Creating BundleLoader
+260:04-19 22:19:11.008 W/unknown:BridgelessReact( 8172): ReactHost{0}.getOrCreateReactInstanceTask(): Creating BridgelessReactContext
+261:04-19 22:19:11.009 W/unknown:BridgelessReact( 8172): ReactHost{0}.getOrCreateReactInstanceTask(): Creating ReactInstance
+263:04-19 22:19:11.049 W/unknown:BridgelessReact( 8172): ReactHost{0}.getOrCreateReactInstanceTask(): Loading JS Bundle
+264:04-19 22:19:11.049 W/unknown:BridgelessReact( 8172): ReactHost{0}.getOrCreateReactInstanceTask(): DevSupportManager.onNewReactContextCreated()
+266:04-19 22:19:11.053 W/unknown:BridgelessReact( 8172): ReactHost{0}.startSurface(surfaceId = 0): Execute
+267:04-19 22:19:11.054 W/unknown:BridgelessReact( 8172): ReactHost{0}.ReactContext.onHostResume()
+268:04-19 22:19:11.054 W/unknown:BridgelessReact( 8172): ReactHost{0}.getOrCreateReactInstanceTask(): Executing ReactInstanceEventListeners
+1006:04-19 22:19:15.336 W/unknown:BridgelessReact( 8251): ReactHost{0}.startSurface(surfaceId = 0): Schedule
+1007:04-19 22:19:15.336 W/unknown:BridgelessReact( 8251): ReactHost{0}.attachSurface(surfaceId = 0)
+1008:04-19 22:19:15.337 W/unknown:BridgelessReact( 8251): ReactHost{0}.getOrCreateReactInstanceTask()
+1009:04-19 22:19:15.337 W/unknown:BridgelessReact( 8251): ReactHost{0}.getOrCreateReactInstanceTask(): Start
+1010:04-19 22:19:15.337 W/unknown:BridgelessReact( 8251): ReactHost{0}.getJSBundleLoader()
+1011:04-19 22:19:15.338 W/unknown:BridgelessReact( 8251): ReactHost{0}.isMetroRunning()
+1013:04-19 22:19:15.345 W/unknown:BridgelessReact( 8251): ReactHost{0}.isMetroRunning(): Async result = true
+1014:04-19 22:19:15.346 W/unknown:BridgelessReact( 8251): ReactHost{0}.loadJSBundleFromMetro()
+1017:04-19 22:19:15.364 W/unknown:BridgelessReact( 8251): ReactHost{0}.onHostResume(activity)
+1036:04-19 22:19:15.466 D/SecondaryActivity( 8251): Skipped RN onWindowFocusChanged before React context is ready: hasFocus=true
+1168:04-19 22:19:15.723 W/unknown:BridgelessReact( 8251): ReactHost{0}.loadJSBundleFromMetro(): Creating BundleLoader
+1169:04-19 22:19:15.724 W/unknown:BridgelessReact( 8251): ReactHost{0}.getOrCreateReactInstanceTask(): Creating BridgelessReactContext
+1170:04-19 22:19:15.725 W/unknown:BridgelessReact( 8251): ReactHost{0}.getOrCreateReactInstanceTask(): Creating ReactInstance
+1182:04-19 22:19:15.777 W/unknown:BridgelessReact( 8251): ReactHost{0}.getOrCreateReactInstanceTask(): Loading JS Bundle
+1183:04-19 22:19:15.809 W/unknown:BridgelessReact( 8251): ReactHost{0}.getOrCreateReactInstanceTask(): DevSupportManager.onNewReactContextCreated()
+1184:04-19 22:19:15.812 W/unknown:BridgelessReact( 8251): ReactHost{0}.startSurface(surfaceId = 0): Execute
+1186:04-19 22:19:15.813 W/unknown:BridgelessReact( 8251): ReactHost{0}.ReactContext.onHostResume()
+1187:04-19 22:19:15.813 W/unknown:BridgelessReact( 8251): ReactHost{0}.getOrCreateReactInstanceTask(): Executing ReactInstanceEventListeners

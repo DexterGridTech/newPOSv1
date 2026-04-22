@@ -1,0 +1,12 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "deviceFingerprint": "438176N3MB",
+    "deviceInfo": {
+      "id": "438176N3MB",
+      "model": "Mixc Retail Android RN84"
+    },
+    "activationStatus": "UNACTIVATED"
+  },
+  "id": "1776704713879-e7fa133e8de28"
+}

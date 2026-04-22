@@ -1,0 +1,392 @@
+--------- beginning of main
+04-22 03:14:12.136 26757 26777 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"MASTER","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-22 03:14:12.136 26757 26777 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"MASTER","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-22 03:14:12.136 26757 26777 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"MASTER","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-22 03:14:12.137 26757 26777 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"MASTER","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-22 03:14:12.138 26757 26840 D nativeloader: Load /data/app/~~mlu_uUM8IWIAYPEnYCSHww==/com.impos2.mixcretailassemblyrn84--nJCRmoKhcdIKidx99VyDA==/base.apk!/lib/arm64-v8a/libquickjs-android-wrapper.so using class loader ns clns-9 (caller=/data/app/~~mlu_uUM8IWIAYPEnYCSHww==/com.impos2.mixcretailassemblyrn84--nJCRmoKhcdIKidx99VyDA==/base.apk): ok
+04-22 03:14:12.142 26757 26777 I ConnectorManager: call start taskId=54996e620f4846f293895506bef8e0f0 channel=INTENT/camera action=com.impos2.posadapter.action.CAMERA_SCAN timeout=60000
+04-22 03:14:12.143   683  1873 V GrammaticalInflectionUtils: AttributionSource: AttributionSource { uid = 10214, packageName = null, attributionTag = null, token = android.os.Binder@d3d534, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+--------- beginning of system
+04-22 03:14:12.143   683  1873 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_USER_ASPECT_RATIO_OVERRIDE
+04-22 03:14:12.144   683  1873 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_USER_ASPECT_RATIO_FULLSCREEN_OVERRIDE
+04-22 03:14:12.144   683  1873 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_RESIZEABLE_ACTIVITY_OVERRIDES
+04-22 03:14:12.144   683  1873 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_MIN_ASPECT_RATIO_OVERRIDE
+04-22 03:14:12.144   683  1873 D CompatChangeReporter: Compat change id reported: 358129114; UID 10214; state: ENABLED
+04-22 03:14:12.144   683  1873 D CompatChangeReporter: Compat change id reported: 357141415; UID 10214; state: ENABLED
+04-22 03:14:12.144   683  1873 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_ORIENTATION_OVERRIDE
+04-22 03:14:12.145   683  1873 I ActivityTaskManager: Ignoring manifest-declared fixed orientation SCREEN_ORIENTATION_PORTRAIT of ActivityRecord{126515760 u0 com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity t39} since target sdk 36
+04-22 03:14:12.146   957  1041 V WindowManagerShell: Transition requested (#153): android.os.BinderProxy@40f5116 TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=39 effectiveUid=10214 displayId=0 isRunning=true baseIntent=Intent { flg=0x10000000 cmp=com.impos2.mixcretailassemblyrn84/.MainActivity } baseActivity=ComponentInfo{com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity} topActivity=ComponentInfo{com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity} origActivity=null realActivity=ComponentInfo{com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity} numActivities=2 lastActiveTime=24309690 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{android.window.IWindowContainerToken$Stub$Proxy@23e6a97} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=Rect(0, 0 - 0, 0) topActivityInfo=ActivityInfo{d79484 com.impos2.adapterv2.camera.CameraScanActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=true isVisible=true isVisibleRequested=true isTopActivityNoDisplay=false isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false isActivityStackTransparent=false lastNonFullscreenBounds=Rect(892, 102 - 1668, 1482) capturedLink=null capturedLinkTimestamp=0 requestedVisibleTypes=-9 topActivityRequestOpenInBrowserEducationTimestamp=0 appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false eligibleForLetterboxEducation= false isLetterboxEducationEnabled= true isLetterboxDoubleTapEnabled= false eligibleForUserAspectRatioButton= true topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 topActivityAppBounds=Rect(0, 0 - 2560, 1600) isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false hasMinAspectRatioOverride=false topActivityLetterboxBounds=null cameraCompatTaskInfo=CameraCompatTaskInfo { freeformCameraCompatMode=inactive}} topActivityMainWindowFrame=null}, pipChange = null, remoteTransition = null, displayChange = null, flags = 0, debugId = 153 }
+04-22 03:14:12.146   957  1041 D ShellSplitScreen: logExit: no-op, mLoggerSessionId is null
+04-22 03:14:12.147   683  1873 I ActivityTaskManager: START u0 {act=com.impos2.posadapter.action.CAMERA_SCAN flg=0x24000000 xflg=0x4 cmp=com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity (has extras)} with LAUNCH_MULTIPLE from uid 10214 (sr=229832130) (BAL_ALLOW_VISIBLE_WINDOW) result code=0
+04-22 03:14:12.147 26757 26777 I CameraScannerManager: startScan success: requestId=44293dcb-8fd1-41e2-961f-8c453143d36b, scanMode=QR_CODE_MODE, imageUri=true, waitResult=true
+04-22 03:14:12.148 26757 26757 W unknown:BridgelessReact: ReactHost{0}.onUserLeaveHint(activity)
+04-22 03:14:12.148 26757 26757 W unknown:BridgelessReact: ReactHost{0}.onHostPause(activity)
+04-22 03:14:12.148 26757 26757 W unknown:BridgelessReact: ReactHost{0}.ReactContext.onHostPause()
+04-22 03:14:12.148   683  1827 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_DISPLAY_ORIENTATION_OVERRIDE
+04-22 03:14:12.149   683  1827 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ENABLE_FAKE_FOCUS
+04-22 03:14:12.149   683   912 D BackgroundInstallControlService: Package event received: 0
+04-22 03:14:12.150   683   912 D BackgroundInstallControlService: Package event received: 0
+04-22 03:14:12.150   683   912 D BackgroundInstallControlService: Package event received: 0
+04-22 03:14:12.150   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.150   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.150   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.150   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.150   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.150   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.150   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.150   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.150   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.150   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.150   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.150   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.150   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.150   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.150   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.150   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.150   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.150   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.150   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.150   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.150   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.150   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.150   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.150   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.151   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.151   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.151   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.151   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.151   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.151   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.151   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.151   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.151   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.151   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.151   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.151   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.151   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.151   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.151   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.151   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.151   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.151   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.151   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.151   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.151   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.151   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.151   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 03:14:12.152 26757 26757 I ailassemblyrn84: AssetManager2(0xb400007aa8c357b8) locale list changing from [] to [en-US]
+04-22 03:14:12.154 26757 26757 D CompatChangeReporter: Compat change id reported: 376561342; UID 10214; state: ENABLED
+04-22 03:14:12.155 26757 26757 I CameraScanActivity: scan from imageUri started: file:///sdcard/Android/data/com.impos2.mixcretailassemblyrn84/files/rn84-e2e/topology-share-bridge-qr.png
+04-22 03:14:12.155 26757 26757 I CameraScanActivity: analyzePickedImage start: file:///sdcard/Android/data/com.impos2.mixcretailassemblyrn84/files/rn84-e2e/topology-share-bridge-qr.png
+04-22 03:14:12.155 26757 26757 D AutofillManager: Fill dialog is enabled:false, hints=[]
+04-22 03:14:12.156 26757 26757 D InsetsController: Setting requestedVisibleTypes to -16 (was -9)
+04-22 03:14:12.157   515   515 I BpBinder: onLastStrongRef automatically unlinking death recipients: 
+04-22 03:14:12.161 26757 26843 W CameraScanActivity: analyzePickedImage read failed: /sdcard/Android/data/com.impos2.mixcretailassemblyrn84/files/rn84-e2e/topology-share-bridge-qr.png: open failed: EACCES (Permission denied)
+04-22 03:14:12.161 26757 26843 W CameraScanActivity: java.io.FileNotFoundException: /sdcard/Android/data/com.impos2.mixcretailassemblyrn84/files/rn84-e2e/topology-share-bridge-qr.png: open failed: EACCES (Permission denied)
+04-22 03:14:12.161 26757 26843 W CameraScanActivity: 	at libcore.io.IoBridge.open(IoBridge.java:574)
+04-22 03:14:12.161 26757 26843 W CameraScanActivity: 	at java.io.FileInputStream.<init>(FileInputStream.java:179)
+04-22 03:14:12.161 26757 26843 W CameraScanActivity: 	at java.io.FileInputStream.<init>(FileInputStream.java:133)
+04-22 03:14:12.161 26757 26843 W CameraScanActivity: 	at com.impos2.adapterv2.camera.CameraScanActivity.w1(r8-map-id-64424dfff95969f32eb6cebb4c4a76ceb3a0467d1bafb7f1b1b88c39992592f1:46)
+04-22 03:14:12.161 26757 26843 W CameraScanActivity: 	at com.impos2.adapterv2.camera.CameraScanActivity.a1(r8-map-id-64424dfff95969f32eb6cebb4c4a76ceb3a0467d1bafb7f1b1b88c39992592f1:3)
+04-22 03:14:12.161 26757 26843 W CameraScanActivity: 	at com.impos2.adapterv2.camera.CameraScanActivity.E0(r8-map-id-64424dfff95969f32eb6cebb4c4a76ceb3a0467d1bafb7f1b1b88c39992592f1:1)
+04-22 03:14:12.161 26757 26843 W CameraScanActivity: 	at O3.q.run(r8-map-id-64424dfff95969f32eb6cebb4c4a76ceb3a0467d1bafb7f1b1b88c39992592f1:5)
+04-22 03:14:12.161 26757 26843 W CameraScanActivity: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1156)
+04-22 03:14:12.161 26757 26843 W CameraScanActivity: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:651)
+04-22 03:14:12.161 26757 26843 W CameraScanActivity: 	at java.lang.Thread.run(Thread.java:1119)
+04-22 03:14:12.161 26757 26843 W CameraScanActivity: Caused by: android.system.ErrnoException: open failed: EACCES (Permission denied)
+04-22 03:14:12.161 26757 26843 W CameraScanActivity: 	at libcore.io.Linux.open(Native Method)
+04-22 03:14:12.161 26757 26843 W CameraScanActivity: 	at libcore.io.ForwardingOs.open(ForwardingOs.java:568)
+04-22 03:14:12.161 26757 26843 W CameraScanActivity: 	at libcore.io.BlockGuardOs.open(BlockGuardOs.java:274)
+04-22 03:14:12.161 26757 26843 W CameraScanActivity: 	at libcore.io.ForwardingOs.open(ForwardingOs.java:568)
+04-22 03:14:12.161 26757 26843 W CameraScanActivity: 	at android.app.ActivityThread$AndroidOs.open(ActivityThread.java:8953)
+04-22 03:14:12.161 26757 26843 W CameraScanActivity: 	at libcore.io.IoBridge.open(IoBridge.java:560)
+04-22 03:14:12.161 26757 26843 W CameraScanActivity: 	... 9 more
+04-22 03:14:12.166   683  1273 D CoreBackPreview: Window{655095c u0 com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@896453a, mPriority=-1, mIsAnimationCallback=false, mOverrideBehavior=0}
+04-22 03:14:12.198 26757 26757 W CameraScanActivity: picked image scan failed: /sdcard/Android/data/com.impos2.mixcretailassemblyrn84/files/rn84-e2e/topology-share-bridge-qr.png: open failed: EACCES (Permission denied)
+04-22 03:14:12.200   683   731 I ActivityTaskManager: Displayed com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity for user 0: +56ms
+04-22 03:14:12.201   957 25095 V WindowManagerShell: onTransitionReady(transaction=2933462669266)
+04-22 03:14:12.201   957  1041 V WindowManagerShell: onTransitionReady (#153) android.os.BinderProxy@40f5116: {id=153 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[
+04-22 03:14:12.201   957  1041 V WindowManagerShell:         {m=OPEN f=FILLS_TASK leash=Surface(name=ActivityRecord{126515760 u0 com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity)/@0xd22a46d sb=Rect(0, 0 - 0, 0) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=-1->0 r=-1->0:-1 bc=ff303030 component=com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity opt={t=FROM_STYLE mUserId=0}},
+04-22 03:14:12.201   957  1041 V WindowManagerShell:         {m=TO_BACK f=FILLS_TASK leash=Surface(name=ActivityRecord{229832130 u0 com.impos2.mixcretailassemblyrn84/.MainActivity)/@0xf2768a2 sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=0 bc=ff303030 component=com.impos2.mixcretailassemblyrn84/.MainActivity opt={t=FROM_STYLE mUserId=0}}
+04-22 03:14:12.201   957  1041 V WindowManagerShell:     ]}
+04-22 03:14:12.201   957  1041 V WindowManagerShell: Playing animation for (#153) android.os.BinderProxy@40f5116@0
+04-22 03:14:12.201   957  1041 V ShellRecents: RecentsTransitionHandler.startAnimation: no controller found
+04-22 03:14:12.201   957  1041 V WindowManagerShell: Transition doesn't have explicit remote, search filters for match for {id=153 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{m=OPEN f=FILLS_TASK leash=Surface(name=ActivityRecord{126515760 u0 com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity)/@0xd22a46d sb=Rect(0, 0 - 0, 0) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=-1->0 r=-1->0:-1 bc=ff303030 component=com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity opt={t=FROM_STYLE mUserId=0}},{m=TO_BACK f=FILLS_TASK leash=Surface(name=ActivityRecord{229832130 u0 com.impos2.mixcretailassemblyrn84/.MainActivity)/@0xf2768a2 sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=0 bc=ff303030 component=com.impos2.mixcretailassemblyrn84/.MainActivity opt={t=FROM_STYLE mUserId=0}}]}
+04-22 03:14:12.201   957  1041 V WindowManagerShell:  Checking filter Pair{{types=[] flags=0x0] notFlags=0x0 checks=[{atype=undefined independent=true modes=[CLOSE,TO_BACK] flags=IN_TASK_WITH_EMBEDDED_ACTIVITY mustBeTask=false order=ANY topActivity=null launchCookie=null taskFragmentToken=android.os.BinderProxy@c0a78a1 windowingMode=undefined}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@ebc9ac6, appThread = android.app.IApplicationThread$Stub$Proxy@89a6a87, debugName = overlayBackTransition }}
+04-22 03:14:12.201   957  1041 V WindowManagerShell:  Checking filter Pair{{types=[] flags=0x0] notFlags=0x0 checks=[{atype=dream independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined},{atype=home independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@19eadb4, appThread = android.app.IApplicationThread$Stub$Proxy@6b4fddd, debugName = LauncherToDream }}
+04-22 03:14:12.201   957  1041 V WindowManagerShell:  Checking filter Pair{{types=[] flags=0x0] notFlags=0x100 checks=[{atype=home independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=TOP topActivity=ComponentInfo{com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity} launchCookie=null windowingMode=undefined},{atype=standard independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined},{NOT atype=undefined independent=true modes=[] flags=NONE mustBeTask=true order=ANY topActivity=null launchCookie=null customAnim=true windowingMode=undefined}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@6579d52, appThread = android.app.IApplicationThread$Stub$Proxy@4a92823, debugName = QuickstepLaunchHome }}
+04-22 03:14:12.201   957  1041 V WindowManagerShell:  Delegate animation for (#153) to null
+04-22 03:14:12.201   957  1041 V WindowManagerShell: start default transition animation, info = {id=153 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{m=OPEN f=FILLS_TASK leash=Surface(name=ActivityRecord{126515760 u0 com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity)/@0xd22a46d sb=Rect(0, 0 - 0, 0) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=-1->0 r=-1->0:-1 bc=ff303030 component=com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity opt={t=FROM_STYLE mUserId=0}},{m=TO_BACK f=FILLS_TASK leash=Surface(name=ActivityRecord{229832130 u0 com.impos2.mixcretailassemblyrn84/.MainActivity)/@0xf2768a2 sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=0 bc=ff303030 component=com.impos2.mixcretailassemblyrn84/.MainActivity opt={t=FROM_STYLE mUserId=0}}]}
+04-22 03:14:12.202   957  1041 V WindowManagerShell: loadAnimation: anim=android.view.animation.AnimationSet@35e158f animAttr=0x5 type=OPEN isEntrance=false
+04-22 03:14:12.202   957  1041 V WindowManagerShell: loadAnimation: anim=android.view.animation.AnimationSet@73169fa animAttr=0x4 type=OPEN isEntrance=true
+04-22 03:14:12.203   957  1041 V WindowManagerShell:  animated by com.android.wm.shell.transition.DefaultTransitionHandler@419789b
+04-22 03:14:12.205   683   731 V WindowManager: Sent Transition (#153) createdAt=04-22 03:14:12.144 via request=TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=39 effectiveUid=10214 displayId=0 isRunning=true baseIntent=Intent { flg=0x10000000 cmp=com.impos2.mixcretailassemblyrn84/.MainActivity } baseActivity=ComponentInfo{com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity} topActivity=ComponentInfo{com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity} origActivity=null realActivity=ComponentInfo{com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity} numActivities=2 lastActiveTime=24309690 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{RemoteToken{33c046c Task{21fefd3 #39 type=standard A=10214:com.impos2.mixcretailassemblyrn84}}} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=Rect(0, 0 - 0, 0) topActivityInfo=ActivityInfo{dae9763 com.impos2.adapterv2.camera.CameraScanActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=true isVisible=true isVisibleRequested=true isTopActivityNoDisplay=false isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false isActivityStackTransparent=false lastNonFullscreenBounds=Rect(892, 102 - 1668, 1482) capturedLink=null capturedLinkTimestamp=0 requestedVisibleTypes=-9 topActivityRequestOpenInBrowserEducationTimestamp=0 appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false eligibleForLetterboxEducation= false isLetterboxEducationEnabled= true isLetterboxDoubleTapEnabled= false eligibleForUserAspectRatioButton= true topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 topActivityAppBounds=Rect(0, 0 - 2560, 1600) isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false hasMinAspectRatioOverride=false topActivityLetterboxBounds=null cameraCompatTaskInfo=CameraCompatTaskInfo { freeformCameraCompatMode=inactive}} topActivityMainWindowFrame=null}, pipChange = null, remoteTransition = null, displayChange = null, flags = 0, debugId = 153 }
+04-22 03:14:12.205   683   731 V WindowManager:     startWCT=WindowContainerTransaction { changes= {} hops= [] errorCallbackToken=null taskFragmentOrganizer=null }
+04-22 03:14:12.205   683   731 V WindowManager:     info={id=153 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[
+04-22 03:14:12.205   683   731 V WindowManager:         {m=OPEN f=FILLS_TASK leash=Surface(name=ActivityRecord{126515760 u0 com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity)/@0x9a727f4 sb=Rect(0, 0 - 0, 0) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=-1->0 r=-1->0:-1 bc=ff303030 component=com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity opt={t=FROM_STYLE mUserId=0}},
+04-22 03:14:12.205   683   731 V WindowManager:         {m=TO_BACK f=FILLS_TASK leash=Surface(name=ActivityRecord{229832130 u0 com.impos2.mixcretailassemblyrn84/.MainActivity)/@0x46b65c7 sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=0 bc=ff303030 component=com.impos2.mixcretailassemblyrn84/.MainActivity opt={t=FROM_STYLE mUserId=0}}
+04-22 03:14:12.205   683   731 V WindowManager:     ]}
+04-22 03:14:12.206   957  1041 V WindowManagerShell: Transition requested (#154): android.os.BinderProxy@fb07bab TransitionRequestInfo { type = CLOSE, triggerTask = null, pipChange = null, remoteTransition = null, displayChange = null, flags = 0, debugId = 154 }
+04-22 03:14:12.210 26757 26757 I ConnectorManager: call end taskId=54996e620f4846f293895506bef8e0f0 success=false code=9999 duration=68
+04-22 03:14:12.212 26757 26841 W ScriptEngineManager: bytecode compile/execute failed, fallback to evaluate
+04-22 03:14:12.212 26757 26841 W ScriptEngineManager: com.whl.quickjs.wrapper.QuickJSException: /sdcard/Android/data/com.impos2.mixcretailassemblyrn84/files/rn84-e2e/topology-share-bridge-qr.png: open failed: EACCES (Permission denied)
+04-22 03:14:12.212 26757 26841 W ScriptEngineManager:     at <anonymous> (unknown.js:16)
+04-22 03:14:12.212 26757 26841 W ScriptEngineManager:     at <anonymous> (unknown.js:29)
+04-22 03:14:12.212 26757 26841 W ScriptEngineManager:     at <eval> (unknown.js:31)
+04-22 03:14:12.212 26757 26841 W ScriptEngineManager: 
+04-22 03:14:12.212 26757 26841 W ScriptEngineManager: 	at com.whl.quickjs.wrapper.QuickJSContext.execute(Native Method)
+04-22 03:14:12.212 26757 26841 W ScriptEngineManager: 	at com.whl.quickjs.wrapper.QuickJSContext.execute(r8-map-id-64424dfff95969f32eb6cebb4c4a76ceb3a0467d1bafb7f1b1b88c39992592f1:3)
+04-22 03:14:12.212 26757 26841 W ScriptEngineManager: 	at U3.g.t(r8-map-id-64424dfff95969f32eb6cebb4c4a76ceb3a0467d1bafb7f1b1b88c39992592f1:52)
+04-22 03:14:12.212 26757 26841 W ScriptEngineManager: 	at U3.g.u(r8-map-id-64424dfff95969f32eb6cebb4c4a76ceb3a0467d1bafb7f1b1b88c39992592f1:153)
+04-22 03:14:12.212 26757 26841 W ScriptEngineManager: 	at U3.g.y(r8-map-id-64424dfff95969f32eb6cebb4c4a76ceb3a0467d1bafb7f1b1b88c39992592f1:1)
+04-22 03:14:12.212 26757 26841 W ScriptEngineManager: 	at U3.g.a(r8-map-id-64424dfff95969f32eb6cebb4c4a76ceb3a0467d1bafb7f1b1b88c39992592f1:1)
+04-22 03:14:12.212 26757 26841 W ScriptEngineManager: 	at U3.b.call(r8-map-id-64424dfff95969f32eb6cebb4c4a76ceb3a0467d1bafb7f1b1b88c39992592f1:7)
+04-22 03:14:12.212 26757 26841 W ScriptEngineManager: 	at java.util.concurrent.FutureTask.run(FutureTask.java:317)
+04-22 03:14:12.212 26757 26841 W ScriptEngineManager: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1156)
+04-22 03:14:12.212 26757 26841 W ScriptEngineManager: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:651)
+04-22 03:14:12.212 26757 26841 W ScriptEngineManager: 	at java.lang.Thread.run(Thread.java:1119)
+04-22 03:14:12.214   683   912 D BackgroundInstallControlService: Package event received: 0
+04-22 03:14:12.215 26757 26777 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"MASTER","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-22 03:14:12.215 26757 26777 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"MASTER","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-22 03:14:12.216 26757 26777 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"MASTER","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-22 03:14:12.216   957 25095 V WindowManagerShell: onTransitionReady(transaction=2933462669272)
+04-22 03:14:12.217   957  1041 V WindowManagerShell: onTransitionReady (#154) android.os.BinderProxy@fb07bab: {id=154 t=CLOSE f=0x0 trk=0 r=[0@Point(0, 0)] c=[
+04-22 03:14:12.217   957  1041 V WindowManagerShell:         {m=CLOSE f=FILLS_TASK|IS_OCCLUDED leash=Surface(name=ActivityRecord{126515760 u0 com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity)/@0xc1c2bc6 sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=0 bc=ff303030 component=com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity opt={t=FROM_STYLE mUserId=0}},
+04-22 03:14:12.217   957  1041 V WindowManagerShell:         {m=TO_FRONT f=FILLS_TASK leash=Surface(name=ActivityRecord{229832130 u0 com.impos2.mixcretailassemblyrn84/.MainActivity)/@0xe792787 sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=0 bc=ff303030 component=com.impos2.mixcretailassemblyrn84/.MainActivity opt={t=FROM_STYLE mUserId=0}}
+04-22 03:14:12.217   957  1041 V WindowManagerShell:     ]}
+04-22 03:14:12.217   957  1041 V WindowManagerShell: Transition (#154) android.os.BinderProxy@fb07bab@0 ready while (#153) android.os.BinderProxy@40f5116@0 is still animating. Notify the animating transition in case they can be merged
+04-22 03:14:12.217 26757 26777 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"MASTER","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-22 03:14:12.218 26757 26757 W unknown:BridgelessReact: ReactHost{0}.onHostResume(activity)
+04-22 03:14:12.218 26757 26757 W unknown:BridgelessReact: ReactHost{0}.ReactContext.onHostResume()
+04-22 03:14:12.218   957  1041 V WindowManagerShell: Transition animation finished (aborted=false), notifying core (#153) android.os.BinderProxy@40f5116@0
+04-22 03:14:12.218 26757 26777 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"MASTER","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-22 03:14:12.219   683   912 D BackgroundInstallControlService: Package event received: 0
+04-22 03:14:12.219   683   912 D BackgroundInstallControlService: Package event received: 0
+04-22 03:14:12.219   957  1041 V WindowManagerShell: Playing animation for (#154) android.os.BinderProxy@fb07bab@0
+04-22 03:14:12.219   683   731 V WindowManager: Sent Transition (#154) createdAt=04-22 03:14:12.206 via request=TransitionRequestInfo { type = CLOSE, triggerTask = null, pipChange = null, remoteTransition = null, displayChange = null, flags = 0, debugId = 154 }
+04-22 03:14:12.219   957  1041 V ShellRecents: RecentsTransitionHandler.startAnimation: no controller found
+04-22 03:14:12.219   683   731 V WindowManager:     startWCT=WindowContainerTransaction { changes= {} hops= [] errorCallbackToken=null taskFragmentOrganizer=null }
+04-22 03:14:12.219   683   731 V WindowManager:     info={id=154 t=CLOSE f=0x0 trk=0 r=[0@Point(0, 0)] c=[
+04-22 03:14:12.219   683   731 V WindowManager:         {m=CLOSE f=FILLS_TASK|IS_OCCLUDED leash=Surface(name=ActivityRecord{126515760 u0 com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity)/@0x9a727f4 sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=0 bc=ff303030 component=com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity opt={t=FROM_STYLE mUserId=0}},
+04-22 03:14:12.219   683   731 V WindowManager:         {m=TO_FRONT f=FILLS_TASK leash=Surface(name=ActivityRecord{229832130 u0 com.impos2.mixcretailassemblyrn84/.MainActivity)/@0x46b65c7 sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=0 bc=ff303030 component=com.impos2.mixcretailassemblyrn84/.MainActivity opt={t=FROM_STYLE mUserId=0}}
+04-22 03:14:12.219   683   731 V WindowManager:     ]}
+04-22 03:14:12.219   683   731 V WindowManager: Finish Transition (#153): created at 04-22 03:14:12.144 collect-started=0.01ms request-sent=2.17ms started=3.025ms ready=4.92ms sent=56.187ms commit=7.923ms finished=74.255ms
+04-22 03:14:12.219   957  1041 V WindowManagerShell: Transition doesn't have explicit remote, search filters for match for {id=154 t=CLOSE f=0x0 trk=0 r=[0@Point(0, 0)] c=[{m=CLOSE f=FILLS_TASK|IS_OCCLUDED leash=Surface(name=ActivityRecord{126515760 u0 com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity)/@0xc1c2bc6 sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=0 bc=ff303030 component=com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity opt={t=FROM_STYLE mUserId=0}},{m=TO_FRONT f=FILLS_TASK leash=Surface(name=ActivityRecord{229832130 u0 com.impos2.mixcretailassemblyrn84/.MainActivity)/@0xe792787 sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=0 bc=ff303030 component=com.impos2.mixcretailassemblyrn84/.MainActivity opt={t=FROM_STYLE mUserId=0}}]}
+04-22 03:14:12.220   957  1041 V WindowManagerShell:  Checking filter Pair{{types=[] flags=0x0] notFlags=0x0 checks=[{atype=undefined independent=true modes=[CLOSE,TO_BACK] flags=IN_TASK_WITH_EMBEDDED_ACTIVITY mustBeTask=false order=ANY topActivity=null launchCookie=null taskFragmentToken=android.os.BinderProxy@c0a78a1 windowingMode=undefined}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@ebc9ac6, appThread = android.app.IApplicationThread$Stub$Proxy@89a6a87, debugName = overlayBackTransition }}
+04-22 03:14:12.220   957  1041 V WindowManagerShell:  Checking filter Pair{{types=[] flags=0x0] notFlags=0x0 checks=[{atype=dream independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined},{atype=home independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@19eadb4, appThread = android.app.IApplicationThread$Stub$Proxy@6b4fddd, debugName = LauncherToDream }}
+04-22 03:14:12.220   957  1041 V WindowManagerShell:  Checking filter Pair{{types=[] flags=0x0] notFlags=0x100 checks=[{atype=home independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=TOP topActivity=ComponentInfo{com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity} launchCookie=null windowingMode=undefined},{atype=standard independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined},{NOT atype=undefined independent=true modes=[] flags=NONE mustBeTask=true order=ANY topActivity=null launchCookie=null customAnim=true windowingMode=undefined}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@6579d52, appThread = android.app.IApplicationThread$Stub$Proxy@4a92823, debugName = QuickstepLaunchHome }}
+04-22 03:14:12.220   957  1041 V WindowManagerShell:  Delegate animation for (#154) to null
+04-22 03:14:12.220   957  1041 V WindowManagerShell: start default transition animation, info = {id=154 t=CLOSE f=0x0 trk=0 r=[0@Point(0, 0)] c=[{m=CLOSE f=FILLS_TASK|IS_OCCLUDED leash=Surface(name=ActivityRecord{126515760 u0 com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity)/@0xc1c2bc6 sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=0 bc=ff303030 component=com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity opt={t=FROM_STYLE mUserId=0}},{m=TO_FRONT f=FILLS_TASK leash=Surface(name=ActivityRecord{229832130 u0 com.impos2.mixcretailassemblyrn84/.MainActivity)/@0xe792787 sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=0 bc=ff303030 component=com.impos2.mixcretailassemblyrn84/.MainActivity opt={t=FROM_STYLE mUserId=0}}]}
+04-22 03:14:12.220   957  1041 V WindowManagerShell: loadAnimation: anim=android.view.animation.AnimationSet@89f3e52 animAttr=0x6 type=CLOSE isEntrance=true
+04-22 03:14:12.221   957  1041 V WindowManagerShell: loadAnimation: anim=android.view.animation.AnimationSet@f696fd9 animAttr=0x7 type=CLOSE isEntrance=false
+04-22 03:14:12.222   957  1041 V WindowManagerShell:  animated by com.android.wm.shell.transition.DefaultTransitionHandler@419789b
+04-22 03:14:12.244   683   829 I ImeTracker: com.impos2.mixcretailassemblyrn84:3875ea2a: onRequestHide at ORIGIN_SERVER reason HIDE_SAME_WINDOW_FOCUSED_WITHOUT_EDITOR fromUser false
+04-22 03:14:12.244 26757 26757 D InsetsController: hide(ime(), fromIme=false)
+04-22 03:14:12.244 26757 26757 I ImeTracker: com.impos2.mixcretailassemblyrn84:3875ea2a: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+04-22 03:14:12.245  1576  1576 I GoogleInputMethodService: GoogleInputMethodService.onFinishInput():2043 
+04-22 03:14:12.246  1576  1576 I Module  : DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatus():100 repeatCheckTimes = 0, locked = false
+04-22 03:14:12.246  1576  1576 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():1293 onStartInput(EditorInfo{EditorInfo{packageName=com.impos2.mixcretailassemblyrn84, inputType=0, inputTypeString=NULL, enableLearning=false, autoCorrection=false, autoComplete=false, imeOptions=0, privateImeOptions=null, actionName=UNSPECIFIED, actionLabel=null, initialSelStart=-1, initialSelEnd=-1, initialCapsMode=0, label=null, fieldId=0, fieldName=null, extras=null, hintText=null, hintLocales=[]}}, false)
+04-22 03:14:12.246  1576  1576 I Module  : DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatus():100 repeatCheckTimes = 1, locked = false
+04-22 03:14:12.246  1576  1576 I EmojiCompatManager: EmojiCompatManager.getEmojiCompatIfLoaded():343 EmojiCompat.init() was never called.
+04-22 03:14:12.246  1576  1576 I EmojiCompatManager: java.lang.IllegalStateException: EmojiCompat is not initialized. Please call EmojiCompat.init() first
+04-22 03:14:12.246  1576  1576 I EmojiCompatManager: 	at asx.p(PG:6)
+04-22 03:14:12.246  1576  1576 I EmojiCompatManager: 	at axb.b(PG:13)
+04-22 03:14:12.246  1576  1576 I EmojiCompatManager: 	at jnr.b(PG:2)
+04-22 03:14:12.246  1576  1576 I EmojiCompatManager: 	at jnr.c(PG:4)
+04-22 03:14:12.246  1576  1576 I EmojiCompatManager: 	at jnr.f(PG:3)
+04-22 03:14:12.246  1576  1576 I EmojiCompatManager: 	at jnx.c(PG:3)
+04-22 03:14:12.246  1576  1576 I EmojiCompatManager: 	at kif.cz(PG:47)
+04-22 03:14:12.246  1576  1576 I EmojiCompatManager: 	at lhl.run(PG:1025)
+04-22 03:14:12.246  1576  1576 I EmojiCompatManager: 	at jaf.execute(PG:12)
+04-22 03:14:12.246  1576  1576 I EmojiCompatManager: 	at nco.v(PG:13)
+04-22 03:14:12.246  1576  1576 I EmojiCompatManager: 	at lhn.m(PG:96)
+04-22 03:14:12.246  1576  1576 I EmojiCompatManager: 	at lhn.k(PG:25)
+04-22 03:14:12.246  1576  1576 I EmojiCompatManager: 	at kgn.onStartInput(PG:250)
+04-22 03:14:12.246  1576  1576 I EmojiCompatManager: 	at android.inputmethodservice.InputMethodService.doStartInput(InputMethodService.java:3521)
+04-22 03:14:12.246  1576  1576 I EmojiCompatManager: 	at android.inputmethodservice.InputMethodService$InputMethodImpl.startInput(InputMethodService.java:879)
+04-22 03:14:12.246  1576  1576 I EmojiCompatManager: 	at android.inputmethodservice.InputMethodService$InputMethodImpl.dispatchStartInput(InputMethodService.java:908)
+04-22 03:14:12.246  1576  1576 I EmojiCompatManager: 	at android.inputmethodservice.IInputMethodWrapper.executeMessage(IInputMethodWrapper.java:201)
+04-22 03:14:12.246  1576  1576 I EmojiCompatManager: 	at com.android.internal.os.HandlerCaller$MyHandler.handleMessage(HandlerCaller.java:44)
+04-22 03:14:12.246  1576  1576 I EmojiCompatManager: 	at android.os.Handler.dispatchMessage(Handler.java:110)
+04-22 03:14:12.246  1576  1576 I EmojiCompatManager: 	at android.os.Looper.loopOnce(Looper.java:248)
+04-22 03:14:12.246  1576  1576 I EmojiCompatManager: 	at android.os.Looper.loop(Looper.java:338)
+04-22 03:14:12.246  1576  1576 I EmojiCompatManager: 	at android.app.ActivityThread.main(ActivityThread.java:9067)
+04-22 03:14:12.246  1576  1576 I EmojiCompatManager: 	at java.lang.reflect.Method.invoke(Native Method)
+04-22 03:14:12.246  1576  1576 I EmojiCompatManager: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:593)
+04-22 03:14:12.246  1576  1576 I EmojiCompatManager: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:932)
+04-22 03:14:12.246   683  1873 W PackageConfigPersister: App-specific configuration not found for packageName: com.impos2.mixcretailassemblyrn84 and userId: 0
+04-22 03:14:12.425  1086  1298 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+04-22 03:14:12.674   957  1041 V WindowManagerShell: Transition animation finished (aborted=false), notifying core (#154) android.os.BinderProxy@fb07bab@0
+04-22 03:14:12.675   683   731 V WindowManager: Finish Transition (#154): created at 04-22 03:14:12.206 collect-started=0.01ms request-sent=0.02ms started=2.332ms ready=8.529ms sent=9.674ms commit=7.976ms finished=468.921ms
+04-22 03:14:12.677   957  1041 V WindowManagerShell: Track 0 became idle
+04-22 03:14:12.677   957  1041 V WindowManagerShell: All active transition animations finished
+04-22 03:14:12.678 26757 26757 D VRI[CameraScanActivity]: visibilityChanged oldVisibility=true newVisibility=false
+04-22 03:14:12.694 26757 26757 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=android.app.Activity$$ExternalSyntheticLambda0@ef02d39
+04-22 03:14:12.694   683   706 D CoreBackPreview: Window{655095c u0 com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity}: Setting back callback null
+04-22 03:14:12.696 26757 26757 D ViewRootImpl: Skipping stats log for color mode
+04-22 03:14:12.698   683   912 D BackgroundInstallControlService: Package event received: 0
+04-22 03:14:14.521   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 03:14:14.522   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 03:14:14.522   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 03:14:14.522   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 03:14:14.522   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 03:14:14.522   683   858 D WifiClientModeImpl[9769:wlan0]: updateLinkLayerStatsRssiSpeedFrequencyCapabilities rssi=-50 TxLinkspeed=1 freq=2447 RxLinkSpeed=2
+04-22 03:14:14.522   683   858 D WifiDataStall: tx tput in kbps: 11000
+04-22 03:14:14.522   683   858 D WifiDataStall: rx tput in kbps: 11000
+04-22 03:14:14.522   683   858 V WifiConfigManager: Updating scan detail cache freq=2447 BSSID=00:13:10:85:fe:01 RSSI=-50 for "AndroidWifi"NONE
+04-22 03:14:14.522   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 03:14:14.522   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 03:14:14.522   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 03:14:14.522   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 03:14:14.522   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 03:14:14.522   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 03:14:14.522   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 03:14:14.522   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 03:14:14.523   683   858 D WifiScoreCard: BSSID update SIGNAL_POLL ID: 261501600 SSID: "AndroidWifi", BSSID: 00:13:10:85:fe:01, MAC: 02:15:b4:00:00:00, IP: /10.0.2.17, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: legacy, RSSI: -50, Link speed: 1Mbps, Tx Link speed: 1Mbps, Max Supported Tx Link speed: 11Mbps, Rx Link speed: 2Mbps, Max Supported Rx Link speed: 11Mbps, Frequency: 2447MHz, Net ID: 0, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"AndroidWifi"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+04-22 03:14:14.523   683   858 D WifiScoreCard: txRate: 2 txSpeed: 1
+04-22 03:14:14.523   683   858 D WifiScoreCard: network update SIGNAL_POLL "AndroidWifi" ID: 579418950 RSSI -50 txSpeed -1
+04-22 03:14:14.523   683   858 D WifiClientModeImpl[9769:wlan0]:  ClientModeImpl$L2ConnectedState screen=on 1 0 "AndroidWifi" 00:13:10:85:fe:01 rssi=-50 f=2447 sc=60 link=1 tx=1.0, 0.0, 0.0 rx=1.2 bcn=0 [on:0 tx:0 rx:0 period:3007] from screen [on:0 period:-1317606021] score=60
+04-22 03:14:15.655   683  1715 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+04-22 03:14:16.277   938   938 D wpa_supplicant: nl80211: Drv Event 64 (NL80211_CMD_NOTIFY_CQM) received for wlan0
+04-22 03:14:16.277   938   938 D wpa_supplicant: nl80211: Beacon loss event
+04-22 03:14:16.277   938   938 D wpa_supplicant: wlan0: Event BEACON_LOSS (53) received
+04-22 03:14:16.277   938   938 I wpa_supplicant: wlan0: CTRL-EVENT-BEACON-LOSS 
+04-22 03:14:17.526   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 03:14:17.526   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 03:14:17.526   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 03:14:17.526   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 03:14:17.526   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 03:14:17.527   683   858 D WifiClientModeImpl[9769:wlan0]: updateLinkLayerStatsRssiSpeedFrequencyCapabilities rssi=-50 TxLinkspeed=1 freq=2447 RxLinkSpeed=2
+04-22 03:14:17.528   683   858 D WifiDataStall: tx tput in kbps: 11000
+04-22 03:14:17.528   683   858 D WifiDataStall: rx tput in kbps: 11000
+04-22 03:14:17.528   683   858 V WifiConfigManager: Updating scan detail cache freq=2447 BSSID=00:13:10:85:fe:01 RSSI=-50 for "AndroidWifi"NONE
+04-22 03:14:17.528   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 03:14:17.528   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 03:14:17.528   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 03:14:17.528   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 03:14:17.529   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 03:14:17.529   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 03:14:17.529   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 03:14:17.529   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 03:14:17.529   683   858 D WifiScoreCard: BSSID update SIGNAL_POLL ID: 261501600 SSID: "AndroidWifi", BSSID: 00:13:10:85:fe:01, MAC: 02:15:b4:00:00:00, IP: /10.0.2.17, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: legacy, RSSI: -50, Link speed: 1Mbps, Tx Link speed: 1Mbps, Max Supported Tx Link speed: 11Mbps, Rx Link speed: 2Mbps, Max Supported Rx Link speed: 11Mbps, Frequency: 2447MHz, Net ID: 0, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"AndroidWifi"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+04-22 03:14:17.530   683   858 D WifiScoreCard: txRate: 1 txSpeed: 1
+04-22 03:14:17.530   683   858 D WifiScoreCard: network update SIGNAL_POLL "AndroidWifi" ID: 579418950 RSSI -50 txSpeed -1
+04-22 03:14:17.530   683   858 D WifiClientModeImpl[9769:wlan0]:  ClientModeImpl$L2ConnectedState screen=on 1 0 "AndroidWifi" 00:13:10:85:fe:01 rssi=-50 f=2447 sc=60 link=1 tx=0.3, 0.0, 0.0 rx=0.4 bcn=0 [on:0 tx:0 rx:0 period:3007] from screen [on:0 period:-1317603014] score=60
+04-22 03:14:17.855  1652  1894 I bdee    : (REDACTED) getHotwordActive::active query: %s, watch: %s, devices connected: %s
+04-22 03:14:18.965  1052 26819 D NetworkMonitor/101: PROBE_HTTPS https://www.google.com/generate_204 Probe failed with exception javax.net.ssl.SSLHandshakeException: connection closed
+04-22 03:14:18.967  1052 26818 D NetworkMonitor/101: isCaptivePortal: isSuccessful()=false isPortal()=false RedirectUrl=null isPartialConnectivity()=true Time=10541ms
+04-22 03:14:18.971   683   864 D ConnectivityService: [101 WIFI] validation failed
+04-22 03:14:20.535   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 03:14:20.535   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 03:14:20.535   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 03:14:20.535   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 03:14:20.535   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 03:14:20.537   683   858 D WifiClientModeImpl[9769:wlan0]: updateLinkLayerStatsRssiSpeedFrequencyCapabilities rssi=-50 TxLinkspeed=2 freq=2447 RxLinkSpeed=2
+04-22 03:14:20.538   683   858 D WifiDataStall: tx tput in kbps: 11000
+04-22 03:14:20.538   683   858 D WifiDataStall: rx tput in kbps: 11000
+04-22 03:14:20.538   683   858 V WifiConfigManager: Updating scan detail cache freq=2447 BSSID=00:13:10:85:fe:01 RSSI=-50 for "AndroidWifi"NONE
+04-22 03:14:20.538   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 03:14:20.538   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 03:14:20.538   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 03:14:20.538   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 03:14:20.538   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 03:14:20.538   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 03:14:20.538   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 03:14:20.538   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 03:14:20.538   683   858 D WifiScoreCard: BSSID update SIGNAL_POLL ID: 261501600 SSID: "AndroidWifi", BSSID: 00:13:10:85:fe:01, MAC: 02:15:b4:00:00:00, IP: /10.0.2.17, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: legacy, RSSI: -50, Link speed: 2Mbps, Tx Link speed: 2Mbps, Max Supported Tx Link speed: 11Mbps, Rx Link speed: 2Mbps, Max Supported Rx Link speed: 11Mbps, Frequency: 2447MHz, Net ID: 0, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"AndroidWifi"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+04-22 03:14:20.538   683   858 D WifiScoreCard: txRate: 2 txSpeed: 2
+04-22 03:14:20.538   683   858 D WifiScoreCard: network update SIGNAL_POLL "AndroidWifi" ID: 579418950 RSSI -50 txSpeed -1
+04-22 03:14:20.538   683   858 D WifiClientModeImpl[9769:wlan0]:  ClientModeImpl$L2ConnectedState screen=on 1 0 "AndroidWifi" 00:13:10:85:fe:01 rssi=-50 f=2447 sc=60 link=2 tx=1.4, 0.0, 0.0 rx=1.4 bcn=0 [on:0 tx:0 rx:0 period:3008] from screen [on:0 period:-1317600006] score=60
+04-22 03:14:22.432  1086  1298 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+04-22 03:14:23.542   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 03:14:23.542   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 03:14:23.542   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 03:14:23.542   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 03:14:23.542   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 03:14:23.543   683   858 D WifiClientModeImpl[9769:wlan0]: updateLinkLayerStatsRssiSpeedFrequencyCapabilities rssi=-50 TxLinkspeed=2 freq=2447 RxLinkSpeed=2
+04-22 03:14:23.543   683   858 D WifiDataStall: tx tput in kbps: 11000
+04-22 03:14:23.543   683   858 D WifiDataStall: rx tput in kbps: 11000
+04-22 03:14:23.543   683   858 V WifiConfigManager: Updating scan detail cache freq=2447 BSSID=00:13:10:85:fe:01 RSSI=-50 for "AndroidWifi"NONE
+04-22 03:14:23.543   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 03:14:23.543   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 03:14:23.543   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 03:14:23.543   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 03:14:23.545   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 03:14:23.546   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 03:14:23.546   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 03:14:23.546   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 03:14:23.547   683   858 D WifiScoreCard: BSSID update SIGNAL_POLL ID: 261501600 SSID: "AndroidWifi", BSSID: 00:13:10:85:fe:01, MAC: 02:15:b4:00:00:00, IP: /10.0.2.17, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: legacy, RSSI: -50, Link speed: 2Mbps, Tx Link speed: 2Mbps, Max Supported Tx Link speed: 11Mbps, Rx Link speed: 2Mbps, Max Supported Rx Link speed: 11Mbps, Frequency: 2447MHz, Net ID: 0, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"AndroidWifi"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+04-22 03:14:23.547   683   858 D WifiScoreCard: txRate: 1 txSpeed: 2
+04-22 03:14:23.547   683   858 D WifiScoreCard: network update SIGNAL_POLL "AndroidWifi" ID: 579418950 RSSI -50 txSpeed -1
+04-22 03:14:23.547   683   858 D WifiClientModeImpl[9769:wlan0]:  ClientModeImpl$L2ConnectedState screen=on 1 0 "AndroidWifi" 00:13:10:85:fe:01 rssi=-50 f=2447 sc=60 link=2 tx=0.5, 0.0, 0.0 rx=0.5 bcn=0 [on:0 tx:0 rx:0 period:3009] from screen [on:0 period:-1317596997] score=60
+04-22 03:14:24.473   938   938 D wpa_supplicant: nl80211: Drv Event 64 (NL80211_CMD_NOTIFY_CQM) received for wlan0
+04-22 03:14:24.474   938   938 D wpa_supplicant: nl80211: Beacon loss event
+04-22 03:14:24.474   938   938 D wpa_supplicant: wlan0: Event BEACON_LOSS (53) received
+04-22 03:14:24.474   938   938 I wpa_supplicant: wlan0: CTRL-EVENT-BEACON-LOSS 
+04-22 03:14:26.554   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 03:14:26.554   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 03:14:26.554   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 03:14:26.554   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 03:14:26.554   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 03:14:26.555   683   858 D WifiClientModeImpl[9769:wlan0]: updateLinkLayerStatsRssiSpeedFrequencyCapabilities rssi=-50 TxLinkspeed=1 freq=2447 RxLinkSpeed=2
+04-22 03:14:26.555   683   858 D WifiDataStall: tx tput in kbps: 11000
+04-22 03:14:26.555   683   858 D WifiDataStall: rx tput in kbps: 11000
+04-22 03:14:26.555   683   858 V WifiConfigManager: Updating scan detail cache freq=2447 BSSID=00:13:10:85:fe:01 RSSI=-50 for "AndroidWifi"NONE
+04-22 03:14:26.555   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 03:14:26.555   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 03:14:26.555   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 03:14:26.555   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 03:14:26.555   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 03:14:26.555   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 03:14:26.555   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 03:14:26.555   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 03:14:26.557   683   858 D WifiScoreCard: BSSID update SIGNAL_POLL ID: 261501600 SSID: "AndroidWifi", BSSID: 00:13:10:85:fe:01, MAC: 02:15:b4:00:00:00, IP: /10.0.2.17, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: legacy, RSSI: -50, Link speed: 1Mbps, Tx Link speed: 1Mbps, Max Supported Tx Link speed: 11Mbps, Rx Link speed: 2Mbps, Max Supported Rx Link speed: 11Mbps, Frequency: 2447MHz, Net ID: 0, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"AndroidWifi"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+04-22 03:14:26.557   683   858 D WifiScoreCard: txRate: 1 txSpeed: 1
+04-22 03:14:26.557   683   858 D WifiScoreCard: network update SIGNAL_POLL "AndroidWifi" ID: 579418950 RSSI -50 txSpeed -1
+04-22 03:14:26.557   683   858 D WifiClientModeImpl[9769:wlan0]:  ClientModeImpl$L2ConnectedState screen=on 1 0 "AndroidWifi" 00:13:10:85:fe:01 rssi=-50 f=2447 sc=60 link=1 tx=0.1, 0.0, 0.0 rx=0.1 bcn=0 [on:0 tx:0 rx:0 period:3010] from screen [on:0 period:-1317593987] score=60
+04-22 03:14:26.984   459 26850 I resolv  : ResNSendHandler::run: 0 / {101 983141 101 983141 1073 1}
+04-22 03:14:26.984   459 26851 I resolv  : ResNSendHandler::run: 0 / {101 983141 101 983141 1073 1}
+04-22 03:14:26.986   459 26852 I resolv  : ResNSendHandler::run: 0 / {101 983141 101 983141 1073 1}
+04-22 03:14:26.986   459 26852 I resolv  : resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d2ced1320
+04-22 03:14:26.987   459 26853 I resolv  : ResNSendHandler::run: 0 / {101 983141 101 983141 1073 1}
+04-22 03:14:26.988   459 26853 I resolv  : resolv_cache_lookup: FOUND IN CACHE entry=0xb400007e7ced03f0
+04-22 03:14:27.477   459 26850 I resolv  : res_nsend: used send_dg 60 terrno: 0
+04-22 03:14:27.478   459 26851 I resolv  : res_nsend: used send_dg 117 terrno: 0
+04-22 03:14:27.483  1052 26848 D NetworkMonitor/101: PROBE_DNS www.google.com 505ms OK 185.45.5.35,2001::1
+04-22 03:14:27.485  1052 26849 D NetworkMonitor/101: PROBE_DNS connectivitycheck.gstatic.com 506ms OK 114.250.65.34
+04-22 03:14:27.486   459 26855 I resolv  : GetAddrInfoHandler::run: {101 983141 101 983141 1073 1}
+04-22 03:14:27.486   459 26854 I resolv  : GetAddrInfoHandler::run: {101 983141 101 983141 1073 1}
+04-22 03:14:27.487   459 26856 I resolv  : res_nmkquery: (QUERY, IN, AAAA)
+04-22 03:14:27.487   459 26856 I resolv  : resolv_cache_lookup: FOUND IN CACHE entry=0xb400007cdced1150
+04-22 03:14:27.487   459 26856 I resolv  : doQuery: rcode=0, ancount=1, return value=60
+04-22 03:14:27.487   459 26858 I resolv  : res_nmkquery: (QUERY, IN, AAAA)
+04-22 03:14:27.487   459 26858 I resolv  : resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d0cedcb30
+04-22 03:14:27.487   459 26857 I resolv  : res_nmkquery: (QUERY, IN, A)
+04-22 03:14:27.487   459 26858 I resolv  : doQuery: rcode=0, ancount=0, return value=117
+04-22 03:14:27.487   459 26857 I resolv  : resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d2ced1320
+04-22 03:14:27.487   459 26857 I resolv  : doQuery: rcode=0, ancount=1, return value=48
+04-22 03:14:27.487   459 26859 I resolv  : res_nmkquery: (QUERY, IN, A)
+04-22 03:14:27.487   459 26859 I resolv  : resolv_cache_lookup: FOUND IN CACHE entry=0xb400007e7ced03f0
+04-22 03:14:27.487   459 26859 I resolv  : doQuery: rcode=0, ancount=1, return value=63
+04-22 03:14:27.979  1052 26849 D NetworkMonitor/101: PROBE_HTTP http://connectivitycheck.gstatic.com/generate_204 time=494ms ret=204 request={Connection=[close], User-Agent=[Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.32 Safari/537.36]} headers={null=[HTTP/1.1 204 No Content], Connection=[close], Cross-Origin-Resource-Policy=[cross-origin], Date=[Tue, 21 Apr 2026 19:14:27 GMT], X-Android-Received-Millis=[1776798867979], X-Android-Response-Source=[NETWORK 204], X-Android-Selected-Protocol=[http/1.1], X-Android-Sent-Millis=[1776798867491]}
+04-22 03:14:29.561   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 03:14:29.562   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 03:14:29.562   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 03:14:29.562   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 03:14:29.562   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 03:14:29.563   683   858 D WifiClientModeImpl[9769:wlan0]: updateLinkLayerStatsRssiSpeedFrequencyCapabilities rssi=-50 TxLinkspeed=1 freq=2447 RxLinkSpeed=2
+04-22 03:14:29.563   683   858 D WifiDataStall: tx tput in kbps: 11000
+04-22 03:14:29.563   683   858 D WifiDataStall: rx tput in kbps: 11000
+04-22 03:14:29.563   683   858 V WifiConfigManager: Updating scan detail cache freq=2447 BSSID=00:13:10:85:fe:01 RSSI=-50 for "AndroidWifi"NONE
+04-22 03:14:29.563   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 03:14:29.563   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 03:14:29.563   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 03:14:29.563   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 03:14:29.564   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 03:14:29.564   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 03:14:29.564   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 03:14:29.564   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 03:14:29.565   683   858 D WifiScoreCard: BSSID update SIGNAL_POLL ID: 261501600 SSID: "AndroidWifi", BSSID: 00:13:10:85:fe:01, MAC: 02:15:b4:00:00:00, IP: /10.0.2.17, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: legacy, RSSI: -50, Link speed: 1Mbps, Tx Link speed: 1Mbps, Max Supported Tx Link speed: 11Mbps, Rx Link speed: 2Mbps, Max Supported Rx Link speed: 11Mbps, Frequency: 2447MHz, Net ID: 0, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"AndroidWifi"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+04-22 03:14:29.565   683   858 D WifiScoreCard: txRate: 3 txSpeed: 1
+04-22 03:14:29.565   683   858 D WifiScoreCard: network update SIGNAL_POLL "AndroidWifi" ID: 579418950 RSSI -50 txSpeed -1
+04-22 03:14:29.565   683   858 D WifiClientModeImpl[9769:wlan0]:  ClientModeImpl$L2ConnectedState screen=on 1 0 "AndroidWifi" 00:13:10:85:fe:01 rssi=-50 f=2447 sc=60 link=1 tx=2.3, 0.0, 0.0 rx=1.9 bcn=0 [on:0 tx:0 rx:0 period:3008] from screen [on:0 period:-1317590979] score=60

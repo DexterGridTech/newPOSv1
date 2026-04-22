@@ -1,0 +1,10 @@
+
+ RUN  v3.2.4 /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84
+
+ ✓ test/scenarios/assembly-report-terminal-version.spec.ts (3 tests) 17ms
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  05:41:25
+   Duration  284ms (transform 36ms, setup 16ms, collect 13ms, tests 17ms, environment 0ms, prepare 46ms)
+

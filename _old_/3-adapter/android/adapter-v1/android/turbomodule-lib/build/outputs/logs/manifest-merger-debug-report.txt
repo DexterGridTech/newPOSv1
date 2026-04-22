@@ -1,0 +1,58 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/AndroidManifest.xml:1:1-22:12
+INJECTED from /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/AndroidManifest.xml:1:1-22:12
+	package
+		INJECTED from /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/AndroidManifest.xml:1:11-69
+uses-permission#android.permission.CAMERA
+ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/AndroidManifest.xml:2:5-65
+	android:name
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/AndroidManifest.xml:2:22-62
+uses-feature#android.hardware.camera
+ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/AndroidManifest.xml:3:5-85
+	android:required
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/AndroidManifest.xml:3:58-82
+	android:name
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/AndroidManifest.xml:3:19-57
+application
+ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/AndroidManifest.xml:5:5-21:19
+activity#com.impos2.posadapter.turbomodules.connector.channels.ResultBridgeActivity
+ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/AndroidManifest.xml:6:9-10:40
+	android:excludeFromRecents
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/AndroidManifest.xml:9:13-46
+	android:exported
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/AndroidManifest.xml:10:13-37
+	android:theme
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/AndroidManifest.xml:8:13-72
+	android:name
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/AndroidManifest.xml:7:13-102
+activity#com.impos2.posadapter.turbomodules.connector.channels.CameraScanActivity
+ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/AndroidManifest.xml:11:9-20:20
+	android:exported
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/AndroidManifest.xml:15:13-37
+	android:configChanges
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/AndroidManifest.xml:14:13-59
+	android:theme
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/AndroidManifest.xml:13:13-63
+	android:name
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/AndroidManifest.xml:12:13-100
+intent-filter#action:name:com.impos2.posadapter.action.CAMERA_SCAN+category:name:android.intent.category.DEFAULT
+ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/AndroidManifest.xml:16:13-19:29
+action#com.impos2.posadapter.action.CAMERA_SCAN
+ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/AndroidManifest.xml:17:17-83
+	android:name
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/AndroidManifest.xml:17:25-80
+category#android.intent.category.DEFAULT
+ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/AndroidManifest.xml:18:17-76
+	android:name
+		ADDED from /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/AndroidManifest.xml:18:27-73
+uses-sdk
+INJECTED from /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/AndroidManifest.xml
+INJECTED from /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/AndroidManifest.xml

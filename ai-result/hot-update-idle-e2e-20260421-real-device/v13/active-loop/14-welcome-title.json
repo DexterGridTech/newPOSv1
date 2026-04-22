@@ -1,0 +1,19 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "target": "primary",
+    "runtimeId": "primary-runtime",
+    "screenKey": "ui.integration.retail-shell.welcome",
+    "mountId": "ui.integration.retail-shell.welcome:title",
+    "nodeId": "ui-integration-retail-shell:welcome:title",
+    "testID": "ui-integration-retail-shell:welcome:title",
+    "semanticId": "ui-integration-retail-shell:welcome:title",
+    "role": "text",
+    "text": "欢迎进入零售终端 · OTA E2E V12",
+    "visible": true,
+    "enabled": true,
+    "availableActions": [],
+    "stale": false
+  },
+  "id": "1776747243276-d6fdac270b52f8"
+}

@@ -1,0 +1,110 @@
+{
+  "packageId": "pkg_49cser77gbw5",
+  "releaseId": "release_knzy6933gbwb",
+  "idleThresholdMs": 15000,
+  "activeLoop": {
+    "allStayedOnV14": true,
+    "allDesiredV15": true,
+    "waitingIdleSamples": 5,
+    "firstSample": {
+      "i": 0,
+      "currentBundleVersion": "1.0.0+ota.14",
+      "desiredBundleVersion": "1.0.0+ota.15",
+      "candidateStatus": "downloading",
+      "hasReady": false,
+      "hasApplying": false,
+      "titleText": "欢迎进入零售终端 · OTA E2E V14"
+    },
+    "lastSample": {
+      "i": 19,
+      "currentBundleVersion": "1.0.0+ota.14",
+      "desiredBundleVersion": "1.0.0+ota.15",
+      "candidateStatus": "ready",
+      "hasReady": true,
+      "hasApplying": true,
+      "restartStatus": "waiting-idle",
+      "restartMode": "idle",
+      "idleThresholdMs": 15000,
+      "lastUserOperationAt": 1776749013100,
+      "nextEligibleAt": 1776749028100,
+      "titleText": "欢迎进入零售终端 · OTA E2E V14"
+    }
+  },
+  "postIdle": {
+    "primaryRuntimeId": "run_mo86hz63_xn13m7hxs1a4rp5s",
+    "secondaryRuntimeId": "run_mo86i1ue_6xgemvwreajaz0ke",
+    "primaryBundleVersion": "1.0.0+ota.15",
+    "secondaryBundleVersion": "1.0.0+ota.15",
+    "primaryPackageId": "pkg_49cser77gbw5",
+    "secondaryPackageId": "pkg_49cser77gbw5",
+    "primaryReleaseId": "release_knzy6933gbwb",
+    "secondaryReleaseId": "release_knzy6933gbwb",
+    "primaryRestartIntent": null,
+    "primaryCandidate": null,
+    "primaryReady": null,
+    "primaryApplying": null,
+    "primaryOverlayPathResult": null,
+    "primaryTitle": "欢迎进入零售终端 · OTA E2E V15",
+    "secondaryScreen": "ui.integration.retail-shell.secondary-welcome",
+    "secondaryTitle": "欢迎来到万象城",
+    "v15VersionReports": [
+      {
+        "displayIndex": 1,
+        "displayRole": "secondary",
+        "state": "RUNNING",
+        "packageId": "pkg_49cser77gbw5",
+        "releaseId": "release_knzy6933gbwb",
+        "reportedAt": 1776749052962
+      },
+      {
+        "displayIndex": 1,
+        "displayRole": "secondary",
+        "state": "RUNNING",
+        "packageId": "pkg_49cser77gbw5",
+        "releaseId": "release_knzy6933gbwb",
+        "reportedAt": 1776749052918
+      },
+      {
+        "displayIndex": 1,
+        "displayRole": "secondary",
+        "state": "RUNNING",
+        "packageId": "pkg_49cser77gbw5",
+        "releaseId": "release_knzy6933gbwb",
+        "reportedAt": 1776749037225
+      },
+      {
+        "displayIndex": 1,
+        "displayRole": "secondary",
+        "state": "RUNNING",
+        "packageId": "pkg_49cser77gbw5",
+        "releaseId": "release_knzy6933gbwb",
+        "reportedAt": 1776749037205
+      },
+      {
+        "displayIndex": 0,
+        "displayRole": "primary",
+        "state": "RUNNING",
+        "packageId": "pkg_49cser77gbw5",
+        "releaseId": "release_knzy6933gbwb",
+        "reportedAt": 1776749033961
+      },
+      {
+        "displayIndex": 0,
+        "displayRole": "primary",
+        "state": "RUNNING",
+        "packageId": "pkg_49cser77gbw5",
+        "releaseId": "release_knzy6933gbwb",
+        "reportedAt": 1776749033861
+      },
+      {
+        "displayIndex": 0,
+        "displayRole": "primary",
+        "state": "BOOTING",
+        "packageId": "pkg_49cser77gbw5",
+        "releaseId": "release_knzy6933gbwb",
+        "reportedAt": 1776749033855
+      }
+    ]
+  },
+  "pass": true
+}

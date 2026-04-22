@@ -1,0 +1,320 @@
+04-21 22:15:35.677 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:35.677 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:35.677 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:35.677 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:38.683 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:38.683 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:38.683 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:38.683 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:38.683 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:40.159 D/NetworkMonitor/101( 1052): PROBE_HTTPS https://www.google.com/generate_204 Probe failed with exception javax.net.ssl.SSLHandshakeException: connection closed
+04-21 22:15:41.690 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:41.690 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:41.690 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:41.690 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:41.690 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:44.698 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:44.698 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:44.698 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:44.698 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:44.698 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:47.706 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:47.706 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:47.706 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:47.706 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:47.706 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:50.713 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:50.714 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:50.714 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:50.714 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:50.714 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:53.717 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:53.717 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:53.717 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:53.717 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:53.717 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:56.720 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:56.720 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:56.720 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:56.720 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:56.720 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:59.721 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:59.721 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:59.722 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:59.727 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:59.727 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:59.727 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:15:59.727 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:02.734 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:02.734 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:02.734 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:02.734 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:02.734 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:05.741 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:05.742 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:05.742 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:05.742 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:05.742 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:08.750 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:08.750 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:08.750 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:08.750 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:08.750 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:11.757 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:11.757 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:11.757 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:11.758 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:11.758 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:14.768 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:14.768 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:14.768 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:14.768 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:14.768 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:17.774 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:17.774 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:17.774 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:17.774 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:17.774 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:20.776 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:20.776 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:20.776 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:20.776 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:20.776 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:22.717 D/NetworkMonitor/101( 1052): PROBE_HTTPS https://www.google.com/generate_204 Probe failed with exception javax.net.ssl.SSLHandshakeException: connection closed
+04-21 22:16:23.785 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:23.785 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:23.785 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:23.785 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:23.785 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:26.796 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:26.796 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:26.796 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:26.796 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:26.796 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:29.802 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:29.802 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:29.802 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:29.802 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:29.802 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:32.808 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:32.808 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:32.808 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:32.808 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:32.808 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:35.815 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:35.815 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:35.815 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:35.815 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:35.815 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:38.825 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:38.826 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:38.826 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:38.826 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:38.826 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:41.833 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:41.833 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:41.833 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:41.833 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:41.833 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:44.841 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:44.841 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:44.841 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:44.841 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:44.841 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:47.849 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:47.850 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:47.850 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:47.850 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:47.850 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:50.857 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:50.857 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:50.857 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:50.857 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:50.857 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:53.864 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:53.864 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:53.864 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:53.865 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:53.865 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:56.874 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:56.874 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:56.874 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:56.874 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:56.875 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:59.881 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:59.882 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:59.882 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:59.882 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:16:59.882 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:02.890 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:02.890 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:02.890 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:02.890 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:02.890 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:05.893 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:05.894 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:05.894 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:05.894 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:05.894 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:08.899 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:08.900 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:08.900 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:08.900 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:08.900 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:11.907 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:11.907 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:11.907 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:11.907 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:11.907 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:14.060 I/assembly.assembly.android.mixc-retail-rn84( 9754): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 22:17:14.060 I/assembly.assembly.android.mixc-retail-rn84( 9754): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 22:17:14.060 I/assembly.assembly.android.mixc-retail-rn84( 9754): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 22:17:14.060 I/assembly.assembly.android.mixc-retail-rn84( 9754): [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-21 22:17:14.067 I/ConnectorManager( 9754): call start taskId=cdec21395069445093e5e970972869e2 channel=INTENT/camera action=com.impos2.posadapter.action.CAMERA_SCAN timeout=60000
+04-21 22:17:14.071 I/ActivityTaskManager(  683): Ignoring manifest-declared fixed orientation SCREEN_ORIENTATION_PORTRAIT of ActivityRecord{77428666 u0 com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity t24} since target sdk 36
+04-21 22:17:14.073 I/ActivityTaskManager(  683): START u0 {act=com.impos2.posadapter.action.CAMERA_SCAN flg=0x24000000 xflg=0x4 cmp=com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity (has extras)} with LAUNCH_MULTIPLE from uid 10213 (sr=137009538) (BAL_ALLOW_VISIBLE_WINDOW) result code=0
+04-21 22:17:14.073 V/WindowManagerShell(  957): Transition requested (#44): android.os.BinderProxy@ec25a84 TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=24 effectiveUid=10213 displayId=0 isRunning=true baseIntent=Intent { flg=0x10000000 cmp=com.impos2.mixcretailassemblyrn84/.MainActivity } baseActivity=ComponentInfo{com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity} topActivity=ComponentInfo{com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity} origActivity=null realActivity=ComponentInfo{com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity} numActivities=2 lastActiveTime=6491616 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{android.window.IWindowContainerToken$Stub$Proxy@66cf26d} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=Rect(0, 0 - 0, 0) topActivityInfo=ActivityInfo{b8e9ea2 com.impos2.adapterv2.camera.CameraScanActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=true isVisible=true isVisibleRequested=true isTopActivityNoDisplay=false isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false isActivityStackTransparent=false lastNonFullscreenBounds=Rect(892, 102 - 1668, 1482) capturedLink=null capturedLinkTimestamp=0 requestedVisibleTypes=-9 topActivityRequestOpenInBrowserEducationTimestamp=0 appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false eligibleForLetterboxEducation= false isLetterboxEducationEnabled= true isLetterboxDoubleTapEnabled= false eligibleForUserAspectRatioButton= true topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 topActivityAppBounds=Rect(0, 0 - 2560, 1600) isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false hasMinAspectRatioOverride=false topActivityLetterboxBounds=null cameraCompatTaskInfo=CameraCompatTaskInfo { freeformCameraCompatMode=inactive}} topActivityMainWindowFrame=null}, pipChange = null, remoteTransition = null, displayChange = null, flags = 0, debugId = 44 }
+04-21 22:17:14.108 D/CoreBackPreview(  683): Window{2474412 u0 com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@62e8099, mPriority=-1, mIsAnimationCallback=false, mOverrideBehavior=0}
+04-21 22:17:14.112 W/HWUI    ( 1396): Failed to initialize 101010-2 format, error = EGL_SUCCESS
+04-21 22:17:14.152 V/WindowManagerShell(  957):         {m=OPEN f=FILLS_TASK leash=Surface(name=ActivityRecord{77428666 u0 com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity)/@0x34c9af0 sb=Rect(0, 0 - 0, 0) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=-1->0 r=-1->0:-1 bc=ff1e1f25 component=com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity opt={t=FROM_STYLE mUserId=0}},
+04-21 22:17:14.152 V/WindowManagerShell(  957): Transition doesn't have explicit remote, search filters for match for {id=44 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{m=OPEN f=TRANSLUCENT|FILLS_TASK leash=Surface(name=ActivityRecord{228283782 u0 com.google.android.permissioncontroller/com.android.permissioncontroller.permission.ui.GrantPermissionsActivity)/@0x35b1733 sb=Rect(0, 0 - 0, 0) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=-1->0 r=-1->0:-1 bc=ff1e1f25 component=com.google.android.permissioncontroller/com.android.permissioncontroller.permission.ui.GrantPermissionsActivity opt={t=FROM_STYLE mUserId=0}},{m=OPEN f=FILLS_TASK leash=Surface(name=ActivityRecord{77428666 u0 com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity)/@0x34c9af0 sb=Rect(0, 0 - 0, 0) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=-1->0 r=-1->0:-1 bc=ff1e1f25 component=com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity opt={t=FROM_STYLE mUserId=0}},{m=TO_BACK f=FILLS_TASK leash=Surface(name=ActivityRecord{137009538 u0 com.impos2.mixcretailassemblyrn84/.MainActivity)/@0x4734869 sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=0 bc=ff1e1f25 component=com.impos2.mixcretailassemblyrn84/.MainActivity opt={t=FROM_STYLE mUserId=0}}]}
+04-21 22:17:14.152 V/WindowManagerShell(  957): start default transition animation, info = {id=44 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{m=OPEN f=TRANSLUCENT|FILLS_TASK leash=Surface(name=ActivityRecord{228283782 u0 com.google.android.permissioncontroller/com.android.permissioncontroller.permission.ui.GrantPermissionsActivity)/@0x35b1733 sb=Rect(0, 0 - 0, 0) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=-1->0 r=-1->0:-1 bc=ff1e1f25 component=com.google.android.permissioncontroller/com.android.permissioncontroller.permission.ui.GrantPermissionsActivity opt={t=FROM_STYLE mUserId=0}},{m=OPEN f=FILLS_TASK leash=Surface(name=ActivityRecord{77428666 u0 com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity)/@0x34c9af0 sb=Rect(0, 0 - 0, 0) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=-1->0 r=-1->0:-1 bc=ff1e1f25 component=com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity opt={t=FROM_STYLE mUserId=0}},{m=TO_BACK f=FILLS_TASK leash=Surface(name=ActivityRecord{137009538 u0 com.impos2.mixcretailassemblyrn84/.MainActivity)/@0x4734869 sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=0 bc=ff1e1f25 component=com.impos2.mixcretailassemblyrn84/.MainActivity opt={t=FROM_STYLE mUserId=0}}]}
+04-21 22:17:14.157 V/WindowManager(  683): Sent Transition (#44) createdAt=04-21 22:17:14.069 via request=TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=24 effectiveUid=10213 displayId=0 isRunning=true baseIntent=Intent { flg=0x10000000 cmp=com.impos2.mixcretailassemblyrn84/.MainActivity } baseActivity=ComponentInfo{com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity} topActivity=ComponentInfo{com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity} origActivity=null realActivity=ComponentInfo{com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity} numActivities=2 lastActiveTime=6491616 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{RemoteToken{c3fd639 Task{1752893 #24 type=standard A=10213:com.impos2.mixcretailassemblyrn84}}} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=Rect(0, 0 - 0, 0) topActivityInfo=ActivityInfo{a127710 com.impos2.adapterv2.camera.CameraScanActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=true isVisible=true isVisibleRequested=true isTopActivityNoDisplay=false isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false isActivityStackTransparent=false lastNonFullscreenBounds=Rect(892, 102 - 1668, 1482) capturedLink=null capturedLinkTimestamp=0 requestedVisibleTypes=-9 topActivityRequestOpenInBrowserEducationTimestamp=0 appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false eligibleForLetterboxEducation= false isLetterboxEducationEnabled= true isLetterboxDoubleTapEnabled= false eligibleForUserAspectRatioButton= true topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 topActivityAppBounds=Rect(0, 0 - 2560, 1600) isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false hasMinAspectRatioOverride=false topActivityLetterboxBounds=null cameraCompatTaskInfo=CameraCompatTaskInfo { freeformCameraCompatMode=inactive}} topActivityMainWindowFrame=null}, pipChange = null, remoteTransition = null, displayChange = null, flags = 0, debugId = 44 }
+04-21 22:17:14.157 V/WindowManager(  683):     startWCT=WindowContainerTransaction { changes= {} hops= [] errorCallbackToken=null taskFragmentOrganizer=null }
+04-21 22:17:14.158 V/WindowManager(  683):         {m=OPEN f=FILLS_TASK leash=Surface(name=ActivityRecord{77428666 u0 com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity)/@0xb6cb4a4 sb=Rect(0, 0 - 0, 0) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=-1->0 r=-1->0:-1 bc=ff1e1f25 component=com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity opt={t=FROM_STYLE mUserId=0}},
+04-21 22:17:14.182 W/HWUI    ( 1396): Failed to initialize 101010-2 format, error = EGL_SUCCESS
+04-21 22:17:14.199 I/EmojiCompatManager( 1576): java.lang.IllegalStateException: EmojiCompat is not initialized. Please call EmojiCompat.init() first
+04-21 22:17:14.911 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:14.911 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:14.911 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:14.911 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:14.911 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:15.525 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:15.550 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:15.550 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:15.550 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:15.550 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:15.550 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:15.550 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:15.551 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:15.553 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:15.555 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:15.556 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:15.556 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:15.556 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:15.556 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:15.556 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:15.556 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:15.560 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:15.582 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:17.074 E/TaskPersister(  683): File error accessing recents directory (directory doesn't exist?).
+04-21 22:17:17.085 D/AndroidRuntime(10106): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+04-21 22:17:17.088 I/AndroidRuntime(10106): Using default boot image
+04-21 22:17:17.088 I/AndroidRuntime(10106): Leaving lock profiling enabled
+04-21 22:17:17.143 D/AndroidRuntime(10106): Calling main entry com.android.commands.uiautomator.Launcher
+04-21 22:17:17.161 E/FeatureFlagsImplExport(10106): android.os.flagging.AconfigStorageReadException: ERROR_PACKAGE_NOT_FOUND: package android.xr cannot be found on the device
+04-21 22:17:17.916 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:17.916 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:17.916 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:17.916 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:17.916 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:18.181 D/AndroidRuntime(10106): Shutting down VM
+04-21 22:17:18.181 W/IPCThreadState(10106): call to talkWithDriver in joinThreadPool returned error: -9 (Bad file descriptor), FD: -1
+04-21 22:17:18.181 W/IPCThreadState(10106): call to talkWithDriver in joinThreadPool returned error: -9 (Bad file descriptor), FD: -1
+04-21 22:17:20.920 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:20.921 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:20.921 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:20.921 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:20.921 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:21.253 D/AndroidRuntime(10132): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+04-21 22:17:21.255 I/AndroidRuntime(10132): Using default boot image
+04-21 22:17:21.255 I/AndroidRuntime(10132): Leaving lock profiling enabled
+04-21 22:17:21.302 D/AndroidRuntime(10132): Calling main entry com.android.commands.uiautomator.Launcher
+04-21 22:17:21.305 E/FeatureFlagsImplExport(10132): android.os.flagging.AconfigStorageReadException: ERROR_PACKAGE_NOT_FOUND: package android.xr cannot be found on the device
+04-21 22:17:22.320 D/AndroidRuntime(10132): Shutting down VM
+04-21 22:17:22.320 W/IPCThreadState(10132): call to talkWithDriver in joinThreadPool returned error: -9 (Bad file descriptor), FD: -1
+04-21 22:17:22.321 W/IPCThreadState(10132): call to talkWithDriver in joinThreadPool returned error: -9 (Bad file descriptor), FD: -1
+04-21 22:17:23.925 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:23.925 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:23.925 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:23.925 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:23.925 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:25.294 D/NetworkMonitor/101( 1052): PROBE_HTTPS https://www.google.com/generate_204 Probe failed with exception javax.net.ssl.SSLHandshakeException: connection closed
+04-21 22:17:26.928 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:26.928 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:26.928 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:26.928 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:26.928 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:29.935 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:29.935 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:29.935 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:29.935 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:29.935 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:32.937 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:32.937 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:32.937 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:32.937 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:32.937 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:35.942 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:35.942 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:35.942 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:35.942 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:35.942 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:36.818 D/NetworkMonitor/101( 1052): PROBE_HTTPS https://www.google.com/generate_204 Probe failed with exception javax.net.ssl.SSLHandshakeException: connection closed
+04-21 22:17:38.944 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:38.944 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:38.944 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:38.944 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:38.944 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:41.948 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:41.948 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:41.948 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:41.948 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:41.948 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:44.954 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:44.954 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:44.954 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:44.954 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:44.954 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:47.956 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:47.956 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:47.956 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:47.956 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:47.956 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:49.346 D/NetworkMonitor/101( 1052): PROBE_HTTPS https://www.google.com/generate_204 Probe failed with exception javax.net.ssl.SSLHandshakeException: connection closed
+04-21 22:17:50.959 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:50.959 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:50.960 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:50.960 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:50.960 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:53.964 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:53.964 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:53.964 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:53.964 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:53.964 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:56.969 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:56.969 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:56.969 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:56.969 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:56.969 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:59.973 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:59.973 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:59.973 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:59.973 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:17:59.973 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:18:02.976 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:18:02.976 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:18:02.976 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:18:02.976 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:18:02.976 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:18:04.361 D/NetworkMonitor/101( 1052): PROBE_HTTPS https://www.google.com/generate_204 Probe failed with exception javax.net.ssl.SSLHandshakeException: connection closed
+04-21 22:18:05.979 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:18:05.979 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:18:05.979 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:18:05.979 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:18:05.979 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:18:08.985 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:18:08.985 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:18:08.985 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:18:08.985 W/BestClock(  683): java.time.DateTimeException: No network time available
+04-21 22:18:08.985 W/BestClock(  683): java.time.DateTimeException: No network time available

@@ -42,6 +42,12 @@ vi.mock('react-native', async () => {
         ScrollView: createHost('mock-scroll-view'),
         TouchableOpacity: createHost('mock-touchable-opacity'),
         TextInput: createHost('mock-text-input'),
+        useWindowDimensions: () => ({
+            width: 1280,
+            height: 720,
+            scale: 1,
+            fontScale: 1,
+        }),
         StyleSheet: {
             create(styles: unknown) {
                 return styles

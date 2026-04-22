@@ -1,0 +1,90 @@
+--------- beginning of main
+04-22 00:34:03.751 D/TrafficStats( 1251): tagSocket(-1) with statsTag=0x20000407, statsUid=-1
+04-22 00:34:03.751 I/TrafficStats( 1251): tagSocketFd(-1, 536871943, -1) failed with errno-9
+04-22 00:34:03.751 D/TrafficStats( 1251): tagSocket(81) with statsTag=0x20000407, statsUid=-1
+04-22 00:34:04.271 D/TrafficStats(14623): tagSocket(5) with statsTag=0x8001, statsUid=-1
+04-22 00:34:14.289 D/TrafficStats(14623): tagSocket(5) with statsTag=0x8001, statsUid=-1
+04-22 00:34:17.292 E/WifiScoringParams(  519): Invalid frequency(-1), using 5G as default rssi array
+04-22 00:34:21.118 D/WifiNl80211Manager(  519): Scan result ready event
+04-22 00:34:21.118 D/WifiNative(  519): Scan result ready event
+04-22 00:34:23.797 E/WakeLock( 1251): GCM_HB_ALARM release without a matched acquire!
+04-22 00:34:23.797 W/WakeLock( 1251): GCM_HB_ALARM counter does not exist
+04-22 00:34:23.800 I/resolv  (  293): GetAddrInfoHandler::run: {100 786532 100 983140 10116 0}
+04-22 00:34:23.801 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 00:34:23.802 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 00:34:23.852 I/resolv  (  293): res_tls_send: TLS query result: 0
+04-22 00:34:23.852 I/resolv  (  293): doQuery: rcode=0, ancount=2, return value=101
+04-22 00:34:24.294 D/TrafficStats(14623): tagSocket(5) with statsTag=0x8001, statsUid=-1
+04-22 00:34:24.339 I/resolv  (  293): res_tls_send: TLS query result: 0
+04-22 00:34:24.339 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=135
+04-22 00:34:24.340 D/TrafficStats( 1251): tagSocket(-1) with statsTag=0x20000407, statsUid=-1
+04-22 00:34:24.340 I/TrafficStats( 1251): tagSocketFd(-1, 536871943, -1) failed with errno-9
+04-22 00:34:24.340 D/TrafficStats( 1251): tagSocket(81) with statsTag=0x20000407, statsUid=-1
+04-22 00:34:24.467 D/TrafficStats(14284): tagSocket(101) with statsTag=0xffffffff, statsUid=-1
+04-22 00:34:24.469 D/TrafficStats(14284): tagSocket(108) with statsTag=0xffffffff, statsUid=-1
+04-22 00:34:24.473 D/TrafficStats(14284): tagSocket(101) with statsTag=0xffffffff, statsUid=-1
+04-22 00:34:24.474 D/TrafficStats(14284): tagSocket(108) with statsTag=0xffffffff, statsUid=-1
+04-22 00:34:24.548 D/TrafficStats(14284): tagSocket(101) with statsTag=0xffffffff, statsUid=-1
+04-22 00:34:24.552 D/TrafficStats(14284): tagSocket(101) with statsTag=0xffffffff, statsUid=-1
+04-22 00:34:24.973 D/TrafficStats( 1251): tagSocket(94) with statsTag=0x20000407, statsUid=-1
+04-22 00:34:24.976 E/GmsTaskScheduler( 1251): sendWakeUpEvent called on SchedulerClientBroadcastStrategy
+04-22 00:34:24.976 I/AlarmManager( 1251): setExactAndAllowWhileIdle [name: GCM_HB_ALARM type: 2 triggerAtMillis: 16431670]
+04-22 00:34:25.327 I/AlarmManager( 1251): setExactAndAllowWhileIdle [name: GCM_HB_ALARM type: 2 triggerAtMillis: 16432021]
+04-22 00:34:25.329 D/ConnectivityService(  519): reportNetworkConnectivity(100, true) by 10116
+04-22 00:34:25.329 D/NetworkMonitor/100(  784): Forcing reevaluation for UID 10116. Dns signal count: 0
+04-22 00:34:25.330 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 00:34:25.330 D/ConnectivityService(  519): reportNetworkConnectivity(100, true) by 10116
+04-22 00:34:25.331 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 00:34:25.331 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffff81, statsUid=-1
+04-22 00:34:25.331 I/AlarmManager( 1251): setExactAndAllowWhileIdle [name: GCM_HB_ALARM type: 2 triggerAtMillis: 16432025]
+04-22 00:34:25.331 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 00:34:25.331 E/GmsTaskScheduler( 1251): sendWakeUpEvent called on SchedulerClientBroadcastStrategy
+04-22 00:34:25.332 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffff81, statsUid=-1
+04-22 00:34:25.333 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 00:34:25.335 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 00:34:25.337 I/resolv  (  293): ResNSendHandler::run: 0 / {100 983140 100 983140 1073 1}
+04-22 00:34:25.342 I/resolv  (  293): res_nsend: used send_dg 117 terrno: 0
+04-22 00:34:25.346 I/resolv  (  293): res_nsend: used send_dg 63 terrno: 0
+04-22 00:34:25.347 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffffff, statsUid=-1
+04-22 00:34:25.348 I/resolv  (  293): res_nsend: used send_dg 60 terrno: 0
+04-22 00:34:25.348 D/NetworkMonitor/100(  784): PROBE_DNS connectivitycheck.gstatic.com 17ms OK 114.250.66.34
+04-22 00:34:25.349 I/resolv  (  293): GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+04-22 00:34:25.349 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 00:34:25.349 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d9da7c190
+04-22 00:34:25.349 I/resolv  (  293): doQuery: rcode=0, ancount=0, return value=117
+04-22 00:34:25.349 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 00:34:25.349 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d8da720b0
+04-22 00:34:25.349 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=63
+04-22 00:34:25.350 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 00:34:25.350 I/resolv  (  293): res_nsend: used send_dg 48 terrno: 0
+04-22 00:34:25.351 D/TrafficStats(  784): tagSocket(68) with statsTag=0xffffffff, statsUid=-1
+04-22 00:34:25.352 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffffff, statsUid=-1
+04-22 00:34:25.354 D/NetworkMonitor/100(  784): PROBE_DNS www.google.com 23ms OK 157.240.7.20,2001::1
+04-22 00:34:25.355 I/resolv  (  293): GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+04-22 00:34:25.355 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 00:34:25.355 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d7da7a050
+04-22 00:34:25.355 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=60
+04-22 00:34:25.355 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 00:34:25.355 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d6da7a5b0
+04-22 00:34:25.355 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=48
+04-22 00:34:25.356 D/TrafficStats(  784): tagSocket(61) with statsTag=0xffffff81, statsUid=-1
+04-22 00:34:28.333 I/resolv  (  293): GetAddrInfoHandler::run: {100 983140 100 983140 1073 1}
+04-22 00:34:28.334 I/resolv  (  293): res_nmkquery: (QUERY, IN, AAAA)
+04-22 00:34:28.334 I/resolv  (  293): res_nmkquery: (QUERY, IN, A)
+04-22 00:34:28.334 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d6da7a5b0
+04-22 00:34:28.334 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=48
+04-22 00:34:28.335 I/resolv  (  293): resolv_cache_lookup: FOUND IN CACHE entry=0xb400007d7da7a050
+04-22 00:34:28.335 I/resolv  (  293): doQuery: rcode=0, ancount=1, return value=60
+04-22 00:34:28.336 D/TrafficStats(  784): tagSocket(68) with statsTag=0xffffff81, statsUid=-1
+04-22 00:34:28.455 D/NetworkMonitor/100(  784): PROBE_FALLBACK http://www.google.com/gen_204 time=122ms ret=204 request={Connection=[close], User-Agent=[Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.32 Safari/537.36]} headers={null=[HTTP/1.1 204 No Content], Connection=[close], Content-Security-Policy=[object-src 'none';base-uri 'self';script-src 'nonce-x-91tTVksxm9eCJwfRnrBA' 'strict-dynamic' 'report-sample' 'unsafe-eval' 'unsafe-inline' https: http:;report-uri https://csp.withgoogle.com/csp/gws/other], Content-Type=[text/html; charset=UTF-8], Date=[Tue, 21 Apr 2026 16:34:28 GMT], Permissions-Policy=[unload=()], Server=[gws], X-Android-Received-Millis=[1776789268454], X-Android-Response-Source=[NETWORK 204], X-Android-Selected-Protocol=[http/1.1], X-Android-Sent-Millis=[1776789268338], X-Frame-Options=[SAMEORIGIN], X-Xss-Protection=[0]}
+04-22 00:34:34.304 D/TrafficStats(14623): tagSocket(5) with statsTag=0x8001, statsUid=-1
+04-22 00:34:34.619 D/EGL_emulation(  728): app_time_stats: avg=34585.39ms min=34585.39ms max=34585.39ms count=1
+04-22 00:34:35.360 D/NetworkMonitor/100(  784): PROBE_HTTP http://connectivitycheck.gstatic.com/generate_204 Probe failed with exception java.net.SocketTimeoutException: failed to connect to connectivitycheck.gstatic.com/114.250.66.34 (port 80) from /10.0.2.15 (port 53822) after 10000ms
+04-22 00:34:35.368 D/TrafficStats(  784): tagSocket(5) with statsTag=0xffffff81, statsUid=-1
+04-22 00:34:38.767 D/TrafficStats( 1251): tagSocket(77) with statsTag=0x20008100, statsUid=-1
+--------- beginning of system
+04-22 00:34:39.431 W/BatteryExternalStatsWorker(  519): error reading Bluetooth stats: 11
+04-22 00:34:39.434 D/TelephonyManager(  519): requestModemActivityInfo: Sending result to app: ModemActivityInfo{ mTimestamp=14736127 mSleepTimeMs=0 mIdleTimeMs=14736054 mActivityStatsTechSpecificInfo=[{mRat=UNKNOWN,mFrequencyRange=UNKNOWN,mTxTimeMs[]=[0, 0, 0, 0, 0],mRxTimeMs=0}]}
+04-22 00:34:39.463 I/netd    (  293): tetherGetStats() -> {[]} <0.83ms>
+04-22 00:34:42.400 D/TrafficStats(14284): tagSocket(101) with statsTag=0xffffffff, statsUid=-1
+04-22 00:34:42.405 D/TrafficStats(14284): tagSocket(101) with statsTag=0xffffffff, statsUid=-1

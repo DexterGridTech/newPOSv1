@@ -61,20 +61,6 @@ export const createAssemblyWebSocketTransport = (): SocketTransport => ({
             pathname: parsedUrl[3] ?? '/',
         })
         const socket = new WebSocket(connection.url)
-
-        socket.onopen = () => {
-            handlers.onOpen()
-        }
-        socket.onmessage = event => {
-            handlers.onMessage(typeof event.data === 'string' ? event.data : String(event.data))
-        }
-        socket.onclose = event => {
-            handlers.onClose(event.reason || `code:${event.code}`)
-        }
-        socket.onerror = event => {
-            handlers.onError(event)
-        }
-
         let timeoutId: ReturnType<typeof setTimeout> | undefined
         if (connection.timeoutMs && connection.timeoutMs > 0) {
             timeoutId = setTimeout(() => {
@@ -85,18 +71,50 @@ export const createAssemblyWebSocketTransport = (): SocketTransport => ({
         }
 
         await new Promise<void>((resolve, reject) => {
-            const handleOpen = () => {
-                socket.removeEventListener('open', handleOpen)
-                socket.removeEventListener('error', handleError)
+            let opened = false
+            let settled = false
+
+            const clearConnectTimeout = () => {
+                if (timeoutId) {
+                    clearTimeout(timeoutId)
+                    timeoutId = undefined
+                }
+            }
+            const rejectBeforeOpen = (reason: string, error?: unknown) => {
+                if (opened || settled) {
+                    return
+                }
+                settled = true
+                clearConnectTimeout()
+                reject(error instanceof Error ? error : new Error(reason))
+            }
+
+            socket.onopen = () => {
+                opened = true
+                settled = true
+                clearConnectTimeout()
+                handlers.onOpen()
                 resolve()
             }
-            const handleError = () => {
-                socket.removeEventListener('open', handleOpen)
-                socket.removeEventListener('error', handleError)
-                reject(new Error('websocket connection failed'))
+            socket.onmessage = event => {
+                handlers.onMessage(typeof event.data === 'string' ? event.data : String(event.data))
             }
-            socket.addEventListener('open', handleOpen)
-            socket.addEventListener('error', handleError)
+            socket.onclose = event => {
+                const reason = event.reason || `code:${event.code}`
+                if (!opened) {
+                    rejectBeforeOpen(`websocket connection closed before open: ${reason}`)
+                    return
+                }
+                clearConnectTimeout()
+                handlers.onClose(reason)
+            }
+            socket.onerror = event => {
+                if (!opened) {
+                    rejectBeforeOpen('websocket connection failed', event)
+                    return
+                }
+                handlers.onError(event)
+            }
         }).finally(() => {
             if (timeoutId) {
                 clearTimeout(timeoutId)

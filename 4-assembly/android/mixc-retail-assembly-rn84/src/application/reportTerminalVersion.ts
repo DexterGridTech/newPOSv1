@@ -1,5 +1,6 @@
 import { buildHotUpdateVersionReportPayload } from '@impos2/kernel-base-tdp-sync-runtime-v2'
 import type { KernelRuntimeV2 } from '@impos2/kernel-base-runtime-shell-v2'
+import type { TransportServerAddress } from '@impos2/kernel-base-transport-runtime'
 import type { AppProps } from '../types'
 import { createAssemblyFetchTransport, resolveAssemblyTransportServers } from '../platform-ports'
 import { SERVER_NAME_MOCK_TERMINAL_PLATFORM } from '@impos2/kernel-server-config-v2'
@@ -10,11 +11,86 @@ import {
   type TerminalVersionReportOutboxItem,
 } from './versionReportOutbox'
 
-const resolveMockTerminalPlatformBaseUrl = (): string =>
-  resolveAssemblyTransportServers()
+const isLoopbackHost = (hostname: string): boolean => {
+  const normalized = hostname.trim().toLowerCase()
+  return normalized === '127.0.0.1'
+    || normalized === 'localhost'
+    || normalized === '10.0.2.2'
+}
+
+const scoreMockTerminalPlatformAddress = (
+  baseUrl: string,
+  addressName: string | undefined,
+  isEmulator: boolean,
+): number => {
+  let score = 0
+  try {
+    const url = new URL(baseUrl)
+    const loopback = isLoopbackHost(url.hostname)
+    score += isEmulator === loopback ? 100 : 0
+  } catch {
+    return -1
+  }
+
+  const normalizedAddressName = addressName?.trim().toLowerCase()
+  if (isEmulator) {
+    if (normalizedAddressName === 'local') {
+      score += 20
+    } else if (normalizedAddressName === 'localhost') {
+      score += 10
+    }
+  } else if (normalizedAddressName === 'lan') {
+    score += 20
+  }
+
+  return score
+}
+
+const resolveMockTerminalPlatformAddresses = (
+  isEmulator: boolean,
+): TransportServerAddress[] => {
+  const resolvedAddresses = resolveAssemblyTransportServers()
     .find(server => server.serverName === SERVER_NAME_MOCK_TERMINAL_PLATFORM)
-    ?.addresses[0]?.baseUrl
-  ?? 'http://10.0.2.2:5810'
+    ?.addresses
+    ?? []
+
+  const sortedAddresses = [...resolvedAddresses]
+    .filter(address => typeof address.baseUrl === 'string' && address.baseUrl.length > 0)
+    .sort((left, right) =>
+      scoreMockTerminalPlatformAddress(right.baseUrl, right.addressName, isEmulator)
+      - scoreMockTerminalPlatformAddress(left.baseUrl, left.addressName, isEmulator))
+
+  const fallbackAddresses: TransportServerAddress[] = isEmulator
+    ? [
+      {
+        addressName: 'emulator-host-loopback',
+        baseUrl: 'http://10.0.2.2:5810',
+        timeoutMs: 3_000,
+      },
+      {
+        addressName: 'emulator-adb-reverse',
+        baseUrl: 'http://127.0.0.1:5810',
+        timeoutMs: 3_000,
+      },
+    ]
+    : [
+      {
+        addressName: 'device-localhost',
+        baseUrl: 'http://127.0.0.1:5810',
+        timeoutMs: 3_000,
+      },
+    ]
+
+  const mergedAddresses = [...sortedAddresses]
+  for (const address of fallbackAddresses) {
+    if (mergedAddresses.some(item => item.baseUrl === address.baseUrl)) {
+      continue
+    }
+    mergedAddresses.push(address)
+  }
+
+  return mergedAddresses
+}
 
 export const reportTerminalVersion = async (
   runtime: KernelRuntimeV2,
@@ -50,39 +126,53 @@ export const reportTerminalVersion = async (
     id: itemId,
     terminalId: report.terminalId,
     sandboxId: report.sandboxId,
-    payload: report.payload as Record<string, unknown>,
+    payload: {
+      ...(report.payload as Record<string, unknown>),
+      isEmulator: props.isEmulator,
+    },
   })
   await flushTerminalVersionReportOutbox(sendTerminalVersionReport)
 }
 
 const sendTerminalVersionReport = async (item: TerminalVersionReportOutboxItem): Promise<void> => {
-  const baseUrl = resolveMockTerminalPlatformBaseUrl()
+  const {isEmulator: rawIsEmulator, ...payload} = item.payload
+  const addresses = resolveMockTerminalPlatformAddresses(rawIsEmulator === true)
   const transport = createAssemblyFetchTransport()
-  await transport.execute({
-    endpoint: {
-      protocol: 'http',
-      name: 'report-terminal-version',
-      serverName: 'mock-terminal-platform',
-      method: 'POST',
-      pathTemplate: `/api/v1/terminals/${item.terminalId}/version-reports`,
-      request: {},
-      response: { kind: 'type-descriptor', name: 'version-report-response' },
-    },
-    input: {
-      body: {
-        sandboxId: item.sandboxId,
-        ...item.payload,
-      },
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    },
-    url: `${baseUrl}/api/v1/terminals/${item.terminalId}/version-reports`,
-    selectedAddress: {
-      addressName: 'mock-terminal-platform',
-      baseUrl,
-    },
-    attemptIndex: 0,
-    roundIndex: 0,
-  })
+  let lastError: unknown
+
+  for (const [attemptIndex, address] of addresses.entries()) {
+    try {
+      await transport.execute({
+        endpoint: {
+          protocol: 'http',
+          name: 'report-terminal-version',
+          serverName: 'mock-terminal-platform',
+          method: 'POST',
+          pathTemplate: `/api/v1/terminals/${item.terminalId}/version-reports`,
+          request: {},
+          response: { kind: 'type-descriptor', name: 'version-report-response' },
+        },
+        input: {
+          body: {
+            sandboxId: item.sandboxId,
+            ...payload,
+          },
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+        url: `${address.baseUrl}/api/v1/terminals/${item.terminalId}/version-reports`,
+        selectedAddress: address,
+        attemptIndex,
+        roundIndex: 0,
+      })
+      return
+    } catch (error) {
+      lastError = error
+    }
+  }
+
+  throw lastError instanceof Error
+    ? lastError
+    : new Error('report-terminal-version failed for every mock-terminal-platform address')
 }

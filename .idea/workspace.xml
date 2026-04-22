@@ -1,0 +1,1007 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="653ef71c-ecb3-4f1e-804d-4a78e2ee2243" name="Changes" comment="0422">
+      <change afterPath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_06p2uoa57h83.zip" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_8ybx186cwdxr.zip" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/2-ui/2.1-base/runtime-react/test/scenarios/runtime-react-default-alert.spec.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/test/scenarios/assembly-admin-console-config.spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/:" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_0ut2l7xsb128.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_27xx37b8v4qn.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_2b80b6g19hff.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_322879g43w2x.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_332actkvreqv.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_44aqrz9syjoe.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_49cser77gbw5.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_4aoicn6ofwj3.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_53319c1wbhuv.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_7pmts64tew00.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_8p6hdhf7v4rg.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_a2ngqcgssjlq.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_acctwvv7v3of.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_b1dizdtke43s.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_bng43smy91ce.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_dm7p6ogqvvv8.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_dtink532zoao.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_fqpt7kt34mhh.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_g68snyt84bbd.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_ggfk4w2bmn14.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_gwo807x6b123.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_hqieivyovh20.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_iyqda1f5dicm.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_l3lgl74cpwwi.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_llmh8lxc2la3.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_lnfhgby3gc5h.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_maly785elrhz.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_nlci2cxph6xe.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_ploddpfx084w.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_r7qmg5cfvvw2.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_sujs6yug0wj1.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_vk1zirmyb11q.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_vna7wtg9onev.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_vxpao7ctb10z.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_wy9ge59plri7.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_yacfq6a1awu2.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/hot-updates/sandbox-kernel-base-test/pkg_yfyzl5gog63m.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/mock-terminal-platform.sqlite-shm" beforeDir="false" afterPath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/mock-terminal-platform.sqlite-shm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/mock-terminal-platform.sqlite-wal" beforeDir="false" afterPath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/data/mock-terminal-platform.sqlite-wal" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/src/modules/admin/hotUpdateService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/src/modules/admin/hotUpdateService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/src/modules/sandbox/service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/server/src/modules/sandbox/service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/1-kernel/1.1-base/tdp-sync-runtime-v2/src/application/createModule.ts" beforeDir="false" afterPath="$PROJECT_DIR$/1-kernel/1.1-base/tdp-sync-runtime-v2/src/application/createModule.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/1-kernel/1.1-base/tdp-sync-runtime-v2/src/features/slices/tdpHotUpdate.ts" beforeDir="false" afterPath="$PROJECT_DIR$/1-kernel/1.1-base/tdp-sync-runtime-v2/src/features/slices/tdpHotUpdate.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/1-kernel/1.1-base/tdp-sync-runtime-v2/test/scenarios/tdp-sync-runtime-v2-hot-update-installer.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/1-kernel/1.1-base/tdp-sync-runtime-v2/test/scenarios/tdp-sync-runtime-v2-hot-update-installer.spec.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/1-kernel/1.1-base/tdp-sync-runtime-v2/test/scenarios/tdp-sync-runtime-v2-hot-update-state.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/1-kernel/1.1-base/tdp-sync-runtime-v2/test/scenarios/tdp-sync-runtime-v2-hot-update-state.spec.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/1-kernel/1.1-base/tdp-sync-runtime-v2/test/scenarios/tdp-sync-runtime-v2-live-hot-update-master-slave-sync.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/1-kernel/1.1-base/tdp-sync-runtime-v2/test/scenarios/tdp-sync-runtime-v2-live-hot-update-master-slave-sync.spec.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/1-kernel/1.1-base/transport-runtime/src/foundations/socketRuntime.ts" beforeDir="false" afterPath="$PROJECT_DIR$/1-kernel/1.1-base/transport-runtime/src/foundations/socketRuntime.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/1-kernel/1.1-base/transport-runtime/test/scenarios/socket-runtime.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/1-kernel/1.1-base/transport-runtime/test/scenarios/socket-runtime.spec.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/1-kernel/1.1-base/ui-runtime-v2/src/types/screen.ts" beforeDir="false" afterPath="$PROJECT_DIR$/1-kernel/1.1-base/ui-runtime-v2/src/types/screen.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/1-kernel/1.1-base/workflow-runtime-v2/src/foundations/builtinTasks.ts" beforeDir="false" afterPath="$PROJECT_DIR$/1-kernel/1.1-base/workflow-runtime-v2/src/foundations/builtinTasks.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/1-kernel/1.1-base/workflow-runtime-v2/test/scenarios/workflow-runtime-v2.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/1-kernel/1.1-base/workflow-runtime-v2/test/scenarios/workflow-runtime-v2.spec.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/2-ui/2.1-base/admin-console/src/features/actors/topologyAdminActor.ts" beforeDir="false" afterPath="$PROJECT_DIR$/2-ui/2.1-base/admin-console/src/features/actors/topologyAdminActor.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/2-ui/2.1-base/admin-console/src/features/commands/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/2-ui/2.1-base/admin-console/src/features/commands/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/2-ui/2.1-base/admin-console/test/scenarios/admin-topology-command.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/2-ui/2.1-base/admin-console/test/scenarios/admin-topology-command.spec.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/2-ui/2.1-base/runtime-react/src/ui/components/DefaultAlert.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/2-ui/2.1-base/runtime-react/src/ui/components/DefaultAlert.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/2-ui/2.3-integration/retail-shell/src/ui/screens/SecondaryWelcomeScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/2-ui/2.3-integration/retail-shell/src/ui/screens/SecondaryWelcomeScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/2-ui/2.3-integration/retail-shell/src/ui/screens/WelcomeScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/2-ui/2.3-integration/retail-shell/src/ui/screens/WelcomeScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/camera/CameraScanActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/camera/CameraScanActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/camera/CameraScannerManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/camera/CameraScannerManager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/hotupdate/HotUpdateBootMarkerStore.kt" beforeDir="false" afterPath="$PROJECT_DIR$/3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/hotupdate/HotUpdateBootMarkerStore.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/3-adapter/android/adapter-android-v2/adapter-lib/src/test/java/com/impos2/adapterv2/hotupdate/HotUpdateBootMarkerStoreTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/3-adapter/android/adapter-android-v2/adapter-lib/src/test/java/com/impos2/adapterv2/hotupdate/HotUpdateBootMarkerStoreTest.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/android/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/android/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/impos2/mixcretailassemblyrn84/turbomodules/AutomationTurboModule.kt" beforeDir="false" afterPath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/impos2/mixcretailassemblyrn84/turbomodules/AutomationTurboModule.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/impos2/mixcretailassemblyrn84/turbomodules/HotUpdateTurboModule.kt" beforeDir="false" afterPath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/impos2/mixcretailassemblyrn84/turbomodules/HotUpdateTurboModule.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/release.manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/release.manifest.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/src/application/adminConsoleConfig.ts" beforeDir="false" afterPath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/src/application/adminConsoleConfig.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/src/application/automation/createAutomationRequestDispatcher.ts" beforeDir="false" afterPath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/src/application/automation/createAutomationRequestDispatcher.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/src/application/createApp.ts" beforeDir="false" afterPath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/src/application/createApp.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/src/application/createModule.ts" beforeDir="false" afterPath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/src/application/createModule.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/src/application/reportTerminalVersion.ts" beforeDir="false" afterPath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/src/application/reportTerminalVersion.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/src/application/topology/assemblyPowerDisplaySwitch.ts" beforeDir="false" afterPath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/src/application/topology/assemblyPowerDisplaySwitch.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/src/generated/releaseInfo.ts" beforeDir="false" afterPath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/src/generated/releaseInfo.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/src/platform-ports/transport.ts" beforeDir="false" afterPath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/src/platform-ports/transport.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/src/turbomodules/topologyHost.ts" beforeDir="false" afterPath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/src/turbomodules/topologyHost.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/test/scenarios/assembly-admin-console-automation.spec.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/test/scenarios/assembly-admin-console-automation.spec.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/test/scenarios/assembly-automation-dispatcher.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/test/scenarios/assembly-automation-dispatcher.spec.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/test/scenarios/assembly-create-app.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/test/scenarios/assembly-create-app.spec.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/test/scenarios/assembly-live-admin-loop.spec.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/test/scenarios/assembly-live-admin-loop.spec.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/test/scenarios/assembly-power-display-switch.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/test/scenarios/assembly-power-display-switch.spec.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/test/scenarios/assembly-report-terminal-version.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/test/scenarios/assembly-report-terminal-version.spec.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/test/scenarios/assembly-runtime-module.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/4-assembly/android/mixc-retail-assembly-rn84/test/scenarios/assembly-runtime-module.spec.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/mock-platform-prepare-activation.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/mock-platform-prepare-activation.mjs" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="18616" />
+    <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+        <option value="TypeScript File" />
+        <option value="TypeScript JSX File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="HARD" />
+    <option name="UPDATE_TYPE" value="REBASE" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;DexterGridTech&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/DexterGridTech/newPOSv1.git&quot;,
+    &quot;accountId&quot;: &quot;6fec8df5-81e9-48ee-87ba-a9a9f5b0b8aa&quot;
+  }
+}</component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="398KlUt8zVcryYeKv49rXbbnDft" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="showScratchesAndConsoles" value="false" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Node.js.base &gt; parameter.ts.executor&quot;: &quot;Run&quot;,
+    &quot;Node.js.base &gt; test.ts.executor&quot;: &quot;Run&quot;,
+    &quot;Node.js.kill-port.js.executor&quot;: &quot;Run&quot;,
+    &quot;Node.js.setup-android-port-forwarding.js.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;Shell Script.start-redux-devtools.sh.executor&quot;: &quot;Run&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;com.android.tools.idea.streaming.emulator.frame.visible&quot;: &quot;false&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;deletionFromPopupRequiresConfirmation&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-base/ui-runtime-v2&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;npm.A:kernel-server.executor&quot;: &quot;Run&quot;,
+    &quot;npm.B:master-ws-server-dual.executor&quot;: &quot;Run&quot;,
+    &quot;npm.B:master-ws-server.executor&quot;: &quot;Run&quot;,
+    &quot;npm.IMPos2DesktopV1 &gt; start:clean.executor&quot;: &quot;Run&quot;,
+    &quot;npm.adapter-v1 &gt; real-build.executor&quot;: &quot;Run&quot;,
+    &quot;npm.adapter-v1 &gt; start.executor&quot;: &quot;Run&quot;,
+    &quot;npm.adapter:adapter-impos-adapterv1:start.executor&quot;: &quot;Run&quot;,
+    &quot;npm.adapter:android-pure:all.executor&quot;: &quot;Run&quot;,
+    &quot;npm.adapter:android-pure:build.executor&quot;: &quot;Run&quot;,
+    &quot;npm.adapter:android-pure:run.executor&quot;: &quot;Run&quot;,
+    &quot;npm.adapter:android-rn84:android.executor&quot;: &quot;Run&quot;,
+    &quot;npm.adapter:android-rn84:metro.executor&quot;: &quot;Run&quot;,
+    &quot;npm.adapter:android-rn84:run.executor&quot;: &quot;Run&quot;,
+    &quot;npm.adapter:android-rn84:start.executor&quot;: &quot;Run&quot;,
+    &quot;npm.adapter:android-rn84v2:android.executor&quot;: &quot;Run&quot;,
+    &quot;npm.adapter:android-rn84v2:start.executor&quot;: &quot;Run&quot;,
+    &quot;npm.adapter:android-rn84v3:android.executor&quot;: &quot;Run&quot;,
+    &quot;npm.adapter:android-rn84v3:start.executor&quot;: &quot;Run&quot;,
+    &quot;npm.adapter:android-v1:metro.executor&quot;: &quot;Run&quot;,
+    &quot;npm.adapter:android-v1:run.executor&quot;: &quot;Run&quot;,
+    &quot;npm.adapter:android-v1:start.executor&quot;: &quot;Run&quot;,
+    &quot;npm.adapter:android:start.executor&quot;: &quot;Run&quot;,
+    &quot;npm.adapter:electron-dev-app:dev.executor&quot;: &quot;Run&quot;,
+    &quot;npm.adapter:electron:start.executor&quot;: &quot;Run&quot;,
+    &quot;npm.adapter:impos2-adapter-v1:start.executor&quot;: &quot;Run&quot;,
+    &quot;npm.adapter:tauri-v1:start.executor&quot;: &quot;Run&quot;,
+    &quot;npm.admin-console &gt; expo:web.executor&quot;: &quot;Run&quot;,
+    &quot;npm.admin-console &gt; test-expo:visible.executor&quot;: &quot;Run&quot;,
+    &quot;npm.android:port-forward.executor&quot;: &quot;Run&quot;,
+    &quot;npm.android:port-list.executor&quot;: &quot;Run&quot;,
+    &quot;npm.assembly:android-desktop:start.executor&quot;: &quot;Run&quot;,
+    &quot;npm.assembly:android-mixc-retail-rn84:metro.executor&quot;: &quot;Run&quot;,
+    &quot;npm.assembly:android-mixc-retail-rn84:run.executor&quot;: &quot;Run&quot;,
+    &quot;npm.assembly:android-mixc-retail-rn84v2:all.executor&quot;: &quot;Run&quot;,
+    &quot;npm.assembly:android-mixc-retail-rn84v2:build.executor&quot;: &quot;Run&quot;,
+    &quot;npm.assembly:android-mixc-retail-rn84v2:build:release.executor&quot;: &quot;Run&quot;,
+    &quot;npm.assembly:android-mixc-retail-rn84v2:buildAndInstallAndRun:release.executor&quot;: &quot;Run&quot;,
+    &quot;npm.assembly:android-mixc-retail-rn84v2:metro.executor&quot;: &quot;Run&quot;,
+    &quot;npm.assembly:android-mixc-retail-rn84v2:run.executor&quot;: &quot;Run&quot;,
+    &quot;npm.assembly:android-mixc-retail:metro.executor&quot;: &quot;Run&quot;,
+    &quot;npm.assembly:android-mixc-retail:run.executor&quot;: &quot;Run&quot;,
+    &quot;npm.assembly:android-mixc-retail:start.executor&quot;: &quot;Run&quot;,
+    &quot;npm.assembly:android-rn84v3:android.executor&quot;: &quot;Run&quot;,
+    &quot;npm.assembly:android-rn84v3:start.executor&quot;: &quot;Run&quot;,
+    &quot;npm.assembly:electron-desktop:start.executor&quot;: &quot;Run&quot;,
+    &quot;npm.assembly:electron-mixc-retail-v1:dev.executor&quot;: &quot;Run&quot;,
+    &quot;npm.assembly:electron-mixc-retail:start.executor&quot;: &quot;Run&quot;,
+    &quot;npm.assembly:impos2-desktop-v1:dev.executor&quot;: &quot;Run&quot;,
+    &quot;npm.assembly:impos2-desktop-v1:start.executor&quot;: &quot;Run&quot;,
+    &quot;npm.base &gt; build.executor&quot;: &quot;Run&quot;,
+    &quot;npm.base &gt; check:circular.executor&quot;: &quot;Run&quot;,
+    &quot;npm.base &gt; dev.executor&quot;: &quot;Run&quot;,
+    &quot;npm.build-for-product:clean.executor&quot;: &quot;Run&quot;,
+    &quot;npm.build.executor&quot;: &quot;Run&quot;,
+    &quot;npm.build:clean.executor&quot;: &quot;Run&quot;,
+    &quot;npm.check-env.executor&quot;: &quot;Run&quot;,
+    &quot;npm.clean.executor&quot;: &quot;Run&quot;,
+    &quot;npm.create-module.executor&quot;: &quot;Run&quot;,
+    &quot;npm.create-package.executor&quot;: &quot;Run&quot;,
+    &quot;npm.input-runtime &gt; test-expo:visible.executor&quot;: &quot;Run&quot;,
+    &quot;npm.interconnection &gt; check:circular.executor&quot;: &quot;Run&quot;,
+    &quot;npm.interconnection-v1 &gt; check:circular.executor&quot;: &quot;Run&quot;,
+    &quot;npm.kernel-core-base-v1.executor&quot;: &quot;Run&quot;,
+    &quot;npm.kernel-core-base.executor&quot;: &quot;Run&quot;,
+    &quot;npm.kernel-core-interconnection-master-v1.executor&quot;: &quot;Run&quot;,
+    &quot;npm.kernel-core-interconnection-master.executor&quot;: &quot;Run&quot;,
+    &quot;npm.kernel-core-interconnection-slave-v1.executor&quot;: &quot;Run&quot;,
+    &quot;npm.kernel-core-interconnection-slave.executor&quot;: &quot;Run&quot;,
+    &quot;npm.kernel-core-interconnection.executor&quot;: &quot;Run&quot;,
+    &quot;npm.kernel-core-navigation-v1.executor&quot;: &quot;Run&quot;,
+    &quot;npm.kernel-core-navigation.executor&quot;: &quot;Run&quot;,
+    &quot;npm.kernel-module-terminal.executor&quot;: &quot;Run&quot;,
+    &quot;npm.kernel:core-task.executor&quot;: &quot;Run&quot;,
+    &quot;npm.kill-port.executor&quot;: &quot;Run&quot;,
+    &quot;npm.mixc-retail &gt; android:release.executor&quot;: &quot;Run&quot;,
+    &quot;npm.mixc-retail &gt; build.executor&quot;: &quot;Run&quot;,
+    &quot;npm.mixc-retail &gt; start.executor&quot;: &quot;Run&quot;,
+    &quot;npm.mock:platform:dev.executor&quot;: &quot;Run&quot;,
+    &quot;npm.redux-devtools.executor&quot;: &quot;Run&quot;,
+    &quot;npm.redux-devtools:start:simple.executor&quot;: &quot;Run&quot;,
+    &quot;npm.runtime-react &gt; test-expo:dual-pages:visible.executor&quot;: &quot;Run&quot;,
+    &quot;npm.runtime-react &gt; test-expo:visible.executor&quot;: &quot;Run&quot;,
+    &quot;npm.setup.executor&quot;: &quot;Run&quot;,
+    &quot;npm.terminal-console &gt; test-expo:visible.executor&quot;: &quot;Run&quot;,
+    &quot;npm.type-check.executor&quot;: &quot;Run&quot;,
+    &quot;npm.ui:core-base.executor&quot;: &quot;Run&quot;,
+    &quot;npm.ui:device-activate.executor&quot;: &quot;Run&quot;,
+    &quot;npm.ui:integrate-desktop-2.executor&quot;: &quot;Run&quot;,
+    &quot;npm.ui:integrate-desktop.executor&quot;: &quot;Run&quot;,
+    &quot;npm.ui:integrate-mixc-retail.executor&quot;: &quot;Run&quot;,
+    &quot;npm.ui:module-admin.executor&quot;: &quot;Run&quot;,
+    &quot;npm.ui:module-device-activate-2.executor&quot;: &quot;Run&quot;,
+    &quot;npm.ui:module-device-activate.executor&quot;: &quot;Run&quot;,
+    &quot;npm.ui:module-mixc-user.executor&quot;: &quot;Run&quot;,
+    &quot;npm.ui:module-system-admin.executor&quot;: &quot;Run&quot;,
+    &quot;npm.ui:module-user-login-2.executor&quot;: &quot;Run&quot;,
+    &quot;npm.ui:module-user-login.executor&quot;: &quot;Run&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Problems&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2724138&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/typescript/lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecapSpentCounter">
+    <option name="endsOfQuotaMs" value="1772618349078" />
+    <option name="spentUsd" value="0.23454694" />
+  </component>
+  <component name="RecapUselessUpdatesCounter">
+    <option name="suspendCountdown" value="0" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/1-kernel/1.1-base/ui-runtime-v2" />
+      <recent name="$PROJECT_DIR$/design/5.终端控制平面服务" />
+      <recent name="$PROJECT_DIR$/design" />
+      <recent name="$PROJECT_DIR$/4-assembly" />
+      <recent name="$PROJECT_DIR$/2-ui/2.1-cores" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/0-mock-server/mock-terminal-platform/docs" />
+      <recent name="$PROJECT_DIR$/ai-task" />
+      <recent name="$PROJECT_DIR$/2-ui/2.2-modules/mixc-trade/src/ui/components/payingOrder" />
+      <recent name="$PROJECT_DIR$/2-ui/2.2-modules/mixc-trade/src/features/actors" />
+    </key>
+  </component>
+  <component name="RunManager" selected="npm.assembly:android-mixc-retail-rn84:run">
+    <configuration name="A:kernel-server" type="js.build_tools.npm" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="A:kernel-server" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs>
+        <env name="SERVER_ADDRESS" value="0.0.0.0" />
+      </envs>
+      <method v="2" />
+    </configuration>
+    <configuration name="assembly:android-mixc-retail-rn84:metro" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="assembly:android-mixc-retail-rn84:metro" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="assembly:android-mixc-retail-rn84:run" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="assembly:android-mixc-retail-rn84:run" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="build:clean" type="js.build_tools.npm" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="build:clean" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="input-runtime &gt; test-expo:visible" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/2-ui/2.1-base/input-runtime/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="test-expo:visible" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="kill-port" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="kill-port" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="setup" type="js.build_tools.npm" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="setup" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="terminal-console &gt; test-expo:visible" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/2-ui/2.1-base/terminal-console/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="test-expo:visible" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="npm.A:kernel-server" />
+      <item itemvalue="npm.build:clean" />
+      <item itemvalue="npm.setup" />
+      <item itemvalue="npm.assembly:android-mixc-retail-rn84:metro" />
+      <item itemvalue="npm.assembly:android-mixc-retail-rn84:run" />
+      <item itemvalue="npm.kill-port" />
+      <item itemvalue="npm.input-runtime &gt; test-expo:visible" />
+      <item itemvalue="npm.terminal-console &gt; test-expo:visible" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.assembly:android-mixc-retail-rn84:run" />
+        <item itemvalue="npm.assembly:android-mixc-retail-rn84:metro" />
+        <item itemvalue="npm.kill-port" />
+        <item itemvalue="npm.terminal-console &gt; test-expo:visible" />
+        <item itemvalue="npm.input-runtime &gt; test-expo:visible" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.32098.37" />
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-IU-253.32098.37" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="653ef71c-ecb3-4f1e-804d-4a78e2ee2243" name="Changes" comment="" />
+      <created>1754303141430</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1754303141430</updated>
+      <workItem from="1754303142798" duration="132000" />
+      <workItem from="1770072410040" duration="30622000" />
+      <workItem from="1770167224428" duration="15452000" />
+      <workItem from="1770184846403" duration="46502000" />
+      <workItem from="1770278424956" duration="13010000" />
+      <workItem from="1770337295974" duration="22935000" />
+      <workItem from="1770372627480" duration="870000" />
+      <workItem from="1770382371653" duration="108000" />
+      <workItem from="1770382697079" duration="4441000" />
+      <workItem from="1770426167189" duration="4923000" />
+      <workItem from="1770433121622" duration="2000" />
+      <workItem from="1770458761286" duration="42802000" />
+      <workItem from="1770544834788" duration="10245000" />
+      <workItem from="1770557026954" duration="10155000" />
+      <workItem from="1770597112813" duration="87828000" />
+      <workItem from="1770859054000" duration="25000" />
+      <workItem from="1770859154009" duration="529000" />
+      <workItem from="1770859689352" duration="1000" />
+      <workItem from="1770859703566" duration="2000" />
+      <workItem from="1770859715547" duration="1306000" />
+      <workItem from="1770861045975" duration="26363000" />
+      <workItem from="1770899042041" duration="32232000" />
+      <workItem from="1770962421614" duration="47232000" />
+      <workItem from="1771052136558" duration="18471000" />
+      <workItem from="1771078184554" duration="14878000" />
+      <workItem from="1771133506600" duration="12636000" />
+      <workItem from="1771248868810" duration="19576000" />
+      <workItem from="1771374496257" duration="49201000" />
+      <workItem from="1771513901019" duration="304000" />
+      <workItem from="1771554418261" duration="8461000" />
+      <workItem from="1771563472674" duration="3404000" />
+      <workItem from="1771569343096" duration="22101000" />
+      <workItem from="1771666805969" duration="17946000" />
+      <workItem from="1771687782591" duration="2155000" />
+      <workItem from="1771719577573" duration="38307000" />
+      <workItem from="1771769569534" duration="269000" />
+      <workItem from="1771817214744" duration="18963000" />
+      <workItem from="1771895065778" duration="24553000" />
+      <workItem from="1771921193901" duration="1598000" />
+      <workItem from="1771924569105" duration="8887000" />
+      <workItem from="1771981078246" duration="48771000" />
+      <workItem from="1772152117134" duration="11832000" />
+      <workItem from="1772164035702" duration="6944000" />
+      <workItem from="1772171647837" duration="18435000" />
+      <workItem from="1772242771077" duration="26925000" />
+      <workItem from="1772288967053" duration="838000" />
+      <workItem from="1772289809830" duration="53090000" />
+      <workItem from="1772413852184" duration="22212000" />
+      <workItem from="1772497452854" duration="2168000" />
+      <workItem from="1772499626896" duration="32240000" />
+      <workItem from="1772587580642" duration="14096000" />
+      <workItem from="1772617683603" duration="1525000" />
+      <workItem from="1772671490620" duration="22383000" />
+      <workItem from="1772763522088" duration="2278000" />
+      <workItem from="1772786753680" duration="91000" />
+      <workItem from="1772886091378" duration="7552000" />
+      <workItem from="1772931536051" duration="22363000" />
+      <workItem from="1773021219925" duration="11947000" />
+      <workItem from="1773043711642" duration="52628000" />
+      <workItem from="1773192697594" duration="13143000" />
+      <workItem from="1773213212834" duration="3467000" />
+      <workItem from="1773277101928" duration="7975000" />
+      <workItem from="1773286539222" duration="3998000" />
+      <workItem from="1773293732839" duration="286000" />
+      <workItem from="1773294164066" duration="144000" />
+      <workItem from="1773294694767" duration="15422000" />
+      <workItem from="1773363866244" duration="23544000" />
+      <workItem from="1773411259427" duration="37444000" />
+      <workItem from="1773573235716" duration="8793000" />
+      <workItem from="1773623625561" duration="27484000" />
+      <workItem from="1773658649257" duration="4626000" />
+      <workItem from="1773713317299" duration="10542000" />
+      <workItem from="1773727365477" duration="99000" />
+      <workItem from="1773733603848" duration="8218000" />
+      <workItem from="1773797812067" duration="3137000" />
+      <workItem from="1773800957534" duration="32411000" />
+      <workItem from="1773881900848" duration="27389000" />
+      <workItem from="1773920603965" duration="3454000" />
+      <workItem from="1774096273108" duration="601000" />
+      <workItem from="1774513464351" duration="2153000" />
+      <workItem from="1774515967758" duration="4668000" />
+      <workItem from="1774520989350" duration="3645000" />
+      <workItem from="1774596997706" duration="6868000" />
+      <workItem from="1774603882994" duration="1000" />
+      <workItem from="1774603906625" duration="1290000" />
+      <workItem from="1774619017202" duration="8954000" />
+      <workItem from="1774660549814" duration="4475000" />
+      <workItem from="1774697829634" duration="4000" />
+      <workItem from="1774702815587" duration="6115000" />
+      <workItem from="1774745527838" duration="2363000" />
+      <workItem from="1774778783441" duration="19559000" />
+      <workItem from="1774832336784" duration="36170000" />
+      <workItem from="1774919678104" duration="118572000" />
+      <workItem from="1775206766213" duration="143000" />
+      <workItem from="1775381910355" duration="1027000" />
+      <workItem from="1775382948179" duration="46173000" />
+      <workItem from="1775488590440" duration="6000" />
+      <workItem from="1775526422800" duration="64163000" />
+      <workItem from="1775653481657" duration="777000" />
+      <workItem from="1775654993688" duration="9574000" />
+      <workItem from="1775719198631" duration="10425000" />
+      <workItem from="1775736837578" duration="12294000" />
+      <workItem from="1775779534252" duration="1066000" />
+      <workItem from="1775825501124" duration="22724000" />
+      <workItem from="1775948566047" duration="14065000" />
+      <workItem from="1776036336280" duration="1922000" />
+      <workItem from="1776064830199" duration="743000" />
+      <workItem from="1776075041436" duration="6240000" />
+      <workItem from="1776095417929" duration="26126000" />
+      <workItem from="1776169151504" duration="10912000" />
+      <workItem from="1776213946666" duration="1056000" />
+      <workItem from="1776233449058" duration="11650000" />
+      <workItem from="1776269917306" duration="616000" />
+      <workItem from="1776292492542" duration="332000" />
+      <workItem from="1776293154788" duration="10726000" />
+      <workItem from="1776328803025" duration="9728000" />
+      <workItem from="1776409595266" duration="8643000" />
+      <workItem from="1776423471777" duration="1708000" />
+      <workItem from="1776441551248" duration="964000" />
+      <workItem from="1776442742828" duration="47425000" />
+      <workItem from="1776647823331" duration="53345000" />
+      <workItem from="1776774165637" duration="12106000" />
+    </task>
+    <task id="LOCAL-00169" summary="0308">
+      <option name="closed" value="true" />
+      <created>1773630203356</created>
+      <option name="number" value="00169" />
+      <option name="presentableId" value="LOCAL-00169" />
+      <option name="project" value="LOCAL" />
+      <updated>1773630203356</updated>
+    </task>
+    <task id="LOCAL-00170" summary="0308">
+      <option name="closed" value="true" />
+      <created>1773633261407</created>
+      <option name="number" value="00170" />
+      <option name="presentableId" value="LOCAL-00170" />
+      <option name="project" value="LOCAL" />
+      <updated>1773633261407</updated>
+    </task>
+    <task id="LOCAL-00171" summary="0308">
+      <option name="closed" value="true" />
+      <created>1773655252422</created>
+      <option name="number" value="00171" />
+      <option name="presentableId" value="LOCAL-00171" />
+      <option name="project" value="LOCAL" />
+      <updated>1773655252422</updated>
+    </task>
+    <task id="LOCAL-00172" summary="0308">
+      <option name="closed" value="true" />
+      <created>1773663271808</created>
+      <option name="number" value="00172" />
+      <option name="presentableId" value="LOCAL-00172" />
+      <option name="project" value="LOCAL" />
+      <updated>1773663271808</updated>
+    </task>
+    <task id="LOCAL-00173" summary="0308">
+      <option name="closed" value="true" />
+      <created>1773723060376</created>
+      <option name="number" value="00173" />
+      <option name="presentableId" value="LOCAL-00173" />
+      <option name="project" value="LOCAL" />
+      <updated>1773723060377</updated>
+    </task>
+    <task id="LOCAL-00174" summary="0308">
+      <option name="closed" value="true" />
+      <created>1773741160735</created>
+      <option name="number" value="00174" />
+      <option name="presentableId" value="LOCAL-00174" />
+      <option name="project" value="LOCAL" />
+      <updated>1773741160735</updated>
+    </task>
+    <task id="LOCAL-00175" summary="0308">
+      <option name="closed" value="true" />
+      <created>1773804279861</created>
+      <option name="number" value="00175" />
+      <option name="presentableId" value="LOCAL-00175" />
+      <option name="project" value="LOCAL" />
+      <updated>1773804279861</updated>
+    </task>
+    <task id="LOCAL-00176" summary="0308">
+      <option name="closed" value="true" />
+      <created>1773815737140</created>
+      <option name="number" value="00176" />
+      <option name="presentableId" value="LOCAL-00176" />
+      <option name="project" value="LOCAL" />
+      <updated>1773815737140</updated>
+    </task>
+    <task id="LOCAL-00177" summary="0308">
+      <option name="closed" value="true" />
+      <created>1773817217105</created>
+      <option name="number" value="00177" />
+      <option name="presentableId" value="LOCAL-00177" />
+      <option name="project" value="LOCAL" />
+      <updated>1773817217105</updated>
+    </task>
+    <task id="LOCAL-00178" summary="0308">
+      <option name="closed" value="true" />
+      <created>1773838354603</created>
+      <option name="number" value="00178" />
+      <option name="presentableId" value="LOCAL-00178" />
+      <option name="project" value="LOCAL" />
+      <updated>1773838354603</updated>
+    </task>
+    <task id="LOCAL-00179" summary="0308">
+      <option name="closed" value="true" />
+      <created>1773899532538</created>
+      <option name="number" value="00179" />
+      <option name="presentableId" value="LOCAL-00179" />
+      <option name="project" value="LOCAL" />
+      <updated>1773899532538</updated>
+    </task>
+    <task id="LOCAL-00180" summary="0308">
+      <option name="closed" value="true" />
+      <created>1773923767924</created>
+      <option name="number" value="00180" />
+      <option name="presentableId" value="LOCAL-00180" />
+      <option name="project" value="LOCAL" />
+      <updated>1773923767924</updated>
+    </task>
+    <task id="LOCAL-00181" summary="0308">
+      <option name="closed" value="true" />
+      <created>1774523874706</created>
+      <option name="number" value="00181" />
+      <option name="presentableId" value="LOCAL-00181" />
+      <option name="project" value="LOCAL" />
+      <updated>1774523874706</updated>
+    </task>
+    <task id="LOCAL-00182" summary="0308">
+      <option name="closed" value="true" />
+      <created>1774604986610</created>
+      <option name="number" value="00182" />
+      <option name="presentableId" value="LOCAL-00182" />
+      <option name="project" value="LOCAL" />
+      <updated>1774604986610</updated>
+    </task>
+    <task id="LOCAL-00183" summary="0308">
+      <option name="closed" value="true" />
+      <created>1774605153737</created>
+      <option name="number" value="00183" />
+      <option name="presentableId" value="LOCAL-00183" />
+      <option name="project" value="LOCAL" />
+      <updated>1774605153737</updated>
+    </task>
+    <task id="LOCAL-00184" summary="0327">
+      <option name="closed" value="true" />
+      <created>1774624707350</created>
+      <option name="number" value="00184" />
+      <option name="presentableId" value="LOCAL-00184" />
+      <option name="project" value="LOCAL" />
+      <updated>1774624707350</updated>
+    </task>
+    <task id="LOCAL-00185" summary="0327">
+      <option name="closed" value="true" />
+      <created>1774627780093</created>
+      <option name="number" value="00185" />
+      <option name="presentableId" value="LOCAL-00185" />
+      <option name="project" value="LOCAL" />
+      <updated>1774627780094</updated>
+    </task>
+    <task id="LOCAL-00186" summary="0327">
+      <option name="closed" value="true" />
+      <created>1774664977683</created>
+      <option name="number" value="00186" />
+      <option name="presentableId" value="LOCAL-00186" />
+      <option name="project" value="LOCAL" />
+      <updated>1774664977683</updated>
+    </task>
+    <task id="LOCAL-00187" summary="0327">
+      <option name="closed" value="true" />
+      <created>1774785805202</created>
+      <option name="number" value="00187" />
+      <option name="presentableId" value="LOCAL-00187" />
+      <option name="project" value="LOCAL" />
+      <updated>1774785805202</updated>
+    </task>
+    <task id="LOCAL-00188" summary="0327">
+      <option name="closed" value="true" />
+      <created>1774785811732</created>
+      <option name="number" value="00188" />
+      <option name="presentableId" value="LOCAL-00188" />
+      <option name="project" value="LOCAL" />
+      <updated>1774785811732</updated>
+    </task>
+    <task id="LOCAL-00189" summary="0330">
+      <option name="closed" value="true" />
+      <created>1774849597531</created>
+      <option name="number" value="00189" />
+      <option name="presentableId" value="LOCAL-00189" />
+      <option name="project" value="LOCAL" />
+      <updated>1774849597531</updated>
+    </task>
+    <task id="LOCAL-00190" summary="0330">
+      <option name="closed" value="true" />
+      <created>1774875280847</created>
+      <option name="number" value="00190" />
+      <option name="presentableId" value="LOCAL-00190" />
+      <option name="project" value="LOCAL" />
+      <updated>1774875280847</updated>
+    </task>
+    <task id="LOCAL-00191" summary="0330">
+      <option name="closed" value="true" />
+      <created>1774876836957</created>
+      <option name="number" value="00191" />
+      <option name="presentableId" value="LOCAL-00191" />
+      <option name="project" value="LOCAL" />
+      <updated>1774876836957</updated>
+    </task>
+    <task id="LOCAL-00192" summary="0330">
+      <option name="closed" value="true" />
+      <created>1774877184187</created>
+      <option name="number" value="00192" />
+      <option name="presentableId" value="LOCAL-00192" />
+      <option name="project" value="LOCAL" />
+      <updated>1774877184187</updated>
+    </task>
+    <task id="LOCAL-00193" summary="0330">
+      <option name="closed" value="true" />
+      <created>1775033458304</created>
+      <option name="number" value="00193" />
+      <option name="presentableId" value="LOCAL-00193" />
+      <option name="project" value="LOCAL" />
+      <updated>1775033458304</updated>
+    </task>
+    <task id="LOCAL-00194" summary="0330">
+      <option name="closed" value="true" />
+      <created>1775045854779</created>
+      <option name="number" value="00194" />
+      <option name="presentableId" value="LOCAL-00194" />
+      <option name="project" value="LOCAL" />
+      <updated>1775045854779</updated>
+    </task>
+    <task id="LOCAL-00195" summary="0330">
+      <option name="closed" value="true" />
+      <created>1775112255684</created>
+      <option name="number" value="00195" />
+      <option name="presentableId" value="LOCAL-00195" />
+      <option name="project" value="LOCAL" />
+      <updated>1775112255684</updated>
+    </task>
+    <task id="LOCAL-00196" summary="0330">
+      <option name="closed" value="true" />
+      <created>1775129404867</created>
+      <option name="number" value="00196" />
+      <option name="presentableId" value="LOCAL-00196" />
+      <option name="project" value="LOCAL" />
+      <updated>1775129404867</updated>
+    </task>
+    <task id="LOCAL-00197" summary="0330">
+      <option name="closed" value="true" />
+      <created>1775204517792</created>
+      <option name="number" value="00197" />
+      <option name="presentableId" value="LOCAL-00197" />
+      <option name="project" value="LOCAL" />
+      <updated>1775204517792</updated>
+    </task>
+    <task id="LOCAL-00198" summary="0406">
+      <option name="closed" value="true" />
+      <created>1775485996984</created>
+      <option name="number" value="00198" />
+      <option name="presentableId" value="LOCAL-00198" />
+      <option name="project" value="LOCAL" />
+      <updated>1775485996985</updated>
+    </task>
+    <task id="LOCAL-00199" summary="0406">
+      <option name="closed" value="true" />
+      <created>1775488506702</created>
+      <option name="number" value="00199" />
+      <option name="presentableId" value="LOCAL-00199" />
+      <option name="project" value="LOCAL" />
+      <updated>1775488506703</updated>
+    </task>
+    <task id="LOCAL-00200" summary="0406">
+      <option name="closed" value="true" />
+      <created>1775488532416</created>
+      <option name="number" value="00200" />
+      <option name="presentableId" value="LOCAL-00200" />
+      <option name="project" value="LOCAL" />
+      <updated>1775488532416</updated>
+    </task>
+    <task id="LOCAL-00201" summary="0407">
+      <option name="closed" value="true" />
+      <created>1775565302994</created>
+      <option name="number" value="00201" />
+      <option name="presentableId" value="LOCAL-00201" />
+      <option name="project" value="LOCAL" />
+      <updated>1775565302995</updated>
+    </task>
+    <task id="LOCAL-00202" summary="0408">
+      <option name="closed" value="true" />
+      <created>1775650181379</created>
+      <option name="number" value="00202" />
+      <option name="presentableId" value="LOCAL-00202" />
+      <option name="project" value="LOCAL" />
+      <updated>1775650181379</updated>
+    </task>
+    <task id="LOCAL-00203" summary="0408">
+      <option name="closed" value="true" />
+      <created>1775696179830</created>
+      <option name="number" value="00203" />
+      <option name="presentableId" value="LOCAL-00203" />
+      <option name="project" value="LOCAL" />
+      <updated>1775696179831</updated>
+    </task>
+    <task id="LOCAL-00204" summary="0408">
+      <option name="closed" value="true" />
+      <created>1775863428973</created>
+      <option name="number" value="00204" />
+      <option name="presentableId" value="LOCAL-00204" />
+      <option name="project" value="LOCAL" />
+      <updated>1775863428973</updated>
+    </task>
+    <task id="LOCAL-00205" summary="0408">
+      <option name="closed" value="true" />
+      <created>1776038092625</created>
+      <option name="number" value="00205" />
+      <option name="presentableId" value="LOCAL-00205" />
+      <option name="project" value="LOCAL" />
+      <updated>1776038092625</updated>
+    </task>
+    <task id="LOCAL-00206" summary="0414">
+      <option name="closed" value="true" />
+      <created>1776149862650</created>
+      <option name="number" value="00206" />
+      <option name="presentableId" value="LOCAL-00206" />
+      <option name="project" value="LOCAL" />
+      <updated>1776149862651</updated>
+    </task>
+    <task id="LOCAL-00207" summary="0414">
+      <option name="closed" value="true" />
+      <created>1776169180728</created>
+      <option name="number" value="00207" />
+      <option name="presentableId" value="LOCAL-00207" />
+      <option name="project" value="LOCAL" />
+      <updated>1776169180728</updated>
+    </task>
+    <task id="LOCAL-00208" summary="0415">
+      <option name="closed" value="true" />
+      <created>1776205048807</created>
+      <option name="number" value="00208" />
+      <option name="presentableId" value="LOCAL-00208" />
+      <option name="project" value="LOCAL" />
+      <updated>1776205048807</updated>
+    </task>
+    <task id="LOCAL-00209" summary="0415">
+      <option name="closed" value="true" />
+      <created>1776210421023</created>
+      <option name="number" value="00209" />
+      <option name="presentableId" value="LOCAL-00209" />
+      <option name="project" value="LOCAL" />
+      <updated>1776210421023</updated>
+    </task>
+    <task id="LOCAL-00210" summary="0415">
+      <option name="closed" value="true" />
+      <created>1776311595432</created>
+      <option name="number" value="00210" />
+      <option name="presentableId" value="LOCAL-00210" />
+      <option name="project" value="LOCAL" />
+      <updated>1776311595432</updated>
+    </task>
+    <task id="LOCAL-00211" summary="0417">
+      <option name="closed" value="true" />
+      <created>1776358580220</created>
+      <option name="number" value="00211" />
+      <option name="presentableId" value="LOCAL-00211" />
+      <option name="project" value="LOCAL" />
+      <updated>1776358580220</updated>
+    </task>
+    <task id="LOCAL-00212" summary="0417">
+      <option name="closed" value="true" />
+      <created>1776471975686</created>
+      <option name="number" value="00212" />
+      <option name="presentableId" value="LOCAL-00212" />
+      <option name="project" value="LOCAL" />
+      <updated>1776471975686</updated>
+    </task>
+    <task id="LOCAL-00213" summary="0419">
+      <option name="closed" value="true" />
+      <created>1776610277269</created>
+      <option name="number" value="00213" />
+      <option name="presentableId" value="LOCAL-00213" />
+      <option name="project" value="LOCAL" />
+      <updated>1776610277269</updated>
+    </task>
+    <task id="LOCAL-00214" summary="0419">
+      <option name="closed" value="true" />
+      <created>1776642130477</created>
+      <option name="number" value="00214" />
+      <option name="presentableId" value="LOCAL-00214" />
+      <option name="project" value="LOCAL" />
+      <updated>1776642130477</updated>
+    </task>
+    <task id="LOCAL-00215" summary="0421">
+      <option name="closed" value="true" />
+      <created>1776727656399</created>
+      <option name="number" value="00215" />
+      <option name="presentableId" value="LOCAL-00215" />
+      <option name="project" value="LOCAL" />
+      <updated>1776727656399</updated>
+    </task>
+    <task id="LOCAL-00216" summary="0421">
+      <option name="closed" value="true" />
+      <created>1776749495152</created>
+      <option name="number" value="00216" />
+      <option name="presentableId" value="LOCAL-00216" />
+      <option name="project" value="LOCAL" />
+      <updated>1776749495153</updated>
+    </task>
+    <task id="LOCAL-00217" summary="0421">
+      <option name="closed" value="true" />
+      <created>1776772199721</created>
+      <option name="number" value="00217" />
+      <option name="presentableId" value="LOCAL-00217" />
+      <option name="project" value="LOCAL" />
+      <updated>1776772199721</updated>
+    </task>
+    <option name="localTasksCounter" value="218" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+    <option name="exactExcludedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/0-mock-server/kernel-server/web/vite.config.js" />
+        <option value="$PROJECT_DIR$/0-mock-server/kernel-server/web/src/App.jsx" />
+        <option value="$PROJECT_DIR$/0-mock-server/kernel-server/web/src/components/common/StatusLight.jsx" />
+      </list>
+    </option>
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="dependencySupport" implementationName="javascript:npm:react" />
+    <option featureType="dependencySupport" implementationName="javascript:npm:prettier" />
+    <option featureType="dependencySupport" implementationName="javascript:npm:tailwindcss" />
+    <option featureType="dependencySupport" implementationName="javascript:npm:vite" />
+    <option featureType="com.intellij.fileTypeFactory" implementationName=".env" />
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.template" />
+    <option featureType="dependencySupport" implementationName="javascript:npm:postcss" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="CHECK_NEW_TODO" value="false" />
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/3-adapter/android/IMPosAdapterV1" />
+      <path value="$PROJECT_DIR$/4-assembly/android/IMPos2DesktopV1" />
+      <path value="$PROJECT_DIR$/3-adapter/android/pos-adapter-v1" />
+      <path value="$PROJECT_DIR$/3-adapter/android/pos-adapter-v2" />
+      <path value="$PROJECT_DIR$/3-adapter/android/pos-adapter-v3" />
+      <path value="$PROJECT_DIR$/3-adapter/android/adapterRN84" />
+    </ignored-roots>
+    <MESSAGE value="init" />
+    <MESSAGE value="03-01" />
+    <MESSAGE value="0303" />
+    <MESSAGE value="0303a" />
+    <MESSAGE value="0308" />
+    <MESSAGE value="0327" />
+    <MESSAGE value="0329" />
+    <MESSAGE value="0330" />
+    <MESSAGE value="0406" />
+    <MESSAGE value="0407" />
+    <MESSAGE value="0408" />
+    <MESSAGE value="0414" />
+    <MESSAGE value="0415" />
+    <MESSAGE value="0417" />
+    <MESSAGE value="0419" />
+    <MESSAGE value="0421" />
+    <MESSAGE value="0422" />
+    <option name="LAST_COMMIT_MESSAGE" value="0422" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

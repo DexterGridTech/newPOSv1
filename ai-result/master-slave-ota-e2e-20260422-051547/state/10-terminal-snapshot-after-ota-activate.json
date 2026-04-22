@@ -1,0 +1,94 @@
+{
+  "success": true,
+  "data": [
+    {
+      "topic": "terminal.hot-update.desired",
+      "itemKey": "main",
+      "operation": "upsert",
+      "scopeType": "TERMINAL",
+      "scopeId": "terminal_j1rgmnggrq4n",
+      "revision": 1,
+      "payload": {
+        "schemaVersion": 1,
+        "releaseId": "release_jn5atz9q6xyk",
+        "packageId": "pkg_9k94k0kk6ilf",
+        "appId": "assembly-android-mixc-retail-rn84",
+        "platform": "android",
+        "product": "mixc-retail",
+        "bundleVersion": "1.0.0+ota.2",
+        "runtimeVersion": "android-mixc-retail-rn84@1.0",
+        "packageUrl": "/api/v1/hot-updates/packages/pkg_9k94k0kk6ilf/download?sandboxId=sandbox-kernel-base-test&token=29501c2f0d9ed66bfb2d6bd0842e9adb731073a32f36a6b3aa3cc0937fec57c0",
+        "packageSize": 3563110,
+        "packageSha256": "f9c87e5b09f12d294193e4a6b9f5c82c495672d9c301f78c09b05c4943b24257",
+        "manifestSha256": "0308635883abe77380c3e51415f630d0288b4cc4a49ee2e06971153af000ae65",
+        "compatibility": {
+          "appId": "assembly-android-mixc-retail-rn84",
+          "platform": "android",
+          "product": "mixc-retail",
+          "runtimeVersion": "android-mixc-retail-rn84@1.0",
+          "minAssemblyVersion": "1.0.0",
+          "maxAssemblyVersion": "1.0.0",
+          "minBuildNumber": 8,
+          "maxBuildNumber": 8,
+          "allowedChannels": [
+            "production"
+          ],
+          "targetPackages": {
+            "@impos2/kernel-base-contracts": "1.0.0",
+            "@impos2/kernel-base-platform-ports": "1.0.0",
+            "@impos2/kernel-base-runtime-shell-v2": "1.0.0",
+            "@impos2/kernel-base-tcp-control-runtime-v2": "1.0.0",
+            "@impos2/kernel-base-topology-runtime-v3": "1.0.0",
+            "@impos2/kernel-base-transport-runtime": "1.0.0",
+            "@impos2/kernel-base-ui-runtime-v2": "1.0.0",
+            "@impos2/kernel-server-config-v2": "1.0.0",
+            "@impos2/ui-base-admin-console": "1.0.0",
+            "@impos2/ui-base-input-runtime": "1.0.0",
+            "@impos2/ui-base-runtime-react": "1.0.0",
+            "@impos2/ui-base-terminal-console": "1.0.0",
+            "@impos2/ui-integration-retail-shell": "1.0.0",
+            "@impos2/adapter-android-v2": "1.0.0"
+          }
+        },
+        "restart": {
+          "mode": "immediate",
+          "operatorInstruction": "ota e2e immediate restart"
+        },
+        "rollout": {
+          "mode": "active",
+          "publishedAt": "2026-04-21T21:35:14.878Z"
+        },
+        "safety": {
+          "requireSignature": false,
+          "maxDownloadAttempts": 3,
+          "maxLaunchFailures": 2,
+          "healthCheckTimeoutMs": 30000
+        },
+        "metadata": {
+          "channel": "production",
+          "builtAt": "2026-04-21T21:34:03.205Z",
+          "releaseNotes": [
+            "ota-e2e",
+            "v20"
+          ]
+        }
+      },
+      "occurredAt": "2026-04-21T21:35:14.879Z",
+      "sourceReleaseId": null
+    },
+    {
+      "topic": "terminal.group.membership",
+      "itemKey": "terminal_j1rgmnggrq4n",
+      "operation": "upsert",
+      "scopeType": "TERMINAL",
+      "scopeId": "terminal_j1rgmnggrq4n",
+      "revision": 1,
+      "payload": {
+        "membershipVersion": 0,
+        "groups": []
+      },
+      "occurredAt": "2026-04-21T21:23:23.851Z",
+      "sourceReleaseId": null
+    }
+  ]
+}

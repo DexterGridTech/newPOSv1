@@ -1,0 +1,636 @@
+--- step1-prepare-activation.json
+{
+  "baseUrl": "http://127.0.0.1:5810",
+  "sandboxId": "sandbox-kernel-base-test",
+  "activationCode": "312058073059",
+  "created": true,
+  "preparedKernelSandbox": false
+}
+--- step2-activate-primary.json
+{
+  "submit": {
+    "ok": true,
+    "nodeId": "ui-base-terminal-activate-device:submit"
+  },
+  "idle": {
+    "ok": true
+  },
+  "activation": {
+    "activationStatus": "ACTIVATED",
+    "terminalId": "terminal_pdiee89wsth0",
+    "sandboxId": "sandbox-kernel-base-test"
+  }
+}
+--- step2-primary-credential.json
+{
+  "status": "READY",
+  "accessToken": "token_oqaw0ebzsth1",
+  "refreshToken": "refresh_7du2eyrdsth1",
+  "expiresAt": 1776614532895,
+  "refreshExpiresAt": 1779199332895,
+  "updatedAt": 1776607332895
+}
+--- step2-primary-identity.json
+{
+  "deviceFingerprint": "J9RZPWR3HK",
+  "deviceInfo": {
+    "id": "J9RZPWR3HK",
+    "model": "Mixc Retail Android RN84"
+  },
+  "activationStatus": "ACTIVATED",
+  "terminalId": "terminal_pdiee89wsth0",
+  "activatedAt": 1776607332895
+}
+--- step2-primary-sandbox.json
+{
+  "sandboxId": "sandbox-kernel-base-test",
+  "updatedAt": 1776607332895
+}
+--- step2-primary-screen.json
+{
+  "containerKey": "primary.root.container",
+  "screen": {
+    "partKey": "ui.integration.retail-shell.welcome",
+    "rendererKey": "ui.integration.retail-shell.welcome",
+    "props": {
+      "terminalId": "terminal_pdiee89wsth0"
+    }
+  },
+  "overlayCount": 0
+}
+--- step2-primary-tree.json
+[
+  {
+    "target": "primary",
+    "runtimeId": "primary-runtime",
+    "screenKey": "overlay",
+    "mountId": "overlay-host:primary",
+    "nodeId": "overlay-host:primary",
+    "testID": "ui-base-overlay-host",
+    "semanticId": "overlay-host:primary",
+    "role": "overlay-host",
+    "visible": true,
+    "enabled": true,
+    "persistent": true,
+    "availableActions": [],
+    "stale": false
+  },
+  {
+    "target": "primary",
+    "runtimeId": "primary-runtime",
+    "screenKey": "runtime-root",
+    "mountId": "root:primary",
+    "nodeId": "root:primary",
+    "testID": "ui-base-root-shell:primary",
+    "semanticId": "runtime-root:primary",
+    "role": "root",
+    "visible": true,
+    "enabled": true,
+    "persistent": true,
+    "availableActions": [],
+    "stale": false
+  },
+  {
+    "target": "primary",
+    "runtimeId": "primary-runtime",
+    "screenKey": "retail-shell-root",
+    "mountId": "ui-integration-retail-shell:root:primary",
+    "nodeId": "ui-integration-retail-shell:root:primary",
+--- step2-secondary-identity.json
+{
+  "deviceFingerprint": "J9RZPWR3HK",
+  "deviceInfo": {
+    "id": "J9RZPWR3HK",
+    "model": "Mixc Retail Android RN84"
+  },
+  "terminalId": "terminal_pdiee89wsth0",
+  "activationStatus": "ACTIVATED",
+  "activatedAt": 1776607332895
+}
+--- step2-secondary-screen.json
+{
+  "containerKey": "secondary.root.container",
+  "screen": {
+    "partKey": "ui.integration.retail-shell.secondary-welcome",
+    "rendererKey": "ui.integration.retail-shell.secondary-welcome",
+    "props": {
+      "terminalId": "terminal_pdiee89wsth0"
+    }
+  },
+  "overlayCount": 0
+}
+--- step2-wait-activated.json
+{
+  "activationStatus": "ACTIVATED",
+  "terminalId": "terminal_pdiee89wsth0",
+  "sandboxId": "sandbox-kernel-base-test"
+}
+--- step3-close-admin-panel.json
+{
+  "ok": true,
+  "nodeId": "ui-base-admin-popup:close-panel"
+}
+--- step3-deactivate-primary.json
+{
+  "login": {
+    "deviceId": "J9RZPWR3HK",
+    "password": "081940",
+    "panel": {
+      "target": "primary",
+      "runtimeId": "primary-runtime",
+      "screenKey": "admin-popup:panel",
+      "mountId": "admin-popup:panel:root",
+      "nodeId": "ui-base-admin-popup:panel",
+      "testID": "ui-base-admin-popup:panel",
+      "semanticId": "ui-base-admin-popup:panel",
+      "role": "dialog",
+      "text": "系统管理工作台",
+      "visible": true,
+      "enabled": true,
+      "persistent": true,
+      "availableActions": [],
+      "stale": false
+    }
+  },
+  "screen": {
+    "containerKey": "primary.root.container",
+    "screen": {
+      "partKey": "ui.base.terminal.activate-device",
+      "rendererKey": "ui.base.terminal.activate-device",
+      "props": null
+    },
+    "overlayCount": 0
+  },
+  "message": {
+    "target": "primary",
+    "runtimeId": "primary-runtime",
+    "screenKey": "ui.base.terminal.activate-device",
+    "mountId": "ui.base.terminal.activate-device:message",
+    "nodeId": "ui-base-terminal-activate-device:message",
+    "testID": "ui-base-terminal-activate-device:message",
+    "semanticId": "ui-base-terminal-activate-device:message",
+    "role": "text",
+    "text": "请向管理员索取激活码。激活成功后，本机将自动进入业务欢迎页。",
+    "value": "master-unactivated",
+    "visible": true,
+    "enabled": true,
+    "availableActions": [],
+    "stale": false
+  }
+}
+--- step3-primary-credential-settled.json
+{
+  "status": "EMPTY"
+}
+--- step3-primary-credential.json
+{
+  "status": "READY",
+  "accessToken": "token_oqaw0ebzsth1",
+  "refreshToken": "refresh_7du2eyrdsth1",
+  "expiresAt": 1776614532895,
+  "refreshExpiresAt": 1779199332895,
+  "updatedAt": 1776607332895
+}
+--- step3-primary-identity-settled.json
+{
+  "activationStatus": "UNACTIVATED",
+  "deviceInfo": {
+    "id": "J9RZPWR3HK",
+    "model": "Mixc Retail Android RN84"
+  },
+  "deviceFingerprint": "J9RZPWR3HK"
+}
+--- step3-primary-identity.json
+{
+  "deviceFingerprint": "J9RZPWR3HK",
+  "deviceInfo": {
+    "id": "J9RZPWR3HK",
+    "model": "Mixc Retail Android RN84"
+  },
+  "activationStatus": "ACTIVATED",
+  "terminalId": "terminal_pdiee89wsth0",
+  "activatedAt": 1776607332895
+}
+--- step3-primary-idle-after-close.json
+{
+  "ok": true
+}
+--- step3-primary-requests.json
+[
+  {
+    "requestId": "req_mo5u7k5s_8jcrw52qsnb9zr9s",
+    "rootCommandId": "cmd_mo5u7k5s_73j8b4aiqfs737vm",
+    "status": "COMPLETED",
+    "startedAt": 1776607458256,
+    "updatedAt": 1776607458301,
+    "commands": [
+      {
+        "requestId": "req_mo5u7k5s_8jcrw52qsnb9zr9s",
+        "commandId": "cmd_mo5u7k5s_73j8b4aiqfs737vm",
+        "commandName": "kernel.base.runtime-shell-v2.initialize",
+        "target": "local",
+        "status": "COMPLETED",
+        "startedAt": 1776607458256,
+        "completedAt": 1776607458301,
+        "actorResults": [
+          {
+            "actorKey": "assembly.android.mixc-retail-rn84.AssemblyRuntimeInitializeActor",
+            "status": "COMPLETED",
+            "startedAt": 1776607458256,
+            "completedAt": 1776607458300,
+            "result": {
+              "displayIndex": 0,
+              "displayCount": 2,
+              "topologyRole": "master"
+            }
+          },
+          {
+            "actorKey": "kernel.base.tdp-sync-runtim
+--- step3-primary-sandbox-settled.json
+{}
+--- step3-primary-sandbox.json
+{
+  "sandboxId": "sandbox-kernel-base-test",
+  "updatedAt": 1776607332895
+}
+--- step3-primary-screen-settled.json
+{
+  "containerKey": "primary.root.container",
+  "screen": {
+    "partKey": "ui.base.terminal.activate-device",
+    "rendererKey": "ui.base.terminal.activate-device",
+    "props": null
+  },
+  "overlayCount": 0
+}
+--- step3-primary-screen.json
+{
+  "containerKey": "primary.root.container",
+  "screen": {
+    "partKey": "ui.integration.retail-shell.welcome",
+    "rendererKey": "ui.integration.retail-shell.welcome",
+    "props": {
+      "terminalId": "terminal_pdiee89wsth0"
+    }
+  },
+  "overlayCount": 0
+}
+--- step3-primary-tree-after-check.json
+[
+  {
+    "target": "primary",
+    "runtimeId": "primary-runtime",
+    "screenKey": "runtime-root",
+    "mountId": "root:primary",
+    "nodeId": "root:primary",
+    "testID": "ui-base-root-shell:primary",
+    "semanticId": "runtime-root:primary",
+    "role": "root",
+    "visible": true,
+    "enabled": true,
+    "persistent": true,
+    "availableActions": [],
+    "stale": false
+  },
+  {
+    "target": "primary",
+    "runtimeId": "primary-runtime",
+    "screenKey": "retail-shell-root",
+    "mountId": "ui-integration-retail-shell:root:primary",
+    "nodeId": "ui-integration-retail-shell:root:primary",
+    "testID": "ui-integration-retail-shell:root:primary",
+    "semanticId": "ui-integration-retail-shell:root:primary",
+    "role": "root",
+    "visible": true,
+    "enabled": true,
+    "persistent": true,
+    "availableActions": [],
+    "stale": false
+  },
+  {
+    "target": "primary",
+    "runtimeId": "primary-runtime",
+    "screenKey": "retail-shell-root",
+    "mountId": "ui-integration-ret
+--- step3-primary-tree-settled.json
+[
+  {
+    "target": "primary",
+    "runtimeId": "primary-runtime",
+    "screenKey": "runtime-root",
+    "mountId": "root:primary",
+    "nodeId": "root:primary",
+    "testID": "ui-base-root-shell:primary",
+    "semanticId": "runtime-root:primary",
+    "role": "root",
+    "visible": true,
+    "enabled": true,
+    "persistent": true,
+    "availableActions": [],
+    "stale": false
+  },
+  {
+    "target": "primary",
+    "runtimeId": "primary-runtime",
+    "screenKey": "retail-shell-root",
+    "mountId": "ui-integration-retail-shell:root:primary",
+    "nodeId": "ui-integration-retail-shell:root:primary",
+    "testID": "ui-integration-retail-shell:root:primary",
+    "semanticId": "ui-integration-retail-shell:root:primary",
+    "role": "root",
+    "visible": true,
+    "enabled": true,
+    "persistent": true,
+    "availableActions": [],
+    "stale": false
+  },
+  {
+    "target": "primary",
+    "runtimeId": "primary-runtime",
+    "screenKey": "retail-shell-root",
+    "mountId": "ui-integration-ret
+--- step3-secondary-identity-settled.json
+{
+  "deviceFingerprint": "J9RZPWR3HK",
+  "deviceInfo": {
+    "id": "J9RZPWR3HK",
+    "model": "Mixc Retail Android RN84"
+  },
+  "activationStatus": "UNACTIVATED"
+}
+--- step3-secondary-identity.json
+{
+  "deviceFingerprint": "J9RZPWR3HK",
+  "deviceInfo": {
+    "id": "J9RZPWR3HK",
+    "model": "Mixc Retail Android RN84"
+  },
+  "terminalId": "terminal_pdiee89wsth0",
+  "activationStatus": "ACTIVATED",
+  "activatedAt": 1776607332895
+}
+--- step3-secondary-screen-settled.json
+{
+  "containerKey": "secondary.root.container",
+  "screen": {
+    "partKey": "ui.base.terminal.activate-device-secondary",
+    "rendererKey": "ui.base.terminal.activate-device-secondary",
+    "props": null
+  },
+  "overlayCount": 0
+}
+--- step3-secondary-screen.json
+{
+  "containerKey": "secondary.root.container",
+  "screen": {
+    "partKey": "ui.integration.retail-shell.secondary-welcome",
+    "rendererKey": "ui.integration.retail-shell.secondary-welcome",
+    "props": {
+      "terminalId": "terminal_pdiee89wsth0"
+    }
+  },
+  "overlayCount": 0
+}
+--- step4-primary-credential.json
+{
+  "status": "EMPTY"
+}
+--- step4-primary-hello.json
+{
+  "protocolVersion": 1,
+  "capabilities": [
+    "runtime.query",
+    "ui.semanticRegistry",
+    "wait",
+    "trace",
+    "scripts.execute"
+  ],
+  "availableTargets": [
+    "host",
+    "primary"
+  ],
+  "buildProfile": "debug",
+  "productMode": false,
+  "scriptExecutionAvailable": true
+}
+--- step4-primary-identity.json
+{
+  "deviceFingerprint": "J9RZPWR3HK",
+  "deviceInfo": {
+    "id": "J9RZPWR3HK",
+    "model": "Mixc Retail Android RN84"
+  },
+  "activationStatus": "UNACTIVATED"
+}
+--- step4-primary-screen.json
+{
+  "containerKey": "primary.root.container",
+  "screen": {
+    "partKey": "ui.base.terminal.activate-device",
+    "rendererKey": "ui.base.terminal.activate-device",
+    "props": null
+  },
+  "overlayCount": 0
+}
+--- step4-primary-tree.json
+[
+  {
+    "target": "primary",
+    "runtimeId": "primary-runtime",
+    "screenKey": "input",
+    "mountId": "input:ui-base-input-runtime:field:1",
+    "nodeId": "ui-base-terminal-activate-device:sandbox",
+    "testID": "ui-base-terminal-activate-device:sandbox",
+    "semanticId": "ui-base-terminal-activate-device:sandbox",
+    "role": "button",
+    "text": "请输入 sandboxId",
+    "value": "",
+    "visible": true,
+    "enabled": true,
+    "persistent": true,
+    "availableActions": [
+      "press"
+    ],
+    "stale": false
+  },
+  {
+    "target": "primary",
+    "runtimeId": "primary-runtime",
+    "screenKey": "input",
+    "mountId": "input:ui-base-input-runtime:field:2",
+    "nodeId": "ui-base-terminal-activate-device:input",
+    "testID": "ui-base-terminal-activate-device:input",
+    "semanticId": "ui-base-terminal-activate-device:input",
+    "role": "button",
+    "text": "请输入至少 6 位激活码",
+    "value": "",
+    "visible": true,
+    "enabled": true,
+    "persistent": true,
+    "availableAction
+--- step4-restart-smoke-primary.json parse-error Unexpected end of JSON input
+--- step4-restart-smoke-secondary.json parse-error Unexpected end of JSON input
+--- step4-secondary-hello.json
+{
+  "protocolVersion": 1,
+  "capabilities": [
+    "runtime.query",
+    "ui.semanticRegistry",
+    "wait",
+    "trace",
+    "scripts.execute"
+  ],
+  "availableTargets": [
+    "host",
+    "secondary"
+  ],
+  "buildProfile": "debug",
+  "productMode": false,
+  "scriptExecutionAvailable": true
+}
+--- step4-secondary-identity.json
+{
+  "deviceFingerprint": "J9RZPWR3HK",
+  "deviceInfo": {
+    "id": "J9RZPWR3HK",
+    "model": "Mixc Retail Android RN84"
+  },
+  "activationStatus": "UNACTIVATED"
+}
+--- step4-secondary-screen.json
+{
+  "containerKey": "secondary.root.container",
+  "screen": {
+    "partKey": "ui.base.terminal.activate-device-secondary",
+    "rendererKey": "ui.base.terminal.activate-device-secondary",
+    "props": null
+  },
+  "overlayCount": 0
+}
+--- step5-prepare-reactivation.json
+{
+  "baseUrl": "http://127.0.0.1:5810",
+  "sandboxId": "sandbox-kernel-base-test",
+  "activationCode": "046067130919",
+  "created": true,
+  "preparedKernelSandbox": false
+}
+--- step5-primary-credential.json
+{
+  "status": "READY",
+  "accessToken": "token_xzqorfc6zmrq",
+  "refreshToken": "refresh_xdpnjkvzzmrq",
+  "expiresAt": 1776614850801,
+  "refreshExpiresAt": 1779199650801,
+  "updatedAt": 1776607650801
+}
+--- step5-primary-identity.json
+{
+  "deviceFingerprint": "J9RZPWR3HK",
+  "deviceInfo": {
+    "id": "J9RZPWR3HK",
+    "model": "Mixc Retail Android RN84"
+  },
+  "activationStatus": "ACTIVATED",
+  "terminalId": "terminal_sdr7x7pazmrq",
+  "activatedAt": 1776607650801
+}
+--- step5-primary-sandbox.json
+{
+  "sandboxId": "sandbox-kernel-base-test",
+  "updatedAt": 1776607650801
+}
+--- step5-primary-screen.json
+{
+  "containerKey": "primary.root.container",
+  "screen": {
+    "partKey": "ui.integration.retail-shell.welcome",
+    "rendererKey": "ui.integration.retail-shell.welcome",
+    "props": {
+      "terminalId": "terminal_sdr7x7pazmrq"
+    }
+  },
+  "overlayCount": 0
+}
+--- step5-primary-tree.json
+[
+  {
+    "target": "primary",
+    "runtimeId": "primary-runtime",
+    "screenKey": "overlay",
+    "mountId": "overlay-host:primary",
+    "nodeId": "overlay-host:primary",
+    "testID": "ui-base-overlay-host",
+    "semanticId": "overlay-host:primary",
+    "role": "overlay-host",
+    "visible": true,
+    "enabled": true,
+    "persistent": true,
+    "availableActions": [],
+    "stale": false
+  },
+  {
+    "target": "primary",
+    "runtimeId": "primary-runtime",
+    "screenKey": "runtime-root",
+    "mountId": "root:primary",
+    "nodeId": "root:primary",
+    "testID": "ui-base-root-shell:primary",
+    "semanticId": "runtime-root:primary",
+    "role": "root",
+    "visible": true,
+    "enabled": true,
+    "persistent": true,
+    "availableActions": [],
+    "stale": false
+  },
+  {
+    "target": "primary",
+    "runtimeId": "primary-runtime",
+    "screenKey": "retail-shell-root",
+    "mountId": "ui-integration-retail-shell:root:primary",
+    "nodeId": "ui-integration-retail-shell:root:primary",
+--- step5-reactivate-primary.json
+{
+  "submit": {
+    "ok": true,
+    "nodeId": "ui-base-terminal-activate-device:submit"
+  },
+  "idle": {
+    "ok": true
+  },
+  "activation": {
+    "activationStatus": "ACTIVATED",
+    "terminalId": "terminal_sdr7x7pazmrq",
+    "sandboxId": "sandbox-kernel-base-test"
+  }
+}
+--- step5-secondary-identity.json
+{
+  "deviceFingerprint": "J9RZPWR3HK",
+  "deviceInfo": {
+    "id": "J9RZPWR3HK",
+    "model": "Mixc Retail Android RN84"
+  },
+  "terminalId": "terminal_sdr7x7pazmrq",
+  "activationStatus": "ACTIVATED",
+  "activatedAt": 1776607650801
+}
+--- step5-secondary-screen.json
+{
+  "containerKey": "secondary.root.container",
+  "screen": {
+    "partKey": "ui.integration.retail-shell.secondary-welcome",
+    "rendererKey": "ui.integration.retail-shell.secondary-welcome",
+    "props": {
+      "terminalId": "terminal_sdr7x7pazmrq"
+    }
+  },
+  "overlayCount": 0
+}
+--- step5-wait-reactivated.json
+{
+  "activationStatus": "ACTIVATED",
+  "terminalId": "terminal_sdr7x7pazmrq",
+  "sandboxId": "sandbox-kernel-base-test"
+}

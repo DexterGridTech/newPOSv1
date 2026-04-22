@@ -1,0 +1,1 @@
+{"version":3,"file":"wsCompression.d.ts","sourceRoot":"","sources":["../../src/utils/wsCompression.ts"],"names":[],"mappings":"AAmBA;;;;GAIG;AACH,wBAAsB,eAAe,CAAC,IAAI,EAAE,MAAM,GAAG,OAAO,CAAC,MAAM,CAAC,CA0BnE;AAED;;;;GAIG;AACH,wBAAsB,iBAAiB,CAAC,IAAI,EAAE,MAAM,GAAG,OAAO,CAAC,MAAM,CAAC,CAwBrE;AAED;;;;;GAKG;AACH,wBAAgB,cAAc,CAAC,IAAI,EAAE,MAAM,EAAE,IAAI,EAAE,MAAM,GAAG,OAAO,CAOlE"}

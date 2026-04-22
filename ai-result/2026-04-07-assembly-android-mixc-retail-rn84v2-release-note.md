@@ -1,0 +1,29 @@
+# Release Note
+
+- appId: assembly-android-mixc-retail-rn84v2
+- platform: android
+- assemblyVersion: 1.1.0
+- buildNumber: 1000002
+- bundleVersion: 1.1.0+ota.2
+- runtimeVersion: android-mixc-retail-rn84v2@1.1
+- channel: test
+- minSupportedAppVersion: 1.1.0
+- git.commit: 3d96e768989b67c15e4f4a70233b21520ddfd228
+- git.branch: main
+- updatedAt: 2026-04-07T12:24:11.402Z
+
+## Target Packages
+- @impos2/kernel-core-base: 1.0.0
+- @impos2/kernel-core-communication: 1.0.0
+- @impos2/kernel-core-interconnection: 1.0.0
+- @impos2/kernel-core-navigation: 1.0.0
+- @impos2/kernel-core-task: 1.0.0
+- @impos2/kernel-core-terminal: 1.0.0
+- @impos2/kernel-mixc-user-login: 1.0.0
+- @impos2/ui-integration-mixc-retail: 1.0.0
+- @impos2/adapter-android-pure: 1.0.0
+
+## Artifacts
+- apk: 4-assembly/android/mixc-retail-rn84v2/android/app/build/outputs/apk/release/app-release.apk, size=92692003, sha256=e207acde40313c40fd466f43690ba905f8d15dcc6b8344e5ad228634448a3d63
+- bundle: 4-assembly/android/mixc-retail-rn84v2/android/app/build/generated/assets/react/release/index.android.bundle, size=3586164, sha256=1e7b17376a202ea047170223c8cc2c029576e2f329d582b6c70a9f4935417bb8
+- sourceMap: 4-assembly/android/mixc-retail-rn84v2/android/app/build/intermediates/sourcemaps/react/release/index.android.bundle.packager.map, size=13372822, sha256=3df81409abd37da8190ae87a8c6a6a549198f5f1c38373bc85f25d5830951b1c

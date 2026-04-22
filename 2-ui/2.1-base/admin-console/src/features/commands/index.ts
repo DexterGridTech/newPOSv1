@@ -6,6 +6,8 @@ const defineModuleCommand = createModuleCommandFactory(moduleName)
 export const adminConsoleCommandDefinitions = {
     scanAndImportTopologyMaster: defineModuleCommand<{
         scanMode?: string
+        imageUri?: string
+        imageBase64?: string
         timeoutMs?: number
         reconnect?: boolean
     }>('scan-and-import-topology-master', {

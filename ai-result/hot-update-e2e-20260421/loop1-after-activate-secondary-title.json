@@ -1,0 +1,19 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "target": "secondary",
+    "runtimeId": "secondary-runtime",
+    "screenKey": "ui.integration.retail-shell.secondary-welcome",
+    "mountId": "ui.integration.retail-shell.secondary-welcome:title",
+    "nodeId": "ui-integration-retail-shell:secondary-welcome:title",
+    "testID": "ui-integration-retail-shell:secondary-welcome:title",
+    "semanticId": "ui-integration-retail-shell:secondary-welcome:title",
+    "role": "text",
+    "text": "欢迎来到万象城",
+    "visible": true,
+    "enabled": true,
+    "availableActions": [],
+    "stale": false
+  },
+  "id": "1776704129616-2ec17de6f8f648"
+}

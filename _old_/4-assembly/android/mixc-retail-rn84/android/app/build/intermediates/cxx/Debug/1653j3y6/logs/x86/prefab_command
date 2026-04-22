@@ -1,0 +1,22 @@
+/opt/homebrew/Cellar/openjdk@17/17.0.18/libexec/openjdk.jdk/Contents/Home/bin/java \
+  --class-path \
+  /Users/dexter/.gradle/caches/modules-2/files-2.1/com.google.prefab/cli/2.1.0/aa32fec809c44fa531f01dcfb739b5b3304d3050/cli-2.1.0-all.jar \
+  com.google.prefab.cli.AppKt \
+  --build-system \
+  cmake \
+  --platform \
+  android \
+  --abi \
+  x86 \
+  --os-version \
+  24 \
+  --stl \
+  c++_shared \
+  --ndk-version \
+  27 \
+  --output \
+  /var/folders/1v/twwzy2r94y76bp582x48cy0c0000gn/T/agp-prefab-staging16675349965627407419/staged-cli-output \
+  /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84/android/app/build/intermediates/cxx/refs/react-native-nitro-modules/2oy225tp \
+  /Users/dexter/.gradle/caches/8.13/transforms/34327d8e45a7655b9a1c4eb72223df88/transformed/jetified-react-android-0.84.1-debug/prefab \
+  /Users/dexter/.gradle/caches/8.13/transforms/04d2fcbfca8714d95627b25f132ce6a1/transformed/jetified-hermes-android-250829098.0.9-debug/prefab \
+  /Users/dexter/.gradle/caches/8.13/transforms/34dda157d506ce7d0de690b58113d724/transformed/jetified-fbjni-0.7.0/prefab

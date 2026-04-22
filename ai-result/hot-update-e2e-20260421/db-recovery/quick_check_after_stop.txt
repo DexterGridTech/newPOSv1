@@ -1,0 +1,40 @@
+*** in database main ***
+Tree 24 page 209 cell 10: Rowid 81 out of order
+Tree 161 page 161 cell 6: 2nd reference to page 209
+Tree 161 page 161 cell 5: Rowid 110 out of order
+wrong # of entries in index sqlite_autoindex_audit_logs_1
+wrong # of entries in index sqlite_autoindex_tdp_projections_1
+wrong # of entries in index idx_terminal_version_reports_terminal
+wrong # of entries in index sqlite_autoindex_terminal_version_reports_1
+NUMERIC value in tdp_projections.scope_type
+NUMERIC value in tdp_projections.scope_type
+NUMERIC value in tdp_projections.scope_type
+NUMERIC value in tdp_projections.scope_type
+NUMERIC value in tdp_projections.scope_type
+NUMERIC value in tdp_projections.scope_type
+NUMERIC value in tdp_projections.scope_type
+NUMERIC value in tdp_projections.scope_type
+NUMERIC value in tdp_projections.scope_type
+NUMERIC value in tdp_projections.scope_type
+NUMERIC value in tdp_projections.scope_type
+NUMERIC value in tdp_projections.scope_type
+NUMERIC value in terminal_version_reports.app_id
+NULL value in terminal_version_reports.bundle_version
+NULL value in terminal_version_reports.source
+NULL value in terminal_version_reports.state
+NULL value in terminal_version_reports.reported_at
+NUMERIC value in terminal_version_reports.app_id
+NULL value in terminal_version_reports.bundle_version
+NULL value in terminal_version_reports.source
+NULL value in terminal_version_reports.state
+NULL value in terminal_version_reports.reported_at
+NUMERIC value in terminal_version_reports.app_id
+NULL value in terminal_version_reports.bundle_version
+NULL value in terminal_version_reports.source
+NULL value in terminal_version_reports.state
+NULL value in terminal_version_reports.reported_at
+NUMERIC value in terminal_version_reports.app_id
+NULL value in terminal_version_reports.bundle_version
+NULL value in terminal_version_reports.source
+NULL value in terminal_version_reports.state
+NULL value in terminal_version_reports.reported_at

@@ -1,0 +1,41 @@
+[
+  {
+    "level_": 0,
+    "message_": "Start JSON generation. Platform version: 24 min SDK version: arm64-v8a",
+    "file_": "/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/cpp/CMakeLists.txt",
+    "tag_": "debug|arm64-v8a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 0
+  },
+  {
+    "level_": 0,
+    "message_": "JSON \u0027/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/.cxx/Debug/5a661z71/arm64-v8a/android_gradle_build.json\u0027 was up-to-date",
+    "file_": "/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/cpp/CMakeLists.txt",
+    "tag_": "debug|arm64-v8a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 0
+  },
+  {
+    "level_": 0,
+    "message_": "JSON generation completed without problems",
+    "file_": "/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/src/main/cpp/CMakeLists.txt",
+    "tag_": "debug|arm64-v8a",
+    "diagnosticCode_": 0,
+    "memoizedIsInitialized": 1,
+    "unknownFields": {
+      "fields": {}
+    },
+    "memoizedSize": -1,
+    "memoizedHashCode": 0
+  }
+]

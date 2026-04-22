@@ -22,6 +22,7 @@ import type { HotUpdateDesiredPayloadDto, HotUpdateManifestDto } from './hotUpda
 
 const HOT_UPDATE_TOPIC_KEY = 'terminal.hot-update.desired'
 const HOT_UPDATE_ITEM_KEY = 'main'
+const DEFAULT_ANDROID_HOT_UPDATE_HEALTH_CHECK_TIMEOUT_MS = 30_000
 
 const currentDir = path.dirname(fileURLToPath(import.meta.url))
 const storageRoot = path.resolve(currentDir, '../../../data/hot-updates')
@@ -311,7 +312,7 @@ const buildDesiredPayload = (input: {
       requireSignature: Boolean(manifest.security.signatureAlgorithm),
       maxDownloadAttempts: 3,
       maxLaunchFailures: 2,
-      healthCheckTimeoutMs: 5_000,
+      healthCheckTimeoutMs: DEFAULT_ANDROID_HOT_UPDATE_HEALTH_CHECK_TIMEOUT_MS,
     },
     metadata: {
       channel: manifest.channel,

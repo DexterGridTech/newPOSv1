@@ -1,0 +1,1 @@
+/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail/android/app/build/intermediates/cxx/Debug/561o4n1o/obj/armeabi-v7a

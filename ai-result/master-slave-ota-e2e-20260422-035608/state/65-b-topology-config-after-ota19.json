@@ -1,0 +1,19 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "instanceMode": "SLAVE",
+    "displayMode": "PRIMARY",
+    "masterLocator": {
+      "masterDeviceId": "6Z2H3BSGEY",
+      "addedAt": 1776804074702,
+      "serverAddress": [
+        {
+          "address": "ws://127.0.0.1:18889/mockMasterServer/ws"
+        }
+      ],
+      "masterNodeId": "master:6Z2H3BSGEY",
+      "httpBaseUrl": "http://127.0.0.1:18889/mockMasterServer"
+    }
+  },
+  "id": "1776804682958-42835628afb05"
+}

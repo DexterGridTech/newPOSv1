@@ -1,0 +1,4 @@
+emulator-5554 tcp:18888 tcp:8888
+emulator-5554 tcp:28554 tcp:18584
+emulator-5556 tcp:28556 tcp:18584
+

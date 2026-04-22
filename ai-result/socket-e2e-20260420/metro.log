@@ -1,0 +1,147 @@
+
+Welcome to React Native v0.84
+Starting dev server on http://localhost:8081
+
+
+                        ▒▒▓▓▓▓▒▒
+                     ▒▓▓▓▒▒░░▒▒▓▓▓▒
+                  ▒▓▓▓▓░░░▒▒▒▒░░░▓▓▓▓▒
+                 ▓▓▒▒▒▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▓▓
+                 ▓▓░░░░░▒▓▓▓▓▓▓▒░░░░░▓▓
+                 ▓▓░░▓▓▒░░░▒▒░░░▒▓▒░░▓▓
+                 ▓▓░░▓▓▓▓▓▒▒▒▒▓▓▓▓▒░░▓▓
+                 ▓▓░░▓▓▓▓▓▓▓▓▓▓▓▓▓▒░░▓▓
+                 ▓▓▒░░▒▒▓▓▓▓▓▓▓▓▒░░░▒▓▓
+                  ▒▓▓▓▒░░░▒▓▓▒░░░▒▓▓▓▒
+                     ▒▓▓▓▒░░░░▒▓▓▓▒
+                        ▒▒▓▓▓▓▒▒
+
+
+                Welcome to Metro v0.83.5
+              Fast - Scalable - Integrated
+
+
+ INFO  [1m[7m💡 JavaScript logs have moved![22m They can now be viewed in React Native DevTools. Tip: Type [1mj[22m in the terminal to open.[27m
+ INFO  Dev server ready. Press Ctrl+C to exit.
+ INFO  Interactive mode is not supported in this environment
+ BUNDLE  ./index.js ░░░░░░░░░░░░░░░░ 0% (0/1)
+ BUNDLE  ./index.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 94% (1164/1255)
+ BUNDLE  ./index.js 
+ BUNDLE  ./index.js ░░░░░░░░░░░░░░░░ 0% (0/1)
+ BUNDLE  ./index.js 
+ BUNDLE  ./index.js ░░░░░░░░░░░░░░░░ 0% (0/1)
+ BUNDLE  ./index.js 
+ BUNDLE  ./index.js ░░░░░░░░░░░░░░░░ 0% (0/1)
+ BUNDLE  ./index.js 
+ BUNDLE  ./index.js ░░░░░░░░░░░░░░░░ 0% (0/1)
+ BUNDLE  ./index.js 
+ BUNDLE  ./index.js ░░░░░░░░░░░░░░░░ 0% (0/1)
+ BUNDLE  ./index.js 
+ BUNDLE  ./index.js ░░░░░░░░░░░░░░░░ 0% (0/1)
+ BUNDLE  ./index.js 
+ BUNDLE  ./index.js ░░░░░░░░░░░░░░░░ 0% (0/1)
+ BUNDLE  ./index.js 
+ BUNDLE  ./index.js ░░░░░░░░░░░░░░░░ 0% (0/1)
+ BUNDLE  ./index.js 
+ BUNDLE  ./index.js ░░░░░░░░░░░░░░░░ 0% (0/1)
+ BUNDLE  ./index.js 
+ ERROR  [timeout] connection terminated with Device for app='com.impos2.mixcretailassemblyrn84' on device='Pixel Tablet - 15 - API 35' after not responding for 60 seconds.
+ BUNDLE  ./index.js ░░░░░░░░░░░░░░░░ 0% (0/1)
+ BUNDLE  ./index.js 
+ BUNDLE  ./index.js ░░░░░░░░░░░░░░░░ 0% (0/1)
+ BUNDLE  ./index.js 
+ BUNDLE  ./index.js ░░░░░░░░░░░░░░░░ 0% (0/1)
+ BUNDLE  ./index.js 
+ ERROR  Error: Unable to resolve module node:timers/promises from /Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-base/workflow-runtime-v2/src/foundations/engineExecutor.ts: node:timers/promises could not be found within the project or in these directories:
+  ../../../node_modules
+  ../../../../../../../node_modules
+  node_modules
+  ../../../node_modules
+> 1 | import {setTimeout as delay} from 'node:timers/promises'
+    |                                    ^
+  2 | import {
+  3 |     createAppError,
+  4 |     isAppError,
+    at ModuleResolver.resolveDependency (/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/node_modules/metro/src/node-haste/DependencyGraph/ModuleResolution.js:178:15)
+    at DependencyGraph.resolveDependency (/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/node_modules/metro/src/node-haste/DependencyGraph.js:252:43)
+    at /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/node_modules/metro/src/lib/transformHelpers.js:165:21
+    at resolveDependencies (/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/node_modules/metro/src/DeltaBundler/buildSubgraph.js:43:25)
+    at visit (/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/node_modules/metro/src/DeltaBundler/buildSubgraph.js:81:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async Promise.all (index 5)
+    at async visit (/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/node_modules/metro/src/DeltaBundler/buildSubgraph.js:90:5)
+    at async Promise.all (index 6)
+    at async visit (/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/node_modules/metro/src/DeltaBundler/buildSubgraph.js:90:5)
+ BUNDLE  ./index.js ░░░░░░░░░░░░░░░░ 0% (0/1)
+ BUNDLE  ./index.js 
+ ERROR  Error: Unable to resolve module node:timers/promises from /Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-base/workflow-runtime-v2/src/foundations/engineExecutor.ts: node:timers/promises could not be found within the project or in these directories:
+  ../../../node_modules
+  ../../../../../../../node_modules
+  node_modules
+  ../../../node_modules
+> 1 | import {setTimeout as delay} from 'node:timers/promises'
+    |                                    ^
+  2 | import {
+  3 |     createAppError,
+  4 |     isAppError,
+    at ModuleResolver.resolveDependency (/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/node_modules/metro/src/node-haste/DependencyGraph/ModuleResolution.js:178:15)
+    at DependencyGraph.resolveDependency (/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/node_modules/metro/src/node-haste/DependencyGraph.js:252:43)
+    at /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/node_modules/metro/src/lib/transformHelpers.js:165:21
+    at resolveDependencies (/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/node_modules/metro/src/DeltaBundler/buildSubgraph.js:43:25)
+    at visit (/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/node_modules/metro/src/DeltaBundler/buildSubgraph.js:81:30)
+    at async Promise.all (index 5)
+    at async visit (/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/node_modules/metro/src/DeltaBundler/buildSubgraph.js:90:5)
+    at async Promise.all (index 6)
+    at async visit (/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/node_modules/metro/src/DeltaBundler/buildSubgraph.js:90:5)
+    at async Promise.all (index 0)
+ PREBUNDLE  ./index.js ░░░░░░░░░░░░░░░░ 0% (0/1)
+ PREBUNDLE  ./index.js 
+ ERROR  Error: Unable to resolve module node:timers/promises from /Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-base/workflow-runtime-v2/src/foundations/engineExecutor.ts: node:timers/promises could not be found within the project or in these directories:
+  ../../../node_modules
+  ../../../../../../../node_modules
+  node_modules
+  ../../../node_modules
+> 1 | import {setTimeout as delay} from 'node:timers/promises'
+    |                                    ^
+  2 | import {
+  3 |     createAppError,
+  4 |     isAppError,
+    at ModuleResolver.resolveDependency (/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/node_modules/metro/src/node-haste/DependencyGraph/ModuleResolution.js:178:15)
+    at DependencyGraph.resolveDependency (/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/node_modules/metro/src/node-haste/DependencyGraph.js:252:43)
+    at /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/node_modules/metro/src/lib/transformHelpers.js:165:21
+    at resolveDependencies (/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/node_modules/metro/src/DeltaBundler/buildSubgraph.js:43:25)
+    at visit (/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/node_modules/metro/src/DeltaBundler/buildSubgraph.js:81:30)
+    at async Promise.all (index 5)
+    at async visit (/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/node_modules/metro/src/DeltaBundler/buildSubgraph.js:90:5)
+    at async Promise.all (index 6)
+    at async visit (/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/node_modules/metro/src/DeltaBundler/buildSubgraph.js:90:5)
+    at async Promise.all (index 0)
+ BUNDLE  ./index.js ░░░░░░░░░░░░░░░░ 0% (0/1)
+ BUNDLE  ./index.js 
+ BUNDLE  ./index.js ░░░░░░░░░░░░░░░░ 0% (0/1)
+ BUNDLE  ./index.js 
+ BUNDLE  ./index.js ░░░░░░░░░░░░░░░░ 0% (0/1)
+ BUNDLE  ./index.js 
+ BUNDLE  ./index.js ░░░░░░░░░░░░░░░░ 0% (0/1)
+ BUNDLE  ./index.js 
+ BUNDLE  ./index.js ░░░░░░░░░░░░░░░░ 0% (0/1)
+ BUNDLE  ./index.js 
+ BUNDLE  ./index.js 
+ BUNDLE  ./index.js ░░░░░░░░░░░░░░░░ 0% (0/1)
+ BUNDLE  ./index.js 
+ BUNDLE  ./index.js 
+ BUNDLE  ./index.js ░░░░░░░░░░░░░░░░ 0% (0/1)
+ BUNDLE  ./index.js 
+ BUNDLE  ./index.js 
+ BUNDLE  ./index.js ░░░░░░░░░░░░░░░░ 0% (0/1)
+ BUNDLE  ./index.js 
+ BUNDLE  ./index.js 
+ BUNDLE  ./index.js ░░░░░░░░░░░░░░░░ 0% (0/1)
+ BUNDLE  ./index.js 
+ BUNDLE  ./index.js 
+ BUNDLE  ./index.js ░░░░░░░░░░░░░░░░ 0% (0/1)
+ BUNDLE  ./index.js 
+ BUNDLE  ./index.js 
+ ERROR  [timeout] connection terminated with Device for app='com.impos2.mixcretailassemblyrn84' on device='sdk_gphone64_arm64 - 13 - API 33' after not responding for 60 seconds.
+ ERROR  [timeout] connection terminated with Device for app='com.impos2.mixcretailassemblyrn84' on device='sdk_gphone64_arm64 - 16 - API 36' after not responding for 60 seconds.
+ ERROR  [timeout] connection terminated with Device for app='com.impos2.mixcretailassemblyrn84' on device='sdk_gphone64_arm64 - 13 - API 33' after not responding for 60 seconds.

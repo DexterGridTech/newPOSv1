@@ -1,0 +1,691 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "kernel.base.runtime-shell-v2.error-catalog": {
+      "kernel.base.topology-runtime-v3.display_context_required": {
+        "key": "kernel.base.topology-runtime-v3.display_context_required",
+        "template": "Topology runtime v3 requires displayIndex/displayCount",
+        "updatedAt": 1776808247234,
+        "source": "default"
+      },
+      "kernel.base.topology-runtime-v3.orchestrator_required": {
+        "key": "kernel.base.topology-runtime-v3.orchestrator_required",
+        "template": "Topology runtime v3 orchestrator is required for ${commandName}",
+        "updatedAt": 1776808247234,
+        "source": "default"
+      },
+      "kernel.base.topology-runtime-v3.socket_binding_required": {
+        "key": "kernel.base.topology-runtime-v3.socket_binding_required",
+        "template": "Topology runtime v3 socket binding is required",
+        "updatedAt": 1776808247234,
+        "source": "default"
+      },
+      "kernel.base.topology-runtime-v3.hello_runtime_required": {
+        "key": "kernel.base.topology-runtime-v3.hello_runtime_required",
+        "template": "Topology runtime v3 hello runtime is required",
+        "updatedAt": 1776808247234,
+        "source": "default"
+      },
+      "kernel.base.topology-runtime-v3.action_not_allowed": {
+        "key": "kernel.base.topology-runtime-v3.action_not_allowed",
+        "template": "Topology runtime v3 action ${commandName} is not allowed: ${reasonCode}",
+        "updatedAt": 1776808247234,
+        "source": "default"
+      },
+      "kernel.base.tcp-control-runtime-v2.activation_code_invalid": {
+        "key": "kernel.base.tcp-control-runtime-v2.activation_code_invalid",
+        "template": "Terminal activation code is invalid",
+        "updatedAt": 1776808247234,
+        "source": "default"
+      },
+      "kernel.base.tcp-control-runtime-v2.activation_failed": {
+        "key": "kernel.base.tcp-control-runtime-v2.activation_failed",
+        "template": "Terminal activation failed: ${error}",
+        "updatedAt": 1776808247234,
+        "source": "default"
+      },
+      "kernel.base.tcp-control-runtime-v2.credential_missing": {
+        "key": "kernel.base.tcp-control-runtime-v2.credential_missing",
+        "template": "Terminal credential is missing",
+        "updatedAt": 1776808247235,
+        "source": "default"
+      },
+      "kernel.base.tcp-control-runtime-v2.credential_expired": {
+        "key": "kernel.base.tcp-control-runtime-v2.credential_expired",
+        "template": "Terminal access credential has expired",
+        "updatedAt": 1776808247235,
+        "source": "default"
+      },
+      "kernel.base.tcp-control-runtime-v2.refresh_failed": {
+        "key": "kernel.base.tcp-control-runtime-v2.refresh_failed",
+        "template": "Terminal credential refresh failed: ${error}",
+        "updatedAt": 1776808247235,
+        "source": "default"
+      },
+      "kernel.base.tcp-control-runtime-v2.deactivation_failed": {
+        "key": "kernel.base.tcp-control-runtime-v2.deactivation_failed",
+        "template": "Terminal deactivation failed: ${error}",
+        "updatedAt": 1776808247235,
+        "source": "default"
+      },
+      "kernel.base.tcp-control-runtime-v2.task_result_report_failed": {
+        "key": "kernel.base.tcp-control-runtime-v2.task_result_report_failed",
+        "template": "Terminal task result report failed: ${error}",
+        "updatedAt": 1776808247235,
+        "source": "default"
+      },
+      "kernel.base.tcp-control-runtime-v2.bootstrap_hydration_failed": {
+        "key": "kernel.base.tcp-control-runtime-v2.bootstrap_hydration_failed",
+        "template": "Terminal control bootstrap failed: ${error}",
+        "updatedAt": 1776808247235,
+        "source": "default"
+      },
+      "kernel.base.tdp-sync-runtime-v2.credential_missing": {
+        "key": "kernel.base.tdp-sync-runtime-v2.credential_missing",
+        "template": "TDP credential or terminal identity is missing",
+        "updatedAt": 1776808247236,
+        "source": "default"
+      },
+      "kernel.base.tdp-sync-runtime-v2.handshake_failed": {
+        "key": "kernel.base.tdp-sync-runtime-v2.handshake_failed",
+        "template": "TDP handshake failed: ${error}",
+        "updatedAt": 1776808247236,
+        "source": "default"
+      },
+      "kernel.base.tdp-sync-runtime-v2.protocol_error": {
+        "key": "kernel.base.tdp-sync-runtime-v2.protocol_error",
+        "template": "TDP protocol error: ${error}",
+        "updatedAt": 1776808247236,
+        "source": "default"
+      },
+      "kernel.base.tdp-sync-runtime-v2.projection_apply_failed": {
+        "key": "kernel.base.tdp-sync-runtime-v2.projection_apply_failed",
+        "template": "TDP projection apply failed: ${error}",
+        "updatedAt": 1776808247236,
+        "source": "default"
+      },
+      "kernel.base.tdp-sync-runtime-v2.assembly_required": {
+        "key": "kernel.base.tdp-sync-runtime-v2.assembly_required",
+        "template": "TDP sync assembly is required for command ${commandName}",
+        "updatedAt": 1776808247237,
+        "source": "default"
+      },
+      "kernel.base.workflow-runtime-v2.workflow_definition_not_found": {
+        "key": "kernel.base.workflow-runtime-v2.workflow_definition_not_found",
+        "template": "Workflow definition ${workflowKey} not found",
+        "updatedAt": 1776808247237,
+        "source": "default"
+      },
+      "kernel.base.workflow-runtime-v2.workflow_definition_disabled": {
+        "key": "kernel.base.workflow-runtime-v2.workflow_definition_disabled",
+        "template": "Workflow definition ${workflowKey} is disabled",
+        "updatedAt": 1776808247237,
+        "source": "default"
+      },
+      "kernel.base.workflow-runtime-v2.duplicate_request": {
+        "key": "kernel.base.workflow-runtime-v2.duplicate_request",
+        "template": "Workflow request ${requestId} is already active",
+        "updatedAt": 1776808247237,
+        "source": "default"
+      },
+      "kernel.base.workflow-runtime-v2.workflow_run_not_found": {
+        "key": "kernel.base.workflow-runtime-v2.workflow_run_not_found",
+        "template": "Workflow run not found",
+        "updatedAt": 1776808247237,
+        "source": "default"
+      },
+      "kernel.base.workflow-runtime-v2.workflow_execution_failed": {
+        "key": "kernel.base.workflow-runtime-v2.workflow_execution_failed",
+        "template": "Workflow ${workflowKey} execution failed",
+        "updatedAt": 1776808247237,
+        "source": "default"
+      },
+      "kernel.base.workflow-runtime-v2.workflow_step_failed": {
+        "key": "kernel.base.workflow-runtime-v2.workflow_step_failed",
+        "template": "Workflow step ${stepKey} failed",
+        "updatedAt": 1776808247237,
+        "source": "default"
+      },
+      "kernel.base.workflow-runtime-v2.workflow_script_failed": {
+        "key": "kernel.base.workflow-runtime-v2.workflow_script_failed",
+        "template": "Workflow script execution failed",
+        "updatedAt": 1776808247237,
+        "source": "default"
+      },
+      "kernel.base.workflow-runtime-v2.workflow_queue_corrupted": {
+        "key": "kernel.base.workflow-runtime-v2.workflow_queue_corrupted",
+        "template": "Workflow queue state is corrupted",
+        "updatedAt": 1776808247237,
+        "source": "default"
+      },
+      "kernel.base.ui-runtime-v2.invalid_screen_target": {
+        "key": "kernel.base.ui-runtime-v2.invalid_screen_target",
+        "template": "UI runtime screen target is invalid",
+        "updatedAt": 1776808247237,
+        "source": "default"
+      },
+      "kernel.base.ui-runtime-v2.duplicated_screen_definition": {
+        "key": "kernel.base.ui-runtime-v2.duplicated_screen_definition",
+        "template": "Screen definition ${partKey} is already registered",
+        "updatedAt": 1776808247237,
+        "source": "default"
+      },
+      "kernel.base.ui-runtime-v2.overlay_id_required": {
+        "key": "kernel.base.ui-runtime-v2.overlay_id_required",
+        "template": "Overlay id is required",
+        "updatedAt": 1776808247237,
+        "source": "default"
+      }
+    },
+    "kernel.base.runtime-shell-v2.parameter-catalog": {
+      "kernel.base.topology-runtime-v3.reconnect-interval-ms": {
+        "key": "kernel.base.topology-runtime-v3.reconnect-interval-ms",
+        "rawValue": 20000,
+        "updatedAt": 1776808247234,
+        "source": "default"
+      },
+      "kernel.base.tcp-control-runtime-v2.credential-refresh-lead-time-ms": {
+        "key": "kernel.base.tcp-control-runtime-v2.credential-refresh-lead-time-ms",
+        "rawValue": 60000,
+        "updatedAt": 1776808247235,
+        "source": "default"
+      },
+      "kernel.base.tdp-sync-runtime-v2.ping-interval-ms": {
+        "key": "kernel.base.tdp-sync-runtime-v2.ping-interval-ms",
+        "rawValue": 30000,
+        "updatedAt": 1776808247237,
+        "source": "default"
+      },
+      "kernel.base.tdp-sync-runtime-v2.reconnect-interval-ms": {
+        "key": "kernel.base.tdp-sync-runtime-v2.reconnect-interval-ms",
+        "rawValue": 20000,
+        "updatedAt": 1776808247237,
+        "source": "default"
+      },
+      "kernel.base.tdp-sync-runtime-v2.reconnect-attempts": {
+        "key": "kernel.base.tdp-sync-runtime-v2.reconnect-attempts",
+        "rawValue": -1,
+        "updatedAt": 1776808247237,
+        "source": "default"
+      },
+      "kernel.base.tdp-sync-runtime-v2.connection-timeout-ms": {
+        "key": "kernel.base.tdp-sync-runtime-v2.connection-timeout-ms",
+        "rawValue": 10000,
+        "updatedAt": 1776808247237,
+        "source": "default"
+      },
+      "kernel.base.tdp-sync-runtime-v2.heartbeat-timeout-ms": {
+        "key": "kernel.base.tdp-sync-runtime-v2.heartbeat-timeout-ms",
+        "rawValue": 45000,
+        "updatedAt": 1776808247237,
+        "source": "default"
+      },
+      "kernel.base.tdp-sync-runtime-v2.hot-update-idle-threshold-ms": {
+        "key": "kernel.base.tdp-sync-runtime-v2.hot-update-idle-threshold-ms",
+        "rawValue": 300000,
+        "updatedAt": 1776808247237,
+        "source": "default"
+      },
+      "kernel.base.workflow-runtime-v2.default-workflow-timeout-ms": {
+        "key": "kernel.base.workflow-runtime-v2.default-workflow-timeout-ms",
+        "rawValue": 60000,
+        "updatedAt": 1776808247237,
+        "source": "default"
+      },
+      "kernel.base.workflow-runtime-v2.default-step-timeout-ms": {
+        "key": "kernel.base.workflow-runtime-v2.default-step-timeout-ms",
+        "rawValue": 15000,
+        "updatedAt": 1776808247237,
+        "source": "default"
+      },
+      "kernel.base.workflow-runtime-v2.event-history-limit": {
+        "key": "kernel.base.workflow-runtime-v2.event-history-limit",
+        "rawValue": 100,
+        "updatedAt": 1776808247237,
+        "source": "default"
+      },
+      "kernel.base.workflow-runtime-v2.completed-observation-limit": {
+        "key": "kernel.base.workflow-runtime-v2.completed-observation-limit",
+        "rawValue": 100,
+        "updatedAt": 1776808247237,
+        "source": "default"
+      },
+      "kernel.base.workflow-runtime-v2.queue-size-limit": {
+        "key": "kernel.base.workflow-runtime-v2.queue-size-limit",
+        "rawValue": 100,
+        "updatedAt": 1776808247237,
+        "source": "default"
+      },
+      "kernel.base.ui-runtime-v2.registry.cache-size-hint": {
+        "key": "kernel.base.ui-runtime-v2.registry.cache-size-hint",
+        "rawValue": 256,
+        "updatedAt": 1776808247237,
+        "source": "default"
+      }
+    },
+    "kernel.base.topology-runtime-v3.config": {
+      "instanceMode": "SLAVE",
+      "masterLocator": {
+        "masterDeviceId": "6Z2H3BSGEY",
+        "addedAt": 1776808761147,
+        "serverAddress": [
+          {
+            "address": "ws://127.0.0.1:18889/mockMasterServer/ws"
+          }
+        ],
+        "masterNodeId": "master:6Z2H3BSGEY",
+        "httpBaseUrl": "http://127.0.0.1:18889/mockMasterServer"
+      }
+    },
+    "kernel.base.topology-runtime-v3.context": {
+      "displayIndex": 0,
+      "displayCount": 1,
+      "instanceMode": "SLAVE",
+      "displayMode": "PRIMARY",
+      "workspace": "BRANCH",
+      "standalone": true,
+      "enableSlave": false,
+      "masterLocator": {
+        "masterDeviceId": "6Z2H3BSGEY",
+        "addedAt": 1776808761147,
+        "serverAddress": [
+          {
+            "address": "ws://127.0.0.1:18889/mockMasterServer/ws"
+          }
+        ],
+        "masterNodeId": "master:6Z2H3BSGEY",
+        "httpBaseUrl": "http://127.0.0.1:18889/mockMasterServer"
+      },
+      "localNodeId": "master:ZJ63NQELD9"
+    },
+    "kernel.base.topology-runtime-v3.connection": {
+      "serverConnectionStatus": "CONNECTED",
+      "reconnectAttempt": 0
+    },
+    "kernel.base.topology-runtime-v3.peer": {
+      "peerNodeId": "master:6Z2H3BSGEY",
+      "peerDeviceId": "6Z2H3BSGEY",
+      "peerRuntime": {
+        "nodeId": "master:6Z2H3BSGEY",
+        "deviceId": "6Z2H3BSGEY",
+        "instanceMode": "MASTER",
+        "displayMode": "PRIMARY",
+        "standalone": true,
+        "protocolVersion": "2026.04-v3",
+        "capabilities": [
+          "state-sync",
+          "command-relay",
+          "request-mirror"
+        ]
+      },
+      "connectedAt": 1776808761209
+    },
+    "kernel.base.topology-runtime-v3.sync": {
+      "status": "active",
+      "activeSessionId": "v3ses_mo95wa01_b9d882ac",
+      "lastSnapshotAppliedAt": 1776808761215
+    },
+    "kernel.base.topology-runtime-v3.request-mirror": {
+      "requests": {}
+    },
+    "kernel.base.topology-runtime-v3.demo.master": {},
+    "kernel.base.topology-runtime-v3.demo.slave": {},
+    "kernel.base.tcp-control-runtime-v2.identity": {
+      "deviceFingerprint": "6Z2H3BSGEY",
+      "deviceInfo": {
+        "id": "6Z2H3BSGEY",
+        "model": "Mixc Retail Android RN84"
+      },
+      "terminalId": "terminal_5re4fwuf4758",
+      "activationStatus": "ACTIVATED",
+      "activatedAt": 1776808855220
+    },
+    "kernel.base.tcp-control-runtime-v2.credential": {
+      "accessToken": "token_wbjo7fq94759",
+      "refreshToken": "refresh_2n2rr23y4759",
+      "expiresAt": 1776816055220,
+      "refreshExpiresAt": 1779400855220,
+      "status": "READY",
+      "updatedAt": 1776808855220
+    },
+    "kernel.base.tcp-control-runtime-v2.binding": {
+      "platformId": "platform-kernel-base-test",
+      "tenantId": "tenant-kernel-base-test",
+      "brandId": "brand-kernel-base-test",
+      "projectId": "project-kernel-base-test",
+      "storeId": "store-kernel-base-test",
+      "profileId": "profile-kernel-base-android-pos",
+      "templateId": "template-kernel-base-android-pos-standard"
+    },
+    "kernel.base.tcp-control-runtime-v2.sandbox": {
+      "sandboxId": "sandbox-kernel-base-test",
+      "updatedAt": 1776808855220
+    },
+    "kernel.base.tcp-control-runtime-v2.runtime": {
+      "bootstrapped": true,
+      "lastError": null
+    },
+    "kernel.base.tdp-sync-runtime-v2.session": {
+      "status": "IDLE"
+    },
+    "kernel.base.tdp-sync-runtime-v2.sync": {
+      "snapshotStatus": "idle",
+      "changesStatus": "idle"
+    },
+    "kernel.base.tdp-sync-runtime-v2.projection": {},
+    "kernel.base.tdp-sync-runtime-v2.command-inbox": {
+      "itemsById": {},
+      "orderedIds": []
+    },
+    "kernel.base.tdp-sync-runtime-v2.control-signals": {
+      "lastProtocolError": null,
+      "lastEdgeDegraded": null,
+      "lastRehomeRequired": null,
+      "lastDisconnectReason": null
+    },
+    "kernel.base.tdp-sync-runtime-v2.hot-update": {
+      "current": {
+        "source": "embedded",
+        "appId": "assembly-android-mixc-retail-rn84",
+        "assemblyVersion": "1.0.0",
+        "buildNumber": 8,
+        "runtimeVersion": "android-mixc-retail-rn84@1.0",
+        "bundleVersion": "1.0.0+ota.0",
+        "appliedAt": 1776808247240
+      },
+      "history": []
+    },
+    "kernel.base.workflow-runtime-v2.definitions": {
+      "bySource": {
+        "module": {
+          "kernel.base.workflow-runtime-v2.builtin.single-read-barcode-from-camera": [
+            {
+              "workflowKey": "kernel.base.workflow-runtime-v2.builtin.single-read-barcode-from-camera",
+              "moduleName": "kernel.base.workflow-runtime-v2",
+              "name": "Single Read Barcode From Camera",
+              "description": "Open camera scanner once and return the decoded barcode string.",
+              "enabled": true,
+              "version": "2026.04",
+              "tags": [
+                "builtin",
+                "task",
+                "barcode",
+                "camera"
+              ],
+              "inputSchema": {
+                "schemaType": "json-schema-lite",
+                "properties": {
+                  "scanMode": {
+                    "type": "string"
+                  },
+                  "imageUri": {
+                    "type": "string"
+                  },
+                  "imageBase64": {
+                    "type": "string"
+                  },
+                  "timeoutMs": {
+                    "type": "number"
+                  }
+                }
+              },
+              "outputSchema": {
+                "schemaType": "json-schema-lite",
+                "required": [
+                  "barcode"
+                ],
+                "properties": {
+                  "barcode": {
+                    "type": "string"
+                  },
+                  "format": {
+                    "type": "string"
+                  },
+                  "raw": {
+                    "type": "object"
+                  }
+                }
+              },
+              "rootStep": {
+                "stepKey": "read-barcode",
+                "name": "Read Barcode",
+                "type": "external-call",
+                "timeoutMs": 60000,
+                "input": {
+                  "object": {
+                    "channel": {
+                      "type": "INTENT",
+                      "target": "camera",
+                      "mode": "request-response"
+                    },
+                    "action": "com.impos2.posadapter.action.CAMERA_SCAN",
+                    "timeoutMs": {
+                      "type": "script",
+                      "language": "javascript",
+                      "source": "\n                            return typeof input.timeoutMs === 'number'\n                                ? input.timeoutMs\n                                : 60000\n                        "
+                    },
+                    "params": {
+                      "type": "script",
+                      "language": "javascript",
+                      "source": "\n                            const requestParams = {\n                                SCAN_MODE: input.scanMode || 'QR_CODE_MODE',\n                                waitResult: true\n                            }\n                            if (typeof input.imageUri === 'string' && input.imageUri.length > 0) {\n                                requestParams.IMAGE_URI = input.imageUri\n                            }\n                            if (typeof input.imageBase64 === 'string' && input.imageBase64.length > 0) {\n                                requestParams.IMAGE_BASE64 = input.imageBase64\n                            }\n                            return requestParams\n                        "
+                    }
+                  }
+                },
+                "output": {
+                  "result": {
+                    "type": "script",
+                    "language": "javascript",
+                    "source": "\n                        if (!params || params.success !== true) {\n                            throw new Error(params?.message || 'BARCODE_SCAN_FAILED')\n                        }\n                        const data = params.data || {}\n                        const barcode = data.SCAN_RESULT || data.scanResult || data.barcode\n                        if (typeof barcode !== 'string' || barcode.length === 0) {\n                            throw new Error('BARCODE_SCAN_EMPTY')\n                        }\n                        return {\n                            barcode,\n                            format: data.SCAN_RESULT_FORMAT || data.scanResultFormat || data.format || 'UNKNOWN',\n                            raw: params\n                        }\n                    "
+                  }
+                }
+              },
+              "timeoutMs": 60000,
+              "defaultOptions": {
+                "timeoutMs": 60000
+              },
+              "createdAt": 1776600000000,
+              "updatedAt": 1776600000000
+            }
+          ]
+        },
+        "host": {},
+        "remote": {},
+        "test": {}
+      },
+      "updatedAt": 1776808247219
+    },
+    "kernel.base.workflow-runtime-v2.observations": {
+      "byRequestId": {
+        "req_mo9626e2_b8qqj58bt1ggf6s0": {
+          "requestId": "req_mo9626e2_b8qqj58bt1ggf6s0",
+          "workflowRunId": "env_mo9626e2_icsat0h7nsquvz5g",
+          "workflowKey": "kernel.base.workflow-runtime-v2.builtin.single-read-barcode-from-camera",
+          "status": "COMPLETED",
+          "startedAt": 1776808761051,
+          "updatedAt": 1776808761145,
+          "progress": {
+            "current": 1,
+            "total": 1,
+            "percent": 100,
+            "activeStepKey": "read-barcode"
+          },
+          "loopIndex": 0,
+          "context": {
+            "input": {
+              "scanMode": "QR_CODE_MODE",
+              "imageBase64": "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",
+              "timeoutMs": 60000
+            },
+            "variables": {},
+            "stepOutputs": {
+              "read-barcode": {
+                "barcode": "{\"v\":\"2026.04\",\"d\":\"6Z2H3BSGEY\",\"n\":\"master:6Z2H3BSGEY\",\"w\":\"ws://127.0.0.1:18889/mockMasterServer/ws\"}",
+                "format": "QR_CODE",
+                "raw": {
+                  "message": "OK",
+                  "data": {
+                    "SCAN_RESULT_FORMAT": "QR_CODE",
+                    "SCAN_RESULT": "{\"v\":\"2026.04\",\"d\":\"6Z2H3BSGEY\",\"n\":\"master:6Z2H3BSGEY\",\"w\":\"ws://127.0.0.1:18889/mockMasterServer/ws\"}"
+                  },
+                  "code": 0,
+                  "success": true
+                }
+              }
+            },
+            "loopIndex": 0,
+            "updatedAt": 1776808761144
+          },
+          "steps": {
+            "read-barcode": {
+              "stepRunId": "env_mo9626e3_c75ka53dmjwqmqcr",
+              "stepKey": "read-barcode",
+              "type": "external-call",
+              "status": "COMPLETED",
+              "updatedAt": 1776808761144,
+              "startedAt": 1776808761051,
+              "output": {
+                "barcode": "{\"v\":\"2026.04\",\"d\":\"6Z2H3BSGEY\",\"n\":\"master:6Z2H3BSGEY\",\"w\":\"ws://127.0.0.1:18889/mockMasterServer/ws\"}",
+                "format": "QR_CODE",
+                "raw": {
+                  "message": "OK",
+                  "data": {
+                    "SCAN_RESULT_FORMAT": "QR_CODE",
+                    "SCAN_RESULT": "{\"v\":\"2026.04\",\"d\":\"6Z2H3BSGEY\",\"n\":\"master:6Z2H3BSGEY\",\"w\":\"ws://127.0.0.1:18889/mockMasterServer/ws\"}"
+                  },
+                  "code": 0,
+                  "success": true
+                }
+              },
+              "completedAt": 1776808761144
+            }
+          },
+          "events": [
+            {
+              "eventId": "env_mo9626e3_54qi6up0xtp2x9r0",
+              "requestId": "req_mo9626e2_b8qqj58bt1ggf6s0",
+              "workflowRunId": "env_mo9626e2_icsat0h7nsquvz5g",
+              "type": "workflow.started",
+              "occurredAt": 1776808761051
+            },
+            {
+              "eventId": "env_mo9626e3_olfe7qu7hd42qry4",
+              "requestId": "req_mo9626e2_b8qqj58bt1ggf6s0",
+              "workflowRunId": "env_mo9626e2_icsat0h7nsquvz5g",
+              "stepKey": "read-barcode",
+              "type": "step.started",
+              "occurredAt": 1776808761051
+            },
+            {
+              "eventId": "env_mo9626go_j5vygxv9n7ozh1i7",
+              "requestId": "req_mo9626e2_b8qqj58bt1ggf6s0",
+              "workflowRunId": "env_mo9626e2_icsat0h7nsquvz5g",
+              "stepKey": "read-barcode",
+              "type": "step.completed",
+              "payload": {
+                "barcode": "{\"v\":\"2026.04\",\"d\":\"6Z2H3BSGEY\",\"n\":\"master:6Z2H3BSGEY\",\"w\":\"ws://127.0.0.1:18889/mockMasterServer/ws\"}",
+                "format": "QR_CODE",
+                "raw": {
+                  "message": "OK",
+                  "data": {
+                    "SCAN_RESULT_FORMAT": "QR_CODE",
+                    "SCAN_RESULT": "{\"v\":\"2026.04\",\"d\":\"6Z2H3BSGEY\",\"n\":\"master:6Z2H3BSGEY\",\"w\":\"ws://127.0.0.1:18889/mockMasterServer/ws\"}"
+                  },
+                  "code": 0,
+                  "success": true
+                }
+              },
+              "occurredAt": 1776808761144
+            },
+            {
+              "eventId": "env_mo9626gp_36ac0krc2ajqa48m",
+              "requestId": "req_mo9626e2_b8qqj58bt1ggf6s0",
+              "workflowRunId": "env_mo9626e2_icsat0h7nsquvz5g",
+              "type": "workflow.completed",
+              "occurredAt": 1776808761145
+            }
+          ],
+          "completedAt": 1776808761145,
+          "output": {
+            "barcode": "{\"v\":\"2026.04\",\"d\":\"6Z2H3BSGEY\",\"n\":\"master:6Z2H3BSGEY\",\"w\":\"ws://127.0.0.1:18889/mockMasterServer/ws\"}",
+            "format": "QR_CODE",
+            "raw": {
+              "message": "OK",
+              "data": {
+                "SCAN_RESULT_FORMAT": "QR_CODE",
+                "SCAN_RESULT": "{\"v\":\"2026.04\",\"d\":\"6Z2H3BSGEY\",\"n\":\"master:6Z2H3BSGEY\",\"w\":\"ws://127.0.0.1:18889/mockMasterServer/ws\"}"
+              },
+              "code": 0,
+              "success": true
+            }
+          }
+        }
+      },
+      "updatedAt": 1776808761145
+    },
+    "kernel.base.workflow-runtime-v2.queue": {
+      "queuedRequestIds": [],
+      "updatedAt": 1776808761146
+    },
+    "kernel.base.ui-runtime-v2.screen.main": {
+      "primary.root.container": {
+        "value": {
+          "partKey": "ui.integration.retail-shell.welcome",
+          "rendererKey": "ui.integration.retail-shell.welcome",
+          "name": "retailShellWelcome",
+          "title": "零售欢迎页",
+          "description": "Retail shell 业务欢迎页",
+          "containerKey": "primary.root.container",
+          "props": {
+            "terminalId": "terminal_5re4fwuf4758"
+          },
+          "source": "ui.integration.retail-shell.activateTerminalSucceeded",
+          "operation": "replace"
+        },
+        "updatedAt": 1776808855222
+      },
+      "secondary.root.container": {
+        "value": {
+          "partKey": "ui.integration.retail-shell.secondary-welcome",
+          "rendererKey": "ui.integration.retail-shell.secondary-welcome",
+          "name": "retailShellSecondaryWelcome",
+          "title": "零售副屏欢迎页",
+          "description": "Retail shell 副屏欢迎页",
+          "containerKey": "secondary.root.container",
+          "props": {
+            "terminalId": "terminal_5re4fwuf4758"
+          },
+          "source": "ui.integration.retail-shell.activateTerminalSucceeded",
+          "operation": "replace"
+        },
+        "updatedAt": 1776808855229
+      }
+    },
+    "kernel.base.ui-runtime-v2.screen.branch": {},
+    "kernel.base.ui-runtime-v2.overlay.main": {
+      "primaryOverlays": {
+        "value": [],
+        "updatedAt": 0
+      },
+      "secondaryOverlays": {
+        "value": [],
+        "updatedAt": 0
+      }
+    },
+    "kernel.base.ui-runtime-v2.overlay.branch": {
+      "primaryOverlays": {
+        "value": [],
+        "updatedAt": 0
+      },
+      "secondaryOverlays": {
+        "value": [],
+        "updatedAt": 0
+      }
+    },
+    "kernel.base.ui-runtime-v2.ui-variable.main": {},
+    "kernel.base.ui-runtime-v2.ui-variable.branch": {},
+    "ui.base.admin-console.console": {
+      "selectedTab": "topology"
+    }
+  },
+  "id": "1776808889862-6e0bbda539ff78"
+}

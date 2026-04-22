@@ -1,0 +1,19 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "target": "primary",
+    "runtimeId": "primary-runtime",
+    "screenKey": "ui.integration.retail-shell.secondary-welcome",
+    "mountId": "ui.integration.retail-shell.secondary-welcome:title",
+    "nodeId": "ui-integration-retail-shell:secondary-welcome:title",
+    "testID": "ui-integration-retail-shell:secondary-welcome:title",
+    "semanticId": "ui-integration-retail-shell:secondary-welcome:title",
+    "role": "text",
+    "text": "欢迎来到万象城 · OTA E2E V17",
+    "visible": true,
+    "enabled": true,
+    "availableActions": [],
+    "stale": false
+  },
+  "id": "1776803272320-ae8431bcaf7d88"
+}

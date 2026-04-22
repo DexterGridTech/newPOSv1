@@ -1,0 +1,112 @@
+{
+  "fileName": "hot-update-assembly-android-mixc-retail-rn84-1.0.0+ota.14.zip",
+  "outputPath": "/Users/dexter/Documents/workspace/idea/newPOSv1/dist/hot-updates/hot-update-assembly-android-mixc-retail-rn84-1.0.0+ota.14.zip",
+  "fileSize": 3300904,
+  "sha256": "6c3a8e3bab73e8040e1f69f40ec6c13696d6d878fe2c8803362afd1925556752",
+  "manifest": {
+    "manifestVersion": 1,
+    "appId": "assembly-android-mixc-retail-rn84",
+    "platform": "android",
+    "product": "mixc-retail",
+    "channel": "production",
+    "bundleVersion": "1.0.0+ota.14",
+    "runtimeVersion": "android-mixc-retail-rn84@1.0",
+    "assemblyVersion": "1.0.0",
+    "buildNumber": 2,
+    "builtAt": "2026-04-21T05:16:49.556Z",
+    "git": {
+      "commit": "1daceffca0723b81cc106cd59dd46de95e060aac",
+      "branch": "main"
+    },
+    "compatibility": {
+      "appId": "assembly-android-mixc-retail-rn84",
+      "platform": "android",
+      "product": "mixc-retail",
+      "runtimeVersion": "android-mixc-retail-rn84@1.0",
+      "minAssemblyVersion": "1.0.0",
+      "maxAssemblyVersion": "1.0.0",
+      "minBuildNumber": 2,
+      "maxBuildNumber": 2,
+      "allowedChannels": [
+        "production"
+      ],
+      "targetPackages": {
+        "@impos2/kernel-base-contracts": "1.0.0",
+        "@impos2/kernel-base-platform-ports": "1.0.0",
+        "@impos2/kernel-base-runtime-shell-v2": "1.0.0",
+        "@impos2/kernel-base-tcp-control-runtime-v2": "1.0.0",
+        "@impos2/kernel-base-topology-runtime-v3": "1.0.0",
+        "@impos2/kernel-base-transport-runtime": "1.0.0",
+        "@impos2/kernel-base-ui-runtime-v2": "1.0.0",
+        "@impos2/kernel-server-config-v2": "1.0.0",
+        "@impos2/ui-base-admin-console": "1.0.0",
+        "@impos2/ui-base-input-runtime": "1.0.0",
+        "@impos2/ui-base-runtime-react": "1.0.0",
+        "@impos2/ui-base-terminal-console": "1.0.0",
+        "@impos2/ui-integration-retail-shell": "1.0.0",
+        "@impos2/adapter-android-v2": "1.0.0"
+      }
+    },
+    "package": {
+      "type": "full-js-bundle",
+      "entry": "payload/index.android.bundle",
+      "sourceMap": "payload/source-map/index.android.bundle.map",
+      "compression": "zip",
+      "size": 2750916,
+      "sha256": "72e269b5888d8fe2b9b62963d40695acd694b02295ae54e5b7ecb1e66dedfd7a",
+      "files": [
+        {
+          "path": "payload/index.android.bundle",
+          "size": 2750916,
+          "sha256": "72e269b5888d8fe2b9b62963d40695acd694b02295ae54e5b7ecb1e66dedfd7a"
+        },
+        {
+          "path": "payload/source-map/index.android.bundle.map",
+          "size": 10547700,
+          "sha256": "bfdc950581a069c98d7fa5d07e7a0e6fa66b64f06c95dae2c4cb6f6137354b69"
+        }
+      ]
+    },
+    "install": {
+      "strategy": "replace-bundle",
+      "requiresRuntimeRestart": true,
+      "maxRetainedPackages": 2
+    },
+    "restart": {
+      "mode": "idle",
+      "operatorInstruction": "idle hot update e2e v14"
+    },
+    "rollout": {
+      "defaultStrategy": "manual-policy"
+    },
+    "security": {
+      "hashAlgorithm": "sha256"
+    },
+    "releaseNotes": [
+      "idle hot update e2e v14"
+    ],
+    "artifacts": [
+      {
+        "name": "apk",
+        "path": "4-assembly/android/mixc-retail-assembly-rn84/android/app/build/outputs/apk/release/app-release.apk",
+        "size": 83356425,
+        "sha256": "f1f9cfb91582c865c97e64da26bacb06a62451c82fa997a45f74c15bf63b7124",
+        "modifiedAt": "2026-04-21T05:08:25.314Z"
+      },
+      {
+        "name": "bundle",
+        "path": "4-assembly/android/mixc-retail-assembly-rn84/android/app/build/generated/assets/react/release/index.android.bundle",
+        "size": 2750912,
+        "sha256": "45e1483d36b9566fd39b2830a012d01a861e6189853aba873604db08b5ebc475",
+        "modifiedAt": "2026-04-21T05:08:10.268Z"
+      },
+      {
+        "name": "sourceMap",
+        "path": "4-assembly/android/mixc-retail-assembly-rn84/android/app/build/intermediates/sourcemaps/react/release/index.android.bundle.packager.map",
+        "size": 10547700,
+        "sha256": "5e4aea09d73e192bca5390dbffe2719f19be2a864a7bce0428cf8a375380ca29",
+        "modifiedAt": "2026-04-21T05:08:07.890Z"
+      }
+    ]
+  }
+}

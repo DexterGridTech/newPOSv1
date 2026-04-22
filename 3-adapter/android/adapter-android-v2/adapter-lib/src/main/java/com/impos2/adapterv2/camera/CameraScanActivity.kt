@@ -11,6 +11,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.ResultReceiver
 import android.util.Log
+import android.util.Base64
 import android.view.Gravity
 import android.view.View
 import android.widget.Button
@@ -35,6 +36,8 @@ import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
+import java.io.File
+import java.io.FileInputStream
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
@@ -46,6 +49,8 @@ class CameraScanActivity : AppCompatActivity() {
     const val ACTION = "com.impos2.posadapter.action.CAMERA_SCAN"
     const val EXTRA_SCAN_RESULT = "SCAN_RESULT"
     const val EXTRA_SCAN_FORMAT = "SCAN_RESULT_FORMAT"
+    const val EXTRA_IMAGE_URI = "IMAGE_URI"
+    const val EXTRA_IMAGE_BASE64 = "IMAGE_BASE64"
     const val EXTRA_ERROR = "error"
     const val EXTRA_RESULT_RECEIVER = "RESULT_RECEIVER"
     const val RESULT_CODE_SUCCESS = 1
@@ -80,6 +85,7 @@ class CameraScanActivity : AppCompatActivity() {
   private lateinit var cameraExecutor: ExecutorService
   private val detected = AtomicBoolean(false)
   private val pickerActive = AtomicBoolean(false)
+  private val imageOnlyMode = AtomicBoolean(false)
   private var scanLineAnimator: ObjectAnimator? = null
   private var cameraProvider: ProcessCameraProvider? = null
   private var cameraScanner: com.google.mlkit.vision.barcode.BarcodeScanner? = null
@@ -118,7 +124,21 @@ class CameraScanActivity : AppCompatActivity() {
     root.isFocusableInTouchMode = true
     root.requestFocus()
 
-    if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+    val imageUri = intent?.getStringExtra(EXTRA_IMAGE_URI)
+    val imageBase64 = intent?.getStringExtra(EXTRA_IMAGE_BASE64)
+    if (!imageBase64.isNullOrBlank()) {
+      imageOnlyMode.set(true)
+      Log.i(TAG, "scan from imageBase64 started: length=${imageBase64.length}")
+      pickerActive.set(true)
+      setImagePickerBusy(true)
+      analyzePickedImageBase64(imageBase64)
+    } else if (!imageUri.isNullOrBlank()) {
+      imageOnlyMode.set(true)
+      Log.i(TAG, "scan from imageUri started: $imageUri")
+      pickerActive.set(true)
+      setImagePickerBusy(true)
+      analyzePickedImage(Uri.parse(imageUri))
+    } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
       startCamera()
     } else {
       ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), REQ_CAMERA)
@@ -354,17 +374,22 @@ class CameraScanActivity : AppCompatActivity() {
   }
 
   private fun analyzePickedImage(uri: Uri) {
+    Log.i(TAG, "analyzePickedImage start: $uri")
     updateHint(PICKER_PROCESSING_HINT)
 
     cameraExecutor.execute {
       val image = runCatching {
-        contentResolver.openInputStream(uri)?.use { input ->
+        openImageInputStream(uri)?.use { input ->
           val bitmap = BitmapFactory.decodeStream(input) ?: error("IMAGE_DECODE_FAILED")
           InputImage.fromBitmap(bitmap, 0)
         } ?: error("IMAGE_READ_FAILED")
       }.getOrElse { error ->
+        Log.w(TAG, "analyzePickedImage read failed: ${error.message}", error)
         runOnUiThread {
-          handlePickedImageFailure(error.message ?: "IMAGE_READ_FAILED")
+          handlePickedImageFailure(
+            error = error.message ?: "IMAGE_READ_FAILED",
+            finishImmediately = imageOnlyMode.get(),
+          )
         }
         return@execute
       }
@@ -374,13 +399,23 @@ class CameraScanActivity : AppCompatActivity() {
         .addOnSuccessListener(ContextCompat.getMainExecutor(this)) { barcodes ->
           val barcode = barcodes.firstOrNull { !it.rawValue.isNullOrEmpty() }
           if (barcode != null && detected.compareAndSet(false, true)) {
+            Log.i(TAG, "analyzePickedImage success: format=${barcode.format}, valueLength=${barcode.rawValue?.length ?: 0}")
             finishWithSuccess(barcode.rawValue ?: "", barcode.format)
           } else {
-            handlePickedImageFailure("NO_BARCODE_FOUND", PICKER_EMPTY_HINT)
+            Log.w(TAG, "analyzePickedImage empty result")
+            handlePickedImageFailure(
+              error = "NO_BARCODE_FOUND",
+              hint = PICKER_EMPTY_HINT,
+              finishImmediately = imageOnlyMode.get(),
+            )
           }
         }
         .addOnFailureListener(ContextCompat.getMainExecutor(this)) { error ->
-          handlePickedImageFailure(error.message ?: "IMAGE_SCAN_FAILED")
+          Log.w(TAG, "analyzePickedImage mlkit failed: ${error.message}", error)
+          handlePickedImageFailure(
+            error = error.message ?: "IMAGE_SCAN_FAILED",
+            finishImmediately = imageOnlyMode.get(),
+          )
         }
         .addOnCompleteListener {
           scanner.close()
@@ -388,8 +423,93 @@ class CameraScanActivity : AppCompatActivity() {
     }
   }
 
-  private fun handlePickedImageFailure(error: String, hint: String = PICKER_FAILED_HINT) {
+  private fun analyzePickedImageBase64(imageBase64: String) {
+    Log.i(TAG, "analyzePickedImageBase64 start: length=${imageBase64.length}")
+    updateHint(PICKER_PROCESSING_HINT)
+
+    cameraExecutor.execute {
+      val image = runCatching {
+        val bytes = Base64.decode(imageBase64, Base64.DEFAULT)
+        val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size) ?: error("IMAGE_DECODE_FAILED")
+        InputImage.fromBitmap(bitmap, 0)
+      }.getOrElse { error ->
+        Log.w(TAG, "analyzePickedImageBase64 decode failed: ${error.message}", error)
+        runOnUiThread {
+          handlePickedImageFailure(
+            error = error.message ?: "IMAGE_DECODE_FAILED",
+            finishImmediately = true,
+          )
+        }
+        return@execute
+      }
+
+      val scanner = createScanner()
+      scanner.process(image)
+        .addOnSuccessListener(ContextCompat.getMainExecutor(this)) { barcodes ->
+          val barcode = barcodes.firstOrNull { !it.rawValue.isNullOrEmpty() }
+          if (barcode != null && detected.compareAndSet(false, true)) {
+            Log.i(TAG, "analyzePickedImageBase64 success: format=${barcode.format}, valueLength=${barcode.rawValue?.length ?: 0}")
+            finishWithSuccess(barcode.rawValue ?: "", barcode.format)
+          } else {
+            Log.w(TAG, "analyzePickedImageBase64 empty result")
+            handlePickedImageFailure(
+              error = "NO_BARCODE_FOUND",
+              hint = PICKER_EMPTY_HINT,
+              finishImmediately = true,
+            )
+          }
+        }
+        .addOnFailureListener(ContextCompat.getMainExecutor(this)) { error ->
+          Log.w(TAG, "analyzePickedImageBase64 mlkit failed: ${error.message}", error)
+          handlePickedImageFailure(
+            error = error.message ?: "IMAGE_SCAN_FAILED",
+            finishImmediately = true,
+          )
+        }
+        .addOnCompleteListener {
+          scanner.close()
+        }
+    }
+  }
+
+  private fun openImageInputStream(uri: Uri) = when (uri.scheme?.lowercase()) {
+    "file" -> {
+      val path = resolveReadableFilePath(uri)
+      FileInputStream(path)
+    }
+    else -> contentResolver.openInputStream(uri)
+  }
+
+  private fun resolveReadableFilePath(uri: Uri): String {
+    val rawPath = uri.path?.takeIf { it.isNotBlank() } ?: error("IMAGE_PATH_MISSING")
+    val externalFilesDir = getExternalFilesDir(null)?.absolutePath
+    if (!externalFilesDir.isNullOrBlank()) {
+      val prefixes = listOf(
+        "/Android/data/$packageName/files/",
+        "/sdcard/Android/data/$packageName/files/",
+        "/storage/emulated/0/Android/data/$packageName/files/",
+        "/storage/self/primary/Android/data/$packageName/files/",
+      )
+      prefixes.firstOrNull { rawPath.startsWith(it) }?.let { prefix ->
+        val relativePath = rawPath.removePrefix(prefix)
+        val resolved = File(externalFilesDir, relativePath).absolutePath
+        Log.i(TAG, "resolveReadableFilePath remapped: raw=$rawPath resolved=$resolved")
+        return resolved
+      }
+    }
+    return rawPath
+  }
+
+  private fun handlePickedImageFailure(
+    error: String,
+    hint: String = PICKER_FAILED_HINT,
+    finishImmediately: Boolean = false,
+  ) {
     Log.w(TAG, "picked image scan failed: $error")
+    if (finishImmediately && detected.compareAndSet(false, true)) {
+      finishWithError(error)
+      return
+    }
     pickerActive.set(false)
     setImagePickerBusy(false)
     updateHint(hint)

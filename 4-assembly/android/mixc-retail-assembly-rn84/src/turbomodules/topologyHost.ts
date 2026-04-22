@@ -6,6 +6,8 @@ export interface NativeTopologyHostAddressInfo {
     basePath: string
     httpBaseUrl: string
     wsUrl: string
+    localHttpBaseUrl?: string
+    localWsUrl?: string
 }
 
 export const nativeTopologyHost = {

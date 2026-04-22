@@ -1,0 +1,8 @@
+{
+  "jsonrpc": "2.0",
+  "error": {
+    "code": -32603,
+    "message": "STALE_NODE"
+  },
+  "id": "1776784917685-fe2f341a817dc8"
+}

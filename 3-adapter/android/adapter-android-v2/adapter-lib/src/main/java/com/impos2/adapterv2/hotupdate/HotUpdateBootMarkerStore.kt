@@ -14,7 +14,7 @@ data class HotUpdateMarker(
   val manifestSha256: String,
   val bootAttempt: Int = 0,
   val maxLaunchFailures: Int = 1,
-  val healthCheckTimeoutMs: Long = 5_000L,
+  val healthCheckTimeoutMs: Long = HotUpdateBootMarkerStore.DEFAULT_HEALTH_CHECK_TIMEOUT_MS,
   val updatedAt: Long = System.currentTimeMillis(),
   val lastBootAt: Long? = null,
   val lastSuccessfulBootAt: Long? = null,
@@ -24,6 +24,9 @@ data class HotUpdateMarker(
 )
 
 class HotUpdateBootMarkerStore(private val rootDir: File) {
+  companion object {
+    const val DEFAULT_HEALTH_CHECK_TIMEOUT_MS = 30_000L
+  }
 
   constructor(context: Context) : this(File(context.filesDir, "hot-updates"))
 
@@ -236,7 +239,8 @@ object HotUpdateMarkerCodec {
         manifestSha256 = requireString(input, "manifestSha256"),
         bootAttempt = findInt(input, "bootAttempt") ?: 0,
         maxLaunchFailures = findInt(input, "maxLaunchFailures") ?: 1,
-        healthCheckTimeoutMs = findLong(input, "healthCheckTimeoutMs") ?: 5_000L,
+        healthCheckTimeoutMs = findLong(input, "healthCheckTimeoutMs")
+          ?: HotUpdateBootMarkerStore.DEFAULT_HEALTH_CHECK_TIMEOUT_MS,
         updatedAt = findLong(input, "updatedAt") ?: 0L,
         lastBootAt = findLong(input, "lastBootAt"),
         lastSuccessfulBootAt = findLong(input, "lastSuccessfulBootAt"),

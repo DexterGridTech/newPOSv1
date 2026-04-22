@@ -2,6 +2,8 @@ apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
+import org.gradle.api.tasks.PathSensitivity
+
 react {
   root = file("../../")
   reactNativeDir = file("../../node_modules/react-native")
@@ -17,10 +19,17 @@ def releaseStoreFile = project.findProperty("MIXC_RELEASE_STORE_FILE")
 def releaseStorePassword = project.findProperty("MIXC_RELEASE_STORE_PASSWORD")
 def releaseKeyAlias = project.findProperty("MIXC_RELEASE_KEY_ALIAS")
 def releaseKeyPassword = project.findProperty("MIXC_RELEASE_KEY_PASSWORD")
-def allowLocalReleaseDebugSigning = (project.findProperty("MIXC_ALLOW_LOCAL_RELEASE_DEBUG_SIGNING")?.toString() == "true")
+def allowLocalReleaseDebugSigning = (
+  project.findProperty("MIXC_ALLOW_LOCAL_RELEASE_DEBUG_SIGNING")?.toString() == "true" ||
+  System.getenv("MIXC_ALLOW_LOCAL_RELEASE_DEBUG_SIGNING") == "true"
+)
 def hasReleaseSigning = [releaseStoreFile, releaseStorePassword, releaseKeyAlias, releaseKeyPassword].every {
   it != null && it.toString().trim()
 }
+def workspaceBundleSourceRoots = [
+  new File(rootProject.projectDir, "../../../../1-kernel"),
+  new File(rootProject.projectDir, "../../../../2-ui"),
+]
 
 def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.+'
 
@@ -34,7 +43,7 @@ android {
     applicationId "com.impos2.mixcretailassemblyrn84"
     minSdkVersion rootProject.ext.minSdkVersion
     targetSdkVersion rootProject.ext.targetSdkVersion
-    versionCode 2
+    versionCode 8
     versionName "1.0.0"
   }
   signingConfigs {
@@ -88,6 +97,33 @@ gradle.taskGraph.whenReady { taskGraph ->
   }
   if (releaseArtifactTaskRequested && !hasReleaseSigning && !allowLocalReleaseDebugSigning) {
     throw new GradleException("Release build requires MIXC_RELEASE_STORE_FILE / MIXC_RELEASE_STORE_PASSWORD / MIXC_RELEASE_KEY_ALIAS / MIXC_RELEASE_KEY_PASSWORD, or set MIXC_ALLOW_LOCAL_RELEASE_DEBUG_SIGNING=true for local E2E builds")
+  }
+}
+
+afterEvaluate {
+  tasks.matching { it.name.startsWith("createBundle") && it.name.endsWith("JsAndAssets") }.configureEach { task ->
+    workspaceBundleSourceRoots.eachWithIndex { sourceRoot, index ->
+      if (!sourceRoot.exists()) {
+        return
+      }
+      // React Native's default bundle task only tracks files under the assembly root.
+      // Our workspace packages are symlinked from 1-kernel/2-ui, so add them explicitly
+      // to prevent stale production/OTA bundles after workspace source changes.
+      task.inputs.files(project.fileTree(sourceRoot) {
+        include("**/*.js")
+        include("**/*.jsx")
+        include("**/*.ts")
+        include("**/*.tsx")
+        include("**/*.json")
+        exclude("**/android/**")
+        exclude("**/ios/**")
+        exclude("**/build/**")
+        exclude("**/dist/**")
+        exclude("**/coverage/**")
+        exclude("**/node_modules/**")
+      }).withPropertyName("workspaceBundleSourceRoot${index}")
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+    }
   }
 }
 

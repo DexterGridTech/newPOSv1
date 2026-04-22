@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.impos2.mixcretailassemblyrn84.restart.AppRestartManagerTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-04-20T21:01:49.172Z" hostname="DexterdeMacBook-Pro.local" time="0.003">
+  <properties/>
+  <testcase name="hot update restart relaunches process only when bundle path is available" classname="com.impos2.mixcretailassemblyrn84.restart.AppRestartManagerTest" time="0.003"/>
+  <testcase name="normalize hot update bundle file returns null for blank value" classname="com.impos2.mixcretailassemblyrn84.restart.AppRestartManagerTest" time="0.0"/>
+  <testcase name="normalize hot update bundle file keeps non blank bundle path" classname="com.impos2.mixcretailassemblyrn84.restart.AppRestartManagerTest" time="0.0"/>
+  <testcase name="normalize hot update bundle file returns null for missing value" classname="com.impos2.mixcretailassemblyrn84.restart.AppRestartManagerTest" time="0.0"/>
+  <testcase name="manual restart does not relaunch process when hot update bundle is missing" classname="com.impos2.mixcretailassemblyrn84.restart.AppRestartManagerTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

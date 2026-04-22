@@ -1,0 +1,630 @@
+--------- beginning of main
+04-20 02:01:49.497   590   745 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+04-20 02:01:49.498   590   745 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+04-20 02:01:49.498   590   745 D InetDiagMessage: Destroyed live tcp sockets for uids={10142} in 1ms
+04-20 02:01:49.498   590   745 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+04-20 02:01:49.499   590   745 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+04-20 02:01:49.499   590   745 D InetDiagMessage: Destroyed live tcp sockets for uids={20142} in 1ms
+--------- beginning of system
+04-20 02:01:54.545   590   689 D ActivityManager: freezing 22500 com.google.android.apps.wellbeing
+04-20 02:01:54.547   590   745 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+04-20 02:01:54.548   590   745 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+04-20 02:01:54.548   590   745 D InetDiagMessage: Destroyed live tcp sockets for uids={10142} in 1ms
+--------- beginning of kernel
+04-20 02:01:59.747   397   397 W healthd : battery l=47 v=5000 t=25.0 h=2 st=4 c=900000 fc=3000000 cc=10 chg=a
+04-20 02:02:00.004  1389  1552 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+04-20 02:02:00.004  1389  1552 I AiAiEcho: EchoTargets: 
+04-20 02:02:00.004  1389  1552 I AiAiEcho: Filtered by AiAi flag check: 
+04-20 02:02:00.004  1389  1552 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+04-20 02:02:00.004  1389  1552 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+04-20 02:02:00.004  1389  1552 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+04-20 02:02:00.004  1389  1552 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+04-20 02:02:00.004  1389  1552 I AiAiEcho: EchoTargets: 
+04-20 02:02:00.004  1389  1552 I AiAiEcho: Filtered by AiAi flag check: 
+04-20 02:02:00.004  1389  1552 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+04-20 02:02:00.004  1389  1552 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+04-20 02:02:00.004  1389  1552 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+04-20 02:02:00.004  1389  1552 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+04-20 02:02:00.005  1389  1552 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+04-20 02:02:00.006  1099  1099 D SsBaseTemplateCard: No text view can be set up
+04-20 02:02:00.006  1099  1099 D SsBaseTemplateCard: Passed-in item info is null
+04-20 02:02:00.006  1099  1099 D SsBaseTemplateCard: Passed-in item info is null
+04-20 02:02:00.006  1099  1099 D SsBaseTemplateCard: Passed-in item info is null
+04-20 02:02:00.006  1099  1099 I SsBaseTemplateCard: Secondary card pane is null
+04-20 02:02:00.011   836   836 W PageIndicator: Total number of pages invalid: 0. Assuming 1 page.
+04-20 02:02:00.027   836   978 D EGL_emulation: app_time_stats: avg=59999.57ms min=59999.57ms max=59999.57ms count=1
+04-20 02:02:07.572  1413  1753 I BistoHotwordHelper: (REDACTED) getHotwordActive::active query: %s, watch: %s, devices connected: %s
+04-20 02:02:09.109 13762 13785 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:09.111 13762 13785 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 146, crc 2169225153, actualSize 16738
+04-20 02:02:09.111 13762 13785 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 02:02:09.112 13762 13785 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:09.113 13762 13785 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:09.113 13762 13785 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:09.113 13762 13785 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:09.114 13762 14053 D TrafficStats: tagSocket(127) with statsTag=0xffffffff, statsUid=-1
+04-20 02:02:09.115 13827 13847 I ReactNativeJS: '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.tdp-sync-runtime-v2.hot-update"],"appliedSliceNames":["kernel.base.tdp-sync-runtime-v2.hot-update"],"skippedSliceReasons":[]}'
+04-20 02:02:09.116 13762 13785 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 147, crc 1402241163, actualSize 19120
+04-20 02:02:09.116 13762 13785 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 02:02:09.118 13762 13785 I MMKV    : <MMKV_IO.cpp:530::expandAndWriteBack> extending [mixc-retail-assembly-rn84::state] file size from 32768 to 65536, incoming size:1292, future usage:11550
+04-20 02:02:09.118 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:09.118 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:09.119 13762 13785 I MMKV    : <MemoryFile.cpp:103::open> open fd[137], flag 0x7, /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-20 02:02:09.119 13762 13785 I MMKV    : <MemoryFile.cpp:250::mmapOrCleanup> mmap to address [0x76eadf0000], oldPtr [0x76fc2f1000], [/data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe]
+04-20 02:02:09.119 13762 13785 I MMKV    : <MemoryFile.cpp:109::close> closing fd[137], /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-20 02:02:09.119 13762 13785 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 148, crc 2855840265, actualSize 22064
+04-20 02:02:09.119 13762 13785 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 02:02:09.147 13762 13785 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:09.148 13762 13785 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 149, crc 1068625129, actualSize 22521
+04-20 02:02:09.148 13762 13785 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 02:02:09.149 13762 13785 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:09.149 13762 13762 I StartupAudit: restart_requested hasSecondary=true pid=13762 time=2026-04-20 02:02:09.149
+04-20 02:02:09.149 13762 13762 I StartupAudit: topology_host_stopping pid=13762 time=2026-04-20 02:02:09.149
+04-20 02:02:09.150 13827 13847 I ReactNativeJS: '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.tdp-sync-runtime-v2.hot-update"],"appliedSliceNames":["kernel.base.tdp-sync-runtime-v2.hot-update"],"skippedSliceReasons":[]}'
+04-20 02:02:09.152 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:09.152 13762 13762 I StartupAudit: topology_host_stopped pid=13762 time=2026-04-20 02:02:09.152
+04-20 02:02:09.152 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:09.152 13827 13847 I ReactNativeJS: '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.tdp-sync-runtime-v2.hot-update"],"appliedSliceNames":["kernel.base.tdp-sync-runtime-v2.hot-update"],"skippedSliceReasons":[]}'
+04-20 02:02:09.154 13762 13785 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:09.154 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:09.154 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:09.154 13762 13785 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:09.154 13762 13785 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:09.154 13762 13785 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:09.154 13762 13785 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:09.154 13827 13847 I ReactNativeJS: '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.tdp-sync-runtime-v2.hot-update"],"appliedSliceNames":["kernel.base.tdp-sync-runtime-v2.hot-update"],"skippedSliceReasons":[]}'
+04-20 02:02:09.156 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:09.157 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:09.158 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:09.158 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:09.159 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:09.159 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:09.159 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:09.256 13762 13762 I StartupAudit: main_process_restart_scheduled triggerAt=1776621729455 pid=13762 time=2026-04-20 02:02:09.256
+04-20 02:02:09.257  1099  1099 I TopTaskTracker: onTaskMovedToFront: (moved taskInfo to front) taskId=670, baseIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.HOME] flg=0x10000100 cmp=com.google.android.apps.nexuslauncher/.NexusLauncherActivity }
+04-20 02:02:09.257   836   874 V WindowManagerShell: Transition requested (#539): android.os.BinderProxy@266295f TransitionRequestInfo { type = CLOSE, triggerTask = TaskInfo{userId=0 taskId=854 displayId=0 isRunning=false baseIntent=Intent { flg=0x10000000 cmp=com.impos2.mixcretailassemblyrn84/.MainActivity } baseActivity=null topActivity=null origActivity=null realActivity=ComponentInfo{com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity} numActivities=0 lastActiveTime=262619297 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{android.window.IWindowContainerToken$Stub$Proxy@494bfac} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=null topActivityInfo=null launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=true isVisible=true isVisibleRequested=true isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= falseisLetterboxEducationEnabled= false isLetterboxDoubleTapEnabled= false topActivityEligibleForUserAspectRatioButton= false topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false cameraCompatTaskInfo=CameraCompatTaskInfo { cameraCompatControlState=hidden freeformCameraCompatMode=inactive}}}, pipTask = null, remoteTransition = null, displayChange = null, flags = 0, debugId = 539 }
+04-20 02:02:09.258 13762 13762 I StartupAudit: main_process_exit pid=13762 time=2026-04-20 02:02:09.258
+04-20 02:02:09.258 13762 13762 I Process : Sending signal. PID: 13762 SIG: 9
+04-20 02:02:09.267   590   955 I WindowManager: WIN DEATH: Window{f9616a5 u0 com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity}
+04-20 02:02:09.267   590  1504 I ActivityManager: Process com.impos2.mixcretailassemblyrn84 (pid 13762) has died: fg +50 TOP 
+04-20 02:02:09.267   590   955 W InputManager-JNI: Input channel object 'f9616a5 com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity (client)' was disposed without first being removed with the input manager!
+04-20 02:02:09.267   389   389 I Zygote  : Process 13762 exited due to signal 9 (Killed)
+04-20 02:02:09.267   590   627 I libprocessgroup: Removed cgroup /sys/fs/cgroup/uid_10216/pid_13762
+04-20 02:02:09.269   590  1504 W ActivityManager: Scheduling restart of crashed service com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.topologyhostv3.TopologyHostV3Service in 1000ms for start-requested
+04-20 02:02:09.271   590   613 W ActivityManager: setHasOverlayUi called on unknown pid: 13762
+04-20 02:02:09.271   590  1504 I AppWidgetServiceImpl: startListening() 0
+04-20 02:02:09.272  1099  1099 D StatsLog: LAUNCHER_ONRESUME
+04-20 02:02:09.273   590  1420 W AppSearchIcing: icing-search-engine.cc:321: Error: 5, Message: Document (com.google.android.googlequicksearchbox$OneSearchZeroStateGoogleSuggestions/default, zp) not found.
+04-20 02:02:09.273   836   874 D WindowManagerShell: setLauncherKeepClearAreaHeight: visible=true, height=223
+04-20 02:02:09.274  1099  1138 D QuickstepModelDelegate: notifyAppTargetEvent action=1 launchLocation=workspace/0/[-1,-1]/[1,1]
+04-20 02:02:09.274  1099  1562 D OneSearchSuggestProvider: AppSearch 0-state cache not available, fallback to AGA
+04-20 02:02:09.274  1099  1562 D OneSearchSuggestProvider: java.util.concurrent.CompletionException: java.util.NoSuchElementException: No value present
+04-20 02:02:09.274  1099  1562 D OneSearchSuggestProvider: 	at java.util.concurrent.CompletableFuture.encodeThrowable(CompletableFuture.java:308)
+04-20 02:02:09.274  1099  1562 D OneSearchSuggestProvider: 	at java.util.concurrent.CompletableFuture.completeThrowable(CompletableFuture.java:323)
+04-20 02:02:09.274  1099  1562 D OneSearchSuggestProvider: 	at java.util.concurrent.CompletableFuture$UniAccept.tryFire(CompletableFuture.java:684)
+04-20 02:02:09.274  1099  1562 D OneSearchSuggestProvider: 	at java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:486)
+04-20 02:02:09.274  1099  1562 D OneSearchSuggestProvider: 	at java.util.concurrent.CompletableFuture.completeExceptionally(CompletableFuture.java:2138)
+04-20 02:02:09.274  1099  1562 D OneSearchSuggestProvider: 	at com.google.android.apps.nexuslauncher.allapps.E0.onResult(go/retraceme 6422cbaa18704413bfb3e93ebb8478614d3644845132061bc54b1fae066de31d:67)
+04-20 02:02:09.274  1099  1562 D OneSearchSuggestProvider: 	at android.app.appsearch.SearchSessionUtil$1.lambda$onResult$0(go/retraceme 64eee9e9f568ff45978879ad2ff83146f2618ee8a88278736fbdf5fae931976e:144)
+04-20 02:02:09.274  1099  1562 D OneSearchSuggestProvider: 	at android.app.appsearch.SearchSessionUtil$1.$r8$lambda$CEk3q8sDAQVhU3rQwVueB8FAj_M(go/retraceme 64eee9e9f568ff45978879ad2ff83146f2618ee8a88278736fbdf5fae931976e:1)
+04-20 02:02:09.274  1099  1562 D OneSearchSuggestProvider: 	at android.app.appsearch.SearchSessionUtil$1$$ExternalSyntheticLambda0.run(go/retraceme 64eee9e9f568ff45978879ad2ff83146f2618ee8a88278736fbdf5fae931976e:22)
+04-20 02:02:09.274  1099  1562 D OneSearchSuggestProvider: 	at android.os.Handler.handleCallback(Handler.java:959)
+04-20 02:02:09.274  1099  1562 D OneSearchSuggestProvider: 	at android.os.Handler.dispatchMessage(Handler.java:100)
+04-20 02:02:09.274  1099  1562 D OneSearchSuggestProvider: 	at android.os.Looper.loopOnce(Looper.java:232)
+04-20 02:02:09.274  1099  1562 D OneSearchSuggestProvider: 	at android.os.Looper.loop(Looper.java:317)
+04-20 02:02:09.274  1099  1562 D OneSearchSuggestProvider: 	at android.os.HandlerThread.run(HandlerThread.java:85)
+04-20 02:02:09.274  1099  1562 D OneSearchSuggestProvider: Caused by: java.util.NoSuchElementException: No value present
+04-20 02:02:09.274  1099  1562 D OneSearchSuggestProvider: 	at java.util.Optional.get(Optional.java:143)
+04-20 02:02:09.274  1099  1562 D OneSearchSuggestProvider: 	at com.google.android.apps.nexuslauncher.allapps.E0.onResult(go/retraceme 6422cbaa18704413bfb3e93ebb8478614d3644845132061bc54b1fae066de31d:28)
+04-20 02:02:09.274  1099  1562 D OneSearchSuggestProvider: 	... 8 more
+04-20 02:02:09.275  1099  1562 D OneSearchSuggestProvider: Created the binder channel successfully for end point service =com.google.android.apps.search.googleapp.search.suggest.plugins.onesearch.server.OneSearchSuggestService , mChannel=i1{delegate=f{logId=381, target=directaddress:///AndroidComponentAddress%5BIntent%20%7B%20act=grpc.io.action.BIND%20cmp=com.google.android.googlequicksearchbox/com.google.android.apps.search.googleapp.search.suggest.plugins.onesearch.server.OneSearchSuggestService%20%7D%5D}} , mOneSearchConnection=m2.Z@1ca1c89
+04-20 02:02:09.277   439   439 I BpBinder: onLastStrongRef automatically unlinking death recipients: 
+04-20 02:02:09.279   590  2411 D ActivityManager: sync unfroze 21035 com.google.android.googlequicksearchbox:search for 6
+04-20 02:02:09.280  1099  1099 D VRI[NexusLauncherActivity]: visibilityChanged oldVisibility=false newVisibility=true
+04-20 02:02:09.285   388   472 I netd    : tetherGetStats() -> {[]} <0.46ms>
+04-20 02:02:09.289  1389  1552 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+04-20 02:02:09.289  1389  1552 I AiAiEcho: EchoTargets: 
+04-20 02:02:09.289  1389  1552 I AiAiEcho: Filtered by AiAi flag check: 
+04-20 02:02:09.289  1389  1552 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+04-20 02:02:09.289  1389  1552 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+04-20 02:02:09.289  1389  1552 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+04-20 02:02:09.289  1389  1552 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+04-20 02:02:09.293  1099  1099 D NexusLauncherModelDelegate: notifySmartspaceEvent: SmartspaceTargetEvent{mSmartspaceTarget=null, mSmartspaceActionId='null', mEventType=6}
+04-20 02:02:09.294   590  2411 D ActivityManager: sync unfroze 21183 com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0 for 6
+04-20 02:02:09.294   590  2411 W ProcessStats: Tracking association SourceState{56e1dfb com.google.android.apps.nexuslauncher/10180 BTop #19595} whose proc state 2 is better than process ProcessState{8ec6fe com.google.android.googlequicksearchbox:search/10144 pkg=com.google.android.googlequicksearchbox} proc state 8 (2 skipped)
+04-20 02:02:09.300  1099  1099 D BaseDepthController: setSurface:
+04-20 02:02:09.300  1099  1099 D BaseDepthController: 	mWaitingOnSurfaceValidity: false
+04-20 02:02:09.300  1099  1099 D BaseDepthController: 	mSurface: Surface(name=com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity)/@0xad0fc95
+04-20 02:02:09.300 21035 21035 I A       : (REDACTED) Created gRPC endpoint for service %s
+04-20 02:02:09.314  1099  1099 D SsBaseTemplateCard: No text view can be set up
+04-20 02:02:09.314  1099  1099 D SsBaseTemplateCard: Passed-in item info is null
+04-20 02:02:09.314  1099  1099 D SsBaseTemplateCard: Passed-in item info is null
+04-20 02:02:09.314  1099  1099 D SsBaseTemplateCard: Passed-in item info is null
+04-20 02:02:09.314  1099  1099 I SsBaseTemplateCard: Secondary card pane is null
+04-20 02:02:09.317   836   851 V WindowManagerShell: onTransitionReady(transaction=2534030744507)
+04-20 02:02:09.317   836   874 V WindowManagerShell: onTransitionReady (#539) android.os.BinderProxy@266295f: {id=539 t=CLOSE f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{android.window.IWindowContainerToken$Stub$Proxy@a30a2f1} m=TO_FRONT f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0xc43475 sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) d=0 taskParent=-1},{WCT{android.window.IWindowContainerToken$Stub$Proxy@fc0fed6} m=CLOSE f=NONE leash=Surface(name=Task=854)/@0x3042c0a sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) d=0 taskParent=-1},{null m=TO_FRONT f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{55198b token=android.os.Binder@bf0535a})/@0x7edfc7b sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) d=0}]}
+04-20 02:02:09.317   836   874 V WindowManagerShell: Playing animation for (#539) android.os.BinderProxy@266295f@0
+04-20 02:02:09.317   836   874 V WindowManagerShell:  try handler com.android.wm.shell.transition.DefaultMixedHandler@a4b4bb1
+04-20 02:02:09.317   836   874 V WindowManagerShell:  try handler com.android.wm.shell.keyguard.KeyguardTransitionHandler@f055896
+04-20 02:02:09.317   836   874 V WindowManagerShell:  try handler com.android.wm.shell.pip.PipTransition@489c17
+04-20 02:02:09.318   836   874 V WindowManagerShell:  try handler com.android.wm.shell.activityembedding.ActivityEmbeddingController@f43a804
+04-20 02:02:09.318   836   874 V WindowManagerShell:  try handler com.android.wm.shell.splitscreen.StageCoordinator@417f1ed
+04-20 02:02:09.318   836   874 V WindowManagerShell:  try handler com.android.wm.shell.desktopmode.DesktopTasksController@4366822
+04-20 02:02:09.318   836   874 V WindowManagerShell:  try handler com.android.wm.shell.recents.RecentsTransitionHandler@b30e2b3
+04-20 02:02:09.318   836   874 V ShellRecents: RecentsTransitionHandler.startAnimation: no controller found
+04-20 02:02:09.318   836   874 V WindowManagerShell:  try handler com.android.wm.shell.transition.RemoteTransitionHandler@2554070
+04-20 02:02:09.318   836   874 V WindowManagerShell: Transition doesn't have explicit remote, search filters for match for {id=539 t=CLOSE f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{android.window.IWindowContainerToken$Stub$Proxy@a30a2f1} m=TO_FRONT f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0xc43475 sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) d=0 taskParent=-1},{WCT{android.window.IWindowContainerToken$Stub$Proxy@fc0fed6} m=CLOSE f=NONE leash=Surface(name=Task=854)/@0x3042c0a sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) d=0 taskParent=-1},{null m=TO_FRONT f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{55198b token=android.os.Binder@bf0535a})/@0x7edfc7b sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) d=0}]}
+04-20 02:02:09.318   836   874 V WindowManagerShell:  Checking filter Pair{{types=[] flags=0x0] notFlags=0x0 checks=[{atype=undefined independent=true modes=[OPEN,TO_FRONT] flags=IN_TASK_WITH_EMBEDDED_ACTIVITY mustBeTask=false order=ANY topActivity=ComponentInfo{com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity} launchCookie=null},{atype=undefined independent=true modes=[CLOSE,TO_BACK] flags=IN_TASK_WITH_EMBEDDED_ACTIVITY mustBeTask=false order=ANY topActivity=null launchCookie=null}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@e8ebfe9, appThread = android.app.IApplicationThread$Stub$Proxy@876e46e, debugName = OverlaySwipeBack }}
+04-20 02:02:09.318   836   874 V WindowManagerShell:  Checking filter Pair{{types=[] flags=0x0] notFlags=0x0 checks=[{atype=dream independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null},{atype=home independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@f4cf70f, appThread = android.app.IApplicationThread$Stub$Proxy@ba5f39c, debugName = LauncherToDream }}
+04-20 02:02:09.318   836   874 V WindowManagerShell:  Checking filter Pair{{types=[] flags=0x0] notFlags=0x100 checks=[{atype=home independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=TOP topActivity=ComponentInfo{com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity} launchCookie=null},{atype=standard independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@c8a71a5, appThread = android.app.IApplicationThread$Stub$Proxy@30d97a, debugName = QuickstepLaunchHome }}
+04-20 02:02:09.318   836   874 D RemoteTransitionHandler: Found filterPair{{types=[] flags=0x0] notFlags=0x100 checks=[{atype=home independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=TOP topActivity=ComponentInfo{com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity} launchCookie=null},{atype=standard independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@c8a71a5, appThread = android.app.IApplicationThread$Stub$Proxy@30d97a, debugName = QuickstepLaunchHome }}
+04-20 02:02:09.318   836   874 V WindowManagerShell:  Delegate animation for (#539) to RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@c8a71a5, appThread = android.app.IApplicationThread$Stub$Proxy@30d97a, debugName = QuickstepLaunchHome }
+04-20 02:02:09.320  1099  1099 D StateManager: createAtomicAnimation - fromState: Background, toState: Normal, partial trace:
+04-20 02:02:09.320  1099  1099 D StateManager: 	at com.android.quickstep.util.StaggeredWorkspaceAnim.prepareToAnimate(go/retraceme 6422cbaa18704413bfb3e93ebb8478614d3644845132061bc54b1fae066de31d:22)
+04-20 02:02:09.320  1099  1099 D StateManager: 	at com.android.quickstep.util.StaggeredWorkspaceAnim.<init>(go/retraceme 6422cbaa18704413bfb3e93ebb8478614d3644845132061bc54b1fae066de31d:4)
+04-20 02:02:09.320  1099  1099 D StateManager: 	at com.android.quickstep.util.StaggeredWorkspaceAnim.<init>(go/retraceme 6422cbaa18704413bfb3e93ebb8478614d3644845132061bc54b1fae066de31d:1)
+04-20 02:02:09.322   590   610 V WindowManager: Sent Transition (#539) createdAt=04-20 02:02:09.256 via request=TransitionRequestInfo { type = CLOSE, triggerTask = TaskInfo{userId=0 taskId=854 displayId=0 isRunning=false baseIntent=Intent { flg=0x10000000 cmp=com.impos2.mixcretailassemblyrn84/.MainActivity } baseActivity=null topActivity=null origActivity=null realActivity=ComponentInfo{com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity} numActivities=0 lastActiveTime=262619297 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{RemoteToken{d4400be Task{22aecb0 #854 type=standard A=10216:com.impos2.mixcretailassemblyrn84}}} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=null topActivityInfo=null launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=true isVisible=true isVisibleRequested=true isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= falseisLetterboxEducationEnabled= false isLetterboxDoubleTapEnabled= false topActivityEligibleForUserAspectRatioButton= false topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false cameraCompatTaskInfo=CameraCompatTaskInfo { cameraCompatControlState=hidden freeformCameraCompatMode=inactive}}}, pipTask = null, remoteTransition = null, displayChange = null, flags = 0, debugId = 539 }
+04-20 02:02:09.322   590   610 V WindowManager:     startWCT=WindowContainerTransaction { changes = {} hops = [] errorCallbackToken=null taskFragmentOrganizer=null }
+04-20 02:02:09.323   590   610 V WindowManager:     info={id=539 t=CLOSE f=0x0 trk=0 r=[0@Point(0, 0)] c=[
+04-20 02:02:09.323   590   610 V WindowManager:         {WCT{RemoteToken{eecd609 Task{403a6f7 #1 type=home}}} m=TO_FRONT f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0x27bc150 sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) d=0 taskParent=-1},
+04-20 02:02:09.323   590   610 V WindowManager:         {WCT{RemoteToken{d4400be Task{22aecb0 #854 type=standard A=10216:com.impos2.mixcretailassemblyrn84}}} m=CLOSE f=NONE leash=Surface(name=Task=854)/@0xbd08fc3 sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) d=0 taskParent=-1},
+04-20 02:02:09.323   590   610 V WindowManager:         {null m=TO_FRONT f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{55198b token=android.os.Binder@bf0535a})/@0x6a378e3 sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) d=0}
+04-20 02:02:09.323   590   610 V WindowManager:     ]}
+04-20 02:02:09.327   590   614 W ActivityTaskManager: Unable to send transaction to client proc com.impos2.mixcretailassemblyrn84: no app thread
+04-20 02:02:09.331   836   874 V WindowManagerShell:  animated by com.android.wm.shell.transition.RemoteTransitionHandler@2554070
+04-20 02:02:09.332  1099  1490 D EGL_emulation: app_time_stats: avg=35385.66ms min=0.97ms max=495266.84ms count=14
+04-20 02:02:09.334   590   955 W UserManagerService: Requested status bar icon for non-badged user 0
+04-20 02:02:09.353   388 14063 I resolv  : GetAddrInfoHandler::run: {0 262144 0 983040 10144 0}
+04-20 02:02:09.354   388 14064 I resolv  : GetAddrInfoHandler::run: {0 262144 0 983040 10144 0}
+04-20 02:02:09.356 21035 21080 W A       : CompleteServer request has failed and can't show offline suggestions.
+04-20 02:02:09.356 21035 21080 W A       : com.google.frameworks.client.data.android.ac: Http networking stack error
+04-20 02:02:09.356 21035 21080 W A       : 	at com.google.frameworks.client.data.android.x.run(PG:36)
+04-20 02:02:09.356 21035 21080 W A       : 	at com.google.android.libraries.k.x.run(PG:3)
+04-20 02:02:09.356 21035 21080 W A       : 	at com.google.common.n.c.c.run(PG:50)
+04-20 02:02:09.356 21035 21080 W A       : 	at com.google.android.libraries.k.e.run(PG:8)
+04-20 02:02:09.356 21035 21080 W A       : 	at java.lang.Thread.run(Thread.java:1012)
+04-20 02:02:09.356 21035 21080 W A       : 	at com.google.android.libraries.k.d.b.run(PG:74)
+04-20 02:02:09.356 21035 21080 W A       : Caused by: org.chromium.net.impl.ct: Exception in CronetUrlRequest: net::ERR_INTERNET_DISCONNECTED, ErrorCode=2, InternalErrorCode=-106, Retryable=false
+04-20 02:02:09.356 21035 21080 W A       : 	at org.chromium.net.impl.CronetUrlRequest.onError(PG:80)
+04-20 02:02:09.356 21035 21080 W A       : #getSuggestions failed
+04-20 02:02:09.356 21035 21080 W A       : com.google.frameworks.client.data.android.ac: Http networking stack error
+04-20 02:02:09.356 21035 21080 W A       : 	at com.google.frameworks.client.data.android.x.run(PG:36)
+04-20 02:02:09.356 21035 21080 W A       : 	at com.google.android.libraries.k.x.run(PG:3)
+04-20 02:02:09.356 21035 21080 W A       : 	at com.google.common.n.c.c.run(PG:50)
+04-20 02:02:09.356 21035 21080 W A       : 	at com.google.android.libraries.k.e.run(PG:8)
+04-20 02:02:09.356 21035 21080 W A       : 	at java.lang.Thread.run(Thread.java:1012)
+04-20 02:02:09.356 21035 21080 W A       : 	at com.google.android.libraries.k.d.b.run(PG:74)
+04-20 02:02:09.356 21035 21080 W A       : Caused by: org.chromium.net.impl.ct: Exception in CronetUrlRequest: net::ERR_INTERNET_DISCONNECTED, ErrorCode=2, InternalErrorCode=-106, Retryable=false
+04-20 02:02:09.356 21035 21080 W A       : 	at org.chromium.net.impl.CronetUrlRequest.onError(PG:80)
+04-20 02:02:09.357  1099 14061 E OneSearchSuggestProvider: Unable to get suggestions from AGA
+04-20 02:02:09.357  1099 14061 E OneSearchSuggestProvider: io.grpc.StatusRuntimeException: UNKNOWN
+04-20 02:02:09.357  1099 14061 E OneSearchSuggestProvider: 	at l3.e.a(go/retraceme 6422cbaa18704413bfb3e93ebb8478614d3644845132061bc54b1fae066de31d:77)
+04-20 02:02:09.357  1099 14061 E OneSearchSuggestProvider: 	at j3.l.b(go/retraceme 6422cbaa18704413bfb3e93ebb8478614d3644845132061bc54b1fae066de31d:43)
+04-20 02:02:09.357  1099 14061 E OneSearchSuggestProvider: 	at j3.l.a(go/retraceme 6422cbaa18704413bfb3e93ebb8478614d3644845132061bc54b1fae066de31d:27)
+04-20 02:02:09.357  1099 14061 E OneSearchSuggestProvider: 	at j3.z.run(go/retraceme 6422cbaa18704413bfb3e93ebb8478614d3644845132061bc54b1fae066de31d:7)
+04-20 02:02:09.357  1099 14061 E OneSearchSuggestProvider: 	at j3.m2.run(go/retraceme 6422cbaa18704413bfb3e93ebb8478614d3644845132061bc54b1fae066de31d:19)
+04-20 02:02:09.357  1099 14061 E OneSearchSuggestProvider: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+04-20 02:02:09.357  1099 14061 E OneSearchSuggestProvider: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+04-20 02:02:09.357  1099 14061 E OneSearchSuggestProvider: 	at java.lang.Thread.run(Thread.java:1012)
+04-20 02:02:09.358  1099  1099 D SearchTargetUtil: query= size=0
+04-20 02:02:09.393   412   412 I RanchuHwc: logCompositionFallbackIfChanged: layer 1458 CompositionType fallback from 2 to 1
+04-20 02:02:09.393   412   412 I RanchuHwc: logCompositionFallbackIfChanged: layer 1459 CompositionType fallback from 2 to 1
+04-20 02:02:09.626   439   814 W VsyncModulator: setTransactionSchedule: Unexpected EarlyEnd
+04-20 02:02:09.778  1099  1099 W FrameTracker: Missed SF frame:PREDICTION_ERROR, 169035869, 6834372, CUJ=J<TASKBAR_EXPAND::App to Home>
+04-20 02:02:09.778  1099  1099 W FrameTracker: Missed SF frame:PREDICTION_ERROR, 169035934, 9499832, CUJ=J<TASKBAR_EXPAND::App to Home>
+04-20 02:02:09.778  1099  1099 W FrameTracker: Missed SF frame:PREDICTION_ERROR, 169035949, 5970708, CUJ=J<TASKBAR_EXPAND::App to Home>
+04-20 02:02:09.778  1099  1099 W FrameTracker: Missed SF frame:PREDICTION_ERROR, 169036015, 4202460, CUJ=J<TASKBAR_EXPAND::App to Home>
+04-20 02:02:09.778  1099  1099 W FrameTracker: Missed SF frame:PREDICTION_ERROR, 169036037, 5362252, CUJ=J<TASKBAR_EXPAND::App to Home>
+04-20 02:02:09.778  1099  1099 W FrameTracker: Missed SF frame:PREDICTION_ERROR, 169036059, 6628503, CUJ=J<TASKBAR_EXPAND::App to Home>
+04-20 02:02:09.778  1099  1099 W FrameTracker: Missed SF frame:PREDICTION_ERROR, 169036176, 4496340, CUJ=J<TASKBAR_EXPAND::App to Home>
+04-20 02:02:09.778  1099  1099 W FrameTracker: Missed App frame:UNKNOWN: 12, 169036191, 0, CUJ=J<TASKBAR_EXPAND::App to Home>
+04-20 02:02:09.778  1099  1099 W FrameTracker: Missed SF frame:UNKNOWN: 12, 169036191, 0, CUJ=J<TASKBAR_EXPAND::App to Home>
+04-20 02:02:09.778  1099  1099 W FrameTracker: Missing HWUI jank callback for vsyncId: 169036191, CUJ=J<TASKBAR_EXPAND::App to Home>
+04-20 02:02:09.778  1099  1099 W FrameTracker: Missed App frame:UNKNOWN: 24, 169036220, 35569008, CUJ=J<TASKBAR_EXPAND::App to Home>
+04-20 02:02:09.778  1099  1099 W FrameTracker: Missed SF frame:UNKNOWN: 24, 169036220, 35569008, CUJ=J<TASKBAR_EXPAND::App to Home>
+04-20 02:02:09.778  1099  1099 W FrameTracker: Missed SF frame:UNKNOWN: 80, 169036235, 31148133, CUJ=J<TASKBAR_EXPAND::App to Home>
+04-20 02:02:09.778  1099  1099 W FrameTracker: Missed SF frame:PREDICTION_ERROR, 169036294, 5766344, CUJ=J<TASKBAR_EXPAND::App to Home>
+04-20 02:02:09.778  1099  1099 W FrameTracker: Missed SF frame:PREDICTION_ERROR, 169036331, 5776845, CUJ=J<TASKBAR_EXPAND::App to Home>
+04-20 02:02:09.778  1099  1099 W FrameTracker: Missed SF frame:PREDICTION_ERROR, 169036391, 5266556, CUJ=J<TASKBAR_EXPAND::App to Home>
+04-20 02:02:09.778  1099  1125 V PerfettoTrigger: Triggering /system/bin/trigger_perfetto com.android.telemetry.interaction-jank-monitor-60
+04-20 02:02:09.895   590  1504 W WindowManager: Failed looking up window session=Session{330fbed 836:u0a10186} callers=com.android.server.wm.WindowManagerService.removeClientToken:2058 com.android.server.wm.Session.remove:274 android.view.IWindowSession$Stub.onTransact:685 
+04-20 02:02:09.896   836   874 V WindowManagerShell: Transition animation finished (aborted=false), notifying core (#539) android.os.BinderProxy@266295f@0
+04-20 02:02:09.897   590  1504 E IPCThreadState: Binder transaction failure. id: 42678982, BR_*: 29189, error: -22 (Invalid argument)
+04-20 02:02:09.898   590  1504 W ActivityManager: pid 590 system sent binder code 7 with flags 1 to frozen apps and got error -32
+04-20 02:02:09.899   590   610 V WindowManager: Finish Transition (#539): created at 04-20 02:02:09.256 collect-started=0.012ms request-sent=0.048ms started=1.906ms ready=23.599ms sent=59.408ms finished=640.533ms
+04-20 02:02:09.900   590  1504 W WindowManager: Exception thrown during dispatchAppVisibility Window{f9616a5 u0 com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity EXITING}
+04-20 02:02:09.900   590  1504 W WindowManager: android.os.DeadObjectException
+04-20 02:02:09.900   590  1504 W WindowManager: 	at android.os.BinderProxy.transactNative(Native Method)
+04-20 02:02:09.900   590  1504 W WindowManager: 	at android.os.BinderProxy.transact(BinderProxy.java:586)
+04-20 02:02:09.900   590  1504 W WindowManager: 	at android.view.IWindow$Stub$Proxy.dispatchAppVisibility(IWindow.java:553)
+04-20 02:02:09.900   590  1504 W WindowManager: 	at com.android.server.wm.WindowState.sendAppVisibilityToClients(WindowState.java:3253)
+04-20 02:02:09.900   590  1504 W WindowManager: 	at com.android.server.wm.WindowContainer.sendAppVisibilityToClients(WindowContainer.java:1289)
+04-20 02:02:09.900   590  1504 W WindowManager: 	at com.android.server.wm.WindowToken.setClientVisible(WindowToken.java:403)
+04-20 02:02:09.900   590  1504 W WindowManager: 	at com.android.server.wm.ActivityRecord.setClientVisible(ActivityRecord.java:7166)
+04-20 02:02:09.900   590  1504 W WindowManager: 	at com.android.server.wm.ActivityRecord.postApplyAnimation(ActivityRecord.java:5881)
+04-20 02:02:09.900   590  1504 W WindowManager: 	at com.android.server.wm.ActivityRecord.commitVisibility(ActivityRecord.java:5823)
+04-20 02:02:09.900   590  1504 W WindowManager: 	at com.android.server.wm.Transition.finishTransition(Transition.java:1286)
+04-20 02:02:09.900   590  1504 W WindowManager: 	at com.android.server.wm.TransitionController.finishTransition(TransitionController.java:937)
+04-20 02:02:09.900   590  1504 W WindowManager: 	at com.android.server.wm.WindowOrganizerController.finishTransition(WindowOrganizerController.java:494)
+04-20 02:02:09.900   590  1504 W WindowManager: 	at android.window.IWindowOrganizerController$Stub.onTransact(IWindowOrganizerController.java:289)
+04-20 02:02:09.900   590  1504 W WindowManager: 	at com.android.server.wm.WindowOrganizerController.onTransact(WindowOrganizerController.java:204)
+04-20 02:02:09.900   590  1504 W WindowManager: 	at android.os.Binder.execTransactInternal(Binder.java:1505)
+04-20 02:02:09.900   590  1504 W WindowManager: 	at android.os.Binder.execTransact(Binder.java:1444)
+04-20 02:02:09.900   590  1504 W Process : Unable to open /proc/13762/status
+04-20 02:02:09.899  1504  1504 I binder  : 1504:590 cannot find target node
+04-20 02:02:09.899  1504  1504 I binder  : 590:1504 transaction async to 0:0 failed 42678982/29189/-22, size 64-0 line 3265
+04-20 02:02:09.906   836   874 V WindowManagerShell: Track 0 became idle
+04-20 02:02:09.906   836   874 V WindowManagerShell: All active transition animations finished
+04-20 02:02:09.906   836   874 V ShellDesktopMode: Task Vanished: #854 closed=true
+04-20 02:02:09.907   590   955 W UserManagerService: Requested status bar icon for non-badged user 0
+04-20 02:02:09.908   590   955 W UserManagerService: Requested status bar icon for non-badged user 0
+04-20 02:02:09.911  1099  1099 I TopTaskTracker: onTaskRemoved: taskId=854
+04-20 02:02:09.911  1099  1099 I TopTaskTracker: onTaskRemoved: taskId=854
+04-20 02:02:09.927  1099  1099 W FrameTracker: Missed SF frame:PREDICTION_ERROR, 169036015, 8082668, CUJ=J<LAUNCHER_APP_CLOSE_TO_HOME>
+04-20 02:02:09.928  1099  1099 W FrameTracker: Missed SF frame:PREDICTION_ERROR, 169036059, 8675294, CUJ=J<LAUNCHER_APP_CLOSE_TO_HOME>
+04-20 02:02:09.928  1099  1099 W FrameTracker: Missed SF frame:PREDICTION_ERROR, 169036081, 7878004, CUJ=J<LAUNCHER_APP_CLOSE_TO_HOME>
+04-20 02:02:09.928  1099  1099 W FrameTracker: Missed SF frame:PREDICTION_ERROR, 169036110, 8072796, CUJ=J<LAUNCHER_APP_CLOSE_TO_HOME>
+04-20 02:02:09.928  1099  1099 W FrameTracker: Missed SF frame:PREDICTION_ERROR, 169036176, 8633631, CUJ=J<LAUNCHER_APP_CLOSE_TO_HOME>
+04-20 02:02:09.928  1099  1099 W FrameTracker: Missed App frame:UNKNOWN: 12, 169036191, 21290299, CUJ=J<LAUNCHER_APP_CLOSE_TO_HOME>
+04-20 02:02:09.928  1099  1099 W FrameTracker: Missed SF frame:UNKNOWN: 12, 169036191, 21290299, CUJ=J<LAUNCHER_APP_CLOSE_TO_HOME>
+04-20 02:02:09.928  1099  1099 W FrameTracker: Missed App frame:UNKNOWN: 24, 169036220, 50589466, CUJ=J<LAUNCHER_APP_CLOSE_TO_HOME>
+04-20 02:02:09.928  1099  1099 W FrameTracker: Missed SF frame:UNKNOWN: 24, 169036220, 50589466, CUJ=J<LAUNCHER_APP_CLOSE_TO_HOME>
+04-20 02:02:09.928  1099  1099 W FrameTracker: Missed SF frame:UNKNOWN: 80, 169036235, 37780508, CUJ=J<LAUNCHER_APP_CLOSE_TO_HOME>
+04-20 02:02:09.928  1099  1099 W FrameTracker: Missed SF frame:UNKNOWN: 80, 169036279, 24469218, CUJ=J<LAUNCHER_APP_CLOSE_TO_HOME>
+04-20 02:02:09.928  1099  1099 W FrameTracker: Missed SF frame:UNKNOWN: 80, 169036294, 19385469, CUJ=J<LAUNCHER_APP_CLOSE_TO_HOME>
+04-20 02:02:09.928  1099  1099 W FrameTracker: Missed SF frame:UNKNOWN: 80, 169036316, 24490969, CUJ=J<LAUNCHER_APP_CLOSE_TO_HOME>
+04-20 02:02:09.928  1099  1099 W FrameTracker: Missed SF frame:UNKNOWN: 80, 169036331, 19183137, CUJ=J<LAUNCHER_APP_CLOSE_TO_HOME>
+04-20 02:02:09.928  1099  1099 W FrameTracker: Missed SF frame:UNKNOWN: 80, 169036346, 24070596, CUJ=J<LAUNCHER_APP_CLOSE_TO_HOME>
+04-20 02:02:09.928  1099  1099 W FrameTracker: Missed SF frame:UNKNOWN: 80, 169036361, 24003596, CUJ=J<LAUNCHER_APP_CLOSE_TO_HOME>
+04-20 02:02:09.928  1099  1099 W FrameTracker: Missed SF frame:UNKNOWN: 80, 169036376, 19307639, CUJ=J<LAUNCHER_APP_CLOSE_TO_HOME>
+04-20 02:02:09.928  1099  1099 W FrameTracker: Missed SF frame:UNKNOWN: 80, 169036391, 19054431, CUJ=J<LAUNCHER_APP_CLOSE_TO_HOME>
+04-20 02:02:09.928  1099  1099 W FrameTracker: Missed SF frame:UNKNOWN: 80, 169036406, 21677848, CUJ=J<LAUNCHER_APP_CLOSE_TO_HOME>
+04-20 02:02:09.928  1099  1099 W FrameTracker: Missed SF frame:UNKNOWN: 80, 169036421, 21987057, CUJ=J<LAUNCHER_APP_CLOSE_TO_HOME>
+04-20 02:02:09.928  1099  1099 W FrameTracker: Missed SF frame:UNKNOWN: 80, 169036436, 21422141, CUJ=J<LAUNCHER_APP_CLOSE_TO_HOME>
+04-20 02:02:09.928  1099  1099 W FrameTracker: Missed SF frame:UNKNOWN: 80, 169036451, 21329934, CUJ=J<LAUNCHER_APP_CLOSE_TO_HOME>
+04-20 02:02:09.928  1099  1099 W FrameTracker: Missed SF frame:UNKNOWN: 80, 169036466, 21878351, CUJ=J<LAUNCHER_APP_CLOSE_TO_HOME>
+04-20 02:02:09.928  1099  1099 W FrameTracker: Missed SF frame:UNKNOWN: 80, 169036481, 21436685, CUJ=J<LAUNCHER_APP_CLOSE_TO_HOME>
+04-20 02:02:09.928  1099  1099 W FrameTracker: Missed SF frame:UNKNOWN: 80, 169036496, 21513561, CUJ=J<LAUNCHER_APP_CLOSE_TO_HOME>
+04-20 02:02:09.928  1099  1099 W FrameTracker: Missed SF frame:UNKNOWN: 80, 169036511, 22543020, CUJ=J<LAUNCHER_APP_CLOSE_TO_HOME>
+04-20 02:02:09.928  1099  1099 W FrameTracker: Missed SF frame:UNKNOWN: 80, 169036526, 20259437, CUJ=J<LAUNCHER_APP_CLOSE_TO_HOME>
+04-20 02:02:09.928  1099  1125 V PerfettoTrigger: Triggering /system/bin/trigger_perfetto com.android.telemetry.interaction-jank-monitor-9
+04-20 02:02:09.942   439   439 E BpTransactionCompletedListener: Failed to transact (-32)
+04-20 02:02:09.982   590   603 W system_server: ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk' with 1 weak references
+04-20 02:02:10.127   590   734 W BestClock: java.time.DateTimeException: Missing network time fix
+04-20 02:02:10.142   388   472 I netd    : tetherGetStats() -> {[]} <0.30ms>
+04-20 02:02:10.142   590   734 W BestClock: java.time.DateTimeException: Missing network time fix
+04-20 02:02:10.143   388   472 I netd    : bandwidthSetGlobalAlert(2097152) <0.05ms>
+04-20 02:02:10.273   590   625 V GrammaticalInflectionUtils: AttributionSource: AttributionSource { uid = 10216, packageName = null, attributionTag = null, token = android.os.Binder@bdb3573, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+04-20 02:02:10.278   389   389 D Zygote  : Forked child process 14068
+04-20 02:02:10.278   590   626 I ActivityManager: Start proc 14068:com.impos2.mixcretailassemblyrn84/u0a216 for service {com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.topologyhostv3.TopologyHostV3Service}
+04-20 02:02:10.302 14068 14068 I ailassemblyrn84: Using CollectorTypeCMC GC.
+04-20 02:02:10.304 14068 14068 E ailassemblyrn84: Not starting debugger since process cannot load the jdwp agent.
+04-20 02:02:10.306 14068 14068 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+04-20 02:02:10.315 14068 14068 D nativeloader: Configuring clns-7 for other apk /data/app/~~f3UmhMudmE-mCoBf2KQ6gg==/com.impos2.mixcretailassemblyrn84-4FpUS9r4ynFlQ940asAVuQ==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~f3UmhMudmE-mCoBf2KQ6gg==/com.impos2.mixcretailassemblyrn84-4FpUS9r4ynFlQ940asAVuQ==/lib/arm64:/data/app/~~f3UmhMudmE-mCoBf2KQ6gg==/com.impos2.mixcretailassemblyrn84-4FpUS9r4ynFlQ940asAVuQ==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.impos2.mixcretailassemblyrn84
+04-20 02:02:10.318 14068 14068 V GraphicsEnvironment: Currently set values for:
+04-20 02:02:10.318 14068 14068 V GraphicsEnvironment:   angle_gl_driver_selection_pkgs=[]
+04-20 02:02:10.318 14068 14068 V GraphicsEnvironment:   angle_gl_driver_selection_values=[]
+04-20 02:02:10.318 14068 14068 V GraphicsEnvironment: Global.Settings values are invalid: number of packages: 0, number of values: 0
+04-20 02:02:10.318 14068 14068 V GraphicsEnvironment: Neither updatable production driver nor prerelease driver is supported.
+04-20 02:02:10.323 14068 14068 W SoLoader: Initializing SoLoader: 0
+04-20 02:02:10.323 14068 14068 W SoLoader: Recording new base apk path: /data/app/~~f3UmhMudmE-mCoBf2KQ6gg==/com.impos2.mixcretailassemblyrn84-4FpUS9r4ynFlQ940asAVuQ==/base.apk
+04-20 02:02:10.323 14068 14068 W SoLoader: Previously recorded 0 base apk paths.
+04-20 02:02:10.323 14068 14068 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+04-20 02:02:10.323 14068 14068 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+04-20 02:02:10.324 14068 14068 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~f3UmhMudmE-mCoBf2KQ6gg==/com.impos2.mixcretailassemblyrn84-4FpUS9r4ynFlQ940asAVuQ==/base.apk!/lib/arm64-v8a]]
+04-20 02:02:10.324 14068 14068 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~f3UmhMudmE-mCoBf2KQ6gg==/com.impos2.mixcretailassemblyrn84-4FpUS9r4ynFlQ940asAVuQ==/lib/arm64 flags = 0]]
+04-20 02:02:10.324 14068 14068 I SoLoader: init finish: 4 SO sources prepared
+04-20 02:02:10.324 14068 14068 W SoLoader: SoLoader initialized: 8
+04-20 02:02:10.326 14068 14068 D nativeloader: Load /data/app/~~f3UmhMudmE-mCoBf2KQ6gg==/com.impos2.mixcretailassemblyrn84-4FpUS9r4ynFlQ940asAVuQ==/base.apk!/lib/arm64-v8a/libc++_shared.so using ns clns-7 from class loader (caller=/data/app/~~f3UmhMudmE-mCoBf2KQ6gg==/com.impos2.mixcretailassemblyrn84-4FpUS9r4ynFlQ940asAVuQ==/base.apk): ok
+04-20 02:02:10.327 14068 14068 D nativeloader: Load /data/app/~~f3UmhMudmE-mCoBf2KQ6gg==/com.impos2.mixcretailassemblyrn84-4FpUS9r4ynFlQ940asAVuQ==/base.apk!/lib/arm64-v8a/libjsi.so using ns clns-7 from class loader (caller=/data/app/~~f3UmhMudmE-mCoBf2KQ6gg==/com.impos2.mixcretailassemblyrn84-4FpUS9r4ynFlQ940asAVuQ==/base.apk): ok
+04-20 02:02:10.328 14068 14068 D nativeloader: Load /data/app/~~f3UmhMudmE-mCoBf2KQ6gg==/com.impos2.mixcretailassemblyrn84-4FpUS9r4ynFlQ940asAVuQ==/base.apk!/lib/arm64-v8a/libfbjni.so using ns clns-7 from class loader (caller=/data/app/~~f3UmhMudmE-mCoBf2KQ6gg==/com.impos2.mixcretailassemblyrn84-4FpUS9r4ynFlQ940asAVuQ==/base.apk): ok
+04-20 02:02:10.329 14068 14068 D nativeloader: Load /data/app/~~f3UmhMudmE-mCoBf2KQ6gg==/com.impos2.mixcretailassemblyrn84-4FpUS9r4ynFlQ940asAVuQ==/base.apk!/lib/arm64-v8a/libreactnative.so using ns clns-7 from class loader (caller=/data/app/~~f3UmhMudmE-mCoBf2KQ6gg==/com.impos2.mixcretailassemblyrn84-4FpUS9r4ynFlQ940asAVuQ==/base.apk): ok
+04-20 02:02:10.329 14068 14068 D jni_lib_merge: Entering merged library JNI_OnLoad.
+04-20 02:02:10.329 14068 14068 D jni_lib_merge: Preparing 12 pre-merged libs (including stub)
+04-20 02:02:10.329 14068 14068 D jni_lib_merge: Preparing to register libfabricjni_so.  onload_func: 0x73a846ba50
+04-20 02:02:10.329 14068 14068 D jni_lib_merge: Preparing to register libreact_devsupportjni_so.  onload_func: 0x73a852f36c
+04-20 02:02:10.329 14068 14068 D jni_lib_merge: Preparing to register libreact_featureflagsjni_so.  onload_func: 0x73a8549ba8
+04-20 02:02:10.329 14068 14068 D jni_lib_merge: Preparing to register libreact_newarchdefaults_so.  onload_func: 0x73a8587d74
+04-20 02:02:10.329 14068 14068 D jni_lib_merge: Preparing to register libreactnativeblob_so.  onload_func: 0x73a8628a4c
+04-20 02:02:10.329 14068 14068 D jni_lib_merge: Preparing to register libreactnativejni_so.  onload_func: 0x73a863d9e4
+04-20 02:02:10.329 14068 14068 D jni_lib_merge: Preparing to register libreactnativejni_common_so.  onload_func: 0x73a8640be0
+04-20 02:02:10.329 14068 14068 D jni_lib_merge: Preparing to register librninstance_so.  onload_func: 0x73a865d778
+04-20 02:02:10.329 14068 14068 D jni_lib_merge: Preparing to register libturbomodulejsijni_so.  onload_func: 0x73a87070e0
+04-20 02:02:10.329 14068 14068 D jni_lib_merge: Preparing to register libuimanagerjni_so.  onload_func: 0x73a870db00
+04-20 02:02:10.329 14068 14068 D jni_lib_merge: Preparing to register libyoga_so.  onload_func: 0x73a87150c4
+04-20 02:02:10.329 14068 14068 D jni_lib_merge: About to register 11 actual methods.
+04-20 02:02:10.330 14068 14068 D nativeloader: Load /data/app/~~f3UmhMudmE-mCoBf2KQ6gg==/com.impos2.mixcretailassemblyrn84-4FpUS9r4ynFlQ940asAVuQ==/base.apk!/lib/arm64-v8a/libreact_codegen_rnsvg.so using ns clns-7 from class loader (caller=/data/app/~~f3UmhMudmE-mCoBf2KQ6gg==/com.impos2.mixcretailassemblyrn84-4FpUS9r4ynFlQ940asAVuQ==/base.apk): ok
+04-20 02:02:10.330 14068 14068 D jni_lib_merge: Entering merged library JNI_OnLoad.
+04-20 02:02:10.330 14068 14068 D jni_lib_merge: Preparing 12 pre-merged libs (including stub)
+04-20 02:02:10.330 14068 14068 D jni_lib_merge: Preparing to register libfabricjni_so.  onload_func: 0x73a846ba50
+04-20 02:02:10.330 14068 14068 D jni_lib_merge: Preparing to register libreact_devsupportjni_so.  onload_func: 0x73a852f36c
+04-20 02:02:10.330 14068 14068 D jni_lib_merge: Preparing to register libreact_featureflagsjni_so.  onload_func: 0x73a8549ba8
+04-20 02:02:10.330 14068 14068 D jni_lib_merge: Preparing to register libreact_newarchdefaults_so.  onload_func: 0x73a8587d74
+04-20 02:02:10.330 14068 14068 D jni_lib_merge: Preparing to register libreactnativeblob_so.  onload_func: 0x73a8628a4c
+04-20 02:02:10.330 14068 14068 D jni_lib_merge: Preparing to register libreactnativejni_so.  onload_func: 0x73a863d9e4
+04-20 02:02:10.330 14068 14068 D jni_lib_merge: Preparing to register libreactnativejni_common_so.  onload_func: 0x73a8640be0
+04-20 02:02:10.330 14068 14068 D jni_lib_merge: Preparing to register librninstance_so.  onload_func: 0x73a865d778
+04-20 02:02:10.330 14068 14068 D jni_lib_merge: Preparing to register libturbomodulejsijni_so.  onload_func: 0x73a87070e0
+04-20 02:02:10.330 14068 14068 D jni_lib_merge: Preparing to register libuimanagerjni_so.  onload_func: 0x73a870db00
+04-20 02:02:10.330 14068 14068 D jni_lib_merge: Preparing to register libyoga_so.  onload_func: 0x73a87150c4
+04-20 02:02:10.330 14068 14068 D jni_lib_merge: About to register 11 actual methods.
+04-20 02:02:10.331 14068 14068 D nativeloader: Load /data/app/~~f3UmhMudmE-mCoBf2KQ6gg==/com.impos2.mixcretailassemblyrn84-4FpUS9r4ynFlQ940asAVuQ==/base.apk!/lib/arm64-v8a/libappmodules.so using ns clns-7 from class loader (caller=/data/app/~~f3UmhMudmE-mCoBf2KQ6gg==/com.impos2.mixcretailassemblyrn84-4FpUS9r4ynFlQ940asAVuQ==/base.apk): ok
+04-20 02:02:10.334   590  1504 I ActivityManager: Background started FGS: Allowed [callingPackage: com.impos2.mixcretailassemblyrn84; callingUid: 10216; uidState: TOP ; uidBFSL: [BFSL]; intent: Intent { cmp=com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.topologyhostv3.TopologyHostV3Service }; code:PROC_STATE_TOP; tempAllowListReason:<null>; targetSdkVersion:36; callerTargetSdkVersion:36; startForegroundCount:1; bindFromPackage:null: isBindService:false]
+04-20 02:02:11.013  1099  1490 D EGL_emulation: app_time_stats: avg=39.84ms min=2.36ms max=1002.40ms count=37
+04-20 02:02:11.233   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:02:12.015  1099  1490 D EGL_emulation: app_time_stats: avg=1001.65ms min=1001.65ms max=1001.65ms count=1
+04-20 02:02:12.911   590  1464 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+04-20 02:02:13.395   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:02:14.014  1099  1490 D EGL_emulation: app_time_stats: avg=999.64ms min=999.30ms max=999.99ms count=2
+04-20 02:02:14.261   590   694 W ActivityTaskManager: callingPackage for (uid=1000, pid=590) is ambiguous: [android, com.android.providers.settings, com.android.server.telecom, com.android.location.fused]
+04-20 02:02:14.261   590   694 I ActivityTaskManager: START u0 {act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10008000 pkg=com.impos2.mixcretailassemblyrn84 cmp=com.impos2.mixcretailassemblyrn84/.MainActivity} with LAUNCH_SINGLE_TASK from uid 10216 (realCallingUid=1000) result code=0
+04-20 02:02:14.261   590   694 W ActivityManager: Unable to send startActivity intent
+04-20 02:02:14.261   590   694 W ActivityManager: java.lang.IllegalStateException: unsupported BackgroundActivityStartMode: 3
+04-20 02:02:14.261   590   694 W ActivityManager: 	at com.android.server.wm.BackgroundActivityStartController$BalState.getBackgroundStartPrivilegesAllowedByCreator(BackgroundActivityStartController.java:412)
+04-20 02:02:14.261   590   694 W ActivityManager: 	at com.android.server.wm.BackgroundActivityStartController$BalState.<init>(BackgroundActivityStartController.java:327)
+04-20 02:02:14.261   590   694 W ActivityManager: 	at com.android.server.wm.BackgroundActivityStartController.checkBackgroundActivityStart(BackgroundActivityStartController.java:687)
+04-20 02:02:14.261   590   694 W ActivityManager: 	at com.android.server.wm.ActivityStarter.executeRequest(ActivityStarter.java:1161)
+04-20 02:02:14.261   590   694 W ActivityManager: 	at com.android.server.wm.ActivityStarter.execute(ActivityStarter.java:782)
+04-20 02:02:14.261   590   694 W ActivityManager: 	at com.android.server.wm.ActivityStartController.startActivityInPackage(ActivityStartController.java:314)
+04-20 02:02:14.261   590   694 W ActivityManager: 	at com.android.server.wm.ActivityTaskManagerService$LocalService.startActivityInPackage(ActivityTaskManagerService.java:6037)
+04-20 02:02:14.261   590   694 W ActivityManager: 	at com.android.server.am.PendingIntentRecord.sendInner(PendingIntentRecord.java:633)
+04-20 02:02:14.261   590   694 W ActivityManager: 	at com.android.server.am.PendingIntentRecord.sendWithResult(PendingIntentRecord.java:365)
+04-20 02:02:14.261   590   694 W ActivityManager: 	at com.android.server.am.ActivityManagerService.sendIntentSender(ActivityManagerService.java:5670)
+04-20 02:02:14.261   590   694 W ActivityManager: 	at android.app.PendingIntent.sendAndReturnResult(PendingIntent.java:1113)
+04-20 02:02:14.261   590   694 W ActivityManager: 	at android.app.PendingIntent.send(PendingIntent.java:1082)
+04-20 02:02:14.261   590   694 W ActivityManager: 	at com.android.server.alarm.AlarmManagerService$DeliveryTracker.deliverLocked(AlarmManagerService.java:5376)
+04-20 02:02:14.261   590   694 W ActivityManager: 	at com.android.server.alarm.AlarmManagerService.deliverAlarmsLocked(AlarmManagerService.java:4320)
+04-20 02:02:14.261   590   694 W ActivityManager: 	at com.android.server.alarm.AlarmManagerService$AlarmThread.run(AlarmManagerService.java:4591)
+04-20 02:02:15.493   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:02:15.944 14068 14087 D ProfileInstaller: Installing profile for com.impos2.mixcretailassemblyrn84
+04-20 02:02:16.014  1099  1490 D EGL_emulation: app_time_stats: avg=999.80ms min=999.15ms max=1000.46ms count=2
+04-20 02:02:17.586   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:02:18.015  1099  1490 D EGL_emulation: app_time_stats: avg=1000.26ms min=999.28ms max=1001.24ms count=2
+04-20 02:02:19.678   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:02:20.011  1099  1490 D EGL_emulation: app_time_stats: avg=998.05ms min=996.36ms max=999.74ms count=2
+04-20 02:02:21.012  1099  1490 D EGL_emulation: app_time_stats: avg=1001.60ms min=1001.60ms max=1001.60ms count=1
+04-20 02:02:21.777   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:02:22.015  1099  1490 D EGL_emulation: app_time_stats: avg=1002.50ms min=1002.50ms max=1002.50ms count=1
+04-20 02:02:23.866   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:02:24.013  1099  1490 D EGL_emulation: app_time_stats: avg=998.76ms min=998.13ms max=999.39ms count=2
+04-20 02:02:24.382   388   472 I netd    : tetherGetStats() -> {[]} <1.02ms>
+04-20 02:02:25.014  1099  1490 D EGL_emulation: app_time_stats: avg=1001.27ms min=1001.27ms max=1001.27ms count=1
+04-20 02:02:25.162   590   738 E WifiScoringParams: Invalid frequency(-1), using 5G as default rssi array
+04-20 02:02:25.966   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:02:27.015  1099  1490 D EGL_emulation: app_time_stats: avg=1000.58ms min=999.08ms max=1002.08ms count=2
+04-20 02:02:28.074   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:02:28.930   590  1504 D WifiNl80211Manager: Scan result ready event
+04-20 02:02:28.930   590  1504 D WifiNative: Scan result ready event
+04-20 02:02:28.935   590   738 I HalDevMgr: bestIfaceCreationProposal is null, requestIface=STA, existingIface=[name=wlan0 type=STA]
+04-20 02:02:29.015  1099  1490 D EGL_emulation: app_time_stats: avg=999.93ms min=995.71ms max=1004.15ms count=2
+04-20 02:02:29.165 13827 13847 I ReactNativeJS: '[assembly.android.mixc-retail-rn84.websocket] connect', { url: 'ws://127.0.0.1:8888/mockMasterServer/ws',
+04-20 02:02:29.165 13827 13847 I ReactNativeJS:   protocol: 'ws',
+04-20 02:02:29.165 13827 13847 I ReactNativeJS:   host: '127.0.0.1:8888',
+04-20 02:02:29.165 13827 13847 I ReactNativeJS:   pathname: '/mockMasterServer/ws' }
+04-20 02:02:29.165 13827 13848 I assembly.assembly.android.mixc-retail-rn84.transport.ws.SocketRuntime: [transport.ws] Socket connect started: assembly.android.mixc-retail-rn84.topology {"profileName":"assembly.android.mixc-retail-rn84.topology","serverName":"dual-topology-host-v3","addressName":"dynamic-topology-host"}
+04-20 02:02:29.167 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:29.167 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:29.168 13827 14100 D TrafficStats: tagSocket(125) with statsTag=0xffffffff, statsUid=-1
+04-20 02:02:29.171 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:29.171 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:29.171 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:29.171 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:29.171 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:30.016  1099  1490 D EGL_emulation: app_time_stats: avg=1000.78ms min=1000.78ms max=1000.78ms count=1
+04-20 02:02:30.171   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:02:32.014  1099  1490 D EGL_emulation: app_time_stats: avg=998.83ms min=996.99ms max=1000.67ms count=2
+04-20 02:02:32.272   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:02:33.017  1099  1490 D EGL_emulation: app_time_stats: avg=1003.19ms min=1003.19ms max=1003.19ms count=1
+04-20 02:02:34.376   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:02:35.010  1099  1490 D EGL_emulation: app_time_stats: avg=996.53ms min=994.39ms max=998.66ms count=2
+04-20 02:02:36.015  1099  1490 D EGL_emulation: app_time_stats: avg=1004.26ms min=1004.26ms max=1004.26ms count=1
+04-20 02:02:36.490   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:02:37.015  1099  1490 D EGL_emulation: app_time_stats: avg=1000.48ms min=1000.48ms max=1000.48ms count=1
+04-20 02:02:38.728   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:02:39.013  1099  1490 D EGL_emulation: app_time_stats: avg=998.82ms min=998.67ms max=998.97ms count=2
+04-20 02:02:40.015  1099  1490 D EGL_emulation: app_time_stats: avg=1002.13ms min=1002.13ms max=1002.13ms count=1
+04-20 02:02:40.833   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:02:42.015  1099  1490 D EGL_emulation: app_time_stats: avg=999.74ms min=999.62ms max=999.86ms count=2
+04-20 02:02:42.926   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:02:44.014  1099  1490 D EGL_emulation: app_time_stats: avg=999.73ms min=997.56ms max=1001.90ms count=2
+04-20 02:02:45.026   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:02:46.013  1099  1490 D EGL_emulation: app_time_stats: avg=999.48ms min=996.85ms max=1002.11ms count=2
+04-20 02:02:47.014  1099  1490 D EGL_emulation: app_time_stats: avg=1000.19ms min=1000.19ms max=1000.19ms count=1
+04-20 02:02:47.122   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:02:48.017  1099  1490 D EGL_emulation: app_time_stats: avg=1003.21ms min=1003.21ms max=1003.21ms count=1
+04-20 02:02:49.177 13827 13848 I assembly.assembly.android.mixc-retail-rn84.transport.ws.SocketRuntime: [transport.ws] Socket connect started: assembly.android.mixc-retail-rn84.topology {"profileName":"assembly.android.mixc-retail-rn84.topology","serverName":"dual-topology-host-v3","addressName":"dynamic-topology-host"}
+04-20 02:02:49.178 13827 13847 I ReactNativeJS: '[assembly.android.mixc-retail-rn84.websocket] connect', { url: 'ws://127.0.0.1:8888/mockMasterServer/ws',
+04-20 02:02:49.178 13827 13847 I ReactNativeJS:   protocol: 'ws',
+04-20 02:02:49.178 13827 13847 I ReactNativeJS:   host: '127.0.0.1:8888',
+04-20 02:02:49.178 13827 13847 I ReactNativeJS:   pathname: '/mockMasterServer/ws' }
+04-20 02:02:49.180 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:49.180 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:49.181 13827 14121 D TrafficStats: tagSocket(125) with statsTag=0xffffffff, statsUid=-1
+04-20 02:02:49.183 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:49.183 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:49.183 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:49.184 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:49.184 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:02:49.216   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:02:50.016  1099  1490 D EGL_emulation: app_time_stats: avg=999.27ms min=998.83ms max=999.71ms count=2
+04-20 02:02:51.016  1099  1490 D EGL_emulation: app_time_stats: avg=1000.05ms min=1000.05ms max=1000.05ms count=1
+04-20 02:02:51.320   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:02:53.014  1099  1490 D EGL_emulation: app_time_stats: avg=999.27ms min=999.19ms max=999.35ms count=2
+04-20 02:02:53.444   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:02:54.019  1099  1490 D EGL_emulation: app_time_stats: avg=1004.91ms min=1004.91ms max=1004.91ms count=1
+04-20 02:02:55.549   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:02:56.013  1099  1490 D EGL_emulation: app_time_stats: avg=996.58ms min=995.21ms max=997.94ms count=2
+04-20 02:02:57.015  1099  1490 D EGL_emulation: app_time_stats: avg=1002.17ms min=1002.17ms max=1002.17ms count=1
+04-20 02:02:57.646   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:02:59.016  1099  1490 D EGL_emulation: app_time_stats: avg=1000.59ms min=998.50ms max=1002.67ms count=2
+04-20 02:02:59.742   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:02:59.747   397   397 W healthd : battery l=47 v=5000 t=25.0 h=2 st=4 c=900000 fc=3000000 cc=10 chg=a
+04-20 02:03:00.009  1389  1552 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+04-20 02:03:00.009  1389  1552 I AiAiEcho: EchoTargets: 
+04-20 02:03:00.009  1389  1552 I AiAiEcho: Filtered by AiAi flag check: 
+04-20 02:03:00.009  1389  1552 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+04-20 02:03:00.009  1389  1552 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+04-20 02:03:00.010  1389  1552 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+04-20 02:03:00.010  1389  1552 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+04-20 02:03:00.010  1389  1552 I AiAiEcho: EchoTargets: 
+04-20 02:03:00.010  1389  1552 I AiAiEcho: Filtered by AiAi flag check: 
+04-20 02:03:00.010  1389  1552 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+04-20 02:03:00.010  1389  1552 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+04-20 02:03:00.010  1389  1552 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+04-20 02:03:00.010  1389  1552 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+04-20 02:03:00.010  1389  1552 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+04-20 02:03:00.013  1099  1099 D SsBaseTemplateCard: No text view can be set up
+04-20 02:03:00.013  1099  1099 D SsBaseTemplateCard: Passed-in item info is null
+04-20 02:03:00.013  1099  1099 D SsBaseTemplateCard: Passed-in item info is null
+04-20 02:03:00.013  1099  1099 D SsBaseTemplateCard: Passed-in item info is null
+04-20 02:03:00.013  1099  1099 I SsBaseTemplateCard: Secondary card pane is null
+04-20 02:03:00.014   836   836 W PageIndicator: Total number of pages invalid: 0. Assuming 1 page.
+04-20 02:03:00.016   836   978 D EGL_emulation: app_time_stats: avg=59988.34ms min=59988.34ms max=59988.34ms count=1
+04-20 02:03:01.016  1099  1490 D EGL_emulation: app_time_stats: avg=999.64ms min=997.15ms max=1002.13ms count=2
+04-20 02:03:01.834   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:03:03.014  1099  1490 D EGL_emulation: app_time_stats: avg=999.07ms min=998.28ms max=999.86ms count=2
+04-20 02:03:03.932   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:03:05.013  1099  1490 D EGL_emulation: app_time_stats: avg=999.69ms min=999.56ms max=999.83ms count=2
+04-20 02:03:06.028   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:03:07.015  1099  1490 D EGL_emulation: app_time_stats: avg=1000.62ms min=997.73ms max=1003.51ms count=2
+04-20 02:03:07.571  1413  1753 I BistoHotwordHelper: (REDACTED) getHotwordActive::active query: %s, watch: %s, devices connected: %s
+04-20 02:03:08.016  1099  1490 D EGL_emulation: app_time_stats: avg=1001.49ms min=1001.49ms max=1001.49ms count=1
+04-20 02:03:08.121   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:03:09.196 13827 13848 I assembly.assembly.android.mixc-retail-rn84.transport.ws.SocketRuntime: [transport.ws] Socket connect started: assembly.android.mixc-retail-rn84.topology {"profileName":"assembly.android.mixc-retail-rn84.topology","serverName":"dual-topology-host-v3","addressName":"dynamic-topology-host"}
+04-20 02:03:09.196 13827 13847 I ReactNativeJS: '[assembly.android.mixc-retail-rn84.websocket] connect', { url: 'ws://127.0.0.1:8888/mockMasterServer/ws',
+04-20 02:03:09.196 13827 13847 I ReactNativeJS:   protocol: 'ws',
+04-20 02:03:09.196 13827 13847 I ReactNativeJS:   host: '127.0.0.1:8888',
+04-20 02:03:09.196 13827 13847 I ReactNativeJS:   pathname: '/mockMasterServer/ws' }
+04-20 02:03:09.199 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:03:09.199 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:03:09.201 13827 14140 D TrafficStats: tagSocket(125) with statsTag=0xffffffff, statsUid=-1
+04-20 02:03:09.205 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:03:09.205 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:03:09.205 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:03:09.206 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:03:09.206 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:03:09.374   388   472 I netd    : tetherGetStats() -> {[]} <0.49ms>
+04-20 02:03:10.015  1099  1490 D EGL_emulation: app_time_stats: avg=999.50ms min=998.08ms max=1000.92ms count=2
+04-20 02:03:10.232   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:03:12.016  1099  1490 D EGL_emulation: app_time_stats: avg=1000.44ms min=997.17ms max=1003.71ms count=2
+04-20 02:03:12.331   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:03:14.014  1099  1490 D EGL_emulation: app_time_stats: avg=998.90ms min=996.57ms max=1001.24ms count=2
+04-20 02:03:14.359  1099  1242 I IPCThreadState: oneway function results for code 2 on binder at 0xb4000075db354500 will be dropped but finished with status UNKNOWN_TRANSACTION
+04-20 02:03:14.377   388   472 I netd    : tetherGetStats() -> {[]} <0.30ms>
+04-20 02:03:14.434   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:03:16.016  1099  1490 D EGL_emulation: app_time_stats: avg=1000.63ms min=998.83ms max=1002.43ms count=2
+04-20 02:03:16.529   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:03:18.020  1099  1490 D EGL_emulation: app_time_stats: avg=1002.23ms min=998.38ms max=1006.07ms count=2
+04-20 02:03:18.766   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:03:20.016  1099  1490 D EGL_emulation: app_time_stats: avg=997.34ms min=993.37ms max=1001.30ms count=2
+04-20 02:03:20.866   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:03:22.014  1099  1490 D EGL_emulation: app_time_stats: avg=999.12ms min=996.91ms max=1001.33ms count=2
+04-20 02:03:22.971   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:03:24.016  1099  1490 D EGL_emulation: app_time_stats: avg=1000.89ms min=999.56ms max=1002.22ms count=2
+04-20 02:03:24.413   590   689 D ActivityManager: freezing 21035 com.google.android.googlequicksearchbox:search
+04-20 02:03:24.415   590   689 D ActivityManager: freezing 21183 com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0
+04-20 02:03:24.471   590   745 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+04-20 02:03:24.471   590   745 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+04-20 02:03:24.471   590   745 D InetDiagMessage: Destroyed live tcp sockets for uids={99001} in 0ms
+04-20 02:03:25.074   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:03:26.014  1099  1490 D EGL_emulation: app_time_stats: avg=998.91ms min=995.57ms max=1002.24ms count=2
+04-20 02:03:27.015  1099  1490 D EGL_emulation: app_time_stats: avg=1000.99ms min=1000.99ms max=1000.99ms count=1
+04-20 02:03:27.173   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:03:28.015  1099  1490 D EGL_emulation: app_time_stats: avg=1000.36ms min=1000.36ms max=1000.36ms count=1
+04-20 02:03:29.210 13827 13848 I assembly.assembly.android.mixc-retail-rn84.transport.ws.SocketRuntime: [transport.ws] Socket connect started: assembly.android.mixc-retail-rn84.topology {"profileName":"assembly.android.mixc-retail-rn84.topology","serverName":"dual-topology-host-v3","addressName":"dynamic-topology-host"}
+04-20 02:03:29.210 13827 13847 I ReactNativeJS: '[assembly.android.mixc-retail-rn84.websocket] connect', { url: 'ws://127.0.0.1:8888/mockMasterServer/ws',
+04-20 02:03:29.210 13827 13847 I ReactNativeJS:   protocol: 'ws',
+04-20 02:03:29.210 13827 13847 I ReactNativeJS:   host: '127.0.0.1:8888',
+04-20 02:03:29.210 13827 13847 I ReactNativeJS:   pathname: '/mockMasterServer/ws' }
+04-20 02:03:29.212 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:03:29.212 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:03:29.213 13827 14161 D TrafficStats: tagSocket(125) with statsTag=0xffffffff, statsUid=-1
+04-20 02:03:29.216 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:03:29.216 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:03:29.216 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:03:29.216 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:03:29.216 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:03:29.273   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:03:30.014  1099  1490 D EGL_emulation: app_time_stats: avg=999.34ms min=999.18ms max=999.49ms count=2
+04-20 02:03:31.016  1099  1490 D EGL_emulation: app_time_stats: avg=1001.58ms min=1001.58ms max=1001.58ms count=1
+04-20 02:03:31.367   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:03:33.017  1099  1490 D EGL_emulation: app_time_stats: avg=1000.41ms min=997.85ms max=1002.97ms count=2
+04-20 02:03:33.593   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:03:35.016  1099  1490 D EGL_emulation: app_time_stats: avg=999.35ms min=998.56ms max=1000.14ms count=2
+04-20 02:03:35.693   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:03:37.015  1099  1490 D EGL_emulation: app_time_stats: avg=999.81ms min=998.05ms max=1001.57ms count=2
+04-20 02:03:37.789   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:03:39.014  1099  1490 D EGL_emulation: app_time_stats: avg=999.56ms min=999.05ms max=1000.07ms count=2
+04-20 02:03:39.890   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:03:41.014  1099  1490 D EGL_emulation: app_time_stats: avg=999.67ms min=999.58ms max=999.76ms count=2
+04-20 02:03:41.997   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:03:43.014  1099  1490 D EGL_emulation: app_time_stats: avg=999.99ms min=996.54ms max=1003.44ms count=2
+04-20 02:03:44.094   443   443 E adbd    : failed to connect to socket 'tcp:18584': Connection refused
+04-20 02:03:45.015  1099  1490 D EGL_emulation: app_time_stats: avg=1000.25ms min=999.45ms max=1001.05ms count=2
+04-20 02:03:47.015  1099  1490 D EGL_emulation: app_time_stats: avg=1000.06ms min=998.80ms max=1001.31ms count=2
+04-20 02:03:48.015  1099  1490 D EGL_emulation: app_time_stats: avg=1000.13ms min=1000.13ms max=1000.13ms count=1
+04-20 02:03:49.228 13827 13847 I ReactNativeJS: '[assembly.android.mixc-retail-rn84.websocket] connect', { url: 'ws://127.0.0.1:8888/mockMasterServer/ws',
+04-20 02:03:49.228 13827 13847 I ReactNativeJS:   protocol: 'ws',
+04-20 02:03:49.228 13827 13847 I ReactNativeJS:   host: '127.0.0.1:8888',
+04-20 02:03:49.228 13827 13847 I ReactNativeJS:   pathname: '/mockMasterServer/ws' }
+04-20 02:03:49.228 13827 13848 I assembly.assembly.android.mixc-retail-rn84.transport.ws.SocketRuntime: [transport.ws] Socket connect started: assembly.android.mixc-retail-rn84.topology {"profileName":"assembly.android.mixc-retail-rn84.topology","serverName":"dual-topology-host-v3","addressName":"dynamic-topology-host"}
+04-20 02:03:49.231 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:03:49.232 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:03:49.233 13827 14178 D TrafficStats: tagSocket(125) with statsTag=0xffffffff, statsUid=-1
+04-20 02:03:49.237 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:03:49.238 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:03:49.238 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:03:49.238 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:03:49.239 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:03:50.011  1099  1490 D EGL_emulation: app_time_stats: avg=997.76ms min=997.76ms max=997.77ms count=2
+04-20 02:03:51.014  1099  1490 D EGL_emulation: app_time_stats: avg=1003.23ms min=1003.23ms max=1003.23ms count=1
+04-20 02:03:52.015  1099  1490 D EGL_emulation: app_time_stats: avg=1000.33ms min=1000.33ms max=1000.33ms count=1
+04-20 02:03:53.016  1099  1490 D EGL_emulation: app_time_stats: avg=1001.08ms min=1001.08ms max=1001.08ms count=1
+04-20 02:03:55.014  1099  1490 D EGL_emulation: app_time_stats: avg=998.93ms min=998.64ms max=999.22ms count=2
+04-20 02:03:56.015  1099  1490 D EGL_emulation: app_time_stats: avg=1001.04ms min=1001.04ms max=1001.04ms count=1
+04-20 02:03:58.015  1099  1490 D EGL_emulation: app_time_stats: avg=1000.14ms min=999.42ms max=1000.86ms count=2
+04-20 02:03:59.719   388 14181 I resolv  : GetAddrInfoHandler::run: {0 786432 0 983040 10143 0}
+04-20 02:03:59.720   937 14180 W gclk    : [{0}] Failed to resolve name. status={1}
+04-20 02:03:59.747   397   397 W healthd : battery l=47 v=5000 t=25.0 h=2 st=4 c=900000 fc=3000000 cc=10 chg=a
+04-20 02:04:00.004  1389  1552 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+04-20 02:04:00.004  1389  1552 I AiAiEcho: EchoTargets: 
+04-20 02:04:00.004  1389  1552 I AiAiEcho: Filtered by AiAi flag check: 
+04-20 02:04:00.004  1389  1552 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+04-20 02:04:00.004  1389  1552 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+04-20 02:04:00.004  1389  1552 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+04-20 02:04:00.004  1389  1552 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+04-20 02:04:00.004  1389  1552 I AiAiEcho: EchoTargets: 
+04-20 02:04:00.004  1389  1552 I AiAiEcho: Filtered by AiAi flag check: 
+04-20 02:04:00.004  1389  1552 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+04-20 02:04:00.004  1389  1552 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+04-20 02:04:00.004  1389  1552 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+04-20 02:04:00.005  1389  1552 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+04-20 02:04:00.005  1389  1552 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+04-20 02:04:00.011  1099  1099 D SsBaseTemplateCard: No text view can be set up
+04-20 02:04:00.011  1099  1099 D SsBaseTemplateCard: Passed-in item info is null
+04-20 02:04:00.011  1099  1099 D SsBaseTemplateCard: Passed-in item info is null
+04-20 02:04:00.011  1099  1099 D SsBaseTemplateCard: Passed-in item info is null
+04-20 02:04:00.011  1099  1099 I SsBaseTemplateCard: Secondary card pane is null
+04-20 02:04:00.014   836   836 W PageIndicator: Total number of pages invalid: 0. Assuming 1 page.
+04-20 02:04:00.014  1099  1490 D EGL_emulation: app_time_stats: avg=999.55ms min=999.23ms max=999.87ms count=2
+04-20 02:04:00.018   836   978 D EGL_emulation: app_time_stats: avg=60002.30ms min=60002.30ms max=60002.30ms count=1
+04-20 02:04:01.016  1099  1490 D EGL_emulation: app_time_stats: avg=1001.54ms min=1001.54ms max=1001.54ms count=1
+04-20 02:04:03.013  1099  1490 D EGL_emulation: app_time_stats: avg=998.62ms min=998.51ms max=998.74ms count=2
+04-20 02:04:04.014  1099  1490 D EGL_emulation: app_time_stats: avg=1001.06ms min=1001.06ms max=1001.06ms count=1
+04-20 02:04:05.015  1099  1490 D EGL_emulation: app_time_stats: avg=1000.48ms min=1000.48ms max=1000.48ms count=1
+04-20 02:04:07.016  1099  1490 D EGL_emulation: app_time_stats: avg=1000.32ms min=999.48ms max=1001.16ms count=2
+04-20 02:04:07.574  1413  1753 I BistoHotwordHelper: (REDACTED) getHotwordActive::active query: %s, watch: %s, devices connected: %s
+04-20 02:04:09.015  1099  1490 D EGL_emulation: app_time_stats: avg=999.67ms min=999.12ms max=1000.23ms count=2
+04-20 02:04:09.247 13827 13847 I ReactNativeJS: '[assembly.android.mixc-retail-rn84.websocket] connect', { url: 'ws://127.0.0.1:8888/mockMasterServer/ws',
+04-20 02:04:09.247 13827 13847 I ReactNativeJS:   protocol: 'ws',
+04-20 02:04:09.247 13827 13847 I ReactNativeJS:   host: '127.0.0.1:8888',
+04-20 02:04:09.247 13827 13847 I ReactNativeJS:   pathname: '/mockMasterServer/ws' }
+04-20 02:04:09.247 13827 13848 I assembly.assembly.android.mixc-retail-rn84.transport.ws.SocketRuntime: [transport.ws] Socket connect started: assembly.android.mixc-retail-rn84.topology {"profileName":"assembly.android.mixc-retail-rn84.topology","serverName":"dual-topology-host-v3","addressName":"dynamic-topology-host"}
+04-20 02:04:09.251 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:04:09.251 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:04:09.252 13827 14182 D TrafficStats: tagSocket(125) with statsTag=0xffffffff, statsUid=-1
+04-20 02:04:09.255 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:04:09.255 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:04:09.255 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:04:09.255 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:04:09.255 13827 13848 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 02:04:11.016  1099  1490 D EGL_emulation: app_time_stats: avg=1000.45ms min=999.94ms max=1000.97ms count=2

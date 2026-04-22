@@ -1,0 +1,448 @@
+--------- beginning of main
+04-22 01:40:37.798 20922 20989 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-22 01:40:37.799 20922 20989 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-22 01:40:37.799 20922 20989 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-22 01:40:37.799 20922 20989 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"ZJ63NQELD9","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-22 01:40:37.803 20922 20989 I ConnectorManager: call start taskId=2c213397c53b40c8b4d0a52b9d5dcd4e channel=INTENT/camera action=com.impos2.posadapter.action.CAMERA_SCAN timeout=60000
+04-22 01:40:37.804   683  1149 V GrammaticalInflectionUtils: AttributionSource: AttributionSource { uid = 10214, packageName = null, attributionTag = null, token = android.os.Binder@d3d534, deviceId = 0, next = null } does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+--------- beginning of system
+04-22 01:40:37.804   683  1149 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_USER_ASPECT_RATIO_OVERRIDE
+04-22 01:40:37.804   683  1149 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_USER_ASPECT_RATIO_FULLSCREEN_OVERRIDE
+04-22 01:40:37.804   683  1149 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_RESIZEABLE_ACTIVITY_OVERRIDES
+04-22 01:40:37.804   683  1149 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_MIN_ASPECT_RATIO_OVERRIDE
+04-22 01:40:37.805   683  1149 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_ORIENTATION_OVERRIDE
+04-22 01:40:37.805   683  1149 I ActivityTaskManager: Ignoring manifest-declared fixed orientation SCREEN_ORIENTATION_PORTRAIT of ActivityRecord{207239848 u0 com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity t34} since target sdk 36
+04-22 01:40:37.806   683  1149 I ActivityTaskManager: START u0 {act=com.impos2.posadapter.action.CAMERA_SCAN flg=0x24000000 xflg=0x4 cmp=com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity (has extras)} with LAUNCH_MULTIPLE from uid 10214 (sr=114755756) (BAL_ALLOW_VISIBLE_WINDOW) result code=0
+04-22 01:40:37.807 20922 20989 I CameraScannerManager: startScan success: requestId=7a835b2e-e424-4a37-80b4-e38341057c6f, scanMode=QR_CODE_MODE, waitResult=true
+04-22 01:40:37.808   957  1041 V WindowManagerShell: Transition requested (#120): android.os.BinderProxy@8957ab8 TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=34 effectiveUid=10214 displayId=0 isRunning=true baseIntent=Intent { flg=0x10000000 cmp=com.impos2.mixcretailassemblyrn84/.MainActivity } baseActivity=ComponentInfo{com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity} topActivity=ComponentInfo{com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity} origActivity=null realActivity=ComponentInfo{com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity} numActivities=2 lastActiveTime=18695349 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{android.window.IWindowContainerToken$Stub$Proxy@5598091} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=Rect(0, 0 - 0, 0) topActivityInfo=ActivityInfo{d6e1bf6 com.impos2.adapterv2.camera.CameraScanActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=true isVisible=true isVisibleRequested=true isTopActivityNoDisplay=false isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false isActivityStackTransparent=false lastNonFullscreenBounds=Rect(892, 102 - 1668, 1482) capturedLink=null capturedLinkTimestamp=0 requestedVisibleTypes=-9 topActivityRequestOpenInBrowserEducationTimestamp=0 appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false eligibleForLetterboxEducation= false isLetterboxEducationEnabled= true isLetterboxDoubleTapEnabled= false eligibleForUserAspectRatioButton= true topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 topActivityAppBounds=Rect(0, 0 - 2560, 1600) isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false hasMinAspectRatioOverride=false topActivityLetterboxBounds=null cameraCompatTaskInfo=CameraCompatTaskInfo { freeformCameraCompatMode=inactive}} topActivityMainWindowFrame=null}, pipChange = null, remoteTransition = null, displayChange = null, flags = 0, debugId = 120 }
+04-22 01:40:37.808   957  1041 D ShellSplitScreen: logExit: no-op, mLoggerSessionId is null
+04-22 01:40:37.824   515   515 I BpBinder: onLastStrongRef automatically unlinking death recipients: 
+04-22 01:40:37.826 20922 20922 W unknown:BridgelessReact: ReactHost{0}.onUserLeaveHint(activity)
+04-22 01:40:37.826 20922 20922 W unknown:BridgelessReact: ReactHost{0}.onHostPause(activity)
+04-22 01:40:37.826 20922 20922 W unknown:BridgelessReact: ReactHost{0}.ReactContext.onHostPause()
+04-22 01:40:37.827   683  1759 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_DISPLAY_ORIENTATION_OVERRIDE
+04-22 01:40:37.827   683   912 D BackgroundInstallControlService: Package event received: 0
+04-22 01:40:37.827   683  1759 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ENABLE_FAKE_FOCUS
+04-22 01:40:37.829   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   912 D BackgroundInstallControlService: Package event received: 0
+04-22 01:40:37.830   683   912 D BackgroundInstallControlService: Package event received: 0
+04-22 01:40:37.830   683   912 D BackgroundInstallControlService: Package event received: 0
+04-22 01:40:37.830 20922 20922 I ailassemblyrn84: AssetManager2(0xb400007aa8c486d8) locale list changing from [] to [en-US]
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.830   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.831   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.831   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.831   683   734 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.835 20922 20922 D AutofillManager: Fill dialog is enabled:false, hints=[]
+04-22 01:40:37.837 20922 20922 D InsetsController: Setting requestedVisibleTypes to -16 (was -9)
+04-22 01:40:37.838 20922 21922 I DynamiteModule: Considering local module com.google.mlkit.dynamite.barcode:10000 and remote module com.google.mlkit.dynamite.barcode:0
+04-22 01:40:37.838 20922 21922 I DynamiteModule: Selected local version of com.google.mlkit.dynamite.barcode
+04-22 01:40:37.839 20922 21668 D TransportRuntime.SQLiteEventStore: Storing event with priority=DEFAULT, name=FIREBASE_ML_SDK for destination cct
+04-22 01:40:37.839 20922 21668 D TransportRuntime.JobInfoScheduler: Upload for context TransportContext(cct, DEFAULT, MSRodHRwczovL2ZpcmViYXNlbG9nZ2luZy5nb29nbGVhcGlzLmNvbS92MGNjL2xvZy9iYXRjaD9mb3JtYXQ9anNvbl9wcm90bzNc) is already scheduled. Returning...
+04-22 01:40:37.840 20922 20922 D CameraOrientationUtil: getRelativeImageRotation: destRotationDegrees=0, sourceRotationDegrees=90, isOppositeFacing=true, result=90
+04-22 01:40:37.840 20922 20922 D CameraOrientationUtil: getRelativeImageRotation: destRotationDegrees=0, sourceRotationDegrees=90, isOppositeFacing=true, result=90
+04-22 01:40:37.841 20922 20922 D DynamicRangeResolver: Resolved dynamic range for use case androidx.camera.core.s-a084efb5-6632-4c6c-aa3b-8382c10e26cf to no compatible HDR dynamic ranges.
+04-22 01:40:37.841 20922 20922 D DynamicRangeResolver: DynamicRange@f3e18b1{encoding=UNSPECIFIED, bitDepth=0}
+04-22 01:40:37.841 20922 20922 D DynamicRangeResolver: ->
+04-22 01:40:37.841 20922 20922 D DynamicRangeResolver: DynamicRange@bb5a86c{encoding=SDR, bitDepth=8}
+04-22 01:40:37.843 20922 20922 D CameraOrientationUtil: getRelativeImageRotation: destRotationDegrees=0, sourceRotationDegrees=90, isOppositeFacing=true, result=90
+04-22 01:40:37.843 20922 20922 D DeferrableSurface: Surface created[total_surfaces=1, used_surfaces=0](E.E$a@1e12866}
+04-22 01:40:37.844 20922 20922 D DeferrableSurface: Surface created[total_surfaces=2, used_surfaces=0](t.f0$b@fc764f2}
+04-22 01:40:37.844 20922 20922 D DeferrableSurface: New surface in use[total_surfaces=2, used_surfaces=1](t.f0$b@fc764f2}
+04-22 01:40:37.844 20922 20922 D DeferrableSurface: use count+1, useCount=1 t.f0$b@fc764f2
+04-22 01:40:37.844 20922 20922 D CameraOrientationUtil: getRelativeImageRotation: destRotationDegrees=0, sourceRotationDegrees=90, isOppositeFacing=true, result=90
+04-22 01:40:37.845 20922 21668 D TransportRuntime.SQLiteEventStore: Storing event with priority=VERY_LOW, name=FIREBASE_ML_SDK for destination cct
+04-22 01:40:37.846 20922 21668 D TransportRuntime.JobInfoScheduler: Upload for context TransportContext(cct, VERY_LOW, MSRodHRwczovL2ZpcmViYXNlbG9nZ2luZy5nb29nbGVhcGlzLmNvbS92MGNjL2xvZy9iYXRjaD9mb3JtYXQ9anNvbl9wcm90bzNc) is already scheduled. Returning...
+04-22 01:40:37.846 20922 20922 D CameraOrientationUtil: getRelativeImageRotation: destRotationDegrees=0, sourceRotationDegrees=90, isOppositeFacing=true, result=90
+04-22 01:40:37.846 20922 20922 D CameraOrientationUtil: getRelativeImageRotation: destRotationDegrees=0, sourceRotationDegrees=90, isOppositeFacing=true, result=90
+04-22 01:40:37.847 20922 20922 D DeferrableSurface: Surface created[total_surfaces=3, used_surfaces=1](w.d0@6c3b49f}
+04-22 01:40:37.848 20922 21664 D Camera2CameraImpl: {Camera@54aec0[id=10]} Use case androidx.camera.core.s-a084efb5-6632-4c6c-aa3b-8382c10e26cf38919322 ACTIVE
+04-22 01:40:37.848 20922 21664 D UseCaseAttachState: Active and attached use case: [] for camera: 10
+04-22 01:40:37.849 20922 21664 D Camera2CameraImpl: {Camera@54aec0[id=10]} Use case androidx.camera.core.f-6fac1334-4d45-4d93-bdf6-25ed2bdb96be120457675 ACTIVE
+04-22 01:40:37.849 20922 21664 D UseCaseAttachState: Active and attached use case: [] for camera: 10
+04-22 01:40:37.849   683  1759 D CoreBackPreview: Window{b6c5954 u0 com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@3141f2, mPriority=-1, mIsAnimationCallback=false, mOverrideBehavior=0}
+04-22 01:40:37.849 20922 21664 D Camera2CameraImpl: {Camera@54aec0[id=10]} Use cases [androidx.camera.core.s-a084efb5-6632-4c6c-aa3b-8382c10e26cf38919322, androidx.camera.core.f-6fac1334-4d45-4d93-bdf6-25ed2bdb96be120457675] now ATTACHED
+04-22 01:40:37.850 20922 21664 D UseCaseAttachState: All use case: [androidx.camera.core.s-a084efb5-6632-4c6c-aa3b-8382c10e26cf38919322, androidx.camera.core.f-6fac1334-4d45-4d93-bdf6-25ed2bdb96be120457675] for camera: 10
+04-22 01:40:37.851 20922 21664 D UseCaseAttachState: Active and attached use case: [androidx.camera.core.s-a084efb5-6632-4c6c-aa3b-8382c10e26cf38919322, androidx.camera.core.f-6fac1334-4d45-4d93-bdf6-25ed2bdb96be120457675] for camera: 10
+04-22 01:40:37.851 20922 21664 D Camera2CameraImpl: {Camera@54aec0[id=10]} Resetting Capture Session
+04-22 01:40:37.851 20922 21664 D Camera2CameraImpl: {Camera@54aec0[id=10]} Releasing session in state INITIALIZED
+04-22 01:40:37.852 20922 21664 D Camera2CameraImpl: {Camera@54aec0[id=10]} Attempting to force open the camera.
+04-22 01:40:37.852 20922 21664 D CameraStateRegistry: tryOpenCamera(Camera@54aec0[id=10]) [Available Cameras: 1, Already Open: false (Previous state: CLOSED)] --> SUCCESS
+04-22 01:40:37.852 20922 21664 D CameraStateRegistry: Recalculating open cameras:
+04-22 01:40:37.852 20922 21664 D CameraStateRegistry: Camera                                       State                 
+04-22 01:40:37.852 20922 21664 D CameraStateRegistry: -------------------------------------------------------------------
+04-22 01:40:37.852 20922 21664 D CameraStateRegistry: Camera@54aec0[id=10]                         OPENING               
+04-22 01:40:37.852 20922 21664 D CameraStateRegistry: Camera@301d154[id=1]                         UNKNOWN               
+04-22 01:40:37.852 20922 21664 D CameraStateRegistry: -------------------------------------------------------------------
+04-22 01:40:37.852 20922 21664 D CameraStateRegistry: Open count: 1 (Max allowed: 1)
+04-22 01:40:37.852 20922 21664 D Camera2CameraImpl: {Camera@54aec0[id=10]} Opening camera.
+04-22 01:40:37.852 20922 21664 D Camera2CameraImpl: {Camera@54aec0[id=10]} Transitioning camera internal state: INITIALIZED --> OPENING
+04-22 01:40:37.852 20922 21664 D CameraStateMachine: New public camera state CameraState{type=OPENING, error=null} from OPENING and null
+04-22 01:40:37.852 20922 21664 D CameraStateMachine: Publishing new public camera state CameraState{type=OPENING, error=null}
+04-22 01:40:37.852 20922 21664 D UseCaseAttachState: All use case: [androidx.camera.core.s-a084efb5-6632-4c6c-aa3b-8382c10e26cf38919322, androidx.camera.core.f-6fac1334-4d45-4d93-bdf6-25ed2bdb96be120457675] for camera: 10
+04-22 01:40:37.855   582  1989 D Camera3-Utils: Set real time priority for thread (tid 1989)
+04-22 01:40:37.855   582  1989 I CameraService: CameraService::connect call (PID 20922 "com.impos2.mixcretailassemblyrn84", camera ID 10) and Camera API version 2
+04-22 01:40:37.855   582  1989 I Camera2ClientBase: Camera 10: Opened. Client: com.impos2.mixcretailassemblyrn84 (PID 20922, UID 10214)
+04-22 01:40:37.855   582  1989 I CameraDeviceClient: CameraDeviceClient 10: Opened
+04-22 01:40:37.855   582  1989 I CameraService: makeClient: Camera2 API, rotationOverride 1
+04-22 01:40:37.855   582  1989 D CameraService: notifyCameraOpening: Bypassing checkOp for uid 10214
+04-22 01:40:37.855   582  1989 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.855   582  1989 W IPCThreadState: Sending oneway calls to frozen process.
+04-22 01:40:37.858   582  1989 D Camera3-Utils: Set regular priority for thread (tid 1989)
+04-22 01:40:37.859 20922 21664 D Camera2CameraImpl: {Camera@54aec0[id=10]} Use case androidx.camera.core.s-a084efb5-6632-4c6c-aa3b-8382c10e26cf38919322 ACTIVE
+04-22 01:40:37.859 20922 21664 D UseCaseAttachState: Active and attached use case: [androidx.camera.core.s-a084efb5-6632-4c6c-aa3b-8382c10e26cf38919322, androidx.camera.core.f-6fac1334-4d45-4d93-bdf6-25ed2bdb96be120457675] for camera: 10
+04-22 01:40:37.859 20922 21664 D Camera2CameraImpl: {Camera@54aec0[id=10]} Use case androidx.camera.core.f-6fac1334-4d45-4d93-bdf6-25ed2bdb96be120457675 ACTIVE
+04-22 01:40:37.859 20922 21664 D UseCaseAttachState: Active and attached use case: [androidx.camera.core.s-a084efb5-6632-4c6c-aa3b-8382c10e26cf38919322, androidx.camera.core.f-6fac1334-4d45-4d93-bdf6-25ed2bdb96be120457675] for camera: 10
+04-22 01:40:37.859 20922 21664 D Camera2CameraImpl: {Camera@54aec0[id=10]} CameraDevice.onOpened()
+04-22 01:40:37.859 20922 21664 D Camera2CameraImpl: {Camera@54aec0[id=10]} Transitioning camera internal state: OPENING --> OPENED
+04-22 01:40:37.859 20922 21664 D CameraStateRegistry: Recalculating open cameras:
+04-22 01:40:37.859 20922 21664 D CameraStateRegistry: Camera                                       State                 
+04-22 01:40:37.859 20922 21664 D CameraStateRegistry: -------------------------------------------------------------------
+04-22 01:40:37.859 20922 21664 D CameraStateRegistry: Camera@54aec0[id=10]                         OPEN                  
+04-22 01:40:37.859 20922 21664 D CameraStateRegistry: Camera@301d154[id=1]                         UNKNOWN               
+04-22 01:40:37.859 20922 21664 D CameraStateRegistry: -------------------------------------------------------------------
+04-22 01:40:37.859 20922 21664 D CameraStateRegistry: Open count: 1 (Max allowed: 1)
+04-22 01:40:37.859 20922 21664 D CameraStateMachine: New public camera state CameraState{type=OPEN, error=null} from OPEN and null
+04-22 01:40:37.859 20922 21664 D CameraStateMachine: Publishing new public camera state CameraState{type=OPEN, error=null}
+04-22 01:40:37.859 20922 21664 D UseCaseAttachState: All use case: [androidx.camera.core.s-a084efb5-6632-4c6c-aa3b-8382c10e26cf38919322, androidx.camera.core.f-6fac1334-4d45-4d93-bdf6-25ed2bdb96be120457675] for camera: 10
+04-22 01:40:37.859 20922 21664 D UseCaseAttachState: Active and attached use case: [androidx.camera.core.s-a084efb5-6632-4c6c-aa3b-8382c10e26cf38919322, androidx.camera.core.f-6fac1334-4d45-4d93-bdf6-25ed2bdb96be120457675] for camera: 10
+04-22 01:40:37.875 20922 20922 D PreviewView: Surface requested by Preview.
+04-22 01:40:37.877 20922 20922 D SurfaceViewImpl: Surface created.
+04-22 01:40:37.877 20922 20922 D SurfaceViewImpl: Surface changed. Size: 1280x960
+04-22 01:40:37.878   683   731 I ActivityTaskManager: Displayed com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity for user 0: +73ms
+04-22 01:40:37.878   957  1560 V WindowManagerShell: onTransitionReady(transaction=2933462668355)
+04-22 01:40:37.878   957  1041 V WindowManagerShell: onTransitionReady (#120) android.os.BinderProxy@8957ab8: {id=120 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[
+04-22 01:40:37.878   957  1041 V WindowManagerShell:         {m=OPEN f=FILLS_TASK leash=Surface(name=ActivityRecord{207239848 u0 com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity)/@0xaab0bf7 sb=Rect(0, 0 - 0, 0) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=-1->0 r=-1->0:-1 bc=ff303030 component=com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity opt={t=FROM_STYLE mUserId=0}},
+04-22 01:40:37.878   957  1041 V WindowManagerShell:         {m=TO_BACK f=FILLS_TASK leash=Surface(name=ActivityRecord{114755756 u0 com.impos2.mixcretailassemblyrn84/.MainActivity)/@0x838a64 sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=0 bc=ff303030 component=com.impos2.mixcretailassemblyrn84/.MainActivity opt={t=FROM_STYLE mUserId=0}}
+04-22 01:40:37.878   957  1041 V WindowManagerShell:     ]}
+04-22 01:40:37.879   957  1041 V WindowManagerShell: Playing animation for (#120) android.os.BinderProxy@8957ab8@0
+04-22 01:40:37.879   957  1041 V ShellRecents: RecentsTransitionHandler.startAnimation: no controller found
+04-22 01:40:37.879   957  1041 V WindowManagerShell: Transition doesn't have explicit remote, search filters for match for {id=120 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{m=OPEN f=FILLS_TASK leash=Surface(name=ActivityRecord{207239848 u0 com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity)/@0xaab0bf7 sb=Rect(0, 0 - 0, 0) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=-1->0 r=-1->0:-1 bc=ff303030 component=com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity opt={t=FROM_STYLE mUserId=0}},{m=TO_BACK f=FILLS_TASK leash=Surface(name=ActivityRecord{114755756 u0 com.impos2.mixcretailassemblyrn84/.MainActivity)/@0x838a64 sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=0 bc=ff303030 component=com.impos2.mixcretailassemblyrn84/.MainActivity opt={t=FROM_STYLE mUserId=0}}]}
+04-22 01:40:37.879   957  1041 V WindowManagerShell:  Checking filter Pair{{types=[] flags=0x0] notFlags=0x0 checks=[{atype=undefined independent=true modes=[CLOSE,TO_BACK] flags=IN_TASK_WITH_EMBEDDED_ACTIVITY mustBeTask=false order=ANY topActivity=null launchCookie=null taskFragmentToken=android.os.BinderProxy@c0a78a1 windowingMode=undefined}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@ebc9ac6, appThread = android.app.IApplicationThread$Stub$Proxy@89a6a87, debugName = overlayBackTransition }}
+04-22 01:40:37.879   957  1041 V WindowManagerShell:  Checking filter Pair{{types=[] flags=0x0] notFlags=0x0 checks=[{atype=dream independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined},{atype=home independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@19eadb4, appThread = android.app.IApplicationThread$Stub$Proxy@6b4fddd, debugName = LauncherToDream }}
+04-22 01:40:37.879   957  1041 V WindowManagerShell:  Checking filter Pair{{types=[] flags=0x0] notFlags=0x100 checks=[{atype=home independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=TOP topActivity=ComponentInfo{com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity} launchCookie=null windowingMode=undefined},{atype=standard independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined},{NOT atype=undefined independent=true modes=[] flags=NONE mustBeTask=true order=ANY topActivity=null launchCookie=null customAnim=true windowingMode=undefined}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@6579d52, appThread = android.app.IApplicationThread$Stub$Proxy@4a92823, debugName = QuickstepLaunchHome }}
+04-22 01:40:37.879   957  1041 V WindowManagerShell:  Delegate animation for (#120) to null
+04-22 01:40:37.879   957  1041 V WindowManagerShell: start default transition animation, info = {id=120 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{m=OPEN f=FILLS_TASK leash=Surface(name=ActivityRecord{207239848 u0 com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity)/@0xaab0bf7 sb=Rect(0, 0 - 0, 0) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=-1->0 r=-1->0:-1 bc=ff303030 component=com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity opt={t=FROM_STYLE mUserId=0}},{m=TO_BACK f=FILLS_TASK leash=Surface(name=ActivityRecord{114755756 u0 com.impos2.mixcretailassemblyrn84/.MainActivity)/@0x838a64 sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=0 bc=ff303030 component=com.impos2.mixcretailassemblyrn84/.MainActivity opt={t=FROM_STYLE mUserId=0}}]}
+04-22 01:40:37.879   957  1041 V WindowManagerShell: loadAnimation: anim=android.view.animation.AnimationSet@d2b0c9 animAttr=0x5 type=OPEN isEntrance=false
+04-22 01:40:37.879   957  1041 V WindowManagerShell: loadAnimation: anim=android.view.animation.AnimationSet@7f3c1fc animAttr=0x4 type=OPEN isEntrance=true
+04-22 01:40:37.879   957  1041 V WindowManagerShell:  animated by com.android.wm.shell.transition.DefaultTransitionHandler@419789b
+04-22 01:40:37.880 20922 20922 D PreviewView: Preview transformation info updated. TransformationInfo{getCropRect=Rect(0, 0 - 1280, 960), getRotationDegrees=90, getTargetRotation=-1, hasCameraTransform=true, getSensorToBufferTransform=Matrix{[1.0, 0.0, 0.0][0.0, 1.0, 0.0][0.0, 0.0, 1.0]}, getMirroring=false}
+04-22 01:40:37.880 20922 20922 D PreviewTransform: Transformation info set: TransformationInfo{getCropRect=Rect(0, 0 - 1280, 960), getRotationDegrees=90, getTargetRotation=-1, hasCameraTransform=true, getSensorToBufferTransform=Matrix{[1.0, 0.0, 0.0][0.0, 1.0, 0.0][0.0, 0.0, 1.0]}, getMirroring=false} 1280x960 false
+04-22 01:40:37.880 20922 20922 D CameraOrientationUtil: getRelativeImageRotation: destRotationDegrees=0, sourceRotationDegrees=90, isOppositeFacing=true, result=90
+04-22 01:40:37.880 20922 20922 D SurfaceViewImpl: Surface set on Preview.
+04-22 01:40:37.880 20922 21666 D SyncCaptureSessionBase: [androidx.camera.camera2.internal.K0@77ee7f] getSurface...done
+04-22 01:40:37.880 20922 21666 D CaptureSession: Opening capture session.
+04-22 01:40:37.881 20922 21666 D DeferrableSurface: use count+1, useCount=2 t.f0$b@fc764f2
+04-22 01:40:37.881 20922 21666 D DeferrableSurface: New surface in use[total_surfaces=3, used_surfaces=2](w.d0@6c3b49f}
+04-22 01:40:37.881 20922 21666 D DeferrableSurface: use count+1, useCount=1 w.d0@6c3b49f
+04-22 01:40:37.882   582  1989 W cameraserver: createConfiguredSurface: Camera 10 with consumer usage flag: 2304: Forcing asynchronous mode forstream
+04-22 01:40:37.882   582  1989 W cameraserver: createConfiguredSurface: Camera 10: Overriding format 0x4 to IMPLEMENTATION_DEFINED
+04-22 01:40:37.883   683   731 V WindowManager: Sent Transition (#120) createdAt=04-22 01:40:37.804 via request=TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=34 effectiveUid=10214 displayId=0 isRunning=true baseIntent=Intent { flg=0x10000000 cmp=com.impos2.mixcretailassemblyrn84/.MainActivity } baseActivity=ComponentInfo{com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity} topActivity=ComponentInfo{com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity} origActivity=null realActivity=ComponentInfo{com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity} numActivities=2 lastActiveTime=18695349 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{RemoteToken{ccea655 Task{21e1d0a #34 type=standard A=10214:com.impos2.mixcretailassemblyrn84}}} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=Rect(0, 0 - 0, 0) topActivityInfo=ActivityInfo{1697eec com.impos2.adapterv2.camera.CameraScanActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=true isVisible=true isVisibleRequested=true isTopActivityNoDisplay=false isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false isActivityStackTransparent=false lastNonFullscreenBounds=Rect(892, 102 - 1668, 1482) capturedLink=null capturedLinkTimestamp=0 requestedVisibleTypes=-9 topActivityRequestOpenInBrowserEducationTimestamp=0 appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false eligibleForLetterboxEducation= false isLetterboxEducationEnabled= true isLetterboxDoubleTapEnabled= false eligibleForUserAspectRatioButton= true topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 topActivityAppBounds=Rect(0, 0 - 2560, 1600) isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false hasMinAspectRatioOverride=false topActivityLetterboxBounds=null cameraCompatTaskInfo=CameraCompatTaskInfo { freeformCameraCompatMode=inactive}} topActivityMainWindowFrame=null}, pipChange = null, remoteTransition = null, displayChange = null, flags = 0, debugId = 120 }
+04-22 01:40:37.883   683   731 V WindowManager:     startWCT=WindowContainerTransaction { changes= {} hops= [] errorCallbackToken=null taskFragmentOrganizer=null }
+04-22 01:40:37.884   683   731 V WindowManager:     info={id=120 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[
+04-22 01:40:37.884   683   731 V WindowManager:         {m=OPEN f=FILLS_TASK leash=Surface(name=ActivityRecord{207239848 u0 com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity)/@0x96f7ff9 sb=Rect(0, 0 - 0, 0) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=-1->0 r=-1->0:-1 bc=ff303030 component=com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity opt={t=FROM_STYLE mUserId=0}},
+04-22 01:40:37.884   683   731 V WindowManager:         {m=TO_BACK f=FILLS_TASK leash=Surface(name=ActivityRecord{114755756 u0 com.impos2.mixcretailassemblyrn84/.MainActivity)/@0x81b27da sb=Rect(0, 0 - 2560, 1600) eb=Rect(0, 0 - 2560, 1600) epz=Point(2560, 1600) d=0 bc=ff303030 component=com.impos2.mixcretailassemblyrn84/.MainActivity opt={t=FROM_STYLE mUserId=0}}
+04-22 01:40:37.884   683   731 V WindowManager:     ]}
+04-22 01:40:37.884   582  5370 D Camera3-Utils: Set real time priority for thread (tid 5370)
+04-22 01:40:37.884   466  7714 D camera.provider.ranchu: CameraDeviceSession:configureStreams:176 cfg={ .streams.size=2, .operationMode=0, .cfg.sessionParams.size()=64,  .streamConfigCounter=1, .multiResolutionInputImage=false }
+04-22 01:40:37.884   466  7714 D camera.provider.ranchu: CameraDeviceSession:configureStreams:199 stream={ .id=0, .streamType=0, .width=1280, .height=960, .format=IMPLEMENTATION_DEFINED, .usage=0x900, .dataSpace={ .low=0x0, .s=0, .t=0, .r=0 }, .rotation=0, .physicalCameraId='', .bufferSize=0, .groupId=-1, .dynamicRangeProfile=0x1 }
+04-22 01:40:37.884   466  7714 D camera.provider.ranchu: CameraDeviceSession:configureStreams:199 stream={ .id=1, .streamType=0, .width=640, .height=480, .format=YCBCR_420_888, .usage=0x3, .dataSpace={ .low=0x0, .s=2, .t=3, .r=1 }, .rotation=0, .physicalCameraId='', .bufferSize=0, .groupId=-1, .dynamicRangeProfile=0x1 }
+04-22 01:40:37.886   582  5370 D Camera3-Device: Set real time priority for request queue thread (tid 21927)
+04-22 01:40:37.886   582  5370 D Camera3-Utils: Set regular priority for thread (tid 5370)
+04-22 01:40:37.886 20922 21666 D CaptureSession: Attempting to send capture request onConfigured
+04-22 01:40:37.886 20922 21666 D CaptureSession: Issuing request for session.
+04-22 01:40:37.886 20922 21666 D Camera2CaptureRequestBuilder: createCaptureRequest
+04-22 01:40:37.887   582 21926 D CameraService: startCameraStreamingOps: Start data delivery for uid 10214
+04-22 01:40:37.887 20922 21666 D CaptureSession: CameraCaptureSession.onConfigured() mState=OPENED
+04-22 01:40:37.888 20922 21666 D CaptureSession: CameraCaptureSession.onReady() OPENED
+04-22 01:40:37.902 20922 21664 D StreamStateObserver: Update Preview stream state to STREAMING
+04-22 01:40:37.905 20922 21934 I tflite  : Replacing 43 out of 43 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 1 partitions for the whole graph.
+04-22 01:40:37.906 20922 21934 I tflite  : Replacing 35 out of 47 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 23 partitions for the whole graph.
+04-22 01:40:37.906 20922 21668 D TransportRuntime.SQLiteEventStore: Storing event with priority=VERY_LOW, name=FIREBASE_ML_SDK for destination cct
+04-22 01:40:37.906 20922 21934 I native  : I0000 00:00:1776793237.906572   21934 oned_decoder_client.cc:696] barhopper::deep_learning::OnedDecoderClient is created successfully.
+04-22 01:40:37.908 20922 21668 D TransportRuntime.JobInfoScheduler: Upload for context TransportContext(cct, VERY_LOW, MSRodHRwczovL2ZpcmViYXNlbG9nZ2luZy5nb29nbGVhcGlzLmNvbS92MGNjL2xvZy9iYXRjaD9mb3JtYXQ9anNvbl9wcm90bzNc) is already scheduled. Returning...
+04-22 01:40:37.914 20922 21668 D TransportRuntime.SQLiteEventStore: Storing event with priority=VERY_LOW, name=FIREBASE_ML_SDK for destination cct
+04-22 01:40:37.915 20922 21668 D TransportRuntime.JobInfoScheduler: Upload for context TransportContext(cct, VERY_LOW, MSRodHRwczovL2ZpcmViYXNlbG9nZ2luZy5nb29nbGVhcGlzLmNvbS92MGNjL2xvZy9iYXRjaD9mb3JtYXQ9anNvbl9wcm90bzNc) is already scheduled. Returning...
+04-22 01:40:37.917 20922 21668 D TransportRuntime.SQLiteEventStore: Storing event with priority=VERY_LOW, name=FIREBASE_ML_SDK for destination cct
+04-22 01:40:37.918 20922 21668 D TransportRuntime.JobInfoScheduler: Upload for context TransportContext(cct, VERY_LOW, MSRodHRwczovL2ZpcmViYXNlbG9nZ2luZy5nb29nbGVhcGlzLmNvbS92MGNjL2xvZy9iYXRjaD9mb3JtYXQ9anNvbl9wcm90bzNc) is already scheduled. Returning...
+04-22 01:40:37.920 20922 21668 D TransportRuntime.SQLiteEventStore: Storing event with priority=VERY_LOW, name=FIREBASE_ML_SDK for destination cct
+04-22 01:40:37.920 20922 21668 D TransportRuntime.JobInfoScheduler: Upload for context TransportContext(cct, VERY_LOW, MSRodHRwczovL2ZpcmViYXNlbG9nZ2luZy5nb29nbGVhcGlzLmNvbS92MGNjL2xvZy9iYXRjaD9mb3JtYXQ9anNvbl9wcm90bzNc) is already scheduled. Returning...
+04-22 01:40:37.974   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:37.974   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:37.974   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:37.977   683   829 I ImeTracker: com.impos2.mixcretailassemblyrn84:b1e09abb: onRequestHide at ORIGIN_SERVER reason HIDE_UNSPECIFIED_WINDOW fromUser false
+04-22 01:40:37.978 20922 20922 D InsetsController: hide(ime(), fromIme=false)
+04-22 01:40:37.978 20922 20922 I ImeTracker: com.impos2.mixcretailassemblyrn84:b1e09abb: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+04-22 01:40:37.979  1576  1576 I GoogleInputMethodService: GoogleInputMethodService.onFinishInput():2043 
+04-22 01:40:37.979  1576  1576 I Module  : DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatus():100 repeatCheckTimes = 0, locked = false
+04-22 01:40:37.979  1576  1576 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():1293 onStartInput(EditorInfo{EditorInfo{packageName=com.impos2.mixcretailassemblyrn84, inputType=0, inputTypeString=NULL, enableLearning=false, autoCorrection=false, autoComplete=false, imeOptions=0, privateImeOptions=null, actionName=UNSPECIFIED, actionLabel=null, initialSelStart=-1, initialSelEnd=-1, initialCapsMode=0, label=null, fieldId=0, fieldName=null, extras=null, hintText=null, hintLocales=[]}}, false)
+04-22 01:40:37.980   683  1149 I ImeTracker: system_server:768a9309: onRequestHide at ORIGIN_SERVER reason IME_REQUESTED_CHANGED_LISTENER fromUser false
+04-22 01:40:37.980  1576  1576 I Module  : DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatus():100 repeatCheckTimes = 1, locked = false
+04-22 01:40:37.980  1576  1576 I EmojiCompatManager: EmojiCompatManager.getEmojiCompatIfLoaded():343 EmojiCompat.init() was never called.
+04-22 01:40:37.980  1576  1576 I EmojiCompatManager: java.lang.IllegalStateException: EmojiCompat is not initialized. Please call EmojiCompat.init() first
+04-22 01:40:37.980  1576  1576 I EmojiCompatManager: 	at asx.p(PG:6)
+04-22 01:40:37.980  1576  1576 I EmojiCompatManager: 	at axb.b(PG:13)
+04-22 01:40:37.980  1576  1576 I EmojiCompatManager: 	at jnr.b(PG:2)
+04-22 01:40:37.980  1576  1576 I EmojiCompatManager: 	at jnr.c(PG:4)
+04-22 01:40:37.980  1576  1576 I EmojiCompatManager: 	at jnr.f(PG:3)
+04-22 01:40:37.980  1576  1576 I EmojiCompatManager: 	at jnx.c(PG:3)
+04-22 01:40:37.980  1576  1576 I EmojiCompatManager: 	at kif.cz(PG:47)
+04-22 01:40:37.980  1576  1576 I EmojiCompatManager: 	at lhl.run(PG:1025)
+04-22 01:40:37.980  1576  1576 I EmojiCompatManager: 	at jaf.execute(PG:12)
+04-22 01:40:37.980  1576  1576 I EmojiCompatManager: 	at nco.v(PG:13)
+04-22 01:40:37.980  1576  1576 I EmojiCompatManager: 	at lhn.m(PG:96)
+04-22 01:40:37.980  1576  1576 I EmojiCompatManager: 	at lhn.k(PG:25)
+04-22 01:40:37.980  1576  1576 I EmojiCompatManager: 	at kgn.onStartInput(PG:250)
+04-22 01:40:37.980  1576  1576 I EmojiCompatManager: 	at android.inputmethodservice.InputMethodService.doStartInput(InputMethodService.java:3521)
+04-22 01:40:37.980  1576  1576 I EmojiCompatManager: 	at android.inputmethodservice.InputMethodService$InputMethodImpl.startInput(InputMethodService.java:879)
+04-22 01:40:37.980  1576  1576 I EmojiCompatManager: 	at android.inputmethodservice.InputMethodService$InputMethodImpl.dispatchStartInput(InputMethodService.java:908)
+04-22 01:40:37.980  1576  1576 I EmojiCompatManager: 	at android.inputmethodservice.IInputMethodWrapper.executeMessage(IInputMethodWrapper.java:201)
+04-22 01:40:37.980  1576  1576 I EmojiCompatManager: 	at com.android.internal.os.HandlerCaller$MyHandler.handleMessage(HandlerCaller.java:44)
+04-22 01:40:37.980  1576  1576 I EmojiCompatManager: 	at android.os.Handler.dispatchMessage(Handler.java:110)
+04-22 01:40:37.980  1576  1576 I EmojiCompatManager: 	at android.os.Looper.loopOnce(Looper.java:248)
+04-22 01:40:37.980  1576  1576 I EmojiCompatManager: 	at android.os.Looper.loop(Looper.java:338)
+04-22 01:40:37.980  1576  1576 I EmojiCompatManager: 	at android.app.ActivityThread.main(ActivityThread.java:9067)
+04-22 01:40:37.980  1576  1576 I EmojiCompatManager: 	at java.lang.reflect.Method.invoke(Native Method)
+04-22 01:40:37.980  1576  1576 I EmojiCompatManager: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:593)
+04-22 01:40:37.980  1576  1576 I EmojiCompatManager: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:932)
+04-22 01:40:37.981   683  1149 W PackageConfigPersister: App-specific configuration not found for packageName: com.impos2.mixcretailassemblyrn84 and userId: 0
+04-22 01:40:37.981   683   734 I ImeTracker: system_server:768a9309: onCancelled at PHASE_SERVER_SHOULD_HIDE
+04-22 01:40:37.988   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 01:40:37.988   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 01:40:37.988   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 01:40:37.988   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 01:40:37.988   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 01:40:37.988   683   858 D WifiClientModeImpl[9769:wlan0]: updateLinkLayerStatsRssiSpeedFrequencyCapabilities rssi=-50 TxLinkspeed=1 freq=2447 RxLinkSpeed=2
+04-22 01:40:37.988   683   858 D WifiDataStall: tx tput in kbps: 11000
+04-22 01:40:37.988   683   858 D WifiDataStall: rx tput in kbps: 11000
+04-22 01:40:37.988   683   858 V WifiConfigManager: Updating scan detail cache freq=2447 BSSID=00:13:10:85:fe:01 RSSI=-50 for "AndroidWifi"NONE
+04-22 01:40:37.988   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 01:40:37.988   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 01:40:37.988   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 01:40:37.988   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 01:40:37.989   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 01:40:37.989   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 01:40:37.989   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 01:40:37.989   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 01:40:37.989   683   858 D WifiScoreCard: BSSID update SIGNAL_POLL ID: 261501600 SSID: "AndroidWifi", BSSID: 00:13:10:85:fe:01, MAC: 02:15:b4:00:00:00, IP: /10.0.2.17, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: legacy, RSSI: -50, Link speed: 1Mbps, Tx Link speed: 1Mbps, Max Supported Tx Link speed: 11Mbps, Rx Link speed: 2Mbps, Max Supported Rx Link speed: 11Mbps, Frequency: 2447MHz, Net ID: 0, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"AndroidWifi"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+04-22 01:40:37.989   683   858 D WifiScoreCard: txRate: 2 txSpeed: 1
+04-22 01:40:37.989   683   858 D WifiScoreCard: network update SIGNAL_POLL "AndroidWifi" ID: 579418950 RSSI -50 txSpeed -1
+04-22 01:40:37.989   683   858 D WifiClientModeImpl[9769:wlan0]:  ClientModeImpl$L2ConnectedState screen=on 1 0 "AndroidWifi" 00:13:10:85:fe:01 rssi=-50 f=2447 sc=60 link=1 tx=1.8, 0.0, 0.0 rx=1.7 bcn=0 [on:0 tx:0 rx:0 period:3004] from screen [on:0 period:-1323222555] score=60
+04-22 01:40:37.990   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:37.991   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:37.991   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:38.007   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:38.007   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:38.007   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:38.025   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:38.025   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:38.025   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:38.040   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:38.040   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:38.040   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:38.058   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:38.058   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:38.058   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:38.074   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:38.074   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:38.074   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:38.090   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:38.094   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:38.094   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:38.094   483   483 I RanchuHwc: logCompositionFallbackIfChanged: layer 261 CompositionType fallback from 2 to 1
+04-22 01:40:38.102   459   535 I netd    : setProcSysNet(4, 2, wlan0, retrans_time_ms, 750) <0.04ms>
+04-22 01:40:38.102   459   535 I netd    : setProcSysNet(4, 2, wlan0, ucast_solicit, 10) <0.02ms>
+04-22 01:40:38.102   459   535 I netd    : setProcSysNet(6, 2, wlan0, retrans_time_ms, 750) <0.01ms>
+04-22 01:40:38.102   459   535 I netd    : setProcSysNet(6, 2, wlan0, ucast_solicit, 10) <0.00ms>
+04-22 01:40:38.107   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:38.107   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:38.107   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:38.124   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:38.124   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:38.124   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:38.140   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:38.140   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:38.140   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:38.157   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:38.157   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:38.157   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:38.174   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:38.174   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:38.174   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:38.191   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:38.191   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:38.191   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:38.207   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:38.207   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:38.207   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:38.224   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:38.224   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:38.224   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:38.240   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:38.240   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:38.240   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:38.257   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:38.257   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:38.257   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:38.274   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:38.274   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:38.274   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:38.290   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:38.290   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:38.290   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:38.307   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:38.307   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:38.307   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:38.328   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:38.328   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:38.328   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:38.340   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:38.340   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:38.340   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:38.341   957  1041 V WindowManagerShell: Transition animation finished (aborted=false), notifying core (#120) android.os.BinderProxy@8957ab8@0
+04-22 01:40:38.344   683   731 V WindowManager: Finish Transition (#120): created at 04-22 01:40:37.804 collect-started=0.009ms request-sent=1.753ms started=4.551ms ready=23.763ms sent=73.349ms commit=23.697ms finished=537.472ms
+04-22 01:40:38.344 20922 20922 D VRI[MainActivity]: visibilityChanged oldVisibility=true newVisibility=false
+04-22 01:40:38.345   957  1041 V WindowManagerShell: Track 0 became idle
+04-22 01:40:38.345   957  1041 V WindowManagerShell: All active transition animations finished
+04-22 01:40:38.357   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:38.357   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:38.357   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:38.370   515   515 I RefreshRateSelector: Display 4619827259835644672 policy changed
+04-22 01:40:38.370   515   515 I RefreshRateSelector: Previous: {defaultModeId=0, allowGroupSwitching=false, primaryRanges={physical=[0.00 Hz, inf Hz], render=[0.00 Hz, 60.00 Hz]}, appRequestRanges={physical=[0.00 Hz, inf Hz], render=[0.00 Hz, inf Hz]} idleScreenConfig=nullptr}
+04-22 01:40:38.370   515   515 I RefreshRateSelector: Current:  DisplayManagerPolicy{defaultModeId=0, allowGroupSwitching=false, primaryRanges={physical=[60.00 Hz, inf Hz], render=[60.00 Hz, 60.00 Hz]}, appRequestRanges={physical=[60.00 Hz, inf Hz], render=[60.00 Hz, 60.00 Hz]} idleScreenConfig=nullptr}
+04-22 01:40:38.370   515   515 I RefreshRateSelector: 0 mode changes were performed under the previous policy
+04-22 01:40:38.370   515   515 D DisplayModeController: setDesiredMode 4619827259835644672 {mode={fps=60.00 Hz, modePtr={id=0, vsyncRate=60.00 Hz, peakRefreshRate=60.00 Hz}}, emitEvent=true, force=false}
+04-22 01:40:38.371 20922 20922 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=androidx.activity.OnBackPressedDispatcher$g$a@e21dd83
+04-22 01:40:38.371   683  1149 D CoreBackPreview: Window{61fd324 u0 com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@2156cfa, mPriority=-1, mIsAnimationCallback=false, mOverrideBehavior=0}
+04-22 01:40:38.374   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:38.374   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:38.374   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:38.378   683   912 D BackgroundInstallControlService: Package event received: 0
+04-22 01:40:38.390   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:38.390   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:38.390   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:38.407   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:38.407   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:38.407   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:38.857   683   734 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_MIN_ASPECT_RATIO_OVERRIDE
+04-22 01:40:38.859 21939 21939 W screencap: Thread Pool max thread count is 0. Cannot cache binder as linkToDeath cannot be implemented. serviceName: SurfaceFlingerAIDL
+04-22 01:40:38.862 21939 21939 W BpBinder: Linking to death on android.gui.ISurfaceComposer but there are no threads (yet?) listening to incoming transactions. See ProcessState::startThreadPool and ProcessState::setThreadPoolMaxThreadCount. Generally you should setup the binder threadpool before other initialization steps.
+04-22 01:40:38.863 21939 21939 W ProcessState: Extra binder thread started, but 0 threads requested. Do not use *startThreadPool when zero threads are requested.
+04-22 01:40:38.869   515   565 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:38.869   515   565 D Region  :   Region transparentRegionHint (this=0xb400006f60e3af10, count=1)
+04-22 01:40:38.869   515   565 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:38.869   515   565 E HwcComposer: getLuts failed Status(-8, EX_SERVICE_SPECIFIC): '8: '
+04-22 01:40:38.869   515   565 E HWComposer: getLuts: getLuts failed for display 4619827259835644672: UNSUPPORTED (8)
+--------- beginning of kernel
+04-22 01:40:38.875   224   224 I servicemanager: Caller(pid=21939,uid=2000,sid=u:r:shell:s0) Found android.hardware.graphics.allocator.IAllocator/default in device VINTF manifest.
+04-22 01:40:38.875   224   224 I servicemanager: Caller(pid=21939,uid=2000,sid=u:r:shell:s0) Found android.hardware.graphics.allocator.IAllocator/default in device VINTF manifest.
+04-22 01:40:38.875   224   224 I servicemanager: Caller(pid=21939,uid=2000,sid=u:r:shell:s0) Found mapper/ranchu in device VINTF manifest.
+04-22 01:40:39.380   938   938 D wpa_supplicant: nl80211: Drv Event 64 (NL80211_CMD_NOTIFY_CQM) received for wlan0
+04-22 01:40:39.380   938   938 D wpa_supplicant: nl80211: Beacon loss event
+04-22 01:40:39.380   938   938 D wpa_supplicant: wlan0: Event BEACON_LOSS (53) received
+04-22 01:40:39.380   938   938 I wpa_supplicant: wlan0: CTRL-EVENT-BEACON-LOSS 
+04-22 01:40:39.419  1086  1298 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+04-22 01:40:39.468  1096  1096 D TaskbarManager: dispatchTouchEvent:  displayId=0 isDefaultDisplay=true
+04-22 01:40:40.808   683  1715 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+04-22 01:40:40.990   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 01:40:40.990   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 01:40:40.990   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 01:40:40.990   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 01:40:40.990   683   858 W BestClock: java.time.DateTimeException: No network time available
+04-22 01:40:40.995   683   858 D WifiClientModeImpl[9769:wlan0]: updateLinkLayerStatsRssiSpeedFrequencyCapabilities rssi=-50 TxLinkspeed=1 freq=2447 RxLinkSpeed=2
+04-22 01:40:40.995   683   858 D WifiDataStall: tx tput in kbps: 11000
+04-22 01:40:40.995   683   858 D WifiDataStall: rx tput in kbps: 11000
+04-22 01:40:40.995   683   858 V WifiConfigManager: Updating scan detail cache freq=2447 BSSID=00:13:10:85:fe:01 RSSI=-50 for "AndroidWifi"NONE
+04-22 01:40:40.995   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 01:40:40.995   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 01:40:40.995   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 01:40:40.995   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 01:40:40.995   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 01:40:40.995   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 01:40:40.995   683   858 D WifiThroughputPredictor:  utilization (LLS) 80 isBluetoothConnected: false final utilization: 80
+04-22 01:40:40.995   683   858 D WifiThroughputPredictor:  BW: 0 RSSI: -50 Nss: 1 Mode: 1 symDur: 4000 snrDb 30 bitPerTone: 4500 rate: 54 throughput: 11
+04-22 01:40:41.001   683   858 D WifiScoreCard: BSSID update SIGNAL_POLL ID: 261501600 SSID: "AndroidWifi", BSSID: 00:13:10:85:fe:01, MAC: 02:15:b4:00:00:00, IP: /10.0.2.17, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: legacy, RSSI: -50, Link speed: 1Mbps, Tx Link speed: 1Mbps, Max Supported Tx Link speed: 11Mbps, Rx Link speed: 2Mbps, Max Supported Rx Link speed: 11Mbps, Frequency: 2447MHz, Net ID: 0, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"AndroidWifi"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+04-22 01:40:41.001   683   858 D WifiScoreCard: txRate: 1 txSpeed: 1
+04-22 01:40:41.001   683   858 D WifiScoreCard: network update SIGNAL_POLL "AndroidWifi" ID: 579418950 RSSI -50 txSpeed -1
+04-22 01:40:41.002   683   858 D WifiClientModeImpl[9769:wlan0]:  ClientModeImpl$L2ConnectedState screen=on 1 0 "AndroidWifi" 00:13:10:85:fe:01 rssi=-50 f=2447 sc=60 link=1 tx=0.6, 0.0, 0.0 rx=0.6 bcn=0 [on:0 tx:0 rx:0 period:3013] from screen [on:0 period:-1323219542] score=60
+04-22 01:40:41.544 21948 21948 W screencap: Thread Pool max thread count is 0. Cannot cache binder as linkToDeath cannot be implemented. serviceName: SurfaceFlingerAIDL
+04-22 01:40:41.545 21948 21948 W BpBinder: Linking to death on android.gui.ISurfaceComposer but there are no threads (yet?) listening to incoming transactions. See ProcessState::startThreadPool and ProcessState::setThreadPoolMaxThreadCount. Generally you should setup the binder threadpool before other initialization steps.
+04-22 01:40:41.545 21948 21948 W ProcessState: Extra binder thread started, but 0 threads requested. Do not use *startThreadPool when zero threads are requested.
+04-22 01:40:41.546   515   664 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:41.546   515   664 D Region  :   Region transparentRegionHint (this=0xb400006f60e49680, count=1)
+04-22 01:40:41.546   515   664 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:41.546   515   664 E HwcComposer: getLuts failed Status(-8, EX_SERVICE_SPECIFIC): '8: '
+04-22 01:40:41.546   515   664 E HWComposer: getLuts: getLuts failed for display 4619827259835644672: UNSUPPORTED (8)
+04-22 01:40:41.552   224   224 I servicemanager: Caller(pid=21948,uid=2000,sid=u:r:shell:s0) Found android.hardware.graphics.allocator.IAllocator/default in device VINTF manifest.
+04-22 01:40:41.553   224   224 I servicemanager: Caller(pid=21948,uid=2000,sid=u:r:shell:s0) Found android.hardware.graphics.allocator.IAllocator/default in device VINTF manifest.
+04-22 01:40:41.553   224   224 I servicemanager: Caller(pid=21948,uid=2000,sid=u:r:shell:s0) Found mapper/ranchu in device VINTF manifest.
+04-22 01:40:41.640   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:41.640   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:41.640   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:41.657   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:41.657   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:41.657   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:41.673   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:41.673   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:41.673   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:42.024   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:42.024   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:42.024   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:42.040   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:42.040   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:42.040   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:42.057   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:42.057   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:42.057   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:42.090   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:42.090   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:42.090   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:42.107   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:42.107   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:42.107   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:42.111 21951 21951 W dumpsys : Thread Pool max thread count is 0. Cannot cache binder as linkToDeath cannot be implemented. serviceName: activity
+04-22 01:40:42.124   515   515 D CompositionEngine: Layer: com.impos2.mixcretailassemblyrn84/com.impos2.adapterv2.camera.CameraScanActivity#1066 had an out of bounds transparent region
+04-22 01:40:42.124   515   515 D Region  :   Region transparentRegionHint (this=0xb400006f60e5e290, count=1)
+04-22 01:40:42.124   515   515 D Region  :     [  0, -907, 1280,   0]
+04-22 01:40:42.142   235   235 I logd    : logdr: UID=2000 GID=2000 PID=21954 n tail=0 logMask=99 pid=0 start=0ns deadline=0ns

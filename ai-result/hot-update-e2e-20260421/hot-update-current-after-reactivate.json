@@ -1,0 +1,16 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "source": "hot-update",
+    "appId": "assembly-android-mixc-retail-rn84",
+    "assemblyVersion": "1.0.0",
+    "buildNumber": 2,
+    "runtimeVersion": "android-mixc-retail-rn84@1.0",
+    "bundleVersion": "1.0.0+ota.5",
+    "packageId": "pkg_b1dizdtke43s",
+    "releaseId": "release_8f0ku0qpe43y",
+    "installDir": "/data/user/0/com.impos2.mixcretailassemblyrn84/files/hot-updates/packages/pkg_b1dizdtke43s",
+    "appliedAt": 1776625215044
+  },
+  "id": "1776710362512-14de77aa9a049"
+}

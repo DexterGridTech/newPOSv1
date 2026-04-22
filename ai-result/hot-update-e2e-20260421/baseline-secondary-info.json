@@ -1,0 +1,23 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": 1,
+    "runtimeId": "run_mo60zxbw_30fxx6xp9at6ytsd",
+    "localNodeId": "master:438176N3MB:display-1",
+    "environmentMode": "PROD",
+    "displayContext": {
+      "displayIndex": 1,
+      "displayCount": 2
+    },
+    "currentScreen": {
+      "containerKey": "secondary.root.container",
+      "screen": {
+        "partKey": "ui.base.terminal.activate-device-secondary",
+        "rendererKey": "ui.base.terminal.activate-device-secondary",
+        "props": null
+      },
+      "overlayCount": 0
+    }
+  },
+  "id": "1776704018200-014d9e4aa8e12"
+}

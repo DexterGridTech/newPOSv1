@@ -71,6 +71,8 @@ class CameraScannerManager private constructor() {
     val requestId = UUID.randomUUID().toString()
     val normalizedTimeout = timeoutMs.coerceAtLeast(1L)
     val scanMode = params["SCAN_MODE"]?.toString() ?: "ALL"
+    val imageUri = params["IMAGE_URI"]?.toString()?.takeIf { it.isNotBlank() }
+    val imageBase64 = params["IMAGE_BASE64"]?.toString()?.takeIf { it.isNotBlank() }
     val waitResult = params["waitResult"]?.toString()?.toBooleanStrictOrNull() ?: true
 
     synchronized(lock) {
@@ -122,6 +124,8 @@ class CameraScannerManager private constructor() {
         action = CameraScanActivity.ACTION
         addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
         putExtra("SCAN_MODE", scanMode)
+        imageUri?.let { putExtra(CameraScanActivity.EXTRA_IMAGE_URI, it) }
+        imageBase64?.let { putExtra(CameraScanActivity.EXTRA_IMAGE_BASE64, it) }
         putExtra("WAIT_RESULT", waitResult)
         putExtra("TIMEOUT", normalizedTimeout)
         putExtra(EXTRA_RESULT_RECEIVER, receiver)
@@ -134,7 +138,7 @@ class CameraScannerManager private constructor() {
       }
 
       activity.startActivity(intent)
-      Log.i(TAG, "startScan success: requestId=$requestId, scanMode=$scanMode, waitResult=$waitResult")
+      Log.i(TAG, "startScan success: requestId=$requestId, scanMode=$scanMode, imageUri=${imageUri != null}, imageBase64=${imageBase64 != null}, waitResult=$waitResult")
     }.onFailure { error ->
       val response = ConnectorResponse(
         success = false,

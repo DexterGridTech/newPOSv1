@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "tasks": [
+    {
+      "branch_name": "main",
+      "worktree_path": "/Users/dexter/Documents/workspace/idea/newPOSv1",
+      "status": "active",
+      "created_at": "2026-04-14T14:49:53.815Z",
+      "updated_at": "2026-04-22T02:55:44.833Z"
+    }
+  ]
+}

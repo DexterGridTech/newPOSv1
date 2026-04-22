@@ -1,0 +1,300 @@
+04-20 06:22:39.007 19836 19893 D TrafficStats: tagSocket(114) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.010 19836 19893 D TrafficStats: tagSocket(114) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.037 19836 19893 D TrafficStats: tagSocket(114) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.040 19836 19893 D TrafficStats: tagSocket(114) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.045 19836 19852 D EGL_emulation: app_time_stats: avg=15027.97ms min=50.47ms max=44667.13ms count=3
+04-20 06:22:39.060 19836 19893 D TrafficStats: tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.063 19836 19893 D TrafficStats: tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.132 19836 19893 D TrafficStats: tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.135 19836 19893 D TrafficStats: tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.159 19836 19893 D TrafficStats: tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.163 19836 19893 D TrafficStats: tagSocket(128) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.188 19836 19893 D TrafficStats: tagSocket(128) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.190 19836 19893 D TrafficStats: tagSocket(128) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.246 19836 19893 D TrafficStats: tagSocket(129) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.271 19836 19893 D TrafficStats: tagSocket(129) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.273 19836 19893 D TrafficStats: tagSocket(129) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.298 19836 19893 D TrafficStats: tagSocket(130) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.300 19836 19893 D TrafficStats: tagSocket(130) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.354 19836 19893 D TrafficStats: tagSocket(131) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.378 19836 19893 D TrafficStats: tagSocket(131) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.381 19836 19893 D TrafficStats: tagSocket(131) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.405 19836 19893 D TrafficStats: tagSocket(134) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.408 19836 19893 D TrafficStats: tagSocket(134) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.462 19836 19893 D TrafficStats: tagSocket(152) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.487 19836 19893 D TrafficStats: tagSocket(152) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.510 19836 19893 D TrafficStats: tagSocket(114) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.849 19836 19893 D TrafficStats: tagSocket(114) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.852 19836 19893 D TrafficStats: tagSocket(114) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.875 19836 19893 D TrafficStats: tagSocket(114) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.877 19836 19893 D TrafficStats: tagSocket(162) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.878 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.902 19836 19893 D TrafficStats: tagSocket(114) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.905 19836 19893 D TrafficStats: tagSocket(151) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.907 19836 19859 I assembly.assembly.android.mixc-retail-rn84.transport.http.HttpRuntime: [transport.http] HTTP request started: kernel.base.tcp-control-runtime-v2.deactivate-terminal {"endpointName":"kernel.base.tcp-control-runtime-v2.deactivate-terminal","serverName":"mock-terminal-platform","addressName":"local","method":"POST","roundIndex":0,"attemptIndex":1}
+04-20 06:22:39.908 19836 20077 D TrafficStats: tagSocket(114) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.927 19836 19859 I assembly.assembly.android.mixc-retail-rn84.transport.http.HttpRuntime: [transport.http] HTTP request completed: kernel.base.tcp-control-runtime-v2.deactivate-terminal {"endpointName":"kernel.base.tcp-control-runtime-v2.deactivate-terminal","serverName":"mock-terminal-platform","addressName":"local","status":200}
+04-20 06:22:39.930 19899 19919 I ReactNativeJS: '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.ui-runtime-v2.screen.main"],"appliedSliceNames":["kernel.base.ui-runtime-v2.screen.main"],"skippedSliceReasons":[]}'
+04-20 06:22:39.931 19836 19893 D TrafficStats: tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.932 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.933 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.936 19899 19920 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.936 19899 19920 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.937 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.937 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.937 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.938 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.938 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.938 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.938 19836 19859 W assembly.assembly.android.mixc-retail-rn84: [runtime.reset] reset runtime application state {"runtimeId":"run_mo6bw2zp_dx19p0ufhzfyfzxd","localNodeId":"master:J9RZPWR3HK","reason":"kernel.base.tcp-control-runtime-v2.deactivateTerminal"}
+04-20 06:22:39.938 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.939 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.939 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.939 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.939 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 274, crc 4236988182, actualSize 15613
+04-20 06:22:39.939 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:39.941 19836 19893 D TrafficStats: tagSocket(118) with statsTag=0xffffffff, statsUid=-1
+04-20 06:22:39.942 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 275, crc 2157712238, actualSize 15485
+04-20 06:22:39.942 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:39.944 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 276, crc 3374266983, actualSize 15473
+04-20 06:22:39.944 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:39.946 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 277, crc 2512371952, actualSize 15473
+04-20 06:22:39.946 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:39.947 19836 19859 I MMKV    : <MMKV_IO.cpp:1533::clearAll> cleaning all key-values from [mixc-retail-assembly-rn84::state]
+04-20 06:22:39.947 19836 19859 I MMKV    : <MemoryFile.cpp:103::open> open fd[128], flag 0x7, /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-20 06:22:39.947 19836 19859 I MMKV    : <MemoryFile.cpp:250::mmapOrCleanup> mmap to address [0x76fc2f1000], oldPtr [0x76fc2f1000], [/data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe]
+04-20 06:22:39.947 19836 19859 I MMKV    : <MemoryFile.cpp:109::close> closing fd[128], /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-20 06:22:39.947 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 278, crc 0, actualSize 0
+04-20 06:22:39.948 19836 19859 I MMKV    : <MMKV.cpp:340::clearMemoryCache> clearMemoryCache [mixc-retail-assembly-rn84::state]
+04-20 06:22:39.948 19836 19859 I MMKV    : <MMKV_IO.cpp:287::loadMetaInfoAndCheck> meta file [mixc-retail-assembly-rn84::state] has flag [0]
+04-20 06:22:39.948 19836 19859 I MMKV    : <MemoryFile.cpp:103::open> open fd[128], flag 0x7, /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-20 06:22:39.948 19836 19859 I MMKV    : <MemoryFile.cpp:250::mmapOrCleanup> mmap to address [0x76fc330000], oldPtr [0x0], [/data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe]
+04-20 06:22:39.948 19836 19859 I MMKV    : <MemoryFile.cpp:109::close> closing fd[128], /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-20 06:22:39.948 19836 19859 I MMKV    : <MMKV_IO.cpp:94::loadFromFile> loading [mixc-retail-assembly-rn84::state] with 0 actual size, file size 4096, InterProcess 0, meta info version:4
+04-20 06:22:39.948 19836 19859 I MMKV    : <MMKV_IO.cpp:145::loadFromFile> loaded [mixc-retail-assembly-rn84::state] with 0 key-values
+04-20 06:22:39.948 19836 19859 I MMKV    : <MMKV_IO.cpp:1533::clearAll> cleaning all key-values from [mixc-retail-assembly-rn84::secure-state]
+04-20 06:22:39.948 19836 19859 I MMKV    : <MemoryFile.cpp:103::open> open fd[128], flag 0x7, /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/c08c20d895f199f98a40164528d2f6a6
+04-20 06:22:39.948 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::secure-state] increase sequence to 11, crc 0, actualSize 0
+04-20 06:22:39.949 19836 19859 I MMKV    : <MMKV.cpp:340::clearMemoryCache> clearMemoryCache [mixc-retail-assembly-rn84::secure-state]
+04-20 06:22:39.949 19836 19859 I MMKV    : <MemoryFile.cpp:109::close> closing fd[128], /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/c08c20d895f199f98a40164528d2f6a6
+04-20 06:22:39.949 19836 19859 I MMKV    : <MMKV_IO.cpp:287::loadMetaInfoAndCheck> meta file [mixc-retail-assembly-rn84::secure-state] has flag [0]
+04-20 06:22:39.949 19836 19859 I MMKV    : <MemoryFile.cpp:103::open> open fd[128], flag 0x7, /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/c08c20d895f199f98a40164528d2f6a6
+04-20 06:22:39.949 19836 19859 I MMKV    : <MemoryFile.cpp:250::mmapOrCleanup> mmap to address [0x76fc47e000], oldPtr [0x0], [/data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/c08c20d895f199f98a40164528d2f6a6]
+04-20 06:22:39.949 19836 19859 I MMKV    : <MemoryFile.cpp:109::close> closing fd[128], /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/c08c20d895f199f98a40164528d2f6a6
+04-20 06:22:39.949 19836 19859 I MMKV    : <MMKV_IO.cpp:94::loadFromFile> loading [mixc-retail-assembly-rn84::secure-state] with 0 actual size, file size 4096, InterProcess 0, meta info version:4
+04-20 06:22:39.949 19836 19859 I MMKV    : <MMKV_IO.cpp:145::loadFromFile> loaded [mixc-retail-assembly-rn84::secure-state] with 0 key-values
+04-20 06:22:39.953 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.953 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 279, crc 44155043, actualSize 4
+04-20 06:22:39.954 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.955 19836 19859 I MMKV    : <MMKV_IO.cpp:530::expandAndWriteBack> extending [mixc-retail-assembly-rn84::state] file size from 4096 to 8192, incoming size:126, future usage:1449
+04-20 06:22:39.955 19836 19859 I MMKV    : <MemoryFile.cpp:103::open> open fd[118], flag 0x7, /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-20 06:22:39.955 19836 19859 I MMKV    : <MemoryFile.cpp:250::mmapOrCleanup> mmap to address [0x76fc32f000], oldPtr [0x76fc330000], [/data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe]
+04-20 06:22:39.955 19836 19859 I MMKV    : <MemoryFile.cpp:109::close> closing fd[118], /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-20 06:22:39.955 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 280, crc 2200182348, actualSize 2768
+04-20 06:22:39.955 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:39.970 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.970 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.971 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.972 19836 19858 I ReactNativeJS: '[tcp-bootstrap-state-written]', '{"nodeId":"master:J9RZPWR3HK","runtimeId":"run_mo6bw2zp_dx19p0ufhzfyfzxd","displayIndex":0,"requestId":"req_mo6c0ggm_n6uuiz1h6czdvjgg","commandId":"cmd_mo6c0ggz_wukdb0xg58xc6s18","nextDeviceFingerprint":"J9RZPWR3HK","nextDeviceInfo":{"id":"J9RZPWR3HK","model":"Mixc Retail Android RN84"},"previousIdentity":{"activationStatus":"UNACTIVATED"}}'
+04-20 06:22:39.973 19899 19919 I ReactNativeJS: '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.ui-runtime-v2.screen.main"],"appliedSliceNames":["kernel.base.ui-runtime-v2.screen.main"],"skippedSliceReasons":[]}'
+04-20 06:22:39.975 19899 19919 I ReactNativeJS: '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.tcp-control-runtime-v2.identity"],"appliedSliceNames":["kernel.base.tcp-control-runtime-v2.identity"],"skippedSliceReasons":[]}'
+04-20 06:22:39.975 19899 19920 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.978 19899 19919 I ReactNativeJS: '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.tcp-control-runtime-v2.credential"],"appliedSliceNames":["kernel.base.tcp-control-runtime-v2.credential"],"skippedSliceReasons":[]}'
+04-20 06:22:39.981 19899 19920 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.982 19899 19920 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.982 19899 19920 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.984 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.987 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.988 19899 19920 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.988 19899 19920 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.988 19899 19919 I ReactNativeJS: '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.tcp-control-runtime-v2.binding"],"appliedSliceNames":["kernel.base.tcp-control-runtime-v2.binding"],"skippedSliceReasons":[]}'
+04-20 06:22:39.989 19899 19912 D EGL_emulation: app_time_stats: avg=22800.30ms min=9.10ms max=45591.51ms count=2
+04-20 06:22:39.990 19899 19919 I ReactNativeJS: '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.tcp-control-runtime-v2.sandbox"],"appliedSliceNames":["kernel.base.tcp-control-runtime-v2.sandbox"],"skippedSliceReasons":[]}'
+04-20 06:22:39.990 19899 19920 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.991 19899 19920 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.992 19899 19920 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.992 19899 19920 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.994 19899 19919 I ReactNativeJS: '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.ui-runtime-v2.screen.main"],"appliedSliceNames":["kernel.base.ui-runtime-v2.screen.main"],"skippedSliceReasons":[]}'
+04-20 06:22:39.996 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:39.996 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.000 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.001 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.001 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.001 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.001 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.001 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.001 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.001 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.001 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.001 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.001 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.001 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.001 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.001 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.001 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.001 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.001 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.001 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.002 19899 19920 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.003 19899 19919 I ReactNativeJS: '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.ui-runtime-v2.screen.main"],"appliedSliceNames":["kernel.base.ui-runtime-v2.screen.main"],"skippedSliceReasons":[]}'
+04-20 06:22:40.004 19899 19920 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.006 19899 19920 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.006 19899 19920 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.006 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.006 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.007 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.007 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.007 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.007 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.007 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.007 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.007 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.007 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.007 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.007 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.007 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.007 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.008 19899 19920 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.008 19899 19920 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.008 19899 19920 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.008 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.008 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.008 19836 19859 I MMKV    : <MMKV_IO.cpp:530::expandAndWriteBack> extending [mixc-retail-assembly-rn84::state] file size from 8192 to 16384, incoming size:318, future usage:3555
+04-20 06:22:40.008 19836 19859 I MMKV    : <MemoryFile.cpp:103::open> open fd[131], flag 0x7, /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-20 06:22:40.008 19836 19859 I MMKV    : <MemoryFile.cpp:250::mmapOrCleanup> mmap to address [0x76fc2f5000], oldPtr [0x76fc32f000], [/data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe]
+04-20 06:22:40.008 19836 19859 I MMKV    : <MemoryFile.cpp:109::close> closing fd[131], /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-20 06:22:40.008 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 281, crc 1764192176, actualSize 7007
+04-20 06:22:40.008 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:40.013 19836 19859 I MMKV    : <MMKV_IO.cpp:530::expandAndWriteBack> extending [mixc-retail-assembly-rn84::state] file size from 16384 to 32768, incoming size:580, future usage:7410
+04-20 06:22:40.013 19836 19859 I MMKV    : <MemoryFile.cpp:103::open> open fd[130], flag 0x7, /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-20 06:22:40.013 19836 19859 I MMKV    : <MemoryFile.cpp:250::mmapOrCleanup> mmap to address [0x76fc2f1000], oldPtr [0x76fc2f5000], [/data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe]
+04-20 06:22:40.013 19836 19859 I MMKV    : <MemoryFile.cpp:109::close> closing fd[130], /data/data/com.impos2.mixcretailassemblyrn84/files/mmkv/specialCharacter/cac4ff37f0f9b0189974948d3d3aa0fe
+04-20 06:22:40.013 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 282, crc 4096245267, actualSize 14229
+04-20 06:22:40.013 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:40.018 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.018 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.018 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.020 19899 19919 I ReactNativeJS: '[runtime-state-sync-apply]', '{"direction":"master-to-slave","incomingSliceNames":["kernel.base.topology-runtime-v3.demo.master","kernel.base.tcp-control-runtime-v2.identity","kernel.base.tcp-control-runtime-v2.credential","kernel.base.tcp-control-runtime-v2.binding","kernel.base.tcp-control-runtime-v2.sandbox","kernel.base.tdp-sync-runtime-v2.hot-update","kernel.base.ui-runtime-v2.screen.main","kernel.base.ui-runtime-v2.overlay.main","kernel.base.ui-runtime-v2.ui-variable.main"],"appliedSliceNames":["kernel.base.topology-runtime-v3.demo.master","kernel.base.tcp-control-runtime-v2.identity","kernel.base.tcp-control-runtime-v2.credential","kernel.base.tcp-control-runtime-v2.binding","kernel.base.tcp-control-runtime-v2.sandbox","kernel.base.tdp-sync-runtime-v2.hot-update","kernel.base.ui-runtime-v2.screen.main","kernel.base.ui-runtime-v2.overlay.main","kernel.base.ui-runtime-v2.ui-variable.main"],"skippedSliceReasons":[]}'
+04-20 06:22:40.021 19899 19920 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.021 19899 19920 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":1,"deviceId":"J9RZPWR3HK","instanceMode":"SLAVE","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.023 19836 19858 I ReactNativeJS: '[runtime-state-sync-apply]', '{"direction":"slave-to-master","incomingSliceNames":["kernel.base.topology-runtime-v3.demo.slave","kernel.base.ui-runtime-v2.screen.branch","kernel.base.ui-runtime-v2.overlay.branch","kernel.base.ui-runtime-v2.ui-variable.branch"],"appliedSliceNames":["kernel.base.topology-runtime-v3.demo.slave","kernel.base.ui-runtime-v2.screen.branch","kernel.base.ui-runtime-v2.overlay.branch","kernel.base.ui-runtime-v2.ui-variable.branch"],"skippedSliceReasons":[]}'
+04-20 06:22:40.024 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.024 19836 19859 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":2,"displayIndex":0,"deviceId":"J9RZPWR3HK","instanceMode":"MASTER","enableSlave":true,"running":false,"reason":"not-master-or-single-primary-host"}
+04-20 06:22:40.027 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 283, crc 639465760, actualSize 14730
+04-20 06:22:40.027 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:40.029 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 284, crc 1620107591, actualSize 14730
+04-20 06:22:40.029 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:40.032 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 285, crc 1133408089, actualSize 14730
+04-20 06:22:40.032 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:40.034 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 286, crc 2391805082, actualSize 14730
+04-20 06:22:40.034 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:40.037 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 287, crc 1791524852, actualSize 14730
+04-20 06:22:40.037 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:40.039 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 288, crc 1599414727, actualSize 14730
+04-20 06:22:40.039 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:40.042 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 289, crc 2666640531, actualSize 14730
+04-20 06:22:40.042 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:40.045 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 290, crc 1938349829, actualSize 14730
+04-20 06:22:40.045 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:40.048 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 291, crc 2702057770, actualSize 14730
+04-20 06:22:40.048 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:40.050 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 292, crc 4190876778, actualSize 14730
+04-20 06:22:40.050 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:40.052 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 293, crc 1522336006, actualSize 14730
+04-20 06:22:40.052 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:40.055 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 294, crc 1537780745, actualSize 14730
+04-20 06:22:40.055 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:40.057 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 295, crc 1189967751, actualSize 14730
+04-20 06:22:40.057 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:40.059 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 296, crc 2702057770, actualSize 14730
+04-20 06:22:40.059 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:40.062 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 297, crc 4190876778, actualSize 14730
+04-20 06:22:40.062 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:40.064 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 298, crc 1522336006, actualSize 14730
+04-20 06:22:40.064 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:40.066 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 299, crc 1537780745, actualSize 14730
+04-20 06:22:40.066 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:40.069 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 300, crc 1189967751, actualSize 14730
+04-20 06:22:40.069 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:40.071 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 301, crc 2702057770, actualSize 14730
+04-20 06:22:40.071 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:40.074 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 302, crc 4190876778, actualSize 14730
+04-20 06:22:40.074 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:40.077 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 303, crc 1522336006, actualSize 14730
+04-20 06:22:40.077 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:40.079 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 304, crc 1537780745, actualSize 14730
+04-20 06:22:40.079 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:40.081 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 305, crc 1189967751, actualSize 14730
+04-20 06:22:40.081 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:40.084 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 306, crc 2702057770, actualSize 14730
+04-20 06:22:40.084 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:40.087 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 307, crc 4190876778, actualSize 14730
+04-20 06:22:40.087 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:40.089 19836 19859 I MMKV    : <MMKV_IO.cpp:609::writeActualSize> [mixc-retail-assembly-rn84::state] increase sequence to 308, crc 1522336006, actualSize 14730
+04-20 06:22:40.089 19836 19859 I MMKV    : <MMKV.cpp:1208::sync> MMKV::sync, SyncFlag = 1
+04-20 06:22:41.491 19836 19852 D EGL_emulation: app_time_stats: avg=140.50ms min=1.99ms max=1462.11ms count=17
+04-20 06:22:46.915 14705 14705 W adbd    : timeout expired while flushing socket, closing
+04-20 06:22:49.216   388 20109 I resolv  : GetAddrInfoHandler::run: {0 786432 0 983040 10143 0}
+04-20 06:22:49.217   937 20108 W gclk    : [{0}] Failed to resolve name. status={1}
+--------- beginning of kernel
+04-20 06:22:59.748   397   397 W healthd : battery l=47 v=5000 t=25.0 h=2 st=4 c=900000 fc=3000000 cc=10 chg=a
+04-20 06:23:00.009  1389  1552 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+04-20 06:23:00.009  1389  1552 I AiAiEcho: EchoTargets: 
+04-20 06:23:00.009  1389  1552 I AiAiEcho: Filtered by AiAi flag check: 
+04-20 06:23:00.009  1389  1552 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+04-20 06:23:00.009  1389  1552 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+04-20 06:23:00.009  1389  1552 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+04-20 06:23:00.009  1389  1552 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+04-20 06:23:00.009  1389  1552 I AiAiEcho: EchoTargets: 
+04-20 06:23:00.009  1389  1552 I AiAiEcho: Filtered by AiAi flag check: 
+04-20 06:23:00.009  1389  1552 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+04-20 06:23:00.010  1389  1552 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+04-20 06:23:00.010  1389  1552 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+04-20 06:23:00.010  1389  1552 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+04-20 06:23:00.010  1389  1552 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+04-20 06:23:00.011  1099  1099 D SsBaseTemplateCard: No text view can be set up
+04-20 06:23:00.011  1099  1099 D SsBaseTemplateCard: Passed-in item info is null
+04-20 06:23:00.011  1099  1099 D SsBaseTemplateCard: Passed-in item info is null
+04-20 06:23:00.011  1099  1099 D SsBaseTemplateCard: Passed-in item info is null
+04-20 06:23:00.011  1099  1099 I SsBaseTemplateCard: Secondary card pane is null
+04-20 06:23:00.014   836   836 W PageIndicator: Total number of pages invalid: 0. Assuming 1 page.
+04-20 06:23:00.029   836   978 D EGL_emulation: app_time_stats: avg=60003.65ms min=60003.65ms max=60003.65ms count=1
+04-20 06:23:07.576  1413  1753 I BistoHotwordHelper: (REDACTED) getHotwordActive::active query: %s, watch: %s, devices connected: %s
+04-20 06:23:08.281 19836 19893 D TrafficStats: tagSocket(134) with statsTag=0xffffffff, statsUid=-1
+04-20 06:23:08.286 19836 19893 D TrafficStats: tagSocket(134) with statsTag=0xffffffff, statsUid=-1
+04-20 06:23:08.342 19899 19949 D TrafficStats: tagSocket(114) with statsTag=0xffffffff, statsUid=-1
+04-20 06:23:08.346 19899 19949 D TrafficStats: tagSocket(114) with statsTag=0xffffffff, statsUid=-1
+04-20 06:23:08.348 19836 19893 D TrafficStats: tagSocket(134) with statsTag=0xffffffff, statsUid=-1
+04-20 06:23:08.351 19836 19893 D TrafficStats: tagSocket(134) with statsTag=0xffffffff, statsUid=-1
+04-20 06:23:08.403 19899 19949 D TrafficStats: tagSocket(114) with statsTag=0xffffffff, statsUid=-1
+04-20 06:23:08.408 19899 19949 D TrafficStats: tagSocket(114) with statsTag=0xffffffff, statsUid=-1
+04-20 06:23:08.633 19899 19949 D TrafficStats: tagSocket(114) with statsTag=0xffffffff, statsUid=-1
+04-20 06:23:08.633 19836 19893 D TrafficStats: tagSocket(134) with statsTag=0xffffffff, statsUid=-1
+04-20 06:23:08.637 19899 19949 D TrafficStats: tagSocket(114) with statsTag=0xffffffff, statsUid=-1
+04-20 06:23:08.638 19836 19893 D TrafficStats: tagSocket(134) with statsTag=0xffffffff, statsUid=-1
+04-20 06:23:51.100   590   738 E WifiScoringParams: Invalid frequency(-1), using 5G as default rssi array
+04-20 06:23:54.880   590  1504 D WifiNl80211Manager: Scan result ready event
+04-20 06:23:54.880   590  1504 D WifiNative: Scan result ready event
+04-20 06:23:54.884   590   738 I HalDevMgr: bestIfaceCreationProposal is null, requestIface=STA, existingIface=[name=wlan0 type=STA]
+04-20 06:23:59.751   397   397 W healthd : battery l=47 v=5000 t=25.0 h=2 st=4 c=900000 fc=3000000 cc=10 chg=a
+04-20 06:24:00.009  1389  1552 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+04-20 06:24:00.009  1389  1552 I AiAiEcho: EchoTargets: 
+04-20 06:24:00.009  1389  1552 I AiAiEcho: Filtered by AiAi flag check: 
+04-20 06:24:00.009  1389  1552 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+04-20 06:24:00.009  1389  1552 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+04-20 06:24:00.009  1389  1552 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+04-20 06:24:00.009  1389  1552 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+04-20 06:24:00.009  1389  1552 I AiAiEcho: EchoTargets: 
+04-20 06:24:00.009  1389  1552 I AiAiEcho: Filtered by AiAi flag check: 
+04-20 06:24:00.009  1389  1552 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+04-20 06:24:00.009  1389  1552 I AiAiEcho: Ranked targets strategy: SORT, count: 0, ranking metadata:  [CONTEXT ratelimit_period="10 SECONDS" ]
+04-20 06:24:00.009  1389  1552 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+04-20 06:24:00.010  1389  1552 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+04-20 06:24:00.010  1389  1552 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+04-20 06:24:00.013  1099  1099 D SsBaseTemplateCard: No text view can be set up
+04-20 06:24:00.013  1099  1099 D SsBaseTemplateCard: Passed-in item info is null
+04-20 06:24:00.013  1099  1099 D SsBaseTemplateCard: Passed-in item info is null
+04-20 06:24:00.013  1099  1099 D SsBaseTemplateCard: Passed-in item info is null
+04-20 06:24:00.013  1099  1099 I SsBaseTemplateCard: Secondary card pane is null
+04-20 06:24:00.013   836   836 W PageIndicator: Total number of pages invalid: 0. Assuming 1 page.
+04-20 06:24:00.028   836   978 D EGL_emulation: app_time_stats: avg=59999.47ms min=59999.47ms max=59999.47ms count=1

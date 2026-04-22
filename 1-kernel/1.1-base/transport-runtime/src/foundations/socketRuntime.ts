@@ -75,6 +75,7 @@ export const createSocketRuntime = (
     const serverCatalog = createServerCatalog()
     const logger = createSocketLogger(input.logger)
     const connections = new Map<string, ManagedSocketConnection>()
+    const preferredAddressByServer = new Map<string, string>()
     let currentServers = input.servers
 
     const refreshServers = () => {
@@ -91,6 +92,27 @@ export const createSocketRuntime = (
             })
         }
         return connection
+    }
+
+    const resolveRoundAddresses = (serverName: string) => {
+        const addresses = [...serverCatalog.resolveAddresses(serverName)]
+        const preferredAddressName = preferredAddressByServer.get(serverName)
+        if (!preferredAddressName) {
+            return addresses
+        }
+        const preferredAddress = addresses.find(address => address.addressName === preferredAddressName)
+        if (!preferredAddress) {
+            preferredAddressByServer.delete(serverName)
+            return addresses
+        }
+        return [
+            preferredAddress,
+            ...addresses.filter(address => address.addressName !== preferredAddressName),
+        ]
+    }
+
+    const rememberPreferredAddress = (serverName: string, addressName: string) => {
+        preferredAddressByServer.set(serverName, addressName)
     }
 
     const finalizeMetric = (
@@ -139,90 +161,120 @@ export const createSocketRuntime = (
     ): Promise<SocketResolvedConnection<TPath, TQuery, THeaders, TIncoming, TOutgoing>> => {
         refreshServers()
         const connection = getConnection(profileName)
-        const address = serverCatalog.resolveAddresses(connection.profile.serverName)[0]
-        const resolved: SocketResolvedConnection<TPath, TQuery, THeaders, TIncoming, TOutgoing> = {
-            connectionId: createConnectionId(),
-            profile: connection.profile as SocketConnectionProfile<TPath, TQuery, THeaders, TIncoming, TOutgoing>,
-            url: buildSocketUrl(
-                address.baseUrl,
-                connection.profile.pathTemplate,
-                inputValue.path as Record<string, unknown> | undefined,
-                inputValue.query as Record<string, unknown> | undefined,
-            ),
-            headers: Object.fromEntries(
-                Object.entries((inputValue.headers as Record<string, unknown> | undefined) ?? {})
-                    .filter(([, value]) => value !== undefined && value !== null)
-                    .map(([key, value]) => [key, String(value)]),
-            ),
-            selectedAddress: address,
-            timeoutMs: connection.profile.meta.connectionTimeoutMs ?? address.timeoutMs,
-        }
+        const headers = Object.fromEntries(
+            Object.entries((inputValue.headers as Record<string, unknown> | undefined) ?? {})
+                .filter(([, value]) => value !== undefined && value !== null)
+                .map(([key, value]) => [key, String(value)]),
+        )
+        const addresses = resolveRoundAddresses(connection.profile.serverName)
+        let lastError: unknown
 
-        connection.resolved = resolved
-        connection.connectedAt = nowTimestampMs()
-        connection.inboundMessageCount = 0
-        connection.outboundMessageCount = 0
-        setState(connection, 'connecting')
+        for (const address of addresses) {
+            const resolved: SocketResolvedConnection<TPath, TQuery, THeaders, TIncoming, TOutgoing> = {
+                connectionId: createConnectionId(),
+                profile: connection.profile as SocketConnectionProfile<TPath, TQuery, THeaders, TIncoming, TOutgoing>,
+                url: buildSocketUrl(
+                    address.baseUrl,
+                    connection.profile.pathTemplate,
+                    inputValue.path as Record<string, unknown> | undefined,
+                    inputValue.query as Record<string, unknown> | undefined,
+                ),
+                headers,
+                selectedAddress: address,
+                timeoutMs: connection.profile.meta.connectionTimeoutMs ?? address.timeoutMs,
+            }
 
-        logger.info({
-            category: 'transport.ws',
-            event: 'connect-started',
-            message: `Socket connect started: ${profileName}`,
-            context: {
-                ...inputValue.context,
-                connectionId: resolved.connectionId,
-            },
-            data: {
-                profileName,
-                serverName: connection.profile.serverName,
-                addressName: address.addressName,
-            },
-        })
+            connection.resolved = resolved
+            connection.connectedAt = nowTimestampMs()
+            connection.inboundMessageCount = 0
+            connection.outboundMessageCount = 0
+            connection.transportConnection = undefined
+            setState(connection, 'connecting')
 
-        connection.transportConnection = await input.transport.connect(resolved, {
-            onOpen() {
-                setState(connection, 'connected')
-                emitEvent(connection, {
-                    type: 'connected',
+            logger.info({
+                category: 'transport.ws',
+                event: 'connect-started',
+                message: `Socket connect started: ${profileName}`,
+                context: {
+                    ...inputValue.context,
                     connectionId: resolved.connectionId,
-                    url: resolved.url,
-                    addressName: resolved.selectedAddress.addressName,
-                    occurredAt: nowTimestampMs(),
+                },
+                data: {
+                    profileName,
+                    serverName: connection.profile.serverName,
+                    addressName: address.addressName,
+                },
+            })
+
+            try {
+                connection.transportConnection = await input.transport.connect(resolved, {
+                    onOpen() {
+                        rememberPreferredAddress(connection.profile.serverName, resolved.selectedAddress.addressName)
+                        setState(connection, 'connected')
+                        emitEvent(connection, {
+                            type: 'connected',
+                            connectionId: resolved.connectionId,
+                            url: resolved.url,
+                            addressName: resolved.selectedAddress.addressName,
+                            occurredAt: nowTimestampMs(),
+                        })
+                    },
+                    onMessage(raw) {
+                        connection.inboundMessageCount += 1
+                        const parsed = connection.profile.codec.deserialize(raw)
+                        emitEvent(connection, {
+                            type: 'message',
+                            connectionId: resolved.connectionId,
+                            message: parsed,
+                            occurredAt: nowTimestampMs(),
+                        })
+                    },
+                    onClose(reason) {
+                        finalizeMetric(connection, true, reason)
+                        setState(connection, 'disconnected')
+                        emitEvent(connection, {
+                            type: 'disconnected',
+                            connectionId: resolved.connectionId,
+                            reason,
+                            occurredAt: nowTimestampMs(),
+                        })
+                    },
+                    onError(error) {
+                        finalizeMetric(connection, false)
+                        setState(connection, 'disconnected')
+                        emitEvent(connection, {
+                            type: 'error',
+                            connectionId: resolved.connectionId,
+                            error,
+                            occurredAt: nowTimestampMs(),
+                        })
+                    },
                 })
-            },
-            onMessage(raw) {
-                connection.inboundMessageCount += 1
-                const parsed = connection.profile.codec.deserialize(raw)
-                emitEvent(connection, {
-                    type: 'message',
-                    connectionId: resolved.connectionId,
-                    message: parsed,
-                    occurredAt: nowTimestampMs(),
-                })
-            },
-            onClose(reason) {
-                finalizeMetric(connection, true, reason)
-                setState(connection, 'disconnected')
-                emitEvent(connection, {
-                    type: 'disconnected',
-                    connectionId: resolved.connectionId,
-                    reason,
-                    occurredAt: nowTimestampMs(),
-                })
-            },
-            onError(error) {
+
+                return resolved
+            } catch (error) {
                 finalizeMetric(connection, false)
                 setState(connection, 'disconnected')
-                emitEvent(connection, {
-                    type: 'error',
-                    connectionId: resolved.connectionId,
-                    error,
-                    occurredAt: nowTimestampMs(),
-                })
-            },
-        })
+                connection.transportConnection = undefined
+                lastError = error
+            }
+        }
 
-        return resolved
+        throw createAppError(transportRuntimeErrorDefinitions.socketRuntimeFailed, {
+            args: {profileName},
+            details: {
+                profileName,
+                serverName: connection.profile.serverName,
+                cause: lastError,
+            },
+            context: {
+                requestId: inputValue.context?.requestId,
+                commandId: inputValue.context?.commandId,
+                sessionId: inputValue.context?.sessionId,
+                nodeId: inputValue.context?.nodeId,
+            },
+            cause: lastError,
+        })
     }
 
     refreshServers()
@@ -272,6 +324,7 @@ export const createSocketRuntime = (
         replaceServers(servers) {
             currentServers = servers
             serverCatalog.replaceServers(servers)
+            preferredAddressByServer.clear()
         },
         getServerCatalog() {
             return serverCatalog

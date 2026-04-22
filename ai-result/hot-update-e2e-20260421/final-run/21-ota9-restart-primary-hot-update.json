@@ -1,0 +1,36 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "current": {
+      "source": "hot-update",
+      "appId": "assembly-android-mixc-retail-rn84",
+      "assemblyVersion": "1.0.0",
+      "buildNumber": 2,
+      "runtimeVersion": "android-mixc-retail-rn84@1.0",
+      "bundleVersion": "1.0.0+ota.9",
+      "packageId": "pkg_lnfhgby3gc5h",
+      "releaseId": "release_igpos0q0gw5h",
+      "installDir": "/data/user/0/com.impos2.mixcretailassemblyrn84/files/hot-updates/packages/pkg_lnfhgby3gc5h",
+      "appliedAt": 1776637155979
+    },
+    "previous": {
+      "source": "embedded",
+      "appId": "assembly-android-mixc-retail-rn84",
+      "assemblyVersion": "1.0.0",
+      "buildNumber": 1,
+      "runtimeVersion": "android-mixc-retail-rn84@1.0",
+      "bundleVersion": "1.0.0+ota.0",
+      "appliedAt": 0
+    },
+    "history": [
+      {
+        "event": "applied",
+        "releaseId": "release_igpos0q0gw5h",
+        "packageId": "pkg_lnfhgby3gc5h",
+        "bundleVersion": "1.0.0+ota.9",
+        "at": 1776637134862
+      }
+    ]
+  },
+  "id": "1776722277245-a3982e100708c"
+}

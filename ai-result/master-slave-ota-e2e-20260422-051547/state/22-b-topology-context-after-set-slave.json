@@ -1,0 +1,14 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "displayIndex": 0,
+    "displayCount": 1,
+    "instanceMode": "SLAVE",
+    "displayMode": "PRIMARY",
+    "workspace": "BRANCH",
+    "standalone": true,
+    "enableSlave": false,
+    "localNodeId": "master:ZJ63NQELD9"
+  },
+  "id": "1776808508631-c68321e6238928"
+}
