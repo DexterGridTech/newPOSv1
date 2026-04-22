@@ -2,7 +2,7 @@
 
 ## 1. 结论
 
-`tdp-sync-runtime-v2` 是旧 `1-kernel/1.1-cores/tdp-client` 在新基础架构里的迁移目标。
+`tdp-sync-runtime-v2` 是旧 `_old_/1-kernel/1.1-cores/tdp-client` 在新基础架构里的迁移目标。
 
 它负责 TDP 数据面，不负责 TCP 控制面：
 

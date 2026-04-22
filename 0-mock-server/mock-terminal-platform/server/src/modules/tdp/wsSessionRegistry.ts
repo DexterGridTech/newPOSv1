@@ -7,6 +7,11 @@ export interface OnlineTdpSession {
   sandboxId: string
   appVersion: string
   protocolVersion: string
+  localNodeId?: string | null
+  displayIndex?: number | null
+  displayCount?: number | null
+  instanceMode?: 'MASTER' | 'SLAVE' | null
+  displayMode?: 'PRIMARY' | 'SECONDARY' | null
   lastCursor: number
   lastDeliveredRevision?: number
   lastAckedRevision?: number
@@ -56,6 +61,21 @@ export const listOnlineSessions = () => Array.from(sessionsById.values())
 
 export const listOnlineSessionsByTerminalId = (sandboxId: string, terminalId: string) =>
   Array.from(sessionsById.values()).filter((item) => item.sandboxId === sandboxId && item.terminalId === terminalId)
+
+export const listOnlineMasterSessionsByTerminalId = (sandboxId: string, terminalId: string) => {
+  const sessions = listOnlineSessionsByTerminalId(sandboxId, terminalId)
+  const identifiedSessions = sessions.filter((session) => session.instanceMode || session.displayMode)
+  if (identifiedSessions.length === 0) {
+    return sessions
+  }
+  const masterPrimarySessions = identifiedSessions.filter((session) =>
+    session.instanceMode === 'MASTER' && session.displayMode === 'PRIMARY')
+  if (masterPrimarySessions.length > 0) {
+    return masterPrimarySessions
+  }
+  const masterSessions = identifiedSessions.filter((session) => session.instanceMode === 'MASTER')
+  return masterSessions.length > 0 ? masterSessions : identifiedSessions
+}
 
 export const forceCloseOnlineSession = (input: {
   sessionId: string

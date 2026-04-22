@@ -38,8 +38,8 @@
 当前 assembly 版本真相源包括：
 
 - `4-assembly/android/mixc-retail-assembly-rn84/release.manifest.json`
-- `4-assembly/android/mixc-retail-rn84v2/release.manifest.json`
-- `4-assembly/electron/mixc-retail-v1/release.manifest.json`
+- `_old_/4-assembly/android/mixc-retail-rn84v2/release.manifest.json`
+- `_old_/4-assembly/electron/mixc-retail-v1/release.manifest.json`
 
 这些 manifest 当前包含：
 
@@ -263,7 +263,8 @@ interface HotUpdateManifestV1 {
 
 交互式流程：
 
-1. 选择 assembly app：`4-assembly/android/*` 或 `4-assembly/electron/*`。
+1. 当前工程选择活跃 assembly app：`4-assembly/android/mixc-retail-assembly-rn84`。
+2. 若需要查阅旧实现，只读参考 `_old_/4-assembly/android/*` 或 `_old_/4-assembly/electron/*`。
 2. 读取所选 assembly 目录下的版本 manifest。
 3. 选择/输入 `bundleVersion` bump：patch ota、指定版本、回滚包。
 4. 输入 release notes、channel、兼容范围、重启策略默认值。

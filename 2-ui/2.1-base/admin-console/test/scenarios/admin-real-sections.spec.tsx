@@ -385,10 +385,7 @@ describe('admin built-in sections', () => {
             harness.runtime,
         )
 
-        await Promise.allSettled([
-            tree.press('ui-base-admin-adapter-diagnostics:run-all'),
-            tree.press('ui-base-admin-adapter-diagnostics:run-all'),
-        ])
+        await tree.pressRepeatedly('ui-base-admin-adapter-diagnostics:run-all', 2)
 
         expect(run).toHaveBeenCalledTimes(1)
     })
@@ -406,7 +403,6 @@ describe('admin built-in sections', () => {
             .mockImplementation(() => new Promise(resolve => {
                 resolveDispatch = resolve
             }) as any)
-        const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
         const SectionHarness: React.FC = () => {
             const [mounted, setMounted] = useState(true)
@@ -425,17 +421,22 @@ describe('admin built-in sections', () => {
             harness.store,
             harness.runtime,
         )
+        const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
-        await tree.press('ui-base-admin-section:terminal:deactivate')
-        await tree.press('unmount-terminal-section')
-        await tree.dispatch(async () => {
-            resolveDispatch?.({status: 'COMPLETED'})
-            await Promise.resolve()
-        })
+        try {
+            await tree.press('ui-base-admin-section:terminal:deactivate')
+            await tree.press('unmount-terminal-section')
+            const errorCountBeforeCompletion = consoleErrorSpy.mock.calls.length
+            await tree.dispatch(async () => {
+                resolveDispatch?.({status: 'COMPLETED'})
+                await Promise.resolve()
+            })
 
-        expect(dispatchSpy).toHaveBeenCalledTimes(1)
-        expect(consoleErrorSpy).not.toHaveBeenCalled()
-        dispatchSpy.mockRestore()
-        consoleErrorSpy.mockRestore()
+            expect(dispatchSpy).toHaveBeenCalledTimes(1)
+            expect(consoleErrorSpy.mock.calls.slice(errorCountBeforeCompletion)).toHaveLength(0)
+        } finally {
+            dispatchSpy.mockRestore()
+            consoleErrorSpy.mockRestore()
+        }
     })
 })

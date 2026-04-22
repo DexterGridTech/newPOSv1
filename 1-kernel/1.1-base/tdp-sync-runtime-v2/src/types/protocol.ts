@@ -11,6 +11,13 @@ export type TdpClientMessage =
             protocolVersion?: string
             capabilities?: string[]
             subscribedTopics?: string[]
+            runtimeIdentity?: {
+                localNodeId?: string
+                displayIndex?: number
+                displayCount?: number
+                instanceMode?: 'MASTER' | 'SLAVE'
+                displayMode?: 'PRIMARY' | 'SECONDARY'
+            }
         }
     }
     | {type: 'PING'}

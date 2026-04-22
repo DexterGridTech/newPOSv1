@@ -217,6 +217,6 @@ selector 对外仍保持统一：
 
 其中，真正值得先做的是第 2 条：
 
-1. 把旧 `1-kernel/1.1-cores/task` 的“服务端 task 发布/执行/回报模型”和新 `workflow-runtime` 的边界再精修一版
+1. 把旧 `_old_/1-kernel/1.1-cores/task` 的“服务端 task 发布/执行/回报模型”和新 `workflow-runtime` 的边界再精修一版
 2. 输出一份精良的 workflow/task 协议设计文档
 3. 再进入业务模块迁移

@@ -6,7 +6,7 @@ import {
     SERVER_CONFIG_SPACE_KERNEL_BASE_HTTP_RETRY_TEST,
     SERVER_NAME_KERNEL_BASE_HTTP_DEMO_TEST,
     SERVER_NAME_KERNEL_BASE_HTTP_FAILOVER_TEST,
-} from '@impos2/kernel-server-config-v2'
+} from '../helpers/testServerConfig'
 import {
     callHttpEnvelope,
     callHttpResult,

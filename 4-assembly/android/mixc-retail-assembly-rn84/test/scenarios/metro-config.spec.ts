@@ -1,5 +1,6 @@
 import path from 'path'
 import {describe, expect, it, vi} from 'vitest'
+import fs from 'fs'
 
 const metroConfig = require('../../metro.config.js')
 
@@ -21,6 +22,14 @@ describe('assembly metro config', () => {
             __dirname,
             '../../../../../2-ui/2.3-integration/retail-shell/src/index.ts',
         )
+        const localReactNativePath = path.resolve(
+            __dirname,
+            '../../node_modules/react-native',
+        )
+        const originalExistsSync = fs.existsSync.bind(fs)
+        const existsSpy = vi.spyOn(fs, 'existsSync').mockImplementation(target =>
+            String(target) === localReactNativePath || originalExistsSync(target),
+        )
 
         resolveRequest(
             {
@@ -30,6 +39,8 @@ describe('assembly metro config', () => {
             'react-native',
             'android',
         )
+
+        existsSpy.mockRestore()
 
         expect(delegatedResolve).toHaveBeenCalledTimes(1)
         const delegatedContext = delegatedResolve.mock.calls[0]?.[0] as {originModulePath: string}

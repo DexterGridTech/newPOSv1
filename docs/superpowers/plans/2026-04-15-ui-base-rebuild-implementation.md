@@ -45,12 +45,12 @@ Each package should use the same shape:
 
 ### Key legacy references
 
-- Read-only reference: `2-ui/2.1-cores/base/src/ui/moduleScreenParts.ts`
-- Read-only reference: `2-ui/2.1-cores/base/src/ui/variables/index.ts`
-- Read-only reference: `2-ui/2.1-cores/base/src/hooks/useMultiplePress.ts`
-- Read-only reference: `2-ui/2.1-cores/admin/src/ui/modals/AdminPopup.tsx`
-- Read-only reference: `2-ui/2.1-cores/terminal/src/hooks/useDeviceActivate.ts`
-- Read-only reference: `2-ui/2.3-integrations/mixc-retail/src/ui/screens/RootScreen.tsx`
+- Read-only reference: `_old_/2-ui/2.1-cores/base/src/ui/moduleScreenParts.ts`
+- Read-only reference: `_old_/2-ui/2.1-cores/base/src/ui/variables/index.ts`
+- Read-only reference: `_old_/2-ui/2.1-cores/base/src/hooks/useMultiplePress.ts`
+- Read-only reference: `_old_/2-ui/2.1-cores/admin/src/ui/modals/AdminPopup.tsx`
+- Read-only reference: `_old_/2-ui/2.1-cores/terminal/src/hooks/useDeviceActivate.ts`
+- Read-only reference: `_old_/2-ui/2.3-integrations/mixc-retail/src/ui/screens/RootScreen.tsx`
 
 ### Key new kernel references
 
@@ -91,23 +91,23 @@ Update the `workspaces` array so it includes the new UI base packages:
 {
   "workspaces": [
     "0-mock-server/*",
-    "0-mock-server/kernel-server/web",
+    "_old_/0-mock-server/kernel-server/web",
     "0-mock-server/mock-terminal-platform/*",
     "1-kernel/*",
     "1-kernel/1.1-base/*",
-    "1-kernel/1.1-cores/*",
-    "1-kernel/1.2-modules/*",
+    "_old_/1-kernel/1.1-cores/*",
+    "_old_/1-kernel/1.2-modules/*",
     "2-ui/2.1-base/*",
-    "2-ui/2.1-cores/*",
-    "2-ui/2.2-modules/*",
-    "2-ui/2.3-integrations/*",
+    "_old_/2-ui/2.1-cores/*",
+    "_old_/2-ui/2.2-modules/*",
+    "_old_/2-ui/2.3-integrations/*",
     "3-adapter/*",
     "3-adapter/android/*",
-    "3-adapter/electron/*",
+    "_old_/3-adapter/electron/*",
     "3-adapter/tauri/*",
     "4-assembly/*",
     "4-assembly/android/*",
-    "4-assembly/electron/*"
+    "_old_/4-assembly/electron/*"
   ]
 }
 ```

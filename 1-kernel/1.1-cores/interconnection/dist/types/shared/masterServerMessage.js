@@ -1,5 +1,0 @@
-export const MasterServerMessageType = {
-    SYNC_STATE: 'SYNC_STATE',
-    REMOTE_COMMAND: 'REMOTE_COMMAND',
-    REMOTE_COMMAND_EXECUTED: 'REMOTE_COMMAND_EXECUTED'
-};

@@ -1,1 +1,0 @@
-export {useWorkbenchTitle} from "./useWorkbenchTitle";

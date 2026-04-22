@@ -29,6 +29,7 @@ import type {
   TenantItem,
   TemplateLibraryItem,
   TerminalItem,
+  TerminalLogFileItem,
   TerminalTemplateItem,
   TopicItem,
 } from './types'
@@ -115,6 +116,9 @@ export default function App() {
   const [taskTrace, setTaskTrace] = useState<TaskTrace | null>(null)
   const [terminalSnapshot, setTerminalSnapshot] = useState<unknown>(null)
   const [terminalChanges, setTerminalChanges] = useState<unknown>(null)
+  const [terminalLogFiles, setTerminalLogFiles] = useState<TerminalLogFileItem[]>([])
+  const [terminalLogDate, setTerminalLogDate] = useState(() => new Date().toISOString().slice(0, 10))
+  const [selectedTerminalForLogs, setSelectedTerminalForLogs] = useState('')
   const [exportPayload, setExportPayload] = useState<unknown>(null)
   const [detailTitle, setDetailTitle] = useState('')
   const [detailPayload, setDetailPayload] = useState<unknown>(null)
@@ -225,6 +229,18 @@ export default function App() {
         nextAuditLogs,
         nextTopicLibrary,
         nextFaultLibrary,
+      ] = await Promise.all([
+        api.getOverview(),
+        api.getRuntimeContext(),
+        api.getSandboxes(),
+        api.getAuditLogs(auditPage, auditPageSize),
+        api.getTopicLibrary(),
+        api.getFaultLibrary(),
+      ])
+
+      api.setCurrentSandboxId(nextRuntimeContext.currentSandboxId)
+
+      const [
         nextTerminals,
         nextActivationCodes,
         nextTaskReleases,
@@ -246,12 +262,6 @@ export default function App() {
         nextProfiles,
         nextManualTemplates,
       ] = await Promise.all([
-        api.getOverview(),
-        api.getRuntimeContext(),
-        api.getSandboxes(),
-        api.getAuditLogs(auditPage, auditPageSize),
-        api.getTopicLibrary(),
-        api.getFaultLibrary(),
         api.getTerminals(),
         api.getActivationCodes(),
         api.getTaskReleases(),
@@ -274,7 +284,6 @@ export default function App() {
         api.getMasterTemplates(),
       ])
 
-      api.setCurrentSandboxId(nextRuntimeContext.currentSandboxId)
       setOverview(nextOverview)
       setRuntimeContext(nextRuntimeContext)
       setSandboxes(nextSandboxes)
@@ -393,6 +402,7 @@ export default function App() {
   const selectedChangeLog = changeLogs[0]
   const selectedSession = sessions[0]
   const quickActionTerminals = filteredTerminals.length ? filteredTerminals : terminals
+  const terminalForLogs = terminals.find((item) => item.terminalId === selectedTerminalForLogs) ?? selectedTerminal
   const currentMasterPlatformId = selectedMasterPlatformId || platforms[0]?.platformId || ''
   const currentMasterPlatform = platforms.find((item) => item.platformId === currentMasterPlatformId) ?? null
   const platformScopedTenants = currentMasterPlatformId ? tenants.filter((item) => item.platformId === currentMasterPlatformId) : tenants
@@ -447,18 +457,46 @@ export default function App() {
   }, [selectedInstance?.instanceId])
 
   useEffect(() => {
-    const terminalId = filteredTerminals[0]?.terminalId ?? terminals[0]?.terminalId
+    const terminalId = selectedTerminalForLogs || filteredTerminals[0]?.terminalId || terminals[0]?.terminalId
     if (!terminalId) return
-    void Promise.all([api.getTerminalSnapshot(terminalId), api.getTerminalChanges(terminalId)])
-      .then(([snapshot, changes]) => {
+    if (terminalId !== selectedTerminalForLogs) {
+      setSelectedTerminalForLogs(terminalId)
+    }
+    void Promise.all([
+      api.getTerminalSnapshot(terminalId),
+      api.getTerminalChanges(terminalId),
+      api.getTerminalLogFiles(terminalId),
+    ])
+      .then(([snapshot, changes, logs]) => {
         setTerminalSnapshot(snapshot)
         setTerminalChanges(changes)
+        setTerminalLogFiles(logs)
       })
       .catch(() => {
         setTerminalSnapshot(null)
         setTerminalChanges(null)
+        setTerminalLogFiles([])
       })
-  }, [filteredTerminals, terminals])
+  }, [filteredTerminals, terminals, selectedTerminalForLogs])
+
+  const viewTerminalLogs = async (terminalId: string) => {
+    setSelectedTerminalForLogs(terminalId)
+    const logs = await api.getTerminalLogFiles(terminalId)
+    setTerminalLogFiles(logs)
+    setMessage(`正在查看终端 ${terminalId} 的日志文件`)
+  }
+
+  const requestTerminalLogs = async (terminalId: string) => {
+    await runAction(
+      () => api.requestTerminalLogUpload(terminalId, {
+        logDate: terminalLogDate,
+        overwrite: true,
+      }),
+      `已向终端 ${terminalId} 下发 ${terminalLogDate} 日志获取命令`,
+    )
+    const logs = await api.getTerminalLogFiles(terminalId)
+    setTerminalLogFiles(logs)
+  }
 
   const downloadExportFile = () => {
     window.open(api.buildExportDownloadUrl(), '_blank', 'noopener,noreferrer')
@@ -1276,13 +1314,38 @@ export default function App() {
           <Panel title="终端总览" subtitle="支持关键字筛选、状态观察、快照与变更对比">
             <FormGrid columns={3}>
               <TextInput label="终端筛选" value={terminalKeyword} onChange={setTerminalKeyword} placeholder="终端 ID / 门店 / 健康 / 生命周期 / 在线状态" />
+              <TextInput label="日志日期" value={terminalLogDate} onChange={setTerminalLogDate} placeholder="YYYY-MM-DD" />
             </FormGrid>
             {emptyTerminals ? <div className="empty-state inline-actions">当前筛选条件下没有终端，试试清空筛选词。</div> : null}
             <div className="three-column inline-actions">
-              <DataTable columns={['终端 ID', '门店', '生命周期', '在线状态', '健康状态', 'App 版本', '详情']} rows={filteredTerminals.slice(0, 12).map((item) => [item.terminalId, item.storeId, item.lifecycleStatus, item.presenceStatus, item.healthStatus, item.currentAppVersion ?? '--', <ActionButton key={item.terminalId} label="查看" onClick={() => openDetail(`终端 ${item.terminalId}`, buildTerminalDetail(item.terminalId) ?? item)} />])} />
+              <DataTable columns={['终端 ID', '门店', '生命周期', '在线状态', '健康状态', 'App 版本', '操作']} rows={filteredTerminals.slice(0, 12).map((item) => [item.terminalId, item.storeId, item.lifecycleStatus, item.presenceStatus, item.healthStatus, item.currentAppVersion ?? '--', <div key={item.terminalId} className="button-group"><ActionButton label="查看" onClick={() => openDetail(`终端 ${item.terminalId}`, buildTerminalDetail(item.terminalId) ?? item)} /><ActionButton label="查看日志" onClick={() => viewTerminalLogs(item.terminalId)} /><ActionButton label="获取日志" tone="primary" onClick={() => requestTerminalLogs(item.terminalId)} /></div>])} />
               <JsonBlock value={filteredTerminals[0] ?? { hint: '暂无终端' }} />
               <JsonBlock value={{ snapshot: terminalSnapshot ?? [], changes: terminalChanges ?? [], compareHint: '左侧为终端基础信息，右侧为 TDP 快照与变更链路' }} />
             </div>
+            <div className="button-group inline-actions">
+              {terminalForLogs ? <ActionButton label={`刷新 ${terminalForLogs.terminalId} 日志列表`} onClick={() => viewTerminalLogs(terminalForLogs.terminalId)} /> : null}
+              {terminalForLogs ? <ActionButton label={`重新获取 ${terminalLogDate} 日志`} tone="primary" onClick={() => requestTerminalLogs(terminalForLogs.terminalId)} /> : null}
+              {terminalForLogs ? <ActionButton label="查看终端详情" onClick={() => openDetail(`终端 ${terminalForLogs.terminalId}`, buildTerminalDetail(terminalForLogs.terminalId) ?? terminalForLogs)} /> : null}
+            </div>
+            <KeyValueList
+              items={[
+                { label: '当前日志终端', value: terminalForLogs?.terminalId ?? '--' },
+                { label: '当前日志日期', value: terminalLogDate },
+                { label: '已有日志文件', value: `${terminalLogFiles.length} 个` },
+              ]}
+            />
+            <DataTable
+              columns={['日期', '屏幕', '文件', '大小', '上传时间', '命令/实例', '元数据']}
+              rows={terminalLogFiles.slice(0, 12).map((item) => [
+                item.logDate,
+                `${item.displayRole} (${item.displayIndex})`,
+                item.fileName,
+                `${item.fileSize} B`,
+                formatTime(item.uploadedAt),
+                `${item.commandId ?? '--'} / ${item.instanceId ?? '--'}`,
+                <ActionButton key={item.logFileId} label="查看" onClick={() => openDetail(`日志文件 ${item.fileName}`, item)} />,
+              ])}
+            />
           </Panel>
 
           <Panel title="激活码与任务发布" subtitle="联调常用入口与下发上下文">
@@ -1719,7 +1782,7 @@ export default function App() {
 
           <Panel title="TDP 会话与主题" subtitle="连接态、协议版本、Topic 基础治理">
             <div className="two-column">
-              <DataTable columns={['Session', '终端', '状态', '客户端版本', '协议版本', '最近心跳', 'Delivered/Acked/Applied', 'HighWatermark', 'AckLag/ApplyLag', '详情']} rows={sessions.slice(0, 8).map((item) => [item.sessionId, item.terminalId, item.status, item.clientVersion, item.protocolVersion, formatTime(item.lastHeartbeatAt), `${item.lastDeliveredRevision ?? '--'} / ${item.lastAckedRevision ?? '--'} / ${item.lastAppliedRevision ?? '--'}`, item.highWatermark ?? '--', `${item.ackLag ?? '--'} / ${item.applyLag ?? '--'}`, <div key={item.sessionId} className="button-group"><ActionButton label="查看" onClick={() => openDetail(`Session ${item.sessionId}`, item)} /><ActionButton label="降级" onClick={() => runAction(() => api.sendEdgeDegraded(item.sessionId, { reason: 'maintenance_mode', nodeState: 'grace', gracePeriodSeconds: 300, alternativeEndpoints: [] }), `已向 ${item.sessionId} 发送 EDGE_DEGRADED`)} /><ActionButton label="迁移" tone="danger" onClick={() => runAction(() => api.sendSessionRehome(item.sessionId, { reason: 'node_draining', deadline: new Date(Date.now() + 60_000).toISOString(), alternativeEndpoints: [] }), `已向 ${item.sessionId} 发送 SESSION_REHOME_REQUIRED`)} /></div>])} />
+              <DataTable columns={['Session', '终端', '角色', '状态', '客户端版本', '协议版本', '最近心跳', 'Delivered/Acked/Applied', 'HighWatermark', 'AckLag/ApplyLag', '详情']} rows={sessions.slice(0, 8).map((item) => [item.sessionId, item.terminalId, `${item.instanceMode ?? '--'} / ${item.displayMode ?? '--'} (${item.displayIndex ?? '--'})`, item.status, item.clientVersion, item.protocolVersion, formatTime(item.lastHeartbeatAt), `${item.lastDeliveredRevision ?? '--'} / ${item.lastAckedRevision ?? '--'} / ${item.lastAppliedRevision ?? '--'}`, item.highWatermark ?? '--', `${item.ackLag ?? '--'} / ${item.applyLag ?? '--'}`, <div key={item.sessionId} className="button-group"><ActionButton label="查看" onClick={() => openDetail(`Session ${item.sessionId}`, item)} /><ActionButton label="降级" onClick={() => runAction(() => api.sendEdgeDegraded(item.sessionId, { reason: 'maintenance_mode', nodeState: 'grace', gracePeriodSeconds: 300, alternativeEndpoints: [] }), `已向 ${item.sessionId} 发送 EDGE_DEGRADED`)} /><ActionButton label="迁移" tone="danger" onClick={() => runAction(() => api.sendSessionRehome(item.sessionId, { reason: 'node_draining', deadline: new Date(Date.now() + 60_000).toISOString(), alternativeEndpoints: [] }), `已向 ${item.sessionId} 发送 SESSION_REHOME_REQUIRED`)} /></div>])} />
               <DataTable columns={['Topic Key', '名称', 'Payload 模式', 'Scope', '保留时长', '详情']} rows={topics.slice(0, 10).map((item) => [item.key, item.name, item.payloadMode, item.scopeType, `${item.retentionHours}h`, <ActionButton key={item.key} label="查看" onClick={() => openDetail(`Topic ${item.key}`, item)} />])} />
             </div>
           </Panel>

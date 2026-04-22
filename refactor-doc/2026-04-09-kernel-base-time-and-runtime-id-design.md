@@ -130,7 +130,7 @@ type TimestampMs = number
 
 格式化能力应提供统一 helper，方向参考旧：
 
-- [time.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/base/src/foundations/time.ts)
+- [time.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/base/src/foundations/time.ts)
 
 但新架构必须明确：
 

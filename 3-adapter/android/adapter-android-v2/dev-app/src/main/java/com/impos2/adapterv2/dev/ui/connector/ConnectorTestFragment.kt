@@ -185,7 +185,7 @@ class ConnectorTestFragment : Fragment() {
               refresh()
             }
             appendEvent("Connector / passive listen / success")
-            appendEvent("adb shell am broadcast -a com.impos2.connector.PASSIVE --es source adapterPure --es message hello")
+            appendEvent("adb shell am broadcast -a com.impos2.connector.PASSIVE --es source adapter-android-v2 --es message hello")
             ConsoleSessionStore.record("Connector", "passive listen", "success")
           }
           refresh()

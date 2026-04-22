@@ -1,5 +1,7 @@
 import type {
+    HttpSuccessResponse,
     HttpTransport,
+    HttpTransportRequest,
     SocketConnectionHandlers,
     SocketResolvedConnection,
     SocketTransport,
@@ -7,7 +9,9 @@ import type {
 } from '@impos2/kernel-base-transport-runtime'
 
 export const createAssemblyFetchTransport = (): HttpTransport => ({
-    async execute(request) {
+    async execute<TPath, TQuery, TBody, TResponse>(
+        request: HttpTransportRequest<TPath, TQuery, TBody>,
+    ): Promise<HttpSuccessResponse<TResponse>> {
         const controller = typeof AbortController !== 'undefined' && request.timeoutMs
             ? new AbortController()
             : undefined
@@ -23,10 +27,10 @@ export const createAssemblyFetchTransport = (): HttpTransport => ({
                     ...(request.input.headers ?? {}),
                 },
                 body: request.input.body == null ? undefined : JSON.stringify(request.input.body),
-                signal: controller?.signal,
+                signal: controller?.signal as RequestInit['signal'],
             })
             const text = await response.text()
-            const data = text ? JSON.parse(text) : null
+            const data = (text ? JSON.parse(text) : null) as TResponse
             const headers: Record<string, string> = {}
             response.headers.forEach((value, key) => {
                 headers[key] = value

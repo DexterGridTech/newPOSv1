@@ -44,7 +44,7 @@ const useStableAutomationNodeId = (
     prefix: string,
     hint: string,
 ): string => {
-    const nodeIdRef = React.useRef<string>()
+    const nodeIdRef = React.useRef<string | undefined>(undefined)
     if (!nodeIdRef.current) {
         adminAutomationNodeSequence += 1
         nodeIdRef.current = `${prefix}:${sanitizeAutomationHint(hint)}:${adminAutomationNodeSequence}`

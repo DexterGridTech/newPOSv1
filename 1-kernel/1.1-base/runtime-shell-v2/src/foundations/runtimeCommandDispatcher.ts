@@ -137,7 +137,12 @@ export const createRuntimeCommandDispatcher = (
                 ])
             }
             try {
-                const peerResult = await peerDispatchGateway.dispatchCommand(commandIntent, {...options, requestId})
+                const peerResult = await peerDispatchGateway.dispatchCommand(commandIntent, {
+                    ...options,
+                    requestId,
+                    commandId,
+                    parentCommandId: options.parentCommandId,
+                })
                 const actorStatus: ActorExecutionResult['status'] =
                     peerResult.status === 'TIMEOUT'
                         ? 'TIMEOUT'

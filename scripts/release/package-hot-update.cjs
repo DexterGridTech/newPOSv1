@@ -184,18 +184,6 @@ function getLocalBuildCommand(appId) {
     ].join(' ')
   }
 
-  if (appId === 'assembly-electron-mixc-retail-v1') {
-    return [
-      'bash -lc',
-      JSON.stringify([
-        'cd 4-assembly/electron/mixc-retail-v1',
-        '../../../node_modules/.bin/tsc -p tsconfig.check.json --noEmit',
-        'node ../../../node_modules/@electron/rebuild/lib/cli.js -f -w better-sqlite3',
-        'node ../../../node_modules/@electron-forge/cli/dist/electron-forge.js package',
-      ].join(' && ')),
-    ].join(' ')
-  }
-
   return ''
 }
 
@@ -216,43 +204,6 @@ function resolveBundleFiles(appId) {
       sourceMap: sourceMapCandidates.find(candidate => fs.existsSync(candidate)) ?? null,
       sourceMapName: 'payload/source-map/index.android.bundle.map',
       extraEntries: [],
-      buildCommand: getLocalBuildCommand(appId),
-    }
-  }
-
-  if (appId === 'assembly-electron-mixc-retail-v1') {
-    const main = ensureFileExistsIn([
-      resolveRepoPath('4-assembly/electron/mixc-retail-v1/.webpack/main/index.js'),
-      resolveRepoPath('4-assembly/electron/mixc-retail-v1/.webpack/arm64/main/index.js'),
-    ], 'electron main bundle')
-    const primaryRenderer = ensureFileExistsIn([
-      resolveRepoPath('4-assembly/electron/mixc-retail-v1/.webpack/renderer/primary_window/index.js'),
-      resolveRepoPath('4-assembly/electron/mixc-retail-v1/.webpack/arm64/renderer/primary_window/index.js'),
-    ], 'electron primary renderer bundle')
-    const primaryPreload = ensureFileExistsIn([
-      resolveRepoPath('4-assembly/electron/mixc-retail-v1/.webpack/renderer/primary_window/preload.js'),
-      resolveRepoPath('4-assembly/electron/mixc-retail-v1/.webpack/arm64/renderer/primary_window/preload.js'),
-    ], 'electron primary preload bundle')
-    const secondaryRenderer = ensureFileExistsIn([
-      resolveRepoPath('4-assembly/electron/mixc-retail-v1/.webpack/renderer/secondary_window/index.js'),
-      resolveRepoPath('4-assembly/electron/mixc-retail-v1/.webpack/arm64/renderer/secondary_window/index.js'),
-    ], 'electron secondary renderer bundle')
-    const secondaryPreload = ensureFileExistsIn([
-      resolveRepoPath('4-assembly/electron/mixc-retail-v1/.webpack/renderer/secondary_window/preload.js'),
-      resolveRepoPath('4-assembly/electron/mixc-retail-v1/.webpack/arm64/renderer/secondary_window/preload.js'),
-    ], 'electron secondary preload bundle')
-    return {
-      payloadType: 'electron-webpack-bundle',
-      entry: primaryRenderer,
-      entryName: 'payload/renderer/primary_window/index.js',
-      sourceMap: null,
-      sourceMapName: null,
-      extraEntries: [
-        {file: main, name: 'payload/main/index.js'},
-        {file: primaryPreload, name: 'payload/preload/primary.js'},
-        {file: secondaryRenderer, name: 'payload/renderer/secondary_window/index.js'},
-        {file: secondaryPreload, name: 'payload/preload/secondary.js'},
-      ],
       buildCommand: getLocalBuildCommand(appId),
     }
   }

@@ -129,6 +129,7 @@ Desktop.ini
 # ============================================
 .idea/
 .vscode/
+*.iml
 *.swp
 *.swo
 *~
@@ -170,9 +171,6 @@ Desktop.ini
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
-
-# 保留 install-state.gz 以加速安装
-!.yarn/install-state.gz
 
 # ============================================
 # Package Manager Lock Files (keep yarn.lock)
@@ -220,6 +218,7 @@ node_modules/.vite/
 # Hot update dist packages
 # ============================================
 /dist/hot-updates/
+0-mock-server/mock-terminal-platform/server/data/hot-updates/
 
 # ============================================
 # Release manifests & generated release info

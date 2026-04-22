@@ -12,7 +12,7 @@
 
 ## Reuse Rule
 
-`0-mock-server/master-ws-server-dual` already contains a working host-shaped mock service and should be treated as a source of proven host behavior rather than something to ignore.
+`_old_/0-mock-server/master-ws-server-dual` already contains a working host-shaped mock service and should be treated as a source of proven host behavior rather than something to ignore.
 
 Reuse policy for this phase:
 

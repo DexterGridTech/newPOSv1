@@ -2,19 +2,19 @@
 
 ## Background
 
-The current `2-ui/2.1-cores` packages were built on top of the old `1-kernel/1.1-cores` stack.
+The current `_old_/2-ui/2.1-cores` packages were built on top of the old `_old_/1-kernel/1.1-cores` stack.
 That stack is no longer the target architecture.
 
 The new target is:
 
 1. `1-kernel/1.1-base/*` remains the only canonical kernel base.
 2. `2-ui/2.1-base/*` becomes the new canonical UI base.
-3. `2-ui/2.2-business/*` and `2-ui/2.3-integrations/*` will later migrate to the new UI base, but should not depend on old `2.1-cores` packages anymore.
+3. `2-ui/2.2-business/*` and `_old_/2-ui/2.3-integrations/*` will later migrate to the new UI base, but should not depend on old `2.1-cores` packages anymore.
 
 This is not a mechanical migration.
 The goal is to understand:
 
-1. what `2-ui/2.1-cores/*` was trying to solve,
+1. what `_old_/2-ui/2.1-cores/*` was trying to solve,
 2. how the current business UI actually uses those packages,
 3. which parts of the old design are still valuable,
 4. which parts should be re-designed more cleanly on top of `1-kernel/1.1-base`.
@@ -168,7 +168,7 @@ The rebuild should achieve all of the following:
 
 The first rebuild phase does not aim to:
 
-1. migrate all `2-ui/2.2-modules` immediately
+1. migrate all `_old_/2-ui/2.2-modules` immediately
 2. redesign business workflows
 3. redesign all UI visuals across the app
 4. replace `ui-runtime-v2` kernel state semantics
@@ -176,7 +176,7 @@ The first rebuild phase does not aim to:
 
 ## What The Current Codebase Tells Us
 
-### 1. `2-ui/2.1-cores/base` and `runtime-base` are mostly duplicate
+### 1. `_old_/2-ui/2.1-cores/base` and `runtime-base` are mostly duplicate
 
 Both packages currently contain:
 
@@ -214,7 +214,7 @@ That behavior should remain, but the logic should become a stable reusable launc
 
 ### 4. Terminal UI is operational, not foundational
 
-`2-ui/2.1-cores/terminal` is really a thin UI around terminal activation and terminal connection state.
+`_old_/2-ui/2.1-cores/terminal` is really a thin UI around terminal activation and terminal connection state.
 It maps cleanly to `1-kernel/1.1-base/tcp-control-runtime-v2`.
 
 So it should stay as its own UI console package rather than being merged into a generic admin package.

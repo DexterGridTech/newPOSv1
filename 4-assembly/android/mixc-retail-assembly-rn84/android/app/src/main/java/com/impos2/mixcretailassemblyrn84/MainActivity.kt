@@ -76,7 +76,7 @@ class MainActivity : ReactActivity() {
   private lateinit var secondaryDisplayLauncher: SecondaryDisplayLauncher
 
   /**
-   * adapterPure 中的系统控制能力入口。
+   * adapter-android-v2 提供的系统控制能力入口。
    *
    * 主屏启动后需要立即设为全屏，并在生命周期变化时不断重放状态，否则某些 ROM、某些系统栏
    * 交互场景下全屏状态会丢失。

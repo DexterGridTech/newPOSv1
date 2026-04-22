@@ -24,7 +24,7 @@
 
 旧工程通过 `displayIndex === 0` 推导 standalone：
 
-参考：`1-kernel/1.1-cores/interconnection/src/foundations/preInitiateInstanceInfo.ts`
+参考：`_old_/1-kernel/1.1-cores/interconnection/src/foundations/preInitiateInstanceInfo.ts`
 
 关键语义：
 
@@ -37,7 +37,7 @@
 
 旧工程 `ApplicationManager` 中 persisted slice 只在 `displayIndex === 0` 时落盘：
 
-参考：`1-kernel/1.1-cores/base/src/application/applicationManager.ts`
+参考：`_old_/1-kernel/1.1-cores/base/src/application/applicationManager.ts`
 
 这在旧架构里等价于：
 
@@ -58,7 +58,7 @@
 
 旧工程只对 standalone slave 响应电源状态变化：
 
-参考：`1-kernel/1.1-cores/interconnection/src/features/actors/initialize.ts`
+参考：`_old_/1-kernel/1.1-cores/interconnection/src/features/actors/initialize.ts`
 
 规则：
 
@@ -73,7 +73,7 @@
 
 旧 admin 里独立副机连接 master 的流程是：
 
-参考：`2-ui/2.1-cores/admin/src/hooks/useSwitchInstanceMode.ts`
+参考：`_old_/2-ui/2.1-cores/admin/src/hooks/useSwitchInstanceMode.ts`
 
 1. 切换本机为 slave。
 2. 扫码或输入 masterInfo。

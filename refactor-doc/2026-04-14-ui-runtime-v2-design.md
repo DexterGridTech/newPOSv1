@@ -2,7 +2,7 @@
 
 ## 1. 目标
 
-`1-kernel/1.1-cores/ui-runtime` 是对旧 `navigation` 的替代，但它仍依赖旧 `base / interconnection` 基础设施。
+`_old_/1-kernel/1.1-cores/ui-runtime` 是对旧 `navigation` 的替代，但它仍依赖旧 `base / interconnection` 基础设施。
 
 本轮目标是在 `1-kernel/1.1-base` 中新建 `ui-runtime-v2`，让 UI 运行时能力基于新基础设施重构：
 
@@ -29,7 +29,7 @@
 
 ## 3. 现有 ui-runtime 的增强
 
-现有 `1-kernel/1.1-cores/ui-runtime` 已经比旧 `navigation` 更清晰：
+现有 `_old_/1-kernel/1.1-cores/ui-runtime` 已经比旧 `navigation` 更清晰：
 
 1. 把 `screen`、`overlay`、`uiVariables` 拆成三个独立 slice。
 2. `showScreen / replaceScreen / resetScreen` 明确 container 当前 screen 语义。

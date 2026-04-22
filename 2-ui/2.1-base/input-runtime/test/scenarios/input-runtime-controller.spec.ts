@@ -71,12 +71,15 @@ describe('input controller', () => {
             return null
         }
 
-        const renderer = TestRenderer.create(
-            React.createElement(HookProbe, {
-                mode: 'virtual-pin',
-                maxLength: 2,
-            }),
-        )
+        let renderer!: TestRenderer.ReactTestRenderer
+        act(() => {
+            renderer = TestRenderer.create(
+                React.createElement(HookProbe, {
+                    mode: 'virtual-pin',
+                    maxLength: 2,
+                }),
+            )
+        })
 
         act(() => {
             latest?.applyVirtualKey('1')
@@ -119,13 +122,16 @@ describe('input controller', () => {
             return null
         }
 
-        const renderer = TestRenderer.create(
-            React.createElement(HookProbe, {
-                mode: 'virtual-pin',
-                maxLength: 6,
-                initialValue: '1',
-            }),
-        )
+        let renderer!: TestRenderer.ReactTestRenderer
+        act(() => {
+            renderer = TestRenderer.create(
+                React.createElement(HookProbe, {
+                    mode: 'virtual-pin',
+                    maxLength: 6,
+                    initialValue: '1',
+                }),
+            )
+        })
 
         act(() => {
             renderer.update(React.createElement(HookProbe, {

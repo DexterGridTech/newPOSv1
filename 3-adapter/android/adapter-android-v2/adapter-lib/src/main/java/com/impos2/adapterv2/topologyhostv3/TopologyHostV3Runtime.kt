@@ -109,7 +109,14 @@ internal class TopologyHostV3Runtime(
 
   fun resolveRelayTarget(message: JSONObject): String? {
     synchronized(lock) {
+      val envelope = runCatching { message.opt("envelope") as? JSONObject }.getOrNull()
       return message.optStringOrNull("targetNodeId")
+        ?: envelope?.optStringOrNull("targetNodeId")
+        ?: if (message.optString("type") == "command-event") {
+          envelope?.optStringOrNull("ownerNodeId")
+        } else {
+          null
+        }
     }
   }
 

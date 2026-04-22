@@ -6,7 +6,8 @@ export interface Spec extends TurboModule {
     log(tag: string, message: string): void
     warn(tag: string, message: string): void
     error(tag: string, message: string): void
-    getLogFiles(): Promise<ReadonlyArray<Record<string, unknown>>>
+    getLogFiles(): Promise<string>
+    uploadLogsForDate(inputJson: string): Promise<string>
     getLogContent(fileName: string, maxBytes: number): Promise<string>
     deleteLogFile(fileName: string): Promise<boolean>
     clearAllLogs(): Promise<boolean>

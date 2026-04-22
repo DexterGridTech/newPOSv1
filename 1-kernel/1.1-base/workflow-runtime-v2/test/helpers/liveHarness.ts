@@ -13,7 +13,9 @@ import {
 import {
     createHttpRuntime,
     createSocketRuntime,
+    type HttpSuccessResponse,
     type HttpTransport,
+    type HttpTransportRequest,
     type SocketTransport,
 } from '@impos2/kernel-base-transport-runtime'
 import {
@@ -65,7 +67,9 @@ export const fetchJson = async <T>(url: string, init?: RequestInit): Promise<T> 
 }
 
 export const createFetchTransport = (): HttpTransport => ({
-    async execute(request) {
+    async execute<TPath, TQuery, TBody, TResponse>(
+        request: HttpTransportRequest<TPath, TQuery, TBody>,
+    ): Promise<HttpSuccessResponse<TResponse>> {
         const response = await fetch(request.url, {
             method: request.endpoint.method,
             headers: {
@@ -75,7 +79,7 @@ export const createFetchTransport = (): HttpTransport => ({
             body: request.input.body == null ? undefined : JSON.stringify(request.input.body),
         })
         return {
-            data: await response.json(),
+            data: await response.json() as TResponse,
             status: response.status,
             statusText: response.statusText,
             headers: {},

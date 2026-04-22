@@ -1,14 +1,17 @@
 import type {
     CommandDispatchEnvelope,
     CommandEventEnvelope,
+    CommandId,
     NodeId,
     ProjectionMirrorEnvelope,
+    RequestId,
     RequestLifecycleSnapshotEnvelope,
     StateSyncDiffEnvelope,
 } from '@impos2/kernel-base-contracts'
 import type {SyncStateDiff} from '@impos2/kernel-base-state-runtime'
 import type {
     RuntimeModuleContextV2,
+    CommandAggregateResult,
 } from '@impos2/kernel-base-runtime-shell-v2'
 import type {
     SocketConnectionProfile,
@@ -188,10 +191,29 @@ export interface TopologyPeerOrchestratorV3 {
     startConnection(): Promise<void>
     stopConnection(reason?: string): void
     restartConnection(reason?: string): Promise<void>
+    dispatchRemoteCommand?(input: {
+        requestId: RequestId
+        commandId: CommandId
+        parentCommandId?: CommandId
+        commandName: string
+        payload: unknown
+        routeContext?: Record<string, unknown>
+    }): Promise<CommandAggregateResult>
     sendStateSnapshot?(message: TopologyV3StateSnapshotMessage): void
     sendStateUpdate?(message: TopologyV3StateUpdateMessage): void
     sendCommandDispatch?(message: TopologyV3CommandDispatchMessage): void
     sendCommandEvent?(message: TopologyV3CommandEventMessage): void
     sendRequestSnapshot?(message: TopologyV3RequestSnapshotMessage): void
     sendProjectionMirror?(message: TopologyV3ProjectionMirrorMessage): void
+}
+
+export interface TopologyPeerDispatchGatewayRuntime {
+    dispatchRemoteCommand(input: {
+        requestId: RequestId
+        commandId: CommandId
+        parentCommandId?: CommandId
+        commandName: string
+        payload: unknown
+        routeContext?: Record<string, unknown>
+    }): Promise<CommandAggregateResult>
 }

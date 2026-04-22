@@ -51,7 +51,7 @@
 1. `displayIndex === 0` -> `standalone=true`、`MASTER`、`PRIMARY`
 2. `displayIndex > 0` -> `standalone=false`、`SLAVE`、`SECONDARY`
 
-参考：`1-kernel/1.1-cores/interconnection/src/foundations/preInitiateInstanceInfo.ts:6`
+参考：`_old_/1-kernel/1.1-cores/interconnection/src/foundations/preInitiateInstanceInfo.ts:6`
 
 这说明旧工程的默认世界观不是“多节点拓扑图”，而是：
 
@@ -66,7 +66,7 @@
 1. master 时同步 `statesToSyncFromMasterToSlave`
 2. slave 时同步 `statesToSyncFromSlaveToMaster`
 
-参考：`1-kernel/1.1-cores/interconnection/src/features/middlewares/stateSyncMiddleware.ts:26`
+参考：`_old_/1-kernel/1.1-cores/interconnection/src/features/middlewares/stateSyncMiddleware.ts:26`
 
 这说明：
 

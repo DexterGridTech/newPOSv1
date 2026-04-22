@@ -2,7 +2,7 @@
 
 ## 1. 定位
 
-`1-kernel/server-config-v2` 是服务器配置包，不是 kernel module，也不是 runtime。
+`_old_/1-kernel/server-config-v2` 是服务器配置包，不是 kernel module，也不是 runtime。
 
 它只负责表达：
 
@@ -29,7 +29,7 @@
 
 ## 2. 从旧包继承的正确点
 
-旧 `1-kernel/server-config` 有几个值得继承的设计点：
+旧 `_old_/1-kernel/server-config` 有几个值得继承的设计点：
 
 1. serverName 是统一常量，不允许业务和测试到处手写散落字符串。
 2. 服务器配置独立成包，不塞进 HTTP runtime 或业务模块。
@@ -42,7 +42,7 @@
 ## 3. 当前包结构
 
 ```text
-1-kernel/server-config-v2/
+_old_/1-kernel/server-config-v2/
   package.json
   tsconfig.json
   src/

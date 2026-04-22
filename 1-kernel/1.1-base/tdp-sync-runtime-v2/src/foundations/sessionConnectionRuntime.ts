@@ -8,7 +8,9 @@ import type {RuntimeModuleContextV2} from '@impos2/kernel-base-runtime-shell-v2'
 import {
     createHttpRuntime,
     createSocketLifecycleController,
+    type HttpSuccessResponse,
     type HttpTransport,
+    type HttpTransportRequest,
 } from '@impos2/kernel-base-transport-runtime'
 import {SERVER_NAME_MOCK_TERMINAL_PLATFORM} from '@impos2/kernel-server-config-v2'
 import {moduleName} from '../moduleName'
@@ -17,6 +19,7 @@ import {
     selectTcpSandboxId,
     selectTcpTerminalId,
 } from '@impos2/kernel-base-tcp-control-runtime-v2'
+import {selectTopologyRuntimeV3Context} from '@impos2/kernel-base-topology-runtime-v3'
 import {tdpSyncV2CommandDefinitions} from '../features/commands'
 import {tdpSyncV2StateActions} from '../features/slices'
 import {TDP_SYNC_V2_SOCKET_PROFILE_NAME, tdpSyncV2SocketProfile} from './socketBinding'
@@ -51,7 +54,9 @@ const isErrorEvent = (
 ): event is {type: 'error'; error: unknown} => event.type === 'error'
 
 const createFetchHttpTransport = (): HttpTransport => ({
-    async execute(request) {
+    async execute<TPath, TQuery, TBody, TResponse>(
+        request: HttpTransportRequest<TPath, TQuery, TBody>,
+    ): Promise<HttpSuccessResponse<TResponse>> {
         const response = await fetch(request.url, {
             method: request.endpoint.method,
             headers: {
@@ -62,7 +67,7 @@ const createFetchHttpTransport = (): HttpTransport => ({
         })
 
         return {
-            data: await response.json(),
+            data: await response.json() as TResponse,
             status: response.status,
             statusText: response.statusText,
             headers: (() => {
@@ -158,6 +163,7 @@ export const installTdpSessionConnectionRuntimeV2 = (input: {
         const sandboxId = selectTcpSandboxId(state)
         const terminalId = selectTcpTerminalId(state)
         const accessToken = selectTcpAccessToken(state)
+        const topologyContext = selectTopologyRuntimeV3Context(state)
         if (!sandboxId || !terminalId || !accessToken) {
             throw createAppError(tdpSyncV2ErrorDefinitions.credentialMissing, {
                 args: {error: !sandboxId ? 'sandboxId is missing' : 'tcp credential is missing'},
@@ -176,6 +182,13 @@ export const installTdpSessionConnectionRuntimeV2 = (input: {
                 appVersion: packageVersion,
                 lastCursor: selectTdpSyncState(state)?.lastCursor,
                 protocolVersion,
+                runtimeIdentity: {
+                    localNodeId: String(input.context.localNodeId),
+                    displayIndex: input.context.displayContext.displayIndex ?? topologyContext?.displayIndex ?? 0,
+                    displayCount: input.context.displayContext.displayCount ?? topologyContext?.displayCount ?? 1,
+                    instanceMode: topologyContext?.instanceMode,
+                    displayMode: topologyContext?.displayMode,
+                },
             },
         }
 

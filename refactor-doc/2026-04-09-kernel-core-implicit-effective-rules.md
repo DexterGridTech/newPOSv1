@@ -6,16 +6,16 @@
 
 这份文档覆盖的观察来源不只包括：
 
-- `1-kernel/1.1-cores/base`
-- `1-kernel/1.1-cores/interconnection`
-- `1-kernel/1.1-cores/communication`
+- `_old_/1-kernel/1.1-cores/base`
+- `_old_/1-kernel/1.1-cores/interconnection`
+- `_old_/1-kernel/1.1-cores/communication`
 
 还包括它们在下面这些层中的真实使用方式：
 
-- `1-kernel/1.1-cores/task`
-- `1-kernel/1.1-cores/ui-runtime`
-- `1-kernel/1.1-cores/tcp-client`
-- `1-kernel/1.1-cores/tdp-client`
+- `_old_/1-kernel/1.1-cores/task`
+- `_old_/1-kernel/1.1-cores/ui-runtime`
+- `_old_/1-kernel/1.1-cores/tcp-client`
+- `_old_/1-kernel/1.1-cores/tdp-client`
 - `2-ui/*`
 - `3-adapter/*`
 - `4-assembly/*`
@@ -54,10 +54,10 @@
 
 证据位置：
 
-- [preInitiateInstanceInfo.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/interconnection/src/foundations/preInitiateInstanceInfo.ts)
-- [applicationManager.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/base/src/application/applicationManager.ts)
-- [modulePreSetup.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/src/application/modulePreSetup.ts)
-- [initialize.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/interconnection/src/features/actors/initialize.ts)
+- [preInitiateInstanceInfo.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/interconnection/src/foundations/preInitiateInstanceInfo.ts)
+- [applicationManager.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/base/src/application/applicationManager.ts)
+- [modulePreSetup.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/4-assembly/android/mixc-retail-rn84v2/src/application/modulePreSetup.ts)
+- [initialize.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/interconnection/src/features/actors/initialize.ts)
 
 重构后规则：
 
@@ -76,10 +76,10 @@
 
 证据位置：
 
-- [command.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/base/src/foundations/command.ts)
-- [usePaymentModal.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/2-ui/2.2-modules/mixc-trade/src/hooks/usePaymentModal.ts)
-- [commandTaskAdapter.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/task/src/foundations/taskAdapter/commandTaskAdapter.ts)
-- [useRequestStatus.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/interconnection/src/hooks/useRequestStatus.ts)
+- [command.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/base/src/foundations/command.ts)
+- [usePaymentModal.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/2-ui/2.2-modules/mixc-trade/src/hooks/usePaymentModal.ts)
+- [commandTaskAdapter.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/task/src/foundations/taskAdapter/commandTaskAdapter.ts)
+- [useRequestStatus.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/interconnection/src/hooks/useRequestStatus.ts)
 
 重构后规则：
 
@@ -97,9 +97,9 @@
 
 证据位置：
 
-- [command.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/base/src/foundations/command.ts)
-- [registerActorSystem.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/interconnection/src/foundations/registerActorSystem.ts)
-- [commandConverter.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/interconnection/src/foundations/commandConverter.ts)
+- [command.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/base/src/foundations/command.ts)
+- [registerActorSystem.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/interconnection/src/foundations/registerActorSystem.ts)
+- [commandConverter.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/interconnection/src/foundations/commandConverter.ts)
 
 重构后规则：
 
@@ -117,9 +117,9 @@
 
 证据位置：
 
-- [workspace.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/interconnection/src/foundations/workspace.ts)
-- [instanceMode.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/interconnection/src/foundations/instanceMode.ts)
-- [screen.ts actor](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/ui-runtime/src/features/actors/screen.ts)
+- [workspace.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/interconnection/src/foundations/workspace.ts)
+- [instanceMode.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/interconnection/src/foundations/instanceMode.ts)
+- [screen.ts actor](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/ui-runtime/src/features/actors/screen.ts)
 
 重构后规则：
 
@@ -139,8 +139,8 @@
 
 证据位置：
 
-- [instanceInfo.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/interconnection/src/features/slices/instanceInfo.ts)
-- [preInitiateInstanceInfo.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/interconnection/src/foundations/preInitiateInstanceInfo.ts)
+- [instanceInfo.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/interconnection/src/features/slices/instanceInfo.ts)
+- [preInitiateInstanceInfo.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/interconnection/src/foundations/preInitiateInstanceInfo.ts)
 - [kernel-core-ui-runtime-dev-methodology.md](/Users/dexter/Documents/workspace/idea/newPOSv1/spec/kernel-core-ui-runtime-dev-methodology.md)
 
 典型例子：
@@ -163,10 +163,10 @@
 
 证据位置：
 
-- [screen slice](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/ui-runtime/src/features/slices/screen.ts)
-- [uiVariables slice](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/ui-runtime/src/features/slices/uiVariables.ts)
-- [batchUpdateState.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/base/src/foundations/batchUpdateState.ts)
-- [stateSyncMiddleware.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/interconnection/src/features/middlewares/stateSyncMiddleware.ts)
+- [screen slice](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/ui-runtime/src/features/slices/screen.ts)
+- [uiVariables slice](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/ui-runtime/src/features/slices/uiVariables.ts)
+- [batchUpdateState.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/base/src/foundations/batchUpdateState.ts)
+- [stateSyncMiddleware.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/interconnection/src/features/middlewares/stateSyncMiddleware.ts)
 
 重构后规则：
 
@@ -185,7 +185,7 @@
 
 证据位置：
 
-- [applicationManager.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/base/src/application/applicationManager.ts)
+- [applicationManager.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/base/src/application/applicationManager.ts)
 - [2026-04-08-ui-runtime-design.md](/Users/dexter/Documents/workspace/idea/newPOSv1/docs/superpowers/specs/2026-04-08-ui-runtime-design.md)
 
 重构后规则：
@@ -203,8 +203,8 @@
 
 证据位置：
 
-- [applicationManager.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/base/src/application/applicationManager.ts)
-- [stateStorage.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/base/src/foundations/adapters/stateStorage.ts)
+- [applicationManager.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/base/src/application/applicationManager.ts)
+- [stateStorage.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/base/src/foundations/adapters/stateStorage.ts)
 
 重构后规则：
 
@@ -221,10 +221,10 @@
 
 证据位置：
 
-- [base screen.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/base/src/foundations/screen.ts)
-- [ui-runtime screen foundation](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/ui-runtime/src/foundations/screen.ts)
-- [ScreenContainer.tsx](/Users/dexter/Documents/workspace/idea/newPOSv1/2-ui/2.1-cores/runtime-base/src/ui/components/ScreenContainer.tsx)
-- [ModalContainer.tsx](/Users/dexter/Documents/workspace/idea/newPOSv1/2-ui/2.1-cores/runtime-base/src/ui/components/ModalContainer.tsx)
+- [base screen.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/base/src/foundations/screen.ts)
+- [ui-runtime screen foundation](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/ui-runtime/src/foundations/screen.ts)
+- [ScreenContainer.tsx](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/2-ui/2.1-cores/runtime-base/src/ui/components/ScreenContainer.tsx)
+- [ModalContainer.tsx](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/2-ui/2.1-cores/runtime-base/src/ui/components/ModalContainer.tsx)
 
 重构后规则：
 
@@ -241,9 +241,9 @@
 
 证据位置：
 
-- [ui-runtime screen foundation](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/ui-runtime/src/foundations/screen.ts)
-- [taskSystem.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/task/src/foundations/taskSystem.ts)
-- [taskDefinition accessory](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/task/src/foundations/accessory.ts)
+- [ui-runtime screen foundation](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/ui-runtime/src/foundations/screen.ts)
+- [taskSystem.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/task/src/foundations/taskSystem.ts)
+- [taskDefinition accessory](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/task/src/foundations/accessory.ts)
 
 重构后规则：
 
@@ -258,9 +258,9 @@ communication 里也已经把并发、限流、统计做成独立控制器，而
 
 证据位置：
 
-- [applicationManager.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/base/src/application/applicationManager.ts)
-- [RequestQueueManager.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/base/src/foundations/http/RequestQueueManager.ts)
-- [HttpExecutionController.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/communication/src/foundations/http/HttpExecutionController.ts)
+- [applicationManager.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/base/src/application/applicationManager.ts)
+- [RequestQueueManager.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/base/src/foundations/http/RequestQueueManager.ts)
+- [HttpExecutionController.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/communication/src/foundations/http/HttpExecutionController.ts)
 
 重构后规则：
 
@@ -278,11 +278,11 @@ communication 里也已经把并发、限流、统计做成独立控制器，而
 
 证据位置：
 
-- [defineHttpEndpoint.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/communication/src/foundations/http/defineHttpEndpoint.ts)
-- [defineSocketProfile.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/communication/src/foundations/ws/defineSocketProfile.ts)
-- [HttpRuntime.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/communication/src/foundations/http/HttpRuntime.ts)
-- [SocketRuntime.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/communication/src/foundations/ws/SocketRuntime.ts)
-- [ServerResolver.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/communication/src/foundations/shared/ServerResolver.ts)
+- [defineHttpEndpoint.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/communication/src/foundations/http/defineHttpEndpoint.ts)
+- [defineSocketProfile.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/communication/src/foundations/ws/defineSocketProfile.ts)
+- [HttpRuntime.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/communication/src/foundations/http/HttpRuntime.ts)
+- [SocketRuntime.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/communication/src/foundations/ws/SocketRuntime.ts)
+- [ServerResolver.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/communication/src/foundations/shared/ServerResolver.ts)
 
 重构后规则：
 
@@ -298,9 +298,9 @@ communication 里也已经把并发、限流、统计做成独立控制器，而
 
 证据位置：
 
-- [persistKey.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/base/src/foundations/persistKey.ts)
-- [batchUpdateState.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/base/src/foundations/batchUpdateState.ts)
-- [stateSyncMiddleware.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/interconnection/src/features/middlewares/stateSyncMiddleware.ts)
+- [persistKey.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/base/src/foundations/persistKey.ts)
+- [batchUpdateState.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/base/src/foundations/batchUpdateState.ts)
+- [stateSyncMiddleware.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/interconnection/src/features/middlewares/stateSyncMiddleware.ts)
 
 重构后规则：
 
@@ -318,8 +318,8 @@ assembly 和 adapter 层反复出现了 `ensureModulePreSetup()` 这种写法，
 
 证据位置：
 
-- [android modulePreSetup](/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/src/application/modulePreSetup.ts)
-- [electron modulePreSetup](/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/electron/mixc-retail-v1/src/application/modulePreSetup.ts)
+- [android modulePreSetup](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/4-assembly/android/mixc-retail-rn84v2/src/application/modulePreSetup.ts)
+- [electron modulePreSetup](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/4-assembly/electron/mixc-retail-v1/src/application/modulePreSetup.ts)
 
 重构后规则：
 

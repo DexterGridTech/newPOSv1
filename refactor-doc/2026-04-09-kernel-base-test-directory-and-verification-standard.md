@@ -210,7 +210,7 @@ test/
 1. 从 `1-kernel/1.1-base/*` 开始采用新规范
 2. `transport-runtime` 作为第一批按新规范落地的包
 3. 其余 `contracts / definition-registry / platform-ports / execution-runtime / topology-runtime / runtime-shell` 后续补切到 `test/`
-4. 老 `1-kernel/1.1-cores/*` 暂不强制改名，但其有效方法会逐步迁移
+4. 老 `_old_/1-kernel/1.1-cores/*` 暂不强制改名，但其有效方法会逐步迁移
 
 ---
 

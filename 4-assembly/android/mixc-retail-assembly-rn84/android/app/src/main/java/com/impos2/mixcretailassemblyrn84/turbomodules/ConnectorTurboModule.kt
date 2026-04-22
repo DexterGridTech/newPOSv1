@@ -22,7 +22,7 @@ import org.json.JSONObject
 /**
  * Connector TurboModule。
  *
- * 它把 adapterPure 中的 Connector 能力桥接到 JS，包括：
+ * 它把 adapter-android-v2 的 Connector 能力桥接到 JS，包括：
  * - 发起主动调用 `call`
  * - 建立订阅 `subscribe`
  * - 取消订阅 `unsubscribe`
@@ -68,7 +68,7 @@ class ConnectorTurboModule(reactContext: ReactApplicationContext) :
   }
 
   /**
-   * adapterPure 的 ConnectorManager 实例。
+   * adapter-android-v2 的 ConnectorManager 实例。
    */
   internal val connector by lazy { ConnectorManager.getInstance(reactApplicationContext) }
 

@@ -143,7 +143,7 @@ live harness 已按旧工程真实语义收紧：
 
 这意味着后续可以进入两个方向：
 
-1. 继续做旧 `1-kernel/1.1-cores/ui-runtime` 与 `navigation` 的能力对比清单，确认旧包还能否删除
+1. 继续做旧 `_old_/1-kernel/1.1-cores/ui-runtime` 与 `navigation` 的能力对比清单，确认旧包还能否删除
 2. 开始设计 `2-ui` 如何消费 `rendererKey`，建立真正的 UI 渲染桥接
 
 在当前阶段，`ui-runtime-v2` 已经具备继续承接后续迁移的基础条件。

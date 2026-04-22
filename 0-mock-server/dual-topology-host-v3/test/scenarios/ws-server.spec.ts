@@ -191,6 +191,79 @@ describe('dual-topology-host-v3 ws server', () => {
         }
     })
 
+    it('relays command-event messages back to the owner node when targetNodeId is omitted', async () => {
+        const server = createDualTopologyHostV3Server({
+            config: {
+                port: 0,
+            },
+        })
+        servers.push(server)
+        await server.start()
+
+        const {wsUrl} = server.getAddressInfo()
+        const master = await createTestWsClientV3(wsUrl)
+        const slave = await createTestWsClientV3(wsUrl)
+
+        try {
+            master.send(createHello({
+                helloId: 'hello-master-event-owner',
+                nodeId: 'master-node',
+                deviceId: 'master-device',
+                instanceMode: 'MASTER',
+                displayMode: 'PRIMARY',
+                standalone: true,
+            }))
+            const masterAck = await master.waitForMessage(message => message.type === 'hello-ack')
+            if (masterAck.type !== 'hello-ack' || !masterAck.sessionId) {
+                throw new Error('Master hello ack missing sessionId')
+            }
+
+            slave.send(createHello({
+                helloId: 'hello-slave-event-owner',
+                nodeId: 'slave-node',
+                deviceId: 'slave-device',
+                instanceMode: 'SLAVE',
+                displayMode: 'SECONDARY',
+                standalone: false,
+            }))
+            await slave.waitForMessage(message => message.type === 'hello-ack')
+
+            slave.send({
+                type: 'command-event',
+                envelope: {
+                    envelopeId: 'env-command-event-owner',
+                    sessionId: masterAck.sessionId,
+                    requestId: 'request-owner',
+                    commandId: 'command-owner',
+                    ownerNodeId: 'master-node',
+                    sourceNodeId: 'slave-node',
+                    eventType: 'completed',
+                    result: {
+                        requestId: 'request-owner',
+                        commandId: 'command-owner',
+                        commandName: 'demo.command',
+                        target: 'peer',
+                        status: 'COMPLETED',
+                        startedAt: 1,
+                        completedAt: 2,
+                        actorResults: [],
+                    },
+                    occurredAt: Date.now(),
+                },
+            })
+
+            const commandEvent = await master.waitForMessage(message => message.type === 'command-event')
+            expect(commandEvent.type).toBe('command-event')
+            if (commandEvent.type === 'command-event') {
+                expect(commandEvent.envelope?.ownerNodeId).toBe('master-node')
+                expect(commandEvent.envelope?.sourceNodeId).toBe('slave-node')
+                expect(commandEvent.envelope?.eventType).toBe('completed')
+            }
+        } finally {
+            await Promise.all([master.close(), slave.close()])
+        }
+    })
+
     it('rejects duplicate role occupancy', async () => {
         const server = createDualTopologyHostV3Server({
             config: {
@@ -237,6 +310,110 @@ describe('dual-topology-host-v3 ws server', () => {
             }
         } finally {
             await Promise.all([masterA.close(), masterB.close()])
+        }
+    })
+
+    it('relays envelope-based command dispatch and command event messages', async () => {
+        const server = createDualTopologyHostV3Server({
+            config: {
+                port: 0,
+            },
+        })
+        servers.push(server)
+        await server.start()
+
+        const {wsUrl} = server.getAddressInfo()
+        const master = await createTestWsClientV3(wsUrl)
+        const slave = await createTestWsClientV3(wsUrl)
+
+        try {
+            master.send(createHello({
+                helloId: 'hello-master-envelope',
+                nodeId: 'master-node',
+                deviceId: 'master-device',
+                instanceMode: 'MASTER',
+                displayMode: 'PRIMARY',
+                standalone: true,
+            }))
+            const masterAck = await master.waitForMessage(message => message.type === 'hello-ack')
+            if (masterAck.type !== 'hello-ack' || !masterAck.sessionId) {
+                throw new Error('Master hello ack missing sessionId')
+            }
+
+            slave.send(createHello({
+                helloId: 'hello-slave-envelope',
+                nodeId: 'slave-node',
+                deviceId: 'slave-device',
+                instanceMode: 'SLAVE',
+                displayMode: 'SECONDARY',
+                standalone: false,
+            }))
+            await slave.waitForMessage(message => message.type === 'hello-ack')
+
+            master.send({
+                type: 'command-dispatch',
+                envelope: {
+                    envelopeId: 'env-command-dispatch',
+                    sessionId: masterAck.sessionId,
+                    requestId: 'req-envelope',
+                    commandId: 'cmd-envelope',
+                    ownerNodeId: 'master-node',
+                    sourceNodeId: 'master-node',
+                    targetNodeId: 'slave-node',
+                    commandName: 'demo.envelope.command',
+                    payload: {ok: true},
+                    context: {},
+                    sentAt: Date.now(),
+                },
+            })
+
+            const commandDispatch = await slave.waitForMessage(message => {
+                return message.type === 'command-dispatch'
+                    && message.envelope?.commandId === 'cmd-envelope'
+            })
+            expect(commandDispatch.type).toBe('command-dispatch')
+            if (commandDispatch.type === 'command-dispatch') {
+                expect(commandDispatch.envelope).toMatchObject({
+                    targetNodeId: 'slave-node',
+                    commandName: 'demo.envelope.command',
+                    payload: {ok: true},
+                })
+            }
+
+            slave.send({
+                type: 'command-event',
+                envelope: {
+                    envelopeId: 'env-command-event',
+                    sessionId: masterAck.sessionId,
+                    requestId: 'req-envelope',
+                    commandId: 'cmd-envelope',
+                    ownerNodeId: 'master-node',
+                    sourceNodeId: 'slave-node',
+                    targetNodeId: 'master-node',
+                    eventType: 'completed',
+                    result: {
+                        ok: true,
+                    },
+                    occurredAt: Date.now(),
+                },
+            })
+
+            const commandEvent = await master.waitForMessage(message => {
+                return message.type === 'command-event'
+                    && message.envelope?.commandId === 'cmd-envelope'
+            })
+            expect(commandEvent.type).toBe('command-event')
+            if (commandEvent.type === 'command-event') {
+                expect(commandEvent.envelope).toMatchObject({
+                    targetNodeId: 'master-node',
+                    eventType: 'completed',
+                    result: {
+                        ok: true,
+                    },
+                })
+            }
+        } finally {
+            await Promise.all([master.close(), slave.close()])
         }
     })
 

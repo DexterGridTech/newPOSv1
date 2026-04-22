@@ -11,6 +11,7 @@ interface ILogManager {
   fun warn(tag: String, message: String)
   fun error(tag: String, message: String)
   fun getLogFiles(): List<LogFile>
+  fun uploadLogsForDate(request: LogUploadRequest): LogUploadResult
   fun getLogContent(fileName: String, maxBytes: Long = 200 * 1024L): String
   fun deleteLogFile(fileName: String): Boolean
   fun clearAllLogs(): Boolean

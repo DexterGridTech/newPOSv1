@@ -623,7 +623,7 @@ git commit -m "Migrate package consumers from topology V2 to V3"
 - Reference script: `scripts/mock-platform-prepare-activation.mjs`
 - Reference script: `scripts/android-assembly-visible-admin-loop.mjs`
 - Modify or create if needed: `scripts/android-topology-v3-verification.mjs`
-- Modify if needed: `1-kernel/server-config-v2/src/serverName.ts`
+- Modify if needed: `_old_/1-kernel/server-config-v2/src/serverName.ts`
 - Modify if needed: `4-assembly/android/mixc-retail-assembly-rn84/test/scenarios/assembly-live-admin-loop.spec.tsx`
 
 - [ ] **Step 1: Add or update a direct-RPC verification helper for V3**

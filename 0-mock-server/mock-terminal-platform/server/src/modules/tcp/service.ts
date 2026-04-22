@@ -263,7 +263,21 @@ export const createTaskRelease = (input: {
     updatedAt: timestamp,
   }).run()
 
-  return { releaseId }
+  return {
+    releaseId,
+    sandboxId,
+    taskType: input.taskType,
+    sourceType: input.sourceType,
+    sourceId: input.sourceId,
+    title: input.title,
+    targetSelector: { type: 'TERMINALS', terminalIds: input.targetTerminalIds },
+    payload: input.payload,
+    priority: input.priority,
+    status: 'APPROVED',
+    approvalStatus: 'APPROVED',
+    createdAt: timestamp,
+    updatedAt: timestamp,
+  }
 }
 
 export const createTaskInstancesForRelease = (input: { sandboxId: string; releaseId: string }) => {
@@ -307,6 +321,52 @@ export const createTaskInstancesForRelease = (input: { sandboxId: string; releas
   }
 }
 
+const resolveReleaseStatusFromInstances = (instanceStatuses: string[]): ReleaseStatus => {
+  if (instanceStatuses.length === 0) {
+    return 'APPROVED'
+  }
+
+  if (instanceStatuses.every((status) => status === 'COMPLETED')) {
+    return 'COMPLETED'
+  }
+
+  const finishedStatuses = new Set(['COMPLETED', 'FAILED', 'CANCELLED'])
+  if (instanceStatuses.every((status) => finishedStatuses.has(status))) {
+    if (instanceStatuses.every((status) => status === 'CANCELLED')) {
+      return 'CANCELLED'
+    }
+    if (instanceStatuses.some((status) => status === 'FAILED')) {
+      return 'FAILED'
+    }
+    return 'FAILED'
+  }
+
+  if (instanceStatuses.some((status) => status === 'IN_PROGRESS')) {
+    return 'IN_PROGRESS'
+  }
+
+  if (instanceStatuses.some((status) => finishedStatuses.has(status))) {
+    return 'IN_PROGRESS'
+  }
+
+  return 'DISPATCHING'
+}
+
+const syncTaskReleaseStatus = (releaseId: string, timestamp: number) => {
+  const rows = sqlite
+    .prepare('SELECT status FROM task_instances WHERE release_id = ?')
+    .all(releaseId) as Array<{ status: string }>
+  const nextStatus = resolveReleaseStatusFromInstances(rows.map((row) => row.status))
+  db.update(taskReleasesTable)
+    .set({
+      status: nextStatus,
+      updatedAt: timestamp,
+    })
+    .where(eq(taskReleasesTable.releaseId, releaseId))
+    .run()
+  return nextStatus
+}
+
 export const updateDeliveryStatus = (instanceId: string, deliveryStatus: DeliveryStatus, error?: unknown) => {
   const timestamp = now()
   db.update(taskInstancesTable)
@@ -344,7 +404,14 @@ export const reportTaskResult = (sandboxId: string, instanceId: string, input: {
     .where(eq(taskInstancesTable.instanceId, instanceId))
     .run()
 
-  return { instanceId, status: input.status }
+  const releaseStatus = syncTaskReleaseStatus(taskInstance.releaseId, timestamp)
+
+  return {
+    instanceId,
+    status: input.status,
+    releaseId: taskInstance.releaseId,
+    releaseStatus,
+  }
 }
 
 export const getTaskTrace = (sandboxId: string, instanceId: string) => {

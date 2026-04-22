@@ -258,6 +258,25 @@ export interface TaskInstanceItem {
   updatedAt: number
 }
 
+export interface TerminalLogFileItem {
+  logFileId: string
+  terminalId: string
+  logDate: string
+  displayIndex: number
+  displayRole: string
+  fileName: string
+  contentType: string
+  fileSize: number
+  sha256: string
+  storagePath: string
+  commandId?: string | null
+  instanceId?: string | null
+  releaseId?: string | null
+  uploadedAt: number
+  updatedAt: number
+  metadata: Record<string, unknown>
+}
+
 export interface TaskTrace {
   instance: Record<string, unknown>
   release: Record<string, unknown> | null
@@ -272,6 +291,11 @@ export interface SessionItem {
   terminalId: string
   clientVersion: string
   protocolVersion: string
+  localNodeId?: string | null
+  displayIndex?: number | null
+  displayCount?: number | null
+  instanceMode?: string | null
+  displayMode?: string | null
   status: string
   connectedAt: number
   lastHeartbeatAt?: number | null

@@ -22,7 +22,7 @@
 
 ## 2. 旧工程里真正值得继承的点
 
-旧 `1-kernel/1.1-cores/interconnection` 的关键链路不是简单的 WebSocket 队列 flush，而是：
+旧 `_old_/1-kernel/1.1-cores/interconnection` 的关键链路不是简单的 WebSocket 队列 flush，而是：
 
 1. 连接恢复后先执行 `synStateAtConnected`。
 2. 双方先交换本地状态摘要，而不是直接推送完整状态。
@@ -31,9 +31,9 @@
 
 对应代码位置：
 
-1. [instanceInterconnection.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/interconnection/src/features/actors/instanceInterconnection.ts)
-2. [stateSyncMiddleware.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/interconnection/src/features/middlewares/stateSyncMiddleware.ts)
-3. [syncRetryQueue.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/interconnection/src/foundations/syncRetryQueue.ts)
+1. [instanceInterconnection.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/interconnection/src/features/actors/instanceInterconnection.ts)
+2. [stateSyncMiddleware.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/interconnection/src/features/middlewares/stateSyncMiddleware.ts)
+3. [syncRetryQueue.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/interconnection/src/foundations/syncRetryQueue.ts)
 
 它的本质是一个“重连一致性屏障”：
 

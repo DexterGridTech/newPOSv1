@@ -4,9 +4,9 @@
 
 在旧 `tcp-control-runtime` 与 `tdp-sync-runtime` 已完成退役后，当前阶段最重要的问题不再是“还能不能继续删旧包”，而是：
 
-1. 对照旧 `1-kernel/1.1-cores/base`
-2. 对照旧 `1-kernel/1.1-cores/interconnection`
-3. 对照旧 `1-kernel/1.1-cores/communication`
+1. 对照旧 `_old_/1-kernel/1.1-cores/base`
+2. 对照旧 `_old_/1-kernel/1.1-cores/interconnection`
+3. 对照旧 `_old_/1-kernel/1.1-cores/communication`
 4. 明确现有 `1-kernel/1.1-base/*` v2 基座还缺哪些基础能力
 5. 并判断这些缺口会不会阻碍后续旧 core 和业务模块迁移
 
@@ -235,7 +235,7 @@
 1. 先不回头再处理已删除的旧包。
 2. 先补齐 `runtime-shell-v2` 关于 request observation / projection 的正式公开约定。
 3. 再补一份“旧 core helper -> 新 base helper”的正式迁移映射规则文档。
-4. 然后继续对照旧 `1-kernel/1.1-cores/base / interconnection / communication` 的具体业务特性，逐项验证 v2 基座是否已具备承接能力。
+4. 然后继续对照旧 `_old_/1-kernel/1.1-cores/base / interconnection / communication` 的具体业务特性，逐项验证 v2 基座是否已具备承接能力。
 5. 只有在这一步收口后，再进入旧 core 剩余能力或业务模块迁移。
 
 ---

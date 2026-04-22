@@ -2,7 +2,7 @@
 
 ## 1. 结论
 
-`tcp-control-runtime-v2` 是旧 `1-kernel/1.1-cores/tcp-client` 在新基础架构里的控制面迁移目标。
+`tcp-control-runtime-v2` 是旧 `_old_/1-kernel/1.1-cores/tcp-client` 在新基础架构里的控制面迁移目标。
 
 它负责终端控制面，不负责 TDP 数据面：
 

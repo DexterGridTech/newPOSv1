@@ -72,10 +72,9 @@
 
 ### 3.1 交付物层次
 
-终端最终交付物位于 `4-assembly`：
+终端当前活跃交付物位于 `4-assembly/android/mixc-retail-assembly-rn84`。
 
-1. Android：`4-assembly/android/mixc-retail-assembly-rn84`
-2. Electron：`4-assembly/electron/mixc-retail-v1`
+历史 Electron 产物已迁入 `_old_/4-assembly/electron/mixc-retail-v1`，仅作参考，不再作为当前工程交付入口。
 
 运行时分成两层：
 

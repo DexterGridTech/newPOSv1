@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use inline execution for this repository unless the user asks to split into subagents. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build `1-kernel/1.1-base/tdp-sync-runtime` as the new TDP data-plane sync package replacing old `1-kernel/1.1-cores/tdp-client`.
+**Goal:** Build `1-kernel/1.1-base/tdp-sync-runtime` as the new TDP data-plane sync package replacing old `_old_/1-kernel/1.1-cores/tdp-client`.
 
 **Architecture:** The package owns TDP session observation, minimal sync recovery state, raw projection cache, raw command inbox, and protocol control signals. It depends on `tcp-control-runtime` for `terminalId + accessToken`, reuses `transport-runtime` for HTTP/WS transport, and exposes only commands/selectors as public package contracts.
 

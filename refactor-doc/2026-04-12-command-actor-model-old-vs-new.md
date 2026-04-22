@@ -22,10 +22,10 @@
 
 参考：
 
-1. [actor.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/base/src/foundations/actor.ts)
-2. [command.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/base/src/foundations/command.ts)
-3. [registerActorSystem.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/interconnection/src/foundations/registerActorSystem.ts)
-4. [commandConverter.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/interconnection/src/foundations/commandConverter.ts)
+1. [actor.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/base/src/foundations/actor.ts)
+2. [command.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/base/src/foundations/command.ts)
+3. [registerActorSystem.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/interconnection/src/foundations/registerActorSystem.ts)
+4. [commandConverter.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/interconnection/src/foundations/commandConverter.ts)
 
 旧模型的运行路径本质上是：
 

@@ -19,6 +19,7 @@ export const createDefaultRuntimePlatformPortsV2 = (
 ): PlatformPorts => ({
     environmentMode: ports?.environmentMode ?? 'DEV',
     logger: ports?.logger ?? noopLogger,
+    terminalLogs: ports?.terminalLogs,
     scriptExecutor: ports?.scriptExecutor,
     stateStorage: ports?.stateStorage,
     secureStateStorage: ports?.secureStateStorage,

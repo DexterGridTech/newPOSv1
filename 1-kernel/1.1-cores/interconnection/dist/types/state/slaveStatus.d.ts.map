@@ -1,1 +1,0 @@
-{"version":3,"file":"slaveStatus.d.ts","sourceRoot":"","sources":["../../../src/types/state/slaveStatus.ts"],"names":[],"mappings":"AAAA,OAAO,EAAC,kBAAkB,EAAC,MAAM,0BAA0B,CAAC;AAC5D,OAAO,EAAC,WAAW,EAAE,SAAS,EAAC,MAAM,WAAW,CAAC;AAEjD,MAAM,WAAW,gBAAgB;IAC7B,WAAW,CAAC,EAAC,kBAAkB,CAAC,WAAW,GAAC,IAAI,CAAC,CAAA;IACjD,SAAS,CAAC,EAAC,kBAAkB,CAAC,SAAS,GAAC,IAAI,CAAC,CAAA;CAEhD"}

@@ -2,7 +2,7 @@
 
 ## 1. 文档目标
 
-本文档用于定义替代旧 `1-kernel/1.1-cores/interconnection` 的客户端侧运行时包。
+本文档用于定义替代旧 `_old_/1-kernel/1.1-cores/interconnection` 的客户端侧运行时包。
 
 旧 `interconnection` 不能被简单替换成一个同名新包，因为它实际混合了四类职责：
 

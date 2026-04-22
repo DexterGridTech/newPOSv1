@@ -85,6 +85,12 @@ Not allowed:
 2. Decide concrete UI components, renderer parts, visual layout, or product copy.
 3. Hard-code emulator, ADB, mock-server, or product address policy.
 
+Hard constraint:
+
+1. `1-kernel/**` must stay React-free. No `react`, `react-native`,
+   `react-redux`, JSX/TSX renderer ownership, or concrete UI implementation
+   imports are allowed in kernel packages.
+
 ### UI Base
 
 `2-ui/2.1-base` owns reusable UI modules, renderers, host-tool abstractions, and
@@ -136,6 +142,21 @@ Rules:
 
 This rule applies equally to assembly, UI, integration shells, and other kernel
 packages.
+
+### Kernel And UI Use Commands For Action Communication
+
+`kernel` and `UI` communicate actions through public commands, while UI reads
+kernel data through selectors/state.
+
+Rules:
+
+1. UI to kernel writes must dispatch public commands.
+2. Kernel to UI interaction requests must emit public request commands such as
+   `request-*`.
+3. UI rendering and presentation reads must use kernel selectors/state, not
+   command responses as the long-lived truth source.
+4. UI must not directly import and dispatch another package's slice actions.
+5. Kernel must not import or know concrete UI implementations.
 
 ### Interaction Requests Are Separate From Execution Commands
 

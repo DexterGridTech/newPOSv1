@@ -25,11 +25,11 @@
 
 对应旧实现可见：
 
-1. [batchUpdateState.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/base/src/foundations/batchUpdateState.ts)
-2. [stateSyncMiddleware.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/interconnection/src/features/middlewares/stateSyncMiddleware.ts)
-3. [instanceInterconnection.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/interconnection/src/features/actors/instanceInterconnection.ts)
-4. [instanceMode.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/interconnection/src/foundations/instanceMode.ts)
-5. [workspace.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/interconnection/src/foundations/workspace.ts)
+1. [batchUpdateState.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/base/src/foundations/batchUpdateState.ts)
+2. [stateSyncMiddleware.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/interconnection/src/features/middlewares/stateSyncMiddleware.ts)
+3. [instanceInterconnection.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/interconnection/src/features/actors/instanceInterconnection.ts)
+4. [instanceMode.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/interconnection/src/foundations/instanceMode.ts)
+5. [workspace.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/interconnection/src/foundations/workspace.ts)
 
 ---
 

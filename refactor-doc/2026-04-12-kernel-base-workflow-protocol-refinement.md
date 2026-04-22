@@ -2,7 +2,7 @@
 
 ## 1. 本轮目标
 
-这轮不是继续加功能代码，而是把旧 `1-kernel/1.1-cores/task` 对业务真正提供的能力，收敛成新 `1-kernel/1.1-base/workflow-runtime` 的正式协议。
+这轮不是继续加功能代码，而是把旧 `_old_/1-kernel/1.1-cores/task` 对业务真正提供的能力，收敛成新 `1-kernel/1.1-base/workflow-runtime` 的正式协议。
 
 重点回答四个问题：
 

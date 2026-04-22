@@ -5,6 +5,7 @@ import {
     createCommand,
     createKernelRuntimeV2,
     createModuleActorFactory,
+    defineCommand,
     defineKernelRuntimeModuleV2,
     onCommand,
 } from '@impos2/kernel-base-runtime-shell-v2'
@@ -177,6 +178,11 @@ const createPowerDisplaySwitchProbeModule = (events: Array<{
         ],
     })
 }
+
+const peerProbeCommand = defineCommand<{value: number}>({
+    moduleName: 'kernel.base.topology-runtime-v3.test.peer-probe',
+    commandName: 'run',
+})
 
 describe('topology-runtime-v3 context derivation', () => {
     it('derives standalone slave from displayIndex instead of instanceMode fallback', () => {
@@ -1231,6 +1237,240 @@ describe('topology-runtime-v3 context derivation', () => {
                     status: 'completed',
                 },
             },
+        })
+    })
+
+    it('dispatches peer commands over the topology socket and resolves command events', async () => {
+        const socketRuntimeSpy = createSocketRuntimeSpy()
+        const runtime = createKernelRuntimeV2({
+            localNodeId: createNodeId(),
+            displayContext: {
+                displayIndex: 0,
+                displayCount: 2,
+            },
+            platformPorts: createPlatformPorts({
+                environmentMode: 'DEV',
+                logger: createTestLogger('kernel.base.topology-runtime-v3.test.peer-command-outbound'),
+            }),
+            modules: [createTopologyRuntimeModuleV3({
+                assembly: {
+                    resolveSocketBinding() {
+                        return {
+                            socketRuntime: socketRuntimeSpy.socketRuntime,
+                            profileName: 'dual-topology.ws.topology-runtime-v3',
+                        }
+                    },
+                    createHelloRuntime() {
+                        return {
+                            nodeId: 'master-node',
+                            deviceId: 'master-device',
+                            instanceMode: 'MASTER',
+                            displayMode: 'PRIMARY',
+                            standalone: false,
+                            protocolVersion: '2026.04-v3',
+                            capabilities: ['state-sync', 'command-relay'],
+                        }
+                    },
+                },
+            })],
+        })
+
+        await runtime.start()
+        await runtime.dispatchCommand(createCommand(
+            topologyRuntimeV3CommandDefinitions.startTopologyConnection,
+            {},
+        ))
+        socketRuntimeSpy.emit('dual-topology.ws.topology-runtime-v3', 'message', {
+            type: 'message',
+            connectionId: 'c1',
+            message: {
+                type: 'hello-ack',
+                helloId: 'h1',
+                accepted: true,
+                sessionId: 's1',
+                peerRuntime: {
+                    nodeId: 'slave-node',
+                    deviceId: 'slave-device',
+                    instanceMode: 'SLAVE',
+                    displayMode: 'SECONDARY',
+                    standalone: false,
+                    protocolVersion: '2026.04-v3',
+                    capabilities: ['state-sync', 'command-relay'],
+                },
+                hostTime: Date.now(),
+            },
+            occurredAt: Date.now(),
+        })
+        socketRuntimeSpy.sendMock.mockClear()
+
+        const peerDispatchPromise = runtime.dispatchCommand(
+            createCommand(peerProbeCommand, {value: 7}),
+            {target: 'peer'},
+        )
+
+        await vi.waitFor(() => {
+            expect(socketRuntimeSpy.sendMock).toHaveBeenCalledWith(
+                'dual-topology.ws.topology-runtime-v3',
+                expect.objectContaining({
+                    type: 'command-dispatch',
+                }),
+            )
+        })
+
+        const dispatchMessage = socketRuntimeSpy.sendMock.mock.calls
+            .map((call: unknown[]) => call[1])
+            .find((message: any) => message?.type === 'command-dispatch') as any
+        expect(dispatchMessage.envelope).toMatchObject({
+            sessionId: 's1',
+            ownerNodeId: runtime.localNodeId,
+            sourceNodeId: runtime.localNodeId,
+            targetNodeId: 'slave-node',
+            commandName: peerProbeCommand.commandName,
+            payload: {value: 7},
+        })
+
+        socketRuntimeSpy.emit('dual-topology.ws.topology-runtime-v3', 'message', {
+            type: 'message',
+            connectionId: 'c1',
+            message: {
+                type: 'command-event',
+                envelope: {
+                    envelopeId: 'e-command-completed',
+                    sessionId: 's1',
+                    requestId: dispatchMessage.envelope.requestId,
+                    commandId: dispatchMessage.envelope.commandId,
+                    ownerNodeId: runtime.localNodeId,
+                    sourceNodeId: 'slave-node',
+                    eventType: 'completed',
+                    result: {
+                        requestId: dispatchMessage.envelope.requestId,
+                        commandId: dispatchMessage.envelope.commandId,
+                        commandName: peerProbeCommand.commandName,
+                        target: 'local',
+                        status: 'COMPLETED',
+                        startedAt: 1,
+                        completedAt: 2,
+                        actorResults: [{
+                            actorKey: 'kernel.base.topology-runtime-v3.test.peer-probe.RemoteActor',
+                            status: 'COMPLETED',
+                            result: {value: 7},
+                        }],
+                    },
+                    occurredAt: 2,
+                },
+            },
+            occurredAt: Date.now(),
+        })
+
+        const peerDispatchResult = await peerDispatchPromise
+
+        expect(peerDispatchResult.status).toBe('COMPLETED')
+        expect(runtime.queryRequest(dispatchMessage.envelope.requestId)).toMatchObject({
+            status: 'COMPLETED',
+            commands: [
+                {
+                    commandId: dispatchMessage.envelope.commandId,
+                    status: 'COMPLETED',
+                },
+            ],
+        })
+    })
+
+    it('executes incoming command-dispatch locally and returns command-event results', async () => {
+        const socketRuntimeSpy = createSocketRuntimeSpy()
+        const defineActor = createModuleActorFactory('kernel.base.topology-runtime-v3.test.peer-probe')
+        const peerProbeModule = defineKernelRuntimeModuleV2({
+            moduleName: 'kernel.base.topology-runtime-v3.test.peer-probe',
+            packageVersion: '0.0.1',
+            commandDefinitions: [peerProbeCommand],
+            actorDefinitions: [
+                defineActor('RemoteActor', [
+                    onCommand(peerProbeCommand, context => ({
+                        value: context.command.payload.value,
+                        nodeId: String(context.localNodeId),
+                    })),
+                ]),
+            ],
+        })
+        const runtime = createKernelRuntimeV2({
+            localNodeId: createNodeId(),
+            displayContext: {
+                displayIndex: 1,
+                displayCount: 2,
+            },
+            platformPorts: createPlatformPorts({
+                environmentMode: 'DEV',
+                logger: createTestLogger('kernel.base.topology-runtime-v3.test.peer-command-inbound'),
+            }),
+            modules: [
+                peerProbeModule,
+                createTopologyRuntimeModuleV3({
+                    assembly: {
+                        resolveSocketBinding() {
+                            return {
+                                socketRuntime: socketRuntimeSpy.socketRuntime,
+                                profileName: 'dual-topology.ws.topology-runtime-v3',
+                            }
+                        },
+                        createHelloRuntime() {
+                            return {
+                                nodeId: 'slave-node',
+                                deviceId: 'slave-device',
+                                instanceMode: 'SLAVE',
+                                displayMode: 'SECONDARY',
+                                standalone: false,
+                                protocolVersion: '2026.04-v3',
+                                capabilities: ['state-sync', 'command-relay'],
+                            }
+                        },
+                    },
+                }),
+            ],
+        })
+
+        await runtime.start()
+        socketRuntimeSpy.sendMock.mockClear()
+        socketRuntimeSpy.emit('dual-topology.ws.topology-runtime-v3', 'message', {
+            type: 'message',
+            connectionId: 'c1',
+            message: {
+                type: 'command-dispatch',
+                envelope: {
+                    envelopeId: 'e-command-dispatch',
+                    sessionId: 's1',
+                    requestId: 'r-peer-command',
+                    commandId: 'c-peer-command',
+                    ownerNodeId: 'master-node',
+                    sourceNodeId: 'master-node',
+                    targetNodeId: runtime.localNodeId,
+                    commandName: peerProbeCommand.commandName,
+                    payload: {value: 9},
+                    context: {},
+                    sentAt: 1,
+                },
+            },
+            occurredAt: Date.now(),
+        })
+
+        await vi.waitFor(() => {
+            const commandEvents = socketRuntimeSpy.sendMock.mock.calls
+                .map((call: unknown[]) => call[1])
+                .filter((message: any) => message?.type === 'command-event')
+            expect(commandEvents.map((message: any) => message.envelope.eventType)).toEqual([
+                'accepted',
+                'started',
+                'completed',
+            ])
+            expect(commandEvents.at(-1)?.envelope.result).toMatchObject({
+                commandName: peerProbeCommand.commandName,
+                status: 'COMPLETED',
+                actorResults: [
+                    expect.objectContaining({
+                        actorKey: 'kernel.base.topology-runtime-v3.test.peer-probe.RemoteActor',
+                        status: 'COMPLETED',
+                    }),
+                ],
+            })
         })
     })
 })

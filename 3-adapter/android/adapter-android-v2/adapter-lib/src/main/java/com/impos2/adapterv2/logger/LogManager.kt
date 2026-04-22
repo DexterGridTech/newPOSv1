@@ -4,13 +4,21 @@ import android.content.Context
 import android.util.Log
 import com.impos2.adapterv2.interfaces.ILogManager
 import com.impos2.adapterv2.interfaces.LogFile
+import com.impos2.adapterv2.interfaces.LogUploadRequest
+import com.impos2.adapterv2.interfaces.LogUploadResult
+import com.impos2.adapterv2.interfaces.UploadedLogFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import org.json.JSONObject
 import java.io.File
 import java.io.FileWriter
+import java.net.HttpURLConnection
+import java.net.URL
+import java.security.MessageDigest
+import java.util.Base64
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -18,7 +26,7 @@ import java.util.Locale
 /**
  * 文件日志管理器。
  *
- * 这个类把控制台日志与落盘日志统一管理，目标是让 adapterPure 在真机问题排查时具备最基本的
+ * 这个类把控制台日志与落盘日志统一管理，目标是让 adapter-android-v2 在真机问题排查时具备最基本的
  * 可追踪性。当前它负责：
  * - 统一写 debug/info/warn/error；
  * - 按天切分日志文件；
@@ -73,6 +81,68 @@ class LogManager private constructor(context: Context) : ILogManager {
       ?.sortedByDescending { it.lastModified() }
       ?.map { LogFile(it.name, it.absolutePath, it.length(), it.lastModified()) }
       ?: emptyList()
+  }
+
+  override fun uploadLogsForDate(request: LogUploadRequest): LogUploadResult {
+    val dayPrefix = request.logDate.trim()
+    require(dayPrefix.isNotEmpty()) { "logDate is required" }
+    require(request.uploadUrl.isNotBlank()) { "uploadUrl is required" }
+
+    val candidates = getLogFiles()
+      .filter { it.fileName.startsWith(dayPrefix) }
+      .sortedBy { it.fileName }
+
+    val uploaded = mutableListOf<UploadedLogFile>()
+    val skipped = mutableListOf<String>()
+
+    candidates.forEach { file ->
+      val content = File(file.filePath).readBytes()
+      val checksum = sha256(content)
+      val payload = JSONObject().apply {
+        put("sandboxId", request.sandboxId)
+        put("logDate", request.logDate)
+        put("displayIndex", request.displayIndex)
+        put("displayRole", request.displayRole)
+        put("terminalId", request.terminalId)
+        put("commandId", request.commandId)
+        put("instanceId", request.instanceId)
+        put("releaseId", request.releaseId)
+        put("fileName", file.fileName)
+        put("contentType", "text/plain")
+        put("contentBase64", Base64.getEncoder().encodeToString(content))
+        put("metadata", JSONObject(request.metadata + mapOf(
+          "checksum" to checksum,
+          "overwrite" to request.overwrite,
+        )))
+      }.toString()
+
+      val response = postJson(request.uploadUrl, payload, request.headers)
+      if (response.first !in 200..299) {
+        skipped += file.fileName
+        Log.e(TAG, "日志上传失败 status=${response.first} file=${file.fileName} body=${response.second}")
+      } else {
+        uploaded += UploadedLogFile(
+          fileName = file.fileName,
+          fileSize = file.fileSize,
+          uploadedAt = System.currentTimeMillis(),
+          checksum = checksum,
+          storageKey = null,
+          metadata = mapOf(
+            "response" to response.second,
+          ),
+        )
+      }
+    }
+
+    return LogUploadResult(
+      terminalId = request.terminalId,
+      displayIndex = request.displayIndex,
+      displayRole = request.displayRole,
+      logDate = request.logDate,
+      uploadedFiles = uploaded,
+      skippedFiles = skipped,
+      metadata = request.metadata,
+    )
   }
 
   override fun getLogContent(fileName: String, maxBytes: Long): String {
@@ -139,6 +209,40 @@ class LogManager private constructor(context: Context) : ILogManager {
           it.delete()
         }
       }
+    }
+  }
+
+  private fun sha256(content: ByteArray): String {
+    val digest = MessageDigest.getInstance("SHA-256").digest(content)
+    return digest.joinToString("") { byte -> "%02x".format(byte) }
+  }
+
+  private fun postJson(
+    targetUrl: String,
+    json: String,
+    headers: Map<String, String>,
+  ): Pair<Int, String> {
+    val connection = URL(targetUrl).openConnection() as HttpURLConnection
+    return try {
+      connection.requestMethod = "POST"
+      connection.doOutput = true
+      connection.connectTimeout = 30_000
+      connection.readTimeout = 30_000
+      connection.setRequestProperty("Content-Type", "application/json")
+      headers.forEach { (key, value) ->
+        connection.setRequestProperty(key, value)
+      }
+      connection.outputStream.use { output ->
+        output.write(json.toByteArray(Charsets.UTF_8))
+      }
+      val status = connection.responseCode
+      val body = (if (status in 200..299) connection.inputStream else connection.errorStream)
+        ?.bufferedReader()
+        ?.use { it.readText() }
+        .orEmpty()
+      status to body
+    } finally {
+      connection.disconnect()
     }
   }
 }

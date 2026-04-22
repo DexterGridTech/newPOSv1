@@ -3,7 +3,7 @@ import { db, sqlite } from '../../database/index.js'
 import { changeLogsTable, commandOutboxTable, projectionsTable, sessionsTable, taskInstancesTable, terminalsTable, topicsTable } from '../../database/schema.js'
 import { createId, now, parseJson } from '../../shared/utils.js'
 import { assertSandboxUsable } from '../sandbox/service.js'
-import { forceCloseOnlineSession, getOnlineSessionById, listOnlineSessionsByTerminalId } from './wsSessionRegistry.js'
+import { forceCloseOnlineSession, getOnlineSessionById, listOnlineMasterSessionsByTerminalId, listOnlineSessionsByTerminalId } from './wsSessionRegistry.js'
 import type { TdpProjectionEnvelope, TdpServerMessage } from './wsProtocol.js'
 
 const toIsoTime = (timestamp: number) => new Date(timestamp).toISOString()
@@ -185,7 +185,17 @@ export const listSessions = (sandboxId: string) => {
   })
 }
 
-export const connectSession = (input: { sandboxId: string; terminalId: string; clientVersion: string; protocolVersion: string }) => {
+export const connectSession = (input: {
+  sandboxId: string
+  terminalId: string
+  clientVersion: string
+  protocolVersion: string
+  localNodeId?: string | null
+  displayIndex?: number | null
+  displayCount?: number | null
+  instanceMode?: 'MASTER' | 'SLAVE' | null
+  displayMode?: 'PRIMARY' | 'SECONDARY' | null
+}) => {
   const sandboxId = input.sandboxId
   assertSandboxUsable(sandboxId)
   const sessionId = createId('session')
@@ -196,6 +206,11 @@ export const connectSession = (input: { sandboxId: string; terminalId: string; c
     sandboxId,
     clientVersion: input.clientVersion,
     protocolVersion: input.protocolVersion,
+    localNodeId: input.localNodeId ?? null,
+    displayIndex: input.displayIndex ?? null,
+    displayCount: input.displayCount ?? null,
+    instanceMode: input.instanceMode ?? null,
+    displayMode: input.displayMode ?? null,
     status: 'CONNECTED',
     connectedAt: timestamp,
     disconnectedAt: null,
@@ -469,10 +484,11 @@ const dispatchRemoteControlRelease = (sandboxId: string, releaseId: string) => {
     const topicKey = typeof basePayload.topicKey === 'string' && basePayload.topicKey.trim()
       ? basePayload.topicKey.trim()
       : 'remote.control'
-    const payload = {
+    const payload: Record<string, unknown> = {
       ...basePayload,
       instanceId: instance.instance_id,
     }
+    const commandType = typeof payload.commandType === 'string' ? payload.commandType : undefined
 
     db.insert(commandOutboxTable).values({
       commandId,
@@ -489,7 +505,9 @@ const dispatchRemoteControlRelease = (sandboxId: string, releaseId: string) => {
       updatedAt: timestamp,
     }).run()
 
-    const sessions = listOnlineSessionsByTerminalId(sandboxId, instance.terminal_id)
+    const sessions = commandType === 'UPLOAD_TERMINAL_LOGS'
+      ? listOnlineMasterSessionsByTerminalId(sandboxId, instance.terminal_id)
+      : listOnlineSessionsByTerminalId(sandboxId, instance.terminal_id)
     for (const session of sessions) {
       session.socket.send(JSON.stringify({
         type: 'COMMAND_DELIVERED',

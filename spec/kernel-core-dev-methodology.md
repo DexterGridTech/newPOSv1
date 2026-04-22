@@ -10,7 +10,7 @@
 
 ## 适用范围
 
-适用于满足下面任一条件的 `1-kernel/1.1-cores/*` 包：
+适用于满足下面任一条件的 `1-kernel/1.1-base/*` 包：
 
 1. 需要通过 `communication` / HTTP / WebSocket 与服务端通信。
 2. 需要在本地维护客户端状态并支持重启恢复。
@@ -126,7 +126,7 @@ TDP 已验证的做法是：
 
 本次已经验证可复用的最小实现位于：
 
-1. `1-kernel/1.1-cores/shared-dev/fileStateStorage.ts`
+1. `1-kernel/test-support/storageHarness.ts`
 
 这个 adapter 的作用：
 
@@ -271,9 +271,10 @@ corepack yarn mock:platform:dev
 
 ### 开发与排查时优先看的位置
 
-1. `1-kernel/1.1-cores/shared-dev/fileStateStorage.ts`
-2. `1-kernel/1.1-cores/tcp-client/dev/index.ts`
-3. `1-kernel/1.1-cores/tdp-client/dev/index.ts`
+1. `1-kernel/test-support/storageHarness.ts`
+2. `1-kernel/1.1-base/tcp-control-runtime-v2/test/helpers/liveHarness.ts`
+3. `1-kernel/1.1-base/tdp-sync-runtime-v2/test/helpers/liveHarness.ts`
+4. `1-kernel/1.1-base/tdp-sync-runtime-v2/test/helpers/terminalTopologyIntegrationHarnessV3.ts`
 
 这三处已经形成了当前仓库里最接近“可复用模板”的实现。
 

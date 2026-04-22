@@ -32,25 +32,11 @@ function fileInfo(filePath) {
 }
 
 function collectArtifacts(appId) {
-  if (appId === 'assembly-android-mixc-retail-rn84v2') {
-    return {
-      apk: fileInfo(path.join(process.cwd(), '4-assembly/android/mixc-retail-rn84v2/android/app/build/outputs/apk/release/app-release.apk')),
-      bundle: fileInfo(path.join(process.cwd(), '4-assembly/android/mixc-retail-rn84v2/android/app/build/generated/assets/react/release/index.android.bundle')),
-      sourceMap: fileInfo(path.join(process.cwd(), '4-assembly/android/mixc-retail-rn84v2/android/app/build/intermediates/sourcemaps/react/release/index.android.bundle.packager.map')),
-    }
-  }
-
   if (appId === 'assembly-android-mixc-retail-rn84') {
     return {
       apk: fileInfo(path.join(process.cwd(), '4-assembly/android/mixc-retail-assembly-rn84/android/app/build/outputs/apk/release/app-release.apk')),
       bundle: fileInfo(path.join(process.cwd(), '4-assembly/android/mixc-retail-assembly-rn84/android/app/build/generated/assets/react/release/index.android.bundle')),
       sourceMap: fileInfo(path.join(process.cwd(), '4-assembly/android/mixc-retail-assembly-rn84/android/app/build/intermediates/sourcemaps/react/release/index.android.bundle.packager.map')),
-    }
-  }
-
-  if (appId === 'assembly-electron-mixc-retail-v1') {
-    return {
-      packagedAppVersion: fileInfo(path.join(process.cwd(), '4-assembly/electron/mixc-retail-v1/out/mixc-retail-v1-darwin-arm64/version')),
     }
   }
 

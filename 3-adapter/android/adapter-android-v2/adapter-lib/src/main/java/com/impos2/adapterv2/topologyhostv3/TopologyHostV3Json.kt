@@ -15,19 +15,35 @@ internal object TopologyHostV3Ids {
 }
 
 internal fun JSONObject.optStringOrNull(key: String): String? {
-  return if (has(key) && !isNull(key)) optString(key) else null
+  return try {
+    if (isNull(key)) null else optString(key).takeIf { it.isNotEmpty() }
+  } catch (_: Throwable) {
+    null
+  }
 }
 
 internal fun JSONObject.optLongOrNull(key: String): Long? {
-  return if (has(key) && !isNull(key)) optLong(key) else null
+  return try {
+    if (isNull(key)) null else optLong(key)
+  } catch (_: Throwable) {
+    null
+  }
 }
 
 internal fun JSONObject.optJsonObject(key: String): JSONObject? {
-  return if (has(key) && !isNull(key)) optJSONObject(key) else null
+  return try {
+    if (isNull(key)) null else optJSONObject(key)
+  } catch (_: Throwable) {
+    null
+  }
 }
 
 internal fun JSONObject.optJsonArray(key: String): JSONArray? {
-  return if (has(key) && !isNull(key)) optJSONArray(key) else null
+  return try {
+    if (isNull(key)) null else optJSONArray(key)
+  } catch (_: Throwable) {
+    null
+  }
 }
 
 internal fun JSONArray.toStringList(): List<String> {

@@ -246,6 +246,11 @@ export const initializeDatabase = (): void => {
       sandbox_id TEXT NOT NULL,
       client_version TEXT NOT NULL,
       protocol_version TEXT NOT NULL,
+      local_node_id TEXT,
+      display_index INTEGER,
+      display_count INTEGER,
+      instance_mode TEXT,
+      display_mode TEXT,
       status TEXT NOT NULL,
       connected_at INTEGER NOT NULL,
       disconnected_at INTEGER,
@@ -396,6 +401,30 @@ export const initializeDatabase = (): void => {
     );
     CREATE INDEX IF NOT EXISTS idx_terminal_version_reports_terminal
       ON terminal_version_reports (sandbox_id, terminal_id, reported_at);
+    CREATE TABLE IF NOT EXISTS terminal_log_files (
+      log_file_id TEXT PRIMARY KEY,
+      sandbox_id TEXT NOT NULL,
+      terminal_id TEXT NOT NULL,
+      log_date TEXT NOT NULL,
+      display_index INTEGER NOT NULL,
+      display_role TEXT NOT NULL,
+      file_name TEXT NOT NULL,
+      content_type TEXT NOT NULL,
+      file_size INTEGER NOT NULL,
+      sha256 TEXT NOT NULL,
+      storage_path TEXT NOT NULL,
+      command_id TEXT,
+      instance_id TEXT,
+      release_id TEXT,
+      metadata_json TEXT NOT NULL,
+      uploaded_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL
+    );
+    DROP INDEX IF EXISTS idx_terminal_log_files_identity;
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_terminal_log_files_identity_v2
+      ON terminal_log_files (sandbox_id, terminal_id, log_date, display_index, display_role, file_name);
+    CREATE INDEX IF NOT EXISTS idx_terminal_log_files_terminal_date
+      ON terminal_log_files (sandbox_id, terminal_id, log_date, updated_at);
     CREATE TABLE IF NOT EXISTS tdp_command_outbox (
       command_id TEXT PRIMARY KEY,
       sandbox_id TEXT NOT NULL,
@@ -457,6 +486,11 @@ export const initializeDatabase = (): void => {
   ensureColumn('tdp_sessions', 'last_delivered_revision', 'INTEGER')
   ensureColumn('tdp_sessions', 'last_acked_revision', 'INTEGER')
   ensureColumn('tdp_sessions', 'last_applied_revision', 'INTEGER')
+  ensureColumn('tdp_sessions', 'local_node_id', 'TEXT')
+  ensureColumn('tdp_sessions', 'display_index', 'INTEGER')
+  ensureColumn('tdp_sessions', 'display_count', 'INTEGER')
+  ensureColumn('tdp_sessions', 'instance_mode', 'TEXT')
+  ensureColumn('tdp_sessions', 'display_mode', 'TEXT')
   migrateTdpProjectionIdentity()
   migrateTdpChangeLogIdentity()
   migrateTdpChangeLogCursor()

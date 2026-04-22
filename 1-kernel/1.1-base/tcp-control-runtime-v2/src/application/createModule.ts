@@ -8,7 +8,12 @@ import {
     defineKernelRuntimeModuleV2,
     deriveKernelRuntimeModuleDescriptorV2,
 } from '@impos2/kernel-base-runtime-shell-v2'
-import {createHttpRuntime, type HttpTransport} from '@impos2/kernel-base-transport-runtime'
+import {
+    createHttpRuntime,
+    type HttpSuccessResponse,
+    type HttpTransport,
+    type HttpTransportRequest,
+} from '@impos2/kernel-base-transport-runtime'
 import {SERVER_NAME_MOCK_TERMINAL_PLATFORM} from '@impos2/kernel-server-config-v2'
 import {moduleName} from '../moduleName'
 import {
@@ -29,7 +34,9 @@ const DEFAULT_MOCK_TERMINAL_PLATFORM_ADDRESS_NAME = 'local-default'
  */
 const createFetchHttpTransport = (): HttpTransport => {
     return {
-        async execute(request) {
+        async execute<TPath, TQuery, TBody, TResponse>(
+            request: HttpTransportRequest<TPath, TQuery, TBody>,
+        ): Promise<HttpSuccessResponse<TResponse>> {
             const response = await fetch(request.url, {
                 method: request.endpoint.method,
                 headers: {
@@ -40,7 +47,7 @@ const createFetchHttpTransport = (): HttpTransport => {
             })
 
             return {
-                data: await response.json(),
+                data: await response.json() as TResponse,
                 status: response.status,
                 statusText: response.statusText,
                 headers: (() => {

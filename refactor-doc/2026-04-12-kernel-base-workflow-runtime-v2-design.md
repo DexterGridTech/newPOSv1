@@ -2,7 +2,7 @@
 
 ## 1. 结论
 
-`workflow-runtime-v2` 是旧 `1-kernel/1.1-cores/task` 在新基础架构下的正式迁移目标。
+`workflow-runtime-v2` 是旧 `_old_/1-kernel/1.1-cores/task` 在新基础架构下的正式迁移目标。
 
 它不是服务端 task 域，也不是 TDP projection 包，而是终端本地工作流编排运行时。
 

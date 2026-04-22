@@ -4,7 +4,7 @@
 
 本文档用于回答当前阶段最关键的问题：
 
-1. 旧业务包到底如何真实使用 `1-kernel/1.1-cores/base`、`interconnection`、`communication`。
+1. 旧业务包到底如何真实使用 `_old_/1-kernel/1.1-cores/base`、`interconnection`、`communication`。
 2. 这些真实使用模式，在新的 `1-kernel/1.1-base/*` 中是否已经有正式承载。
 3. 哪些地方已经被测试覆盖，哪些地方还需要继续补验证。
 
@@ -20,17 +20,17 @@
 
 本轮重点复核了以下业务包和旧 core 文件：
 
-1. `1-kernel/1.2-modules/pay-base`
-2. `1-kernel/1.2-modules/order-create-traditional`
-3. `1-kernel/1.2-modules/user-base`
-4. `1-kernel/1.2-modules/product-from-contract`
-5. `1-kernel/1.2-modules/mixc-user-login`
-6. `2-ui/2.2-modules/mixc-trade`
-7. `2-ui/2.1-cores/admin`
-8. `1-kernel/1.1-cores/interconnection/src/foundations/workspace.ts`
-9. `1-kernel/1.1-cores/interconnection/src/foundations/instanceMode.ts`
-10. `1-kernel/1.1-cores/communication/src/foundations/http/*`
-11. `1-kernel/1.1-cores/communication/src/supports/errors/normalizeCommunicationError.ts`
+1. `_old_/1-kernel/1.2-modules/pay-base`
+2. `_old_/1-kernel/1.2-modules/order-create-traditional`
+3. `_old_/1-kernel/1.2-modules/user-base`
+4. `_old_/1-kernel/1.2-modules/product-from-contract`
+5. `_old_/1-kernel/1.2-modules/mixc-user-login`
+6. `_old_/2-ui/2.2-modules/mixc-trade`
+7. `_old_/2-ui/2.1-cores/admin`
+8. `_old_/1-kernel/1.1-cores/interconnection/src/foundations/workspace.ts`
+9. `_old_/1-kernel/1.1-cores/interconnection/src/foundations/instanceMode.ts`
+10. `_old_/1-kernel/1.1-cores/communication/src/foundations/http/*`
+11. `_old_/1-kernel/1.1-cores/communication/src/supports/errors/normalizeCommunicationError.ts`
 
 ---
 
@@ -47,9 +47,9 @@
 
 典型位置：
 
-1. `1-kernel/1.2-modules/pay-base/src/types/shared/moduleStateKey.ts`
-2. `1-kernel/1.2-modules/user-base/src/types/shared/moduleStateKey.ts`
-3. `2-ui/2.2-modules/mixc-management/src/types/shared/moduleStateKey.ts`
+1. `_old_/1-kernel/1.2-modules/pay-base/src/types/shared/moduleStateKey.ts`
+2. `_old_/1-kernel/1.2-modules/user-base/src/types/shared/moduleStateKey.ts`
+3. `_old_/2-ui/2.2-modules/mixc-management/src/types/shared/moduleStateKey.ts`
 
 这里真正有价值的不是旧 helper 名字本身，而是这条规则：
 
@@ -66,10 +66,10 @@
 
 典型位置：
 
-1. `1-kernel/1.2-modules/order-create-traditional/src/selectors/selectDraftProductOrders.ts`
-2. `1-kernel/1.2-modules/pay-base/src/features/actors/paymentRequest.ts`
-3. `1-kernel/1.1-cores/interconnection/src/foundations/workspace.ts`
-4. `1-kernel/1.1-cores/interconnection/src/foundations/instanceMode.ts`
+1. `_old_/1-kernel/1.2-modules/order-create-traditional/src/selectors/selectDraftProductOrders.ts`
+2. `_old_/1-kernel/1.2-modules/pay-base/src/features/actors/paymentRequest.ts`
+3. `_old_/1-kernel/1.1-cores/interconnection/src/foundations/workspace.ts`
+4. `_old_/1-kernel/1.1-cores/interconnection/src/foundations/instanceMode.ts`
 
 这里真正的业务需求是：
 
@@ -86,10 +86,10 @@
 
 典型位置：
 
-1. `1-kernel/1.2-modules/user-base/src/features/actors/user.ts`
-2. `1-kernel/1.2-modules/pay-base/src/features/actors/paymentRequest.ts`
-3. `1-kernel/1.2-modules/product-from-contract/src/features/actors/contract.ts`
-4. `2-ui/2.2-modules/mixc-trade/src/hooks/usePaymentModal.ts`
+1. `_old_/1-kernel/1.2-modules/user-base/src/features/actors/user.ts`
+2. `_old_/1-kernel/1.2-modules/pay-base/src/features/actors/paymentRequest.ts`
+3. `_old_/1-kernel/1.2-modules/product-from-contract/src/features/actors/contract.ts`
+4. `_old_/2-ui/2.2-modules/mixc-trade/src/hooks/usePaymentModal.ts`
 
 旧实现依赖 `storeEntry`，但抽掉旧坏设计后，保留下来的本质需求其实是：
 
@@ -106,10 +106,10 @@
 
 典型位置：
 
-1. `1-kernel/1.2-modules/pay-base/src/types/state/paymentFunction.ts`
-2. `1-kernel/1.2-modules/pay-base/src/types/state/payingOrder.ts`
-3. `1-kernel/1.2-modules/order-create-traditional/src/types/state/createOrder.ts`
-4. `1-kernel/1.2-modules/product-from-contract/src/types/state/contract.ts`
+1. `_old_/1-kernel/1.2-modules/pay-base/src/types/state/paymentFunction.ts`
+2. `_old_/1-kernel/1.2-modules/pay-base/src/types/state/payingOrder.ts`
+3. `_old_/1-kernel/1.2-modules/order-create-traditional/src/types/state/createOrder.ts`
+4. `_old_/1-kernel/1.2-modules/product-from-contract/src/types/state/contract.ts`
 
 这说明两件事必须保留：
 
@@ -125,10 +125,10 @@
 
 典型位置：
 
-1. `1-kernel/1.2-modules/user-base/src/features/slices/user.ts`
-2. `1-kernel/1.2-modules/pay-base/src/features/slices/paymentFunction.ts`
-3. `1-kernel/1.2-modules/order-create-traditional/src/features/slices/createOrder.ts`
-4. `1-kernel/1.2-modules/product-from-contract/src/features/slices/contract.ts`
+1. `_old_/1-kernel/1.2-modules/user-base/src/features/slices/user.ts`
+2. `_old_/1-kernel/1.2-modules/pay-base/src/features/slices/paymentFunction.ts`
+3. `_old_/1-kernel/1.2-modules/order-create-traditional/src/features/slices/createOrder.ts`
+4. `_old_/1-kernel/1.2-modules/product-from-contract/src/features/slices/contract.ts`
 
 新架构里，这一层已经被拆成：
 
@@ -144,8 +144,8 @@
 
 典型位置：
 
-1. `2-ui/2.2-modules/mixc-trade/src/selectors/selectOrderCreation.ts`
-2. `1-kernel/1.2-modules/pay-base/src/selectors/selectPaymentRequest.ts`
+1. `_old_/2-ui/2.2-modules/mixc-trade/src/selectors/selectOrderCreation.ts`
+2. `_old_/1-kernel/1.2-modules/pay-base/src/selectors/selectPaymentRequest.ts`
 3. `2-ui/*/src/types/kernel-core-base-augment.ts`
 
 这条规则必须继续保留。
@@ -166,10 +166,10 @@
 
 典型位置：
 
-1. `1-kernel/1.2-modules/pay-base/src/supports/errors/index.ts`
-2. `1-kernel/1.2-modules/user-base/src/supports/parameters/index.ts`
-3. `2-ui/2.1-cores/admin/src/supports/errors/index.ts`
-4. `2-ui/2.2-modules/mixc-trade/src/supports/parameters/index.ts`
+1. `_old_/1-kernel/1.2-modules/pay-base/src/supports/errors/index.ts`
+2. `_old_/1-kernel/1.2-modules/user-base/src/supports/parameters/index.ts`
+3. `_old_/2-ui/2.1-cores/admin/src/supports/errors/index.ts`
+4. `_old_/2-ui/2.2-modules/mixc-trade/src/supports/parameters/index.ts`
 
 ### 3.8 command / actor 的真实使用方式
 
@@ -182,9 +182,9 @@
 
 典型位置：
 
-1. `1-kernel/1.2-modules/user-base/src/features/commands/index.ts`
-2. `1-kernel/1.2-modules/user-base/src/features/actors/user.ts`
-3. `1-kernel/1.2-modules/pay-base/src/features/actors/paymentRequest.ts`
+1. `_old_/1-kernel/1.2-modules/user-base/src/features/commands/index.ts`
+2. `_old_/1-kernel/1.2-modules/user-base/src/features/actors/user.ts`
+3. `_old_/1-kernel/1.2-modules/pay-base/src/features/actors/paymentRequest.ts`
 
 真正要继承的是：
 
@@ -202,8 +202,8 @@
 
 典型位置：
 
-1. `1-kernel/1.2-modules/mixc-user-login/src/supports/http-services.ts`
-2. `1-kernel/1.2-modules/mixc-user-login/src/features/actors/user.ts`
+1. `_old_/1-kernel/1.2-modules/mixc-user-login/src/supports/http-services.ts`
+2. `_old_/1-kernel/1.2-modules/mixc-user-login/src/features/actors/user.ts`
 
 这套模式的价值是：
 

@@ -422,7 +422,7 @@ request 相关统一进入：
 
 后续产品形态下沉到：
 
-- `3-adapter/android/adapterPure`
+- `_old_/3-adapter/android/adapterPure`
 
 ### 11.4 关键验收
 

@@ -30,7 +30,7 @@ class AppControlTurboModule(reactContext: ReactApplicationContext) :
   }
 
   /**
-   * AppControlManager 是 adapterPure 提供的系统控制实现。
+   * AppControlManager 是 adapter-android-v2 提供的系统控制实现。
    */
   private val appControlManager by lazy {
     AppControlManager.getInstance(reactApplicationContext.applicationContext as android.app.Application)
@@ -79,7 +79,7 @@ class AppControlTurboModule(reactContext: ReactApplicationContext) :
   /**
    * 退出应用。
    *
-   * 这是 adapterPure 暴露的底层能力，保留给某些测试场景或设备级流程使用。正式业务若要重建 RN，
+   * 这是 adapter-android-v2 暴露的底层能力，保留给某些测试场景或设备级流程使用。正式业务若要重建 RN，
    * 应优先走 [restartApp]。
    */
   override fun exitApp(promise: Promise) {

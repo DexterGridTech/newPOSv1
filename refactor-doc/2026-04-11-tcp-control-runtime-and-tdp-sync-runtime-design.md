@@ -4,8 +4,8 @@
 
 本文档用于收敛旧：
 
-- `1-kernel/1.1-cores/tcp-client`
-- `1-kernel/1.1-cores/tdp-client`
+- `_old_/1-kernel/1.1-cores/tcp-client`
+- `_old_/1-kernel/1.1-cores/tdp-client`
 
 在新架构下的目标落点、包边界、公开协议、状态设计与验证方式。
 

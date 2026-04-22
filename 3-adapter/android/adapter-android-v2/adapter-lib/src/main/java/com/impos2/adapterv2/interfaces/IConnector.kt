@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 /**
  * 外部连接能力抽象。
  *
- * 这个接口定义的是 adapterPure 对“外部交互通道”的统一访问面，调用方不需要关心底层到底是：
+ * 这个接口定义的是 adapter-android-v2 对“外部交互通道”的统一访问面，调用方不需要关心底层到底是：
  * - camera 扫码
  * - 系统 Intent
  * - HID 输入

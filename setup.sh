@@ -183,8 +183,8 @@ create_local_properties() {
     fi
 
     LOCAL_PROPS_PATHS=(
-        "3-adapter/android/IMPos2AdapterV1/android/local.properties"
-        "4-assembly/android/IMPos2DesktopV1/android/local.properties"
+        "3-adapter/android/adapter-android-v2/local.properties"
+        "4-assembly/android/mixc-retail-assembly-rn84/android/local.properties"
     )
 
     for props_path in "${LOCAL_PROPS_PATHS[@]}"; do
@@ -206,9 +206,9 @@ EOF
 verify_installation() {
     print_header "验证安装"
 
-    if [ -f "scripts/check-env.js" ]; then
+    if [ -f "scripts/check-env.cjs" ]; then
         print_info "运行环境检查脚本..."
-        node scripts/check-env.js || {
+        node scripts/check-env.cjs || {
             print_warning "环境检查发现一些问题，但不影响继续"
         }
     else
@@ -226,16 +226,19 @@ print_next_steps() {
     echo ""
     echo -e "${BLUE}后续步骤:${NC}"
     echo ""
-    echo "  1. 启动 Mock 服务器:"
-    echo "     ${YELLOW}yarn A:kernel-server${NC}"
+    echo "  1. 启动 Mock 平台服务:"
+    echo "     ${YELLOW}yarn mock:platform:dev${NC}"
     echo ""
-    echo "  2. 启动 UI 开发服务器:"
-    echo "     ${YELLOW}yarn ui:integrate-desktop-2${NC}"
+    echo "  2. 启动双机拓扑宿主:"
+    echo "     ${YELLOW}yarn B:dual-topology-host-v3${NC}"
     echo ""
-    echo "  3. 启动 Android 应用:"
-    echo "     ${YELLOW}yarn assembly:impos2-desktop-v1:start${NC}"
+    echo "  3. 启动 RN84 Metro:"
+    echo "     ${YELLOW}yarn assembly:android-mixc-retail-rn84:metro${NC}"
     echo ""
-    echo "  4. 查看所有可用命令:"
+    echo "  4. 运行 Android RN84 宿主:"
+    echo "     ${YELLOW}yarn assembly:android-mixc-retail-rn84:run${NC}"
+    echo ""
+    echo "  5. 查看所有可用命令:"
     echo "     ${YELLOW}cat package.json | grep '\".*\":' | grep -v '\"---'${NC}"
     echo ""
 

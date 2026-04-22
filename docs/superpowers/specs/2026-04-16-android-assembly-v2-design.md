@@ -4,10 +4,10 @@
 
 The next rebuild step is the Android native / assembly layer.
 
-The old validated split is:
+The old validated split is archived under `_old_` as reference-only:
 
-1. [`3-adapter/android/adapterPure`](/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterPure)
-2. [`4-assembly/android/mixc-retail-rn84v2`](/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2)
+1. [`_old_/3-adapter/android/adapterPure`](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/3-adapter/android/adapterPure)
+2. [`_old_/4-assembly/android/mixc-retail-rn84v2`](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/4-assembly/android/mixc-retail-rn84v2)
 
 That split has already been proven workable in practice.
 The new rebuild must preserve that split instead of collapsing everything into one package.
@@ -514,7 +514,7 @@ The new assembly should continue to:
 
 This should be built around the old successful pattern from:
 
-[reactotronConfig.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-rn84v2/src/foundations/reactotronConfig.ts)
+[reactotronConfig.ts](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/4-assembly/android/mixc-retail-rn84v2/src/foundations/reactotronConfig.ts)
 
 ## Configuration Inheritance Checklist
 

@@ -46,7 +46,7 @@
 
 如果把 Redux 从 kernel 中移走，会直接造成：
 
-1. `1-kernel/1.2-modules/*` 各业务包自己实现 store 体系
+1. `_old_/1-kernel/1.2-modules/*` 各业务包自己实现 store 体系
 2. workspace slice 和主副机同步规则分散
 3. 持久化约束无法统一
 4. `errorCatalog / parameterCatalog / topology seed` 这类全局可变数据无统一承载层

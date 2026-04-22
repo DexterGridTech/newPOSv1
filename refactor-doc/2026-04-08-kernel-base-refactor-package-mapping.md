@@ -133,7 +133,7 @@
 
 旧包：
 
-- `0-mock-server/master-ws-server-dual`
+- `_old_/0-mock-server/master-ws-server-dual`
 
 新定位：
 
@@ -161,7 +161,7 @@
 
 `dual-topology-host` 的 Node 版开发实现最终会对应到：
 
-- `3-adapter/android/adapterPure`
+- `_old_/3-adapter/android/adapterPure`
 
 中的主屏机内置 topology host 实现。
 

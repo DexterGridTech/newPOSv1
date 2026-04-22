@@ -40,6 +40,7 @@ import type {
   TopicDecisionItem,
   TerminalDecisionTrace,
   TerminalGroupMembershipItem,
+  TerminalLogFileItem,
   TerminalVersionReportItem,
   TerminalTemplateItem,
   TopicItem,
@@ -174,6 +175,9 @@ export const api = {
   getTaskReleases: () => request<TaskReleaseItem[]>('/api/v1/admin/tasks/releases'),
   getTaskInstances: () => request<TaskInstanceItem[]>('/api/v1/admin/tasks/instances'),
   getTaskTrace: (instanceId: string) => request<TaskTrace>(`/api/v1/admin/tasks/instances/${instanceId}/trace`),
+  getTerminalLogFiles: (terminalId: string) => request<TerminalLogFileItem[]>(`/api/v1/admin/terminals/${terminalId}/log-files`),
+  requestTerminalLogUpload: (terminalId: string, payload: { logDate: string; overwrite?: boolean }) =>
+    request(`/api/v1/admin/terminals/${terminalId}/log-fetches`, { method: 'POST', body: JSON.stringify(payload) }),
   getSessions: () => request<SessionItem[]>('/api/v1/admin/tdp/sessions'),
   sendEdgeDegraded: (sessionId: string, payload: Record<string, unknown>) => request(`/api/v1/admin/tdp/sessions/${sessionId}/edge-degraded`, { method: 'POST', body: JSON.stringify(payload) }),
   sendSessionRehome: (sessionId: string, payload: Record<string, unknown>) => request(`/api/v1/admin/tdp/sessions/${sessionId}/rehome`, { method: 'POST', body: JSON.stringify(payload) }),

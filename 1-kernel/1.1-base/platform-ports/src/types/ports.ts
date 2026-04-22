@@ -1,5 +1,42 @@
 import type {LoggerPort, LogEnvironmentMode} from './logging'
 
+export interface TerminalLogUploadFileResult {
+    fileName: string
+    fileSize: number
+    uploadedAt?: number
+    checksum?: string
+    storageKey?: string
+    url?: string
+    metadata?: Record<string, unknown>
+}
+
+export interface TerminalLogUploadResult {
+    terminalId?: string
+    displayIndex?: number
+    displayRole?: 'PRIMARY' | 'SECONDARY' | string
+    logDate: string
+    uploadedFiles: TerminalLogUploadFileResult[]
+    skippedFiles?: string[]
+    metadata?: Record<string, unknown>
+}
+
+export interface TerminalLogUploadPort {
+    uploadLogsForDate(input: {
+        uploadUrl: string
+        logDate: string
+        terminalId?: string
+        sandboxId?: string
+        commandId?: string
+        instanceId?: string
+        releaseId?: string
+        displayIndex?: number
+        displayRole?: 'PRIMARY' | 'SECONDARY' | string
+        overwrite?: boolean
+        headers?: Record<string, string>
+        metadata?: Record<string, unknown>
+    }): Promise<TerminalLogUploadResult>
+}
+
 export interface ScriptExecutorPort {
     execute<T = unknown>(input: {
         source: string
@@ -131,6 +168,7 @@ export interface ConnectorPort {
 export interface PlatformPorts {
     environmentMode: LogEnvironmentMode
     logger: LoggerPort
+    terminalLogs?: TerminalLogUploadPort
     scriptExecutor?: ScriptExecutorPort
     stateStorage?: StateStoragePort
     secureStateStorage?: StateStoragePort

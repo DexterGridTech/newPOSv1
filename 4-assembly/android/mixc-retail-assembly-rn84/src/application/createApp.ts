@@ -11,6 +11,7 @@ import {
     createTdpSyncRuntimeModuleV2,
     selectTdpHotUpdateCurrent,
 } from '@impos2/kernel-base-tdp-sync-runtime-v2'
+import {createTerminalLogUploadRuntimeModuleV2} from '@impos2/kernel-base-terminal-log-upload-runtime-v2'
 import {createTcpControlRuntimeModuleV2} from '@impos2/kernel-base-tcp-control-runtime-v2'
 import {createUiRuntimeModuleV2} from '@impos2/kernel-base-ui-runtime-v2'
 import {createWorkflowRuntimeModuleV2} from '@impos2/kernel-base-workflow-runtime-v2'
@@ -29,6 +30,7 @@ import type {UiRuntimeProviderProps} from '@impos2/ui-base-runtime-react'
 import {createModule as createInputRuntimeModule} from '@impos2/ui-base-input-runtime'
 import {createModule as createAdminConsoleModule} from '@impos2/ui-base-admin-console'
 import {createModule as createTerminalConsoleModule} from '@impos2/ui-base-terminal-console'
+import {createModule as createTopologyRuntimeBridgeModule} from '@impos2/ui-base-topology-runtime-bridge'
 import {createModule as createRetailShellModule} from '@impos2/ui-integration-retail-shell'
 import type {KernelRuntimeAppV2} from '@impos2/kernel-base-runtime-shell-v2'
 import type {StoreEnhancer} from '@reduxjs/toolkit'
@@ -181,10 +183,12 @@ const createKernelRuntimeAppForAssembly = (
                     },
                 },
             }),
+            createTerminalLogUploadRuntimeModuleV2(),
             createWorkflowRuntimeModuleV2(),
             createUiRuntimeModuleV2(),
             createRuntimeReactModule(),
             createInputRuntimeModule(),
+            createTopologyRuntimeBridgeModule(),
             createAdminConsoleModule(createAssemblyAdminConsoleInput({
                 topology: options.topologyAdminInput,
                 getRuntime: options.getRuntime,

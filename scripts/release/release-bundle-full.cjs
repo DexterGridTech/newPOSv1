@@ -7,16 +7,8 @@ function run(command) {
 }
 
 function getLocalReleaseCommand(appId) {
-  if (appId === 'assembly-android-mixc-retail-rn84v2') {
-    return "bash -lc 'cd 4-assembly/android/mixc-retail-rn84v2 && ../../../node_modules/.bin/tsc --noEmit && cd android && rm -rf app/build/generated/assets/react/release app/build/generated/sourcemaps/react/release app/build/intermediates/assets/release && ./gradlew createBundleReleaseJsAndAssets --rerun-tasks'"
-  }
-
   if (appId === 'assembly-android-mixc-retail-rn84') {
     return "bash -lc 'cd 4-assembly/android/mixc-retail-assembly-rn84 && ../../../node_modules/.bin/tsc --noEmit && cd android && rm -rf app/build/generated/assets/react/release app/build/generated/sourcemaps/react/release app/build/intermediates/assets/release && ./gradlew createBundleReleaseJsAndAssets --rerun-tasks'"
-  }
-
-  if (appId === 'assembly-electron-mixc-retail-v1') {
-    return "bash -lc 'cd 4-assembly/electron/mixc-retail-v1 && ../../../node_modules/.bin/tsc -p tsconfig.check.json --noEmit && node ../../../node_modules/@electron/rebuild/lib/cli.js -f -w better-sqlite3 && node ../../../node_modules/@electron-forge/cli/dist/electron-forge.js package'"
   }
 
   throw new Error(`unsupported app id for bundle release: ${appId}`)

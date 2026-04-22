@@ -6,7 +6,7 @@
 
 1. `0-mock-server/mock-terminal-platform` 服务端 TCP task。
 2. 客户端 `tdp-sync-runtime` / `tcp-control-runtime` 对 task 的接收、确认与结果回报。
-3. 旧 `1-kernel/1.1-cores/task` 后续在新架构中的目标命名和职责。
+3. 旧 `_old_/1-kernel/1.1-cores/task` 后续在新架构中的目标命名和职责。
 
 结论先行：
 
@@ -198,7 +198,7 @@
 
 ## 5. 旧 `1.1-cores/task` 的真实职责
 
-旧 `1-kernel/1.1-cores/task` 当前做的是客户端本地流程编排。
+旧 `_old_/1-kernel/1.1-cores/task` 当前做的是客户端本地流程编排。
 
 核心能力：
 
@@ -405,7 +405,7 @@
 
 ## 10. 迁移结论
 
-旧 `1-kernel/1.1-cores/task` 后续不应直接迁为 `1-kernel/1.1-base/task`。
+旧 `_old_/1-kernel/1.1-cores/task` 后续不应直接迁为 `1-kernel/1.1-base/task`。
 
 推荐迁移为：
 

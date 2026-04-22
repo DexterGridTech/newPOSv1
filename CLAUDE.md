@@ -417,7 +417,7 @@ class YourModule(reactContext: ReactApplicationContext) :
 ```json
 {
   "dependencies": {
-    "@impos2/ui-integration-mixc-retail": "*"
+    "@impos2/ui-integration-retail-shell": "*"
     // ❌ 缺少 react-native-svg（UI 层间接使用）
   }
 }
@@ -427,7 +427,7 @@ class YourModule(reactContext: ReactApplicationContext) :
 ```json
 {
   "dependencies": {
-    "@impos2/ui-integration-mixc-retail": "*",
+    "@impos2/ui-integration-retail-shell": "*",
     "react-native-svg": "^15.15.3"  // ✅ 显式声明
   }
 }
@@ -492,4 +492,3 @@ val secondarySurface = reactHost.createSurface(context, "App", secondaryOptions)
 - ✅ 内存占用较小
 
 **结论**：新架构中 `getDefaultReactHost()` 返回单例，此方案无法实现真正独立。
-

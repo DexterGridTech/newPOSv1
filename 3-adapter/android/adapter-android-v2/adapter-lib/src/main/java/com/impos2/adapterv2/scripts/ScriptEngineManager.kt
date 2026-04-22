@@ -26,7 +26,7 @@ import java.util.concurrent.locks.ReentrantLock
 /**
  * 脚本执行引擎管理器。
  *
- * 这是 adapterPure 中最敏感的模块之一，目标不是“能执行脚本”这么简单，而是要在生产环境下做到：
+ * 这是 adapter-android-v2 中最敏感的模块之一，目标不是“能执行脚本”这么简单，而是要在生产环境下做到：
  * - 单次执行可控；
  * - 超时后能隔离污染并重建 runtime；
  * - native function 回调可诊断；

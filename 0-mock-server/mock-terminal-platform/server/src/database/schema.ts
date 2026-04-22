@@ -225,6 +225,11 @@ export const sessionsTable = sqliteTable('tdp_sessions', {
   sandboxId: text('sandbox_id').notNull(),
   clientVersion: text('client_version').notNull(),
   protocolVersion: text('protocol_version').notNull(),
+  localNodeId: text('local_node_id'),
+  displayIndex: integer('display_index'),
+  displayCount: integer('display_count'),
+  instanceMode: text('instance_mode'),
+  displayMode: text('display_mode'),
   status: text('status').notNull(),
   connectedAt: integer('connected_at').notNull(),
   disconnectedAt: integer('disconnected_at'),
@@ -371,6 +376,26 @@ export const terminalVersionReportsTable = sqliteTable('terminal_version_reports
   state: text('state').notNull(),
   reason: text('reason'),
   reportedAt: integer('reported_at').notNull()
+})
+
+export const terminalLogFilesTable = sqliteTable('terminal_log_files', {
+  logFileId: text('log_file_id').primaryKey(),
+  sandboxId: text('sandbox_id').notNull(),
+  terminalId: text('terminal_id').notNull(),
+  logDate: text('log_date').notNull(),
+  displayIndex: integer('display_index').notNull(),
+  displayRole: text('display_role').notNull(),
+  fileName: text('file_name').notNull(),
+  contentType: text('content_type').notNull(),
+  fileSize: integer('file_size').notNull(),
+  sha256: text('sha256').notNull(),
+  storagePath: text('storage_path').notNull(),
+  commandId: text('command_id'),
+  instanceId: text('instance_id'),
+  releaseId: text('release_id'),
+  metadataJson: text('metadata_json').notNull(),
+  uploadedAt: integer('uploaded_at').notNull(),
+  updatedAt: integer('updated_at').notNull(),
 })
 
 export const commandOutboxTable = sqliteTable('tdp_command_outbox', {

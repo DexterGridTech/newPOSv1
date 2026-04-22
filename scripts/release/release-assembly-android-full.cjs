@@ -24,13 +24,11 @@ function main() {
   run(`node scripts/release/sync-assembly-version.cjs --app ${appId}`)
   run(`node scripts/release/sync-android-version.cjs --app ${appId}`)
   run(`node scripts/release/generate-assembly-release-info.cjs --app ${appId}`)
-  if (appId === 'assembly-android-mixc-retail-rn84') {
-    run('corepack yarn workspace @impos2/assembly-android-mixc-retail-rn84 type-check')
-    run("bash -lc 'source ~/.zshrc && cd 4-assembly/android/mixc-retail-assembly-rn84/android && ./gradlew assembleRelease'")
-  } else {
-    run('corepack yarn workspace @impos2/assembly-android-mixc-retail-rn84v2 type-check')
-    run('corepack yarn assembly:android-mixc-retail-rn84v2:build:release')
+  if (appId !== 'assembly-android-mixc-retail-rn84') {
+    throw new Error(`unsupported android release app: ${appId}`)
   }
+  run('corepack yarn workspace @impos2/assembly-android-mixc-retail-rn84 type-check')
+  run("bash -lc 'source ~/.zshrc && cd 4-assembly/android/mixc-retail-assembly-rn84/android && ./gradlew assembleRelease'")
   run(`node scripts/release/finalize-release-manifest.cjs --app ${appId}`)
 }
 

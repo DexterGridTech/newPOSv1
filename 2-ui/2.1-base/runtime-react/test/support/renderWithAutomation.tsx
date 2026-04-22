@@ -226,6 +226,7 @@ export interface RenderWithAutomationResult {
     update(element: React.ReactElement): Promise<void>
     unmount(): Promise<void>
     press(testID: string): Promise<void>
+    pressRepeatedly(testID: string, times: number): Promise<void>
     changeText(testID: string, value: string): Promise<void>
     clearValue(testID: string): Promise<void>
     typeVirtualValue(fieldNodeId: string, value: string, options?: {clear?: boolean}): Promise<void>
@@ -388,6 +389,18 @@ export const renderWithAutomation = (
         tree = TestRenderer.create(wrap(element))
     })
 
+    const clearRegisteredNodes = () => {
+        registry.clearTarget(target)
+        for (const key of explicitNodeUnregisters.keys()) {
+            explicitNodeUnregisters.delete(key)
+            handlers.delete(key)
+        }
+        for (const key of fallbackNodeUnregisters.keys()) {
+            fallbackNodeUnregisters.delete(key)
+            handlers.delete(key)
+        }
+    }
+
     const rebuildRegistry = () => {
         for (const unregister of fallbackNodeUnregisters.values()) {
             unregister()
@@ -436,6 +449,7 @@ export const renderWithAutomation = (
                     visible: true,
                     enabled: props.disabled !== true,
                     focused: props.focused === true,
+                    persistent: true,
                     availableActions: inferAvailableActions(props),
                 }
                 const score = inferInteractionPriority(props) * 100
@@ -459,6 +473,7 @@ export const renderWithAutomation = (
                     text,
                     visible: true,
                     enabled: true,
+                    persistent: true,
                     availableActions: [],
                 }, 1)
             }
@@ -470,7 +485,15 @@ export const renderWithAutomation = (
             })
         }
 
-        visit(tree.root, 'root')
+        let root: TestRendererNode
+        try {
+            root = tree.root
+        } catch {
+            clearRegisteredNodes()
+            return
+        }
+
+        visit(root, 'root')
         for (const [testID, candidate] of candidates.entries()) {
             if (registry.getNode(target, testID) && !registry.getNode(target, testID)?.stale) {
                 continue
@@ -641,6 +664,19 @@ export const renderWithAutomation = (
                 nodeId: testID,
                 action: 'press',
             })
+        },
+        async pressRepeatedly(testID, times) {
+            await act(async () => {
+                for (let index = 0; index < times; index += 1) {
+                    await actionExecutor.performAction({
+                        target,
+                        nodeId: testID,
+                        action: 'press',
+                    })
+                }
+                await sleep(0)
+            })
+            rebuildRegistry()
         },
         async changeText(testID, value) {
             await resolveNodeForTextEntry(client, target, testID)

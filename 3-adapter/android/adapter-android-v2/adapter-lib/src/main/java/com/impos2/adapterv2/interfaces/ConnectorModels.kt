@@ -76,7 +76,7 @@ data class ConnectorResponse(
 /**
  * Connector 结果码。
  *
- * 这里保留的是 adapterPure 侧统一可理解的错误分类，避免把具体平台异常直接泄露给上层业务。
+ * 这里保留的是 adapter 层统一可理解的错误分类，避免把具体平台异常直接泄露给上层业务。
  */
 object ConnectorCodes {
   const val SUCCESS = 0

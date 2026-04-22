@@ -1,7 +1,7 @@
 # terminal-data 设计总览
 
 > 版本：2.0 | 状态：详细设计稿 | 日期：2026-04-06
-> 目标：为 `1-kernel/1.1-cores/terminal` 提供新一代替代包设计方案
+> 目标：为 `_old_/1-kernel/1.1-cores/terminal` 提供新一代替代包设计方案
 > 包名：`@impos2/kernel-core-terminal-data`
 > 模块名：`kernel.core.terminal-data`
 

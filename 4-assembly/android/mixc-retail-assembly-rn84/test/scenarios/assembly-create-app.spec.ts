@@ -13,6 +13,7 @@ const {
     createUiRuntimeModuleV2Mock,
     createRuntimeReactModuleMock,
     createInputRuntimeModuleMock,
+    createTopologyRuntimeBridgeModuleMock,
     createAdminConsoleModuleMock,
     createTerminalConsoleModuleMock,
     createRetailShellModuleMock,
@@ -42,6 +43,7 @@ const {
     uiRuntimeModule,
     runtimeReactModule,
     inputRuntimeModule,
+    topologyRuntimeBridgeModule,
     adminConsoleModule,
     terminalConsoleModule,
     retailShellModule,
@@ -70,6 +72,7 @@ const {
         createUiRuntimeModuleV2Mock: vi.fn((..._args: any[]) => ({kind: 'ui-runtime-module'})),
         createRuntimeReactModuleMock: vi.fn((..._args: any[]) => ({kind: 'runtime-react-module'})),
         createInputRuntimeModuleMock: vi.fn((..._args: any[]) => ({kind: 'input-runtime-module'})),
+        createTopologyRuntimeBridgeModuleMock: vi.fn((..._args: any[]) => ({kind: 'topology-runtime-bridge-module'})),
         createAdminConsoleModuleMock: vi.fn((..._args: any[]) => ({kind: 'admin-console-module'})),
         createTerminalConsoleModuleMock: vi.fn((..._args: any[]) => ({kind: 'terminal-console-module'})),
         createRetailShellModuleMock: vi.fn((..._args: any[]) => ({kind: 'retail-shell-module'})),
@@ -144,6 +147,7 @@ const {
         uiRuntimeModule: {kind: 'ui-runtime-module'},
         runtimeReactModule: {kind: 'runtime-react-module'},
         inputRuntimeModule: {kind: 'input-runtime-module'},
+        topologyRuntimeBridgeModule: {kind: 'topology-runtime-bridge-module'},
         adminConsoleModule: {kind: 'admin-console-module'},
         terminalConsoleModule: {kind: 'terminal-console-module'},
         retailShellModule: {kind: 'retail-shell-module'},
@@ -224,6 +228,10 @@ vi.mock('@impos2/ui-base-input-runtime', () => ({
     createModule: createInputRuntimeModuleMock,
 }))
 
+vi.mock('@impos2/ui-base-topology-runtime-bridge', () => ({
+    createModule: createTopologyRuntimeBridgeModuleMock,
+}))
+
 vi.mock('@impos2/ui-base-admin-console', () => ({
     createModule: createAdminConsoleModuleMock,
 }))
@@ -293,6 +301,7 @@ describe('assembly createApp', () => {
         createUiRuntimeModuleV2Mock.mockReturnValue(uiRuntimeModule)
         createRuntimeReactModuleMock.mockReturnValue(runtimeReactModule)
         createInputRuntimeModuleMock.mockReturnValue(inputRuntimeModule)
+        createTopologyRuntimeBridgeModuleMock.mockReturnValue(topologyRuntimeBridgeModule)
         createAdminConsoleModuleMock.mockReturnValue(adminConsoleModule)
         createTerminalConsoleModuleMock.mockReturnValue(terminalConsoleModule)
         createRetailShellModuleMock.mockReturnValue(retailShellModule)
@@ -352,11 +361,15 @@ describe('assembly createApp', () => {
             tcpControlModule,
             tdpSyncModule,
             expect.objectContaining({
+                moduleName: 'kernel.base.terminal-log-upload-runtime-v2',
+            }),
+            expect.objectContaining({
                 moduleName: 'kernel.base.workflow-runtime-v2',
             }),
             uiRuntimeModule,
             runtimeReactModule,
             inputRuntimeModule,
+            topologyRuntimeBridgeModule,
             adminConsoleModule,
             terminalConsoleModule,
             retailShellModule,

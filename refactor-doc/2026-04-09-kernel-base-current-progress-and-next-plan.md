@@ -98,7 +98,7 @@
 
 1. 服务端 `task_release / task_instance` 是平台业务域。
 2. `tcp.task.release` 是 TDP projection topic，不等于客户端 workflow 定义。
-3. 旧 `1-kernel/1.1-cores/task` 后续不再迁为 `task` 包。
+3. 旧 `_old_/1-kernel/1.1-cores/task` 后续不再迁为 `task` 包。
 4. 旧 `task` 包的推荐迁移目标命名为 `workflow-runtime`。
 
 ---
@@ -170,16 +170,16 @@
 
 已针对第一阶段范围重新审阅：
 
-1. `1-kernel/1.1-cores/base`
-2. `1-kernel/1.1-cores/interconnection`
-3. `1-kernel/1.1-cores/communication`
+1. `_old_/1-kernel/1.1-cores/base`
+2. `_old_/1-kernel/1.1-cores/interconnection`
+3. `_old_/1-kernel/1.1-cores/communication`
 
 同时也延伸阅读了它们在以下层的真实使用方式：
 
-1. `1-kernel/1.1-cores/task`
-2. `1-kernel/1.1-cores/ui-runtime`
-3. `1-kernel/1.1-cores/tcp-client`
-4. `1-kernel/1.1-cores/tdp-client`
+1. `_old_/1-kernel/1.1-cores/task`
+2. `_old_/1-kernel/1.1-cores/ui-runtime`
+3. `_old_/1-kernel/1.1-cores/tcp-client`
+4. `_old_/1-kernel/1.1-cores/tdp-client`
 5. `2-ui/*`
 6. `3-adapter/*`
 7. `4-assembly/*`
@@ -711,7 +711,7 @@
 
 ### 5.5.3 `transport-runtime` 与旧 `communication` 的关系
 
-本轮 `transport-runtime` 不是平地重写，而是明确继承和改造了旧 `1-kernel/1.1-cores/communication` 中已经验证有效的基础设施思想，包括：
+本轮 `transport-runtime` 不是平地重写，而是明确继承和改造了旧 `_old_/1-kernel/1.1-cores/communication` 中已经验证有效的基础设施思想，包括：
 
 1. 声明式 HTTP endpoint 语言
 2. 声明式 WS profile 语言

@@ -49,6 +49,13 @@ const handleHandshake = (socket: WebSocket, req: IncomingMessage, payload: {
   protocolVersion?: string
   capabilities?: string[]
   subscribedTopics?: string[]
+  runtimeIdentity?: {
+    localNodeId?: string
+    displayIndex?: number
+    displayCount?: number
+    instanceMode?: 'MASTER' | 'SLAVE'
+    displayMode?: 'PRIMARY' | 'SECONDARY'
+  }
 }) => {
   const url = new URL(req.url ?? '', 'http://127.0.0.1')
   const sandboxId = url.searchParams.get('sandboxId')
@@ -88,6 +95,11 @@ const handleHandshake = (socket: WebSocket, req: IncomingMessage, payload: {
     terminalId,
     clientVersion: appVersion,
     protocolVersion,
+    localNodeId: payload.runtimeIdentity?.localNodeId,
+    displayIndex: payload.runtimeIdentity?.displayIndex,
+    displayCount: payload.runtimeIdentity?.displayCount,
+    instanceMode: payload.runtimeIdentity?.instanceMode,
+    displayMode: payload.runtimeIdentity?.displayMode,
   })
   upsertTerminalRuntimeFacts({
     sandboxId,
@@ -106,6 +118,11 @@ const handleHandshake = (socket: WebSocket, req: IncomingMessage, payload: {
     sandboxId,
     appVersion,
     protocolVersion,
+    localNodeId: payload.runtimeIdentity?.localNodeId ?? null,
+    displayIndex: payload.runtimeIdentity?.displayIndex ?? null,
+    displayCount: payload.runtimeIdentity?.displayCount ?? null,
+    instanceMode: payload.runtimeIdentity?.instanceMode ?? null,
+    displayMode: payload.runtimeIdentity?.displayMode ?? null,
     lastCursor,
     lastDeliveredRevision: undefined,
     subscribedTopics: payload.subscribedTopics ?? [],
@@ -118,7 +135,7 @@ const handleHandshake = (socket: WebSocket, req: IncomingMessage, payload: {
     domain: 'TDP',
     action: 'WS_CONNECT_SESSION',
     targetId: connection.sessionId,
-    detail: { terminalId, protocolVersion, appVersion, lastCursor, syncMode },
+    detail: { terminalId, protocolVersion, appVersion, lastCursor, syncMode, runtimeIdentity: payload.runtimeIdentity },
     operator: 'terminal-client',
   })
 

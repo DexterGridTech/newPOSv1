@@ -1,20 +1,20 @@
 {
   "root": "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84",
-  "reactNativePath": "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/node_modules/react-native",
+  "reactNativePath": "/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/react-native",
   "reactNativeVersion": "0.84",
   "dependencies": {
     "react-native-svg": {
-      "root": "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/node_modules/react-native-svg",
+      "root": "/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/react-native-svg",
       "name": "react-native-svg",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/node_modules/react-native-svg/RNSVG.podspec",
+          "podspecPath": "/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/react-native-svg/RNSVG.podspec",
           "version": "15.15.4",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/node_modules/react-native-svg/android",
+          "sourceDir": "/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/react-native-svg/android",
           "packageImportPath": "import com.horcrux.svg.SvgPackage;",
           "packageInstance": "new SvgPackage()",
           "buildTypes": [],
@@ -50,7 +50,7 @@
             "RNSVGTSpanComponentDescriptor",
             "RNSVGUseComponentDescriptor"
           ],
-          "cmakeListsPath": "/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/node_modules/react-native-svg/android/src/main/jni/CMakeLists.txt",
+          "cmakeListsPath": "/Users/dexter/Documents/workspace/idea/newPOSv1/node_modules/react-native-svg/android/src/main/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,

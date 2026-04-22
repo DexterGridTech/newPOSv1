@@ -25,6 +25,32 @@ interface AssemblyReadyState {
     >
 }
 
+const safeNativeLog = (
+    level: 'log' | 'error',
+    tag: string,
+    message: string,
+) => {
+    try {
+        const logger = nativeLogger as typeof nativeLogger & Record<string, unknown>
+        const method = logger[level]
+        if (typeof method === 'function') {
+            method(tag, message)
+            return
+        }
+    } catch (error) {
+        console.warn(
+            '[assembly.android.mixc-retail-rn84.boot] native logger failed',
+            error instanceof Error ? error.stack ?? error.message : String(error),
+        )
+    }
+
+    if (level === 'error') {
+        console.error(`[${tag}] ${message}`)
+        return
+    }
+    console.log(`[${tag}] ${message}`)
+}
+
 const normalizeProps = (props: Partial<AppProps>): AppProps => ({
     deviceId: props.deviceId ?? 'UNKNOWN-ANDROID-DEVICE',
     screenMode: props.screenMode ?? 'desktop',
@@ -49,7 +75,8 @@ export default function App(rawProps: Partial<AppProps>): React.JSX.Element {
         void (async () => {
             try {
                 const logStage = (stage: string, extra?: Record<string, unknown>) => {
-                    nativeLogger.log(
+                    safeNativeLog(
+                        'log',
                         'assembly.android.mixc-retail-rn84.boot',
                         JSON.stringify({
                             stage,
@@ -119,7 +146,8 @@ export default function App(rawProps: Partial<AppProps>): React.JSX.Element {
                 }
             } catch (error) {
                 if (!disposed) {
-                    nativeLogger.error(
+                    safeNativeLog(
+                        'error',
                         'assembly.android.mixc-retail-rn84.boot',
                         error instanceof Error ? error.stack ?? error.message : String(error),
                     )
@@ -154,7 +182,8 @@ export default function App(rawProps: Partial<AppProps>): React.JSX.Element {
                     'FAILED',
                     error instanceof Error ? error.message : String(error),
                 ).catch(() => {})
-                nativeLogger.error(
+                safeNativeLog(
+                    'error',
                     'assembly.android.mixc-retail-rn84.boot',
                     error instanceof Error ? error.stack ?? error.message : String(error),
                 )
@@ -169,7 +198,8 @@ export default function App(rawProps: Partial<AppProps>): React.JSX.Element {
                     result.reason,
                 )
             } catch (error) {
-                nativeLogger.error(
+                safeNativeLog(
+                    'error',
                     'assembly.android.mixc-retail-rn84.version-report',
                     error instanceof Error ? error.stack ?? error.message : String(error),
                 )

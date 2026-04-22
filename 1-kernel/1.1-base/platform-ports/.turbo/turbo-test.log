@@ -1,17 +1,10 @@
-[platform-ports-test-scenario] {
-  packageName: '@impos2/kernel-base-platform-ports',
-  packageVersion: '0.0.1',
-  eventCount: 1,
-  firstEvent: {
-    timestamp: 1775914870726,
-    level: 'info',
-    category: 'runtime.lifecycle',
-    event: 'test-verification',
-    message: 'hello',
-    scope: { moduleName: 'kernel.base.platform-ports.test', layer: 'kernel' },
-    context: undefined,
-    data: { token: '[MASKED]' },
-    error: undefined,
-    security: { containsSensitiveRaw: true, maskingMode: 'masked' }
-  }
-}
+
+ RUN  v3.2.4 /Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-base/platform-ports
+
+ ✓ test/scenarios/platform-ports.spec.ts (8 tests) 3ms
+
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
+   Start at  23:20:26
+   Duration  498ms (transform 149ms, setup 0ms, collect 237ms, tests 3ms, environment 0ms, prepare 38ms)
+

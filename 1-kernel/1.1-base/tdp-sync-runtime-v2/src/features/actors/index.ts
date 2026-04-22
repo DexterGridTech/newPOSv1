@@ -14,6 +14,7 @@ import {
 } from './sessionConnectionActor'
 import {createTdpSessionStateActorDefinitionV2} from './sessionStateActor'
 import {createTdpTopicChangeActorDefinitionV2} from './topicChangeActor'
+import {createTdpTerminalLogUploadCommandRouterActorDefinitionV2} from './terminalLogUploadCommandRouterActor'
 import {createTdpSystemCatalogBridgeActorDefinitionV2} from './systemCatalogBridgeActor'
 import {createTdpUserOperationActorDefinitionV2} from './userOperationActor'
 import {createTdpHotUpdateNativeBootActorDefinitionV2} from './hotUpdateNativeBootActor'
@@ -30,6 +31,7 @@ export * from './commandAckActor'
 export * from './sessionConnectionActor'
 export * from './sessionStateActor'
 export * from './topicChangeActor'
+export * from './terminalLogUploadCommandRouterActor'
 export * from './systemCatalogBridgeActor'
 export * from './userOperationActor'
 export * from './hotUpdateNativeBootActor'
@@ -48,6 +50,7 @@ export const createTdpSyncActorDefinitionsV2 = (
     createTdpCursorFeedbackActorDefinitionV2(),
     createTdpCommandInboxActorDefinitionV2(),
     createTdpCommandAckActorDefinitionV2(),
+    createTdpTerminalLogUploadCommandRouterActorDefinitionV2(),
     createTdpSessionStateActorDefinitionV2(connectionRuntimeRef),
     createTdpTopicChangeActorDefinitionV2(fingerprintRef, moduleInput),
     createTdpSystemCatalogBridgeActorDefinitionV2(),

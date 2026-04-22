@@ -389,7 +389,7 @@ projection mirror 策略：
 
 产品实现：
 
-- `3-adapter/android/adapterPure` 的主屏机内置宿主能力
+- `_old_/3-adapter/android/adapterPure` 的主屏机内置宿主能力
 
 二者必须实现同一份 host contract。
 

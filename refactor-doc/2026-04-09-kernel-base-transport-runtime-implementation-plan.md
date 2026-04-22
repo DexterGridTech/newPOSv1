@@ -12,7 +12,7 @@
 
 ## Reuse Rule
 
-`1-kernel/1.1-cores/communication` already contains mature HTTP and WS foundation work. `transport-runtime` should inherit and adapt that work whenever it already matches the target semantics, instead of rebuilding equivalent machinery from scratch.
+`_old_/1-kernel/1.1-cores/communication` already contains mature HTTP and WS foundation work. `transport-runtime` should inherit and adapt that work whenever it already matches the target semantics, instead of rebuilding equivalent machinery from scratch.
 
 Reuse policy for this phase:
 

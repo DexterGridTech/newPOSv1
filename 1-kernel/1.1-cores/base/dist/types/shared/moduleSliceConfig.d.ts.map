@@ -1,1 +1,0 @@
-{"version":3,"file":"moduleSliceConfig.d.ts","sourceRoot":"","sources":["../../../src/types/shared/moduleSliceConfig.ts"],"names":[],"mappings":"AAAA,OAAO,EAAC,OAAO,EAAC,MAAM,kBAAkB,CAAC;AAEzC,MAAM,WAAW,iBAAiB,CAAC,KAAK,GAAG,GAAG;IAC1C,IAAI,EAAE,MAAM,CAAA;IACZ,OAAO,EAAE,OAAO,CAAC,KAAK,CAAC,CAAA;IACvB,gBAAgB,EAAE,OAAO,CAAA;IACzB,gBAAgB,CAAC,EAAE,MAAM,EAAE,CAAA;CAC9B"}

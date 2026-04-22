@@ -70,7 +70,7 @@ class AppControlTestFragment : Fragment() {
 
       addView(consoleCard("Loading 控制") {
         addView(primaryButton("显示 Loading") {
-          appControl.showLoading("adapterPure loading...")
+          appControl.showLoading("adapter-android-v2 loading...")
           recordAction("showLoading")
         })
         addView(outlineButton("隐藏 Loading") {

@@ -1,8 +1,8 @@
-# `kernel-core-ui-runtime` Design
+# `kernel-base-ui-runtime-v2` Design
 
 ## Background
 
-The current [`navigation`](/Users/dexter/Documents/workspace/idea/newPOSv1/1-kernel/1.1-cores/navigation) package is not only a navigation package.
+The legacy [`navigation`](/Users/dexter/Documents/workspace/idea/newPOSv1/_old_/1-kernel/1.1-cores/navigation) package is not only a navigation package.
 It currently owns four different concerns:
 
 1. `ScreenPart` registration and lookup
@@ -17,12 +17,12 @@ The goal of this design is to create a new kernel core package that keeps the sa
 
 ## Goals
 
-1. Keep the same responsibility scope as `kernel-core-navigation`
+1. Keep the same responsibility scope as the old `kernel-core-navigation`
 2. Preserve the current `ScreenPart`-driven UI orchestration idea
 3. Split runtime state into focused slices instead of one mixed `uiVariables` slice
 4. Preserve current workspace persistence and master/slave sync behavior
 5. Keep the existing global screen registry model
-6. Build the new package in the same monorepo package structure as other `1-kernel/1.1-cores/*` packages
+6. Build the new package in the new `1-kernel/1.1-base/*` monorepo structure
 
 ## Non-goals
 
@@ -36,11 +36,11 @@ The goal of this design is to create a new kernel core package that keeps the sa
 
 Package directory:
 
-`1-kernel/1.1-cores/ui-runtime`
+`1-kernel/1.1-base/ui-runtime-v2`
 
 Published package name:
 
-`@impos2/kernel-core-ui-runtime`
+`@impos2/kernel-base-ui-runtime-v2`
 
 Module name:
 

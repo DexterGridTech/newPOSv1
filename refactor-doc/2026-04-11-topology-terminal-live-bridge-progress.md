@@ -176,6 +176,6 @@
 补充约束：
 
 1. 这里提到的 “task/scene 相关 slice” 指服务端 task 域在客户端侧形成的业务 read model。
-2. 不应把旧 `1-kernel/1.1-cores/task` 直接当作这个 read model 的落点。
+2. 不应把旧 `_old_/1-kernel/1.1-cores/task` 直接当作这个 read model 的落点。
 3. 旧 `task` 包后续按 `workflow-runtime` 方向迁移，详见：
    [refactor-doc/2026-04-11-kernel-base-task-domain-and-workflow-boundary.md](/Users/dexter/Documents/workspace/idea/newPOSv1/refactor-doc/2026-04-11-kernel-base-task-domain-and-workflow-boundary.md)

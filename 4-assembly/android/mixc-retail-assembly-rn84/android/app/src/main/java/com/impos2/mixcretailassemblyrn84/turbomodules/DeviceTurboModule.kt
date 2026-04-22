@@ -24,7 +24,7 @@ import com.impos2.adapterv2.interfaces.UsbDevice
 /**
  * Device TurboModule。
  *
- * 负责把 adapterPure 的设备信息和系统状态能力桥接给 JS。它不做业务判断，只负责：
+ * 负责把 adapter-android-v2 的设备信息和系统状态能力桥接给 JS。它不做业务判断，只负责：
  * - 调用 DeviceManager；
  * - 把强类型对象转换成 JS 可读结构；
  * - 通过 Promise 把结果返回给上层。

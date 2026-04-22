@@ -1,6 +1,19 @@
-import {createEnvelopeId, nowTimestampMs} from '@impos2/kernel-base-contracts'
+import {
+    createEnvelopeId,
+    createRequestId,
+    nowTimestampMs,
+    type CommandEventEnvelope,
+    type CommandRouteContext,
+    type RequestId,
+    type SessionId,
+} from '@impos2/kernel-base-contracts'
 import {createAppError, isAppError} from '@impos2/kernel-base-contracts'
-import type {RuntimeModuleContextV2} from '@impos2/kernel-base-runtime-shell-v2'
+import {
+    createCommand,
+    defineCommand,
+    type CommandAggregateResult,
+    type RuntimeModuleContextV2,
+} from '@impos2/kernel-base-runtime-shell-v2'
 import {createSocketLifecycleController} from '@impos2/kernel-base-transport-runtime'
 import {topologyRuntimeV3StateActions} from '../features/slices'
 import {topologyRuntimeV3ErrorDefinitions, topologyRuntimeV3ParameterDefinitions} from '../supports'
@@ -8,6 +21,8 @@ import type {
     TopologyPeerOrchestratorV3,
     TopologyRuntimeV3Assembly,
     TopologyRuntimeV3SocketBinding,
+    TopologyV3CommandDispatchMessage,
+    TopologyV3CommandEventMessage,
     TopologyV3HelloAckMessage,
     TopologyV3IncomingMessage,
 } from '../types/runtime'
@@ -46,6 +61,33 @@ const isErrorEvent = (
 
 const normalizeRequestMirrorStatus = (status: string) =>
     status === 'complete' ? 'completed' : status
+
+const createRemoteCommandDefinition = (commandName: string) =>
+    defineCommand({
+        moduleName: 'kernel.base.topology-runtime-v3.remote-dispatch',
+        commandName,
+    })
+
+const toTopologyCommandError = (error: unknown) => {
+    if (isAppError(error)) {
+        return {
+            key: error.key,
+            code: error.code,
+            message: error.message,
+            details: error.details,
+        }
+    }
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+        key: 'kernel.base.topology-runtime-v3.remote_command_failed',
+        code: 'TOPOLOGY_REMOTE_COMMAND_FAILED',
+        message,
+        details: error,
+    }
+}
+
+const createPendingRemoteCommandKey = (requestId: RequestId, commandId: string) =>
+    `${requestId}:${commandId}`
 
 const resolveReconnectDelayMs = (context: RuntimeModuleContextV2, override?: number) => {
     if (typeof override === 'number' && Number.isFinite(override) && override >= 0) {
@@ -151,6 +193,11 @@ export const createTopologyPeerOrchestratorV3 = (input: {
         }
     }
     let socketBinding = registerSocketBinding(initialSocketBinding)
+    const pendingRemoteCommands = new Map<string, {
+        commandId: string
+        resolve: (result: CommandAggregateResult) => void
+        reject: (error: unknown) => void
+    }>()
     const refreshSocketBinding = () => {
         const latestSocketBinding = input.assembly.resolveSocketBinding(input.context)
         if (!latestSocketBinding) {
@@ -194,6 +241,120 @@ export const createTopologyPeerOrchestratorV3 = (input: {
     }
 
     let previousState = input.context.getState()
+
+    const resolveActiveSessionId = () => {
+        const syncState = input.context.getState()?.[
+            'kernel.base.topology-runtime-v3.sync' as keyof ReturnType<typeof input.context.getState>
+        ] as {activeSessionId?: SessionId; status?: string} | undefined
+        return syncState?.status === 'active' ? syncState.activeSessionId : undefined
+    }
+
+    const resolvePeerNodeId = () => {
+        const peerState = input.context.getState()?.[
+            'kernel.base.topology-runtime-v3.peer' as keyof ReturnType<typeof input.context.getState>
+        ] as {peerNodeId?: string} | undefined
+        return peerState?.peerNodeId
+    }
+
+    const sendRemoteCommandEvent = (message: TopologyV3CommandEventMessage) => {
+        socketBinding.socketRuntime.send(socketBinding.profileName, message)
+    }
+
+    const dispatchIncomingRemoteCommand = async (message: TopologyV3CommandDispatchMessage) => {
+        const envelope = message.envelope
+        const acceptEnvelope: CommandEventEnvelope = {
+            envelopeId: createEnvelopeId(),
+            sessionId: envelope.sessionId,
+            requestId: envelope.requestId,
+            commandId: envelope.commandId,
+            ownerNodeId: envelope.ownerNodeId,
+            sourceNodeId: input.context.localNodeId,
+            eventType: 'accepted',
+            occurredAt: nowTimestampMs(),
+        }
+        sendRemoteCommandEvent({
+            type: 'command-event',
+            envelope: acceptEnvelope,
+        })
+
+        const startedEnvelope: CommandEventEnvelope = {
+            envelopeId: createEnvelopeId(),
+            sessionId: envelope.sessionId,
+            requestId: envelope.requestId,
+            commandId: envelope.commandId,
+            ownerNodeId: envelope.ownerNodeId,
+            sourceNodeId: input.context.localNodeId,
+            eventType: 'started',
+            occurredAt: nowTimestampMs(),
+        }
+        sendRemoteCommandEvent({
+            type: 'command-event',
+            envelope: startedEnvelope,
+        })
+
+        try {
+            const result = await input.context.dispatchCommand(
+                createCommand(createRemoteCommandDefinition(envelope.commandName), envelope.payload),
+                {
+                    requestId: envelope.requestId,
+                    commandId: envelope.commandId,
+                    parentCommandId: envelope.parentCommandId,
+                    routeContext: envelope.context as CommandRouteContext,
+                },
+            )
+            sendRemoteCommandEvent({
+                type: 'command-event',
+                envelope: {
+                    envelopeId: createEnvelopeId(),
+                    sessionId: envelope.sessionId,
+                    requestId: envelope.requestId,
+                    commandId: envelope.commandId,
+                    ownerNodeId: envelope.ownerNodeId,
+                    sourceNodeId: input.context.localNodeId,
+                    eventType: result.status === 'FAILED' || result.status === 'PARTIAL_FAILED' || result.status === 'TIMEOUT'
+                        ? 'failed'
+                        : 'completed',
+                    result: {
+                        requestId: result.requestId,
+                        commandId: result.commandId,
+                        commandName: result.commandName,
+                        target: result.target,
+                        status: result.status,
+                        startedAt: result.startedAt,
+                        completedAt: result.completedAt,
+                        actorResults: result.actorResults as unknown as Record<string, unknown>[],
+                    },
+                    error: result.status === 'FAILED' || result.status === 'PARTIAL_FAILED' || result.status === 'TIMEOUT'
+                        ? {
+                            key: 'kernel.base.topology-runtime-v3.remote_command_failed',
+                            code: 'TOPOLOGY_REMOTE_COMMAND_FAILED',
+                            message: `Remote command ${result.commandName} finished with ${result.status}`,
+                            details: {
+                                status: result.status,
+                                actorResults: result.actorResults,
+                            },
+                        }
+                        : undefined,
+                    occurredAt: nowTimestampMs(),
+                },
+            })
+        } catch (error) {
+            sendRemoteCommandEvent({
+                type: 'command-event',
+                envelope: {
+                    envelopeId: createEnvelopeId(),
+                    sessionId: envelope.sessionId,
+                    requestId: envelope.requestId,
+                    commandId: envelope.commandId,
+                    ownerNodeId: envelope.ownerNodeId,
+                    sourceNodeId: input.context.localNodeId,
+                    eventType: 'failed',
+                    error: toTopologyCommandError(error),
+                    occurredAt: nowTimestampMs(),
+                },
+            })
+        }
+    }
 
     const performSocketConnection = async () => {
         const currentBinding = refreshSocketBinding()
@@ -342,6 +503,30 @@ export const createTopologyPeerOrchestratorV3 = (input: {
                 },
             } as any))
             break
+        case 'command-dispatch':
+            void dispatchIncomingRemoteCommand(message)
+            break
+        case 'command-event': {
+            input.context.applyRemoteCommandEvent(message.envelope)
+            const commandResult = message.envelope.result as CommandAggregateResult | undefined
+            const pendingKey = createPendingRemoteCommandKey(message.envelope.requestId, message.envelope.commandId)
+            const pending = pendingRemoteCommands.get(pendingKey)
+            if (
+                pending
+                && pending.commandId === message.envelope.commandId
+                && (message.envelope.eventType === 'completed' || message.envelope.eventType === 'failed')
+            ) {
+                pendingRemoteCommands.delete(pendingKey)
+                if (message.envelope.eventType === 'completed' && commandResult) {
+                    pending.resolve(commandResult)
+                } else if (commandResult) {
+                    pending.resolve(commandResult)
+                } else {
+                    pending.reject(message.envelope.error ?? new Error('Remote command failed'))
+                }
+            }
+            break
+        }
         default:
             break
         }
@@ -393,6 +578,55 @@ export const createTopologyPeerOrchestratorV3 = (input: {
         },
         async restartConnection(reason?: string) {
             await lifecycle.restart(reason)
+        },
+        async dispatchRemoteCommand(inputCommand) {
+            const sessionId = resolveActiveSessionId()
+            const targetNodeId = resolvePeerNodeId()
+            if (!sessionId || !targetNodeId) {
+                throw createAppError(topologyRuntimeV3ErrorDefinitions.orchestratorRequired, {
+                    args: {
+                        commandName: inputCommand.commandName,
+                    },
+                    details: {
+                        reason: 'peer-session-not-ready',
+                        sessionId,
+                        targetNodeId,
+                    },
+                })
+            }
+
+            return await new Promise<CommandAggregateResult>((resolve, reject) => {
+                const requestId = inputCommand.requestId ?? createRequestId()
+                const pendingKey = createPendingRemoteCommandKey(requestId, inputCommand.commandId)
+                pendingRemoteCommands.set(pendingKey, {
+                    commandId: inputCommand.commandId,
+                    resolve,
+                    reject,
+                })
+
+                try {
+                    socketBinding.socketRuntime.send(socketBinding.profileName, {
+                        type: 'command-dispatch',
+                        envelope: {
+                            envelopeId: createEnvelopeId(),
+                            sessionId,
+                            requestId,
+                            commandId: inputCommand.commandId,
+                            parentCommandId: inputCommand.parentCommandId,
+                            ownerNodeId: input.context.localNodeId,
+                            sourceNodeId: input.context.localNodeId,
+                            targetNodeId,
+                            commandName: inputCommand.commandName,
+                            payload: inputCommand.payload,
+                            context: (inputCommand.routeContext ?? {}) as CommandRouteContext,
+                            sentAt: nowTimestampMs(),
+                        },
+                    })
+                } catch (error) {
+                    pendingRemoteCommands.delete(pendingKey)
+                    reject(error)
+                }
+            })
         },
         sendStateSnapshot(message) {
             socketBinding.socketRuntime.send(socketBinding.profileName, message)

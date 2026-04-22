@@ -148,6 +148,27 @@ export const createTopologyRuntimeModuleV3 = (
                 })
             }
 
+            if (orchestratorRef.current) {
+                context.installPeerDispatchGateway({
+                    dispatchCommand: (command, options) => {
+                        if (!orchestratorRef.current?.dispatchRemoteCommand) {
+                            throw new Error('Topology peer dispatch gateway is not available')
+                        }
+                        const routeContext = options.routeContext
+                        return orchestratorRef.current.dispatchRemoteCommand({
+                            requestId: options.requestId!,
+                            commandId: options.commandId!,
+                            parentCommandId: options.parentCommandId,
+                            commandName: command.definition.commandName,
+                            payload: command.payload,
+                            routeContext: routeContext && typeof routeContext === 'object'
+                                ? routeContext as Record<string, unknown>
+                                : undefined,
+                        })
+                    },
+                })
+            }
+
             createRuntimeModuleLifecycleLogger({moduleName, context}).logInstall({
                 stateSlices: topologyRuntimeV3ModuleManifest.stateSliceNames,
                 commandNames: topologyRuntimeV3ModuleManifest.commandNames,

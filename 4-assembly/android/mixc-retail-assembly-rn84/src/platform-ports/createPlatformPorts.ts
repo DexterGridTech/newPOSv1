@@ -7,6 +7,7 @@ import {nativeTopologyHost} from '../turbomodules/topologyHost'
 import {createAssemblyLogger} from './logger'
 import {createAssemblyHotUpdatePort} from './hotUpdate'
 import {createAssemblyStateStorage} from './stateStorage'
+import {createAssemblyTerminalLogUploadPort} from './terminalLogs'
 
 export const createAssemblyPlatformPorts = (
     environmentMode: LogEnvironmentMode,
@@ -24,6 +25,7 @@ export const createAssemblyPlatformPorts = (
     return {
         environmentMode,
         logger: createAssemblyLogger(environmentMode),
+        terminalLogs: createAssemblyTerminalLogUploadPort(),
         scriptExecutor: nativeScriptExecutor,
         stateStorage,
         secureStateStorage,

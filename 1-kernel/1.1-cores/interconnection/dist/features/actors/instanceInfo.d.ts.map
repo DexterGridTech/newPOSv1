@@ -1,1 +1,0 @@
-{"version":3,"file":"instanceInfo.d.ts","sourceRoot":"","sources":["../../../src/features/actors/instanceInfo.ts"],"names":[],"mappings":"AAAA,OAAO,EAAC,KAAK,EAAqB,MAAM,0BAA0B,CAAC;AASnE,qBAAa,iBAAkB,SAAQ,KAAK;IACxC,mBAAmB;;;;MAIb;IACN,kBAAkB;;;;MASZ;IACN,mBAAmB;;;;MASb;IACN,qBAAqB;;;;MASf;IACN,cAAc;;;;MAIR;IACN,eAAe;;;;MAIT;IACN,aAAa;;;;MAIP;IACN,eAAe;;;;MAIT;CACT"}

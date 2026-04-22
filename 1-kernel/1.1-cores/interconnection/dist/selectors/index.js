@@ -1,1 +1,0 @@
-export { selectSlaveConnected } from './selectSlaveConnected';

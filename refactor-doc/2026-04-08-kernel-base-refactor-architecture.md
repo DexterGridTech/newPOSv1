@@ -4,10 +4,10 @@
 
 本文档用于定义第一阶段核心基础包重构的目标架构，覆盖以下范围：
 
-- `1-kernel/1.1-cores/base`
-- `1-kernel/1.1-cores/interconnection`
-- `1-kernel/1.1-cores/communication`
-- `0-mock-server/master-ws-server-dual`
+- `_old_/1-kernel/1.1-cores/base`
+- `_old_/1-kernel/1.1-cores/interconnection`
+- `_old_/1-kernel/1.1-cores/communication`
+- `_old_/0-mock-server/master-ws-server-dual`
 
 本阶段只做目标架构设计，不考虑迁移妥协，不保留历史全局 manager 模式，不以旧包边界为新架构边界。
 

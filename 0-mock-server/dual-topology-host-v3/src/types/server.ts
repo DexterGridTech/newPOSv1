@@ -71,39 +71,88 @@ export interface TopologyV3StateUpdateMessage {
     sentAt: number
 }
 
-export interface TopologyV3CommandDispatchMessage {
-    type: 'command-dispatch'
+export interface TopologyV3CommandDispatchEnvelope {
+    envelopeId: string
     sessionId: string
+    requestId: string
+    commandId: string
+    parentCommandId?: string
+    ownerNodeId: string
     sourceNodeId: string
     targetNodeId: string
-    commandId: string
     commandName: string
     payload: unknown
+    context: Record<string, unknown>
     sentAt: number
+}
+
+export interface TopologyV3CommandDispatchMessage {
+    type: 'command-dispatch'
+    envelope?: TopologyV3CommandDispatchEnvelope
+    sessionId?: string
+    sourceNodeId?: string
+    targetNodeId?: string
+    commandId?: string
+    commandName?: string
+    payload?: unknown
+    sentAt?: number
+}
+
+export interface TopologyV3CommandEventEnvelope {
+    envelopeId: string
+    sessionId: string
+    requestId: string
+    commandId: string
+    ownerNodeId: string
+    sourceNodeId: string
+    targetNodeId?: string
+    eventType: 'accepted' | 'started' | 'resultPatch' | 'completed' | 'failed'
+    resultPatch?: Record<string, unknown>
+    result?: Record<string, unknown>
+    error?: {
+        key: string
+        code: string
+        message: string
+        details?: unknown
+    }
+    occurredAt: number
 }
 
 export interface TopologyV3CommandEventMessage {
     type: 'command-event'
+    envelope?: TopologyV3CommandEventEnvelope
+    sessionId?: string
+    sourceNodeId?: string
+    targetNodeId?: string
+    commandId?: string
+    status?: 'STARTED' | 'COMPLETED' | 'FAILED'
+    payload?: unknown
+    sentAt?: number
+}
+
+export interface TopologyV3RequestSnapshotEnvelope {
+    envelopeId: string
     sessionId: string
+    requestId: string
+    ownerNodeId: string
     sourceNodeId: string
     targetNodeId: string
-    commandId: string
-    status: 'STARTED' | 'COMPLETED' | 'FAILED'
-    payload?: unknown
+    snapshot: unknown
     sentAt: number
 }
 
 export interface TopologyV3RequestSnapshotMessage {
     type: 'request-snapshot'
-    sessionId: string
-    sourceNodeId: string
-    targetNodeId: string
-    requests: Array<{
+    envelope?: TopologyV3RequestSnapshotEnvelope
+    sessionId?: string
+    sourceNodeId?: string
+    targetNodeId?: string
+    requests?: Array<{
         requestId: string
         status: string
         payload?: unknown
     }>
-    sentAt: number
+    sentAt?: number
 }
 
 export type TopologyV3RelayChannel =

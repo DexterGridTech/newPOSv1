@@ -143,6 +143,11 @@ import {
   listTerminalVersionHistory,
   reportTerminalVersion,
 } from './hotUpdateVersionReportService.js'
+import {
+  listTerminalLogFiles,
+  receiveTerminalLogUpload,
+  requestTerminalLogUpload,
+} from '../terminal-log/service.js'
 
 export const createRouter = () => {
   const router = Router()
@@ -709,6 +714,55 @@ export const createRouter = () => {
       return ok(res, reportTaskResult(req.body.sandboxId, req.params.instanceId, req.body))
     } catch (error) {
       return fail(res, error instanceof Error ? error.message : '任务结果上报失败')
+    }
+  })
+  router.get('/api/v1/admin/terminals/:terminalId/log-files', (req, res) => {
+    try {
+      return ok(res, listTerminalLogFiles(requireQuerySandboxId(req.query as Record<string, unknown>), req.params.terminalId))
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '终端日志列表查询失败', 400)
+    }
+  })
+  router.post('/api/v1/admin/terminals/:terminalId/log-fetches', (req, res) => {
+    try {
+      const sandboxId = requireBodySandboxId(req.body)
+      const origin = `${req.protocol}://${req.get('host')}`
+      const uploadUrl = typeof req.body?.uploadUrl === 'string' && req.body.uploadUrl.trim()
+        ? req.body.uploadUrl.trim()
+        : `${origin}/api/v1/terminals/${req.params.terminalId}/log-files/upload`
+      const result = requestTerminalLogUpload({
+        sandboxId,
+        terminalId: req.params.terminalId,
+        logDate: req.body.logDate,
+        overwrite: req.body.overwrite !== false,
+        operator: 'admin-console',
+        uploadUrl,
+      })
+      appendAuditLog({ domain: 'TERMINAL_LOG', action: 'REQUEST_TERMINAL_LOG_UPLOAD', targetId: req.params.terminalId, detail: { ...req.body, uploadUrl } })
+      return created(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '创建终端日志获取任务失败', 400)
+    }
+  })
+  router.post('/api/v1/terminals/:terminalId/log-files/upload', (req, res) => {
+    try {
+      const result = receiveTerminalLogUpload({
+        sandboxId: req.body.sandboxId,
+        terminalId: req.params.terminalId,
+        logDate: req.body.logDate,
+        displayIndex: req.body.displayIndex,
+        displayRole: req.body.displayRole,
+        commandId: req.body.commandId,
+        instanceId: req.body.instanceId,
+        releaseId: req.body.releaseId,
+        fileName: req.body.fileName,
+        contentType: req.body.contentType,
+        contentBase64: req.body.contentBase64,
+        metadata: req.body.metadata,
+      })
+      return created(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '终端日志上传失败', 400)
     }
   })
   router.post('/internal/data-plane/tasks/delivery-status', (req, res) => ok(res, updateDeliveryStatus(req.body.instanceId, req.body.deliveryStatus, req.body.error)))

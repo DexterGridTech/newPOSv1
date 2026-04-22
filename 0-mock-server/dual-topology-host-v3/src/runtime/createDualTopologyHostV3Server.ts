@@ -27,6 +27,28 @@ const writeJson = (response: http.ServerResponse, statusCode: number, payload: u
     response.end(JSON.stringify(payload))
 }
 
+const resolveTargetNodeId = (message: DualTopologyHostV3IncomingMessage): string | undefined => {
+    if (message.type === 'hello') {
+        return undefined
+    }
+    if ('targetNodeId' in message && typeof message.targetNodeId === 'string') {
+        return message.targetNodeId
+    }
+    if ('envelope' in message && message.envelope && typeof message.envelope === 'object') {
+        const envelope = message.envelope as {
+            targetNodeId?: unknown
+            ownerNodeId?: unknown
+        }
+        if (typeof envelope.targetNodeId === 'string') {
+            return envelope.targetNodeId
+        }
+        if (message.type === 'command-event' && typeof envelope.ownerNodeId === 'string') {
+            return envelope.ownerNodeId
+        }
+    }
+    return undefined
+}
+
 export const createDualTopologyHostV3Server = (
     input: {
         config?: Partial<DualTopologyHostV3ServerConfig>
@@ -165,7 +187,10 @@ export const createDualTopologyHostV3Server = (
             return
         }
 
-        const targetRuntime = Array.from(peerByRole.values()).find(peer => peer.runtime.nodeId === message.targetNodeId)
+        const targetNodeId = resolveTargetNodeId(message)
+        const targetRuntime = targetNodeId
+            ? Array.from(peerByRole.values()).find(peer => peer.runtime.nodeId === targetNodeId)
+            : undefined
         if (!targetRuntime || targetRuntime.socket.readyState !== WebSocket.OPEN) {
             return
         }

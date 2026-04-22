@@ -2,7 +2,7 @@
 
 ## 1. 结论
 
-旧 `1-kernel/1.1-cores/task` 不应迁移为新 `task` 包，而应迁移为：
+旧 `_old_/1-kernel/1.1-cores/task` 不应迁移为新 `task` 包，而应迁移为：
 
 `1-kernel/1.1-base/workflow-runtime`
 

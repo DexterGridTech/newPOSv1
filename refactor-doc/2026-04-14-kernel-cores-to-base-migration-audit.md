@@ -4,19 +4,19 @@
 
 本轮审计范围：
 
-1. `1-kernel/1.1-cores/base`
-2. `1-kernel/1.1-cores/interconnection`
-3. `1-kernel/1.1-cores/communication`
-4. `1-kernel/1.1-cores/navigation`
-5. `1-kernel/1.1-cores/task`
-6. `1-kernel/1.1-cores/tcp-client`
-7. `1-kernel/1.1-cores/tdp-client`
-8. `1-kernel/1.1-cores/terminal`
+1. `_old_/1-kernel/1.1-cores/base`
+2. `_old_/1-kernel/1.1-cores/interconnection`
+3. `_old_/1-kernel/1.1-cores/communication`
+4. `_old_/1-kernel/1.1-cores/navigation`
+5. `_old_/1-kernel/1.1-cores/task`
+6. `_old_/1-kernel/1.1-cores/tcp-client`
+7. `_old_/1-kernel/1.1-cores/tdp-client`
+8. `_old_/1-kernel/1.1-cores/terminal`
 
 明确排除：
 
-1. `1-kernel/1.1-cores/ui-runtime`
-2. `1-kernel/1.1-cores/shared-dev`
+1. `_old_/1-kernel/1.1-cores/ui-runtime`
+2. `_old_/1-kernel/1.1-cores/shared-dev`
 
 排除原因：
 
@@ -39,7 +39,7 @@
 2. 本轮确认并补齐了一个真实缺口：旧 `task` 的 platform-aware definition 选择能力。
 3. 旧 `terminal` 的底层核心能力已经被 `tcp-control-runtime-v2`、`tdp-sync-runtime-v2`、`topology-runtime-v2` 拆分承接。
 4. 旧 `terminal` 的 `Unit / unitData / rootPath` 模型不应直接迁入 `1.1-base`，后续业务包应通过 `tdpTopicDataChanged` 自行建立业务 state/read model。
-5. 旧 `navigation` 已由 `1-kernel/1.1-cores/ui-runtime` 作为专项替代方向承接，不属于 `1.1-base` 目标。
+5. 旧 `navigation` 已由 `_old_/1-kernel/1.1-cores/ui-runtime` 作为专项替代方向承接，不属于 `1.1-base` 目标。
 
 本轮已经补齐：
 
@@ -161,7 +161,7 @@
 
 新承接包：
 
-1. `1-kernel/1.1-cores/ui-runtime`
+1. `_old_/1-kernel/1.1-cores/ui-runtime`
 
 当前结论：
 
@@ -340,7 +340,7 @@
 
 建议后续顺序：
 
-1. 以 `1-kernel/1.2-modules` 的真实业务使用为样本，设计 `1-kernel/1.2-business` 的 topic 消费规范。
+1. 以 `_old_/1-kernel/1.2-modules` 的真实业务使用为样本，设计 `1-kernel/1.2-business` 的 topic 消费规范。
 2. 对每个业务包明确：
    1. 监听哪个 `tdpTopicDataChanged` topic。
    2. 转成哪个业务 state。

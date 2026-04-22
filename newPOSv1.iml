@@ -4,7 +4,7 @@
     <exclude-output />
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/3-adapter/tauri/adapter-v1/native/target" />
-      <excludeFolder url="file://$MODULE_DIR$/_package_template_" />
+      <excludeFolder url="file://$MODULE_DIR$/_old_/_package_template_" />
       <excludeFolder url="file://$MODULE_DIR$/_old_" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />

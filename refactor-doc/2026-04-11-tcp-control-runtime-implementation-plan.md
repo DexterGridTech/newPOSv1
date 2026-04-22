@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use inline execution for this repository unless the user asks to split into subagents. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build `1-kernel/1.1-base/tcp-control-runtime` as the new TCP control-plane base package that replaces old `1-kernel/1.1-cores/tcp-client`.
+**Goal:** Build `1-kernel/1.1-base/tcp-control-runtime` as the new TCP control-plane base package that replaces old `_old_/1-kernel/1.1-cores/tcp-client`.
 
 **Architecture:** The package owns terminal control-plane identity, credential, binding, and runtime observation state. It exposes commands and selectors as the only cross-package write/read contract, while slice actions remain package-internal. HTTP integration uses `transport-runtime`; state persistence uses `state-runtime` field-level persistence.
 

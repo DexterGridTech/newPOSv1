@@ -36,7 +36,7 @@ import java.util.concurrent.atomic.AtomicReference
 /**
  * Connector 总入口。
  *
- * 这个类负责把 adapterPure 中所有“外部交互通道”收敛到统一入口，包括：
+ * 这个类负责把 adapter-android-v2 中所有“外部交互通道”收敛到统一入口，包括：
  * - Camera 扫码类 request/response 调用；
  * - 系统 Intent 调用与文件选择；
  * - HID 键盘流式输入订阅；
@@ -181,7 +181,7 @@ class ConnectorManager private constructor(private val context: Context) : IConn
         response(
           success = false,
           code = ConnectorCodes.NOT_SUPPORTED,
-          message = "Only REQUEST_RESPONSE is supported in adapterPure",
+          message = "Only REQUEST_RESPONSE is supported in adapter-android-v2",
           started = System.currentTimeMillis(),
         ),
       )

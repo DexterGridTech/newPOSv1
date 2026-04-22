@@ -2,9 +2,9 @@
 
 `1-kernel/1.1-base` 是新版 kernel 基础层。
 
-它承接旧 `1-kernel/1.1-cores/base`、`interconnection`、`communication`、`task`、`navigation`、`terminal` 中真正有价值的业务能力，但不做旧包的一比一复刻。新基础层的目标是把旧工程里职责过重、边界不清、全局状态过多的能力重新拆成一组职责明确、依赖清晰、协议公开、可测试、可扩展的基础包。
+它承接旧 `_old_/1-kernel/1.1-cores/base`、`interconnection`、`communication`、`task`、`navigation`、`terminal` 中真正有价值的业务能力，但不做旧包的一比一复刻。新基础层的目标是把旧工程里职责过重、边界不清、全局状态过多的能力重新拆成一组职责明确、依赖清晰、协议公开、可测试、可扩展的基础包。
 
-旧 `1-kernel/1.1-cores` 以后只作为设计参考和回归语义参考，不再作为新业务包的依赖来源。未来 `1-kernel/1.2-business`、`2-ui`、`3-adapter`、`4-assembly` 应优先围绕本目录的基础协议和 runtime 能力继续建设。
+旧 `_old_/1-kernel/1.1-cores` 以后只作为设计参考和回归语义参考，不再作为新业务包的依赖来源。未来 `1-kernel/1.2-business`、`2-ui`、`3-adapter`、`4-assembly` 应优先围绕本目录的基础协议和 runtime 能力继续建设。
 
 ## 一、总设计目标
 
@@ -31,7 +31,7 @@
 
 这些规则是后续维护和新增业务包时必须优先遵守的约束。
 
-1. `1-kernel/1.1-base` 是新的 canonical kernel base；旧 `1-kernel/1.1-cores` 只作参考。
+1. `1-kernel/1.1-base` 是新的 canonical kernel base；旧 `_old_/1-kernel/1.1-cores` 只作参考。
 2. kernel 包不能依赖 React。`hooks/index.ts` 可以保留规则说明或空出口，但真实 hook 实现应在 `2-ui` 或 assembly。
 3. 每个包都应保留 `moduleName`，并用它派生命名空间、日志 scope、command key、actor key、slice key。
 4. `runtime-shell-v2` 是唯一 runtime shell，不允许重新引入多个并列 global manager。

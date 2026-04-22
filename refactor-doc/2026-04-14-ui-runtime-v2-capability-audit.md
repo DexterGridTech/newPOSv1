@@ -4,8 +4,8 @@
 
 本文件对照三套实现：
 
-1. 旧 `navigation`：`1-kernel/1.1-cores/navigation`
-2. 旧 `ui-runtime`：`1-kernel/1.1-cores/ui-runtime`
+1. 旧 `navigation`：`_old_/1-kernel/1.1-cores/navigation`
+2. 旧 `ui-runtime`：`_old_/1-kernel/1.1-cores/ui-runtime`
 3. 新 `ui-runtime-v2`：`1-kernel/1.1-base/ui-runtime-v2`
 
 审计目标：
@@ -357,11 +357,11 @@ actor：
 
 使用位置集中在：
 
-1. `2-ui/2.1-cores/base`
-2. `2-ui/2.1-cores/runtime-base`
-3. `2-ui/2.1-cores/terminal`
-4. `2-ui/2.2-modules/mixc-*`
-5. `2-ui/2.3-integrations/mixc-retail`
+1. `_old_/2-ui/2.1-cores/base`
+2. `_old_/2-ui/2.1-cores/runtime-base`
+3. `_old_/2-ui/2.1-cores/terminal`
+4. `_old_/2-ui/2.2-modules/mixc-*`
+5. `_old_/2-ui/2.3-integrations/mixc-retail`
 
 ### 10.2 v2 的处理结论
 

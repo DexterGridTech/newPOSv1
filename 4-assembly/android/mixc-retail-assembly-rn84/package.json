@@ -29,6 +29,7 @@
     "@impos2/ui-base-input-runtime": "workspace:*",
     "@impos2/ui-base-runtime-react": "workspace:*",
     "@impos2/ui-base-terminal-console": "workspace:*",
+    "@impos2/ui-base-topology-runtime-bridge": "workspace:*",
     "@impos2/ui-integration-retail-shell": "workspace:*",
     "@reduxjs/toolkit": "^2.10.0",
     "react": "19.2.3",

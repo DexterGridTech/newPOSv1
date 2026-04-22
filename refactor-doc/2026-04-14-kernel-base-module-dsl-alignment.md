@@ -2,7 +2,7 @@
 
 ## 目标
 
-把 `1-kernel/1.1-cores` 里最值得继承的开发体验迁移到 `1-kernel/1.1-base`：
+把 `_old_/1-kernel/1.1-cores` 里最值得继承的开发体验迁移到 `1-kernel/1.1-base`：
 
 1. 开发者只写模块内短名。
 2. `moduleName` 是字符串真相源。

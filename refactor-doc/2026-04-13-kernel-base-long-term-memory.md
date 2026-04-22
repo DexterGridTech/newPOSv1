@@ -25,7 +25,7 @@
 7. 不再使用 `features/epics`
 8. 不再保留 `features/middlewares` 空目录规范
 9. 统一参考仓库现有 `1-kernel` / `2-ui` / `4-assembly` 子包结构，不随意自创异构目录布局
-10. `_package_template_` 只是模板参考，不是当前直接产物
+10. `_old_/_package_template_` 只是模板参考，不是当前直接产物
 
 ## 3. 核心架构原则
 

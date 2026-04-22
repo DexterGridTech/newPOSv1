@@ -27,18 +27,21 @@ describe('DefaultAlert', () => {
         })
         const dispatchCommand = vi.fn(async () => ({status: 'COMPLETED'}))
 
-        const tree = TestRenderer.create(
-            <UiRuntimeProvider runtime={{dispatchCommand} as any}>
-                <DefaultAlert
-                    title="切换到副屏"
-                    message="检测到电源状态变化，请确认是否切换显示模式。"
-                    confirmText="立即切换"
-                    cancelText="取消"
-                    confirmAction={{commands: [closeCommand, switchCommand]}}
-                    cancelAction={{commands: [closeCommand]}}
-                />
-            </UiRuntimeProvider>,
-        )
+        let tree!: TestRenderer.ReactTestRenderer
+        await act(async () => {
+            tree = TestRenderer.create(
+                <UiRuntimeProvider runtime={{dispatchCommand} as any}>
+                    <DefaultAlert
+                        title="切换到副屏"
+                        message="检测到电源状态变化，请确认是否切换显示模式。"
+                        confirmText="立即切换"
+                        cancelText="取消"
+                        confirmAction={{commands: [closeCommand, switchCommand]}}
+                        cancelAction={{commands: [closeCommand]}}
+                    />
+                </UiRuntimeProvider>,
+            )
+        })
 
         await act(async () => {
             await tree.root.findByProps({testID: 'ui-base-default-alert:confirm'}).props.onPress()
@@ -66,19 +69,22 @@ describe('DefaultAlert', () => {
         })
         const dispatchCommand = vi.fn(async () => ({status: 'COMPLETED'}))
 
-        const tree = TestRenderer.create(
-            <UiRuntimeProvider runtime={{dispatchCommand} as any}>
-                <DefaultAlert
-                    title="切换到副屏"
-                    message="检测到电源状态变化，请确认是否切换显示模式。"
-                    autoConfirmAfterMs={1_000}
-                    confirmText="立即切换"
-                    cancelText="取消"
-                    confirmAction={{commands: [closeCommand, confirmCommand]}}
-                    cancelAction={{commands: [closeCommand]}}
-                />
-            </UiRuntimeProvider>,
-        )
+        let tree!: TestRenderer.ReactTestRenderer
+        await act(async () => {
+            tree = TestRenderer.create(
+                <UiRuntimeProvider runtime={{dispatchCommand} as any}>
+                    <DefaultAlert
+                        title="切换到副屏"
+                        message="检测到电源状态变化，请确认是否切换显示模式。"
+                        autoConfirmAfterMs={1_000}
+                        confirmText="立即切换"
+                        cancelText="取消"
+                        confirmAction={{commands: [closeCommand, confirmCommand]}}
+                        cancelAction={{commands: [closeCommand]}}
+                    />
+                </UiRuntimeProvider>,
+            )
+        })
 
         expect(tree.root.findByProps({
             testID: 'ui-base-default-alert:countdown',

@@ -1,1 +1,0 @@
-export const moduleName = '{{MODULE_NAME}}'

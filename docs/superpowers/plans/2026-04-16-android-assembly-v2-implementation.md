@@ -55,8 +55,8 @@
 
 ### Read-only references that guide implementation
 
-- Read-only reference: `3-adapter/android/adapterPure/**`
-- Read-only reference: `4-assembly/android/mixc-retail-rn84v2/**`
+- Read-only reference: `_old_/3-adapter/android/adapterPure/**`
+- Read-only reference: `_old_/4-assembly/android/mixc-retail-rn84v2/**`
 - Read-only reference: `0-mock-server/dual-topology-host/**`
 - Read-only reference: `1-kernel/1.1-base/platform-ports/src/types/ports.ts`
 - Read-only reference: `1-kernel/1.1-base/runtime-shell-v2/src/application/createKernelRuntimeApp.ts`

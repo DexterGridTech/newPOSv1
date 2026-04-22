@@ -16,7 +16,7 @@
     "check:circular": "madge --circular --extensions ts --warning src/"
   },
   "dependencies": {
-    "@impos2/kernel-base-transport-runtime": "workspace:*"
+    "@impos2/kernel-base-contracts": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^25.0.9",

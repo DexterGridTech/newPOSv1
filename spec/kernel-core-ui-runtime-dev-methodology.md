@@ -2,7 +2,7 @@
 
 ## 目的
 
-本文沉淀本次 `1-kernel/1.1-cores/ui-runtime` 设计、实现、调试过程中已经验证有效的方法，供后续同类 runtime core 包复用。
+本文沉淀本次 `1-kernel/1.1-base/ui-runtime-v2` 设计、实现、调试过程中已经验证有效的方法，供后续同类 runtime 包复用。
 
 重点不是某个 API 细节，而是以下几类方法：
 
@@ -13,7 +13,7 @@
 
 ## 适用范围
 
-适用于满足下面任一条件的 `1-kernel/1.1-cores/*` 包：
+适用于满足下面任一条件的 `1-kernel/1.1-base/*` 包：
 
 1. 包内 state 同时承载本地持久化和主副端同步语义。
 2. 包的真实行为依赖 `ApplicationManager`、workspace slice、command actor、interconnection。
@@ -122,10 +122,10 @@
 1. 单进程状态语义验证。
 2. 双进程主副屏同步验证。
 
-对应到当前 `ui-runtime/dev`：
+对应到当前 `ui-runtime-v2/test`：
 
-1. `test-state-single.ts`：验证本地命令是否正确驱动 `screen` / `overlay` / `uiVariables`。
-2. `test-state-dual.ts`：验证主副进程是否正确建立连接并同步主屏状态到副屏。
+1. `ui-runtime-v2.spec.ts`：验证本地命令是否正确驱动 `screen` / `overlay` / `uiVariables`。
+2. `ui-runtime-v2-live-*.spec.ts`：验证主副 runtime 是否正确建立连接并同步主屏状态到副屏。
 
 这样拆的原因：
 
@@ -138,10 +138,10 @@
 
 这次已验证可复用的方式是：
 
-1. 启动 `0-mock-server/master-ws-server-dual` 作为主副屏通信服务。
-2. 分别启动两个独立 Node 子进程。
-3. 两个进程分别创建自己的 `ApplicationManager`。
-4. 通过不同 `displayIndex` 让 `interconnection` 自动判断主屏和副屏。
+1. 启动 `0-mock-server/dual-topology-host-v3` 或由测试 harness 创建内嵌 host。
+2. 分别创建 master/slave runtime，或在需要重启语义时启动独立 Node 子进程。
+3. 两端分别创建自己的 runtime/store。
+4. 通过 topology context 和 `displayIndex` / `displayMode` 让运行时判断主屏和副屏。
 
 对应结论：
 
@@ -206,7 +206,8 @@
 
 本次双进程 dev 场景采用的健康检查地址是：
 
-1. `http://127.0.0.1:8888/mockMasterServer/health`
+1. `0-mock-server/dual-topology-host-v3/test/scenarios/http-server.spec.ts`
+2. `0-mock-server/dual-topology-host-v3/test/scenarios/ws-server.spec.ts`
 
 ### 4. Android assembly 双屏调试先走 automation socket，不先猜也不先写大脚本
 
@@ -286,22 +287,22 @@ adb logcat -d -v time | rg -n "ReactNativeJS|automation|topology|secondary" -S
 
 后续新增同类型 core 包时，建议优先参考以下文件：
 
-1. `1-kernel/1.1-cores/ui-runtime/dev/index.ts`
-2. `1-kernel/1.1-cores/ui-runtime/dev/test-state-single.ts`
-3. `1-kernel/1.1-cores/ui-runtime/dev/test-state-dual.ts`
-4. `1-kernel/1.1-cores/ui-runtime/dev/worker.ts`
-5. `0-mock-server/master-ws-server-dual/src/index.ts`
+1. `1-kernel/1.1-base/ui-runtime-v2/test/helpers/liveHarness.ts`
+2. `1-kernel/1.1-base/ui-runtime-v2/test/scenarios/ui-runtime-v2.spec.ts`
+3. `1-kernel/1.1-base/ui-runtime-v2/test/scenarios/ui-runtime-v2-live-screen-master-to-slave.spec.ts`
+4. `1-kernel/1.1-base/ui-runtime-v2/test/scenarios/ui-runtime-v2-live-branch-screen-slave-to-master.spec.ts`
+5. `0-mock-server/dual-topology-host-v3/src/index.ts`
 
 如果要快速回归当前 `ui-runtime` dev 测试，可使用：
 
 ```bash
-node $(node -p "require.resolve('tsx/cli')") 1-kernel/1.1-cores/ui-runtime/dev/index.ts
+corepack yarn workspace @impos2/kernel-base-ui-runtime-v2 test
 ```
 
 如果要先做类型检查，可使用：
 
 ```bash
-./node_modules/typescript/bin/tsc --noEmit -p 1-kernel/1.1-cores/ui-runtime/tsconfig.json
+./node_modules/typescript/bin/tsc --noEmit -p 1-kernel/1.1-base/ui-runtime-v2/tsconfig.json
 ```
 
 ## 五、落地建议
