@@ -139,4 +139,79 @@ describe('mock-terminal-platform hot update version reports', () => {
       }),
     ]))
   })
+
+  it('prefers the latest primary-role report over stale single-role history for the same display bucket', async () => {
+    const server = createMockTerminalPlatformTestServer()
+    servers.push(server)
+    await server.start()
+
+    const prepareResponse = await fetch(`${server.getHttpBaseUrl()}/mock-debug/kernel-base-test/prepare`, { method: 'POST' })
+    const preparePayload = await prepareResponse.json() as { data: { sandboxId: string } }
+    const sandboxId = preparePayload.data.sandboxId
+
+    const activationResponse = await fetch(`${server.getHttpBaseUrl()}/api/v1/terminals/activate`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        sandboxId,
+        activationCode: '200000000001',
+        deviceFingerprint: 'device-version-report-003',
+        deviceInfo: { id: 'device-version-report-003', model: 'Mixc Retail Android RN84' },
+      }),
+    })
+    const activationPayload = await activationResponse.json() as { data: { terminalId: string } }
+    const terminalId = activationPayload.data.terminalId
+
+    await fetch(`${server.getHttpBaseUrl()}/api/v1/terminals/${terminalId}/version-reports`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        sandboxId,
+        displayIndex: 0,
+        displayRole: 'single',
+        appId: 'assembly-android-mixc-retail-rn84',
+        assemblyVersion: '1.0.0',
+        buildNumber: 1,
+        runtimeVersion: 'android-mixc-retail-rn84@1.0',
+        bundleVersion: '1.0.0+ota.7',
+        source: 'hot-update',
+        packageId: 'pkg-single',
+        releaseId: 'release-single',
+        state: 'RUNNING',
+      }),
+    })
+
+    await fetch(`${server.getHttpBaseUrl()}/api/v1/terminals/${terminalId}/version-reports`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        sandboxId,
+        displayIndex: 0,
+        displayRole: 'primary',
+        appId: 'assembly-android-mixc-retail-rn84',
+        assemblyVersion: '1.0.0',
+        buildNumber: 1,
+        runtimeVersion: 'android-mixc-retail-rn84@1.0',
+        bundleVersion: '1.0.0+ota.8',
+        source: 'hot-update',
+        packageId: 'pkg-primary-current',
+        releaseId: 'release-primary-current',
+        state: 'RUNNING',
+      }),
+    })
+
+    const driftResponse = await fetch(`${server.getHttpBaseUrl()}/api/v1/admin/hot-updates/version-drift?sandboxId=${sandboxId}`)
+    const driftPayload = await driftResponse.json() as {
+      data: Array<{ terminalId: string; displayRole: string; bundleVersion: string; packageId: string | null }>
+    }
+
+    expect(driftPayload.data.filter(item => item.terminalId === terminalId)).toEqual([
+      expect.objectContaining({
+        terminalId,
+        displayRole: 'primary',
+        bundleVersion: '1.0.0+ota.8',
+        packageId: 'pkg-primary-current',
+      }),
+    ])
+  })
 })
