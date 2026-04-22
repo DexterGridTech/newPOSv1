@@ -1,1 +1,0 @@
-{"success":true,"data":[{"topic":"terminal.group.membership","itemKey":"terminal_ndfsx94eqqek","operation":"upsert","scopeType":"TERMINAL","scopeId":"terminal_ndfsx94eqqek","revision":1,"payload":{"membershipVersion":0,"groups":[]},"occurredAt":"2026-04-21T14:22:43.303Z","sourceReleaseId":null}]}

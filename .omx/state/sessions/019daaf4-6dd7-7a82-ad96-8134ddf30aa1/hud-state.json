@@ -1,6 +1,0 @@
-{
-  "last_turn_at": "2026-04-20T13:27:27.517Z",
-  "turn_count": 1,
-  "last_progress_at": "2026-04-20T13:27:27.517Z",
-  "last_agent_output": "已完成 `P0 / P1 / P2` 的修改，并做了完整验证。\n\n这轮主要落了三块。第一，`adapter-android-v2` 的 `dev-app` 已经从旧 `topologyhost` 切到"
-}

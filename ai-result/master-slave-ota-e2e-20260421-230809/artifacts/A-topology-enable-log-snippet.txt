@@ -1,2 +1,0 @@
-04-21 23:13:32.651 12640 12668 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Create assembly topology socket binding {"displayIndex":0,"role":"master","localNodeId":"master:6Z2H3BSGEY","resolvedPathTemplate":"/ws"}
-04-21 23:13:32.684 12640 12668 I assembly.assembly.android.mixc-retail-rn84: [assembly.topology] Native topology host already matches desired lifecycle state {"displayCount":1,"displayIndex":0,"deviceId":"6Z2H3BSGEY","instanceMode":"MASTER","enableSlave":false,"running":false,"reason":"not-master-or-single-primary-host"}

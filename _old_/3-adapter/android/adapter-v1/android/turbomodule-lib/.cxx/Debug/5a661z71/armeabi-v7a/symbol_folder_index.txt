@@ -1,1 +1,0 @@
-/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapter-v1/android/turbomodule-lib/build/intermediates/cxx/Debug/5a661z71/obj/armeabi-v7a

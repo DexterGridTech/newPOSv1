@@ -1,8 +1,0 @@
-{
-  "jsonrpc": "2.0",
-  "error": {
-    "code": -32001,
-    "message": "automation js dispatcher timeout after 32000ms"
-  },
-  "id": null
-}

@@ -1,2 +1,0 @@
-209:04-19 22:38:34.865 D/MainActivity( 8761): Skipped RN onWindowFocusChanged before React context is ready: hasFocus=true
-845:04-19 22:38:39.800 D/SecondaryActivity( 8837): Skipped RN onWindowFocusChanged before React context is ready: hasFocus=true

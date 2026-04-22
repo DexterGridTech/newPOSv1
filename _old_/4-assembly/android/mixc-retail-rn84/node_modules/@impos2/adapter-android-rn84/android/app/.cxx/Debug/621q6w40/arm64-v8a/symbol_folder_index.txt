@@ -1,1 +1,0 @@
-/Users/dexter/Documents/workspace/idea/newPOSv1/3-adapter/android/adapterRN84/android/app/build/intermediates/cxx/Debug/621q6w40/obj/arm64-v8a

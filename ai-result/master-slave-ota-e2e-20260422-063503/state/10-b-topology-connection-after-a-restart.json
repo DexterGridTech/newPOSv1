@@ -1,8 +1,0 @@
-{
-  "jsonrpc": "2.0",
-  "result": {
-    "serverConnectionStatus": "CONNECTED",
-    "reconnectAttempt": 0
-  },
-  "id": "1776812068714-c43c30d663ce4"
-}

@@ -1,4 +1,0 @@
-/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/android/app/.cxx/RelWithDebInfo/1p4t3g5o/x86_64/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/foo.dir
-/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/android/app/.cxx/RelWithDebInfo/1p4t3g5o/x86_64/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/boo.dir
-/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/android/app/.cxx/RelWithDebInfo/1p4t3g5o/x86_64/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/edit_cache.dir
-/Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/android/app/.cxx/RelWithDebInfo/1p4t3g5o/x86_64/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/rebuild_cache.dir

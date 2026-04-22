@@ -1,6 +1,0 @@
-{
-  "last_turn_at": "2026-04-20T03:00:46.993Z",
-  "turn_count": 96,
-  "last_progress_at": "2026-04-20T03:00:46.993Z",
-  "last_agent_output": "是问题，而且比前一个 `host-runtime` 的 case 更像真实问题。\n\n**判断**\n- 这个 review 基本成立。\n- `ExecutionJournal` 是 runtime 常驻"
-}

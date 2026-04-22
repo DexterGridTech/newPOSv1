@@ -1,5 +1,0 @@
-forwarded tcp:28554 -> tcp:18584
-{
-  "ok": true,
-  "nodeId": "ui-base-admin-section:topology:share-payload"
-}

@@ -1,3 +1,0 @@
-  mCurrentFocus=Window{9023c6b u0 com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity}
-  mFocusedApp=ActivityRecord{195648029 u0 com.impos2.mixcretailassemblyrn84/.MainActivity t28}
-    mFocusedWindow=Window{9023c6b u0 com.impos2.mixcretailassemblyrn84/com.impos2.mixcretailassemblyrn84.MainActivity}

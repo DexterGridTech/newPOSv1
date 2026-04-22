@@ -1,7 +1,0 @@
-[web] 9:38:02 PM [vite] (client) Re-optimizing dependencies because lockfile has changed
-[web] 
-[web]   VITE v7.3.1  ready in 161 ms
-[web] 
-[web]   ➜  Local:   http://localhost:5820/
-[web]   ➜  Network: use --host to expose
-[server] Mock Terminal Platform server listening on http://127.0.0.1:5810

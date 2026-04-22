@@ -1,1 +1,0 @@
-{"success":true,"data":{"total":1,"items":[{"topicKey":"system.parameter","operation":"upsert","scopeType":"TERMINAL","scopeKey":"terminal_1x7upxfgvjw7","itemKey":"kernel.base.tdp-sync-runtime-v2.hot-update-idle-threshold-ms","revision":2,"targetTerminalIds":["terminal_1x7upxfgvjw7"]}]}}

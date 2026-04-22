@@ -1,6 +1,0 @@
-{
-  "last_turn_at": "2026-04-20T11:36:18.904Z",
-  "turn_count": 2,
-  "last_progress_at": "2026-04-20T11:36:18.904Z",
-  "last_agent_output": "这是个值得改的问题，而且我做了比原建议稍完整一点的修复。\n\n原问题的关键不只是 `AppRestartManager(private val activity: MainActivity)` 这条强引"
-}

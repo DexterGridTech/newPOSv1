@@ -1,5 +1,0 @@
-[release] bumped bundle version: assembly-android-mixc-retail-rn84 -> 1.0.0+ota.1
-[release] prepared manifest: /Users/dexter/Documents/workspace/idea/newPOSv1/4-assembly/android/mixc-retail-assembly-rn84/release.manifest.json
-[release] injected git metadata: assembly-android-mixc-retail-rn84
-[release] manifest validation passed: assembly-android-mixc-retail-rn84
-[release] generated release info: assembly-android-mixc-retail-rn84

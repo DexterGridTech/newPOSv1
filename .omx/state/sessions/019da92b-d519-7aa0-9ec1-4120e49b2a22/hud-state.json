@@ -1,6 +1,0 @@
-{
-  "last_turn_at": "2026-04-20T09:20:35.167Z",
-  "turn_count": 17,
-  "last_progress_at": "2026-04-20T09:20:35.167Z",
-  "last_agent_output": "按你定的方向已经重构完了，现在边界变成了：\n\n`3-adapter/android/adapter-android-v2`\n承担通用 Android 热更新 helper：\n[HotUpdateBoo"
-}

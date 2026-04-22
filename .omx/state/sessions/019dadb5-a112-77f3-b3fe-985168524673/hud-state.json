@@ -1,6 +1,0 @@
-{
-  "last_turn_at": "2026-04-21T01:56:06.796Z",
-  "turn_count": 1,
-  "last_progress_at": "2026-04-21T01:56:06.796Z",
-  "last_agent_output": "是的，Android RN84 这条链路你说得对，实际跑的是本地原生 `topologyhostv3`，不是 `0-mock-server/dual-topology-host-v3`。\n\n直接证据有"
-}

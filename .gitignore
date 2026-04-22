@@ -189,12 +189,40 @@ pnpm-lock.yaml
 /.claude/
 /_old_/
 /3-adapter/tauri/adapter-v1/native/target/
-/3-adapter/tauri/adapter-v1/native/target/
-/3-adapter/tauri/adapter-v1/native/target/
 /output/
 .omx/
 .playwright-cli/
 .superpowers/
-
 /.turbo/
 /ai-result/
+
+# ============================================
+# Nested node_modules (subpackages)
+# ============================================
+**/node_modules/
+node_modules/.vite/
+
+# ============================================
+# Android CMake / NDK build cache
+# ============================================
+**/android/app/.cxx/
+**/.cxx/
+
+# ============================================
+# SQLite WAL/SHM files
+# ============================================
+*.sqlite-shm
+*.sqlite-wal
+*.sqlite3-shm
+*.sqlite3-wal
+
+# ============================================
+# Hot update dist packages
+# ============================================
+/dist/hot-updates/
+
+# ============================================
+# Release manifests & generated release info
+# ============================================
+release.manifest.json
+**/src/generated/releaseInfo.ts

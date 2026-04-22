@@ -1,26 +1,0 @@
-* Uses proxy env variable http_proxy == 'http://127.0.0.1:7890'
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying 127.0.0.1:7890...
-* Connected to 127.0.0.1 (127.0.0.1) port 7890
-> GET http://127.0.0.1:18888/mockMasterServer/status HTTP/1.1
-> Host: 127.0.0.1:18888
-> User-Agent: curl/8.7.1
-> Accept: */*
-> Proxy-Connection: Keep-Alive
-> 
-* Request completely sent off
-< HTTP/1.1 200 OK
-< Content-Length: 408
-< Access-Control-Allow-Headers: content-type
-< Access-Control-Allow-Methods: GET,POST,DELETE,OPTIONS
-< Access-Control-Allow-Origin: *
-< Connection: keep-alive
-< Content-Type: application/json
-< Keep-Alive: timeout=4
-< Proxy-Connection: keep-alive
-< 
-{ [408 bytes data]
-100   408  100   408    0     0  92036      0 --:--:-- --:--:-- --:--:--   99k
-* Connection #0 to host 127.0.0.1 left intact
-{"state":"RUNNING","config":{"port":8888,"basePath":"\/mockMasterServer"},"addressInfo":{"host":"10.0.2.15","port":8888,"basePath":"\/mockMasterServer","httpBaseUrl":"http:\/\/10.0.2.15:8888\/mockMasterServer","wsUrl":"ws:\/\/10.0.2.15:8888\/mockMasterServer\/ws","bindHost":"0.0.0.0","localHttpBaseUrl":"http:\/\/127.0.0.1:8888\/mockMasterServer","localWsUrl":"ws:\/\/127.0.0.1:8888\/mockMasterServer\/ws"}}

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.impos2.mixcretailassemblyrn84.startup.ReactLifecycleGateTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-04-20T21:01:49.176Z" hostname="DexterdeMacBook-Pro.local" time="0.0">
-  <properties/>
-  <testcase name="forwards to react only when context is ready" classname="com.impos2.mixcretailassemblyrn84.startup.ReactLifecycleGateTest" time="0.0"/>
-  <testcase name="secondary display launch requires api 26 or above" classname="com.impos2.mixcretailassemblyrn84.startup.ReactLifecycleGateTest" time="0.0"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

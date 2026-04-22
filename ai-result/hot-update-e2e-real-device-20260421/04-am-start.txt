@@ -1,8 +1,0 @@
-Starting: Intent { cmp=com.impos2.mixcretailassemblyrn84/.MainActivity }
-Warning: Activity not started, intent has been delivered to currently running top-most instance.
-Status: ok
-LaunchState: UNKNOWN (0)
-Activity: com.impos2.mixcretailassemblyrn84/.MainActivity
-TotalTime: 0
-WaitTime: 11
-Complete

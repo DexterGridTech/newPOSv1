@@ -1,9 +1,0 @@
-forwarded tcp:28556 -> tcp:18584
-{
-  "jsonrpc": "2.0",
-  "result": {
-    "ok": true,
-    "nodeId": "ui-base-admin-section:topology:scan-master"
-  },
-  "id": "1776786032511-174c3602ed0b4"
-}

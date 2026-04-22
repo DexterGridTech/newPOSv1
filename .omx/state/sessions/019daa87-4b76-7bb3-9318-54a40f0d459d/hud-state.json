@@ -1,6 +1,0 @@
-{
-  "last_turn_at": "2026-04-20T11:05:07.863Z",
-  "turn_count": 1,
-  "last_progress_at": "2026-04-20T11:05:07.863Z",
-  "last_agent_output": "**判断**\n这条值得改，但原描述里的死锁因果链不完全准确。`resolveNativeCall` / `rejectNativeCall` 并不跑在 `scriptExecutor` 上，所以不是“"
-}

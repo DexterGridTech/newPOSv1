@@ -1,9 +1,0 @@
-{
-  "jsonrpc": "2.0",
-  "result": {
-    "status": "active",
-    "activeSessionId": "v3ses_mo8pdjqb_529a2d5e",
-    "lastSnapshotAppliedAt": 1776781227714
-  },
-  "id": "1776781247019-9229731e1b2f9"
-}
