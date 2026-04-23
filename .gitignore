@@ -1,0 +1,227 @@
+# ============================================
+# Dependencies
+# ============================================
+node_modules/
+.pnp
+.pnp.js
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+# ============================================
+# Build outputs
+# ============================================
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# TypeScript compilation outputs
+# Ignore compiled files in src/ and dev/ directories
+**/src/**/*.js
+**/src/**/*.d.ts
+**/src/**/*.d.ts.map
+**/src/**/*.js.map
+**/dev/**/*.js
+**/dev/**/*.d.ts
+**/dev/**/*.d.ts.map
+**/dev/**/*.js.map
+
+# Ignore compiled files in package root
+0-mock-server/**/vite.config.js
+0-mock-server/**/vite.config.d.ts
+2-ui/**/App.js
+2-ui/**/App.d.ts
+2-ui/**/App.js.map
+2-ui/**/App.d.ts.map
+2-ui/**/index.js
+2-ui/**/index.d.ts
+2-ui/**/index.js.map
+2-ui/**/index.d.ts.map
+4-assembly/**/App.js
+4-assembly/**/App.d.ts
+4-assembly/**/App.js.map
+4-assembly/**/App.d.ts.map
+
+# ============================================
+# React Native / Expo
+# ============================================
+.expo/
+.expo-shared/
+.bundle/
+
+# Android
+**/android/build/
+**/android/app/build/
+**/android/.gradle/
+**/android/local.properties
+**/android/.cxx/
+**/.cxx/
+**/android/captures/
+*.apk
+*.aab
+
+# iOS
+**/ios/build/
+**/ios/Pods/
+**/ios/*.xcworkspace/xcuserdata/
+**/ios/*.xcodeproj/xcuserdata/
+**/ios/*.xcodeproj/project.xcworkspace/xcuserdata/
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Electron / Desktop packaging outputs
+**/out/
+**/.webpack/
+**/*.app/
+**/*.dmg
+**/*.exe
+**/*.AppImage
+**/*.deb
+**/*.rpm
+**/*.nsis.7z
+**/*.blockmap
+
+# ============================================
+# Metro Bundler
+# ============================================
+.metro/
+.metro-cache/
+*.haste_cache_*
+
+# ============================================
+# Testing
+# ============================================
+coverage/
+.nyc_output/
+*.lcov
+
+# ============================================
+# Database
+# ============================================
+*.db
+*.sqlite
+*.sqlite3
+*.db-shm
+*.db-wal
+
+# ============================================
+# Logs
+# ============================================
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ============================================
+# OS Files
+# ============================================
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ============================================
+# IDE / Editor
+# ============================================
+.idea/
+.vscode/
+*.iml
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# ============================================
+# Environment Variables
+# ============================================
+.env
+.env.local
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ============================================
+# Turbo
+# ============================================
+.turbo/
+
+# ============================================
+# AI Generated / Temporary
+# ============================================
+/ai-result/
+/ai-task/
+/output/browser/
+/.codex-tmp/
+/.superpowers/brainstorm/
+/tmp/
+/temp/
+
+# ============================================
+# Yarn
+# ============================================
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# ============================================
+# Package Manager Lock Files (keep yarn.lock)
+# ============================================
+package-lock.json
+pnpm-lock.yaml
+
+# ============================================
+# Misc
+# ============================================
+*.orig
+*.rej
+.cache/
+/.claude/
+/_old_/
+/3-adapter/tauri/adapter-v1/native/target/
+/output/
+.omx/
+.playwright-cli/
+.superpowers/
+/.turbo/
+/ai-result/
+
+# ============================================
+# Nested node_modules (subpackages)
+# ============================================
+**/node_modules/
+node_modules/.vite/
+
+# ============================================
+# Android CMake / NDK build cache
+# ============================================
+**/android/app/.cxx/
+**/.cxx/
+
+# ============================================
+# SQLite WAL/SHM files
+# ============================================
+*.sqlite-shm
+*.sqlite-wal
+*.sqlite3-shm
+*.sqlite3-wal
+
+# ============================================
+# Hot update dist packages
+# ============================================
+/dist/hot-updates/
+0-mock-server/mock-terminal-platform/server/data/hot-updates/
+
+# ============================================
+# Release manifests & generated release info
+# ============================================
+release.manifest.json
+**/src/generated/releaseInfo.ts

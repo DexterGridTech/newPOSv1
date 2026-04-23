@@ -1,0 +1,14 @@
+{
+  "name": "@impos2/mock-admin-mall-tenant-console",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -k -n server,web \"corepack yarn workspace @impos2/mock-admin-mall-tenant-console-server dev\" \"corepack yarn workspace @impos2/mock-admin-mall-tenant-console-web dev\"",
+    "build": "corepack yarn workspace @impos2/mock-admin-mall-tenant-console-server build && corepack yarn workspace @impos2/mock-admin-mall-tenant-console-web build",
+    "type-check": "corepack yarn workspace @impos2/mock-admin-mall-tenant-console-server type-check && corepack yarn workspace @impos2/mock-admin-mall-tenant-console-web type-check",
+    "clean": "corepack yarn workspace @impos2/mock-admin-mall-tenant-console-server clean && corepack yarn workspace @impos2/mock-admin-mall-tenant-console-web clean"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

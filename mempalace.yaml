@@ -1,0 +1,45 @@
+wing: newposv1
+rooms:
+- name: design
+  description: Files from design/
+  keywords:
+  - design
+  - design
+- name: ai_task
+  description: Files from ai-task/
+  keywords:
+  - ai_task
+  - ai-task
+- name: ai_result
+  description: Files from ai-result/
+  keywords:
+  - ai_result
+  - ai-result
+- name: spec
+  description: Files from spec/
+  keywords:
+  - spec
+  - spec
+- name: output
+  description: Files from output/
+  keywords:
+  - output
+  - output
+- name: refactor_doc
+  description: Files from refactor-doc/
+  keywords:
+  - refactor_doc
+  - refactor-doc
+- name: documentation
+  description: Files from docs/
+  keywords:
+  - documentation
+  - docs
+- name: scripts
+  description: Files from scripts/
+  keywords:
+  - scripts
+  - scripts
+- name: general
+  description: Files that don't fit other rooms
+  keywords: []

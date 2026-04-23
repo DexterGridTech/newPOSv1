@@ -1,0 +1,71 @@
+import {
+    createHttpServiceBinder,
+    createModuleHttpEndpointFactory,
+    type HttpRuntime,
+} from '@impos2/kernel-base-transport-runtime'
+import {SERVER_NAME_MOCK_TERMINAL_PLATFORM} from '@impos2/kernel-server-config-v2'
+import {moduleName} from '../moduleName'
+import {tdpSyncV2ErrorDefinitions} from '../supports'
+import type {
+    TdpChangesResponse,
+    TdpSnapshotResponse,
+    TdpSyncHttpServiceV2,
+} from '../types'
+
+const TDP_SYNC_V2_SNAPSHOT_FALLBACK_MESSAGE = 'tdp snapshot request failed'
+const TDP_SYNC_V2_CHANGES_FALLBACK_MESSAGE = 'tdp changes request failed'
+
+const defineEndpoint = createModuleHttpEndpointFactory(moduleName, SERVER_NAME_MOCK_TERMINAL_PLATFORM)
+
+const snapshotEndpoint = defineEndpoint<
+    {terminalId: string},
+    {sandboxId: string},
+    void,
+    TdpSnapshotResponse
+>('get-snapshot', {
+    method: 'GET',
+    pathTemplate: '/api/v1/tdp/terminals/{terminalId}/snapshot',
+    request: {
+        path: true,
+        query: true,
+    },
+})
+
+const changesEndpoint = defineEndpoint<
+    {terminalId: string},
+    {sandboxId: string; cursor?: number; limit?: number},
+    void,
+    TdpChangesResponse
+>('get-changes', {
+    method: 'GET',
+    pathTemplate: '/api/v1/tdp/terminals/{terminalId}/changes',
+    request: {
+        path: true,
+        query: true,
+    },
+})
+
+export const createTdpSyncHttpServiceV2 = (runtime: HttpRuntime): TdpSyncHttpServiceV2 => {
+    const http = createHttpServiceBinder(runtime)
+
+    return {
+        async getSnapshot(sandboxId, terminalId) {
+            return http.envelope(snapshotEndpoint, {
+                path: {terminalId},
+                query: {sandboxId},
+            }, {
+                errorDefinition: tdpSyncV2ErrorDefinitions.protocolError,
+                fallbackMessage: TDP_SYNC_V2_SNAPSHOT_FALLBACK_MESSAGE,
+            })
+        },
+        async getChanges(sandboxId, terminalId, cursor = 0, limit) {
+            return http.envelope(changesEndpoint, {
+                path: {terminalId},
+                query: {sandboxId, cursor, limit},
+            }, {
+                errorDefinition: tdpSyncV2ErrorDefinitions.protocolError,
+                fallbackMessage: TDP_SYNC_V2_CHANGES_FALLBACK_MESSAGE,
+            })
+        },
+    }
+}

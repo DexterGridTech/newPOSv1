@@ -1,0 +1,25 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+  <uses-permission android:name="android.permission.CAMERA" />
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+  <uses-feature
+    android:name="android.hardware.camera"
+    android:required="false" />
+
+  <application>
+    <activity
+      android:name=".camera.CameraScanActivity"
+      android:exported="false"
+      android:screenOrientation="portrait"
+      android:theme="@style/Theme.AppCompat.NoActionBar" />
+    <activity
+      android:name=".connector.SystemFilePickerActivity"
+      android:exported="false"
+      android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+    <service
+      android:name=".topologyhostv3.TopologyHostV3Service"
+      android:enabled="true"
+      android:exported="false"
+      android:foregroundServiceType="dataSync" />
+  </application>
+</manifest>

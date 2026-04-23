@@ -1,0 +1,45 @@
+{
+  "name": "@impos2/ui-base-automation-runtime",
+  "version": "1.0.0",
+  "description": "Unified UI automation and runtime inspection control plane",
+  "author": "DexterYang",
+  "license": "ISC",
+  "exports": {
+    ".": "./src/index.ts",
+    "./application": "./src/application/index.ts",
+    "./supports": "./src/supports/index.ts",
+    "./types": "./src/types/index.ts"
+  },
+  "react-native": "./src/index.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json --noEmit",
+    "build-for-product": "rm -rf dist && tsc -p tsconfig.json",
+    "web": "EXPO_OFFLINE=1 node ../../../node_modules/expo/bin/cli start --web --localhost",
+    "expo:web": "EXPO_OFFLINE=1 node ../../../node_modules/expo/bin/cli start --web --localhost",
+    "test-expo": "tsc -p test-expo/tsconfig.json --noEmit && node test-expo/runAutomation.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist",
+    "type-check": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@impos2/kernel-base-platform-ports": "workspace:*",
+    "@impos2/kernel-base-runtime-shell-v2": "workspace:*",
+    "@impos2/kernel-base-ui-runtime-v2": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-native": ">=0.77"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.9",
+    "@types/react": "^19.2.0",
+    "expo": "~54.0.31",
+    "expo-status-bar": "~3.0.9",
+    "react-dom": "19.2.3",
+    "react-native-web": "^0.21.0",
+    "react-test-renderer": "19.2.3",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  }
+}
