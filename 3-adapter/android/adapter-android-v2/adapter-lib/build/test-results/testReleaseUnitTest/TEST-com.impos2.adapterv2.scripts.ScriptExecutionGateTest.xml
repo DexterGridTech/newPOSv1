@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.impos2.adapterv2.scripts.ScriptExecutionGateTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-04-21T06:22:51.381Z" hostname="DexterdeMacBook-Pro.local" time="0.131">
-  <properties/>
-  <testcase name="serializesConcurrentCallers" classname="com.impos2.adapterv2.scripts.ScriptExecutionGateTest" time="0.131"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

@@ -1,8 +1,0 @@
-import './scenarios/ui-runtime-v2.spec'
-import './scenarios/ui-runtime-v2-state-sync.spec'
-import './scenarios/ui-runtime-v2-live-screen-master-to-slave.spec'
-import './scenarios/ui-runtime-v2-live-overlay-master-to-slave.spec'
-import './scenarios/ui-runtime-v2-live-ui-variables-master-to-slave.spec'
-import './scenarios/ui-runtime-v2-live-clear-master-to-slave.spec'
-import './scenarios/ui-runtime-v2-live-reconnect-master-to-slave.spec'
-import './scenarios/ui-runtime-v2-live-branch-screen-slave-to-master.spec'
