@@ -1,5 +1,11 @@
 import {Router} from 'express'
-import {getMasterDataOverview, listMasterDataDocuments} from './service.js'
+import {
+  applyDemoMasterDataChange,
+  getMasterDataOverview,
+  listMasterDataDocuments,
+  rebuildProjectionOutboxFromCurrentDocuments,
+  updateMasterDataDocument,
+} from './service.js'
 import {created, fail, ok} from '../../shared/http.js'
 import {getTerminalAuthCapabilities} from '../terminal-auth/service.js'
 import {listProjectionOutbox, previewProjectionBatch, publishProjectionBatch, retryProjectionOutbox} from '../projection/service.js'
@@ -20,6 +26,41 @@ export const createRouter = () => {
       domain: typeof req.query.domain === 'string' ? req.query.domain : undefined,
       entityType: typeof req.query.entityType === 'string' ? req.query.entityType : undefined,
     }))
+  })
+
+  router.patch('/api/v1/master-data/documents/:docId', (req, res) => {
+    try {
+      ok(res, updateMasterDataDocument(req.params.docId, req.body ?? {}))
+    } catch (error) {
+      fail(res, error instanceof Error ? error.message : 'master data update failed', 400)
+    }
+  })
+
+  router.post('/api/v1/master-data/demo-change', (_req, res) => {
+    try {
+      created(res, applyDemoMasterDataChange())
+    } catch (error) {
+      fail(res, error instanceof Error ? error.message : 'demo master data change failed', 400)
+    }
+  })
+
+  router.post('/api/v1/master-data/rebuild-projection-outbox', (req, res) => {
+    try {
+      const body = req.body as {
+        domain?: unknown
+        entityType?: unknown
+        targetTerminalIds?: unknown
+      }
+      created(res, rebuildProjectionOutboxFromCurrentDocuments({
+        domain: typeof body?.domain === 'string' && body.domain.trim() ? body.domain.trim() : undefined,
+        entityType: typeof body?.entityType === 'string' && body.entityType.trim() ? body.entityType.trim() : undefined,
+        targetTerminalIds: Array.isArray(body?.targetTerminalIds)
+          ? body.targetTerminalIds.filter((item): item is string => typeof item === 'string' && item.trim().length > 0)
+          : undefined,
+      }))
+    } catch (error) {
+      fail(res, error instanceof Error ? error.message : 'rebuild projection outbox failed', 400)
+    }
   })
 
   router.get('/api/v1/projection-outbox', (req, res) => {

@@ -40,6 +40,90 @@ export const api = {
     payload: Record<string, unknown>
     updatedAt: number
   }>>('/api/v1/master-data/documents'),
+  updateDocument: (
+    docId: string,
+    input: {
+      title?: string
+      status?: string
+      data?: Record<string, unknown>
+      payload?: Record<string, unknown>
+      targetTerminalIds?: string[]
+    },
+  ) => request<{
+    document: {
+      docId: string
+      domain: string
+      entityType: string
+      entityId: string
+      naturalScopeType: string
+      naturalScopeKey: string
+      title: string
+      status: string
+      sourceRevision: number
+      payload: Record<string, unknown>
+      updatedAt: number
+    }
+    projection: {
+      topicKey: string
+      scopeType: string
+      scopeKey: string
+      itemKey: string
+      sourceRevision: number
+      sourceEventId: string | null
+      targetTerminalIds: string[]
+    }
+  }>(`/api/v1/master-data/documents/${docId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(input),
+  }),
+  applyDemoChange: () => request<{
+    document: {
+      docId: string
+      domain: string
+      entityType: string
+      entityId: string
+      naturalScopeType: string
+      naturalScopeKey: string
+      title: string
+      status: string
+      sourceRevision: number
+      payload: Record<string, unknown>
+      updatedAt: number
+    }
+    projection: {
+      topicKey: string
+      scopeType: string
+      scopeKey: string
+      itemKey: string
+      sourceRevision: number
+      sourceEventId: string | null
+      targetTerminalIds: string[]
+    }
+  }>('/api/v1/master-data/demo-change', {
+    method: 'POST',
+    body: JSON.stringify({}),
+  }),
+  rebuildProjectionOutbox: (input: {
+    domain?: string
+    entityType?: string
+    targetTerminalIds?: string[]
+  } = {}) => request<{
+    total: number
+    rebuiltAt: number
+    targetTerminalIds: string[]
+    documents: Array<{
+      docId: string
+      title: string
+      topicKey: string
+      scopeType: string
+      scopeKey: string
+      itemKey: string
+      sourceRevision: number
+    }>
+  }>('/api/v1/master-data/rebuild-projection-outbox', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  }),
   getProjectionOutbox: () => request<Array<{
     outboxId: string
     topicKey: string

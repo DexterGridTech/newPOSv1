@@ -30,6 +30,8 @@ export default function App() {
   const [activeDomain, setActiveDomain] = useState('organization')
   const [selectedDocId, setSelectedDocId] = useState('')
   const [preview, setPreview] = useState<Awaited<ReturnType<typeof api.previewProjectionOutbox>> | null>(null)
+  const [editorValue, setEditorValue] = useState('')
+  const [editorDirty, setEditorDirty] = useState(false)
 
   const load = async () => {
     setLoading(true)
@@ -71,6 +73,19 @@ export default function App() {
   const failedCount = outbox.filter(item => item.status === 'FAILED').length
   const publishedCount = outbox.filter(item => item.status === 'PUBLISHED').length
 
+  useEffect(() => {
+    if (!selectedDocument) {
+      setEditorValue('')
+      setEditorDirty(false)
+      return
+    }
+    const data = typeof selectedDocument.payload?.data === 'object' && selectedDocument.payload?.data !== null
+      ? selectedDocument.payload.data
+      : {}
+    setEditorValue(JSON.stringify(data, null, 2))
+    setEditorDirty(false)
+  }, [selectedDocument?.docId, selectedDocument?.updatedAt])
+
   const publish = async () => {
     setMessage('')
     setError('')
@@ -94,6 +109,60 @@ export default function App() {
   const previewPublish = async () => {
     const result = await api.previewProjectionOutbox()
     setPreview(result)
+  }
+
+  const saveDocument = async (publishAfterSave: boolean) => {
+    if (!selectedDocument) {
+      return
+    }
+    setMessage('')
+    setError('')
+    try {
+      const nextData = JSON.parse(editorValue) as Record<string, unknown>
+      const result = await api.updateDocument(selectedDocument.docId, {
+        data: nextData,
+      })
+      setMessage(`已保存 ${result.document.title}，topic=${result.projection.topicKey}，rev=${result.projection.sourceRevision}`)
+      setEditorDirty(false)
+      if (publishAfterSave) {
+        const publishResult = await api.publishProjectionOutbox()
+        setMessage(`已保存并发布 ${publishResult.published}/${publishResult.total} 条 projection`)
+      }
+      await load()
+    } catch (nextError) {
+      setError(nextError instanceof Error ? nextError.message : String(nextError))
+    }
+  }
+
+  const applyDemoChange = async () => {
+    setMessage('')
+    setError('')
+    try {
+      const result = await api.applyDemoChange()
+      setMessage(`已生成演示变更：${result.document.title}，等待发布到 TDP`)
+      await load()
+      setSelectedDocId(result.document.docId)
+    } catch (nextError) {
+      setError(nextError instanceof Error ? nextError.message : String(nextError))
+    }
+  }
+
+  const rebuildOutbox = async (publishAfterRebuild: boolean) => {
+    setMessage('')
+    setError('')
+    try {
+      const result = await api.rebuildProjectionOutbox()
+      setMessage(`已按当前主数据重建 ${result.total} 条 projection outbox`)
+      if (publishAfterRebuild) {
+        const publishResult = await api.publishProjectionOutbox()
+        setMessage(`已重建并发布 ${publishResult.published}/${publishResult.total} 条 projection`)
+        setPreview(null)
+      }
+      await load()
+    } catch (nextError) {
+      setError(nextError instanceof Error ? nextError.message : String(nextError))
+      await load()
+    }
   }
 
   return (
@@ -150,6 +219,9 @@ export default function App() {
           </div>
           <div className="hero-actions">
             <button onClick={() => void load()} disabled={loading}>刷新</button>
+            <button onClick={() => void applyDemoChange()}>生成演示变更</button>
+            <button onClick={() => void rebuildOutbox(false)}>重建全量 outbox</button>
+            <button onClick={() => void rebuildOutbox(true)}>重建并发布全量</button>
             <button onClick={() => void previewPublish()}>预览发布</button>
             <button className="primary" onClick={() => void publish()} disabled={pendingCount === 0}>发布 pending</button>
             <button onClick={() => void retry()} disabled={failedCount === 0}>失败重试</button>
@@ -203,6 +275,22 @@ export default function App() {
                   <div><span>Scope</span><strong>{selectedDocument.naturalScopeType}:{selectedDocument.naturalScopeKey}</strong></div>
                   <div><span>Revision</span><strong>{selectedDocument.sourceRevision}</strong></div>
                 </div>
+                <div className="editor-toolbar">
+                  <strong>业务 data 编辑器</strong>
+                  <div className="editor-actions">
+                    <button onClick={() => void saveDocument(false)} disabled={!editorDirty}>保存为 pending</button>
+                    <button className="primary-action" onClick={() => void saveDocument(true)} disabled={!editorDirty}>保存并发布</button>
+                  </div>
+                </div>
+                <textarea
+                  className="json-editor"
+                  value={editorValue}
+                  onChange={event => {
+                    setEditorValue(event.target.value)
+                    setEditorDirty(true)
+                  }}
+                  spellCheck={false}
+                />
                 <JsonPanel value={selectedDocument.payload} />
               </>
             ) : (

@@ -78,12 +78,17 @@ export const cateringProductMasterDataSliceDescriptor: StateRuntimeSliceDescript
             return entries
         },
         applyEntries: (
-            _state: CateringProductMasterDataState,
+            state: CateringProductMasterDataState,
             entries: Readonly<Record<string, SyncValueEnvelope | undefined>>,
         ) => {
             const next: CateringProductMasterDataState = {
-                byTopic: {},
-                diagnostics: [],
+                byTopic: Object.fromEntries(
+                    Object.entries(state.byTopic).map(([topic, records]) => [
+                        topic,
+                        {...records},
+                    ]),
+                ),
+                diagnostics: state.diagnostics,
                 lastChangedAt: Date.now(),
             }
             Object.values(entries).forEach((entry: SyncValueEnvelope | undefined) => {
@@ -92,6 +97,11 @@ export const cateringProductMasterDataSliceDescriptor: StateRuntimeSliceDescript
                 }
                 const record = entry.value as CateringProductRecord
                 const byItemKey = next.byTopic[record.topic] ?? {}
+                if (entry.tombstone === true || record.tombstone === true) {
+                    delete byItemKey[record.itemKey]
+                    next.byTopic[record.topic] = byItemKey
+                    return
+                }
                 byItemKey[record.itemKey] = record
                 next.byTopic[record.topic] = byItemKey
             })

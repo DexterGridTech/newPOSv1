@@ -391,6 +391,8 @@ export const MasterDataWorkbenchScreen: React.FC<MasterDataWorkbenchScreenProps>
     const displayTitle = displayMode === 'SECONDARY'
         ? '餐饮主数据工作台 · SECONDARY'
         : '餐饮主数据工作台 · PRIMARY'
+    const liveProduct = state.products[0]
+    const liveMenu = state.menu
 
     useEffect(() => {
         if (!automationBridge) {
@@ -441,6 +443,51 @@ export const MasterDataWorkbenchScreen: React.FC<MasterDataWorkbenchScreenProps>
                 enabled: true,
                 availableActions: [],
             }),
+            automationBridge.registerNode({
+                target: automationTarget,
+                runtimeId: automationRuntimeId,
+                screenKey,
+                mountId: `${screenKey}:live-product-name`,
+                nodeId: 'ui-business-catering-master-data-workbench:live-product-name',
+                testID: 'ui-business-catering-master-data-workbench:live-product-name',
+                semanticId: 'ui-business-catering-master-data-workbench:live-product-name',
+                role: 'text',
+                text: liveProduct?.product_name ?? '-',
+                value: liveProduct?.product_id ?? '-',
+                visible: true,
+                enabled: true,
+                availableActions: [],
+            }),
+            automationBridge.registerNode({
+                target: automationTarget,
+                runtimeId: automationRuntimeId,
+                screenKey,
+                mountId: `${screenKey}:live-product-price`,
+                nodeId: 'ui-business-catering-master-data-workbench:live-product-price',
+                testID: 'ui-business-catering-master-data-workbench:live-product-price',
+                semanticId: 'ui-business-catering-master-data-workbench:live-product-price',
+                role: 'text',
+                text: liveProduct?.base_price == null ? '-' : `¥${liveProduct.base_price}`,
+                value: liveProduct?.base_price == null ? '-' : String(liveProduct.base_price),
+                visible: true,
+                enabled: true,
+                availableActions: [],
+            }),
+            automationBridge.registerNode({
+                target: automationTarget,
+                runtimeId: automationRuntimeId,
+                screenKey,
+                mountId: `${screenKey}:live-menu-name`,
+                nodeId: 'ui-business-catering-master-data-workbench:live-menu-name',
+                testID: 'ui-business-catering-master-data-workbench:live-menu-name',
+                semanticId: 'ui-business-catering-master-data-workbench:live-menu-name',
+                role: 'text',
+                text: liveMenu?.menuName ?? '-',
+                value: liveMenu?.menuId ?? '-',
+                visible: true,
+                enabled: true,
+                availableActions: [],
+            }),
         ]
         return () => unregisters.forEach(unregister => unregister())
     }, [
@@ -449,6 +496,11 @@ export const MasterDataWorkbenchScreen: React.FC<MasterDataWorkbenchScreenProps>
         automationTarget,
         displayTitle,
         displayMode,
+        liveMenu?.menuId,
+        liveMenu?.menuName,
+        liveProduct?.base_price,
+        liveProduct?.product_id,
+        liveProduct?.product_name,
         resolvedTerminalId,
         screenKey,
     ])

@@ -23,6 +23,7 @@ const ADB_EXECUTABLE = resolveAdbExecutable();
 const ADB_SOURCE = process.env.ANDROID_HOME?.trim()
   ? `ANDROID_HOME (${process.env.ANDROID_HOME})`
   : 'PATH';
+const args = process.argv.slice(2);
 
 function adbCommand(args) {
   const escapedAdb = ADB_EXECUTABLE.includes(' ') ? `"${ADB_EXECUTABLE}"` : ADB_EXECUTABLE;
@@ -37,6 +38,12 @@ const PORTS_TO_FORWARD = [
   { host: 5810, device: 5810, description: 'Mock Terminal Platform' },
   { host: 9090, device: 9090, description: 'Reactotron' }
 ];
+
+const TOPOLOGY_HOST_FORWARD = {
+  host: 18889,
+  device: 8888,
+  description: 'Topology Host (dual-emulator host bridge)',
+};
 
 /**
  * 检查 ADB 是否可用
@@ -90,6 +97,18 @@ async function setupPortForwarding(deviceId, port) {
   }
 }
 
+async function setupHostForwarding(deviceId, port) {
+  try {
+    const command = adbCommand(`-s ${deviceId} forward tcp:${port.host} tcp:${port.device}`);
+    await execAsync(command);
+    console.log(`  ✓ ${port.description}: host ${port.host} -> device ${port.device}`);
+    return true;
+  } catch (error) {
+    console.error(`  ✗ host 端口 ${port.host} 转发失败:`, error.message);
+    return false;
+  }
+}
+
 /**
  * 列出当前的端口转发规则
  */
@@ -113,6 +132,7 @@ async function listPortForwarding(deviceId) {
 async function clearPortForwarding(deviceId) {
   try {
     await execAsync(adbCommand(`-s ${deviceId} reverse --remove-all`));
+    await execAsync(adbCommand(`-s ${deviceId} forward --remove-all`));
     console.log('✓ 已清除所有端口转发规则');
     return true;
   } catch (error) {
@@ -161,7 +181,23 @@ async function main() {
       if (success) successCount++;
     }
 
-    console.log(`\n完成: ${successCount}/${PORTS_TO_FORWARD.length} 个端口映射成功`);
+    const topologyHostDeviceId = process.env.ANDROID_TOPOLOGY_HOST_DEVICE_ID?.trim();
+    const enableTopologyHostBridge = args.includes('--topology-host')
+      ? device.id === devices[0]?.id
+      : topologyHostDeviceId === device.id
+        || topologyHostDeviceId === 'auto-primary'
+          && device.id === devices[0]?.id;
+
+    if (enableTopologyHostBridge) {
+      const success = await setupHostForwarding(device.id, TOPOLOGY_HOST_FORWARD);
+      if (success) {
+        successCount++;
+        console.log(`    说明: 其他模拟器可通过 10.0.2.2:${TOPOLOGY_HOST_FORWARD.host} 访问该主机 topology host`);
+      }
+    }
+
+    const expectedCount = PORTS_TO_FORWARD.length + (enableTopologyHostBridge ? 1 : 0);
+    console.log(`\n完成: ${successCount}/${expectedCount} 个端口映射成功`);
 
     // 列出当前的端口转发规则
     await listPortForwarding(device.id);
@@ -171,10 +207,9 @@ async function main() {
   console.log('\n提示:');
   console.log('  - 端口转发在设备重启后会失效，需要重新运行此脚本');
   console.log('  - 使用 "yarn android:port-clear" 可以清除所有端口转发规则');
+  console.log('  - 如需双模拟器 topology 联调，先设置 ANDROID_TOPOLOGY_HOST_DEVICE_ID=<主机 serial> 再运行脚本');
+  console.log(`  - 副机导入 locator 时使用 ws://10.0.2.2:${TOPOLOGY_HOST_FORWARD.host}/mockMasterServer/ws`);
 }
-
-// 处理命令行参数
-const args = process.argv.slice(2);
 
 if (args.includes('--clear') || args.includes('-c')) {
   // 清除模式
@@ -227,15 +262,18 @@ if (args.includes('--clear') || args.includes('-c')) {
   console.log('  node setup-android-port-forwarding.js          设置端口转发');
   console.log('  node setup-android-port-forwarding.js --list   列出当前端口转发规则');
   console.log('  node setup-android-port-forwarding.js --clear  清除所有端口转发规则');
+  console.log('  node setup-android-port-forwarding.js --topology-host  将第一个设备的 topology host 暴露到宿主机 18889');
   console.log('  node setup-android-port-forwarding.js --help   显示帮助信息');
   console.log('\n选项:');
   console.log('  -l, --list    列出当前端口转发规则');
   console.log('  -c, --clear   清除所有端口转发规则');
+  console.log('  --topology-host  双模拟器联调：第一个设备作为主机，副机使用 10.0.2.2:18889 连接');
   console.log('  -h, --help    显示帮助信息');
   console.log('\n端口映射列表:');
   PORTS_TO_FORWARD.forEach(port => {
     console.log(`  ${port.host} -> ${port.device}  (${port.description})`);
   });
+  console.log(`  host ${TOPOLOGY_HOST_FORWARD.host} -> device ${TOPOLOGY_HOST_FORWARD.device}  (${TOPOLOGY_HOST_FORWARD.description}, optional)`);
 } else {
   // 默认执行设置
   main().catch(error => {

@@ -94,12 +94,17 @@ export const organizationIamMasterDataSliceDescriptor: StateRuntimeSliceDescript
             return entries
         },
         applyEntries: (
-            _state: OrganizationIamMasterDataState,
+            state: OrganizationIamMasterDataState,
             entries: Readonly<Record<string, SyncValueEnvelope | undefined>>,
         ) => {
             const next: OrganizationIamMasterDataState = {
-                byTopic: {},
-                diagnostics: [],
+                byTopic: Object.fromEntries(
+                    Object.entries(state.byTopic).map(([topic, records]) => [
+                        topic,
+                        {...records},
+                    ]),
+                ),
+                diagnostics: state.diagnostics,
                 lastChangedAt: Date.now(),
             }
             Object.values(entries).forEach((entry: SyncValueEnvelope | undefined) => {
@@ -108,6 +113,11 @@ export const organizationIamMasterDataSliceDescriptor: StateRuntimeSliceDescript
                 }
                 const record = entry.value as OrganizationIamMasterDataRecord
                 const byItemKey = next.byTopic[record.topic] ?? {}
+                if (entry.tombstone === true || record.tombstone === true) {
+                    delete byItemKey[record.itemKey]
+                    next.byTopic[record.topic] = byItemKey
+                    return
+                }
                 byItemKey[record.itemKey] = record
                 next.byTopic[record.topic] = byItemKey
             })

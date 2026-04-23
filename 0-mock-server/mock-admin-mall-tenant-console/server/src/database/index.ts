@@ -11,6 +11,16 @@ fs.mkdirSync(path.dirname(dataFile), {recursive: true})
 
 export const sqlite = new Database(dataFile)
 
+const DEFAULT_SCOPE_IDS = {
+  platformId: process.env.MOCK_ADMIN_MALL_TENANT_CONSOLE_PLATFORM_ID?.trim() || 'platform-kernel-base-test',
+  projectId: process.env.MOCK_ADMIN_MALL_TENANT_CONSOLE_PROJECT_ID?.trim() || 'project-kernel-base-test',
+  tenantId: process.env.MOCK_ADMIN_MALL_TENANT_CONSOLE_TENANT_ID?.trim() || 'tenant-kernel-base-test',
+  brandId: process.env.MOCK_ADMIN_MALL_TENANT_CONSOLE_BRAND_ID?.trim() || 'brand-kernel-base-test',
+  storeId: process.env.MOCK_ADMIN_MALL_TENANT_CONSOLE_STORE_ID?.trim() || 'store-kernel-base-test',
+  contractId: process.env.MOCK_ADMIN_MALL_TENANT_CONSOLE_CONTRACT_ID?.trim() || 'contract-kernel-base-test',
+  unitCode: process.env.MOCK_ADMIN_MALL_TENANT_CONSOLE_UNIT_CODE?.trim() || 'KB001',
+} as const
+
 const createOrganizationEnvelope = (input: {
   sourceEventId: string
   sourceRevision: number
@@ -19,7 +29,7 @@ const createOrganizationEnvelope = (input: {
   schema_version: 1,
   projection_kind: 'organization',
   sandbox_id: DEFAULT_SANDBOX_ID,
-  platform_id: 'platform-mixc',
+  platform_id: DEFAULT_SCOPE_IDS.platformId,
   source_service: 'mock-admin-mall-tenant-console',
   source_event_id: input.sourceEventId,
   source_revision: input.sourceRevision,
@@ -35,7 +45,7 @@ const createIamEnvelope = (input: {
   schema_version: 1,
   projection_kind: 'iam',
   sandbox_id: DEFAULT_SANDBOX_ID,
-  platform_id: 'platform-mixc',
+  platform_id: DEFAULT_SCOPE_IDS.platformId,
   source_service: 'mock-admin-mall-tenant-console',
   source_event_id: input.sourceEventId,
   source_revision: input.sourceRevision,
@@ -51,7 +61,7 @@ const createCateringProductEnvelope = (input: {
   schema_version: 1,
   projection_kind: 'catering_product',
   sandbox_id: DEFAULT_SANDBOX_ID,
-  platform_id: 'platform-mixc',
+  platform_id: DEFAULT_SCOPE_IDS.platformId,
   source_service: 'mock-admin-mall-tenant-console',
   source_event_id: input.sourceEventId,
   source_revision: input.sourceRevision,
@@ -67,7 +77,7 @@ const createCateringStoreOperationEnvelope = (input: {
   schema_version: 1,
   projection_kind: 'catering_store_operation',
   sandbox_id: DEFAULT_SANDBOX_ID,
-  platform_id: 'platform-mixc',
+  platform_id: DEFAULT_SCOPE_IDS.platformId,
   source_service: 'mock-admin-mall-tenant-console',
   source_event_id: input.sourceEventId,
   source_revision: input.sourceRevision,
@@ -75,7 +85,7 @@ const createCateringStoreOperationEnvelope = (input: {
   data: input.data,
 })
 
-const seedOutboxForRows = (input: {
+export interface ProjectionOutboxSeedInput {
   topicKey: string
   scopeType: string
   scopeKey: string
@@ -83,7 +93,9 @@ const seedOutboxForRows = (input: {
   operation?: 'upsert' | 'delete'
   payload: Record<string, unknown>
   targetTerminalIds?: string[]
-}) => {
+}
+
+export const enqueueProjectionOutbox = (input: ProjectionOutboxSeedInput) => {
   const timestamp = now()
   const sourceEventId = typeof input.payload.source_event_id === 'string' && input.payload.source_event_id.trim()
     ? input.payload.source_event_id.trim()
@@ -114,6 +126,10 @@ const seedOutboxForRows = (input: {
     timestamp,
     timestamp,
   )
+}
+
+const seedOutboxForRows = (input: ProjectionOutboxSeedInput) => {
+  enqueueProjectionOutbox(input)
 }
 
 export const initializeDatabase = () => {
@@ -175,21 +191,21 @@ export const initializeDatabase = () => {
       docId: createId('doc'),
       domain: 'organization',
       entityType: 'platform',
-      entityId: 'platform-mixc',
+      entityId: DEFAULT_SCOPE_IDS.platformId,
       naturalScopeType: 'PLATFORM',
-      naturalScopeKey: 'platform-mixc',
-      title: 'MixC Mall Platform',
+      naturalScopeKey: DEFAULT_SCOPE_IDS.platformId,
+      title: 'Kernel Base Test Platform',
       status: 'ACTIVE',
       sourceRevision: 1,
       payload: createOrganizationEnvelope({
         sourceEventId: 'evt-org-platform-001',
         sourceRevision: 1,
         data: {
-          platform_id: 'platform-mixc',
-          platform_code: 'MIXC',
-          platform_name: 'MixC Mall Platform',
+          platform_id: DEFAULT_SCOPE_IDS.platformId,
+          platform_code: 'PLATFORM_KERNEL_BASE_TEST',
+          platform_name: 'Kernel Base Test Platform',
           status: 'ACTIVE',
-          description: 'Production-shaped mock mall platform',
+          description: 'Production-shaped kernel-base test mall platform',
         },
       }),
     },
@@ -197,25 +213,25 @@ export const initializeDatabase = () => {
       docId: createId('doc'),
       domain: 'organization',
       entityType: 'project',
-      entityId: 'project-baycity',
+      entityId: DEFAULT_SCOPE_IDS.projectId,
       naturalScopeType: 'PROJECT',
-      naturalScopeKey: 'project-baycity',
-      title: 'Bay City',
+      naturalScopeKey: DEFAULT_SCOPE_IDS.projectId,
+      title: 'Kernel Base Test Project',
       status: 'ACTIVE',
       sourceRevision: 1,
       payload: createOrganizationEnvelope({
         sourceEventId: 'evt-org-project-001',
         sourceRevision: 1,
         data: {
-          project_id: 'project-baycity',
-          project_code: 'BAYCITY',
-          project_name: 'Bay City Project',
-          platform_id: 'platform-mixc',
+          project_id: DEFAULT_SCOPE_IDS.projectId,
+          project_code: 'PROJECT_KERNEL_BASE_TEST',
+          project_name: 'Kernel Base Test Project',
+          platform_id: DEFAULT_SCOPE_IDS.platformId,
           region: {
-            region_code: 'CN-SZ-NS',
-            region_name: 'Shenzhen Nanshan',
-            parent_region_code: 'CN-SZ',
-            region_level: 3,
+            region_code: 'SZ',
+            region_name: 'Shenzhen',
+            parent_region_code: 'CN-GD',
+            region_level: 2,
           },
           timezone: 'Asia/Shanghai',
           status: 'ACTIVE',
@@ -226,20 +242,20 @@ export const initializeDatabase = () => {
       docId: createId('doc'),
       domain: 'organization',
       entityType: 'tenant',
-      entityId: 'tenant-blueharbor',
+      entityId: DEFAULT_SCOPE_IDS.tenantId,
       naturalScopeType: 'TENANT',
-      naturalScopeKey: 'tenant-blueharbor',
-      title: 'Blue Harbor Tenant',
+      naturalScopeKey: DEFAULT_SCOPE_IDS.tenantId,
+      title: 'Kernel Base Test Tenant',
       status: 'ACTIVE',
       sourceRevision: 1,
       payload: createOrganizationEnvelope({
         sourceEventId: 'evt-org-tenant-001',
         sourceRevision: 1,
         data: {
-          tenant_id: 'tenant-blueharbor',
-          tenant_code: 'BLUE_HARBOR',
-          tenant_name: 'Blue Harbor Catering Tenant',
-          platform_id: 'platform-mixc',
+          tenant_id: DEFAULT_SCOPE_IDS.tenantId,
+          tenant_code: 'TENANT_KERNEL_BASE_TEST',
+          tenant_name: 'Kernel Base Test Tenant',
+          platform_id: DEFAULT_SCOPE_IDS.platformId,
           status: 'ACTIVE',
         },
       }),
@@ -248,21 +264,21 @@ export const initializeDatabase = () => {
       docId: createId('doc'),
       domain: 'organization',
       entityType: 'brand',
-      entityId: 'brand-seaflame',
+      entityId: DEFAULT_SCOPE_IDS.brandId,
       naturalScopeType: 'BRAND',
-      naturalScopeKey: 'brand-seaflame',
-      title: 'Sea Flame',
+      naturalScopeKey: DEFAULT_SCOPE_IDS.brandId,
+      title: 'Kernel Base Test Brand',
       status: 'ACTIVE',
       sourceRevision: 1,
       payload: createOrganizationEnvelope({
         sourceEventId: 'evt-org-brand-001',
         sourceRevision: 1,
         data: {
-          brand_id: 'brand-seaflame',
-          brand_code: 'SEA_FLAME',
-          brand_name: 'Sea Flame',
-          tenant_id: 'tenant-blueharbor',
-          platform_id: 'platform-mixc',
+          brand_id: DEFAULT_SCOPE_IDS.brandId,
+          brand_code: 'BRAND_KERNEL_BASE_TEST',
+          brand_name: 'Kernel Base Test Brand',
+          tenant_id: DEFAULT_SCOPE_IDS.tenantId,
+          platform_id: DEFAULT_SCOPE_IDS.platformId,
           status: 'ACTIVE',
         },
       }),
@@ -271,24 +287,24 @@ export const initializeDatabase = () => {
       docId: createId('doc'),
       domain: 'organization',
       entityType: 'store',
-      entityId: 'store-seaflame-001',
+      entityId: DEFAULT_SCOPE_IDS.storeId,
       naturalScopeType: 'STORE',
-      naturalScopeKey: 'store-seaflame-001',
-      title: 'Sea Flame Bay Store',
+      naturalScopeKey: DEFAULT_SCOPE_IDS.storeId,
+      title: 'Kernel Base Test Store',
       status: 'ACTIVE',
       sourceRevision: 1,
       payload: createOrganizationEnvelope({
         sourceEventId: 'evt-org-store-001',
         sourceRevision: 1,
         data: {
-          store_id: 'store-seaflame-001',
-          store_code: 'SF001',
-          store_name: 'Sea Flame Bay Store',
-          unit_code: 'B1-018',
-          platform_id: 'platform-mixc',
-          project_id: 'project-baycity',
-          tenant_id: 'tenant-blueharbor',
-          brand_id: 'brand-seaflame',
+          store_id: DEFAULT_SCOPE_IDS.storeId,
+          store_code: 'STORE_KERNEL_BASE_TEST',
+          store_name: 'Kernel Base Test Store',
+          unit_code: DEFAULT_SCOPE_IDS.unitCode,
+          platform_id: DEFAULT_SCOPE_IDS.platformId,
+          project_id: DEFAULT_SCOPE_IDS.projectId,
+          tenant_id: DEFAULT_SCOPE_IDS.tenantId,
+          brand_id: DEFAULT_SCOPE_IDS.brandId,
           status: 'ACTIVE',
         },
       }),
@@ -297,24 +313,24 @@ export const initializeDatabase = () => {
       docId: createId('doc'),
       domain: 'organization',
       entityType: 'contract',
-      entityId: 'contract-seaflame-001',
+      entityId: DEFAULT_SCOPE_IDS.contractId,
       naturalScopeType: 'STORE',
-      naturalScopeKey: 'store-seaflame-001',
-      title: 'Sea Flame 2026 Contract',
+      naturalScopeKey: DEFAULT_SCOPE_IDS.storeId,
+      title: 'Kernel Base Test 2026 Contract',
       status: 'ACTIVE',
       sourceRevision: 1,
       payload: createOrganizationEnvelope({
         sourceEventId: 'evt-org-contract-001',
         sourceRevision: 1,
         data: {
-          contract_id: 'contract-seaflame-001',
-          contract_code: 'CT-SF-2026',
-          platform_id: 'platform-mixc',
-          project_id: 'project-baycity',
-          tenant_id: 'tenant-blueharbor',
-          brand_id: 'brand-seaflame',
-          store_id: 'store-seaflame-001',
-          unit_code: 'B1-018',
+          contract_id: DEFAULT_SCOPE_IDS.contractId,
+          contract_code: 'CONTRACT_KERNEL_BASE_TEST',
+          platform_id: DEFAULT_SCOPE_IDS.platformId,
+          project_id: DEFAULT_SCOPE_IDS.projectId,
+          tenant_id: DEFAULT_SCOPE_IDS.tenantId,
+          brand_id: DEFAULT_SCOPE_IDS.brandId,
+          store_id: DEFAULT_SCOPE_IDS.storeId,
+          unit_code: DEFAULT_SCOPE_IDS.unitCode,
           start_date: '2026-01-01',
           end_date: '2026-12-31',
           status: 'ACTIVE',
@@ -327,7 +343,7 @@ export const initializeDatabase = () => {
       entityType: 'role',
       entityId: 'role-store-manager',
       naturalScopeType: 'PLATFORM',
-      naturalScopeKey: 'platform-mixc',
+      naturalScopeKey: DEFAULT_SCOPE_IDS.platformId,
       title: 'Store Manager Role',
       status: 'ACTIVE',
       sourceRevision: 1,
@@ -350,7 +366,7 @@ export const initializeDatabase = () => {
       entityType: 'permission',
       entityId: 'perm-product-manage',
       naturalScopeType: 'PLATFORM',
-      naturalScopeKey: 'platform-mixc',
+      naturalScopeKey: DEFAULT_SCOPE_IDS.platformId,
       title: 'Manage Product Permission',
       status: 'ACTIVE',
       sourceRevision: 1,
@@ -372,7 +388,7 @@ export const initializeDatabase = () => {
       entityType: 'user',
       entityId: 'user-linmei',
       naturalScopeType: 'STORE',
-      naturalScopeKey: 'store-seaflame-001',
+      naturalScopeKey: DEFAULT_SCOPE_IDS.storeId,
       title: 'Lin Mei',
       status: 'ACTIVE',
       sourceRevision: 1,
@@ -384,7 +400,7 @@ export const initializeDatabase = () => {
           user_code: 'lin.mei',
           display_name: 'Lin Mei',
           mobile: '13800000001',
-          store_id: 'store-seaflame-001',
+          store_id: DEFAULT_SCOPE_IDS.storeId,
           status: 'ACTIVE',
         },
       }),
@@ -395,7 +411,7 @@ export const initializeDatabase = () => {
       entityType: 'user_role_binding',
       entityId: 'binding-linmei-manager',
       naturalScopeType: 'STORE',
-      naturalScopeKey: 'store-seaflame-001',
+      naturalScopeKey: DEFAULT_SCOPE_IDS.storeId,
       title: 'Lin Mei Store Manager Binding',
       status: 'ACTIVE',
       sourceRevision: 1,
@@ -406,7 +422,7 @@ export const initializeDatabase = () => {
           binding_id: 'binding-linmei-manager',
           user_id: 'user-linmei',
           role_id: 'role-store-manager',
-          store_id: 'store-seaflame-001',
+          store_id: DEFAULT_SCOPE_IDS.storeId,
           status: 'ACTIVE',
         },
       }),
@@ -417,7 +433,7 @@ export const initializeDatabase = () => {
       entityType: 'product',
       entityId: 'product-salmon-bowl',
       naturalScopeType: 'BRAND',
-      naturalScopeKey: 'brand-seaflame',
+      naturalScopeKey: DEFAULT_SCOPE_IDS.brandId,
       title: 'Salmon Bowl',
       status: 'ACTIVE',
       sourceRevision: 1,
@@ -426,7 +442,7 @@ export const initializeDatabase = () => {
         sourceRevision: 1,
         data: {
           product_id: 'product-salmon-bowl',
-          brand_id: 'brand-seaflame',
+          brand_id: DEFAULT_SCOPE_IDS.brandId,
           product_name: 'Salmon Bowl',
           ownership_scope: 'BRAND',
           product_type: 'STANDARD',
@@ -447,8 +463,8 @@ export const initializeDatabase = () => {
       entityType: 'brand_menu',
       entityId: 'brand-menu-seaflame-main',
       naturalScopeType: 'BRAND',
-      naturalScopeKey: 'brand-seaflame',
-      title: 'Sea Flame Main Menu',
+      naturalScopeKey: DEFAULT_SCOPE_IDS.brandId,
+      title: 'Kernel Base Test Main Menu',
       status: 'ACTIVE',
       sourceRevision: 1,
       payload: createCateringProductEnvelope({
@@ -456,8 +472,8 @@ export const initializeDatabase = () => {
         sourceRevision: 1,
         data: {
           brand_menu_id: 'brand-menu-seaflame-main',
-          brand_id: 'brand-seaflame',
-          menu_name: 'Sea Flame Main Menu',
+          brand_id: DEFAULT_SCOPE_IDS.brandId,
+          menu_name: 'Kernel Base Test Main Menu',
           status: 'APPROVED',
           sections: [
             {section_id: 'section-signature', section_name: 'Signature Bowls', display_order: 10},
@@ -471,7 +487,7 @@ export const initializeDatabase = () => {
       entityType: 'menu_catalog',
       entityId: 'menu-seaflame-store-001',
       naturalScopeType: 'STORE',
-      naturalScopeKey: 'store-seaflame-001',
+      naturalScopeKey: DEFAULT_SCOPE_IDS.storeId,
       title: 'Store Effective Menu',
       status: 'ACTIVE',
       sourceRevision: 1,
@@ -480,8 +496,8 @@ export const initializeDatabase = () => {
         sourceRevision: 1,
         data: {
           menu_id: 'menu-seaflame-store-001',
-          store_id: 'store-seaflame-001',
-          menu_name: 'Sea Flame Store Effective Menu',
+          store_id: DEFAULT_SCOPE_IDS.storeId,
+          menu_name: 'Kernel Base Test Store Effective Menu',
           sections: [
             {
               section_id: 'section-signature',
@@ -502,7 +518,7 @@ export const initializeDatabase = () => {
       entityType: 'menu_availability',
       entityId: 'product-salmon-bowl',
       naturalScopeType: 'STORE',
-      naturalScopeKey: 'store-seaflame-001',
+      naturalScopeKey: DEFAULT_SCOPE_IDS.storeId,
       title: 'Salmon Bowl Availability',
       status: 'ACTIVE',
       sourceRevision: 1,
@@ -511,7 +527,7 @@ export const initializeDatabase = () => {
         sourceRevision: 1,
         data: {
           product_id: 'product-salmon-bowl',
-          store_id: 'store-seaflame-001',
+          store_id: DEFAULT_SCOPE_IDS.storeId,
           available: true,
           sold_out_reason: null,
           effective_from: '2026-04-23T00:00:00.000Z',
@@ -524,7 +540,7 @@ export const initializeDatabase = () => {
       entityType: 'saleable_stock',
       entityId: 'stock-product-salmon-bowl',
       naturalScopeType: 'STORE',
-      naturalScopeKey: 'store-seaflame-001',
+      naturalScopeKey: DEFAULT_SCOPE_IDS.storeId,
       title: 'Salmon Bowl Stock',
       status: 'ACTIVE',
       sourceRevision: 1,
@@ -533,7 +549,7 @@ export const initializeDatabase = () => {
         sourceRevision: 1,
         data: {
           stock_id: 'stock-product-salmon-bowl',
-          store_id: 'store-seaflame-001',
+          store_id: DEFAULT_SCOPE_IDS.storeId,
           product_id: 'product-salmon-bowl',
           saleable_quantity: 26,
           safety_stock: 4,
@@ -547,7 +563,7 @@ export const initializeDatabase = () => {
       entityType: 'stock_reservation',
       entityId: 'reservation-salmon-bowl-001',
       naturalScopeType: 'STORE',
-      naturalScopeKey: 'store-seaflame-001',
+      naturalScopeKey: DEFAULT_SCOPE_IDS.storeId,
       title: 'Salmon Bowl Active Reservation',
       status: 'ACTIVE',
       sourceRevision: 1,
@@ -556,7 +572,7 @@ export const initializeDatabase = () => {
         sourceRevision: 1,
         data: {
           reservation_id: 'reservation-salmon-bowl-001',
-          store_id: 'store-seaflame-001',
+          store_id: DEFAULT_SCOPE_IDS.storeId,
           product_id: 'product-salmon-bowl',
           reserved_quantity: 2,
           reservation_status: 'ACTIVE',
@@ -595,130 +611,114 @@ export const initializeDatabase = () => {
     seedOutboxForRows({
       topicKey: 'org.platform.profile',
       scopeType: 'PLATFORM',
-      scopeKey: 'platform-mixc',
-      itemKey: 'platform-mixc',
+      scopeKey: DEFAULT_SCOPE_IDS.platformId,
+      itemKey: DEFAULT_SCOPE_IDS.platformId,
       payload: docs[0].payload,
-      targetTerminalIds: ['terminal-test-001'],
     })
     seedOutboxForRows({
       topicKey: 'org.project.profile',
       scopeType: 'PROJECT',
-      scopeKey: 'project-baycity',
-      itemKey: 'project-baycity',
+      scopeKey: DEFAULT_SCOPE_IDS.projectId,
+      itemKey: DEFAULT_SCOPE_IDS.projectId,
       payload: docs[1].payload,
-      targetTerminalIds: ['terminal-test-001'],
     })
     seedOutboxForRows({
       topicKey: 'org.tenant.profile',
       scopeType: 'TENANT',
-      scopeKey: 'tenant-blueharbor',
-      itemKey: 'tenant-blueharbor',
+      scopeKey: DEFAULT_SCOPE_IDS.tenantId,
+      itemKey: DEFAULT_SCOPE_IDS.tenantId,
       payload: docs[2].payload,
-      targetTerminalIds: ['terminal-test-001'],
     })
     seedOutboxForRows({
       topicKey: 'org.brand.profile',
       scopeType: 'BRAND',
-      scopeKey: 'brand-seaflame',
-      itemKey: 'brand-seaflame',
+      scopeKey: DEFAULT_SCOPE_IDS.brandId,
+      itemKey: DEFAULT_SCOPE_IDS.brandId,
       payload: docs[3].payload,
-      targetTerminalIds: ['terminal-test-001'],
     })
     seedOutboxForRows({
       topicKey: 'org.store.profile',
       scopeType: 'STORE',
-      scopeKey: 'store-seaflame-001',
-      itemKey: 'store-seaflame-001',
+      scopeKey: DEFAULT_SCOPE_IDS.storeId,
+      itemKey: DEFAULT_SCOPE_IDS.storeId,
       payload: docs[4].payload,
-      targetTerminalIds: ['terminal-test-001'],
     })
     seedOutboxForRows({
       topicKey: 'org.contract.active',
       scopeType: 'STORE',
-      scopeKey: 'store-seaflame-001',
-      itemKey: 'contract-seaflame-001',
+      scopeKey: DEFAULT_SCOPE_IDS.storeId,
+      itemKey: DEFAULT_SCOPE_IDS.contractId,
       payload: docs[5].payload,
-      targetTerminalIds: ['terminal-test-001'],
     })
     seedOutboxForRows({
       topicKey: 'iam.role.catalog',
       scopeType: 'PLATFORM',
-      scopeKey: 'platform-mixc',
+      scopeKey: DEFAULT_SCOPE_IDS.platformId,
       itemKey: 'role-store-manager',
       payload: docs[6].payload,
-      targetTerminalIds: ['terminal-test-001'],
     })
     seedOutboxForRows({
       topicKey: 'iam.permission.catalog',
       scopeType: 'PLATFORM',
-      scopeKey: 'platform-mixc',
+      scopeKey: DEFAULT_SCOPE_IDS.platformId,
       itemKey: 'perm-product-manage',
       payload: docs[7].payload,
-      targetTerminalIds: ['terminal-test-001'],
     })
     seedOutboxForRows({
       topicKey: 'iam.user.store-effective',
       scopeType: 'STORE',
-      scopeKey: 'store-seaflame-001',
+      scopeKey: DEFAULT_SCOPE_IDS.storeId,
       itemKey: 'user-linmei',
       payload: docs[8].payload,
-      targetTerminalIds: ['terminal-test-001'],
     })
     seedOutboxForRows({
       topicKey: 'iam.user-role-binding.store-effective',
       scopeType: 'STORE',
-      scopeKey: 'store-seaflame-001',
+      scopeKey: DEFAULT_SCOPE_IDS.storeId,
       itemKey: 'binding-linmei-manager',
       payload: docs[9].payload,
-      targetTerminalIds: ['terminal-test-001'],
     })
     seedOutboxForRows({
       topicKey: 'catering.product.profile',
       scopeType: 'BRAND',
-      scopeKey: 'brand-seaflame',
+      scopeKey: DEFAULT_SCOPE_IDS.brandId,
       itemKey: 'product-salmon-bowl',
       payload: docs[10].payload,
-      targetTerminalIds: ['terminal-test-001'],
     })
     seedOutboxForRows({
       topicKey: 'catering.brand-menu.profile',
       scopeType: 'BRAND',
-      scopeKey: 'brand-seaflame',
+      scopeKey: DEFAULT_SCOPE_IDS.brandId,
       itemKey: 'brand-menu-seaflame-main',
       payload: docs[11].payload,
-      targetTerminalIds: ['terminal-test-001'],
     })
     seedOutboxForRows({
       topicKey: 'menu.catalog',
       scopeType: 'STORE',
-      scopeKey: 'store-seaflame-001',
+      scopeKey: DEFAULT_SCOPE_IDS.storeId,
       itemKey: 'menu-seaflame-store-001',
       payload: docs[12].payload,
-      targetTerminalIds: ['terminal-test-001'],
     })
     seedOutboxForRows({
       topicKey: 'menu.availability',
       scopeType: 'STORE',
-      scopeKey: 'store-seaflame-001',
+      scopeKey: DEFAULT_SCOPE_IDS.storeId,
       itemKey: 'product-salmon-bowl',
       payload: docs[13].payload,
-      targetTerminalIds: ['terminal-test-001'],
     })
     seedOutboxForRows({
       topicKey: 'catering.saleable-stock.profile',
       scopeType: 'STORE',
-      scopeKey: 'store-seaflame-001',
+      scopeKey: DEFAULT_SCOPE_IDS.storeId,
       itemKey: 'stock-product-salmon-bowl',
       payload: docs[14].payload,
-      targetTerminalIds: ['terminal-test-001'],
     })
     seedOutboxForRows({
       topicKey: 'catering.stock-reservation.active',
       scopeType: 'STORE',
-      scopeKey: 'store-seaflame-001',
+      scopeKey: DEFAULT_SCOPE_IDS.storeId,
       itemKey: 'reservation-salmon-bowl-001',
       payload: docs[15].payload,
-      targetTerminalIds: ['terminal-test-001'],
     })
   })
 

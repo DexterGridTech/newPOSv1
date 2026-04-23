@@ -1,5 +1,6 @@
-import {sqlite} from '../../database/index.js'
-import {parseJson} from '../../shared/utils.js'
+import {enqueueProjectionOutbox, sqlite} from '../../database/index.js'
+import {DEFAULT_SOURCE_SERVICE} from '../../shared/constants.js'
+import {createId, now, parseJson, serializeJson} from '../../shared/utils.js'
 
 export interface MasterDataDocument {
   docId: string
@@ -15,6 +16,14 @@ export interface MasterDataDocument {
   payload: Record<string, unknown>
   createdAt: number
   updatedAt: number
+}
+
+export interface UpdateMasterDataDocumentInput {
+  title?: string
+  status?: string
+  data?: Record<string, unknown>
+  payload?: Record<string, unknown>
+  targetTerminalIds?: string[]
 }
 
 const toDocument = (row: {
@@ -65,6 +74,213 @@ export const listMasterDataDocuments = (input: {
   ) as Parameters<typeof toDocument>[0][]
 
   return rows.map(toDocument)
+}
+
+const getDocumentRow = (docId: string) => sqlite.prepare(`
+  SELECT *
+  FROM master_data_documents
+  WHERE doc_id = ?
+  LIMIT 1
+`).get(docId) as Parameters<typeof toDocument>[0] | undefined
+
+const requireDocument = (docId: string) => {
+  const row = getDocumentRow(docId)
+  if (!row) {
+    throw new Error(`master data document not found: ${docId}`)
+  }
+  return toDocument(row)
+}
+
+const topicKeyByDomainEntityType: Record<string, string> = {
+  'organization:platform': 'org.platform.profile',
+  'organization:project': 'org.project.profile',
+  'organization:tenant': 'org.tenant.profile',
+  'organization:brand': 'org.brand.profile',
+  'organization:store': 'org.store.profile',
+  'organization:contract': 'org.contract.active',
+  'iam:role': 'iam.role.catalog',
+  'iam:permission': 'iam.permission.catalog',
+  'iam:user': 'iam.user.store-effective',
+  'iam:user_role_binding': 'iam.user-role-binding.store-effective',
+  'catering-product:product': 'catering.product.profile',
+  'catering-product:brand_menu': 'catering.brand-menu.profile',
+  'catering-product:menu_catalog': 'menu.catalog',
+  'catering-store-operating:menu_availability': 'menu.availability',
+  'catering-store-operating:saleable_stock': 'catering.saleable-stock.profile',
+  'catering-store-operating:stock_reservation': 'catering.stock-reservation.active',
+}
+
+const resolveTopicKey = (document: Pick<MasterDataDocument, 'domain' | 'entityType'>) => {
+  const topicKey = topicKeyByDomainEntityType[`${document.domain}:${document.entityType}`]
+  if (!topicKey) {
+    throw new Error(`unsupported master data document topic mapping: ${document.domain}:${document.entityType}`)
+  }
+  return topicKey
+}
+
+const patchEnvelope = (input: {
+  currentPayload: Record<string, unknown>
+  sourceRevision: number
+  data?: Record<string, unknown>
+  payload?: Record<string, unknown>
+}) => {
+  const sourceEventId = createId('evt')
+  const sourceRevision = input.sourceRevision
+  const currentData = typeof input.currentPayload.data === 'object' && input.currentPayload.data !== null
+    ? input.currentPayload.data as Record<string, unknown>
+    : {}
+  const patchPayload = input.payload ?? {}
+  const patchData = input.data ?? {}
+
+  return {
+    ...input.currentPayload,
+    ...patchPayload,
+    source_service: DEFAULT_SOURCE_SERVICE,
+    source_event_id: sourceEventId,
+    source_revision: sourceRevision,
+    generated_at: new Date(now()).toISOString(),
+    data: {
+      ...currentData,
+      ...patchData,
+    },
+  }
+}
+
+const createProjectionReplayEnvelope = (input: {
+  currentPayload: Record<string, unknown>
+  sourceRevision: number
+}) => ({
+  ...input.currentPayload,
+  source_service: DEFAULT_SOURCE_SERVICE,
+  source_event_id: createId('evt'),
+  source_revision: input.sourceRevision,
+  generated_at: new Date(now()).toISOString(),
+})
+
+export const updateMasterDataDocument = (
+  docId: string,
+  input: UpdateMasterDataDocumentInput,
+) => {
+  const current = requireDocument(docId)
+  const timestamp = now()
+  const nextRevision = current.sourceRevision + 1
+  const nextPayload = patchEnvelope({
+    currentPayload: current.payload,
+    sourceRevision: nextRevision,
+    data: input.data,
+    payload: input.payload,
+  })
+  const nextTitle = input.title?.trim() || current.title
+  const nextStatus = input.status?.trim() || current.status
+  const topicKey = resolveTopicKey(current)
+
+  sqlite.transaction(() => {
+    sqlite.prepare(`
+      UPDATE master_data_documents
+      SET title = ?, status = ?, source_revision = ?, payload_json = ?, updated_at = ?
+      WHERE doc_id = ?
+    `).run(
+      nextTitle,
+      nextStatus,
+      nextRevision,
+      serializeJson(nextPayload),
+      timestamp,
+      docId,
+    )
+
+    enqueueProjectionOutbox({
+      topicKey,
+      scopeType: current.naturalScopeType,
+      scopeKey: current.naturalScopeKey,
+      itemKey: current.entityId,
+      payload: nextPayload,
+      targetTerminalIds: input.targetTerminalIds,
+    })
+  })()
+
+  return {
+    document: requireDocument(docId),
+    projection: {
+      topicKey,
+      scopeType: current.naturalScopeType,
+      scopeKey: current.naturalScopeKey,
+      itemKey: current.entityId,
+      sourceRevision: nextRevision,
+      sourceEventId: typeof nextPayload.source_event_id === 'string'
+        ? nextPayload.source_event_id
+        : null,
+      targetTerminalIds: input.targetTerminalIds ?? [],
+    },
+  }
+}
+
+export const applyDemoMasterDataChange = () => {
+  const product = listMasterDataDocuments({
+    domain: 'catering-product',
+    entityType: 'product',
+  }).find(item => item.entityId === 'product-salmon-bowl')
+
+  if (!product) {
+    throw new Error('demo product document not found: product-salmon-bowl')
+  }
+
+  const basePrice = typeof product.payload.data === 'object' && product.payload.data !== null
+    ? Number((product.payload.data as Record<string, unknown>).base_price ?? 58)
+    : 58
+  const nextPrice = Number.isFinite(basePrice) ? basePrice + 1 : 59
+
+  return updateMasterDataDocument(product.docId, {
+    title: `Salmon Bowl ${nextPrice}`,
+    data: {
+      product_name: `Salmon Bowl ${nextPrice}`,
+      base_price: nextPrice,
+      status: 'ACTIVE',
+    },
+  })
+}
+
+export const rebuildProjectionOutboxFromCurrentDocuments = (input: {
+  domain?: string
+  entityType?: string
+  targetTerminalIds?: string[]
+} = {}) => {
+  const documents = listMasterDataDocuments({
+    domain: input.domain,
+    entityType: input.entityType,
+  })
+  const timestamp = now()
+
+  sqlite.transaction(() => {
+    documents.forEach(document => {
+      const payload = createProjectionReplayEnvelope({
+        currentPayload: document.payload,
+        sourceRevision: document.sourceRevision,
+      })
+      enqueueProjectionOutbox({
+        topicKey: resolveTopicKey(document),
+        scopeType: document.naturalScopeType,
+        scopeKey: document.naturalScopeKey,
+        itemKey: document.entityId,
+        payload,
+        targetTerminalIds: input.targetTerminalIds,
+      })
+    })
+  })()
+
+  return {
+    total: documents.length,
+    rebuiltAt: timestamp,
+    targetTerminalIds: input.targetTerminalIds ?? [],
+    documents: documents.map(document => ({
+      docId: document.docId,
+      title: document.title,
+      topicKey: resolveTopicKey(document),
+      scopeType: document.naturalScopeType,
+      scopeKey: document.naturalScopeKey,
+      itemKey: document.entityId,
+      sourceRevision: document.sourceRevision,
+    })),
+  }
 }
 
 export const getMasterDataOverview = () => {

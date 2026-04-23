@@ -86,18 +86,25 @@ export const previewProjectionBatch = (input: {status?: string; outboxIds?: stri
     sandboxId: DEFAULT_SANDBOX_ID,
     targetPlatformBaseUrl: TARGET_TDP_BASE_URL,
     total: selected.length,
-    projections: selected.map(item => ({
-      operation: item.operation,
-      topicKey: item.topicKey,
-      scopeType: item.scopeType,
-      scopeKey: item.scopeKey,
-      itemKey: item.itemKey,
-      sourceEventId: item.sourceEventId,
-      sourceRevision: item.sourceRevision,
-      sourceReleaseId: item.sourceEventId,
-      payload: item.payload,
-      targetTerminalIds: item.targetTerminalIds,
-    })),
+    projections: selected.map(item => {
+      const projection = {
+        operation: item.operation,
+        topicKey: item.topicKey,
+        scopeType: item.scopeType,
+        scopeKey: item.scopeKey,
+        itemKey: item.itemKey,
+        sourceEventId: item.sourceEventId,
+        sourceRevision: item.sourceRevision,
+        sourceReleaseId: item.sourceEventId,
+        payload: item.payload,
+      } as Record<string, unknown>
+
+      if (item.targetTerminalIds.length > 0) {
+        projection.targetTerminalIds = item.targetTerminalIds
+      }
+
+      return projection
+    }),
   }
 }
 

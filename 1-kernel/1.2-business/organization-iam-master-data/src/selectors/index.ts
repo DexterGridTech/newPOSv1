@@ -1,3 +1,4 @@
+import {createSelector} from '@reduxjs/toolkit'
 import type {RootState} from '@impos2/kernel-base-state-runtime'
 import {selectTcpBindingSnapshot} from '@impos2/kernel-base-tcp-control-runtime-v2'
 import {ORGANIZATION_IAM_MASTER_DATA_STATE_KEY, getOrganizationIamRecordsByTopic} from '../features/slices/masterData'
@@ -5,6 +6,7 @@ import {organizationIamTopics} from '../foundations/topics'
 import type {
     BrandProfile,
     ContractProfile,
+    OrganizationIamDiagnosticsEntry,
     OrganizationIamMasterDataRecord,
     OrganizationIamMasterDataState,
     OrganizationTreeNode,
@@ -22,10 +24,10 @@ export const selectOrganizationIamMasterDataState = (
     state: RootState,
 ) => state[ORGANIZATION_IAM_MASTER_DATA_STATE_KEY as keyof RootState] as OrganizationIamMasterDataState | undefined
 
-const activeRecords = <TData extends Record<string, unknown>>(
-    state: RootState,
+const activeRecordsFromMasterData = <TData extends Record<string, unknown>>(
+    masterData: OrganizationIamMasterDataState | undefined,
     topic: Parameters<typeof getOrganizationIamRecordsByTopic>[1],
-) => getOrganizationIamRecordsByTopic(selectOrganizationIamMasterDataState(state), topic)
+) => getOrganizationIamRecordsByTopic(masterData, topic)
     .filter(record => !record.tombstone)
     .map(record => record as OrganizationIamMasterDataRecord<TData>)
 
@@ -35,16 +37,62 @@ const findDataById = <TData extends Record<string, unknown>>(
     id?: string,
 ) => records.find(record => record.data[field] === id)?.data
 
-export const selectOrganizationIamDiagnostics = (state: RootState) =>
-    selectOrganizationIamMasterDataState(state)?.diagnostics ?? []
+const createActiveRecordSelector = <TData extends Record<string, unknown>>(
+    topic: Parameters<typeof getOrganizationIamRecordsByTopic>[1],
+) => createSelector(
+    [selectOrganizationIamMasterDataState],
+    masterData => activeRecordsFromMasterData<TData>(masterData, topic),
+)
 
-export const selectOrganizationIamAllRecords = (state: RootState) =>
-    Object.values(selectOrganizationIamMasterDataState(state)?.byTopic ?? {})
+const createActiveDataSelector = <TData extends Record<string, unknown>>(
+    topic: Parameters<typeof getOrganizationIamRecordsByTopic>[1],
+) => createSelector(
+    [createActiveRecordSelector<TData>(topic)],
+    records => records.map(record => record.data),
+)
+
+const selectPlatformRecords = createActiveRecordSelector<PlatformProfile>(organizationIamTopics.platform)
+const selectProjectRecords = createActiveRecordSelector<ProjectProfile>(organizationIamTopics.project)
+const selectTenantRecords = createActiveRecordSelector<TenantProfile>(organizationIamTopics.tenant)
+const selectBrandRecords = createActiveRecordSelector<BrandProfile>(organizationIamTopics.brand)
+const selectStoreRecords = createActiveRecordSelector<StoreProfile>(organizationIamTopics.store)
+const selectContractRecords = createActiveRecordSelector<ContractProfile>(organizationIamTopics.contract)
+const selectPlatformProfiles = createActiveDataSelector<PlatformProfile>(organizationIamTopics.platform)
+const selectProjectProfiles = createActiveDataSelector<ProjectProfile>(organizationIamTopics.project)
+const selectTenantProfiles = createActiveDataSelector<TenantProfile>(organizationIamTopics.tenant)
+const selectBrandProfiles = createActiveDataSelector<BrandProfile>(organizationIamTopics.brand)
+const selectStoreProfiles = createActiveDataSelector<StoreProfile>(organizationIamTopics.store)
+const selectRoleProfiles = createActiveDataSelector<RoleProfile>(organizationIamTopics.role)
+const selectPermissionProfiles = createActiveDataSelector<PermissionProfile>(organizationIamTopics.permission)
+const selectUserProfiles = createActiveDataSelector<UserProfile>(organizationIamTopics.user)
+const selectUserRoleBindingProfiles = createActiveDataSelector<UserRoleBindingProfile>(organizationIamTopics.userRoleBinding)
+
+export const selectOrganizationIamDiagnostics: (state: RootState) => OrganizationIamDiagnosticsEntry[] = createSelector(
+    [selectOrganizationIamMasterDataState],
+    masterData => masterData?.diagnostics ?? [],
+)
+
+export const selectOrganizationIamAllRecords: (
+    state: RootState,
+) => OrganizationIamMasterDataRecord[] = createSelector(
+    [selectOrganizationIamMasterDataState],
+    masterData => Object.values(masterData?.byTopic ?? {})
         .flatMap(records => Object.values(records ?? {}))
+)
 
-export const selectOrganizationIamSummary = (state: RootState) => {
-    const masterData = selectOrganizationIamMasterDataState(state)
-    return {
+export const selectOrganizationIamSummary: (state: RootState) => {
+    platforms: number
+    projects: number
+    tenants: number
+    brands: number
+    stores: number
+    users: number
+    roles: number
+    diagnostics: number
+    lastChangedAt?: number
+} = createSelector(
+    [selectOrganizationIamMasterDataState],
+    masterData => ({
         platforms: Object.keys(masterData?.byTopic[organizationIamTopics.platform] ?? {}).length,
         projects: Object.keys(masterData?.byTopic[organizationIamTopics.project] ?? {}).length,
         tenants: Object.keys(masterData?.byTopic[organizationIamTopics.tenant] ?? {}).length,
@@ -54,107 +102,118 @@ export const selectOrganizationIamSummary = (state: RootState) => {
         roles: Object.keys(masterData?.byTopic[organizationIamTopics.role] ?? {}).length,
         diagnostics: masterData?.diagnostics.length ?? 0,
         lastChangedAt: masterData?.lastChangedAt,
-    }
-}
+    }),
+)
 
-export const selectCurrentPlatformProfile = (state: RootState): PlatformProfile | undefined => {
-    const binding = selectTcpBindingSnapshot(state)
-    return findDataById<PlatformProfile>(
-        activeRecords(state, organizationIamTopics.platform),
+export const selectCurrentPlatformProfile: (state: RootState) => PlatformProfile | undefined = createSelector(
+    [selectPlatformRecords, selectTcpBindingSnapshot],
+    (records, binding): PlatformProfile | undefined => findDataById<PlatformProfile>(
+        records,
         'platform_id',
         binding.platformId,
-    ) ?? activeRecords<PlatformProfile>(state, organizationIamTopics.platform)[0]?.data
-}
+    ) ?? records[0]?.data,
+)
 
-export const selectCurrentProjectProfile = (state: RootState): ProjectProfile | undefined => {
-    const binding = selectTcpBindingSnapshot(state)
-    return findDataById<ProjectProfile>(
-        activeRecords(state, organizationIamTopics.project),
+export const selectCurrentProjectProfile: (state: RootState) => ProjectProfile | undefined = createSelector(
+    [selectProjectRecords, selectTcpBindingSnapshot],
+    (records, binding): ProjectProfile | undefined => findDataById<ProjectProfile>(
+        records,
         'project_id',
         binding.projectId,
-    ) ?? activeRecords<ProjectProfile>(state, organizationIamTopics.project)[0]?.data
-}
+    ) ?? records[0]?.data,
+)
 
-export const selectCurrentTenantProfile = (state: RootState): TenantProfile | undefined => {
-    const binding = selectTcpBindingSnapshot(state)
-    return findDataById<TenantProfile>(
-        activeRecords(state, organizationIamTopics.tenant),
+export const selectCurrentTenantProfile: (state: RootState) => TenantProfile | undefined = createSelector(
+    [selectTenantRecords, selectTcpBindingSnapshot],
+    (records, binding): TenantProfile | undefined => findDataById<TenantProfile>(
+        records,
         'tenant_id',
         binding.tenantId,
-    ) ?? activeRecords<TenantProfile>(state, organizationIamTopics.tenant)[0]?.data
-}
+    ) ?? records[0]?.data,
+)
 
-export const selectCurrentBrandProfile = (state: RootState): BrandProfile | undefined => {
-    const binding = selectTcpBindingSnapshot(state)
-    return findDataById<BrandProfile>(
-        activeRecords(state, organizationIamTopics.brand),
+export const selectCurrentBrandProfile: (state: RootState) => BrandProfile | undefined = createSelector(
+    [selectBrandRecords, selectTcpBindingSnapshot],
+    (records, binding): BrandProfile | undefined => findDataById<BrandProfile>(
+        records,
         'brand_id',
         binding.brandId,
-    ) ?? activeRecords<BrandProfile>(state, organizationIamTopics.brand)[0]?.data
-}
+    ) ?? records[0]?.data,
+)
 
-export const selectCurrentStoreProfile = (state: RootState): StoreProfile | undefined => {
-    const binding = selectTcpBindingSnapshot(state)
-    return findDataById<StoreProfile>(
-        activeRecords(state, organizationIamTopics.store),
+export const selectCurrentStoreProfile: (state: RootState) => StoreProfile | undefined = createSelector(
+    [selectStoreRecords, selectTcpBindingSnapshot],
+    (records, binding): StoreProfile | undefined => findDataById<StoreProfile>(
+        records,
         'store_id',
         binding.storeId,
-    ) ?? activeRecords<StoreProfile>(state, organizationIamTopics.store)[0]?.data
-}
+    ) ?? records[0]?.data,
+)
 
-export const selectCurrentActiveContract = (state: RootState): ContractProfile | undefined => {
-    const store = selectCurrentStoreProfile(state)
-    return activeRecords<ContractProfile>(state, organizationIamTopics.contract)
+export const selectCurrentActiveContract: (state: RootState) => ContractProfile | undefined = createSelector(
+    [selectContractRecords, selectCurrentStoreProfile],
+    (records, store): ContractProfile | undefined => records
         .map(record => record.data)
         .find(contract => contract.store_id === store?.store_id && contract.status !== 'INACTIVE')
-        ?? activeRecords<ContractProfile>(state, organizationIamTopics.contract)[0]?.data
-}
+        ?? records[0]?.data,
+)
 
-export const selectStoreEffectiveUsers = (state: RootState): UserProfile[] => {
-    const store = selectCurrentStoreProfile(state)
-    return activeRecords<UserProfile>(state, organizationIamTopics.user)
-        .map(record => record.data)
+export const selectStoreEffectiveUsers: (state: RootState) => UserProfile[] = createSelector(
+    [selectUserProfiles, selectCurrentStoreProfile],
+    (users, store): UserProfile[] => users
         .filter(user => !store?.store_id || user.store_id === store.store_id)
-}
+)
 
-export const selectStoreEffectiveRoles = (state: RootState): RoleProfile[] =>
-    activeRecords<RoleProfile>(state, organizationIamTopics.role).map(record => record.data)
+export const selectStoreEffectiveRoles: (state: RootState) => RoleProfile[] = createSelector(
+    [selectRoleProfiles],
+    roles => roles,
+)
 
-export const selectStoreEffectivePermissions = (state: RootState): PermissionProfile[] =>
-    activeRecords<PermissionProfile>(state, organizationIamTopics.permission).map(record => record.data)
+export const selectStoreEffectivePermissions: (state: RootState) => PermissionProfile[] = createSelector(
+    [selectPermissionProfiles],
+    permissions => permissions,
+)
 
-export const selectStoreEffectiveUserRoleBindings = (state: RootState): UserRoleBindingProfile[] => {
-    const store = selectCurrentStoreProfile(state)
-    return activeRecords<UserRoleBindingProfile>(state, organizationIamTopics.userRoleBinding)
-        .map(record => record.data)
+export const selectStoreEffectiveUserRoleBindings: (state: RootState) => UserRoleBindingProfile[] = createSelector(
+    [selectUserRoleBindingProfiles, selectCurrentStoreProfile],
+    (bindings, store): UserRoleBindingProfile[] => bindings
         .filter(binding => !store?.store_id || binding.store_id === store.store_id)
-}
+)
 
-export const selectIamReadinessSummary = (state: RootState) => {
-    const users = selectStoreEffectiveUsers(state)
-    const roles = selectStoreEffectiveRoles(state)
-    const permissions = selectStoreEffectivePermissions(state)
-    const bindings = selectStoreEffectiveUserRoleBindings(state)
-    return {
+export const selectIamReadinessSummary: (state: RootState) => {
+    readyForFutureLogin: boolean
+    users: number
+    roles: number
+    permissions: number
+    bindings: number
+} = createSelector(
+    [
+        selectStoreEffectiveUsers,
+        selectStoreEffectiveRoles,
+        selectStoreEffectivePermissions,
+        selectStoreEffectiveUserRoleBindings,
+    ],
+    (users, roles, permissions, bindings) => ({
         readyForFutureLogin: users.length > 0 && roles.length > 0 && permissions.length > 0 && bindings.length > 0,
         users: users.length,
         roles: roles.length,
         permissions: permissions.length,
         bindings: bindings.length,
-    }
-}
+    }),
+)
 
 const nodeTitle = (value: Record<string, unknown>, fallback: string) =>
     String(value.platform_name ?? value.project_name ?? value.tenant_name ?? value.brand_name ?? value.store_name ?? fallback)
 
-export const selectOrganizationTree = (state: RootState): OrganizationTreeNode[] => {
-    const platforms = activeRecords<PlatformProfile>(state, organizationIamTopics.platform).map(record => record.data)
-    const projects = activeRecords<ProjectProfile>(state, organizationIamTopics.project).map(record => record.data)
-    const tenants = activeRecords<TenantProfile>(state, organizationIamTopics.tenant).map(record => record.data)
-    const brands = activeRecords<BrandProfile>(state, organizationIamTopics.brand).map(record => record.data)
-    const stores = activeRecords<StoreProfile>(state, organizationIamTopics.store).map(record => record.data)
-
-    return platforms.map(platform => ({
+export const selectOrganizationTree: (state: RootState) => OrganizationTreeNode[] = createSelector(
+    [
+        selectPlatformProfiles,
+        selectProjectProfiles,
+        selectTenantProfiles,
+        selectBrandProfiles,
+        selectStoreProfiles,
+    ],
+    (platforms, projects, tenants, brands, stores): OrganizationTreeNode[] => platforms.map(platform => ({
         id: platform.platform_id,
         type: 'platform',
         title: nodeTitle(platform, platform.platform_id),
@@ -192,5 +251,5 @@ export const selectOrganizationTree = (state: RootState): OrganizationTreeNode[]
                             })),
                     })),
             })),
-    }))
-}
+    })),
+)
