@@ -1,5 +1,5 @@
 {
-  "name": "@impos2/ui-base-admin-console",
+  "name": "@next/ui-base-admin-console",
   "version": "1.0.0",
   "description": "Admin console and operator tools for UI base",
   "author": "DexterYang",
@@ -24,13 +24,13 @@
     "type-check": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@impos2/kernel-base-platform-ports": "workspace:*",
-    "@impos2/kernel-base-state-runtime": "workspace:*",
-    "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*",
-    "@impos2/kernel-base-topology-runtime-v3": "workspace:*",
-    "@impos2/kernel-base-workflow-runtime-v2": "workspace:*",
-    "@impos2/ui-base-input-runtime": "workspace:*",
-    "@impos2/ui-base-runtime-react": "workspace:*",
+    "@next/kernel-base-platform-ports": "workspace:*",
+    "@next/kernel-base-state-runtime": "workspace:*",
+    "@next/kernel-base-tcp-control-runtime-v2": "workspace:*",
+    "@next/kernel-base-topology-runtime-v3": "workspace:*",
+    "@next/kernel-base-workflow-runtime-v2": "workspace:*",
+    "@next/ui-base-input-runtime": "workspace:*",
+    "@next/ui-base-runtime-react": "workspace:*",
     "react-native-qrcode-svg": "^6.3.21"
   },
   "peerDependencies": {

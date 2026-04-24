@@ -4,7 +4,7 @@ export * from './demoSyncActor'
 export * from './hostLifecycleActor'
 export * from './powerDisplaySwitchActor'
 
-import type {ActorDefinition} from '@impos2/kernel-base-runtime-shell-v2'
+import type {ActorDefinition} from '@next/kernel-base-runtime-shell-v2'
 import {createTopologyRuntimeV3ContextActor} from './contextActor'
 import {
     createTopologyRuntimeV3ConnectionActor,

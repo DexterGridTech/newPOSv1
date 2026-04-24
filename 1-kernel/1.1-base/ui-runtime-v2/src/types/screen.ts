@@ -1,4 +1,4 @@
-import type {CommandIntent} from '@impos2/kernel-base-runtime-shell-v2'
+import type {CommandIntent} from '@next/kernel-base-runtime-shell-v2'
 
 export interface UiScreenDefinition<TProps = unknown> {
     partKey: string

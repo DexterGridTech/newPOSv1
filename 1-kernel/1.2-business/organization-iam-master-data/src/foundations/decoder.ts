@@ -1,4 +1,4 @@
-import type {TdpTopicDataChangeItem} from '@impos2/kernel-base-tdp-sync-runtime-v2'
+import type {TdpTopicDataChangeItem} from '@next/kernel-base-tdp-sync-runtime-v2'
 import type {
     OrganizationIamMasterDataRecord,
     OrganizationIamWireEnvelope,

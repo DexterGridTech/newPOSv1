@@ -3,23 +3,23 @@ import {
     isAppError,
     packageVersion,
     protocolVersion,
-} from '@impos2/kernel-base-contracts'
-import type {RuntimeModuleContextV2} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-contracts'
+import type {RuntimeModuleContextV2} from '@next/kernel-base-runtime-shell-v2'
 import {
     createHttpRuntime,
     createSocketLifecycleController,
     type HttpSuccessResponse,
     type HttpTransport,
     type HttpTransportRequest,
-} from '@impos2/kernel-base-transport-runtime'
-import {SERVER_NAME_MOCK_TERMINAL_PLATFORM} from '@impos2/kernel-server-config-v2'
+} from '@next/kernel-base-transport-runtime'
+import {SERVER_NAME_MOCK_TERMINAL_PLATFORM} from '@next/kernel-server-config-v2'
 import {moduleName} from '../moduleName'
 import {
     selectTcpAccessToken,
     selectTcpSandboxId,
     selectTcpTerminalId,
-} from '@impos2/kernel-base-tcp-control-runtime-v2'
-import {selectTopologyRuntimeV3Context} from '@impos2/kernel-base-topology-runtime-v3'
+} from '@next/kernel-base-tcp-control-runtime-v2'
+import {selectTopologyRuntimeV3Context} from '@next/kernel-base-topology-runtime-v3'
 import {tdpSyncV2CommandDefinitions} from '../features/commands'
 import {tdpSyncV2StateActions} from '../features/slices'
 import {TDP_SYNC_V2_SOCKET_PROFILE_NAME, tdpSyncV2SocketProfile} from './socketBinding'

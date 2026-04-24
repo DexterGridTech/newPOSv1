@@ -3,7 +3,7 @@ import {
     createModuleActorFactory,
     onCommand,
     type ActorDefinition,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {selectTopologyRuntimeV3Context} from '../../selectors'
 import {moduleName} from '../../moduleName'
 import {topologyRuntimeV3CommandDefinitions} from '../commands'

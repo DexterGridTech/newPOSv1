@@ -1,4 +1,4 @@
-import type {ConnectionId, SessionId} from '@impos2/kernel-base-contracts'
+import type {ConnectionId, SessionId} from '@next/kernel-base-contracts'
 import {createHostEnvelopeId} from './ids'
 import type {
     HostRelayCounters,

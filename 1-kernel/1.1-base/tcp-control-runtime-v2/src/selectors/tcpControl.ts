@@ -1,5 +1,5 @@
 import {createSelector} from '@reduxjs/toolkit'
-import type {RootState} from '@impos2/kernel-base-state-runtime'
+import type {RootState} from '@next/kernel-base-state-runtime'
 import {
     TCP_BINDING_STATE_KEY,
     TCP_CREDENTIAL_STATE_KEY,

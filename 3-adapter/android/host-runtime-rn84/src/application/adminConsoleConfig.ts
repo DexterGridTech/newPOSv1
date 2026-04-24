@@ -1,22 +1,22 @@
 import {
     createAdminConsoleModuleInputFromHost,
-} from '@impos2/ui-base-admin-console/supports'
+} from '@next/ui-base-admin-console/supports'
 import type {
     AdapterDiagnosticScenario,
     AdminTopologyHost,
     AdminTopologySharePayload,
-} from '@impos2/ui-base-admin-console/types'
-import type {CreateAdminConsoleModuleInput} from '@impos2/ui-base-admin-console/application'
-import {createCommand, type KernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/ui-base-admin-console/types'
+import type {CreateAdminConsoleModuleInput} from '@next/ui-base-admin-console/application'
+import {createCommand, type KernelRuntimeV2} from '@next/kernel-base-runtime-shell-v2'
 import {
     selectTransportServerSpaceState,
-} from '@impos2/kernel-base-transport-runtime'
-import {kernelBaseDevServerConfig} from '@impos2/kernel-server-config-v2'
+} from '@next/kernel-base-transport-runtime'
+import {kernelBaseDevServerConfig} from '@next/kernel-server-config-v2'
 import {
     createTopologyV3MasterLocatorFromSharePayload,
     createTopologyV3SharePayload,
     topologyRuntimeV3CommandDefinitions,
-} from '@impos2/kernel-base-topology-runtime-v3'
+} from '@next/kernel-base-topology-runtime-v3'
 import {nativeLogger} from '../turbomodules/logger'
 import {nativeAppControl} from '../turbomodules/appControl'
 import {nativeConnector} from '../turbomodules/connector'

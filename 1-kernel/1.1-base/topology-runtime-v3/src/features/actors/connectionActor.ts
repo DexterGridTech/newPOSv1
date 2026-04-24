@@ -1,9 +1,9 @@
-import {createAppError} from '@impos2/kernel-base-contracts'
+import {createAppError} from '@next/kernel-base-contracts'
 import {
     createModuleActorFactory,
     onCommand,
     type ActorDefinition,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {moduleName} from '../../moduleName'
 import {topologyRuntimeV3ErrorDefinitions} from '../../supports'
 import type {TopologyPeerOrchestratorV3} from '../../types/runtime'

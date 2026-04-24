@@ -1,11 +1,11 @@
 import React, {useEffect, useMemo, useState} from 'react'
 import {Provider} from 'react-redux'
 import {ScrollView, Text, View} from 'react-native'
-import {createCommand, runtimeShellV2CommandDefinitions} from '@impos2/kernel-base-runtime-shell-v2'
+import {createCommand, runtimeShellV2CommandDefinitions} from '@next/kernel-base-runtime-shell-v2'
 import {
     InputRuntimeProvider,
     VirtualKeyboardOverlay,
-} from '@impos2/ui-base-input-runtime'
+} from '@next/ui-base-input-runtime'
 import {
     AdminPopup,
     adminLauncherDefaults,
@@ -17,12 +17,12 @@ import {
     createRuntimeReactHarness,
     type RuntimeReactHarness,
 } from '../../runtime-react/test/support/runtimeReactHarness'
-import {UiRuntimeProvider} from '@impos2/ui-base-runtime-react'
+import {UiRuntimeProvider} from '@next/ui-base-runtime-react'
 import {createBrowserAutomationHost} from '../../ui-automation-runtime/src/supports'
 import {resetAdminHostTools} from '../src/supports/adminHostToolsRegistry'
 import {resetAdminConsoleSections} from '../src/supports/adminSectionRegistry'
 import {resetAdminAdapterDiagnosticsScenarios} from '../src/supports/adapterDiagnosticsRuntime'
-import type {StateStoragePort} from '@impos2/kernel-base-platform-ports'
+import type {StateStoragePort} from '@next/kernel-base-platform-ports'
 
 const deviceId = 'ADMIN-EXPO-DEVICE-001'
 

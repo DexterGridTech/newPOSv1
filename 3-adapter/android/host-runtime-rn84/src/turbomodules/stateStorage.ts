@@ -1,4 +1,4 @@
-import type {StateStoragePort} from '@impos2/kernel-base-platform-ports'
+import type {StateStoragePort} from '@next/kernel-base-platform-ports'
 import NativeStateStorageTurboModule from './specs/NativeStateStorageTurboModule'
 
 export const createNativeStateStorage = (

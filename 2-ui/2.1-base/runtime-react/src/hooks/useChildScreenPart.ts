@@ -3,8 +3,8 @@ import {useSelector} from 'react-redux'
 import {
     selectUiCurrentScreenOrFirstReady,
     type UiScreenRuntimeEntry,
-} from '@impos2/kernel-base-ui-runtime-v2'
-import type {RootState} from '@impos2/kernel-base-state-runtime'
+} from '@next/kernel-base-ui-runtime-v2'
+import type {RootState} from '@next/kernel-base-state-runtime'
 import {resolveUiRenderer} from '../foundations/rendererRegistry'
 import type {
     ResolvedUiScreenPart,

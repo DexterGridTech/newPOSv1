@@ -13,7 +13,7 @@ const scriptDir = dirname(fileURLToPath(import.meta.url))
 const repoRoot = resolve(scriptDir, '..')
 const androidAutomationScriptPath = resolve(repoRoot, 'scripts/android-automation-rpc.mjs')
 
-const DEFAULT_PACKAGE_NAME = 'com.impos2.mixcretailassemblyrn84'
+const DEFAULT_PACKAGE_NAME = 'com.next.mixcretailassemblyrn84'
 const DEFAULT_MAIN_ACTIVITY = `${DEFAULT_PACKAGE_NAME}/.MainActivity`
 const DEFAULT_TIMEOUT_MS = Number(process.env.ASSEMBLY_VISIBLE_AUTOMATION_TIMEOUT_MS ?? '15000')
 const DEFAULT_SLOW_MS = Number(process.env.ASSEMBLY_VISIBLE_AUTOMATION_SLOW_MS ?? '500')

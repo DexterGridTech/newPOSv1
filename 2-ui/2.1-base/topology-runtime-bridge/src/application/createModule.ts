@@ -1,20 +1,20 @@
 import type {
     KernelRuntimeModuleV2,
     RuntimeModulePreSetupContextV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {
     createCommand,
     createModuleActorFactory,
     createRuntimeModuleLifecycleLogger,
     defineKernelRuntimeModuleV2,
     onCommand,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {
     TOPOLOGY_POWER_DISPLAY_SWITCH_ALERT_ID,
     topologyRuntimeV3CommandDefinitions,
-} from '@impos2/kernel-base-topology-runtime-v3'
-import {createUiRuntimeModuleV2, uiRuntimeV2CommandDefinitions} from '@impos2/kernel-base-ui-runtime-v2'
-import {runtimeReactDefaultParts} from '@impos2/ui-base-runtime-react'
+} from '@next/kernel-base-topology-runtime-v3'
+import {createUiRuntimeModuleV2, uiRuntimeV2CommandDefinitions} from '@next/kernel-base-ui-runtime-v2'
+import {runtimeReactDefaultParts} from '@next/ui-base-runtime-react'
 import {moduleName} from '../moduleName'
 import {topologyRuntimeBridgeModuleManifest} from './moduleManifest'
 import type {CreateTopologyRuntimeBridgeModuleInput, TopologyPowerDisplaySwitchAlertCopy} from '../types'

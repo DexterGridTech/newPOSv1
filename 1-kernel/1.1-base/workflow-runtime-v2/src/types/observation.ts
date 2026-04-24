@@ -1,7 +1,7 @@
 import type {
     AppError,
     RequestId,
-} from '@impos2/kernel-base-contracts'
+} from '@next/kernel-base-contracts'
 import type {
     WorkflowRunId,
     WorkflowStepRunId,

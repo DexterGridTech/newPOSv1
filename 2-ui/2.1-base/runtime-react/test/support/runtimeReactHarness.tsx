@@ -5,12 +5,12 @@ import type {
     KernelRuntimeAppV2,
     KernelRuntimeModuleV2,
     KernelRuntimeV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
-import {createKernelRuntimeApp} from '@impos2/kernel-base-runtime-shell-v2'
-import {createTopologyRuntimeModuleV3} from '@impos2/kernel-base-topology-runtime-v3'
-import type {CreateTopologyRuntimeModuleV3Input} from '@impos2/kernel-base-topology-runtime-v3'
-import {createUiRuntimeModuleV2} from '@impos2/kernel-base-ui-runtime-v2'
-import type {PlatformPorts} from '@impos2/kernel-base-platform-ports'
+} from '@next/kernel-base-runtime-shell-v2'
+import {createKernelRuntimeApp} from '@next/kernel-base-runtime-shell-v2'
+import {createTopologyRuntimeModuleV3} from '@next/kernel-base-topology-runtime-v3'
+import type {CreateTopologyRuntimeModuleV3Input} from '@next/kernel-base-topology-runtime-v3'
+import {createUiRuntimeModuleV2} from '@next/kernel-base-ui-runtime-v2'
+import type {PlatformPorts} from '@next/kernel-base-platform-ports'
 import type {EnhancedStore} from '@reduxjs/toolkit'
 import {createModule, UiRuntimeProvider} from '../../src'
 import type {CreateRuntimeReactModuleInput} from '../../src'

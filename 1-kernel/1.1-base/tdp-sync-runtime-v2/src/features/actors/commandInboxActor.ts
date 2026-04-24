@@ -2,8 +2,8 @@ import {
     createModuleActorFactory,
     onCommand,
     type ActorDefinition,
-} from '@impos2/kernel-base-runtime-shell-v2'
-import {nowTimestampMs} from '@impos2/kernel-base-contracts'
+} from '@next/kernel-base-runtime-shell-v2'
+import {nowTimestampMs} from '@next/kernel-base-contracts'
 import {moduleName} from '../../moduleName'
 import {tdpSyncV2CommandDefinitions} from '../commands'
 import {tdpSyncV2DomainActions} from '../slices'

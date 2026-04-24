@@ -1,8 +1,8 @@
 import {
     createAppError,
     nowTimestampMs,
-} from '@impos2/kernel-base-contracts'
-import type {LoggerPort} from '@impos2/kernel-base-platform-ports'
+} from '@next/kernel-base-contracts'
+import type {LoggerPort} from '@next/kernel-base-platform-ports'
 import type {
     CreateHttpRuntimeInput,
     HttpAttemptMetric,

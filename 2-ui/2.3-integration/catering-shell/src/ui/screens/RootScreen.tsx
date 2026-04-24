@@ -1,22 +1,22 @@
 import React, {useEffect, useMemo, useState} from 'react'
 import {View} from 'react-native'
 import {useSelector} from 'react-redux'
-import {selectTopologyDisplayMode, selectTopologyStandalone} from '@impos2/kernel-base-topology-runtime-v3'
+import {selectTopologyDisplayMode, selectTopologyStandalone} from '@next/kernel-base-topology-runtime-v3'
 import {
     InputRuntimeProvider,
     VirtualKeyboardOverlay,
-} from '@impos2/ui-base-input-runtime'
+} from '@next/ui-base-input-runtime'
 import {
     AdminPopup,
     useAdminLauncher,
-} from '@impos2/ui-base-admin-console'
-import {UiRuntimeRootShell} from '@impos2/ui-base-runtime-react'
+} from '@next/ui-base-admin-console'
+import {UiRuntimeRootShell} from '@next/ui-base-runtime-react'
 import {
     useOptionalUiAutomationBridge,
     useOptionalUiAutomationRuntimeId,
     useUiRuntime,
-} from '@impos2/ui-base-runtime-react'
-import type {RootState} from '@impos2/kernel-base-state-runtime'
+} from '@next/ui-base-runtime-react'
+import type {RootState} from '@next/kernel-base-state-runtime'
 import type {CateringRootScreenProps} from '../../types'
 
 export const RootScreen: React.FC<CateringRootScreenProps> = ({

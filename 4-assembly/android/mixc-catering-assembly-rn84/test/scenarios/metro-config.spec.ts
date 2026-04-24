@@ -71,7 +71,7 @@ describe('assembly metro config', () => {
                 originModulePath: workspaceSource,
                 resolveRequest: delegatedResolve,
             },
-            '@impos2/ui-base-runtime-react',
+            '@next/ui-base-runtime-react',
             'android',
         )
 

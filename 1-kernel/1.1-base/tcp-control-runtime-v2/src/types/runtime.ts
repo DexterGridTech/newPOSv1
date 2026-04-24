@@ -1,5 +1,5 @@
-import type {HttpRuntime} from '@impos2/kernel-base-transport-runtime'
-import type {RuntimeModuleContextV2} from '@impos2/kernel-base-runtime-shell-v2'
+import type {HttpRuntime} from '@next/kernel-base-transport-runtime'
+import type {RuntimeModuleContextV2} from '@next/kernel-base-runtime-shell-v2'
 import type {
     ActivateTerminalApiRequest,
     ActivateTerminalApiResponse,

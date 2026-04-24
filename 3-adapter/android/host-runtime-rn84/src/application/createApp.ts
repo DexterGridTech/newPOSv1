@@ -1,38 +1,38 @@
-import {createCommand, createKernelRuntimeApp} from '@impos2/kernel-base-runtime-shell-v2'
+import {createCommand, createKernelRuntimeApp} from '@next/kernel-base-runtime-shell-v2'
 import {
     selectTcpIsActivated,
     selectTcpTerminalId,
-} from '@impos2/kernel-base-tcp-control-runtime-v2'
+} from '@next/kernel-base-tcp-control-runtime-v2'
 import {
     createTopologyRuntimeModuleV3,
     selectTopologyRuntimeV3Context,
-} from '@impos2/kernel-base-topology-runtime-v3'
+} from '@next/kernel-base-topology-runtime-v3'
 import {
     createTdpSyncRuntimeModuleV2,
     tdpSyncV2CommandDefinitions,
     selectTdpHotUpdateCurrent,
-} from '@impos2/kernel-base-tdp-sync-runtime-v2'
-import {createTerminalLogUploadRuntimeModuleV2} from '@impos2/kernel-base-terminal-log-upload-runtime-v2'
-import {createTcpControlRuntimeModuleV2} from '@impos2/kernel-base-tcp-control-runtime-v2'
-import {createUiRuntimeModuleV2} from '@impos2/kernel-base-ui-runtime-v2'
-import {createWorkflowRuntimeModuleV2} from '@impos2/kernel-base-workflow-runtime-v2'
+} from '@next/kernel-base-tdp-sync-runtime-v2'
+import {createTerminalLogUploadRuntimeModuleV2} from '@next/kernel-base-terminal-log-upload-runtime-v2'
+import {createTcpControlRuntimeModuleV2} from '@next/kernel-base-tcp-control-runtime-v2'
+import {createUiRuntimeModuleV2} from '@next/kernel-base-ui-runtime-v2'
+import {createWorkflowRuntimeModuleV2} from '@next/kernel-base-workflow-runtime-v2'
 import {
     createHttpRuntime,
     createTransportRuntimeModule,
     resolveTransportServers,
     selectTransportSelectedServerSpace,
-} from '@impos2/kernel-base-transport-runtime'
+} from '@next/kernel-base-transport-runtime'
 import {
     kernelBaseDevServerConfig,
     SERVER_NAME_MOCK_TERMINAL_PLATFORM,
-} from '@impos2/kernel-server-config-v2'
-import {createModule as createRuntimeReactModule} from '@impos2/ui-base-runtime-react'
-import type {UiRuntimeProviderProps} from '@impos2/ui-base-runtime-react'
-import {createModule as createInputRuntimeModule} from '@impos2/ui-base-input-runtime'
-import {createModule as createAdminConsoleModule} from '@impos2/ui-base-admin-console'
-import {createModule as createTerminalConsoleModule} from '@impos2/ui-base-terminal-console'
-import {createModule as createTopologyRuntimeBridgeModule} from '@impos2/ui-base-topology-runtime-bridge'
-import type {KernelRuntimeAppV2, KernelRuntimeModuleV2} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-server-config-v2'
+import {createModule as createRuntimeReactModule} from '@next/ui-base-runtime-react'
+import type {UiRuntimeProviderProps} from '@next/ui-base-runtime-react'
+import {createModule as createInputRuntimeModule} from '@next/ui-base-input-runtime'
+import {createModule as createAdminConsoleModule} from '@next/ui-base-admin-console'
+import {createModule as createTerminalConsoleModule} from '@next/ui-base-terminal-console'
+import {createModule as createTopologyRuntimeBridgeModule} from '@next/ui-base-topology-runtime-bridge'
+import type {KernelRuntimeAppV2, KernelRuntimeModuleV2} from '@next/kernel-base-runtime-shell-v2'
 import type {StoreEnhancer} from '@reduxjs/toolkit'
 import type {AppProps} from '../types'
 import {
@@ -69,7 +69,7 @@ export interface AssemblyRuntimeApp {
         UiRuntimeProviderProps,
         'automationBridge' | 'automationRuntimeId' | 'performAutomationAction'
     >
-    start(): Promise<import('@impos2/kernel-base-runtime-shell-v2').KernelRuntimeV2>
+    start(): Promise<import('@next/kernel-base-runtime-shell-v2').KernelRuntimeV2>
 }
 
 const createStoreEnhancers = (
@@ -96,7 +96,7 @@ const createKernelRuntimeAppForAssembly = (
     options: {
         mockTerminalPlatformBaseUrl?: string
         topologyAdminInput?: NonNullable<Parameters<typeof createAssemblyAdminConsoleInput>[0]>['topology']
-        getRuntime?: () => import('@impos2/kernel-base-runtime-shell-v2').KernelRuntimeV2 | undefined
+        getRuntime?: () => import('@next/kernel-base-runtime-shell-v2').KernelRuntimeV2 | undefined
         createShellModule: () => KernelRuntimeModuleV2
         extraKernelModules?: readonly KernelRuntimeModuleV2[]
         releaseInfo?: HostRuntimeReleaseInfo
@@ -105,7 +105,7 @@ const createKernelRuntimeAppForAssembly = (
 ): KernelRuntimeAppV2 => {
     const httpTransport = createAssemblyFetchTransport()
     const resolveAssemblyTransportServers = (
-        context?: Pick<import('@impos2/kernel-base-runtime-shell-v2').KernelRuntimeV2, 'getState'>,
+        context?: Pick<import('@next/kernel-base-runtime-shell-v2').KernelRuntimeV2, 'getState'>,
     ) => {
         const selectedSpace = context && typeof context.getState === 'function'
             ? selectTransportSelectedServerSpace(context.getState())
@@ -237,7 +237,7 @@ const createInitialTopologyContextSnapshot = (
 })
 
 const updateTopologyRuntimeEnvironment = (
-    runtime: import('@impos2/kernel-base-runtime-shell-v2').KernelRuntimeV2,
+    runtime: import('@next/kernel-base-runtime-shell-v2').KernelRuntimeV2,
     bindingSource: ReturnType<typeof createAssemblyTopologyBindingSource>,
     latestTopologyContext: AssemblyTopologyStorageGateSnapshot,
 ) => {
@@ -304,7 +304,7 @@ export const createApp = (
         })
     const topologyBindingSource = createAssemblyTopologyBindingSource(createInitialTopologyBindingState(props))
     const latestTopologyContext = createInitialTopologyContextSnapshot(props)
-    let latestRuntime: import('@impos2/kernel-base-runtime-shell-v2').KernelRuntimeV2 | undefined
+    let latestRuntime: import('@next/kernel-base-runtime-shell-v2').KernelRuntimeV2 | undefined
     const platformPorts = createAssemblyPlatformPorts(environmentMode, {
         shouldDisableStatePersistence: () => shouldDisableAssemblyStatePersistence(latestTopologyContext),
     })

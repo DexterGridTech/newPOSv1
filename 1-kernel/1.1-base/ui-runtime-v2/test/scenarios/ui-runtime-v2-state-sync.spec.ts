@@ -3,7 +3,7 @@ import {
     applySliceSyncDiff,
     createSliceSyncDiff,
     createSliceSyncSummary,
-} from '@impos2/kernel-base-state-runtime'
+} from '@next/kernel-base-state-runtime'
 import {
     uiRuntimeV2OverlayStateSlices,
     uiRuntimeV2ScreenStateSlices,

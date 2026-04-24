@@ -2,7 +2,7 @@ import type {
     CommandId,
     RequestId,
     TimestampMs,
-} from '@impos2/kernel-base-contracts'
+} from '@next/kernel-base-contracts'
 import type {CommandQueryResult} from './command'
 
 export type RequestQueryStatus = 'RUNNING' | 'COMPLETED' | 'PARTIAL_FAILED' | 'FAILED' | 'TIMEOUT'

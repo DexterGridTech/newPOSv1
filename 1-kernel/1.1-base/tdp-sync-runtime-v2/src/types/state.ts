@@ -1,4 +1,4 @@
-import type {AppError, TimestampMs} from '@impos2/kernel-base-contracts'
+import type {AppError, TimestampMs} from '@next/kernel-base-contracts'
 
 export type TdpSessionStatus =
     | 'IDLE'

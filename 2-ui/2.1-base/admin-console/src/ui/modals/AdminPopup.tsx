@@ -1,14 +1,14 @@
 import React, {useMemo} from 'react'
 import {Pressable, ScrollView, Text, View, useWindowDimensions} from 'react-native'
 import QRCode from 'react-native-qrcode-svg'
-import {InputField} from '@impos2/ui-base-input-runtime'
-import {useOptionalInputRuntime} from '@impos2/ui-base-input-runtime'
+import {InputField} from '@next/ui-base-input-runtime'
+import {useOptionalInputRuntime} from '@next/ui-base-input-runtime'
 import {
     useOptionalUiAutomationBridge,
     useOptionalUiAutomationRuntimeId,
     useOptionalUiAutomationTarget,
     useUiRuntime,
-} from '@impos2/ui-base-runtime-react'
+} from '@next/ui-base-runtime-react'
 import {useStore} from 'react-redux'
 import type {EnhancedStore} from '@reduxjs/toolkit'
 import {adminConsoleGroups, adminConsoleTabs} from '../../foundations'

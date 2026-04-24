@@ -2,7 +2,7 @@ import {
     createModuleParameterFactory,
     listDefinitions,
     positiveFiniteNumber,
-} from '@impos2/kernel-base-contracts'
+} from '@next/kernel-base-contracts'
 import {moduleName} from '../moduleName'
 
 const defineParameter = createModuleParameterFactory(moduleName)

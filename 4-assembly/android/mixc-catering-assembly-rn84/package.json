@@ -1,5 +1,5 @@
 {
-  "name": "@impos2/assembly-android-mixc-catering-assembly-rn84",
+  "name": "@next/assembly-android-mixc-catering-assembly-rn84",
   "version": "1.0.0",
   "description": "Android RN84 assembly built on kernel-base and ui-base",
   "private": true,
@@ -14,8 +14,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@impos2/host-runtime-rn84": "workspace:*",
-    "@impos2/ui-integration-catering-shell": "workspace:*",
+    "@next/host-runtime-rn84": "workspace:*",
+    "@next/ui-integration-catering-shell": "workspace:*",
     "react": "19.2.3",
     "react-native": "0.84.1",
     "react-native-qrcode-svg": "^6.3.21",

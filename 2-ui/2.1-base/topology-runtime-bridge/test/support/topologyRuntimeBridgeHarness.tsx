@@ -1,8 +1,8 @@
-import {createKernelRuntimeApp} from '@impos2/kernel-base-runtime-shell-v2'
-import {createTopologyRuntimeModuleV3} from '@impos2/kernel-base-topology-runtime-v3'
-import {createUiRuntimeModuleV2} from '@impos2/kernel-base-ui-runtime-v2'
-import type {PlatformPorts} from '@impos2/kernel-base-platform-ports'
-import {createModule as createRuntimeReactModule} from '@impos2/ui-base-runtime-react'
+import {createKernelRuntimeApp} from '@next/kernel-base-runtime-shell-v2'
+import {createTopologyRuntimeModuleV3} from '@next/kernel-base-topology-runtime-v3'
+import {createUiRuntimeModuleV2} from '@next/kernel-base-ui-runtime-v2'
+import type {PlatformPorts} from '@next/kernel-base-platform-ports'
+import {createModule as createRuntimeReactModule} from '@next/ui-base-runtime-react'
 import {createModule} from '../../src'
 import type {CreateTopologyRuntimeBridgeModuleInput} from '../../src'
 import {createBrowserConsoleLogger} from '../../../runtime-react/test/support/browserConsoleLogger'
@@ -44,4 +44,4 @@ export const createTopologyRuntimeBridgeHarness = async (
 }
 
 export {renderWithAutomation} from '../../../runtime-react/test/support/runtimeReactHarness'
-export {UiRuntimeRootShell} from '@impos2/ui-base-runtime-react'
+export {UiRuntimeRootShell} from '@next/ui-base-runtime-react'

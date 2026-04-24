@@ -1,5 +1,5 @@
-import {uiBaseTerminalScreenParts} from '@impos2/ui-base-terminal-console'
-import {masterDataWorkbenchScreenParts} from '@impos2/ui-business-catering-master-data-workbench'
+import {uiBaseTerminalScreenParts} from '@next/ui-base-terminal-console'
+import {masterDataWorkbenchScreenParts} from '@next/ui-business-catering-master-data-workbench'
 import {cateringShellScreenParts} from './cateringShellScreenParts'
 
 export const cateringShellNavigationTargets = {

@@ -1,9 +1,10 @@
 import React from 'react'
+import {releaseInfo} from '../../src/generated/releaseInfo'
 import {beforeEach, describe, expect, it, vi} from 'vitest'
-import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
-import {tcpControlV2CommandDefinitions} from '@impos2/kernel-base-tcp-control-runtime-v2'
-import {uiRuntimeV2CommandDefinitions} from '@impos2/kernel-base-ui-runtime-v2'
-import {uiBaseTerminalScreenParts} from '@impos2/ui-base-terminal-console'
+import {createCommand} from '@next/kernel-base-runtime-shell-v2'
+import {tcpControlV2CommandDefinitions} from '@next/kernel-base-tcp-control-runtime-v2'
+import {uiRuntimeV2CommandDefinitions} from '@next/kernel-base-ui-runtime-v2'
+import {uiBaseTerminalScreenParts} from '@next/ui-base-terminal-console'
 import {createMemoryStorage} from '../../../../../1-kernel/test-support/storageHarness'
 import {mountAssemblyAutomationApp} from '../support/mountAssemblyAutomationApp'
 
@@ -54,6 +55,7 @@ vi.mock('react-native', async () => {
                 return value.android ?? value.default
             },
         },
+        useWindowDimensions: () => ({width: 1280, height: 720, scale: 1, fontScale: 1}),
         NativeEventEmitter: MockNativeEventEmitter,
         TurboModuleRegistry: {
             get(name: string) {
@@ -245,9 +247,9 @@ vi.mock('react-native-qrcode-svg', () => ({
     default: (props: Record<string, unknown>) => React.createElement('mock-qrcode', props),
 }))
 
-vi.mock('@impos2/ui-base-admin-console', async importOriginal => {
-    const actual = await importOriginal<typeof import('@impos2/ui-base-admin-console')>()
-    const {defineKernelRuntimeModuleV2} = await import('@impos2/kernel-base-runtime-shell-v2')
+vi.mock('@next/ui-base-admin-console', async importOriginal => {
+    const actual = await importOriginal<typeof import('@next/ui-base-admin-console')>()
+    const {defineKernelRuntimeModuleV2} = await import('@next/kernel-base-runtime-shell-v2')
 
     return {
         ...actual,
@@ -288,6 +290,15 @@ vi.mock('reactotron-redux', () => ({
     reactotronRedux: () => () => undefined,
 }))
 
+
+const createProductApp = (createApp: any, props: any, options: any = {}) => createApp(props, {
+    createShellModule: options.createShellModule,
+    extraKernelModules: options.extraKernelModules ?? [],
+    productId: 'mixc-catering',
+    releaseInfo,
+    ...options,
+})
+
 describe('assembly ui automation runtime', () => {
     beforeEach(() => {
         vi.clearAllMocks()
@@ -296,9 +307,9 @@ describe('assembly ui automation runtime', () => {
     })
 
     it('drives primary catering-shell UI through the assembly automation controller', async () => {
-        const {RootScreen} = await import('@impos2/ui-integration-catering-shell')
+        const {RootScreen, createModule: createCateringShellModule, createCateringBusinessModules} = await import('@next/ui-integration-catering-shell')
         const {createApp} = await import('../../src/application/createApp')
-        const runtimeApp = createApp({
+        const runtimeApp = createProductApp(createApp, {
             deviceId: 'ASSEMBLY-DEVICE-001',
             screenMode: 'desktop',
             displayCount: 2,
@@ -308,7 +319,7 @@ describe('assembly ui automation runtime', () => {
                 role: 'master',
                 localNodeId: 'master-node-1',
             },
-        })
+        }, {createShellModule: createCateringShellModule, extraKernelModules: createCateringBusinessModules()})
         const mounted = await mountAssemblyAutomationApp(
             runtimeApp as any,
             <RootScreen deviceId="ASSEMBLY-DEVICE-001" />,
@@ -398,20 +409,20 @@ describe('assembly ui automation runtime', () => {
 
             await expect(mounted.client.call('wait.forScreen', {
                 target: 'primary',
-                partKey: 'ui.integration.catering-shell.welcome',
+                partKey: 'ui.business.catering-master-data-workbench.primary-workbench',
                 timeoutMs: 3_000,
             })).resolves.toMatchObject({
                 screen: {
-                    partKey: 'ui.integration.catering-shell.welcome',
+                    partKey: 'ui.business.catering-master-data-workbench.primary-workbench',
                 },
             })
             await expect(mounted.client.call('wait.forNode', {
                 target: 'primary',
-                testID: 'ui-integration-catering-shell:welcome:title',
+                testID: 'ui-business-catering-master-data-workbench:title',
                 timeoutMs: 3_000,
             })).resolves.toSatisfy((node: {text?: string}) =>
                 typeof node.text === 'string'
-                && node.text.startsWith('欢迎进入零售终端 · OTA E2E V'),
+                && node.text.includes('主数据'),
             )
         } finally {
             await mounted.unmount()
@@ -419,9 +430,9 @@ describe('assembly ui automation runtime', () => {
     })
 
     it('exposes the secondary catering-shell target through the same controller', async () => {
-        const {RootScreen} = await import('@impos2/ui-integration-catering-shell')
+        const {RootScreen, createModule: createCateringShellModule, createCateringBusinessModules} = await import('@next/ui-integration-catering-shell')
         const {createApp} = await import('../../src/application/createApp')
-        const runtimeApp = createApp({
+        const runtimeApp = createProductApp(createApp, {
             deviceId: 'ASSEMBLY-DEVICE-SECONDARY-001',
             screenMode: 'desktop',
             displayCount: 2,
@@ -431,7 +442,7 @@ describe('assembly ui automation runtime', () => {
                 role: 'slave',
                 localNodeId: 'slave-node-1',
             },
-        })
+        }, {createShellModule: createCateringShellModule, extraKernelModules: createCateringBusinessModules()})
         const mounted = await mountAssemblyAutomationApp(
             runtimeApp as any,
             <RootScreen deviceId="ASSEMBLY-DEVICE-SECONDARY-001" />,

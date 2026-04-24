@@ -1,6 +1,6 @@
 import type {Subject} from 'rxjs'
-import type {RequestId} from '@impos2/kernel-base-contracts'
-import type {ActorExecutionContext} from '@impos2/kernel-base-runtime-shell-v2'
+import type {RequestId} from '@next/kernel-base-contracts'
+import type {ActorExecutionContext} from '@next/kernel-base-runtime-shell-v2'
 import type {
     RunWorkflowInput,
     WorkflowObservation,

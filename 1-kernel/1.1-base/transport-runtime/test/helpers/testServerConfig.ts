@@ -1,4 +1,4 @@
-import type {TransportServerConfig} from '@impos2/kernel-base-contracts'
+import type {TransportServerConfig} from '@next/kernel-base-contracts'
 
 export const SERVER_NAME_KERNEL_BASE_HTTP_FAILOVER_TEST = 'kernel-base-http-failover-test'
 export const SERVER_NAME_KERNEL_BASE_HTTP_DEMO_TEST = 'demo'

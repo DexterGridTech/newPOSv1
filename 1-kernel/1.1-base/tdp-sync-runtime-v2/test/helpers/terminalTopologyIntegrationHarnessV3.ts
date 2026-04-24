@@ -3,29 +3,29 @@ import {
     nowTimestampMs,
     type ParameterCatalogEntry,
     type TimestampMs,
-} from '@impos2/kernel-base-contracts'
-import {createLoggerPort} from '@impos2/kernel-base-platform-ports'
+} from '@next/kernel-base-contracts'
+import {createLoggerPort} from '@next/kernel-base-platform-ports'
 import {
     createCommand,
     runtimeShellV2CommandDefinitions,
     type KernelRuntimeModuleV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {
     kernelBaseTestServerConfig,
     SERVER_NAME_MOCK_TERMINAL_PLATFORM,
-} from '@impos2/kernel-server-config-v2'
+} from '@next/kernel-server-config-v2'
 import {
     createHttpRuntime,
     createSocketRuntime,
     type HttpSuccessResponse,
     type HttpTransport,
     type HttpTransportRequest,
-} from '@impos2/kernel-base-transport-runtime'
+} from '@next/kernel-base-transport-runtime'
 import {
     createTcpControlRuntimeModuleV2,
     selectTcpTerminalId,
     tcpControlV2CommandDefinitions,
-} from '@impos2/kernel-base-tcp-control-runtime-v2'
+} from '@next/kernel-base-tcp-control-runtime-v2'
 import {
     createTdpSyncRuntimeModuleV2,
     selectTdpSessionState,
@@ -36,7 +36,7 @@ import {
 import {
     selectTopologyRuntimeV3Connection,
     topologyRuntimeV3CommandDefinitions,
-} from '@impos2/kernel-base-topology-runtime-v3'
+} from '@next/kernel-base-topology-runtime-v3'
 import {createMockTerminalPlatformTestServer} from '../../../../../0-mock-server/mock-terminal-platform/server/src/test/createMockTerminalPlatformTestServer'
 import {createNodeWsTransport} from '../../../transport-runtime/test/helpers/nodeWsTransport'
 import {resolveTransportServers} from '../../../../test-support/serverConfig'

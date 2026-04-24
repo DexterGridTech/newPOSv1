@@ -1,9 +1,9 @@
-import {resolveParameter as resolveDefinitionParameter} from '@impos2/kernel-base-definition-registry'
+import {resolveParameter as resolveDefinitionParameter} from '@next/kernel-base-definition-registry'
 import type {
     ParameterCatalogEntry,
     ParameterDefinition,
     ResolvedParameter,
-} from '@impos2/kernel-base-contracts'
+} from '@next/kernel-base-contracts'
 import type {EnhancedStore} from '@reduxjs/toolkit'
 import {RUNTIME_SHELL_V2_PARAMETER_CATALOG_STATE_KEY} from '../features/slices/parameterCatalogState'
 

@@ -1,10 +1,10 @@
-import type {AppModule, AppModuleDependency, NodeId} from '@impos2/kernel-base-contracts'
+import type {AppModule, AppModuleDependency, NodeId} from '@next/kernel-base-contracts'
 import type {
     RootState,
     StateRuntimeSliceDescriptor,
-} from '@impos2/kernel-base-state-runtime'
+} from '@next/kernel-base-state-runtime'
 import type {EnhancedStore, UnknownAction} from '@reduxjs/toolkit'
-import type {PlatformPorts} from '@impos2/kernel-base-platform-ports'
+import type {PlatformPorts} from '@next/kernel-base-platform-ports'
 import type {ActorDefinition} from './actor'
 import type {CommandDefinition, CommandIntent} from './command'
 import type {RequestQueryResult} from './request'
@@ -18,7 +18,7 @@ import type {
     RequestLifecycleSnapshot,
     ResolvedParameter,
     StateSyncDiffEnvelope,
-} from '@impos2/kernel-base-contracts'
+} from '@next/kernel-base-contracts'
 import type {RuntimeDisplayContextV2} from './runtime'
 
 export interface RuntimeModuleContextV2 {

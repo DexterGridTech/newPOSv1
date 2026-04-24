@@ -1,6 +1,6 @@
 import React from 'react'
 import {Text, TouchableOpacity, View} from 'react-native'
-import type {UiAlertInfo} from '@impos2/kernel-base-ui-runtime-v2'
+import type {UiAlertInfo} from '@next/kernel-base-ui-runtime-v2'
 import {useUiRuntime} from '../../contexts'
 
 export const DefaultAlert: React.FC<UiAlertInfo> = ({

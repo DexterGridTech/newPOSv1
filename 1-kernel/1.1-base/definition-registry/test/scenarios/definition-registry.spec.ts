@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest'
-import {createAppError} from '@impos2/kernel-base-contracts'
+import {createAppError} from '@next/kernel-base-contracts'
 import {
     createDefinitionRegistryBundle,
     createDefinitionResolverBundle,

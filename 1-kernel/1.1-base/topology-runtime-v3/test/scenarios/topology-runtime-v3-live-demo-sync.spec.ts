@@ -1,10 +1,10 @@
 import {describe, expect, it} from 'vitest'
-import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
+import {createCommand} from '@next/kernel-base-runtime-shell-v2'
 import {
     createTcpControlRuntimeModuleV2,
     selectTcpIdentitySnapshot,
     tcpControlV2StateActions,
-} from '@impos2/kernel-base-tcp-control-runtime-v2'
+} from '@next/kernel-base-tcp-control-runtime-v2'
 import {
     selectTopologyRuntimeV3DemoMasterState,
     selectTopologyRuntimeV3DemoSlaveState,

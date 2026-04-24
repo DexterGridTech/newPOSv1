@@ -1,4 +1,4 @@
-import {nowTimestampMs, type ParameterDefinition} from '@impos2/kernel-base-contracts'
+import {nowTimestampMs, type ParameterDefinition} from '@next/kernel-base-contracts'
 import type {UnknownAction} from '@reduxjs/toolkit'
 import type {KernelRuntimeModuleV2} from '../types'
 import {runtimeShellV2StateActions} from '../features/slices'

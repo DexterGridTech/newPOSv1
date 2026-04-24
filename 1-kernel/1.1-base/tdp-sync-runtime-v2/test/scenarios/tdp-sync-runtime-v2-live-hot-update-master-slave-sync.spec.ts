@@ -1,10 +1,10 @@
 import {describe, expect, it} from 'vitest'
-import {createKernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
+import {createKernelRuntimeV2} from '@next/kernel-base-runtime-shell-v2'
 import {
     createPlatformPorts,
     createLoggerPort,
-} from '@impos2/kernel-base-platform-ports'
-import {selectTopologySync} from '@impos2/kernel-base-topology-runtime-v3'
+} from '@next/kernel-base-platform-ports'
+import {selectTopologySync} from '@next/kernel-base-topology-runtime-v3'
 import {
     createTdpSyncRuntimeModuleV2,
     selectTdpHotUpdateState,

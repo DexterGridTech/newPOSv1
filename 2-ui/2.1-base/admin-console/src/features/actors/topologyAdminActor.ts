@@ -1,21 +1,21 @@
-import {createAppError} from '@impos2/kernel-base-contracts'
+import {createAppError} from '@next/kernel-base-contracts'
 import {
     createCommand,
     createModuleActorFactory,
     onCommand,
     type ActorDefinition,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {
     parseTopologyV3SharePayload,
     topologyRuntimeV3CommandDefinitions,
-} from '@impos2/kernel-base-topology-runtime-v3'
+} from '@next/kernel-base-topology-runtime-v3'
 import {
     transportRuntimeCommandDefinitions,
-} from '@impos2/kernel-base-transport-runtime'
+} from '@next/kernel-base-transport-runtime'
 import {
     workflowBuiltinTaskKeys,
     workflowRuntimeV2CommandDefinitions,
-} from '@impos2/kernel-base-workflow-runtime-v2'
+} from '@next/kernel-base-workflow-runtime-v2'
 import {moduleName} from '../../moduleName'
 import {getAdminHostTools} from '../../supports/adminHostToolsRegistry'
 import type {

@@ -1,4 +1,4 @@
-import type {StateStoragePort} from '@impos2/kernel-base-platform-ports'
+import type {StateStoragePort} from '@next/kernel-base-platform-ports'
 import {createNativeStateStorage} from '../turbomodules/stateStorage'
 
 export interface TerminalVersionReportOutboxItem {

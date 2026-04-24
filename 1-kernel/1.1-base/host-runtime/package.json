@@ -1,5 +1,5 @@
 {
-  "name": "@impos2/kernel-base-host-runtime",
+  "name": "@next/kernel-base-host-runtime",
   "version": "1.0.0",
   "description": "Kernel base host runtime package",
   "author": "DexterYang",
@@ -19,8 +19,8 @@
     "check:circular": "madge --circular --extensions ts --warning src/"
   },
   "dependencies": {
-    "@impos2/kernel-base-contracts": "workspace:*",
-    "@impos2/kernel-base-platform-ports": "workspace:*"
+    "@next/kernel-base-contracts": "workspace:*",
+    "@next/kernel-base-platform-ports": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^25.0.9",

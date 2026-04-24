@@ -1,5 +1,5 @@
 import {describe, expect, it, vi} from 'vitest'
-import {createLoggerPort} from '@impos2/kernel-base-platform-ports'
+import {createLoggerPort} from '@next/kernel-base-platform-ports'
 import {
     kernelBaseTestServerConfig,
     SERVER_CONFIG_SPACE_KERNEL_BASE_HTTP_REPLACEMENT_TEST,

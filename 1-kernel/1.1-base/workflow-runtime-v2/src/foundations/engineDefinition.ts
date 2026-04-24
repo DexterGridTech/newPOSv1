@@ -1,5 +1,5 @@
-import {isAppError, type AppError} from '@impos2/kernel-base-contracts'
-import type {RuntimeModuleContextV2} from '@impos2/kernel-base-runtime-shell-v2'
+import {isAppError, type AppError} from '@next/kernel-base-contracts'
+import type {RuntimeModuleContextV2} from '@next/kernel-base-runtime-shell-v2'
 import type {WorkflowDefinition, WorkflowDefinitionsBySource} from '../types'
 import {
     selectWorkflowDefinitionsBySource,

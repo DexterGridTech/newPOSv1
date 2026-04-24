@@ -1,7 +1,7 @@
 import {
     defineKernelRuntimeModuleManifestV2,
     type KernelRuntimeModuleManifestV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {packageVersion} from '../generated/packageVersion'
 import {moduleName} from '../moduleName'
 

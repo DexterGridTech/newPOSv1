@@ -1,4 +1,4 @@
-import type {KernelRuntimeAppV2, KernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
+import type {KernelRuntimeAppV2, KernelRuntimeV2} from '@next/kernel-base-runtime-shell-v2'
 import {createAutomationRequestDispatcher, type AssemblyAutomationController} from './createAutomationRequestDispatcher'
 import {createRuntimeReactAutomationBridge} from './createRuntimeReactAutomationBridge'
 

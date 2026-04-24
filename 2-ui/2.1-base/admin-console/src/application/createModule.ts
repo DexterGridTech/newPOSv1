@@ -2,11 +2,11 @@ import type {
     KernelRuntimeModuleV2,
     RuntimeModuleContextV2,
     RuntimeModulePreSetupContextV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {
     createRuntimeModuleLifecycleLogger,
     defineKernelRuntimeModuleV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {createAdminTopologyActor} from '../features/actors'
 import {moduleName} from '../moduleName'
 import {createAdminHostTools} from '../supports/adminHostToolsFactory'

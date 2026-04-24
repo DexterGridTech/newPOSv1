@@ -22,16 +22,16 @@ const {
     },
 }))
 
-vi.mock('@impos2/kernel-base-runtime-shell-v2', async importOriginal => ({
-    ...await importOriginal<typeof import('@impos2/kernel-base-runtime-shell-v2')>(),
+vi.mock('@next/kernel-base-runtime-shell-v2', async importOriginal => ({
+    ...await importOriginal<typeof import('@next/kernel-base-runtime-shell-v2')>(),
     createCommand: createCommandMock,
 }))
 
-vi.mock('@impos2/kernel-base-topology-runtime-v3', () => ({
+vi.mock('@next/kernel-base-topology-runtime-v3', () => ({
     topologyRuntimeV3CommandDefinitions: topologyCommandDefinitions,
 }))
 
-vi.mock('@impos2/kernel-base-tcp-control-runtime-v2', () => ({
+vi.mock('@next/kernel-base-tcp-control-runtime-v2', () => ({
     tcpControlV2CommandDefinitions: tcpCommandDefinitions,
 }))
 

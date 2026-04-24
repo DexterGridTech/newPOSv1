@@ -1,7 +1,7 @@
 import type {
     LoggerPort,
     StateStoragePort,
-} from '@impos2/kernel-base-platform-ports'
+} from '@next/kernel-base-platform-ports'
 import type {RootState} from '../types/state'
 import type {CreateStateRuntimeInput, StateRuntime} from '../types/runtime'
 import type {

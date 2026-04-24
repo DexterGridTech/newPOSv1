@@ -49,7 +49,7 @@
     android/
       build.gradle                       # com.android.library + com.facebook.react
       src/main/AndroidManifest.xml
-      src/main/java/com/impos2/hostruntimern84/
+      src/main/java/com/next/hostruntimern84/
         HostRuntimePackage.kt
         HostRuntimeConfig.kt
         HostRuntimeActivityDelegate.kt    # 通用 Activity 生命周期/launch options 委托
@@ -131,7 +131,7 @@ JS 侧职责：
 
 不承担职责：
 
-1. 不直接 import `@impos2/ui-integration-retail-shell` 或 `@impos2/ui-integration-catering-shell`。
+1. 不直接 import `@next/ui-integration-retail-shell` 或 `@next/ui-integration-catering-shell`。
 2. 不持有产品品牌文案、启动图、launcher icon。
 3. 不决定产品 shell 的 RootScreen。
 4. 不持有具体 assembly 的 applicationId、namespace、签名配置。
@@ -143,7 +143,7 @@ JS 侧职责：
 第一阶段策略：
 
 1. 直接复制 `retail-shell`。
-2. 包名改为 `@impos2/ui-integration-catering-shell`。
+2. 包名改为 `@next/ui-integration-catering-shell`。
 3. `moduleName` 改为 catering 专属值，例如 `ui.integration.catering-shell`。
 4. UI 文案可暂时保持与 retail 一致或改为餐饮占位，但需要避免继续使用 retail module namespace。
 5. 后续餐饮业务差异只在 `catering-shell` 及其依赖的 kernel/UI/business modules 内演进。
@@ -176,8 +176,8 @@ JS 侧职责：
 `mixc-catering-assembly-rn84/App.tsx` 目标形态：
 
 ```tsx
-import {createHostApp} from '@impos2/host-runtime-rn84'
-import {RootScreen, createModule as createShellModule} from '@impos2/ui-integration-catering-shell'
+import {createHostApp} from '@next/host-runtime-rn84'
+import {RootScreen, createModule as createShellModule} from '@next/ui-integration-catering-shell'
 
 export default createHostApp({
   RootScreen,
@@ -242,7 +242,7 @@ interface CreateHostAppOptions {
   "type": "modules",
   "jsSrcsDir": "src/turbomodules/specs",
   "android": {
-    "javaPackageName": "com.impos2.mixcretailassemblyrn84.turbomodules"
+    "javaPackageName": "com.next.mixcretailassemblyrn84.turbomodules"
   }
 }
 ```
@@ -262,17 +262,17 @@ interface CreateHostAppOptions {
 2. `host-runtime-rn84/package.json` 拥有 `codegenConfig`。
 3. `mixc-catering-assembly-rn84/package.json` 不声明 `codegenConfig`。
 4. `mixc-catering-assembly-rn84/src` 不包含 `turbomodules/specs`。
-5. Kotlin TurboModule 继承 `com.impos2.hostruntimern84.turbomodules.Native*Spec`。
+5. Kotlin TurboModule 继承 `com.next.hostruntimern84.turbomodules.Native*Spec`。
 
 建议配置：
 
 ```json
 "codegenConfig": {
-  "name": "Impos2HostRuntimeRN84Spec",
+  "name": "NextHostRuntimeRN84Spec",
   "type": "modules",
   "jsSrcsDir": "src/turbomodules/specs",
   "android": {
-    "javaPackageName": "com.impos2.hostruntimern84.turbomodules"
+    "javaPackageName": "com.next.hostruntimern84.turbomodules"
   }
 }
 ```
@@ -319,7 +319,7 @@ module.exports = {
 
 ```json
 "dependencies": {
-  "@impos2/host-runtime-rn84": "workspace:*"
+  "@next/host-runtime-rn84": "workspace:*"
 }
 ```
 
@@ -352,7 +352,7 @@ react {
 | --- | --- | --- |
 | 找不到 `Native*Spec` | library 未被 RN CLI 发现或未执行 Codegen | 确保 dependency、`react-native.config.js`、`codegenConfig`、`com.facebook.react` plugin 完整 |
 | 重复 module name | app 同时注册旧 assembly package 和新 library package | catering assembly 不复制旧 `AdapterPackage`，只依赖 `host-runtime-rn84` |
-| 包名不一致 | Kotlin import 仍指向旧 retail 包名 | Kotlin 全部改为 `com.impos2.hostruntimern84.turbomodules.Native*Spec` |
+| 包名不一致 | Kotlin import 仍指向旧 retail 包名 | Kotlin 全部改为 `com.next.hostruntimern84.turbomodules.Native*Spec` |
 | specs 被 app 和 library 同时扫描 | assembly 仍保留 `codegenConfig` 或 specs | 极薄 assembly 删除 codegenConfig 和 `src/turbomodules/specs` |
 | Gradle project 解析失败 | autolink 生成的 project 与手动 include 名称冲突 | 不手动 include host runtime；只手动 include adapter-lib 如有必要 |
 | Release minify 缺规则 | TurboModule/adapter 类被 R8 裁剪 | 在 host runtime `consumer-rules.pro` 放 RN module/adapter 必要 keep rules |
@@ -569,7 +569,7 @@ createHostApp({
 如果需要复用餐饮后台能力，可以在 `catering-shell` 或 `mixc-catering-assembly-rn84` 内提供产品级 helper，例如：
 
 ```ts
-import {createCateringHostBusinessModules} from '@impos2/ui-integration-catering-shell'
+import {createCateringHostBusinessModules} from '@next/ui-integration-catering-shell'
 
 createHostApp({
   RootScreen,
@@ -620,12 +620,12 @@ def safeExt = { name, fallback ->
 
 react {
   jsRootDir = file("..")
-  libraryName = "Impos2HostRuntimeRN84Spec"
-  codegenJavaPackageName = "com.impos2.hostruntimern84.turbomodules"
+  libraryName = "NextHostRuntimeRN84Spec"
+  codegenJavaPackageName = "com.next.hostruntimern84.turbomodules"
 }
 
 android {
-  namespace 'com.impos2.hostruntimern84'
+  namespace 'com.next.hostruntimern84'
   compileSdk safeExt('compileSdkVersion', 35)
 
   defaultConfig {
@@ -660,8 +660,8 @@ project(':adapter-android-v2').projectDir = file('../../../../3-adapter/android/
 
 保留 app 级配置：
 
-1. `applicationId "com.impos2.mixccateringassemblyrn84"`
-2. `namespace "com.impos2.mixccateringassemblyrn84"`
+1. `applicationId "com.next.mixccateringassemblyrn84"`
+2. `namespace "com.next.mixccateringassemblyrn84"`
 3. `versionCode` / `versionName`
 4. signing configs
 5. `ENABLE_HOT_UPDATE_BUNDLE_RESOLVER`
@@ -694,16 +694,16 @@ Root `package.json` workspaces 需要新增：
 Root scripts 可新增：
 
 ```json
-"assembly:android-mixc-catering-rn84:test": "corepack yarn workspace @impos2/assembly-android-mixc-catering-rn84 test",
-"assembly:android-mixc-catering-rn84:type-check": "corepack yarn workspace @impos2/assembly-android-mixc-catering-rn84 type-check",
-"assembly:android-mixc-catering-rn84:android": "corepack yarn workspace @impos2/assembly-android-mixc-catering-rn84 android"
+"assembly:android-mixc-catering-rn84:test": "corepack yarn workspace @next/assembly-android-mixc-catering-rn84 test",
+"assembly:android-mixc-catering-rn84:type-check": "corepack yarn workspace @next/assembly-android-mixc-catering-rn84 type-check",
+"assembly:android-mixc-catering-rn84:android": "corepack yarn workspace @next/assembly-android-mixc-catering-rn84 android"
 ```
 
 `host-runtime-rn84/package.json` 建议：
 
 ```json
 {
-  "name": "@impos2/host-runtime-rn84",
+  "name": "@next/host-runtime-rn84",
   "version": "1.0.0",
   "private": true,
   "react-native": "./src/index.ts",
@@ -713,20 +713,20 @@ Root scripts 可新增：
     "test": "vitest run"
   },
   "dependencies": {
-    "@impos2/kernel-base-platform-ports": "workspace:*",
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*",
-    "@impos2/kernel-base-transport-runtime": "workspace:*",
-    "@impos2/kernel-base-topology-runtime-v3": "workspace:*",
-    "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*",
-    "@impos2/kernel-base-tdp-sync-runtime-v2": "workspace:*",
-    "@impos2/kernel-base-terminal-log-upload-runtime-v2": "workspace:*",
-    "@impos2/kernel-base-ui-runtime-v2": "workspace:*",
-    "@impos2/kernel-base-workflow-runtime-v2": "workspace:*",
-    "@impos2/ui-base-runtime-react": "workspace:*",
-    "@impos2/ui-base-input-runtime": "workspace:*",
-    "@impos2/ui-base-admin-console": "workspace:*",
-    "@impos2/ui-base-terminal-console": "workspace:*",
-    "@impos2/ui-base-topology-runtime-bridge": "workspace:*"
+    "@next/kernel-base-platform-ports": "workspace:*",
+    "@next/kernel-base-runtime-shell-v2": "workspace:*",
+    "@next/kernel-base-transport-runtime": "workspace:*",
+    "@next/kernel-base-topology-runtime-v3": "workspace:*",
+    "@next/kernel-base-tcp-control-runtime-v2": "workspace:*",
+    "@next/kernel-base-tdp-sync-runtime-v2": "workspace:*",
+    "@next/kernel-base-terminal-log-upload-runtime-v2": "workspace:*",
+    "@next/kernel-base-ui-runtime-v2": "workspace:*",
+    "@next/kernel-base-workflow-runtime-v2": "workspace:*",
+    "@next/ui-base-runtime-react": "workspace:*",
+    "@next/ui-base-input-runtime": "workspace:*",
+    "@next/ui-base-admin-console": "workspace:*",
+    "@next/ui-base-terminal-console": "workspace:*",
+    "@next/ui-base-topology-runtime-bridge": "workspace:*"
   },
   "peerDependencies": {
     "react": "19.2.3",
@@ -736,7 +736,7 @@ Root scripts 可新增：
 }
 ```
 
-注意：`adapter-android-v2` 是纯 Android Gradle library，`host-runtime-rn84` 的 JS `package.json` 不声明 `@impos2/adapter-android-v2` 依赖，避免误导维护者以为 JS 层可以 import adapter。Android 依赖只通过 Gradle include + `implementation project(':adapter-android-v2')` 表达。
+注意：`adapter-android-v2` 是纯 Android Gradle library，`host-runtime-rn84` 的 JS `package.json` 不声明 `@next/adapter-android-v2` 依赖，避免误导维护者以为 JS 层可以 import adapter。Android 依赖只通过 Gradle include + `implementation project(':adapter-android-v2')` 表达。
 
 ## 11. 测试与验证设计
 
@@ -766,10 +766,10 @@ Catering assembly 只保留薄测试：
 最低验收：
 
 ```bash
-corepack yarn workspace @impos2/host-runtime-rn84 type-check
-corepack yarn workspace @impos2/host-runtime-rn84 test
-corepack yarn workspace @impos2/assembly-android-mixc-catering-rn84 type-check
-corepack yarn workspace @impos2/assembly-android-mixc-catering-rn84 test
+corepack yarn workspace @next/host-runtime-rn84 type-check
+corepack yarn workspace @next/host-runtime-rn84 test
+corepack yarn workspace @next/assembly-android-mixc-catering-rn84 type-check
+corepack yarn workspace @next/assembly-android-mixc-catering-rn84 test
 cd 4-assembly/android/mixc-catering-assembly-rn84/android && ./gradlew :app:assembleDebug
 ```
 
@@ -821,7 +821,7 @@ Codegen 专项验收：
 1. 建立 RN module library Gradle 结构。
 2. 同一阶段迁入 `src/turbomodules/specs` 和 TurboModule Kotlin 实现，保证 JS Spec + Kotlin `Native*Spec` + Gradle Codegen 一次闭环。
 3. 迁入 startup/restart/hotupdate 通用类。
-4. 将 package 改为 `com.impos2.hostruntimern84`。
+4. 将 package 改为 `com.next.hostruntimern84`。
 5. 将 broadcast action 改为基于 `context.packageName` 派生，并使用动态 receiver filter。
 6. 跑 Gradle library compile 或通过 catering app assemble 验证。
 7. 再迁移依赖 native wrappers 的 vitest。

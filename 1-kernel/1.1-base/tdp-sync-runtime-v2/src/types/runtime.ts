@@ -2,9 +2,9 @@ import type {
     HttpRuntime,
     SocketConnectionProfile,
     SocketRuntime,
-} from '@impos2/kernel-base-transport-runtime'
-import type {RuntimeModuleContextV2} from '@impos2/kernel-base-runtime-shell-v2'
-import type {HotUpdatePort} from '@impos2/kernel-base-platform-ports'
+} from '@next/kernel-base-transport-runtime'
+import type {RuntimeModuleContextV2} from '@next/kernel-base-runtime-shell-v2'
+import type {HotUpdatePort} from '@next/kernel-base-platform-ports'
 import type {
     TdpChangesResponse,
     TdpClientMessage,
@@ -12,7 +12,7 @@ import type {
     TdpSnapshotResponse,
 } from './protocol'
 import type {HotUpdateCurrentFacts} from './hotUpdate'
-import type {CommandIntent} from '@impos2/kernel-base-runtime-shell-v2'
+import type {CommandIntent} from '@next/kernel-base-runtime-shell-v2'
 
 export interface TdpTopicDataChangeItem {
     operation: 'upsert' | 'delete'

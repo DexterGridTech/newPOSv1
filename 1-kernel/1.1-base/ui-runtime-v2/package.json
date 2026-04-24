@@ -1,5 +1,5 @@
 {
-  "name": "@impos2/kernel-base-ui-runtime-v2",
+  "name": "@next/kernel-base-ui-runtime-v2",
   "version": "1.0.0",
   "description": "Kernel base runtime package",
   "author": "DexterYang",
@@ -19,11 +19,11 @@
     "check:circular": "madge --circular --extensions ts --warning src/"
   },
   "dependencies": {
-    "@impos2/kernel-base-contracts": "workspace:*",
-    "@impos2/kernel-base-platform-ports": "workspace:*",
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*",
-    "@impos2/kernel-base-state-runtime": "workspace:*",
-    "@impos2/kernel-base-topology-runtime-v3": "workspace:*",
+    "@next/kernel-base-contracts": "workspace:*",
+    "@next/kernel-base-platform-ports": "workspace:*",
+    "@next/kernel-base-runtime-shell-v2": "workspace:*",
+    "@next/kernel-base-state-runtime": "workspace:*",
+    "@next/kernel-base-topology-runtime-v3": "workspace:*",
     "@reduxjs/toolkit": "^2.10.0"
   },
   "devDependencies": {

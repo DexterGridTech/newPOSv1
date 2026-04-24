@@ -1,4 +1,4 @@
-import type {LoggerPort} from '@impos2/kernel-base-platform-ports'
+import type {LoggerPort} from '@next/kernel-base-platform-ports'
 import type {
     KernelRuntimeAppDescriptorV2,
     KernelRuntimeModuleDescriptorV2,

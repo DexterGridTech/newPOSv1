@@ -1,10 +1,10 @@
-import {createEnvelopeId, nowTimestampMs, type StateSyncDiffEnvelope} from '@impos2/kernel-base-contracts'
+import {createEnvelopeId, nowTimestampMs, type StateSyncDiffEnvelope} from '@next/kernel-base-contracts'
 import {
     createSliceSyncDiff,
     createSliceSyncSummary,
     type StateRuntimeSliceDescriptor,
-} from '@impos2/kernel-base-state-runtime'
-import type {RootState} from '@impos2/kernel-base-state-runtime'
+} from '@next/kernel-base-state-runtime'
+import type {RootState} from '@next/kernel-base-state-runtime'
 import type {
     TopologyV3ContextState,
 } from '../types/state'

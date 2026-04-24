@@ -1,17 +1,17 @@
-import {createAppError} from '@impos2/kernel-base-contracts'
+import {createAppError} from '@next/kernel-base-contracts'
 import {
     createCommand,
     createModuleActorFactory,
     onCommand,
     type ActorExecutionContext,
     type ActorDefinition,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {
     selectTcpSandboxId,
     selectTcpTerminalId,
     tcpControlV2CommandDefinitions,
-} from '@impos2/kernel-base-tcp-control-runtime-v2'
-import {selectTopologyRuntimeV3Context} from '@impos2/kernel-base-topology-runtime-v3'
+} from '@next/kernel-base-tcp-control-runtime-v2'
+import {selectTopologyRuntimeV3Context} from '@next/kernel-base-topology-runtime-v3'
 import {moduleName} from '../../moduleName'
 import {terminalLogUploadRuntimeV2ErrorDefinitions} from '../../supports/errors'
 import {terminalLogUploadRuntimeV2CommandDefinitions} from '../commands'

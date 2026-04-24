@@ -1,24 +1,24 @@
-import {createNodeId, createRequestId} from '@impos2/kernel-base-contracts'
-import type {ParameterCatalogEntry} from '@impos2/kernel-base-contracts'
-import type {StateStoragePort} from '@impos2/kernel-base-platform-ports'
-import {createLoggerPort, createPlatformPorts} from '@impos2/kernel-base-platform-ports'
+import {createNodeId, createRequestId} from '@next/kernel-base-contracts'
+import type {ParameterCatalogEntry} from '@next/kernel-base-contracts'
+import type {StateStoragePort} from '@next/kernel-base-platform-ports'
+import {createLoggerPort, createPlatformPorts} from '@next/kernel-base-platform-ports'
 import {existsSync} from 'node:fs'
 import {spawn, spawnSync, type ChildProcessWithoutNullStreams} from 'node:child_process'
 import {resolve} from 'node:path'
 import {
     createKernelRuntimeV2,
     type RuntimeModuleContextV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {
     kernelBaseTestServerConfig,
     SERVER_NAME_MOCK_TERMINAL_PLATFORM,
-} from '@impos2/kernel-server-config-v2'
+} from '@next/kernel-server-config-v2'
 import {
     createHttpRuntime,
     type HttpSuccessResponse,
     type HttpTransport,
     type HttpTransportRequest,
-} from '@impos2/kernel-base-transport-runtime'
+} from '@next/kernel-base-transport-runtime'
 import {
     createTcpControlRuntimeModuleV2,
     tcpControlV2CommandDefinitions,

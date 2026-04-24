@@ -2,14 +2,14 @@ import type {
     KernelRuntimeModuleV2,
     RuntimeModuleContextV2,
     RuntimeModulePreSetupContextV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {
     createCommand,
     createRuntimeModuleLifecycleLogger,
     defineKernelRuntimeModuleV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
-import {uiRuntimeV2CommandDefinitions} from '@impos2/kernel-base-ui-runtime-v2'
-import {registerUiRendererParts} from '@impos2/ui-base-runtime-react'
+} from '@next/kernel-base-runtime-shell-v2'
+import {uiRuntimeV2CommandDefinitions} from '@next/kernel-base-ui-runtime-v2'
+import {registerUiRendererParts} from '@next/ui-base-runtime-react'
 import {moduleName} from '../moduleName'
 import {
     terminalConsoleScreenDefinitions,

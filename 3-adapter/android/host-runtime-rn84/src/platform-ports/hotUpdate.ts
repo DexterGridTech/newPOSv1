@@ -1,4 +1,4 @@
-import type { HotUpdatePort } from '@impos2/kernel-base-platform-ports'
+import type { HotUpdatePort } from '@next/kernel-base-platform-ports'
 import { nativeHotUpdate } from '../turbomodules/hotUpdate'
 
 export const createAssemblyHotUpdatePort = (): HotUpdatePort => ({

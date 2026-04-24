@@ -296,7 +296,7 @@ adb logcat -d -v time | rg -n "ReactNativeJS|automation|topology|secondary" -S
 如果要快速回归当前 `ui-runtime` dev 测试，可使用：
 
 ```bash
-corepack yarn workspace @impos2/kernel-base-ui-runtime-v2 test
+corepack yarn workspace @next/kernel-base-ui-runtime-v2 test
 ```
 
 如果要先做类型检查，可使用：

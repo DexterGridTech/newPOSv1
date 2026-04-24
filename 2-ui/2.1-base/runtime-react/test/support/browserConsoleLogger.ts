@@ -4,7 +4,7 @@ import {
     type LogEvent,
     type LogScope,
     type LoggerPort,
-} from '@impos2/kernel-base-platform-ports'
+} from '@next/kernel-base-platform-ports'
 
 const formatScope = (scope: LogScope): string => {
     return [

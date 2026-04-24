@@ -1,4 +1,4 @@
-import type {ErrorDefinition, ParameterDefinition} from '@impos2/kernel-base-contracts'
+import type {ErrorDefinition, ParameterDefinition} from '@next/kernel-base-contracts'
 
 export interface KeyedDefinition {
     key: string

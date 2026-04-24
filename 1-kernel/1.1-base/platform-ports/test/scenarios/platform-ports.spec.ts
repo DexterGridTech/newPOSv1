@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest'
-import {createCommandId, createRequestId} from '@impos2/kernel-base-contracts'
+import {createCommandId, createRequestId} from '@next/kernel-base-contracts'
 import {createLoggerPort, createPlatformPorts, packageVersion, type LogEvent} from '../../src'
 
 describe('kernel-base-platform-ports', () => {

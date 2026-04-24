@@ -50,23 +50,23 @@ const {
     selectTransportServerSpaceStateMock: vi.fn((state: any) => state?.transportServerSpace),
 }))
 
-vi.mock('@impos2/kernel-base-runtime-shell-v2', async importOriginal => ({
-    ...await importOriginal<typeof import('@impos2/kernel-base-runtime-shell-v2')>(),
+vi.mock('@next/kernel-base-runtime-shell-v2', async importOriginal => ({
+    ...await importOriginal<typeof import('@next/kernel-base-runtime-shell-v2')>(),
     createCommand: createCommandMock,
 }))
 
-vi.mock('@impos2/kernel-base-topology-runtime-v3', async importOriginal => ({
-    ...await importOriginal<typeof import('@impos2/kernel-base-topology-runtime-v3')>(),
+vi.mock('@next/kernel-base-topology-runtime-v3', async importOriginal => ({
+    ...await importOriginal<typeof import('@next/kernel-base-topology-runtime-v3')>(),
     topologyRuntimeV3CommandDefinitions: topologyCommandDefinitions,
 }))
 
-vi.mock('@impos2/kernel-base-transport-runtime', async importOriginal => ({
-    ...await importOriginal<typeof import('@impos2/kernel-base-transport-runtime')>(),
+vi.mock('@next/kernel-base-transport-runtime', async importOriginal => ({
+    ...await importOriginal<typeof import('@next/kernel-base-transport-runtime')>(),
     selectTransportServerSpaceState: selectTransportServerSpaceStateMock,
 }))
 
-vi.mock('@impos2/kernel-server-config-v2', async importOriginal => ({
-    ...await importOriginal<typeof import('@impos2/kernel-server-config-v2')>(),
+vi.mock('@next/kernel-server-config-v2', async importOriginal => ({
+    ...await importOriginal<typeof import('@next/kernel-server-config-v2')>(),
     kernelBaseDevServerConfig: {
         selectedSpace: 'kernel-base-dev',
         spaces: [

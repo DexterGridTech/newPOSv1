@@ -2,7 +2,7 @@
 
 > 版本：2.0 | 状态：详细设计稿 | 日期：2026-04-06
 > 目标：为 `_old_/1-kernel/1.1-cores/terminal` 提供新一代替代包设计方案
-> 包名：`@impos2/kernel-core-terminal-data`
+> 包名：`@next/kernel-core-terminal-data`
 > 模块名：`kernel.core.terminal-data`
 
 ---
@@ -147,7 +147,7 @@ Redux Store
 ```typescript
 // 4-assembly/your-app/src/store/index.ts
 import { configureStore } from '@reduxjs/toolkit'
-import { terminalDataModule } from '@impos2/kernel-core-terminal-data'
+import { terminalDataModule } from '@next/kernel-core-terminal-data'
 
 export const store = configureStore({
   reducer: {
@@ -161,8 +161,8 @@ export const store = configureStore({
 
 ```typescript
 // 4-assembly/your-app/src/setup.ts
-import { terminalDataModulePreSetup } from '@impos2/kernel-core-terminal-data'
-import { RNDeviceInfoAdapter } from '@impos2/adapter-android-rn84'
+import { terminalDataModulePreSetup } from '@next/kernel-core-terminal-data'
+import { RNDeviceInfoAdapter } from '@next/adapter-android-rn84'
 import { MMKVStorageAdapter } from './adapters/MMKVStorageAdapter'
 import { axiosTransportAdapter } from './adapters/AxiosTransportAdapter'
 import { wsTransportAdapter } from './adapters/WebSocketTransportAdapter'
@@ -187,7 +187,7 @@ await terminalDataModulePreSetup({
 // 4-assembly/your-app/src/App.tsx
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
-import { bootstrapTerminalData } from '@impos2/kernel-core-terminal-data'
+import { bootstrapTerminalData } from '@next/kernel-core-terminal-data'
 
 function App() {
   const dispatch = useDispatch()
@@ -210,7 +210,7 @@ import {
   useTdpSessionStatus,
   useProjection,
   useDesiredConfig,
-} from '@impos2/kernel-core-terminal-data'
+} from '@next/kernel-core-terminal-data'
 
 function HomeScreen() {
   const { identity, isActivated } = useTerminalIdentity()
@@ -239,7 +239,7 @@ function HomeScreen() {
 import {
   selectUnconsumedInboxItems,
   terminalDataCommands,
-} from '@impos2/kernel-core-terminal-data'
+} from '@next/kernel-core-terminal-data'
 
 function TaskHandler() {
   const dispatch = useDispatch()

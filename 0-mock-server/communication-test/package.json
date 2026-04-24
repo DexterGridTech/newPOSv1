@@ -1,7 +1,7 @@
 {
-  "name": "@impos2/communication-test",
+  "name": "@next/communication-test",
   "version": "1.0.0",
-  "description": "Test server for @impos2/kernel-core-communication",
+  "description": "Test server for @next/kernel-core-communication",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",

@@ -1,7 +1,7 @@
 # terminal-data 设计总览
 
 > 目标：为 `_old_/1-kernel/1.1-cores/terminal` 提供新一代替代包设计方案。  
-> 包名建议：`@impos2/kernel-core-terminal-data`  
+> 包名建议：`@next/kernel-core-terminal-data`  
 > 模块名建议：`kernel.core.terminal-data`
 
 ---

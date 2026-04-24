@@ -1,6 +1,6 @@
-# @impos2/communication-test
+# @next/communication-test
 
-专门用于验证 `@impos2/kernel-core-communication` 的测试服务器。
+专门用于验证 `@next/kernel-core-communication` 的测试服务器。
 
 ## 端口
 

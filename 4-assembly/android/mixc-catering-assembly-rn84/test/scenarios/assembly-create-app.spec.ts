@@ -155,8 +155,8 @@ const {
     }
 })
 
-vi.mock('@impos2/kernel-base-runtime-shell-v2', async importOriginal => {
-    const actual = await importOriginal<typeof import('@impos2/kernel-base-runtime-shell-v2')>()
+vi.mock('@next/kernel-base-runtime-shell-v2', async importOriginal => {
+    const actual = await importOriginal<typeof import('@next/kernel-base-runtime-shell-v2')>()
     return {
         ...actual,
         createKernelRuntimeApp: createKernelRuntimeAppMock,
@@ -164,20 +164,20 @@ vi.mock('@impos2/kernel-base-runtime-shell-v2', async importOriginal => {
     }
 })
 
-vi.mock('@impos2/kernel-base-topology-runtime-v3', () => ({
+vi.mock('@next/kernel-base-topology-runtime-v3', () => ({
     createTopologyRuntimeModuleV3: createTopologyRuntimeModuleV3Mock,
     topologyRuntimeV3CommandDefinitions: topologyRuntimeV3CommandDefinitionsMock,
     selectTopologyRuntimeV3Context: selectTopologyRuntimeV3ContextMock,
     selectTopologyRuntimeV3Connection: selectTopologyRuntimeV3ConnectionMock,
 }))
 
-vi.mock('@impos2/kernel-base-tcp-control-runtime-v2', () => ({
+vi.mock('@next/kernel-base-tcp-control-runtime-v2', () => ({
     createTcpControlRuntimeModuleV2: createTcpControlRuntimeModuleV2Mock,
     selectTcpIsActivated: selectTcpIsActivatedMock,
     selectTcpTerminalId: selectTcpTerminalIdMock,
 }))
 
-vi.mock('@impos2/kernel-base-tdp-sync-runtime-v2', () => ({
+vi.mock('@next/kernel-base-tdp-sync-runtime-v2', () => ({
     moduleName: 'kernel.base.tdp-sync-runtime-v2',
     createTdpSyncRuntimeModuleV2: createTdpSyncRuntimeModuleV2Mock,
     selectTdpHotUpdateCurrent: selectTdpHotUpdateCurrentMock,
@@ -186,18 +186,18 @@ vi.mock('@impos2/kernel-base-tdp-sync-runtime-v2', () => ({
     },
 }))
 
-vi.mock('@impos2/kernel-base-ui-runtime-v2', () => ({
+vi.mock('@next/kernel-base-ui-runtime-v2', () => ({
     createUiRuntimeModuleV2: createUiRuntimeModuleV2Mock,
 }))
 
-vi.mock('@impos2/kernel-base-transport-runtime', () => ({
+vi.mock('@next/kernel-base-transport-runtime', () => ({
     createHttpRuntime: createHttpRuntimeMock,
     createTransportRuntimeModule: createTransportRuntimeModuleMock,
     resolveTransportServers: resolveTransportServersMock,
     selectTransportSelectedServerSpace: selectTransportSelectedServerSpaceMock,
 }))
 
-vi.mock('@impos2/kernel-server-config-v2', () => ({
+vi.mock('@next/kernel-server-config-v2', () => ({
     SERVER_NAME_MOCK_TERMINAL_PLATFORM: 'mock-terminal-platform',
     kernelBaseDevServerConfig: {
         selectedSpace: 'dev',
@@ -220,27 +220,27 @@ vi.mock('@impos2/kernel-server-config-v2', () => ({
     },
 }))
 
-vi.mock('@impos2/ui-base-runtime-react', () => ({
+vi.mock('@next/ui-base-runtime-react', () => ({
     createModule: createRuntimeReactModuleMock,
 }))
 
-vi.mock('@impos2/ui-base-input-runtime', () => ({
+vi.mock('@next/ui-base-input-runtime', () => ({
     createModule: createInputRuntimeModuleMock,
 }))
 
-vi.mock('@impos2/ui-base-topology-runtime-bridge', () => ({
+vi.mock('@next/ui-base-topology-runtime-bridge', () => ({
     createModule: createTopologyRuntimeBridgeModuleMock,
 }))
 
-vi.mock('@impos2/ui-base-admin-console', () => ({
+vi.mock('@next/ui-base-admin-console', () => ({
     createModule: createAdminConsoleModuleMock,
 }))
 
-vi.mock('@impos2/ui-base-terminal-console', () => ({
+vi.mock('@next/ui-base-terminal-console', () => ({
     createModule: createTerminalConsoleModuleMock,
 }))
 
-vi.mock('@impos2/ui-integration-catering-shell', () => ({
+vi.mock('@next/ui-integration-catering-shell', () => ({
     createModule: createCateringShellModuleMock,
 }))
 
@@ -281,8 +281,15 @@ vi.mock('../../src/application/syncHotUpdateStateFromNativeBoot', () => ({
     syncHotUpdateStateFromNativeBoot: syncHotUpdateStateFromNativeBootMock,
 }))
 
-import {createApp} from '../../src/application/createApp'
+import {createApp, type CreateHostRuntimeAppOptions} from '../../src/application/createApp'
 import {releaseInfo} from '../../src/generated/releaseInfo'
+
+const createProductApp = (props: Parameters<typeof createApp>[0], options: Partial<CreateHostRuntimeAppOptions> = {}) => createApp(props, {
+    createShellModule: createCateringShellModuleMock,
+    productId: 'mixc-catering',
+    releaseInfo,
+    ...options,
+})
 
 describe('assembly createApp', () => {
     beforeEach(() => {
@@ -321,7 +328,7 @@ describe('assembly createApp', () => {
     })
 
     it('assembles the retail shell into the runtime module graph', async () => {
-        const result = createApp({
+        const result = createProductApp({
             deviceId: 'device-1',
             screenMode: 'desktop',
             displayCount: 2,
@@ -347,7 +354,7 @@ describe('assembly createApp', () => {
         const runtimeCall = createKernelRuntimeAppMock.mock.calls.at(0)
         expect(runtimeCall).toBeDefined()
         const runtimeConfig = runtimeCall![0] as any
-        expect(runtimeConfig.runtimeName).toBe('assembly.android.mixc-catering-rn84')
+        expect(runtimeConfig.runtimeName).toBe('adapter.android.host-runtime-rn84')
         expect(runtimeConfig.localNodeId).toBe('master-device-1')
         expect(runtimeConfig.storeEnhancers).toEqual([{kind: 'reactotron-enhancer'}])
         expect(runtimeConfig.displayContext).toEqual({
@@ -386,7 +393,7 @@ describe('assembly createApp', () => {
             hotUpdate: {
                 getPort: expect.any(Function),
                 getCurrentFacts: expect.any(Function),
-                prepareRestart: expect.any(Function),
+                createRestartPreparationCommand: expect.any(Function),
             },
         })
         const tdpSyncInput = createTdpSyncRuntimeModuleV2Mock.mock.calls.at(0)?.[0] as any
@@ -466,7 +473,7 @@ describe('assembly createApp', () => {
     it('enables automation in production when the package switch is on', () => {
         ;(globalThis as any).__DEV__ = false
 
-        const result = createApp({
+        const result = createProductApp({
             deviceId: 'device-1',
             screenMode: 'desktop',
             displayCount: 1,
@@ -500,7 +507,7 @@ describe('assembly createApp', () => {
             scriptExecutionAvailable: false,
         })
 
-        const result = createApp({
+        const result = createProductApp({
             deviceId: 'device-1',
             screenMode: 'desktop',
             displayCount: 1,
@@ -514,7 +521,7 @@ describe('assembly createApp', () => {
     })
 
     it('passes topology-aware storage gate and dynamic binding source through assembly app setup', () => {
-        createApp({
+        createProductApp({
             deviceId: 'device-1',
             screenMode: 'desktop',
             displayCount: 1,
@@ -562,7 +569,7 @@ describe('assembly createApp', () => {
             releaseId: 'rel-1',
         })
 
-        const result = createApp({
+        const result = createProductApp({
             deviceId: 'device-1',
             screenMode: 'desktop',
             displayCount: 1,
@@ -597,7 +604,7 @@ describe('assembly createApp', () => {
         startMock.mockResolvedValueOnce(runtime as any)
         selectTopologyRuntimeV3ContextMock.mockImplementation(() => currentContext)
 
-        const result = createApp({
+        const result = createProductApp({
             deviceId: 'device-1',
             screenMode: 'desktop',
             displayCount: 1,
@@ -652,7 +659,7 @@ describe('assembly createApp', () => {
             reconnectAttempt: 0,
         })
 
-        const result = createApp({
+        const result = createProductApp({
             deviceId: 'device-slave-1',
             screenMode: 'desktop',
             displayCount: 1,
@@ -683,7 +690,7 @@ describe('assembly createApp', () => {
         startMock.mockResolvedValueOnce(runtime as any)
         syncHotUpdateStateFromNativeBootMock.mockRejectedValueOnce(new Error('native boot sync failed'))
 
-        const result = createApp({
+        const result = createProductApp({
             deviceId: 'device-1',
             screenMode: 'desktop',
             displayCount: 1,

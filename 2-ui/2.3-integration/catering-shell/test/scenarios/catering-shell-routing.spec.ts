@@ -2,27 +2,27 @@ import {describe, expect, it, vi} from 'vitest'
 import {
     createCommand,
     runtimeShellV2CommandDefinitions,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {
     selectUiScreen,
-} from '@impos2/kernel-base-ui-runtime-v2'
+} from '@next/kernel-base-ui-runtime-v2'
 import {
     uiRuntimeRootVariables,
-} from '@impos2/ui-base-runtime-react'
+} from '@next/ui-base-runtime-react'
 import {
     tcpControlV2CommandDefinitions,
     tcpControlV2StateActions,
-} from '@impos2/kernel-base-tcp-control-runtime-v2'
+} from '@next/kernel-base-tcp-control-runtime-v2'
 import {
     selectCateringProductMasterDataState,
-} from '@impos2/kernel-business-catering-product-master-data'
+} from '@next/kernel-business-catering-product-master-data'
 import {
     selectOrganizationIamMasterDataState,
-} from '@impos2/kernel-business-organization-iam-master-data'
+} from '@next/kernel-business-organization-iam-master-data'
 import {
     selectCateringStoreOperatingMasterDataState,
-} from '@impos2/kernel-business-catering-store-operating-master-data'
-import type {RootState} from '@impos2/kernel-base-state-runtime'
+} from '@next/kernel-business-catering-store-operating-master-data'
+import type {RootState} from '@next/kernel-base-state-runtime'
 import {createCateringShellHarness} from '../support/cateringShellHarness'
 
 const selectPrimaryRoot = (state: RootState) =>

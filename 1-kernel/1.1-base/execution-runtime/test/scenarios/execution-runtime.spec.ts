@@ -5,8 +5,8 @@ import {
     createRequestId,
     createSessionId,
     INTERNAL_REQUEST_ID,
-} from '@impos2/kernel-base-contracts'
-import {createLoggerPort} from '@impos2/kernel-base-platform-ports'
+} from '@next/kernel-base-contracts'
+import {createLoggerPort} from '@next/kernel-base-platform-ports'
 import {
     createExecutionCommand,
     createExecutionRuntime,

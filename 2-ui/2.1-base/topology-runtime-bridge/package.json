@@ -1,5 +1,5 @@
 {
-  "name": "@impos2/ui-base-topology-runtime-bridge",
+  "name": "@next/ui-base-topology-runtime-bridge",
   "version": "1.0.0",
   "description": "Topology-specific UI bridge for kernel topology runtime requests",
   "author": "DexterYang",
@@ -19,10 +19,10 @@
     "type-check": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*",
-    "@impos2/kernel-base-topology-runtime-v3": "workspace:*",
-    "@impos2/kernel-base-ui-runtime-v2": "workspace:*",
-    "@impos2/ui-base-runtime-react": "workspace:*"
+    "@next/kernel-base-runtime-shell-v2": "workspace:*",
+    "@next/kernel-base-topology-runtime-v3": "workspace:*",
+    "@next/kernel-base-ui-runtime-v2": "workspace:*",
+    "@next/ui-base-runtime-react": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=18",

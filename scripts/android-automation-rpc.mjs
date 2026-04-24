@@ -8,7 +8,7 @@ import {spawnSync} from 'node:child_process'
 const DEFAULT_HOST = '127.0.0.1'
 const DEFAULT_PRIMARY_PORT = 18584
 const DEFAULT_SECONDARY_PORT = 18585
-const DEFAULT_PACKAGE = 'com.impos2.mixccateringassemblyrn84'
+const DEFAULT_PACKAGE = 'com.next.mixccateringassemblyrn84'
 const DEFAULT_MAIN_ACTIVITY = `${DEFAULT_PACKAGE}/.MainActivity`
 const DEFAULT_TIMEOUT_MS = 8000
 const TCP_IDENTITY_STATE_KEY = 'kernel.base.tcp-control-runtime-v2.identity'

@@ -1,4 +1,4 @@
-import type {SyncRecordState, SyncValueEnvelope} from '@impos2/kernel-base-state-runtime'
+import type {SyncRecordState, SyncValueEnvelope} from '@next/kernel-base-state-runtime'
 import type {UiOverlayEntry, UiScreenRuntimeEntry} from './screen'
 
 export type UiScreenRuntimeState = SyncRecordState<UiScreenRuntimeEntry | null>

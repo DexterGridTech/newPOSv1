@@ -13,6 +13,11 @@ export default createWorkspaceVitestConfig('assembly-android-mixc-catering-rn84'
             'react-redux': resolve(workspaceRoot, 'node_modules/react-redux'),
             'react-native': 'react-native-web',
             'react-native-qrcode-svg': resolve(__dirname, 'test/support/mockQrCode.tsx'),
+            '../../src/application': resolve(workspaceRoot, '3-adapter/android/host-runtime-rn84/src/application'),
+            '../../src/platform-ports': resolve(workspaceRoot, '3-adapter/android/host-runtime-rn84/src/platform-ports'),
+            '../../src/turbomodules': resolve(workspaceRoot, '3-adapter/android/host-runtime-rn84/src/turbomodules'),
+            '../../src/types': resolve(workspaceRoot, '3-adapter/android/host-runtime-rn84/src/types'),
+            '../../src/moduleName': resolve(workspaceRoot, '3-adapter/android/host-runtime-rn84/src/moduleName'),
         },
     },
     test: {

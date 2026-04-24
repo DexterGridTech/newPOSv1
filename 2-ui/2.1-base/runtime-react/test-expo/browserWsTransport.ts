@@ -3,7 +3,7 @@ import type {
     SocketTransportConnection,
     SocketResolvedConnection,
     SocketConnectionHandlers,
-} from '@impos2/kernel-base-transport-runtime'
+} from '@next/kernel-base-transport-runtime'
 
 /**
  * 设计意图：

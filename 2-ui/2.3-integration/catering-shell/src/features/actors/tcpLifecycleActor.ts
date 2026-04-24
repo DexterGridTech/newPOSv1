@@ -2,8 +2,8 @@ import {
     createModuleActorFactory,
     onCommand,
     type ActorDefinition,
-} from '@impos2/kernel-base-runtime-shell-v2'
-import {tcpControlV2CommandDefinitions} from '@impos2/kernel-base-tcp-control-runtime-v2'
+} from '@next/kernel-base-runtime-shell-v2'
+import {tcpControlV2CommandDefinitions} from '@next/kernel-base-tcp-control-runtime-v2'
 import {replaceCateringShellRootScreen} from '../../supports/rootScreenRouter'
 import {moduleName} from '../../moduleName'
 

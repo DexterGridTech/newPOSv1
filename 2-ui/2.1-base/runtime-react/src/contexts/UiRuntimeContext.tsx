@@ -1,5 +1,5 @@
 import React, {createContext, useContext} from 'react'
-import type {KernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
+import type {KernelRuntimeV2} from '@next/kernel-base-runtime-shell-v2'
 import type {RuntimeReactAutomationBridge} from '../types'
 
 const UiRuntimeContext = createContext<KernelRuntimeV2 | null>(null)

@@ -1,5 +1,5 @@
 {
-  "name": "@impos2/ui-integration-catering-shell",
+  "name": "@next/ui-integration-catering-shell",
   "version": "1.0.0",
   "description": "Catering integration shell built on ui-base packages",
   "author": "DexterYang",
@@ -21,19 +21,19 @@
     "type-check": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*",
-    "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*",
-    "@impos2/kernel-base-tdp-sync-runtime-v2": "workspace:*",
-    "@impos2/kernel-base-topology-runtime-v3": "workspace:*",
-    "@impos2/kernel-base-ui-runtime-v2": "workspace:*",
-    "@impos2/ui-base-admin-console": "workspace:*",
-    "@impos2/ui-base-input-runtime": "workspace:*",
-    "@impos2/ui-base-runtime-react": "workspace:*",
-    "@impos2/ui-base-terminal-console": "workspace:*",
-    "@impos2/ui-business-catering-master-data-workbench": "workspace:*",
-    "@impos2/kernel-business-catering-product-master-data": "workspace:*",
-    "@impos2/kernel-business-catering-store-operating-master-data": "workspace:*",
-    "@impos2/kernel-business-organization-iam-master-data": "workspace:*"
+    "@next/kernel-base-runtime-shell-v2": "workspace:*",
+    "@next/kernel-base-tcp-control-runtime-v2": "workspace:*",
+    "@next/kernel-base-tdp-sync-runtime-v2": "workspace:*",
+    "@next/kernel-base-topology-runtime-v3": "workspace:*",
+    "@next/kernel-base-ui-runtime-v2": "workspace:*",
+    "@next/kernel-business-catering-product-master-data": "workspace:*",
+    "@next/kernel-business-catering-store-operating-master-data": "workspace:*",
+    "@next/kernel-business-organization-iam-master-data": "workspace:*",
+    "@next/ui-base-admin-console": "workspace:*",
+    "@next/ui-base-input-runtime": "workspace:*",
+    "@next/ui-base-runtime-react": "workspace:*",
+    "@next/ui-base-terminal-console": "workspace:*",
+    "@next/ui-business-catering-master-data-workbench": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=18",

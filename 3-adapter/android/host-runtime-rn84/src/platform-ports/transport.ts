@@ -6,7 +6,7 @@ import type {
     SocketResolvedConnection,
     SocketTransport,
     SocketTransportConnection,
-} from '@impos2/kernel-base-transport-runtime'
+} from '@next/kernel-base-transport-runtime'
 
 export const createAssemblyFetchTransport = (): HttpTransport => ({
     async execute<TPath, TQuery, TBody, TResponse>(

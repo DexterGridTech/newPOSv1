@@ -1,4 +1,4 @@
-import type {TerminalLogUploadPort} from '@impos2/kernel-base-platform-ports'
+import type {TerminalLogUploadPort} from '@next/kernel-base-platform-ports'
 import {nativeLogger} from '../turbomodules/logger'
 
 export const createAssemblyTerminalLogUploadPort = (): TerminalLogUploadPort => ({

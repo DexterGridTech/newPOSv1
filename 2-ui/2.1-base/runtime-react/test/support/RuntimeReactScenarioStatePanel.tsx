@@ -1,7 +1,7 @@
 import React from 'react'
 import {Text, View} from 'react-native'
 import {useSelector} from 'react-redux'
-import type {RootState} from '@impos2/kernel-base-state-runtime'
+import type {RootState} from '@next/kernel-base-state-runtime'
 import {
     selectTopologyDisplayMode,
     selectTopologyInstanceMode,
@@ -9,12 +9,12 @@ import {
     selectTopologyRuntimeV3PeerNodeId,
     selectTopologyRuntimeV3ServerConnected,
     selectTopologyWorkspace,
-} from '@impos2/kernel-base-topology-runtime-v3'
+} from '@next/kernel-base-topology-runtime-v3'
 import {
     selectUiOverlays,
     selectUiScreen,
     selectUiVariable,
-} from '@impos2/kernel-base-ui-runtime-v2'
+} from '@next/kernel-base-ui-runtime-v2'
 import {uiRuntimeRootVariables} from '../../src'
 import {runtimeReactScenarioVariable} from './runtimeReactScenarioParts'
 

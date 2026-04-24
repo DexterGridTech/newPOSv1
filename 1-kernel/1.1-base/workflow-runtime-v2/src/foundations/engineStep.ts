@@ -1,4 +1,4 @@
-import type {ActorExecutionContext} from '@impos2/kernel-base-runtime-shell-v2'
+import type {ActorExecutionContext} from '@next/kernel-base-runtime-shell-v2'
 import type {
     WorkflowDefinition,
     WorkflowObservation,

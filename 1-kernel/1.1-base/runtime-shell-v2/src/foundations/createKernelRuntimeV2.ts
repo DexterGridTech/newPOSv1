@@ -1,8 +1,8 @@
 import {
     createNodeId,
     createRuntimeInstanceId,
-} from '@impos2/kernel-base-contracts'
-import {createStateRuntime} from '@impos2/kernel-base-state-runtime'
+} from '@next/kernel-base-contracts'
+import {createStateRuntime} from '@next/kernel-base-state-runtime'
 import type {EnhancedStore, UnknownAction} from '@reduxjs/toolkit'
 import {moduleName} from '../moduleName'
 import type {

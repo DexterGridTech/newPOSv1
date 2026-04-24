@@ -4,7 +4,7 @@ import {
     useOptionalUiAutomationBridge,
     useOptionalUiAutomationRuntimeId,
     useOptionalUiAutomationTarget,
-} from '@impos2/ui-base-runtime-react'
+} from '@next/ui-base-runtime-react'
 import type {ManagedInputMode} from '../../types'
 import {usesVirtualKeyboard} from '../../foundations/inputPolicies'
 import {createInputRuntimeId} from '../../supports'

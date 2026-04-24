@@ -2,8 +2,8 @@ import {createSlice, type PayloadAction} from '@reduxjs/toolkit'
 import type {
     StateRuntimeSliceDescriptor,
     SyncValueEnvelope,
-} from '@impos2/kernel-base-state-runtime'
-import {createSyncTombstone} from '@impos2/kernel-base-state-runtime'
+} from '@next/kernel-base-state-runtime'
+import {createSyncTombstone} from '@next/kernel-base-state-runtime'
 import {TDP_HOT_UPDATE_STATE_KEY} from '../../foundations/stateKeys'
 import {evaluateHotUpdateCompatibility} from '../../foundations/hotUpdateCompatibility'
 import type {

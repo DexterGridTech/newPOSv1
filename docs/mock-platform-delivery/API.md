@@ -125,7 +125,7 @@
   "deviceInfo": {
     "model": "Mock-POS-X1",
     "osVersion": "Android 14",
-    "manufacturer": "IMPOS2"
+    "manufacturer": "NEXT"
   }
 }
 ```

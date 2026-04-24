@@ -6,7 +6,7 @@
 
 **Architecture:** Execute the replacement in strict phases. First create V3 host and V3 topology runtime in parallel with V2, preserving the existing product behavior while establishing no-ticket pair semantics. Next migrate adapter, assembly, UI, Expo/test helpers, and kernel live harnesses to V3. Only after all package tests, assembly automation tests, and real-device socket-driven verification pass do we remove V2 imports, delete the old packages, and update docs/memory.
 
-**Tech Stack:** TypeScript, Vitest, Kotlin, Android Service/WS host, React Native 0.84, Expo Web test helpers, `@impos2/kernel-base-state-runtime`, `@impos2/kernel-base-runtime-shell-v2`, `@impos2/kernel-base-tdp-sync-runtime-v2`, `@impos2/ui-base-admin-console`, `@impos2/ui-base-terminal-console`, `scripts/android-automation-rpc.mjs`, ADB automation socket.
+**Tech Stack:** TypeScript, Vitest, Kotlin, Android Service/WS host, React Native 0.84, Expo Web test helpers, `@next/kernel-base-state-runtime`, `@next/kernel-base-runtime-shell-v2`, `@next/kernel-base-tdp-sync-runtime-v2`, `@next/ui-base-admin-console`, `@next/ui-base-terminal-console`, `scripts/android-automation-rpc.mjs`, ADB automation socket.
 
 **Execution Note:** Steps that show `git commit` are delivery checkpoints for a later execution pass. Do not create commits during implementation unless the user explicitly asks for them in that execution session.
 
@@ -36,8 +36,8 @@
 
 ### Adapter / assembly / UI migration points
 
-- Modify: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/topologyhost/**`
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/topologyhostv3/**`
+- Modify: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/topologyhost/**`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/topologyhostv3/**`
 - Modify: `3-adapter/android/adapter-android-v2/adapter-lib/src/test/**`
 - Modify: `4-assembly/android/mixc-retail-assembly-rn84/src/platform-ports/topology.ts`
 - Modify: `4-assembly/android/mixc-retail-assembly-rn84/src/application/bootstrapRuntime.ts`
@@ -46,8 +46,8 @@
 - Modify: `4-assembly/android/mixc-retail-assembly-rn84/src/application/adminConsoleConfig.ts`
 - Modify: `4-assembly/android/mixc-retail-assembly-rn84/src/application/resolveTopologyLaunch.ts`
 - Create or modify: `4-assembly/android/mixc-retail-assembly-rn84/src/application/topology-v3/**`
-- Modify: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/impos2/mixcretailassemblyrn84/startup/TopologyLaunchCoordinator.kt`
-- Modify: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/impos2/mixcretailassemblyrn84/turbomodules/TopologyHostTurboModule.kt`
+- Modify: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/next/mixcretailassemblyrn84/startup/TopologyLaunchCoordinator.kt`
+- Modify: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/next/mixcretailassemblyrn84/turbomodules/TopologyHostTurboModule.kt`
 - Modify: `2-ui/2.1-base/admin-console/src/types/admin.ts`
 - Modify: `2-ui/2.1-base/admin-console/src/ui/screens/AdminTopologySection.tsx`
 - Modify: `2-ui/2.1-base/terminal-console/src/ui/screens/ActivateDeviceScreen.tsx`
@@ -58,7 +58,7 @@
 
 - Delete after migration: `0-mock-server/dual-topology-host/**`
 - Delete after migration: `1-kernel/1.1-base/topology-runtime-v2/**`
-- Modify after migration: all remaining imports of `@impos2/kernel-base-topology-runtime-v2`
+- Modify after migration: all remaining imports of `@next/kernel-base-topology-runtime-v2`
 - Modify after migration: all remaining imports/usages of `dual-topology-host`
 - Modify after migration: docs and READMEs that still describe V2 / old host
 
@@ -73,8 +73,8 @@ Old packages can be deleted only after all of the following are true:
 - [ ] `4-assembly/android/mixc-retail-assembly-rn84` Vitest suite passes after migration.
 - [ ] `2-ui/2.1-base/admin-console` and `2-ui/2.1-base/terminal-console` tests pass after migration.
 - [ ] Expo / browser topology helpers are migrated and pass against V3 host.
-- [ ] No remaining repo imports of `@impos2/kernel-base-topology-runtime-v2` except temporary migration shims explicitly listed in the plan.
-- [ ] No remaining repo imports/usages of `@impos2/dual-topology-host` except temporary migration shims explicitly listed in the plan.
+- [ ] No remaining repo imports of `@next/kernel-base-topology-runtime-v2` except temporary migration shims explicitly listed in the plan.
+- [ ] No remaining repo imports/usages of `@next/dual-topology-host` except temporary migration shims explicitly listed in the plan.
 - [ ] RN84 emulator flow passes: master/slave pair, activation restriction, admin topology panel, reconnect, state sync.
 - [ ] RN84 real-device flow passes on `4-assembly/android/mixc-retail-assembly-rn84`.
 - [ ] Real-device verification includes direct socket RPC evidence through `scripts/android-automation-rpc.mjs`, not only UI scripting.
@@ -131,7 +131,7 @@ Expected: FAIL with missing workspace/files.
 
 Copy the package structure from `0-mock-server/dual-topology-host`, but change names to V3:
 
-- package name: `@impos2/dual-topology-host-v3`
+- package name: `@next/dual-topology-host-v3`
 - module name: `mock.server.dual-topology-host-v3`
 - no dependency on ticket issuance in public server APIs
 
@@ -373,19 +373,19 @@ git commit -m "Build V3 topology runtime baseline"
 ### Task 3: Add Android host-v3 and keep V2/V3 side-by-side during migration
 
 **Files:**
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/topologyhostv3/TopologyHostV3Models.kt`
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/topologyhostv3/TopologyHostV3Json.kt`
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/topologyhostv3/TopologyHostV3Runtime.kt`
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/topologyhostv3/TopologyHostV3Server.kt`
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/topologyhostv3/TopologyHostV3Service.kt`
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/topologyhostv3/TopologyHostV3Manager.kt`
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/test/java/com/impos2/adapterv2/topologyhostv3/**`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/topologyhostv3/TopologyHostV3Models.kt`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/topologyhostv3/TopologyHostV3Json.kt`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/topologyhostv3/TopologyHostV3Runtime.kt`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/topologyhostv3/TopologyHostV3Server.kt`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/topologyhostv3/TopologyHostV3Service.kt`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/topologyhostv3/TopologyHostV3Manager.kt`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/test/java/com/next/adapterv2/topologyhostv3/**`
 - Modify if needed: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/AndroidManifest.xml`
-- Modify: `3-adapter/android/adapter-android-v2/dev-app/src/main/java/com/impos2/adapterv2/dev/ui/topologyhost/TopologyHostTestFragment.kt`
+- Modify: `3-adapter/android/adapter-android-v2/dev-app/src/main/java/com/next/adapterv2/dev/ui/topologyhost/TopologyHostTestFragment.kt`
 
 - [ ] **Step 1: Write the failing adapter host-v3 runtime test**
 
-Create `3-adapter/android/adapter-android-v2/adapter-lib/src/test/java/com/impos2/adapterv2/topologyhostv3/TopologyHostV3RuntimeTest.kt` with assertions for:
+Create `3-adapter/android/adapter-android-v2/adapter-lib/src/test/java/com/next/adapterv2/topologyhostv3/TopologyHostV3RuntimeTest.kt` with assertions for:
 
 - one master + one slave occupancy
 - duplicate master reject
@@ -447,9 +447,9 @@ Expected: PASS with new V3 tests included.
 - [ ] **Step 8: Commit the Android host-v3 layer**
 
 ```bash
-git add 3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/topologyhostv3 \
-        3-adapter/android/adapter-android-v2/adapter-lib/src/test/java/com/impos2/adapterv2/topologyhostv3 \
-        3-adapter/android/adapter-android-v2/dev-app/src/main/java/com/impos2/adapterv2/dev/ui/topologyhost/TopologyHostTestFragment.kt
+git add 3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/topologyhostv3 \
+        3-adapter/android/adapter-android-v2/adapter-lib/src/test/java/com/next/adapterv2/topologyhostv3 \
+        3-adapter/android/adapter-android-v2/dev-app/src/main/java/com/next/adapterv2/dev/ui/topologyhost/TopologyHostTestFragment.kt
 git commit -m "Add Android topology host V3"
 ```
 
@@ -463,8 +463,8 @@ git commit -m "Add Android topology host V3"
 - Modify: `4-assembly/android/mixc-retail-assembly-rn84/src/application/adminConsoleConfig.ts`
 - Modify: `4-assembly/android/mixc-retail-assembly-rn84/src/application/resolveTopologyLaunch.ts`
 - Create or modify: `4-assembly/android/mixc-retail-assembly-rn84/src/application/topology-v3/**`
-- Modify: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/impos2/mixcretailassemblyrn84/startup/TopologyLaunchCoordinator.kt`
-- Modify: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/impos2/mixcretailassemblyrn84/turbomodules/TopologyHostTurboModule.kt`
+- Modify: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/next/mixcretailassemblyrn84/startup/TopologyLaunchCoordinator.kt`
+- Modify: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/next/mixcretailassemblyrn84/turbomodules/TopologyHostTurboModule.kt`
 - Modify: `2-ui/2.1-base/admin-console/src/types/admin.ts`
 - Modify: `2-ui/2.1-base/admin-console/src/ui/screens/AdminTopologySection.tsx`
 - Modify: `2-ui/2.1-base/terminal-console/src/ui/screens/ActivateDeviceScreen.tsx`
@@ -571,14 +571,14 @@ git commit -m "Migrate assembly and UI topology flows to V3"
 - Modify: `2-ui/2.1-base/runtime-react/test/support/runtimeReactScenarioParts.tsx`
 - Modify: `2-ui/2.1-base/runtime-react/test/support/RuntimeReactScenarioStatePanel.tsx`
 - Modify: `2-ui/2.3-integration/retail-shell/src/ui/screens/RootScreen.tsx`
-- Modify package manifests that still depend on `@impos2/kernel-base-topology-runtime-v2`
+- Modify package manifests that still depend on `@next/kernel-base-topology-runtime-v2`
 
 - [ ] **Step 1: Produce the failing import audit**
 
 Run and save the audit:
 
 ```bash
-rg -n "@impos2/kernel-base-topology-runtime-v2|dual-topology-host" 1-kernel 2-ui 3-adapter 4-assembly 0-mock-server -g '!**/build/**' -g '!**/dist/**' -g '!**/node_modules/**'
+rg -n "@next/kernel-base-topology-runtime-v2|dual-topology-host" 1-kernel 2-ui 3-adapter 4-assembly 0-mock-server -g '!**/build/**' -g '!**/dist/**' -g '!**/node_modules/**'
 ```
 
 Expected: multiple remaining V2 references.
@@ -716,7 +716,7 @@ git commit -m "Record topology V3 device verification evidence"
 Run:
 
 ```bash
-rg -n "@impos2/kernel-base-topology-runtime-v2|@impos2/dual-topology-host|dual-topology-host" 1-kernel 2-ui 3-adapter 4-assembly 0-mock-server -g '!**/build/**' -g '!**/dist/**' -g '!**/node_modules/**'
+rg -n "@next/kernel-base-topology-runtime-v2|@next/dual-topology-host|dual-topology-host" 1-kernel 2-ui 3-adapter 4-assembly 0-mock-server -g '!**/build/**' -g '!**/dist/**' -g '!**/node_modules/**'
 ```
 
 Expected: only the old package directories themselves remain.

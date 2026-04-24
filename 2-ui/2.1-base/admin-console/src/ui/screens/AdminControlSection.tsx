@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react'
 import {
     createCommand,
     type KernelRuntimeV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import type {
     AdminAppControlHost,
     AdminControlSnapshot,

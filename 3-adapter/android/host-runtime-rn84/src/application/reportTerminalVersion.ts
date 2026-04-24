@@ -1,16 +1,16 @@
-import { buildHotUpdateVersionReportPayload } from '@impos2/kernel-base-tdp-sync-runtime-v2'
-import type { KernelRuntimeV2 } from '@impos2/kernel-base-runtime-shell-v2'
+import { buildHotUpdateVersionReportPayload } from '@next/kernel-base-tdp-sync-runtime-v2'
+import type { KernelRuntimeV2 } from '@next/kernel-base-runtime-shell-v2'
 import {
   resolveTransportServers,
   selectTransportSelectedServerSpace,
   type TransportServerAddress,
-} from '@impos2/kernel-base-transport-runtime'
+} from '@next/kernel-base-transport-runtime'
 import type { AppProps } from '../types'
 import { createAssemblyFetchTransport } from '../platform-ports'
 import {
   kernelBaseDevServerConfig,
   SERVER_NAME_MOCK_TERMINAL_PLATFORM,
-} from '@impos2/kernel-server-config-v2'
+} from '@next/kernel-server-config-v2'
 import {getHostRuntimeReleaseInfo} from './releaseInfoContext'
 import {
   enqueueTerminalVersionReport,

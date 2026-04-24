@@ -1,4 +1,4 @@
-import {createAppError, nowTimestampMs} from '@impos2/kernel-base-contracts'
+import {createAppError, nowTimestampMs} from '@next/kernel-base-contracts'
 import {tdpSyncV2DomainActions} from '../features/slices'
 import {tdpSyncV2ErrorDefinitions} from '../supports'
 import type {TdpCommandInboxItem, TdpServerMessage} from '../types'

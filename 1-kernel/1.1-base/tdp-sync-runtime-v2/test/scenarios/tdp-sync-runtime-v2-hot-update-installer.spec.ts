@@ -1,23 +1,23 @@
 import {describe, expect, it, vi} from 'vitest'
-import {createLoggerPort, createPlatformPorts} from '@impos2/kernel-base-platform-ports'
+import {createLoggerPort, createPlatformPorts} from '@next/kernel-base-platform-ports'
 import {
     createKernelRuntimeV2,
     createCommand,
     type RuntimeModuleContextV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
-import {createHttpRuntime, type HttpTransport} from '@impos2/kernel-base-transport-runtime'
-import {createTcpControlRuntimeModuleV2} from '@impos2/kernel-base-tcp-control-runtime-v2'
+} from '@next/kernel-base-runtime-shell-v2'
+import {createHttpRuntime, type HttpTransport} from '@next/kernel-base-transport-runtime'
+import {createTcpControlRuntimeModuleV2} from '@next/kernel-base-tcp-control-runtime-v2'
 import {
     createTopologyRuntimeModuleV3,
     topologyRuntimeV3CommandDefinitions,
-} from '@impos2/kernel-base-topology-runtime-v3'
+} from '@next/kernel-base-topology-runtime-v3'
 import {
     createTdpSyncRuntimeModuleV2,
     tdpHotUpdateActions,
     selectTdpHotUpdateState,
 } from '../../src'
 import {resolveTransportServers} from '../../../../test-support/serverConfig'
-import {kernelBaseTestServerConfig} from '@impos2/kernel-server-config-v2'
+import {kernelBaseTestServerConfig} from '@next/kernel-server-config-v2'
 
 const createMemoryStorage = () => {
     const saved = new Map<string, string>()

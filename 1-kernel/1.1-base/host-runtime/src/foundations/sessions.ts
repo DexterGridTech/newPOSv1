@@ -4,7 +4,7 @@ import type {
     NodeRuntimeInfo,
     PairingTicket,
     SessionId,
-} from '@impos2/kernel-base-contracts'
+} from '@next/kernel-base-contracts'
 import type {
     HostConnectionAttachResult,
     HostConnectionDetachResult,

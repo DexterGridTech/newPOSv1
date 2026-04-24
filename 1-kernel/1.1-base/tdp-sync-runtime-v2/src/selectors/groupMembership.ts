@@ -1,5 +1,5 @@
-import type {RootState} from '@impos2/kernel-base-state-runtime'
-import {selectTcpTerminalId} from '@impos2/kernel-base-tcp-control-runtime-v2'
+import type {RootState} from '@next/kernel-base-state-runtime'
+import {selectTcpTerminalId} from '@next/kernel-base-tcp-control-runtime-v2'
 import type {TdpTerminalGroupMembershipPayload} from '../types'
 import {TDP_PROJECTION_STATE_KEY} from '../foundations/stateKeys'
 import type {TdpProjectionState} from '../types'

@@ -6,7 +6,7 @@ import type {
     PairingTicket,
     SessionId,
     TimestampMs,
-} from '@impos2/kernel-base-contracts'
+} from '@next/kernel-base-contracts'
 
 export interface HostTicketOccupancy {
     role: 'master' | 'slave'

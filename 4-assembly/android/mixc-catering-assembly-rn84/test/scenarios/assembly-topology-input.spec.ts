@@ -1,5 +1,5 @@
 import {describe, expect, it, vi} from 'vitest'
-import {SERVER_NAME_DUAL_TOPOLOGY_HOST_V3} from '@impos2/kernel-server-config-v2'
+import {SERVER_NAME_DUAL_TOPOLOGY_HOST_V3} from '@next/kernel-server-config-v2'
 import {createAssemblyTopologyBindingSource} from '../../src/application/topology'
 import {createAssemblyTopologyInput} from '../../src/platform-ports/topology'
 

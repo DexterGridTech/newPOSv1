@@ -1,10 +1,10 @@
-import {createAppError, nowTimestampMs} from '@impos2/kernel-base-contracts'
+import {createAppError, nowTimestampMs} from '@next/kernel-base-contracts'
 import {
     createCommand,
     createModuleActorFactory,
     onCommand,
     type ActorDefinition,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {moduleName} from '../../moduleName'
 import {selectTcpCredentialSnapshot, selectTcpSandboxId} from '../../selectors'
 import {tcpControlV2ErrorDefinitions} from '../../supports'

@@ -2,8 +2,8 @@ import {describe, expect, it} from 'vitest'
 import {
     selectUiScreenDefinition,
     uiRuntimeV2CommandDefinitions,
-} from '@impos2/kernel-base-ui-runtime-v2'
-import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-ui-runtime-v2'
+import {createCommand} from '@next/kernel-base-runtime-shell-v2'
 import {
     createTerminalConsoleHarness,
 } from '../support/terminalConsoleHarness'

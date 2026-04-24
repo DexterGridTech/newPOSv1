@@ -1,15 +1,15 @@
 import {useCallback, useMemo, useState} from 'react'
 import {shallowEqual, useSelector} from 'react-redux'
-import {createCommand, type KernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
-import type {RootState} from '@impos2/kernel-base-state-runtime'
+import {createCommand, type KernelRuntimeV2} from '@next/kernel-base-runtime-shell-v2'
+import type {RootState} from '@next/kernel-base-state-runtime'
 import {
     selectTopologyRuntimeV3TcpActivationEligibility,
     type TopologyV3ActivationStatus,
-} from '@impos2/kernel-base-topology-runtime-v3'
+} from '@next/kernel-base-topology-runtime-v3'
 import {
     selectTcpIdentitySnapshot,
     tcpControlV2CommandDefinitions,
-} from '@impos2/kernel-base-tcp-control-runtime-v2'
+} from '@next/kernel-base-tcp-control-runtime-v2'
 import type {TerminalActivationModel} from '../types'
 
 const normalizeActivationCode = (value: string): string =>

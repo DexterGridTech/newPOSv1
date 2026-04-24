@@ -1,5 +1,5 @@
 {
-  "name": "@impos2/mock-terminal-platform-server",
+  "name": "@next/mock-terminal-platform-server",
   "version": "1.0.0",
   "private": true,
   "type": "module",

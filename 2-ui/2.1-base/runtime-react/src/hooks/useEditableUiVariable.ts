@@ -1,8 +1,8 @@
 import {useCallback} from 'react'
 import {useSelector} from 'react-redux'
-import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
-import {uiRuntimeV2CommandDefinitions, selectUiVariable} from '@impos2/kernel-base-ui-runtime-v2'
-import type {RootState} from '@impos2/kernel-base-state-runtime'
+import {createCommand} from '@next/kernel-base-runtime-shell-v2'
+import {uiRuntimeV2CommandDefinitions, selectUiVariable} from '@next/kernel-base-ui-runtime-v2'
+import type {RootState} from '@next/kernel-base-state-runtime'
 import {useUiRuntime} from '../contexts'
 import type {UiRuntimeVariable} from '../types'
 

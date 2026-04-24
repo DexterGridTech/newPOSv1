@@ -1,18 +1,18 @@
 import {describe, expect, it} from 'vitest'
-import {createNodeId, createRequestId} from '@impos2/kernel-base-contracts'
-import {createLoggerPort, createPlatformPorts} from '@impos2/kernel-base-platform-ports'
+import {createNodeId, createRequestId} from '@next/kernel-base-contracts'
+import {createLoggerPort, createPlatformPorts} from '@next/kernel-base-platform-ports'
 import {
     applySliceSyncDiff,
     createSliceSyncDiff,
     createSliceSyncSummary,
-} from '@impos2/kernel-base-state-runtime'
+} from '@next/kernel-base-state-runtime'
 import {
     createCommand,
     createKernelRuntimeV2,
     type RuntimeModuleContextV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
-import {kernelBaseTestServerConfig} from '@impos2/kernel-server-config-v2'
-import {createHttpRuntime, type HttpTransport} from '@impos2/kernel-base-transport-runtime'
+} from '@next/kernel-base-runtime-shell-v2'
+import {kernelBaseTestServerConfig} from '@next/kernel-server-config-v2'
+import {createHttpRuntime, type HttpTransport} from '@next/kernel-base-transport-runtime'
 import {
     createTcpControlRuntimeModuleV2,
     selectTcpAccessToken,

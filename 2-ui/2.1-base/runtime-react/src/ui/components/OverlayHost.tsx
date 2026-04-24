@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react'
 import {View} from 'react-native'
 import {useUiOverlays} from '../../hooks'
+import {defaultUiAlertContainerKey} from '../../foundations/defineUiAlertPart'
 import {resolveUiRenderer} from '../../foundations/rendererRegistry'
 import type {RuntimeReactAutomationBridge} from '../../types'
 
@@ -17,7 +18,9 @@ export const OverlayHost: React.FC<OverlayHostProps> = ({
     automationRuntimeId = 'runtime',
     automationTarget = 'primary',
 }) => {
-    const overlays = useUiOverlays(displayMode)
+    const overlays = useUiOverlays(displayMode).filter(overlay => overlay.screenPartKey !== 'ui.base.default-alert'
+        && overlay.rendererKey !== 'ui.base.default-alert'
+        && !overlay.id.startsWith(defaultUiAlertContainerKey))
 
     useEffect(() => {
         if (!automationBridge) {

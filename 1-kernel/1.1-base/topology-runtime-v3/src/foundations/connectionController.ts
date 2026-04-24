@@ -6,15 +6,15 @@ import {
     type CommandRouteContext,
     type RequestId,
     type SessionId,
-} from '@impos2/kernel-base-contracts'
-import {createAppError, isAppError} from '@impos2/kernel-base-contracts'
+} from '@next/kernel-base-contracts'
+import {createAppError, isAppError} from '@next/kernel-base-contracts'
 import {
     createCommand,
     defineCommand,
     type CommandAggregateResult,
     type RuntimeModuleContextV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
-import {createSocketLifecycleController} from '@impos2/kernel-base-transport-runtime'
+} from '@next/kernel-base-runtime-shell-v2'
+import {createSocketLifecycleController} from '@next/kernel-base-transport-runtime'
 import {topologyRuntimeV3StateActions} from '../features/slices'
 import {topologyRuntimeV3ErrorDefinitions, topologyRuntimeV3ParameterDefinitions} from '../supports'
 import type {

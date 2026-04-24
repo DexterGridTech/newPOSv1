@@ -1,5 +1,5 @@
 {
-  "name": "@impos2/kernel-base-topology-runtime-v3",
+  "name": "@next/kernel-base-topology-runtime-v3",
   "version": "1.0.0",
   "description": "Kernel base topology runtime V3 package",
   "author": "DexterYang",
@@ -18,7 +18,7 @@
     "type-check": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@impos2/kernel-base-contracts": "workspace:*"
+    "@next/kernel-base-contracts": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^25.0.9",

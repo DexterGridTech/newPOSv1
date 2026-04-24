@@ -2,7 +2,7 @@ import React from 'react'
 import TestRenderer, {act} from 'react-test-renderer'
 import {Provider} from 'react-redux'
 import type {EnhancedStore} from '@reduxjs/toolkit'
-import type {KernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
+import type {KernelRuntimeV2} from '@next/kernel-base-runtime-shell-v2'
 import {
     createActionExecutor,
     createAutomationJsonRpcClient,

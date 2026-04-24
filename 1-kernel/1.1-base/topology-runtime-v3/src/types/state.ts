@@ -1,4 +1,4 @@
-import type {StateRuntimeSliceDescriptor} from '@impos2/kernel-base-state-runtime'
+import type {StateRuntimeSliceDescriptor} from '@next/kernel-base-state-runtime'
 import type {TopologyV3HelloRuntime, TopologyV3MasterLocator} from './runtime'
 
 export interface TopologyV3ConfigRuntimeState {

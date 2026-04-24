@@ -1,8 +1,8 @@
-import type {KernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
-import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
+import type {KernelRuntimeV2} from '@next/kernel-base-runtime-shell-v2'
+import {createCommand} from '@next/kernel-base-runtime-shell-v2'
 import {
     tdpSyncV2CommandDefinitions,
-} from '@impos2/kernel-base-tdp-sync-runtime-v2'
+} from '@next/kernel-base-tdp-sync-runtime-v2'
 import {getHostRuntimeReleaseInfo} from './releaseInfoContext'
 import {nativeAppControl, nativeLogger} from '../turbomodules'
 import {

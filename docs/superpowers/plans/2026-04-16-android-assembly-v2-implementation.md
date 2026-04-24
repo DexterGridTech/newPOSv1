@@ -6,7 +6,7 @@
 
 **Architecture:** The work is split into two new packages. `adapter-android-v2` keeps `adapter-lib + dev-app`, reuses the proven native managers, and introduces a new embedded `topologyHost` native subsystem whose HTTP / WS behavior mirrors `dual-topology-host`. `mixc-retail-assembly-rn84` remains the RN 0.84 bare host, inherits the old dual-screen startup / restart architecture, exposes the adapter capabilities via TurboModules, assembles new `platformPorts`, and boots `createKernelRuntimeApp(...)` with the new `1-kernel` / `2-ui` runtime graph.
 
-**Tech Stack:** Android Gradle Plugin, Kotlin, Java 17, AndroidX, RN 0.84.1 new architecture, Hermes, TurboModules / codegen, TypeScript, Metro, Babel, Reactotron, Vitest, Android instrumentation tests, loopback HTTP / WS protocol testing, `@impos2/kernel-base-runtime-shell-v2`, `@impos2/kernel-base-platform-ports`, `@impos2/kernel-base-topology-runtime-v2`, `@impos2/ui-integration-retail-shell`
+**Tech Stack:** Android Gradle Plugin, Kotlin, Java 17, AndroidX, RN 0.84.1 new architecture, Hermes, TurboModules / codegen, TypeScript, Metro, Babel, Reactotron, Vitest, Android instrumentation tests, loopback HTTP / WS protocol testing, `@next/kernel-base-runtime-shell-v2`, `@next/kernel-base-platform-ports`, `@next/kernel-base-topology-runtime-v2`, `@next/ui-integration-retail-shell`
 
 ---
 
@@ -20,10 +20,10 @@
 - Create: `3-adapter/android/adapter-android-v2/gradle.properties`
 - Create: `3-adapter/android/adapter-android-v2/adapter-lib/build.gradle`
 - Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/AndroidManifest.xml`
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/**`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/**`
 - Create: `3-adapter/android/adapter-android-v2/dev-app/build.gradle`
 - Create: `3-adapter/android/adapter-android-v2/dev-app/src/main/AndroidManifest.xml`
-- Create: `3-adapter/android/adapter-android-v2/dev-app/src/main/java/com/impos2/adapterv2/dev/**`
+- Create: `3-adapter/android/adapter-android-v2/dev-app/src/main/java/com/next/adapterv2/dev/**`
 - Create: `3-adapter/android/adapter-android-v2/README.md`
 
 ### New assembly package
@@ -43,7 +43,7 @@
 - Create: `4-assembly/android/mixc-retail-assembly-rn84/android/gradle.properties`
 - Create: `4-assembly/android/mixc-retail-assembly-rn84/android/app/build.gradle`
 - Create: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/AndroidManifest.xml`
-- Create: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/impos2/mixcretailassemblyrn84/**`
+- Create: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/next/mixcretailassemblyrn84/**`
 - Create: `4-assembly/android/mixc-retail-assembly-rn84/assets/**`
 - Create: `4-assembly/android/mixc-retail-assembly-rn84/README.md`
 
@@ -77,8 +77,8 @@ Add workspace scripts alongside the existing `adapterPure` scripts:
 ```json
 {
   "scripts": {
-    "adapter:android-v2:build": "corepack yarn workspace @impos2/adapter-android-v2 build:android",
-    "adapter:android-v2:all": "corepack yarn workspace @impos2/adapter-android-v2 android:all"
+    "adapter:android-v2:build": "corepack yarn workspace @next/adapter-android-v2 build:android",
+    "adapter:android-v2:all": "corepack yarn workspace @next/adapter-android-v2 android:all"
   }
 }
 ```
@@ -90,8 +90,8 @@ Add workspace scripts alongside the old RN84 assembly scripts:
 ```json
 {
   "scripts": {
-    "assembly:android-mixc-retail-rn84:metro": "corepack yarn workspace @impos2/assembly-android-mixc-retail-rn84 start:clean",
-    "assembly:android-mixc-retail-rn84:run": "corepack yarn workspace @impos2/assembly-android-mixc-retail-rn84 android:run"
+    "assembly:android-mixc-retail-rn84:metro": "corepack yarn workspace @next/assembly-android-mixc-retail-rn84 start:clean",
+    "assembly:android-mixc-retail-rn84:run": "corepack yarn workspace @next/assembly-android-mixc-retail-rn84 android:run"
   }
 }
 ```
@@ -160,14 +160,14 @@ Create `package.json` with the same usage model as `adapterPure`, but rename the
 
 ```json
 {
-  "name": "@impos2/adapter-android-v2",
+  "name": "@next/adapter-android-v2",
   "version": "1.0.0",
   "private": true,
   "scripts": {
     "android:dev": "zsh -lc 'source ~/.zshrc >/dev/null 2>&1 || true; if ! command -v adb >/dev/null 2>&1; then echo adb not found in PATH after loading ~/.zshrc; exit 1; fi; if ! adb devices | grep -qE \"(^|[[:space:]])device$\"; then echo no connected Android device or emulator found; exit 1; fi; cd dev-app && ../gradlew :dev-app:installDebug'",
     "build:android": "zsh -lc 'source ~/.zshrc >/dev/null 2>&1 || true; cd . && ./gradlew :adapter-lib:assembleDebug :dev-app:assembleDebug'",
-    "android:start": "zsh -lc 'source ~/.zshrc >/dev/null 2>&1 || true; if ! command -v adb >/dev/null 2>&1; then echo adb not found in PATH after loading ~/.zshrc; exit 1; fi; if ! adb devices | grep -qE \"(^|[[:space:]])device$\"; then echo no connected Android device or emulator found; exit 1; fi; adb shell am start -n com.impos2.adapterv2.dev/.MainActivity'",
-    "android:all": "zsh -lc 'source ~/.zshrc >/dev/null 2>&1 || true; if ! command -v adb >/dev/null 2>&1; then echo adb not found in PATH after loading ~/.zshrc; exit 1; fi; if ! adb devices | grep -qE \"(^|[[:space:]])device$\"; then echo no connected Android device or emulator found; exit 1; fi; cd . && ./gradlew :adapter-lib:assembleDebug :dev-app:installDebug && adb shell am start -n com.impos2.adapterv2.dev/.MainActivity'"
+    "android:start": "zsh -lc 'source ~/.zshrc >/dev/null 2>&1 || true; if ! command -v adb >/dev/null 2>&1; then echo adb not found in PATH after loading ~/.zshrc; exit 1; fi; if ! adb devices | grep -qE \"(^|[[:space:]])device$\"; then echo no connected Android device or emulator found; exit 1; fi; adb shell am start -n com.next.adapterv2.dev/.MainActivity'",
+    "android:all": "zsh -lc 'source ~/.zshrc >/dev/null 2>&1 || true; if ! command -v adb >/dev/null 2>&1; then echo adb not found in PATH after loading ~/.zshrc; exit 1; fi; if ! adb devices | grep -qE \"(^|[[:space:]])device$\"; then echo no connected Android device or emulator found; exit 1; fi; cd . && ./gradlew :adapter-lib:assembleDebug :dev-app:installDebug && adb shell am start -n com.next.adapterv2.dev/.MainActivity'"
   }
 }
 ```
@@ -181,7 +181,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'org.jetbrains.kotlin.android'
 
 android {
-  namespace 'com.impos2.adapterv2'
+  namespace 'com.next.adapterv2'
   compileSdk rootProject.ext.compileSdkVersion
 
   defaultConfig {
@@ -216,9 +216,9 @@ Model `dev-app/build.gradle` and `AndroidManifest.xml` after `adapterPure/dev-ap
 
 ```groovy
 android {
-  namespace 'com.impos2.adapterv2.dev'
+  namespace 'com.next.adapterv2.dev'
   defaultConfig {
-    applicationId 'com.impos2.adapterv2.dev'
+    applicationId 'com.next.adapterv2.dev'
     minSdk rootProject.ext.minSdkVersion
     targetSdk rootProject.ext.targetSdkVersion
     versionCode 1
@@ -263,14 +263,14 @@ git commit -m "Scaffold the Android adapter v2 package with inherited native pro
 ## Task 3: Reuse the sound native managers from `adapterPure`
 
 **Files:**
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/device/**`
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/connector/**`
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/logger/**`
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/scripts/**`
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/appcontrol/**`
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/camera/**`
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/interfaces/**`
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/errors/**`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/device/**`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/connector/**`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/logger/**`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/scripts/**`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/appcontrol/**`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/camera/**`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/interfaces/**`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/errors/**`
 - Test: `3-adapter/android/adapter-android-v2/adapter-lib/**`
 
 - [ ] **Step 1: Port the old interfaces and models into the new namespace**
@@ -286,7 +286,7 @@ Copy the old interface structure first, preserving shape and comments where they
 
 Change only:
 
-1. package name from `com.impos2.adapter` to `com.impos2.adapterv2`
+1. package name from `com.next.adapter` to `com.next.adapterv2`
 2. references that still mention the old `LocalWebServer`
 
 - [ ] **Step 2: Port the sound native managers with minimal behavior changes**
@@ -328,14 +328,14 @@ git commit -m "Reuse the proven Android native managers in adapter v2"
 ## Task 4: Build the new native `topologyHost` aligned with `dual-topology-host`
 
 **Files:**
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/topologyhost/TopologyHostManager.kt`
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/topologyhost/TopologyHostService.kt`
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/topologyhost/TopologyHostServer.kt`
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/topologyhost/TopologyHostConfig.kt`
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/topologyhost/TopologyHostStats.kt`
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/topologyhost/http/**`
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/topologyhost/ws/**`
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/topologyhost/runtime/**`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/topologyhost/TopologyHostManager.kt`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/topologyhost/TopologyHostService.kt`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/topologyhost/TopologyHostServer.kt`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/topologyhost/TopologyHostConfig.kt`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/topologyhost/TopologyHostStats.kt`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/topologyhost/http/**`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/topologyhost/ws/**`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/topologyhost/runtime/**`
 - Modify: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/AndroidManifest.xml`
 - Test: `3-adapter/android/adapter-android-v2/adapter-lib/src/**`
 
@@ -456,8 +456,8 @@ git commit -m "Replace the old local web server with a native topology host alig
 ## Task 5: Turn `dev-app` into a native diagnostics and topology-host verification shell
 
 **Files:**
-- Create: `3-adapter/android/adapter-android-v2/dev-app/src/main/java/com/impos2/adapterv2/dev/MainActivity.kt`
-- Create: `3-adapter/android/adapter-android-v2/dev-app/src/main/java/com/impos2/adapterv2/dev/ui/**`
+- Create: `3-adapter/android/adapter-android-v2/dev-app/src/main/java/com/next/adapterv2/dev/MainActivity.kt`
+- Create: `3-adapter/android/adapter-android-v2/dev-app/src/main/java/com/next/adapterv2/dev/ui/**`
 - Test: `3-adapter/android/adapter-android-v2/dev-app/**`
 
 - [ ] **Step 1: Port the old diagnostics shell structure**
@@ -583,11 +583,11 @@ git commit -m "Scaffold the RN84 Android assembly v2 package from the proven hos
 ## Task 7: Rebuild the native assembly startup / restart / dual-screen host
 
 **Files:**
-- Create: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/impos2/mixcretailassemblyrn84/MainApplication.kt`
-- Create: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/impos2/mixcretailassemblyrn84/MainActivity.kt`
-- Create: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/impos2/mixcretailassemblyrn84/SecondaryActivity.kt`
-- Create: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/impos2/mixcretailassemblyrn84/startup/**`
-- Create: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/impos2/mixcretailassemblyrn84/restart/**`
+- Create: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/next/mixcretailassemblyrn84/MainApplication.kt`
+- Create: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/next/mixcretailassemblyrn84/MainActivity.kt`
+- Create: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/next/mixcretailassemblyrn84/SecondaryActivity.kt`
+- Create: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/next/mixcretailassemblyrn84/startup/**`
+- Create: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/next/mixcretailassemblyrn84/restart/**`
 - Test: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/**`
 
 - [ ] **Step 1: Port the old startup coordinator chain**
@@ -646,8 +646,8 @@ git commit -m "Rebuild the Android assembly startup and dual-screen orchestratio
 ## Task 8: Expose adapter capabilities through TurboModules and TS wrappers
 
 **Files:**
-- Create: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/impos2/mixcretailassemblyrn84/turbomodules/AdapterPackage.kt`
-- Create: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/impos2/mixcretailassemblyrn84/turbomodules/*TurboModule.kt`
+- Create: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/next/mixcretailassemblyrn84/turbomodules/AdapterPackage.kt`
+- Create: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/next/mixcretailassemblyrn84/turbomodules/*TurboModule.kt`
 - Create: `4-assembly/android/mixc-retail-assembly-rn84/src/turbomodules/*.ts`
 - Create: `4-assembly/android/mixc-retail-assembly-rn84/src/platform-ports/*.ts`
 - Test: `4-assembly/android/mixc-retail-assembly-rn84/src/**`
@@ -753,11 +753,11 @@ Create `createRuntime.ts` that:
 The module list should include the actual rebuilt runtime modules needed by the app, for example:
 
 1. kernel base topology / state / tcp / workflow modules required by the shell
-2. `@impos2/ui-base-runtime-react`
-3. `@impos2/ui-base-input-runtime`
-4. `@impos2/ui-base-admin-console`
-5. `@impos2/ui-base-terminal-console`
-6. `@impos2/ui-integration-retail-shell`
+2. `@next/ui-base-runtime-react`
+3. `@next/ui-base-input-runtime`
+4. `@next/ui-base-admin-console`
+5. `@next/ui-base-terminal-console`
+6. `@next/ui-integration-retail-shell`
 
 Do not create a fake old-style assembly module just to register things globally.
 

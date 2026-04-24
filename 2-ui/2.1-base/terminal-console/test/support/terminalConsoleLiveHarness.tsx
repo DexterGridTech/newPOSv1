@@ -1,9 +1,9 @@
-import type {PlatformPorts} from '@impos2/kernel-base-platform-ports'
-import type {KernelRuntimeModuleV2} from '@impos2/kernel-base-runtime-shell-v2'
+import type {PlatformPorts} from '@next/kernel-base-platform-ports'
+import type {KernelRuntimeModuleV2} from '@next/kernel-base-runtime-shell-v2'
 import {
     createCommand,
     runtimeShellV2CommandDefinitions,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {
     createLivePlatform,
     createFetchTransport,

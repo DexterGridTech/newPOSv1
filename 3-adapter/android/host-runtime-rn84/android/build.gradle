@@ -8,12 +8,12 @@ def safeExt = { name, fallback ->
 
 react {
   jsRootDir = file("..")
-  libraryName = "Impos2HostRuntimeRN84Spec"
-  codegenJavaPackageName = "com.impos2.hostruntimern84.turbomodules"
+  libraryName = "NextHostRuntimeRN84Spec"
+  codegenJavaPackageName = "com.next.hostruntimern84.turbomodules"
 }
 
 android {
-  namespace 'com.impos2.hostruntimern84'
+  namespace 'com.next.hostruntimern84'
   compileSdk safeExt('compileSdkVersion', 35)
 
   defaultConfig {

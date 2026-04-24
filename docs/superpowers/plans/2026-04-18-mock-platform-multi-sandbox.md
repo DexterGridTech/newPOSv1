@@ -421,7 +421,7 @@ export interface SessionItem {
 
 - [ ] **Step 5: Type-check the web app**
 
-Run: `corepack yarn workspace @impos2/mock-terminal-platform-web type-check`
+Run: `corepack yarn workspace @next/mock-terminal-platform-web type-check`
 
 Expected: PASS
 
@@ -472,7 +472,7 @@ Add `1-kernel/1.1-base/tcp-control-runtime-v2/src/features/slices/tcpSandbox.ts`
 
 ```ts
 import {createSlice, type PayloadAction} from '@reduxjs/toolkit'
-import type {StateRuntimeSliceDescriptor} from '@impos2/kernel-base-state-runtime'
+import type {StateRuntimeSliceDescriptor} from '@next/kernel-base-state-runtime'
 import {TCP_SANDBOX_STATE_KEY} from '../../foundations/stateKeys'
 
 type TcpSandboxState = {
@@ -820,11 +820,11 @@ Expected: PASS
 
 - [ ] **Step 3: Run server and web type-check**
 
-Run: `corepack yarn workspace @impos2/mock-terminal-platform-server type-check`
+Run: `corepack yarn workspace @next/mock-terminal-platform-server type-check`
 
 Expected: PASS
 
-Run: `corepack yarn workspace @impos2/mock-terminal-platform-web type-check`
+Run: `corepack yarn workspace @next/mock-terminal-platform-web type-check`
 
 Expected: PASS
 

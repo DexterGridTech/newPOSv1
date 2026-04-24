@@ -5,7 +5,7 @@ import {
     useOptionalUiAutomationRuntimeId,
     useOptionalUiAutomationTarget,
     useUiRuntime,
-} from '@impos2/ui-base-runtime-react'
+} from '@next/ui-base-runtime-react'
 import type {CateringWelcomeScreenProps} from '../../types'
 
 const welcomeCardShadowStyle = {

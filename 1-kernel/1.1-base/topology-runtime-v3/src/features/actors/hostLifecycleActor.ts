@@ -3,8 +3,8 @@ import {
     createModuleActorFactory,
     onCommand,
     type ActorDefinition,
-} from '@impos2/kernel-base-runtime-shell-v2'
-import type {TopologyHostAddressInfo} from '@impos2/kernel-base-platform-ports'
+} from '@next/kernel-base-runtime-shell-v2'
+import type {TopologyHostAddressInfo} from '@next/kernel-base-platform-ports'
 import {moduleName} from '../../moduleName'
 import {topologyRuntimeV3CommandDefinitions} from '../commands'
 import {topologyRuntimeV3StateActions} from '../slices'

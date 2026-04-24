@@ -14,7 +14,7 @@ const {
     createNativeStateStorageMock: vi.fn(),
 }))
 
-vi.mock('@impos2/kernel-base-tdp-sync-runtime-v2', () => ({
+vi.mock('@next/kernel-base-tdp-sync-runtime-v2', () => ({
     buildHotUpdateVersionReportPayload: buildHotUpdateVersionReportPayloadMock,
 }))
 
@@ -22,7 +22,7 @@ vi.mock('../../src/platform-ports', () => ({
     createAssemblyFetchTransport: createAssemblyFetchTransportMock,
 }))
 
-vi.mock('@impos2/kernel-base-transport-runtime', () => ({
+vi.mock('@next/kernel-base-transport-runtime', () => ({
     resolveTransportServers: resolveTransportServersMock,
     selectTransportSelectedServerSpace: selectTransportSelectedServerSpaceMock,
 }))
@@ -31,7 +31,7 @@ vi.mock('../../src/turbomodules/stateStorage', () => ({
     createNativeStateStorage: createNativeStateStorageMock,
 }))
 
-vi.mock('@impos2/kernel-server-config-v2', () => ({
+vi.mock('@next/kernel-server-config-v2', () => ({
     SERVER_NAME_MOCK_TERMINAL_PLATFORM: 'mock-terminal-platform',
     kernelBaseDevServerConfig: {
         selectedSpace: 'kernel-base-dev',

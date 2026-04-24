@@ -2,12 +2,12 @@ import type {
     KernelRuntimeModuleV2,
     RuntimeModuleContextV2,
     RuntimeModulePreSetupContextV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {
     createRuntimeModuleLifecycleLogger,
     defineKernelRuntimeModuleV2,
     deriveKernelRuntimeModuleDescriptorV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {moduleName} from '../moduleName'
 import {createTdpSyncActorDefinitionsV2} from '../features/actors'
 import {createTopicChangePublisherFingerprintV2} from '../foundations/topicChangePublisher'
@@ -18,11 +18,11 @@ import {
 import {createTdpSyncHttpServiceV2} from '../foundations/httpService'
 import {
     resolveHttpUrlCandidates,
-} from '@impos2/kernel-base-transport-runtime'
+} from '@next/kernel-base-transport-runtime'
 import {
     selectTopologyRuntimeV3Context,
-} from '@impos2/kernel-base-topology-runtime-v3'
-import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-topology-runtime-v3'
+import {createCommand} from '@next/kernel-base-runtime-shell-v2'
 import {
     selectTdpHotUpdateCandidate,
     selectTdpHotUpdateCurrent,
@@ -32,7 +32,7 @@ import {
 } from '../selectors'
 import {tdpHotUpdateActions} from '../features/slices'
 import {tdpSyncV2CommandDefinitions} from '../features/commands'
-import {SERVER_NAME_MOCK_TERMINAL_PLATFORM} from '@impos2/kernel-server-config-v2'
+import {SERVER_NAME_MOCK_TERMINAL_PLATFORM} from '@next/kernel-server-config-v2'
 import type {CreateTdpSyncRuntimeModuleV2Input} from '../types'
 import {tdpSyncRuntimeV2ModuleManifest} from './moduleManifest'
 import {tdpSyncV2ParameterDefinitions} from '../supports/parameters'

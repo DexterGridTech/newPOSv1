@@ -17,11 +17,11 @@ vi.mock('../../src/turbomodules', () => ({
     },
 }))
 
-import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
-import {tdpSyncV2CommandDefinitions} from '@impos2/kernel-base-tdp-sync-runtime-v2'
+import {createCommand} from '@next/kernel-base-runtime-shell-v2'
+import {tdpSyncV2CommandDefinitions} from '@next/kernel-base-tdp-sync-runtime-v2'
 import {reportAppLoadComplete} from '../../src/application/reportAppLoadComplete'
 import {syncHotUpdateStateFromNativeBoot} from '../../src/application/syncHotUpdateStateFromNativeBoot'
-import {releaseInfo} from '../../src/generated/releaseInfo'
+import {releaseInfo} from '@next/host-runtime-rn84/src/generated/releaseInfo'
 
 const embeddedRelease = {
     appId: releaseInfo.appId,
@@ -49,8 +49,8 @@ describe('assembly report app load complete', () => {
         expect(hideLoadingMock).toHaveBeenCalledTimes(1)
         expect(hideLoadingMock).toHaveBeenCalledWith(1)
         expect(loggerLogMock).toHaveBeenCalledTimes(2)
-        expect(loggerLogMock.mock.calls[0]?.[0]).toBe('assembly.android.mixc-catering-rn84.boot')
-        expect(loggerLogMock.mock.calls[1]?.[0]).toBe('assembly.android.mixc-catering-rn84.boot')
+        expect(loggerLogMock.mock.calls[0]?.[0]).toBe('adapter.android.host-runtime-rn84.boot')
+        expect(loggerLogMock.mock.calls[1]?.[0]).toBe('adapter.android.host-runtime-rn84.boot')
         expect(loggerLogMock.mock.calls[0]?.[1]).toContain('"stage":"app-load-complete:start"')
         expect(loggerLogMock.mock.calls[1]?.[1]).toContain('"stage":"app-load-complete:done"')
         expect(result).toEqual({terminalState: 'RUNNING'})

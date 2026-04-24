@@ -1,7 +1,7 @@
 import React from 'react'
 import {Text, TouchableOpacity, View} from 'react-native'
-import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
-import {topologyRuntimeV3CommandDefinitions} from '@impos2/kernel-base-topology-runtime-v3'
+import {createCommand} from '@next/kernel-base-runtime-shell-v2'
+import {topologyRuntimeV3CommandDefinitions} from '@next/kernel-base-topology-runtime-v3'
 import {
     defineUiModalPart,
     defineUiScreenPart,

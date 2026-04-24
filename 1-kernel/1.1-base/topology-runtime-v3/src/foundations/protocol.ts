@@ -1,7 +1,7 @@
 import {
     JsonSocketCodec,
     defineSocketProfile,
-} from '@impos2/kernel-base-transport-runtime'
+} from '@next/kernel-base-transport-runtime'
 import type {
     TopologyV3IncomingMessage,
     TopologyV3OutgoingMessage,

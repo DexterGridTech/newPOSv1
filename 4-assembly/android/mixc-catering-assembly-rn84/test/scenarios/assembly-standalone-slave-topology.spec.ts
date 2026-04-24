@@ -2,7 +2,7 @@ import {describe, expect, it, vi} from 'vitest'
 import {
     createTopologyV3MasterLocatorFromSharePayload,
     parseTopologyV3SharePayload,
-} from '@impos2/kernel-base-topology-runtime-v3'
+} from '@next/kernel-base-topology-runtime-v3'
 import {
     createAssemblyTopologyBindingSource,
 } from '../../src/application/topology'

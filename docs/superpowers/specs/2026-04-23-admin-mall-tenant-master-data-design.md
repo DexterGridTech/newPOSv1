@@ -91,9 +91,9 @@ The three `1-kernel/1.2-business` packages are:
 
 | Directory | Published package | Module name | Responsibility |
 | --- | --- | --- | --- |
-| `organization-iam-master-data` | `@impos2/kernel-business-organization-iam-master-data` | `kernel.business.organization-iam-master-data` | Organization and store-level IAM master data |
-| `catering-product-master-data` | `@impos2/kernel-business-catering-product-master-data` | `kernel.business.catering-product-master-data` | Catering product, menu, price, modifier, combo, and production-profile master data |
-| `catering-store-operating-master-data` | `@impos2/kernel-business-catering-store-operating-master-data` | `kernel.business.catering-store-operating-master-data` | Catering store operation, availability, stock, sold-out, and operating-config master data |
+| `organization-iam-master-data` | `@next/kernel-business-organization-iam-master-data` | `kernel.business.organization-iam-master-data` | Organization and store-level IAM master data |
+| `catering-product-master-data` | `@next/kernel-business-catering-product-master-data` | `kernel.business.catering-product-master-data` | Catering product, menu, price, modifier, combo, and production-profile master data |
+| `catering-store-operating-master-data` | `@next/kernel-business-catering-store-operating-master-data` | `kernel.business.catering-store-operating-master-data` | Catering store operation, availability, stock, sold-out, and operating-config master data |
 
 Dependency rules:
 
@@ -426,7 +426,7 @@ Directory:
 
 Workspace package:
 
-`@impos2/mock-admin-mall-tenant-console`
+`@next/mock-admin-mall-tenant-console`
 
 Technology:
 
@@ -684,7 +684,7 @@ Directory:
 
 Published package:
 
-`@impos2/ui-business-catering-master-data-workbench`
+`@next/ui-business-catering-master-data-workbench`
 
 Module name:
 

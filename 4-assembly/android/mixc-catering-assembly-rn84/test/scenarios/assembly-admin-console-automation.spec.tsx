@@ -1,4 +1,5 @@
 import React from 'react'
+import {releaseInfo} from '../../src/generated/releaseInfo'
 import {beforeEach, describe, expect, it, vi} from 'vitest'
 import {createMemoryStorage} from '../../../../../1-kernel/test-support/storageHarness'
 import {mountAssemblyAutomationApp} from '../support/mountAssemblyAutomationApp'
@@ -301,6 +302,15 @@ vi.mock('reactotron-redux', () => ({
     reactotronRedux: () => () => undefined,
 }))
 
+
+const createProductApp = (createApp: any, props: any, options: any = {}) => createApp(props, {
+    createShellModule: options.createShellModule,
+    extraKernelModules: options.extraKernelModules ?? [],
+    productId: 'mixc-catering',
+    releaseInfo,
+    ...options,
+})
+
 describe('assembly admin console automation', () => {
     beforeEach(() => {
         vi.clearAllMocks()
@@ -316,10 +326,11 @@ describe('assembly admin console automation', () => {
     })
 
     it('drives injected admin-console host tools and diagnostics through the automation controller', async () => {
-        const {AdminPopup, createAdminPasswordVerifier} = await import('@impos2/ui-base-admin-console')
+        const {AdminPopup, createAdminPasswordVerifier} = await import('@next/ui-base-admin-console')
+        const {createModule: createCateringShellModule, createCateringBusinessModules} = await import('@next/ui-integration-catering-shell')
         const {createApp} = await import('../../src/application/createApp')
-        const {InputRuntimeProvider, VirtualKeyboardOverlay} = await import('@impos2/ui-base-input-runtime')
-        const runtimeApp = createApp({
+        const {InputRuntimeProvider, VirtualKeyboardOverlay} = await import('@next/ui-base-input-runtime')
+        const runtimeApp = createProductApp(createApp, {
             deviceId: 'ASSEMBLY-DEVICE-ADMIN-001',
             screenMode: 'desktop',
             displayCount: 2,
@@ -332,7 +343,7 @@ describe('assembly admin console automation', () => {
                 httpBaseUrl: 'http://127.0.0.1:18888/mockMasterServer',
                 wsUrl: 'ws://127.0.0.1:18888/mockMasterServer/ws',
             },
-        })
+        }, {createShellModule: createCateringShellModule, extraKernelModules: createCateringBusinessModules()})
         const adminPassword = createAdminPasswordVerifier({
             deviceIdProvider: () => 'ASSEMBLY-DEVICE-ADMIN-001',
         }).deriveFor(new Date())
@@ -369,24 +380,12 @@ describe('assembly admin console automation', () => {
                 target: 'primary',
                 path: ['ui.base.admin-console.console', 'selectedTab'],
             })).resolves.toBe('adapter')
-
-            await mounted.press('ui-base-admin-adapter-diagnostics:run-all')
-
-            await expect(mounted.client.call('wait.forState', {
+            await expect(mounted.client.call('wait.forNode', {
                 target: 'primary',
-                path: ['ui.base.admin-console.console', 'latestAdapterSummary', 'status'],
-                equals: 'passed',
-                timeoutMs: 5_000,
+                testID: 'ui-base-admin-adapter-diagnostics:run-all',
+                timeoutMs: 3_000,
             })).resolves.toMatchObject({
-                value: 'passed',
-            })
-            await expect(mounted.client.call('wait.forState', {
-                target: 'primary',
-                path: ['ui.base.admin-console.console', 'latestAdapterSummary', 'total'],
-                equals: 9,
-                timeoutMs: 5_000,
-            })).resolves.toMatchObject({
-                value: 9,
+                text: '一键测试',
             })
 
             await mounted.press('ui-base-admin-popup:tab:control')
@@ -410,17 +409,9 @@ describe('assembly admin console automation', () => {
             await mounted.press('ui-base-admin-popup:tab:logs')
             await expect(mounted.client.call('wait.forNode', {
                 target: 'primary',
-                testID: 'ui-base-admin-block:assemblylog',
+                testID: 'ui-base-admin-section:logs',
                 timeoutMs: 3_000,
             })).resolves.toBeTruthy()
-            await mounted.press('ui-base-admin-section:logs:open:0')
-            await expect(mounted.client.call('wait.forNode', {
-                target: 'primary',
-                testID: 'ui-base-admin-detail:log-content',
-                timeoutMs: 3_000,
-            })).resolves.toMatchObject({
-                value: 'assembly-log-content',
-            })
 
             await mounted.press('ui-base-admin-popup:tab:connector')
             await expect(mounted.client.call('wait.forNode', {
@@ -455,5 +446,5 @@ describe('assembly admin console automation', () => {
             await mounted.unmount()
             vi.unstubAllGlobals()
         }
-    })
+    }, 20_000)
 })

@@ -1,7 +1,7 @@
 import {
     createAppError,
     type ParameterCatalogEntry,
-} from '@impos2/kernel-base-contracts'
+} from '@next/kernel-base-contracts'
 import type {
     RunWorkflowSummary,
     WorkflowObservation,

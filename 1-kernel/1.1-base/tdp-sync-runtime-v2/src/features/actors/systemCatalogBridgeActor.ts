@@ -1,11 +1,11 @@
-import {createModuleActorFactory} from '@impos2/kernel-base-runtime-shell-v2'
+import {createModuleActorFactory} from '@next/kernel-base-runtime-shell-v2'
 import {
     createCommand,
     onCommand,
     runtimeShellV2CommandDefinitions,
     type ActorDefinition,
-} from '@impos2/kernel-base-runtime-shell-v2'
-import type {ErrorCatalogEntry, ParameterCatalogEntry} from '@impos2/kernel-base-contracts'
+} from '@next/kernel-base-runtime-shell-v2'
+import type {ErrorCatalogEntry, ParameterCatalogEntry} from '@next/kernel-base-contracts'
 import {moduleName} from '../../moduleName'
 import {tdpSyncV2CommandDefinitions} from '../commands'
 import {TDP_SYSTEM_TOPIC_KEYS} from '../../foundations/topicChangePublisher'

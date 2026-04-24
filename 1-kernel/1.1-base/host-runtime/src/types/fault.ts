@@ -3,7 +3,7 @@ import type {
     NodeId,
     SessionId,
     TimestampMs,
-} from '@impos2/kernel-base-contracts'
+} from '@next/kernel-base-contracts'
 import type {HostRelayChannel} from './relay'
 
 export interface HostFaultRuleBase {

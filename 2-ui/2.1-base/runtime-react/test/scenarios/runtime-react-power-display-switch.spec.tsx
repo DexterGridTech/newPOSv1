@@ -1,9 +1,9 @@
 import {describe, expect, it} from 'vitest'
-import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
+import {createCommand} from '@next/kernel-base-runtime-shell-v2'
 import {
     topologyRuntimeV3CommandDefinitions,
-} from '@impos2/kernel-base-topology-runtime-v3'
-import {selectUiOverlays} from '@impos2/kernel-base-ui-runtime-v2'
+} from '@next/kernel-base-topology-runtime-v3'
+import {selectUiOverlays} from '@next/kernel-base-ui-runtime-v2'
 import {createRuntimeReactHarness} from '../support/runtimeReactHarness'
 
 describe('runtime-react renderer boundary', () => {

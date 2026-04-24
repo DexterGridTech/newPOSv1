@@ -1,5 +1,5 @@
-import {createCommand, type KernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
-import {uiRuntimeV2CommandDefinitions} from '@impos2/kernel-base-ui-runtime-v2'
+import {createCommand, type KernelRuntimeV2} from '@next/kernel-base-runtime-shell-v2'
+import {uiRuntimeV2CommandDefinitions} from '@next/kernel-base-ui-runtime-v2'
 import type {UiScreenPartDefinition} from '../types'
 
 export const createUiNavigationBridge = (runtime: KernelRuntimeV2) => ({

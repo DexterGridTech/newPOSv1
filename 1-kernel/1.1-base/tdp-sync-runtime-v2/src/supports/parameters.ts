@@ -3,7 +3,7 @@ import {
     integerAtLeast,
     listDefinitions,
     positiveFiniteNumber,
-} from '@impos2/kernel-base-contracts'
+} from '@next/kernel-base-contracts'
 import {moduleName} from '../moduleName'
 
 const reconnectAttemptCount = integerAtLeast(-1)

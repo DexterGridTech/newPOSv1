@@ -144,12 +144,12 @@ test/
 新版 runtime 推荐从 `runtime-shell-v2` 的 `createKernelRuntimeApp` 启动。
 
 ```ts
-import {createKernelRuntimeApp} from '@impos2/kernel-base-runtime-shell-v2'
-import {createTcpControlRuntimeModuleV2} from '@impos2/kernel-base-tcp-control-runtime-v2'
-import {createTdpSyncRuntimeModuleV2} from '@impos2/kernel-base-tdp-sync-runtime-v2'
-import {createTopologyRuntimeModuleV3} from '@impos2/kernel-base-topology-runtime-v3'
-import {createUiRuntimeModuleV2} from '@impos2/kernel-base-ui-runtime-v2'
-import {createWorkflowRuntimeModuleV2} from '@impos2/kernel-base-workflow-runtime-v2'
+import {createKernelRuntimeApp} from '@next/kernel-base-runtime-shell-v2'
+import {createTcpControlRuntimeModuleV2} from '@next/kernel-base-tcp-control-runtime-v2'
+import {createTdpSyncRuntimeModuleV2} from '@next/kernel-base-tdp-sync-runtime-v2'
+import {createTopologyRuntimeModuleV3} from '@next/kernel-base-topology-runtime-v3'
+import {createUiRuntimeModuleV2} from '@next/kernel-base-ui-runtime-v2'
+import {createWorkflowRuntimeModuleV2} from '@next/kernel-base-workflow-runtime-v2'
 
 const app = createKernelRuntimeApp({
     runtimeName: 'pos-main-runtime',
@@ -201,7 +201,7 @@ import {
     createModuleActorFactory,
     createModuleCommandFactory,
     onCommand,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {moduleName} from '../moduleName'
 
 const defineCommand = createModuleCommandFactory(moduleName)
@@ -495,7 +495,7 @@ HTTP 服务测试要求：
 
 ### contracts
 
-包名：`@impos2/kernel-base-contracts`
+包名：`@next/kernel-base-contracts`
 
 定位：跨包共享语言层。
 
@@ -527,7 +527,7 @@ HTTP 服务测试要求：
 
 ### definition-registry
 
-包名：`@impos2/kernel-base-definition-registry`
+包名：`@next/kernel-base-definition-registry`
 
 定位：error/parameter 定义注册与解析层。
 
@@ -561,7 +561,7 @@ HTTP 服务测试要求：
 
 ### execution-runtime
 
-包名：`@impos2/kernel-base-execution-runtime`
+包名：`@next/kernel-base-execution-runtime`
 
 定位：低层 command 执行原语。
 
@@ -592,7 +592,7 @@ HTTP 服务测试要求：
 
 ### host-runtime
 
-包名：`@impos2/kernel-base-host-runtime`
+包名：`@next/kernel-base-host-runtime`
 
 定位：双机 host 纯控制面内核。
 
@@ -626,7 +626,7 @@ HTTP 服务测试要求：
 
 ### platform-ports
 
-包名：`@impos2/kernel-base-platform-ports`
+包名：`@next/kernel-base-platform-ports`
 
 定位：kernel 到宿主平台的端口层。
 
@@ -661,7 +661,7 @@ HTTP 服务测试要求：
 
 ### runtime-shell-v2
 
-包名：`@impos2/kernel-base-runtime-shell-v2`
+包名：`@next/kernel-base-runtime-shell-v2`
 
 定位：新版 kernel 唯一 runtime shell。
 
@@ -702,7 +702,7 @@ HTTP 服务测试要求：
 
 ### state-runtime
 
-包名：`@impos2/kernel-base-state-runtime`
+包名：`@next/kernel-base-state-runtime`
 
 定位：Redux、持久化、同步声明的统一基座。
 
@@ -738,7 +738,7 @@ HTTP 服务测试要求：
 
 ### tcp-control-runtime-v2
 
-包名：`@impos2/kernel-base-tcp-control-runtime-v2`
+包名：`@next/kernel-base-tcp-control-runtime-v2`
 
 定位：终端控制平面 runtime。
 
@@ -772,7 +772,7 @@ HTTP 服务测试要求：
 
 ### tdp-sync-runtime-v2
 
-包名：`@impos2/kernel-base-tdp-sync-runtime-v2`
+包名：`@next/kernel-base-tdp-sync-runtime-v2`
 
 定位：终端数据平面同步 runtime。
 
@@ -811,7 +811,7 @@ HTTP 服务测试要求：
 
 ### topology-runtime-v3
 
-包名：`@impos2/kernel-base-topology-runtime-v3`
+包名：`@next/kernel-base-topology-runtime-v3`
 
 定位：主副机拓扑 runtime。
 
@@ -848,7 +848,7 @@ HTTP 服务测试要求：
 
 ### transport-runtime
 
-包名：`@impos2/kernel-base-transport-runtime`
+包名：`@next/kernel-base-transport-runtime`
 
 定位：HTTP/WS transport 基础设施。
 
@@ -883,7 +883,7 @@ HTTP 服务测试要求：
 
 ### ui-runtime-v2
 
-包名：`@impos2/kernel-base-ui-runtime-v2`
+包名：`@next/kernel-base-ui-runtime-v2`
 
 定位：UI runtime 基础能力。
 
@@ -917,7 +917,7 @@ HTTP 服务测试要求：
 
 ### workflow-runtime-v2
 
-包名：`@impos2/kernel-base-workflow-runtime-v2`
+包名：`@next/kernel-base-workflow-runtime-v2`
 
 定位：动态 workflow runtime。
 

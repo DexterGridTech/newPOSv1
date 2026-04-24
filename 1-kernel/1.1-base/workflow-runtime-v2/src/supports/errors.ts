@@ -1,4 +1,4 @@
-import {createModuleErrorFactory, listDefinitions} from '@impos2/kernel-base-contracts'
+import {createModuleErrorFactory, listDefinitions} from '@next/kernel-base-contracts'
 import {moduleName} from '../moduleName'
 
 const defineError = createModuleErrorFactory(moduleName)

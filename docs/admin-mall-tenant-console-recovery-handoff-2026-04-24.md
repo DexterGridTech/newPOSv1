@@ -103,9 +103,9 @@
 以下验证已经通过：
 
 1. `node --import tsx scripts/mock-admin-console-contract.test.mjs`
-2. `corepack yarn workspace @impos2/mock-admin-mall-tenant-console-web type-check`
-3. `corepack yarn workspace @impos2/mock-admin-mall-tenant-console-web build`
-4. `corepack yarn workspace @impos2/mock-admin-mall-tenant-console-server build`
+2. `corepack yarn workspace @next/mock-admin-mall-tenant-console-web type-check`
+3. `corepack yarn workspace @next/mock-admin-mall-tenant-console-web build`
+4. `corepack yarn workspace @next/mock-admin-mall-tenant-console-server build`
 5. Playwright CLI 真实页面链路验证：
    - `tenant -> store -> contract monitor`
    - 组织页可以收敛到 `1 in scope`
@@ -152,9 +152,9 @@
 做完 IAM 改造后的标准验证顺序：
 
 1. `node --import tsx scripts/mock-admin-console-contract.test.mjs`
-2. `corepack yarn workspace @impos2/mock-admin-mall-tenant-console-web type-check`
-3. `corepack yarn workspace @impos2/mock-admin-mall-tenant-console-web build`
-4. `corepack yarn workspace @impos2/mock-admin-mall-tenant-console-server build`
+2. `corepack yarn workspace @next/mock-admin-mall-tenant-console-web type-check`
+3. `corepack yarn workspace @next/mock-admin-mall-tenant-console-web build`
+4. `corepack yarn workspace @next/mock-admin-mall-tenant-console-server build`
 5. 再跑真实浏览器 IAM 链路验证
 
 ## 9. 新会话推荐提示词

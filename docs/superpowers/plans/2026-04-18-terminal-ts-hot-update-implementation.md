@@ -119,7 +119,7 @@
   RN Codegen spec。
 - Create: `4-assembly/android/mixc-retail-assembly-rn84/src/turbomodules/hotUpdate.ts`
   JS bridge。
-- Create: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/impos2/mixcretailassemblyrn84/turbomodules/HotUpdateTurboModule.kt`
+- Create: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/next/mixcretailassemblyrn84/turbomodules/HotUpdateTurboModule.kt`
   Android 下载/校验/解压/boot marker helper。
 - Create: `1-kernel/1.1-base/tdp-sync-runtime-v2/src/features/actors/hotUpdateActor.ts`
   真实下载/ready 编排 actor。
@@ -132,11 +132,11 @@
 
 ### Slice 4: Assembly bundle resolver and rollback
 
-- Modify: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/impos2/mixcretailassemblyrn84/MainApplication.kt`
+- Modify: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/next/mixcretailassemblyrn84/MainApplication.kt`
   覆写 `getJSBundleFile()` 或等价接口，读取 boot marker / ready bundle 路径。
-- Create: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/impos2/mixcretailassemblyrn84/HotUpdateBundleResolver.kt`
+- Create: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/next/mixcretailassemblyrn84/HotUpdateBundleResolver.kt`
   Android bundle resolver。
-- Create: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/impos2/mixcretailassemblyrn84/HotUpdateBootMarkerStore.kt`
+- Create: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/next/mixcretailassemblyrn84/HotUpdateBootMarkerStore.kt`
   原子写 boot marker。
 - Modify: `4-assembly/android/mixc-retail-assembly-rn84/src/application/reportAppLoadComplete.ts`
   接入 load-complete success report hook。
@@ -251,7 +251,7 @@ describe('tdp hot update compatibility', () => {
 
 - [ ] **Step 2: 运行聚焦单测，确认现在失败**
 
-Run: `corepack yarn workspace @impos2/kernel-base-tdp-sync-runtime-v2 test test/scenarios/tdp-sync-runtime-v2-hot-update-compatibility.spec.ts`
+Run: `corepack yarn workspace @next/kernel-base-tdp-sync-runtime-v2 test test/scenarios/tdp-sync-runtime-v2-hot-update-compatibility.spec.ts`
 
 Expected: FAIL，提示 `evaluateHotUpdateCompatibility` 和 hot update 类型尚不存在。
 
@@ -481,7 +481,7 @@ export const evaluateHotUpdateCompatibility = (input: {
 
 - [ ] **Step 5: 运行聚焦单测，确认兼容性函数通过**
 
-Run: `corepack yarn workspace @impos2/kernel-base-tdp-sync-runtime-v2 test test/scenarios/tdp-sync-runtime-v2-hot-update-compatibility.spec.ts`
+Run: `corepack yarn workspace @next/kernel-base-tdp-sync-runtime-v2 test test/scenarios/tdp-sync-runtime-v2-hot-update-compatibility.spec.ts`
 
 Expected: PASS
 
@@ -618,7 +618,7 @@ describe('tdp hot update state reducer', () => {
 
 ```ts
 import {createSlice, type PayloadAction} from '@reduxjs/toolkit'
-import type {StateRuntimeSliceDescriptor} from '@impos2/kernel-base-state-runtime'
+import type {StateRuntimeSliceDescriptor} from '@next/kernel-base-state-runtime'
 import type {
   HotUpdateCurrentFacts,
   HotUpdateHistoryItem,
@@ -799,7 +799,7 @@ export const tdpHotUpdateSliceDescriptor: StateRuntimeSliceDescriptor<HotUpdateS
 `selectors/hotUpdate.ts` 至少包含：
 
 ```ts
-import type {RootState} from '@impos2/kernel-base-state-runtime'
+import type {RootState} from '@next/kernel-base-state-runtime'
 import {TDP_HOT_UPDATE_STATE_KEY} from '../features/slices/tdpHotUpdate'
 import type {HotUpdateState} from '../types'
 
@@ -815,11 +815,11 @@ export const selectTdpHotUpdateCandidate = (state: RootState) =>
 
 - [ ] **Step 9: 运行 Slice 1 的单元测试与 type-check**
 
-Run: `corepack yarn workspace @impos2/kernel-base-tdp-sync-runtime-v2 test test/scenarios/tdp-sync-runtime-v2-hot-update-compatibility.spec.ts test/scenarios/tdp-sync-runtime-v2-hot-update-state.spec.ts`
+Run: `corepack yarn workspace @next/kernel-base-tdp-sync-runtime-v2 test test/scenarios/tdp-sync-runtime-v2-hot-update-compatibility.spec.ts test/scenarios/tdp-sync-runtime-v2-hot-update-state.spec.ts`
 
 Expected: PASS
 
-Run: `corepack yarn workspace @impos2/kernel-base-tdp-sync-runtime-v2 type-check`
+Run: `corepack yarn workspace @next/kernel-base-tdp-sync-runtime-v2 type-check`
 
 Expected: PASS
 
@@ -920,7 +920,7 @@ it('rehydrates hot update desired and pending candidate after real restart', asy
 在 `hotUpdateProjectionReducer.ts` 提供：
 
 ```ts
-import type {KernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
+import type {KernelRuntimeV2} from '@next/kernel-base-runtime-shell-v2'
 import {selectTdpResolvedProjection} from '../selectors'
 import {tdpHotUpdateActions} from '../features/slices/tdpHotUpdate'
 import {TDP_HOT_UPDATE_ITEM_KEY, TDP_HOT_UPDATE_TOPIC} from './hotUpdateTopic'
@@ -986,11 +986,11 @@ reconcileDesired(state, action: PayloadAction<{
 
 - [ ] **Step 4: 运行 live restart recovery 测试与 type-check**
 
-Run: `corepack yarn workspace @impos2/kernel-base-tdp-sync-runtime-v2 test test/scenarios/tdp-sync-runtime-v2-live-hot-update-restart-recovery.spec.ts`
+Run: `corepack yarn workspace @next/kernel-base-tdp-sync-runtime-v2 test test/scenarios/tdp-sync-runtime-v2-live-hot-update-restart-recovery.spec.ts`
 
 Expected: PASS
 
-Run: `corepack yarn workspace @impos2/kernel-base-tdp-sync-runtime-v2 type-check`
+Run: `corepack yarn workspace @next/kernel-base-tdp-sync-runtime-v2 type-check`
 
 Expected: PASS
 
@@ -1053,7 +1053,7 @@ sync: {
 
 - [ ] **Step 3: 运行主副屏同步测试**
 
-Run: `corepack yarn workspace @impos2/kernel-base-tdp-sync-runtime-v2 test test/scenarios/tdp-sync-runtime-v2-live-hot-update-master-slave-sync.spec.ts`
+Run: `corepack yarn workspace @next/kernel-base-tdp-sync-runtime-v2 test test/scenarios/tdp-sync-runtime-v2-live-hot-update-master-slave-sync.spec.ts`
 
 Expected: PASS
 
@@ -1068,12 +1068,12 @@ Expected: PASS
 Run:
 
 ```bash
-corepack yarn workspace @impos2/kernel-base-tdp-sync-runtime-v2 test \
+corepack yarn workspace @next/kernel-base-tdp-sync-runtime-v2 test \
   test/scenarios/tdp-sync-runtime-v2-hot-update-compatibility.spec.ts \
   test/scenarios/tdp-sync-runtime-v2-hot-update-state.spec.ts \
   test/scenarios/tdp-sync-runtime-v2-live-hot-update-restart-recovery.spec.ts \
   test/scenarios/tdp-sync-runtime-v2-live-hot-update-master-slave-sync.spec.ts
-corepack yarn workspace @impos2/kernel-base-tdp-sync-runtime-v2 type-check
+corepack yarn workspace @next/kernel-base-tdp-sync-runtime-v2 type-check
 ```
 
 Expected: 全部 PASS
@@ -1103,38 +1103,38 @@ Expected: 全部 PASS
 
 ### Slice 1
 
-- `corepack yarn workspace @impos2/kernel-base-tdp-sync-runtime-v2 test test/scenarios/tdp-sync-runtime-v2-hot-update-compatibility.spec.ts`
-- `corepack yarn workspace @impos2/kernel-base-tdp-sync-runtime-v2 test test/scenarios/tdp-sync-runtime-v2-hot-update-state.spec.ts`
-- `corepack yarn workspace @impos2/kernel-base-tdp-sync-runtime-v2 test test/scenarios/tdp-sync-runtime-v2-live-hot-update-restart-recovery.spec.ts`
-- `corepack yarn workspace @impos2/kernel-base-tdp-sync-runtime-v2 test test/scenarios/tdp-sync-runtime-v2-live-hot-update-master-slave-sync.spec.ts`
-- `corepack yarn workspace @impos2/kernel-base-tdp-sync-runtime-v2 type-check`
+- `corepack yarn workspace @next/kernel-base-tdp-sync-runtime-v2 test test/scenarios/tdp-sync-runtime-v2-hot-update-compatibility.spec.ts`
+- `corepack yarn workspace @next/kernel-base-tdp-sync-runtime-v2 test test/scenarios/tdp-sync-runtime-v2-hot-update-state.spec.ts`
+- `corepack yarn workspace @next/kernel-base-tdp-sync-runtime-v2 test test/scenarios/tdp-sync-runtime-v2-live-hot-update-restart-recovery.spec.ts`
+- `corepack yarn workspace @next/kernel-base-tdp-sync-runtime-v2 test test/scenarios/tdp-sync-runtime-v2-live-hot-update-master-slave-sync.spec.ts`
+- `corepack yarn workspace @next/kernel-base-tdp-sync-runtime-v2 type-check`
 
 ### Slice 2
 
 - `corepack yarn vitest run 0-mock-server/mock-terminal-platform/server/src/test/hot-update-api.spec.ts`
-- `corepack yarn workspace @impos2/mock-terminal-platform-server type-check`
-- `corepack yarn workspace @impos2/mock-terminal-platform-web type-check`
-- `corepack yarn workspace @impos2/mock-terminal-platform-web build`
+- `corepack yarn workspace @next/mock-terminal-platform-server type-check`
+- `corepack yarn workspace @next/mock-terminal-platform-web type-check`
+- `corepack yarn workspace @next/mock-terminal-platform-web build`
 
 ### Slice 3
 
-- `corepack yarn workspace @impos2/assembly-android-mixc-retail-rn84 test test/scenarios/assembly-hot-update-port.spec.ts`
-- `corepack yarn workspace @impos2/kernel-base-tdp-sync-runtime-v2 test test/scenarios/tdp-sync-runtime-v2-live-hot-update-ready.spec.ts`
-- `corepack yarn workspace @impos2/assembly-android-mixc-retail-rn84 type-check`
-- `corepack yarn workspace @impos2/kernel-base-tdp-sync-runtime-v2 type-check`
+- `corepack yarn workspace @next/assembly-android-mixc-retail-rn84 test test/scenarios/assembly-hot-update-port.spec.ts`
+- `corepack yarn workspace @next/kernel-base-tdp-sync-runtime-v2 test test/scenarios/tdp-sync-runtime-v2-live-hot-update-ready.spec.ts`
+- `corepack yarn workspace @next/assembly-android-mixc-retail-rn84 type-check`
+- `corepack yarn workspace @next/kernel-base-tdp-sync-runtime-v2 type-check`
 
 ### Slice 4
 
-- `corepack yarn workspace @impos2/assembly-android-mixc-retail-rn84 test test/scenarios/assembly-hot-update-bundle-resolver.spec.ts`
-- `corepack yarn workspace @impos2/assembly-android-mixc-retail-rn84 test test/scenarios/assembly-hot-update-rollback.spec.ts`
-- `corepack yarn workspace @impos2/assembly-android-mixc-retail-rn84 type-check`
+- `corepack yarn workspace @next/assembly-android-mixc-retail-rn84 test test/scenarios/assembly-hot-update-bundle-resolver.spec.ts`
+- `corepack yarn workspace @next/assembly-android-mixc-retail-rn84 test test/scenarios/assembly-hot-update-rollback.spec.ts`
+- `corepack yarn workspace @next/assembly-android-mixc-retail-rn84 type-check`
 
 ### Slice 5
 
 - `corepack yarn vitest run 0-mock-server/mock-terminal-platform/server/src/test/hot-update-version-report.spec.ts`
-- `corepack yarn workspace @impos2/mock-terminal-platform-server type-check`
-- `corepack yarn workspace @impos2/mock-terminal-platform-web type-check`
-- `corepack yarn workspace @impos2/mock-terminal-platform-web build`
+- `corepack yarn workspace @next/mock-terminal-platform-server type-check`
+- `corepack yarn workspace @next/mock-terminal-platform-web type-check`
+- `corepack yarn workspace @next/mock-terminal-platform-web build`
 
 ---
 

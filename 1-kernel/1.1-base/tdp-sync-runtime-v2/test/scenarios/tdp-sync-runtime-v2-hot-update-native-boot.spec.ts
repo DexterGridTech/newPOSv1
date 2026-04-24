@@ -1,11 +1,11 @@
 import {describe, expect, it, vi} from 'vitest'
-import {createNodeId} from '@impos2/kernel-base-contracts'
-import {createLoggerPort, createPlatformPorts} from '@impos2/kernel-base-platform-ports'
+import {createNodeId} from '@next/kernel-base-contracts'
+import {createLoggerPort, createPlatformPorts} from '@next/kernel-base-platform-ports'
 import {
     createCommand,
     createKernelRuntimeV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
-import {createTcpControlRuntimeModuleV2} from '@impos2/kernel-base-tcp-control-runtime-v2'
+} from '@next/kernel-base-runtime-shell-v2'
+import {createTcpControlRuntimeModuleV2} from '@next/kernel-base-tcp-control-runtime-v2'
 import {
     createTdpSyncRuntimeModuleV2,
     selectTdpHotUpdateState,

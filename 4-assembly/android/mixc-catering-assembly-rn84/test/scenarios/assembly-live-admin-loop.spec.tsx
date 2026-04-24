@@ -1,9 +1,10 @@
 import React from 'react'
+import {releaseInfo} from '../../src/generated/releaseInfo'
 import {beforeEach, describe, expect, it, vi} from 'vitest'
 import {createMemoryStorage} from '../../../../../1-kernel/test-support/storageHarness'
 import {createLivePlatform, waitFor} from '../../../../../1-kernel/1.1-base/tcp-control-runtime-v2/test/helpers/liveHarness'
-import {createCommand, runtimeShellV2CommandDefinitions} from '@impos2/kernel-base-runtime-shell-v2'
-import {createAdminPasswordVerifier} from '@impos2/ui-base-admin-console'
+import {createCommand, runtimeShellV2CommandDefinitions} from '@next/kernel-base-runtime-shell-v2'
+import {createAdminPasswordVerifier} from '@next/ui-base-admin-console'
 import {mountAssemblyAutomationApp} from '../support/mountAssemblyAutomationApp'
 
 type MemoryStorageHandle = ReturnType<typeof createMemoryStorage>
@@ -276,6 +277,15 @@ vi.mock('reactotron-redux', () => ({
     reactotronRedux: () => () => undefined,
 }))
 
+
+const createProductApp = (createApp: any, props: any, options: any = {}) => createApp(props, {
+    createShellModule: options.createShellModule,
+    extraKernelModules: options.extraKernelModules ?? [],
+    productId: 'mixc-catering',
+    releaseInfo,
+    ...options,
+})
+
 describe('assembly live admin automation loop', () => {
     beforeEach(() => {
         vi.clearAllMocks()
@@ -285,13 +295,13 @@ describe('assembly live admin automation loop', () => {
 
     it('activates against mock-terminal-platform and returns to activation after admin deactivation', async () => {
         const platform = await createLivePlatform()
-        const {RootScreen} = await import('@impos2/ui-integration-catering-shell')
+        const {RootScreen, createModule: createCateringShellModule, createCateringBusinessModules} = await import('@next/ui-integration-catering-shell')
         const {createApp} = await import('../../src/application/createApp')
         const activationCodes = await platform.admin.activationCodes()
         const activationCode = activationCodes.find(item => item.status === 'AVAILABLE')?.code
         expect(activationCode).toBeTruthy()
 
-        const runtimeApp = createApp({
+        const runtimeApp = createProductApp(createApp, {
             deviceId: 'ASSEMBLY-DEVICE-LIVE-001',
             screenMode: 'desktop',
             displayCount: 2,
@@ -303,6 +313,8 @@ describe('assembly live admin automation loop', () => {
             },
         }, {
             mockTerminalPlatformBaseUrl: platform.baseUrl,
+            createShellModule: createCateringShellModule,
+            extraKernelModules: createCateringBusinessModules(),
         })
 
         const mounted = await mountAssemblyAutomationApp(
@@ -336,11 +348,11 @@ describe('assembly live admin automation loop', () => {
             })
             await expect(mounted.client.call('wait.forScreen', {
                 target: 'primary',
-                partKey: 'ui.integration.catering-shell.welcome',
+                partKey: 'ui.business.catering-master-data-workbench.primary-workbench',
                 timeoutMs: 10_000,
             })).resolves.toMatchObject({
                 screen: {
-                    partKey: 'ui.integration.catering-shell.welcome',
+                    partKey: 'ui.business.catering-master-data-workbench.primary-workbench',
                 },
             })
 

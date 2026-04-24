@@ -2,7 +2,7 @@ import type {ComponentType} from 'react'
 import type {
     UiAlertInfo,
     UiScreenDefinition,
-} from '@impos2/kernel-base-ui-runtime-v2'
+} from '@next/kernel-base-ui-runtime-v2'
 import {defineUiScreenPart} from './defineUiScreenPart'
 
 export const defaultUiAlertContainerKey = 'overlay.alert'

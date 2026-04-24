@@ -1,4 +1,4 @@
-import {createModuleParameterFactory, integerAtLeast, listDefinitions} from '@impos2/kernel-base-contracts'
+import {createModuleParameterFactory, integerAtLeast, listDefinitions} from '@next/kernel-base-contracts'
 import {moduleName} from '../moduleName'
 
 const defineParameter = createModuleParameterFactory(moduleName)

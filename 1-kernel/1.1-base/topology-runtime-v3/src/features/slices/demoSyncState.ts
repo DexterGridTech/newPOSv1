@@ -2,7 +2,7 @@ import {createSlice, type PayloadAction} from '@reduxjs/toolkit'
 import type {
     StateRuntimeSliceDescriptor,
     SyncValueEnvelope,
-} from '@impos2/kernel-base-state-runtime'
+} from '@next/kernel-base-state-runtime'
 import {
     TOPOLOGY_V3_DEMO_MASTER_STATE_KEY,
     TOPOLOGY_V3_DEMO_SLAVE_STATE_KEY,

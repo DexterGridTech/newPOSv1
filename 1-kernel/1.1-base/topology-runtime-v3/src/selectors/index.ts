@@ -1,4 +1,4 @@
-import type {RootState} from '@impos2/kernel-base-state-runtime'
+import type {RootState} from '@next/kernel-base-state-runtime'
 import {
     TOPOLOGY_V3_CONFIG_STATE_KEY,
     TOPOLOGY_V3_CONNECTION_STATE_KEY,

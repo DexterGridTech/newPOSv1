@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react'
 import {View} from 'react-native'
-import {createCommand, defineCommand} from '@impos2/kernel-base-runtime-shell-v2'
+import {createCommand, defineCommand} from '@next/kernel-base-runtime-shell-v2'
 import {uiRuntimeRootVariables} from '../../foundations/uiVariables'
 import type {RuntimeReactAutomationBridge} from '../../types'
 import {

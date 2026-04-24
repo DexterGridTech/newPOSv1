@@ -2,8 +2,8 @@ import {
     createHttpServiceBinder,
     createModuleHttpEndpointFactory,
     type HttpRuntime,
-} from '@impos2/kernel-base-transport-runtime'
-import {SERVER_NAME_MOCK_TERMINAL_PLATFORM} from '@impos2/kernel-server-config-v2'
+} from '@next/kernel-base-transport-runtime'
+import {SERVER_NAME_MOCK_TERMINAL_PLATFORM} from '@next/kernel-server-config-v2'
 import {moduleName} from '../moduleName'
 import {tcpControlV2ErrorDefinitions} from '../supports'
 import type {

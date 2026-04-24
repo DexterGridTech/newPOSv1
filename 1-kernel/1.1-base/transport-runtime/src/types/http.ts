@@ -1,5 +1,5 @@
-import type {AppError, TimestampMs} from '@impos2/kernel-base-contracts'
-import type {LoggerPort} from '@impos2/kernel-base-platform-ports'
+import type {AppError, TimestampMs} from '@next/kernel-base-contracts'
+import type {LoggerPort} from '@next/kernel-base-platform-ports'
 import type {
     ServerCatalog,
     TransportRequestContext,

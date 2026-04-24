@@ -1307,7 +1307,7 @@ export default function App() {
             </FormGrid>
             {!activationCodeInputValid ? <div className="feedback error">激活码格式不正确，请输入 12 位纯数字。</div> : null}
             <div className="button-group inline-actions">
-              <ActionButton label="执行终端激活" tone="primary" onClick={() => runAction(async () => { if (!activationCodeInput.trim()) throw new Error('激活码不能为空'); if (!isNumericActivationCode(activationCodeInput)) throw new Error('激活码必须是 12 位纯数字'); await api.activateTerminal({ activationCode: activationCodeInput, deviceFingerprint: 'mock-fingerprint-rn84', deviceInfo: { model: 'Mock-POS-X1', osVersion: 'Android 14', manufacturer: 'IMPOS2' } }) }, '终端激活成功')} />
+              <ActionButton label="执行终端激活" tone="primary" onClick={() => runAction(async () => { if (!activationCodeInput.trim()) throw new Error('激活码不能为空'); if (!isNumericActivationCode(activationCodeInput)) throw new Error('激活码必须是 12 位纯数字'); await api.activateTerminal({ activationCode: activationCodeInput, deviceFingerprint: 'mock-fingerprint-rn84', deviceInfo: { model: 'Mock-POS-X1', osVersion: 'Android 14', manufacturer: 'NEXT' } }) }, '终端激活成功')} />
             </div>
           </Panel>
 
@@ -1645,7 +1645,7 @@ export default function App() {
                         await api.activateTerminal({
                           activationCode: manualActivationCode,
                           deviceFingerprint: manualDeviceFingerprint,
-                          deviceInfo: { model: 'Manual-POS', osVersion: 'Android 14', manufacturer: 'IMPOS2', source: 'manual-console' },
+                          deviceInfo: { model: 'Manual-POS', osVersion: 'Android 14', manufacturer: 'NEXT', source: 'manual-console' },
                         })
                       }, '已完成手动激活')
                     }

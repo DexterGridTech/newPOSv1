@@ -1,6 +1,6 @@
 import {createSlice, type PayloadAction} from '@reduxjs/toolkit'
 import {castDraft} from 'immer'
-import type {StateRuntimeSliceDescriptor} from '@impos2/kernel-base-state-runtime'
+import type {StateRuntimeSliceDescriptor} from '@next/kernel-base-state-runtime'
 import type {
     WorkflowObservation,
     WorkflowObservationsState,

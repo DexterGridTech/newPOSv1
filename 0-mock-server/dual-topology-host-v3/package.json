@@ -1,5 +1,5 @@
 {
-  "name": "@impos2/dual-topology-host-v3",
+  "name": "@next/dual-topology-host-v3",
   "version": "1.0.0",
   "description": "Dual topology V3 local pair host package",
   "main": "dist/index.js",

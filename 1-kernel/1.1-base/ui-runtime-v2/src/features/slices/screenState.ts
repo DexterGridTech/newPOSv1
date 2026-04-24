@@ -5,8 +5,8 @@ import {
     toWorkspaceStateDescriptors,
     type StateRuntimeSliceDescriptor,
     type SyncValueEnvelope,
-} from '@impos2/kernel-base-state-runtime'
-import {nowTimestampMs} from '@impos2/kernel-base-contracts'
+} from '@next/kernel-base-state-runtime'
+import {nowTimestampMs} from '@next/kernel-base-contracts'
 import {uiRuntimeV2BaseStateKeys} from '../../foundations/stateKeys'
 import type {UiScreenRuntimeEntry, UiScreenRuntimeState} from '../../types'
 

@@ -1,4 +1,4 @@
-import {createModuleCommandFactory} from '@impos2/kernel-base-runtime-shell-v2'
+import {createModuleCommandFactory} from '@next/kernel-base-runtime-shell-v2'
 import {moduleName} from '../../moduleName'
 
 const defineModuleCommand = createModuleCommandFactory(moduleName)

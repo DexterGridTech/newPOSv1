@@ -1,5 +1,5 @@
-import {applySliceSyncDiff, type StateRuntime} from '@impos2/kernel-base-state-runtime'
-import type {StateSyncDiffEnvelope} from '@impos2/kernel-base-contracts'
+import {applySliceSyncDiff, type StateRuntime} from '@next/kernel-base-state-runtime'
+import type {StateSyncDiffEnvelope} from '@next/kernel-base-contracts'
 
 export const createRuntimeStateSync = (stateRuntime: StateRuntime) => {
     /**

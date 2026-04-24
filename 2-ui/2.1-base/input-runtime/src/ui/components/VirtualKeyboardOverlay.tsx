@@ -4,7 +4,7 @@ import {
     useOptionalUiAutomationBridge,
     useOptionalUiAutomationRuntimeId,
     useOptionalUiAutomationTarget,
-} from '@impos2/ui-base-runtime-react'
+} from '@next/ui-base-runtime-react'
 import {getVirtualKeyboardLayout} from '../../foundations'
 import {useOptionalInputRuntime} from '../../contexts'
 import type {VirtualKeyboardKey} from '../../types'

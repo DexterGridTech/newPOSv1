@@ -1171,7 +1171,7 @@ const seedDefaultData = (): void => {
       'bundle-2026.04.06',
       'config-2026.04.01',
       `fp-${terminalId}`,
-      JSON.stringify({ model: 'PDA-X1', osVersion: 'Android 14', manufacturer: 'IMPOS2' }),
+      JSON.stringify({ model: 'PDA-X1', osVersion: 'Android 14', manufacturer: 'NEXT' }),
       'STANDARD',
       timestamp - index * 3600_000,
       timestamp - index * 60_000,

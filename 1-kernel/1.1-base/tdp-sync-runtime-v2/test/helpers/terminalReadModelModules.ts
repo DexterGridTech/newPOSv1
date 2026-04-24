@@ -1,11 +1,11 @@
-import type {TimestampMs} from '@impos2/kernel-base-contracts'
+import type {TimestampMs} from '@next/kernel-base-contracts'
 import {
     defineCommand,
     onCommand,
     type ActorDefinition,
     type KernelRuntimeModuleV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
-import type {StateRuntimeSliceDescriptor, SyncValueEnvelope} from '@impos2/kernel-base-state-runtime'
+} from '@next/kernel-base-runtime-shell-v2'
+import type {StateRuntimeSliceDescriptor, SyncValueEnvelope} from '@next/kernel-base-state-runtime'
 import {createSlice, type PayloadAction, type Reducer} from '@reduxjs/toolkit'
 import {
     selectTdpCommandInboxState,

@@ -1,4 +1,4 @@
-import {createAppError} from '@impos2/kernel-base-contracts'
+import {createAppError} from '@next/kernel-base-contracts'
 import {tcpControlV2ErrorDefinitions} from '../../supports'
 import type {TcpControlHttpService} from '../../types'
 

@@ -1,4 +1,4 @@
-import {nowTimestampMs} from '@impos2/kernel-base-contracts'
+import {nowTimestampMs} from '@next/kernel-base-contracts'
 import type {
     UiAlertInfo,
     UiOverlayEntry,

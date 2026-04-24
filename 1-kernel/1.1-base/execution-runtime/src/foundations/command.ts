@@ -3,8 +3,8 @@ import type {
     CommandRouteContext,
     RequestId,
     SessionId,
-} from '@impos2/kernel-base-contracts'
-import {INTERNAL_REQUEST_ID} from '@impos2/kernel-base-contracts'
+} from '@next/kernel-base-contracts'
+import {INTERNAL_REQUEST_ID} from '@next/kernel-base-contracts'
 import type {ExecutionCommand} from '../types/execution'
 
 export interface CreateExecutionCommandInput<TPayload = unknown> {

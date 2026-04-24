@@ -1,5 +1,5 @@
-import {nowTimestampMs} from '@impos2/kernel-base-contracts'
-import type {PairingTicket, SessionId} from '@impos2/kernel-base-contracts'
+import {nowTimestampMs} from '@next/kernel-base-contracts'
+import type {PairingTicket, SessionId} from '@next/kernel-base-contracts'
 import type {
     HostTicketOccupancy,
     HostTicketRecord,

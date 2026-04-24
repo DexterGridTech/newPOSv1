@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'org.jetbrains.kotlin.android'
 
 android {
-  namespace 'com.impos2.adapterv2'
+  namespace 'com.next.adapterv2'
   compileSdk rootProject.ext.compileSdkVersion
 
   defaultConfig {

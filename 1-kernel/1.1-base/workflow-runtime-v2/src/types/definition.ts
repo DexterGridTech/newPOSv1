@@ -1,4 +1,4 @@
-import type {RequestId} from '@impos2/kernel-base-contracts'
+import type {RequestId} from '@next/kernel-base-contracts'
 import type {WorkflowDefinitionId, WorkflowRunId} from './ids'
 
 export interface WorkflowSchemaDescriptor {

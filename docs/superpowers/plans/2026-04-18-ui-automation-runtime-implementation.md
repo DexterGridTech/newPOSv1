@@ -6,7 +6,7 @@
 
 **Architecture:** The implementation is split into four layers. `2-ui/2.1-base/ui-automation-runtime` owns the protocol, runtime registry, semantic registry, query / action / wait engines, trace, and Web / Expo helper integrations. `3-adapter/android/adapter-android-v2` adds a localhost socket transport and script-execution bridge only. `4-assembly/android/mixc-retail-assembly-rn84` only wires native transport, target registration, and environment gating. Kernel changes are explicitly minimized to small helper surfaces only when the runtime facade is insufficient.
 
-**Tech Stack:** TypeScript, React Native 0.84, Expo Web test shells, Vitest, Node WebSocket helpers, Kotlin, Android localhost sockets over ADB, existing native script engine, `@impos2/kernel-base-runtime-shell-v2`, `@impos2/kernel-base-platform-ports`, `@impos2/ui-base-runtime-react`
+**Tech Stack:** TypeScript, React Native 0.84, Expo Web test shells, Vitest, Node WebSocket helpers, Kotlin, Android localhost sockets over ADB, existing native script engine, `@next/kernel-base-runtime-shell-v2`, `@next/kernel-base-platform-ports`, `@next/ui-base-runtime-react`
 
 ---
 
@@ -39,11 +39,11 @@
 
 ### Android adapter additions
 
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/automation/AutomationSocketServer.kt`
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/automation/AutomationSession.kt`
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/automation/AutomationMessageCodec.kt`
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/automation/AutomationHostBridge.kt`
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/automation/AutomationScriptExecutorBridge.kt`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/automation/AutomationSocketServer.kt`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/automation/AutomationSession.kt`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/automation/AutomationMessageCodec.kt`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/automation/AutomationHostBridge.kt`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/automation/AutomationScriptExecutorBridge.kt`
 - Modify: `3-adapter/android/adapter-android-v2/adapter-lib/build.gradle`
 
 ### Android assembly additions
@@ -58,7 +58,7 @@
 - Modify: `4-assembly/android/mixc-retail-assembly-rn84/src/turbomodules/index.ts`
 - Modify: `4-assembly/android/mixc-retail-assembly-rn84/App.tsx`
 - Add if needed: `4-assembly/android/mixc-retail-assembly-rn84/src/turbomodules/specs/NativeAutomationTurboModule.ts`
-- Add if needed: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/impos2/mixcretailassemblyrn84/turbomodules/AutomationTurboModule.kt`
+- Add if needed: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/next/mixcretailassemblyrn84/turbomodules/AutomationTurboModule.kt`
 
 ### Possible minimal kernel touch points
 
@@ -72,7 +72,7 @@
 - Reference: `2-ui/2.1-base/input-runtime/**`
 - Reference: `2-ui/2.1-base/admin-console/**`
 - Reference: `4-assembly/android/mixc-retail-assembly-rn84/src/turbomodules/scripts.ts`
-- Reference: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/scripts/**`
+- Reference: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/scripts/**`
 
 ---
 
@@ -115,7 +115,7 @@ Create `2-ui/2.1-base/ui-automation-runtime/package.json`:
 
 ```json
 {
-  "name": "@impos2/ui-base-automation-runtime",
+  "name": "@next/ui-base-automation-runtime",
   "version": "1.0.0",
   "description": "Unified UI automation and runtime inspection control plane",
   "author": "DexterYang",
@@ -139,9 +139,9 @@ Create `2-ui/2.1-base/ui-automation-runtime/package.json`:
     "type-check": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@impos2/kernel-base-platform-ports": "workspace:*",
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*",
-    "@impos2/kernel-base-ui-runtime-v2": "workspace:*"
+    "@next/kernel-base-platform-ports": "workspace:*",
+    "@next/kernel-base-runtime-shell-v2": "workspace:*",
+    "@next/kernel-base-ui-runtime-v2": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=18",
@@ -217,13 +217,13 @@ export default createWorkspaceVitestConfig('ui-base-automation-runtime', {
 
 - [ ] **Step 6: Run the package smoke test**
 
-Run: `corepack yarn workspace @impos2/ui-base-automation-runtime test -- ui-automation-runtime-package`
+Run: `corepack yarn workspace @next/ui-base-automation-runtime test -- ui-automation-runtime-package`
 
 Expected: PASS with one passing package-shell test.
 
 - [ ] **Step 7: Run type-check for the new package**
 
-Run: `corepack yarn workspace @impos2/ui-base-automation-runtime type-check`
+Run: `corepack yarn workspace @next/ui-base-automation-runtime type-check`
 
 Expected: PASS with no TypeScript errors.
 
@@ -287,7 +287,7 @@ describe('ui automation runtime protocol rules', () => {
 
 - [ ] **Step 2: Run the test to verify protocol helpers are missing**
 
-Run: `corepack yarn workspace @impos2/ui-base-automation-runtime test -- ui-automation-runtime-protocol`
+Run: `corepack yarn workspace @next/ui-base-automation-runtime test -- ui-automation-runtime-protocol`
 
 Expected: FAIL with missing exports from `src/foundations/protocol.ts`.
 
@@ -419,13 +419,13 @@ export * from './foundations/protocol'
 
 - [ ] **Step 6: Run the protocol test**
 
-Run: `corepack yarn workspace @impos2/ui-base-automation-runtime test -- ui-automation-runtime-protocol`
+Run: `corepack yarn workspace @next/ui-base-automation-runtime test -- ui-automation-runtime-protocol`
 
 Expected: PASS with all protocol guard assertions passing.
 
 - [ ] **Step 7: Run package type-check**
 
-Run: `corepack yarn workspace @impos2/ui-base-automation-runtime type-check`
+Run: `corepack yarn workspace @next/ui-base-automation-runtime type-check`
 
 Expected: PASS.
 
@@ -490,7 +490,7 @@ describe('automation target registry', () => {
 
 - [ ] **Step 2: Run the test to verify runtime creation is missing**
 
-Run: `corepack yarn workspace @impos2/ui-base-automation-runtime test -- ui-automation-runtime-target-registry`
+Run: `corepack yarn workspace @next/ui-base-automation-runtime test -- ui-automation-runtime-target-registry`
 
 Expected: FAIL with missing `createAutomationRuntime`.
 
@@ -621,13 +621,13 @@ Ensure `2-ui/2.1-base/ui-automation-runtime/src/index.ts` still exports `./appli
 
 - [ ] **Step 6: Run the target registry test**
 
-Run: `corepack yarn workspace @impos2/ui-base-automation-runtime test -- ui-automation-runtime-target-registry`
+Run: `corepack yarn workspace @next/ui-base-automation-runtime test -- ui-automation-runtime-target-registry`
 
 Expected: PASS.
 
 - [ ] **Step 7: Run package type-check**
 
-Run: `corepack yarn workspace @impos2/ui-base-automation-runtime type-check`
+Run: `corepack yarn workspace @next/ui-base-automation-runtime type-check`
 
 Expected: PASS.
 
@@ -733,7 +733,7 @@ describe('semantic registry lifecycle', () => {
 
 - [ ] **Step 2: Run the test to verify semantic registry is missing**
 
-Run: `corepack yarn workspace @impos2/ui-base-automation-runtime test -- ui-automation-runtime-semantic-registry`
+Run: `corepack yarn workspace @next/ui-base-automation-runtime test -- ui-automation-runtime-semantic-registry`
 
 Expected: FAIL with missing `createSemanticRegistry`.
 
@@ -910,13 +910,13 @@ export * from './foundations/semanticRegistry'
 
 - [ ] **Step 6: Run the semantic registry test**
 
-Run: `corepack yarn workspace @impos2/ui-base-automation-runtime test -- ui-automation-runtime-semantic-registry`
+Run: `corepack yarn workspace @next/ui-base-automation-runtime test -- ui-automation-runtime-semantic-registry`
 
 Expected: PASS.
 
 - [ ] **Step 7: Run package type-check**
 
-Run: `corepack yarn workspace @impos2/ui-base-automation-runtime type-check`
+Run: `corepack yarn workspace @next/ui-base-automation-runtime type-check`
 
 Expected: PASS.
 
@@ -1001,7 +1001,7 @@ describe('automation query/action/wait engines', () => {
 
 - [ ] **Step 2: Run the test to verify engines are missing**
 
-Run: `corepack yarn workspace @impos2/ui-base-automation-runtime test -- ui-automation-runtime-engines`
+Run: `corepack yarn workspace @next/ui-base-automation-runtime test -- ui-automation-runtime-engines`
 
 Expected: FAIL with missing engine modules.
 
@@ -1321,11 +1321,11 @@ export const createAutomationEventBus = () => {
 
 - [ ] **Step 8: Run engine tests and type-check**
 
-Run: `corepack yarn workspace @impos2/ui-base-automation-runtime test -- ui-automation-runtime-engines`
+Run: `corepack yarn workspace @next/ui-base-automation-runtime test -- ui-automation-runtime-engines`
 
 Expected: PASS.
 
-Run: `corepack yarn workspace @impos2/ui-base-automation-runtime type-check`
+Run: `corepack yarn workspace @next/ui-base-automation-runtime type-check`
 
 Expected: PASS.
 
@@ -1390,7 +1390,7 @@ describe('automation host adapters', () => {
 
 - [ ] **Step 2: Run the test to verify host support is missing**
 
-Run: `corepack yarn workspace @impos2/ui-base-automation-runtime test -- ui-automation-runtime-hosts`
+Run: `corepack yarn workspace @next/ui-base-automation-runtime test -- ui-automation-runtime-hosts`
 
 Expected: FAIL with missing host adapter exports.
 
@@ -1503,7 +1503,7 @@ export * from './webSocketAutomationHost'
 
 - [ ] **Step 7: Run the host tests**
 
-Run: `corepack yarn workspace @impos2/ui-base-automation-runtime test -- ui-automation-runtime-hosts`
+Run: `corepack yarn workspace @next/ui-base-automation-runtime test -- ui-automation-runtime-hosts`
 
 Expected: PASS.
 
@@ -1591,7 +1591,7 @@ The runner must:
 
 - [ ] **Step 10: Run test-expo type-check**
 
-Run: `corepack yarn workspace @impos2/ui-base-automation-runtime test-expo`
+Run: `corepack yarn workspace @next/ui-base-automation-runtime test-expo`
 
 Expected: PASS for TypeScript and browser smoke flow.
 
@@ -1638,7 +1638,7 @@ describe('runtime-react automation registration', () => {
 
 - [ ] **Step 2: Run the test before wiring any automation dependency**
 
-Run: `corepack yarn workspace @impos2/ui-base-runtime-react test -- runtime-react-automation-registration`
+Run: `corepack yarn workspace @next/ui-base-runtime-react test -- runtime-react-automation-registration`
 
 Expected: PASS today for stable anchors. This locks existing behavior before adding optional automation registration.
 
@@ -1724,11 +1724,11 @@ Expected: no matches.
 
 - [ ] **Step 6: Run runtime-react tests**
 
-Run: `corepack yarn workspace @impos2/ui-base-runtime-react test -- runtime-react-automation-registration`
+Run: `corepack yarn workspace @next/ui-base-runtime-react test -- runtime-react-automation-registration`
 
 Expected: PASS.
 
-Run: `corepack yarn workspace @impos2/ui-base-runtime-react type-check`
+Run: `corepack yarn workspace @next/ui-base-runtime-react type-check`
 
 Expected: PASS.
 
@@ -1750,7 +1750,7 @@ git commit -m "Expose optional automation registration anchors in runtime react"
 
 - [ ] **Step 1: Preserve the existing `input-runtime` Expo test as the baseline**
 
-Run: `corepack yarn workspace @impos2/ui-base-input-runtime test-expo`
+Run: `corepack yarn workspace @next/ui-base-input-runtime test-expo`
 
 Expected: PASS before migration. If it fails due to environment, record the blocker before changing the script.
 
@@ -1797,7 +1797,7 @@ await automation.performAction('ui-base-input-runtime-expo:pin', 'press')
 
 - [ ] **Step 4: Run the transitional Expo smoke test**
 
-Run: `corepack yarn workspace @impos2/ui-base-input-runtime test-expo`
+Run: `corepack yarn workspace @next/ui-base-input-runtime test-expo`
 
 Expected: PASS with behavior identical to the baseline.
 
@@ -1815,20 +1815,20 @@ git commit -m "Add transitional semantic action helper for Expo automation"
 ## Task 9: Add adb-only localhost automation socket transport to `adapter-android-v2`
 
 **Files:**
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/automation/AutomationMessageCodec.kt`
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/automation/AutomationSession.kt`
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/automation/AutomationSocketServer.kt`
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/automation/AutomationHostBridge.kt`
-- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/automation/AutomationScriptExecutorBridge.kt`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/automation/AutomationMessageCodec.kt`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/automation/AutomationSession.kt`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/automation/AutomationSocketServer.kt`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/automation/AutomationHostBridge.kt`
+- Create: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/automation/AutomationScriptExecutorBridge.kt`
 - Modify: `3-adapter/android/adapter-android-v2/adapter-lib/build.gradle`
 - Test: `3-adapter/android/adapter-android-v2/adapter-lib/src/test/**`
 
 - [ ] **Step 1: Write the failing Kotlin codec/server test**
 
-Create `3-adapter/android/adapter-android-v2/adapter-lib/src/test/java/com/impos2/adapterv2/automation/AutomationMessageCodecTest.kt`:
+Create `3-adapter/android/adapter-android-v2/adapter-lib/src/test/java/com/next/adapterv2/automation/AutomationMessageCodecTest.kt`:
 
 ```kotlin
-package com.impos2.adapterv2.automation
+package com.next.adapterv2.automation
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -1846,16 +1846,16 @@ class AutomationMessageCodecTest {
 
 - [ ] **Step 2: Run the adapter unit test to verify the automation package does not exist**
 
-Run: `cd 3-adapter/android/adapter-android-v2 && ./gradlew :adapter-lib:testDebugUnitTest --tests com.impos2.adapterv2.automation.AutomationMessageCodecTest`
+Run: `cd 3-adapter/android/adapter-android-v2 && ./gradlew :adapter-lib:testDebugUnitTest --tests com.next.adapterv2.automation.AutomationMessageCodecTest`
 
 Expected: FAIL with missing automation classes or test source path.
 
 - [ ] **Step 3: Implement a minimal newline-delimited JSON codec**
 
-Create `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/automation/AutomationMessageCodec.kt`:
+Create `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/automation/AutomationMessageCodec.kt`:
 
 ```kotlin
-package com.impos2.adapterv2.automation
+package com.next.adapterv2.automation
 
 class AutomationMessageCodec {
   fun encode(message: String): String = if (message.endsWith("\n")) message else "$message\n"
@@ -1866,10 +1866,10 @@ class AutomationMessageCodec {
 
 - [ ] **Step 4: Add a real socket accept/read/write loop and session shell**
 
-Create `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/automation/AutomationSession.kt`:
+Create `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/automation/AutomationSession.kt`:
 
 ```kotlin
-package com.impos2.adapterv2.automation
+package com.next.adapterv2.automation
 
 data class AutomationSession(
   val sessionId: String,
@@ -1877,10 +1877,10 @@ data class AutomationSession(
 )
 ```
 
-Create `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/automation/AutomationSocketServer.kt`:
+Create `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/automation/AutomationSocketServer.kt`:
 
 ```kotlin
-package com.impos2.adapterv2.automation
+package com.next.adapterv2.automation
 
 import java.net.InetAddress
 import java.net.Socket
@@ -1946,13 +1946,13 @@ class AutomationSocketServer(
 
 - [ ] **Step 5: Add script bridge wrappers without changing existing script engine semantics**
 
-Create `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/automation/AutomationScriptExecutorBridge.kt`:
+Create `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/automation/AutomationScriptExecutorBridge.kt`:
 
 ```kotlin
-package com.impos2.adapterv2.automation
+package com.next.adapterv2.automation
 
-import com.impos2.adapterv2.interfaces.IScriptEngine
-import com.impos2.adapterv2.scripts.ScriptExecutionOptions
+import com.next.adapterv2.interfaces.IScriptEngine
+import com.next.adapterv2.scripts.ScriptExecutionOptions
 
 class AutomationScriptExecutorBridge(
   private val scriptEngine: IScriptEngine,
@@ -1971,10 +1971,10 @@ class AutomationScriptExecutorBridge(
 }
 ```
 
-Create `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/automation/AutomationHostBridge.kt`:
+Create `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/automation/AutomationHostBridge.kt`:
 
 ```kotlin
-package com.impos2.adapterv2.automation
+package com.next.adapterv2.automation
 
 interface AutomationHostBridge {
   fun onMessage(session: AutomationSession, message: String): String
@@ -1994,7 +1994,7 @@ dependencies {
 
 - [ ] **Step 7: Run adapter unit tests**
 
-Run: `cd 3-adapter/android/adapter-android-v2 && ./gradlew :adapter-lib:testDebugUnitTest --tests com.impos2.adapterv2.automation.AutomationMessageCodecTest`
+Run: `cd 3-adapter/android/adapter-android-v2 && ./gradlew :adapter-lib:testDebugUnitTest --tests com.next.adapterv2.automation.AutomationMessageCodecTest`
 
 Expected: PASS.
 
@@ -2089,7 +2089,7 @@ describe('assembly automation gating', () => {
 
 - [ ] **Step 2: Run the test to verify assembly automation wiring is missing**
 
-Run: `corepack yarn workspace @impos2/assembly-android-mixc-retail-rn84 test -- assembly-automation`
+Run: `corepack yarn workspace @next/assembly-android-mixc-retail-rn84 test -- assembly-automation`
 
 Expected: FAIL with missing assembly automation module.
 
@@ -2102,7 +2102,7 @@ import {
     createAutomationRuntime,
     createSemanticRegistry,
     type SemanticRegistry,
-} from '@impos2/ui-base-automation-runtime'
+} from '@next/ui-base-automation-runtime'
 
 export interface CreateAssemblyAutomationOptions {
     readonly buildProfile: 'debug' | 'internal' | 'product' | 'test'
@@ -2169,7 +2169,7 @@ export * from './createAssemblyAutomation'
 Create `4-assembly/android/mixc-retail-assembly-rn84/src/application/automation/createAutomationRequestDispatcher.ts`:
 
 ```ts
-import type {AutomationRuntime} from '@impos2/ui-base-automation-runtime'
+import type {AutomationRuntime} from '@next/ui-base-automation-runtime'
 
 export interface AutomationJsonRpcRequest {
     readonly id?: string | number | null
@@ -2218,8 +2218,8 @@ export const createAutomationRequestDispatcher = (input: {
 Create `4-assembly/android/mixc-retail-assembly-rn84/src/application/automation/createRuntimeReactAutomationBridge.ts`:
 
 ```ts
-import type {SemanticRegistry} from '@impos2/ui-base-automation-runtime'
-import type {RuntimeReactAutomationBridge} from '@impos2/ui-base-runtime-react'
+import type {SemanticRegistry} from '@next/ui-base-automation-runtime'
+import type {RuntimeReactAutomationBridge} from '@next/ui-base-runtime-react'
 
 export const createRuntimeReactAutomationBridge = (
     registry: SemanticRegistry,
@@ -2294,11 +2294,11 @@ Add only a clarifying test or comment-free assertion path through the automation
 
 - [ ] **Step 9: Run assembly tests and type-check**
 
-Run: `corepack yarn workspace @impos2/assembly-android-mixc-retail-rn84 test -- assembly-automation`
+Run: `corepack yarn workspace @next/assembly-android-mixc-retail-rn84 test -- assembly-automation`
 
 Expected: PASS.
 
-Run: `corepack yarn workspace @impos2/assembly-android-mixc-retail-rn84 type-check`
+Run: `corepack yarn workspace @next/assembly-android-mixc-retail-rn84 type-check`
 
 Expected: PASS.
 
@@ -2316,8 +2316,8 @@ git commit -m "Wire product-safe automation startup into the Android assembly"
 **Files:**
 - Create if needed: `4-assembly/android/mixc-retail-assembly-rn84/src/turbomodules/specs/NativeAutomationTurboModule.ts`
 - Create if needed: `4-assembly/android/mixc-retail-assembly-rn84/src/turbomodules/automation.ts`
-- Create if needed: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/impos2/mixcretailassemblyrn84/turbomodules/AutomationTurboModule.kt`
-- Modify if needed: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/impos2/mixcretailassemblyrn84/turbomodules/AdapterPackage.kt`
+- Create if needed: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/next/mixcretailassemblyrn84/turbomodules/AutomationTurboModule.kt`
+- Modify if needed: `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/next/mixcretailassemblyrn84/turbomodules/AdapterPackage.kt`
 - Modify if needed: `4-assembly/android/mixc-retail-assembly-rn84/src/turbomodules/index.ts`
 - Test: `4-assembly/android/mixc-retail-assembly-rn84/test/scenarios/assembly-native-wrappers.spec.ts`
 
@@ -2326,7 +2326,7 @@ git commit -m "Wire product-safe automation startup into the Android assembly"
 Read before editing:
 
 1. `4-assembly/android/mixc-retail-assembly-rn84/src/turbomodules/scripts.ts`
-2. `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/impos2/mixcretailassemblyrn84/turbomodules/AdapterPackage.kt`
+2. `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/next/mixcretailassemblyrn84/turbomodules/AdapterPackage.kt`
 
 If the assembly can start the automation path entirely through existing boot timing and existing native services, skip this task and mark it N/A in the execution log.
 
@@ -2374,10 +2374,10 @@ export const nativeAutomation = {
 
 - [ ] **Step 4: Add the native TurboModule only as a transport starter**
 
-Create `android/app/src/main/java/com/impos2/mixcretailassemblyrn84/turbomodules/AutomationTurboModule.kt`:
+Create `android/app/src/main/java/com/next/mixcretailassemblyrn84/turbomodules/AutomationTurboModule.kt`:
 
 ```kotlin
-package com.impos2.mixcretailassemblyrn84.turbomodules
+package com.next.mixcretailassemblyrn84.turbomodules
 
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
@@ -2411,7 +2411,7 @@ Update native `AdapterPackage.kt` and JS `src/turbomodules/index.ts` accordingly
 
 - [ ] **Step 6: Run wrapper tests**
 
-Run: `corepack yarn workspace @impos2/assembly-android-mixc-retail-rn84 test -- assembly-native-wrappers`
+Run: `corepack yarn workspace @next/assembly-android-mixc-retail-rn84 test -- assembly-native-wrappers`
 
 Expected: PASS.
 
@@ -2465,7 +2465,7 @@ Behavior:
 
 Run in order:
 
-1. Start Metro: `corepack yarn workspace @impos2/assembly-android-mixc-retail-rn84 start`
+1. Start Metro: `corepack yarn workspace @next/assembly-android-mixc-retail-rn84 start`
 2. Configure device reverses for Metro/mock/Reactotron
 3. Install latest debug APK
 4. Restart app
@@ -2542,7 +2542,7 @@ Do not introduce protocol, trace, registry, or automation-specific classes into 
 
 Run the narrowest relevant test command, for example:
 
-`corepack yarn workspace @impos2/kernel-base-runtime-shell-v2 test -- runtime-shell`
+`corepack yarn workspace @next/kernel-base-runtime-shell-v2 test -- runtime-shell`
 
 Expected: PASS for the new helper coverage and no unrelated automation abstractions in kernel.
 
@@ -2565,9 +2565,9 @@ git commit -m "Add minimal runtime helper surface for automation integration"
 
 Run:
 
-1. `corepack yarn workspace @impos2/ui-base-automation-runtime type-check`
-2. `corepack yarn workspace @impos2/ui-base-automation-runtime test`
-3. `corepack yarn workspace @impos2/ui-base-automation-runtime test-expo`
+1. `corepack yarn workspace @next/ui-base-automation-runtime type-check`
+2. `corepack yarn workspace @next/ui-base-automation-runtime test`
+3. `corepack yarn workspace @next/ui-base-automation-runtime test-expo`
 
 Expected: PASS.
 
@@ -2575,11 +2575,11 @@ Expected: PASS.
 
 Run:
 
-1. `corepack yarn workspace @impos2/ui-base-runtime-react type-check`
-2. `corepack yarn workspace @impos2/ui-base-runtime-react test`
-3. `corepack yarn workspace @impos2/ui-base-input-runtime test-expo`
-4. `corepack yarn workspace @impos2/assembly-android-mixc-retail-rn84 type-check`
-5. `corepack yarn workspace @impos2/assembly-android-mixc-retail-rn84 test`
+1. `corepack yarn workspace @next/ui-base-runtime-react type-check`
+2. `corepack yarn workspace @next/ui-base-runtime-react test`
+3. `corepack yarn workspace @next/ui-base-input-runtime test-expo`
+4. `corepack yarn workspace @next/assembly-android-mixc-retail-rn84 type-check`
+5. `corepack yarn workspace @next/assembly-android-mixc-retail-rn84 test`
 
 Expected: PASS, or explicit blockers recorded.
 

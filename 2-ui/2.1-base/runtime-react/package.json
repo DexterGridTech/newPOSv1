@@ -1,5 +1,5 @@
 {
-  "name": "@impos2/ui-base-runtime-react",
+  "name": "@next/ui-base-runtime-react",
   "version": "1.0.0",
   "description": "React Native bridge for kernel ui-runtime-v2",
   "author": "DexterYang",
@@ -27,10 +27,10 @@
     "type-check": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@impos2/kernel-base-platform-ports": "workspace:*",
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*",
-    "@impos2/kernel-base-topology-runtime-v3": "workspace:*",
-    "@impos2/kernel-base-ui-runtime-v2": "workspace:*",
+    "@next/kernel-base-platform-ports": "workspace:*",
+    "@next/kernel-base-runtime-shell-v2": "workspace:*",
+    "@next/kernel-base-topology-runtime-v3": "workspace:*",
+    "@next/kernel-base-ui-runtime-v2": "workspace:*",
     "@reduxjs/toolkit": "^2.10.0"
   },
   "peerDependencies": {

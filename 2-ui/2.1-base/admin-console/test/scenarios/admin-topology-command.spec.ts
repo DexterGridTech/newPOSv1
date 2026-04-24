@@ -1,13 +1,13 @@
 import {describe, expect, it, vi} from 'vitest'
-import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
+import {createCommand} from '@next/kernel-base-runtime-shell-v2'
 import {
     createWorkflowRuntimeModuleV2,
     workflowBuiltinTaskKeys,
     workflowRuntimeV2CommandDefinitions,
-} from '@impos2/kernel-base-workflow-runtime-v2'
+} from '@next/kernel-base-workflow-runtime-v2'
 import {
     topologyRuntimeV3CommandDefinitions,
-} from '@impos2/kernel-base-topology-runtime-v3'
+} from '@next/kernel-base-topology-runtime-v3'
 import {createAdminConsoleHarness} from '../support/adminConsoleHarness'
 import {adminConsoleCommandDefinitions} from '../../src'
 
@@ -197,7 +197,7 @@ describe('admin topology command', () => {
         const result = await harness.runtime.dispatchCommand(createCommand(
             adminConsoleCommandDefinitions.scanAndImportTopologyMaster,
             {
-                imageUri: 'content://com.impos2.test/topology-share-qr.png',
+                imageUri: 'content://com.next.test/topology-share-qr.png',
                 reconnect: false,
             },
         ))
@@ -205,7 +205,7 @@ describe('admin topology command', () => {
         expect(result.status).toBe('COMPLETED')
         expect(connectorCall).toHaveBeenCalledWith(expect.objectContaining({
             params: expect.objectContaining({
-                IMAGE_URI: 'content://com.impos2.test/topology-share-qr.png',
+                IMAGE_URI: 'content://com.next.test/topology-share-qr.png',
             }),
         }))
     })

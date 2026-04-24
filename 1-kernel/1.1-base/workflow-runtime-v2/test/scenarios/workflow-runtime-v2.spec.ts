@@ -1,8 +1,8 @@
 import {setTimeout as delay} from 'node:timers/promises'
 import {describe, expect, it} from 'vitest'
-import {createRequestId, type RequestId} from '@impos2/kernel-base-contracts'
-import {createCommand, runtimeShellV2CommandDefinitions} from '@impos2/kernel-base-runtime-shell-v2'
-import {tdpSyncV2CommandDefinitions} from '@impos2/kernel-base-tdp-sync-runtime-v2'
+import {createRequestId, type RequestId} from '@next/kernel-base-contracts'
+import {createCommand, runtimeShellV2CommandDefinitions} from '@next/kernel-base-runtime-shell-v2'
+import {tdpSyncV2CommandDefinitions} from '@next/kernel-base-tdp-sync-runtime-v2'
 import {
     createWorkflowRuntimeModuleV2,
     selectWorkflowDefinition,
@@ -78,7 +78,7 @@ describe('workflow-runtime-v2', () => {
                     target: 'camera',
                     mode: 'request-response',
                 },
-                action: 'com.impos2.posadapter.action.CAMERA_SCAN',
+                action: 'com.next.posadapter.action.CAMERA_SCAN',
                 params: {
                     SCAN_MODE: 'QR_CODE_MODE',
                     waitResult: true,
@@ -134,7 +134,7 @@ describe('workflow-runtime-v2', () => {
             {
                 workflowKey: workflowBuiltinTaskKeys.singleReadBarcodeFromCamera,
                 input: {
-                    imageUri: 'content://com.impos2.test/topology-share-qr.png',
+                    imageUri: 'content://com.next.test/topology-share-qr.png',
                     timeoutMs: 4321,
                 },
             },
@@ -151,10 +151,10 @@ describe('workflow-runtime-v2', () => {
                     target: 'camera',
                     mode: 'request-response',
                 },
-                action: 'com.impos2.posadapter.action.CAMERA_SCAN',
+                action: 'com.next.posadapter.action.CAMERA_SCAN',
                 params: {
                     SCAN_MODE: 'QR_CODE_MODE',
-                    IMAGE_URI: 'content://com.impos2.test/topology-share-qr.png',
+                    IMAGE_URI: 'content://com.next.test/topology-share-qr.png',
                     waitResult: true,
                 },
                 timeoutMs: 4321,
@@ -212,7 +212,7 @@ describe('workflow-runtime-v2', () => {
                     target: 'camera',
                     mode: 'request-response',
                 },
-                action: 'com.impos2.posadapter.action.CAMERA_SCAN',
+                action: 'com.next.posadapter.action.CAMERA_SCAN',
                 params: {
                     SCAN_MODE: 'QR_CODE_MODE',
                     IMAGE_BASE64: 'ZmFrZS1xci1pbWFnZS1iYXNlNjQ=',

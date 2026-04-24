@@ -1,5 +1,5 @@
 {
-  "name": "@impos2/mock-admin-mall-tenant-console-server",
+  "name": "@next/mock-admin-mall-tenant-console-server",
   "version": "1.0.0",
   "private": true,
   "type": "module",

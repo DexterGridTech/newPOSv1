@@ -4,21 +4,21 @@ import {ScrollView, Text, View} from 'react-native'
 import {
     createCommand,
     runtimeShellV2CommandDefinitions,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {
     createHttpRuntime,
-} from '@impos2/kernel-base-transport-runtime'
+} from '@next/kernel-base-transport-runtime'
 import {
     createTcpControlRuntimeModuleV2,
     selectTcpIdentitySnapshot,
     tcpControlV2CommandDefinitions,
-} from '@impos2/kernel-base-tcp-control-runtime-v2'
+} from '@next/kernel-base-tcp-control-runtime-v2'
 import {
     kernelBaseTestServerConfig,
     SERVER_NAME_MOCK_TERMINAL_PLATFORM,
-} from '@impos2/kernel-server-config-v2'
-import type {StateStoragePort} from '@impos2/kernel-base-platform-ports'
-import type {RootState} from '@impos2/kernel-base-state-runtime'
+} from '@next/kernel-server-config-v2'
+import type {StateStoragePort} from '@next/kernel-base-platform-ports'
+import type {RootState} from '@next/kernel-base-state-runtime'
 import {
     createRuntimeReactHarness,
     type RuntimeReactHarness,

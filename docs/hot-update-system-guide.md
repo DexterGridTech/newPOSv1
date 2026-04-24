@@ -1266,7 +1266,7 @@ Assembly 侧桥接位置：
 
 marker 存储类：
 
-- `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/impos2/mixcretailassemblyrn84/HotUpdateBootMarkerStore.kt`
+- `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/next/mixcretailassemblyrn84/HotUpdateBootMarkerStore.kt`
 
 当前有三类 marker：
 

@@ -4,8 +4,8 @@ import {
     createCommandId,
     createModuleParameterFactory,
     createRequestId,
-} from '@impos2/kernel-base-contracts'
-import type {StateRuntimeSliceDescriptor} from '@impos2/kernel-base-state-runtime'
+} from '@next/kernel-base-contracts'
+import type {StateRuntimeSliceDescriptor} from '@next/kernel-base-state-runtime'
 import {
     createCommand,
     createKernelRuntimeApp,

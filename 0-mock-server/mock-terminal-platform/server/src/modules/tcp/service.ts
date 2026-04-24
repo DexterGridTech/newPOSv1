@@ -520,7 +520,7 @@ export const batchCreateTerminals = (sandboxId: string, count: number) => {
       currentBundleVersion: 'bundle-2026.04.06',
       currentConfigVersion: 'config-2026.04.06',
       deviceFingerprint: `fp-${terminalId}`,
-      deviceInfoJson: JSON.stringify({ model: 'Mock-POS-X1', manufacturer: 'IMPOS2', osVersion: 'Android 14' }),
+      deviceInfoJson: JSON.stringify({ model: 'Mock-POS-X1', manufacturer: 'NEXT', osVersion: 'Android 14' }),
       sourceMode: 'STANDARD',
       activatedAt: timestamp,
       lastSeenAt: timestamp,

@@ -4,9 +4,9 @@ import {
     type KernelRuntimeModuleV2,
     type RuntimeModuleContextV2,
     type RuntimeModulePreSetupContextV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
-import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
-import {uiRuntimeV2CommandDefinitions} from '@impos2/kernel-base-ui-runtime-v2'
+} from '@next/kernel-base-runtime-shell-v2'
+import {createCommand} from '@next/kernel-base-runtime-shell-v2'
+import {uiRuntimeV2CommandDefinitions} from '@next/kernel-base-ui-runtime-v2'
 import {moduleName as runtimeReactModuleName, registerUiRendererParts} from '../../src'
 import {
     runtimeReactScenarioDefinitions,

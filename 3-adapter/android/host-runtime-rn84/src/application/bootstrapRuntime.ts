@@ -1,7 +1,7 @@
-import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
-import {tcpControlV2CommandDefinitions} from '@impos2/kernel-base-tcp-control-runtime-v2'
-import {topologyRuntimeV3CommandDefinitions} from '@impos2/kernel-base-topology-runtime-v3'
-import type {KernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
+import {createCommand} from '@next/kernel-base-runtime-shell-v2'
+import {tcpControlV2CommandDefinitions} from '@next/kernel-base-tcp-control-runtime-v2'
+import {topologyRuntimeV3CommandDefinitions} from '@next/kernel-base-topology-runtime-v3'
+import type {KernelRuntimeV2} from '@next/kernel-base-runtime-shell-v2'
 import type {AppProps} from '../types'
 
 export const bootstrapAssemblyRuntime = async (

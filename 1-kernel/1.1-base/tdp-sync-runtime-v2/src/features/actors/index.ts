@@ -1,4 +1,4 @@
-import type {ActorDefinition} from '@impos2/kernel-base-runtime-shell-v2'
+import type {ActorDefinition} from '@next/kernel-base-runtime-shell-v2'
 import type {TopicChangePublisherFingerprintV2} from '../../foundations/topicChangePublisher'
 import {createTdpAutoConnectActorDefinitionV2} from './autoConnectActor'
 import {createTdpInitializeActorDefinitionV2} from './initializeActor'

@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest'
-import {applySliceSyncDiff} from '@impos2/kernel-base-state-runtime'
+import {applySliceSyncDiff} from '@next/kernel-base-state-runtime'
 import {cateringProductMasterDataSliceDescriptor} from '../../src/features/slices/masterData'
 
 describe('cateringProductMasterDataSliceDescriptor state sync', () => {

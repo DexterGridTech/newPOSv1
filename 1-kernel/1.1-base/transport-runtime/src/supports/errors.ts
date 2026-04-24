@@ -1,5 +1,5 @@
-import {createAppError, isAppError} from '@impos2/kernel-base-contracts'
-import type {AppError, ErrorDefinition} from '@impos2/kernel-base-contracts'
+import {createAppError, isAppError} from '@next/kernel-base-contracts'
+import type {AppError, ErrorDefinition} from '@next/kernel-base-contracts'
 import {moduleName} from '../moduleName'
 
 export const transportRuntimeErrorDefinitions = {

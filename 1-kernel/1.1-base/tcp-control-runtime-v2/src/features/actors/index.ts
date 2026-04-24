@@ -1,4 +1,4 @@
-import type {ActorDefinition} from '@impos2/kernel-base-runtime-shell-v2'
+import type {ActorDefinition} from '@next/kernel-base-runtime-shell-v2'
 import {createTcpActivationActorDefinitionV2} from './activationActor'
 import {createTcpBootstrapActorDefinitionV2} from './bootstrapActor'
 import {createTcpCredentialActorDefinitionV2} from './credentialActor'

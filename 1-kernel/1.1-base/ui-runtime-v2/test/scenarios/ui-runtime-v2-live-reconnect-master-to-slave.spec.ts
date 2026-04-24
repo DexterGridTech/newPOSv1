@@ -1,9 +1,9 @@
 import {describe, expect, it} from 'vitest'
-import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
+import {createCommand} from '@next/kernel-base-runtime-shell-v2'
 import {
     selectTopologyRuntimeV3Connection,
     selectTopologySync,
-} from '@impos2/kernel-base-topology-runtime-v3'
+} from '@next/kernel-base-topology-runtime-v3'
 import {uiRuntimeV2CommandDefinitions} from '../../src'
 import {uiRuntimeV2VariableWorkspaceKeys} from '../../src/features/slices'
 import {createUiRuntimeV2LiveHarness} from '../helpers/liveHarness'

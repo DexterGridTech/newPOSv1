@@ -4,11 +4,11 @@ import {
     onCommand,
     runtimeShellV2CommandDefinitions,
     type ActorDefinition,
-} from '@impos2/kernel-base-runtime-shell-v2'
-import {organizationIamMasterDataCommandDefinitions} from '@impos2/kernel-business-organization-iam-master-data'
-import {cateringProductMasterDataCommandDefinitions} from '@impos2/kernel-business-catering-product-master-data'
-import {cateringStoreOperatingMasterDataCommandDefinitions} from '@impos2/kernel-business-catering-store-operating-master-data'
-import {selectTcpIsActivated, selectTcpTerminalId} from '@impos2/kernel-base-tcp-control-runtime-v2'
+} from '@next/kernel-base-runtime-shell-v2'
+import {organizationIamMasterDataCommandDefinitions} from '@next/kernel-business-organization-iam-master-data'
+import {cateringProductMasterDataCommandDefinitions} from '@next/kernel-business-catering-product-master-data'
+import {cateringStoreOperatingMasterDataCommandDefinitions} from '@next/kernel-business-catering-store-operating-master-data'
+import {selectTcpIsActivated, selectTcpTerminalId} from '@next/kernel-base-tcp-control-runtime-v2'
 import {replaceCateringShellRootScreen} from '../../supports/rootScreenRouter'
 import {moduleName} from '../../moduleName'
 

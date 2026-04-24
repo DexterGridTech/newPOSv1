@@ -1,4 +1,4 @@
-import {createNodeId, createRuntimeInstanceId} from '@impos2/kernel-base-contracts'
+import {createNodeId, createRuntimeInstanceId} from '@next/kernel-base-contracts'
 import type {
     KernelRuntimeAppConfigV2,
     KernelRuntimeAppDescriptorV2,

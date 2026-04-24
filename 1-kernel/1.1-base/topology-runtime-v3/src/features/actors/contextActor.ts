@@ -3,8 +3,8 @@ import {
     createModuleActorFactory,
     onCommand,
     type ActorDefinition,
-} from '@impos2/kernel-base-runtime-shell-v2'
-import {createAppError} from '@impos2/kernel-base-contracts'
+} from '@next/kernel-base-runtime-shell-v2'
+import {createAppError} from '@next/kernel-base-contracts'
 import {moduleName} from '../../moduleName'
 import {
     getTopologyV3DisplayModeEligibility,

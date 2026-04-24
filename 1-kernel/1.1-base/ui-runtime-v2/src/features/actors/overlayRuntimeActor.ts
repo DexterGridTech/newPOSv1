@@ -1,12 +1,12 @@
-import {createAppError} from '@impos2/kernel-base-contracts'
-import {createWorkspaceActionDispatcher} from '@impos2/kernel-base-state-runtime'
+import {createAppError} from '@next/kernel-base-contracts'
+import {createWorkspaceActionDispatcher} from '@next/kernel-base-state-runtime'
 import {
     createModuleActorFactory,
     onCommand,
     type ActorDefinition,
     type ActorExecutionContext,
-} from '@impos2/kernel-base-runtime-shell-v2'
-import {selectTopologyDisplayMode, selectTopologyWorkspace} from '@impos2/kernel-base-topology-runtime-v3'
+} from '@next/kernel-base-runtime-shell-v2'
+import {selectTopologyDisplayMode, selectTopologyWorkspace} from '@next/kernel-base-topology-runtime-v3'
 import {createUiOverlayEntry} from '../../foundations'
 import {moduleName} from '../../moduleName'
 import {normalizeUiRuntimeWorkspace} from '../../selectors'

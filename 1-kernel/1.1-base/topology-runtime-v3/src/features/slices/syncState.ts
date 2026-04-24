@@ -1,5 +1,5 @@
 import {createSlice, type PayloadAction} from '@reduxjs/toolkit'
-import type {StateRuntimeSliceDescriptor} from '@impos2/kernel-base-state-runtime'
+import type {StateRuntimeSliceDescriptor} from '@next/kernel-base-state-runtime'
 import type {TopologyV3SyncState} from '../../types/state'
 import {TOPOLOGY_V3_SYNC_STATE_KEY} from '../../foundations/stateKeys'
 

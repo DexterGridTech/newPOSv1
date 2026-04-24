@@ -1,4 +1,4 @@
-import type {RootState} from '@impos2/kernel-base-state-runtime'
+import type {RootState} from '@next/kernel-base-state-runtime'
 import type {HotUpdateState} from '../types'
 import {TDP_HOT_UPDATE_STATE_KEY} from '../foundations/stateKeys'
 

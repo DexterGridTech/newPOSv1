@@ -1,4 +1,4 @@
-import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
+import {createCommand} from '@next/kernel-base-runtime-shell-v2'
 import {tdpSyncV2CommandDefinitions} from '../features/commands'
 import {selectTdpResolvedProjectionByTopic} from '../selectors'
 import {selectTdpProjectionState} from '../selectors'

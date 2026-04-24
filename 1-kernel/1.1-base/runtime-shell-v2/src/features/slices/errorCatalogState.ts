@@ -1,6 +1,6 @@
 import {createSlice, type PayloadAction} from '@reduxjs/toolkit'
-import type {ErrorCatalogEntry} from '@impos2/kernel-base-contracts'
-import type {StateRuntimeSliceDescriptor} from '@impos2/kernel-base-state-runtime'
+import type {ErrorCatalogEntry} from '@next/kernel-base-contracts'
+import type {StateRuntimeSliceDescriptor} from '@next/kernel-base-state-runtime'
 
 export const RUNTIME_SHELL_V2_ERROR_CATALOG_STATE_KEY = 'kernel.base.runtime-shell-v2.error-catalog'
 

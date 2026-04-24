@@ -1,11 +1,11 @@
-import {createWorkspaceActionDispatcher} from '@impos2/kernel-base-state-runtime'
+import {createWorkspaceActionDispatcher} from '@next/kernel-base-state-runtime'
 import {
     createModuleActorFactory,
     onCommand,
     type ActorDefinition,
     type ActorExecutionContext,
-} from '@impos2/kernel-base-runtime-shell-v2'
-import {selectTopologyWorkspace} from '@impos2/kernel-base-topology-runtime-v3'
+} from '@next/kernel-base-runtime-shell-v2'
+import {selectTopologyWorkspace} from '@next/kernel-base-topology-runtime-v3'
 import {moduleName} from '../../moduleName'
 import {normalizeUiRuntimeWorkspace} from '../../selectors'
 import {uiRuntimeV2CommandDefinitions} from '../commands'

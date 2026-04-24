@@ -3,8 +3,8 @@ import {
     isAppError,
     nowTimestampMs,
     type AppError,
-} from '@impos2/kernel-base-contracts'
-import type {RuntimeModuleContextV2} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-contracts'
+import type {RuntimeModuleContextV2} from '@next/kernel-base-runtime-shell-v2'
 import type {
     WorkflowDefinition,
     WorkflowObservation,

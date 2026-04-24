@@ -1,15 +1,15 @@
 import React from 'react'
 import {describe, expect, it, vi} from 'vitest'
-import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
+import {createCommand} from '@next/kernel-base-runtime-shell-v2'
 import {
     tcpControlV2CommandDefinitions,
     tcpControlV2StateActions,
-} from '@impos2/kernel-base-tcp-control-runtime-v2'
+} from '@next/kernel-base-tcp-control-runtime-v2'
 import {
     selectTopologyRuntimeV3Context,
     topologyRuntimeV3CommandDefinitions,
     topologyRuntimeV3StateActions,
-} from '@impos2/kernel-base-topology-runtime-v3'
+} from '@next/kernel-base-topology-runtime-v3'
 import {
     ActivateDeviceScreen,
     ActivateDeviceSecondaryScreen,

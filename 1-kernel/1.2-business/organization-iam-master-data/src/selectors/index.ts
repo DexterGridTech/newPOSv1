@@ -1,6 +1,6 @@
 import {createSelector} from '@reduxjs/toolkit'
-import type {RootState} from '@impos2/kernel-base-state-runtime'
-import {selectTcpBindingSnapshot} from '@impos2/kernel-base-tcp-control-runtime-v2'
+import type {RootState} from '@next/kernel-base-state-runtime'
+import {selectTcpBindingSnapshot} from '@next/kernel-base-tcp-control-runtime-v2'
 import {ORGANIZATION_IAM_MASTER_DATA_STATE_KEY, getOrganizationIamRecordsByTopic} from '../features/slices/masterData'
 import {organizationIamTopics} from '../foundations/topics'
 import type {

@@ -5,14 +5,14 @@ import {
     type KernelRuntimeAppV2,
     type KernelRuntimeV2,
     type RequestQueryResult,
-} from '@impos2/kernel-base-runtime-shell-v2'
-import type {RequestId} from '@impos2/kernel-base-contracts'
-import {selectTopologyDisplayMode} from '@impos2/kernel-base-topology-runtime-v3'
+} from '@next/kernel-base-runtime-shell-v2'
+import type {RequestId} from '@next/kernel-base-contracts'
+import {selectTopologyDisplayMode} from '@next/kernel-base-topology-runtime-v3'
 import {
     selectUiOverlays,
     selectUiScreen,
-} from '@impos2/kernel-base-ui-runtime-v2'
-import {uiRuntimeRootVariables} from '@impos2/ui-base-runtime-react'
+} from '@next/kernel-base-ui-runtime-v2'
+import {uiRuntimeRootVariables} from '@next/ui-base-runtime-react'
 import {
     assertValidTarget,
     createActionExecutor,
@@ -27,7 +27,7 @@ import {
     createSemanticRegistry,
     type SemanticRegistry,
     type SessionHelloResult,
-} from '@impos2/ui-base-automation-runtime'
+} from '@next/ui-base-automation-runtime'
 import {nativeScriptExecutor} from '../../turbomodules/scripts'
 
 type RuntimeTarget = Exclude<AutomationTarget, 'all' | 'host'>

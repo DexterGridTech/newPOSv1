@@ -1,12 +1,12 @@
 import type {
     KernelRuntimeModuleV2,
     RuntimeModulePreSetupContextV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {
     createRuntimeModuleLifecycleLogger,
     defineKernelRuntimeModuleV2,
     deriveKernelRuntimeModuleDescriptorV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {moduleName} from '../moduleName'
 import {createTerminalLogUploadActorDefinitionsV2} from '../features/actors'
 import {terminalLogUploadRuntimeV2ModuleManifest} from './moduleManifest'

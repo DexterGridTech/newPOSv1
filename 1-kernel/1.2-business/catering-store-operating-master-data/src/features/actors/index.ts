@@ -1,4 +1,4 @@
-import type {ActorDefinition} from '@impos2/kernel-base-runtime-shell-v2'
+import type {ActorDefinition} from '@next/kernel-base-runtime-shell-v2'
 import {createCateringStoreOperatingMasterDataActorDefinition} from './masterDataActor'
 
 export * from './masterDataActor'

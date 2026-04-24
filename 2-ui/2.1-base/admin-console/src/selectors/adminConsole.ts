@@ -1,4 +1,4 @@
-import type {RootState} from '@impos2/kernel-base-state-runtime'
+import type {RootState} from '@next/kernel-base-state-runtime'
 import {createSelector} from '@reduxjs/toolkit'
 import {adminConsoleStateKeys} from '../foundations/stateKeys'
 import type {

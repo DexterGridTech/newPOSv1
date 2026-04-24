@@ -6,7 +6,7 @@
 
 **Architecture:** The rebuild creates four UI base packages: `runtime-react`, `input-runtime`, `admin-console`, and `terminal-console`. `runtime-react` is the React bridge for `ui-runtime-v2`; `input-runtime` owns field controllers and virtual keyboard policy; `admin-console` hosts admin login, topology/device/tools, and adapter diagnostics; `terminal-console` is the TCP-facing activation and connection UI aligned with `tcp-control-runtime-v2`. All production exports stay pure React Native. Expo is isolated to `test-expo/`.
 
-**Tech Stack:** TypeScript, React Native, React, React Redux, Vitest, react-test-renderer, Expo (test-only), `@impos2/kernel-base-ui-runtime-v2`, `@impos2/kernel-base-runtime-shell-v2`, `@impos2/kernel-base-topology-runtime-v2`, `@impos2/kernel-base-tcp-control-runtime-v2`, `@impos2/kernel-base-platform-ports`
+**Tech Stack:** TypeScript, React Native, React, React Redux, Vitest, react-test-renderer, Expo (test-only), `@next/kernel-base-ui-runtime-v2`, `@next/kernel-base-runtime-shell-v2`, `@next/kernel-base-topology-runtime-v2`, `@next/kernel-base-tcp-control-runtime-v2`, `@next/kernel-base-platform-ports`
 
 ---
 
@@ -174,7 +174,7 @@ Model `package.json` after the kernel base packages, but keep React / React Nati
 
 ```json
 {
-  "name": "@impos2/ui-base-runtime-react",
+  "name": "@next/ui-base-runtime-react",
   "version": "1.0.0",
   "description": "React Native bridge for kernel ui-runtime-v2",
   "author": "DexterYang",
@@ -192,10 +192,10 @@ Model `package.json` after the kernel base packages, but keep React / React Nati
     "type-check": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@impos2/kernel-base-platform-ports": "workspace:*",
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*",
-    "@impos2/kernel-base-topology-runtime-v2": "workspace:*",
-    "@impos2/kernel-base-ui-runtime-v2": "workspace:*",
+    "@next/kernel-base-platform-ports": "workspace:*",
+    "@next/kernel-base-runtime-shell-v2": "workspace:*",
+    "@next/kernel-base-topology-runtime-v2": "workspace:*",
+    "@next/kernel-base-ui-runtime-v2": "workspace:*",
     "@reduxjs/toolkit": "^2.10.0"
   },
   "peerDependencies": {
@@ -219,7 +219,7 @@ Use the same package style, with dependencies adjusted to the package responsibi
 
 ```json
 {
-  "name": "@impos2/ui-base-input-runtime",
+  "name": "@next/ui-base-input-runtime",
   "version": "1.0.0",
   "exports": {
     ".": "./src/index.ts"
@@ -232,10 +232,10 @@ Use the same package style, with dependencies adjusted to the package responsibi
     "type-check": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@impos2/kernel-base-platform-ports": "workspace:*",
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*",
-    "@impos2/kernel-base-state-runtime": "workspace:*",
-    "@impos2/ui-base-runtime-react": "workspace:*"
+    "@next/kernel-base-platform-ports": "workspace:*",
+    "@next/kernel-base-runtime-shell-v2": "workspace:*",
+    "@next/kernel-base-state-runtime": "workspace:*",
+    "@next/ui-base-runtime-react": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=18",
@@ -247,25 +247,25 @@ Use the same package style, with dependencies adjusted to the package responsibi
 
 ```json
 {
-  "name": "@impos2/ui-base-admin-console",
+  "name": "@next/ui-base-admin-console",
   "dependencies": {
-    "@impos2/kernel-base-platform-ports": "workspace:*",
-    "@impos2/kernel-base-topology-runtime-v2": "workspace:*",
-    "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*",
-    "@impos2/ui-base-input-runtime": "workspace:*",
-    "@impos2/ui-base-runtime-react": "workspace:*"
+    "@next/kernel-base-platform-ports": "workspace:*",
+    "@next/kernel-base-topology-runtime-v2": "workspace:*",
+    "@next/kernel-base-tcp-control-runtime-v2": "workspace:*",
+    "@next/ui-base-input-runtime": "workspace:*",
+    "@next/ui-base-runtime-react": "workspace:*"
   }
 }
 ```
 
 ```json
 {
-  "name": "@impos2/ui-base-terminal-console",
+  "name": "@next/ui-base-terminal-console",
   "dependencies": {
-    "@impos2/kernel-base-platform-ports": "workspace:*",
-    "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*",
-    "@impos2/ui-base-input-runtime": "workspace:*",
-    "@impos2/ui-base-runtime-react": "workspace:*"
+    "@next/kernel-base-platform-ports": "workspace:*",
+    "@next/kernel-base-tcp-control-runtime-v2": "workspace:*",
+    "@next/ui-base-input-runtime": "workspace:*",
+    "@next/ui-base-runtime-react": "workspace:*"
   }
 }
 ```
@@ -290,11 +290,11 @@ Each package should start from the same layout:
 ```
 
 ```ts
-export const moduleName = '@impos2/ui-base-runtime-react'
+export const moduleName = '@next/ui-base-runtime-react'
 ```
 
 ```ts
-import {defineKernelRuntimeModuleManifestV2} from '@impos2/kernel-base-runtime-shell-v2'
+import {defineKernelRuntimeModuleManifestV2} from '@next/kernel-base-runtime-shell-v2'
 import {moduleName} from '../moduleName'
 
 export const runtimeReactModuleManifest = defineKernelRuntimeModuleManifestV2({
@@ -310,11 +310,11 @@ import type {
   KernelRuntimeModuleV2,
   RuntimeModuleContextV2,
   RuntimeModulePreSetupContextV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {
   createRuntimeModuleLifecycleLogger,
   defineKernelRuntimeModuleV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {moduleName} from '../moduleName'
 import {runtimeReactModuleManifest} from './moduleManifest'
 
@@ -407,8 +407,8 @@ git commit -m "Scaffold the new 2-ui base package structure"
 The core harness pattern should look like this:
 
 ```ts
-import {createKernelRuntimeApp} from '@impos2/kernel-base-runtime-shell-v2'
-import {createPlatformPorts} from '@impos2/kernel-base-platform-ports'
+import {createKernelRuntimeApp} from '@next/kernel-base-runtime-shell-v2'
+import {createPlatformPorts} from '@next/kernel-base-platform-ports'
 
 export interface UiTestHarness {
   app: ReturnType<typeof createKernelRuntimeApp>
@@ -465,7 +465,7 @@ export * from './support/inputHarness'
 
 - [ ] **Step 4: Verify test harness compilation**
 
-Run: `corepack yarn workspaces foreach -Rpt --from '@impos2/ui-base-*' run type-check`
+Run: `corepack yarn workspaces foreach -Rpt --from '@next/ui-base-*' run type-check`
 
 Expected: harnesses compile without Expo and without importing from future business packages.
 
@@ -498,7 +498,7 @@ The screen-part definition should preserve the old authoring feel while translat
 
 ```ts
 import type {ComponentType} from 'react'
-import type {UiScreenDefinition} from '@impos2/kernel-base-ui-runtime-v2'
+import type {UiScreenDefinition} from '@next/kernel-base-ui-runtime-v2'
 
 export interface UiScreenPartDefinition<TProps = unknown> {
   definition: UiScreenDefinition<TProps>
@@ -552,7 +552,7 @@ The registry should extract definitions for kernel registration and keep compone
 
 ```ts
 import type {ComponentType} from 'react'
-import type {UiScreenDefinition} from '@impos2/kernel-base-ui-runtime-v2'
+import type {UiScreenDefinition} from '@next/kernel-base-ui-runtime-v2'
 import type {UiScreenPartDefinition} from '../types/parts'
 
 export interface UiRendererRegistryEntry {
@@ -630,13 +630,13 @@ describe('runtime-react registration', () => {
 
 - [ ] **Step 7: Run the test to verify it fails**
 
-Run: `corepack yarn workspace @impos2/ui-base-runtime-react vitest run test/scenarios/runtime-react-registration.spec.ts`
+Run: `corepack yarn workspace @next/ui-base-runtime-react vitest run test/scenarios/runtime-react-registration.spec.ts`
 
 Expected: FAIL because the registry helpers are not implemented yet.
 
 - [ ] **Step 8: Implement the minimal code and rerun**
 
-Run: `corepack yarn workspace @impos2/ui-base-runtime-react vitest run test/scenarios/runtime-react-registration.spec.ts`
+Run: `corepack yarn workspace @next/ui-base-runtime-react vitest run test/scenarios/runtime-react-registration.spec.ts`
 
 Expected: PASS.
 
@@ -693,7 +693,7 @@ describe('ScreenContainer', () => {
 
 - [ ] **Step 2: Run the test to verify it fails**
 
-Run: `corepack yarn workspace @impos2/ui-base-runtime-react vitest run test/scenarios/runtime-react-screen-container.spec.tsx`
+Run: `corepack yarn workspace @next/ui-base-runtime-react vitest run test/scenarios/runtime-react-screen-container.spec.tsx`
 
 Expected: FAIL because the root rendering components do not exist yet.
 
@@ -722,7 +722,7 @@ export const ScreenContainer: React.FC<{containerKey: string}> = ({containerKey}
 Keep the semantics close to the old UI usage:
 
 ```ts
-import {uiRuntimeV2CommandDefinitions} from '@impos2/kernel-base-ui-runtime-v2'
+import {uiRuntimeV2CommandDefinitions} from '@next/kernel-base-ui-runtime-v2'
 
 export const createUiNavigationBridge = (runtime: {
   dispatchCommand: (command: unknown) => Promise<unknown>
@@ -758,9 +758,9 @@ The root shell should support:
 Run:
 
 ```bash
-corepack yarn workspace @impos2/ui-base-runtime-react vitest run test/scenarios/runtime-react-screen-container.spec.tsx
-corepack yarn workspace @impos2/ui-base-runtime-react vitest run test/scenarios/runtime-react-overlay-host.spec.tsx
-corepack yarn workspace @impos2/ui-base-runtime-react vitest run test/scenarios/runtime-react-navigation-bridge.spec.ts
+corepack yarn workspace @next/ui-base-runtime-react vitest run test/scenarios/runtime-react-screen-container.spec.tsx
+corepack yarn workspace @next/ui-base-runtime-react vitest run test/scenarios/runtime-react-overlay-host.spec.tsx
+corepack yarn workspace @next/ui-base-runtime-react vitest run test/scenarios/runtime-react-navigation-bridge.spec.ts
 ```
 
 Expected: PASS.
@@ -839,7 +839,7 @@ describe('input policy', () => {
 
 - [ ] **Step 3: Run the test to verify it fails**
 
-Run: `corepack yarn workspace @impos2/ui-base-input-runtime vitest run test/scenarios/input-runtime-policy.spec.ts`
+Run: `corepack yarn workspace @next/ui-base-input-runtime vitest run test/scenarios/input-runtime-policy.spec.ts`
 
 Expected: FAIL because the policy helpers do not exist yet.
 
@@ -893,9 +893,9 @@ Write tests that prove:
 Run:
 
 ```bash
-corepack yarn workspace @impos2/ui-base-input-runtime vitest run test/scenarios/input-runtime-policy.spec.ts
-corepack yarn workspace @impos2/ui-base-input-runtime vitest run test/scenarios/input-runtime-controller.spec.ts
-corepack yarn workspace @impos2/ui-base-input-runtime vitest run test/scenarios/input-runtime-rendered.spec.tsx
+corepack yarn workspace @next/ui-base-input-runtime vitest run test/scenarios/input-runtime-policy.spec.ts
+corepack yarn workspace @next/ui-base-input-runtime vitest run test/scenarios/input-runtime-controller.spec.ts
+corepack yarn workspace @next/ui-base-input-runtime vitest run test/scenarios/input-runtime-rendered.spec.tsx
 ```
 
 Expected: PASS.
@@ -1039,10 +1039,10 @@ The popup should:
 Run:
 
 ```bash
-corepack yarn workspace @impos2/ui-base-admin-console vitest run test/scenarios/admin-password.spec.ts
-corepack yarn workspace @impos2/ui-base-admin-console vitest run test/scenarios/admin-launcher.spec.ts
-corepack yarn workspace @impos2/ui-base-admin-console vitest run test/scenarios/admin-recovery.spec.ts
-corepack yarn workspace @impos2/ui-base-admin-console vitest run test/scenarios/admin-popup-rendered.spec.tsx
+corepack yarn workspace @next/ui-base-admin-console vitest run test/scenarios/admin-password.spec.ts
+corepack yarn workspace @next/ui-base-admin-console vitest run test/scenarios/admin-launcher.spec.ts
+corepack yarn workspace @next/ui-base-admin-console vitest run test/scenarios/admin-recovery.spec.ts
+corepack yarn workspace @next/ui-base-admin-console vitest run test/scenarios/admin-popup-rendered.spec.tsx
 ```
 
 Expected: PASS.
@@ -1138,8 +1138,8 @@ Add one admin tab dedicated to:
 Run:
 
 ```bash
-corepack yarn workspace @impos2/ui-base-admin-console vitest run test/scenarios/admin-adapter-diagnostics.spec.ts
-corepack yarn workspace @impos2/ui-base-admin-console vitest run test/scenarios/admin-adapter-diagnostics-rendered.spec.tsx
+corepack yarn workspace @next/ui-base-admin-console vitest run test/scenarios/admin-adapter-diagnostics.spec.ts
+corepack yarn workspace @next/ui-base-admin-console vitest run test/scenarios/admin-adapter-diagnostics-rendered.spec.tsx
 ```
 
 Expected: PASS.
@@ -1222,9 +1222,9 @@ These should still be declared in a single `terminalScreenParts.ts` file so futu
 Run:
 
 ```bash
-corepack yarn workspace @impos2/ui-base-terminal-console vitest run test/scenarios/terminal-console-activation.spec.ts
-corepack yarn workspace @impos2/ui-base-terminal-console vitest run test/scenarios/terminal-console-summary.spec.ts
-corepack yarn workspace @impos2/ui-base-terminal-console vitest run test/scenarios/terminal-console-rendered.spec.tsx
+corepack yarn workspace @next/ui-base-terminal-console vitest run test/scenarios/terminal-console-activation.spec.ts
+corepack yarn workspace @next/ui-base-terminal-console vitest run test/scenarios/terminal-console-summary.spec.ts
+corepack yarn workspace @next/ui-base-terminal-console vitest run test/scenarios/terminal-console-rendered.spec.tsx
 ```
 
 Expected: PASS.
@@ -1330,8 +1330,8 @@ describe('UiRuntimeRootShell', () => {
 Run:
 
 ```bash
-corepack yarn workspace @impos2/ui-base-runtime-react vitest run test/scenarios/runtime-react-root-shell.spec.tsx
-corepack yarn workspace @impos2/ui-base-admin-console vitest run test/scenarios/admin-integration-trigger.spec.tsx
+corepack yarn workspace @next/ui-base-runtime-react vitest run test/scenarios/runtime-react-root-shell.spec.tsx
+corepack yarn workspace @next/ui-base-admin-console vitest run test/scenarios/admin-integration-trigger.spec.tsx
 ```
 
 Expected: PASS.
@@ -1356,10 +1356,10 @@ git commit -m "Document and test the rebuilt root shell integration pattern"
 Run:
 
 ```bash
-corepack yarn workspace @impos2/ui-base-runtime-react type-check
-corepack yarn workspace @impos2/ui-base-input-runtime type-check
-corepack yarn workspace @impos2/ui-base-admin-console type-check
-corepack yarn workspace @impos2/ui-base-terminal-console type-check
+corepack yarn workspace @next/ui-base-runtime-react type-check
+corepack yarn workspace @next/ui-base-input-runtime type-check
+corepack yarn workspace @next/ui-base-admin-console type-check
+corepack yarn workspace @next/ui-base-terminal-console type-check
 ```
 
 Expected: PASS.
@@ -1369,10 +1369,10 @@ Expected: PASS.
 Run:
 
 ```bash
-corepack yarn workspace @impos2/ui-base-runtime-react test
-corepack yarn workspace @impos2/ui-base-input-runtime test
-corepack yarn workspace @impos2/ui-base-admin-console test
-corepack yarn workspace @impos2/ui-base-terminal-console test
+corepack yarn workspace @next/ui-base-runtime-react test
+corepack yarn workspace @next/ui-base-input-runtime test
+corepack yarn workspace @next/ui-base-admin-console test
+corepack yarn workspace @next/ui-base-terminal-console test
 ```
 
 Expected: PASS.

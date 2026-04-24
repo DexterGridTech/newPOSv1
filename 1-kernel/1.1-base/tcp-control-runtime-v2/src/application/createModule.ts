@@ -2,19 +2,19 @@ import type {
     KernelRuntimeModuleV2,
     RuntimeModuleContextV2,
     RuntimeModulePreSetupContextV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {
     createRuntimeModuleLifecycleLogger,
     defineKernelRuntimeModuleV2,
     deriveKernelRuntimeModuleDescriptorV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {
     createHttpRuntime,
     type HttpSuccessResponse,
     type HttpTransport,
     type HttpTransportRequest,
-} from '@impos2/kernel-base-transport-runtime'
-import {SERVER_NAME_MOCK_TERMINAL_PLATFORM} from '@impos2/kernel-server-config-v2'
+} from '@next/kernel-base-transport-runtime'
+import {SERVER_NAME_MOCK_TERMINAL_PLATFORM} from '@next/kernel-server-config-v2'
 import {moduleName} from '../moduleName'
 import {
     createTcpControlActorDefinitionsV2,

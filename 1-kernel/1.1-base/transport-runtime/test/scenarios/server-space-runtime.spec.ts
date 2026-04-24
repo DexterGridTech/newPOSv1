@@ -1,9 +1,9 @@
 import {describe, expect, it} from 'vitest'
-import {createLoggerPort, createPlatformPorts} from '@impos2/kernel-base-platform-ports'
+import {createLoggerPort, createPlatformPorts} from '@next/kernel-base-platform-ports'
 import {
     createCommand,
     createKernelRuntimeV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {
     createTransportRuntimeModule,
     resolveTransportServers,

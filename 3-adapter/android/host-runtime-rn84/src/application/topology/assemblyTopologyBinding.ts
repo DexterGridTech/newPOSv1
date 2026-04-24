@@ -1,7 +1,7 @@
 import {
     resolveTopologyV3SocketServerFromUrls,
     type TopologyV3SocketServerDefinition,
-} from '@impos2/kernel-base-topology-runtime-v3'
+} from '@next/kernel-base-topology-runtime-v3'
 
 export interface AssemblyTopologyBindingState {
     role: 'master' | 'slave'

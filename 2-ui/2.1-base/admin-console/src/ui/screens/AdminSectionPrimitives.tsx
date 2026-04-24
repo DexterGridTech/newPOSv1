@@ -4,8 +4,8 @@ import {
     useOptionalUiAutomationBridge,
     useOptionalUiAutomationRuntimeId,
     useOptionalUiAutomationTarget,
-} from '@impos2/ui-base-runtime-react'
-import type {RuntimeReactAutomationNodeRegistration} from '@impos2/ui-base-runtime-react'
+} from '@next/ui-base-runtime-react'
+import type {RuntimeReactAutomationNodeRegistration} from '@next/ui-base-runtime-react'
 import type {
     AdminDetailItem,
     AdminStatusItem,

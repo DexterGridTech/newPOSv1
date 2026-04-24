@@ -1,8 +1,8 @@
-import { selectTcpSandboxId, selectTcpTerminalId } from '@impos2/kernel-base-tcp-control-runtime-v2'
+import { selectTcpSandboxId, selectTcpTerminalId } from '@next/kernel-base-tcp-control-runtime-v2'
 import {
   selectTopologyRuntimeV3Context,
   selectTopologyRuntimeV3DisplayMode,
-} from '@impos2/kernel-base-topology-runtime-v3'
+} from '@next/kernel-base-topology-runtime-v3'
 import { selectTdpHotUpdateState } from '../selectors'
 
 export const buildHotUpdateVersionReportPayload = (state: unknown, input: {

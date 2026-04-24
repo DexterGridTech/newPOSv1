@@ -2,7 +2,7 @@ import {describe, expect, it} from 'vitest'
 import {
     applySliceSyncDiff,
     createSliceSyncDiff,
-} from '@impos2/kernel-base-state-runtime'
+} from '@next/kernel-base-state-runtime'
 import {
     createTdpHotUpdateStateForTests,
     reduceHotUpdateDesired,

@@ -1,4 +1,4 @@
-import type {KernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
+import type {KernelRuntimeV2} from '@next/kernel-base-runtime-shell-v2'
 import type {UnknownAction} from '@reduxjs/toolkit'
 import {selectTdpResolvedProjection} from '../selectors'
 import {TDP_HOT_UPDATE_ITEM_KEY, TDP_HOT_UPDATE_TOPIC} from './hotUpdateTopic'

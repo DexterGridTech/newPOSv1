@@ -1,4 +1,4 @@
-import type {CommandId, RequestId, TimestampMs} from '@impos2/kernel-base-contracts'
+import type {CommandId, RequestId, TimestampMs} from '@next/kernel-base-contracts'
 
 export interface ExecutionJournalRecord {
     eventType: 'started' | 'completed' | 'failed'

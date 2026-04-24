@@ -4,7 +4,7 @@ import {
     nowTimestampMs,
     type AppError,
     type RequestId,
-} from '@impos2/kernel-base-contracts'
+} from '@next/kernel-base-contracts'
 import type {
     WorkflowErrorView,
     WorkflowEvent,

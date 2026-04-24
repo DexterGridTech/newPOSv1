@@ -4,14 +4,14 @@ import {
     onCommand,
     type ActorDefinition,
     type ActorExecutionContext,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {
     selectTdpProjectionEntriesByTopic,
     tdpSyncV2CommandDefinitions,
     type TdpProjectionEnvelope,
     type TdpTopicDataChangeItem,
-} from '@impos2/kernel-base-tdp-sync-runtime-v2'
-import {tcpControlV2CommandDefinitions} from '@impos2/kernel-base-tcp-control-runtime-v2'
+} from '@next/kernel-base-tdp-sync-runtime-v2'
+import {tcpControlV2CommandDefinitions} from '@next/kernel-base-tcp-control-runtime-v2'
 import {moduleName} from '../../moduleName'
 import {decodeCateringStoreOperatingChange} from '../../foundations/decoder'
 import {cateringStoreOperatingTopicList, isCateringStoreOperatingTopic} from '../../foundations/topics'

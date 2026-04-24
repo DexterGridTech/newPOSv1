@@ -33,19 +33,19 @@ const {
     },
 }))
 
-vi.mock('@impos2/kernel-base-runtime-shell-v2', async importOriginal => ({
-    ...await importOriginal<typeof import('@impos2/kernel-base-runtime-shell-v2')>(),
+vi.mock('@next/kernel-base-runtime-shell-v2', async importOriginal => ({
+    ...await importOriginal<typeof import('@next/kernel-base-runtime-shell-v2')>(),
     defineCommand: defineCommandMock,
     createCommand: createCommandMock,
 }))
 
-vi.mock('@impos2/kernel-base-ui-runtime-v2', async importOriginal => ({
-    ...await importOriginal<typeof import('@impos2/kernel-base-ui-runtime-v2')>(),
+vi.mock('@next/kernel-base-ui-runtime-v2', async importOriginal => ({
+    ...await importOriginal<typeof import('@next/kernel-base-ui-runtime-v2')>(),
     selectUiScreen: selectUiScreenMock,
     selectUiOverlays: selectUiOverlaysMock,
 }))
 
-vi.mock('@impos2/kernel-base-topology-runtime-v3', () => ({
+vi.mock('@next/kernel-base-topology-runtime-v3', () => ({
     selectTopologyDisplayMode: selectTopologyDisplayModeMock,
     topologyRuntimeV3CommandDefinitions: topologyCommandDefinitions,
 }))
@@ -56,7 +56,7 @@ vi.mock('../../src/turbomodules/scripts', () => ({
     },
 }))
 
-import {createAutomationJsonRpcClient} from '@impos2/ui-base-automation-runtime'
+import {createAutomationJsonRpcClient} from '@next/ui-base-automation-runtime'
 import {createAutomationRequestDispatcher} from '../../src/application/automation'
 
 describe('assembly automation dispatcher', () => {

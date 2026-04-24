@@ -1,5 +1,5 @@
 import type {EnhancedStore, StoreEnhancer} from '@reduxjs/toolkit'
-import type {LoggerPort, StateStoragePort} from '@impos2/kernel-base-platform-ports'
+import type {LoggerPort, StateStoragePort} from '@next/kernel-base-platform-ports'
 import type {RootState} from './state'
 import type {StateRuntimeSliceDescriptor} from './slice'
 import type {PersistedStateRuntimeSnapshot} from './persistence'

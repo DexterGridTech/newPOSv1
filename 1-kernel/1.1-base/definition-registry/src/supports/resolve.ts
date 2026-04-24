@@ -1,4 +1,4 @@
-import {renderErrorTemplate} from '@impos2/kernel-base-contracts'
+import {renderErrorTemplate} from '@next/kernel-base-contracts'
 import type {
     AppError,
     ErrorCatalogEntry,
@@ -7,7 +7,7 @@ import type {
     ParameterDefinition,
     ResolvedErrorView,
     ResolvedParameter,
-} from '@impos2/kernel-base-contracts'
+} from '@next/kernel-base-contracts'
 import type {DefinitionRegistryBundle} from '../types/registry'
 
 /**

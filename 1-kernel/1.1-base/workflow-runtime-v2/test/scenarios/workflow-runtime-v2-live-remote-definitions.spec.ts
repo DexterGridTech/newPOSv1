@@ -1,10 +1,10 @@
 import {afterEach, describe, expect, it} from 'vitest'
-import {createRequestId} from '@impos2/kernel-base-contracts'
-import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
+import {createRequestId} from '@next/kernel-base-contracts'
+import {createCommand} from '@next/kernel-base-runtime-shell-v2'
 import {
     selectTdpProjectionByTopicAndBucket,
     selectTerminalGroupMembership,
-} from '@impos2/kernel-base-tdp-sync-runtime-v2'
+} from '@next/kernel-base-tdp-sync-runtime-v2'
 import {
     createWorkflowRuntimeModuleV2,
     selectWorkflowDefinition,

@@ -30,13 +30,13 @@
 ### Verified Evidence
 
 - `./node_modules/.bin/vitest run 0-mock-server/mock-terminal-platform/server/src/test/tdp-dynamic-group.spec.ts`
-- `corepack yarn workspace @impos2/mock-terminal-platform-server type-check`
-- `corepack yarn workspace @impos2/mock-terminal-platform-web type-check`
-- `corepack yarn workspace @impos2/mock-terminal-platform-web build`
-- `corepack yarn workspace @impos2/kernel-base-tdp-sync-runtime-v2 type-check`
-- `corepack yarn workspace @impos2/kernel-base-tdp-sync-runtime-v2 test test/scenarios/tdp-sync-runtime-v2-live-group-policy.spec.ts`
-- `corepack yarn workspace @impos2/kernel-base-workflow-runtime-v2 type-check`
-- `corepack yarn workspace @impos2/kernel-base-workflow-runtime-v2 test test/scenarios/workflow-runtime-v2-live-remote-definitions.spec.ts`
+- `corepack yarn workspace @next/mock-terminal-platform-server type-check`
+- `corepack yarn workspace @next/mock-terminal-platform-web type-check`
+- `corepack yarn workspace @next/mock-terminal-platform-web build`
+- `corepack yarn workspace @next/kernel-base-tdp-sync-runtime-v2 type-check`
+- `corepack yarn workspace @next/kernel-base-tdp-sync-runtime-v2 test test/scenarios/tdp-sync-runtime-v2-live-group-policy.spec.ts`
+- `corepack yarn workspace @next/kernel-base-workflow-runtime-v2 type-check`
+- `corepack yarn workspace @next/kernel-base-workflow-runtime-v2 test test/scenarios/workflow-runtime-v2-live-remote-definitions.spec.ts`
 
 ### Remaining Next Slice
 
@@ -804,13 +804,13 @@ const sections = [
 
 - [ ] **Step 6: 先用 `type-check` 验证 web 侧接口与组件编排**
 
-Run: `corepack yarn workspace @impos2/mock-terminal-platform-web type-check`
+Run: `corepack yarn workspace @next/mock-terminal-platform-web type-check`
 
 Expected: PASS
 
 - [ ] **Step 7: 再跑完整 web build，确认页面拆分没有引入打包错误**
 
-Run: `corepack yarn workspace @impos2/mock-terminal-platform-web build`
+Run: `corepack yarn workspace @next/mock-terminal-platform-web build`
 
 Expected: PASS
 
@@ -947,11 +947,11 @@ export * from './selectors/groupMembership'
 
 - [ ] **Step 6: 跑单包测试与类型检查**
 
-Run: `corepack yarn workspace @impos2/kernel-base-tdp-sync-runtime-v2 test`
+Run: `corepack yarn workspace @next/kernel-base-tdp-sync-runtime-v2 test`
 
 Expected: PASS
 
-Run: `corepack yarn workspace @impos2/kernel-base-tdp-sync-runtime-v2 type-check`
+Run: `corepack yarn workspace @next/kernel-base-tdp-sync-runtime-v2 type-check`
 
 Expected: PASS
 
@@ -1078,31 +1078,31 @@ await waitFor(() => selectWorkflowDefinition(harness.runtime.getState(), 'workfl
 
 - [ ] **Step 5: 运行最小必要验证命令，收集 fresh evidence**
 
-Run: `corepack yarn workspace @impos2/kernel-base-tdp-sync-runtime-v2 test tdp-sync-runtime-v2-live-group-policy.spec.ts`
+Run: `corepack yarn workspace @next/kernel-base-tdp-sync-runtime-v2 test tdp-sync-runtime-v2-live-group-policy.spec.ts`
 
 Expected: PASS
 
-Run: `corepack yarn workspace @impos2/kernel-base-tdp-sync-runtime-v2 test tdp-sync-runtime-v2-live-roundtrip.spec.ts`
+Run: `corepack yarn workspace @next/kernel-base-tdp-sync-runtime-v2 test tdp-sync-runtime-v2-live-roundtrip.spec.ts`
 
 Expected: PASS
 
-Run: `corepack yarn workspace @impos2/kernel-base-tdp-sync-runtime-v2 test tdp-sync-runtime-v2-live-restart-recovery.spec.ts`
+Run: `corepack yarn workspace @next/kernel-base-tdp-sync-runtime-v2 test tdp-sync-runtime-v2-live-restart-recovery.spec.ts`
 
 Expected: PASS
 
-Run: `corepack yarn workspace @impos2/kernel-base-workflow-runtime-v2 test workflow-runtime-v2-live-remote-definitions.spec.ts`
+Run: `corepack yarn workspace @next/kernel-base-workflow-runtime-v2 test workflow-runtime-v2-live-remote-definitions.spec.ts`
 
 Expected: PASS
 
 - [ ] **Step 6: 做最后一轮跨包类型检查**
 
-Run: `corepack yarn workspace @impos2/mock-terminal-platform-server type-check`
+Run: `corepack yarn workspace @next/mock-terminal-platform-server type-check`
 
-Run: `corepack yarn workspace @impos2/mock-terminal-platform-web type-check`
+Run: `corepack yarn workspace @next/mock-terminal-platform-web type-check`
 
-Run: `corepack yarn workspace @impos2/kernel-base-tdp-sync-runtime-v2 type-check`
+Run: `corepack yarn workspace @next/kernel-base-tdp-sync-runtime-v2 type-check`
 
-Run: `corepack yarn workspace @impos2/kernel-base-workflow-runtime-v2 type-check`
+Run: `corepack yarn workspace @next/kernel-base-workflow-runtime-v2 type-check`
 
 Expected: 全部 PASS
 

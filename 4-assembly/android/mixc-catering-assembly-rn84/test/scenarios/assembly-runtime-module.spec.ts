@@ -16,14 +16,14 @@ vi.mock('../../src/application/syncHotUpdateStateFromNativeBoot', () => ({
     syncHotUpdateStateFromNativeBoot: syncHotUpdateStateFromNativeBootMock,
 }))
 
-import {runtimeShellV2CommandDefinitions} from '@impos2/kernel-base-runtime-shell-v2'
+import {runtimeShellV2CommandDefinitions} from '@next/kernel-base-runtime-shell-v2'
 import {createModule} from '../../src/application/createModule'
 import {assemblyRuntimeModuleManifest} from '../../src/application/moduleManifest'
-import {releaseInfo} from '../../src/generated/releaseInfo'
+import {releaseInfo} from '@next/host-runtime-rn84/src/generated/releaseInfo'
 
 describe('assembly runtime module', () => {
     it('uses release info as runtime module package version source', () => {
-        expect(assemblyRuntimeModuleManifest.moduleName).toBe('assembly.android.mixc-catering-rn84')
+        expect(assemblyRuntimeModuleManifest.moduleName).toBe('adapter.android.host-runtime-rn84')
         expect(assemblyRuntimeModuleManifest.packageVersion).toBe(releaseInfo.assemblyVersion)
     })
 

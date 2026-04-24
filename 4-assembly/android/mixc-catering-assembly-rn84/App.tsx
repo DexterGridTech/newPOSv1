@@ -1,9 +1,9 @@
-import {createHostApp} from '@impos2/host-runtime-rn84'
+import {createHostApp} from '@next/host-runtime-rn84'
 import {
     RootScreen,
     createCateringBusinessModules,
     createModule as createCateringShellModule,
-} from '@impos2/ui-integration-catering-shell'
+} from '@next/ui-integration-catering-shell'
 import {releaseInfo} from './src/generated/releaseInfo'
 
 export default createHostApp({

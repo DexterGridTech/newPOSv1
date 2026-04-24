@@ -1,6 +1,6 @@
 import {createSelector} from '@reduxjs/toolkit'
-import type {RequestId} from '@impos2/kernel-base-contracts'
-import type {RootState} from '@impos2/kernel-base-state-runtime'
+import type {RequestId} from '@next/kernel-base-contracts'
+import type {RootState} from '@next/kernel-base-state-runtime'
 import type {
     WorkflowDefinition,
     WorkflowDefinitionsBySource,

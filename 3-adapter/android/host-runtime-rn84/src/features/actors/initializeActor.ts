@@ -3,7 +3,7 @@ import {
     onCommand,
     runtimeShellV2CommandDefinitions,
     type ActorDefinition,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {bootstrapAssemblyRuntime} from '../../application/bootstrapRuntime'
 import {moduleName} from '../../moduleName'
 import type {AppProps} from '../../types'

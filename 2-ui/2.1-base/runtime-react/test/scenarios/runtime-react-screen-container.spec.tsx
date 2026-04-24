@@ -5,8 +5,8 @@ import {
     clearUiRendererRegistry,
     uiRuntimeRootVariables,
 } from '../../src'
-import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
-import {uiRuntimeV2CommandDefinitions} from '@impos2/kernel-base-ui-runtime-v2'
+import {createCommand} from '@next/kernel-base-runtime-shell-v2'
+import {uiRuntimeV2CommandDefinitions} from '@next/kernel-base-ui-runtime-v2'
 import {createRuntimeReactHarness, renderWithAutomation} from '../support/runtimeReactHarness'
 import {runtimeReactScenarioParts} from '../support/runtimeReactScenarioParts'
 

@@ -1,7 +1,7 @@
 import {
     defineUiScreenPart,
     uiRuntimeRootVariables,
-} from '@impos2/ui-base-runtime-react'
+} from '@next/ui-base-runtime-react'
 import {ActivateDeviceScreen} from '../ui/screens/ActivateDeviceScreen'
 import {ActivateDeviceSecondaryScreen} from '../ui/screens/ActivateDeviceSecondaryScreen'
 import {TerminalSummaryScreen} from '../ui/screens/TerminalSummaryScreen'

@@ -6,7 +6,7 @@
 
 **Architecture:** Keep `topology-runtime-v2` as the shared kernel runtime and avoid broad kernel changes. Implement precise storage gating, dynamic topology socket binding, external-master ticket orchestration, admin-console topology actions, and power-triggered display switching in the assembly/admin boundary where the product-specific topology semantics belong.
 
-**Tech Stack:** TypeScript, React Native 0.84, Vitest, `@impos2/kernel-base-topology-runtime-v2`, `@impos2/kernel-base-transport-runtime`, Android topology host HTTP `/tickets`, assembly TurboModules, admin-console semantic UI tests.
+**Tech Stack:** TypeScript, React Native 0.84, Vitest, `@next/kernel-base-topology-runtime-v2`, `@next/kernel-base-transport-runtime`, Android topology host HTTP `/tickets`, assembly TurboModules, admin-console semantic UI tests.
 
 ---
 
@@ -57,7 +57,7 @@
 ### Android adapter
 
 - No code change by default.
-- Reference: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/topologyhostv3/TopologyHostV3Server.kt`
+- Reference: `3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/topologyhostv3/TopologyHostV3Server.kt`
 - Reference: `4-assembly/android/mixc-retail-assembly-rn84/src/turbomodules/topologyHost.ts`
 
 ---
@@ -180,7 +180,7 @@ Expected: PASS.
 
 - [ ] **Step 6: Type-check assembly**
 
-Run: `corepack yarn workspace @impos2/assembly-android-mixc-retail-rn84 type-check`
+Run: `corepack yarn workspace @next/assembly-android-mixc-retail-rn84 type-check`
 
 Expected: PASS, or if the workspace script name differs, use the package's existing type-check/build command and record the exact command in the implementation log.
 
@@ -420,7 +420,7 @@ export interface AssemblyTopologySharePayload {
     httpBaseUrl?: string
 }
 
-export type AssemblyTopologyMasterInfo = import('@impos2/kernel-base-topology-runtime-v2').TopologyV2MasterInfo & {
+export type AssemblyTopologyMasterInfo = import('@next/kernel-base-topology-runtime-v2').TopologyV2MasterInfo & {
     masterNodeId?: string
     httpBaseUrl?: string
 }
@@ -723,8 +723,8 @@ Create `assembly-power-display-switch.spec.ts`:
 
 ```ts
 import {describe, expect, it, vi} from 'vitest'
-import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
-import {topologyRuntimeV2CommandDefinitions} from '@impos2/kernel-base-topology-runtime-v2'
+import {createCommand} from '@next/kernel-base-runtime-shell-v2'
+import {topologyRuntimeV2CommandDefinitions} from '@next/kernel-base-topology-runtime-v2'
 import {handleAssemblyPowerDisplaySwitch} from '../../src/application/topology'
 
 describe('assembly power display switch', () => {

@@ -22,7 +22,7 @@ const redirectPackages = new Set([
 
 function shouldRedirectToLocal(moduleName) {
   const packageName = getPackageName(moduleName);
-  if (packageName.startsWith('@impos2')) {
+  if (packageName.startsWith('@next')) {
     return false;
   }
   return (

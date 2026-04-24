@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest'
-import {createLoggerPort} from '@impos2/kernel-base-platform-ports'
+import {createLoggerPort} from '@next/kernel-base-platform-ports'
 import {
     createCommandId,
     createEnvelopeId,
@@ -15,7 +15,7 @@ import {
     type StateSyncCommitAckEnvelope,
     type StateSyncDiffEnvelope,
     type StateSyncSummaryEnvelope,
-} from '@impos2/kernel-base-contracts'
+} from '@next/kernel-base-contracts'
 import {
     createHostRuntime,
     hostRuntimeParameterDefinitions,

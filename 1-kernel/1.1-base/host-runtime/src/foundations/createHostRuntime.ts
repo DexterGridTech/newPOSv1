@@ -4,7 +4,7 @@ import {
     type NodeHelloAck,
     type NodeId,
     type PairingTicket,
-} from '@impos2/kernel-base-contracts'
+} from '@next/kernel-base-contracts'
 import {createHostFaultRegistry} from './faults'
 import {createHostConnectionId, createHostSessionId} from './ids'
 import {createHostObservability} from './observability'

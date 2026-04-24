@@ -20,17 +20,17 @@ Production code under `src/` must not import Expo.
 启动可视页面：
 
 ```bash
-corepack yarn workspace @impos2/ui-base-admin-console expo:web
+corepack yarn workspace @next/ui-base-admin-console expo:web
 ```
 
 默认自动化：
 
 ```bash
-corepack yarn workspace @impos2/ui-base-admin-console test-expo
+corepack yarn workspace @next/ui-base-admin-console test-expo
 ```
 
 可视化自动化：
 
 ```bash
-corepack yarn workspace @impos2/ui-base-admin-console test-expo:visible
+corepack yarn workspace @next/ui-base-admin-console test-expo:visible
 ```

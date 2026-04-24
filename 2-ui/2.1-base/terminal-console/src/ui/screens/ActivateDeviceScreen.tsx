@@ -1,12 +1,12 @@
 import React, {useEffect} from 'react'
 import {ScrollView, Text, View, useWindowDimensions} from 'react-native'
-import {InputField, inputRuntimeDefaultFields} from '@impos2/ui-base-input-runtime'
+import {InputField, inputRuntimeDefaultFields} from '@next/ui-base-input-runtime'
 import {
     useOptionalUiAutomationBridge,
     useOptionalUiAutomationRuntimeId,
     useOptionalUiAutomationTarget,
     useUiRuntime,
-} from '@impos2/ui-base-runtime-react'
+} from '@next/ui-base-runtime-react'
 import {useTerminalConnectionSummary} from '../../hooks/useTerminalConnectionSummary'
 import {useDeviceActivation} from '../../hooks/useDeviceActivation'
 import {

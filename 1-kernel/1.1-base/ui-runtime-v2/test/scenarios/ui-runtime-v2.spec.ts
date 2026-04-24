@@ -1,9 +1,9 @@
 import {describe, expect, it} from 'vitest'
-import {createCommand, createKernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
-import {createPlatformPorts} from '@impos2/kernel-base-platform-ports'
-import {createLoggerPort} from '@impos2/kernel-base-platform-ports'
-import {createTopologyRuntimeModuleV3} from '@impos2/kernel-base-topology-runtime-v3'
-import {topologyRuntimeV3CommandDefinitions} from '@impos2/kernel-base-topology-runtime-v3'
+import {createCommand, createKernelRuntimeV2} from '@next/kernel-base-runtime-shell-v2'
+import {createPlatformPorts} from '@next/kernel-base-platform-ports'
+import {createLoggerPort} from '@next/kernel-base-platform-ports'
+import {createTopologyRuntimeModuleV3} from '@next/kernel-base-topology-runtime-v3'
+import {topologyRuntimeV3CommandDefinitions} from '@next/kernel-base-topology-runtime-v3'
 import {
     createUiAlertDefinition,
     createUiAlertScreen,

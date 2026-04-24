@@ -1,5 +1,5 @@
 {
-  "name": "@impos2/ui-base-automation-runtime",
+  "name": "@next/ui-base-automation-runtime",
   "version": "1.0.0",
   "description": "Unified UI automation and runtime inspection control plane",
   "author": "DexterYang",
@@ -23,9 +23,9 @@
     "type-check": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@impos2/kernel-base-platform-ports": "workspace:*",
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*",
-    "@impos2/kernel-base-ui-runtime-v2": "workspace:*"
+    "@next/kernel-base-platform-ports": "workspace:*",
+    "@next/kernel-base-runtime-shell-v2": "workspace:*",
+    "@next/kernel-base-ui-runtime-v2": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=18",

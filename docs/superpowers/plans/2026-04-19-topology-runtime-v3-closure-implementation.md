@@ -6,7 +6,7 @@
 
 **Architecture:** Keep topology-runtime-v3 as the shared rule owner for topology eligibility decisions, while assembly remains the owner of native host lifecycle and storage gating. UI packages consume shared selectors/reason codes and only render or dispatch allowed actions. Tests prove each rule at the smallest package boundary first, then assembly integration.
 
-**Tech Stack:** TypeScript, React Native, React Redux, Redux Toolkit, Vitest, Kotlin/Android topology host, `@impos2/kernel-base-topology-runtime-v3`, `@impos2/ui-base-admin-console`, `@impos2/ui-base-terminal-console`, `@impos2/assembly-android-mixc-retail-rn84`.
+**Tech Stack:** TypeScript, React Native, React Redux, Redux Toolkit, Vitest, Kotlin/Android topology host, `@next/kernel-base-topology-runtime-v3`, `@next/ui-base-admin-console`, `@next/ui-base-terminal-console`, `@next/assembly-android-mixc-retail-rn84`.
 
 ---
 

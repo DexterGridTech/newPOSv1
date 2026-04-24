@@ -1,4 +1,4 @@
-import type {TransportServerConfig} from '@impos2/kernel-base-contracts'
+import type {TransportServerConfig} from '@next/kernel-base-contracts'
 import {
     SERVER_NAME_DUAL_TOPOLOGY_HOST_V3,
     SERVER_NAME_MOCK_TERMINAL_PLATFORM,

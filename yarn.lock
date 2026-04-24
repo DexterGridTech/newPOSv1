@@ -2415,671 +2415,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@impos2/adapter-android-v2@workspace:3-adapter/android/adapter-android-v2":
-  version: 0.0.0-use.local
-  resolution: "@impos2/adapter-android-v2@workspace:3-adapter/android/adapter-android-v2"
-  languageName: unknown
-  linkType: soft
-
-"@impos2/assembly-android-mixc-catering-assembly-rn84@workspace:4-assembly/android/mixc-catering-assembly-rn84":
-  version: 0.0.0-use.local
-  resolution: "@impos2/assembly-android-mixc-catering-assembly-rn84@workspace:4-assembly/android/mixc-catering-assembly-rn84"
-  dependencies:
-    "@babel/core": ^7.25.2
-    "@babel/preset-env": ^7.25.3
-    "@babel/runtime": ^7.25.0
-    "@impos2/host-runtime-rn84": "workspace:*"
-    "@impos2/ui-integration-catering-shell": "workspace:*"
-    "@react-native-community/cli": 20.1.0
-    "@react-native-community/cli-platform-android": 20.1.0
-    "@react-native-community/cli-platform-ios": 20.1.0
-    "@react-native/babel-preset": 0.84.1
-    "@react-native/eslint-config": 0.84.1
-    "@react-native/metro-config": 0.84.1
-    "@react-native/typescript-config": 0.84.1
-    "@types/jest": ^29.5.13
-    "@types/react": ^19.2.0
-    "@types/react-test-renderer": ^19.1.0
-    eslint: ^8.19.0
-    jest: ^29.6.3
-    prettier: 2.8.8
-    react: 19.2.3
-    react-native: 0.84.1
-    react-native-qrcode-svg: ^6.3.21
-    react-native-svg: ^15.15.3
-    react-redux: ^9.1.0
-    react-test-renderer: 19.2.3
-    reactotron-core-client: ^2.9.9
-    reactotron-react-native: ^5.1.18
-    reactotron-redux: ^3.2.1
-    redux: ^5.0.1
-    typescript: ^5.8.3
-    vitest: ^3.2.4
-  languageName: unknown
-  linkType: soft
-
-"@impos2/dual-topology-host-v3@workspace:0-mock-server/dual-topology-host-v3":
-  version: 0.0.0-use.local
-  resolution: "@impos2/dual-topology-host-v3@workspace:0-mock-server/dual-topology-host-v3"
-  dependencies:
-    "@types/node": ^25.0.9
-    "@types/ws": ^8.5.13
-    tsx: ^4.21.0
-    typescript: ^5.9.3
-    vitest: ^3.2.4
-    ws: ^8.18.0
-  languageName: unknown
-  linkType: soft
-
-"@impos2/host-runtime-rn84@workspace:*, @impos2/host-runtime-rn84@workspace:3-adapter/android/host-runtime-rn84":
-  version: 0.0.0-use.local
-  resolution: "@impos2/host-runtime-rn84@workspace:3-adapter/android/host-runtime-rn84"
-  dependencies:
-    "@impos2/kernel-base-contracts": "workspace:*"
-    "@impos2/kernel-base-platform-ports": "workspace:*"
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
-    "@impos2/kernel-base-state-runtime": "workspace:*"
-    "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*"
-    "@impos2/kernel-base-tdp-sync-runtime-v2": "workspace:*"
-    "@impos2/kernel-base-terminal-log-upload-runtime-v2": "workspace:*"
-    "@impos2/kernel-base-topology-runtime-v3": "workspace:*"
-    "@impos2/kernel-base-transport-runtime": "workspace:*"
-    "@impos2/kernel-base-ui-runtime-v2": "workspace:*"
-    "@impos2/kernel-base-workflow-runtime-v2": "workspace:*"
-    "@impos2/kernel-business-catering-product-master-data": "workspace:*"
-    "@impos2/kernel-business-catering-store-operating-master-data": "workspace:*"
-    "@impos2/kernel-business-organization-iam-master-data": "workspace:*"
-    "@impos2/kernel-server-config-v2": "workspace:*"
-    "@impos2/ui-base-admin-console": "workspace:*"
-    "@impos2/ui-base-automation-runtime": "workspace:*"
-    "@impos2/ui-base-input-runtime": "workspace:*"
-    "@impos2/ui-base-runtime-react": "workspace:*"
-    "@impos2/ui-base-terminal-console": "workspace:*"
-    "@impos2/ui-base-topology-runtime-bridge": "workspace:*"
-    "@impos2/ui-business-catering-master-data-workbench": "workspace:*"
-    "@reduxjs/toolkit": ^2.10.0
-    "@types/react": ^19.2.0
-    react: 19.2.3
-    react-native: 0.84.1
-    react-redux: ^9.1.0
-    redux: ^5.0.1
-    typescript: ^5.8.3
-    vitest: ^3.2.4
-  languageName: unknown
-  linkType: soft
-
-"@impos2/kernel-base-contracts@workspace:*, @impos2/kernel-base-contracts@workspace:1-kernel/1.1-base/contracts":
-  version: 0.0.0-use.local
-  resolution: "@impos2/kernel-base-contracts@workspace:1-kernel/1.1-base/contracts"
-  dependencies:
-    "@types/node": ^25.0.9
-    madge: ^8.0.0
-    tsx: ^4.21.0
-    typescript: ^5.9.3
-    vitest: ^3.2.4
-  languageName: unknown
-  linkType: soft
-
-"@impos2/kernel-base-definition-registry@workspace:*, @impos2/kernel-base-definition-registry@workspace:1-kernel/1.1-base/definition-registry":
-  version: 0.0.0-use.local
-  resolution: "@impos2/kernel-base-definition-registry@workspace:1-kernel/1.1-base/definition-registry"
-  dependencies:
-    "@impos2/kernel-base-contracts": "workspace:*"
-    "@types/node": ^25.0.9
-    madge: ^8.0.0
-    tsx: ^4.21.0
-    typescript: ^5.9.3
-    vitest: ^3.2.4
-  languageName: unknown
-  linkType: soft
-
-"@impos2/kernel-base-execution-runtime@workspace:1-kernel/1.1-base/execution-runtime":
-  version: 0.0.0-use.local
-  resolution: "@impos2/kernel-base-execution-runtime@workspace:1-kernel/1.1-base/execution-runtime"
-  dependencies:
-    "@impos2/kernel-base-contracts": "workspace:*"
-    "@impos2/kernel-base-definition-registry": "workspace:*"
-    "@impos2/kernel-base-platform-ports": "workspace:*"
-    "@types/node": ^25.0.9
-    madge: ^8.0.0
-    tsx: ^4.21.0
-    typescript: ^5.9.3
-    vitest: ^3.2.4
-  languageName: unknown
-  linkType: soft
-
-"@impos2/kernel-base-host-runtime@workspace:1-kernel/1.1-base/host-runtime":
-  version: 0.0.0-use.local
-  resolution: "@impos2/kernel-base-host-runtime@workspace:1-kernel/1.1-base/host-runtime"
-  dependencies:
-    "@impos2/kernel-base-contracts": "workspace:*"
-    "@impos2/kernel-base-platform-ports": "workspace:*"
-    "@types/node": ^25.0.9
-    madge: ^8.0.0
-    tsx: ^4.21.0
-    typescript: ^5.9.3
-    vitest: ^3.2.4
-  languageName: unknown
-  linkType: soft
-
-"@impos2/kernel-base-platform-ports@workspace:*, @impos2/kernel-base-platform-ports@workspace:1-kernel/1.1-base/platform-ports":
-  version: 0.0.0-use.local
-  resolution: "@impos2/kernel-base-platform-ports@workspace:1-kernel/1.1-base/platform-ports"
-  dependencies:
-    "@impos2/kernel-base-contracts": "workspace:*"
-    "@types/node": ^25.0.9
-    madge: ^8.0.0
-    tsx: ^4.21.0
-    typescript: ^5.9.3
-    vitest: ^3.2.4
-  languageName: unknown
-  linkType: soft
-
-"@impos2/kernel-base-runtime-shell-v2@workspace:*, @impos2/kernel-base-runtime-shell-v2@workspace:1-kernel/1.1-base/runtime-shell-v2":
-  version: 0.0.0-use.local
-  resolution: "@impos2/kernel-base-runtime-shell-v2@workspace:1-kernel/1.1-base/runtime-shell-v2"
-  dependencies:
-    "@impos2/kernel-base-contracts": "workspace:*"
-    "@impos2/kernel-base-definition-registry": "workspace:*"
-    "@impos2/kernel-base-platform-ports": "workspace:*"
-    "@impos2/kernel-base-state-runtime": "workspace:*"
-    "@reduxjs/toolkit": ^2.10.0
-    "@types/node": ^25.0.9
-    madge: ^8.0.0
-    tsx: ^4.21.0
-    typescript: ^5.9.3
-    vitest: ^3.2.4
-  languageName: unknown
-  linkType: soft
-
-"@impos2/kernel-base-state-runtime@workspace:*, @impos2/kernel-base-state-runtime@workspace:1-kernel/1.1-base/state-runtime":
-  version: 0.0.0-use.local
-  resolution: "@impos2/kernel-base-state-runtime@workspace:1-kernel/1.1-base/state-runtime"
-  dependencies:
-    "@impos2/kernel-base-contracts": "workspace:*"
-    "@impos2/kernel-base-platform-ports": "workspace:*"
-    "@reduxjs/toolkit": ^2.10.0
-    "@types/node": ^25.0.9
-    madge: ^8.0.0
-    tsx: ^4.21.0
-    typescript: ^5.9.3
-    vitest: ^3.2.4
-  languageName: unknown
-  linkType: soft
-
-"@impos2/kernel-base-tcp-control-runtime-v2@workspace:*, @impos2/kernel-base-tcp-control-runtime-v2@workspace:1-kernel/1.1-base/tcp-control-runtime-v2":
-  version: 0.0.0-use.local
-  resolution: "@impos2/kernel-base-tcp-control-runtime-v2@workspace:1-kernel/1.1-base/tcp-control-runtime-v2"
-  dependencies:
-    "@impos2/kernel-base-contracts": "workspace:*"
-    "@impos2/kernel-base-platform-ports": "workspace:*"
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
-    "@impos2/kernel-base-state-runtime": "workspace:*"
-    "@impos2/kernel-base-transport-runtime": "workspace:*"
-    "@impos2/kernel-server-config-v2": "workspace:*"
-    "@reduxjs/toolkit": ^2.10.0
-    "@types/node": ^25.0.9
-    madge: ^8.0.0
-    tsx: ^4.21.0
-    typescript: ^5.9.3
-    vitest: ^3.2.4
-  languageName: unknown
-  linkType: soft
-
-"@impos2/kernel-base-tdp-sync-runtime-v2@workspace:*, @impos2/kernel-base-tdp-sync-runtime-v2@workspace:1-kernel/1.1-base/tdp-sync-runtime-v2":
-  version: 0.0.0-use.local
-  resolution: "@impos2/kernel-base-tdp-sync-runtime-v2@workspace:1-kernel/1.1-base/tdp-sync-runtime-v2"
-  dependencies:
-    "@impos2/kernel-base-contracts": "workspace:*"
-    "@impos2/kernel-base-platform-ports": "workspace:*"
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
-    "@impos2/kernel-base-state-runtime": "workspace:*"
-    "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*"
-    "@impos2/kernel-base-topology-runtime-v3": "workspace:*"
-    "@impos2/kernel-base-transport-runtime": "workspace:*"
-    "@impos2/kernel-server-config-v2": "workspace:*"
-    "@reduxjs/toolkit": ^2.10.0
-    "@types/node": ^25.0.9
-    madge: ^8.0.0
-    tsx: ^4.21.0
-    typescript: ^5.9.3
-    vitest: ^3.2.4
-  languageName: unknown
-  linkType: soft
-
-"@impos2/kernel-base-terminal-log-upload-runtime-v2@workspace:*, @impos2/kernel-base-terminal-log-upload-runtime-v2@workspace:1-kernel/1.1-base/terminal-log-upload-runtime-v2":
-  version: 0.0.0-use.local
-  resolution: "@impos2/kernel-base-terminal-log-upload-runtime-v2@workspace:1-kernel/1.1-base/terminal-log-upload-runtime-v2"
-  dependencies:
-    "@impos2/kernel-base-contracts": "workspace:*"
-    "@impos2/kernel-base-platform-ports": "workspace:*"
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
-    "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*"
-    "@impos2/kernel-base-topology-runtime-v3": "workspace:*"
-    "@types/node": ^25.0.9
-    typescript: ^5.9.3
-    vitest: ^3.2.4
-  languageName: unknown
-  linkType: soft
-
-"@impos2/kernel-base-topology-runtime-v3@workspace:*, @impos2/kernel-base-topology-runtime-v3@workspace:1-kernel/1.1-base/topology-runtime-v3":
-  version: 0.0.0-use.local
-  resolution: "@impos2/kernel-base-topology-runtime-v3@workspace:1-kernel/1.1-base/topology-runtime-v3"
-  dependencies:
-    "@impos2/kernel-base-contracts": "workspace:*"
-    "@types/node": ^25.0.9
-    typescript: ^5.9.3
-    vitest: ^3.2.4
-  languageName: unknown
-  linkType: soft
-
-"@impos2/kernel-base-transport-runtime@workspace:*, @impos2/kernel-base-transport-runtime@workspace:1-kernel/1.1-base/transport-runtime":
-  version: 0.0.0-use.local
-  resolution: "@impos2/kernel-base-transport-runtime@workspace:1-kernel/1.1-base/transport-runtime"
-  dependencies:
-    "@impos2/kernel-base-contracts": "workspace:*"
-    "@impos2/kernel-base-platform-ports": "workspace:*"
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
-    "@impos2/kernel-base-state-runtime": "workspace:*"
-    "@impos2/kernel-server-config-v2": "workspace:*"
-    "@reduxjs/toolkit": ^2.10.0
-    "@types/node": ^25.0.9
-    "@types/ws": ^8.5.13
-    madge: ^8.0.0
-    tsx: ^4.21.0
-    typescript: ^5.9.3
-    vitest: ^3.2.4
-    ws: ^8.18.0
-  languageName: unknown
-  linkType: soft
-
-"@impos2/kernel-base-ui-runtime-v2@workspace:*, @impos2/kernel-base-ui-runtime-v2@workspace:1-kernel/1.1-base/ui-runtime-v2":
-  version: 0.0.0-use.local
-  resolution: "@impos2/kernel-base-ui-runtime-v2@workspace:1-kernel/1.1-base/ui-runtime-v2"
-  dependencies:
-    "@impos2/kernel-base-contracts": "workspace:*"
-    "@impos2/kernel-base-platform-ports": "workspace:*"
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
-    "@impos2/kernel-base-state-runtime": "workspace:*"
-    "@impos2/kernel-base-topology-runtime-v3": "workspace:*"
-    "@reduxjs/toolkit": ^2.10.0
-    "@types/node": ^25.0.9
-    madge: ^8.0.0
-    tsx: ^4.21.0
-    typescript: ^5.9.3
-    vitest: ^3.2.4
-  languageName: unknown
-  linkType: soft
-
-"@impos2/kernel-base-workflow-runtime-v2@workspace:*, @impos2/kernel-base-workflow-runtime-v2@workspace:1-kernel/1.1-base/workflow-runtime-v2":
-  version: 0.0.0-use.local
-  resolution: "@impos2/kernel-base-workflow-runtime-v2@workspace:1-kernel/1.1-base/workflow-runtime-v2"
-  dependencies:
-    "@impos2/kernel-base-contracts": "workspace:*"
-    "@impos2/kernel-base-platform-ports": "workspace:*"
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
-    "@impos2/kernel-base-state-runtime": "workspace:*"
-    "@impos2/kernel-base-tdp-sync-runtime-v2": "workspace:*"
-    "@impos2/kernel-server-config-v2": "workspace:*"
-    "@reduxjs/toolkit": ^2.10.0
-    "@types/node": ^25.0.9
-    madge: ^8.0.0
-    rxjs: ^7.8.2
-    tsx: ^4.21.0
-    typescript: ^5.9.3
-    vitest: ^3.2.4
-  languageName: unknown
-  linkType: soft
-
-"@impos2/kernel-business-catering-product-master-data@workspace:*, @impos2/kernel-business-catering-product-master-data@workspace:1-kernel/1.2-business/catering-product-master-data":
-  version: 0.0.0-use.local
-  resolution: "@impos2/kernel-business-catering-product-master-data@workspace:1-kernel/1.2-business/catering-product-master-data"
-  dependencies:
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
-    "@impos2/kernel-base-state-runtime": "workspace:*"
-    "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*"
-    "@impos2/kernel-base-tdp-sync-runtime-v2": "workspace:*"
-    "@impos2/kernel-business-organization-iam-master-data": "workspace:*"
-    "@reduxjs/toolkit": ^2.10.0
-    "@types/node": ^25.0.9
-    madge: ^8.0.0
-    typescript: ^5.9.3
-    vitest: ^3.2.4
-  languageName: unknown
-  linkType: soft
-
-"@impos2/kernel-business-catering-store-operating-master-data@workspace:*, @impos2/kernel-business-catering-store-operating-master-data@workspace:1-kernel/1.2-business/catering-store-operating-master-data":
-  version: 0.0.0-use.local
-  resolution: "@impos2/kernel-business-catering-store-operating-master-data@workspace:1-kernel/1.2-business/catering-store-operating-master-data"
-  dependencies:
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
-    "@impos2/kernel-base-state-runtime": "workspace:*"
-    "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*"
-    "@impos2/kernel-base-tdp-sync-runtime-v2": "workspace:*"
-    "@impos2/kernel-business-organization-iam-master-data": "workspace:*"
-    "@reduxjs/toolkit": ^2.10.0
-    "@types/node": ^25.0.9
-    madge: ^8.0.0
-    typescript: ^5.9.3
-    vitest: ^3.2.4
-  languageName: unknown
-  linkType: soft
-
-"@impos2/kernel-business-organization-iam-master-data@workspace:*, @impos2/kernel-business-organization-iam-master-data@workspace:1-kernel/1.2-business/organization-iam-master-data":
-  version: 0.0.0-use.local
-  resolution: "@impos2/kernel-business-organization-iam-master-data@workspace:1-kernel/1.2-business/organization-iam-master-data"
-  dependencies:
-    "@impos2/kernel-base-contracts": "workspace:*"
-    "@impos2/kernel-base-platform-ports": "workspace:*"
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
-    "@impos2/kernel-base-state-runtime": "workspace:*"
-    "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*"
-    "@impos2/kernel-base-tdp-sync-runtime-v2": "workspace:*"
-    "@reduxjs/toolkit": ^2.10.0
-    "@types/node": ^25.0.9
-    madge: ^8.0.0
-    typescript: ^5.9.3
-    vitest: ^3.2.4
-  languageName: unknown
-  linkType: soft
-
-"@impos2/kernel-server-config-v2@workspace:*, @impos2/kernel-server-config-v2@workspace:1-kernel/server-config-v2":
-  version: 0.0.0-use.local
-  resolution: "@impos2/kernel-server-config-v2@workspace:1-kernel/server-config-v2"
-  dependencies:
-    "@impos2/kernel-base-contracts": "workspace:*"
-    "@types/node": ^25.0.9
-    madge: ^8.0.0
-    typescript: ^5.9.3
-  languageName: unknown
-  linkType: soft
-
-"@impos2/mock-admin-mall-tenant-console-server@workspace:0-mock-server/mock-admin-mall-tenant-console/server":
-  version: 0.0.0-use.local
-  resolution: "@impos2/mock-admin-mall-tenant-console-server@workspace:0-mock-server/mock-admin-mall-tenant-console/server"
-  dependencies:
-    "@types/cors": ^2.8.19
-    "@types/express": ^5.0.3
-    "@types/node": ^25.0.9
-    better-sqlite3: ^12.6.2
-    cors: ^2.8.5
-    express: ^4.21.2
-    tsx: ^4.20.6
-    typescript: ^5.9.3
-  languageName: unknown
-  linkType: soft
-
-"@impos2/mock-admin-mall-tenant-console-web@workspace:0-mock-server/mock-admin-mall-tenant-console/web":
-  version: 0.0.0-use.local
-  resolution: "@impos2/mock-admin-mall-tenant-console-web@workspace:0-mock-server/mock-admin-mall-tenant-console/web"
-  dependencies:
-    "@types/react": ^18.3.0
-    "@types/react-dom": ^18.3.0
-    "@vitejs/plugin-react": ^4.7.0
-    react: ^18.3.1
-    react-dom: ^18.3.1
-    typescript: ^5.9.3
-    vite: ^7.1.7
-  languageName: unknown
-  linkType: soft
-
-"@impos2/mock-admin-mall-tenant-console@workspace:0-mock-server/mock-admin-mall-tenant-console":
-  version: 0.0.0-use.local
-  resolution: "@impos2/mock-admin-mall-tenant-console@workspace:0-mock-server/mock-admin-mall-tenant-console"
-  dependencies:
-    concurrently: ^9.2.1
-  languageName: unknown
-  linkType: soft
-
-"@impos2/mock-terminal-platform-server@workspace:0-mock-server/mock-terminal-platform/server":
-  version: 0.0.0-use.local
-  resolution: "@impos2/mock-terminal-platform-server@workspace:0-mock-server/mock-terminal-platform/server"
-  dependencies:
-    "@types/cors": ^2.8.19
-    "@types/express": ^5.0.3
-    "@types/node": ^25.0.9
-    "@types/ws": ^8.5.13
-    better-sqlite3: ^12.6.2
-    cors: ^2.8.5
-    drizzle-orm: ^0.44.7
-    express: ^4.21.2
-    tsx: ^4.20.6
-    typescript: ^5.9.3
-    vitest: ^3.2.4
-    ws: ^8.19.0
-    zod: ^3.25.76
-  languageName: unknown
-  linkType: soft
-
-"@impos2/mock-terminal-platform-web@workspace:0-mock-server/mock-terminal-platform/web":
-  version: 0.0.0-use.local
-  resolution: "@impos2/mock-terminal-platform-web@workspace:0-mock-server/mock-terminal-platform/web"
-  dependencies:
-    "@types/react": ^18.3.0
-    "@types/react-dom": ^18.3.0
-    "@vitejs/plugin-react": ^4.7.0
-    react: ^18.3.1
-    react-dom: ^18.3.1
-    typescript: ^5.9.3
-    vite: ^7.1.7
-  languageName: unknown
-  linkType: soft
-
-"@impos2/mock-terminal-platform@workspace:0-mock-server/mock-terminal-platform":
-  version: 0.0.0-use.local
-  resolution: "@impos2/mock-terminal-platform@workspace:0-mock-server/mock-terminal-platform"
-  dependencies:
-    concurrently: ^9.2.1
-  languageName: unknown
-  linkType: soft
-
-"@impos2/ui-base-admin-console@workspace:*, @impos2/ui-base-admin-console@workspace:2-ui/2.1-base/admin-console":
-  version: 0.0.0-use.local
-  resolution: "@impos2/ui-base-admin-console@workspace:2-ui/2.1-base/admin-console"
-  dependencies:
-    "@impos2/kernel-base-platform-ports": "workspace:*"
-    "@impos2/kernel-base-state-runtime": "workspace:*"
-    "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*"
-    "@impos2/kernel-base-topology-runtime-v3": "workspace:*"
-    "@impos2/kernel-base-workflow-runtime-v2": "workspace:*"
-    "@impos2/ui-base-input-runtime": "workspace:*"
-    "@impos2/ui-base-runtime-react": "workspace:*"
-    "@types/node": ^25.0.9
-    "@types/react": ^19.2.0
-    expo: ~54.0.31
-    expo-status-bar: ~3.0.9
-    react-dom: 19.2.3
-    react-native-qrcode-svg: ^6.3.21
-    react-native-web: ^0.21.0
-    react-test-renderer: 19.2.3
-    typescript: ^5.9.3
-    vitest: ^3.2.4
-  peerDependencies:
-    react: ">=18"
-    react-native: ">=0.77"
-    react-redux: ^9.1.0
-  languageName: unknown
-  linkType: soft
-
-"@impos2/ui-base-automation-runtime@workspace:*, @impos2/ui-base-automation-runtime@workspace:2-ui/2.1-base/ui-automation-runtime":
-  version: 0.0.0-use.local
-  resolution: "@impos2/ui-base-automation-runtime@workspace:2-ui/2.1-base/ui-automation-runtime"
-  dependencies:
-    "@impos2/kernel-base-platform-ports": "workspace:*"
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
-    "@impos2/kernel-base-ui-runtime-v2": "workspace:*"
-    "@types/node": ^25.0.9
-    "@types/react": ^19.2.0
-    expo: ~54.0.31
-    expo-status-bar: ~3.0.9
-    react-dom: 19.2.3
-    react-native-web: ^0.21.0
-    react-test-renderer: 19.2.3
-    typescript: ^5.9.3
-    vitest: ^3.2.4
-  peerDependencies:
-    react: ">=18"
-    react-native: ">=0.77"
-  languageName: unknown
-  linkType: soft
-
-"@impos2/ui-base-input-runtime@workspace:*, @impos2/ui-base-input-runtime@workspace:2-ui/2.1-base/input-runtime":
-  version: 0.0.0-use.local
-  resolution: "@impos2/ui-base-input-runtime@workspace:2-ui/2.1-base/input-runtime"
-  dependencies:
-    "@impos2/kernel-base-platform-ports": "workspace:*"
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
-    "@impos2/kernel-base-state-runtime": "workspace:*"
-    "@impos2/ui-base-runtime-react": "workspace:*"
-    "@types/node": ^25.0.9
-    "@types/react": ^19.2.0
-    expo: ~54.0.31
-    expo-status-bar: ~3.0.9
-    react-dom: 19.2.3
-    react-native-web: ^0.21.0
-    react-test-renderer: 19.2.3
-    typescript: ^5.9.3
-    vitest: ^3.2.4
-  peerDependencies:
-    react: ">=18"
-    react-native: ">=0.77"
-    react-redux: ^9.1.0
-  languageName: unknown
-  linkType: soft
-
-"@impos2/ui-base-runtime-react@workspace:*, @impos2/ui-base-runtime-react@workspace:2-ui/2.1-base/runtime-react":
-  version: 0.0.0-use.local
-  resolution: "@impos2/ui-base-runtime-react@workspace:2-ui/2.1-base/runtime-react"
-  dependencies:
-    "@impos2/kernel-base-platform-ports": "workspace:*"
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
-    "@impos2/kernel-base-topology-runtime-v3": "workspace:*"
-    "@impos2/kernel-base-ui-runtime-v2": "workspace:*"
-    "@reduxjs/toolkit": ^2.10.0
-    "@types/node": ^25.0.9
-    "@types/react": ^19.2.0
-    expo: ~54.0.31
-    expo-status-bar: ~3.0.9
-    react-dom: 19.2.3
-    react-native-web: ^0.21.0
-    react-test-renderer: 19.2.3
-    typescript: ^5.9.3
-    vitest: ^3.2.4
-  peerDependencies:
-    react: ">=18"
-    react-native: ">=0.77"
-    react-redux: ^9.1.0
-  languageName: unknown
-  linkType: soft
-
-"@impos2/ui-base-terminal-console@workspace:*, @impos2/ui-base-terminal-console@workspace:2-ui/2.1-base/terminal-console":
-  version: 0.0.0-use.local
-  resolution: "@impos2/ui-base-terminal-console@workspace:2-ui/2.1-base/terminal-console"
-  dependencies:
-    "@impos2/kernel-base-contracts": "workspace:*"
-    "@impos2/kernel-base-platform-ports": "workspace:*"
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
-    "@impos2/kernel-base-state-runtime": "workspace:*"
-    "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*"
-    "@impos2/kernel-base-topology-runtime-v3": "workspace:*"
-    "@impos2/kernel-base-transport-runtime": "workspace:*"
-    "@impos2/kernel-server-config-v2": "workspace:*"
-    "@impos2/ui-base-input-runtime": "workspace:*"
-    "@impos2/ui-base-runtime-react": "workspace:*"
-    "@types/node": ^25.0.9
-    "@types/react": ^19.2.0
-    expo: ~54.0.31
-    expo-status-bar: ~3.0.9
-    react-dom: 19.2.3
-    react-native-web: ^0.21.0
-    react-test-renderer: 19.2.3
-    tsx: ^4.20.6
-    typescript: ^5.9.3
-    vitest: ^3.2.4
-  peerDependencies:
-    react: ">=18"
-    react-native: ">=0.77"
-    react-redux: ^9.1.0
-  languageName: unknown
-  linkType: soft
-
-"@impos2/ui-base-topology-runtime-bridge@workspace:*, @impos2/ui-base-topology-runtime-bridge@workspace:2-ui/2.1-base/topology-runtime-bridge":
-  version: 0.0.0-use.local
-  resolution: "@impos2/ui-base-topology-runtime-bridge@workspace:2-ui/2.1-base/topology-runtime-bridge"
-  dependencies:
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
-    "@impos2/kernel-base-topology-runtime-v3": "workspace:*"
-    "@impos2/kernel-base-ui-runtime-v2": "workspace:*"
-    "@impos2/ui-base-runtime-react": "workspace:*"
-    "@types/node": ^25.0.9
-    "@types/react": ^19.2.0
-    react-dom: 19.2.3
-    react-native-web: ^0.21.0
-    react-test-renderer: 19.2.3
-    typescript: ^5.9.3
-    vitest: ^3.2.4
-  peerDependencies:
-    react: ">=18"
-    react-native: ">=0.77"
-    react-redux: ^9.1.0
-  languageName: unknown
-  linkType: soft
-
-"@impos2/ui-business-catering-master-data-workbench@workspace:*, @impos2/ui-business-catering-master-data-workbench@workspace:2-ui/2.2-business/catering-master-data-workbench":
-  version: 0.0.0-use.local
-  resolution: "@impos2/ui-business-catering-master-data-workbench@workspace:2-ui/2.2-business/catering-master-data-workbench"
-  dependencies:
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
-    "@impos2/kernel-base-state-runtime": "workspace:*"
-    "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*"
-    "@impos2/kernel-base-ui-runtime-v2": "workspace:*"
-    "@impos2/kernel-business-catering-product-master-data": "workspace:*"
-    "@impos2/kernel-business-catering-store-operating-master-data": "workspace:*"
-    "@impos2/kernel-business-organization-iam-master-data": "workspace:*"
-    "@impos2/ui-base-runtime-react": "workspace:*"
-    "@types/node": ^25.0.9
-    "@types/react": ^19.2.0
-    react-test-renderer: 19.2.3
-    typescript: ^5.9.3
-    vitest: ^3.2.4
-  peerDependencies:
-    react: ">=18"
-    react-native: ">=0.77"
-    react-redux: ^9.1.0
-  languageName: unknown
-  linkType: soft
-
-"@impos2/ui-integration-catering-shell@workspace:*, @impos2/ui-integration-catering-shell@workspace:2-ui/2.3-integration/catering-shell":
-  version: 0.0.0-use.local
-  resolution: "@impos2/ui-integration-catering-shell@workspace:2-ui/2.3-integration/catering-shell"
-  dependencies:
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*"
-    "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*"
-    "@impos2/kernel-base-tdp-sync-runtime-v2": "workspace:*"
-    "@impos2/kernel-base-topology-runtime-v3": "workspace:*"
-    "@impos2/kernel-base-ui-runtime-v2": "workspace:*"
-    "@impos2/ui-base-admin-console": "workspace:*"
-    "@impos2/ui-base-input-runtime": "workspace:*"
-    "@impos2/ui-base-runtime-react": "workspace:*"
-    "@impos2/ui-base-terminal-console": "workspace:*"
-    "@impos2/ui-business-catering-master-data-workbench": "workspace:*"
-    "@types/node": ^25.0.9
-    "@types/react": ^19.2.0
-    expo: ~54.0.31
-    expo-status-bar: ~3.0.9
-    react-dom: 19.2.3
-    react-native-web: ^0.21.0
-    react-test-renderer: 19.2.3
-    tsx: ^4.20.6
-    typescript: ^5.9.3
-    vitest: ^3.2.4
-  peerDependencies:
-    react: ">=18"
-    react-native: ">=0.77"
-    react-redux: ^9.1.0
-  languageName: unknown
-  linkType: soft
-
 "@inquirer/external-editor@npm:^1.0.0":
   version: 1.0.3
   resolution: "@inquirer/external-editor@npm:1.0.3"
@@ -3423,6 +2758,670 @@ __metadata:
   checksum: af8fda2431348ad507fbddf8e25f5d08c79ecc94594061ce402cf41bc5aba1a7b3e59bf0fd70a619b35f33983a3f488ceeba8faf56bff784f98bb5394a8b7d47
   languageName: node
   linkType: hard
+
+"@next/adapter-android-v2@workspace:3-adapter/android/adapter-android-v2":
+  version: 0.0.0-use.local
+  resolution: "@next/adapter-android-v2@workspace:3-adapter/android/adapter-android-v2"
+  languageName: unknown
+  linkType: soft
+
+"@next/assembly-android-mixc-catering-assembly-rn84@workspace:4-assembly/android/mixc-catering-assembly-rn84":
+  version: 0.0.0-use.local
+  resolution: "@next/assembly-android-mixc-catering-assembly-rn84@workspace:4-assembly/android/mixc-catering-assembly-rn84"
+  dependencies:
+    "@babel/core": ^7.25.2
+    "@babel/preset-env": ^7.25.3
+    "@babel/runtime": ^7.25.0
+    "@next/host-runtime-rn84": "workspace:*"
+    "@next/ui-integration-catering-shell": "workspace:*"
+    "@react-native-community/cli": 20.1.0
+    "@react-native-community/cli-platform-android": 20.1.0
+    "@react-native-community/cli-platform-ios": 20.1.0
+    "@react-native/babel-preset": 0.84.1
+    "@react-native/eslint-config": 0.84.1
+    "@react-native/metro-config": 0.84.1
+    "@react-native/typescript-config": 0.84.1
+    "@types/jest": ^29.5.13
+    "@types/react": ^19.2.0
+    "@types/react-test-renderer": ^19.1.0
+    eslint: ^8.19.0
+    jest: ^29.6.3
+    prettier: 2.8.8
+    react: 19.2.3
+    react-native: 0.84.1
+    react-native-qrcode-svg: ^6.3.21
+    react-native-svg: ^15.15.3
+    react-redux: ^9.1.0
+    react-test-renderer: 19.2.3
+    reactotron-core-client: ^2.9.9
+    reactotron-react-native: ^5.1.18
+    reactotron-redux: ^3.2.1
+    redux: ^5.0.1
+    typescript: ^5.8.3
+    vitest: ^3.2.4
+  languageName: unknown
+  linkType: soft
+
+"@next/dual-topology-host-v3@workspace:0-mock-server/dual-topology-host-v3":
+  version: 0.0.0-use.local
+  resolution: "@next/dual-topology-host-v3@workspace:0-mock-server/dual-topology-host-v3"
+  dependencies:
+    "@types/node": ^25.0.9
+    "@types/ws": ^8.5.13
+    tsx: ^4.21.0
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+    ws: ^8.18.0
+  languageName: unknown
+  linkType: soft
+
+"@next/host-runtime-rn84@workspace:*, @next/host-runtime-rn84@workspace:3-adapter/android/host-runtime-rn84":
+  version: 0.0.0-use.local
+  resolution: "@next/host-runtime-rn84@workspace:3-adapter/android/host-runtime-rn84"
+  dependencies:
+    "@next/kernel-base-contracts": "workspace:*"
+    "@next/kernel-base-platform-ports": "workspace:*"
+    "@next/kernel-base-runtime-shell-v2": "workspace:*"
+    "@next/kernel-base-state-runtime": "workspace:*"
+    "@next/kernel-base-tcp-control-runtime-v2": "workspace:*"
+    "@next/kernel-base-tdp-sync-runtime-v2": "workspace:*"
+    "@next/kernel-base-terminal-log-upload-runtime-v2": "workspace:*"
+    "@next/kernel-base-topology-runtime-v3": "workspace:*"
+    "@next/kernel-base-transport-runtime": "workspace:*"
+    "@next/kernel-base-ui-runtime-v2": "workspace:*"
+    "@next/kernel-base-workflow-runtime-v2": "workspace:*"
+    "@next/kernel-server-config-v2": "workspace:*"
+    "@next/ui-base-admin-console": "workspace:*"
+    "@next/ui-base-automation-runtime": "workspace:*"
+    "@next/ui-base-input-runtime": "workspace:*"
+    "@next/ui-base-runtime-react": "workspace:*"
+    "@next/ui-base-terminal-console": "workspace:*"
+    "@next/ui-base-topology-runtime-bridge": "workspace:*"
+    "@reduxjs/toolkit": ^2.10.0
+    "@types/react": ^19.2.0
+    react: 19.2.3
+    react-native: 0.84.1
+    react-redux: ^9.1.0
+    redux: ^5.0.1
+    typescript: ^5.8.3
+    vitest: ^3.2.4
+  languageName: unknown
+  linkType: soft
+
+"@next/kernel-base-contracts@workspace:*, @next/kernel-base-contracts@workspace:1-kernel/1.1-base/contracts":
+  version: 0.0.0-use.local
+  resolution: "@next/kernel-base-contracts@workspace:1-kernel/1.1-base/contracts"
+  dependencies:
+    "@types/node": ^25.0.9
+    madge: ^8.0.0
+    tsx: ^4.21.0
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  languageName: unknown
+  linkType: soft
+
+"@next/kernel-base-definition-registry@workspace:*, @next/kernel-base-definition-registry@workspace:1-kernel/1.1-base/definition-registry":
+  version: 0.0.0-use.local
+  resolution: "@next/kernel-base-definition-registry@workspace:1-kernel/1.1-base/definition-registry"
+  dependencies:
+    "@next/kernel-base-contracts": "workspace:*"
+    "@types/node": ^25.0.9
+    madge: ^8.0.0
+    tsx: ^4.21.0
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  languageName: unknown
+  linkType: soft
+
+"@next/kernel-base-execution-runtime@workspace:1-kernel/1.1-base/execution-runtime":
+  version: 0.0.0-use.local
+  resolution: "@next/kernel-base-execution-runtime@workspace:1-kernel/1.1-base/execution-runtime"
+  dependencies:
+    "@next/kernel-base-contracts": "workspace:*"
+    "@next/kernel-base-definition-registry": "workspace:*"
+    "@next/kernel-base-platform-ports": "workspace:*"
+    "@types/node": ^25.0.9
+    madge: ^8.0.0
+    tsx: ^4.21.0
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  languageName: unknown
+  linkType: soft
+
+"@next/kernel-base-host-runtime@workspace:1-kernel/1.1-base/host-runtime":
+  version: 0.0.0-use.local
+  resolution: "@next/kernel-base-host-runtime@workspace:1-kernel/1.1-base/host-runtime"
+  dependencies:
+    "@next/kernel-base-contracts": "workspace:*"
+    "@next/kernel-base-platform-ports": "workspace:*"
+    "@types/node": ^25.0.9
+    madge: ^8.0.0
+    tsx: ^4.21.0
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  languageName: unknown
+  linkType: soft
+
+"@next/kernel-base-platform-ports@workspace:*, @next/kernel-base-platform-ports@workspace:1-kernel/1.1-base/platform-ports":
+  version: 0.0.0-use.local
+  resolution: "@next/kernel-base-platform-ports@workspace:1-kernel/1.1-base/platform-ports"
+  dependencies:
+    "@next/kernel-base-contracts": "workspace:*"
+    "@types/node": ^25.0.9
+    madge: ^8.0.0
+    tsx: ^4.21.0
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  languageName: unknown
+  linkType: soft
+
+"@next/kernel-base-runtime-shell-v2@workspace:*, @next/kernel-base-runtime-shell-v2@workspace:1-kernel/1.1-base/runtime-shell-v2":
+  version: 0.0.0-use.local
+  resolution: "@next/kernel-base-runtime-shell-v2@workspace:1-kernel/1.1-base/runtime-shell-v2"
+  dependencies:
+    "@next/kernel-base-contracts": "workspace:*"
+    "@next/kernel-base-definition-registry": "workspace:*"
+    "@next/kernel-base-platform-ports": "workspace:*"
+    "@next/kernel-base-state-runtime": "workspace:*"
+    "@reduxjs/toolkit": ^2.10.0
+    "@types/node": ^25.0.9
+    madge: ^8.0.0
+    tsx: ^4.21.0
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  languageName: unknown
+  linkType: soft
+
+"@next/kernel-base-state-runtime@workspace:*, @next/kernel-base-state-runtime@workspace:1-kernel/1.1-base/state-runtime":
+  version: 0.0.0-use.local
+  resolution: "@next/kernel-base-state-runtime@workspace:1-kernel/1.1-base/state-runtime"
+  dependencies:
+    "@next/kernel-base-contracts": "workspace:*"
+    "@next/kernel-base-platform-ports": "workspace:*"
+    "@reduxjs/toolkit": ^2.10.0
+    "@types/node": ^25.0.9
+    madge: ^8.0.0
+    tsx: ^4.21.0
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  languageName: unknown
+  linkType: soft
+
+"@next/kernel-base-tcp-control-runtime-v2@workspace:*, @next/kernel-base-tcp-control-runtime-v2@workspace:1-kernel/1.1-base/tcp-control-runtime-v2":
+  version: 0.0.0-use.local
+  resolution: "@next/kernel-base-tcp-control-runtime-v2@workspace:1-kernel/1.1-base/tcp-control-runtime-v2"
+  dependencies:
+    "@next/kernel-base-contracts": "workspace:*"
+    "@next/kernel-base-platform-ports": "workspace:*"
+    "@next/kernel-base-runtime-shell-v2": "workspace:*"
+    "@next/kernel-base-state-runtime": "workspace:*"
+    "@next/kernel-base-transport-runtime": "workspace:*"
+    "@next/kernel-server-config-v2": "workspace:*"
+    "@reduxjs/toolkit": ^2.10.0
+    "@types/node": ^25.0.9
+    madge: ^8.0.0
+    tsx: ^4.21.0
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  languageName: unknown
+  linkType: soft
+
+"@next/kernel-base-tdp-sync-runtime-v2@workspace:*, @next/kernel-base-tdp-sync-runtime-v2@workspace:1-kernel/1.1-base/tdp-sync-runtime-v2":
+  version: 0.0.0-use.local
+  resolution: "@next/kernel-base-tdp-sync-runtime-v2@workspace:1-kernel/1.1-base/tdp-sync-runtime-v2"
+  dependencies:
+    "@next/kernel-base-contracts": "workspace:*"
+    "@next/kernel-base-platform-ports": "workspace:*"
+    "@next/kernel-base-runtime-shell-v2": "workspace:*"
+    "@next/kernel-base-state-runtime": "workspace:*"
+    "@next/kernel-base-tcp-control-runtime-v2": "workspace:*"
+    "@next/kernel-base-topology-runtime-v3": "workspace:*"
+    "@next/kernel-base-transport-runtime": "workspace:*"
+    "@next/kernel-server-config-v2": "workspace:*"
+    "@reduxjs/toolkit": ^2.10.0
+    "@types/node": ^25.0.9
+    madge: ^8.0.0
+    tsx: ^4.21.0
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  languageName: unknown
+  linkType: soft
+
+"@next/kernel-base-terminal-log-upload-runtime-v2@workspace:*, @next/kernel-base-terminal-log-upload-runtime-v2@workspace:1-kernel/1.1-base/terminal-log-upload-runtime-v2":
+  version: 0.0.0-use.local
+  resolution: "@next/kernel-base-terminal-log-upload-runtime-v2@workspace:1-kernel/1.1-base/terminal-log-upload-runtime-v2"
+  dependencies:
+    "@next/kernel-base-contracts": "workspace:*"
+    "@next/kernel-base-platform-ports": "workspace:*"
+    "@next/kernel-base-runtime-shell-v2": "workspace:*"
+    "@next/kernel-base-tcp-control-runtime-v2": "workspace:*"
+    "@next/kernel-base-topology-runtime-v3": "workspace:*"
+    "@types/node": ^25.0.9
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  languageName: unknown
+  linkType: soft
+
+"@next/kernel-base-topology-runtime-v3@workspace:*, @next/kernel-base-topology-runtime-v3@workspace:1-kernel/1.1-base/topology-runtime-v3":
+  version: 0.0.0-use.local
+  resolution: "@next/kernel-base-topology-runtime-v3@workspace:1-kernel/1.1-base/topology-runtime-v3"
+  dependencies:
+    "@next/kernel-base-contracts": "workspace:*"
+    "@types/node": ^25.0.9
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  languageName: unknown
+  linkType: soft
+
+"@next/kernel-base-transport-runtime@workspace:*, @next/kernel-base-transport-runtime@workspace:1-kernel/1.1-base/transport-runtime":
+  version: 0.0.0-use.local
+  resolution: "@next/kernel-base-transport-runtime@workspace:1-kernel/1.1-base/transport-runtime"
+  dependencies:
+    "@next/kernel-base-contracts": "workspace:*"
+    "@next/kernel-base-platform-ports": "workspace:*"
+    "@next/kernel-base-runtime-shell-v2": "workspace:*"
+    "@next/kernel-base-state-runtime": "workspace:*"
+    "@next/kernel-server-config-v2": "workspace:*"
+    "@reduxjs/toolkit": ^2.10.0
+    "@types/node": ^25.0.9
+    "@types/ws": ^8.5.13
+    madge: ^8.0.0
+    tsx: ^4.21.0
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+    ws: ^8.18.0
+  languageName: unknown
+  linkType: soft
+
+"@next/kernel-base-ui-runtime-v2@workspace:*, @next/kernel-base-ui-runtime-v2@workspace:1-kernel/1.1-base/ui-runtime-v2":
+  version: 0.0.0-use.local
+  resolution: "@next/kernel-base-ui-runtime-v2@workspace:1-kernel/1.1-base/ui-runtime-v2"
+  dependencies:
+    "@next/kernel-base-contracts": "workspace:*"
+    "@next/kernel-base-platform-ports": "workspace:*"
+    "@next/kernel-base-runtime-shell-v2": "workspace:*"
+    "@next/kernel-base-state-runtime": "workspace:*"
+    "@next/kernel-base-topology-runtime-v3": "workspace:*"
+    "@reduxjs/toolkit": ^2.10.0
+    "@types/node": ^25.0.9
+    madge: ^8.0.0
+    tsx: ^4.21.0
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  languageName: unknown
+  linkType: soft
+
+"@next/kernel-base-workflow-runtime-v2@workspace:*, @next/kernel-base-workflow-runtime-v2@workspace:1-kernel/1.1-base/workflow-runtime-v2":
+  version: 0.0.0-use.local
+  resolution: "@next/kernel-base-workflow-runtime-v2@workspace:1-kernel/1.1-base/workflow-runtime-v2"
+  dependencies:
+    "@next/kernel-base-contracts": "workspace:*"
+    "@next/kernel-base-platform-ports": "workspace:*"
+    "@next/kernel-base-runtime-shell-v2": "workspace:*"
+    "@next/kernel-base-state-runtime": "workspace:*"
+    "@next/kernel-base-tdp-sync-runtime-v2": "workspace:*"
+    "@next/kernel-server-config-v2": "workspace:*"
+    "@reduxjs/toolkit": ^2.10.0
+    "@types/node": ^25.0.9
+    madge: ^8.0.0
+    rxjs: ^7.8.2
+    tsx: ^4.21.0
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  languageName: unknown
+  linkType: soft
+
+"@next/kernel-business-catering-product-master-data@workspace:*, @next/kernel-business-catering-product-master-data@workspace:1-kernel/1.2-business/catering-product-master-data":
+  version: 0.0.0-use.local
+  resolution: "@next/kernel-business-catering-product-master-data@workspace:1-kernel/1.2-business/catering-product-master-data"
+  dependencies:
+    "@next/kernel-base-runtime-shell-v2": "workspace:*"
+    "@next/kernel-base-state-runtime": "workspace:*"
+    "@next/kernel-base-tcp-control-runtime-v2": "workspace:*"
+    "@next/kernel-base-tdp-sync-runtime-v2": "workspace:*"
+    "@next/kernel-business-organization-iam-master-data": "workspace:*"
+    "@reduxjs/toolkit": ^2.10.0
+    "@types/node": ^25.0.9
+    madge: ^8.0.0
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  languageName: unknown
+  linkType: soft
+
+"@next/kernel-business-catering-store-operating-master-data@workspace:*, @next/kernel-business-catering-store-operating-master-data@workspace:1-kernel/1.2-business/catering-store-operating-master-data":
+  version: 0.0.0-use.local
+  resolution: "@next/kernel-business-catering-store-operating-master-data@workspace:1-kernel/1.2-business/catering-store-operating-master-data"
+  dependencies:
+    "@next/kernel-base-runtime-shell-v2": "workspace:*"
+    "@next/kernel-base-state-runtime": "workspace:*"
+    "@next/kernel-base-tcp-control-runtime-v2": "workspace:*"
+    "@next/kernel-base-tdp-sync-runtime-v2": "workspace:*"
+    "@next/kernel-business-organization-iam-master-data": "workspace:*"
+    "@reduxjs/toolkit": ^2.10.0
+    "@types/node": ^25.0.9
+    madge: ^8.0.0
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  languageName: unknown
+  linkType: soft
+
+"@next/kernel-business-organization-iam-master-data@workspace:*, @next/kernel-business-organization-iam-master-data@workspace:1-kernel/1.2-business/organization-iam-master-data":
+  version: 0.0.0-use.local
+  resolution: "@next/kernel-business-organization-iam-master-data@workspace:1-kernel/1.2-business/organization-iam-master-data"
+  dependencies:
+    "@next/kernel-base-contracts": "workspace:*"
+    "@next/kernel-base-platform-ports": "workspace:*"
+    "@next/kernel-base-runtime-shell-v2": "workspace:*"
+    "@next/kernel-base-state-runtime": "workspace:*"
+    "@next/kernel-base-tcp-control-runtime-v2": "workspace:*"
+    "@next/kernel-base-tdp-sync-runtime-v2": "workspace:*"
+    "@reduxjs/toolkit": ^2.10.0
+    "@types/node": ^25.0.9
+    madge: ^8.0.0
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  languageName: unknown
+  linkType: soft
+
+"@next/kernel-server-config-v2@workspace:*, @next/kernel-server-config-v2@workspace:1-kernel/server-config-v2":
+  version: 0.0.0-use.local
+  resolution: "@next/kernel-server-config-v2@workspace:1-kernel/server-config-v2"
+  dependencies:
+    "@next/kernel-base-contracts": "workspace:*"
+    "@types/node": ^25.0.9
+    madge: ^8.0.0
+    typescript: ^5.9.3
+  languageName: unknown
+  linkType: soft
+
+"@next/mock-admin-mall-tenant-console-server@workspace:0-mock-server/mock-admin-mall-tenant-console/server":
+  version: 0.0.0-use.local
+  resolution: "@next/mock-admin-mall-tenant-console-server@workspace:0-mock-server/mock-admin-mall-tenant-console/server"
+  dependencies:
+    "@types/cors": ^2.8.19
+    "@types/express": ^5.0.3
+    "@types/node": ^25.0.9
+    better-sqlite3: ^12.6.2
+    cors: ^2.8.5
+    express: ^4.21.2
+    tsx: ^4.20.6
+    typescript: ^5.9.3
+  languageName: unknown
+  linkType: soft
+
+"@next/mock-admin-mall-tenant-console-web@workspace:0-mock-server/mock-admin-mall-tenant-console/web":
+  version: 0.0.0-use.local
+  resolution: "@next/mock-admin-mall-tenant-console-web@workspace:0-mock-server/mock-admin-mall-tenant-console/web"
+  dependencies:
+    "@types/react": ^18.3.0
+    "@types/react-dom": ^18.3.0
+    "@vitejs/plugin-react": ^4.7.0
+    react: ^18.3.1
+    react-dom: ^18.3.1
+    typescript: ^5.9.3
+    vite: ^7.1.7
+  languageName: unknown
+  linkType: soft
+
+"@next/mock-admin-mall-tenant-console@workspace:0-mock-server/mock-admin-mall-tenant-console":
+  version: 0.0.0-use.local
+  resolution: "@next/mock-admin-mall-tenant-console@workspace:0-mock-server/mock-admin-mall-tenant-console"
+  dependencies:
+    concurrently: ^9.2.1
+  languageName: unknown
+  linkType: soft
+
+"@next/mock-terminal-platform-server@workspace:0-mock-server/mock-terminal-platform/server":
+  version: 0.0.0-use.local
+  resolution: "@next/mock-terminal-platform-server@workspace:0-mock-server/mock-terminal-platform/server"
+  dependencies:
+    "@types/cors": ^2.8.19
+    "@types/express": ^5.0.3
+    "@types/node": ^25.0.9
+    "@types/ws": ^8.5.13
+    better-sqlite3: ^12.6.2
+    cors: ^2.8.5
+    drizzle-orm: ^0.44.7
+    express: ^4.21.2
+    tsx: ^4.20.6
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+    ws: ^8.19.0
+    zod: ^3.25.76
+  languageName: unknown
+  linkType: soft
+
+"@next/mock-terminal-platform-web@workspace:0-mock-server/mock-terminal-platform/web":
+  version: 0.0.0-use.local
+  resolution: "@next/mock-terminal-platform-web@workspace:0-mock-server/mock-terminal-platform/web"
+  dependencies:
+    "@types/react": ^18.3.0
+    "@types/react-dom": ^18.3.0
+    "@vitejs/plugin-react": ^4.7.0
+    react: ^18.3.1
+    react-dom: ^18.3.1
+    typescript: ^5.9.3
+    vite: ^7.1.7
+  languageName: unknown
+  linkType: soft
+
+"@next/mock-terminal-platform@workspace:0-mock-server/mock-terminal-platform":
+  version: 0.0.0-use.local
+  resolution: "@next/mock-terminal-platform@workspace:0-mock-server/mock-terminal-platform"
+  dependencies:
+    concurrently: ^9.2.1
+  languageName: unknown
+  linkType: soft
+
+"@next/ui-base-admin-console@workspace:*, @next/ui-base-admin-console@workspace:2-ui/2.1-base/admin-console":
+  version: 0.0.0-use.local
+  resolution: "@next/ui-base-admin-console@workspace:2-ui/2.1-base/admin-console"
+  dependencies:
+    "@next/kernel-base-platform-ports": "workspace:*"
+    "@next/kernel-base-state-runtime": "workspace:*"
+    "@next/kernel-base-tcp-control-runtime-v2": "workspace:*"
+    "@next/kernel-base-topology-runtime-v3": "workspace:*"
+    "@next/kernel-base-workflow-runtime-v2": "workspace:*"
+    "@next/ui-base-input-runtime": "workspace:*"
+    "@next/ui-base-runtime-react": "workspace:*"
+    "@types/node": ^25.0.9
+    "@types/react": ^19.2.0
+    expo: ~54.0.31
+    expo-status-bar: ~3.0.9
+    react-dom: 19.2.3
+    react-native-qrcode-svg: ^6.3.21
+    react-native-web: ^0.21.0
+    react-test-renderer: 19.2.3
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  peerDependencies:
+    react: ">=18"
+    react-native: ">=0.77"
+    react-redux: ^9.1.0
+  languageName: unknown
+  linkType: soft
+
+"@next/ui-base-automation-runtime@workspace:*, @next/ui-base-automation-runtime@workspace:2-ui/2.1-base/ui-automation-runtime":
+  version: 0.0.0-use.local
+  resolution: "@next/ui-base-automation-runtime@workspace:2-ui/2.1-base/ui-automation-runtime"
+  dependencies:
+    "@next/kernel-base-platform-ports": "workspace:*"
+    "@next/kernel-base-runtime-shell-v2": "workspace:*"
+    "@next/kernel-base-ui-runtime-v2": "workspace:*"
+    "@types/node": ^25.0.9
+    "@types/react": ^19.2.0
+    expo: ~54.0.31
+    expo-status-bar: ~3.0.9
+    react-dom: 19.2.3
+    react-native-web: ^0.21.0
+    react-test-renderer: 19.2.3
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  peerDependencies:
+    react: ">=18"
+    react-native: ">=0.77"
+  languageName: unknown
+  linkType: soft
+
+"@next/ui-base-input-runtime@workspace:*, @next/ui-base-input-runtime@workspace:2-ui/2.1-base/input-runtime":
+  version: 0.0.0-use.local
+  resolution: "@next/ui-base-input-runtime@workspace:2-ui/2.1-base/input-runtime"
+  dependencies:
+    "@next/kernel-base-platform-ports": "workspace:*"
+    "@next/kernel-base-runtime-shell-v2": "workspace:*"
+    "@next/kernel-base-state-runtime": "workspace:*"
+    "@next/ui-base-runtime-react": "workspace:*"
+    "@types/node": ^25.0.9
+    "@types/react": ^19.2.0
+    expo: ~54.0.31
+    expo-status-bar: ~3.0.9
+    react-dom: 19.2.3
+    react-native-web: ^0.21.0
+    react-test-renderer: 19.2.3
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  peerDependencies:
+    react: ">=18"
+    react-native: ">=0.77"
+    react-redux: ^9.1.0
+  languageName: unknown
+  linkType: soft
+
+"@next/ui-base-runtime-react@workspace:*, @next/ui-base-runtime-react@workspace:2-ui/2.1-base/runtime-react":
+  version: 0.0.0-use.local
+  resolution: "@next/ui-base-runtime-react@workspace:2-ui/2.1-base/runtime-react"
+  dependencies:
+    "@next/kernel-base-platform-ports": "workspace:*"
+    "@next/kernel-base-runtime-shell-v2": "workspace:*"
+    "@next/kernel-base-topology-runtime-v3": "workspace:*"
+    "@next/kernel-base-ui-runtime-v2": "workspace:*"
+    "@reduxjs/toolkit": ^2.10.0
+    "@types/node": ^25.0.9
+    "@types/react": ^19.2.0
+    expo: ~54.0.31
+    expo-status-bar: ~3.0.9
+    react-dom: 19.2.3
+    react-native-web: ^0.21.0
+    react-test-renderer: 19.2.3
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  peerDependencies:
+    react: ">=18"
+    react-native: ">=0.77"
+    react-redux: ^9.1.0
+  languageName: unknown
+  linkType: soft
+
+"@next/ui-base-terminal-console@workspace:*, @next/ui-base-terminal-console@workspace:2-ui/2.1-base/terminal-console":
+  version: 0.0.0-use.local
+  resolution: "@next/ui-base-terminal-console@workspace:2-ui/2.1-base/terminal-console"
+  dependencies:
+    "@next/kernel-base-contracts": "workspace:*"
+    "@next/kernel-base-platform-ports": "workspace:*"
+    "@next/kernel-base-runtime-shell-v2": "workspace:*"
+    "@next/kernel-base-state-runtime": "workspace:*"
+    "@next/kernel-base-tcp-control-runtime-v2": "workspace:*"
+    "@next/kernel-base-topology-runtime-v3": "workspace:*"
+    "@next/kernel-base-transport-runtime": "workspace:*"
+    "@next/kernel-server-config-v2": "workspace:*"
+    "@next/ui-base-input-runtime": "workspace:*"
+    "@next/ui-base-runtime-react": "workspace:*"
+    "@types/node": ^25.0.9
+    "@types/react": ^19.2.0
+    expo: ~54.0.31
+    expo-status-bar: ~3.0.9
+    react-dom: 19.2.3
+    react-native-web: ^0.21.0
+    react-test-renderer: 19.2.3
+    tsx: ^4.20.6
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  peerDependencies:
+    react: ">=18"
+    react-native: ">=0.77"
+    react-redux: ^9.1.0
+  languageName: unknown
+  linkType: soft
+
+"@next/ui-base-topology-runtime-bridge@workspace:*, @next/ui-base-topology-runtime-bridge@workspace:2-ui/2.1-base/topology-runtime-bridge":
+  version: 0.0.0-use.local
+  resolution: "@next/ui-base-topology-runtime-bridge@workspace:2-ui/2.1-base/topology-runtime-bridge"
+  dependencies:
+    "@next/kernel-base-runtime-shell-v2": "workspace:*"
+    "@next/kernel-base-topology-runtime-v3": "workspace:*"
+    "@next/kernel-base-ui-runtime-v2": "workspace:*"
+    "@next/ui-base-runtime-react": "workspace:*"
+    "@types/node": ^25.0.9
+    "@types/react": ^19.2.0
+    react-dom: 19.2.3
+    react-native-web: ^0.21.0
+    react-test-renderer: 19.2.3
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  peerDependencies:
+    react: ">=18"
+    react-native: ">=0.77"
+    react-redux: ^9.1.0
+  languageName: unknown
+  linkType: soft
+
+"@next/ui-business-catering-master-data-workbench@workspace:*, @next/ui-business-catering-master-data-workbench@workspace:2-ui/2.2-business/catering-master-data-workbench":
+  version: 0.0.0-use.local
+  resolution: "@next/ui-business-catering-master-data-workbench@workspace:2-ui/2.2-business/catering-master-data-workbench"
+  dependencies:
+    "@next/kernel-base-runtime-shell-v2": "workspace:*"
+    "@next/kernel-base-state-runtime": "workspace:*"
+    "@next/kernel-base-tcp-control-runtime-v2": "workspace:*"
+    "@next/kernel-base-ui-runtime-v2": "workspace:*"
+    "@next/kernel-business-catering-product-master-data": "workspace:*"
+    "@next/kernel-business-catering-store-operating-master-data": "workspace:*"
+    "@next/kernel-business-organization-iam-master-data": "workspace:*"
+    "@next/ui-base-runtime-react": "workspace:*"
+    "@types/node": ^25.0.9
+    "@types/react": ^19.2.0
+    react-test-renderer: 19.2.3
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  peerDependencies:
+    react: ">=18"
+    react-native: ">=0.77"
+    react-redux: ^9.1.0
+  languageName: unknown
+  linkType: soft
+
+"@next/ui-integration-catering-shell@workspace:*, @next/ui-integration-catering-shell@workspace:2-ui/2.3-integration/catering-shell":
+  version: 0.0.0-use.local
+  resolution: "@next/ui-integration-catering-shell@workspace:2-ui/2.3-integration/catering-shell"
+  dependencies:
+    "@next/kernel-base-runtime-shell-v2": "workspace:*"
+    "@next/kernel-base-tcp-control-runtime-v2": "workspace:*"
+    "@next/kernel-base-tdp-sync-runtime-v2": "workspace:*"
+    "@next/kernel-base-topology-runtime-v3": "workspace:*"
+    "@next/kernel-base-ui-runtime-v2": "workspace:*"
+    "@next/kernel-business-catering-product-master-data": "workspace:*"
+    "@next/kernel-business-catering-store-operating-master-data": "workspace:*"
+    "@next/kernel-business-organization-iam-master-data": "workspace:*"
+    "@next/ui-base-admin-console": "workspace:*"
+    "@next/ui-base-input-runtime": "workspace:*"
+    "@next/ui-base-runtime-react": "workspace:*"
+    "@next/ui-base-terminal-console": "workspace:*"
+    "@next/ui-business-catering-master-data-workbench": "workspace:*"
+    "@types/node": ^25.0.9
+    "@types/react": ^19.2.0
+    expo: ~54.0.31
+    expo-status-bar: ~3.0.9
+    react-dom: 19.2.3
+    react-native-web: ^0.21.0
+    react-test-renderer: 19.2.3
+    tsx: ^4.20.6
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  peerDependencies:
+    react: ">=18"
+    react-native: ">=0.77"
+    react-redux: ^9.1.0
+  languageName: unknown
+  linkType: soft
 
 "@nicolo-ribaudo/eslint-scope-5-internals@npm:5.1.1-v1":
   version: 5.1.1-v1

@@ -1,4 +1,4 @@
-import type {NodeId, SessionId} from '@impos2/kernel-base-contracts'
+import type {NodeId, SessionId} from '@next/kernel-base-contracts'
 import type {
     HostFaultRule,
     HostHelloFaultMatchResult,

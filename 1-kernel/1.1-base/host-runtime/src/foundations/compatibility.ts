@@ -1,4 +1,4 @@
-import type {CompatibilityDecision, NodeRuntimeInfo} from '@impos2/kernel-base-contracts'
+import type {CompatibilityDecision, NodeRuntimeInfo} from '@next/kernel-base-contracts'
 
 export interface EvaluateHostCompatibilityInput {
     hostRuntime: NodeRuntimeInfo

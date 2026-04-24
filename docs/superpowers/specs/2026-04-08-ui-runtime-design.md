@@ -40,7 +40,7 @@ Package directory:
 
 Published package name:
 
-`@impos2/kernel-base-ui-runtime-v2`
+`@next/kernel-base-ui-runtime-v2`
 
 Module name:
 

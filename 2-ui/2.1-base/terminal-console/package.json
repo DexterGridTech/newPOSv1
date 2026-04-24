@@ -1,5 +1,5 @@
 {
-  "name": "@impos2/ui-base-terminal-console",
+  "name": "@next/ui-base-terminal-console",
   "version": "1.0.0",
   "description": "Terminal-facing TCP UI console for UI base",
   "author": "DexterYang",
@@ -21,16 +21,16 @@
     "type-check": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@impos2/kernel-base-contracts": "workspace:*",
-    "@impos2/kernel-base-platform-ports": "workspace:*",
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*",
-    "@impos2/kernel-base-state-runtime": "workspace:*",
-    "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*",
-    "@impos2/kernel-base-topology-runtime-v3": "workspace:*",
-    "@impos2/kernel-base-transport-runtime": "workspace:*",
-    "@impos2/kernel-server-config-v2": "workspace:*",
-    "@impos2/ui-base-input-runtime": "workspace:*",
-    "@impos2/ui-base-runtime-react": "workspace:*"
+    "@next/kernel-base-contracts": "workspace:*",
+    "@next/kernel-base-platform-ports": "workspace:*",
+    "@next/kernel-base-runtime-shell-v2": "workspace:*",
+    "@next/kernel-base-state-runtime": "workspace:*",
+    "@next/kernel-base-tcp-control-runtime-v2": "workspace:*",
+    "@next/kernel-base-topology-runtime-v3": "workspace:*",
+    "@next/kernel-base-transport-runtime": "workspace:*",
+    "@next/kernel-server-config-v2": "workspace:*",
+    "@next/ui-base-input-runtime": "workspace:*",
+    "@next/ui-base-runtime-react": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=18",

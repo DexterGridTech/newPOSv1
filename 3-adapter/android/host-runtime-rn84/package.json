@@ -1,5 +1,5 @@
 {
-  "name": "@impos2/host-runtime-rn84",
+  "name": "@next/host-runtime-rn84",
   "version": "1.0.0",
   "description": "Reusable RN84 Android host runtime for thin assemblies",
   "private": true,
@@ -11,24 +11,24 @@
     "clean": "rm -rf android/build"
   },
   "dependencies": {
-    "@impos2/kernel-base-contracts": "workspace:*",
-    "@impos2/kernel-base-platform-ports": "workspace:*",
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*",
-    "@impos2/kernel-base-state-runtime": "workspace:*",
-    "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*",
-    "@impos2/kernel-base-tdp-sync-runtime-v2": "workspace:*",
-    "@impos2/kernel-base-terminal-log-upload-runtime-v2": "workspace:*",
-    "@impos2/kernel-base-topology-runtime-v3": "workspace:*",
-    "@impos2/kernel-base-transport-runtime": "workspace:*",
-    "@impos2/kernel-base-ui-runtime-v2": "workspace:*",
-    "@impos2/kernel-base-workflow-runtime-v2": "workspace:*",
-    "@impos2/kernel-server-config-v2": "workspace:*",
-    "@impos2/ui-base-admin-console": "workspace:*",
-    "@impos2/ui-base-automation-runtime": "workspace:*",
-    "@impos2/ui-base-input-runtime": "workspace:*",
-    "@impos2/ui-base-runtime-react": "workspace:*",
-    "@impos2/ui-base-terminal-console": "workspace:*",
-    "@impos2/ui-base-topology-runtime-bridge": "workspace:*",
+    "@next/kernel-base-contracts": "workspace:*",
+    "@next/kernel-base-platform-ports": "workspace:*",
+    "@next/kernel-base-runtime-shell-v2": "workspace:*",
+    "@next/kernel-base-state-runtime": "workspace:*",
+    "@next/kernel-base-tcp-control-runtime-v2": "workspace:*",
+    "@next/kernel-base-tdp-sync-runtime-v2": "workspace:*",
+    "@next/kernel-base-terminal-log-upload-runtime-v2": "workspace:*",
+    "@next/kernel-base-topology-runtime-v3": "workspace:*",
+    "@next/kernel-base-transport-runtime": "workspace:*",
+    "@next/kernel-base-ui-runtime-v2": "workspace:*",
+    "@next/kernel-base-workflow-runtime-v2": "workspace:*",
+    "@next/kernel-server-config-v2": "workspace:*",
+    "@next/ui-base-admin-console": "workspace:*",
+    "@next/ui-base-automation-runtime": "workspace:*",
+    "@next/ui-base-input-runtime": "workspace:*",
+    "@next/ui-base-runtime-react": "workspace:*",
+    "@next/ui-base-terminal-console": "workspace:*",
+    "@next/ui-base-topology-runtime-bridge": "workspace:*",
     "@reduxjs/toolkit": "^2.10.0",
     "react": "19.2.3",
     "react-native": "0.84.1",
@@ -41,11 +41,16 @@
     "vitest": "^3.2.4"
   },
   "codegenConfig": {
-    "name": "Impos2HostRuntimeRN84Spec",
+    "name": "NextHostRuntimeRN84Spec",
     "type": "modules",
     "jsSrcsDir": "src/turbomodules/specs",
     "android": {
-      "javaPackageName": "com.impos2.hostruntimern84.turbomodules"
+      "javaPackageName": "com.next.hostruntimern84.turbomodules"
+    }
+  },
+  "assembly": {
+    "adbSocketDebug": {
+      "enabled": true
     }
   }
 }

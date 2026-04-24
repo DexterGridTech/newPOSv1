@@ -1,5 +1,5 @@
-import {createLoggerPort} from '@impos2/kernel-base-platform-ports'
-import type {LogEnvironmentMode, LogEvent} from '@impos2/kernel-base-platform-ports'
+import {createLoggerPort} from '@next/kernel-base-platform-ports'
+import type {LogEnvironmentMode, LogEvent} from '@next/kernel-base-platform-ports'
 import {nativeLogger} from '../turbomodules'
 
 const stringifyLogEvent = (event: LogEvent): string => {

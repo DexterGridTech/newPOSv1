@@ -1,4 +1,4 @@
-import {formatTimestampMs, type TimestampMs} from '@impos2/kernel-base-contracts'
+import {formatTimestampMs, type TimestampMs} from '@next/kernel-base-contracts'
 
 const activationStatusLabels = {
     UNACTIVATED: '未激活',

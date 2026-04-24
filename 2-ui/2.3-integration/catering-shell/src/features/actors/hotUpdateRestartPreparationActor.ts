@@ -4,13 +4,13 @@ import {
     onCommand,
     type ActorDefinition,
     type RuntimeModuleContextV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
-import {tdpSyncV2CommandDefinitions} from '@impos2/kernel-base-tdp-sync-runtime-v2'
+} from '@next/kernel-base-runtime-shell-v2'
+import {tdpSyncV2CommandDefinitions} from '@next/kernel-base-tdp-sync-runtime-v2'
 import {
     selectUiOverlays,
     uiRuntimeV2CommandDefinitions,
-} from '@impos2/kernel-base-ui-runtime-v2'
-import {runtimeReactDefaultParts} from '@impos2/ui-base-runtime-react'
+} from '@next/kernel-base-ui-runtime-v2'
+import {runtimeReactDefaultParts} from '@next/ui-base-runtime-react'
 import {moduleName} from '../../moduleName'
 
 export const CATERING_SHELL_HOT_UPDATE_RESTART_OVERLAY_ID = 'catering-shell.hot-update.restart-progress'

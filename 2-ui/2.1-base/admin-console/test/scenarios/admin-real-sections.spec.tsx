@@ -2,20 +2,20 @@ import React, {useState} from 'react'
 import {act} from 'react-test-renderer'
 import {describe, expect, it, vi} from 'vitest'
 import {Pressable, Text} from 'react-native'
-import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
+import {createCommand} from '@next/kernel-base-runtime-shell-v2'
 import {
     createTcpControlRuntimeModuleV2,
     tcpControlV2CommandDefinitions,
     tcpControlV2StateActions,
-} from '@impos2/kernel-base-tcp-control-runtime-v2'
-import {createAppError} from '@impos2/kernel-base-contracts'
+} from '@next/kernel-base-tcp-control-runtime-v2'
+import {createAppError} from '@next/kernel-base-contracts'
 import {
     topologyRuntimeV3CommandDefinitions,
     topologyRuntimeV3StateActions,
-} from '@impos2/kernel-base-topology-runtime-v3'
+} from '@next/kernel-base-topology-runtime-v3'
 import {
     createWorkflowRuntimeModuleV2,
-} from '@impos2/kernel-base-workflow-runtime-v2'
+} from '@next/kernel-base-workflow-runtime-v2'
 import {
     AdapterDiagnosticsScreen,
     AdminTerminalSection,

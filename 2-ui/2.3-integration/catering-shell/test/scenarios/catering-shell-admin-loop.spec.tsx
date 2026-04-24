@@ -3,20 +3,20 @@ import {describe, expect, it} from 'vitest'
 import {
     createCommand,
     runtimeShellV2CommandDefinitions,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {
     selectUiScreen,
-} from '@impos2/kernel-base-ui-runtime-v2'
+} from '@next/kernel-base-ui-runtime-v2'
 import {
     uiRuntimeRootVariables,
-} from '@impos2/ui-base-runtime-react'
+} from '@next/ui-base-runtime-react'
 import {
     selectTcpCredentialSnapshot,
     selectTcpIdentitySnapshot,
     tcpControlV2StateActions,
-} from '@impos2/kernel-base-tcp-control-runtime-v2'
-import {AdminTerminalSection} from '@impos2/ui-base-admin-console'
-import type {RootState} from '@impos2/kernel-base-state-runtime'
+} from '@next/kernel-base-tcp-control-runtime-v2'
+import {AdminTerminalSection} from '@next/ui-base-admin-console'
+import type {RootState} from '@next/kernel-base-state-runtime'
 import {createCateringShellHarness, renderWithAutomation} from '../support/cateringShellHarness'
 
 const selectPrimaryRoot = (state: RootState) =>

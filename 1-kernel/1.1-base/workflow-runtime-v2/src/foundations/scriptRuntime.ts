@@ -1,5 +1,5 @@
-import {createAppError} from '@impos2/kernel-base-contracts'
-import type {PlatformPorts} from '@impos2/kernel-base-platform-ports'
+import {createAppError} from '@next/kernel-base-contracts'
+import type {PlatformPorts} from '@next/kernel-base-platform-ports'
 import {workflowRuntimeV2ErrorDefinitions} from '../supports'
 import type {
     WorkflowContextSnapshot,

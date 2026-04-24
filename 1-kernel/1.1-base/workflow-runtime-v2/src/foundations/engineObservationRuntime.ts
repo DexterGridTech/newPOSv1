@@ -2,8 +2,8 @@ import {Subject} from 'rxjs'
 import {
     nowTimestampMs,
     type RequestId,
-} from '@impos2/kernel-base-contracts'
-import type {RuntimeModuleContextV2} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-contracts'
+import type {RuntimeModuleContextV2} from '@next/kernel-base-runtime-shell-v2'
 import type {WorkflowObservation} from '../types'
 import {
     workflowRuntimeV2StateActions,

@@ -1,7 +1,7 @@
 import {
     defineUiScreenPart,
     uiRuntimeRootVariables,
-} from '@impos2/ui-base-runtime-react'
+} from '@next/ui-base-runtime-react'
 import {MasterDataWorkbenchScreen} from '../ui/screens'
 
 export const masterDataWorkbenchScreenKeys = {

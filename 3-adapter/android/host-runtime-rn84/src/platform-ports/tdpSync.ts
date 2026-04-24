@@ -1,14 +1,14 @@
-import type {LoggerPort} from '@impos2/kernel-base-platform-ports'
-import type {RuntimeModuleContextV2} from '@impos2/kernel-base-runtime-shell-v2'
+import type {LoggerPort} from '@next/kernel-base-platform-ports'
+import type {RuntimeModuleContextV2} from '@next/kernel-base-runtime-shell-v2'
 import {
     createHttpRuntime,
     createSocketRuntime,
     type TransportServerDefinition,
-} from '@impos2/kernel-base-transport-runtime'
+} from '@next/kernel-base-transport-runtime'
 import {
     tdpSyncV2SocketProfile,
     type TdpSyncRuntimeAssemblyV2,
-} from '@impos2/kernel-base-tdp-sync-runtime-v2'
+} from '@next/kernel-base-tdp-sync-runtime-v2'
 import {moduleName} from '../moduleName'
 import {
     createAssemblyFetchTransport,

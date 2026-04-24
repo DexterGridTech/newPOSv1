@@ -1,13 +1,13 @@
 import {setTimeout as delay} from 'node:timers/promises'
 import {createSlice, type PayloadAction} from '@reduxjs/toolkit'
-import {createLoggerPort, createPlatformPorts, type CreatePlatformPortsInput} from '@impos2/kernel-base-platform-ports'
-import {createNodeId} from '@impos2/kernel-base-contracts'
+import {createLoggerPort, createPlatformPorts, type CreatePlatformPortsInput} from '@next/kernel-base-platform-ports'
+import {createNodeId} from '@next/kernel-base-contracts'
 import {
     createKernelRuntimeV2,
     defineCommand,
     type ActorDefinition,
     type KernelRuntimeModuleV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 
 export const CHILD_SLICE = 'kernel.base.workflow-runtime-v2.test.child-state'
 export const CHILD_MODULE_NAME = 'kernel.base.workflow-runtime-v2.test.child-command'

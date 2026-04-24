@@ -1,14 +1,14 @@
-import {nowTimestampMs, createAppError} from '@impos2/kernel-base-contracts'
+import {nowTimestampMs, createAppError} from '@next/kernel-base-contracts'
 import {
     createCommand,
     createModuleActorFactory,
     onCommand,
     type ActorDefinition,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {
     selectTcpCredentialSnapshot,
     tcpControlV2CommandDefinitions,
-} from '@impos2/kernel-base-tcp-control-runtime-v2'
+} from '@next/kernel-base-tcp-control-runtime-v2'
 import {moduleName} from '../../moduleName'
 import {tdpSyncV2CommandDefinitions} from '../commands'
 import {tdpSyncV2DomainActions} from '../slices'

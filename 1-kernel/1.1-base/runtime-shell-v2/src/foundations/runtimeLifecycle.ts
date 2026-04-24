@@ -9,8 +9,8 @@ import {bootstrapRuntimeCatalogs} from './runtimeCatalogBootstrap'
 import {createCommand} from './command'
 
 interface CreateRuntimeLifecycleInput {
-    runtimeId: import('@impos2/kernel-base-contracts').RuntimeInstanceId
-    localNodeId: import('@impos2/kernel-base-contracts').NodeId
+    runtimeId: import('@next/kernel-base-contracts').RuntimeInstanceId
+    localNodeId: import('@next/kernel-base-contracts').NodeId
     modules: readonly KernelRuntimeModuleV2[]
     store: EnhancedStore
     platformPorts: RuntimeModuleContextV2['platformPorts']

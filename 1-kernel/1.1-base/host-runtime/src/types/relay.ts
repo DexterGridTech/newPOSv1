@@ -11,7 +11,7 @@ import type {
     StateSyncDiffEnvelope,
     StateSyncSummaryEnvelope,
     TimestampMs,
-} from '@impos2/kernel-base-contracts'
+} from '@next/kernel-base-contracts'
 
 export type HostRelayChannel = 'dispatch' | 'event' | 'projection' | 'resume'
 

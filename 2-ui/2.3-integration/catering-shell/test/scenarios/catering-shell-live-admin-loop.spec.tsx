@@ -3,19 +3,19 @@ import {describe, expect, it} from 'vitest'
 import {
     createCommand,
     runtimeShellV2CommandDefinitions,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {
     selectTcpIdentitySnapshot,
     tcpControlV2CommandDefinitions,
-} from '@impos2/kernel-base-tcp-control-runtime-v2'
+} from '@next/kernel-base-tcp-control-runtime-v2'
 import {
     selectUiScreen,
-} from '@impos2/kernel-base-ui-runtime-v2'
+} from '@next/kernel-base-ui-runtime-v2'
 import {
     uiRuntimeRootVariables,
-} from '@impos2/ui-base-runtime-react'
-import {AdminTerminalSection} from '@impos2/ui-base-admin-console'
-import type {RootState} from '@impos2/kernel-base-state-runtime'
+} from '@next/ui-base-runtime-react'
+import {AdminTerminalSection} from '@next/ui-base-admin-console'
+import type {RootState} from '@next/kernel-base-state-runtime'
 import {
     createCateringShellLiveHarness,
     renderWithAutomation,

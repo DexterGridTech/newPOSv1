@@ -30,7 +30,7 @@ const buildReactotronClientName = (
     input: Pick<ReactotronSessionOptions, 'displayIndex' | 'deviceId'>,
 ): string => {
     const screenLabel = input.displayIndex === 0 ? 'Main' : `Secondary-${input.displayIndex}`
-    return `IMPos2 Desktop V1 ${screenLabel} ${input.deviceId}`
+    return `Next Desktop V1 ${screenLabel} ${input.deviceId}`
 }
 
 export const resolveReactotronHost = (isEmulator: boolean): string => {

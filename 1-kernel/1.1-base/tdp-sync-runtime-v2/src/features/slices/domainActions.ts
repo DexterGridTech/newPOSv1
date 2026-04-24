@@ -1,5 +1,5 @@
 import {createAction} from '@reduxjs/toolkit'
-import type {AppError} from '@impos2/kernel-base-contracts'
+import type {AppError} from '@next/kernel-base-contracts'
 import {moduleName} from '../../moduleName'
 import type {
     TdpCommandInboxItem,

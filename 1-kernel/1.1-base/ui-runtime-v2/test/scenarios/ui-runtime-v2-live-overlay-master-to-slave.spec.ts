@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest'
-import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
+import {createCommand} from '@next/kernel-base-runtime-shell-v2'
 import {uiRuntimeV2CommandDefinitions} from '../../src'
 import {uiRuntimeV2OverlayWorkspaceKeys} from '../../src/features/slices'
 import {

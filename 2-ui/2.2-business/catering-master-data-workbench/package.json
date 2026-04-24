@@ -1,5 +1,5 @@
 {
-  "name": "@impos2/ui-business-catering-master-data-workbench",
+  "name": "@next/ui-business-catering-master-data-workbench",
   "version": "1.0.0",
   "description": "Terminal catering master data workbench UI",
   "author": "DexterYang",
@@ -17,14 +17,14 @@
     "type-check": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*",
-    "@impos2/kernel-base-state-runtime": "workspace:*",
-    "@impos2/kernel-base-tcp-control-runtime-v2": "workspace:*",
-    "@impos2/kernel-base-ui-runtime-v2": "workspace:*",
-    "@impos2/kernel-business-catering-product-master-data": "workspace:*",
-    "@impos2/kernel-business-catering-store-operating-master-data": "workspace:*",
-    "@impos2/kernel-business-organization-iam-master-data": "workspace:*",
-    "@impos2/ui-base-runtime-react": "workspace:*"
+    "@next/kernel-base-runtime-shell-v2": "workspace:*",
+    "@next/kernel-base-state-runtime": "workspace:*",
+    "@next/kernel-base-tcp-control-runtime-v2": "workspace:*",
+    "@next/kernel-base-ui-runtime-v2": "workspace:*",
+    "@next/kernel-business-catering-product-master-data": "workspace:*",
+    "@next/kernel-business-catering-store-operating-master-data": "workspace:*",
+    "@next/kernel-business-organization-iam-master-data": "workspace:*",
+    "@next/ui-base-runtime-react": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=18",

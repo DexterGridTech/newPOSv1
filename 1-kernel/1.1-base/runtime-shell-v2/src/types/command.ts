@@ -5,7 +5,7 @@ import type {
     RequestId,
     RuntimeInstanceId,
     TimestampMs,
-} from '@impos2/kernel-base-contracts'
+} from '@next/kernel-base-contracts'
 
 export type CommandVisibility = 'public' | 'internal'
 export type CommandTarget = 'local' | 'peer'

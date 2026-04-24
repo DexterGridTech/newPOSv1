@@ -1,9 +1,9 @@
-import type {RootState} from '@impos2/kernel-base-state-runtime'
+import type {RootState} from '@next/kernel-base-state-runtime'
 import {
     RUNTIME_SHELL_V2_ERROR_CATALOG_STATE_KEY,
     RUNTIME_SHELL_V2_PARAMETER_CATALOG_STATE_KEY,
 } from '../features/slices'
-import type {ErrorCatalogEntry, ParameterCatalogEntry} from '@impos2/kernel-base-contracts'
+import type {ErrorCatalogEntry, ParameterCatalogEntry} from '@next/kernel-base-contracts'
 
 export const selectRuntimeShellV2ErrorCatalog = (state: RootState) =>
     (state[RUNTIME_SHELL_V2_ERROR_CATALOG_STATE_KEY as keyof RootState] as Record<string, ErrorCatalogEntry> | undefined) ?? {}

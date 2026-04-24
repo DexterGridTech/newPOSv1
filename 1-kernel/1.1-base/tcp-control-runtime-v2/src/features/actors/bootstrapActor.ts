@@ -3,7 +3,7 @@ import {
     createModuleActorFactory,
     onCommand,
     type ActorDefinition,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {moduleName} from '../../moduleName'
 import {tcpControlV2CommandDefinitions} from '../commands'
 import {tcpControlV2StateActions} from '../slices'

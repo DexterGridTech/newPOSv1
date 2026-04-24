@@ -1,5 +1,5 @@
 {
-  "name": "@impos2/kernel-base-platform-ports",
+  "name": "@next/kernel-base-platform-ports",
   "version": "1.0.0",
   "description": "Kernel base platform ports package",
   "author": "DexterYang",
@@ -19,7 +19,7 @@
     "check:circular": "madge --circular --extensions ts --warning src/"
   },
   "dependencies": {
-    "@impos2/kernel-base-contracts": "workspace:*"
+    "@next/kernel-base-contracts": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^25.0.9",

@@ -2,8 +2,8 @@ import {
     createModuleActorFactory,
     onCommand,
     type ActorDefinition,
-} from '@impos2/kernel-base-runtime-shell-v2'
-import {tdpSyncV2CommandDefinitions} from '@impos2/kernel-base-tdp-sync-runtime-v2'
+} from '@next/kernel-base-runtime-shell-v2'
+import {tdpSyncV2CommandDefinitions} from '@next/kernel-base-tdp-sync-runtime-v2'
 import {moduleName} from '../../moduleName'
 import type {WorkflowRuntimeRegistryRecord} from '../../foundations/runtime'
 

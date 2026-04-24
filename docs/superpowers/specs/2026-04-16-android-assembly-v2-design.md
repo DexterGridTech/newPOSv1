@@ -192,7 +192,7 @@ Directory:
 
 Published package:
 
-`@impos2/adapter-android-v2`
+`@next/adapter-android-v2`
 
 Important note:
 
@@ -208,7 +208,7 @@ Directory:
 
 Published package:
 
-`@impos2/assembly-android-mixc-retail-rn84`
+`@next/assembly-android-mixc-retail-rn84`
 
 Important note:
 

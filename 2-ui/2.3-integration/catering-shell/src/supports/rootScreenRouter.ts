@@ -1,8 +1,8 @@
 import {
     createCommand,
     type ActorExecutionContext,
-} from '@impos2/kernel-base-runtime-shell-v2'
-import {uiRuntimeV2CommandDefinitions} from '@impos2/kernel-base-ui-runtime-v2'
+} from '@next/kernel-base-runtime-shell-v2'
+import {uiRuntimeV2CommandDefinitions} from '@next/kernel-base-ui-runtime-v2'
 import {cateringShellNavigationTargets} from '../foundations'
 
 export interface ReplaceCateringShellRootScreenInput {

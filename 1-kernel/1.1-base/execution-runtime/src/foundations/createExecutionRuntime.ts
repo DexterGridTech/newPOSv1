@@ -1,6 +1,6 @@
-import {createAppError, isAppError, nowTimestampMs} from '@impos2/kernel-base-contracts'
-import type {AppError, CreateAppErrorInput} from '@impos2/kernel-base-contracts'
-import type {LoggerPort} from '@impos2/kernel-base-platform-ports'
+import {createAppError, isAppError, nowTimestampMs} from '@next/kernel-base-contracts'
+import type {AppError, CreateAppErrorInput} from '@next/kernel-base-contracts'
+import type {LoggerPort} from '@next/kernel-base-platform-ports'
 import {createExecutionJournal} from './journal'
 import type {
     ExecutionCommand,

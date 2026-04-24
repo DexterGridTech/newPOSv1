@@ -4,8 +4,8 @@ import {
     onCommand,
     runtimeShellV2CommandDefinitions,
     type ActorDefinition,
-} from '@impos2/kernel-base-runtime-shell-v2'
-import {selectTcpIsActivated} from '@impos2/kernel-base-tcp-control-runtime-v2'
+} from '@next/kernel-base-runtime-shell-v2'
+import {selectTcpIsActivated} from '@next/kernel-base-tcp-control-runtime-v2'
 import {moduleName} from '../../moduleName'
 import type {CreateTdpSyncRuntimeModuleV2Input} from '../../types'
 import {tdpSyncV2CommandDefinitions} from '../commands'

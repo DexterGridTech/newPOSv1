@@ -2,8 +2,8 @@ import type {
     RuntimeReactAutomationActionInput,
     RuntimeReactAutomationBridge,
     RuntimeReactAutomationNodeRegistration,
-} from '@impos2/ui-base-runtime-react'
-import type {SemanticRegistry} from '@impos2/ui-base-automation-runtime'
+} from '@next/ui-base-runtime-react'
+import type {SemanticRegistry} from '@next/ui-base-automation-runtime'
 
 export interface RuntimeReactAutomationBridgeWithActions extends RuntimeReactAutomationBridge {
     performNodeAction(input: RuntimeReactAutomationActionInput): Promise<unknown>

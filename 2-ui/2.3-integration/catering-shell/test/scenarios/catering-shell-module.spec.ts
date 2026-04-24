@@ -1,10 +1,10 @@
 import {describe, expect, it, vi} from 'vitest'
-import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
+import {createCommand} from '@next/kernel-base-runtime-shell-v2'
 import {
     selectUiOverlays,
     selectUiScreenDefinition,
-} from '@impos2/kernel-base-ui-runtime-v2'
-import {tdpSyncV2CommandDefinitions} from '@impos2/kernel-base-tdp-sync-runtime-v2'
+} from '@next/kernel-base-ui-runtime-v2'
+import {tdpSyncV2CommandDefinitions} from '@next/kernel-base-tdp-sync-runtime-v2'
 import {CATERING_SHELL_HOT_UPDATE_RESTART_OVERLAY_ID} from '../../src/features'
 import {createCateringShellHarness} from '../support/cateringShellHarness'
 

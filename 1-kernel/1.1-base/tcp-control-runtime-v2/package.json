@@ -1,5 +1,5 @@
 {
-  "name": "@impos2/kernel-base-tcp-control-runtime-v2",
+  "name": "@next/kernel-base-tcp-control-runtime-v2",
   "version": "1.0.0",
   "description": "Kernel base tcp control runtime v2 package",
   "author": "DexterYang",
@@ -19,15 +19,15 @@
     "check:circular": "madge --circular --extensions ts --warning src/"
   },
   "dependencies": {
-    "@impos2/kernel-base-contracts": "workspace:*",
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*",
-    "@impos2/kernel-base-state-runtime": "workspace:*",
-    "@impos2/kernel-base-transport-runtime": "workspace:*",
-    "@impos2/kernel-server-config-v2": "workspace:*",
+    "@next/kernel-base-contracts": "workspace:*",
+    "@next/kernel-base-runtime-shell-v2": "workspace:*",
+    "@next/kernel-base-state-runtime": "workspace:*",
+    "@next/kernel-base-transport-runtime": "workspace:*",
+    "@next/kernel-server-config-v2": "workspace:*",
     "@reduxjs/toolkit": "^2.10.0"
   },
   "devDependencies": {
-    "@impos2/kernel-base-platform-ports": "workspace:*",
+    "@next/kernel-base-platform-ports": "workspace:*",
     "@types/node": "^25.0.9",
     "madge": "^8.0.0",
     "tsx": "^4.21.0",

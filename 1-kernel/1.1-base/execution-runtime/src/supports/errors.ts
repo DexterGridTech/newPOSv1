@@ -1,4 +1,4 @@
-import type {ErrorDefinition} from '@impos2/kernel-base-contracts'
+import type {ErrorDefinition} from '@next/kernel-base-contracts'
 import {moduleName} from '../moduleName'
 
 export const executionRuntimeErrorDefinitions = {

@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'vitest'
 import {createSlice, type PayloadAction} from '@reduxjs/toolkit'
-import {createNodeId} from '@impos2/kernel-base-contracts'
-import {createLoggerPort, createPlatformPorts} from '@impos2/kernel-base-platform-ports'
+import {createNodeId} from '@next/kernel-base-contracts'
+import {createLoggerPort, createPlatformPorts} from '@next/kernel-base-platform-ports'
 import {
     createCommand,
     createKernelRuntimeV2,
@@ -9,11 +9,11 @@ import {
     onCommand,
     type RuntimeModuleContextV2,
     type KernelRuntimeModuleV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {
     kernelBaseTestServerConfig,
     SERVER_NAME_MOCK_TERMINAL_PLATFORM,
-} from '@impos2/kernel-server-config-v2'
+} from '@next/kernel-server-config-v2'
 import {
     createHttpRuntime,
     JsonSocketCodec,
@@ -21,14 +21,14 @@ import {
     typed,
     type HttpTransport,
     type SocketRuntime,
-} from '@impos2/kernel-base-transport-runtime'
+} from '@next/kernel-base-transport-runtime'
 import {
     createTcpControlRuntimeModuleV2,
     selectTcpCredentialSnapshot,
     selectTcpBindingSnapshot,
     selectTcpTerminalId,
     tcpControlV2CommandDefinitions,
-} from '@impos2/kernel-base-tcp-control-runtime-v2'
+} from '@next/kernel-base-tcp-control-runtime-v2'
 import {
     createTdpSyncRuntimeModuleV2,
     buildHotUpdateVersionReportPayload,
@@ -46,7 +46,7 @@ import {
 import {
     selectRuntimeShellV2ErrorCatalog,
     selectRuntimeShellV2ParameterCatalog,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {resolveTransportServers} from '../../../../test-support/serverConfig'
 
 const TEST_TOPIC_CHANGE_RECORDER_SLICE = 'kernel.base.tdp-sync-runtime-v2.test.topic-change-recorder'

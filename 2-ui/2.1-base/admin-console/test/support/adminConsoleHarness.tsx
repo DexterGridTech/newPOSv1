@@ -10,8 +10,8 @@ import {
     InputRuntimeProvider,
     VirtualKeyboardOverlay,
 } from '../../../input-runtime/src'
-import type {PlatformPorts} from '@impos2/kernel-base-platform-ports'
-import type {KernelRuntimeModuleV2} from '@impos2/kernel-base-runtime-shell-v2'
+import type {PlatformPorts} from '@next/kernel-base-platform-ports'
+import type {KernelRuntimeModuleV2} from '@next/kernel-base-runtime-shell-v2'
 import {createMemoryStorage} from '../../../../../1-kernel/test-support/storageHarness'
 import type {CreateAdminConsoleModuleInput} from '../../src'
 import {createModule} from '../../src'

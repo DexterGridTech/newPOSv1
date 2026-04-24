@@ -10,7 +10,7 @@ export const repoRoot = resolve(scriptDir, '..')
 export const androidAutomationScriptPath = resolve(repoRoot, 'scripts/android-automation-rpc.mjs')
 export const portForwardScriptPath = resolve(repoRoot, 'scripts/setup-android-port-forwarding.mjs')
 
-export const DEFAULT_PACKAGE_NAME = 'com.impos2.mixcretailassemblyrn84'
+export const DEFAULT_PACKAGE_NAME = 'com.next.mixcretailassemblyrn84'
 export const DEFAULT_PLATFORM_BASE_URL = 'http://127.0.0.1:5810'
 export const DEFAULT_ADMIN_BASE_URL = 'http://127.0.0.1:5830'
 export const DEFAULT_SANDBOX_ID = 'sandbox-kernel-base-test'

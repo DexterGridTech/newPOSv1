@@ -1,18 +1,18 @@
-import {createNodeId, nowTimestampMs, type ParameterCatalogEntry} from '@impos2/kernel-base-contracts'
-import {createLoggerPort, createPlatformPorts} from '@impos2/kernel-base-platform-ports'
+import {createNodeId, nowTimestampMs, type ParameterCatalogEntry} from '@next/kernel-base-contracts'
+import {createLoggerPort, createPlatformPorts} from '@next/kernel-base-platform-ports'
 import {
     createCommand,
     createKernelRuntimeV2,
     runtimeShellV2CommandDefinitions,
     type KernelRuntimeModuleV2,
     type RuntimeModuleContextV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {
     createSocketRuntime,
     defineSocketProfile,
     JsonSocketCodec,
     typed,
-} from '@impos2/kernel-base-transport-runtime'
+} from '@next/kernel-base-transport-runtime'
 import type {TopologyV3FaultRule} from '../../../../../0-mock-server/dual-topology-host-v3/src/types/server'
 import {createDualTopologyHostV3Server} from '../../../../../0-mock-server/dual-topology-host-v3/src'
 import {fetchJson} from '../../../../../0-mock-server/dual-topology-host-v3/test/helpers/http'

@@ -1,6 +1,6 @@
 import React, {useMemo, useRef, useState, useSyncExternalStore} from 'react'
 import type {EnhancedStore} from '@reduxjs/toolkit'
-import type {KernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
+import type {KernelRuntimeV2} from '@next/kernel-base-runtime-shell-v2'
 import {selectLatestAdapterSummary} from '../../selectors'
 import {adminConsoleStateActions} from '../../features/slices'
 import {createAdapterDiagnosticsController} from '../../supports/adapterDiagnostics'

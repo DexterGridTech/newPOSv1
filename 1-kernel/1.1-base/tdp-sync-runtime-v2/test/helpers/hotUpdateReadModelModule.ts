@@ -1,4 +1,4 @@
-import type {KernelRuntimeModuleV2} from '@impos2/kernel-base-runtime-shell-v2'
+import type {KernelRuntimeModuleV2} from '@next/kernel-base-runtime-shell-v2'
 import {tdpHotUpdateSliceDescriptor} from '../../src/features/slices/tdpHotUpdate'
 
 export const createHotUpdateReadModelModule = (): KernelRuntimeModuleV2 => ({

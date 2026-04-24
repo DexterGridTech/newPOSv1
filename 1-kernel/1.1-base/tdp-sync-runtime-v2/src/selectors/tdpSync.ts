@@ -1,8 +1,8 @@
-import type {RootState} from '@impos2/kernel-base-state-runtime'
+import type {RootState} from '@next/kernel-base-state-runtime'
 import {
     selectTcpBindingSnapshot,
     selectTcpTerminalId,
-} from '@impos2/kernel-base-tcp-control-runtime-v2'
+} from '@next/kernel-base-tcp-control-runtime-v2'
 import {
     TDP_COMMAND_INBOX_STATE_KEY,
     TDP_CONTROL_SIGNALS_STATE_KEY,

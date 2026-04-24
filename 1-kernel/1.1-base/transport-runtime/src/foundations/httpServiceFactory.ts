@@ -1,8 +1,8 @@
-import {createAppError} from '@impos2/kernel-base-contracts'
+import {createAppError} from '@next/kernel-base-contracts'
 import type {
     AppError,
     ErrorDefinition,
-} from '@impos2/kernel-base-contracts'
+} from '@next/kernel-base-contracts'
 import type {
     HttpCallInput,
     HttpEndpointDefinition,

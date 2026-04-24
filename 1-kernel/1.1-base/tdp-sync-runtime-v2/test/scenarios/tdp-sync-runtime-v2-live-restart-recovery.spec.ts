@@ -1,7 +1,7 @@
 import {afterEach, describe, expect, it} from 'vitest'
-import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
-import {createRequestId} from '@impos2/kernel-base-contracts'
-import {selectTcpTerminalId} from '@impos2/kernel-base-tcp-control-runtime-v2'
+import {createCommand} from '@next/kernel-base-runtime-shell-v2'
+import {createRequestId} from '@next/kernel-base-contracts'
+import {selectTcpTerminalId} from '@next/kernel-base-tcp-control-runtime-v2'
 import {
     selectTdpCommandInboxState,
     selectTdpProjectionByTopicAndBucket,

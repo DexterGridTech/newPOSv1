@@ -3,7 +3,7 @@ import type {
     ConnectorPort,
     DevicePort,
     PlatformPorts,
-} from '@impos2/kernel-base-platform-ports'
+} from '@next/kernel-base-platform-ports'
 import type {
     AdminAppControlHost,
     AdminConnectorHost,

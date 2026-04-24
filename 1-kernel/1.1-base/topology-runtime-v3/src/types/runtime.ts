@@ -7,16 +7,16 @@ import type {
     RequestId,
     RequestLifecycleSnapshotEnvelope,
     StateSyncDiffEnvelope,
-} from '@impos2/kernel-base-contracts'
-import type {SyncStateDiff} from '@impos2/kernel-base-state-runtime'
+} from '@next/kernel-base-contracts'
+import type {SyncStateDiff} from '@next/kernel-base-state-runtime'
 import type {
     RuntimeModuleContextV2,
     CommandAggregateResult,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import type {
     SocketConnectionProfile,
     SocketRuntime,
-} from '@impos2/kernel-base-transport-runtime'
+} from '@next/kernel-base-transport-runtime'
 
 export interface TopologyV3MasterAddress {
     address: string

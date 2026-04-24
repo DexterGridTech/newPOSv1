@@ -2,7 +2,7 @@ import {afterEach, describe, expect, it} from 'vitest'
 import {
     selectRuntimeShellV2ErrorCatalog,
     selectRuntimeShellV2ParameterCatalog,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {
     activateLiveTerminal,
     createLivePlatform,
@@ -10,8 +10,8 @@ import {
     readLiveTerminalScope,
     waitFor,
 } from '../helpers/liveHarness'
-import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
-import {createRequestId} from '@impos2/kernel-base-contracts'
+import {createCommand} from '@next/kernel-base-runtime-shell-v2'
+import {createRequestId} from '@next/kernel-base-contracts'
 import {
     selectTdpSessionState,
     tdpSyncV2CommandDefinitions,

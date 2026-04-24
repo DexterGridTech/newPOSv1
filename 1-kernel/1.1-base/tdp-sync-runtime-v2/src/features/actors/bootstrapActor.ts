@@ -3,9 +3,9 @@ import {
     createModuleActorFactory,
     onCommand,
     type ActorDefinition,
-} from '@impos2/kernel-base-runtime-shell-v2'
-import {createAppError} from '@impos2/kernel-base-contracts'
-import {selectTcpAccessToken, selectTcpSandboxId, selectTcpTerminalId} from '@impos2/kernel-base-tcp-control-runtime-v2'
+} from '@next/kernel-base-runtime-shell-v2'
+import {createAppError} from '@next/kernel-base-contracts'
+import {selectTcpAccessToken, selectTcpSandboxId, selectTcpTerminalId} from '@next/kernel-base-tcp-control-runtime-v2'
 import {moduleName} from '../../moduleName'
 import {tdpSyncV2ErrorDefinitions} from '../../supports'
 import {tdpSyncV2CommandDefinitions} from '../commands'

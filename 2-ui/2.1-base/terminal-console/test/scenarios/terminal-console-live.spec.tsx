@@ -1,13 +1,13 @@
 import React from 'react'
 import {describe, expect, it, vi} from 'vitest'
-import {createRequestId} from '@impos2/kernel-base-contracts'
+import {createRequestId} from '@next/kernel-base-contracts'
 import {
     createCommand,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {
     selectTcpIdentitySnapshot,
     tcpControlV2CommandDefinitions,
-} from '@impos2/kernel-base-tcp-control-runtime-v2'
+} from '@next/kernel-base-tcp-control-runtime-v2'
 import {
     ActivateDeviceScreen,
     TerminalSummaryScreen,

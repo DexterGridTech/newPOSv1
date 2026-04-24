@@ -145,7 +145,7 @@
 - 根目录（1-kernel、2-ui 层）：RN 0.77 + React 18
 - 适配层/整合层（3-adapter、4-integration）：RN 0.84+ + React 19（新架构）
 
-当一个 RN 裸工程包（适配层/整合层）依赖了使用旧版 RN 的 `@impos2/*` 包时，必须处理版本冲突。
+当一个 RN 裸工程包（适配层/整合层）依赖了使用旧版 RN 的 `@next/*` 包时，必须处理版本冲突。
 
 ## 必须解决的三类问题
 
@@ -167,7 +167,7 @@ override fun onCreate() {
 
 ### 2. JS 运行时崩溃：`TurboModuleRegistry.getEnforcing('DeviceInfo') could not be found`
 
-**原因**：Metro 在解析 `@impos2/*` 包内部的 `import 'react-native'` 时，从包所在目录（根目录 `node_modules/@impos2/`）向上查找，找到了根目录的 RN 0.77 的 JS。而 native 端是 RN 0.84，JS 与 native 模块名不匹配。
+**原因**：Metro 在解析 `@next/*` 包内部的 `import 'react-native'` 时，从包所在目录（根目录 `node_modules/@next/`）向上查找，找到了根目录的 RN 0.77 的 JS。而 native 端是 RN 0.84，JS 与 native 模块名不匹配。
 
 **修复**：在 `metro.config.js` 中用 `resolveRequest` 强制重定向，见下方完整配置。
 
@@ -248,7 +248,7 @@ module.exports = mergeConfig(getDefaultConfig(__dirname), config);
 - [ ] `MainApplication.kt` 使用 `ReactNativeApplicationEntryPoint.loadReactNative(this)`，不手动调用 `SoLoader.init`
 - [ ] `metro.config.js` 使用上方模板，包含 `resolveRequest` 重定向逻辑
 - [ ] 每次修改 `metro.config.js` 后，必须带 `--reset-cache` 重启 Metro
-- [ ] `@impos2/*` 包的 `peerDependencies` 中的 RN/React 版本与本工程不同时，不需要修改这些包，Metro 的 `resolveRequest` 会在运行时统一版本
+- [ ] `@next/*` 包的 `peerDependencies` 中的 RN/React 版本与本工程不同时，不需要修改这些包，Metro 的 `resolveRequest` 会在运行时统一版本
 
 ---
 
@@ -373,7 +373,7 @@ class YourModule(reactContext: ReactApplicationContext) :
 ```json
 {
   "dependencies": {
-    "@impos2/adapter-android-rn84": "file:../../../3-adapter/android/adapterRN84",
+    "@next/adapter-android-rn84": "file:../../../3-adapter/android/adapterRN84",
     "react": "19.2.3",
     "react-native": "0.84.1",
     "react-native-mmkv": "^4.3.0"
@@ -417,7 +417,7 @@ class YourModule(reactContext: ReactApplicationContext) :
 ```json
 {
   "dependencies": {
-    "@impos2/ui-integration-retail-shell": "*"
+    "@next/ui-integration-retail-shell": "*"
     // ❌ 缺少 react-native-svg（UI 层间接使用）
   }
 }
@@ -427,7 +427,7 @@ class YourModule(reactContext: ReactApplicationContext) :
 ```json
 {
   "dependencies": {
-    "@impos2/ui-integration-retail-shell": "*",
+    "@next/ui-integration-retail-shell": "*",
     "react-native-svg": "^15.15.3"  // ✅ 显式声明
   }
 }

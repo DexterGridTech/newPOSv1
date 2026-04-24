@@ -1,4 +1,4 @@
-import type {LoggerPort, PlatformPorts} from '@impos2/kernel-base-platform-ports'
+import type {LoggerPort, PlatformPorts} from '@next/kernel-base-platform-ports'
 
 const noopLogger: LoggerPort = {
     emit() {},

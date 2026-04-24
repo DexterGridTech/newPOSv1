@@ -1,6 +1,6 @@
 import {createModuleCommandFactory} from '../../supports/moduleDsl'
 import {moduleName} from '../../moduleName'
-import type {ErrorCatalogEntry, ParameterCatalogEntry} from '@impos2/kernel-base-contracts'
+import type {ErrorCatalogEntry, ParameterCatalogEntry} from '@next/kernel-base-contracts'
 
 const defineModuleCommand = createModuleCommandFactory(moduleName)
 

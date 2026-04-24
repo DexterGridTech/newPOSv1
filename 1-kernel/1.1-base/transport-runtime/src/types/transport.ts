@@ -7,11 +7,11 @@ export type {
     TransportServerConfigSpace,
     TransportServerDefinition,
     TransportServerOverride,
-} from '@impos2/kernel-base-contracts'
+} from '@next/kernel-base-contracts'
 import type {
     TransportServerAddress,
     TransportServerDefinition,
-} from '@impos2/kernel-base-contracts'
+} from '@next/kernel-base-contracts'
 
 export interface ServerCatalog {
     registerServer(server: TransportServerDefinition): void

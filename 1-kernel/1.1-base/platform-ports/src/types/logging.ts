@@ -5,7 +5,7 @@ import type {
     RequestId,
     SessionId,
     TimestampMs,
-} from '@impos2/kernel-base-contracts'
+} from '@next/kernel-base-contracts'
 
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error'
 export type LogEnvironmentMode = 'DEV' | 'PROD' | 'TEST'

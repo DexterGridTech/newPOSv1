@@ -1,4 +1,4 @@
-import type {TimestampMs} from '@impos2/kernel-base-contracts'
+import type {TimestampMs} from '@next/kernel-base-contracts'
 
 export type StateScopeAxis = 'instanceMode' | 'workspace' | 'displayMode'
 

@@ -280,7 +280,7 @@ function main() {
   console.clear();
   console.log('');
   console.log(`${colors.green}╔════════════════════════════════════════╗${colors.reset}`);
-  console.log(`${colors.green}║   IMPos2 环境检查工具                 ║${colors.reset}`);
+  console.log(`${colors.green}║   Next 环境检查工具                 ║${colors.reset}`);
   console.log(`${colors.green}╚════════════════════════════════════════╝${colors.reset}`);
   console.log('');
 

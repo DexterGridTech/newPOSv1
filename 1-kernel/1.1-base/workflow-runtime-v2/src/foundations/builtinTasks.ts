@@ -48,7 +48,7 @@ export const createWorkflowBuiltinTaskDefinitions = (): readonly WorkflowDefinit
                         target: 'camera',
                         mode: 'request-response',
                     },
-                    action: 'com.impos2.posadapter.action.CAMERA_SCAN',
+                    action: 'com.next.posadapter.action.CAMERA_SCAN',
                     timeoutMs: {
                         type: 'script',
                         language: 'javascript',

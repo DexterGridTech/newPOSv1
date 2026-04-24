@@ -5,14 +5,14 @@ import {
     selectTopologyDisplayMode,
     selectTopologyStandalone,
     selectTopologySync,
-} from '@impos2/kernel-base-topology-runtime-v3'
+} from '@next/kernel-base-topology-runtime-v3'
 import {
     useOptionalUiAutomationBridge,
     useOptionalUiAutomationRuntimeId,
     useOptionalUiAutomationTarget,
     useUiRuntime,
-} from '@impos2/ui-base-runtime-react'
-import type {RootState} from '@impos2/kernel-base-state-runtime'
+} from '@next/ui-base-runtime-react'
+import type {RootState} from '@next/kernel-base-state-runtime'
 import {useTerminalConnectionSummary} from '../../hooks/useTerminalConnectionSummary'
 
 export const ActivateDeviceSecondaryScreen: React.FC = () => {

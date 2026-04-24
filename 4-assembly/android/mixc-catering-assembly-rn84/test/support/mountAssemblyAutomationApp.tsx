@@ -1,8 +1,8 @@
 import React from 'react'
 import TestRenderer from 'react-test-renderer'
 import {Provider} from 'react-redux'
-import {createAutomationJsonRpcClient} from '@impos2/ui-base-automation-runtime'
-import {UiRuntimeProvider} from '@impos2/ui-base-runtime-react'
+import {createAutomationJsonRpcClient} from '@next/ui-base-automation-runtime'
+import {UiRuntimeProvider} from '@next/ui-base-runtime-react'
 
 export interface RuntimeLike {
     readonly runtimeId?: string

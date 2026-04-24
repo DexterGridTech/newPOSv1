@@ -94,7 +94,7 @@ v2 测试已经明确覆盖：
 4. `master` role 必须和 ticket owner 匹配
 5. 某个 role 已被占用时拒绝新的 hello
 
-参考：`3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/topologyhostv3/TopologyHostV3Runtime.kt`
+参考：`3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/topologyhostv3/TopologyHostV3Runtime.kt`
 
 这其实已经说明当前 host 的业务模型也是：
 
@@ -946,7 +946,7 @@ V3 第一版建议：
 V3 不建议在现有 `topologyhost` 目录上直接硬改，而是建议先并行引入一套新的 namespace / 文件组，例如：
 
 ```text
-3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/topologyhostv3
+3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/topologyhostv3
 ```
 
 等 V3 稳定后，再决定是否替换旧实现。
@@ -1076,7 +1076,7 @@ V3 里要明确：
 
 当前已有的原生入口是：
 
-- `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/impos2/mixcretailassemblyrn84/startup/TopologyLaunchCoordinator.kt`
+- `4-assembly/android/mixc-retail-assembly-rn84/android/app/src/main/java/com/next/mixcretailassemblyrn84/startup/TopologyLaunchCoordinator.kt`
 
 V3 第一版建议：
 
@@ -1360,7 +1360,7 @@ admin topology 面板与 TCP 激活页面必须共用同一套限制说明，不
 
 ```text
 0-mock-server/dual-topology-host-v3
-3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/topologyhostv3
+3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/topologyhostv3
 4-assembly/android/mixc-retail-assembly-rn84/src/application/topology-v3
 ```
 
@@ -1407,7 +1407,7 @@ V3 必须按并行迁移设计，而不是原地替换：
 
 1. 不先改 `tdp-sync-runtime-v2` 的业务 slice 结构
 2. 先把 topology live harness / sync status adapter 替换到 V3
-3. 明确核查所有 `@impos2/kernel-base-topology-runtime-v2` import 点
+3. 明确核查所有 `@next/kernel-base-topology-runtime-v2` import 点
 4. 等 assembly 和 live tests 稳定后，再考虑删除 v2 依赖
 
 ### 12.3 第一版范围

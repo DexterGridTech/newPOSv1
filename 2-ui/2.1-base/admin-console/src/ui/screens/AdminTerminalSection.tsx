@@ -7,8 +7,8 @@ import {
     selectTcpRuntimeState,
     selectTcpSandboxId,
     tcpControlV2CommandDefinitions,
-} from '@impos2/kernel-base-tcp-control-runtime-v2'
-import {createCommand, type KernelRuntimeV2} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-tcp-control-runtime-v2'
+import {createCommand, type KernelRuntimeV2} from '@next/kernel-base-runtime-shell-v2'
 import {formatAdminStatus, formatAdminTimestamp} from '../../supports/adminFormatting'
 import {
     AdminActionGroup,

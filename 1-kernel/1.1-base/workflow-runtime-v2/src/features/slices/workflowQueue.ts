@@ -1,6 +1,6 @@
 import {createSlice, type PayloadAction} from '@reduxjs/toolkit'
-import type {RequestId} from '@impos2/kernel-base-contracts'
-import type {StateRuntimeSliceDescriptor} from '@impos2/kernel-base-state-runtime'
+import type {RequestId} from '@next/kernel-base-contracts'
+import type {StateRuntimeSliceDescriptor} from '@next/kernel-base-state-runtime'
 import type {WorkflowQueueState} from '../../types'
 
 export const WORKFLOW_QUEUE_STATE_KEY = 'kernel.base.workflow-runtime-v2.queue'

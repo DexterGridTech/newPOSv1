@@ -1,6 +1,6 @@
 import {afterEach, describe, expect, it} from 'vitest'
-import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
-import {createRequestId} from '@impos2/kernel-base-contracts'
+import {createCommand} from '@next/kernel-base-runtime-shell-v2'
+import {createRequestId} from '@next/kernel-base-contracts'
 import {
     selectTcpCredentialSnapshot,
     selectTcpIdentitySnapshot,

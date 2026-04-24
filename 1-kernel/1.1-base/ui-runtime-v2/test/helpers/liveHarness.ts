@@ -1,4 +1,4 @@
-import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
+import {createCommand} from '@next/kernel-base-runtime-shell-v2'
 import {
     createTopologyRuntimeV3LiveHarness,
     waitFor,
@@ -7,7 +7,7 @@ import {
     selectTopologyRuntimeV3Connection,
     selectTopologyRuntimeV3Context,
     topologyRuntimeV3CommandDefinitions,
-} from '@impos2/kernel-base-topology-runtime-v3'
+} from '@next/kernel-base-topology-runtime-v3'
 import {
     createUiRuntimeModuleV2,
     registerUiScreenDefinitions,

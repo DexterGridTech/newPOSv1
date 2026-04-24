@@ -2,13 +2,13 @@ import type {
     KernelRuntimeModuleV2,
     RuntimeModuleContextV2,
     RuntimeModulePreSetupContextV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {
     createRuntimeModuleLifecycleLogger,
     createCommand,
     defineKernelRuntimeModuleV2,
     deriveKernelRuntimeModuleDescriptorV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {moduleName} from '../moduleName'
 import {deriveTopologyV3RuntimeContext} from '../foundations/runtimeDerivation'
 import {TOPOLOGY_V3_CONFIG_STATE_KEY} from '../foundations/stateKeys'

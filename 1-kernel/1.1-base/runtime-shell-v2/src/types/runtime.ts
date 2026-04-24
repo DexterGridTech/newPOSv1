@@ -8,9 +8,9 @@ import type {
     ResolvedParameter,
     RuntimeInstanceId,
     StateSyncDiffEnvelope,
-} from '@impos2/kernel-base-contracts'
-import type {PlatformPorts} from '@impos2/kernel-base-platform-ports'
-import type {RootState, StateRuntimeSliceDescriptor} from '@impos2/kernel-base-state-runtime'
+} from '@next/kernel-base-contracts'
+import type {PlatformPorts} from '@next/kernel-base-platform-ports'
+import type {RootState, StateRuntimeSliceDescriptor} from '@next/kernel-base-state-runtime'
 import type {EnhancedStore, StoreEnhancer} from '@reduxjs/toolkit'
 import type {
     CommandAggregateResult,
@@ -67,8 +67,8 @@ export interface KernelRuntimeV2 {
     }): ResolvedParameter<TValue>
     registerMirroredCommand(input: {
         requestId: RequestId
-        commandId: import('@impos2/kernel-base-contracts').CommandId
-        parentCommandId?: import('@impos2/kernel-base-contracts').CommandId
+        commandId: import('@next/kernel-base-contracts').CommandId
+        parentCommandId?: import('@next/kernel-base-contracts').CommandId
         commandName: string
         target?: import('./command').CommandTarget
         routeContext?: CommandRouteContext

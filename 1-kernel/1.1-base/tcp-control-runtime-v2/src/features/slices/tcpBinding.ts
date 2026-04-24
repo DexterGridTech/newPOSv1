@@ -1,5 +1,5 @@
 import {createSlice, type PayloadAction} from '@reduxjs/toolkit'
-import type {StateRuntimeSliceDescriptor, SyncValueEnvelope} from '@impos2/kernel-base-state-runtime'
+import type {StateRuntimeSliceDescriptor, SyncValueEnvelope} from '@next/kernel-base-state-runtime'
 import type {TcpBindingContext, TcpBindingState} from '../../types'
 import {TCP_BINDING_STATE_KEY} from '../../foundations/stateKeys'
 

@@ -1,5 +1,5 @@
 import type {ComponentType} from 'react'
-import type {UiScreenDefinition} from '@impos2/kernel-base-ui-runtime-v2'
+import type {UiScreenDefinition} from '@next/kernel-base-ui-runtime-v2'
 import {defineUiScreenPart} from './defineUiScreenPart'
 
 export const defaultUiModalContainerKey = 'overlay.modal'

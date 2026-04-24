@@ -193,7 +193,7 @@
 
 Android topology host 已提供 `POST /tickets`：
 
-参考：`3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/impos2/adapterv2/topologyhostv3/TopologyHostV3Server.kt`
+参考：`3-adapter/android/adapter-android-v2/adapter-lib/src/main/java/com/next/adapterv2/topologyhostv3/TopologyHostV3Server.kt`
 
 请求要求：
 
@@ -893,12 +893,12 @@ Product 仅不启动 UI 自动化调试控制面。
 
 验证命令：
 
-1. `corepack yarn workspace @impos2/assembly-android-mixc-retail-rn84 test test/scenarios/assembly-state-storage.spec.ts test/scenarios/assembly-topology-input.spec.ts test/scenarios/assembly-standalone-slave-topology.spec.ts test/scenarios/assembly-power-display-switch.spec.ts test/scenarios/assembly-create-app.spec.ts`
-2. `corepack yarn workspace @impos2/assembly-android-mixc-retail-rn84 test test/scenarios/assembly-admin-console-automation.spec.tsx`
-3. `corepack yarn workspace @impos2/assembly-android-mixc-retail-rn84 test test/scenarios/assembly-runtime-module.spec.ts`
-4. `corepack yarn workspace @impos2/assembly-android-mixc-retail-rn84 type-check`
-5. `corepack yarn workspace @impos2/ui-base-admin-console test test/scenarios/admin-real-sections.spec.tsx`
-6. `corepack yarn workspace @impos2/ui-base-admin-console type-check`
+1. `corepack yarn workspace @next/assembly-android-mixc-retail-rn84 test test/scenarios/assembly-state-storage.spec.ts test/scenarios/assembly-topology-input.spec.ts test/scenarios/assembly-standalone-slave-topology.spec.ts test/scenarios/assembly-power-display-switch.spec.ts test/scenarios/assembly-create-app.spec.ts`
+2. `corepack yarn workspace @next/assembly-android-mixc-retail-rn84 test test/scenarios/assembly-admin-console-automation.spec.tsx`
+3. `corepack yarn workspace @next/assembly-android-mixc-retail-rn84 test test/scenarios/assembly-runtime-module.spec.ts`
+4. `corepack yarn workspace @next/assembly-android-mixc-retail-rn84 type-check`
+5. `corepack yarn workspace @next/ui-base-admin-console test test/scenarios/admin-real-sections.spec.tsx`
+6. `corepack yarn workspace @next/ui-base-admin-console type-check`
 
 剩余边界：
 

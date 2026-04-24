@@ -51,8 +51,8 @@ describe('assembly state storage', () => {
         await stateStorage.setItem('terminal.activation', 'active')
         await secureStateStorage.setItem('terminal.token', 'secret-token')
 
-        expect(createNativeStateStorageMock).toHaveBeenCalledWith('mixc-catering-assembly-rn84::state')
-        expect(createNativeStateStorageMock).toHaveBeenCalledWith('mixc-catering-assembly-rn84::secure-state')
+        expect(createNativeStateStorageMock).toHaveBeenCalledWith('host-runtime-rn84::state')
+        expect(createNativeStateStorageMock).toHaveBeenCalledWith('host-runtime-rn84::secure-state')
         expect(await stateStorage.getItem('terminal.activation')).toBe('active')
         expect(await secureStateStorage.getItem('terminal.token')).toBe('secret-token')
         expect(await stateStorage.getItem('terminal.token')).toBeNull()

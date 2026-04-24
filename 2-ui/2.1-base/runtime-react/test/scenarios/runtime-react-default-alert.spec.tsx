@@ -1,9 +1,9 @@
 import React from 'react'
 import TestRenderer, {act} from 'react-test-renderer'
 import {describe, expect, it, vi, beforeEach, afterEach} from 'vitest'
-import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
-import {topologyRuntimeV3CommandDefinitions} from '@impos2/kernel-base-topology-runtime-v3'
-import {uiRuntimeV2CommandDefinitions} from '@impos2/kernel-base-ui-runtime-v2'
+import {createCommand} from '@next/kernel-base-runtime-shell-v2'
+import {topologyRuntimeV3CommandDefinitions} from '@next/kernel-base-topology-runtime-v3'
+import {uiRuntimeV2CommandDefinitions} from '@next/kernel-base-ui-runtime-v2'
 import {
     DefaultAlert,
     UiRuntimeProvider,

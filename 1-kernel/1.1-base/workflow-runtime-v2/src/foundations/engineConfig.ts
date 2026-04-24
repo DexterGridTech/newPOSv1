@@ -1,7 +1,7 @@
 import {
     selectRuntimeShellV2ParameterCatalog,
     type RuntimeModuleContextV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import type {WorkflowDefinition, WorkflowStepDefinition} from '../types'
 import {workflowRuntimeV2ParameterDefinitions} from '../supports'
 import {toParameterNumber} from './engineObservation'

@@ -1,9 +1,9 @@
-import type {ParameterDefinition} from '@impos2/kernel-base-contracts'
+import type {ParameterDefinition} from '@next/kernel-base-contracts'
 import {
     createModuleParameterFactory,
     listDefinitions,
     nonNegativeFiniteNumber,
-} from '@impos2/kernel-base-contracts'
+} from '@next/kernel-base-contracts'
 import {moduleName} from '../moduleName'
 
 const defineParameter = createModuleParameterFactory(moduleName)

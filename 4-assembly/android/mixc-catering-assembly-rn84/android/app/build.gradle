@@ -4,13 +4,27 @@ apply plugin: "com.facebook.react"
 
 import org.gradle.api.tasks.PathSensitivity
 
+def resolveHermesCommand = {
+  def hermesRoot = new File(rootProject.projectDir, "../../../../node_modules/hermes-compiler/hermesc")
+  def osName = System.getProperty("os.name").toLowerCase(Locale.ROOT)
+  def relativePath = osName.contains("windows")
+    ? "win64-bin/hermesc.exe"
+    : (osName.contains("mac") || osName.contains("darwin") ? "osx-bin/hermesc" : "linux64-bin/hermesc")
+  def hermesCommandFile = new File(hermesRoot, relativePath)
+  if (!hermesCommandFile.exists()) {
+    throw new GradleException("Hermes compiler not found at ${hermesCommandFile}. Run `corepack yarn install` from the repo root to restore hermes-compiler binaries.")
+  }
+  hermesCommandFile.setExecutable(true, false)
+  return hermesCommandFile.getCanonicalPath()
+}
+
 react {
   root = file("../../")
   reactNativeDir = file("../../../../../node_modules/react-native")
   codegenDir = file("../../../../../node_modules/@react-native/codegen")
   cliFile = file("../../../../../node_modules/react-native/cli.js")
   entryFile = file("../../index.js")
-  hermesCommand = new File(rootProject.projectDir, "../../../../node_modules/hermes-compiler/hermesc/osx-bin/hermesc").getCanonicalPath()
+  hermesCommand = resolveHermesCommand()
   autolinkLibrariesWithApp()
 }
 
@@ -38,9 +52,9 @@ android {
   buildToolsVersion rootProject.ext.buildToolsVersion
   compileSdk rootProject.ext.compileSdkVersion
 
-  namespace "com.impos2.mixccateringassemblyrn84"
+  namespace "com.next.mixccateringassemblyrn84"
   defaultConfig {
-    applicationId "com.impos2.mixccateringassemblyrn84"
+    applicationId "com.next.mixccateringassemblyrn84"
     minSdkVersion rootProject.ext.minSdkVersion
     targetSdkVersion rootProject.ext.targetSdkVersion
     versionCode 8

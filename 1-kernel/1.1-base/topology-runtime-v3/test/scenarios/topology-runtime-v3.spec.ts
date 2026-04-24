@@ -1,6 +1,6 @@
 import {describe, expect, it, vi} from 'vitest'
-import {createNodeId} from '@impos2/kernel-base-contracts'
-import {createLoggerPort, createPlatformPorts} from '@impos2/kernel-base-platform-ports'
+import {createNodeId} from '@next/kernel-base-contracts'
+import {createLoggerPort, createPlatformPorts} from '@next/kernel-base-platform-ports'
 import {
     createCommand,
     createKernelRuntimeV2,
@@ -8,15 +8,15 @@ import {
     defineCommand,
     defineKernelRuntimeModuleV2,
     onCommand,
-} from '@impos2/kernel-base-runtime-shell-v2'
-import type {StateRuntimeSliceDescriptor, SyncValueEnvelope} from '@impos2/kernel-base-state-runtime'
+} from '@next/kernel-base-runtime-shell-v2'
+import type {StateRuntimeSliceDescriptor, SyncValueEnvelope} from '@next/kernel-base-state-runtime'
 import {createMemoryStorage} from '../../../../test-support/storageHarness'
 import {createSlice, type PayloadAction} from '@reduxjs/toolkit'
 import {
     createTcpControlRuntimeModuleV2,
     tcpControlV2CommandDefinitions,
     tcpControlV2StateActions,
-} from '@impos2/kernel-base-tcp-control-runtime-v2'
+} from '@next/kernel-base-tcp-control-runtime-v2'
 import {
     applyTopologyV3HelloAck,
     createTopologyV3InitialPairLinkState,
@@ -43,7 +43,7 @@ import {
     selectTopologyRuntimeV3Workspace,
     topologyRuntimeV3CommandDefinitions,
 } from '../../src'
-import type {SocketRuntime} from '@impos2/kernel-base-transport-runtime'
+import type {SocketRuntime} from '@next/kernel-base-transport-runtime'
 
 const createSocketRuntimeSpy = () => {
     const listeners = new Map<string, Map<string, Set<(event: unknown) => void>>>()

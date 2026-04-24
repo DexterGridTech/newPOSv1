@@ -5,7 +5,7 @@ import type {EnhancedStore} from '@reduxjs/toolkit'
 import {
     createCommand,
     type KernelRuntimeV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {
     createTopologyV3CompactSharePayload,
     selectTopologyRuntimeV3Connection,
@@ -22,10 +22,10 @@ import {
     selectTopologyRuntimeV3TcpActivationEligibility,
     selectTopologyRuntimeV3Workspace,
     topologyRuntimeV3CommandDefinitions,
-} from '@impos2/kernel-base-topology-runtime-v3'
+} from '@next/kernel-base-topology-runtime-v3'
 import {
     selectTcpIdentitySnapshot,
-} from '@impos2/kernel-base-tcp-control-runtime-v2'
+} from '@next/kernel-base-tcp-control-runtime-v2'
 import {adminConsoleCommandDefinitions} from '../../features/commands'
 import {formatAdminStatus, formatAdminTimestamp} from '../../supports/adminFormatting'
 import {

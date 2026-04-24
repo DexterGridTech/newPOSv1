@@ -1,5 +1,5 @@
 {
-  "name": "@impos2/ui-base-input-runtime",
+  "name": "@next/ui-base-input-runtime",
   "version": "1.0.0",
   "description": "Input controllers and virtual keyboard runtime for UI base",
   "author": "DexterYang",
@@ -21,10 +21,10 @@
     "type-check": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@impos2/kernel-base-platform-ports": "workspace:*",
-    "@impos2/kernel-base-runtime-shell-v2": "workspace:*",
-    "@impos2/kernel-base-state-runtime": "workspace:*",
-    "@impos2/ui-base-runtime-react": "workspace:*"
+    "@next/kernel-base-platform-ports": "workspace:*",
+    "@next/kernel-base-runtime-shell-v2": "workspace:*",
+    "@next/kernel-base-state-runtime": "workspace:*",
+    "@next/ui-base-runtime-react": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=18",

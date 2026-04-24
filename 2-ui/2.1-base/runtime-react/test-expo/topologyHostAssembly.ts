@@ -1,10 +1,10 @@
-import type {CreateTopologyRuntimeModuleV3Input, TopologyV3HelloRuntime} from '@impos2/kernel-base-topology-runtime-v3'
+import type {CreateTopologyRuntimeModuleV3Input, TopologyV3HelloRuntime} from '@next/kernel-base-topology-runtime-v3'
 import {
     defineSocketProfile,
     JsonSocketCodec,
     typed,
     createSocketRuntime,
-} from '@impos2/kernel-base-transport-runtime'
+} from '@next/kernel-base-transport-runtime'
 import type {RuntimeReactExpoConfig} from './runtimeReactExpoConfig'
 import {createBrowserWsTransport} from './browserWsTransport'
 import {createBrowserConsoleLogger} from '../test/support/browserConsoleLogger'

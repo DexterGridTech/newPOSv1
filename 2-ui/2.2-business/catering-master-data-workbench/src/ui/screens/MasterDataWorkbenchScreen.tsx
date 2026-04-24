@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react'
 import {ScrollView, Text, View} from 'react-native'
 import {useSelector} from 'react-redux'
-import type {RootState} from '@impos2/kernel-base-state-runtime'
-import {selectTcpIdentitySnapshot} from '@impos2/kernel-base-tcp-control-runtime-v2'
-import {selectTopologyDisplayMode} from '@impos2/kernel-base-topology-runtime-v3'
+import type {RootState} from '@next/kernel-base-state-runtime'
+import {selectTcpIdentitySnapshot} from '@next/kernel-base-tcp-control-runtime-v2'
+import {selectTopologyDisplayMode} from '@next/kernel-base-topology-runtime-v3'
 import {
     selectCurrentActiveContract,
     selectCurrentBrandProfile,
@@ -22,7 +22,7 @@ import {
     selectStoreEffectiveRoles,
     selectStoreEffectiveUserRoleBindings,
     selectStoreEffectiveUsers,
-} from '@impos2/kernel-business-organization-iam-master-data'
+} from '@next/kernel-business-organization-iam-master-data'
 import {
     selectAllCateringProducts,
     selectCateringProductDiagnostics,
@@ -30,20 +30,20 @@ import {
     selectCateringProductSummary,
     selectCurrentStoreEffectiveMenu,
     selectLatestCateringProduct,
-} from '@impos2/kernel-business-catering-product-master-data'
+} from '@next/kernel-business-catering-product-master-data'
 import {
     selectCateringStoreOperatingDiagnostics,
     selectCurrentStoreConfig,
     selectCateringStoreOperatingSummary,
     selectOperationDashboardModel,
     selectStoreOperatingStatus,
-} from '@impos2/kernel-business-catering-store-operating-master-data'
+} from '@next/kernel-business-catering-store-operating-master-data'
 import {
     useOptionalUiAutomationBridge,
     useOptionalUiAutomationRuntimeId,
     useOptionalUiAutomationTarget,
     useUiRuntime,
-} from '@impos2/ui-base-runtime-react'
+} from '@next/ui-base-runtime-react'
 import type {MasterDataWorkbenchScreenProps} from '../../types'
 
 type DomainKey = 'organization' | 'product' | 'operation' | 'inspector'

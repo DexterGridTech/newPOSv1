@@ -27,7 +27,7 @@ function main() {
   if (appId !== 'assembly-android-mixc-catering-rn84') {
     throw new Error(`unsupported android release app: ${appId}`)
   }
-  run('corepack yarn workspace @impos2/assembly-android-mixc-catering-rn84 type-check')
+  run('corepack yarn workspace @next/assembly-android-mixc-catering-rn84 type-check')
   run("bash -lc 'source ~/.zshrc && cd 4-assembly/android/mixc-catering-assembly-rn84/android && ./gradlew assembleRelease'")
   run(`node scripts/release/finalize-release-manifest.cjs --app ${appId}`)
 }

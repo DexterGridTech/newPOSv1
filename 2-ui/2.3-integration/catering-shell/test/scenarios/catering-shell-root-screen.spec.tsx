@@ -3,14 +3,14 @@ import {describe, expect, it, vi} from 'vitest'
 import {
     createCommand,
     runtimeShellV2CommandDefinitions,
-} from '@impos2/kernel-base-runtime-shell-v2'
-import {tcpControlV2StateActions} from '@impos2/kernel-base-tcp-control-runtime-v2'
+} from '@next/kernel-base-runtime-shell-v2'
+import {tcpControlV2StateActions} from '@next/kernel-base-tcp-control-runtime-v2'
 import {RootScreen} from '../../src'
 import {createCateringShellHarness, renderWithAutomation} from '../support/cateringShellHarness'
 
-vi.mock('@impos2/ui-base-admin-console', async () => {
+vi.mock('@next/ui-base-admin-console', async () => {
     const ReactModule = await import('react')
-    const actual = await vi.importActual<typeof import('@impos2/ui-base-admin-console')>('@impos2/ui-base-admin-console')
+    const actual = await vi.importActual<typeof import('@next/ui-base-admin-console')>('@next/ui-base-admin-console')
 
     return {
         ...actual,

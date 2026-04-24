@@ -190,16 +190,16 @@ export interface AdminHostTools {
 }
 
 export interface AdminHostToolsResolver {
-    get(localNodeId: import('@impos2/kernel-base-runtime-shell-v2').KernelRuntimeV2['localNodeId']): Readonly<AdminHostTools>
+    get(localNodeId: import('@next/kernel-base-runtime-shell-v2').KernelRuntimeV2['localNodeId']): Readonly<AdminHostTools>
     install(
-        localNodeId: import('@impos2/kernel-base-runtime-shell-v2').KernelRuntimeV2['localNodeId'],
+        localNodeId: import('@next/kernel-base-runtime-shell-v2').KernelRuntimeV2['localNodeId'],
         hostTools: Partial<AdminHostTools>,
     ): void
-    reset(localNodeId?: import('@impos2/kernel-base-runtime-shell-v2').KernelRuntimeV2['localNodeId']): void
+    reset(localNodeId?: import('@next/kernel-base-runtime-shell-v2').KernelRuntimeV2['localNodeId']): void
 }
 
 export interface AdminConsoleSectionRenderContext {
-    runtime: import('@impos2/kernel-base-runtime-shell-v2').KernelRuntimeV2
+    runtime: import('@next/kernel-base-runtime-shell-v2').KernelRuntimeV2
     store: import('@reduxjs/toolkit').EnhancedStore
     closePanel: () => void
     hostTools: Readonly<AdminHostTools>

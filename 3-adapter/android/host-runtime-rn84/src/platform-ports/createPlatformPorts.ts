@@ -1,4 +1,4 @@
-import type {LogEnvironmentMode, PlatformPorts} from '@impos2/kernel-base-platform-ports'
+import type {LogEnvironmentMode, PlatformPorts} from '@next/kernel-base-platform-ports'
 import {nativeAppControl} from '../turbomodules/appControl'
 import {nativeConnector} from '../turbomodules/connector'
 import {nativeDevice} from '../turbomodules/device'

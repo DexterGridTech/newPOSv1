@@ -8,8 +8,8 @@ import {
     type CommandId,
     type NodeId,
     type RuntimeInstanceId,
-} from '@impos2/kernel-base-contracts'
-import type {PlatformPorts} from '@impos2/kernel-base-platform-ports'
+} from '@next/kernel-base-contracts'
+import type {PlatformPorts} from '@next/kernel-base-platform-ports'
 import type {EnhancedStore, UnknownAction} from '@reduxjs/toolkit'
 import {moduleName} from '../moduleName'
 import type {
@@ -95,12 +95,12 @@ export const createRuntimeCommandDispatcher = (
      * executionStack 只防同 request 内“同 Command + 同 Actor”的递归重入，允许不同 request 并发，也允许 Actor 再发子 Command。
      */
     const executionStack: Array<{
-        requestId: import('@impos2/kernel-base-contracts').RequestId
+        requestId: import('@next/kernel-base-contracts').RequestId
         commandName: string
         actorKey: string
         commandId: CommandId
     }> = []
-    const pendingResetByRequestId = new Map<import('@impos2/kernel-base-contracts').RequestId, {reason?: string}>()
+    const pendingResetByRequestId = new Map<import('@next/kernel-base-contracts').RequestId, {reason?: string}>()
 
     const dispatchLocal = async <TPayload>(
         commandIntent: CommandIntent<TPayload>,

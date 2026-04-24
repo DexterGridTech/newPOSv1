@@ -1,15 +1,15 @@
-import {createNodeId, createRequestId} from '@impos2/kernel-base-contracts'
-import type {ParameterCatalogEntry} from '@impos2/kernel-base-contracts'
-import {createLoggerPort, createPlatformPorts} from '@impos2/kernel-base-platform-ports'
+import {createNodeId, createRequestId} from '@next/kernel-base-contracts'
+import type {ParameterCatalogEntry} from '@next/kernel-base-contracts'
+import {createLoggerPort, createPlatformPorts} from '@next/kernel-base-platform-ports'
 import {
     createKernelRuntimeV2,
     type KernelRuntimeModuleV2,
     type RuntimeModuleContextV2,
-} from '@impos2/kernel-base-runtime-shell-v2'
+} from '@next/kernel-base-runtime-shell-v2'
 import {
     kernelBaseTestServerConfig,
     SERVER_NAME_MOCK_TERMINAL_PLATFORM,
-} from '@impos2/kernel-server-config-v2'
+} from '@next/kernel-server-config-v2'
 import {
     createHttpRuntime,
     createSocketRuntime,
@@ -17,20 +17,20 @@ import {
     type HttpTransport,
     type HttpTransportRequest,
     type SocketTransport,
-} from '@impos2/kernel-base-transport-runtime'
+} from '@next/kernel-base-transport-runtime'
 import {
     createTcpControlRuntimeModuleV2,
     tcpControlV2CommandDefinitions,
     selectTcpBindingSnapshot,
     selectTcpTerminalId,
-} from '@impos2/kernel-base-tcp-control-runtime-v2'
+} from '@next/kernel-base-tcp-control-runtime-v2'
 import {
     createTdpSyncRuntimeModuleV2,
     selectTdpSessionState,
     tdpSyncV2CommandDefinitions,
     tdpSyncV2SocketProfile,
     type CreateTdpSyncRuntimeModuleV2Input,
-} from '@impos2/kernel-base-tdp-sync-runtime-v2'
+} from '@next/kernel-base-tdp-sync-runtime-v2'
 import {createMockTerminalPlatformTestServer} from '../../../../../0-mock-server/mock-terminal-platform/server/src/test/createMockTerminalPlatformTestServer'
 import {createNodeWsTransport} from '../../../transport-runtime/test/helpers/nodeWsTransport'
 import {createFileStoragePair, createMemoryStorage} from '../../../../test-support/storageHarness'

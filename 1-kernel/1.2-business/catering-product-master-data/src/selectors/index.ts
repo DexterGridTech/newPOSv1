@@ -1,6 +1,6 @@
 import {createSelector} from '@reduxjs/toolkit'
-import type {RootState} from '@impos2/kernel-base-state-runtime'
-import {selectTcpBindingSnapshot} from '@impos2/kernel-base-tcp-control-runtime-v2'
+import type {RootState} from '@next/kernel-base-state-runtime'
+import {selectTcpBindingSnapshot} from '@next/kernel-base-tcp-control-runtime-v2'
 import {CATERING_PRODUCT_MASTER_DATA_STATE_KEY} from '../features/slices/masterData'
 import {cateringProductTopics} from '../foundations/topics'
 import type {

@@ -1,4 +1,4 @@
-import type {RequestId} from '@impos2/kernel-base-contracts'
+import type {RequestId} from '@next/kernel-base-contracts'
 import type {WorkflowDefinition} from './definition'
 import type {WorkflowObservation} from './observation'
 

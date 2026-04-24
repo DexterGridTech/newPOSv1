@@ -3,21 +3,21 @@ import {
     defineSocketProfile,
     JsonSocketCodec,
     typed,
-} from '@impos2/kernel-base-transport-runtime'
+} from '@next/kernel-base-transport-runtime'
 import {
     resolveTopologyV3SocketServerFromUrls,
     selectTopologyRuntimeV3Context,
     type TopologyRuntimeV3Assembly,
     type CreateTopologyRuntimeModuleV3Input,
     type TopologyV3HelloRuntime,
-} from '@impos2/kernel-base-topology-runtime-v3'
-import type {LoggerPort} from '@impos2/kernel-base-platform-ports'
+} from '@next/kernel-base-topology-runtime-v3'
+import type {LoggerPort} from '@next/kernel-base-platform-ports'
 import {
     createAssemblyTopologyBindingSource,
     type AssemblyTopologyBindingSource,
     type AssemblyTopologyBindingState,
 } from '../application/topology'
-import {SERVER_NAME_DUAL_TOPOLOGY_HOST_V3} from '@impos2/kernel-server-config-v2'
+import {SERVER_NAME_DUAL_TOPOLOGY_HOST_V3} from '@next/kernel-server-config-v2'
 import type {AppProps, AssemblyTopologyLaunchOptions} from '../types'
 import {moduleName} from '../moduleName'
 import {createAssemblyWebSocketTransport} from './transport'

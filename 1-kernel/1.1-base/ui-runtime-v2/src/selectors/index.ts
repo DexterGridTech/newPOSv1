@@ -1,9 +1,9 @@
-import type {RootState} from '@impos2/kernel-base-state-runtime'
+import type {RootState} from '@next/kernel-base-state-runtime'
 import {
     selectTopologyDisplayMode,
     selectTopologyInstanceMode,
     selectTopologyWorkspace,
-} from '@impos2/kernel-base-topology-runtime-v3'
+} from '@next/kernel-base-topology-runtime-v3'
 import {createUiScreenRegistry} from '../foundations/screenRegistry'
 import {
     uiRuntimeV2OverlayWorkspaceKeys,

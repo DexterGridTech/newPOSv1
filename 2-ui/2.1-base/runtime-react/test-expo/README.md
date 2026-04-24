@@ -20,7 +20,7 @@ The current page validates:
 ## Start
 
 ```bash
-corepack yarn workspace @impos2/ui-base-runtime-react expo:web
+corepack yarn workspace @next/ui-base-runtime-react expo:web
 ```
 
 ## Automation
@@ -30,7 +30,7 @@ corepack yarn workspace @impos2/ui-base-runtime-react expo:web
 The default command is CI/headless style. You usually will not see a browser window or page changes on the desktop.
 
 ```bash
-corepack yarn workspace @impos2/ui-base-runtime-react test-expo
+corepack yarn workspace @next/ui-base-runtime-react test-expo
 ```
 
 Covered flows:
@@ -49,19 +49,19 @@ Covered flows:
 Use this when you want to watch the page change:
 
 ```bash
-corepack yarn workspace @impos2/ui-base-runtime-react test-expo:visible
+corepack yarn workspace @next/ui-base-runtime-react test-expo:visible
 ```
 
 Use this when you only want to watch the two-display smoke test:
 
 ```bash
-corepack yarn workspace @impos2/ui-base-runtime-react test-expo:dual-pages:visible
+corepack yarn workspace @next/ui-base-runtime-react test-expo:dual-pages:visible
 ```
 
 Use this when you only want to watch the real topology host scenario:
 
 ```bash
-corepack yarn workspace @impos2/ui-base-runtime-react test-expo:topology-host:visible
+corepack yarn workspace @next/ui-base-runtime-react test-expo:topology-host:visible
 ```
 
 Important:

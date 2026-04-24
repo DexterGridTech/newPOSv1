@@ -2,8 +2,8 @@ import {shallowEqual, useSelector} from 'react-redux'
 import {
     selectUiScreenDefinitionsByContainer,
     type UiScreenDefinition,
-} from '@impos2/kernel-base-ui-runtime-v2'
-import type {RootState} from '@impos2/kernel-base-state-runtime'
+} from '@next/kernel-base-ui-runtime-v2'
+import type {RootState} from '@next/kernel-base-state-runtime'
 import type {UiRuntimeVariable} from '../types'
 
 const resolveContainerKey = (input: string | UiRuntimeVariable) =>

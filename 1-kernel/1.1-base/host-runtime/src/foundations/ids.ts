@@ -2,7 +2,7 @@ import type {
     ConnectionId,
     EnvelopeId,
     SessionId,
-} from '@impos2/kernel-base-contracts'
+} from '@next/kernel-base-contracts'
 
 const createHostIdPayload = (): string => {
     return `${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`

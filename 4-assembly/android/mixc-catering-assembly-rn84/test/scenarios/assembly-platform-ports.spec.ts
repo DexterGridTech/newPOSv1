@@ -54,6 +54,15 @@ vi.mock('../../src/platform-ports/stateStorage', () => ({
     createAssemblyStateStorage: createAssemblyStateStorageMock,
 }))
 
+vi.mock('../../src/turbomodules/logger', () => ({
+    nativeLogger: {
+        debug: vi.fn(),
+        log: vi.fn(),
+        warn: vi.fn(),
+        error: vi.fn(),
+    },
+}))
+
 vi.mock('../../src/turbomodules/appControl', () => ({
     nativeAppControl: {
         restartApp: nativeAppControlRestartAppMock,
