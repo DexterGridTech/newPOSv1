@@ -5,6 +5,9 @@ export type OrganizationIamTopic =
     | 'org.brand.profile'
     | 'org.store.profile'
     | 'org.contract.active'
+    | 'org.business-entity.profile'
+    | 'org.table.profile'
+    | 'org.workstation.profile'
     | 'iam.role.catalog'
     | 'iam.permission.catalog'
     | 'iam.user.store-effective'
@@ -82,6 +85,34 @@ export interface ContractProfile {
     unit_code?: string
     start_date?: string
     end_date?: string
+    status?: string
+    [key: string]: unknown
+}
+
+export interface BusinessEntityProfile {
+    entity_id: string
+    entity_code?: string
+    entity_name?: string
+    tenant_id?: string
+    status?: string
+    [key: string]: unknown
+}
+
+export interface TableProfile {
+    table_id: string
+    store_id?: string
+    table_no?: string
+    capacity?: number
+    table_status?: string
+    [key: string]: unknown
+}
+
+export interface WorkstationProfile {
+    workstation_id: string
+    store_id?: string
+    workstation_code?: string
+    workstation_name?: string
+    category_codes?: string[]
     status?: string
     [key: string]: unknown
 }
@@ -170,7 +201,7 @@ export interface OrganizationIamMasterDataState {
 
 export interface OrganizationTreeNode {
     id: string
-    type: 'platform' | 'project' | 'tenant' | 'brand' | 'store'
+    type: 'platform' | 'project' | 'tenant' | 'brand' | 'store' | 'business-entity' | 'table' | 'workstation'
     title: string
     status?: string
     children: OrganizationTreeNode[]

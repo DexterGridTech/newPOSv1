@@ -53,9 +53,6 @@ export const createTcpDeactivationActorDefinitionV2 = (
                 tcpControlV2CommandDefinitions.resetTcpControl,
                 {},
             ))
-            actorContext.requestApplicationReset?.({
-                reason: `${moduleName}.deactivateTerminal`,
-            })
             return {
                 terminalId: result.terminalId,
                 status: result.status,

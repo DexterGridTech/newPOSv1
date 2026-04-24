@@ -11,6 +11,7 @@ import {
     type TdpProjectionEnvelope,
     type TdpTopicDataChangeItem,
 } from '@impos2/kernel-base-tdp-sync-runtime-v2'
+import {tcpControlV2CommandDefinitions} from '@impos2/kernel-base-tcp-control-runtime-v2'
 import {moduleName} from '../../moduleName'
 import {decodeCateringStoreOperatingChange} from '../../foundations/decoder'
 import {cateringStoreOperatingTopicList, isCateringStoreOperatingTopic} from '../../foundations/topics'
@@ -83,55 +84,75 @@ const applyDecodedRecords = async (
     }
 }
 
+const rebuildMasterDataFromTdp = async (
+    context: ActorExecutionContext,
+) => {
+    const next: CateringStoreOperatingMasterDataState = {
+        byTopic: {},
+        diagnostics: [],
+        lastChangedAt: Date.now(),
+    }
+    for (const topic of cateringStoreOperatingTopicList) {
+        const projections = selectTdpProjectionEntriesByTopic(context.getState(), topic)
+            .sort((left, right) => left.revision - right.revision)
+        projections.forEach(projection => {
+            const decoded = decodeCateringStoreOperatingChange(topic, toChangeItem(projection))
+            if (decoded.record) {
+                const byItemKey = next.byTopic[topic] ?? {}
+                byItemKey[decoded.record.itemKey] = decoded.record
+                next.byTopic[topic] = byItemKey
+                return
+            }
+            next.diagnostics.unshift({
+                topic,
+                itemKey: projection.itemKey,
+                scopeType: projection.scopeType,
+                scopeId: projection.scopeId,
+                revision: projection.revision,
+                reason: decoded.error ?? 'Unknown decode failure',
+                occurredAt: Date.now(),
+            })
+        })
+    }
+    context.dispatchAction(cateringStoreOperatingMasterDataActions.replaceAll(next))
+    await context.dispatchCommand(createCommand(
+        cateringStoreOperatingMasterDataCommandDefinitions.cateringStoreOperatingMasterDataChanged,
+        {
+            topic: '*',
+            itemKeys: [],
+            changedAt: next.lastChangedAt ?? Date.now(),
+        },
+    ))
+    return {
+        topics: cateringStoreOperatingTopicList.length,
+        diagnostics: next.diagnostics.length,
+    }
+}
+
 export const createCateringStoreOperatingMasterDataActorDefinition = (): ActorDefinition =>
     defineActor('CateringStoreOperatingMasterDataActor', [
         onCommand(tdpSyncV2CommandDefinitions.tdpTopicDataChanged, context =>
             applyDecodedRecords(context as ActorExecutionContext, context.command.payload.topic, context.command.payload.changes),
         ),
+        onCommand(tdpSyncV2CommandDefinitions.tdpSnapshotLoaded, async context => {
+            const rebuilt = await rebuildMasterDataFromTdp(context as ActorExecutionContext)
+            return {
+                ...rebuilt,
+                reason: 'snapshot-loaded',
+            }
+        }),
         onCommand(cateringStoreOperatingMasterDataCommandDefinitions.resetCateringStoreOperatingMasterData, context => {
             context.dispatchAction(cateringStoreOperatingMasterDataActions.reset())
             return {reset: true}
         }),
-        onCommand(cateringStoreOperatingMasterDataCommandDefinitions.rebuildCateringStoreOperatingMasterDataFromTdp, async context => {
-            const next: CateringStoreOperatingMasterDataState = {
-                byTopic: {},
-                diagnostics: [],
-                lastChangedAt: Date.now(),
-            }
-            for (const topic of cateringStoreOperatingTopicList) {
-                const projections = selectTdpProjectionEntriesByTopic(context.getState(), topic)
-                    .sort((left, right) => left.revision - right.revision)
-                projections.forEach(projection => {
-                    const decoded = decodeCateringStoreOperatingChange(topic, toChangeItem(projection))
-                    if (decoded.record) {
-                        const byItemKey = next.byTopic[topic] ?? {}
-                        byItemKey[decoded.record.itemKey] = decoded.record
-                        next.byTopic[topic] = byItemKey
-                        return
-                    }
-                    next.diagnostics.unshift({
-                        topic,
-                        itemKey: projection.itemKey,
-                        scopeType: projection.scopeType,
-                        scopeId: projection.scopeId,
-                        revision: projection.revision,
-                        reason: decoded.error ?? 'Unknown decode failure',
-                        occurredAt: Date.now(),
-                    })
-                })
-            }
-            context.dispatchAction(cateringStoreOperatingMasterDataActions.replaceAll(next))
-            await context.dispatchCommand(createCommand(
-                cateringStoreOperatingMasterDataCommandDefinitions.cateringStoreOperatingMasterDataChanged,
-                {
-                    topic: '*',
-                    itemKeys: [],
-                    changedAt: next.lastChangedAt ?? Date.now(),
-                },
-            ))
+        onCommand(tcpControlV2CommandDefinitions.resetTcpControl, context => {
+            context.dispatchAction(cateringStoreOperatingMasterDataActions.reset())
             return {
-                topics: cateringStoreOperatingTopicList.length,
-                diagnostics: next.diagnostics.length,
+                reset: true,
+                reason: 'tcp-control-reset',
             }
         }),
+        onCommand(cateringStoreOperatingMasterDataCommandDefinitions.rebuildCateringStoreOperatingMasterDataFromTdp, async context =>
+            rebuildMasterDataFromTdp(context as ActorExecutionContext),
+        ),
     ])

@@ -5,6 +5,7 @@ import {CATERING_STORE_OPERATING_MASTER_DATA_STATE_KEY} from '../features/slices
 import {cateringStoreOperatingTopics} from '../foundations/topics'
 import type {
     CateringStoreOperatingMasterDataState,
+    StoreConfigProfile,
     MenuAvailabilityProfile,
     SaleableStockProfile,
     StockReservationProfile,
@@ -29,6 +30,7 @@ const createTopicValuesSelector = <TData extends Record<string, unknown>>(
 )
 
 const selectMenuAvailabilityProfiles = createTopicValuesSelector<MenuAvailabilityProfile>('menuAvailability')
+const selectStoreConfigProfiles = createTopicValuesSelector<StoreConfigProfile>('storeConfig')
 const selectSaleableStockProfiles = createTopicValuesSelector<SaleableStockProfile>('saleableStock')
 const selectStockReservationProfiles = createTopicValuesSelector<StockReservationProfile>('stockReservation')
 
@@ -49,6 +51,7 @@ export const selectCateringStoreOperatingSummary: (state: RootState) => {
     [selectCateringStoreOperatingMasterDataState],
     masterData => ({
         availability: Object.keys(masterData?.byTopic[cateringStoreOperatingTopics.menuAvailability] ?? {}).length,
+        configs: Object.keys(masterData?.byTopic[cateringStoreOperatingTopics.storeConfig] ?? {}).length,
         stocks: Object.keys(masterData?.byTopic[cateringStoreOperatingTopics.saleableStock] ?? {}).length,
         reservations: Object.keys(masterData?.byTopic[cateringStoreOperatingTopics.stockReservation] ?? {}).length,
         diagnostics: masterData?.diagnostics.length ?? 0,
@@ -60,6 +63,12 @@ export const selectMenuAvailabilityByProductId: (state: RootState) => MenuAvaila
     [selectMenuAvailabilityProfiles, selectTcpBindingSnapshot],
     (availability, binding): MenuAvailabilityProfile[] => availability
         .filter(item => !binding.storeId || item.store_id === binding.storeId)
+)
+
+export const selectCurrentStoreConfig: (state: RootState) => StoreConfigProfile | undefined = createSelector(
+    [selectStoreConfigProfiles, selectTcpBindingSnapshot],
+    (configs, binding): StoreConfigProfile | undefined => configs.find(item => !binding.storeId || item.store_id === binding.storeId)
+        ?? configs[0],
 )
 
 export const selectSaleableStockByProductId: (state: RootState) => SaleableStockProfile[] = createSelector(
@@ -100,6 +109,12 @@ export const selectStoreOperatingStatus: (state: RootState) => {
 )
 
 export const selectOperationDashboardModel: (state: RootState) => {
+    storeConfig?: {
+        businessStatus?: string
+        acceptOrder?: boolean
+        operatingHoursCount: number
+        extraChargeRuleCount: number
+    }
     availabilityRows: Array<{
         productId: string
         available: boolean
@@ -122,11 +137,20 @@ export const selectOperationDashboardModel: (state: RootState) => {
     }>
 } = createSelector(
     [
+        selectCurrentStoreConfig,
         selectMenuAvailabilityByProductId,
         selectSaleableStockByProductId,
         selectActiveStockReservations,
     ],
-    (availability, stocks, reservations) => ({
+    (storeConfig, availability, stocks, reservations) => ({
+        storeConfig: storeConfig
+            ? {
+                businessStatus: storeConfig.business_status,
+                acceptOrder: storeConfig.accept_order,
+                operatingHoursCount: storeConfig.operating_hours?.length ?? 0,
+                extraChargeRuleCount: storeConfig.extra_charge_rules?.length ?? 0,
+            }
+            : undefined,
         availabilityRows: availability.map(item => ({
             productId: item.product_id,
             available: item.available !== false,

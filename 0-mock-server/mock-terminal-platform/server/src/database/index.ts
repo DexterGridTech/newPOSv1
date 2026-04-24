@@ -283,7 +283,8 @@ export const initializeDatabase = (): void => {
       updated_at INTEGER NOT NULL
     );
     CREATE TABLE IF NOT EXISTS tdp_projection_source_events (
-      source_event_id TEXT PRIMARY KEY,
+      acceptance_id TEXT PRIMARY KEY,
+      source_event_id TEXT NOT NULL,
       sandbox_id TEXT NOT NULL,
       topic_key TEXT NOT NULL,
       scope_type TEXT NOT NULL,
@@ -294,6 +295,8 @@ export const initializeDatabase = (): void => {
       tdp_revision INTEGER NOT NULL,
       payload_json TEXT NOT NULL,
       source_release_id TEXT,
+      occurred_at INTEGER,
+      scope_metadata_json TEXT,
       accepted_at INTEGER NOT NULL
     );
     CREATE TABLE IF NOT EXISTS tdp_change_logs (
@@ -309,6 +312,8 @@ export const initializeDatabase = (): void => {
       revision INTEGER NOT NULL,
       payload_json TEXT NOT NULL,
       source_release_id TEXT,
+      occurred_at INTEGER,
+      scope_metadata_json TEXT,
       created_at INTEGER NOT NULL
     );
     CREATE TABLE IF NOT EXISTS selector_groups (
@@ -505,7 +510,11 @@ export const initializeDatabase = (): void => {
   ensureColumn('tdp_projection_source_events', 'tdp_revision', 'INTEGER NOT NULL DEFAULT 0')
   ensureColumn('tdp_projection_source_events', 'payload_json', `TEXT NOT NULL DEFAULT '{}'`)
   ensureColumn('tdp_projection_source_events', 'source_release_id', 'TEXT')
+  ensureColumn('tdp_projection_source_events', 'occurred_at', 'INTEGER')
+  ensureColumn('tdp_projection_source_events', 'scope_metadata_json', 'TEXT')
   ensureColumn('tdp_projection_source_events', 'accepted_at', 'INTEGER NOT NULL DEFAULT 0')
+  ensureColumn('tdp_change_logs', 'occurred_at', 'INTEGER')
+  ensureColumn('tdp_change_logs', 'scope_metadata_json', 'TEXT')
   ensureColumn('tdp_sessions', 'last_delivered_revision', 'INTEGER')
   ensureColumn('tdp_sessions', 'last_acked_revision', 'INTEGER')
   ensureColumn('tdp_sessions', 'last_applied_revision', 'INTEGER')
@@ -517,6 +526,7 @@ export const initializeDatabase = (): void => {
   migrateTdpProjectionIdentity()
   migrateTdpChangeLogIdentity()
   migrateTdpChangeLogCursor()
+  migrateTdpProjectionSourceEventsIdentity()
   migratePlatformScopedMasterData()
   migrateMasterDataToIndependentModel()
   migrateTerminalMasterData()
@@ -626,6 +636,97 @@ const migrateTdpChangeLogIdentity = () => {
     })
   })
   transaction(rows)
+}
+
+const migrateTdpProjectionSourceEventsIdentity = () => {
+  const columns = sqlite.prepare(`PRAGMA table_info(tdp_projection_source_events)`).all() as Array<{
+    name: string
+    pk: number
+  }>
+  const hasAcceptanceId = columns.some(column => column.name === 'acceptance_id')
+  if (!hasAcceptanceId) {
+    sqlite.exec(`
+      CREATE TABLE IF NOT EXISTS tdp_projection_source_events_v2 (
+        acceptance_id TEXT PRIMARY KEY,
+        source_event_id TEXT NOT NULL,
+        sandbox_id TEXT NOT NULL,
+        topic_key TEXT NOT NULL,
+        scope_type TEXT NOT NULL,
+        scope_key TEXT NOT NULL,
+        item_key TEXT NOT NULL,
+        operation TEXT NOT NULL,
+        source_revision INTEGER,
+        tdp_revision INTEGER NOT NULL,
+        payload_json TEXT NOT NULL,
+        source_release_id TEXT,
+        occurred_at INTEGER,
+        scope_metadata_json TEXT,
+        accepted_at INTEGER NOT NULL
+      );
+    `)
+    const legacyRows = sqlite.prepare(`
+      SELECT source_event_id, sandbox_id, topic_key, scope_type, scope_key, item_key, operation,
+             source_revision, tdp_revision, payload_json, source_release_id, accepted_at
+      FROM tdp_projection_source_events
+    `).all() as Array<{
+      source_event_id: string
+      sandbox_id: string
+      topic_key: string
+      scope_type: string
+      scope_key: string
+      item_key: string
+      operation: string
+      source_revision: number | null
+      tdp_revision: number
+      payload_json: string
+      source_release_id: string | null
+      accepted_at: number
+    }>
+    const insert = sqlite.prepare(`
+      INSERT INTO tdp_projection_source_events_v2 (
+        acceptance_id, source_event_id, sandbox_id, topic_key, scope_type, scope_key, item_key, operation,
+        source_revision, tdp_revision, payload_json, source_release_id, occurred_at, scope_metadata_json, accepted_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `)
+    const transaction = sqlite.transaction((rows: typeof legacyRows) => {
+      rows.forEach(row => {
+        insert.run(
+          createId('accept'),
+          row.source_event_id,
+          row.sandbox_id,
+          row.topic_key,
+          row.scope_type || 'TERMINAL',
+          row.scope_key || '',
+          row.item_key || '',
+          row.operation || 'upsert',
+          row.source_revision,
+          row.tdp_revision,
+          row.payload_json || '{}',
+          row.source_release_id,
+          row.accepted_at,
+          null,
+          row.accepted_at,
+        )
+      })
+    })
+    transaction(legacyRows)
+    sqlite.exec(`
+      DROP TABLE tdp_projection_source_events;
+      ALTER TABLE tdp_projection_source_events_v2 RENAME TO tdp_projection_source_events;
+    `)
+  }
+
+  sqlite.exec(`
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_tdp_projection_source_events_identity
+      ON tdp_projection_source_events (
+        sandbox_id,
+        topic_key,
+        scope_type,
+        scope_key,
+        item_key,
+        source_event_id
+      );
+  `)
 }
 
 const migratePlatformScopedMasterData = () => {

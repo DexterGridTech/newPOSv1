@@ -23,6 +23,7 @@ export interface TdpTopicDataChangeItem {
     scopeId?: string
     sourceReleaseId?: string | null
     occurredAt?: string
+    scopeMetadata?: Record<string, unknown>
 }
 
 export interface TdpTopicDataChangedPayload {

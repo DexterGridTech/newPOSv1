@@ -1,0 +1,6 @@
+<resources>
+  <color name="startup_background">#0B1020</color>
+  <color name="startup_accent">#D6A85C</color>
+  <color name="startup_text_primary">#F8FAFC</color>
+  <color name="startup_text_secondary">#CBD5E1</color>
+</resources>

@@ -7,6 +7,7 @@ export default defineConfig({
     port: 5840,
     proxy: {
       '/api': 'http://127.0.0.1:5830',
+      '/internal': 'http://127.0.0.1:5830',
     },
   },
 })

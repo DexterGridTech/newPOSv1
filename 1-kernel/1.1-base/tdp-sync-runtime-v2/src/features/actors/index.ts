@@ -18,6 +18,7 @@ import {createTdpTerminalLogUploadCommandRouterActorDefinitionV2} from './termin
 import {createTdpSystemCatalogBridgeActorDefinitionV2} from './systemCatalogBridgeActor'
 import {createTdpUserOperationActorDefinitionV2} from './userOperationActor'
 import {createTdpHotUpdateNativeBootActorDefinitionV2} from './hotUpdateNativeBootActor'
+import {createTdpTcpResetActorDefinitionV2} from './tcpResetActor'
 import type {CreateTdpSyncRuntimeModuleV2Input} from '../../types'
 
 export * from './initializeActor'
@@ -35,6 +36,7 @@ export * from './terminalLogUploadCommandRouterActor'
 export * from './systemCatalogBridgeActor'
 export * from './userOperationActor'
 export * from './hotUpdateNativeBootActor'
+export * from './tcpResetActor'
 
 export const createTdpSyncActorDefinitionsV2 = (
     fingerprintRef: TopicChangePublisherFingerprintV2,
@@ -50,6 +52,7 @@ export const createTdpSyncActorDefinitionsV2 = (
     createTdpCursorFeedbackActorDefinitionV2(),
     createTdpCommandInboxActorDefinitionV2(),
     createTdpCommandAckActorDefinitionV2(),
+    createTdpTcpResetActorDefinitionV2(),
     createTdpTerminalLogUploadCommandRouterActorDefinitionV2(),
     createTdpSessionStateActorDefinitionV2(connectionRuntimeRef),
     createTdpTopicChangeActorDefinitionV2(fingerprintRef, moduleInput),

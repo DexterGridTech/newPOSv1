@@ -209,7 +209,7 @@ function checkLocalProperties() {
 
   const localPropsFiles = [
     '3-adapter/android/adapter-android-v2/local.properties',
-    '4-assembly/android/mixc-retail-assembly-rn84/android/local.properties',
+    '4-assembly/android/mixc-catering-assembly-rn84/android/local.properties',
   ];
 
   let allExist = true;

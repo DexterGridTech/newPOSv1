@@ -17,7 +17,8 @@
     "2-ui/2.2-business/*",
     "2-ui/2.3-integration/*",
     "3-adapter/android/adapter-android-v2",
-    "4-assembly/android/mixc-retail-assembly-rn84"
+    "3-adapter/android/host-runtime-rn84",
+    "4-assembly/android/mixc-catering-assembly-rn84"
   ],
   "scripts": {
     "setup": "corepack yarn install",
@@ -50,20 +51,19 @@
     "mock:platform:type-check": "corepack yarn workspace @impos2/mock-terminal-platform type-check",
     "mock:admin-mall-tenant-console:dev": "corepack yarn workspace @impos2/mock-admin-mall-tenant-console dev",
     "mock:admin-mall-tenant-console:type-check": "corepack yarn workspace @impos2/mock-admin-mall-tenant-console type-check",
+    "admin-mall-master-data:restore": "node scripts/admin-mall-tenant-master-data-restore.mjs",
+    "admin-mall-master-data:restore-clean": "node scripts/admin-mall-tenant-master-data-restore.mjs --clean-hot-update --relaunch-app --ensure-activated",
+    "admin-mall-master-data:smoke": "node scripts/admin-mall-tenant-master-data-smoke.mjs",
     "---------": "---------------------------------------",
     "kernel:base:topology-runtime-v3:test": "corepack yarn workspace @impos2/kernel-base-topology-runtime-v3 test",
     "kernel:base:tdp-sync-runtime-v2:test": "corepack yarn workspace @impos2/kernel-base-tdp-sync-runtime-v2 test",
     "-------------": "----------------------------------------",
     "ui:base:runtime-react:test": "corepack yarn workspace @impos2/ui-base-runtime-react test",
     "ui:base:topology-runtime-bridge:test": "corepack yarn workspace @impos2/ui-base-topology-runtime-bridge test",
-    "ui:integration-retail-shell:web": "corepack yarn workspace @impos2/ui-integration-retail-shell web",
     "--------": "---------------------------------------",
     "adapter:android-v2:build": "corepack yarn workspace @impos2/adapter-android-v2 build:android",
     "adapter:android-v2:all": "corepack yarn workspace @impos2/adapter-android-v2 android:all",
     "-----------": "---------------------------------------",
-    "assembly:android-mixc-retail-rn84:metro": "corepack yarn workspace @impos2/assembly-android-mixc-retail-rn84 start:clean",
-    "assembly:android-mixc-retail-rn84:run": "corepack yarn workspace @impos2/assembly-android-mixc-retail-rn84 android:run",
-    "assembly:android-mixc-retail-rn84:test-visible:admin-loop": "corepack yarn workspace @impos2/assembly-android-mixc-retail-rn84 test-visible:admin-loop",
     "------------": "---------------------------------------",
     "dev": "turbo run dev",
     "test": "turbo run test",
@@ -83,7 +83,11 @@
     "release:assembly:generate-release-info": "node scripts/release/generate-assembly-release-info.cjs",
     "release:manifest:generate-note": "node scripts/release/generate-release-note.cjs",
     "release:package:generate-version-info": "node scripts/release/generate-package-version-info.cjs",
-    "release:hot-update:package": "node scripts/release/package-hot-update.cjs"
+    "release:hot-update:package": "node scripts/release/package-hot-update.cjs",
+    "ui:integration-catering-shell:web": "corepack yarn workspace @impos2/ui-integration-catering-shell web",
+    "assembly:android-mixc-catering-rn84:metro": "corepack yarn workspace @impos2/assembly-android-mixc-catering-assembly-rn84 start:clean",
+    "assembly:android-mixc-catering-rn84:run": "corepack yarn workspace @impos2/assembly-android-mixc-catering-assembly-rn84 android:run",
+    "assembly:android-mixc-catering-rn84:test-visible:admin-loop": "corepack yarn workspace @impos2/assembly-android-mixc-catering-assembly-rn84 test-visible:admin-loop"
   },
   "devDependencies": {
     "@react-native-community/cli-plugin-metro": "^12.3.6",

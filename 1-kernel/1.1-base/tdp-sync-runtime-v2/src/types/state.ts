@@ -21,6 +21,7 @@ export interface TdpProjectionEnvelope {
     payload: Record<string, unknown>
     occurredAt: string
     sourceReleaseId?: string | null
+    scopeMetadata?: Record<string, unknown>
 }
 
 export type TdpProjectionId = string

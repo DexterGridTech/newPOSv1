@@ -40,7 +40,7 @@ function assertFileExists(filePath, label) {
 
 function getManifestPath(appId) {
   const manifestMap = {
-    'assembly-android-mixc-retail-rn84': resolveRepoPath('4-assembly/android/mixc-retail-assembly-rn84/release.manifest.json'),
+    'assembly-android-mixc-catering-rn84': resolveRepoPath('4-assembly/android/mixc-catering-assembly-rn84/release.manifest.json'),
   }
 
   const manifestPath = manifestMap[appId]
@@ -53,7 +53,7 @@ function getManifestPath(appId) {
 
 function getPackageJsonPathByAppId(appId) {
   const map = {
-    'assembly-android-mixc-retail-rn84': resolveRepoPath('4-assembly/android/mixc-retail-assembly-rn84/package.json'),
+    'assembly-android-mixc-catering-rn84': resolveRepoPath('4-assembly/android/mixc-catering-assembly-rn84/package.json'),
   }
   const packageJsonPath = map[appId]
   if (!packageJsonPath) {
@@ -65,7 +65,7 @@ function getPackageJsonPathByAppId(appId) {
 
 function getTrackedPackagePathsByAppId(appId) {
   const perApp = {
-    'assembly-android-mixc-retail-rn84': [
+    'assembly-android-mixc-catering-rn84': [
       '1-kernel/1.1-base/contracts/package.json',
       '1-kernel/1.1-base/definition-registry/package.json',
       '1-kernel/1.1-base/execution-runtime/package.json',
@@ -86,7 +86,7 @@ function getTrackedPackagePathsByAppId(appId) {
       '2-ui/2.1-base/terminal-console/package.json',
       '2-ui/2.1-base/topology-runtime-bridge/package.json',
       '2-ui/2.1-base/ui-automation-runtime/package.json',
-      '2-ui/2.3-integration/retail-shell/package.json',
+      '2-ui/2.3-integration/catering-shell/package.json',
       '3-adapter/android/adapter-android-v2/package.json',
     ],
   }

@@ -62,6 +62,20 @@ export const selectAllCateringProducts: (state: RootState) => CateringProductPro
     products => products,
 )
 
+export const selectLatestCateringProduct: (state: RootState) => CateringProductProfile | undefined = createSelector(
+    [selectCateringProductMasterDataState],
+    masterData => Object.values(masterData?.byTopic[cateringProductTopics.product] ?? {})
+        .filter(record => !record.tombstone)
+        .slice()
+        .sort((left, right) => {
+            const changedAt = (right.updatedAt ?? 0) - (left.updatedAt ?? 0)
+            if (changedAt !== 0) {
+                return changedAt
+            }
+            return (right.sourceRevision ?? right.revision ?? 0) - (left.sourceRevision ?? left.revision ?? 0)
+        })[0]?.data as CateringProductProfile | undefined,
+)
+
 export const selectAllBrandMenus: (state: RootState) => CateringBrandMenuProfile[] = createSelector(
     [selectBrandMenuProfiles],
     brandMenus => brandMenus,

@@ -66,6 +66,14 @@ export const fetchJson = async <T>(url: string, init?: RequestInit): Promise<T> 
     return payload.data
 }
 
+const withAdminAuth = (adminToken: string, init?: RequestInit): RequestInit => ({
+    ...init,
+    headers: {
+        ...(init?.headers ?? {}),
+        authorization: `Bearer ${adminToken}`,
+    },
+})
+
 export const createFetchTransport = (): HttpTransport => ({
     async execute<TPath, TQuery, TBody, TResponse>(
         request: HttpTransportRequest<TPath, TQuery, TBody>,
@@ -100,6 +108,7 @@ export const createLivePlatform = async () => {
 
     return {
         baseUrl,
+        adminToken: server.getAdminToken(),
         prepare,
         async close() {
             await server.close()
@@ -107,10 +116,10 @@ export const createLivePlatform = async () => {
         admin: {
             upsertProjectionBatch: (body: Record<string, unknown>) => fetchJson<any>(
                 `${baseUrl}/api/v1/admin/tdp/projections/batch-upsert`,
-                {
+                withAdminAuth(server.getAdminToken(), {
                     method: 'POST',
                     body: JSON.stringify({...body, sandboxId: prepare.sandboxId}),
-                },
+                }),
             ),
             createSelectorGroup: (body: Record<string, unknown>) => fetchJson<any>(
                 `${baseUrl}/api/v1/admin/tdp/groups`,

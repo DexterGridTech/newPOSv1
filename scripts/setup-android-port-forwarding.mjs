@@ -8,8 +8,10 @@
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 const execAsync = promisify(exec);
+const scriptPath = fileURLToPath(import.meta.url);
 
 function resolveAdbExecutable() {
   const androidHome = process.env.ANDROID_HOME?.trim();
@@ -44,6 +46,21 @@ const TOPOLOGY_HOST_FORWARD = {
   device: 8888,
   description: 'Topology Host (dual-emulator host bridge)',
 };
+
+export function resolveTopologyHostDeviceId(devices, topologyHostDeviceId, topologyHostFlagEnabled) {
+  if (!topologyHostFlagEnabled) {
+    if (topologyHostDeviceId === 'auto-primary') {
+      return devices[0]?.id ?? null;
+    }
+    return topologyHostDeviceId || null;
+  }
+
+  if (topologyHostDeviceId && topologyHostDeviceId !== 'auto-primary') {
+    return topologyHostDeviceId;
+  }
+
+  return devices[0]?.id ?? null;
+}
 
 /**
  * 检查 ADB 是否可用
@@ -171,6 +188,13 @@ async function main() {
     console.log(`  ${index + 1}. ${device.id}`);
   });
 
+  const topologyHostDeviceId = process.env.ANDROID_TOPOLOGY_HOST_DEVICE_ID?.trim();
+  const selectedTopologyHostDeviceId = resolveTopologyHostDeviceId(
+    devices,
+    topologyHostDeviceId,
+    args.includes('--topology-host'),
+  );
+
   // 为每个设备设置端口转发
   for (const device of devices) {
     console.log(`\n正在为设备 ${device.id} 设置端口转发...`);
@@ -181,12 +205,7 @@ async function main() {
       if (success) successCount++;
     }
 
-    const topologyHostDeviceId = process.env.ANDROID_TOPOLOGY_HOST_DEVICE_ID?.trim();
-    const enableTopologyHostBridge = args.includes('--topology-host')
-      ? device.id === devices[0]?.id
-      : topologyHostDeviceId === device.id
-        || topologyHostDeviceId === 'auto-primary'
-          && device.id === devices[0]?.id;
+    const enableTopologyHostBridge = selectedTopologyHostDeviceId === device.id;
 
     if (enableTopologyHostBridge) {
       const success = await setupHostForwarding(device.id, TOPOLOGY_HOST_FORWARD);
@@ -211,73 +230,75 @@ async function main() {
   console.log(`  - 副机导入 locator 时使用 ws://10.0.2.2:${TOPOLOGY_HOST_FORWARD.host}/mockMasterServer/ws`);
 }
 
-if (args.includes('--clear') || args.includes('-c')) {
+if (process.argv[1] && path.resolve(process.argv[1]) === scriptPath) {
+  if (args.includes('--clear') || args.includes('-c')) {
   // 清除模式
-  (async () => {
-    console.log('=== 清除端口转发规则 ===\n');
+    (async () => {
+      console.log('=== 清除端口转发规则 ===\n');
 
-    const adbAvailable = await checkAdb();
-    if (!adbAvailable) {
-      process.exit(1);
-    }
+      const adbAvailable = await checkAdb();
+      if (!adbAvailable) {
+        process.exit(1);
+      }
 
-    const devices = await getDevices();
-    if (devices.length === 0) {
-      console.error('✗ 没有找到连接的设备');
-      process.exit(1);
-    }
+      const devices = await getDevices();
+      if (devices.length === 0) {
+        console.error('✗ 没有找到连接的设备');
+        process.exit(1);
+      }
 
-    for (const device of devices) {
-      console.log(`\n正在清除设备 ${device.id} 的端口转发规则...`);
-      await clearPortForwarding(device.id);
-    }
+      for (const device of devices) {
+        console.log(`\n正在清除设备 ${device.id} 的端口转发规则...`);
+        await clearPortForwarding(device.id);
+      }
 
-    console.log('\n=== 清除完成 ===');
-  })();
-} else if (args.includes('--list') || args.includes('-l')) {
+      console.log('\n=== 清除完成 ===');
+    })();
+  } else if (args.includes('--list') || args.includes('-l')) {
   // 列出模式
-  (async () => {
-    console.log('=== 查看端口转发规则 ===\n');
+    (async () => {
+      console.log('=== 查看端口转发规则 ===\n');
 
-    const adbAvailable = await checkAdb();
-    if (!adbAvailable) {
-      process.exit(1);
-    }
+      const adbAvailable = await checkAdb();
+      if (!adbAvailable) {
+        process.exit(1);
+      }
 
-    const devices = await getDevices();
-    if (devices.length === 0) {
-      console.error('✗ 没有找到连接的设备');
-      process.exit(1);
-    }
+      const devices = await getDevices();
+      if (devices.length === 0) {
+        console.error('✗ 没有找到连接的设备');
+        process.exit(1);
+      }
 
-    for (const device of devices) {
-      console.log(`\n设备: ${device.id}`);
-      await listPortForwarding(device.id);
-    }
-  })();
-} else if (args.includes('--help') || args.includes('-h')) {
+      for (const device of devices) {
+        console.log(`\n设备: ${device.id}`);
+        await listPortForwarding(device.id);
+      }
+    })();
+  } else if (args.includes('--help') || args.includes('-h')) {
   // 帮助信息
-  console.log('安卓虚拟机端口映射脚本');
-  console.log('\n用法:');
-  console.log('  node setup-android-port-forwarding.js          设置端口转发');
-  console.log('  node setup-android-port-forwarding.js --list   列出当前端口转发规则');
-  console.log('  node setup-android-port-forwarding.js --clear  清除所有端口转发规则');
-  console.log('  node setup-android-port-forwarding.js --topology-host  将第一个设备的 topology host 暴露到宿主机 18889');
-  console.log('  node setup-android-port-forwarding.js --help   显示帮助信息');
-  console.log('\n选项:');
-  console.log('  -l, --list    列出当前端口转发规则');
-  console.log('  -c, --clear   清除所有端口转发规则');
-  console.log('  --topology-host  双模拟器联调：第一个设备作为主机，副机使用 10.0.2.2:18889 连接');
-  console.log('  -h, --help    显示帮助信息');
-  console.log('\n端口映射列表:');
-  PORTS_TO_FORWARD.forEach(port => {
-    console.log(`  ${port.host} -> ${port.device}  (${port.description})`);
-  });
-  console.log(`  host ${TOPOLOGY_HOST_FORWARD.host} -> device ${TOPOLOGY_HOST_FORWARD.device}  (${TOPOLOGY_HOST_FORWARD.description}, optional)`);
-} else {
+    console.log('安卓虚拟机端口映射脚本');
+    console.log('\n用法:');
+    console.log('  node setup-android-port-forwarding.js          设置端口转发');
+    console.log('  node setup-android-port-forwarding.js --list   列出当前端口转发规则');
+    console.log('  node setup-android-port-forwarding.js --clear  清除所有端口转发规则');
+    console.log('  node setup-android-port-forwarding.js --topology-host  将指定主机设备的 topology host 暴露到宿主机 18889');
+    console.log('  node setup-android-port-forwarding.js --help   显示帮助信息');
+    console.log('\n选项:');
+    console.log('  -l, --list    列出当前端口转发规则');
+    console.log('  -c, --clear   清除所有端口转发规则');
+    console.log('  --topology-host  双模拟器联调：优先使用 ANDROID_TOPOLOGY_HOST_DEVICE_ID，未指定时退回第一个设备');
+    console.log('  -h, --help    显示帮助信息');
+    console.log('\n端口映射列表:');
+    PORTS_TO_FORWARD.forEach(port => {
+      console.log(`  ${port.host} -> ${port.device}  (${port.description})`);
+    });
+    console.log(`  host ${TOPOLOGY_HOST_FORWARD.host} -> device ${TOPOLOGY_HOST_FORWARD.device}  (${TOPOLOGY_HOST_FORWARD.description}, optional)`);
+  } else {
   // 默认执行设置
-  main().catch(error => {
-    console.error('\n✗ 发生错误:', error.message);
-    process.exit(1);
-  });
+    main().catch(error => {
+      console.error('\n✗ 发生错误:', error.message);
+      process.exit(1);
+    });
+  }
 }

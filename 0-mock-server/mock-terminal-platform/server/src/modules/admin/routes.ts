@@ -148,6 +148,7 @@ import {
   receiveTerminalLogUpload,
   requestTerminalLogUpload,
 } from '../terminal-log/service.js'
+import { TDP_ADMIN_TOKEN } from '../../shared/constants.js'
 
 export const createRouter = () => {
   const router = Router()
@@ -174,6 +175,19 @@ export const createRouter = () => {
       throw new Error('SANDBOX_ID_REQUIRED')
     }
     return sandboxId
+  }
+
+  const requireTdpAdminToken = (req: Parameters<RequestHandler>[0]) => {
+    const authorization = typeof req.headers.authorization === 'string'
+      ? req.headers.authorization.trim()
+      : ''
+    if (!authorization.startsWith('Bearer ')) {
+      throw new Error('TDP_ADMIN_TOKEN_REQUIRED')
+    }
+    const token = authorization.slice('Bearer '.length).trim()
+    if (!token || token !== TDP_ADMIN_TOKEN) {
+      throw new Error('TDP_ADMIN_TOKEN_INVALID')
+    }
   }
 
   router.get('/api/v1/admin/overview', (_req, res) => ok(res, getPlatformOverview()))
@@ -1075,16 +1089,30 @@ export const createRouter = () => {
     }
   })
   router.post('/api/v1/admin/tdp/projections/upsert', (req, res) => {
-    requireBodySandboxId(req.body)
-    const result = upsertProjection(req.body)
-    appendAuditLog({ domain: 'TDP', action: 'UPSERT_PROJECTION', targetId: `${result.topicKey}:${result.scopeType}:${result.scopeKey}:${result.itemKey}`, detail: req.body })
-    return ok(res, result)
+    try {
+      requireTdpAdminToken(req)
+      requireBodySandboxId(req.body)
+      const result = upsertProjection(req.body)
+      appendAuditLog({ domain: 'TDP', action: 'UPSERT_PROJECTION', targetId: `${result.topicKey}:${result.scopeType}:${result.scopeKey}:${result.itemKey}`, detail: req.body })
+      return ok(res, result)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'TDP upsert failed'
+      const status = message === 'TDP_ADMIN_TOKEN_REQUIRED' || message === 'TDP_ADMIN_TOKEN_INVALID' ? 401 : 400
+      return fail(res, message, status)
+    }
   })
   router.post('/api/v1/admin/tdp/projections/batch-upsert', (req, res) => {
-    requireBodySandboxId(req.body)
-    const result = upsertProjectionBatch(req.body)
-    appendAuditLog({ domain: 'TDP', action: 'BATCH_UPSERT_PROJECTION', targetId: `count:${result.total}`, detail: req.body })
-    return ok(res, result)
+    try {
+      requireTdpAdminToken(req)
+      requireBodySandboxId(req.body)
+      const result = upsertProjectionBatch(req.body)
+      appendAuditLog({ domain: 'TDP', action: 'BATCH_UPSERT_PROJECTION', targetId: `count:${result.total}`, detail: req.body })
+      return ok(res, result)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'TDP batch upsert failed'
+      const status = message === 'TDP_ADMIN_TOKEN_REQUIRED' || message === 'TDP_ADMIN_TOKEN_INVALID' ? 401 : 400
+      return fail(res, message, status)
+    }
   })
   router.get('/api/v1/admin/tdp/projections', withBadRequest((req, res) => ok(res, listProjections(requireQuerySandboxId(req.query as Record<string, unknown>)))))
   router.get('/api/v1/admin/tdp/change-logs', withBadRequest((req, res) => ok(res, listChangeLogs(requireQuerySandboxId(req.query as Record<string, unknown>)))))

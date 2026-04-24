@@ -28,11 +28,11 @@ function main() {
     throw new Error(`app is not android: ${appId}`)
   }
 
-  if (appId !== 'assembly-android-mixc-retail-rn84') {
+  if (appId !== 'assembly-android-mixc-catering-rn84') {
     throw new Error(`unsupported android app: ${appId}`)
   }
 
-  const buildGradlePath = resolveRepoPath('4-assembly/android/mixc-retail-assembly-rn84/android/app/build.gradle')
+  const buildGradlePath = resolveRepoPath('4-assembly/android/mixc-catering-assembly-rn84/android/app/build.gradle')
   const current = readText(buildGradlePath)
   let next = current
   next = replaceOne(next, /versionCode\s+\d+/, `versionCode ${manifest.buildNumber}`, 'versionCode')

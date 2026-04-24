@@ -21,7 +21,8 @@ export const createRuntimeStateSync = (stateRuntime: StateRuntime) => {
 
         for (const slice of stateRuntime.getSlices()) {
             const diff = envelope.diffBySlice[slice.name]
-            if (!diff) {
+            const hasIncomingSlice = Object.prototype.hasOwnProperty.call(envelope.diffBySlice, slice.name)
+            if (!diff && !hasIncomingSlice) {
                 continue
             }
             if (!slice.sync) {
@@ -38,9 +39,10 @@ export const createRuntimeStateSync = (stateRuntime: StateRuntime) => {
             nextSlices[slice.name] = applySliceSyncDiff(
                 slice,
                 currentSliceState as Record<string, unknown>,
-                diff as any,
+                (diff ?? []) as any,
                 {
                     mode: syncMode,
+                    replaceMissing: envelope.replaceMissing,
                 },
             )
             appliedSliceNames.push(slice.name)
@@ -49,6 +51,7 @@ export const createRuntimeStateSync = (stateRuntime: StateRuntime) => {
         console.info('[runtime-state-sync-apply]', JSON.stringify({
             direction: envelope.direction,
             incomingSliceNames,
+            replaceMissing: envelope.replaceMissing === true,
             appliedSliceNames,
             skippedSliceReasons,
         }))

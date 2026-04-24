@@ -265,7 +265,8 @@ export const projectionsTable = sqliteTable('tdp_projections', {
 })
 
 export const projectionSourceEventsTable = sqliteTable('tdp_projection_source_events', {
-  sourceEventId: text('source_event_id').primaryKey(),
+  acceptanceId: text('acceptance_id').primaryKey(),
+  sourceEventId: text('source_event_id').notNull(),
   sandboxId: text('sandbox_id').notNull(),
   topicKey: text('topic_key').notNull(),
   scopeType: text('scope_type').notNull(),
@@ -276,6 +277,8 @@ export const projectionSourceEventsTable = sqliteTable('tdp_projection_source_ev
   tdpRevision: integer('tdp_revision').notNull(),
   payloadJson: text('payload_json').notNull(),
   sourceReleaseId: text('source_release_id'),
+  occurredAt: integer('occurred_at'),
+  scopeMetadataJson: text('scope_metadata_json'),
   acceptedAt: integer('accepted_at').notNull()
 })
 
@@ -292,6 +295,8 @@ export const changeLogsTable = sqliteTable('tdp_change_logs', {
   revision: integer('revision').notNull(),
   payloadJson: text('payload_json').notNull(),
   sourceReleaseId: text('source_release_id'),
+  occurredAt: integer('occurred_at'),
+  scopeMetadataJson: text('scope_metadata_json'),
   createdAt: integer('created_at').notNull()
 })
 

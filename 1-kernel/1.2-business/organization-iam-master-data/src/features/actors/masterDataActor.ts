@@ -11,6 +11,7 @@ import {
     type TdpProjectionEnvelope,
     type TdpTopicDataChangeItem,
 } from '@impos2/kernel-base-tdp-sync-runtime-v2'
+import {tcpControlV2CommandDefinitions} from '@impos2/kernel-base-tcp-control-runtime-v2'
 import {moduleName} from '../../moduleName'
 import {decodeOrganizationIamChange} from '../../foundations/decoder'
 import {isOrganizationIamTopic, organizationIamTopicList} from '../../foundations/topics'
@@ -81,55 +82,75 @@ const applyDecodedRecords = async (
     }
 }
 
+const rebuildMasterDataFromTdp = async (
+    context: ActorExecutionContext,
+) => {
+    const next: OrganizationIamMasterDataState = {
+        byTopic: {},
+        diagnostics: [],
+        lastChangedAt: Date.now(),
+    }
+    for (const topic of organizationIamTopicList) {
+        const projections = selectTdpProjectionEntriesByTopic(context.getState(), topic)
+            .sort((left, right) => left.revision - right.revision)
+        projections.forEach(projection => {
+            const decoded = decodeOrganizationIamChange(topic, toChangeItem(projection))
+            if (decoded.record) {
+                const byItemKey = next.byTopic[topic] ?? {}
+                byItemKey[decoded.record.itemKey] = decoded.record
+                next.byTopic[topic] = byItemKey
+                return
+            }
+            next.diagnostics.unshift({
+                topic,
+                itemKey: projection.itemKey,
+                scopeType: projection.scopeType,
+                scopeId: projection.scopeId,
+                revision: projection.revision,
+                reason: decoded.error ?? 'Unknown decode failure',
+                occurredAt: Date.now(),
+            })
+        })
+    }
+    context.dispatchAction(organizationIamMasterDataActions.replaceAll(next))
+    await context.dispatchCommand(createCommand(
+        organizationIamMasterDataCommandDefinitions.organizationIamMasterDataChanged,
+        {
+            topic: '*',
+            itemKeys: [],
+            changedAt: next.lastChangedAt ?? Date.now(),
+        },
+    ))
+    return {
+        topics: organizationIamTopicList.length,
+        diagnostics: next.diagnostics.length,
+    }
+}
+
 export const createOrganizationIamMasterDataActorDefinition = (): ActorDefinition =>
     defineActor('OrganizationIamMasterDataActor', [
         onCommand(tdpSyncV2CommandDefinitions.tdpTopicDataChanged, context =>
             applyDecodedRecords(context as ActorExecutionContext, context.command.payload.topic, context.command.payload.changes),
         ),
+        onCommand(tdpSyncV2CommandDefinitions.tdpSnapshotLoaded, async context => {
+            const rebuilt = await rebuildMasterDataFromTdp(context as ActorExecutionContext)
+            return {
+                ...rebuilt,
+                reason: 'snapshot-loaded',
+            }
+        }),
         onCommand(organizationIamMasterDataCommandDefinitions.resetOrganizationIamMasterData, context => {
             context.dispatchAction(organizationIamMasterDataActions.reset())
             return {reset: true}
         }),
-        onCommand(organizationIamMasterDataCommandDefinitions.rebuildOrganizationIamMasterDataFromTdp, async context => {
-            const next: OrganizationIamMasterDataState = {
-                byTopic: {},
-                diagnostics: [],
-                lastChangedAt: Date.now(),
-            }
-            for (const topic of organizationIamTopicList) {
-                const projections = selectTdpProjectionEntriesByTopic(context.getState(), topic)
-                    .sort((left, right) => left.revision - right.revision)
-                projections.forEach(projection => {
-                    const decoded = decodeOrganizationIamChange(topic, toChangeItem(projection))
-                    if (decoded.record) {
-                        const byItemKey = next.byTopic[topic] ?? {}
-                        byItemKey[decoded.record.itemKey] = decoded.record
-                        next.byTopic[topic] = byItemKey
-                        return
-                    }
-                    next.diagnostics.unshift({
-                        topic,
-                        itemKey: projection.itemKey,
-                        scopeType: projection.scopeType,
-                        scopeId: projection.scopeId,
-                        revision: projection.revision,
-                        reason: decoded.error ?? 'Unknown decode failure',
-                        occurredAt: Date.now(),
-                    })
-                })
-            }
-            context.dispatchAction(organizationIamMasterDataActions.replaceAll(next))
-            await context.dispatchCommand(createCommand(
-                organizationIamMasterDataCommandDefinitions.organizationIamMasterDataChanged,
-                {
-                    topic: '*',
-                    itemKeys: [],
-                    changedAt: next.lastChangedAt ?? Date.now(),
-                },
-            ))
+        onCommand(tcpControlV2CommandDefinitions.resetTcpControl, context => {
+            context.dispatchAction(organizationIamMasterDataActions.reset())
             return {
-                topics: organizationIamTopicList.length,
-                diagnostics: next.diagnostics.length,
+                reset: true,
+                reason: 'tcp-control-reset',
             }
         }),
+        onCommand(organizationIamMasterDataCommandDefinitions.rebuildOrganizationIamMasterDataFromTdp, async context =>
+            rebuildMasterDataFromTdp(context as ActorExecutionContext),
+        ),
     ])

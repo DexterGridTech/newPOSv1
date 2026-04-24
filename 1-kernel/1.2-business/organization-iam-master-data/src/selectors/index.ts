@@ -5,6 +5,7 @@ import {ORGANIZATION_IAM_MASTER_DATA_STATE_KEY, getOrganizationIamRecordsByTopic
 import {organizationIamTopics} from '../foundations/topics'
 import type {
     BrandProfile,
+    BusinessEntityProfile,
     ContractProfile,
     OrganizationIamDiagnosticsEntry,
     OrganizationIamMasterDataRecord,
@@ -15,9 +16,11 @@ import type {
     ProjectProfile,
     RoleProfile,
     StoreProfile,
+    TableProfile,
     TenantProfile,
     UserProfile,
     UserRoleBindingProfile,
+    WorkstationProfile,
 } from '../types'
 
 export const selectOrganizationIamMasterDataState = (
@@ -57,11 +60,17 @@ const selectTenantRecords = createActiveRecordSelector<TenantProfile>(organizati
 const selectBrandRecords = createActiveRecordSelector<BrandProfile>(organizationIamTopics.brand)
 const selectStoreRecords = createActiveRecordSelector<StoreProfile>(organizationIamTopics.store)
 const selectContractRecords = createActiveRecordSelector<ContractProfile>(organizationIamTopics.contract)
+const selectBusinessEntityRecords = createActiveRecordSelector<BusinessEntityProfile>(organizationIamTopics.businessEntity)
+const selectTableRecords = createActiveRecordSelector<TableProfile>(organizationIamTopics.table)
+const selectWorkstationRecords = createActiveRecordSelector<WorkstationProfile>(organizationIamTopics.workstation)
 const selectPlatformProfiles = createActiveDataSelector<PlatformProfile>(organizationIamTopics.platform)
 const selectProjectProfiles = createActiveDataSelector<ProjectProfile>(organizationIamTopics.project)
 const selectTenantProfiles = createActiveDataSelector<TenantProfile>(organizationIamTopics.tenant)
 const selectBrandProfiles = createActiveDataSelector<BrandProfile>(organizationIamTopics.brand)
 const selectStoreProfiles = createActiveDataSelector<StoreProfile>(organizationIamTopics.store)
+const selectBusinessEntityProfiles = createActiveDataSelector<BusinessEntityProfile>(organizationIamTopics.businessEntity)
+const selectTableProfiles = createActiveDataSelector<TableProfile>(organizationIamTopics.table)
+const selectWorkstationProfiles = createActiveDataSelector<WorkstationProfile>(organizationIamTopics.workstation)
 const selectRoleProfiles = createActiveDataSelector<RoleProfile>(organizationIamTopics.role)
 const selectPermissionProfiles = createActiveDataSelector<PermissionProfile>(organizationIamTopics.permission)
 const selectUserProfiles = createActiveDataSelector<UserProfile>(organizationIamTopics.user)
@@ -98,6 +107,9 @@ export const selectOrganizationIamSummary: (state: RootState) => {
         tenants: Object.keys(masterData?.byTopic[organizationIamTopics.tenant] ?? {}).length,
         brands: Object.keys(masterData?.byTopic[organizationIamTopics.brand] ?? {}).length,
         stores: Object.keys(masterData?.byTopic[organizationIamTopics.store] ?? {}).length,
+        businessEntities: Object.keys(masterData?.byTopic[organizationIamTopics.businessEntity] ?? {}).length,
+        tables: Object.keys(masterData?.byTopic[organizationIamTopics.table] ?? {}).length,
+        workstations: Object.keys(masterData?.byTopic[organizationIamTopics.workstation] ?? {}).length,
         users: Object.keys(masterData?.byTopic[organizationIamTopics.user] ?? {}).length,
         roles: Object.keys(masterData?.byTopic[organizationIamTopics.role] ?? {}).length,
         diagnostics: masterData?.diagnostics.length ?? 0,
@@ -164,6 +176,21 @@ export const selectStoreEffectiveUsers: (state: RootState) => UserProfile[] = cr
         .filter(user => !store?.store_id || user.store_id === store.store_id)
 )
 
+export const selectCurrentStoreTables: (state: RootState) => TableProfile[] = createSelector(
+    [selectTableProfiles, selectCurrentStoreProfile],
+    (tables, store) => tables.filter(table => !store?.store_id || table.store_id === store.store_id),
+)
+
+export const selectCurrentStoreWorkstations: (state: RootState) => WorkstationProfile[] = createSelector(
+    [selectWorkstationProfiles, selectCurrentStoreProfile],
+    (workstations, store) => workstations.filter(workstation => !store?.store_id || workstation.store_id === store.store_id),
+)
+
+export const selectCurrentTenantBusinessEntities: (state: RootState) => BusinessEntityProfile[] = createSelector(
+    [selectBusinessEntityProfiles, selectCurrentTenantProfile],
+    (entities, tenant) => entities.filter(entity => !tenant?.tenant_id || entity.tenant_id === tenant.tenant_id),
+)
+
 export const selectStoreEffectiveRoles: (state: RootState) => RoleProfile[] = createSelector(
     [selectRoleProfiles],
     roles => roles,
@@ -205,6 +232,10 @@ export const selectIamReadinessSummary: (state: RootState) => {
 const nodeTitle = (value: Record<string, unknown>, fallback: string) =>
     String(value.platform_name ?? value.project_name ?? value.tenant_name ?? value.brand_name ?? value.store_name ?? fallback)
 
+const createTreeNode = (
+    node: OrganizationTreeNode,
+): OrganizationTreeNode => node
+
 export const selectOrganizationTree: (state: RootState) => OrganizationTreeNode[] = createSelector(
     [
         selectPlatformProfiles,
@@ -212,43 +243,74 @@ export const selectOrganizationTree: (state: RootState) => OrganizationTreeNode[
         selectTenantProfiles,
         selectBrandProfiles,
         selectStoreProfiles,
+        selectCurrentTenantBusinessEntities,
+        selectCurrentStoreTables,
+        selectCurrentStoreWorkstations,
     ],
-    (platforms, projects, tenants, brands, stores): OrganizationTreeNode[] => platforms.map(platform => ({
+    (platforms, projects, tenants, brands, stores, entities, tables, workstations): OrganizationTreeNode[] => platforms.map(platform => createTreeNode({
         id: platform.platform_id,
         type: 'platform',
         title: nodeTitle(platform, platform.platform_id),
         status: platform.status,
         children: projects
             .filter(project => !project.platform_id || project.platform_id === platform.platform_id)
-            .map(project => ({
+            .map(project => createTreeNode({
                 id: project.project_id,
                 type: 'project',
                 title: nodeTitle(project, project.project_id),
                 status: project.status,
                 children: tenants
                     .filter(tenant => !tenant.platform_id || tenant.platform_id === platform.platform_id)
-                    .map(tenant => ({
+                    .map(tenant => createTreeNode({
                         id: tenant.tenant_id,
                         type: 'tenant',
                         title: nodeTitle(tenant, tenant.tenant_id),
                         status: tenant.status,
                         children: brands
                             .filter(brand => brand.tenant_id === tenant.tenant_id)
-                            .map(brand => ({
+                            .map(brand => createTreeNode({
                                 id: brand.brand_id,
                                 type: 'brand',
                                 title: nodeTitle(brand, brand.brand_id),
                                 status: brand.status,
                                 children: stores
                                     .filter(store => store.brand_id === brand.brand_id && store.project_id === project.project_id)
-                                    .map(store => ({
+                                    .map(store => createTreeNode({
                                         id: store.store_id,
                                         type: 'store',
                                         title: nodeTitle(store, store.store_id),
                                         status: store.status,
-                                        children: [],
+                                        children: [
+                                            ...tables
+                                                .filter(table => table.store_id === store.store_id)
+                                                .map(table => createTreeNode({
+                                                    id: table.table_id,
+                                                    type: 'table',
+                                                    title: String(table.table_no ?? table.table_id),
+                                                    status: table.table_status,
+                                                    children: [],
+                                                })),
+                                            ...workstations
+                                                .filter(workstation => workstation.store_id === store.store_id)
+                                                .map(workstation => createTreeNode({
+                                                    id: workstation.workstation_id,
+                                                    type: 'workstation',
+                                                    title: String(workstation.workstation_name ?? workstation.workstation_code ?? workstation.workstation_id),
+                                                    status: workstation.status,
+                                                    children: [],
+                                                })),
+                                        ],
                                     })),
-                            })),
+                            }))
+                            .concat(entities
+                                .filter(entity => entity.tenant_id === tenant.tenant_id)
+                                .map(entity => createTreeNode({
+                                    id: entity.entity_id,
+                                    type: 'business-entity',
+                                    title: String(entity.entity_name ?? entity.entity_code ?? entity.entity_id),
+                                    status: entity.status,
+                                    children: [],
+                                }))),
                     })),
             })),
     })),

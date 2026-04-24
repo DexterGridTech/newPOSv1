@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FAF7F1">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="64dp"
+        android:paddingTop="48dp"
+        android:paddingRight="64dp"
+        android:paddingBottom="48dp">
+
+        <LinearLayout
+            android:id="@+id/startup_logo_group"
+            android:layout_width="520dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:importantForAccessibility="no"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/startup_the_mixc_logo"
+                android:layout_width="520dp"
+                android:layout_height="298dp"
+                android:adjustViewBounds="true"
+                android:contentDescription="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/startup_the_mixc_logo" />
+
+            <FrameLayout
+                android:layout_width="160dp"
+                android:layout_height="3dp"
+                android:layout_marginTop="20dp"
+                android:background="#ECE1D3">
+
+                <View
+                    android:id="@+id/startup_accent_line"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#F08300"
+                    android:transformPivotX="0dp" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/startup_status_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="0.08"
+                android:text="正在启动设备服务"
+                android:textColor="#75675E"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+    </FrameLayout>
+</FrameLayout>

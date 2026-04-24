@@ -35,6 +35,7 @@ import {
     selectTdpHotUpdateState,
     selectTdpCommandInboxState,
     selectTdpProjectionByTopicAndBucket,
+    selectTdpProjectionState,
     selectTdpResolvedProjection,
     selectTdpResolvedProjectionByTopic,
     selectTdpSessionState,
@@ -1072,6 +1073,92 @@ describe('tdp-sync-runtime-v2', () => {
             error: {
                 key: 'kernel.base.tdp-sync-runtime-v2.credential_missing',
             },
+        })
+    })
+
+    it('clears TDP cursor and retained projection repository when tcp control resets for rebind', async () => {
+        const stateStorage = createMemoryStorage()
+        const secureStateStorage = createMemoryStorage()
+        const socketRuntimeSpy = createSocketRuntimeSpy()
+        const runtime = createRuntime({
+            localNodeId: 'node_tdp_v2_reset_rebind',
+            stateStorage,
+            secureStateStorage,
+            socketRuntimeSpy,
+            autoConnectOnActivation: true,
+        })
+
+        await runtime.start()
+        await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.bootstrapTcpControl, {
+            deviceInfo: {
+                id: 'device-reset-rebind-001',
+                model: 'Mock POS',
+            },
+        }))
+        await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.activateTerminal, {
+            sandboxId: 'sandbox-test-001',
+            activationCode: 'ACT-TDP-V2-RESET-REBIND-001',
+            deviceFingerprint: 'device-reset-rebind-001',
+            deviceInfo: {
+                id: 'device-reset-rebind-001',
+                model: 'Mock POS',
+            },
+        }))
+        await runtime.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.tdpSessionReady, {
+            sessionId: 'session-reset-rebind-001',
+            nodeId: 'mock-tdp-node-reset-rebind',
+            nodeState: 'healthy',
+            highWatermark: 9,
+            syncMode: 'incremental',
+            alternativeEndpoints: [],
+        }))
+        await runtime.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.tdpSnapshotLoaded, {
+            highWatermark: 9,
+            snapshot: [{
+                topic: 'config.delta',
+                itemKey: 'cfg-reset-rebind-001',
+                operation: 'upsert',
+                scopeType: 'TERMINAL',
+                scopeId: 'terminal-test-001',
+                revision: 9,
+                payload: {version: 'before-reset'},
+                occurredAt: '2026-04-24T00:00:00.000Z',
+            }],
+        }))
+
+        expect(selectTdpSyncState(runtime.getState())).toMatchObject({
+            lastCursor: 9,
+            lastAppliedCursor: 9,
+        })
+        expect(selectTdpProjectionByTopicAndBucket(runtime.getState(), {
+            topic: 'config.delta',
+            scopeType: 'TERMINAL',
+            scopeId: 'terminal-test-001',
+            itemKey: 'cfg-reset-rebind-001',
+        })?.payload.version).toBe('before-reset')
+        expect(selectTdpResolvedProjectionByTopic(runtime.getState(), 'config.delta')).toMatchObject({
+            'cfg-reset-rebind-001': {
+                payload: {version: 'before-reset'},
+            },
+        })
+
+        await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.resetTcpControl, {}))
+
+        expect(selectTdpSessionState(runtime.getState())?.status).toBe('IDLE')
+        expect(selectTdpSyncState(runtime.getState())).toMatchObject({
+            snapshotStatus: 'idle',
+            changesStatus: 'idle',
+            lastCursor: undefined,
+            lastDeliveredCursor: undefined,
+            lastAckedCursor: undefined,
+            lastAppliedCursor: undefined,
+        })
+        expect(selectTdpProjectionState(runtime.getState())).toEqual({})
+        expect(selectTdpResolvedProjectionByTopic(runtime.getState(), 'config.delta')).toEqual({})
+        expect(selectTdpCommandInboxState(runtime.getState())?.orderedIds ?? []).toEqual([])
+        expect(socketRuntimeSpy.disconnects).toContainEqual({
+            profileName: 'kernel.base.tdp-sync-runtime-v2.test.socket',
+            reason: 'command-disconnect',
         })
     })
 

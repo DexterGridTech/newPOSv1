@@ -101,12 +101,36 @@ export const applySliceSyncDiff = <TState extends Record<string, unknown>>(
         ) as Record<string, SyncValueEnvelope | undefined>
 
     if (descriptor.sync.applyEntries) {
+        if (options.mode === 'authoritative' && options.replaceMissing === true) {
+            const authoritativeEntries = descriptor.sync.getEntries?.(state) ?? state
+            const authoritativeRecord = authoritativeEntries as Record<string, SyncValueEnvelope | undefined>
+            const mergedIncoming: Record<string, SyncValueEnvelope | undefined> = {
+                ...incoming,
+            }
+            Object.keys(authoritativeRecord).forEach(key => {
+                if (!Object.prototype.hasOwnProperty.call(mergedIncoming, key)) {
+                    const current = authoritativeRecord[key]
+                    if (!current) {
+                        return
+                    }
+                    mergedIncoming[key] = createSyncTombstone(current.updatedAt)
+                }
+            })
+            return descriptor.sync.applyEntries(state, mergedIncoming) as TState
+        }
         return descriptor.sync.applyEntries(state, incoming) as TState
     }
 
     if (options.mode === 'authoritative') {
         const next: SyncRecordState = {
             ...state as SyncRecordState,
+        }
+        if (options.replaceMissing === true) {
+            Object.keys(next).forEach(key => {
+                if (!Object.prototype.hasOwnProperty.call(incoming, key)) {
+                    delete next[key]
+                }
+            })
         }
         for (const [key, incomingValue] of Object.entries(incoming)) {
             if (!incomingValue) {

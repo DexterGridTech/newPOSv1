@@ -1,0 +1,96 @@
+import {
+    createRuntimeReactHarness,
+    renderWithAutomation,
+    renderWithStore,
+    type RuntimeReactHarness,
+} from '../../../../2.1-base/runtime-react/test/support/runtimeReactHarness'
+import {createFileStoragePair} from '../../../../../1-kernel/test-support/storageHarness'
+import {
+    createLivePlatform,
+    createFetchTransport,
+    waitFor,
+    fetchJson,
+} from '../../../../../1-kernel/1.1-base/tcp-control-runtime-v2/test/helpers/liveHarness'
+import {
+    kernelBaseTestServerConfig,
+    SERVER_NAME_MOCK_TERMINAL_PLATFORM,
+} from '../../../../../1-kernel/server-config-v2/src'
+import {resolveTransportServers} from '../../../../../1-kernel/test-support/serverConfig'
+import {createHttpRuntime} from '../../../../../1-kernel/1.1-base/transport-runtime/src'
+import {createTcpControlRuntimeModuleV2} from '../../../../../1-kernel/1.1-base/tcp-control-runtime-v2/src'
+import {createTdpSyncRuntimeModuleV2} from '../../../../../1-kernel/1.1-base/tdp-sync-runtime-v2/src'
+import {createModule as createTerminalConsoleModule} from '../../../../2.1-base/terminal-console/src'
+import {createModule as createAdminConsoleModule} from '../../../../2.1-base/admin-console/src'
+import {createModule as createInputRuntimeModule} from '../../../../2.1-base/input-runtime/src'
+import {createOrganizationIamMasterDataModule} from '../../../../../1-kernel/1.2-business/organization-iam-master-data/src'
+import {createCateringProductMasterDataModule} from '../../../../../1-kernel/1.2-business/catering-product-master-data/src'
+import {createCateringStoreOperatingMasterDataModule} from '../../../../../1-kernel/1.2-business/catering-store-operating-master-data/src'
+import {createModule as createCateringMasterDataWorkbenchModule} from '../../../../2.2-business/catering-master-data-workbench/src'
+import {createModule as createCateringShellModule} from '../../src'
+
+export interface CateringShellLiveHarness extends RuntimeReactHarness {
+    platform: Awaited<ReturnType<typeof createLivePlatform>>
+    storagePair: ReturnType<typeof createFileStoragePair>
+    cleanup(): Promise<void>
+}
+
+export const createCateringShellLiveHarness = async (): Promise<CateringShellLiveHarness> => {
+    const platform = await createLivePlatform()
+    const storagePair = createFileStoragePair('catering-shell-live')
+
+    const harness = await createRuntimeReactHarness({
+        modules: [
+            createTcpControlRuntimeModuleV2({
+                assembly: {
+                    createHttpRuntime(context) {
+                        return createHttpRuntime({
+                            logger: context.platformPorts.logger.scope({
+                                moduleName: 'ui.integration.catering-shell.live-test',
+                                subsystem: 'transport.http',
+                            }),
+                            transport: createFetchTransport(),
+                            servers: resolveTransportServers(kernelBaseTestServerConfig, {
+                                baseUrlOverrides: {
+                                    [SERVER_NAME_MOCK_TERMINAL_PLATFORM]: platform.baseUrl,
+                                },
+                            }),
+                        })
+                    },
+                },
+            }),
+            createTdpSyncRuntimeModuleV2(),
+            createInputRuntimeModule(),
+            createAdminConsoleModule(),
+            createTerminalConsoleModule(),
+            createOrganizationIamMasterDataModule(),
+            createCateringProductMasterDataModule(),
+            createCateringStoreOperatingMasterDataModule(),
+            createCateringMasterDataWorkbenchModule(),
+            createCateringShellModule(),
+        ],
+        platformPorts: {
+            stateStorage: storagePair.stateStorage.storage,
+            secureStateStorage: storagePair.secureStateStorage.storage,
+            device: {
+                async getDeviceId() {
+                    return 'DEVICE-LIVE-001'
+                },
+                async getPlatform() {
+                    return 'test'
+                },
+            },
+        },
+    })
+
+    return {
+        ...harness,
+        platform,
+        storagePair,
+        async cleanup() {
+            storagePair.cleanup()
+            await platform.close()
+        },
+    }
+}
+
+export {renderWithStore, renderWithAutomation, waitFor, fetchJson}

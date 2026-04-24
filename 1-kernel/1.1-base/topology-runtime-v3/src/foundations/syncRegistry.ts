@@ -138,6 +138,7 @@ export const createTopologyV3StateDiffEnvelopeFromSnapshot = (input: {
     diffBySlice: Object.fromEntries(
         input.message.entries.map(entry => [entry.sliceName, entry.payload]),
     ),
+    replaceMissing: true,
     sentAt: input.message.sentAt as any,
 })
 

@@ -31,6 +31,11 @@ This design is derived from:
 6. `/Users/dexter/Documents/workspace/idea/requirement-doc/design-v3/1.业务分析与领域设计/04-终端体系域设计（TDP+TCP）.md`
 7. `/Users/dexter/Documents/workspace/idea/requirement-doc/design-v3/1.业务分析与领域设计/05-商品与门店经营域.md`
 8. `/Users/dexter/Documents/workspace/idea/requirement-doc/design-v3/1.业务分析与领域设计/13-设计红线与数据一致性保障.md`
+9. `/Users/dexter/Documents/workspace/idea/requirement-doc/design-v3/4.后台服务全面设计/02-organization-service服务设计.md`
+10. `/Users/dexter/Documents/workspace/idea/requirement-doc/design-v3/4.后台服务全面设计/03-iam-service服务设计.md`
+11. `/Users/dexter/Documents/workspace/idea/requirement-doc/design-v3/4.后台服务全面设计/04-product-service服务设计.md`
+12. `/Users/dexter/Documents/workspace/idea/requirement-doc/design-v3/4.后台服务全面设计/11-tdp-service服务设计.md`
+13. `/Users/dexter/Documents/workspace/idea/requirement-doc/design-v3/4.后台服务全面设计/13-接口设计规范.md`
 
 ## 3. Scope
 
@@ -89,6 +94,12 @@ The console must still reserve real boundaries for:
    Every business page can expose raw aggregate, revision, outbox, TDP
    projection, and terminal observation for debugging, but those are secondary
    tools.
+6. Backend API fidelity.
+   The mock console server exposes management APIs that are shaped like the
+   real backend service APIs in `design-v3/4.后台服务全面设计`: URL namespace,
+   HTTP method semantics, idempotency headers, pagination, response envelope,
+   and business error-code style should be preserved where the in-scope master
+   data flow overlaps the real services.
 
 ## 5. System Boundary
 
@@ -201,6 +212,25 @@ This module covers `UC-01-007` to `UC-01-017`, `UC-01-020` to `UC-01-026`.
 4. Contract is the only truth source for current store tenant/brand ownership.
 5. Store retains contract snapshot fields for query performance only.
 
+### Region Value Contract
+
+Region is intentionally not a terminal entity and not an independent terminal
+scope. In this console, region management pages maintain allowed region values,
+while `Project` stores the selected region value directly:
+
+```ts
+export interface ProjectRegionValue {
+    region_code: string
+    region_name: string
+    parent_region_code?: string | null
+    region_level?: number | null
+}
+```
+
+When a project's region value changes, the console increments the `Project`
+revision and republishes `org.project.profile`. There is no separate
+`org.region.*` topic.
+
 ### Required Behaviors
 
 1. Store creation does not directly bind tenant or brand.
@@ -211,6 +241,22 @@ This module covers `UC-01-007` to `UC-01-017`, `UC-01-020` to `UC-01-026`.
 6. Brand lifecycle restricts new contract creation and menu availability.
 7. Organization tree filters by management context but uses the same canonical
    entities as the write model.
+
+### Contract Snapshot Consistency
+
+Store contract snapshot fields are:
+
+1. `active_contract_id`
+2. `tenant_id`
+3. `brand_id`
+4. `entity_id`
+
+The contract lifecycle job updates contract status and store snapshot fields in
+one database transaction. If any part of the transaction fails, neither the
+contract status nor the store snapshot changes. After commit, the console emits
+`ContractActivated`, `ContractExpired`, or `ContractTerminated` plus a
+`StoreContractSnapshotUpdated` event, and then enqueues both
+`org.contract.active` and `org.store.profile` projections.
 
 ### Terminal-Relevant Entities
 
@@ -244,6 +290,22 @@ This module covers `UC-01-018` and `UC-01-019`.
 3. Workstation type and category responsibility are explicit.
 4. Workstation payload is available to the terminal workbench because later KDS
    and production flows will consume the same master data.
+
+### Table And Workstation State Notes
+
+Table states follow the organization-domain design and are rendered explicitly
+in the admin and terminal workbench:
+
+1. `AVAILABLE`
+2. `OCCUPIED`
+3. `RESERVED`
+4. `CLEANING`
+5. `DISABLED`
+
+This module specifically corresponds to:
+
+1. `UC-01-018` 管理桌台
+2. `UC-01-019` 管理工作站
 
 ## 7.4 用户与权限
 
@@ -305,6 +367,21 @@ domain model.
 4. Terminal workbench shows both source role definitions and store-effective
    user-binding resolution.
 
+### Store-Effective IAM Projection Keys
+
+`iam.user.store-effective` and `iam.user-role-binding.store-effective` are
+store-scoped topics. They use:
+
+1. `scope_type = STORE`
+2. `scope_key = store_id`
+3. `item_key = user_id` for `iam.user.store-effective`
+4. `item_key = binding_id` for `iam.user-role-binding.store-effective`
+
+This is safe because each store terminal only receives records whose
+`scope_key` matches its activated store. A multi-store employee therefore
+appears as separate store-effective user projections at different store scopes,
+without colliding on a single terminal.
+
 ## 7.5 餐饮商品
 
 This module covers `UC-03-001` to `UC-03-006` and `UC-03-018` to `UC-03-019`.
@@ -360,6 +437,34 @@ This module covers `UC-03-007`, `UC-03-008`, `UC-03-009`, and `UC-03-021`.
    treat `menu.catalog` as the effective truth and expose the source/effective
    drift in diagnostics.
 
+### Brand Menu Review State Machine
+
+The brand menu review workflow is not cosmetic. It follows an explicit product
+state model:
+
+1. `status`: `DRAFT | ACTIVE | INACTIVE`
+2. `review_status`: `NONE | PENDING_REVIEW | APPROVED | REJECTED`
+
+Main transitions:
+
+1. New menu starts as `status=DRAFT`, `review_status=NONE`.
+2. Submit review:
+   `review_status: NONE | REJECTED -> PENDING_REVIEW`
+3. Approve review:
+   `review_status: PENDING_REVIEW -> APPROVED`
+4. Reject review:
+   `review_status: PENDING_REVIEW -> REJECTED`
+5. Publish to stores:
+   allowed only when `review_status=APPROVED`; publishing activates the
+   resulting menu version flow and store menu updates.
+
+The review workbench must therefore show:
+
+1. waiting menus
+2. approval and rejection actions
+3. rejection reason
+4. resubmission path
+
 ## 7.7 门店经营
 
 This module covers `UC-03-010` to `UC-03-017` and `UC-03-020`.
@@ -391,6 +496,58 @@ This module covers `UC-03-010` to `UC-03-017` and `UC-03-020`.
 7. `StockReservation` is not a main admin workflow; it is shown as runtime
    diagnostic state because its real source is upstream order/reservation
    events.
+
+### Rule Resolution Priorities
+
+This module follows the domain-design truth chains instead of inventing local
+heuristics.
+
+Price resolution priority:
+
+1. `MenuProduct.override_price`
+2. `PriceRule` by specificity:
+   `channel + time_slot + member_level`
+   `channel + member_level`
+   `time_slot + member_level`
+   `member_level`
+   `channel + time_slot`
+   `channel`
+   `time_slot`
+   `global`
+3. `BrandMenuProduct.standard_price`
+4. `Product.base_price`
+
+When multiple rules exist at the same specificity, the smallest numeric
+`priority` wins.
+
+Availability resolution order:
+
+1. store operating status
+2. operating hours and special operating day override
+3. menu inclusion
+4. product lifecycle state
+5. `AvailabilityRule` in domain order:
+   `MANUAL`
+   `CHANNEL`
+   `TIME_SLOT`
+   combo availability checks
+   stock and quota checks
+
+Special operating days override normal operating hours for the target date.
+Extra-charge rules are additive unless a future business rule explicitly marks a
+rule family as mutually exclusive.
+
+### StockReservation Boundary
+
+`StockReservation` exists in the write model because it is a real aggregate in
+the domain, but in this round it is not created from the main admin workflows.
+
+Current policy:
+
+1. admin UI exposes it as read-only diagnostics
+2. mock data may come from a future order simulator or manual diagnostics seed
+3. no operator-facing "create stock reservation" business page is added to the
+   main navigation
 
 ## 7.8 投影与联调
 
@@ -487,6 +644,56 @@ model. The target server must add explicit write-model tables grouped by domain.
 3. `projection_delivery_diagnostics`
 4. `terminal_observation_snapshots`
 
+## 8.6 Backend API Contract Alignment
+
+The server side of `mock-admin-mall-tenant-console` must not expose arbitrary
+test-only endpoints as the primary integration contract. For in-scope master
+data workflows, routes should follow the backend service design in
+`design-v3/4.后台服务全面设计`.
+
+### API Shape Rules
+
+1. Organization APIs follow `/api/v1/org/*` where the organization-service
+   design defines the resource.
+2. IAM APIs follow the IAM service design for users, roles, role bindings,
+   permission tests, audit reads, and reserved auth boundaries.
+3. Catering product, menu, store config, sold-out, availability, and inventory
+   APIs follow the product-service design where the route overlaps this round.
+4. TDP publishing/diagnostics APIs may keep mock-platform-specific adapters
+   internally, but the admin-facing publisher contract must preserve the
+   production concepts from the TDP service: topic, message/projection type,
+   retained state, subscriber/terminal observation, publish result, and
+   delivery diagnostics.
+5. POST create or workflow-action APIs use `Idempotency-Key` when the backend
+   service design marks them idempotent.
+6. List APIs support `page`, `size`, `sort`, filtering, and the documented
+   paginated response shape.
+7. Responses use a unified response envelope compatible with
+   `13-接口设计规范`. If a service document uses a service-specific example such
+   as `code = "SUCCESS"` or `code = "0"`, the mock records that as an API
+   compatibility note and keeps client parsing tolerant without inventing a
+   new mock-only format.
+8. Mock-only diagnostics routes are allowed only under an explicit diagnostics
+   namespace, and they must not replace the production-shaped workflow APIs.
+
+### In-Scope Service Surface
+
+The mock console implements the in-scope subset of:
+
+1. `organization-service`: sandbox, platform, ISV credential masking,
+   project, tenant, brand, store, contract, organization tree, legal entity,
+   table, and workstation management.
+2. `iam-service`: reserved auth routes, user management, role management,
+   user-role binding, effective permission query, permission test, and audit
+   diagnostics.
+3. `product-service`: product/category/variant/modifier/combo,
+   production profile, menu, store menu, store config, sold-out, price rules,
+   availability rules, saleable inventory, and snapshot/stock diagnostics
+   relevant to this round.
+4. `tdp-service`: publish, retained projection inspection, subscriber/terminal
+   observation, replay, retry, and delivery diagnostics as local equivalents
+   mapped onto `mock-terminal-platform`.
+
 ## 9. Event And Outbox Design
 
 Every business mutation emits a business event and at least one outbox row.
@@ -523,11 +730,131 @@ Publisher guarantees:
 2. Older `source_revision` must never overwrite newer retained state.
 3. Duplicate deliveries may happen, but stale state must not win.
 
+Replay and rebuild paths use a deterministic replay event id derived from:
+
+1. `topic_key`
+2. `scope_type`
+3. `scope_key`
+4. `item_key`
+5. `source_revision`
+
+This keeps rebuild idempotent even when the original business event is not part
+of the local outbox being reconstructed.
+
 ### 9.3 Publisher Authentication
 
 The publisher uses a configured static server-to-server token such as
 `MOCK_TERMINAL_PLATFORM_ADMIN_TOKEN` even in local mock mode, so the boundary is
-already production-shaped.
+already production-shaped. The token is injected through environment variables
+or local runtime config. In mock mode, `mock-terminal-platform` only needs simple
+Bearer verification; it does not need a full OAuth flow.
+
+### 9.4 Projection Eligibility And Sensitivity Policy
+
+Not every write-model field is terminal-distributable. The professional rule is
+that TDP carries explicit terminal projection views, not raw aggregate dumps.
+
+Each aggregate or sub-document must be classified along two axes:
+
+1. `projection_policy`
+2. `sensitivity_level`
+
+Recommended values:
+
+```ts
+type ProjectionPolicy =
+    | 'TERMINAL_DIRECT'
+    | 'TERMINAL_DERIVED'
+    | 'ADMIN_ONLY'
+    | 'SERVER_INTERNAL'
+    | 'NEVER_DISTRIBUTE'
+
+type SensitivityLevel =
+    | 'PUBLIC_BUSINESS'
+    | 'INTERNAL_OPERATIONAL'
+    | 'CONFIDENTIAL'
+    | 'SECRET'
+```
+
+Operational meaning:
+
+1. `TERMINAL_DIRECT`
+   The field or view may appear directly in terminal TDP payloads.
+2. `TERMINAL_DERIVED`
+   The source field itself must not be projected, but a terminal-safe derived
+   view may be published if the terminal needs it.
+3. `ADMIN_ONLY`
+   Visible in admin read models only, never in TDP payloads.
+4. `SERVER_INTERNAL`
+   Used by services, jobs, and diagnostics only.
+5. `NEVER_DISTRIBUTE`
+   Must not leave the protected server-side write model except encrypted at
+   rest or masked admin display.
+
+### 9.5 Allowlist Projection Rule
+
+Projection building is allowlist-based, not denylist-based.
+
+Rules:
+
+1. Raw aggregates are never serialized straight into TDP.
+2. Every TDP topic has an explicit projection DTO contract.
+3. Only fields listed in that DTO contract may enter TDP.
+4. Sensitive fields are excluded by default even if they sit under a
+   terminal-relevant aggregate.
+5. When terminal only needs a boolean, status, or timestamp, publish the
+   derived safe view instead of the secret source field.
+
+### 9.6 Typical Classification Examples
+
+Examples in this slice:
+
+1. `Platform.isv_config.app_key`
+   `projection_policy = NEVER_DISTRIBUTE`
+   `sensitivity_level = SECRET`
+2. `Platform.isv_config.app_secret`
+   `projection_policy = NEVER_DISTRIBUTE`
+   `sensitivity_level = SECRET`
+3. `Platform.isv_config.isv_token`
+   `projection_policy = NEVER_DISTRIBUTE`
+   `sensitivity_level = SECRET`
+4. `Platform.isv_config.token_expire_at`
+   `projection_policy = ADMIN_ONLY`
+   `sensitivity_level = CONFIDENTIAL`
+5. `Platform.isv_config.channel_status`
+   `projection_policy = TERMINAL_DERIVED` only if the terminal truly needs an
+   operational flag such as "channel ordering disabled"; otherwise `ADMIN_ONLY`
+6. `User.password_hash`
+   `projection_policy = NEVER_DISTRIBUTE`
+   `sensitivity_level = SECRET`
+7. `BusinessEntity.bank_account`
+   `projection_policy = NEVER_DISTRIBUTE`
+   `sensitivity_level = SECRET`
+8. `BusinessEntity.tax_profile`
+   `projection_policy = ADMIN_ONLY` unless a later terminal flow has an
+   explicit need
+9. `Store.store_name`
+   `projection_policy = TERMINAL_DIRECT`
+   `sensitivity_level = PUBLIC_BUSINESS`
+10. `Product.production_profile`
+   `projection_policy = TERMINAL_DIRECT`
+   `sensitivity_level = INTERNAL_OPERATIONAL`
+
+### 9.7 Topic Design Consequence
+
+This policy means:
+
+1. Some aggregates are terminal-relevant only in part.
+2. Some admin aggregates produce no terminal projection at all.
+3. The existence of a write-model table does not imply the existence of a TDP
+   topic.
+4. A topic should be named after the terminal-safe business view it carries,
+   not after the full secret-bearing server aggregate.
+
+For example, the console may fully manage `Platform.isv_config`, but there is no
+`org.platform.isv-config` terminal topic. If a future terminal flow needs a
+channel-operability signal, the correct output is a derived safe projection such
+as `channel.operability.status`, not the raw ISV credential object.
 
 ## 10. TDP Topic And Scope Contract
 
@@ -560,6 +887,15 @@ Implications:
 3. Terminal packages listen to both because they consume the resolved scope
    stream, not a single hardcoded scope bucket.
 4. A single source product revision must not be copied to both scopes.
+5. Brand-to-store product synchronization does not mean blind duplication of a
+   brand product revision into store scope.
+6. If a store simply inherits a brand product without local override, the
+   terminal receives the `BRAND` scoped source through the scope chain.
+7. If a store creates a local override or local inherited copy as a distinct
+   store-owned fact, that resulting store product publishes as its own
+   `STORE` scoped record with its own revision lineage.
+8. In other words, dual scope is intentional, but "same source revision dual
+   write" is forbidden.
 
 ### 10.3 Effective Menu Clarification
 
@@ -682,6 +1018,26 @@ Each entity detail offers:
 4. `投影信息`
 5. `原始数据`
 
+### 12.3.1 Tab Data Sources
+
+The workbench intentionally mixes derived business state with projection
+diagnostics, but each tab has one clear source:
+
+1. `结构化详情`
+   Reads from typed kernel package state and selectors.
+2. `关联关系`
+   Reads from typed kernel selectors and cross-package derived indexes.
+3. `状态机`
+   Reads from typed kernel state plus package-level domain metadata.
+4. `投影信息`
+   Reads from TDP retained projection metadata exposed by sync runtime.
+5. `原始数据`
+   Reads from the retained TDP payload for the selected topic item, not from
+   reconstructed UI view models.
+
+This keeps business UI stable while still allowing operators to inspect the raw
+wire payload that produced the state.
+
 ### 12.4 Domain Sections
 
 1. `组织`
@@ -797,4 +1153,3 @@ following:
    needs traceability.
 3. We intentionally avoid simplifying Region into a terminal entity, while
    still preserving it as a management construct in the admin console.
-

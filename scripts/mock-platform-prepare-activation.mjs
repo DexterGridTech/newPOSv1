@@ -141,6 +141,7 @@ function parseArgs(argv) {
   const options = {
     baseUrl: process.env.MOCK_TERMINAL_PLATFORM_BASE_URL?.trim() || resolveDefaultMockTerminalPlatformBaseUrl(),
     sandboxId: '',
+    storeId: '',
     count: 1,
   }
 
@@ -152,6 +153,9 @@ function parseArgs(argv) {
         break
       case '--sandbox-id':
         options.sandboxId = argv[++index] ?? ''
+        break
+      case '--store-id':
+        options.storeId = argv[++index] ?? ''
         break
       case '--count':
         options.count = Number(argv[++index] ?? 1)
@@ -207,18 +211,19 @@ async function listActivationCodes(baseUrl, sandboxId) {
   return payload.data
 }
 
-async function createActivationCodes(baseUrl, sandboxId, count) {
+async function createActivationCodes(baseUrl, sandboxId, count, storeId = '') {
   return await requestJson(baseUrl, '/api/v1/admin/activation-codes/batch', {
     method: 'POST',
     body: JSON.stringify({
       sandboxId,
       count,
+      ...(storeId ? {storeId} : {}),
     }),
   })
 }
 
-function selectAvailableActivationCode(codes) {
-  return codes.find(item => item?.status === 'AVAILABLE') ?? null
+function selectAvailableActivationCode(codes, storeId = '') {
+  return codes.find(item => item?.status === 'AVAILABLE' && (!storeId || item?.storeId === storeId || item?.store_id === storeId)) ?? null
 }
 
 export async function prepareActivation(options) {
@@ -246,14 +251,15 @@ export async function prepareActivation(options) {
   }
 
   let codes = await listActivationCodes(baseUrl, sandboxId)
-  let activation = selectAvailableActivationCode(codes)
+  const storeId = options.storeId?.trim() ?? ''
+  let activation = selectAvailableActivationCode(codes, storeId)
   let created = false
 
   if (!activation) {
-    await createActivationCodes(baseUrl, sandboxId, Math.max(1, options.count || 1))
+    await createActivationCodes(baseUrl, sandboxId, Math.max(1, options.count || 1), storeId)
     created = true
     codes = await listActivationCodes(baseUrl, sandboxId)
-    activation = selectAvailableActivationCode(codes)
+    activation = selectAvailableActivationCode(codes, storeId)
   }
 
   if (!activation) {
@@ -263,6 +269,7 @@ export async function prepareActivation(options) {
   return {
     baseUrl,
     sandboxId,
+    storeId: activation.storeId ?? activation.store_id ?? storeId,
     activationCode: activation.code,
     created,
     preparedKernelSandbox,

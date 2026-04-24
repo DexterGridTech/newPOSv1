@@ -9,6 +9,9 @@ import {
     selectCurrentBrandProfile,
     selectCurrentProjectProfile,
     selectCurrentStoreProfile,
+    selectCurrentStoreTables,
+    selectCurrentStoreWorkstations,
+    selectCurrentTenantBusinessEntities,
     selectCurrentTenantProfile,
     selectIamReadinessSummary,
     selectOrganizationIamAllRecords,
@@ -26,9 +29,11 @@ import {
     selectCateringProductDisplayModel,
     selectCateringProductSummary,
     selectCurrentStoreEffectiveMenu,
+    selectLatestCateringProduct,
 } from '@impos2/kernel-business-catering-product-master-data'
 import {
     selectCateringStoreOperatingDiagnostics,
+    selectCurrentStoreConfig,
     selectCateringStoreOperatingSummary,
     selectOperationDashboardModel,
     selectStoreOperatingStatus,
@@ -157,6 +162,8 @@ const OrganizationDomain: React.FC<{state: ReturnType<typeof useWorkbenchState>}
         <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 12}}>
             <MetricCard label="项目" value={state.organizationSummary.projects} tone="blue" />
             <MetricCard label="门店" value={state.organizationSummary.stores} tone="green" />
+            <MetricCard label="桌台" value={state.tables.length} tone="amber" />
+            <MetricCard label="工作站" value={state.workstations.length} tone="slate" />
             <MetricCard label="员工" value={state.organizationSummary.users} tone="slate" />
             <MetricCard label="角色" value={state.organizationSummary.roles} tone="amber" />
         </View>
@@ -167,6 +174,11 @@ const OrganizationDomain: React.FC<{state: ReturnType<typeof useWorkbenchState>}
             <DataRow label="品牌" value={state.brand?.brand_name ?? state.brand?.brand_id} />
             <DataRow label="门店" value={state.store?.store_name ?? state.store?.store_id} />
             <DataRow label="合同" value={state.contract?.contract_code ?? state.contract?.contract_id} />
+        </Section>
+        <Section title="法人主体 / 桌台 / 工作站" subtitle="UC-01 门店设施已纳入 terminal-safe 组织主数据，不再只停留在后台写模型。">
+            <DataRow label="法人主体" value={state.businessEntities.map(item => item.entity_name ?? item.entity_id).join(', ') || '-'} />
+            <DataRow label="桌台" value={state.tables.map(item => item.table_no ?? item.table_id).join(', ') || '-'} />
+            <DataRow label="工作站" value={state.workstations.map(item => item.workstation_name ?? item.workstation_code ?? item.workstation_id).join(', ') || '-'} />
         </Section>
         <Section title="店铺级 IAM 预览" subtitle="本轮不做店员登录；这里展示未来登录会使用的店铺级员工、角色和权限资料。">
             <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 10}}>
@@ -255,11 +267,18 @@ const ProductDomain: React.FC<{state: ReturnType<typeof useWorkbenchState>}> = (
 const OperationDomain: React.FC<{state: ReturnType<typeof useWorkbenchState>}> = ({state}) => (
     <View style={{gap: 16}}>
         <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 12}}>
+            <MetricCard label="营业配置" value={state.operationDashboard.storeConfig ? 1 : 0} tone="blue" />
             <MetricCard label="可售项" value={state.operatingStatus.availableItems} tone="green" />
             <MetricCard label="售罄项" value={state.operatingStatus.soldOutItems} tone={state.operatingStatus.soldOutItems > 0 ? 'amber' : 'slate'} />
             <MetricCard label="低库存" value={state.operatingStatus.lowStockItems} tone={state.operatingStatus.lowStockItems > 0 ? 'amber' : 'slate'} />
             <MetricCard label="锁库存" value={state.operatingStatus.activeReservations} tone="blue" />
         </View>
+        <Section title="门店经营配置" subtitle="`store.config` 承载营业状态、接单策略、营业时段和附加费等真实经营配置。">
+            <DataRow label="营业状态" value={state.storeConfig?.business_status} />
+            <DataRow label="接单" value={state.storeConfig?.accept_order === true ? 'ACCEPTING' : state.storeConfig?.accept_order === false ? 'PAUSED' : '-'} />
+            <DataRow label="营业时段" value={state.operationDashboard.storeConfig?.operatingHoursCount ?? 0} />
+            <DataRow label="附加费规则" value={state.operationDashboard.storeConfig?.extraChargeRuleCount ?? 0} />
+        </Section>
         <Section title="终端有效可售状态" subtitle="`menu.availability` 是终端 authoritative 可售视图；stock/reservation 作为经营观测。">
             {state.operationDashboard.availabilityRows.map(row => (
                 <View key={row.productId} style={{borderRadius: 16, backgroundColor: '#f8fafc', padding: 12}}>
@@ -334,11 +353,16 @@ const useWorkbenchState = () => {
     const roles = useSelector(selectStoreEffectiveRoles)
     const permissions = useSelector(selectStoreEffectivePermissions)
     const bindings = useSelector(selectStoreEffectiveUserRoleBindings)
+    const businessEntities = useSelector(selectCurrentTenantBusinessEntities)
+    const tables = useSelector(selectCurrentStoreTables)
+    const workstations = useSelector(selectCurrentStoreWorkstations)
     const iamReadiness = useSelector(selectIamReadinessSummary)
     const organizationTree = useSelector(selectOrganizationTree)
     const menu = useSelector(selectCurrentStoreEffectiveMenu)
+    const latestProduct = useSelector(selectLatestCateringProduct)
     const products = useSelector(selectAllCateringProducts)
     const productDisplay = useSelector(selectCateringProductDisplayModel)
+    const storeConfig = useSelector(selectCurrentStoreConfig)
     const operatingStatus = useSelector(selectStoreOperatingStatus)
     const operationDashboard = useSelector(selectOperationDashboardModel)
     const organizationDiagnostics = useSelector(selectOrganizationIamDiagnostics)
@@ -360,11 +384,16 @@ const useWorkbenchState = () => {
         roles,
         permissions,
         bindings,
+        businessEntities,
+        tables,
+        workstations,
         iamReadiness,
         organizationTree,
         menu,
+        latestProduct,
         products,
         productDisplay,
+        storeConfig,
         operatingStatus,
         operationDashboard,
         organizationDiagnostics,
@@ -391,8 +420,8 @@ export const MasterDataWorkbenchScreen: React.FC<MasterDataWorkbenchScreenProps>
     const displayTitle = displayMode === 'SECONDARY'
         ? '餐饮主数据工作台 · SECONDARY'
         : '餐饮主数据工作台 · PRIMARY'
-    const liveProduct = state.products[0]
     const liveMenu = state.menu
+    const liveProduct = state.latestProduct
 
     useEffect(() => {
         if (!automationBridge) {

@@ -171,11 +171,11 @@ function parseBooleanArg(value) {
 }
 
 function getLocalBuildCommand(appId) {
-  if (appId === 'assembly-android-mixc-retail-rn84') {
+  if (appId === 'assembly-android-mixc-catering-rn84') {
     return [
       'bash -lc',
       JSON.stringify([
-        'cd 4-assembly/android/mixc-retail-assembly-rn84',
+        'cd 4-assembly/android/mixc-catering-assembly-rn84',
         '../../../node_modules/.bin/tsc --noEmit',
         'cd android',
         'rm -rf app/build/generated/assets/react/release app/build/generated/sourcemaps/react/release app/build/intermediates/assets/release',
@@ -188,14 +188,14 @@ function getLocalBuildCommand(appId) {
 }
 
 function resolveBundleFiles(appId) {
-  if (appId === 'assembly-android-mixc-retail-rn84') {
+  if (appId === 'assembly-android-mixc-catering-rn84') {
     const entry = ensureFileExistsIn([
-      resolveRepoPath('4-assembly/android/mixc-retail-assembly-rn84/android/app/build/generated/assets/react/release/index.android.bundle'),
-      resolveRepoPath('4-assembly/android/mixc-retail-assembly-rn84/android/app/build/generated/assets/createBundleReleaseJsAndAssets/index.android.bundle'),
+      resolveRepoPath('4-assembly/android/mixc-catering-assembly-rn84/android/app/build/generated/assets/react/release/index.android.bundle'),
+      resolveRepoPath('4-assembly/android/mixc-catering-assembly-rn84/android/app/build/generated/assets/createBundleReleaseJsAndAssets/index.android.bundle'),
     ], 'android bundle entry')
     const sourceMapCandidates = [
-      resolveRepoPath('4-assembly/android/mixc-retail-assembly-rn84/android/app/build/intermediates/sourcemaps/react/release/index.android.bundle.packager.map'),
-      resolveRepoPath('4-assembly/android/mixc-retail-assembly-rn84/android/app/build/generated/sourcemaps/react/release/index.android.bundle.map'),
+      resolveRepoPath('4-assembly/android/mixc-catering-assembly-rn84/android/app/build/intermediates/sourcemaps/react/release/index.android.bundle.packager.map'),
+      resolveRepoPath('4-assembly/android/mixc-catering-assembly-rn84/android/app/build/generated/sourcemaps/react/release/index.android.bundle.map'),
     ]
     return {
       payloadType: 'full-js-bundle',
@@ -230,7 +230,7 @@ function walkSourceFiles(directory, files) {
 
 function collectBundleSourceFiles(appId) {
   const roots = new Set([
-    resolveRepoPath('4-assembly/android/mixc-retail-assembly-rn84'),
+    resolveRepoPath('4-assembly/android/mixc-catering-assembly-rn84'),
     ...getTrackedPackagePathsByAppId(appId).map(relativePath =>
       path.dirname(resolveRepoPath(relativePath))),
   ])
@@ -315,7 +315,7 @@ async function main() {
   }
   let appId = typeof args.app === 'string' ? args.app : ''
   if (!appId) {
-    appId = await prompt('Assembly appId (例如 assembly-android-mixc-retail-rn84): ')
+    appId = await prompt('Assembly appId (例如 assembly-android-mixc-catering-rn84): ')
   }
   if (!appId) {
     printUsageAndExit()

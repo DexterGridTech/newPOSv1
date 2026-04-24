@@ -617,7 +617,11 @@ describe('tcp-control-runtime-v2', () => {
         )
 
         expect(result.status).toBe('COMPLETED')
-        expect(runtime.queryRequest(deactivateRequestId)).toBeUndefined()
+        expect(runtime.queryRequest(deactivateRequestId)?.commands.map(item => item.commandName)).toEqual([
+            tcpControlV2CommandDefinitions.deactivateTerminal.commandName,
+            tcpControlV2CommandDefinitions.deactivateTerminalSucceeded.commandName,
+            tcpControlV2CommandDefinitions.resetTcpControl.commandName,
+        ])
         expect(calls).toEqual([
             'POST /api/v1/terminals/activate',
             'POST /api/v1/terminals/{terminalId}/deactivate',

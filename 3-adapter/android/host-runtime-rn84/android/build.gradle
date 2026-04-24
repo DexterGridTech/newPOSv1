@@ -1,0 +1,31 @@
+apply plugin: 'com.android.library'
+apply plugin: 'org.jetbrains.kotlin.android'
+apply plugin: 'com.facebook.react'
+
+def safeExt = { name, fallback ->
+  rootProject.ext.has(name) ? rootProject.ext.get(name) : fallback
+}
+
+react {
+  jsRootDir = file("..")
+  libraryName = "Impos2HostRuntimeRN84Spec"
+  codegenJavaPackageName = "com.impos2.hostruntimern84.turbomodules"
+}
+
+android {
+  namespace 'com.impos2.hostruntimern84'
+  compileSdk safeExt('compileSdkVersion', 35)
+
+  defaultConfig {
+    minSdk safeExt('minSdkVersion', 24)
+    consumerProguardFiles 'consumer-rules.pro'
+  }
+}
+
+dependencies {
+  implementation 'com.facebook.react:react-android'
+  implementation project(':adapter-android-v2')
+  implementation 'androidx.core:core-ktx:1.13.1'
+  implementation 'androidx.core:core-splashscreen:1.0.1'
+  implementation 'com.airbnb.android:lottie:6.7.1'
+}

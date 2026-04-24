@@ -5,6 +5,7 @@ import type {
     CateringStoreOperatingDiagnosticsEntry,
     CateringStoreOperatingMasterDataState,
     CateringStoreOperatingRecord,
+    CateringStoreOperatingTopic,
 } from '../../types'
 
 export const CATERING_STORE_OPERATING_MASTER_DATA_STATE_KEY = `${moduleName}.master-data`
@@ -13,6 +14,12 @@ const initialState: CateringStoreOperatingMasterDataState = {
     byTopic: {},
     diagnostics: [],
 }
+
+const createEmptyState = (changedAt?: number): CateringStoreOperatingMasterDataState => ({
+    byTopic: {},
+    diagnostics: [],
+    lastChangedAt: changedAt,
+})
 
 const MAX_DIAGNOSTICS = 50
 
@@ -40,7 +47,7 @@ const slice = createSlice({
             state.lastChangedAt = Date.now()
         },
         reset() {
-            return initialState
+            return createEmptyState(Date.now())
         },
         replaceAll(state, action: PayloadAction<CateringStoreOperatingMasterDataState>) {
             state.byTopic = action.payload.byTopic
@@ -91,19 +98,28 @@ export const cateringStoreOperatingMasterDataSliceDescriptor: StateRuntimeSliceD
                 diagnostics: state.diagnostics,
                 lastChangedAt: Date.now(),
             }
-            Object.values(entries).forEach((entry: SyncValueEnvelope | undefined) => {
+            Object.entries(entries).forEach(([entryKey, entry]: [string, SyncValueEnvelope | undefined]) => {
+                const [topic, itemKey] = entryKey.split(':', 2) as [CateringStoreOperatingTopic | undefined, string | undefined]
+                if (!topic || !itemKey) {
+                    return
+                }
+                const byItemKey = next.byTopic[topic] ?? {}
+                if (entry?.tombstone === true) {
+                    delete byItemKey[itemKey]
+                    next.byTopic[topic] = byItemKey
+                    return
+                }
                 if (!entry?.value || typeof entry.value !== 'object') {
                     return
                 }
                 const record = entry.value as CateringStoreOperatingRecord
-                const byItemKey = next.byTopic[record.topic] ?? {}
-                if (entry.tombstone === true || record.tombstone === true) {
+                if (record.tombstone === true) {
                     delete byItemKey[record.itemKey]
-                    next.byTopic[record.topic] = byItemKey
+                    next.byTopic[topic] = byItemKey
                     return
                 }
-                byItemKey[record.itemKey] = record
-                next.byTopic[record.topic] = byItemKey
+                byItemKey[itemKey] = record
+                next.byTopic[topic] = byItemKey
             })
             return next
         },

@@ -402,33 +402,33 @@ function assertPreActivationUi() {
 
 function assertActivatedUi(terminalId) {
   expectEqual(
-    waitForScreen('primary', 'ui.integration.retail-shell.welcome')?.screen?.partKey,
-    'ui.integration.retail-shell.welcome',
+    waitForScreen('primary', 'ui.business.catering-master-data-workbench.primary-workbench')?.screen?.partKey,
+    'ui.business.catering-master-data-workbench.primary-workbench',
     'activated primary screen',
   )
   expectEqual(
-    waitForScreen('secondary', 'ui.integration.retail-shell.secondary-welcome')?.screen?.partKey,
-    'ui.integration.retail-shell.secondary-welcome',
+    waitForScreen('secondary', 'ui.business.catering-master-data-workbench.secondary-workbench')?.screen?.partKey,
+    'ui.business.catering-master-data-workbench.secondary-workbench',
     'activated secondary screen',
   )
 
   expectTextPrefix(
-    getNode('primary', 'ui-integration-retail-shell:welcome:title')?.text,
+    getNode('primary', 'ui-business-catering-master-data-workbench:title')?.text,
     '欢迎进入零售终端',
     'activated primary title',
   )
   expectTextPrefix(
-    getNode('secondary', 'ui-integration-retail-shell:secondary-welcome:title')?.text,
+    getNode('secondary', 'ui-business-catering-master-data-workbench:title')?.text,
     '欢迎来到万象城',
     'activated secondary title',
   )
   expectEqual(
-    getNode('primary', 'ui-integration-retail-shell:welcome:terminal-id')?.value,
+    getNode('primary', 'ui-business-catering-master-data-workbench:terminal-id')?.value,
     terminalId,
     'activated primary terminalId',
   )
   expectEqual(
-    getNode('secondary', 'ui-integration-retail-shell:secondary-welcome:terminal-id')?.value,
+    getNode('secondary', 'ui-business-catering-master-data-workbench:terminal-id')?.value,
     terminalId,
     'activated secondary terminalId',
   )
@@ -605,7 +605,7 @@ async function main() {
 
   callRpcResult('wait.forScreen', {
     target: OPTIONS.target,
-    partKey: 'ui.integration.retail-shell.welcome',
+    partKey: 'ui.business.catering-master-data-workbench.primary-workbench',
     timeoutMs: OPTIONS.timeoutMs,
   })
 

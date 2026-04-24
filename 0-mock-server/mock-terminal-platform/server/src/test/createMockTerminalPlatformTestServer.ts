@@ -7,6 +7,7 @@ import { createApp } from '../app/createApp.js'
 import { initializeDatabase, resetDatabaseConnection } from '../database/index.js'
 import { createHttpAndWsServer } from '../modules/tdp/wsServer.js'
 import { resetOnlineSessions } from '../modules/tdp/wsSessionRegistry.js'
+import { TDP_ADMIN_TOKEN } from '../shared/constants.js'
 
 export interface MockTerminalPlatformTestServer {
   start(): Promise<void>
@@ -14,6 +15,7 @@ export interface MockTerminalPlatformTestServer {
   getAddressInfo(): AddressInfo
   getHttpBaseUrl(): string
   getTempDir(): string
+  getAdminToken(): string
 }
 
 export const createMockTerminalPlatformTestServer = (): MockTerminalPlatformTestServer => {
@@ -87,6 +89,9 @@ export const createMockTerminalPlatformTestServer = (): MockTerminalPlatformTest
     },
     getTempDir() {
       return tempDir
+    },
+    getAdminToken() {
+      return TDP_ADMIN_TOKEN
     },
   }
 }

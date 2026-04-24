@@ -8,12 +8,14 @@ import {spawnSync} from 'node:child_process'
 const DEFAULT_HOST = '127.0.0.1'
 const DEFAULT_PRIMARY_PORT = 18584
 const DEFAULT_SECONDARY_PORT = 18585
-const DEFAULT_PACKAGE = 'com.impos2.mixcretailassemblyrn84'
+const DEFAULT_PACKAGE = 'com.impos2.mixccateringassemblyrn84'
 const DEFAULT_MAIN_ACTIVITY = `${DEFAULT_PACKAGE}/.MainActivity`
 const DEFAULT_TIMEOUT_MS = 8000
 const TCP_IDENTITY_STATE_KEY = 'kernel.base.tcp-control-runtime-v2.identity'
 const TCP_SANDBOX_STATE_KEY = 'kernel.base.tcp-control-runtime-v2.sandbox'
-const ADMIN_LAUNCHER_NODE_ID = 'ui-integration-retail-shell:admin-launcher'
+const ADMIN_LAUNCHER_NODE_IDS = [
+  'ui-integration-catering-shell:admin-launcher',
+]
 
 function resolveAdbExecutable() {
   const androidHome = process.env.ANDROID_HOME?.trim()
@@ -260,6 +262,18 @@ function sendRpc({host, port, method, params = {}, timeoutMs = DEFAULT_TIMEOUT_M
         done(null, JSON.parse(line))
       } catch (error) {
         done(error)
+      }
+    })
+
+    socket.on('end', () => {
+      if (!settled) {
+        done(new Error(`socket closed before response for ${method}`))
+      }
+    })
+
+    socket.on('close', () => {
+      if (!settled) {
+        done(new Error(`socket closed before response for ${method}`))
       }
     })
 
@@ -651,12 +665,27 @@ async function readOptionalNode(nodeId) {
   }
 }
 
+
+async function resolveFirstLiveNode(nodeIds) {
+  for (const nodeId of nodeIds) {
+    const node = await readOptionalNode(nodeId)
+    if (isLiveAutomationNode(node)) {
+      return node
+    }
+  }
+  return null
+}
+
 async function adminLoginFlow(password = '') {
   const existingPanel = await readOptionalNode('ui-base-admin-popup:panel')
   if (isLiveAutomationNode(existingPanel)) {
     return {alreadyLoggedIn: true, panel: existingPanel}
   }
-  await pressNode(ADMIN_LAUNCHER_NODE_ID)
+  const launcher = await resolveFirstLiveNode(ADMIN_LAUNCHER_NODE_IDS)
+  if (!launcher?.nodeId) {
+    throw new Error('ADMIN_LAUNCHER_NOT_FOUND')
+  }
+  await pressNode(launcher.nodeId)
   await maybeSlowDown()
   await callMethodResult('wait.forNode', {
     target: OPTIONS.target,

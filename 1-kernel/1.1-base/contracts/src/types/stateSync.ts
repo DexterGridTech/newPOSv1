@@ -38,6 +38,7 @@ export interface StateSyncDiffEnvelope {
     targetNodeId: NodeId
     direction: 'master-to-slave' | 'slave-to-master'
     diffBySlice: StateSyncDiffPayload
+    replaceMissing?: boolean
     sentAt: TimestampMs
 }
 

@@ -14,6 +14,7 @@ import {createMemoryStorage} from '../../../../test-support/storageHarness'
 import {createSlice, type PayloadAction} from '@reduxjs/toolkit'
 import {
     createTcpControlRuntimeModuleV2,
+    tcpControlV2CommandDefinitions,
     tcpControlV2StateActions,
 } from '@impos2/kernel-base-tcp-control-runtime-v2'
 import {
@@ -634,6 +635,69 @@ describe('topology-runtime-v3 context derivation', () => {
         expect(orchestrator.startConnection).toHaveBeenCalledTimes(1)
     })
 
+    it('does not stop topology host when tcp control clears activation-bound state', async () => {
+        const topologyHost = {
+            start: vi.fn(async () => ({
+                localWsUrl: 'ws://127.0.0.1:18888/mockMasterServer/ws',
+                localHttpBaseUrl: 'http://127.0.0.1:18888/mockMasterServer',
+            })),
+            stop: vi.fn(async () => undefined),
+            getStatus: vi.fn(async () => ({state: 'RUNNING'})),
+            getDiagnosticsSnapshot: vi.fn(async () => null),
+        }
+        const orchestrator = {
+            startConnection: vi.fn(async () => undefined),
+            stopConnection: vi.fn(),
+            restartConnection: vi.fn(async () => undefined),
+        }
+        const runtime = createKernelRuntimeV2({
+            localNodeId: createNodeId(),
+            displayContext: {
+                displayIndex: 0,
+                displayCount: 1,
+            },
+            platformPorts: createPlatformPorts({
+                environmentMode: 'DEV',
+                logger: createTestLogger('kernel.base.topology-runtime-v3.test.host-lifecycle-reset'),
+                topologyHost,
+                stateStorage: createMemoryStorage().storage,
+                secureStateStorage: createMemoryStorage().storage,
+            }),
+            modules: [
+                createTopologyRuntimeModuleV3({orchestrator}),
+                createTcpControlRuntimeModuleV2(),
+            ],
+        })
+
+        await runtime.start()
+        await runtime.dispatchCommand(createCommand(
+            topologyRuntimeV3CommandDefinitions.setEnableSlave,
+            {enableSlave: true},
+        ))
+
+        await vi.waitFor(() => {
+            expect(topologyHost.start).toHaveBeenCalledTimes(1)
+            expect(selectTopologyRuntimeV3Host(runtime.getState())).toMatchObject({
+                desiredRunning: true,
+                actualRunning: true,
+            })
+        })
+
+        expect((await runtime.dispatchCommand(createCommand(
+            tcpControlV2CommandDefinitions.resetTcpControl,
+            {},
+        ))).status).toBe('COMPLETED')
+
+        expect(selectTopologyRuntimeV3ConfigState(runtime.getState())).toMatchObject({
+            enableSlave: true,
+        })
+        expect(selectTopologyRuntimeV3Host(runtime.getState())).toMatchObject({
+            desiredRunning: true,
+            actualRunning: true,
+        })
+        expect(topologyHost.stop).not.toHaveBeenCalled()
+    })
+
     it('seeds initial power status without requesting a display switch, then requests switch for standalone slave changes', async () => {
         let powerListener: ((event: Record<string, unknown>) => void) | undefined
         const powerEvents: Array<{
@@ -1163,6 +1227,77 @@ describe('topology-runtime-v3 context derivation', () => {
                 updatedAt: 100,
             },
         })
+    })
+
+    it('clears stale authoritative sync state when incoming snapshot entry is empty', async () => {
+        const socketRuntimeSpy = createSocketRuntimeSpy()
+        const syncSlice = createSyncSliceModule({
+            sliceName: 'topology.runtime.v3.test.sync.master',
+            syncIntent: 'master-to-slave',
+        })
+        const runtime = createKernelRuntimeV2({
+            localNodeId: createNodeId(),
+            displayContext: {
+                displayIndex: 1,
+                displayCount: 2,
+            },
+            platformPorts: createPlatformPorts({
+                environmentMode: 'DEV',
+                logger: createTestLogger('kernel.base.topology-runtime-v3.test.snapshot-clear'),
+            }),
+            modules: [
+                syncSlice.module as any,
+                createTopologyRuntimeModuleV3({
+                    assembly: {
+                        resolveSocketBinding() {
+                            return {
+                                socketRuntime: socketRuntimeSpy.socketRuntime,
+                                profileName: 'dual-topology.ws.topology-runtime-v3',
+                            }
+                        },
+                        createHelloRuntime() {
+                            return {
+                                nodeId: 'slave-node',
+                                deviceId: 'slave-device',
+                                instanceMode: 'SLAVE',
+                                displayMode: 'SECONDARY',
+                                standalone: false,
+                                protocolVersion: '2026.04-v3',
+                                capabilities: ['state-sync'],
+                            }
+                        },
+                    },
+                }),
+            ],
+        })
+
+        await runtime.start()
+        runtime.getStore().dispatch(syncSlice.actions.put({
+            entryKey: 'counter',
+            value: 'stale-secondary-value',
+            updatedAt: 90,
+        }))
+
+        socketRuntimeSpy.emit('dual-topology.ws.topology-runtime-v3', 'message', {
+            type: 'message',
+            connectionId: 'c1',
+            message: {
+                type: 'state-snapshot',
+                sessionId: 's1',
+                sourceNodeId: 'master-node',
+                entries: [
+                    {
+                        sliceName: 'topology.runtime.v3.test.sync.master',
+                        revision: 2,
+                        payload: [],
+                    },
+                ],
+                sentAt: Date.now(),
+            },
+            occurredAt: Date.now(),
+        })
+
+        expect((runtime.getState() as Record<string, any>)['topology.runtime.v3.test.sync.master']).toEqual({})
     })
 
     it('applies incoming request-snapshot into request mirror state', async () => {

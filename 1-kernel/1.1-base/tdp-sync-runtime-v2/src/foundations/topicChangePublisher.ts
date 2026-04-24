@@ -58,6 +58,7 @@ const toChangeItems = (
                 scopeId: previousEntry.scopeId,
                 sourceReleaseId: previousEntry.sourceReleaseId ?? null,
                 occurredAt: previousEntry.occurredAt,
+                scopeMetadata: previousEntry.scopeMetadata,
             })
             continue
         }
@@ -72,6 +73,7 @@ const toChangeItems = (
                 scopeId: currentEntry.scopeId,
                 sourceReleaseId: currentEntry.sourceReleaseId ?? null,
                 occurredAt: currentEntry.occurredAt,
+                scopeMetadata: currentEntry.scopeMetadata,
             })
             continue
         }
@@ -95,6 +97,7 @@ const toChangeItems = (
             scopeId: currentEntry.scopeId,
             sourceReleaseId: currentEntry.sourceReleaseId ?? null,
             occurredAt: currentEntry.occurredAt,
+            scopeMetadata: currentEntry.scopeMetadata,
         })
     }
 

@@ -1,8 +1,14 @@
 import {describe, expect, it} from 'vitest'
 import {createCommand} from '@impos2/kernel-base-runtime-shell-v2'
 import {
+    createTcpControlRuntimeModuleV2,
+    selectTcpIdentitySnapshot,
+    tcpControlV2StateActions,
+} from '@impos2/kernel-base-tcp-control-runtime-v2'
+import {
     selectTopologyRuntimeV3DemoMasterState,
     selectTopologyRuntimeV3DemoSlaveState,
+    selectTopologyRuntimeV3Connection,
     topologyRuntimeV3CommandDefinitions,
 } from '../../src'
 import {createTopologyRuntimeV3LiveHarness, waitFor} from '../helpers/runtimeLiveHarness'
@@ -175,4 +181,92 @@ describe('topology-runtime-v3 live demo sync', () => {
             await harness.close()
         }
     }, 15_000)
+
+    it('replays the latest tcp activation identity to slave after reconnect', async () => {
+        const harness = await createTopologyRuntimeV3LiveHarness({
+            profileName: 'dual-topology.ws.topology-runtime-v3.tcp.identity',
+        })
+
+        try {
+            const extraModules = [createTcpControlRuntimeModuleV2()]
+            const masterRuntime = harness.createMasterRuntime(extraModules)
+            const slaveRuntime = harness.createSlaveRuntime(extraModules)
+
+            await masterRuntime.start()
+            await slaveRuntime.start()
+            await harness.configureDefaultPair(masterRuntime, slaveRuntime)
+            await harness.startTopologyConnectionPair(masterRuntime, slaveRuntime)
+
+            masterRuntime.getStore().dispatch(tcpControlV2StateActions.setActivatedIdentity({
+                terminalId: 'terminal-old',
+                activatedAt: 100,
+            }))
+
+            await waitFor(() => {
+                const slaveIdentity = selectTcpIdentitySnapshot(slaveRuntime.getState())
+                return slaveIdentity.activationStatus === 'ACTIVATED'
+                    && slaveIdentity.terminalId === 'terminal-old'
+            }, 5_000)
+
+            await slaveRuntime.dispatchCommand(createCommand(
+                topologyRuntimeV3CommandDefinitions.stopTopologyConnection,
+                {},
+            ))
+
+            await waitFor(() =>
+                selectTopologyRuntimeV3Connection(slaveRuntime.getState())?.serverConnectionStatus === 'DISCONNECTED',
+            5_000)
+
+            masterRuntime.getStore().dispatch(tcpControlV2StateActions.clearActivation())
+
+            await slaveRuntime.dispatchCommand(createCommand(
+                topologyRuntimeV3CommandDefinitions.restartTopologyConnection,
+                {},
+            ))
+
+            await waitFor(() => {
+                const slaveIdentity = selectTcpIdentitySnapshot(slaveRuntime.getState())
+                return slaveIdentity.activationStatus === 'UNACTIVATED'
+                    && slaveIdentity.terminalId == null
+            }, 5_000)
+
+            await slaveRuntime.dispatchCommand(createCommand(
+                topologyRuntimeV3CommandDefinitions.stopTopologyConnection,
+                {},
+            ))
+
+            await waitFor(() =>
+                selectTopologyRuntimeV3Connection(slaveRuntime.getState())?.serverConnectionStatus === 'DISCONNECTED',
+            5_000)
+
+            masterRuntime.getStore().dispatch(tcpControlV2StateActions.setActivatedIdentity({
+                terminalId: 'terminal-new',
+                activatedAt: 200,
+            }))
+
+            await slaveRuntime.dispatchCommand(createCommand(
+                topologyRuntimeV3CommandDefinitions.restartTopologyConnection,
+                {},
+            ))
+
+            await waitFor(() => {
+                const slaveIdentity = selectTcpIdentitySnapshot(slaveRuntime.getState())
+                return slaveIdentity.activationStatus === 'ACTIVATED'
+                    && slaveIdentity.terminalId === 'terminal-new'
+            }, 5_000)
+
+            await Promise.allSettled([
+                masterRuntime.dispatchCommand(createCommand(
+                    topologyRuntimeV3CommandDefinitions.stopTopologyConnection,
+                    {},
+                )),
+                slaveRuntime.dispatchCommand(createCommand(
+                    topologyRuntimeV3CommandDefinitions.stopTopologyConnection,
+                    {},
+                )),
+            ])
+        } finally {
+            await harness.close()
+        }
+    }, 20_000)
 })

@@ -9,7 +9,7 @@ const {
 
 function getGeneratedFilePath(appId) {
   const map = {
-    'assembly-android-mixc-retail-rn84': path.join(process.cwd(), '4-assembly/android/mixc-retail-assembly-rn84/src/generated/releaseInfo.ts'),
+    'assembly-android-mixc-catering-rn84': path.join(process.cwd(), '4-assembly/android/mixc-catering-assembly-rn84/src/generated/releaseInfo.ts'),
   }
   const filePath = map[appId]
   if (!filePath) {

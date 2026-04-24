@@ -16,7 +16,8 @@ The current scope is:
 1. `1-kernel/1.1-base`
 2. `2-ui/2.1-base`
 3. `3-adapter/android/adapter-android-v2`
-4. `4-assembly/android/mixc-retail-assembly-rn84`
+4. `3-adapter/android/host-runtime-rn84`
+5. Product assemblies such as `4-assembly/android/mixc-catering-assembly-rn84`
 
 ## Layer Contract
 
@@ -39,20 +40,70 @@ Not allowed:
    UI navigation, or whether a standalone slave should switch screen mode.
 2. React Native runtime composition or kernel command orchestration.
 
+### Host Runtime
+
+`3-adapter/android/host-runtime-rn84` owns reusable RN84 Android host runtime
+composition. It is product-agnostic infrastructure for native ports, base
+runtime modules, topology, TCP/TDP, terminal/admin base consoles, automation,
+and RN84 boot wiring.
+
+Allowed responsibilities:
+
+1. Create the generic kernel runtime app from base kernel and base UI runtime
+   modules.
+2. Expose typed injection points such as `createShellModule` and
+   `extraKernelModules` for product assemblies.
+3. Own RN84 host mechanics, native bridge bindings, platform-port adapters,
+   automation hooks, topology host lifecycle, and TDP restart preparation.
+
+Not allowed:
+
+1. Importing or depending on `1-kernel/1.2-business/*`,
+   `2-ui/2.2-business/*`, or product/business integration packages.
+2. Owning the list of product business modules, master-data modules, or
+   product-specific screens.
+3. Encoding product policy such as catering, retail, tenant, mall, brand, menu,
+   or store workflows.
+
+### Product Integration Shell
+
+`2-ui/2.3-integration/*-shell` owns product/business runtime composition that
+combines business kernel modules, business UI workbenches, and product shell
+actors through public commands/selectors. It may expose a single product module
+and a product business-module factory for product assemblies to inject into the
+host runtime.
+
+Allowed responsibilities:
+
+1. Register product screens, shell actors, and business UI renderer parts.
+2. Compose matching `1-kernel/1.2-business/*` and `2-ui/2.2-business/*` modules
+   for that product line.
+3. Dispatch public business commands during product lifecycle events.
+
+Not allowed:
+
+1. Importing assembly native wrappers or RN84 host implementation details.
+2. Mutating business kernel slices directly instead of dispatching public
+   commands.
+3. Hiding native host policy that belongs in `host-runtime-rn84` or adapter
+   ports.
+
 ### Assembly
 
-`4-assembly/android/mixc-retail-assembly-rn84` owns host composition. It should
-be the thinnest possible product shell, not a fallback home for missing
-capabilities in lower layers.
+Product assemblies such as `4-assembly/android/mixc-catering-assembly-rn84` own
+final product wiring. They should be the thinnest possible product shell, not a
+fallback home for missing capabilities in lower layers.
 
 Allowed responsibilities:
 
 1. Wire adapter native capabilities into `platform-ports`.
-2. Build the kernel runtime app with product release info and host launch props.
-3. Own RN84 process, activity, bundle resolver, startup, and restart mechanics.
+2. Build the host runtime app with product release info, host launch props,
+   and the selected product integration shell.
+3. Own RN84 process, activity, bundle resolver, startup, and restart mechanics
+   only when those mechanics are product packaging concerns.
 4. Provide product-specific configuration values and build/runtime flags.
-5. Perform final module wiring when all domain decisions already live in
-   kernel/UI/adapter contracts.
+5. Perform final module wiring by passing the product integration shell and its
+   exported business-module factory into host-runtime injection points.
 
 Not allowed:
 
@@ -63,8 +114,10 @@ Not allowed:
 4. Calling native adapter managers from application logic when an existing
    `platform-ports` port or host interface can carry the fact/capability.
 5. Keeping reusable host capability logic only because the target
-   `platform-ports`, kernel package, UI module, or adapter module does not yet
-   expose the needed contract.
+   `platform-ports`, kernel package, UI module, host-runtime package, or adapter
+   module does not yet expose the needed contract.
+6. Directly importing `1-kernel/1.2-business/*` or `2-ui/2.2-business/*` when a
+   product integration shell can expose the composed product module set.
 
 ### Kernel
 

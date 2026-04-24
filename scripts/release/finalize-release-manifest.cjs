@@ -32,11 +32,11 @@ function fileInfo(filePath) {
 }
 
 function collectArtifacts(appId) {
-  if (appId === 'assembly-android-mixc-retail-rn84') {
+  if (appId === 'assembly-android-mixc-catering-rn84') {
     return {
-      apk: fileInfo(path.join(process.cwd(), '4-assembly/android/mixc-retail-assembly-rn84/android/app/build/outputs/apk/release/app-release.apk')),
-      bundle: fileInfo(path.join(process.cwd(), '4-assembly/android/mixc-retail-assembly-rn84/android/app/build/generated/assets/react/release/index.android.bundle')),
-      sourceMap: fileInfo(path.join(process.cwd(), '4-assembly/android/mixc-retail-assembly-rn84/android/app/build/intermediates/sourcemaps/react/release/index.android.bundle.packager.map')),
+      apk: fileInfo(path.join(process.cwd(), '4-assembly/android/mixc-catering-assembly-rn84/android/app/build/outputs/apk/release/app-release.apk')),
+      bundle: fileInfo(path.join(process.cwd(), '4-assembly/android/mixc-catering-assembly-rn84/android/app/build/generated/assets/react/release/index.android.bundle')),
+      sourceMap: fileInfo(path.join(process.cwd(), '4-assembly/android/mixc-catering-assembly-rn84/android/app/build/intermediates/sourcemaps/react/release/index.android.bundle.packager.map')),
     }
   }
 

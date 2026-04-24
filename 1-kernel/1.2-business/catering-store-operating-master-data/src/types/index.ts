@@ -1,4 +1,5 @@
 export type CateringStoreOperatingTopic =
+    | 'store.config'
     | 'menu.availability'
     | 'catering.availability-rule.profile'
     | 'catering.saleable-stock.profile'
@@ -22,6 +23,16 @@ export interface MenuAvailabilityProfile {
     available?: boolean
     sold_out_reason?: string | null
     effective_from?: string
+    [key: string]: unknown
+}
+
+export interface StoreConfigProfile {
+    config_id: string
+    store_id?: string
+    business_status?: string
+    accept_order?: boolean
+    operating_hours?: Array<Record<string, unknown>>
+    extra_charge_rules?: Array<Record<string, unknown>>
     [key: string]: unknown
 }
 
