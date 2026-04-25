@@ -1072,3 +1072,28 @@ test/
 10. 是 UI runtime 协议，放 `ui-runtime-v2`。
 11. 是 workflow runtime，放 `workflow-runtime-v2`。
 12. 如果只是业务规则，不要放进 base，应该进入未来 `1-kernel/1.2-business`。
+
+## 二十、终端总架构中的 base 责任
+
+在当前终端架构中，`1.1-base` 是所有上层能力共享的 kernel 基座。它定义“终端怎么运行、怎么通信、怎么记录状态、怎么恢复、怎么被 UI/Android 宿主驱动”，但不定义“某个产品卖什么、某个商场有哪些店、某个业务页面怎么排版”。
+
+与其他目录的关系应保持如下边界：
+
+```text
+1-kernel/1.1-base
+  <- 1-kernel/1.2-business      业务 kernel 消费 base command/state/transport/topology/TDP 能力
+  <- 2-ui/2.1-base              UI runtime/bridge 消费 base state 与 command 协议
+  <- 2-ui/2.2-business          业务 UI 通过 selector 和 command 接入业务 kernel
+  <- 2-ui/2.3-integration       产品 shell 组合业务 UI 与 base UI
+  <- 3-adapter/android          Android host 提供 platform ports，不反向依赖业务
+  <- 4-assembly/android         产品 assembly 注入 host runtime 与 integration shell
+```
+
+新增或修改 base 包时必须遵守：
+
+1. base 包不得依赖 `1-kernel/1.2-business`、`2-ui/2.2-business`、`2-ui/2.3-integration`、`3-adapter/android` 或 `4-assembly/android`。
+2. base 包不得引入 React、React Native、Android 或产品 assembly 专属 API。
+3. 业务差异通过 command payload、selector、platform port、server config、TDP projection、system parameter 扩展，不通过在 base 中硬编码产品分支实现。
+4. host runtime 或 assembly 发现 base 能力缺口时，应补 base 的稳定协议和测试，而不是把业务链路沉淀到 host/assembly。
+5. UI 变化必须由 state/selector 驱动；base 提供状态真相、command 入口、request ledger 和恢复语义，不提供临时 UI 拼装逻辑。
+6. 涉及重启恢复、主副机、TDP、TCP、workflow、server config 的修改，必须验证 state、selector、日志和恢复路径，而不是只验证 transport 请求成功。
