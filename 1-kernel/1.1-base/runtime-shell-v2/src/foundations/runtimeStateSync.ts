@@ -48,13 +48,15 @@ export const createRuntimeStateSync = (stateRuntime: StateRuntime) => {
             appliedSliceNames.push(slice.name)
         }
 
-        console.info('[runtime-state-sync-apply]', JSON.stringify({
-            direction: envelope.direction,
-            incomingSliceNames,
-            replaceMissing: envelope.replaceMissing === true,
-            appliedSliceNames,
-            skippedSliceReasons,
-        }))
+        if (typeof process !== 'undefined' && process.env?.NEXT_RUNTIME_STATE_SYNC_DEBUG === '1') {
+            console.debug('[runtime-state-sync-apply]', JSON.stringify({
+                direction: envelope.direction,
+                incomingSliceNames,
+                replaceMissing: envelope.replaceMissing === true,
+                appliedSliceNames,
+                skippedSliceReasons,
+            }))
+        }
 
         if (Object.keys(nextSlices).length > 0) {
             stateRuntime.applySlicePatches(nextSlices)

@@ -82,21 +82,23 @@ const resolveBindingUrls = (
     return {wsUrl, httpBaseUrl}
 }
 
-let lifecycleSyncChain = Promise.resolve()
+const createLifecycleSyncQueue = () => {
+    let lifecycleSyncChain = Promise.resolve()
 
-const enqueueLifecycleSync = <T>(
-    run: () => Promise<T>,
-): Promise<T> => {
-    const next = lifecycleSyncChain.then(run, run)
-    lifecycleSyncChain = next.then(
-        () => undefined,
-        () => undefined,
-    )
-    return next
+    return <T>(run: () => Promise<T>): Promise<T> => {
+        const next = lifecycleSyncChain.then(run, run)
+        lifecycleSyncChain = next.then(
+            () => undefined,
+            () => undefined,
+        )
+        return next
+    }
 }
 
-export const createTopologyRuntimeV3HostLifecycleActor = (): ActorDefinition =>
-    defineActor('TopologyHostLifecycleActor', [
+export const createTopologyRuntimeV3HostLifecycleActor = (): ActorDefinition => {
+    const enqueueLifecycleSync = createLifecycleSyncQueue()
+
+    return defineActor('TopologyHostLifecycleActor', [
         onCommand(topologyRuntimeV3CommandDefinitions.updateTopologyHostBinding, async context => {
             const runtimeContext = selectTopologyRuntimeV3Context(context.getState())
             if (!runtimeContext || runtimeContext.instanceMode !== 'MASTER') {
@@ -264,3 +266,4 @@ export const createTopologyRuntimeV3HostLifecycleActor = (): ActorDefinition =>
             }
         })),
     ])
+}

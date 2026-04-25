@@ -9,6 +9,7 @@ import {selectTcpAccessToken, selectTcpSandboxId, selectTcpTerminalId} from '@ne
 import {moduleName} from '../../moduleName'
 import {tdpSyncV2ErrorDefinitions} from '../../supports'
 import {tdpSyncV2CommandDefinitions} from '../commands'
+import {selectTdpSyncState} from '../../selectors'
 import {tdpSyncV2DomainActions} from '../slices'
 
 const defineActor = createModuleActorFactory(moduleName)
@@ -34,7 +35,7 @@ export const createTdpBootstrapActorDefinitionV2 = (): ActorDefinition => define
 
             await context.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.bootstrapTdpSyncSucceeded, {}))
             return {
-                lastCursor: (context.getState() as any)?.[`${moduleName}.sync`]?.lastCursor,
+                lastCursor: selectTdpSyncState(context.getState())?.lastCursor,
             }
         }),
         onCommand(tdpSyncV2CommandDefinitions.bootstrapTdpSyncSucceeded, () => {

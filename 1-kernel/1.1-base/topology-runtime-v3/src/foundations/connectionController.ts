@@ -198,6 +198,21 @@ export const createTopologyPeerOrchestratorV3 = (input: {
         resolve: (result: CommandAggregateResult) => void
         reject: (error: unknown) => void
     }>()
+    const rejectPendingRemoteCommands = (reason: string) => {
+        if (pendingRemoteCommands.size === 0) {
+            return
+        }
+        const error = createAppError(topologyRuntimeV3ErrorDefinitions.orchestratorRequired, {
+            details: {
+                reason,
+                pendingCount: pendingRemoteCommands.size,
+            },
+        })
+        for (const pending of pendingRemoteCommands.values()) {
+            pending.reject(error)
+        }
+        pendingRemoteCommands.clear()
+    }
     const refreshSocketBinding = () => {
         const latestSocketBinding = input.assembly.resolveSocketBinding(input.context)
         if (!latestSocketBinding) {
@@ -392,6 +407,7 @@ export const createTopologyPeerOrchestratorV3 = (input: {
             await performSocketConnection()
         },
         disconnect(reason) {
+            rejectPendingRemoteCommands(reason ?? 'topology-disconnected')
             socketBinding.socketRuntime.disconnect(socketBinding.profileName, reason)
         },
         attachListeners(handlers) {
@@ -427,6 +443,7 @@ export const createTopologyPeerOrchestratorV3 = (input: {
             return error.key === 'kernel.base.transport-runtime.socket_runtime_failed'
         },
         onDisconnected() {
+            rejectPendingRemoteCommands('topology-disconnected')
             applyDisconnectToState(input.context, lifecycle.getReconnectAttempt())
         },
         onReconnectScheduled({attempt}) {
