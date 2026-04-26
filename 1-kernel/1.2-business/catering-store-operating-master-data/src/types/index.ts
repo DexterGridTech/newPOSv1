@@ -3,7 +3,6 @@ export type CateringStoreOperatingTopic =
     | 'menu.availability'
     | 'catering.availability-rule.profile'
     | 'catering.saleable-stock.profile'
-    | 'catering.stock-reservation.active'
 
 export interface CateringStoreOperatingEnvelope<TData extends Record<string, unknown> = Record<string, unknown>> {
     schema_version: 1
@@ -48,18 +47,9 @@ export interface SaleableStockProfile {
     store_id?: string
     product_id?: string
     saleable_quantity?: number
+    reserved_quantity?: number
     safety_stock?: number
     status?: string
-    [key: string]: unknown
-}
-
-export interface StockReservationProfile {
-    reservation_id: string
-    store_id?: string
-    product_id?: string
-    reserved_quantity?: number
-    reservation_status?: string
-    expires_at?: string
     [key: string]: unknown
 }
 

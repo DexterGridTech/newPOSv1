@@ -175,8 +175,5 @@ export const defaultOperationDraft: OperationDraft = {
   availabilityRuleCode: 'AVAILABILITY_LATE_NIGHT',
   availabilityChannelType: 'TAKEAWAY',
   availabilityAllowed: false,
-  reservationId: 'reservation-salmon-bowl-shift-b',
   reservedQuantity: '3',
-  reservationStatus: 'ACTIVE',
-  reservationExpiresAt: '2026-04-24T23:30:00.000Z',
 }

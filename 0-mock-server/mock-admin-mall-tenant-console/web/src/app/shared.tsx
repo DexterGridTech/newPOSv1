@@ -1,8 +1,34 @@
 import type {ChangeEvent, CSSProperties, ReactNode, SelectHTMLAttributes} from 'react'
 import type {EntityItem, OrgTreeNode} from './types'
 
+const formatJsonValue = (value: unknown) => {
+  if (typeof value === 'undefined') {
+    return 'undefined'
+  }
+
+  return JSON.stringify(value, null, 2)
+}
+
+const resolveStatusClass = (status: string) => {
+  const normalizedStatus = status.toLowerCase()
+
+  if (['active', 'allowed', 'approved', 'available', 'open', 'published'].includes(normalizedStatus)) {
+    return 'published'
+  }
+
+  if (['pending', 'queued', 'reserved', 'suspended'].includes(normalizedStatus)) {
+    return 'pending'
+  }
+
+  if (['closed', 'denied', 'failed', 'inactive', 'rejected', 'terminated'].includes(normalizedStatus)) {
+    return 'failed'
+  }
+
+  return 'neutral'
+}
+
 export const JsonPanel = ({value}: {value: unknown}) => (
-  <pre className="json-panel">{JSON.stringify(value, null, 2)}</pre>
+  <pre className="json-panel">{formatJsonValue(value)}</pre>
 )
 
 type TextFieldProps = {
@@ -62,7 +88,7 @@ const getResourceCardItemKey = (title: string, item: EntityItem, index: number) 
 ].join(':')
 
 export const ResourceCard = ({title, count, description, items}: ResourceCardProps) => (
-  <article className="panel">
+  <article className="panel resource-card-panel">
     <div className="panel-title">
       <div>
         <h3>{title}</h3>
@@ -72,12 +98,16 @@ export const ResourceCard = ({title, count, description, items}: ResourceCardPro
     </div>
     <div className="document-list">
       {items.map((item, index) => (
-        <div key={getResourceCardItemKey(title, item, index)} className="resource-card-row">
+        <div
+          key={getResourceCardItemKey(title, item, index)}
+          className="resource-card-row"
+          title={`${item.title} · ${item.entityId}`}
+        >
           <div>
             <strong>{item.title}</strong>
             <span>{item.entityId}</span>
           </div>
-          <span className="pill neutral">{item.status}</span>
+          <span className={`pill ${resolveStatusClass(item.status)}`}>{item.status}</span>
         </div>
       ))}
       {items.length === 0 ? <p className="empty">当前分域还没有记录。</p> : null}
@@ -97,7 +127,7 @@ export const TreeNode = ({node, depth = 0}: TreeNodeProps) => (
         <strong>{node.title}</strong>
         <span>{node.type}</span>
       </div>
-      <span className="pill neutral">{node.status}</span>
+      <span className={`pill ${resolveStatusClass(node.status)}`}>{node.status}</span>
     </div>
     {Array.isArray(node.children) && node.children.length > 0 ? (
       <div className="tree-children">

@@ -1,9 +1,12 @@
 export type CateringProductTopic =
+    | 'catering.product-category.profile'
     | 'catering.product.profile'
+    | 'catering.product-inheritance.profile'
     | 'catering.brand-menu.profile'
     | 'menu.catalog'
     | 'catering.price-rule.profile'
     | 'catering.bundle-price-rule.profile'
+    | 'catering.channel-product-mapping.profile'
 
 export interface CateringProductEnvelope<TData extends Record<string, unknown> = Record<string, unknown>> {
     schema_version: 1
@@ -17,20 +20,50 @@ export interface CateringProductEnvelope<TData extends Record<string, unknown> =
     data: TData
 }
 
+export interface CateringProductCategoryProfile {
+    category_id: string
+    category_code?: string
+    category_name?: string
+    owner_id?: string
+    ownership_scope?: string
+    brand_id?: string
+    store_id?: string
+    parent_category_id?: string | null
+    sort_order?: number
+    status?: string
+    [key: string]: unknown
+}
+
 export interface CateringProductProfile {
     product_id: string
+    product_code?: string
     brand_id?: string
     store_id?: string
     product_name?: string
+    category_id?: string
     ownership_scope?: string
     product_type?: string
+    image_url?: string | null
+    product_description?: string | null
     base_price?: number
+    production_profile?: Record<string, unknown>
     production_steps?: Array<Record<string, unknown>>
     modifier_groups?: Array<Record<string, unknown>>
     variants?: Array<Record<string, unknown>>
     combo_item_groups?: Array<Record<string, unknown>>
     price_rules?: Array<Record<string, unknown>>
     bundle_price_rules?: Array<Record<string, unknown>>
+    status?: string
+    [key: string]: unknown
+}
+
+export interface ProductInheritanceProfile {
+    inheritance_id: string
+    brand_product_id?: string
+    store_product_id?: string
+    store_id?: string
+    locked_fields?: string[]
+    override_fields?: Record<string, unknown>
     status?: string
     [key: string]: unknown
 }
@@ -66,6 +99,17 @@ export interface CateringPriceRuleProfile {
     store_id?: string
     price_type?: string
     channel_type?: string
+    [key: string]: unknown
+}
+
+export interface ChannelProductMappingProfile {
+    mapping_id: string
+    store_id?: string
+    product_id?: string
+    channel_type?: string
+    channel_product_id?: string
+    sync_status?: string
+    status?: string
     [key: string]: unknown
 }
 
@@ -111,6 +155,8 @@ export interface EffectiveMenuSectionView {
         title: string
         price?: number
         productType?: string
+        imageUrl?: string | null
+        categoryId?: string
     }>
 }
 

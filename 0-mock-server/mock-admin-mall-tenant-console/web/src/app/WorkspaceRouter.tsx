@@ -135,12 +135,10 @@ export function WorkspaceRouter({activeDomain, state}: Props) {
           priceRules={state.priceRules}
           availabilityRules={state.availabilityRules}
           menuAvailability={state.menuAvailability}
-          stockReservations={state.stockReservations}
           operationDraft={state.operationDraft}
           setOperationDraft={state.setOperationDraft}
           operationActionLoading={state.operationActionLoading}
           runOperationsWorkflow={state.runOperationsWorkflow}
-          toggleStoreBusiness={state.toggleStoreBusiness}
           restoreProductAvailability={state.restoreProductAvailability}
           lastOperationResult={state.lastOperationResult}
         />

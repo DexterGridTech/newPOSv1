@@ -88,6 +88,7 @@ const createCateringStoreOperationEnvelope = (input: {
 })
 
 export interface ProjectionOutboxSeedInput {
+  sandboxId?: string
   topicKey: string
   scopeType: string
   scopeKey: string
@@ -112,7 +113,7 @@ export const enqueueProjectionOutbox = (input: ProjectionOutboxSeedInput) => {
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     createId('outbox'),
-    DEFAULT_SANDBOX_ID,
+    input.sandboxId ?? DEFAULT_SANDBOX_ID,
     'mock-admin-mall-tenant-console',
     sourceEventId,
     sourceRevision,
@@ -180,7 +181,6 @@ const seedProjectionTopics: Record<string, {topicKey: string; scopeType: string;
   menu_availability: {topicKey: 'menu.availability', scopeType: 'STORE', itemKeyField: 'product_id'},
   availability_rule: {topicKey: 'catering.availability-rule.profile', scopeType: 'STORE', itemKeyField: 'rule_id'},
   saleable_stock: {topicKey: 'catering.saleable-stock.profile', scopeType: 'STORE', itemKeyField: 'stock_id'},
-  stock_reservation: {topicKey: 'catering.stock-reservation.active', scopeType: 'STORE', itemKeyField: 'reservation_id'},
   store_config: {topicKey: 'catering.store-config.profile', scopeType: 'STORE', itemKeyField: 'config_id'},
   price_rule: {topicKey: 'catering.price-rule.profile', scopeType: 'STORE', itemKeyField: 'rule_id'},
 }
@@ -295,10 +295,10 @@ const createChineseScenarioSeedDocs = (): SeedDoc[] => {
   }))
 
   const tenants = [
-    {tenantId: DEFAULT_SCOPE_IDS.tenantId, code: 'TENANT_XIBEI', name: '西贝餐饮集团', category: '中餐'},
-    {tenantId: 'tenant-nanjing-dapaidang', code: 'TENANT_NJDPD', name: '南京大牌档', category: '中餐'},
-    {tenantId: 'tenant-nayuki', code: 'TENANT_NAYUKI', name: '奈雪的茶', category: '茶饮'},
-    {tenantId: 'tenant-chagee', code: 'TENANT_CHAGEE', name: '霸王茶姬', category: '茶饮'},
+    {tenantId: DEFAULT_SCOPE_IDS.tenantId, code: 'TENANT_XIBEI', name: '西贝餐饮集团'},
+    {tenantId: 'tenant-nanjing-dapaidang', code: 'TENANT_NJDPD', name: '南京大牌档'},
+    {tenantId: 'tenant-nayuki', code: 'TENANT_NAYUKI', name: '奈雪的茶'},
+    {tenantId: 'tenant-chagee', code: 'TENANT_CHAGEE', name: '霸王茶姬'},
   ]
   tenants.forEach((tenant, index) => addOrganization({
     entityType: 'tenant',
@@ -313,23 +313,22 @@ const createChineseScenarioSeedDocs = (): SeedDoc[] => {
       tenant_id: tenant.tenantId,
       tenant_code: tenant.code,
       tenant_name: tenant.name,
-      tenant_category: tenant.category,
       platform_id: DEFAULT_SCOPE_IDS.platformId,
       status: 'ACTIVE',
     },
   }))
 
   const brands = [
-    {brandId: DEFAULT_SCOPE_IDS.brandId, tenantId: DEFAULT_SCOPE_IDS.tenantId, code: 'BRAND_XIBEI', name: '西贝莜面村', category: '西北中餐'},
-    {brandId: 'brand-nanjing-dapaidang', tenantId: 'tenant-nanjing-dapaidang', code: 'BRAND_NJDPD', name: '南京大牌档', category: '江南中餐'},
-    {brandId: 'brand-nayuki', tenantId: 'tenant-nayuki', code: 'BRAND_NAYUKI', name: '奈雪的茶', category: '新式茶饮'},
-    {brandId: 'brand-chagee', tenantId: 'tenant-chagee', code: 'BRAND_CHAGEE', name: '霸王茶姬', category: '原叶鲜奶茶'},
+    {brandId: DEFAULT_SCOPE_IDS.brandId, code: 'BRAND_XIBEI', name: '西贝莜面村', category: '西北中餐'},
+    {brandId: 'brand-nanjing-dapaidang', code: 'BRAND_NJDPD', name: '南京大牌档', category: '江南中餐'},
+    {brandId: 'brand-nayuki', code: 'BRAND_NAYUKI', name: '奈雪的茶', category: '新式茶饮'},
+    {brandId: 'brand-chagee', code: 'BRAND_CHAGEE', name: '霸王茶姬', category: '原叶鲜奶茶'},
   ]
   brands.forEach((brand, index) => addOrganization({
     entityType: 'brand',
     entityId: brand.brandId,
     naturalScopeType: 'BRAND',
-    naturalScopeKey: brand.brandId,
+    naturalScopeKey: DEFAULT_SCOPE_IDS.platformId,
     title: brand.name,
     status: 'ACTIVE',
     sourceRevision: 1,
@@ -339,7 +338,6 @@ const createChineseScenarioSeedDocs = (): SeedDoc[] => {
       brand_code: brand.code,
       brand_name: brand.name,
       brand_category: brand.category,
-      tenant_id: brand.tenantId,
       platform_id: DEFAULT_SCOPE_IDS.platformId,
       status: 'ACTIVE',
     },
@@ -559,7 +557,17 @@ const createChineseScenarioSeedDocs = (): SeedDoc[] => {
         status: 'ACTIVE',
         sourceRevision: 1,
         eventId: `evt-cn-stock-${index + 1}-${productIndex + 1}`,
-        data: {stock_id: `stock-${store.storeId}-${productId}`, store_id: store.storeId, product_id: productId, saleable_quantity: 30 - productIndex * 6, safety_stock: store.business === '茶饮' ? 8 : 4, status: 'ACTIVE'},
+        data: {
+          stock_id: `stock-${store.storeId}-${productId}`,
+          store_id: store.storeId,
+          product_id: productId,
+          total_quantity: 30 - productIndex * 6,
+          sold_quantity: productIndex,
+          reserved_quantity: store.business === '茶饮' && productIndex === 0 ? 12 : 0,
+          saleable_quantity: 30 - productIndex * 6 - productIndex - (store.business === '茶饮' && productIndex === 0 ? 12 : 0),
+          safety_stock: store.business === '茶饮' ? 8 : 4,
+          status: 'ACTIVE',
+        },
       })
     })
     addOperation({
@@ -572,17 +580,6 @@ const createChineseScenarioSeedDocs = (): SeedDoc[] => {
       sourceRevision: 1,
       eventId: `evt-cn-store-config-${index + 1}`,
       data: {config_id: `config-${store.storeId}-pos`, store_id: store.storeId, dine_in_enabled: store.business !== '茶饮', takeaway_enabled: true, invoice_enabled: true, business_hours: store.business === '茶饮' ? '10:00-22:00' : '11:00-21:30', status: 'ACTIVE'},
-    })
-    addOperation({
-      entityType: 'stock_reservation',
-      entityId: index === 0 ? 'reservation-salmon-bowl-001' : `reservation-${store.storeId}-rush-hour`,
-      naturalScopeType: 'STORE',
-      naturalScopeKey: store.storeId,
-      title: `${store.name} 晚高峰锁定库存`,
-      status: 'ACTIVE',
-      sourceRevision: 1,
-      eventId: `evt-cn-reservation-${index + 1}`,
-      data: {reservation_id: index === 0 ? 'reservation-salmon-bowl-001' : `reservation-${store.storeId}-rush-hour`, store_id: store.storeId, product_id: productIds[0], reserved_quantity: store.business === '茶饮' ? 12 : 4, reservation_status: 'ACTIVE', expires_at: '2026-04-24T20:30:00.000Z'},
     })
   })
 

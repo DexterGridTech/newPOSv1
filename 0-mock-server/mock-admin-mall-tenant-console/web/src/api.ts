@@ -18,7 +18,7 @@ export interface ApiResponse<T> {
   }
 }
 
-type PageResult<T> = {
+export type PageResult<T> = {
   data: T[]
   pagination: {
     page: number
@@ -28,8 +28,33 @@ type PageResult<T> = {
   }
 }
 
-const headers = (init?: RequestInit) => ({
+export type PageQuery = {
+  page?: number
+  size?: number
+  search?: string
+  status?: string
+  filters?: Record<string, string | number | boolean | null | undefined>
+}
+
+type ApiRequestInit = RequestInit & {
+  skipSandboxHeader?: boolean
+}
+
+const CUSTOMER_PAGE_SIZE = 500
+const LOCAL_API_BASE_URL = 'http://127.0.0.1:5830'
+const configuredApiBaseUrl = (import.meta as ImportMeta & {
+  env?: {VITE_ADMIN_CONSOLE_API_BASE_URL?: string}
+}).env?.VITE_ADMIN_CONSOLE_API_BASE_URL?.trim()
+const isLocalDevConsole = typeof window !== 'undefined'
+  && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  && window.location.port === '5840'
+const API_BASE_URL = configuredApiBaseUrl || (isLocalDevConsole ? LOCAL_API_BASE_URL : '')
+
+let activeSandboxId = ''
+
+const headers = (init?: ApiRequestInit) => ({
   'content-type': 'application/json',
+  ...(activeSandboxId && !init?.skipSandboxHeader ? {'x-sandbox-id': activeSandboxId} : {}),
   ...(init?.headers ?? {}),
 })
 
@@ -38,10 +63,44 @@ const readErrorMessage = <T>(payload: ApiResponse<T> | null, response: Response)
   ?? payload?.message
   ?? `request failed: ${response.status}`
 
-const request = async <T>(url: string, init?: RequestInit) => {
-  const response = await fetch(url, {
+const buildRequestUrl = (url: string) => {
+  if (!API_BASE_URL || /^https?:\/\//.test(url)) {
+    return url
+  }
+  return `${API_BASE_URL}${url}`
+}
+
+const resolveAssetUrl = (url: string) => {
+  if (!url || /^https?:\/\//.test(url) || !API_BASE_URL) {
+    return url
+  }
+  return `${API_BASE_URL}${url}`
+}
+
+const buildPageUrl = (path: string, query: PageQuery = {}) => {
+  const params = new URLSearchParams()
+  params.set('page', String(query.page ?? 1))
+  params.set('size', String(query.size ?? 20))
+  if (query.search?.trim()) {
+    params.set('search', query.search.trim())
+  }
+  if (query.status?.trim()) {
+    params.set('status', query.status.trim())
+  }
+  Object.entries(query.filters ?? {}).forEach(([key, value]) => {
+    if (value === null || value === undefined || value === '' || value === 'ALL') {
+      return
+    }
+    params.set(key, String(value))
+  })
+  return `${path}?${params.toString()}`
+}
+
+const request = async <T>(url: string, init?: ApiRequestInit) => {
+  const {skipSandboxHeader: _skipSandboxHeader, ...fetchInit} = init ?? {}
+  const response = await fetch(buildRequestUrl(url), {
+    ...fetchInit,
     headers: headers(init),
-    ...init,
   })
   const payload = await response.json() as ApiResponse<T>
   const isExplicitFailure = payload.success === false
@@ -54,10 +113,11 @@ const request = async <T>(url: string, init?: RequestInit) => {
   return payload.data
 }
 
-const requestPage = async <T>(url: string, init?: RequestInit): Promise<PageResult<T>> => {
-  const response = await fetch(url, {
+const requestPage = async <T>(url: string, init?: ApiRequestInit): Promise<PageResult<T>> => {
+  const {skipSandboxHeader: _skipSandboxHeader, ...fetchInit} = init ?? {}
+  const response = await fetch(buildRequestUrl(url), {
+    ...fetchInit,
     headers: headers(init),
-    ...init,
   })
   const payload = await response.json() as ApiResponse<T[]>
   const isExplicitFailure = payload.success === false
@@ -78,14 +138,54 @@ const requestPage = async <T>(url: string, init?: RequestInit): Promise<PageResu
   }
 }
 
+const uploadAsset = async (input: {
+  kind: 'brand-logo' | 'product-image' | 'menu-product-image'
+  file: File
+}) => {
+  const contentBase64 = await fileToBase64(input.file)
+  const asset = await request<{
+    url: string
+    assetId: string
+    fileName: string
+    mimeType: string
+    size: number
+  }>('/api/v1/customer/assets', {
+    method: 'POST',
+    body: JSON.stringify({
+      kind: input.kind,
+      fileName: input.file.name,
+      mimeType: input.file.type || 'application/octet-stream',
+      contentBase64,
+    }),
+  })
+  return {
+    ...asset,
+    url: resolveAssetUrl(asset.url),
+  }
+}
+
+const fileToBase64 = (file: File) => new Promise<string>((resolve, reject) => {
+  const reader = new FileReader()
+  reader.onload = () => {
+    const result = typeof reader.result === 'string' ? reader.result : ''
+    resolve(result.includes(',') ? result.slice(result.indexOf(',') + 1) : result)
+  }
+  reader.onerror = () => reject(reader.error ?? new Error('文件读取失败'))
+  reader.readAsDataURL(file)
+})
+
 export const api = {
+  setActiveSandboxId: (sandboxId: string) => {
+    activeSandboxId = sandboxId
+  },
+  uploadCustomerAsset: uploadAsset,
   getSandboxes: () => requestPage<{
     aggregateId: string
     entityId: string
     title: string
     status: string
     payload: Record<string, unknown>
-  }>('/api/v1/org/sandboxes?page=1&size=20'),
+  }>('/api/v1/org/sandboxes?page=1&size=100', {skipSandboxHeader: true}),
   createSandbox: (input: {
     sandboxId?: string
     sandboxCode: string
@@ -95,19 +195,32 @@ export const api = {
     owner?: string
   }) => request<EntityItemLike>('/api/v1/org/sandboxes', {
     method: 'POST',
+    skipSandboxHeader: true,
     body: JSON.stringify(input),
   }),
   activateSandbox: (sandboxId: string) => request<EntityItemLike>(`/api/v1/org/sandboxes/${sandboxId}/activate`, {
     method: 'POST',
+    skipSandboxHeader: true,
     body: JSON.stringify({}),
   }),
   suspendSandbox: (sandboxId: string) => request<EntityItemLike>(`/api/v1/org/sandboxes/${sandboxId}/suspend`, {
     method: 'POST',
+    skipSandboxHeader: true,
     body: JSON.stringify({}),
   }),
   closeSandbox: (sandboxId: string) => request<EntityItemLike>(`/api/v1/org/sandboxes/${sandboxId}/close`, {
     method: 'POST',
+    skipSandboxHeader: true,
     body: JSON.stringify({}),
+  }),
+  updateCustomerEntity: (entityType: string, entityId: string, input: {
+    title?: string
+    status?: string
+    data?: Record<string, unknown>
+    expectedRevision?: number
+  }) => request<EntityItemLike>(`/api/v1/customer/entities/${entityType}/${entityId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(input),
   }),
   createPlatform: (input: {
     platformCode: string
@@ -123,6 +236,7 @@ export const api = {
       tokenExpireAt?: string | null
       channelStatus?: string | null
     }
+    metadataCatalog?: Record<string, unknown>
   }) => request<EntityItemLike>('/api/v1/org/platforms', {
     method: 'POST',
     body: JSON.stringify(input),
@@ -154,6 +268,7 @@ export const api = {
     region?: Record<string, unknown>
     address?: string
     businessMode?: string
+    projectPhases?: Array<Record<string, unknown>>
   }) => request<EntityItemLike>('/api/v1/org/projects', {
     method: 'POST',
     body: JSON.stringify(input),
@@ -171,6 +286,13 @@ export const api = {
     tenantCode: string
     tenantName: string
     platformId?: string
+    companyName?: string
+    socialCreditCode?: string
+    contactName?: string
+    contactPhone?: string
+    invoiceTitle?: string
+    settlementCycle?: string
+    billingEmail?: string
   }) => request<{
     aggregateId: string
     entityId: string
@@ -193,17 +315,36 @@ export const api = {
     brandId?: string
     brandCode: string
     brandName: string
-    tenantId: string
+    platformId?: string
+    brandCategory?: string
+    brandDescription?: string
+    brandLogoUrl?: string
+    brandNameEn?: string
+    standardMenuEnabled?: boolean
+    standardPricingLocked?: boolean
+    erpIntegrationEnabled?: boolean
+    erpApiEndpoint?: string
   }) => request<EntityItemLike>('/api/v1/org/brands', {
     method: 'POST',
     body: JSON.stringify(input),
   }),
-  createBusinessEntity: (input: {
-    entityId?: string
-    entityCode: string
-    entityName: string
-    tenantId: string
-  }) => request<EntityItemLike>('/api/v1/org/legal-entities', {
+  getBrandMetadata: (brandId: string, query?: PageQuery) => requestPage<{
+    aggregateId: string
+    entityId: string
+    title: string
+    status: string
+    payload: Record<string, unknown>
+  }>(buildPageUrl(`/api/v1/org/brands/${brandId}/metadata`, query ?? {size: CUSTOMER_PAGE_SIZE})),
+  createBrandMetadata: (brandId: string, input: {
+    metadataId?: string
+    metadataType: string
+    metadataName: string
+    options?: Array<Record<string, unknown> | string>
+    selectionType?: string
+    required?: boolean
+    minSelections?: number
+    maxSelections?: number
+  }) => request<EntityItemLike>(`/api/v1/org/brands/${brandId}/metadata`, {
     method: 'POST',
     body: JSON.stringify(input),
   }),
@@ -212,6 +353,11 @@ export const api = {
     storeCode: string
     storeName: string
     unitCode: string
+    storeType?: string
+    storeFormats?: string[]
+    floor?: string
+    areaSqm?: number
+    businessHours?: string
     projectId: string
   }) => request<EntityItemLike>('/api/v1/org/stores', {
     method: 'POST',
@@ -219,11 +365,14 @@ export const api = {
   }),
   createContract: (input: {
     contractId?: string
-    contractNo: string
+    contractNo?: string
+    contractCode?: string
     storeId: string
+    lessorProjectId?: string
+    lessorPhaseId?: string
     tenantId: string
     brandId: string
-    entityId: string
+    entityId?: string
     startDate: string
     endDate: string
     commissionType?: string
@@ -325,7 +474,7 @@ export const api = {
     method: 'POST',
     body: JSON.stringify({}),
   }),
-  getProjectionOutbox: () => request<Array<{
+  getProjectionOutbox: (query?: {status?: string; page?: number; size?: number}) => requestPage<{
     outboxId: string
     topicKey: string
     scopeType: string
@@ -339,7 +488,11 @@ export const api = {
     payload: Record<string, unknown>
     targetTerminalIds: string[]
     updatedAt: number
-  }>>('/api/v1/diagnostics/projections/outbox'),
+  }>(buildPageUrl('/api/v1/diagnostics/projections/outbox', {
+    page: query?.page ?? 1,
+    size: query?.size ?? CUSTOMER_PAGE_SIZE,
+    status: query?.status,
+  })),
   previewProjectionOutbox: () => request<{
     sandboxId: string
     targetPlatformBaseUrl: string
@@ -363,6 +516,16 @@ export const api = {
     method: 'POST',
     body: JSON.stringify({}),
   }),
+  getProjectionPublishLog: (query?: {page?: number; size?: number}) => requestPage<{
+    publishId: string
+    outboxId: string
+    request: Record<string, unknown>
+    response: Record<string, unknown>
+    createdAt: number
+  }>(buildPageUrl('/api/v1/diagnostics/projections/publish-log', {
+    page: query?.page ?? 1,
+    size: query?.size ?? CUSTOMER_PAGE_SIZE,
+  })),
   getAlignedAuditEvents: () => requestPage<{
     eventId: string
     aggregateType: string
@@ -373,7 +536,7 @@ export const api = {
     actorId: string
     sourceRevision: number
     payload: Record<string, unknown>
-  }>('/api/v1/diagnostics/events?page=1&size=20'),
+  }>(`/api/v1/diagnostics/events?page=1&size=${CUSTOMER_PAGE_SIZE}`),
   getProjectionDiagnostics: () => requestPage<{
     diagnosticId: string
     topicKey: string
@@ -383,56 +546,56 @@ export const api = {
     status: string
     detail: Record<string, unknown>
     createdAt: number
-  }>('/api/v1/diagnostics/projections/delivery?page=1&size=20'),
-  getPlatforms: () => requestPage<{
+  }>(`/api/v1/diagnostics/projections/delivery?page=1&size=${CUSTOMER_PAGE_SIZE}`),
+  getPlatforms: (query?: PageQuery) => requestPage<{
     aggregateId: string
     entityId: string
     title: string
     status: string
     payload: Record<string, unknown>
-  }>('/api/v1/org/platforms?page=1&size=20'),
-  getProjects: () => requestPage<{
+  }>(buildPageUrl('/api/v1/org/platforms', query ?? {size: CUSTOMER_PAGE_SIZE})),
+  getProjects: (query?: PageQuery) => requestPage<{
     aggregateId: string
     entityId: string
     title: string
     status: string
     payload: Record<string, unknown>
-  }>('/api/v1/org/projects?page=1&size=20'),
-  getTenants: () => requestPage<{
+  }>(buildPageUrl('/api/v1/org/projects', query ?? {size: CUSTOMER_PAGE_SIZE})),
+  getTenants: (query?: PageQuery) => requestPage<{
     aggregateId: string
     entityId: string
     title: string
     status: string
     payload: Record<string, unknown>
-  }>('/api/v1/org/tenants?page=1&size=20'),
-  getTenantStores: (tenantId: string) => requestPage<{
+  }>(buildPageUrl('/api/v1/org/tenants', query ?? {size: CUSTOMER_PAGE_SIZE})),
+  getTenantStores: (tenantId: string, query?: PageQuery) => requestPage<{
     aggregateId: string
     entityId: string
     title: string
     status: string
     payload: Record<string, unknown>
-  }>(`/api/v1/org/tenants/${tenantId}/stores?page=1&size=100`),
-  getBrands: () => requestPage<{
+  }>(buildPageUrl(`/api/v1/org/tenants/${tenantId}/stores`, query ?? {size: 100})),
+  getBrands: (query?: PageQuery) => requestPage<{
     aggregateId: string
     entityId: string
     title: string
     status: string
     payload: Record<string, unknown>
-  }>('/api/v1/org/brands?page=1&size=20'),
-  getStores: () => requestPage<{
+  }>(buildPageUrl('/api/v1/org/brands', query ?? {size: CUSTOMER_PAGE_SIZE})),
+  getStores: (query?: PageQuery) => requestPage<{
     aggregateId: string
     entityId: string
     title: string
     status: string
     payload: Record<string, unknown>
-  }>('/api/v1/org/stores?page=1&size=20'),
-  getContracts: () => requestPage<{
+  }>(buildPageUrl('/api/v1/org/stores', query ?? {size: CUSTOMER_PAGE_SIZE})),
+  getContracts: (query?: PageQuery) => requestPage<{
     aggregateId: string
     entityId: string
     title: string
     status: string
     payload: Record<string, unknown>
-  }>('/api/v1/org/contracts?page=1&size=20'),
+  }>(buildPageUrl('/api/v1/org/contracts', query ?? {size: CUSTOMER_PAGE_SIZE})),
   getStoreContractMonitor: (storeId: string) => request<{
     store: EntityItemLike
     snapshot: {
@@ -468,53 +631,121 @@ export const api = {
       summary: string | null
     }>
   }>(`/api/v1/org/stores/${storeId}/contract-monitor`),
-  getBusinessEntities: () => requestPage<{
+  getBusinessEntities: (query?: PageQuery) => requestPage<{
     aggregateId: string
     entityId: string
     title: string
     status: string
     payload: Record<string, unknown>
-  }>('/api/v1/org/legal-entities?page=1&size=20'),
-  getTables: (storeId = 'store-kernel-base-test') => requestPage<{
+  }>(buildPageUrl('/api/v1/org/legal-entities', query ?? {size: CUSTOMER_PAGE_SIZE})),
+  createBusinessEntity: (input: {
+    entityId?: string
+    entityCode: string
+    entityName: string
+    tenantId: string
+    companyName?: string
+    unifiedSocialCreditCode?: string
+    legalRepresentative?: string
+    entityType?: string
+    bankName?: string
+    bankAccountName?: string
+    bankAccountNo?: string
+    bankBranch?: string
+    taxRegistrationNo?: string
+    taxpayerType?: string
+    taxRate?: number
+    settlementCycle?: string
+    settlementDay?: number | null
+    autoSettlementEnabled?: boolean
+  }) => request<EntityItemLike>('/api/v1/org/legal-entities', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  }),
+  getTables: (query?: PageQuery) => requestPage<{
     aggregateId: string
     entityId: string
     title: string
     status: string
     payload: Record<string, unknown>
-  }>(`/api/v1/org/stores/${storeId}/tables?page=1&size=20`),
-  getWorkstations: (storeId = 'store-kernel-base-test') => requestPage<{
+  }>(buildPageUrl('/api/v1/org/tables', query ?? {size: CUSTOMER_PAGE_SIZE})),
+  createTable: (storeId: string, input: {
+    tableId?: string
+    tableNo: string
+    tableName?: string
+    area?: string
+    capacity?: number
+    tableType?: string
+    qrCodeUrl?: string | null
+    qrCodeContent?: string | null
+    currentBookingId?: string | null
+    currentCustomerCount?: number | null
+    occupiedAt?: string | null
+    estimatedDuration?: number | null
+    sortOrder?: number
+    reservable?: boolean
+    consumerDescription?: string | null
+    minimumSpend?: number | null
+  }) => request<EntityItemLike>(`/api/v1/org/stores/${storeId}/tables`, {
+    method: 'POST',
+    body: JSON.stringify(input),
+  }),
+  getWorkstations: (query?: PageQuery) => requestPage<{
     aggregateId: string
     entityId: string
     title: string
     status: string
     payload: Record<string, unknown>
-  }>(`/api/v1/org/stores/${storeId}/workstations?page=1&size=20`),
-  getUsers: () => requestPage<{
+  }>(buildPageUrl('/api/v1/org/workstations', query ?? {size: CUSTOMER_PAGE_SIZE})),
+  createWorkstation: (storeId: string, input: {
+    workstationId?: string
+    workstationCode: string
+    workstationName: string
+    categoryCodes?: string[]
+    workstationType?: string
+    responsibleCategories?: string[]
+    description?: string | null
+  }) => request<EntityItemLike>(`/api/v1/org/stores/${storeId}/workstations`, {
+    method: 'POST',
+    body: JSON.stringify(input),
+  }),
+  getUsers: (query?: PageQuery) => requestPage<{
     aggregateId: string
     entityId: string
     title: string
     status: string
     payload: Record<string, unknown>
-  }>('/api/v1/users?page=1&size=20'),
-  getPermissions: () => requestPage<{
+  }>(buildPageUrl('/api/v1/users', query ?? {size: CUSTOMER_PAGE_SIZE})),
+  getPermissions: (query?: PageQuery) => requestPage<{
     aggregateId: string
     entityId: string
     title: string
     status: string
     payload: Record<string, unknown>
-  }>('/api/v1/permissions?page=1&size=20'),
-  getRoles: () => requestPage<{
+  }>(buildPageUrl('/api/v1/permissions', query ?? {size: CUSTOMER_PAGE_SIZE})),
+  createPermission: (input: {
+    permissionId?: string
+    permissionCode: string
+    permissionName: string
+    permissionType?: string
+    platformId?: string
+  }) => request<EntityItemLike>('/api/v1/permissions', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  }),
+  getRoles: (query?: PageQuery) => requestPage<{
     aggregateId: string
     entityId: string
     title: string
     status: string
     payload: Record<string, unknown>
-  }>('/api/v1/roles?page=1&size=20'),
+  }>(buildPageUrl('/api/v1/roles', query ?? {size: CUSTOMER_PAGE_SIZE})),
   createRole: (input: {
     roleCode: string
     roleName: string
     scopeType: string
     permissionIds: string[]
+    platformId?: string
+    roleType?: string
   }) => request<EntityItemLike>('/api/v1/roles', {
     method: 'POST',
     body: JSON.stringify(input),
@@ -527,13 +758,20 @@ export const api = {
     method: 'POST',
     body: JSON.stringify({}),
   }),
-  getUserRoleBindings: () => requestPage<{
+  updateRolePermissions: (roleId: string, input: {
+    permissionIds: string[]
+    expectedRevision?: number
+  }) => request<EntityItemLike>(`/api/v1/roles/${roleId}/permissions`, {
+    method: 'PUT',
+    body: JSON.stringify(input),
+  }),
+  getUserRoleBindings: (query?: PageQuery) => requestPage<{
     aggregateId: string
     entityId: string
     title: string
     status: string
     payload: Record<string, unknown>
-  }>('/api/v1/user-role-bindings?page=1&size=20'),
+  }>(buildPageUrl('/api/v1/user-role-bindings', query ?? {size: CUSTOMER_PAGE_SIZE})),
   getStoreEffectiveIam: (storeId: string) => request<StoreEffectiveIam>(`/api/v1/stores/${storeId}/effective-iam`),
   getUserEffectivePermissions: (userId: string, storeId: string) => request<UserEffectivePermissions>(
     `/api/v1/users/${userId}/effective-permissions?storeId=${encodeURIComponent(storeId)}`,
@@ -558,7 +796,12 @@ export const api = {
   createUserRoleBinding: (input: {
     userId: string
     roleId: string
-    storeId: string
+    storeId?: string
+    scopeType?: string
+    scopeId?: string
+    effectiveFrom?: string
+    effectiveTo?: string | null
+    reason?: string | null
   }) => request<EntityItemLike>('/api/v1/user-role-bindings', {
     method: 'POST',
     body: JSON.stringify(input),
@@ -589,21 +832,48 @@ export const api = {
     method: 'POST',
     body: JSON.stringify(input),
   }),
-  getProducts: () => requestPage<{
+  getProducts: (query?: PageQuery) => requestPage<{
     aggregateId: string
     entityId: string
     title: string
     status: string
     payload: Record<string, unknown>
-  }>('/api/v1/products?page=1&size=20'),
+  }>(buildPageUrl('/api/v1/products', query ?? {size: CUSTOMER_PAGE_SIZE})),
+  getProductCategories: (query?: PageQuery) => requestPage<{
+    aggregateId: string
+    entityId: string
+    title: string
+    status: string
+    payload: Record<string, unknown>
+  }>(buildPageUrl('/api/v1/product-categories', query ?? {size: CUSTOMER_PAGE_SIZE})),
+  createProductCategory: (input: {
+    categoryId?: string
+    categoryCode: string
+    categoryName: string
+    parentCategoryId?: string | null
+    ownershipScope?: 'BRAND' | 'STORE'
+    brandId?: string | null
+    storeId?: string | null
+    sortOrder?: number
+  }) => request<EntityItemLike>('/api/v1/product-categories', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  }),
   createProduct: (input: {
     productId?: string
+    productCode?: string
     productName: string
     ownershipScope: 'BRAND' | 'STORE'
     brandId?: string
     storeId?: string
     productType?: string
+    categoryId?: string | null
+    imageUrl?: string
+    productDescription?: string | null
     basePrice?: number
+    comboPricingStrategy?: Record<string, unknown> | string | null
+    comboItems?: Array<Record<string, unknown>>
+    productionProfile?: Record<string, unknown>
     productionSteps?: Array<Record<string, unknown>>
     modifierGroups?: Array<Record<string, unknown>>
     variants?: Array<Record<string, unknown>>
@@ -633,17 +903,22 @@ export const api = {
     method: 'POST',
     body: JSON.stringify(input),
   }),
-  getMenus: () => requestPage<{
+  getMenus: (query?: PageQuery) => requestPage<{
     aggregateId: string
     entityId: string
     title: string
     status: string
     payload: Record<string, unknown>
-  }>('/api/v1/menus?page=1&size=20'),
+  }>(buildPageUrl('/api/v1/menus', query ?? {size: CUSTOMER_PAGE_SIZE})),
   createBrandMenu: (input: {
     brandMenuId?: string
     brandId: string
     menuName: string
+    channelType?: string
+    effectiveFrom?: string | null
+    effectiveTo?: string | null
+    parentMenuId?: string | null
+    version?: number
     sections?: Array<Record<string, unknown>>
     reviewStatus?: string
   }) => request<EntityItemLike>('/api/v1/menus', {
@@ -662,17 +937,25 @@ export const api = {
     method: 'POST',
     body: JSON.stringify({}),
   }),
-  getStoreMenus: () => requestPage<{
+  getStoreMenus: (query?: PageQuery) => requestPage<{
     aggregateId: string
     entityId: string
     title: string
     status: string
     payload: Record<string, unknown>
-  }>('/api/v1/store-menus?page=1&size=20'),
+  }>(buildPageUrl('/api/v1/store-menus', query ?? {size: CUSTOMER_PAGE_SIZE})),
   createStoreMenu: (input: {
     menuId?: string
     storeId: string
     menuName: string
+    brandMenuId?: string | null
+    channelType?: string
+    menuType?: string
+    inheritMode?: string
+    effectiveFrom?: string | null
+    effectiveTo?: string | null
+    parentMenuId?: string | null
+    version?: number
     sections?: Array<Record<string, unknown>>
     versionHash?: string
   }) => request<EntityItemLike>('/api/v1/store-menus', {
@@ -683,107 +966,142 @@ export const api = {
     method: 'POST',
     body: JSON.stringify({}),
   }),
-  getStoreConfigs: (storeId = 'store-kernel-base-test') => requestPage<{
+  getStoreConfigs: (query?: PageQuery) => requestPage<{
     aggregateId: string
     entityId: string
     title: string
     status: string
     payload: Record<string, unknown>
-  }>(`/api/v1/stores/${storeId}/config?page=1&size=20`),
+  }>(buildPageUrl('/api/v1/store-configs', query ?? {size: CUSTOMER_PAGE_SIZE})),
   updateStoreConfig: (storeId: string, input: {
     businessStatus?: string
     acceptOrder?: boolean
+    operatingStatus?: string
+    autoAcceptEnabled?: boolean
+    acceptTimeoutSeconds?: number
+    preparationBufferMinutes?: number
+    maxConcurrentOrders?: number
     operatingHours?: Array<Record<string, unknown>>
+    specialOperatingDays?: Array<Record<string, unknown>>
+    channelOperatingHours?: Array<Record<string, unknown>>
+    autoOpenCloseEnabled?: boolean
     extraChargeRules?: Array<Record<string, unknown>>
+    refundStockPolicy?: string
+    version?: number
   }) => request<EntityItemLike>(`/api/v1/stores/${storeId}/config`, {
     method: 'PUT',
     body: JSON.stringify(input),
   }),
-  openStore: (storeId: string, input: {
-    operatingHours?: Array<Record<string, unknown>>
-    extraChargeRules?: Array<Record<string, unknown>>
-  } = {}) => request<EntityItemLike>(`/api/v1/stores/${storeId}/open`, {
-    method: 'POST',
-    body: JSON.stringify(input),
-  }),
-  closeStore: (storeId: string, input: {
-    operatingHours?: Array<Record<string, unknown>>
-    extraChargeRules?: Array<Record<string, unknown>>
-  } = {}) => request<EntityItemLike>(`/api/v1/stores/${storeId}/close`, {
-    method: 'POST',
-    body: JSON.stringify(input),
-  }),
-  getInventories: (storeId = 'store-kernel-base-test') => requestPage<{
+  getInventories: (query?: PageQuery) => requestPage<{
     aggregateId: string
     entityId: string
     title: string
     status: string
     payload: Record<string, unknown>
-  }>(`/api/v1/stores/${storeId}/inventories?page=1&size=20`),
+  }>(buildPageUrl('/api/v1/inventories', query ?? {size: CUSTOMER_PAGE_SIZE})),
   updateInventory: (storeId: string, productId: string, input: {
     stockId?: string
     saleableQuantity: number
+    skuId?: string
+    stockGranularity?: string
+    stockType?: string
+    stockDate?: string
+    periodId?: string
+    totalQuantity?: number | null
+    soldQuantity?: number
+    reservedQuantity?: number
     safetyStock?: number
+    soldOutThreshold?: number
+    reservationTtlSeconds?: number
+    resetPolicy?: string
+    ingredientConsumption?: Array<Record<string, unknown>>
   }) => request<EntityItemLike>(`/api/v1/stores/${storeId}/inventories/${productId}`, {
     method: 'PUT',
     body: JSON.stringify(input),
   }),
-  getPriceRules: (storeId = 'store-kernel-base-test') => requestPage<{
+  getPriceRules: (query?: PageQuery) => requestPage<{
     aggregateId: string
     entityId: string
     title: string
     status: string
     payload: Record<string, unknown>
-  }>(`/api/v1/stores/${storeId}/price-rules?page=1&size=20`),
+  }>(buildPageUrl('/api/v1/price-rules', query ?? {size: CUSTOMER_PAGE_SIZE})),
   createPriceRule: (input: {
     ruleCode: string
-    productId: string
+    ruleName?: string
+    productId?: string
     storeId: string
     priceType?: string
     channelType?: string
     priceDelta?: number
+    priceValue?: number
+    timeSlot?: {start?: string; end?: string} | null
+    memberTier?: string | null
+    priority?: number
+    discountType?: string
+    discountValue?: number
+    applicableProductIds?: string[]
+    effectiveFrom?: string | null
+    effectiveTo?: string | null
   }) => request<EntityItemLike>('/api/v1/product-price-rules', {
     method: 'POST',
     body: JSON.stringify(input),
   }),
-  getAvailabilityRules: (storeId = 'store-kernel-base-test') => requestPage<{
+  updatePriceRule: (ruleId: string, input: {
+    ruleName?: string
+    channelType?: string
+    timeSlot?: {start?: string; end?: string} | null
+    memberTier?: string | null
+    priority?: number
+    discountType?: string
+    discountValue?: number
+    applicableProductIds?: string[]
+    effectiveFrom?: string | null
+    effectiveTo?: string | null
+    expectedRevision?: number
+  }) => request<EntityItemLike>(`/api/v1/price-rules/${ruleId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(input),
+  }),
+  disablePriceRule: (ruleId: string, input: {reason?: string} = {}) => request<EntityItemLike>(`/api/v1/price-rules/${ruleId}/disable`, {
+    method: 'POST',
+    body: JSON.stringify(input),
+  }),
+  getAvailabilityRules: (query?: PageQuery) => requestPage<{
     aggregateId: string
     entityId: string
     title: string
     status: string
     payload: Record<string, unknown>
-  }>(`/api/v1/stores/${storeId}/availability-rules?page=1&size=20`),
+  }>(buildPageUrl('/api/v1/availability-rules', query ?? {size: CUSTOMER_PAGE_SIZE})),
   createAvailabilityRule: (storeId: string, input: {
     ruleCode: string
     productId?: string
+    ruleType?: string
+    ruleConfig?: Record<string, unknown>
     channelType?: string
+    timeSlot?: Record<string, unknown> | null
+    dailyQuota?: number | null
+    priority?: number
+    enabled?: boolean
     available?: boolean
   }) => request<EntityItemLike>(`/api/v1/stores/${storeId}/availability-rules`, {
     method: 'POST',
     body: JSON.stringify(input),
   }),
-  getMenuAvailability: (storeId = 'store-kernel-base-test') => requestPage<{
+  getMenuAvailability: (query?: PageQuery) => requestPage<{
     aggregateId: string
     entityId: string
     title: string
     status: string
     payload: Record<string, unknown>
-  }>(`/api/v1/stores/${storeId}/menu-availability?page=1&size=20`),
-  getStockReservations: (storeId = 'store-kernel-base-test') => requestPage<{
-    aggregateId: string
-    entityId: string
-    title: string
-    status: string
-    payload: Record<string, unknown>
-  }>(`/api/v1/stores/${storeId}/stock-reservations?page=1&size=20`),
-  createStockReservation: (storeId: string, input: {
-    reservationId?: string
-    productId: string
-    reservedQuantity: number
-    reservationStatus?: string
-    expiresAt?: string
-  }) => request<EntityItemLike>(`/api/v1/stores/${storeId}/stock-reservations`, {
-    method: 'POST',
+  }>(buildPageUrl('/api/v1/menu-availability', query ?? {size: CUSTOMER_PAGE_SIZE})),
+  updateMenuAvailability: (storeId: string, productId: string, input: {
+    available: boolean
+    soldOutReason?: string | null
+    effectiveFrom?: string
+  }) => request<EntityItemLike>(`/api/v1/stores/${storeId}/menu-availability/${productId}`, {
+    method: 'PUT',
     body: JSON.stringify(input),
   }),
   getTerminalAuthCapabilities: () => request<{
@@ -794,7 +1112,7 @@ export const api = {
   }>('/api/v1/auth/capabilities'),
 }
 
-type EntityItemLike = {
+export type EntityItemLike = {
   aggregateId: string
   entityId: string
   title: string

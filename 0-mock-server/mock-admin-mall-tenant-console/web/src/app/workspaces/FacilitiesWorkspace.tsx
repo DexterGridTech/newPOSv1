@@ -8,6 +8,8 @@ type Props = {
 }
 
 export function FacilitiesWorkspace({tables, workstations}: Props) {
+  const hasFacilities = tables.length + workstations.length > 0
+
   return (
     <>
       <article className="panel workspace-hero-card">
@@ -24,6 +26,9 @@ export function FacilitiesWorkspace({tables, workstations}: Props) {
           <div><span>可用桌台</span><strong>{tables.filter(item => item.status === 'AVAILABLE').length}</strong></div>
           <div><span>激活工作站</span><strong>{workstations.filter(item => item.status === 'ACTIVE').length}</strong></div>
         </div>
+        {!hasFacilities ? (
+          <p className="empty">当前 aligned write-model 还没有 table / workstation 实体；左侧导航数量按设施实体计数展示，避免把组织域总量误认为设施数据。</p>
+        ) : null}
       </article>
       <ResourceCard title="桌台列表" count={tables.length} items={tables} />
       <ResourceCard title="工作站列表" count={workstations.length} items={workstations} />

@@ -2,7 +2,7 @@ import {api} from '../api'
 import type {PermissionDecision, StoreEffectiveIam, UserEffectivePermissions} from '../api'
 
 export type LegacyDocument = Awaited<ReturnType<typeof api.getDocuments>>[number]
-export type OutboxItem = Awaited<ReturnType<typeof api.getProjectionOutbox>>[number]
+export type OutboxItem = Awaited<ReturnType<typeof api.getProjectionOutbox>>['data'][number]
 export type AuditEvent = Awaited<ReturnType<typeof api.getAlignedAuditEvents>>['data'][number]
 export type ProjectionDiagnostic = Awaited<ReturnType<typeof api.getProjectionDiagnostics>>['data'][number]
 export type Overview = Awaited<ReturnType<typeof api.getOverview>>
@@ -189,10 +189,7 @@ export type OperationDraft = {
   availabilityRuleCode: string
   availabilityChannelType: string
   availabilityAllowed: boolean
-  reservationId: string
   reservedQuantity: string
-  reservationStatus: string
-  reservationExpiresAt: string
 }
 
 export type LastOperationResult = {

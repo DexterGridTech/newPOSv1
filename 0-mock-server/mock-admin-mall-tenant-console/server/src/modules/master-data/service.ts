@@ -107,7 +107,6 @@ const topicKeyByDomainEntityType: Record<string, string> = {
   'catering-product:menu_catalog': 'menu.catalog',
   'catering-store-operating:menu_availability': 'menu.availability',
   'catering-store-operating:saleable_stock': 'catering.saleable-stock.profile',
-  'catering-store-operating:stock_reservation': 'catering.stock-reservation.active',
 }
 
 const resolveTopicKey = (document: Pick<MasterDataDocument, 'domain' | 'entityType'>) => {
@@ -189,6 +188,7 @@ export const updateMasterDataDocument = (
     )
 
     enqueueProjectionOutbox({
+      sandboxId: current.sandboxId,
       topicKey,
       scopeType: current.naturalScopeType,
       scopeKey: current.naturalScopeKey,
@@ -257,6 +257,7 @@ export const rebuildProjectionOutboxFromCurrentDocuments = (input: {
         sourceRevision: document.sourceRevision,
       })
       enqueueProjectionOutbox({
+        sandboxId: document.sandboxId,
         topicKey: resolveTopicKey(document),
         scopeType: document.naturalScopeType,
         scopeKey: document.naturalScopeKey,

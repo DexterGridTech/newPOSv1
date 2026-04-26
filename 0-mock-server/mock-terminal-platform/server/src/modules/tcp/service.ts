@@ -13,6 +13,7 @@ import {
 import { createId, now, parseJson } from '../../shared/utils.js'
 import type { DeliveryStatus, ReleaseStatus, TaskType } from '../../shared/types.js'
 import { assertSandboxUsable } from '../sandbox/service.js'
+import { fanoutExistingProjectionToTerminalIds } from '../tdp/service.js'
 
 export const listTerminals = (sandboxId: string) => {
   assertSandboxUsable(sandboxId)
@@ -42,6 +43,84 @@ export const listTemplates = (sandboxId: string) => {
 export const listActivationCodes = (sandboxId: string) => {
   assertSandboxUsable(sandboxId)
   return db.select().from(activationCodesTable).where(eq(activationCodesTable.sandboxId, sandboxId)).orderBy(desc(activationCodesTable.createdAt)).all()
+}
+
+const fanoutRetainedProjectionsToTerminal = (terminal: {
+  terminalId: string
+  sandboxId: string
+  platformId: string
+  projectId: string
+  tenantId: string
+  brandId: string
+  storeId: string
+}) => {
+  const scopeMatches = (scopeType: string, scopeKey: string) => {
+    switch (scopeType) {
+      case 'TERMINAL':
+        return scopeKey === terminal.terminalId
+      case 'STORE':
+        return scopeKey === terminal.storeId
+      case 'TENANT':
+        return scopeKey === terminal.tenantId
+      case 'BRAND':
+        return scopeKey === terminal.brandId
+      case 'PROJECT':
+        return scopeKey === terminal.projectId
+      case 'PLATFORM':
+        return scopeKey === terminal.platformId
+      default:
+        return false
+    }
+  }
+
+  const rows = sqlite.prepare(`
+    SELECT
+      p.topic_key,
+      p.scope_type,
+      p.scope_key,
+      p.item_key,
+      p.revision,
+      p.payload_json,
+      e.source_release_id
+    FROM tdp_projections p
+    LEFT JOIN tdp_projection_source_events e
+      ON e.sandbox_id = p.sandbox_id
+     AND e.topic_key = p.topic_key
+     AND e.scope_type = p.scope_type
+     AND e.scope_key = p.scope_key
+     AND e.item_key = p.item_key
+     AND e.tdp_revision = p.revision
+    WHERE p.sandbox_id = ?
+    ORDER BY p.updated_at ASC
+  `).all(terminal.sandboxId) as Array<{
+    topic_key: string
+    scope_type: string
+    scope_key: string
+    item_key: string
+    revision: number
+    payload_json: string
+    source_release_id: string | null
+  }>
+
+  let total = 0
+  for (const row of rows) {
+    if (!scopeMatches(row.scope_type, row.scope_key)) {
+      continue
+    }
+    const result = fanoutExistingProjectionToTerminalIds({
+      sandboxId: terminal.sandboxId,
+      topicKey: row.topic_key,
+      scopeType: row.scope_type,
+      scopeKey: row.scope_key,
+      itemKey: row.item_key,
+      revision: row.revision,
+      payload: parseJson<Record<string, unknown>>(row.payload_json, {}),
+      sourceReleaseId: row.source_release_id,
+      targetTerminalIds: [terminal.terminalId],
+    })
+    total += result.total
+  }
+  return {total}
 }
 
 export const activateTerminal = (input: {
@@ -108,6 +187,16 @@ export const activateTerminal = (input: {
     refreshExpiresAt: timestamp + 30 * 24 * 3600_000,
     revokedAt: null,
   }).run()
+
+  fanoutRetainedProjectionsToTerminal({
+    terminalId,
+    sandboxId,
+    platformId: activation.platformId,
+    tenantId: activation.tenantId,
+    brandId: activation.brandId,
+    projectId: activation.projectId,
+    storeId: activation.storeId,
+  })
 
   return {
     terminalId,
@@ -527,6 +616,15 @@ export const batchCreateTerminals = (sandboxId: string, count: number) => {
       createdAt: timestamp,
       updatedAt: timestamp,
     }).run()
+    fanoutRetainedProjectionsToTerminal({
+      terminalId,
+      sandboxId,
+      platformId: store.platformId,
+      tenantId: store.tenantId,
+      brandId: store.brandId,
+      projectId: store.projectId,
+      storeId: store.storeId,
+    })
   }
 
   return { count, terminalIds }

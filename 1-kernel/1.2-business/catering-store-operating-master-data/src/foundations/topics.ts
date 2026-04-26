@@ -5,7 +5,6 @@ export const cateringStoreOperatingTopics = {
     menuAvailability: 'menu.availability',
     availabilityRule: 'catering.availability-rule.profile',
     saleableStock: 'catering.saleable-stock.profile',
-    stockReservation: 'catering.stock-reservation.active',
 } as const satisfies Record<string, CateringStoreOperatingTopic>
 
 export const cateringStoreOperatingTopicList = Object.values(cateringStoreOperatingTopics)

@@ -62,14 +62,13 @@ type LoadSnapshot = {
   priceRules: EntityItem[]
   availabilityRules: EntityItem[]
   menuAvailability: EntityItem[]
-  stockReservations: EntityItem[]
 }
 
 const loadSnapshot = async (): Promise<LoadSnapshot> => {
   const [
     overview,
     documents,
-    outbox,
+    outboxPage,
     authCapabilities,
     auditEvents,
     diagnostics,
@@ -96,7 +95,6 @@ const loadSnapshot = async (): Promise<LoadSnapshot> => {
     priceRules,
     availabilityRules,
     menuAvailability,
-    stockReservations,
   ] = await Promise.all([
     api.getOverview(),
     api.getDocuments(),
@@ -127,13 +125,12 @@ const loadSnapshot = async (): Promise<LoadSnapshot> => {
     api.getPriceRules(),
     api.getAvailabilityRules(),
     api.getMenuAvailability(),
-    api.getStockReservations(),
   ])
 
   return {
     overview,
     documents,
-    outbox,
+    outbox: outboxPage.data,
     authCapabilities,
     auditEvents: auditEvents.data,
     diagnostics: diagnostics.data,
@@ -160,7 +157,6 @@ const loadSnapshot = async (): Promise<LoadSnapshot> => {
     priceRules: priceRules.data,
     availabilityRules: availabilityRules.data,
     menuAvailability: menuAvailability.data,
-    stockReservations: stockReservations.data,
   }
 }
 
@@ -213,7 +209,6 @@ export function useAdminConsoleState() {
   const [priceRules, setPriceRules] = useState<EntityItem[]>([])
   const [availabilityRules, setAvailabilityRules] = useState<EntityItem[]>([])
   const [menuAvailability, setMenuAvailability] = useState<EntityItem[]>([])
-  const [stockReservations, setStockReservations] = useState<EntityItem[]>([])
   const [authCapabilities, setAuthCapabilities] = useState<AuthCapabilities | null>(null)
   const [environmentDraft, setEnvironmentDraft] = useState(defaultEnvironmentDraft)
   const [environmentActionLoading, setEnvironmentActionLoading] = useState(false)
@@ -270,7 +265,6 @@ export function useAdminConsoleState() {
       setPriceRules(snapshot.priceRules)
       setAvailabilityRules(snapshot.availabilityRules)
       setMenuAvailability(snapshot.menuAvailability)
-      setStockReservations(snapshot.stockReservations)
     } catch (nextError) {
       setError(resolveErrorMessage(nextError))
     } finally {
@@ -661,7 +655,7 @@ export function useAdminConsoleState() {
       const brand = await api.createBrand({
         brandCode: orgDraft.brandCode,
         brandName: orgDraft.brandName,
-        tenantId: tenant.entityId,
+        platformId: lastEnvironmentResult?.platformId ?? platforms[0]?.entityId,
       })
       const businessEntity = await api.createBusinessEntity({
         entityCode: orgDraft.entityCode,
@@ -1201,6 +1195,7 @@ export function useAdminConsoleState() {
         stockId: operationDraft.stockId,
         saleableQuantity: Number(operationDraft.saleableQuantity),
         safetyStock: Number(operationDraft.safetyStock),
+        reservedQuantity: Number(operationDraft.reservedQuantity),
       })
       const priceRule = await api.createPriceRule({
         ruleCode: operationDraft.priceRuleCode,
@@ -1220,46 +1215,17 @@ export function useAdminConsoleState() {
         storeId: operationDraft.storeId,
         reason: operationDraft.soldOutReason,
       })
-      const reservation = await api.createStockReservation(operationDraft.storeId, {
-        reservationId: operationDraft.reservationId,
-        productId: operationDraft.productId,
-        reservedQuantity: Number(operationDraft.reservedQuantity),
-        reservationStatus: operationDraft.reservationStatus,
-        expiresAt: operationDraft.reservationExpiresAt,
-      })
       setLastOperationResult({
-        action: 'store-operations-upserted',
+        action: 'store-operating-master-data-upserted',
         payload: {
           storeConfig,
           inventory,
           priceRule,
           availabilityRule,
           soldOutResult,
-          reservation,
         },
       })
-      setMessage('门店经营工作流已收口：已更新配置、库存、价格规则、可售规则，并触发一次人工沽清')
-      await load()
-    } catch (nextError) {
-      setError(resolveErrorMessage(nextError))
-    } finally {
-      setOperationActionLoading(false)
-    }
-  }
-
-  const toggleStoreBusiness = async (nextAction: 'open' | 'close') => {
-    setOperationActionLoading(true)
-    setMessage('')
-    setError('')
-    try {
-      const result = nextAction === 'open'
-        ? await api.openStore(operationDraft.storeId)
-        : await api.closeStore(operationDraft.storeId)
-      setLastOperationResult({
-        action: `store-${nextAction}`,
-        payload: result,
-      })
-      setMessage(`门店 ${operationDraft.storeId} 已${nextAction === 'open' ? '开店' : '闭店'}`)
+      setMessage('门店经营主数据已更新：营业配置、库存汇总、价格规则、可售规则和人工沽清状态已写入')
       await load()
     } catch (nextError) {
       setError(resolveErrorMessage(nextError))
@@ -1334,7 +1300,6 @@ export function useAdminConsoleState() {
     priceRules,
     availabilityRules,
     menuAvailability,
-    stockReservations,
     authCapabilities,
     environmentDraft,
     setEnvironmentDraft,
@@ -1394,7 +1359,6 @@ export function useAdminConsoleState() {
     rejectLatestMenu,
     rollbackLatestStoreMenu,
     runOperationsWorkflow,
-    toggleStoreBusiness,
     restoreProductAvailability,
   }
 }

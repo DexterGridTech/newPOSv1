@@ -5,10 +5,13 @@ import {CATERING_PRODUCT_MASTER_DATA_STATE_KEY} from '../features/slices/masterD
 import {cateringProductTopics} from '../foundations/topics'
 import type {
     CateringBrandMenuProfile,
+    CateringProductCategoryProfile,
     CateringPriceRuleProfile,
     CateringProductMasterDataState,
     CateringProductProfile,
+    ChannelProductMappingProfile,
     EffectiveMenuView,
+    ProductInheritanceProfile,
     TerminalMenuCatalog,
 } from '../types'
 
@@ -30,10 +33,13 @@ const createTopicValuesSelector = <TData extends Record<string, unknown>>(
     masterData => activeTopicValuesFromMasterData<TData>(masterData, topic),
 )
 
+const selectProductCategoryProfiles = createTopicValuesSelector<CateringProductCategoryProfile>('productCategory')
 const selectCateringProductProfiles = createTopicValuesSelector<CateringProductProfile>('product')
+const selectProductInheritanceProfiles = createTopicValuesSelector<ProductInheritanceProfile>('productInheritance')
 const selectBrandMenuProfiles = createTopicValuesSelector<CateringBrandMenuProfile>('brandMenu')
 const selectMenuCatalogProfiles = createTopicValuesSelector<TerminalMenuCatalog>('menuCatalog')
 const selectPriceRuleProfiles = createTopicValuesSelector<CateringPriceRuleProfile>('priceRule')
+const selectChannelProductMappingProfiles = createTopicValuesSelector<ChannelProductMappingProfile>('channelProductMapping')
 
 export const selectCateringProductDiagnostics: (state: RootState) => CateringProductMasterDataState['diagnostics'] = createSelector(
     [selectCateringProductMasterDataState],
@@ -42,24 +48,47 @@ export const selectCateringProductDiagnostics: (state: RootState) => CateringPro
 
 export const selectCateringProductSummary: (state: RootState) => {
     products: number
+    productCategories: number
+    productInheritances: number
     brandMenus: number
     menuCatalogs: number
+    priceRules: number
+    channelMappings: number
     diagnostics: number
     lastChangedAt?: number
 } = createSelector(
     [selectCateringProductMasterDataState],
     masterData => ({
+        productCategories: Object.keys(masterData?.byTopic[cateringProductTopics.productCategory] ?? {}).length,
         products: Object.keys(masterData?.byTopic[cateringProductTopics.product] ?? {}).length,
+        productInheritances: Object.keys(masterData?.byTopic[cateringProductTopics.productInheritance] ?? {}).length,
         brandMenus: Object.keys(masterData?.byTopic[cateringProductTopics.brandMenu] ?? {}).length,
         menuCatalogs: Object.keys(masterData?.byTopic[cateringProductTopics.menuCatalog] ?? {}).length,
+        priceRules: Object.keys(masterData?.byTopic[cateringProductTopics.priceRule] ?? {}).length,
+        channelMappings: Object.keys(masterData?.byTopic[cateringProductTopics.channelProductMapping] ?? {}).length,
         diagnostics: masterData?.diagnostics.length ?? 0,
         lastChangedAt: masterData?.lastChangedAt,
     }),
 )
 
+export const selectAllProductCategories: (state: RootState) => CateringProductCategoryProfile[] = createSelector(
+    [selectProductCategoryProfiles],
+    categories => categories,
+)
+
 export const selectAllCateringProducts: (state: RootState) => CateringProductProfile[] = createSelector(
     [selectCateringProductProfiles],
     products => products,
+)
+
+export const selectAllProductInheritances: (state: RootState) => ProductInheritanceProfile[] = createSelector(
+    [selectProductInheritanceProfiles],
+    inheritances => inheritances,
+)
+
+export const selectAllChannelProductMappings: (state: RootState) => ChannelProductMappingProfile[] = createSelector(
+    [selectChannelProductMappingProfiles],
+    mappings => mappings,
 )
 
 export const selectLatestCateringProduct: (state: RootState) => CateringProductProfile | undefined = createSelector(
@@ -118,6 +147,8 @@ export const selectCurrentStoreEffectiveMenu: (state: RootState) => EffectiveMen
                                 title: product?.product_name ?? productId,
                                 price: product?.base_price,
                                 productType: product?.product_type,
+                                imageUrl: product?.image_url,
+                                categoryId: product?.category_id,
                             }
                         }),
                 })),
@@ -141,27 +172,40 @@ export const selectPriceRulesByProductId: (state: RootState, productId: string) 
 
 export const selectCateringProductDisplayModel: (state: RootState) => {
     menu: EffectiveMenuView | undefined
-    productCards: Array<{
+        productCards: Array<{
         productId: string
         title: string
         price?: number
+        categoryId?: string
         type?: string
         ownershipScope?: string
         modifierGroupCount: number
         productionStepCount: number
+        productionCategoryCount: number
+        menuUsageCount: number
     }>
 } = createSelector(
-    [selectCurrentStoreEffectiveMenu, selectAllCateringProducts],
-    (menu, products) => ({
+    [selectCurrentStoreEffectiveMenu, selectAllCateringProducts, selectAllMenuCatalogs, selectAllBrandMenus],
+    (menu, products, menuCatalogs, brandMenus) => ({
         menu,
         productCards: products.map(product => ({
             productId: product.product_id,
             title: product.product_name ?? product.product_id,
             price: product.base_price,
+            categoryId: product.category_id,
             type: product.product_type,
             ownershipScope: product.ownership_scope,
             modifierGroupCount: product.modifier_groups?.length ?? 0,
             productionStepCount: product.production_steps?.length ?? 0,
+            productionCategoryCount: Array.isArray(product.production_profile?.category_codes)
+                ? product.production_profile.category_codes.length
+                : 0,
+            menuUsageCount: [...menuCatalogs, ...brandMenus].filter(candidate =>
+                (candidate.sections ?? []).some(section => {
+                    const products = Array.isArray(section.products) ? section.products : []
+                    return products.some((entry: Record<string, unknown>) => String(entry.product_id ?? '') === product.product_id)
+                }),
+            ).length,
         })),
     }),
 )

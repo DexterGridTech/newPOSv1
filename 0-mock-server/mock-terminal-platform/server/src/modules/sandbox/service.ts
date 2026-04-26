@@ -140,6 +140,7 @@ export const switchCurrentSandbox = (sandboxId: string) => {
 }
 
 export const createSandbox = (input: {
+  sandboxId?: string
   name: string
   description: string
   purpose: string
@@ -170,7 +171,10 @@ export const createSandbox = (input: {
   }
 
   const timestamp = now()
-  const sandboxId = createId('sandbox')
+  const sandboxId = input.sandboxId?.trim() || createId('sandbox')
+  if (getSandboxById(sandboxId)) {
+    throw new Error('沙箱 ID 已存在')
+  }
 
   db.insert(sandboxesTable).values({
     sandboxId,

@@ -1,9 +1,12 @@
 import {sqlite} from '../../database/index.js'
 import {
   DEFAULT_SANDBOX_ID,
+  DEFAULT_SOURCE_SERVICE,
   TARGET_TDP_ADMIN_TOKEN,
   TARGET_TDP_BASE_URL,
 } from '../../shared/constants.js'
+import type {PaginationQuery} from '../../shared/pagination.js'
+import {paginateItems} from '../../shared/pagination.js'
 import {createId, now, parseJson, serializeJson} from '../../shared/utils.js'
 
 export interface ProjectionOutboxItem {
@@ -78,45 +81,130 @@ export const listProjectionOutbox = (input: {status?: string} = {}) => {
   return rows.map(toOutboxItem)
 }
 
+export const listProjectionOutboxPage = (input: {status?: string; pagination: PaginationQuery}) =>
+  paginateItems(listProjectionOutbox({status: input.status}), input.pagination)
+
+export const listProjectionPublishLog = () => {
+  const rows = sqlite.prepare(`
+    SELECT publish_id, outbox_id, request_json, response_json, created_at
+    FROM projection_publish_log
+    ORDER BY created_at DESC
+  `).all() as Array<{
+    publish_id: string
+    outbox_id: string
+    request_json: string
+    response_json: string
+    created_at: number
+  }>
+
+  return rows.map(row => ({
+    publishId: row.publish_id,
+    outboxId: row.outbox_id,
+    request: parseJson(row.request_json, {}),
+    response: parseJson(row.response_json, {}),
+    createdAt: row.created_at,
+  }))
+}
+
+export const listProjectionPublishLogPage = (input: {pagination: PaginationQuery}) =>
+  paginateItems(listProjectionPublishLog(), input.pagination)
+
+const toProjectionPayload = (item: ProjectionOutboxItem) => {
+  const projection = {
+    operation: item.operation,
+    topicKey: item.topicKey,
+    scopeType: item.scopeType,
+    scopeKey: item.scopeKey,
+    itemKey: item.itemKey,
+    sourceEventId: item.sourceEventId,
+    sourceRevision: item.sourceRevision,
+    sourceReleaseId: item.sourceEventId,
+    occurredAt: item.payload.generated_at ?? new Date(item.createdAt).toISOString(),
+    scopeMetadata: {
+      source_service: item.sourceService,
+      natural_scope_type: item.scopeType,
+      natural_scope_key: item.scopeKey,
+    },
+    payload: item.payload,
+  } as Record<string, unknown>
+
+  if (item.targetTerminalIds.length > 0) {
+    projection.targetTerminalIds = item.targetTerminalIds
+  }
+
+  return projection
+}
+
+const groupBySandbox = (items: ProjectionOutboxItem[]) => {
+  const groups = new Map<string, ProjectionOutboxItem[]>()
+  items.forEach(item => {
+    const sandboxRows = groups.get(item.sandboxId) ?? []
+    sandboxRows.push(item)
+    groups.set(item.sandboxId, sandboxRows)
+  })
+  return Array.from(groups.entries()).map(([sandboxId, rows]) => ({sandboxId, rows}))
+}
+
+const ensureTargetSandbox = async (sandboxId: string) => {
+  const response = await fetch(`${TARGET_TDP_BASE_URL}/api/v1/admin/sandboxes`)
+  const payload = await response.json() as {
+    success?: boolean
+    data?: Array<{sandboxId?: string; name?: string}>
+    error?: {message?: string}
+  }
+  if (!response.ok || !payload.success) {
+    throw new Error(payload.error?.message ?? `TDP sandbox lookup failed: ${response.status}`)
+  }
+  if (payload.data?.some(item => item.sandboxId === sandboxId)) {
+    return
+  }
+
+  const createResponse = await fetch(`${TARGET_TDP_BASE_URL}/api/v1/admin/sandboxes`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      authorization: `Bearer ${TARGET_TDP_ADMIN_TOKEN}`,
+    },
+    body: JSON.stringify({
+      sandboxId,
+      name: sandboxId,
+      description: `Created automatically from ${DEFAULT_SOURCE_SERVICE}`,
+      purpose: 'CUSTOMER_MASTER_DATA',
+      resourceLimits: {},
+      creationMode: 'EMPTY',
+    }),
+  })
+  const createPayload = await createResponse.json() as {
+    success?: boolean
+    error?: {message?: string}
+  }
+  if (!createResponse.ok || !createPayload.success) {
+    throw new Error(createPayload.error?.message ?? `TDP sandbox create failed: ${createResponse.status}`)
+  }
+}
+
 export const previewProjectionBatch = (input: {status?: string; outboxIds?: string[]} = {}) => {
   const selected = listProjectionOutbox({status: input.status ?? 'PENDING'})
     .filter(item => !input.outboxIds || input.outboxIds.includes(item.outboxId))
+  const batches = groupBySandbox(selected).map(group => ({
+    sandboxId: group.sandboxId,
+    total: group.rows.length,
+    projections: group.rows.map(toProjectionPayload),
+  }))
 
   return {
-    sandboxId: DEFAULT_SANDBOX_ID,
+    sandboxId: batches[0]?.sandboxId ?? DEFAULT_SANDBOX_ID,
     targetPlatformBaseUrl: TARGET_TDP_BASE_URL,
     total: selected.length,
-    projections: selected.map(item => {
-      const projection = {
-        operation: item.operation,
-        topicKey: item.topicKey,
-        scopeType: item.scopeType,
-        scopeKey: item.scopeKey,
-        itemKey: item.itemKey,
-        sourceEventId: item.sourceEventId,
-        sourceRevision: item.sourceRevision,
-        sourceReleaseId: item.sourceEventId,
-        occurredAt: item.payload.generated_at ?? new Date(item.createdAt).toISOString(),
-        scopeMetadata: {
-          source_service: item.sourceService,
-          natural_scope_type: item.scopeType,
-          natural_scope_key: item.scopeKey,
-        },
-        payload: item.payload,
-      } as Record<string, unknown>
-
-      if (item.targetTerminalIds.length > 0) {
-        projection.targetTerminalIds = item.targetTerminalIds
-      }
-
-      return projection
-    }),
+    batches,
+    projections: selected.map(toProjectionPayload),
   }
 }
 
 export const publishProjectionBatch = async (input: {outboxIds?: string[]} = {}) => {
-  const preview = previewProjectionBatch({outboxIds: input.outboxIds})
-  if (preview.projections.length === 0) {
+  const rows = listProjectionOutbox({status: 'PENDING'})
+    .filter(item => !input.outboxIds || input.outboxIds.includes(item.outboxId))
+  if (rows.length === 0) {
     return {
       total: 0,
       published: 0,
@@ -124,142 +212,138 @@ export const publishProjectionBatch = async (input: {outboxIds?: string[]} = {})
     }
   }
 
-  const requestBody = {
-    sandboxId: DEFAULT_SANDBOX_ID,
-    projections: preview.projections,
-  }
   const endpoint = `${TARGET_TDP_BASE_URL}/api/v1/admin/tdp/projections/batch-upsert`
   const timestamp = now()
-  const rows = listProjectionOutbox({status: 'PENDING'})
-    .filter(item => !input.outboxIds || input.outboxIds.includes(item.outboxId))
+  const acceptedStatuses = new Set(['ACCEPTED', 'IDEMPOTENT_REPLAY'])
+  const batchResults: unknown[] = []
+  const acceptedOutboxIds = new Set<string>()
+  const failedItems: Array<{outboxId: string; status: string; sourceEventId: string | null}> = []
+  let firstError: string | undefined
 
-  try {
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-        authorization: `Bearer ${TARGET_TDP_ADMIN_TOKEN}`,
-      },
-      body: JSON.stringify(requestBody),
-    })
-    const payload = await response.json() as unknown
-    const responseBody = payload as {
-      success?: boolean
-      data?: {
-        items?: Array<{
-          status?: string
-          sourceEventId?: string | null
-        }>
-      }
-      error?: {message?: string}
+  for (const group of groupBySandbox(rows)) {
+    const requestBody = {
+      sandboxId: group.sandboxId,
+      projections: group.rows.map(toProjectionPayload),
     }
-    const responseItems = Array.isArray(responseBody.data?.items) ? responseBody.data.items : []
-    sqlite.prepare(`
-      INSERT INTO projection_publish_log (publish_id, outbox_id, request_json, response_json, created_at)
-      VALUES (?, ?, ?, ?, ?)
-    `).run(
-      createId('publish'),
-      rows.map(item => item.outboxId).join(','),
-      serializeJson(requestBody),
-      serializeJson(payload),
-      timestamp,
-    )
 
-    if (!response.ok || !responseBody.success) {
-      const message = responseBody.error?.message ?? `TDP publish failed: ${response.status}`
-      rows.forEach(item => {
+    try {
+      await ensureTargetSandbox(group.sandboxId)
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          authorization: `Bearer ${TARGET_TDP_ADMIN_TOKEN}`,
+        },
+        body: JSON.stringify(requestBody),
+      })
+      const payload = await response.json() as unknown
+      batchResults.push(payload)
+      const responseBody = payload as {
+        success?: boolean
+        data?: {
+          items?: Array<{
+            status?: string
+            sourceEventId?: string | null
+          }>
+        }
+        error?: {message?: string}
+      }
+      const responseItems = Array.isArray(responseBody.data?.items) ? responseBody.data.items : []
+      sqlite.prepare(`
+        INSERT INTO projection_publish_log (publish_id, outbox_id, request_json, response_json, created_at)
+        VALUES (?, ?, ?, ?, ?)
+      `).run(
+        createId('publish'),
+        group.rows.map(item => item.outboxId).join(','),
+        serializeJson(requestBody),
+        serializeJson(payload),
+        timestamp,
+      )
+
+      if (!response.ok || !responseBody.success) {
+        const message = responseBody.error?.message ?? `TDP publish failed: ${response.status}`
+        firstError = firstError ?? message
+        group.rows.forEach(item => {
+          sqlite.prepare(`
+            UPDATE projection_outbox
+            SET status = ?, attempt_count = attempt_count + 1, last_error = ?, updated_at = ?
+            WHERE outbox_id = ?
+          `).run('FAILED', message, timestamp, item.outboxId)
+        })
+        continue
+      }
+
+      const rowBySourceEventId = new Map(group.rows.map(item => [item.sourceEventId, item]))
+
+      responseItems.forEach(item => {
+        const sourceEventId = typeof item?.sourceEventId === 'string' ? item.sourceEventId : null
+        const row = sourceEventId ? rowBySourceEventId.get(sourceEventId) : undefined
+        if (!row) {
+          return
+        }
+        const status = typeof item?.status === 'string' ? item.status : 'UNKNOWN'
+        if (acceptedStatuses.has(status)) {
+          acceptedOutboxIds.add(row.outboxId)
+          return
+        }
+        failedItems.push({
+          outboxId: row.outboxId,
+          status,
+          sourceEventId,
+        })
+      })
+
+      if (responseItems.length === 0) {
+        group.rows.forEach(item => {
+          acceptedOutboxIds.add(item.outboxId)
+        })
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error)
+      firstError = firstError ?? message
+      group.rows.forEach(item => {
         sqlite.prepare(`
           UPDATE projection_outbox
           SET status = ?, attempt_count = attempt_count + 1, last_error = ?, updated_at = ?
           WHERE outbox_id = ?
         `).run('FAILED', message, timestamp, item.outboxId)
       })
-      return {
-        total: rows.length,
-        published: 0,
-        response: payload,
-        error: message,
-      }
     }
+  }
 
-    const acceptedStatuses = new Set(['ACCEPTED', 'IDEMPOTENT_REPLAY'])
-    const rowBySourceEventId = new Map(rows.map(item => [item.sourceEventId, item]))
-    const acceptedOutboxIds = new Set<string>()
-    const failedItems: Array<{outboxId: string; status: string; sourceEventId: string | null}> = []
-
-    responseItems.forEach(item => {
-      const sourceEventId = typeof item?.sourceEventId === 'string' ? item.sourceEventId : null
-      const row = sourceEventId ? rowBySourceEventId.get(sourceEventId) : undefined
-      if (!row) {
-        return
-      }
-      const status = typeof item?.status === 'string' ? item.status : 'UNKNOWN'
-      if (acceptedStatuses.has(status)) {
-        acceptedOutboxIds.add(row.outboxId)
-        return
-      }
-      failedItems.push({
-        outboxId: row.outboxId,
-        status,
-        sourceEventId,
-      })
-    })
-
-    if (responseItems.length === 0) {
-      rows.forEach(item => {
-        acceptedOutboxIds.add(item.outboxId)
-      })
+  rows.forEach(item => {
+    if (!acceptedOutboxIds.has(item.outboxId)) {
+      return
     }
+    sqlite.prepare(`
+      UPDATE projection_outbox
+      SET status = ?, attempt_count = attempt_count + 1, last_error = NULL, published_at = ?, updated_at = ?
+      WHERE outbox_id = ?
+    `).run('PUBLISHED', timestamp, timestamp, item.outboxId)
+  })
 
-    rows.forEach(item => {
-      if (!acceptedOutboxIds.has(item.outboxId)) {
-        return
-      }
-      sqlite.prepare(`
-        UPDATE projection_outbox
-        SET status = ?, attempt_count = attempt_count + 1, last_error = NULL, published_at = ?, updated_at = ?
-        WHERE outbox_id = ?
-      `).run('PUBLISHED', timestamp, timestamp, item.outboxId)
-    })
+  failedItems.forEach(item => {
+    sqlite.prepare(`
+      UPDATE projection_outbox
+      SET status = ?, attempt_count = attempt_count + 1, last_error = ?, updated_at = ?
+      WHERE outbox_id = ?
+    `).run(
+      'FAILED',
+      `TDP batch item rejected: ${item.status}`,
+      timestamp,
+      item.outboxId,
+    )
+  })
 
-    failedItems.forEach(item => {
-      sqlite.prepare(`
-        UPDATE projection_outbox
-        SET status = ?, attempt_count = attempt_count + 1, last_error = ?, updated_at = ?
-        WHERE outbox_id = ?
-      `).run(
-        'FAILED',
-        `TDP batch item rejected: ${item.status}`,
-        timestamp,
-        item.outboxId,
-      )
-    })
+  const published = acceptedOutboxIds.size
+  const failed = failedItems.length
 
-    const published = acceptedOutboxIds.size
-    const failed = failedItems.length
-
-    return {
-      total: rows.length,
-      published,
-      failed,
-      response: payload,
-      error: failed > 0 ? `${failed} projection(s) were rejected by TDP` : undefined,
-    }
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error)
-    rows.forEach(item => {
-      sqlite.prepare(`
-        UPDATE projection_outbox
-        SET status = ?, attempt_count = attempt_count + 1, last_error = ?, updated_at = ?
-        WHERE outbox_id = ?
-      `).run('FAILED', message, timestamp, item.outboxId)
-    })
-    return {
-      total: rows.length,
-      published: 0,
-      response: null,
-      error: message,
-    }
+  return {
+    total: rows.length,
+    published,
+    failed,
+    response: batchResults.length === 1 ? batchResults[0] : batchResults,
+    error: firstError ?? (failed > 0 ? `${failed} projection(s) were rejected by TDP` : undefined),
   }
 }
 
@@ -277,5 +361,84 @@ export const retryProjectionOutbox = (input: {outboxIds?: string[]} = {}) => {
   })
   return {
     total: rows.length,
+  }
+}
+
+const readAutoPublisherIntervalMs = () => {
+  const rawValue = process.env.MOCK_ADMIN_MALL_TENANT_CONSOLE_AUTO_PUBLISH_INTERVAL_MS
+  const parsedValue = Number(rawValue)
+  if (!Number.isFinite(parsedValue) || parsedValue < 5000) {
+    return 15000
+  }
+  return parsedValue
+}
+
+const isAutoPublisherEnabled = () =>
+  process.env.MOCK_ADMIN_MALL_TENANT_CONSOLE_AUTO_PUBLISH?.trim().toLowerCase() !== 'false'
+
+let autoPublisherRunning = false
+let autoPublisherStarted = false
+
+export const publishProjectionBacklog = async () => {
+  const failedCount = listProjectionOutbox({status: 'FAILED'}).length
+  if (failedCount > 0) {
+    retryProjectionOutbox()
+  }
+  return publishProjectionBatch()
+}
+
+export const startProjectionOutboxAutoPublisher = () => {
+  if (!isAutoPublisherEnabled()) {
+    return {
+      started: false,
+      stop: () => {},
+    }
+  }
+
+  if (autoPublisherStarted) {
+    return {
+      started: true,
+      stop: () => {},
+    }
+  }
+
+  autoPublisherStarted = true
+  const intervalMs = readAutoPublisherIntervalMs()
+  const tick = async () => {
+    if (autoPublisherRunning) {
+      return
+    }
+
+    const backlogCount = listProjectionOutbox()
+      .filter(item => item.status === 'PENDING' || item.status === 'FAILED')
+      .length
+    if (backlogCount === 0) {
+      return
+    }
+
+    autoPublisherRunning = true
+    try {
+      const result = await publishProjectionBacklog()
+      if (result.total > 0 && result.error) {
+        console.warn(`[projection-auto-publish] ${result.error}`)
+      }
+    } catch (error) {
+      console.warn('[projection-auto-publish] unexpected failure', error)
+    } finally {
+      autoPublisherRunning = false
+    }
+  }
+
+  const timer = setInterval(() => {
+    void tick()
+  }, intervalMs)
+  void tick()
+
+  return {
+    started: true,
+    stop: () => {
+      clearInterval(timer)
+      autoPublisherStarted = false
+    },
   }
 }

@@ -1,10 +1,12 @@
 import {createApp} from './app/createApp.js'
 import {initializeDatabase} from './database/index.js'
 import {initializeAlignedMasterData} from './modules/aligned-master-data/service.js'
+import {startProjectionOutboxAutoPublisher} from './modules/projection/service.js'
 import {APP_NAME, SERVER_PORT} from './shared/constants.js'
 
 initializeDatabase()
 initializeAlignedMasterData()
+startProjectionOutboxAutoPublisher()
 
 const app = createApp()
 app.listen(SERVER_PORT, () => {

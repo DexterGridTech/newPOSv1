@@ -5,7 +5,13 @@ import type {PaginatedResult} from './pagination.js'
 export interface RequestContext {
   traceId: string
   sandboxId: string
+  clientIp?: string
+  userAgent?: string
   idempotencyKey?: string
+  expectedRevision?: number
+  actorType?: string
+  actorId?: string
+  targetTerminalIds?: string[]
 }
 
 export interface ApiSuccessEnvelope<T> {
@@ -51,7 +57,38 @@ export class HttpError extends Error {
   }
 }
 
+const firstHeader = (value: string | string[] | undefined) => Array.isArray(value) ? value[0] : value
+
+const bodyRecord = (req: Request): Record<string, unknown> =>
+  typeof req.body === 'object' && req.body !== null && !Array.isArray(req.body)
+    ? req.body as Record<string, unknown>
+    : {}
+
+const firstString = (...values: unknown[]) => {
+  for (const value of values) {
+    if (typeof value === 'string' && value.trim()) {
+      return value.trim()
+    }
+  }
+  return undefined
+}
+
+const firstNumber = (...values: unknown[]) => {
+  for (const value of values) {
+    const parsed = Number(value)
+    if (Number.isFinite(parsed)) {
+      return parsed
+    }
+  }
+  return undefined
+}
+
+const stringArray = (value: unknown) => Array.isArray(value)
+  ? value.map(item => typeof item === 'string' ? item.trim() : '').filter(Boolean)
+  : undefined
+
 export const getRequestContext = (req: Request): RequestContext => {
+  const body = bodyRecord(req)
   const traceId = typeof req.headers['x-trace-id'] === 'string' && req.headers['x-trace-id'].trim()
     ? req.headers['x-trace-id'].trim()
     : createId('trace')
@@ -61,7 +98,24 @@ export const getRequestContext = (req: Request): RequestContext => {
   const idempotencyKey = typeof req.headers['idempotency-key'] === 'string' && req.headers['idempotency-key'].trim()
     ? req.headers['idempotency-key'].trim()
     : undefined
-  return {traceId, sandboxId, idempotencyKey}
+  const expectedRevision = firstNumber(
+    firstHeader(req.headers['x-expected-revision']),
+    req.query.expectedRevision,
+    body.expectedRevision,
+    body.sourceRevision,
+  )
+  const targetTerminalIds = stringArray(body.targetTerminalIds)
+  return {
+    traceId,
+    sandboxId,
+    clientIp: firstString(firstHeader(req.headers['x-forwarded-for']), req.socket.remoteAddress),
+    userAgent: firstString(firstHeader(req.headers['user-agent'])),
+    idempotencyKey,
+    expectedRevision,
+    actorType: firstString(firstHeader(req.headers['x-actor-type']), body.actorType),
+    actorId: firstString(firstHeader(req.headers['x-actor-id']), body.actorId),
+    targetTerminalIds,
+  }
 }
 
 export const requestContextMiddleware = (req: Request, res: Response, next: NextFunction) => {

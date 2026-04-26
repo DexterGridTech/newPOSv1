@@ -8,12 +8,10 @@ type Props = {
   priceRules: EntityItem[]
   availabilityRules: EntityItem[]
   menuAvailability: EntityItem[]
-  stockReservations: EntityItem[]
   operationDraft: OperationDraft
   setOperationDraft: Dispatch<SetStateAction<OperationDraft>>
   operationActionLoading: boolean
   runOperationsWorkflow: () => Promise<void>
-  toggleStoreBusiness: (nextAction: 'open' | 'close') => Promise<void>
   restoreProductAvailability: () => Promise<void>
   lastOperationResult: LastOperationResult | null
 }
@@ -25,12 +23,10 @@ export function OperationsWorkspace(props: Props) {
     priceRules,
     availabilityRules,
     menuAvailability,
-    stockReservations,
     operationDraft,
     setOperationDraft,
     operationActionLoading,
     runOperationsWorkflow,
-    toggleStoreBusiness,
     restoreProductAvailability,
     lastOperationResult,
   } = props
@@ -41,7 +37,7 @@ export function OperationsWorkspace(props: Props) {
         <div className="panel-title">
           <div>
             <h3>门店经营主链路操作台</h3>
-            <p className="panel-subtitle">开店/闭店、库存、价格规则、可售规则、人工沽清与 reservation 同时进入经营域写模型，直接服务终端有效状态。</p>
+            <p className="panel-subtitle">只维护交易前主数据：营业配置、库存汇总、价格规则和可售规则；不在这里处理订单、预订或履约流程。</p>
           </div>
           <span>{storeConfigs.length + inventories.length} operating facts</span>
         </div>
@@ -66,15 +62,10 @@ export function OperationsWorkspace(props: Props) {
           <TextField label="可售规则码" name="availabilityRuleCode" value={operationDraft.availabilityRuleCode} onChange={value => setOperationDraft(current => ({...current, availabilityRuleCode: value}))} />
           <TextField label="可售规则渠道" name="availabilityChannelType" value={operationDraft.availabilityChannelType} onChange={value => setOperationDraft(current => ({...current, availabilityChannelType: value}))} />
           <TextField label="允许可售" name="availabilityAllowed" value={String(operationDraft.availabilityAllowed)} onChange={value => setOperationDraft(current => ({...current, availabilityAllowed: value === 'true'}))} />
-          <TextField label="Reservation Id" name="reservationId" value={operationDraft.reservationId} onChange={value => setOperationDraft(current => ({...current, reservationId: value}))} />
-          <TextField label="预留数量" name="reservedQuantity" value={operationDraft.reservedQuantity} onChange={value => setOperationDraft(current => ({...current, reservedQuantity: value}))} />
-          <TextField label="Reservation Status" name="reservationStatus" value={operationDraft.reservationStatus} onChange={value => setOperationDraft(current => ({...current, reservationStatus: value}))} />
-          <TextField label="Reservation 到期" name="reservationExpiresAt" value={operationDraft.reservationExpiresAt} onChange={value => setOperationDraft(current => ({...current, reservationExpiresAt: value}))} />
+          <TextField label="已占用数量" name="reservedQuantity" value={operationDraft.reservedQuantity} onChange={value => setOperationDraft(current => ({...current, reservedQuantity: value}))} />
         </div>
         <div className="hero-actions">
-          <button className="primary" onClick={() => void runOperationsWorkflow()} disabled={operationActionLoading}>更新经营全链路</button>
-          <button onClick={() => void toggleStoreBusiness('open')} disabled={operationActionLoading}>开店</button>
-          <button onClick={() => void toggleStoreBusiness('close')} disabled={operationActionLoading}>闭店</button>
+          <button className="primary" onClick={() => void runOperationsWorkflow()} disabled={operationActionLoading}>更新经营主数据</button>
           <button onClick={() => void restoreProductAvailability()} disabled={operationActionLoading}>恢复商品可售</button>
         </div>
       </article>
@@ -84,17 +75,17 @@ export function OperationsWorkspace(props: Props) {
         <div className="panel-title">
           <div>
             <h3>经营规则与库存快照</h3>
-            <p className="panel-subtitle">把 store config、库存、价格规则、可售规则、人工沽清与 reservation 放在同一个视图里追踪真实影响链。</p>
+            <p className="panel-subtitle">把 store config、库存汇总、价格规则、可售规则与人工沽清放在同一个视图里追踪主数据影响链。</p>
           </div>
           <span>{storeConfigs.length + inventories.length + priceRules.length + availabilityRules.length}</span>
         </div>
-        <JsonPanel value={{storeConfigs, inventories, priceRules, availabilityRules, menuAvailability, stockReservations}} />
+        <JsonPanel value={{storeConfigs, inventories, priceRules, availabilityRules, menuAvailability}} />
       </article>
       <article className="panel detail-panel">
         <div className="panel-title">
           <div>
             <h3>最近一次经营工作流结果</h3>
-            <p className="panel-subtitle">这里保留开店/闭店、库存、价格、可售和 reservation 的最新回包，确认 UI 完全跟着 state 收敛。</p>
+            <p className="panel-subtitle">这里保留营业配置、库存、价格和可售规则的最新回包，确认 UI 完全跟着 state 收敛。</p>
           </div>
           <span>{lastOperationResult ? 'ready' : 'empty'}</span>
         </div>

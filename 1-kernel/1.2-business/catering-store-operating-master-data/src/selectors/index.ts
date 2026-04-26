@@ -8,7 +8,6 @@ import type {
     StoreConfigProfile,
     MenuAvailabilityProfile,
     SaleableStockProfile,
-    StockReservationProfile,
 } from '../types'
 
 export const selectCateringStoreOperatingMasterDataState = (
@@ -32,7 +31,6 @@ const createTopicValuesSelector = <TData extends Record<string, unknown>>(
 const selectMenuAvailabilityProfiles = createTopicValuesSelector<MenuAvailabilityProfile>('menuAvailability')
 const selectStoreConfigProfiles = createTopicValuesSelector<StoreConfigProfile>('storeConfig')
 const selectSaleableStockProfiles = createTopicValuesSelector<SaleableStockProfile>('saleableStock')
-const selectStockReservationProfiles = createTopicValuesSelector<StockReservationProfile>('stockReservation')
 
 export const selectCateringStoreOperatingDiagnostics: (
     state: RootState,
@@ -43,20 +41,24 @@ export const selectCateringStoreOperatingDiagnostics: (
 
 export const selectCateringStoreOperatingSummary: (state: RootState) => {
     availability: number
+    configs: number
     stocks: number
-    reservations: number
+    reservedStockQuantity: number
     diagnostics: number
     lastChangedAt?: number
 } = createSelector(
     [selectCateringStoreOperatingMasterDataState],
-    masterData => ({
-        availability: Object.keys(masterData?.byTopic[cateringStoreOperatingTopics.menuAvailability] ?? {}).length,
-        configs: Object.keys(masterData?.byTopic[cateringStoreOperatingTopics.storeConfig] ?? {}).length,
-        stocks: Object.keys(masterData?.byTopic[cateringStoreOperatingTopics.saleableStock] ?? {}).length,
-        reservations: Object.keys(masterData?.byTopic[cateringStoreOperatingTopics.stockReservation] ?? {}).length,
-        diagnostics: masterData?.diagnostics.length ?? 0,
-        lastChangedAt: masterData?.lastChangedAt,
-    }),
+    masterData => {
+        const stocks = activeTopicValuesFromMasterData<SaleableStockProfile>(masterData, 'saleableStock')
+        return {
+            availability: Object.keys(masterData?.byTopic[cateringStoreOperatingTopics.menuAvailability] ?? {}).length,
+            configs: Object.keys(masterData?.byTopic[cateringStoreOperatingTopics.storeConfig] ?? {}).length,
+            stocks: Object.keys(masterData?.byTopic[cateringStoreOperatingTopics.saleableStock] ?? {}).length,
+            reservedStockQuantity: stocks.reduce((total, item) => total + (item.reserved_quantity ?? 0), 0),
+            diagnostics: masterData?.diagnostics.length ?? 0,
+            lastChangedAt: masterData?.lastChangedAt,
+        }
+    },
 )
 
 export const selectMenuAvailabilityByProductId: (state: RootState) => MenuAvailabilityProfile[] = createSelector(
@@ -77,25 +79,18 @@ export const selectSaleableStockByProductId: (state: RootState) => SaleableStock
         .filter(item => !binding.storeId || item.store_id === binding.storeId)
 )
 
-export const selectActiveStockReservations: (state: RootState) => StockReservationProfile[] = createSelector(
-    [selectStockReservationProfiles, selectTcpBindingSnapshot],
-    (reservations, binding): StockReservationProfile[] => reservations
-        .filter(item => !binding.storeId || item.store_id === binding.storeId)
-)
-
 export const selectStoreOperatingStatus: (state: RootState) => {
     totalAvailabilityItems: number
     availableItems: number
     soldOutItems: number
     lowStockItems: number
-    activeReservations: number
+    reservedStockQuantity: number
 } = createSelector(
     [
         selectMenuAvailabilityByProductId,
         selectSaleableStockByProductId,
-        selectActiveStockReservations,
     ],
-    (availability, stocks, reservations) => {
+    (availability, stocks) => {
         const soldOut = availability.filter(item => item.available === false)
         const lowStock = stocks.filter(item => (item.saleable_quantity ?? 0) <= (item.safety_stock ?? 0))
         return {
@@ -103,7 +98,7 @@ export const selectStoreOperatingStatus: (state: RootState) => {
             availableItems: availability.filter(item => item.available !== false).length,
             soldOutItems: soldOut.length,
             lowStockItems: lowStock.length,
-            activeReservations: reservations.filter(item => item.reservation_status === 'ACTIVE').length,
+            reservedStockQuantity: stocks.reduce((total, item) => total + (item.reserved_quantity ?? 0), 0),
         }
     },
 )
@@ -125,24 +120,17 @@ export const selectOperationDashboardModel: (state: RootState) => {
         stockId: string
         productId: string | undefined
         saleableQuantity: number
+        reservedQuantity: number
         safetyStock: number
         status: string | undefined
-    }>
-    reservationRows: Array<{
-        reservationId: string
-        productId: string | undefined
-        reservedQuantity: number
-        status: string | undefined
-        expiresAt: string | undefined
     }>
 } = createSelector(
     [
         selectCurrentStoreConfig,
         selectMenuAvailabilityByProductId,
         selectSaleableStockByProductId,
-        selectActiveStockReservations,
     ],
-    (storeConfig, availability, stocks, reservations) => ({
+    (storeConfig, availability, stocks) => ({
         storeConfig: storeConfig
             ? {
                 businessStatus: storeConfig.business_status,
@@ -161,15 +149,9 @@ export const selectOperationDashboardModel: (state: RootState) => {
             stockId: item.stock_id,
             productId: item.product_id,
             saleableQuantity: item.saleable_quantity ?? 0,
+            reservedQuantity: item.reserved_quantity ?? 0,
             safetyStock: item.safety_stock ?? 0,
             status: item.status,
-        })),
-        reservationRows: reservations.map(item => ({
-            reservationId: item.reservation_id,
-            productId: item.product_id,
-            reservedQuantity: item.reserved_quantity ?? 0,
-            status: item.reservation_status,
-            expiresAt: item.expires_at,
         })),
     }),
 )

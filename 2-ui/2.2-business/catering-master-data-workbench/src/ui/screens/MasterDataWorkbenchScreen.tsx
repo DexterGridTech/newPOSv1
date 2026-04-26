@@ -7,7 +7,9 @@ import {selectTopologyDisplayMode} from '@next/kernel-base-topology-runtime-v3'
 import {
     selectCurrentActiveContract,
     selectCurrentBrandProfile,
+    selectCurrentPlatformProfile,
     selectCurrentProjectProfile,
+    selectCurrentRegionProfile,
     selectCurrentStoreProfile,
     selectCurrentStoreTables,
     selectCurrentStoreWorkstations,
@@ -24,7 +26,10 @@ import {
     selectStoreEffectiveUsers,
 } from '@next/kernel-business-organization-iam-master-data'
 import {
+    selectAllProductCategories,
     selectAllCateringProducts,
+    selectAllChannelProductMappings,
+    selectAllProductInheritances,
     selectCateringProductDiagnostics,
     selectCateringProductDisplayModel,
     selectCateringProductSummary,
@@ -55,7 +60,7 @@ const panelShadow = {
 const domainLabels: Record<DomainKey, string> = {
     organization: '组织与权限',
     product: '餐饮商品',
-    operation: '门店经营',
+    operation: '经营配置',
     inspector: '投影诊断',
 }
 
@@ -161,24 +166,49 @@ const OrganizationDomain: React.FC<{state: ReturnType<typeof useWorkbenchState>}
     <View style={{gap: 16}}>
         <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 12}}>
             <MetricCard label="项目" value={state.organizationSummary.projects} tone="blue" />
+            <MetricCard label="大区" value={state.organizationSummary.regions} tone="slate" />
             <MetricCard label="门店" value={state.organizationSummary.stores} tone="green" />
             <MetricCard label="桌台" value={state.tables.length} tone="amber" />
             <MetricCard label="工作站" value={state.workstations.length} tone="slate" />
             <MetricCard label="员工" value={state.organizationSummary.users} tone="slate" />
             <MetricCard label="角色" value={state.organizationSummary.roles} tone="amber" />
         </View>
-        <Section title="当前终端组织链路" subtitle="按 TCP 激活绑定解析；如果绑定还未完整下发，则展示当前可见主数据。">
+        <Section title="当前终端组织链路" subtitle="按 TCP 激活绑定解析；Store 的租户和品牌来自合同快照，不在终端或门店资料里临时拼接。">
+            <DataRow label="平台" value={state.platform?.platform_name ?? state.platform?.platform_id} />
             <DataRow label="项目" value={state.project?.project_name ?? state.project?.project_id} />
-            <DataRow label="Region" value={state.project?.region?.region_name ?? state.project?.region?.region_code} />
-            <DataRow label="租户" value={state.tenant?.tenant_name ?? state.tenant?.tenant_id} />
-            <DataRow label="品牌" value={state.brand?.brand_name ?? state.brand?.brand_id} />
+            <DataRow label="大区" value={state.region?.region_name ?? state.project?.region?.region_name ?? state.project?.region?.region_code} />
             <DataRow label="门店" value={state.store?.store_name ?? state.store?.store_id} />
-            <DataRow label="合同" value={state.contract?.contract_code ?? state.contract?.contract_id} />
+            <DataRow label="当前租户" value={state.tenant?.tenant_name ?? state.contract?.lessee_tenant_name ?? state.store?.tenant_id} />
+            <DataRow label="当前品牌" value={state.brand?.brand_name ?? state.contract?.lessee_brand_name ?? state.store?.brand_id} />
+            <DataRow label="合同" value={state.contract?.contract_no ?? state.contract?.contract_code ?? state.contract?.contract_id} />
         </Section>
-        <Section title="法人主体 / 桌台 / 工作站" subtitle="UC-01 门店设施已纳入 terminal-safe 组织主数据，不再只停留在后台写模型。">
+        <Section title="项目分期与合同快照" subtitle="合同是签署时快照；项目分期或业主方后续变化，不会反写已签合同。">
+            <DataRow
+                label="项目分期"
+                value={(state.project?.project_phases ?? [])
+                    .map(phase => `${phase.phase_name ?? phase.phase_id ?? '未命名分期'} / ${phase.owner_name ?? '未维护业主方'}`)
+                    .join(', ') || '-'}
+            />
+            <DataRow label="合同甲方项目" value={state.contract?.lessor_project_id ?? state.contract?.project_id} />
+            <DataRow label="合同甲方分期" value={state.contract?.lessor_phase_name ?? state.contract?.lessor_phase_id} />
+            <DataRow label="合同业主方" value={state.contract?.lessor_owner_name} />
+            <DataRow label="乙方经营主体" value={state.contract?.lessee_entity_name ?? state.contract?.entity_id} />
+            <DataRow label="合同周期" value={`${state.contract?.start_date ?? '-'} ~ ${state.contract?.end_date ?? '-'}`} />
+        </Section>
+        <Section title="法人主体 / 桌台 / 工作站" subtitle="这里展示交易前必须存在的经营资源，不执行开台、结账、预订或生产派工。">
             <DataRow label="法人主体" value={state.businessEntities.map(item => item.entity_name ?? item.entity_id).join(', ') || '-'} />
-            <DataRow label="桌台" value={state.tables.map(item => item.table_no ?? item.table_id).join(', ') || '-'} />
-            <DataRow label="工作站" value={state.workstations.map(item => item.workstation_name ?? item.workstation_code ?? item.workstation_id).join(', ') || '-'} />
+            <DataRow
+                label="桌台"
+                value={state.tables
+                    .map(item => `${item.table_name ?? item.table_no ?? item.table_id} / ${item.table_type ?? '-'} / ${item.capacity ?? '-'}座`)
+                    .join(', ') || '-'}
+            />
+            <DataRow
+                label="工作站"
+                value={state.workstations
+                    .map(item => `${item.workstation_name ?? item.workstation_code ?? item.workstation_id} / ${item.workstation_type ?? '-'} / ${(item.responsible_categories ?? item.category_codes ?? []).join('|') || '-'}`)
+                    .join(', ') || '-'}
+            />
         </Section>
         <Section title="店铺级 IAM 预览" subtitle="本轮不做店员登录；这里展示未来登录会使用的店铺级员工、角色和权限资料。">
             <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 10}}>
@@ -211,10 +241,17 @@ const ProductDomain: React.FC<{state: ReturnType<typeof useWorkbenchState>}> = (
     <View style={{gap: 16}}>
         <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 12}}>
             <MetricCard label="餐饮商品" value={state.productSummary.products} tone="blue" />
+            <MetricCard label="商品分类" value={state.productSummary.productCategories} tone="slate" />
             <MetricCard label="品牌菜单" value={state.productSummary.brandMenus} tone="green" />
             <MetricCard label="门店菜单" value={state.productSummary.menuCatalogs} tone="amber" />
+            <MetricCard label="渠道映射" value={state.productSummary.channelMappings} tone="slate" />
             <MetricCard label="菜单分区" value={state.menu?.sections.length ?? 0} tone="slate" />
         </View>
+        <Section title="商品分类与继承" subtitle="分类和继承关系来自后台主数据，菜单和门店覆盖都应基于这些事实。">
+            <DataRow label="分类" value={state.productCategories.map(item => item.category_name ?? item.category_code ?? item.category_id).join(', ') || '-'} />
+            <DataRow label="门店继承关系" value={`${state.productInheritances.length} 条`} />
+            <DataRow label="渠道商品映射" value={`${state.channelMappings.length} 条`} />
+        </Section>
         <Section title="终端有效菜单" subtitle="`menu.catalog` 是终端 authoritative 菜单视图；商品资料只用于补充详情。">
             <DataRow label="菜单" value={state.menu?.menuName ?? state.menu?.menuId} />
             <DataRow label="门店" value={state.menu?.storeId} />
@@ -235,7 +272,7 @@ const ProductDomain: React.FC<{state: ReturnType<typeof useWorkbenchState>}> = (
                         }}>
                             <Text style={{fontSize: 13, fontWeight: '800', color: '#1e293b'}}>{product.title}</Text>
                             <Text style={{fontSize: 13, color: '#475569'}}>
-                                {product.productType ?? 'PRODUCT'} · {product.price == null ? '-' : `¥${product.price}`}
+                                {product.productType ?? 'PRODUCT'} · {product.categoryId ?? '未分类'} · {product.price == null ? '-' : `¥${product.price}`}
                             </Text>
                         </View>
                     ))}
@@ -253,10 +290,10 @@ const ProductDomain: React.FC<{state: ReturnType<typeof useWorkbenchState>}> = (
                 }}>
                     <Text style={{fontSize: 15, fontWeight: '900', color: '#0f172a'}}>{product.title}</Text>
                     <Text style={{fontSize: 12, color: '#64748b'}}>
-                        {product.productId} · {product.type ?? 'STANDARD'} · {product.ownershipScope ?? 'UNKNOWN'} · ¥{product.price ?? '-'}
+                        {product.productId} · {product.categoryId ?? '未分类'} · {product.type ?? 'STANDARD'} · {product.ownershipScope ?? 'UNKNOWN'} · ¥{product.price ?? '-'}
                     </Text>
                     <Text style={{fontSize: 12, color: '#475569'}}>
-                        Modifier Groups {product.modifierGroupCount} · Production Steps {product.productionStepCount}
+                        加料组 {product.modifierGroupCount} · 制作步骤 {product.productionStepCount} · 出品分类 {product.productionCategoryCount} · 在用菜单 {product.menuUsageCount}
                     </Text>
                 </View>
             ))}
@@ -271,15 +308,15 @@ const OperationDomain: React.FC<{state: ReturnType<typeof useWorkbenchState>}> =
             <MetricCard label="可售项" value={state.operatingStatus.availableItems} tone="green" />
             <MetricCard label="售罄项" value={state.operatingStatus.soldOutItems} tone={state.operatingStatus.soldOutItems > 0 ? 'amber' : 'slate'} />
             <MetricCard label="低库存" value={state.operatingStatus.lowStockItems} tone={state.operatingStatus.lowStockItems > 0 ? 'amber' : 'slate'} />
-            <MetricCard label="锁库存" value={state.operatingStatus.activeReservations} tone="blue" />
+            <MetricCard label="占用汇总" value={state.operatingStatus.reservedStockQuantity} tone="blue" />
         </View>
-        <Section title="门店经营配置" subtitle="`store.config` 承载营业状态、接单策略、营业时段和附加费等真实经营配置。">
+        <Section title="门店经营参数" subtitle="`store.config` 承载营业状态、订单入口、营业时段和附加费等交易前配置，不在此处理订单。">
             <DataRow label="营业状态" value={state.storeConfig?.business_status} />
-            <DataRow label="接单" value={state.storeConfig?.accept_order === true ? 'ACCEPTING' : state.storeConfig?.accept_order === false ? 'PAUSED' : '-'} />
+            <DataRow label="订单入口配置" value={state.storeConfig?.accept_order === true ? '允许终端接收订单入口' : state.storeConfig?.accept_order === false ? '暂停终端订单入口' : '-'} />
             <DataRow label="营业时段" value={state.operationDashboard.storeConfig?.operatingHoursCount ?? 0} />
             <DataRow label="附加费规则" value={state.operationDashboard.storeConfig?.extraChargeRuleCount ?? 0} />
         </Section>
-        <Section title="终端有效可售状态" subtitle="`menu.availability` 是终端 authoritative 可售视图；stock/reservation 作为经营观测。">
+        <Section title="终端有效可售状态" subtitle="`menu.availability` 是终端 authoritative 可售视图；库存占用只作为主数据事实展示，不在这里执行交易或预订流程。">
             {state.operationDashboard.availabilityRows.map(row => (
                 <View key={row.productId} style={{borderRadius: 16, backgroundColor: '#f8fafc', padding: 12}}>
                     <StatusPill tone={row.available ? 'green' : 'red'}>{row.available ? 'AVAILABLE' : 'SOLD OUT'}</StatusPill>
@@ -290,19 +327,12 @@ const OperationDomain: React.FC<{state: ReturnType<typeof useWorkbenchState>}> =
                 </View>
             ))}
         </Section>
-        <Section title="库存与预占" subtitle="展示 saleable stock 与 active reservation，用于后续 KDS/KIOSK/POS 经营联调。">
+        <Section title="库存与占用汇总" subtitle="展示 saleable stock 的可售、已售、下游占用汇总和安全库存，用于判断终端可售基础事实。">
             {state.operationDashboard.stockRows.map(row => (
                 <DataRow
                     key={row.stockId}
                     label={row.productId ?? row.stockId}
-                    value={`saleable=${row.saleableQuantity}, safety=${row.safetyStock}, status=${row.status ?? '-'}`}
-                />
-            ))}
-            {state.operationDashboard.reservationRows.map(row => (
-                <DataRow
-                    key={row.reservationId}
-                    label={row.reservationId}
-                    value={`${row.productId}: reserved=${row.reservedQuantity}, status=${row.status ?? '-'}, expires=${row.expiresAt ?? '-'}`}
+                    value={`可售=${row.saleableQuantity}, 占用汇总=${row.reservedQuantity}, 安全库存=${row.safetyStock}, 状态=${row.status ?? '-'}`}
                 />
             ))}
         </Section>
@@ -344,7 +374,9 @@ const useWorkbenchState = () => {
     const organizationSummary = useSelector(selectOrganizationIamSummary)
     const productSummary = useSelector(selectCateringProductSummary)
     const operationSummary = useSelector(selectCateringStoreOperatingSummary)
+    const platform = useSelector(selectCurrentPlatformProfile)
     const project = useSelector(selectCurrentProjectProfile)
+    const region = useSelector(selectCurrentRegionProfile)
     const tenant = useSelector(selectCurrentTenantProfile)
     const brand = useSelector(selectCurrentBrandProfile)
     const store = useSelector(selectCurrentStoreProfile)
@@ -360,6 +392,9 @@ const useWorkbenchState = () => {
     const organizationTree = useSelector(selectOrganizationTree)
     const menu = useSelector(selectCurrentStoreEffectiveMenu)
     const latestProduct = useSelector(selectLatestCateringProduct)
+    const productCategories = useSelector(selectAllProductCategories)
+    const productInheritances = useSelector(selectAllProductInheritances)
+    const channelMappings = useSelector(selectAllChannelProductMappings)
     const products = useSelector(selectAllCateringProducts)
     const productDisplay = useSelector(selectCateringProductDisplayModel)
     const storeConfig = useSelector(selectCurrentStoreConfig)
@@ -375,7 +410,9 @@ const useWorkbenchState = () => {
         organizationSummary,
         productSummary,
         operationSummary,
+        platform,
         project,
+        region,
         tenant,
         brand,
         store,
@@ -391,6 +428,9 @@ const useWorkbenchState = () => {
         organizationTree,
         menu,
         latestProduct,
+        productCategories,
+        productInheritances,
+        channelMappings,
         products,
         productDisplay,
         storeConfig,
