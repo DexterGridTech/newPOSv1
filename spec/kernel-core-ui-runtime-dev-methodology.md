@@ -37,6 +37,20 @@
 2. 业务时序集中在 runtime 层，更容易复用、联调和排障
 3. 避免 integration root / page hook 逐渐长成新的 `ApplicationManager`
 
+### 0.1 导航选中态只读 ui-runtime，不在业务 slice 里复制
+
+页面、Tab、面板等“当前选中的是哪个 screen”的事实源统一是 `ui-runtime-v2` 的 `screen` slice。
+
+开发约束：
+
+1. 业务 UI 包不得在自己的 feature slice 中新增 `selectedTab`、`currentPage`、`activeScreen` 这类导航镜像状态。
+2. 读取选中态时，优先通过 `1-kernel/1.1-base/ui-runtime-v2/src/selectors/index.ts` 暴露的 selector，例如 `selectUiCurrentScreenOrFirstReady` 或 `selectUiCurrentScreenPartKeyOrFirstReady`。
+3. selector 读不到当前 screen 时，再按 registry 的 first-ready 或业务默认 tab 做 fallback。
+4. 用户点击 Tab 或页面跳转时，只发送 `showScreen` / `replaceScreen` / `navigation.navigateTo` 等 runtime command，让 `ui-runtime-v2` 写入容器 screen。
+5. 业务 slice 只保留真正属于业务恢复的最小事实，例如诊断结果、用户输入草稿、远端能力快照；不持久化 UI 导航选中态。
+
+这样做可以避免两个状态源竞争：缓存页面激活、主副屏同步、重启恢复和自动化验证都只围绕同一个 screen truth source 展开。
+
 ### 1. 按运行职责拆 slice，不按“都属于 UI”硬塞到一起
 
 `ui-runtime` 这次验证下来的合理拆分是：

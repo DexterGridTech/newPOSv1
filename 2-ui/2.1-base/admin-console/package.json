@@ -27,6 +27,7 @@
     "@next/kernel-base-platform-ports": "workspace:*",
     "@next/kernel-base-state-runtime": "workspace:*",
     "@next/kernel-base-tcp-control-runtime-v2": "workspace:*",
+    "@next/kernel-base-tdp-sync-runtime-v2": "workspace:*",
     "@next/kernel-base-topology-runtime-v3": "workspace:*",
     "@next/kernel-base-workflow-runtime-v2": "workspace:*",
     "@next/ui-base-input-runtime": "workspace:*",

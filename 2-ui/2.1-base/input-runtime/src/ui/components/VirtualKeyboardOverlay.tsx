@@ -11,6 +11,7 @@ import type {VirtualKeyboardKey} from '../../types'
 
 export interface VirtualKeyboardOverlayProps {
     visible?: boolean
+    bottomInset?: number
     onKeyPress?: (key: VirtualKeyboardKey) => void
 }
 
@@ -51,6 +52,7 @@ const getKeyLabel = (key: VirtualKeyboardKey): string => {
 }
 
 export const VirtualKeyboardOverlay: React.FC<VirtualKeyboardOverlayProps> = ({
+    bottomInset = 16,
     visible,
     onKeyPress,
 }) => {
@@ -129,7 +131,7 @@ export const VirtualKeyboardOverlay: React.FC<VirtualKeyboardOverlayProps> = ({
                 position: 'absolute',
                 left: 16,
                 right: 16,
-                bottom: 16,
+                bottom: bottomInset,
                 width: '100%',
                 maxWidth: layout.maxWidth,
                 alignSelf: 'center',

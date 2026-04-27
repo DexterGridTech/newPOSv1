@@ -10,7 +10,9 @@ import {selectTopologyWorkspace} from '@next/kernel-base-topology-runtime-v3'
 import {createUiScreenRuntimeEntry} from '../../foundations'
 import {moduleName} from '../../moduleName'
 import {normalizeUiRuntimeWorkspace} from '../../selectors'
-import {uiRuntimeV2ErrorDefinitions} from '../../supports'
+import {
+    uiRuntimeV2ErrorDefinitions,
+} from '../../supports'
 import {uiRuntimeV2CommandDefinitions} from '../commands'
 import {uiRuntimeV2ScreenStateActions} from '../slices'
 

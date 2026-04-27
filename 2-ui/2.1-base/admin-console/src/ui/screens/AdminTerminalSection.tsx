@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react'
+import React, {useCallback, useState} from 'react'
 import type {EnhancedStore} from '@reduxjs/toolkit'
 import {
     selectTcpBindingSnapshot,
@@ -10,6 +10,11 @@ import {
 } from '@next/kernel-base-tcp-control-runtime-v2'
 import {createCommand, type KernelRuntimeV2} from '@next/kernel-base-runtime-shell-v2'
 import {formatAdminStatus, formatAdminTimestamp} from '../../supports/adminFormatting'
+import {
+    shallowEqualAdminSnapshot,
+    useAdminMountedRef,
+    useAdminStoreSnapshot,
+} from './useAdminScreenActivity'
 import {
     AdminActionGroup,
     AdminActionButton,
@@ -31,21 +36,9 @@ export const AdminTerminalSection: React.FC<AdminTerminalSectionProps> = ({
     store,
     closePanel,
 }) => {
-    const mountedRef = useRef(true)
-    const [snapshot, setSnapshot] = useState(() => ({
-        identity: selectTcpIdentitySnapshot(store.getState()),
-        credential: selectTcpCredentialSnapshot(store.getState()),
-        binding: selectTcpBindingSnapshot(store.getState()),
-        sandboxId: selectTcpSandboxId(store.getState()),
-        runtimeState: selectTcpRuntimeState(store.getState()),
-    }))
+    const mountedRef = useAdminMountedRef()
     const [message, setMessage] = useState('')
     const [loading, setLoading] = useState(false)
-    const {identity, credential, binding, sandboxId, runtimeState} = snapshot
-
-    useEffect(() => () => {
-        mountedRef.current = false
-    }, [])
 
     const readSnapshot = useCallback(() => {
         const state = store.getState()
@@ -57,20 +50,12 @@ export const AdminTerminalSection: React.FC<AdminTerminalSectionProps> = ({
             runtimeState: selectTcpRuntimeState(state),
         }
     }, [store])
-
-    const refreshSnapshot = useCallback(() => {
-        if (mountedRef.current) {
-            setSnapshot(readSnapshot())
-        }
-    }, [readSnapshot])
-
-    useEffect(() => {
-        const updateSnapshot = () => {
-            refreshSnapshot()
-        }
-        updateSnapshot()
-        return store.subscribe(updateSnapshot)
-    }, [refreshSnapshot, store])
+    const snapshot = useAdminStoreSnapshot(
+        store.subscribe,
+        readSnapshot,
+        shallowEqualAdminSnapshot,
+    )
+    const {identity, credential, binding, sandboxId, runtimeState} = snapshot
 
     const deactivate = () => {
         void (async () => {
@@ -84,7 +69,6 @@ export const AdminTerminalSection: React.FC<AdminTerminalSectionProps> = ({
                     tcpControlV2CommandDefinitions.deactivateTerminal,
                     {reason: 'admin-console'},
                 ))
-                refreshSnapshot()
                 if (!mountedRef.current) {
                     return
                 }

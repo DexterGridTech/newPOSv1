@@ -339,14 +339,14 @@ const entityStatusByType: Partial<Record<DomainEntity, Set<string>>> = {
   business_entity: statusSet('ACTIVE', 'INACTIVE', 'SUSPENDED', 'ARCHIVED'),
   table: statusSet('AVAILABLE', 'DISABLED'),
   workstation: statusSet('ACTIVE', 'INACTIVE', 'DISABLED', 'ARCHIVED'),
-  identity_provider_config: statusSet('ACTIVE', 'INACTIVE', 'SUSPENDED'),
+  identity_provider_config: statusSet('ACTIVE', 'DISABLED'),
   permission: statusSet('ACTIVE', 'INACTIVE', 'DEPRECATED', 'ARCHIVED'),
   permission_group: statusSet('ACTIVE', 'INACTIVE', 'ARCHIVED'),
   role_template: statusSet('ACTIVE', 'INACTIVE', 'DEPRECATED', 'ARCHIVED'),
   feature_point: statusSet('ACTIVE', 'INACTIVE', 'DEPRECATED'),
   platform_feature_switch: statusSet('ACTIVE', 'INACTIVE'),
-  role: statusSet('ACTIVE', 'INACTIVE', 'SUSPENDED', 'ARCHIVED'),
-  user: statusSet('ACTIVE', 'SUSPENDED', 'LOCKED', 'INACTIVE', 'ARCHIVED'),
+  role: statusSet('ACTIVE', 'DEPRECATED'),
+  user: statusSet('ACTIVE', 'SUSPENDED', 'LOCKED', 'DELETED'),
   user_role_binding: statusSet('ACTIVE', 'REVOKED', 'EXPIRED', 'INACTIVE'),
   resource_tag: statusSet('ACTIVE', 'INACTIVE', 'ARCHIVED'),
   principal_group: statusSet('ACTIVE', 'INACTIVE', 'ARCHIVED'),
@@ -1184,6 +1184,45 @@ const recordAuthAuditLog = (input: {
   })
 }
 
+const ensureCustomerDemoAuthAuditLog = (input: {
+  logId: string
+  userId: string
+  resourceId: string | null
+  action: string
+  permissionCode: string
+  result: 'ALLOWED' | 'DENIED'
+  denyReason?: string | null
+  detail: Record<string, unknown>
+}) => {
+  ensureSchema()
+  const existing = sqlite.prepare(`
+    SELECT log_id
+    FROM auth_audit_logs
+    WHERE sandbox_id = ? AND log_id = ?
+  `).get(customerDemoIdentity.sandboxId, input.logId) as {log_id: string} | undefined
+  if (existing) return
+  appendAuthAuditLog({
+    logId: input.logId,
+    sandboxId: customerDemoIdentity.sandboxId,
+    platformId: customerDemoIdentity.platformId,
+    userId: input.userId,
+    userType: input.userId === 'user-butterful-store-manager' ? 'STORE_STAFF' : 'TENANT_STAFF',
+    eventType: 'PermissionDecisionChecked',
+    resourceType: 'STORE',
+    resourceId: input.resourceId,
+    action: input.action,
+    permissionCode: input.permissionCode,
+    result: input.result,
+    denyReason: input.denyReason ?? null,
+    isCrossSandbox: true,
+    clientIp: null,
+    userAgent: 'customer-demo-seed',
+    requestId: input.logId,
+    occurredAt: '2026-04-25T09:00:00.000Z',
+    detail: input.detail,
+  })
+}
+
 const buildContractTimeline = (storeId: string, sandboxId = DEFAULT_SANDBOX_ID) =>
   listBusinessEvents(sandboxId)
     .filter(event => {
@@ -1315,6 +1354,28 @@ const sanitizeEntityStatus = (entityType: DomainEntity, value: unknown, fallback
     })
   }
   return normalized
+}
+
+const assertAllowedStatusTransition = (input: {
+  entityType: DomainEntity
+  entityId: string
+  currentStatus: string
+  nextStatus: string
+}) => {
+  if (input.entityType === 'user' && input.currentStatus === 'DELETED' && input.nextStatus !== 'DELETED') {
+    throw new HttpError(409, 'USER_DELETED_TERMINAL', '已删除用户是软删除终态，不能恢复或改为其他状态', {
+      userId: input.entityId,
+      currentStatus: input.currentStatus,
+      nextStatus: input.nextStatus,
+    })
+  }
+  if (input.entityType === 'role' && input.currentStatus === 'DEPRECATED' && input.nextStatus !== 'DEPRECATED') {
+    throw new HttpError(409, 'ROLE_DEPRECATED_TERMINAL', '已废弃角色是终态，不能恢复或改为其他状态', {
+      roleId: input.entityId,
+      currentStatus: input.currentStatus,
+      nextStatus: input.nextStatus,
+    })
+  }
 }
 
 const resolveEntityId = (prefix: string, requestedId: unknown, fallbackSeed: string) => {
@@ -1667,6 +1728,58 @@ const assertRequiredFields = (record: Record<string, unknown>, fields: string[],
   }
 }
 
+const assertPlatformExists = (platformId: string, sandboxId: string) => {
+  if (!findAggregateRow('platform', platformId, sandboxId)) {
+    throw new HttpError(404, 'PLATFORM_NOT_FOUND', '集团不存在', {platformId})
+  }
+}
+
+const findActiveByField = (
+  entityType: DomainEntity,
+  sandboxId: string,
+  field: string,
+  value: unknown,
+  platformId?: string,
+) => {
+  const normalizedValue = asOptionalString(value)
+  if (!normalizedValue) return null
+  return listRowsByEntityType(entityType, sandboxId)
+    .map(toAggregateRow)
+    .find(item => {
+      const itemData = asRecord(item.payload.data)
+      const itemPlatformId = asOptionalString(itemData.platform_id) ?? item.naturalScopeKey
+      return item.status === 'ACTIVE'
+        && asString(itemData[field]) === normalizedValue
+        && (!platformId || itemPlatformId === platformId)
+    }) ?? null
+}
+
+const assertEntityBelongsToPlatform = (
+  entity: AggregateRow,
+  platformId: string,
+  code: string,
+  message: string,
+  sandboxId = DEFAULT_SANDBOX_ID,
+) => {
+  const entityData = asRecord(entity.payload.data)
+  const storeId = entity.entityType === 'user' || entity.entityType === 'user_role_binding'
+    ? asOptionalString(entityData.store_id) ?? (entity.naturalScopeType === 'STORE' ? entity.naturalScopeKey : undefined)
+    : undefined
+  const storePlatformId = storeId
+    ? asOptionalString(readAggregateData(findAggregateRow('store', storeId, sandboxId)).platform_id)
+    : undefined
+  const entityPlatformId = asOptionalString(entityData.platform_id)
+    ?? storePlatformId
+    ?? (entity.naturalScopeType === 'PLATFORM' ? entity.naturalScopeKey : undefined)
+  if (entityPlatformId && entityPlatformId !== platformId) {
+    throw new HttpError(409, code, message, {
+      entityId: entity.entityId,
+      platformId,
+      entityPlatformId,
+    })
+  }
+}
+
 const assertDateRange = (startDate: unknown, endDate: unknown) => {
   const start = asOptionalString(startDate)
   const end = asOptionalString(endDate)
@@ -1914,7 +2027,7 @@ const assertUpdateDoesNotChangeReadonlyFields = (input: {
   inputData: Record<string, unknown>
 }) => {
   if (input.entityType === 'tenant' && Object.prototype.hasOwnProperty.call(input.inputData, 'tenant_category')) {
-    throw new HttpError(400, 'TENANT_CATEGORY_FORBIDDEN', '租户是法人主体，不维护品类；品牌品类请在集团业务字典中维护')
+    throw new HttpError(400, 'TENANT_CATEGORY_FORBIDDEN', '租户是法人主体，不维护品类；品牌品类请在集团全局字典中维护')
   }
   if (input.entityType === 'brand' && Object.prototype.hasOwnProperty.call(input.inputData, 'tenant_id')) {
     throw new HttpError(400, 'BRAND_TENANT_FORBIDDEN', '品牌直属集团，不归属租户；门店通过合同关联租户与品牌')
@@ -2329,7 +2442,9 @@ const normalizeProductType = (value: unknown) => {
 
 const normalizePriceType = (value: unknown) => {
   const priceType = asString(value, 'FIXED').toUpperCase()
-  return priceType === 'STANDARD' ? 'FIXED' : priceType
+  if (priceType === 'STANDARD') return 'FIXED'
+  if (priceType === 'MEMBER') return 'MEMBER_PRICE'
+  return priceType
 }
 
 const findBrandCodeDuplicate = (input: {
@@ -2500,6 +2615,7 @@ const assertEntityConstraints = (input: {
   const data = input.data
   if (input.entityType === 'identity_provider_config') {
     const platformId = asString(data.platform_id, input.naturalScopeKey)
+    assertPlatformExists(platformId, input.sandboxId)
     const idpType = asString(data.idp_type, 'LOCAL')
     const applicableUserTypes = asStringList(data.applicable_user_types)
     if (applicableUserTypes.length === 0) {
@@ -2513,6 +2629,9 @@ const assertEntityConstraints = (input: {
     }
     if (idpType === 'OIDC') {
       assertRequiredFields(data, ['issuer_url', 'client_id', 'client_secret_encrypted'], 'OIDC_CONFIG_REQUIRED', 'OIDC 身份源配置不完整')
+    }
+    if (idpType === 'SAML') {
+      assertRequiredFields(data, ['issuer_url', 'client_id', 'client_secret_encrypted'], 'SAML_CONFIG_REQUIRED', 'SAML 身份源配置不完整')
     }
     if (idpType === 'WECHAT_WORK' || idpType === 'DINGTALK') {
       assertRequiredFields(data, ['corp_id', 'agent_id', 'app_secret_encrypted'], 'ENTERPRISE_IDP_CONFIG_REQUIRED', '企业身份源配置不完整')
@@ -2535,6 +2654,8 @@ const assertEntityConstraints = (input: {
   }
 
   if (input.entityType === 'permission') {
+    const platformId = asString(data.platform_id, input.naturalScopeKey || identity.platformId)
+    assertPlatformExists(platformId, input.sandboxId)
     const permissionCode = asString(data.permission_code)
     if (!/^[a-zA-Z0-9_-]+:[a-zA-Z0-9_-]+$/.test(permissionCode)) {
       throw new HttpError(400, 'INVALID_PERMISSION_CODE', '权限编码格式错误，应为 resource:action 格式')
@@ -2582,18 +2703,25 @@ const assertEntityConstraints = (input: {
       throw new HttpError(404, 'PARENT_PERMISSION_NOT_FOUND', '父权限不存在', {parentPermissionId})
     }
     const permissionGroupId = asOptionalString(data.permission_group_id)
-    if (permissionGroupId && !findAggregateRow('permission_group', permissionGroupId, input.sandboxId)) {
+    if (permissionGroupId) {
+      const permissionGroup = findAggregateRow('permission_group', permissionGroupId, input.sandboxId)
+      if (!permissionGroup) {
       throw new HttpError(404, 'PERMISSION_GROUP_NOT_FOUND', '权限分组不存在', {permissionGroupId})
+      }
+      assertEntityBelongsToPlatform(permissionGroup, platformId, 'PERMISSION_GROUP_PLATFORM_MISMATCH', '权限分组必须属于当前集团', input.sandboxId)
     }
   }
 
   if (input.entityType === 'permission_group') {
+    const platformId = asString(data.platform_id, input.naturalScopeKey || identity.platformId)
+    assertPlatformExists(platformId, input.sandboxId)
     const duplicate = findFieldDuplicate({
       entityType: 'permission_group',
       sandboxId: input.sandboxId,
       entityId: input.entityId,
       field: 'group_code',
       value: data.group_code,
+      scope: {field: 'platform_id', value: platformId},
     })
     if (duplicate) {
       throw new HttpError(409, 'PERMISSION_GROUP_CODE_ALREADY_EXISTS', '权限分组编码已存在')
@@ -2605,30 +2733,39 @@ const assertEntityConstraints = (input: {
   }
 
   if (input.entityType === 'role_template') {
+    const platformId = asString(data.platform_id, input.naturalScopeKey || identity.platformId)
+    assertPlatformExists(platformId, input.sandboxId)
     const duplicate = findFieldDuplicate({
       entityType: 'role_template',
       sandboxId: input.sandboxId,
       entityId: input.entityId,
       field: 'template_code',
       value: data.template_code,
+      scope: {field: 'platform_id', value: platformId},
     })
     if (duplicate) {
       throw new HttpError(409, 'ROLE_TEMPLATE_CODE_ALREADY_EXISTS', '角色模板编码已存在')
     }
-    const missingPermissionIds = asStringList(data.base_permission_ids)
-      .filter(permissionId => !findAggregateRow('permission', permissionId, input.sandboxId))
-    if (missingPermissionIds.length) {
-      throw new HttpError(404, 'ROLE_TEMPLATE_PERMISSION_NOT_FOUND', '角色模板包含不存在的权限', {permissionIds: missingPermissionIds})
-    }
+    const templatePermissions = asStringList(data.base_permission_ids).map(permissionId => {
+      const permission = findAggregateRow('permission', permissionId, input.sandboxId)
+      if (!permission) return {permissionId, permission: null}
+      assertEntityBelongsToPlatform(permission, platformId, 'ROLE_TEMPLATE_PERMISSION_PLATFORM_MISMATCH', '角色模板基础权限必须属于当前集团', input.sandboxId)
+      return {permissionId, permission}
+    })
+    const missingPermissionIds = templatePermissions.filter(item => !item.permission).map(item => item.permissionId)
+    if (missingPermissionIds.length) throw new HttpError(404, 'ROLE_TEMPLATE_PERMISSION_NOT_FOUND', '角色模板包含不存在的权限', {permissionIds: missingPermissionIds})
   }
 
   if (input.entityType === 'feature_point') {
+    const platformId = asString(data.platform_id, input.naturalScopeKey || identity.platformId)
+    assertPlatformExists(platformId, input.sandboxId)
     const duplicate = findFieldDuplicate({
       entityType: 'feature_point',
       sandboxId: input.sandboxId,
       entityId: input.entityId,
       field: 'feature_code',
       value: data.feature_code,
+      scope: {field: 'platform_id', value: platformId},
     })
     if (duplicate) {
       throw new HttpError(409, 'FEATURE_CODE_ALREADY_EXISTS', '功能点编码已存在')
@@ -2770,6 +2907,32 @@ const assertEntityConstraints = (input: {
     assertBrandConstraints(data)
   }
 
+  if (input.entityType === 'user') {
+    const platformId = asString(data.platform_id, input.naturalScopeKey || identity.platformId)
+    assertPlatformExists(platformId, input.sandboxId)
+    const userType = asString(data.user_type, 'STORE_STAFF')
+    const identitySource = asString(data.identity_source, 'LOCAL').toUpperCase()
+    const hasPasswordHash = Boolean(asOptionalString(data.password_hash))
+    const hasExternalUserId = Boolean(asOptionalString(data.external_user_id))
+    if (userType !== 'API_CLIENT' && !asOptionalString(data.email) && !asOptionalString(data.phone ?? data.mobile)) {
+      throw new HttpError(400, 'USER_CONTACT_REQUIRED', '邮箱和手机号至少填写一个')
+    }
+    if (identitySource === 'LOCAL' && !hasPasswordHash) {
+      throw new HttpError(400, 'LOCAL_USER_PASSWORD_REQUIRED', '本地用户必须保存密码哈希')
+    }
+    if (identitySource !== 'LOCAL') {
+      if (hasPasswordHash) {
+        throw new HttpError(400, 'EXTERNAL_USER_PASSWORD_FORBIDDEN', '外部身份源用户不能保存本地密码哈希')
+      }
+      if (!hasExternalUserId) {
+        throw new HttpError(400, 'EXTERNAL_USER_ID_REQUIRED', '外部身份源用户必须保存外部用户 ID')
+      }
+    }
+    if (asOptionalString(data.locked_until) && asString(data.status, 'ACTIVE') !== 'LOCKED') {
+      throw new HttpError(400, 'LOCKED_UNTIL_REQUIRES_LOCKED_STATUS', '存在锁定截止时间时用户状态必须为 LOCKED')
+    }
+  }
+
   if (input.entityType === 'business_entity') {
     const tenantId = asString(data.tenant_id)
     const tenant = findAggregateRow('tenant', tenantId, input.sandboxId)
@@ -2831,6 +2994,9 @@ const assertEntityConstraints = (input: {
       catalogKey: 'store_business_scenarios',
       values: data.business_scenarios ?? data.store_formats,
       field: 'business_scenarios',
+      ownerEntityType: 'store',
+      ownerId: input.entityId,
+      ownerCatalog: data.metadata_catalog,
     })
     assertStoreSnapshotConsistency({storeId: input.entityId, data})
   }
@@ -2891,6 +3057,8 @@ const assertEntityConstraints = (input: {
       catalogKey: 'table_types',
       value: tableType,
       field: 'table_type',
+      ownerEntityType: 'store',
+      ownerId: storeId,
     })
     assertPlatformCatalogValue({
       sandboxId: input.sandboxId,
@@ -2898,6 +3066,8 @@ const assertEntityConstraints = (input: {
       catalogKey: 'table_areas',
       value: data.area,
       field: 'area',
+      ownerEntityType: 'store',
+      ownerId: storeId,
     })
     if (asNumber(data.capacity, 0) <= 0) {
       throw new HttpError(400, 'INVALID_TABLE_CAPACITY', '桌台容量必须大于 0')
@@ -2922,6 +3092,8 @@ const assertEntityConstraints = (input: {
       catalogKey: 'workstation_types',
       value: workstationType,
       field: 'workstation_type',
+      ownerEntityType: 'store',
+      ownerId: storeId,
     })
     assertPlatformCatalogValues({
       sandboxId: input.sandboxId,
@@ -2929,6 +3101,8 @@ const assertEntityConstraints = (input: {
       catalogKey: 'production_categories',
       values: data.responsible_categories ?? data.category_codes,
       field: 'responsible_categories',
+      ownerEntityType: 'brand',
+      ownerId: asNullableString(storeData.brand_id),
     })
   }
 
@@ -2956,6 +3130,7 @@ const assertEntityConstraints = (input: {
 
   if (input.entityType === 'principal_group') {
     const platformId = asString(data.platform_id, input.naturalScopeKey)
+    assertPlatformExists(platformId, input.sandboxId)
     const duplicate = findFieldDuplicate({
       entityType: 'principal_group',
       sandboxId: input.sandboxId,
@@ -2986,6 +3161,8 @@ const assertEntityConstraints = (input: {
     if (!user || user.status !== 'ACTIVE') {
       throw new HttpError(409, 'USER_NOT_ACTIVE', '用户不存在或未启用', {userId})
     }
+    const groupPlatformId = asString(asRecord(group.payload.data).platform_id, group.naturalScopeKey)
+    assertEntityBelongsToPlatform(user, groupPlatformId, 'GROUP_MEMBER_PLATFORM_MISMATCH', '用户组成员必须属于同一集团', input.sandboxId)
     const duplicate = listRowsByEntityType('group_member', input.sandboxId)
       .map(toAggregateRow)
       .find(item => {
@@ -3017,6 +3194,8 @@ const assertEntityConstraints = (input: {
     if (!role || role.status !== 'ACTIVE') {
       throw new HttpError(409, 'ROLE_NOT_ACTIVE', '角色不存在或已停用，无法授权', {roleId})
     }
+    const bindingPlatformId = asString(data.platform_id, asOptionalString(asRecord(role.payload.data).platform_id) ?? role.naturalScopeKey)
+    assertEntityBelongsToPlatform(role, bindingPlatformId, 'ROLE_BINDING_PLATFORM_MISMATCH', '授权角色必须属于当前集团', input.sandboxId)
     const rolePermissionCodes = getRolePermissionCodes(role, input.sandboxId)
     const highRiskPolicies = listRowsByEntityType('high_risk_permission_policy', input.sandboxId)
       .map(toAggregateRow)
@@ -3052,6 +3231,8 @@ const assertEntityConstraints = (input: {
     if (!group || group.status !== 'ACTIVE') {
       throw new HttpError(409, 'GROUP_NOT_ACTIVE', '用户组不存在或未启用，无法授权', {groupId})
     }
+    const groupPlatformId = asString(asRecord(group.payload.data).platform_id, group.naturalScopeKey)
+    assertEntityBelongsToPlatform(findAggregateRow('role', asString(data.role_id), input.sandboxId)!, groupPlatformId, 'GROUP_ROLE_BINDING_PLATFORM_MISMATCH', '用户组授权角色必须属于同一集团', input.sandboxId)
     const scope = bindingScopeForData(data, input.naturalScopeType, input.naturalScopeKey)
     const duplicate = listRowsByEntityType('group_role_binding', input.sandboxId)
       .map(toAggregateRow)
@@ -3097,6 +3278,16 @@ const assertEntityConstraints = (input: {
     if (!user || user.status !== 'ACTIVE') {
       throw new HttpError(409, 'USER_NOT_ACTIVE', '用户不存在或未启用，无法授权', {userId})
     }
+    const userData = asRecord(user.payload.data)
+    const userStoreId = asOptionalString(userData.store_id) ?? (user.naturalScopeType === 'STORE' ? user.naturalScopeKey : undefined)
+    const userStorePlatformId = userStoreId
+      ? asOptionalString(readAggregateData(findAggregateRow('store', userStoreId, input.sandboxId)).platform_id)
+      : undefined
+    const userPlatformId = asString(
+      userData.platform_id,
+      userStorePlatformId ?? (user.naturalScopeType === 'PLATFORM' ? user.naturalScopeKey : identity.platformId),
+    )
+    assertEntityBelongsToPlatform(findAggregateRow('role', asString(data.role_id), input.sandboxId)!, userPlatformId, 'USER_ROLE_BINDING_PLATFORM_MISMATCH', '用户授权角色必须属于同一集团', input.sandboxId)
     const scope = bindingScopeForData(data, input.naturalScopeType, input.naturalScopeKey)
     const duplicate = listRowsByEntityType('user_role_binding', input.sandboxId)
       .map(toAggregateRow)
@@ -3127,6 +3318,84 @@ const assertEntityConstraints = (input: {
         sandboxId: input.sandboxId,
         candidateGrants: [candidateGrant],
       })
+    }
+  }
+
+  if (input.entityType === 'authorization_session') {
+    const userId = asString(data.user_id)
+    const platformId = asString(data.platform_id, input.naturalScopeKey || identity.platformId)
+    assertPlatformExists(platformId, input.sandboxId)
+    const user = findAggregateRow('user', userId, input.sandboxId)
+    if (!user || user.status !== 'ACTIVE') {
+      throw new HttpError(409, 'AUTH_SESSION_USER_NOT_ACTIVE', '授权会话用户不存在或未启用', {userId})
+    }
+    assertEntityBelongsToPlatform(user, platformId, 'AUTH_SESSION_USER_PLATFORM_MISMATCH', '授权会话用户必须属于当前集团', input.sandboxId)
+  const activeUserGroupIds = new Set(listRowsByEntityType('group_member', input.sandboxId)
+      .map(toAggregateRow)
+      .filter(member => member.status === 'ACTIVE')
+      .filter(member => asString(asRecord(member.payload.data).user_id) === userId)
+      .map(member => asString(asRecord(member.payload.data).group_id))
+      .filter(Boolean))
+    const invalidBindingIds = asStringList(data.activated_binding_ids).filter(bindingId => {
+      const userBinding = findAggregateRow('user_role_binding', bindingId, input.sandboxId)
+      if (userBinding && userBinding.status === 'ACTIVE') {
+        const bindingData = asRecord(userBinding.payload.data)
+        const bindingPlatformId = asOptionalString(bindingData.platform_id) ?? userBinding.naturalScopeKey
+        return asString(bindingData.user_id) !== userId || bindingPlatformId !== platformId
+      }
+      const groupBinding = findAggregateRow('group_role_binding', bindingId, input.sandboxId)
+      if (groupBinding && groupBinding.status === 'ACTIVE') {
+        const bindingData = asRecord(groupBinding.payload.data)
+        const bindingPlatformId = asOptionalString(bindingData.platform_id) ?? groupBinding.naturalScopeKey
+        return bindingPlatformId !== platformId || !activeUserGroupIds.has(asString(bindingData.group_id))
+      }
+      return true
+    })
+    if (invalidBindingIds.length) {
+      throw new HttpError(404, 'AUTH_SESSION_BINDING_NOT_FOUND', '授权会话激活授权不存在、未启用或不属于该用户', {bindingIds: invalidBindingIds})
+    }
+  }
+
+  if (input.entityType === 'separation_of_duty_rule') {
+    const platformId = asString(data.platform_id, input.naturalScopeKey || identity.platformId)
+    assertPlatformExists(platformId, input.sandboxId)
+    const conflictCodes = [
+      ...asStringList(data.conflicting_role_codes),
+      ...asStringList(data.conflicting_perm_codes),
+    ]
+    if (asBoolean(data.is_active, true) && conflictCodes.length < 2) {
+      throw new HttpError(400, 'SOD_RULE_CONFLICTS_REQUIRED', '职责分离规则至少需要两个冲突角色或权限')
+    }
+    const missingRoleCodes = asStringList(data.conflicting_role_codes)
+      .filter(roleCode => !findActiveByField('role', input.sandboxId, 'role_code', roleCode, platformId))
+    if (missingRoleCodes.length) {
+      throw new HttpError(404, 'SOD_RULE_ROLE_NOT_FOUND', '职责分离规则包含不存在的角色编码', {roleCodes: missingRoleCodes})
+    }
+    const missingPermissionCodes = asStringList(data.conflicting_perm_codes)
+      .filter(permissionCode => !findActiveByField('permission', input.sandboxId, 'permission_code', permissionCode, platformId))
+    if (missingPermissionCodes.length) {
+      throw new HttpError(404, 'SOD_RULE_PERMISSION_NOT_FOUND', '职责分离规则包含不存在的权限编码', {permissionCodes: missingPermissionCodes})
+    }
+  }
+
+  if (input.entityType === 'high_risk_permission_policy') {
+    const platformId = asString(data.platform_id, input.naturalScopeKey || identity.platformId)
+    assertPlatformExists(platformId, input.sandboxId)
+    const permissionCode = asString(data.permission_code)
+    if (!findActiveByField('permission', input.sandboxId, 'permission_code', permissionCode, platformId)) {
+      throw new HttpError(404, 'HIGH_RISK_PERMISSION_NOT_FOUND', '高风险策略关联的权限不存在或未启用', {permissionCode})
+    }
+    const approverRoleCode = asOptionalString(data.approver_role_code)
+    if (approverRoleCode && !findActiveByField('role', input.sandboxId, 'role_code', approverRoleCode, platformId)) {
+      throw new HttpError(404, 'HIGH_RISK_APPROVER_ROLE_NOT_FOUND', '高风险策略审批角色不存在或未启用', {approverRoleCode})
+    }
+    const maxDurationDays = asNullableNumber(data.max_duration_days)
+    if (maxDurationDays !== null && (!Number.isInteger(maxDurationDays) || maxDurationDays <= 0)) {
+      throw new HttpError(400, 'INVALID_HIGH_RISK_DURATION', '高风险授权最长天数必须为正整数', {maxDurationDays})
+    }
+    const mfaValidityMinutes = asNumber(data.mfa_validity_minutes, 30)
+    if (asBoolean(data.require_mfa, false) && (!Number.isInteger(mfaValidityMinutes) || mfaValidityMinutes <= 0)) {
+      throw new HttpError(400, 'INVALID_HIGH_RISK_MFA_VALIDITY', 'MFA 有效分钟必须为正整数', {mfaValidityMinutes})
     }
   }
 
@@ -3234,6 +3503,8 @@ const assertEntityConstraints = (input: {
       catalogKey: 'channel_types',
       value: data.channel_type,
       field: 'channel_type',
+      ownerEntityType: 'store',
+      ownerId: storeId,
     })
   }
 
@@ -3273,16 +3544,6 @@ const assertEntityConstraints = (input: {
     if (!['BRAND', 'STORE'].includes(ownershipScope)) {
       throw new HttpError(400, 'INVALID_PRODUCT_OWNERSHIP_SCOPE', '商品归属范围只能是品牌或门店', {ownershipScope})
     }
-    assertPlatformCatalogValue({
-      sandboxId: input.sandboxId,
-      platformId,
-      catalogKey: 'product_types',
-      value: productType,
-      field: 'product_type',
-    })
-    if (!['SINGLE', 'COMBO', 'MODIFIER'].includes(productType)) {
-      throw new HttpError(400, 'INVALID_PRODUCT_TYPE', '商品类型只能是单品、套餐或加料', {productType})
-    }
     if (basePrice <= 0) {
       throw new HttpError(400, 'INVALID_PRODUCT_PRICE', '商品基础价格必须大于 0')
     }
@@ -3298,6 +3559,16 @@ const assertEntityConstraints = (input: {
       if (asNullableString(data.store_id)) {
         throw new HttpError(400, 'PRODUCT_STORE_FORBIDDEN_FOR_BRAND_SCOPE', '品牌级商品不能同时归属门店')
       }
+      assertPlatformCatalogValue({
+        sandboxId: input.sandboxId,
+        platformId,
+        catalogKey: 'product_types',
+        value: productType,
+        field: 'product_type',
+        ownerEntityType: 'brand',
+        ownerId: brandId,
+        ownerCatalog: asRecord(brand.payload.data).metadata_catalog,
+      })
     }
     if (ownershipScope === 'STORE') {
       const storeId = asNullableString(data.store_id)
@@ -3311,6 +3582,16 @@ const assertEntityConstraints = (input: {
       if (asNullableString(data.brand_id)) {
         throw new HttpError(400, 'PRODUCT_BRAND_FORBIDDEN_FOR_STORE_SCOPE', '门店级商品不能同时归属品牌')
       }
+      const brandId = asNullableString(asRecord(store.payload.data).brand_id)
+      assertPlatformCatalogValue({
+        sandboxId: input.sandboxId,
+        platformId,
+        catalogKey: 'product_types',
+        value: productType,
+        field: 'product_type',
+        ownerEntityType: 'brand',
+        ownerId: brandId,
+      })
     }
     const categoryId = asNullableString(data.category_id)
     if (categoryId) {
@@ -3414,6 +3695,8 @@ const assertEntityConstraints = (input: {
       catalogKey: 'price_types',
       value: data.price_type,
       field: 'price_type',
+      ownerEntityType: 'store',
+      ownerId: storeId,
     })
     assertPlatformCatalogValue({
       sandboxId: input.sandboxId,
@@ -3421,6 +3704,8 @@ const assertEntityConstraints = (input: {
       catalogKey: 'channel_types',
       value: data.channel_type,
       field: 'channel_type',
+      ownerEntityType: 'store',
+      ownerId: storeId,
     })
     assertPlatformCatalogValue({
       sandboxId: input.sandboxId,
@@ -3428,14 +3713,18 @@ const assertEntityConstraints = (input: {
       catalogKey: 'discount_types',
       value: data.discount_type,
       field: 'discount_type',
+      ownerEntityType: 'store',
+      ownerId: storeId,
     })
     assertPlatformCatalogValue({
       sandboxId: input.sandboxId,
       platformId,
       catalogKey: 'member_tiers',
-      value: data.member_tier ?? 'NONE',
+      value: data.member_tier,
       field: 'member_tier',
       allowEmpty: true,
+      ownerEntityType: 'store',
+      ownerId: storeId,
     })
     const targetProductIds = asStringList(data.applicable_product_ids ?? data.product_id)
     const mismatchedProductIds = targetProductIds.filter(productId => {
@@ -3513,6 +3802,8 @@ const assertEntityConstraints = (input: {
       catalogKey: 'availability_rule_types',
       value: data.rule_type,
       field: 'rule_type',
+      ownerEntityType: 'store',
+      ownerId: storeId,
     })
     assertPlatformCatalogValue({
       sandboxId: input.sandboxId,
@@ -3521,6 +3812,8 @@ const assertEntityConstraints = (input: {
       value: data.channel_type ?? 'ALL',
       field: 'channel_type',
       allowEmpty: true,
+      ownerEntityType: 'store',
+      ownerId: storeId,
     })
     const productId = asNullableString(data.product_id)
     if (productId) {
@@ -3675,6 +3968,28 @@ const platformMetadataOption = (value: string, label: string, extra: Record<stri
   status: 'ACTIVE',
 })
 
+const metadataCatalogOwnerScopeByKey = {
+  regions: 'PLATFORM',
+  project_business_modes: 'PLATFORM',
+  tenant_types: 'PLATFORM',
+  tenant_business_models: 'PLATFORM',
+  store_business_formats: 'PLATFORM',
+  store_cooperation_modes: 'PLATFORM',
+  brand_categories: 'PLATFORM',
+  product_types: 'BRAND',
+  product_categories: 'BRAND',
+  production_categories: 'BRAND',
+  store_business_scenarios: 'STORE',
+  table_areas: 'STORE',
+  table_types: 'STORE',
+  workstation_types: 'STORE',
+  channel_types: 'STORE',
+  price_types: 'STORE',
+  discount_types: 'STORE',
+  member_tiers: 'STORE',
+  availability_rule_types: 'STORE',
+} as const
+
 const defaultPlatformMetadataCatalog = {
   regions: [
     platformMetadataOption('NORTH_CHINA', '华北大区', {
@@ -3812,7 +4127,7 @@ const defaultPlatformMetadataCatalog = {
     platformMetadataOption('DISCOUNT_RATE', '折扣率'),
     platformMetadataOption('DISCOUNT_AMOUNT', '立减金额'),
     platformMetadataOption('OVERRIDE_PRICE', '覆盖价'),
-    platformMetadataOption('MEMBER', '会员价'),
+    platformMetadataOption('MEMBER_PRICE', '会员价'),
   ],
   channel_types: [
     platformMetadataOption('ALL', '全部渠道'),
@@ -3884,6 +4199,17 @@ const normalizeMetadataOptions = (
   return normalizedItems
 }
 
+const normalizeScopedMetadataOptions = (
+  value: unknown,
+  key: keyof typeof metadataCatalogOwnerScopeByKey,
+  ownerId: string,
+  options: {mergeDefaults?: boolean} = {},
+) => normalizeMetadataOptions(value, defaultPlatformMetadataCatalog[key], options).map(entry => ({
+  ...entry,
+  owner_scope: metadataCatalogOwnerScopeByKey[key],
+  owner_id: asNullableString(entry.owner_id) ?? ownerId,
+}))
+
 const normalizePlatformRegions = (value: unknown, options: {mergeDefaults?: boolean} = {}) =>
   normalizeMetadataOptions(value, defaultPlatformMetadataCatalog.regions, options).map((entry, index) => {
     const code = asString(entry.value ?? entry.region_code, `REGION_${index + 1}`)
@@ -3913,9 +4239,48 @@ const normalizePlatformMetadataCatalog = (value: unknown, options: {mergeDefault
   ]))
 }
 
+const normalizeEntityMetadataCatalog = (
+  value: unknown,
+  ownerScope: 'PLATFORM' | 'BRAND' | 'STORE',
+  ownerId: string,
+  options: {mergeDefaults?: boolean} = {},
+) => {
+  const keys = Object.entries(metadataCatalogOwnerScopeByKey)
+    .filter(([, scope]) => scope === ownerScope)
+    .map(([key]) => key as keyof typeof metadataCatalogOwnerScopeByKey)
+  const catalog = asRecord(value)
+  return Object.fromEntries(keys.map(key => [
+    key,
+    ownerScope === 'PLATFORM' && key === 'regions'
+      ? normalizePlatformRegions(catalog[key], options).map(entry => ({...entry, owner_scope: ownerScope, owner_id: ownerId}))
+      : normalizeScopedMetadataOptions(catalog[key], key, ownerId, options),
+  ]))
+}
+
 const getPlatformCatalog = (platformId: string | null | undefined, sandboxId: string) => {
   const platform = platformId ? findAggregateRow('platform', platformId, sandboxId) : null
   return normalizePlatformMetadataCatalog(asRecord(platform?.payload.data).metadata_catalog)
+}
+
+const getBusinessCatalogOptions = (input: {
+  sandboxId: string
+  platformId: string
+  catalogKey: keyof typeof defaultPlatformMetadataCatalog
+  ownerEntityType?: DomainEntity
+  ownerId?: string | null
+  ownerCatalog?: unknown
+}) => {
+  const platformCatalog = getPlatformCatalog(input.platformId, input.sandboxId)
+  const platformOptions = asRecordList(platformCatalog[input.catalogKey])
+  if (!input.ownerEntityType || !input.ownerId) return platformOptions
+  const inlineOwnerCatalog = asRecord(input.ownerCatalog)
+  if (Array.isArray(inlineOwnerCatalog[input.catalogKey])) {
+    return normalizeMetadataOptions(inlineOwnerCatalog[input.catalogKey], platformOptions)
+  }
+  const owner = findAggregateRow(input.ownerEntityType, input.ownerId, input.sandboxId)
+  const ownerCatalog = asRecord(asRecord(owner?.payload.data).metadata_catalog)
+  if (!Array.isArray(ownerCatalog[input.catalogKey])) return platformOptions
+  return normalizeMetadataOptions(ownerCatalog[input.catalogKey], platformOptions)
 }
 
 const catalogOptionMatches = (option: Record<string, unknown>, value: string) => {
@@ -3933,6 +4298,17 @@ const catalogOptionMatches = (option: Record<string, unknown>, value: string) =>
   ].some(candidate => asString(candidate, '').trim().toUpperCase() === normalizedValue)
 }
 
+const normalizeLegacyBrandCategory = (value: unknown) => {
+  const raw = asString(value, '').trim()
+  const legacyMap: Record<string, string> = {
+    西北中餐: 'CHINESE_CUISINE',
+    江南中餐: 'CHINESE_CUISINE',
+    新式茶饮: 'TEA_DRINK',
+    原叶鲜奶茶: 'TEA_DRINK',
+  }
+  return legacyMap[raw] ?? value
+}
+
 const assertPlatformCatalogValue = (input: {
   sandboxId: string
   platformId: string
@@ -3940,6 +4316,9 @@ const assertPlatformCatalogValue = (input: {
   value: unknown
   field: string
   allowEmpty?: boolean
+  ownerEntityType?: DomainEntity
+  ownerId?: string | null
+  ownerCatalog?: unknown
 }) => {
   const value = asOptionalString(input.value)
   if (!value) {
@@ -3949,14 +4328,15 @@ const assertPlatformCatalogValue = (input: {
       catalogKey: input.catalogKey,
     })
   }
-  const catalog = getPlatformCatalog(input.platformId, input.sandboxId)
-  const options = asRecordList(catalog[input.catalogKey]).filter(option => sanitizeStatus(option.status, 'ACTIVE') === 'ACTIVE')
+  const options = getBusinessCatalogOptions(input).filter(option => sanitizeStatus(option.status, 'ACTIVE') === 'ACTIVE')
   if (!options.some(option => catalogOptionMatches(option, value))) {
-    throw new HttpError(400, 'CATALOG_VALUE_NOT_DEFINED', '该字段必须来自集团业务字典，请先在集团业务字典中维护', {
+    throw new HttpError(400, 'CATALOG_VALUE_NOT_DEFINED', '该字段必须来自对应归属的业务字典，请先在集团全局、品牌或门店字典中维护', {
       field: input.field,
       value,
       catalogKey: input.catalogKey,
       platformId: input.platformId,
+      ownerEntityType: input.ownerEntityType,
+      ownerId: input.ownerId,
     })
   }
 }
@@ -3968,11 +4348,14 @@ const assertPlatformCatalogValues = (input: {
   values: unknown
   field: string
   allowEmpty?: boolean
+  ownerEntityType?: DomainEntity
+  ownerId?: string | null
+  ownerCatalog?: unknown
 }) => {
   const values = asStringList(input.values)
   if (values.length === 0) {
     if (input.allowEmpty) return
-    throw new HttpError(400, 'CATALOG_VALUE_REQUIRED', '必须至少选择一个集团业务字典中的有效值', {
+    throw new HttpError(400, 'CATALOG_VALUE_REQUIRED', '必须至少选择一个对应归属业务字典中的有效值', {
       field: input.field,
       catalogKey: input.catalogKey,
     })
@@ -4137,10 +4520,256 @@ const customerDemoMutation = (idempotencyKey: string): MutationInput => ({
   idempotencyKey,
 })
 
+const ensureCustomerDemoIamMasterData = () => {
+  const sandboxId = customerDemoIdentity.sandboxId
+  const platformId = customerDemoIdentity.platformId
+  if (!getEntityRow('platform', platformId, sandboxId)) {
+    return
+  }
+
+  const primaryStoreId = customerDemoIdentity.primaryStoreId
+  const permissions = [
+    ['perm-longfor-platform-view', 'platform:view', '查看集团主数据', 'platform', 'view'],
+    ['perm-longfor-project-manage', 'project:manage', '维护项目与分期', 'project', 'manage'],
+    ['perm-longfor-contract-manage', 'contract:manage', '维护经营合同', 'contract', 'manage'],
+    ['perm-longfor-menu-manage', 'menu:manage', '维护菜单', 'menu', 'manage'],
+    ['perm-longfor-store-config-manage', 'store-config:manage', '维护门店经营参数', 'store-config', 'manage'],
+    ['perm-longfor-iam-manage', 'iam:manage', '维护角色与授权', 'iam', 'manage'],
+  ] as const
+
+  createPermissionGroup({
+    permissionGroupId: 'permission-group-longfor-master-data',
+    platformId,
+    groupCode: 'MASTER_DATA',
+    groupName: '主数据管理',
+    sortOrder: 10,
+    mutation: customerDemoMutation('customer-demo-permission-group'),
+  })
+  permissions.forEach(([permissionId, permissionCode, permissionName, resource, action]) => createPermission({
+    permissionId,
+    permissionCode,
+    permissionName,
+    platformId,
+    permissionType: 'SYSTEM',
+    module: 'customer-master-data',
+    resource,
+    resourceType: resource,
+    action,
+    permissionGroupId: 'permission-group-longfor-master-data',
+    mutation: customerDemoMutation(`customer-demo-permission-${permissionId}`),
+  }))
+  createRole({
+    roleId: 'role-longfor-platform-master-admin',
+    roleCode: 'PLATFORM_MASTER_ADMIN',
+    roleName: '集团主数据管理员',
+    platformId,
+    scopeType: 'PLATFORM',
+    roleType: 'SYSTEM',
+    permissionIds: permissions.map(([permissionId]) => permissionId),
+    mutation: customerDemoMutation('customer-demo-role-platform-admin'),
+  })
+  createRole({
+    roleId: 'role-longfor-store-operator',
+    roleCode: 'STORE_OPERATOR',
+    roleName: '门店资料维护员',
+    platformId,
+    scopeType: 'STORE',
+    roleType: 'CUSTOM',
+    permissionIds: ['perm-longfor-platform-view', 'perm-longfor-menu-manage', 'perm-longfor-store-config-manage'],
+    mutation: customerDemoMutation('customer-demo-role-store-operator'),
+  })
+  createRoleTemplate({
+    templateId: 'role-template-longfor-store-operator',
+    platformId,
+    templateCode: 'STORE_OPERATOR_TEMPLATE',
+    templateName: '门店资料维护模板',
+    basePermissionIds: ['perm-longfor-platform-view', 'perm-longfor-menu-manage', 'perm-longfor-store-config-manage'],
+    recommendedScopeType: 'STORE',
+    industryTags: ['餐饮', '零售'],
+    mutation: customerDemoMutation('customer-demo-role-template'),
+  })
+  createUser({
+    userId: 'user-longfor-admin',
+    userCode: 'longfor.admin',
+    username: 'longfor.admin',
+    displayName: '顾一鸣',
+    mobile: '13900003001',
+    email: 'admin@longfor.example',
+    userType: 'TENANT_STAFF',
+    platformId,
+    mutation: customerDemoMutation('customer-demo-user-admin'),
+  })
+  createUser({
+    userId: 'user-butterful-store-manager',
+    userCode: 'butterful.manager',
+    username: 'butterful.manager',
+    displayName: '周店长',
+    mobile: '13900003002',
+    email: 'manager@butterful.example',
+    userType: 'STORE_STAFF',
+    storeId: primaryStoreId,
+    mutation: customerDemoMutation('customer-demo-user-store-manager'),
+  })
+  createUserRoleBinding({
+    bindingId: 'binding-longfor-admin-platform',
+    userId: 'user-longfor-admin',
+    roleId: 'role-longfor-platform-master-admin',
+    resourceScope: {scope_type: 'ORG_NODE', org_node_type: 'platform', org_node_ids: [platformId]},
+    policyEffect: 'ALLOW',
+    mutation: customerDemoMutation('customer-demo-binding-platform-admin'),
+  })
+  createUserRoleBinding({
+    bindingId: 'binding-butterful-manager-store',
+    userId: 'user-butterful-store-manager',
+    roleId: 'role-longfor-store-operator',
+    storeId: primaryStoreId,
+    resourceScope: {scope_type: 'RESOURCE_IDS', resource_type: 'store', resource_ids: [primaryStoreId]},
+    policyEffect: 'ALLOW',
+    mutation: customerDemoMutation('customer-demo-binding-store-manager'),
+  })
+  createPrincipalGroup({
+    groupId: 'principal-group-longfor-project-ops',
+    platformId,
+    groupCode: 'PROJECT_OPS',
+    groupName: '项目运营组',
+    groupType: 'MANUAL',
+    mutation: customerDemoMutation('customer-demo-principal-group'),
+  })
+  addGroupMember({
+    memberId: 'group-member-longfor-admin-project-ops',
+    groupId: 'principal-group-longfor-project-ops',
+    userId: 'user-longfor-admin',
+    joinedBy: 'customer-demo-seed',
+    mutation: customerDemoMutation('customer-demo-group-member'),
+  })
+  createGroupRoleBinding({
+    groupBindingId: 'group-binding-project-ops-platform-view',
+    groupId: 'principal-group-longfor-project-ops',
+    roleId: 'role-longfor-store-operator',
+    resourceScope: {scope_type: 'ORG_NODE', org_node_type: 'project', org_node_ids: [customerDemoIdentity.primaryProjectId]},
+    mutation: customerDemoMutation('customer-demo-group-binding'),
+  })
+  createResourceTag({
+    tagId: 'tag-store-butterful-key-account',
+    platformId,
+    tagKey: 'store_segment',
+    tagValue: 'KEY_ACCOUNT',
+    tagLabel: '重点门店',
+    resourceType: 'store',
+    resourceId: primaryStoreId,
+    mutation: customerDemoMutation('customer-demo-resource-tag'),
+  })
+  createIdentityProviderConfig({
+    idpId: 'idp-longfor-local',
+    platformId,
+    idpName: '龙湖本地账号',
+    idpType: 'LOCAL',
+    applicableUserTypes: ['TENANT_STAFF', 'STORE_STAFF'],
+    priority: 10,
+    mutation: customerDemoMutation('customer-demo-idp'),
+  })
+  createFeaturePoint({
+    featurePointId: 'feature-longfor-customer-master-data',
+    platformId,
+    featureCode: 'CUSTOMER_MASTER_DATA',
+    featureName: '主数据后台',
+    defaultEnabled: true,
+    mutation: customerDemoMutation('customer-demo-feature-point'),
+  })
+  upsertPlatformFeatureSwitch({
+    switchId: 'switch-longfor-customer-master-data',
+    platformId,
+    featureCode: 'CUSTOMER_MASTER_DATA',
+    isEnabled: true,
+    enabledBy: 'customer-demo-seed',
+    mutation: customerDemoMutation('customer-demo-feature-switch'),
+  })
+  createAuthorizationSession({
+    sessionId: 'auth-session-longfor-admin-platform',
+    userId: 'user-longfor-admin',
+    platformId,
+    activatedBindingIds: ['binding-longfor-admin-platform', 'group-binding-project-ops-platform-view'],
+    workingScope: {scope_type: 'ORG_NODE', org_node_type: 'platform', org_node_ids: [platformId]},
+    sessionToken: 'longfor-admin-demo-session-token',
+    expiresAt: '2026-12-31T23:59:59.000Z',
+    mfaVerifiedAt: '2026-04-25T09:00:00.000Z',
+    mfaExpiresAt: '2026-04-25T09:30:00.000Z',
+    mfaMethod: 'TOTP',
+    mutation: customerDemoMutation('customer-demo-auth-session-admin'),
+  })
+  createAuthorizationSession({
+    sessionId: 'auth-session-butterful-manager-store',
+    userId: 'user-butterful-store-manager',
+    platformId,
+    activatedBindingIds: ['binding-butterful-manager-store'],
+    workingScope: {scope_type: 'RESOURCE_IDS', resource_type: 'store', resource_ids: [primaryStoreId]},
+    sessionToken: 'butterful-manager-demo-session-token',
+    expiresAt: '2026-12-31T23:59:59.000Z',
+    mfaMethod: 'SMS',
+    mutation: customerDemoMutation('customer-demo-auth-session-store-manager'),
+  })
+  createSeparationOfDutyRule({
+    sodRuleId: 'sod-longfor-contract-iam',
+    platformId,
+    ruleName: '合同与权限维护职责分离',
+    ruleDescription: '同一用户不建议同时拥有合同维护和 IAM 管理权限。',
+    conflictingPermCodes: ['contract:manage', 'iam:manage'],
+    mutation: customerDemoMutation('customer-demo-sod'),
+  })
+  createHighRiskPermissionPolicy({
+    policyId: 'risk-longfor-iam-manage',
+    platformId,
+    permissionCode: 'iam:manage',
+    requireApproval: true,
+    approverRoleCode: 'PLATFORM_MASTER_ADMIN',
+    maxDurationDays: 30,
+    requireMfa: true,
+    mutation: customerDemoMutation('customer-demo-high-risk-policy'),
+  })
+  ensureCustomerDemoAuthAuditLog({
+    logId: 'auth-audit-longfor-store-manager-menu-manage-allow',
+    userId: 'user-butterful-store-manager',
+    resourceId: primaryStoreId,
+    action: 'CHECK_PERMISSION',
+    permissionCode: 'menu:manage',
+    result: 'ALLOWED',
+    detail: {
+      allowed: true,
+      userId: 'user-butterful-store-manager',
+      storeId: primaryStoreId,
+      permissionCode: 'menu:manage',
+      matchedBindingIds: ['binding-butterful-manager-store'],
+      matchedRoleIds: ['role-longfor-store-operator'],
+      reason: 'ROLE_PERMISSION_MATCH',
+      decisionSource: 'customer-demo-seed',
+    },
+  })
+  ensureCustomerDemoAuthAuditLog({
+    logId: 'auth-audit-longfor-store-manager-iam-manage-deny',
+    userId: 'user-butterful-store-manager',
+    resourceId: primaryStoreId,
+    action: 'CHECK_PERMISSION',
+    permissionCode: 'iam:manage',
+    result: 'DENIED',
+    denyReason: 'NO_MATCHING_ROLE_PERMISSION',
+    detail: {
+      allowed: false,
+      userId: 'user-butterful-store-manager',
+      storeId: primaryStoreId,
+      permissionCode: 'iam:manage',
+      matchedBindingIds: [],
+      matchedRoleIds: [],
+      reason: 'NO_MATCHING_ROLE_PERMISSION',
+      decisionSource: 'customer-demo-seed',
+    },
+  })
+}
+
 const ensureCustomerDemoMasterData = () => {
   const sandboxId = customerDemoIdentity.sandboxId
   const platformId = customerDemoIdentity.platformId
   if (getEntityRow('platform', platformId, sandboxId)) {
+    ensureCustomerDemoIamMasterData()
     return
   }
 
@@ -4791,176 +5420,7 @@ const ensureCustomerDemoMasterData = () => {
     mutation: customerDemoMutation(`customer-demo-workstation-${workstation.id}`),
   }))
 
-  const permissions = [
-    ['perm-longfor-platform-view', 'platform:view', '查看集团主数据', 'platform', 'view'],
-    ['perm-longfor-project-manage', 'project:manage', '维护项目与分期', 'project', 'manage'],
-    ['perm-longfor-contract-manage', 'contract:manage', '维护经营合同', 'contract', 'manage'],
-    ['perm-longfor-menu-manage', 'menu:manage', '维护菜单', 'menu', 'manage'],
-    ['perm-longfor-store-config-manage', 'store-config:manage', '维护门店经营参数', 'store-config', 'manage'],
-    ['perm-longfor-iam-manage', 'iam:manage', '维护角色与授权', 'iam', 'manage'],
-  ] as const
-  createPermissionGroup({
-    permissionGroupId: 'permission-group-longfor-master-data',
-    groupCode: 'MASTER_DATA',
-    groupName: '主数据管理',
-    sortOrder: 10,
-    mutation: customerDemoMutation('customer-demo-permission-group'),
-  })
-  permissions.forEach(([permissionId, permissionCode, permissionName, resource, action]) => createPermission({
-    permissionId,
-    permissionCode,
-    permissionName,
-    platformId,
-    permissionType: 'SYSTEM',
-    module: 'customer-master-data',
-    resource,
-    resourceType: resource,
-    action,
-    permissionGroupId: 'permission-group-longfor-master-data',
-    mutation: customerDemoMutation(`customer-demo-permission-${permissionId}`),
-  }))
-  createRole({
-    roleId: 'role-longfor-platform-master-admin',
-    roleCode: 'PLATFORM_MASTER_ADMIN',
-    roleName: '集团主数据管理员',
-    platformId,
-    scopeType: 'PLATFORM',
-    roleType: 'SYSTEM',
-    permissionIds: permissions.map(([permissionId]) => permissionId),
-    mutation: customerDemoMutation('customer-demo-role-platform-admin'),
-  })
-  createRole({
-    roleId: 'role-longfor-store-operator',
-    roleCode: 'STORE_OPERATOR',
-    roleName: '门店资料维护员',
-    platformId,
-    scopeType: 'STORE',
-    roleType: 'CUSTOM',
-    permissionIds: ['perm-longfor-platform-view', 'perm-longfor-menu-manage', 'perm-longfor-store-config-manage'],
-    mutation: customerDemoMutation('customer-demo-role-store-operator'),
-  })
-  createRoleTemplate({
-    templateId: 'role-template-longfor-store-operator',
-    templateCode: 'STORE_OPERATOR_TEMPLATE',
-    templateName: '门店资料维护模板',
-    basePermissionIds: ['perm-longfor-platform-view', 'perm-longfor-menu-manage', 'perm-longfor-store-config-manage'],
-    recommendedScopeType: 'STORE',
-    industryTags: ['餐饮', '零售'],
-    mutation: customerDemoMutation('customer-demo-role-template'),
-  })
-  createUser({
-    userId: 'user-longfor-admin',
-    userCode: 'longfor.admin',
-    username: 'longfor.admin',
-    displayName: '顾一鸣',
-    mobile: '13900003001',
-    email: 'admin@longfor.example',
-    userType: 'TENANT_STAFF',
-    platformId,
-    mutation: customerDemoMutation('customer-demo-user-admin'),
-  })
-  createUser({
-    userId: 'user-butterful-store-manager',
-    userCode: 'butterful.manager',
-    username: 'butterful.manager',
-    displayName: '周店长',
-    mobile: '13900003002',
-    email: 'manager@butterful.example',
-    userType: 'STORE_STAFF',
-    storeId: primaryStoreId,
-    mutation: customerDemoMutation('customer-demo-user-store-manager'),
-  })
-  createUserRoleBinding({
-    bindingId: 'binding-longfor-admin-platform',
-    userId: 'user-longfor-admin',
-    roleId: 'role-longfor-platform-master-admin',
-    resourceScope: {scope_type: 'ORG_NODE', org_node_type: 'platform', org_node_ids: [platformId]},
-    policyEffect: 'ALLOW',
-    mutation: customerDemoMutation('customer-demo-binding-platform-admin'),
-  })
-  createUserRoleBinding({
-    bindingId: 'binding-butterful-manager-store',
-    userId: 'user-butterful-store-manager',
-    roleId: 'role-longfor-store-operator',
-    storeId: primaryStoreId,
-    resourceScope: {scope_type: 'RESOURCE_IDS', resource_type: 'store', resource_ids: [primaryStoreId]},
-    policyEffect: 'ALLOW',
-    mutation: customerDemoMutation('customer-demo-binding-store-manager'),
-  })
-  createPrincipalGroup({
-    groupId: 'principal-group-longfor-project-ops',
-    platformId,
-    groupCode: 'PROJECT_OPS',
-    groupName: '项目运营组',
-    groupType: 'MANUAL',
-    mutation: customerDemoMutation('customer-demo-principal-group'),
-  })
-  addGroupMember({
-    memberId: 'group-member-longfor-admin-project-ops',
-    groupId: 'principal-group-longfor-project-ops',
-    userId: 'user-longfor-admin',
-    joinedBy: 'customer-demo-seed',
-    mutation: customerDemoMutation('customer-demo-group-member'),
-  })
-  createGroupRoleBinding({
-    groupBindingId: 'group-binding-project-ops-platform-view',
-    groupId: 'principal-group-longfor-project-ops',
-    roleId: 'role-longfor-store-operator',
-    resourceScope: {scope_type: 'ORG_NODE', org_node_type: 'project', org_node_ids: [customerDemoIdentity.primaryProjectId]},
-    mutation: customerDemoMutation('customer-demo-group-binding'),
-  })
-  createResourceTag({
-    tagId: 'tag-store-butterful-key-account',
-    platformId,
-    tagKey: 'store_segment',
-    tagValue: 'KEY_ACCOUNT',
-    tagLabel: '重点门店',
-    resourceType: 'store',
-    resourceId: primaryStoreId,
-    mutation: customerDemoMutation('customer-demo-resource-tag'),
-  })
-  createIdentityProviderConfig({
-    idpId: 'idp-longfor-local',
-    platformId,
-    idpName: '龙湖本地账号',
-    idpType: 'LOCAL',
-    applicableUserTypes: ['TENANT_STAFF', 'STORE_STAFF'],
-    priority: 10,
-    mutation: customerDemoMutation('customer-demo-idp'),
-  })
-  createFeaturePoint({
-    featurePointId: 'feature-longfor-customer-master-data',
-    featureCode: 'CUSTOMER_MASTER_DATA',
-    featureName: '主数据后台',
-    defaultEnabled: true,
-    mutation: customerDemoMutation('customer-demo-feature-point'),
-  })
-  upsertPlatformFeatureSwitch({
-    switchId: 'switch-longfor-customer-master-data',
-    platformId,
-    featureCode: 'CUSTOMER_MASTER_DATA',
-    isEnabled: true,
-    enabledBy: 'customer-demo-seed',
-    mutation: customerDemoMutation('customer-demo-feature-switch'),
-  })
-  createSeparationOfDutyRule({
-    sodRuleId: 'sod-longfor-contract-iam',
-    platformId,
-    ruleName: '合同与权限维护职责分离',
-    ruleDescription: '同一用户不建议同时拥有合同维护和 IAM 管理权限。',
-    conflictingPermCodes: ['contract:manage', 'iam:manage'],
-    mutation: customerDemoMutation('customer-demo-sod'),
-  })
-  createHighRiskPermissionPolicy({
-    policyId: 'risk-longfor-iam-manage',
-    platformId,
-    permissionCode: 'iam:manage',
-    requireApproval: true,
-    approverRoleCode: 'PLATFORM_MASTER_ADMIN',
-    maxDurationDays: 30,
-    requireMfa: true,
-    mutation: customerDemoMutation('customer-demo-high-risk-policy'),
-  })
+  ensureCustomerDemoIamMasterData()
 }
 
 const normalizeProductVariants = (value: unknown, basePrice: number) =>
@@ -5269,7 +5729,7 @@ const completeEntityData = (input: {
       contact_email: asNullableString(data.contact_email),
       address: asNullableString(data.address),
       isv_config: asRecord(data.isv_config),
-      metadata_catalog: normalizePlatformMetadataCatalog(data.metadata_catalog),
+      metadata_catalog: normalizeEntityMetadataCatalog(data.metadata_catalog, 'PLATFORM', platformId),
       external_platform_id: asNullableString(data.external_platform_id),
       synced_at: asNullableString(data.synced_at),
       version: asNumber(data.version, 1),
@@ -5400,6 +5860,7 @@ const completeEntityData = (input: {
       erp_auth_config: asRecord(data.erp_auth_config),
       brand_status: asString(data.brand_status, status),
       external_brand_id: asNullableString(data.external_brand_id),
+      metadata_catalog: normalizeEntityMetadataCatalog(data.metadata_catalog, 'BRAND', brandId),
       synced_at: asNullableString(data.synced_at),
       version: asNumber(data.version, 1),
       status,
@@ -5483,6 +5944,7 @@ const completeEntityData = (input: {
       operating_status: asString(data.operating_status, 'PREPARING'),
       contract_status: asString(data.contract_status, data.active_contract_id ? 'ACTIVE' : 'NO_CONTRACT'),
       external_store_id: asNullableString(data.external_store_id),
+      metadata_catalog: normalizeEntityMetadataCatalog(data.metadata_catalog, 'STORE', storeId),
       synced_at: asNullableString(data.synced_at),
       version: asNumber(data.version, 1),
       status,
@@ -5673,6 +6135,7 @@ const completeEntityData = (input: {
     return {
       ...data,
       permission_group_id: asString(data.permission_group_id, input.entityId),
+      platform_id: asString(data.platform_id, input.naturalScopeKey || identity.platformId),
       group_code: asString(data.group_code, input.entityId),
       group_name: asString(data.group_name, input.title),
       group_icon: asNullableString(data.group_icon),
@@ -5686,6 +6149,7 @@ const completeEntityData = (input: {
     return {
       ...data,
       template_id: asString(data.template_id, input.entityId),
+      platform_id: asString(data.platform_id, input.naturalScopeKey || identity.platformId),
       template_code: asString(data.template_code, input.entityId),
       template_name: asString(data.template_name, input.title),
       template_description: asNullableString(data.template_description),
@@ -5701,6 +6165,7 @@ const completeEntityData = (input: {
     return {
       ...data,
       feature_point_id: asString(data.feature_point_id, input.entityId),
+      platform_id: asString(data.platform_id, input.naturalScopeKey || identity.platformId),
       feature_code: asString(data.feature_code, input.entityId),
       feature_name: asString(data.feature_name, input.title),
       feature_description: asNullableString(data.feature_description),
@@ -5745,6 +6210,7 @@ const completeEntityData = (input: {
   if (input.entityType === 'user') {
     const store = resolveRelatedData('store', data.store_id, input.sandboxId)
     const platformId = asString(data.platform_id, asString(store.data.platform_id, identity.platformId))
+    const identitySource = asString(data.identity_source, 'LOCAL').toUpperCase()
     return {
       ...data,
       user_id: asString(data.user_id, input.entityId),
@@ -5756,10 +6222,12 @@ const completeEntityData = (input: {
       phone: asNullableString(data.phone ?? data.mobile),
       mobile: asNullableString(data.mobile ?? data.phone),
       user_type: asString(data.user_type, 'STORE_STAFF'),
-      identity_source: asString(data.identity_source, 'LOCAL'),
+      identity_source: identitySource,
       external_user_id: asNullableString(data.external_user_id),
       store_id: asNullableString(data.store_id),
-      password_hash: asNullableString(data.password_hash) ?? 'mock-password-hash-redacted',
+      password_hash: identitySource === 'LOCAL'
+        ? asNullableString(data.password_hash) ?? 'mock-password-hash-redacted'
+        : null,
       failed_login_count: asNumber(data.failed_login_count, 0),
       locked_until: asNullableString(data.locked_until),
       last_login_at: asNullableString(data.last_login_at),
@@ -5838,14 +6306,15 @@ const completeEntityData = (input: {
   }
 
   if (input.entityType === 'authorization_session') {
+    const {session_token: sessionToken, ...safeData} = data
     return {
-      ...data,
+      ...safeData,
       session_id: asString(data.session_id, input.entityId),
       user_id: asString(data.user_id, ''),
       platform_id: asString(data.platform_id, input.naturalScopeKey || identity.platformId),
       activated_binding_ids: asStringList(data.activated_binding_ids),
       working_scope: asRecord(data.working_scope),
-      session_token_masked: maskSecret(asNullableString(data.session_token) ?? null),
+      session_token_masked: maskSecret(asNullableString(sessionToken) ?? null),
       expires_at: asNullableString(data.expires_at),
       last_active_at: asNullableString(data.last_active_at),
       mfa_verified_at: asNullableString(data.mfa_verified_at),
@@ -6658,6 +7127,7 @@ const ensurePlatformScopedIamSeeds = () => {
             eventType: 'UserRoleBindingPlatformRoleMigrated',
             data: {
               ...data,
+              platform_id: platformId,
               role_id: scopedRoleId,
             },
           })
@@ -6875,6 +7345,76 @@ const repairKnownSeedInconsistencies = () => {
         expectedRevision: aggregate.sourceRevision,
       },
       eventType: 'PlatformMetadataCatalogMigrated',
+      data,
+    })
+  })
+
+  listRowsByEntityTypeAcrossSandboxes('brand').forEach(row => {
+    const aggregate = toAggregateRow(row)
+    const data = cloneJson(asRecord(aggregate.payload.data))
+    const normalizedBrandCategory = normalizeLegacyBrandCategory(data.brand_category)
+    const catalog = asRecord(data.metadata_catalog)
+    const normalizedCatalog = normalizeEntityMetadataCatalog(catalog, 'BRAND', aggregate.entityId, {mergeDefaults: true})
+    if (normalizeComparable(catalog) === normalizeComparable(normalizedCatalog) && data.brand_category === normalizedBrandCategory) return
+    data.brand_category = normalizedBrandCategory
+    data.metadata_catalog = normalizedCatalog
+    upsertEntity({
+      entityType: 'brand',
+      entityId: aggregate.entityId,
+      title: aggregate.title,
+      status: aggregate.status,
+      naturalScopeType: aggregate.naturalScopeType,
+      naturalScopeKey: aggregate.naturalScopeKey,
+      mutation: {
+        sandboxId: aggregate.sandboxId,
+        actorType: 'SEED_MIGRATION',
+        actorId: 'aligned-master-data',
+        expectedRevision: aggregate.sourceRevision,
+      },
+      eventType: 'BrandMetadataCatalogMigrated',
+      data,
+    })
+  })
+
+  listRowsByEntityTypeAcrossSandboxes('store').forEach(row => {
+    const aggregate = toAggregateRow(row)
+    const data = cloneJson(asRecord(aggregate.payload.data))
+    const activeContractId = asNullableString(data.active_contract_id)
+    if (!activeContractId) {
+      data.active_contract_id = null
+      data.tenant_id = null
+      data.brand_id = null
+      data.entity_id = null
+      data.store_status = 'VACANT'
+      data.operating_status = 'PREPARING'
+      data.contract_status = 'NO_CONTRACT'
+    }
+    const catalog = asRecord(data.metadata_catalog)
+    const normalizedCatalog = normalizeEntityMetadataCatalog(catalog, 'STORE', aggregate.entityId, {mergeDefaults: true})
+    if (
+      normalizeComparable(catalog) === normalizeComparable(normalizedCatalog)
+      && activeContractId === asNullableString(data.active_contract_id)
+      && asNullableString(asRecord(aggregate.payload.data).tenant_id) === asNullableString(data.tenant_id)
+      && asNullableString(asRecord(aggregate.payload.data).brand_id) === asNullableString(data.brand_id)
+      && asNullableString(asRecord(aggregate.payload.data).entity_id) === asNullableString(data.entity_id)
+      && asString(asRecord(aggregate.payload.data).store_status, '') === asString(data.store_status, '')
+      && asString(asRecord(aggregate.payload.data).contract_status, '') === asString(data.contract_status, '')
+    ) return
+    data.metadata_catalog = normalizedCatalog
+    upsertEntity({
+      entityType: 'store',
+      entityId: aggregate.entityId,
+      title: aggregate.title,
+      status: aggregate.status,
+      naturalScopeType: aggregate.naturalScopeType,
+      naturalScopeKey: aggregate.naturalScopeKey,
+      mutation: {
+        sandboxId: aggregate.sandboxId,
+        actorType: 'SEED_MIGRATION',
+        actorId: 'aligned-master-data',
+        expectedRevision: aggregate.sourceRevision,
+      },
+      eventType: 'StoreMetadataCatalogMigrated',
       data,
     })
   })
@@ -7782,6 +8322,12 @@ export const updateCustomerEntity = (input: {
       const current = requireEntityRow(entityType, input.entityId, input.mutation?.sandboxId ?? DEFAULT_SANDBOX_ID)
       const currentData = cloneJson(asRecord(current.payload.data))
       const nextStatus = input.status ? sanitizeEntityStatus(entityType, input.status, current.status) : current.status
+      assertAllowedStatusTransition({
+        entityType,
+        entityId: input.entityId,
+        currentStatus: current.status,
+        nextStatus,
+      })
       if (entityType === 'table' && !tableMasterStatuses.has(nextStatus)) {
         throw new HttpError(400, 'INVALID_TABLE_STATUS', '桌台主数据只能维护启用或停用状态', {
           tableId: input.entityId,
@@ -7808,7 +8354,13 @@ export const updateCustomerEntity = (input: {
         delete inputData.tenant_id
       }
       if (entityType === 'platform' && 'metadata_catalog' in inputData) {
-        inputData.metadata_catalog = normalizePlatformMetadataCatalog(inputData.metadata_catalog)
+        inputData.metadata_catalog = normalizeEntityMetadataCatalog(inputData.metadata_catalog, 'PLATFORM', input.entityId)
+      }
+      if (entityType === 'brand' && 'metadata_catalog' in inputData) {
+        inputData.metadata_catalog = normalizeEntityMetadataCatalog(inputData.metadata_catalog, 'BRAND', input.entityId)
+      }
+      if (entityType === 'store' && 'metadata_catalog' in inputData) {
+        inputData.metadata_catalog = normalizeEntityMetadataCatalog(inputData.metadata_catalog, 'STORE', input.entityId)
       }
       const nextData: Record<string, unknown> = {
         ...currentData,
@@ -7914,7 +8466,7 @@ export const createPlatform = (input: {
         contact_email: input.contactEmail ?? null,
         address: input.address ?? null,
         isv_config: buildMaskedIsvCredential(input.isvConfig ?? {}),
-        metadata_catalog: normalizePlatformMetadataCatalog(input.metadataCatalog),
+        metadata_catalog: normalizeEntityMetadataCatalog(input.metadataCatalog, 'PLATFORM', platformId),
         external_platform_id: input.externalPlatformId ?? null,
         synced_at: input.syncedAt ?? null,
         version: asNumber(input.version, 1),
@@ -8208,6 +8760,7 @@ export const createBrand = (input: {
   erpIntegrationEnabled?: boolean
   erpApiEndpoint?: string
   erpAuthConfig?: Record<string, unknown>
+  metadataCatalog?: Record<string, unknown>
   externalBrandId?: string | null
   syncedAt?: string | null
   version?: number
@@ -8249,6 +8802,7 @@ export const createBrand = (input: {
       erp_integration_enabled: erpIntegrationEnabled,
       erp_api_endpoint: erpIntegrationEnabled ? asOptionalString(input.erpApiEndpoint) ?? null : null,
       erp_auth_config: input.erpAuthConfig ?? {},
+      metadata_catalog: normalizeEntityMetadataCatalog(input.metadataCatalog, 'BRAND', brandId),
       external_brand_id: input.externalBrandId ?? null,
       synced_at: input.syncedAt ?? null,
       version: asNumber(input.version, 1),
@@ -8372,6 +8926,7 @@ export const createStore = (input: {
   externalStoreId?: string | null
   syncedAt?: string | null
   version?: number
+  metadataCatalog?: Record<string, unknown>
   mutation?: MutationInput
 }) => getMutationResponse(
   `create-store:${input.projectId}:${input.storeCode}`,
@@ -8454,6 +9009,7 @@ export const createStore = (input: {
         external_store_id: input.externalStoreId ?? null,
         synced_at: input.syncedAt ?? null,
         version: asNumber(input.version, 1),
+        metadata_catalog: normalizeEntityMetadataCatalog(input.metadataCatalog, 'STORE', storeId),
         status: 'ACTIVE',
       },
     })
@@ -8842,6 +9398,7 @@ export const createIdentityProviderConfig = (input: {
 
 export const createPermissionGroup = (input: {
   permissionGroupId?: string
+  platformId?: string
   groupCode: string
   groupName: string
   groupIcon?: string | null
@@ -8849,21 +9406,23 @@ export const createPermissionGroup = (input: {
   parentGroupId?: string | null
   mutation?: MutationInput
 }) => getMutationResponse(
-  `create-permission-group:${input.groupCode}`,
+  `create-permission-group:${input.platformId ?? identity.platformId}:${input.groupCode}`,
   input.mutation?.idempotencyKey,
   () => {
-    const groupId = input.permissionGroupId ?? normalizeId(`permission-group-${input.groupCode}`)
+    const platformId = asString(input.platformId, identity.platformId)
+    const groupId = input.permissionGroupId ?? normalizeId(`permission-group-${platformId}-${input.groupCode}`)
     return upsertEntity({
       entityType: 'permission_group',
       entityId: groupId,
       title: input.groupName,
       status: 'ACTIVE',
       naturalScopeType: 'PLATFORM',
-      naturalScopeKey: identity.platformId,
+      naturalScopeKey: platformId,
       mutation: defaultMutation(input.mutation),
       eventType: 'PermissionGroupUpserted',
       data: {
         permission_group_id: groupId,
+        platform_id: platformId,
         group_code: input.groupCode,
         group_name: input.groupName,
         group_icon: input.groupIcon ?? null,
@@ -8877,6 +9436,7 @@ export const createPermissionGroup = (input: {
 
 export const createRoleTemplate = (input: {
   templateId?: string
+  platformId?: string
   templateCode: string
   templateName: string
   templateDescription?: string | null
@@ -8886,10 +9446,11 @@ export const createRoleTemplate = (input: {
   isActive?: boolean
   mutation?: MutationInput
 }) => getMutationResponse(
-  `create-role-template:${input.templateCode}`,
+  `create-role-template:${input.platformId ?? identity.platformId}:${input.templateCode}`,
   input.mutation?.idempotencyKey,
   () => {
-    const templateId = input.templateId ?? normalizeId(`role-template-${input.templateCode}`)
+    const platformId = asString(input.platformId, identity.platformId)
+    const templateId = input.templateId ?? normalizeId(`role-template-${platformId}-${input.templateCode}`)
     const active = asBoolean(input.isActive, true)
     return upsertEntity({
       entityType: 'role_template',
@@ -8897,11 +9458,12 @@ export const createRoleTemplate = (input: {
       title: input.templateName,
       status: active ? 'ACTIVE' : 'INACTIVE',
       naturalScopeType: 'PLATFORM',
-      naturalScopeKey: identity.platformId,
+      naturalScopeKey: platformId,
       mutation: defaultMutation(input.mutation),
       eventType: 'RoleTemplateUpserted',
       data: {
         template_id: templateId,
+        platform_id: platformId,
         template_code: input.templateCode,
         template_name: input.templateName,
         template_description: input.templateDescription ?? null,
@@ -8917,6 +9479,7 @@ export const createRoleTemplate = (input: {
 
 export const createFeaturePoint = (input: {
   featurePointId?: string
+  platformId?: string
   featureCode: string
   featureName: string
   featureDescription?: string | null
@@ -8924,10 +9487,11 @@ export const createFeaturePoint = (input: {
   defaultEnabled?: boolean
   mutation?: MutationInput
 }) => getMutationResponse(
-  `create-feature-point:${input.featureCode}`,
+  `create-feature-point:${input.platformId ?? identity.platformId}:${input.featureCode}`,
   input.mutation?.idempotencyKey,
   () => {
-    const featurePointId = input.featurePointId ?? normalizeId(`feature-point-${input.featureCode}`)
+    const platformId = asString(input.platformId, identity.platformId)
+    const featurePointId = input.featurePointId ?? normalizeId(`feature-point-${platformId}-${input.featureCode}`)
     const enabled = asBoolean(input.isEnabledGlobally, true)
     return upsertEntity({
       entityType: 'feature_point',
@@ -8935,11 +9499,12 @@ export const createFeaturePoint = (input: {
       title: input.featureName,
       status: enabled ? 'ACTIVE' : 'DISABLED',
       naturalScopeType: 'PLATFORM',
-      naturalScopeKey: identity.platformId,
+      naturalScopeKey: platformId,
       mutation: defaultMutation(input.mutation),
       eventType: 'FeaturePointUpserted',
       data: {
         feature_point_id: featurePointId,
+        platform_id: platformId,
         feature_code: input.featureCode,
         feature_name: input.featureName,
         feature_description: input.featureDescription ?? null,
@@ -9095,7 +9660,11 @@ export const createUser = (input: {
   () => {
     const userId = input.userId ?? normalizeId(`user-${input.userCode}`)
     const userType = input.userType ?? 'STORE_STAFF'
-    const platformId = asString(input.platformId, identity.platformId)
+    const identitySource = asString(input.identitySource, 'LOCAL').toUpperCase()
+    const storePlatformId = input.storeId
+      ? asOptionalString(readAggregateData(findAggregateRow('store', input.storeId, input.mutation?.sandboxId ?? DEFAULT_SANDBOX_ID)).platform_id)
+      : null
+    const platformId = asString(input.platformId, storePlatformId ?? identity.platformId)
     const username = input.username ?? input.userCode
     const duplicate = findFieldDuplicate({
       entityType: 'user',
@@ -9110,6 +9679,12 @@ export const createUser = (input: {
     }
     if (userType !== 'API_CLIENT' && !asOptionalString(input.email) && !asOptionalString(input.phone ?? input.mobile)) {
       throw new HttpError(400, 'USER_CONTACT_REQUIRED', '邮箱和手机号至少填写一个')
+    }
+    const passwordHash = identitySource === 'LOCAL'
+      ? asString(input.passwordHash, 'mock-password-hash-redacted')
+      : null
+    if (identitySource !== 'LOCAL' && !asOptionalString(input.externalUserId)) {
+      throw new HttpError(400, 'EXTERNAL_USER_ID_REQUIRED', '外部身份源用户必须保存外部用户 ID')
     }
     const naturalScopeType = userType === 'PLATFORM_OPS' ? 'PLATFORM' : (input.storeId ? 'STORE' : 'PLATFORM')
     const naturalScopeKey = naturalScopeType === 'STORE'
@@ -9133,11 +9708,11 @@ export const createUser = (input: {
         phone: input.phone ?? input.mobile ?? null,
         mobile: input.mobile ?? input.phone ?? null,
         user_type: userType,
-        identity_source: input.identitySource ?? 'LOCAL',
+        identity_source: identitySource,
         external_user_id: input.externalUserId ?? null,
         platform_id: platformId,
         store_id: input.storeId ?? null,
-        password_hash: input.passwordHash ?? 'mock-password-hash-redacted',
+        password_hash: passwordHash,
         failed_login_count: 0,
         locked_until: null,
         last_login_at: null,
@@ -9182,7 +9757,14 @@ export const createUserRoleBinding = (input: {
     const user = requireEntityRow('user', input.userId, sandboxId)
     const role = requireEntityRow('role', input.roleId, sandboxId)
     const userData = readAggregateData(user)
-    const platformId = asOptionalString(userData.platform_id) ?? identity.platformId
+    const roleData = readAggregateData(role)
+    const storePlatformId = input.storeId
+      ? asOptionalString(readAggregateData(findAggregateRow('store', input.storeId, sandboxId)).platform_id)
+      : null
+    const platformId = asOptionalString(userData.platform_id)
+      ?? asOptionalString(roleData.platform_id)
+      ?? storePlatformId
+      ?? identity.platformId
     const normalizedScope = normalizeScopeSelector(
       input.resourceScope ?? input.scopeSelector ?? {
         scope_type: input.scopeType ?? (input.storeId ? 'STORE' : 'PLATFORM'),
@@ -10696,6 +11278,12 @@ export const changeEntityStatus = (input: {
     if (current.status === nextStatus) {
       return current
     }
+    assertAllowedStatusTransition({
+      entityType: input.entityType,
+      entityId: input.entityId,
+      currentStatus: current.status,
+      nextStatus,
+    })
     const nextData: Record<string, unknown> = {
       ...cloneJson(asRecord(current.payload.data)),
       status: nextStatus,

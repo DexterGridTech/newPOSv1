@@ -22,7 +22,7 @@ type Props = {
   runIamWorkflow: () => Promise<void>
   runIamPermissionCheck: () => Promise<void>
   changeIamUserStatus: (nextStatus: 'ACTIVE' | 'SUSPENDED') => Promise<void>
-  changeIamRoleStatus: (nextStatus: 'ACTIVE' | 'SUSPENDED') => Promise<void>
+  changeIamRoleStatus: (nextStatus: 'ACTIVE' | 'DEPRECATED') => Promise<void>
   revokeLatestIamBinding: () => Promise<void>
   authCapabilities: AuthCapabilities | null
   lastIamResult: LastIamResult | null
@@ -107,7 +107,7 @@ export function IamWorkspace(props: Props) {
           <button onClick={() => void runIamPermissionCheck()} disabled={iamActionLoading}>重新测试权限</button>
           <button onClick={() => void changeIamUserStatus('SUSPENDED')} disabled={iamActionLoading}>暂停用户</button>
           <button onClick={() => void changeIamUserStatus('ACTIVE')} disabled={iamActionLoading}>恢复用户</button>
-          <button onClick={() => void changeIamRoleStatus('SUSPENDED')} disabled={iamActionLoading}>暂停角色</button>
+          <button onClick={() => void changeIamRoleStatus('DEPRECATED')} disabled={iamActionLoading}>废弃角色</button>
           <button onClick={() => void changeIamRoleStatus('ACTIVE')} disabled={iamActionLoading}>恢复角色</button>
           <button onClick={() => void revokeLatestIamBinding()} disabled={iamActionLoading}>撤销最近绑定</button>
         </div>

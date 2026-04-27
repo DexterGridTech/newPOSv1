@@ -293,7 +293,7 @@ const ProductDomain: React.FC<{state: ReturnType<typeof useWorkbenchState>}> = (
                         {product.productId} · {product.categoryId ?? '未分类'} · {product.type ?? 'STANDARD'} · {product.ownershipScope ?? 'UNKNOWN'} · ¥{product.price ?? '-'}
                     </Text>
                     <Text style={{fontSize: 12, color: '#475569'}}>
-                        加料组 {product.modifierGroupCount} · 制作步骤 {product.productionStepCount} · 出品分类 {product.productionCategoryCount} · 在用菜单 {product.menuUsageCount}
+                        加料组 {product.modifierGroupCount} · 出品步骤 {product.productionStepCount} · 出品分类 {product.productionCategoryCount} · 在用菜单 {product.menuUsageCount}
                     </Text>
                 </View>
             ))}
@@ -310,9 +310,9 @@ const OperationDomain: React.FC<{state: ReturnType<typeof useWorkbenchState>}> =
             <MetricCard label="低库存" value={state.operatingStatus.lowStockItems} tone={state.operatingStatus.lowStockItems > 0 ? 'amber' : 'slate'} />
             <MetricCard label="占用汇总" value={state.operatingStatus.reservedStockQuantity} tone="blue" />
         </View>
-        <Section title="门店经营参数" subtitle="`store.config` 承载营业状态、订单入口、营业时段和附加费等交易前配置，不在此处理订单。">
+        <Section title="门店经营参数" subtitle="`store.config` 承载营业状态、渠道入口、营业时段和附加费等交易前配置，不在此处理订单。">
             <DataRow label="营业状态" value={state.storeConfig?.business_status} />
-            <DataRow label="订单入口配置" value={state.storeConfig?.accept_order === true ? '允许终端接收订单入口' : state.storeConfig?.accept_order === false ? '暂停终端订单入口' : '-'} />
+            <DataRow label="渠道入口策略" value={state.storeConfig?.accept_order === true ? '开放终端渠道入口' : state.storeConfig?.accept_order === false ? '暂停终端渠道入口' : '-'} />
             <DataRow label="营业时段" value={state.operationDashboard.storeConfig?.operatingHoursCount ?? 0} />
             <DataRow label="附加费规则" value={state.operationDashboard.storeConfig?.extraChargeRuleCount ?? 0} />
         </Section>
@@ -599,7 +599,7 @@ export const MasterDataWorkbenchScreen: React.FC<MasterDataWorkbenchScreenProps>
             }}>
                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 16}}>
                     <View style={{gap: 4, flex: 1}}>
-                        <Text style={{fontSize: 12, fontWeight: '900', color: '#38bdf8'}}>MASTER DATA WORKBENCH</Text>
+                        <Text style={{fontSize: 12, fontWeight: '900', color: '#38bdf8'}}>主数据工作台</Text>
                         <Text
                             style={{fontSize: 26, lineHeight: 32, fontWeight: '900', color: '#f8fafc'}}
                             testID="ui-business-catering-master-data-workbench:title"
@@ -607,11 +607,11 @@ export const MasterDataWorkbenchScreen: React.FC<MasterDataWorkbenchScreenProps>
                             {displayTitle}
                         </Text>
                         <Text style={{fontSize: 12, color: '#cbd5e1'}} testID="ui-business-catering-master-data-workbench:terminal-id">
-                            Terminal {resolvedTerminalId} · {displayMode} · Activation-only path · no staff login required
+                            终端 {resolvedTerminalId} · {displayMode} · 仅终端激活链路 · 当前不要求店员登录
                         </Text>
                     </View>
                     <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-end', gap: 8}}>
-                        <StatusPill tone="green">TDP LIVE</StatusPill>
+                        <StatusPill tone="green">主数据投射已连接</StatusPill>
                         <StatusPill tone="blue">{displayMode}</StatusPill>
                     </View>
                 </View>
@@ -651,9 +651,9 @@ export const MasterDataWorkbenchScreen: React.FC<MasterDataWorkbenchScreenProps>
                         )
                     })}
                     <View style={{marginTop: 10, gap: 8}}>
-                        <Text style={{fontSize: 11, fontWeight: '900', color: '#64748b'}}>LIVE SUMMARY</Text>
+                        <Text style={{fontSize: 11, fontWeight: '900', color: '#64748b'}}>实时摘要</Text>
                         <Text style={{fontSize: 12, color: '#475569', lineHeight: 18}}>
-                            Org {state.organizationSummary.stores} stores · Menu {state.productSummary.menuCatalogs} · Stock {state.operationSummary.stocks}
+                            组织 {state.organizationSummary.stores} 家门店 · 菜单 {state.productSummary.menuCatalogs} 份 · 库存 {state.operationSummary.stocks} 条
                         </Text>
                     </View>
                 </View>

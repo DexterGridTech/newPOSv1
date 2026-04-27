@@ -84,7 +84,7 @@
     "release:manifest:generate-note": "node scripts/release/generate-release-note.cjs",
     "release:package:generate-version-info": "node scripts/release/generate-package-version-info.cjs",
     "release:hot-update:package": "node scripts/release/package-hot-update.cjs",
-    "ui:integration-catering-shell:web": "corepack yarn workspace @next/ui-integration-catering-shell web",
+    "ui:integration-catering-shell:web": "corepack yarn workspace @next/ui-integration-catering-shell dev:web",
     "assembly:android-mixc-catering-rn84:metro": "corepack yarn workspace @next/assembly-android-mixc-catering-assembly-rn84 start:clean",
     "assembly:android-mixc-catering-rn84:run": "corepack yarn workspace @next/assembly-android-mixc-catering-assembly-rn84 android:run",
     "assembly:android-mixc-catering-rn84:test-visible:admin-loop": "corepack yarn workspace @next/assembly-android-mixc-catering-assembly-rn84 test-visible:admin-loop"

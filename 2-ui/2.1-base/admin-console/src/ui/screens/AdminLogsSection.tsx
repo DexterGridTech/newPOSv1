@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useCallback, useState} from 'react'
 import {Text, View} from 'react-native'
 import type {AdminLogFileSummary, AdminLogHost} from '../../types'
 import {
@@ -12,6 +12,10 @@ import {
     AdminSummaryCard,
     AdminSummaryGrid,
 } from './AdminSectionPrimitives'
+import {
+    useAdminMountedRef,
+    useAdminRefreshWhileScreenActive,
+} from './useAdminScreenActivity'
 
 export interface AdminLogsSectionProps {
     host?: AdminLogHost
@@ -20,6 +24,7 @@ export interface AdminLogsSectionProps {
 export const AdminLogsSection: React.FC<AdminLogsSectionProps> = ({
     host,
 }) => {
+    const mountedRef = useAdminMountedRef()
     const [files, setFiles] = useState<readonly AdminLogFileSummary[]>([])
     const [directoryPath, setDirectoryPath] = useState<string | undefined>()
     const [content, setContent] = useState('')
@@ -27,7 +32,7 @@ export const AdminLogsSection: React.FC<AdminLogsSectionProps> = ({
     const [message, setMessage] = useState('')
     const [loading, setLoading] = useState(false)
 
-    useEffect(() => {
+    const refresh = useCallback((errorMessage: string) => {
         if (!host) {
             return
         }
@@ -39,15 +44,26 @@ export const AdminLogsSection: React.FC<AdminLogsSectionProps> = ({
                     host.listFiles(),
                     host.getDirectoryPath(),
                 ])
-                setFiles(nextFiles)
-                setDirectoryPath(nextDirectoryPath)
+                if (mountedRef.current) {
+                    setFiles(nextFiles)
+                    setDirectoryPath(nextDirectoryPath)
+                }
             } catch (error) {
-                setMessage(error instanceof Error ? error.message : '日志列表读取失败')
+                if (mountedRef.current) {
+                    setMessage(error instanceof Error ? error.message : errorMessage)
+                }
             } finally {
-                setLoading(false)
+                if (mountedRef.current) {
+                    setLoading(false)
+                }
             }
         })()
-    }, [host])
+    }, [host, mountedRef])
+
+    useAdminRefreshWhileScreenActive(
+        () => refresh('日志列表刷新失败'),
+        host ? 'host-ready' : 'host-missing',
+    )
 
     if (!host) {
         return (
@@ -59,36 +75,24 @@ export const AdminLogsSection: React.FC<AdminLogsSectionProps> = ({
         )
     }
 
-    const refresh = () => {
-        void (async () => {
-            setLoading(true)
-            setMessage('')
-            try {
-                const [nextFiles, nextDirectoryPath] = await Promise.all([
-                    host.listFiles(),
-                    host.getDirectoryPath(),
-                ])
-                setFiles(nextFiles)
-                setDirectoryPath(nextDirectoryPath)
-            } catch (error) {
-                setMessage(error instanceof Error ? error.message : '日志列表刷新失败')
-            } finally {
-                setLoading(false)
-            }
-        })()
-    }
-
     const handleOpen = (fileName: string) => {
         void (async () => {
             setLoading(true)
             setMessage('')
             try {
-                setContent(await host.readFile(fileName))
-                setSelectedFileName(fileName)
+                const nextContent = await host.readFile(fileName)
+                if (mountedRef.current) {
+                    setContent(nextContent)
+                    setSelectedFileName(fileName)
+                }
             } catch (error) {
-                setMessage(error instanceof Error ? error.message : '日志内容读取失败')
+                if (mountedRef.current) {
+                    setMessage(error instanceof Error ? error.message : '日志内容读取失败')
+                }
             } finally {
-                setLoading(false)
+                if (mountedRef.current) {
+                    setLoading(false)
+                }
             }
         })()
     }
@@ -99,16 +103,22 @@ export const AdminLogsSection: React.FC<AdminLogsSectionProps> = ({
             setMessage('')
             try {
                 await host.deleteFile(fileName)
-                if (selectedFileName === fileName) {
+                if (mountedRef.current && selectedFileName === fileName) {
                     setSelectedFileName(undefined)
                     setContent('')
                 }
                 const nextFiles = await host.listFiles()
-                setFiles(nextFiles)
+                if (mountedRef.current) {
+                    setFiles(nextFiles)
+                }
             } catch (error) {
-                setMessage(error instanceof Error ? error.message : '日志删除失败')
+                if (mountedRef.current) {
+                    setMessage(error instanceof Error ? error.message : '日志删除失败')
+                }
             } finally {
-                setLoading(false)
+                if (mountedRef.current) {
+                    setLoading(false)
+                }
             }
         })()
     }
@@ -119,13 +129,19 @@ export const AdminLogsSection: React.FC<AdminLogsSectionProps> = ({
             setMessage('')
             try {
                 await host.clearAll()
-                setFiles([])
-                setSelectedFileName(undefined)
-                setContent('')
+                if (mountedRef.current) {
+                    setFiles([])
+                    setSelectedFileName(undefined)
+                    setContent('')
+                }
             } catch (error) {
-                setMessage(error instanceof Error ? error.message : '日志清理失败')
+                if (mountedRef.current) {
+                    setMessage(error instanceof Error ? error.message : '日志清理失败')
+                }
             } finally {
-                setLoading(false)
+                if (mountedRef.current) {
+                    setLoading(false)
+                }
             }
         })()
     }
@@ -142,7 +158,7 @@ export const AdminLogsSection: React.FC<AdminLogsSectionProps> = ({
                     label={loading ? '刷新中' : '刷新日志'}
                     tone="primary"
                     disabled={loading}
-                    onPress={refresh}
+                    onPress={() => refresh('日志列表刷新失败')}
                 />
                 <AdminActionButton
                     testID="ui-base-admin-section:logs:clear"

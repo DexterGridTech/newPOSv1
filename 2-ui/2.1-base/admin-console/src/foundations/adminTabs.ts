@@ -28,6 +28,7 @@ export const adminConsoleTabs: ReadonlyArray<{
 }> = [
     {key: 'terminal', group: 'runtime', title: '终端管理', hint: '查看终端激活状态并执行注销激活'},
     {key: 'topology', group: 'runtime', title: '实例与拓扑', hint: '查看主副机模式、主机信息和连接状态'},
+    {key: 'version', group: 'runtime', title: '版本管理', hint: '查看应用版本、热更新状态和宿主启动标记'},
     {key: 'device', group: 'runtime', title: '设备与宿主', hint: '查看本机设备和宿主运行环境信息'},
     {key: 'control', group: 'runtime', title: '应用控制', hint: '执行全屏、锁定、清缓存和重启'},
     {key: 'logs', group: 'runtime', title: '日志', hint: '查看和清理本地日志文件'},

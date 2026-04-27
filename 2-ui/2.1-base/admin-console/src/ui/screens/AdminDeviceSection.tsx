@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useCallback, useState} from 'react'
 import type {AdminDeviceHost, AdminDeviceSnapshot} from '../../types'
 import {
     AdminBlock,
@@ -11,6 +11,10 @@ import {
     AdminSummaryCard,
     AdminSummaryGrid,
 } from './AdminSectionPrimitives'
+import {
+    useAdminMountedRef,
+    useAdminRefreshWhileScreenActive,
+} from './useAdminScreenActivity'
 
 const readString = (
     value: unknown,
@@ -49,12 +53,13 @@ export interface AdminDeviceSectionProps {
 export const AdminDeviceSection: React.FC<AdminDeviceSectionProps> = ({
     host,
 }) => {
+    const mountedRef = useAdminMountedRef()
     const [snapshot, setSnapshot] = useState<AdminDeviceSnapshot | undefined>()
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
     const resourceDetails = snapshot?.resourceDetails
 
-    useEffect(() => {
+    const refresh = useCallback((errorMessage: string) => {
         if (!host) {
             return
         }
@@ -62,14 +67,26 @@ export const AdminDeviceSection: React.FC<AdminDeviceSectionProps> = ({
             setLoading(true)
             setError('')
             try {
-                setSnapshot(await host.getSnapshot())
+                const nextSnapshot = await host.getSnapshot()
+                if (mountedRef.current) {
+                    setSnapshot(nextSnapshot)
+                }
             } catch (nextError) {
-                setError(nextError instanceof Error ? nextError.message : '设备信息读取失败')
+                if (mountedRef.current) {
+                    setError(nextError instanceof Error ? nextError.message : errorMessage)
+                }
             } finally {
-                setLoading(false)
+                if (mountedRef.current) {
+                    setLoading(false)
+                }
             }
         })()
-    }, [host])
+    }, [host, mountedRef])
+
+    useAdminRefreshWhileScreenActive(
+        () => refresh('设备信息刷新失败'),
+        host ? 'host-ready' : 'host-missing',
+    )
 
     if (!host) {
         return (
@@ -79,20 +96,6 @@ export const AdminDeviceSection: React.FC<AdminDeviceSectionProps> = ({
                 message="设备宿主能力未安装"
             />
         )
-    }
-
-    const handleRefresh = () => {
-        void (async () => {
-            setLoading(true)
-            setError('')
-            try {
-                setSnapshot(await host.getSnapshot())
-            } catch (nextError) {
-                setError(nextError instanceof Error ? nextError.message : '设备信息刷新失败')
-            } finally {
-                setLoading(false)
-            }
-        })()
     }
 
     return (
@@ -106,7 +109,7 @@ export const AdminDeviceSection: React.FC<AdminDeviceSectionProps> = ({
                 label={loading ? '刷新中' : '刷新设备与宿主信息'}
                 tone="primary"
                 disabled={loading}
-                onPress={handleRefresh}
+                onPress={() => refresh('设备信息刷新失败')}
             />
             <AdminSectionMessage message={error || undefined} />
             {snapshot ? (

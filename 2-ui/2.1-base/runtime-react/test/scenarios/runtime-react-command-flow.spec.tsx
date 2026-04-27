@@ -17,7 +17,7 @@ const createScenarioTree = async () => {
         },
     })
 
-    return renderWithAutomation(
+    const tree = renderWithAutomation(
         <>
             <RuntimeReactScenarioStatePanel />
             <UiRuntimeRootShell />
@@ -25,6 +25,8 @@ const createScenarioTree = async () => {
         harness.store,
         harness.runtime,
     )
+    await tree.waitForNode('ui-base-runtime-react-test:home')
+    return tree
 }
 
 describe('runtime-react command flow', () => {
@@ -46,11 +48,13 @@ describe('runtime-react command flow', () => {
 
         const navigateTree = await createScenarioTree()
         await navigateTree.press('ui-base-runtime-react-test:navigate-detail')
+        await navigateTree.waitForNode('ui-base-runtime-react-test:detail')
         await expect(navigateTree.getText('ui-base-runtime-react-test:state:primary'))
             .resolves.toBe('ui.base.runtime-react.test.detail')
 
         const replaceTree = await createScenarioTree()
         await replaceTree.press('ui-base-runtime-react-test:replace-detail')
+        await replaceTree.waitForNode('ui-base-runtime-react-test:detail')
         await expect(replaceTree.getText('ui-base-runtime-react-test:detail-label'))
             .resolves.toBe('detail-from-replace')
 

@@ -3220,6 +3220,7 @@ __metadata:
     "@next/kernel-base-platform-ports": "workspace:*"
     "@next/kernel-base-state-runtime": "workspace:*"
     "@next/kernel-base-tcp-control-runtime-v2": "workspace:*"
+    "@next/kernel-base-tdp-sync-runtime-v2": "workspace:*"
     "@next/kernel-base-topology-runtime-v3": "workspace:*"
     "@next/kernel-base-workflow-runtime-v2": "workspace:*"
     "@next/ui-base-input-runtime": "workspace:*"
@@ -3343,6 +3344,29 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@next/ui-base-test-support@workspace:*, @next/ui-base-test-support@workspace:2-ui/2.1-base/test-support":
+  version: 0.0.0-use.local
+  resolution: "@next/ui-base-test-support@workspace:2-ui/2.1-base/test-support"
+  dependencies:
+    "@next/kernel-base-platform-ports": "workspace:*"
+    "@next/kernel-base-runtime-shell-v2": "workspace:*"
+    "@next/kernel-base-tcp-control-runtime-v2": "workspace:*"
+    "@next/kernel-base-topology-runtime-v3": "workspace:*"
+    "@next/kernel-base-transport-runtime": "workspace:*"
+    "@next/kernel-base-ui-runtime-v2": "workspace:*"
+    "@next/kernel-server-config-v2": "workspace:*"
+    "@next/ui-base-automation-runtime": "workspace:*"
+    "@next/ui-base-runtime-react": "workspace:*"
+    "@reduxjs/toolkit": ^2.10.0
+    "@types/node": ^25.0.9
+    typescript: ^5.9.3
+  peerDependencies:
+    react: ">=18"
+    react-native: ">=0.77"
+    react-redux: ^9.1.0
+  languageName: unknown
+  linkType: soft
+
 "@next/ui-base-topology-runtime-bridge@workspace:*, @next/ui-base-topology-runtime-bridge@workspace:2-ui/2.1-base/topology-runtime-bridge":
   version: 0.0.0-use.local
   resolution: "@next/ui-base-topology-runtime-bridge@workspace:2-ui/2.1-base/topology-runtime-bridge"
@@ -3397,6 +3421,7 @@ __metadata:
     "@next/kernel-base-tcp-control-runtime-v2": "workspace:*"
     "@next/kernel-base-tdp-sync-runtime-v2": "workspace:*"
     "@next/kernel-base-topology-runtime-v3": "workspace:*"
+    "@next/kernel-base-transport-runtime": "workspace:*"
     "@next/kernel-base-ui-runtime-v2": "workspace:*"
     "@next/kernel-business-catering-product-master-data": "workspace:*"
     "@next/kernel-business-catering-store-operating-master-data": "workspace:*"
@@ -3405,6 +3430,7 @@ __metadata:
     "@next/ui-base-input-runtime": "workspace:*"
     "@next/ui-base-runtime-react": "workspace:*"
     "@next/ui-base-terminal-console": "workspace:*"
+    "@next/ui-base-test-support": "workspace:*"
     "@next/ui-business-catering-master-data-workbench": "workspace:*"
     "@types/node": ^25.0.9
     "@types/react": ^19.2.0

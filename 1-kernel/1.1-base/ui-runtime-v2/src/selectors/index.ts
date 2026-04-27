@@ -134,3 +134,11 @@ export const selectUiCurrentScreenOrFirstReady = (
     overrides: Partial<UiScreenRegistryContext> = {},
 ) => selectUiScreen(state, containerKey)
     ?? selectFirstReadyUiScreenDefinition(state, containerKey, fromIndex, overrides)
+
+export const selectUiCurrentScreenPartKeyOrFirstReady = (
+    state: RootState,
+    containerKey: string,
+    fromIndex = -1,
+    overrides: Partial<UiScreenRegistryContext> = {},
+): string | undefined =>
+    selectUiCurrentScreenOrFirstReady(state, containerKey, fromIndex, overrides)?.partKey

@@ -2,7 +2,6 @@ import {describe, expect, it} from 'vitest'
 import {
     createAdapterDiagnosticsController,
     adminConsoleStateActions,
-    selectAdminConsoleSelectedTab,
     selectLatestAdapterSummary,
 } from '../../src'
 import {createAdminConsoleHarness} from '../support/adminConsoleHarness'
@@ -45,7 +44,7 @@ describe('adapter diagnostics', () => {
         expect(summary.results.map(item => item.adapterKey)).toEqual(['scanner', 'storage'])
     })
 
-    it('stores selected tab and latest summary inside admin console state', async () => {
+    it('stores only the latest adapter summary inside admin console state', async () => {
         const harness = await createAdminConsoleHarness()
         const summary = {
             runId: 'run-1',
@@ -60,10 +59,8 @@ describe('adapter diagnostics', () => {
             results: [],
         }
 
-        harness.store.dispatch(adminConsoleStateActions.setSelectedTab('adapter'))
         harness.store.dispatch(adminConsoleStateActions.setLatestAdapterSummary(summary))
 
-        expect(selectAdminConsoleSelectedTab(harness.store.getState())).toBe('adapter')
         expect(selectLatestAdapterSummary(harness.store.getState())).toEqual(summary)
     })
 

@@ -3,6 +3,9 @@ import type {ComponentType} from 'react'
 export interface ResolvedUiScreenPart<TProps = unknown> {
     partKey: string
     rendererKey: string
+    id?: string | null
+    source?: string
+    operation?: 'show' | 'replace'
     Component: ComponentType<TProps>
     props?: TProps
 }
@@ -10,6 +13,9 @@ export interface ResolvedUiScreenPart<TProps = unknown> {
 export interface MissingUiRendererPart {
     partKey: string
     rendererKey: string
+    id?: string | null
+    source?: string
+    operation?: 'show' | 'replace'
     name: string
     title: string
     description: string

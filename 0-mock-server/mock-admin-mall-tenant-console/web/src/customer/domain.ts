@@ -1,5 +1,5 @@
 import type {CollectionState, CustomerEntity} from './types'
-import {enumLabels, platformMetadataOptions, STATUS_LABELS} from './metadata'
+import {businessMetadataOptions, enumLabels, platformMetadataOptions, STATUS_LABELS} from './metadata'
 
 export const dataOf = (item?: CustomerEntity | null) => {
   const payload = item?.payload ?? {}
@@ -38,8 +38,8 @@ export const formatDateTime = (value: unknown) => {
 
 export const badgeTone = (status: string) => {
   if (['ACTIVE', 'APPROVED', 'PUBLISHED', 'OPERATING', 'AVAILABLE', 'ALLOW'].includes(status)) return 'good'
-  if (['PENDING', 'PENDING_REVIEW', 'PROCESSING', 'PAUSED', 'EXPIRED'].includes(status)) return 'warn'
-  if (['FAILED', 'TERMINATED', 'SUSPENDED', 'INACTIVE', 'INVALID', 'SOLD_OUT', 'REVOKED'].includes(status)) return 'bad'
+  if (['PENDING', 'PENDING_REVIEW', 'PROCESSING', 'PAUSED', 'EXPIRED', 'DEPRECATED'].includes(status)) return 'warn'
+  if (['FAILED', 'TERMINATED', 'SUSPENDED', 'INACTIVE', 'INVALID', 'SOLD_OUT', 'REVOKED', 'LOCKED', 'DELETED', 'DISABLED'].includes(status)) return 'bad'
   return 'neutral'
 }
 
@@ -75,12 +75,31 @@ export const topicLabel = (topic: string) => {
     'catering.saleable-stock.profile': '可售库存',
     'menu.availability': '商品可售状态',
     'catering.price-rule.profile': '价格规则',
+    'catering.product-inheritance.profile': '商品继承',
+    'catering.bundle-price-rule.profile': '组合优惠',
+    'catering.channel-product-mapping.profile': '渠道商品映射',
   }
   return labels[topic] ?? topic
 }
 
 export const relationName = (items: CustomerEntity[], id: unknown, fallback = '--') =>
   items.find(item => item.entityId === id)?.title ?? asText(id, fallback)
+
+export const permissionCodeFor = (permission: CustomerEntity) =>
+  asText(dataOf(permission).permission_code, permission.entityId)
+
+export const isHighRiskPermission = (permission: CustomerEntity, highRiskPolicies: CustomerEntity[] = []) => {
+  const data = dataOf(permission)
+  const permissionCode = permissionCodeFor(permission)
+  return data.high_risk === true
+    || data.require_approval === true
+    || highRiskPolicies.some(policy => {
+      const policyData = dataOf(policy)
+      return policy.status === 'ACTIVE'
+        && asText(policyData.permission_code, '') === permissionCode
+        && asText(policyData.status, 'ACTIVE') !== 'INACTIVE'
+    })
+}
 
 export const relationLabel = (collections: CollectionState, key: string, value: unknown) => {
   if (!value) return '--'
@@ -90,6 +109,10 @@ export const relationLabel = (collections: CollectionState, key: string, value: 
   if (key.includes('brand_id')) return relationName(collections.brands, value)
   if (key.includes('store_id')) return relationName(collections.stores, value)
   if (key.includes('role_id')) return relationName(collections.roles, value)
+  if (key.includes('group_id')) return relationName(collections.principalGroups, value)
+  if (key.includes('permission_group_id')) return relationName(collections.permissionGroups, value)
+  if (key.includes('template_id')) return relationName(collections.roleTemplates, value)
+  if (key.includes('source_template_id')) return relationName(collections.roleTemplates, value)
   if (key.includes('permission_id')) return relationName(collections.permissions, value)
   if (key.includes('user_id')) return relationName(collections.users, value)
   if (key.includes('product_id')) return relationName(collections.products, value)
@@ -177,7 +200,7 @@ export function businessLabel(key: string) {
     contact_name: '联系人',
     contact_phone: '联系电话',
     isv_config: 'ISV 配置',
-    metadata_catalog: '平台业务字典',
+    metadata_catalog: '业务字典',
     project_name: '项目名称',
     project_code: '项目编码',
     project_id: '所属项目',
@@ -198,6 +221,14 @@ export function businessLabel(key: string) {
     billing_email: '账单邮箱',
     bank_name: '开户银行',
     bank_account: '银行账号',
+    bank_account_no: '银行账号',
+    bank_account_no_masked: '银行账号',
+    bank_account_name: '银行户名',
+    bank_branch: '开户支行',
+    taxpayer_type: '纳税人类型',
+    tax_rate: '税率',
+    settlement_day: '结算日',
+    auto_settlement_enabled: '自动结算',
     brand_name: '品牌名称',
     brand_code: '品牌编码',
     brand_id: '品牌',
@@ -218,6 +249,7 @@ export function businessLabel(key: string) {
     area_square_meter: '面积',
     store_type: '门店类型',
     store_formats: '经营场景',
+    business_scenarios: '经营场景',
     business_formats: '经营场景',
     opening_status: '开业状态',
     active_contract_id: '当前合同',
@@ -268,20 +300,48 @@ export function businessLabel(key: string) {
     workstation_code: '工作站编码',
     workstation_name: '工作站名称',
     category_codes: '可处理品类',
+    parent_permission_id: '上级权限',
     permission_name: '权限名称',
     permission_code: '权限编码',
     permission_id: '权限',
     permission_type: '权限类型',
+    permission_source: '权限来源',
+    permission_group_id: '权限分组',
+    resource_type: '资源类型',
+    resource: '资源标识',
+    action: '动作',
+    feature_flag: '关联功能点',
+    high_risk: '高风险权限',
+    require_approval: '需要审批',
+    permission_description: '权限说明',
+    is_system: '系统内置',
     role_name: '角色名称',
     role_code: '角色编码',
     role_id: '角色',
     role_type: '角色来源',
+    role_source: '角色来源',
+    source_template_id: '来源模板',
+    template_sync_status: '模板同步状态',
+    role_description: '角色说明',
+    applicable_user_types: '适用用户类型',
     scope_type: '授权范围',
     permission_ids: '权限集合',
     binding_id: '授权记录',
     user_id: '用户',
+    username: '登录名',
+    email: '邮箱',
+    phone: '联系电话',
+    identity_source: '身份来源',
+    external_user_id: '外部用户 ID',
+    failed_login_count: '失败登录次数',
+    locked_until: '锁定至',
+    last_login_at: '最后登录时间',
+    last_login_ip: '最后登录 IP',
+    created_by: '创建人',
+    version: '版本',
     scope_selector: '授权范围',
     policy_effect: '授权结果',
+    policy_conditions: '策略条件',
     effective_from: '生效时间',
     effective_to: '失效时间',
     grant_reason: '授权原因',
@@ -289,6 +349,71 @@ export function businessLabel(key: string) {
     display_name: '姓名',
     user_code: '用户编码',
     mobile: '手机号',
+    idp_name: '身份源名称',
+    idp_type: '身份源类型',
+    sync_enabled: '启用同步',
+    sync_cron: '同步 Cron',
+    ldap_url: 'LDAP 地址',
+    base_dn: 'Base DN',
+    issuer_url: 'OIDC Issuer',
+    client_id: 'Client ID',
+    scopes: 'OIDC Scopes',
+    group_name: '分组名称',
+    group_code: '分组编码',
+    group_icon: '图标',
+    parent_group_id: '上级分组',
+    sort_order: '排序',
+    template_name: '模板名称',
+    template_code: '模板编码',
+    template_description: '模板说明',
+    base_permission_ids: '基础权限',
+    recommended_scope_type: '推荐范围',
+    industry_tags: '行业标签',
+    is_active: '启用',
+    feature_name: '功能点名称',
+    feature_code: '功能点编码',
+    feature_description: '功能说明',
+    is_enabled: '启用',
+    is_enabled_globally: '全局启用',
+    default_enabled: '平台默认启用',
+    enabled_by: '操作人',
+    enabled_at: '启用时间',
+    tag_key: '标签键',
+    tag_value: '标签值',
+    tag_label: '标签名称',
+    resource_id: '资源 ID',
+    group_type: '用户组类型',
+    ldap_group_dn: 'LDAP Group DN',
+    oidc_claim_key: 'OIDC Claim Key',
+    oidc_claim_value: 'OIDC Claim Value',
+    member_id: '成员记录',
+    group_id: '用户组',
+    source: '来源',
+    joined_by: '加入人',
+    joined_at: '加入时间',
+    group_binding_id: '组授权记录',
+    approval_id: '审批单号',
+    granted_by: '授权人',
+    session_id: '会话编号',
+    working_scope: '工作范围',
+    activated_binding_ids: '激活授权',
+    session_token_masked: '会话 Token',
+    last_active_at: '最后活跃时间',
+    mfa_verified_at: 'MFA 验证时间',
+    mfa_expires_at: 'MFA 过期时间',
+    mfa_method: 'MFA 方式',
+    rule_description: '规则说明',
+    conflicting_role_codes: '冲突角色编码',
+    conflicting_perm_codes: '冲突权限编码',
+    approver_role_code: '审批角色',
+    max_duration_days: '最长授权天数',
+    require_mfa: '需要 MFA',
+    mfa_validity_minutes: 'MFA 有效分钟',
+    result: '鉴权结果',
+    deny_reason: '拒绝原因',
+    is_cross_sandbox: '跨沙箱',
+    occurred_at: '发生时间',
+    request_id: '请求 ID',
     product_name: '商品名称',
     product_id: '商品',
     product_type: '商品类型',
@@ -299,6 +424,13 @@ export function businessLabel(key: string) {
     modifier_groups: '加料组',
     variants: '规格',
     combo_item_groups: '套餐组成',
+    inheritance_id: '继承关系',
+    brand_product_id: '品牌商品',
+    store_product_id: '门店商品',
+    override_fields: '覆盖字段',
+    locked_fields: '锁定字段',
+    sync_status: '同步状态',
+    last_sync_at: '最后同步时间',
     menu_name: '菜单名称',
     brand_menu_id: '品牌菜单',
     menu_id: '门店菜单',
@@ -307,7 +439,7 @@ export function businessLabel(key: string) {
     version_hash: '版本',
     rule_name: '规则名称',
     rule_code: '规则编码',
-    rule_id: '规则编号',
+    rule_id: '组合优惠规则',
     channel_type: '渠道',
     price_type: '价格类型',
     price_delta: '调价金额',
@@ -316,7 +448,15 @@ export function businessLabel(key: string) {
     priority: '优先级',
     discount_type: '优惠类型',
     discount_value: '优惠值',
+    trigger_products: '触发商品',
+    max_applications: '最大触发次数',
     applicable_product_ids: '适用商品',
+    mapping_id: '渠道商品映射',
+    external_product_id: '外部商品 ID',
+    external_sku_id: '外部 SKU ID',
+    mapping_status: '映射状态',
+    sync_error_message: '同步失败原因',
+    field_mapping_config: '字段映射配置',
     available: '是否可售',
     sold_out_reason: '不可售原因',
     stock_id: '库存编号',
@@ -341,7 +481,7 @@ export function businessLabel(key: string) {
   return labels[key] ?? key.replace(/_/g, ' ')
 }
 
-export function renderBusinessValue(key: string, value: unknown, collections: CollectionState) {
+export function renderBusinessValue(key: string, value: unknown, collections: CollectionState, owner?: CustomerEntity) {
   if (key === 'scope_selector') return scopeSelectorLabel(value, collections)
   if (key === 'brand_category') {
     const selectedPlatform = collections.platforms.find(platform => dataOf(platform).metadata_catalog)
@@ -349,7 +489,17 @@ export function renderBusinessValue(key: string, value: unknown, collections: Co
   }
   if (key === 'store_formats') {
     const selectedPlatform = collections.platforms.find(platform => dataOf(platform).metadata_catalog)
-    const options = platformMetadataOptions(selectedPlatform, 'store_business_scenarios')
+    const selectedStore = owner?.entityType === 'store' ? owner : undefined
+    const options = businessMetadataOptions({platform: selectedPlatform, store: selectedStore, key: 'store_business_scenarios'})
+    const values = asArray(value).map(item => asText(item, '')).filter(Boolean)
+    return values.length === 0
+      ? '暂无'
+      : values.map(item => options.find(option => option.value === item)?.label ?? enumLabel(item)).join('、')
+  }
+  if (key === 'business_scenarios') {
+    const selectedPlatform = collections.platforms.find(platform => dataOf(platform).metadata_catalog)
+    const selectedStore = owner?.entityType === 'store' ? owner : undefined
+    const options = businessMetadataOptions({platform: selectedPlatform, store: selectedStore, key: 'store_business_scenarios'})
     const values = asArray(value).map(item => asText(item, '')).filter(Boolean)
     return values.length === 0
       ? '暂无'
@@ -388,7 +538,10 @@ export function scopeLabel(value: unknown) {
   if (raw === 'PLATFORM') return '全平台'
   if (raw === 'PROJECT') return '指定项目'
   if (raw === 'STORE') return '指定门店'
+  if (raw === 'TAG') return '资源标签'
   if (raw === 'ORG_NODE') return '组织范围'
+  if (raw === 'RESOURCE_IDS') return '资源清单'
+  if (raw === 'COMPOSITE') return '组合范围'
   return raw
 }
 
@@ -396,6 +549,18 @@ export function scopeSelectorLabel(value: unknown, collections?: CollectionState
   const record = typeof value === 'object' && value !== null ? value as Record<string, unknown> : {}
   const scopeType = asText(record.scope_type, '')
   const scopeKey = record.scope_key
+  const tags = asArray(record.tags).map(item => asText(item, '')).filter(Boolean)
+  const orgNodeType = asText(record.org_node_type, '')
+  const orgNodeIds = asArray(record.org_node_ids ?? record.org_node_id).map(item => asText(item, '')).filter(Boolean)
+  const resourceType = asText(record.resource_type, '')
+  const tagKey = asText(record.tag_key, '')
+  const tagValue = asText(record.tag_value, '')
+  const resourceIds = asArray(record.resource_ids).map(item => asText(item, '')).filter(Boolean)
+  const selectors = asArray(record.selectors ?? record.children)
+  if (scopeType === 'TAG') return `标签：${tags.length ? tags.join('、') : tagKey !== '--' ? `${tagKey}:${tagValue}` : asText(scopeKey)}`
+  if (scopeType === 'ORG_NODE') return `组织范围：${orgNodeType !== '--' ? `${enumLabel(orgNodeType.toUpperCase())} · ` : ''}${orgNodeIds.length || asText(scopeKey) !== '--' ? orgNodeIds.join('、') || asText(scopeKey) : '--'}`
+  if (scopeType === 'RESOURCE_IDS') return `资源清单：${resourceType !== '--' ? `${enumLabel(resourceType.toUpperCase())} · ` : ''}${resourceIds.length || 0} 个`
+  if (scopeType === 'COMPOSITE') return `组合范围：${selectors.length || 0} 条`
   if (!scopeKey) return scopeLabel(scopeType)
   if (scopeType === 'PLATFORM') return `全平台：${collections ? relationName(collections.platforms, scopeKey) : asText(scopeKey)}`
   if (scopeType === 'PROJECT') return `项目：${collections ? relationName(collections.projects, scopeKey) : asText(scopeKey)}`

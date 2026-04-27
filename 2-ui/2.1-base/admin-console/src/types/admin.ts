@@ -7,6 +7,7 @@ export type AdminConsoleTab =
     | 'connector'
     | 'logs'
     | 'topology'
+    | 'version'
     | 'control'
     | 'terminal'
     | 'adapter'
@@ -65,7 +66,6 @@ export interface AdapterDiagnosticSummary {
 }
 
 export interface AdminConsoleState {
-    selectedTab: AdminConsoleTab
     latestAdapterSummary?: AdapterDiagnosticSummary
 }
 
@@ -181,12 +181,30 @@ export interface AdminTopologyHost {
     getTopologyHostDiagnostics?(): Promise<Record<string, unknown> | null>
 }
 
+export interface AdminVersionNativeMarkers {
+    boot?: Record<string, unknown> | null
+    active?: Record<string, unknown> | null
+    rollback?: Record<string, unknown> | null
+}
+
+export interface AdminVersionSnapshot {
+    embeddedRelease?: readonly AdminDetailItem[]
+    nativeMarkers?: AdminVersionNativeMarkers
+    capabilities?: readonly AdminStatusItem[]
+}
+
+export interface AdminVersionHost {
+    getSnapshot(): Promise<AdminVersionSnapshot>
+    clearBootMarker?(): Promise<void>
+}
+
 export interface AdminHostTools {
     device?: AdminDeviceHost
     logs?: AdminLogHost
     control?: AdminAppControlHost
     connector?: AdminConnectorHost
     topology?: AdminTopologyHost
+    version?: AdminVersionHost
 }
 
 export interface AdminHostToolsResolver {

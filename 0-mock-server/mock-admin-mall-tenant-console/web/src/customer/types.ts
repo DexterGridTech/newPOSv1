@@ -54,8 +54,22 @@ export type PageKey =
   | 'roles'
   | 'users'
   | 'roleBindings'
+  | 'identityProviderConfigs'
+  | 'permissionGroups'
+  | 'roleTemplates'
+  | 'featurePoints'
+  | 'platformFeatureSwitches'
+  | 'resourceTags'
+  | 'principalGroups'
+  | 'groupMembers'
+  | 'groupRoleBindings'
+  | 'authorizationSessions'
+  | 'sodRules'
+  | 'highRiskPolicies'
+  | 'authAuditLogs'
   | 'products'
   | 'productCategories'
+  | 'productInheritances'
   | 'brandMenus'
   | 'storeMenus'
   | 'storeConfig'
@@ -63,6 +77,8 @@ export type PageKey =
   | 'availability'
   | 'availabilityRules'
   | 'priceRules'
+  | 'bundlePriceRules'
+  | 'channelProductMappings'
   | 'projectionOutbox'
   | 'publishLog'
 
@@ -81,8 +97,22 @@ export type CollectionKey =
   | 'roles'
   | 'users'
   | 'roleBindings'
+  | 'identityProviderConfigs'
+  | 'permissionGroups'
+  | 'roleTemplates'
+  | 'featurePoints'
+  | 'platformFeatureSwitches'
+  | 'resourceTags'
+  | 'principalGroups'
+  | 'groupMembers'
+  | 'groupRoleBindings'
+  | 'authorizationSessions'
+  | 'sodRules'
+  | 'highRiskPolicies'
+  | 'authAuditLogs'
   | 'products'
   | 'productCategories'
+  | 'productInheritances'
   | 'brandMenus'
   | 'storeMenus'
   | 'storeConfig'
@@ -90,6 +120,8 @@ export type CollectionKey =
   | 'availability'
   | 'priceRules'
   | 'availabilityRules'
+  | 'bundlePriceRules'
+  | 'channelProductMappings'
 
 export type CollectionState = Record<CollectionKey, CustomerEntity[]>
 
@@ -118,6 +150,7 @@ export type FilterState = {
   billingMode: string
   permissionType: string
   roleType: string
+  resourceType: string
   scopeType: string
   policyEffect: string
   ownershipScope: string
@@ -141,12 +174,22 @@ export type FilterState = {
   isvStatus: string
   userId: string
   permissionId: string
+  groupId: string
+  identitySource: string
+  idpType: string
+  featureCode: string
+  enabledState: string
+  groupType: string
+  groupMemberSource: string
+  riskControl: string
+  mfaState: string
+  syncStatus: string
 }
 
 export type FieldDef = {
   name: string
   label: string
-  type?: 'text' | 'number' | 'date' | 'time' | 'textarea' | 'select' | 'json' | 'option-list' | 'asset' | 'multi-select' | 'project-phases'
+  type?: 'text' | 'number' | 'date' | 'time' | 'textarea' | 'select' | 'json' | 'option-list' | 'asset' | 'multi-select' | 'project-phases' | 'scope-selector'
   required?: boolean
   options?: Array<{label: string; value: string}>
   defaultValue?: string

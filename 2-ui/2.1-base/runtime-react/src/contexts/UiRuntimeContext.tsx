@@ -1,20 +1,73 @@
-import React, {createContext, useContext} from 'react'
+import React, {createContext, useContext, useCallback, useEffect, useRef, useState, useSyncExternalStore} from 'react'
 import type {KernelRuntimeV2} from '@next/kernel-base-runtime-shell-v2'
 import type {RuntimeReactAutomationBridge} from '../types'
 
 const UiRuntimeContext = createContext<KernelRuntimeV2 | null>(null)
 const UiRuntimeAutomationContext = createContext<RuntimeReactAutomationBridge | null>(null)
 const UiRuntimeAutomationRuntimeIdContext = createContext<string | undefined>(undefined)
+export interface UiRuntimeScreenActivityController {
+    getSnapshot(): boolean
+    setActive(active: boolean): void
+    getVersion(): number
+    subscribe(listener: () => void): () => void
+}
+
+const defaultScreenActivityController: UiRuntimeScreenActivityController = {
+    getSnapshot: () => true,
+    setActive: () => {},
+    getVersion: () => 0,
+    subscribe: () => () => {},
+}
+
+const UiRuntimeScreenActivityContext = createContext<UiRuntimeScreenActivityController>(defaultScreenActivityController)
 const UiRuntimeAutomationActionContext = createContext<((input: {
     nodeId: string
     action: string
     value?: unknown
 }) => Promise<unknown> | unknown) | null>(null)
 
+export const createUiRuntimeScreenActivityController = (
+    initiallyActive = true,
+): UiRuntimeScreenActivityController => {
+    let active = Boolean(initiallyActive)
+    let version = 0
+    const listeners = new Set<() => void>()
+
+    return {
+        getSnapshot: () => active,
+        getVersion: () => version,
+        setActive(nextActive) {
+            const normalizedActive = Boolean(nextActive)
+            if (active === normalizedActive) {
+                return
+            }
+            active = normalizedActive
+            version += 1
+            for (const listener of [...listeners]) {
+                if (listeners.has(listener)) {
+                    listener()
+                }
+            }
+        },
+        subscribe(listener) {
+            listeners.add(listener)
+            let disposed = false
+            return () => {
+                if (disposed) {
+                    return
+                }
+                disposed = true
+                listeners.delete(listener)
+            }
+        },
+    }
+}
+
 export interface UiRuntimeProviderProps {
     runtime: KernelRuntimeV2
     automationBridge?: RuntimeReactAutomationBridge
     automationRuntimeId?: string
+    screenActivityController?: UiRuntimeScreenActivityController
     performAutomationAction?: (input: {
         nodeId: string
         action: string
@@ -27,19 +80,90 @@ export const UiRuntimeProvider: React.FC<UiRuntimeProviderProps> = ({
     runtime,
     automationBridge,
     automationRuntimeId,
+    screenActivityController,
     performAutomationAction,
     children,
 }) => (
     <UiRuntimeContext.Provider value={runtime}>
-        <UiRuntimeAutomationContext.Provider value={automationBridge ?? null}>
-            <UiRuntimeAutomationRuntimeIdContext.Provider value={automationRuntimeId}>
-                <UiRuntimeAutomationActionContext.Provider value={performAutomationAction ?? null}>
-                    {children}
-                </UiRuntimeAutomationActionContext.Provider>
-            </UiRuntimeAutomationRuntimeIdContext.Provider>
-        </UiRuntimeAutomationContext.Provider>
+        <UiRuntimeScreenActivityContext.Provider value={screenActivityController ?? defaultScreenActivityController}>
+            <UiRuntimeAutomationContext.Provider value={automationBridge ?? null}>
+                <UiRuntimeAutomationRuntimeIdContext.Provider value={automationRuntimeId}>
+                    <UiRuntimeAutomationActionContext.Provider value={performAutomationAction ?? null}>
+                        {children}
+                    </UiRuntimeAutomationActionContext.Provider>
+                </UiRuntimeAutomationRuntimeIdContext.Provider>
+            </UiRuntimeAutomationContext.Provider>
+        </UiRuntimeScreenActivityContext.Provider>
     </UiRuntimeContext.Provider>
 )
+
+export const useUiRuntimeScreenActive = (): boolean => {
+    const controller = useContext(UiRuntimeScreenActivityContext)
+    return useSyncExternalStore(
+        controller.subscribe,
+        controller.getSnapshot,
+        controller.getSnapshot,
+    )
+}
+
+export const useUiRuntimeScreenActivityController = (): UiRuntimeScreenActivityController =>
+    useContext(UiRuntimeScreenActivityContext)
+
+export const useOnUiRuntimeScreenActivated = (
+    callback: () => void,
+): void => {
+    const controller = useUiRuntimeScreenActivityController()
+    const callbackRef = useRef(callback)
+    callbackRef.current = callback
+
+    useEffect(() => controller.subscribe(() => {
+        if (controller.getSnapshot()) {
+            callbackRef.current()
+        }
+    }), [controller])
+}
+
+export const useUiRuntimeScreenActiveVersion = (): number => {
+    const controller = useUiRuntimeScreenActivityController()
+    return useSyncExternalStore(
+        controller.subscribe,
+        controller.getVersion,
+        controller.getVersion,
+    )
+}
+
+export const useUiRuntimeScreenGatedStoreSubscription = <TSnapshot,>(
+    subscribe: (listener: () => void) => () => void,
+    getSnapshot: () => TSnapshot,
+    isEqual: (left: TSnapshot | undefined, right: TSnapshot) => boolean = Object.is,
+): TSnapshot => {
+    const active = useUiRuntimeScreenActive()
+    const snapshotRef = useRef<TSnapshot | undefined>(undefined)
+    const [snapshot, setSnapshot] = useState(() => {
+        const initialSnapshot = getSnapshot()
+        snapshotRef.current = initialSnapshot
+        return initialSnapshot
+    })
+
+    const refreshSnapshot = useCallback(() => {
+        const nextSnapshot = getSnapshot()
+        if (isEqual(snapshotRef.current, nextSnapshot)) {
+            return
+        }
+        snapshotRef.current = nextSnapshot
+        setSnapshot(nextSnapshot)
+    }, [getSnapshot, isEqual])
+
+    useEffect(() => {
+        if (!active) {
+            return undefined
+        }
+        refreshSnapshot()
+        return subscribe(refreshSnapshot)
+    }, [active, refreshSnapshot, subscribe])
+
+    return snapshot
+}
 
 export const useUiRuntime = (): KernelRuntimeV2 => {
     const runtime = useContext(UiRuntimeContext)

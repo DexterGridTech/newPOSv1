@@ -77,6 +77,11 @@ const ids = {
   highRiskPermissionCode: `phase4:risk_${runId}`,
   highRiskRoleId: `role-phase4-risk-${runId}`,
   highRiskRoleCode: `ROLE_PHASE4_RISK_${runId.toUpperCase()}`,
+  iamFeaturePointId: `feature-phase4-${runId}`,
+  iamFeatureCode: `FEATURE_PHASE4_${runId.toUpperCase()}`,
+  iamPermissionGroupId: `permission-group-phase4-${runId}`,
+  iamRoleTemplateId: `role-template-phase4-${runId}`,
+  iamAuthorizationSessionId: `auth-session-phase4-${runId}`,
   productId: `product-phase5-${runId}`,
   brandMenuId: `brand-menu-phase6-${runId}`,
   storeMenuId: `menu-phase6-${runId}`,
@@ -925,6 +930,24 @@ test('table master-data endpoints reject transaction and reservation runtime sta
 })
 
 test('platform business dictionaries guard master-data attributes without leaking transaction workflows', async () => {
+  const demoStoresResponse = await request('/api/v1/org/stores?page=1&size=200', {
+    headers: {
+      'x-sandbox-id': 'sandbox-customer-real-retail-20260425',
+    },
+  })
+  assert.equal(demoStoresResponse.response.status, 200)
+  const demoStoresPage = demoStoresResponse.payload
+  const demoButterfulStore = demoStoresPage.data.find(item => item.entityId === 'store-cd-binjiang-butterful')
+  assert.ok(demoButterfulStore, 'Butterful demo store should exist')
+  assert.ok(
+    demoButterfulStore.payload.data.metadata_catalog.table_areas.some(item => item.value === 'HALL' && item.owner_scope === 'STORE' && item.owner_id === 'store-cd-binjiang-butterful'),
+    'demo store should expose table area dictionary as store-owned metadata',
+  )
+  assert.ok(
+    demoButterfulStore.payload.data.metadata_catalog.table_types.some(item => item.value === 'HALL' && item.owner_scope === 'STORE' && item.owner_id === 'store-cd-binjiang-butterful'),
+    'demo store should expose table type dictionary as store-owned metadata',
+  )
+
   const invalidBrand = await post('/api/v1/org/brands', {
     brandId: `brand-invalid-dictionary-${runId}`,
     brandCode: `BRAND_INVALID_DICT_${runId.toUpperCase()}`,
@@ -1198,6 +1221,69 @@ test('iam workflow routes resolve permission by user binding instead of any role
   assert.equal(roleWithMissingPermission.response.status, 404)
   assert.equal(roleWithMissingPermission.payload.code, 'ROLE_PERMISSION_NOT_FOUND')
 
+  const featurePointCreate = await post('/api/v1/iam/feature-points', {
+    featurePointId: ids.iamFeaturePointId,
+    platformId: 'platform-kernel-base-test',
+    featureCode: ids.iamFeatureCode,
+    featureName: `Phase4 Feature ${runId}`,
+    isEnabledGlobally: true,
+    defaultEnabled: true,
+  }, {
+    headers: {'idempotency-key': `test-create-feature-point-${runId}`},
+  })
+  assert.equal(featurePointCreate.response.status, 201)
+  assert.equal(featurePointCreate.payload.data.payload.data.platform_id, 'platform-kernel-base-test')
+
+  const permissionGroupCreate = await post('/api/v1/iam/permission-groups', {
+    permissionGroupId: ids.iamPermissionGroupId,
+    platformId: 'platform-kernel-base-test',
+    groupCode: `GROUP_PHASE4_PERMISSION_${runId.toUpperCase()}`,
+    groupName: `Phase4 Permission Group ${runId}`,
+  }, {
+    headers: {'idempotency-key': `test-create-permission-group-${runId}`},
+  })
+  assert.equal(permissionGroupCreate.response.status, 201)
+  assert.equal(permissionGroupCreate.payload.data.payload.data.platform_id, 'platform-kernel-base-test')
+
+  const permissionWithGroupCreate = await post('/api/v1/permissions', {
+    permissionId: `perm-phase4-grouped-${runId}`,
+    permissionCode: `phase4_grouped:manage_${runId}`,
+    permissionName: `Phase4 Grouped Permission ${runId}`,
+    permissionGroupId: ids.iamPermissionGroupId,
+    featureFlag: ids.iamFeatureCode,
+    platformId: 'platform-kernel-base-test',
+  }, {
+    headers: {'idempotency-key': `test-create-grouped-permission-${runId}`},
+  })
+  assert.equal(permissionWithGroupCreate.response.status, 201)
+  assert.equal(permissionWithGroupCreate.payload.data.payload.data.permission_group_id, ids.iamPermissionGroupId)
+
+  const roleTemplateCreate = await post('/api/v1/iam/role-templates', {
+    templateId: ids.iamRoleTemplateId,
+    platformId: 'platform-kernel-base-test',
+    templateCode: `ROLE_TEMPLATE_PHASE4_${runId.toUpperCase()}`,
+    templateName: `Phase4 Role Template ${runId}`,
+    basePermissionIds: [ids.permissionId],
+    recommendedScopeType: 'STORE',
+    isActive: true,
+  }, {
+    headers: {'idempotency-key': `test-create-role-template-${runId}`},
+  })
+  assert.equal(roleTemplateCreate.response.status, 201)
+  assert.equal(roleTemplateCreate.payload.data.payload.data.platform_id, 'platform-kernel-base-test')
+
+  const roleTemplateMissingPermission = await post('/api/v1/iam/role-templates', {
+    templateId: `role-template-phase4-missing-${runId}`,
+    platformId: 'platform-kernel-base-test',
+    templateCode: `ROLE_TEMPLATE_PHASE4_MISSING_${runId.toUpperCase()}`,
+    templateName: `Phase4 Missing Permission Template ${runId}`,
+    basePermissionIds: [`missing-permission-${runId}`],
+    recommendedScopeType: 'STORE',
+    isActive: true,
+  })
+  assert.equal(roleTemplateMissingPermission.response.status, 404)
+  assert.equal(roleTemplateMissingPermission.payload.code, 'ROLE_TEMPLATE_PERMISSION_NOT_FOUND')
+
   const userCreate = await post('/api/v1/users', {
     userId: ids.userId,
     userCode: ids.userCode,
@@ -1211,6 +1297,33 @@ test('iam workflow routes resolve permission by user binding instead of any role
   })
   assert.equal(userCreate.response.status, 201)
   assert.equal(userCreate.payload.data.entityId, ids.userId)
+
+  const externalUserMissingId = await post('/api/v1/users', {
+    userId: `user-phase4-ldap-missing-${runId}`,
+    userCode: `user.phase4.ldap.missing.${runId}`,
+    displayName: `Phase4 LDAP Missing ${runId}`,
+    mobile: '13800000003',
+    storeId: 'store-kernel-base-test',
+    identitySource: 'LDAP',
+  })
+  assert.equal(externalUserMissingId.response.status, 400)
+  assert.equal(externalUserMissingId.payload.code, 'EXTERNAL_USER_ID_REQUIRED')
+
+  const externalUserCreate = await post('/api/v1/users', {
+    userId: `user-phase4-ldap-${runId}`,
+    userCode: `user.phase4.ldap.${runId}`,
+    displayName: `Phase4 LDAP User ${runId}`,
+    mobile: '13800000004',
+    storeId: 'store-kernel-base-test',
+    identitySource: 'LDAP',
+    externalUserId: `ldap-${runId}`,
+  }, {
+    headers: {'idempotency-key': `test-create-ldap-user-${runId}`},
+  })
+  assert.equal(externalUserCreate.response.status, 201)
+  assert.equal(externalUserCreate.payload.data.payload.data.identity_source, 'LDAP')
+  assert.equal(externalUserCreate.payload.data.payload.data.external_user_id, `ldap-${runId}`)
+  assert.equal(externalUserCreate.payload.data.payload.data.password_hash, null)
 
   const denyBeforeBinding = await post('/internal/auth/check-permission', {
     userId: ids.userId,
@@ -1406,6 +1519,15 @@ test('iam workflow routes resolve permission by user binding instead of any role
   })
   assert.equal(groupMemberCreate.response.status, 201)
 
+  const duplicateGroupMemberCreate = await post('/api/v1/iam/group-members', {
+    memberId: `group-member-phase4-duplicate-${runId}`,
+    groupId: ids.groupId,
+    userId: ids.userId,
+    joinedBy: 'contract-test',
+  })
+  assert.equal(duplicateGroupMemberCreate.response.status, 409)
+  assert.equal(duplicateGroupMemberCreate.payload.code, 'GROUP_MEMBER_ALREADY_EXISTS')
+
   const groupBindingCreate = await post('/api/v1/iam/group-role-bindings', {
     groupBindingId: ids.groupBindingId,
     groupId: ids.groupId,
@@ -1430,6 +1552,33 @@ test('iam workflow routes resolve permission by user binding instead of any role
     headers: {'idempotency-key': `test-create-group-org-node-binding-${runId}`},
   })
   assert.equal(groupOrgNodeBindingCreate.response.status, 201)
+
+  const authorizationSessionMissingBinding = await post('/api/v1/iam/authorization-sessions', {
+    sessionId: `auth-session-phase4-missing-${runId}`,
+    userId: ids.userId,
+    platformId: 'platform-kernel-base-test',
+    activatedBindingIds: [`missing-binding-${runId}`],
+    workingScope: {scope_type: 'STORE', scope_key: 'store-kernel-base-test'},
+  })
+  assert.equal(authorizationSessionMissingBinding.response.status, 404)
+  assert.equal(authorizationSessionMissingBinding.payload.code, 'AUTH_SESSION_BINDING_NOT_FOUND')
+
+  const authorizationSessionCreate = await post('/api/v1/iam/authorization-sessions', {
+    sessionId: ids.iamAuthorizationSessionId,
+    userId: ids.userId,
+    platformId: 'platform-kernel-base-test',
+    activatedBindingIds: [ids.bindingId, ids.groupBindingId],
+    workingScope: {scope_type: 'STORE', scope_key: 'store-kernel-base-test'},
+    mfaVerifiedAt: '2026-04-25T00:00:00.000Z',
+    mfaExpiresAt: '2026-04-25T00:30:00.000Z',
+    mfaMethod: 'TOTP',
+  }, {
+    headers: {'idempotency-key': `test-create-authorization-session-${runId}`},
+  })
+  assert.equal(authorizationSessionCreate.response.status, 201)
+  assert.deepEqual(authorizationSessionCreate.payload.data.payload.data.activated_binding_ids, [ids.bindingId, ids.groupBindingId])
+  assert.equal(authorizationSessionCreate.payload.data.payload.data.session_token, undefined)
+  assert.equal(authorizationSessionCreate.payload.data.payload.data.session_token_masked, null)
 
   const allowByGroupProjectScope = await post('/internal/auth/check-permission', {
     userId: ids.userId,
@@ -1502,6 +1651,16 @@ test('iam workflow routes resolve permission by user binding instead of any role
   })
   assert.equal(sodRuleCreate.response.status, 201)
 
+  const invalidSodRuleCreate = await post('/api/v1/iam/sod-rules', {
+    sodRuleId: `sod-rule-invalid-${runId}`,
+    ruleName: `Phase4 Invalid SoD Rule ${runId}`,
+    conflictingRoleCodes: [`MISSING_ROLE_${runId.toUpperCase()}`],
+    scopeType: 'STORE',
+    isActive: true,
+  })
+  assert.equal(invalidSodRuleCreate.response.status, 400)
+  assert.equal(invalidSodRuleCreate.payload.code, 'SOD_RULE_CONFLICTS_REQUIRED')
+
   const sodConflictBinding = await post('/api/v1/user-role-bindings', {
     bindingId: `binding-phase4-sod-${runId}`,
     userId: ids.userId,
@@ -1544,6 +1703,25 @@ test('iam workflow routes resolve permission by user binding instead of any role
     headers: {'idempotency-key': `test-create-high-risk-policy-${runId}`},
   })
   assert.equal(highRiskPolicyCreate.response.status, 201)
+
+  const missingHighRiskPolicyCreate = await post('/api/v1/iam/high-risk-policies', {
+    policyId: `high-risk-policy-missing-${runId}`,
+    permissionCode: `missing:risk_${runId}`,
+    requireApproval: true,
+    isActive: true,
+  })
+  assert.equal(missingHighRiskPolicyCreate.response.status, 404)
+  assert.equal(missingHighRiskPolicyCreate.payload.code, 'HIGH_RISK_PERMISSION_NOT_FOUND')
+
+  const invalidHighRiskDurationCreate = await post('/api/v1/iam/high-risk-policies', {
+    policyId: `high-risk-policy-duration-${runId}`,
+    permissionCode: ids.highRiskPermissionCode,
+    requireApproval: true,
+    maxDurationDays: 0,
+    isActive: true,
+  })
+  assert.equal(invalidHighRiskDurationCreate.response.status, 400)
+  assert.equal(invalidHighRiskDurationCreate.payload.code, 'INVALID_HIGH_RISK_DURATION')
 
   const highRiskWithoutApproval = await post('/api/v1/user-role-bindings', {
     bindingId: `binding-phase4-risk-no-approval-${runId}`,
@@ -1592,18 +1770,6 @@ test('iam workflow routes resolve permission by user binding instead of any role
   })
   assert.equal(userActivate.response.status, 200)
   assert.equal(userActivate.payload.data.status, 'ACTIVE')
-
-  const roleSuspend = await post(`/api/v1/roles/${ids.roleId}/suspend`, {}, {
-    headers: {'idempotency-key': `test-suspend-role-${runId}`},
-  })
-  assert.equal(roleSuspend.response.status, 200)
-  assert.equal(roleSuspend.payload.data.status, 'SUSPENDED')
-
-  const roleActivate = await post(`/api/v1/roles/${ids.roleId}/activate`, {}, {
-    headers: {'idempotency-key': `test-activate-role-${runId}`},
-  })
-  assert.equal(roleActivate.response.status, 200)
-  assert.equal(roleActivate.payload.data.status, 'ACTIVE')
 
   const bindingRevoke = await post(`/api/v1/user-role-bindings/${ids.bindingId}/revoke`, {
     reason: 'contract regression revoke',
@@ -1670,6 +1836,37 @@ test('iam workflow routes resolve permission by user binding instead of any role
     && item.action === 'REVOKE_USER_ROLE_BINDING'
     && item.requestId === `test-auth-revoke-${runId}`
   ))
+
+  const roleDeprecate = await post(`/api/v1/roles/${ids.roleId}/deprecate`, {}, {
+    headers: {'idempotency-key': `test-deprecate-role-${runId}`},
+  })
+  assert.equal(roleDeprecate.response.status, 200)
+  assert.equal(roleDeprecate.payload.data.status, 'DEPRECATED')
+
+  const roleActivate = await post(`/api/v1/roles/${ids.roleId}/activate`, {}, {
+    headers: {'idempotency-key': `test-activate-role-${runId}`},
+  })
+  assert.equal(roleActivate.response.status, 409)
+  assert.equal(roleActivate.payload.code, 'ROLE_DEPRECATED_TERMINAL')
+
+  const deletedUser = await patchEntity('user', ids.userId, {
+    title: `Phase4 User ${runId}`,
+    status: 'DELETED',
+    data: {
+      ...userActivate.payload.data.payload.data,
+      status: 'DELETED',
+    },
+  }, {
+    headers: {'idempotency-key': `test-delete-user-${runId}`},
+  })
+  assert.equal(deletedUser.response.status, 200)
+  assert.equal(deletedUser.payload.data.status, 'DELETED')
+
+  const deletedUserReactivate = await post(`/api/v1/users/${ids.userId}/activate`, {}, {
+    headers: {'idempotency-key': `test-reactivate-deleted-user-${runId}`},
+  })
+  assert.equal(deletedUserReactivate.response.status, 409)
+  assert.equal(deletedUserReactivate.payload.code, 'USER_DELETED_TERMINAL')
 
   const businessEvents = await get('/api/v1/diagnostics/events?page=1&size=200')
   assert.ok(businessEvents.data.some(item => item.eventType === 'UserRoleBindingRevoked'))
@@ -2506,8 +2703,8 @@ test('non-default platform productized master-data keeps platform ownership and 
     headers: {'idempotency-key': `test-phase8-platform-${runId}`},
   })
   assert.equal(platformCreate.response.status, 201)
-  assert.ok(platformCreate.payload.data.payload.data.metadata_catalog.price_types.some(item => item.value === 'FIXED'))
-  assert.ok(platformCreate.payload.data.payload.data.metadata_catalog.channel_types.some(item => item.value === 'POS'))
+  assert.ok(platformCreate.payload.data.payload.data.metadata_catalog.regions.every(item => item.owner_scope === 'PLATFORM'))
+  assert.ok(platformCreate.payload.data.payload.data.metadata_catalog.project_business_modes.some(item => item.value === 'SHOPPING_MALL'))
 
   const regionCreate = await post('/api/v1/org/regions', {
     regionId,
@@ -2553,6 +2750,36 @@ test('non-default platform productized master-data keeps platform ownership and 
   })
   assert.equal(brandCreate.response.status, 201)
 
+  const brandPatch = await patchEntity('brand', brandId, {
+    title: brandCreate.payload.data.title,
+    status: brandCreate.payload.data.status,
+    expectedRevision: brandCreate.payload.data.sourceRevision,
+    data: {
+      ...brandCreate.payload.data.payload.data,
+      metadata_catalog: {
+        product_types: [{value: 'SEASONAL_SET', label: '季节限定套餐'}],
+        production_categories: [{value: 'TEA_BAR', label: '茶饮吧台'}],
+      },
+    },
+  })
+  assert.equal(brandPatch.response.status, 200)
+  assert.equal(brandPatch.payload.data.payload.data.metadata_catalog.product_types[0].owner_scope, 'BRAND')
+  assert.equal(brandPatch.payload.data.payload.data.metadata_catalog.product_types[0].owner_id, brandId)
+
+  const invalidBrandScopedProduct = await post('/api/v1/products', {
+    productId: `product-phase8-invalid-brand-dict-${runId}`,
+    productCode: `PRODUCT_PHASE8_INVALID_BRAND_DICT_${runId.toUpperCase()}`,
+    productName: `Phase8 Invalid Brand Dictionary Product ${runId}`,
+    ownershipScope: 'BRAND',
+    brandId,
+    productType: `NOT_IN_BRAND_DICT_${runId.toUpperCase()}`,
+    basePrice: 12,
+  })
+  assert.equal(invalidBrandScopedProduct.response.status, 400)
+  assert.equal(invalidBrandScopedProduct.payload.code, 'CATALOG_VALUE_NOT_DEFINED')
+  assert.equal(invalidBrandScopedProduct.payload.error.details.ownerEntityType, 'brand')
+  assert.equal(invalidBrandScopedProduct.payload.error.details.ownerId, brandId)
+
   const entityCreate = await post('/api/v1/org/legal-entities', {
     entityId,
     entityCode: `ENTITY_PHASE8_${runId.toUpperCase()}`,
@@ -2571,6 +2798,39 @@ test('non-default platform productized master-data keeps platform ownership and 
   })
   assert.equal(storeCreate.response.status, 201)
   assert.equal(storeCreate.payload.data.payload.data.platform_id, platformId)
+
+  const storePatch = await patchEntity('store', storeId, {
+    title: storeCreate.payload.data.title,
+    status: storeCreate.payload.data.status,
+    expectedRevision: storeCreate.payload.data.sourceRevision,
+    data: {
+      ...storeCreate.payload.data.payload.data,
+      metadata_catalog: {
+        table_areas: [{value: 'ROOFTOP', label: '屋顶花园'}],
+        channel_types: [{value: 'COMMUNITY_GROUP', label: '社群团购'}],
+        price_types: [{value: 'STORE_MEMBER_PRICE', label: '门店会员价'}],
+        discount_types: [{value: 'STORE_ONLY', label: '门店专享'}],
+        member_tiers: [{value: 'DIAMOND', label: '钻石会员'}],
+        availability_rule_types: [{value: 'WEATHER', label: '天气规则'}],
+      },
+    },
+  })
+  assert.equal(storePatch.response.status, 200)
+  assert.equal(storePatch.payload.data.payload.data.metadata_catalog.table_areas[0].owner_scope, 'STORE')
+  assert.equal(storePatch.payload.data.payload.data.metadata_catalog.table_areas[0].owner_id, storeId)
+
+  const invalidStoreScopedTable = await post(`/api/v1/org/stores/${storeId}/tables`, {
+    tableId: `table-phase8-invalid-store-dict-${runId}`,
+    tableNo: `P8-BAD-${runId}`,
+    tableName: `Phase8 Invalid Store Dictionary Table ${runId}`,
+    area: `NOT_IN_STORE_DICT_${runId.toUpperCase()}`,
+    tableType: 'HALL',
+    capacity: 4,
+  })
+  assert.equal(invalidStoreScopedTable.response.status, 400)
+  assert.equal(invalidStoreScopedTable.payload.code, 'CATALOG_VALUE_NOT_DEFINED')
+  assert.equal(invalidStoreScopedTable.payload.error.details.ownerEntityType, 'store')
+  assert.equal(invalidStoreScopedTable.payload.error.details.ownerId, storeId)
 
   const contractCreate = await post('/api/v1/org/contracts', {
     contractId,
@@ -2593,16 +2853,33 @@ test('non-default platform productized master-data keeps platform ownership and 
   const contractActivate = await post(`/api/v1/org/contracts/${contractId}/activate`, {})
   assert.equal(contractActivate.response.status, 200)
 
+  const inlineDictionaryStoreId = `store-phase8-inline-dict-${runId}`
+  const inlineDictionaryStore = await post('/api/v1/org/stores', {
+    storeId: inlineDictionaryStoreId,
+    storeCode: `STORE_PHASE8_INLINE_DICT_${runId.toUpperCase()}`,
+    storeName: `Phase8 Inline Dictionary Store ${runId}`,
+    unitCode: `P8-INLINE-${runId.slice(-4)}`,
+    projectId,
+    businessScenarios: ['LATE_NIGHT'],
+    metadataCatalog: {
+      store_business_scenarios: [{value: 'LATE_NIGHT', label: '夜间档'}],
+    },
+  })
+  assert.equal(inlineDictionaryStore.response.status, 201)
+  assert.equal(inlineDictionaryStore.payload.data.payload.data.metadata_catalog.store_business_scenarios[0].owner_scope, 'STORE')
+  assert.equal(inlineDictionaryStore.payload.data.payload.data.metadata_catalog.store_business_scenarios[0].owner_id, inlineDictionaryStoreId)
+
   const productCreate = await post('/api/v1/products', {
     productId,
     productCode: `PRODUCT_PHASE8_${runId.toUpperCase()}`,
     productName: `Phase8 Product ${runId}`,
     ownershipScope: 'BRAND',
     brandId,
-    productType: 'SINGLE',
+    productType: 'SEASONAL_SET',
     basePrice: 38,
   })
   assert.equal(productCreate.response.status, 201)
+  assert.equal(productCreate.payload.data.payload.data.product_type, 'SEASONAL_SET')
   assert.equal(productCreate.payload.data.payload.data.platform_id, platformId)
   assertProjectionPlatform({
     sourceEventId: productCreate.payload.data.payload.source_event_id,
@@ -2688,11 +2965,14 @@ test('non-default platform productized master-data keeps platform ownership and 
     ruleCode: priceRuleCode,
     productId,
     storeId,
-    priceType: 'STANDARD',
-    channelType: 'POS',
+    priceType: 'STORE_MEMBER_PRICE',
+    channelType: 'COMMUNITY_GROUP',
+    discountType: 'STORE_ONLY',
     priceDelta: 2,
   })
   assert.equal(priceRuleCreate.response.status, 201)
+  assert.equal(priceRuleCreate.payload.data.payload.data.price_type, 'STORE_MEMBER_PRICE')
+  assert.equal(priceRuleCreate.payload.data.payload.data.channel_type, 'COMMUNITY_GROUP')
   assert.equal(priceRuleCreate.payload.data.payload.data.platform_id, platformId)
   assertProjectionPlatform({
     sourceEventId: priceRuleCreate.payload.data.payload.source_event_id,
@@ -2704,8 +2984,9 @@ test('non-default platform productized master-data keeps platform ownership and 
     ruleCode: `PRICE_PHASE8_CROSS_${runId.toUpperCase()}`,
     productId: 'product-salmon-bowl',
     storeId,
-    priceType: 'STANDARD',
-    channelType: 'POS',
+    priceType: 'STORE_MEMBER_PRICE',
+    channelType: 'COMMUNITY_GROUP',
+    discountType: 'STORE_ONLY',
     priceDelta: 1,
   })
   assert.equal(crossPlatformPriceRule.response.status, 409)

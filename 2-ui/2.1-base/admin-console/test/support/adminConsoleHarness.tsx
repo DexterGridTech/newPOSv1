@@ -12,6 +12,7 @@ import {
 } from '../../../input-runtime/src'
 import type {PlatformPorts} from '@next/kernel-base-platform-ports'
 import type {KernelRuntimeModuleV2} from '@next/kernel-base-runtime-shell-v2'
+import type {CreateTopologyRuntimeModuleV3Input} from '@next/kernel-base-topology-runtime-v3'
 import {createMemoryStorage} from '../../../../../1-kernel/test-support/storageHarness'
 import type {CreateAdminConsoleModuleInput} from '../../src'
 import {createModule} from '../../src'
@@ -25,7 +26,7 @@ export const createAdminConsoleHarness = async (
     input: CreateAdminConsoleModuleInput & {
         platformPorts?: Partial<PlatformPorts>
         modules?: readonly KernelRuntimeModuleV2[]
-        topology?: Parameters<typeof createRuntimeReactHarness>[0]['topology']
+        topology?: CreateTopologyRuntimeModuleV3Input
         displayContext?: {
             displayIndex?: number
             displayCount?: number

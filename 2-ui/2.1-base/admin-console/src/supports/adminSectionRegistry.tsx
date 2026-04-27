@@ -10,6 +10,7 @@ import {AdminDeviceSection} from '../ui/screens/AdminDeviceSection'
 import {AdminLogsSection} from '../ui/screens/AdminLogsSection'
 import {AdminTerminalSection} from '../ui/screens/AdminTerminalSection'
 import {AdminTopologySection} from '../ui/screens/AdminTopologySection'
+import {AdminVersionSection} from '../ui/screens/AdminVersionSection'
 import {getAdminAdapterDiagnosticsRegistry} from './adapterDiagnosticsRuntime'
 
 const createDefaultAdminConsoleSections = (): readonly AdminConsoleSection[] => ([
@@ -39,6 +40,14 @@ const createDefaultAdminConsoleSections = (): readonly AdminConsoleSection[] => 
         title: '实例与拓扑',
         render: ({runtime, store, hostTools}) => (
             <AdminTopologySection runtime={runtime} store={store} host={hostTools.topology} />
+        ),
+    },
+    {
+        tab: 'version',
+        group: 'runtime',
+        title: '版本管理',
+        render: ({store, hostTools}) => (
+            <AdminVersionSection store={store} host={hostTools.version} />
         ),
     },
     {

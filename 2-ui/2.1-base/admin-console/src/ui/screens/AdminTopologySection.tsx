@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react'
+import React, {useCallback, useMemo, useState} from 'react'
 import {Text, View} from 'react-native'
 import QRCode from 'react-native-qrcode-svg'
 import type {EnhancedStore} from '@reduxjs/toolkit'
@@ -37,6 +37,12 @@ import {
     AdminSummaryCard,
     AdminSummaryGrid,
 } from './AdminSectionPrimitives'
+import {
+    shallowEqualAdminSnapshot,
+    useAdminMountedRef,
+    useAdminRefreshWhileScreenActive,
+    useAdminStoreSnapshot,
+} from './useAdminScreenActivity'
 import type {AdminTopologyHost, AdminTopologySharePayload} from '../../types'
 
 export interface AdminTopologySectionProps {
@@ -50,6 +56,7 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
     store,
     host,
 }) => {
+    const mountedRef = useAdminMountedRef()
     const topologyHost = host
     const reasonMessages: Record<string, string> = {
         'managed-secondary': '当前是托管副屏，不能手工切换拓扑角色或显示模式。',
@@ -60,7 +67,7 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
         'master-primary-enable-slave': '只有主机主屏可以开启副机接入服务。',
         'standalone-slave-only-display-mode': '只有独立副机可以手工切换主屏/副屏显示模式。',
     }
-    const readSnapshot = () => {
+    const readSnapshot = useCallback(() => {
         const state = store.getState()
         const activationStatus = selectTcpIdentitySnapshot(state).activationStatus
         return {
@@ -80,8 +87,12 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
             enableSlaveEligibility: selectTopologyRuntimeV3EnableSlaveEligibility(state),
             displayModeEligibility: selectTopologyRuntimeV3DisplayModeEligibility(state),
         }
-    }
-    const [snapshot, setSnapshot] = useState(readSnapshot)
+    }, [store])
+    const snapshot = useAdminStoreSnapshot(
+        store.subscribe,
+        readSnapshot,
+        shallowEqualAdminSnapshot,
+    )
     const [hostStatus, setHostStatus] = useState<Record<string, unknown> | null>(null)
     const [hostDiagnostics, setHostDiagnostics] = useState<Record<string, unknown> | null>(null)
     const [sharePayload, setSharePayload] = useState<AdminTopologySharePayload | null>(null)
@@ -109,6 +120,18 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
     const hostRunning = (hostStatus?.running === true)
         || hostStatus?.status === 'RUNNING'
         || hostStatus?.serverState === 'RUNNING'
+    const connectionStatus = connection?.serverConnectionStatus ?? 'DISCONNECTED'
+    const canSwitchToMaster = instanceMode !== 'MASTER' && displayModeEligibility.allowed
+    const canSwitchToSlave = instanceMode !== 'SLAVE' && switchToSlaveEligibility.allowed
+    const canEnableSlave = !enableSlave && enableSlaveEligibility.allowed
+    const canDisableSlave = enableSlave && enableSlaveEligibility.allowed
+    const canStartConnection = connectionStatus === 'DISCONNECTED' && (
+        instanceMode === 'MASTER'
+        || Boolean(masterLocator?.serverAddress?.length)
+    )
+    const canRestartConnection = connectionStatus !== 'DISCONNECTED'
+    const canStopConnection = connectionStatus !== 'DISCONNECTED'
+    const canClearMaster = Boolean(masterLocator)
     const hostAddressInfo = hostStatus?.addressInfo && typeof hostStatus.addressInfo === 'object'
         ? hostStatus.addressInfo as Record<string, unknown>
         : {}
@@ -123,8 +146,15 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
                 : !displayModeEligibility.allowed
                     ? displayModeEligibility.reasonCode
                     : tcpActivationEligibility.reasonCode
+    const canReadTopologyHostSnapshot = useMemo(
+        () => Boolean(topologyHost?.getTopologyHostStatus || topologyHost?.getTopologyHostDiagnostics),
+        [topologyHost],
+    )
 
-    const refreshHostStatus = async () => {
+    const refreshHostStatus = useCallback(async () => {
+        if (!canReadTopologyHostSnapshot) {
+            return
+        }
         const result = await runtime.dispatchCommand(createCommand(
             adminConsoleCommandDefinitions.refreshTopologyHostStatus,
             {},
@@ -133,9 +163,11 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
             topologyHostStatus?: Record<string, unknown> | null
             topologyHostDiagnostics?: Record<string, unknown> | null
         } | undefined
-        setHostStatus(payload?.topologyHostStatus ?? null)
-        setHostDiagnostics(payload?.topologyHostDiagnostics ?? null)
-    }
+        if (mountedRef.current) {
+            setHostStatus(payload?.topologyHostStatus ?? null)
+            setHostDiagnostics(payload?.topologyHostDiagnostics ?? null)
+        }
+    }, [canReadTopologyHostSnapshot, mountedRef, runtime])
 
     const runHostAction = async (
         action: () => Promise<void> | void,
@@ -143,22 +175,25 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
     ) => {
         try {
             await action()
-            setMessage(successMessage)
+            if (mountedRef.current) {
+                setMessage(successMessage)
+            }
             await refreshHostStatus()
         } catch (error) {
-            setMessage(error instanceof Error ? error.message : '拓扑操作失败')
+            if (mountedRef.current) {
+                setMessage(error instanceof Error ? error.message : '拓扑操作失败')
+            }
         }
     }
 
-    useEffect(() => {
-        const updateSnapshot = () => setSnapshot(readSnapshot())
-        updateSnapshot()
-        return store.subscribe(updateSnapshot)
-    }, [store])
-
-    useEffect(() => {
-        void refreshHostStatus()
-    }, [topologyHost])
+    useAdminRefreshWhileScreenActive(
+        () => {
+            if (canReadTopologyHostSnapshot) {
+                void refreshHostStatus()
+            }
+        },
+        canReadTopologyHostSnapshot ? 'host-snapshot-ready' : 'host-snapshot-missing',
+    )
 
     const handleScanMaster = async () => {
         if (scanRunning) {
@@ -187,17 +222,23 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
             if (result.status !== 'COMPLETED' || !actorResult?.sharePayload) {
                 throw new Error(result.actorResults[0]?.error?.message ?? '扫码任务执行失败')
             }
-            setSharePayload(actorResult.sharePayload)
-            setScanStatusLabel('已完成')
-            setScanDetail(result.requestId)
-            setMessage('扫码成功，已导入主机信息')
+            if (mountedRef.current) {
+                setSharePayload(actorResult.sharePayload)
+                setScanStatusLabel('已完成')
+                setScanDetail(result.requestId)
+                setMessage('扫码成功，已导入主机信息')
+            }
             await refreshHostStatus()
         } catch (error) {
-            setScanStatusLabel('失败')
-            setScanDetail(error instanceof Error ? error.message : '扫码结果处理失败')
-            setMessage(error instanceof Error ? error.message : '扫码结果处理失败')
+            if (mountedRef.current) {
+                setScanStatusLabel('失败')
+                setScanDetail(error instanceof Error ? error.message : '扫码结果处理失败')
+                setMessage(error instanceof Error ? error.message : '扫码结果处理失败')
+            }
         } finally {
-            setScanRunning(false)
+            if (mountedRef.current) {
+                setScanRunning(false)
+            }
         }
     }
 
@@ -360,6 +401,7 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
                     <AdminActionButton
                         testID="ui-base-admin-section:topology:set-master"
                         label="切换为主机"
+                        disabled={!canSwitchToMaster}
                         onPress={() => void runtime.dispatchCommand(createCommand(
                             topologyRuntimeV3CommandDefinitions.setInstanceMode,
                             {instanceMode: 'MASTER'},
@@ -368,7 +410,7 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
                     <AdminActionButton
                         testID="ui-base-admin-section:topology:set-slave"
                         label="切换为副机"
-                        disabled={!switchToSlaveEligibility.allowed}
+                        disabled={!canSwitchToSlave}
                         onPress={() => void runtime.dispatchCommand(createCommand(
                             topologyRuntimeV3CommandDefinitions.setInstanceMode,
                             {instanceMode: 'SLAVE'},
@@ -377,7 +419,7 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
                     <AdminActionButton
                         testID="ui-base-admin-section:topology:enable-slave"
                         label="启用副机"
-                        disabled={!enableSlaveEligibility.allowed}
+                        disabled={!canEnableSlave}
                         onPress={() => void runtime.dispatchCommand(createCommand(
                             topologyRuntimeV3CommandDefinitions.setEnableSlave,
                             {enableSlave: true},
@@ -386,7 +428,7 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
                     <AdminActionButton
                         testID="ui-base-admin-section:topology:disable-slave"
                         label="停用副机"
-                        disabled={!enableSlaveEligibility.allowed}
+                        disabled={!canDisableSlave}
                         onPress={() => void runtime.dispatchCommand(createCommand(
                             topologyRuntimeV3CommandDefinitions.setEnableSlave,
                             {enableSlave: false},
@@ -396,6 +438,7 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
                         testID="ui-base-admin-section:topology:start"
                         label="启动连接"
                         tone="primary"
+                        disabled={!canStartConnection}
                         onPress={() => void runtime.dispatchCommand(createCommand(
                             topologyRuntimeV3CommandDefinitions.startTopologyConnection,
                             {},
@@ -404,6 +447,7 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
                     <AdminActionButton
                         testID="ui-base-admin-section:topology:restart"
                         label="重启连接"
+                        disabled={!canRestartConnection}
                         onPress={() => void runtime.dispatchCommand(createCommand(
                             topologyRuntimeV3CommandDefinitions.restartTopologyConnection,
                             {},
@@ -412,6 +456,7 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
                     <AdminActionButton
                         testID="ui-base-admin-section:topology:stop"
                         label="断开连接"
+                        disabled={!canStopConnection}
                         onPress={() => void runtime.dispatchCommand(createCommand(
                             topologyRuntimeV3CommandDefinitions.stopTopologyConnection,
                             {},
@@ -421,6 +466,7 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
                         testID="ui-base-admin-section:topology:clear-master"
                         label="清空主机"
                         tone="danger"
+                        disabled={!canClearMaster}
                         onPress={() => void runtime.dispatchCommand(createCommand(
                             adminConsoleCommandDefinitions.clearTopologyMasterLocator,
                             {},
@@ -476,7 +522,9 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
                                 const payload = (result.actorResults[0]?.result as {
                                     sharePayload?: AdminTopologySharePayload
                                 } | undefined)?.sharePayload ?? null
-                                setSharePayload(payload)
+                                if (mountedRef.current) {
+                                    setSharePayload(payload)
+                                }
                                 if (!payload) {
                                     throw new Error('当前 host 未提供可分享的配对信息')
                                 }

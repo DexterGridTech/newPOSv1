@@ -1,5 +1,9 @@
 import {createAutomationRuntime} from '../application/createAutomationRuntime'
 import {createAutomationTrace} from '../foundations/automationTrace'
+import {createActionExecutor} from '../foundations/actionExecutor'
+import {createQueryEngine} from '../foundations/queryEngine'
+import {createSemanticRegistry} from '../foundations/semanticRegistry'
+import type {AutomationNodeAction, AutomationNodeSnapshot} from '../types/selectors'
 import type {
     AutomationMethod,
     AutomationTarget,
@@ -23,15 +27,23 @@ type DomLikeElement = {
     isConnected?: boolean
     tagName?: string
     nodeName?: string
+    style?: Record<string, string | number>
     click?: () => void
     focus?: () => void
+    remove?: () => void
+    setAttribute?: (name: string, value: string) => void
+    addEventListener?: (type: string, listener: (event: unknown) => void) => void
     dispatchEvent?: (event: unknown) => boolean
     getAttribute?: (name: string) => string | null
+    dataset?: Record<string, string | undefined>
 }
 
 type DomLikeDocument = {
-    body?: unknown
+    body?: {
+        appendChild?: (element: unknown) => unknown
+    }
     activeElement?: unknown
+    createElement?: (tagName: string) => unknown
     querySelector?: (selector: string) => unknown
     querySelectorAll?: (selector: string) => ArrayLike<unknown>
 }
@@ -55,6 +67,7 @@ type BrowserSupportGlobals = typeof globalThis & {
     CSS?: {
         escape?: (value: string) => string
     }
+    setTimeout?: (handler: () => void, timeout?: number) => unknown
 }
 
 interface BrowserJsonRpcRequest {
@@ -81,6 +94,50 @@ interface BrowserAutomationNodeSnapshot {
     readonly availableActions: readonly string[]
 }
 
+export interface BrowserAutomationNodeRegistration {
+    readonly target: BrowserAutomationTarget
+    readonly runtimeId: string
+    readonly screenKey: string
+    readonly mountId: string
+    readonly nodeId: string
+    readonly testID?: string
+    readonly semanticId?: string
+    readonly role?: string
+    readonly text?: string
+    readonly value?: unknown
+    readonly visible: boolean
+    readonly enabled: boolean
+    readonly focused?: boolean
+    readonly bounds?: {
+        readonly x: number
+        readonly y: number
+        readonly width: number
+        readonly height: number
+    }
+    readonly availableActions: readonly string[]
+    readonly persistent?: boolean
+    readonly onAutomationAction?: (input: {
+        readonly target: BrowserAutomationTarget
+        readonly nodeId: string
+        readonly action: string
+        readonly value?: unknown
+    }) => Promise<unknown> | unknown
+}
+
+export interface BrowserAutomationBridge {
+    registerNode(node: BrowserAutomationNodeRegistration): () => void
+    updateNode(
+        target: BrowserAutomationTarget,
+        nodeId: string,
+        patch: Partial<BrowserAutomationNodeRegistration>,
+    ): void
+    clearVisibleContexts(
+        target: BrowserAutomationTarget,
+        visibleContextKeys: readonly string[],
+    ): void
+    clearTarget(target: BrowserAutomationTarget): void
+}
+
 type BrowserGlobalScope = typeof globalThis & {
     [AUTOMATION_HOST_GLOBAL_KEY]?: BrowserAutomationGlobal
 }
@@ -92,6 +149,7 @@ export interface BrowserAutomationGlobal {
 }
 
 export interface BrowserAutomationHost extends BrowserAutomationGlobal {
+    readonly automationBridge: BrowserAutomationBridge
     start(): void
     stop(): void
 }
@@ -107,6 +165,18 @@ export interface CreateBrowserAutomationHostOptions {
 }
 
 const browserGlobals = globalThis as BrowserSupportGlobals
+
+const toAutomationNodeAction = (action: string): AutomationNodeAction =>
+    action as AutomationNodeAction
+
+const toAutomationNodeSnapshot = (
+    node: BrowserAutomationNodeRegistration,
+): AutomationNodeSnapshot => ({
+    ...node,
+    testID: node.testID,
+    semanticId: node.semanticId,
+    availableActions: node.availableActions.map(toAutomationNodeAction),
+})
 
 const asDomElement = (value: unknown): DomLikeElement | null =>
     value != null && typeof value === 'object'
@@ -350,6 +420,9 @@ export const createBrowserAutomationHost = (
     const target = options.target ?? 'primary'
     const runtimeId = options.runtimeId ?? `browser-${target}`
     const quietWindowMs = options.quietWindowMs ?? 120
+    const semanticRegistry = createSemanticRegistry()
+    const semanticHandlers = new Map<string, BrowserAutomationNodeRegistration['onAutomationAction']>()
+    const semanticDomProxies = new Map<string, DomLikeElement>()
     const automationRuntime = createAutomationRuntime({
         buildProfile,
         scriptExecutionAvailable: options.scriptExecutionAvailable ?? true,
@@ -359,6 +432,19 @@ export const createBrowserAutomationHost = (
         runtimeId,
     })
     const trace = createAutomationTrace()
+    const queryEngine = createQueryEngine({registry: semanticRegistry, trace})
+    const actionExecutor = createActionExecutor({
+        registry: semanticRegistry,
+        trace,
+        async performNodeAction(input) {
+            return await semanticHandlers.get(input.nodeId)?.({
+                target: input.target,
+                nodeId: input.nodeId,
+                action: input.action,
+                value: input.value,
+            })
+        },
+    })
     const globalScope = globalThis as BrowserGlobalScope
     let started = false
     let mutationObserver: DomLikeMutationObserver | undefined
@@ -396,8 +482,115 @@ export const createBrowserAutomationHost = (
         mutationObserver = undefined
     }
 
-    const findNodeSnapshot = (nodeId: string): BrowserAutomationNodeSnapshot | null => {
-        const element = queryByTestId(nodeId)
+    const removeSemanticDomProxy = (nodeId: string) => {
+        semanticDomProxies.get(nodeId)?.remove?.()
+        semanticDomProxies.delete(nodeId)
+    }
+
+    const installSemanticDomProxy = (
+        node: BrowserAutomationNodeRegistration,
+    ) => {
+        const document = getDocument()
+        if (
+            !document?.body?.appendChild
+            || !document.createElement
+            || queryByTestId(node.nodeId)
+            || !node.availableActions.includes('press')
+        ) {
+            return
+        }
+        removeSemanticDomProxy(node.nodeId)
+        const proxy = asDomElement(document.createElement('button'))
+        if (!proxy?.setAttribute) {
+            return
+        }
+        proxy.setAttribute('data-testid', node.nodeId)
+        proxy.setAttribute('aria-label', node.text ?? node.nodeId)
+        proxy.setAttribute('type', 'button')
+        if (proxy.dataset) {
+            proxy.dataset.automationProxy = 'true'
+        }
+        if (proxy.style) {
+            proxy.style.position = 'fixed'
+            proxy.style.left = 0
+            proxy.style.top = 0
+            proxy.style.width = 1
+            proxy.style.height = 1
+            proxy.style.opacity = 0
+            proxy.style.pointerEvents = 'auto'
+        }
+        proxy.addEventListener?.('click', event => {
+            ;(event as {preventDefault?: () => void} | undefined)?.preventDefault?.()
+            const action = () => {
+                void semanticHandlers.get(node.nodeId)?.({
+                    target: node.target,
+                    nodeId: node.nodeId,
+                    action: 'press',
+                })
+            }
+            if (typeof browserGlobals.setTimeout === 'function') {
+                browserGlobals.setTimeout(action, 0)
+            } else {
+                action()
+            }
+            markActivity()
+        })
+        document.body.appendChild(proxy)
+        semanticDomProxies.set(node.nodeId, proxy)
+    }
+
+    const bridge: BrowserAutomationBridge = {
+        registerNode(node) {
+            const unregister = semanticRegistry.registerNode(toAutomationNodeSnapshot(node))
+            if (node.onAutomationAction) {
+                semanticHandlers.set(node.nodeId, node.onAutomationAction)
+            }
+            installSemanticDomProxy(node)
+            return () => {
+                semanticHandlers.delete(node.nodeId)
+                removeSemanticDomProxy(node.nodeId)
+                unregister()
+            }
+        },
+        updateNode(nodeTarget, nodeId, patch) {
+            semanticRegistry.updateNode(nodeTarget, nodeId, {
+                ...patch,
+                availableActions: patch.availableActions?.map(toAutomationNodeAction),
+            })
+            if (patch.onAutomationAction) {
+                semanticHandlers.set(nodeId, patch.onAutomationAction)
+            }
+            const node = semanticRegistry.getNode(nodeTarget, nodeId)
+            if (node) {
+                installSemanticDomProxy({
+                    ...node,
+                    availableActions: node.availableActions,
+                    onAutomationAction: semanticHandlers.get(nodeId),
+                })
+            }
+        },
+        clearVisibleContexts(nodeTarget, visibleContextKeys) {
+            semanticRegistry.clearScreenContext(nodeTarget, visibleContextKeys)
+        },
+        clearTarget(nodeTarget) {
+            semanticRegistry.clearTarget(nodeTarget)
+            for (const [nodeId] of semanticHandlers.entries()) {
+                if (!semanticRegistry.getNode(nodeTarget, nodeId)) {
+                    semanticHandlers.delete(nodeId)
+                    removeSemanticDomProxy(nodeId)
+                }
+            }
+        },
+    }
+
+    const findNodeSnapshot = (nodeId: string): BrowserAutomationNodeSnapshot | AutomationNodeSnapshot | null => {
+        const semanticNode = semanticRegistry.getNode(target, nodeId)
+        const domElement = queryByTestId(nodeId)
+        const isSemanticProxy = domElement?.dataset?.automationProxy === 'true'
+        if (semanticNode && !semanticNode.stale) {
+            return semanticNode
+        }
+        const element = isSemanticProxy ? null : domElement
         if (!element) {
             return null
         }
@@ -409,15 +602,25 @@ export const createBrowserAutomationHost = (
         })
     }
 
-    const queryNodes = (params: Record<string, unknown>): readonly BrowserAutomationNodeSnapshot[] => {
+    const queryNodes = (params: Record<string, unknown>): readonly (BrowserAutomationNodeSnapshot | AutomationNodeSnapshot)[] => {
         const testID = typeof params.testID === 'string' ? params.testID : undefined
         const semanticId = typeof params.semanticId === 'string' ? params.semanticId : undefined
         const role = typeof params.role === 'string' ? params.role : undefined
         const text = typeof params.text === 'string' ? params.text : undefined
+        const screen = typeof params.screen === 'string' ? params.screen : undefined
+        const semanticNodes = queryEngine.queryNodes({
+            target,
+            testID,
+            semanticId,
+            role,
+            text,
+            screen,
+        })
         const candidates = testID
             ? [queryByTestId(testID)].filter((value): value is DomLikeElement => value != null)
             : queryAllTestIdNodes()
-        return candidates
+        const domNodes = candidates
+            .filter(element => element.dataset?.automationProxy !== 'true')
             .map(element => toNodeSnapshot({
                 target,
                 runtimeId,
@@ -436,6 +639,11 @@ export const createBrowserAutomationHost = (
                 }
                 return true
             })
+        const semanticKeys = new Set(semanticNodes.map(node => node.nodeId))
+        return [
+            ...semanticNodes,
+            ...domNodes.filter(node => !semanticKeys.has(node.nodeId)),
+        ]
     }
 
     const executeBrowserScript = async (
@@ -512,6 +720,32 @@ export const createBrowserAutomationHost = (
                 case 'ui.clearValue':
                 case 'ui.submit': {
                     const nodeId = String(params.nodeId ?? '')
+                    const semanticNode = semanticRegistry.getNode(target, nodeId)
+                    if (semanticNode && !semanticNode.stale) {
+                        const action = request.method === 'ui.setValue'
+                            ? 'changeText'
+                            : request.method === 'ui.clearValue'
+                                ? 'clear'
+                                : request.method === 'ui.submit'
+                                    ? 'submit'
+                                    : request.method === 'ui.revealNode' || request.method === 'ui.scroll'
+                                        ? 'scroll'
+                                        : String(params.action ?? 'press')
+                        const result = await actionExecutor.performAction({
+                            target,
+                            nodeId,
+                            action: toAutomationNodeAction(action),
+                            value: params.value,
+                        })
+                        markActivity()
+                        trace.record({
+                            step: request.method,
+                            status: 'ok',
+                            input: params,
+                            output: result,
+                        })
+                        return toJsonRpcResult(request.id, result)
+                    }
                     const element = queryByTestId(nodeId)
                     if (!element) {
                         throw new Error(`NODE_NOT_FOUND:${nodeId}`)
@@ -642,6 +876,7 @@ export const createBrowserAutomationHost = (
         get started() {
             return started
         },
+        automationBridge: bridge,
         runtimeId,
         start() {
             if (started) {

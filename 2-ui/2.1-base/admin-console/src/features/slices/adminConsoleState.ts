@@ -4,20 +4,14 @@ import {adminConsoleStateKeys} from '../../foundations/stateKeys'
 import type {
     AdapterDiagnosticSummary,
     AdminConsoleState,
-    AdminConsoleTab,
 } from '../../types'
 
-const initialState: AdminConsoleState = {
-    selectedTab: 'terminal',
-}
+const initialState: AdminConsoleState = {}
 
 const slice = createSlice({
     name: adminConsoleStateKeys.console,
     initialState,
     reducers: {
-        setSelectedTab(state, action: PayloadAction<AdminConsoleTab>) {
-            state.selectedTab = action.payload
-        },
         setLatestAdapterSummary(state, action: PayloadAction<AdapterDiagnosticSummary | undefined>) {
             state.latestAdapterSummary = action.payload
         },
@@ -32,11 +26,6 @@ export const adminConsoleStateSliceDescriptor: StateRuntimeSliceDescriptor<Admin
     persistIntent: 'owner-only',
     syncIntent: 'isolated',
     persistence: [
-        {
-            kind: 'field',
-            stateKey: 'selectedTab',
-            flushMode: 'immediate',
-        },
         {
             kind: 'field',
             stateKey: 'latestAdapterSummary',

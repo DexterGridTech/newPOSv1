@@ -1,4 +1,4 @@
-import React, {useMemo, useRef, useState, useSyncExternalStore} from 'react'
+import React, {useCallback, useMemo, useRef, useState} from 'react'
 import type {EnhancedStore} from '@reduxjs/toolkit'
 import type {KernelRuntimeV2} from '@next/kernel-base-runtime-shell-v2'
 import {selectLatestAdapterSummary} from '../../selectors'
@@ -14,6 +14,7 @@ import {
     AdminSummaryCard,
     AdminSummaryGrid,
 } from './AdminSectionPrimitives'
+import {useAdminStoreSnapshot} from './useAdminScreenActivity'
 
 export interface AdapterDiagnosticsScreenProps {
     runtime: KernelRuntimeV2
@@ -32,10 +33,13 @@ export const AdapterDiagnosticsScreen: React.FC<AdapterDiagnosticsScreenProps> =
     const controller = useMemo(() => createAdapterDiagnosticsController({
         registry,
     }), [registry])
-    const latestSummary = useSyncExternalStore(
+    const readLatestSummary = useCallback(
+        () => selectLatestAdapterSummary(store.getState()),
+        [store],
+    )
+    const latestSummary = useAdminStoreSnapshot(
         store.subscribe,
-        () => selectLatestAdapterSummary(store.getState()),
-        () => selectLatestAdapterSummary(store.getState()),
+        readLatestSummary,
     )
 
     const handleRunAll = async () => {

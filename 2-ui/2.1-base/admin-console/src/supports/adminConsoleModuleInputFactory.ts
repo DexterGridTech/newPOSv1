@@ -14,6 +14,7 @@ export interface CreateAdminConsoleModuleInputFromHostInput {
     connector?: CreateAdminHostToolsInput['connector']
     connectorChannels?: readonly AdminConnectorChannelDefinition[]
     topology?: CreateAdminHostToolsInput['topology']
+    version?: CreateAdminHostToolsInput['version']
 }
 
 const createDefaultConnectorChannels = (): readonly AdminConnectorChannelDefinition[] => ([
@@ -46,6 +47,7 @@ export const createAdminConsoleModuleInputFromHost = (
         control: input.control,
         connector: input.connector,
         topology: input.topology,
+        version: input.version,
         connectorChannels: input.connector
             ? (input.connectorChannels ?? createDefaultConnectorChannels())
             : input.connectorChannels,

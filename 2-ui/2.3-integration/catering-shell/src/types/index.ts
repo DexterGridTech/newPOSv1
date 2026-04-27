@@ -8,4 +8,5 @@ export interface CateringSecondaryWelcomeScreenProps {
 
 export interface CateringRootScreenProps {
     deviceId?: string
+    virtualKeyboardBottomInset?: number
 }

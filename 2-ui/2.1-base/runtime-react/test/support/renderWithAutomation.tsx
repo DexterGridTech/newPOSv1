@@ -22,6 +22,7 @@ import {
 } from '../../src'
 
 type TestRendererNode = TestRenderer.ReactTestInstance
+type TestRendererTreeNode = NonNullable<ReturnType<TestRenderer.ReactTestRenderer['toTree']>>
 
 type SupportedMethod =
     | 'session.hello'
@@ -45,6 +46,9 @@ const isTestRendererNode = (value: unknown): value is TestRendererNode =>
 const isPrimitiveChild = (value: unknown): boolean =>
     typeof value === 'string' || typeof value === 'number'
 
+const isTreeNode = (value: unknown): value is TestRendererTreeNode =>
+    typeof value === 'object' && value != null && 'props' in value && 'rendered' in value
+
 const readNodeText = (node: TestRendererNode): string | undefined => {
     const chunks: string[] = []
     const visit = (child: unknown) => {
@@ -57,6 +61,26 @@ const readNodeText = (node: TestRendererNode): string | undefined => {
         }
     }
     node.children.forEach(visit)
+    const text = chunks.join('').trim()
+    return text.length > 0 ? text : undefined
+}
+
+const readTreeNodeText = (node: TestRendererTreeNode): string | undefined => {
+    const chunks: string[] = []
+    const visit = (value: unknown) => {
+        if (typeof value === 'string' || typeof value === 'number') {
+            chunks.push(String(value))
+            return
+        }
+        if (Array.isArray(value)) {
+            value.forEach(visit)
+            return
+        }
+        if (isTreeNode(value)) {
+            visit(value.rendered)
+        }
+    }
+    visit(node.rendered)
     const text = chunks.join('').trim()
     return text.length > 0 ? text : undefined
 }
@@ -120,6 +144,22 @@ const inferInteractionPriority = (props: Record<string, unknown>): number => {
         return 50
     }
     return 0
+}
+
+const isHiddenByStyle = (style: unknown): boolean => {
+    if (!style) {
+        return false
+    }
+    if (Array.isArray(style)) {
+        return style.some(isHiddenByStyle)
+    }
+    if (typeof style !== 'object') {
+        return false
+    }
+    const value = style as Record<string, unknown>
+    return value.display === 'none'
+        || value.opacity === 0
+        || value.height === 0
 }
 
 type AutomationPointer = {
@@ -303,6 +343,13 @@ export const renderWithAutomation = (
         runtimeId: runtime.runtimeId,
     })
 
+    const flushReactWork = async () => {
+        await act(async () => {
+            await sleep(0)
+            await sleep(0)
+        })
+    }
+
     const registerExplicitNode = (node: RuntimeReactAutomationNodeRegistration): (() => void) => {
         const key = node.nodeId
         explicitNodeUnregisters.get(key)?.()
@@ -428,8 +475,9 @@ export const renderWithAutomation = (
             }
         }
 
-        const visit = (node: TestRendererNode, path: string) => {
+        const visit = (node: TestRendererNode, path: string, hidden = false) => {
             const props = node.props as Record<string, unknown>
+            const nodeHidden = hidden || isHiddenByStyle(props.style)
             const testID = typeof props.testID === 'string' ? props.testID : undefined
             if (testID) {
                 const actionHandler = createNodeAction(props)
@@ -446,7 +494,7 @@ export const renderWithAutomation = (
                         ?? (typeof props.value === 'string' ? props.value : undefined)
                         ?? (typeof props.placeholder === 'string' ? props.placeholder : undefined),
                     value: props.value,
-                    visible: true,
+                    visible: !nodeHidden,
                     enabled: props.disabled !== true,
                     focused: props.focused === true,
                     persistent: true,
@@ -471,7 +519,7 @@ export const renderWithAutomation = (
                     semanticId: nodeId,
                     role: 'text',
                     text,
-                    visible: true,
+                    visible: !nodeHidden,
                     enabled: true,
                     persistent: true,
                     availableActions: [],
@@ -480,9 +528,52 @@ export const renderWithAutomation = (
 
             node.children.forEach((child, index) => {
                 if (isTestRendererNode(child)) {
-                    visit(child, `${path}.${index}`)
+                    visit(child, `${path}.${index}`, nodeHidden)
                 }
             })
+        }
+
+        const visitTreeNode = (node: TestRendererTreeNode, path: string, hidden = false) => {
+            const props = node.props as Record<string, unknown>
+            const nodeHidden = hidden || isHiddenByStyle(props.style)
+            const testID = typeof props.testID === 'string' ? props.testID : undefined
+            if (testID && !candidates.has(testID)) {
+                const snapshot: AutomationNodeSnapshot = {
+                    target,
+                    runtimeId: runtime.runtimeId,
+                    screenKey: 'test-renderer',
+                    mountId: testID,
+                    nodeId: testID,
+                    testID,
+                    semanticId: testID,
+                    role: inferRole(props),
+                    text: readTreeNodeText(node)
+                        ?? (typeof props.value === 'string' ? props.value : undefined)
+                        ?? (typeof props.placeholder === 'string' ? props.placeholder : undefined),
+                    value: props.value,
+                    visible: !nodeHidden,
+                    enabled: props.disabled !== true,
+                    focused: props.focused === true,
+                    persistent: true,
+                    availableActions: inferAvailableActions(props),
+                }
+                const actionHandler = createNodeAction(props)
+                const score = inferInteractionPriority(props) * 100
+                    + snapshot.availableActions.length * 10
+                    + (snapshot.text ? 1 : 0)
+                registerCandidate(testID, snapshot, score, actionHandler)
+            }
+
+            const rendered = node.rendered
+            if (Array.isArray(rendered)) {
+                rendered.forEach((child, index) => {
+                    if (isTreeNode(child)) {
+                        visitTreeNode(child, `${path}.${index}`, nodeHidden)
+                    }
+                })
+            } else if (isTreeNode(rendered)) {
+                visitTreeNode(rendered, `${path}.0`, nodeHidden)
+            }
         }
 
         let root: TestRendererNode
@@ -494,6 +585,10 @@ export const renderWithAutomation = (
         }
 
         visit(root, 'root')
+        const treeRoot = tree.toTree()
+        if (treeRoot) {
+            visitTreeNode(treeRoot, 'tree')
+        }
         for (const [testID, candidate] of candidates.entries()) {
             if (registry.getNode(target, testID) && !registry.getNode(target, testID)?.stale) {
                 continue
@@ -586,6 +681,7 @@ export const renderWithAutomation = (
                     const timeoutMs = Number(params.timeoutMs ?? 3_000)
                     const startedAt = Date.now()
                     while (Date.now() - startedAt < timeoutMs) {
+                        await flushReactWork()
                         rebuildRegistry()
                         const nodes = queryEngine.queryNodes({
                             target,
@@ -598,7 +694,9 @@ export const renderWithAutomation = (
                         if (nodes[0]) {
                             return success(nodes[0])
                         }
-                        await sleep(10)
+                        await act(async () => {
+                            await sleep(10)
+                        })
                     }
                     return failure('WAIT_FOR_NODE_TIMEOUT')
                 }

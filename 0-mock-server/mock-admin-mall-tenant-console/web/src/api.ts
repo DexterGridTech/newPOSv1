@@ -174,6 +174,57 @@ const fileToBase64 = (file: File) => new Promise<string>((resolve, reject) => {
   reader.readAsDataURL(file)
 })
 
+type AuthAuditLogLike = {
+  logId: string
+  sandboxId: string
+  platformId: string
+  userId: string
+  userType: string
+  eventType: string
+  resourceType: string
+  resourceId?: string | null
+  action: string
+  permissionCode?: string | null
+  result: string
+  denyReason?: string | null
+  isCrossSandbox?: boolean
+  clientIp?: string | null
+  userAgent?: string | null
+  requestId?: string | null
+  occurredAt: string
+  detail?: Record<string, unknown>
+}
+
+const authAuditLogToEntity = (log: AuthAuditLogLike): EntityItemLike => ({
+  aggregateId: log.logId,
+  entityId: log.logId,
+  title: `${log.result === 'ALLOWED' ? '允许' : '拒绝'} · ${log.permissionCode ?? log.action}`,
+  status: log.result === 'ALLOWED' ? 'ALLOW' : 'DENIED',
+  payload: {
+    sandbox_id: log.sandboxId,
+    platform_id: log.platformId,
+    data: {
+      log_id: log.logId,
+      platform_id: log.platformId,
+      user_id: log.userId,
+      user_type: log.userType,
+      event_type: log.eventType,
+      resource_type: log.resourceType,
+      resource_id: log.resourceId ?? null,
+      action: log.action,
+      permission_code: log.permissionCode ?? null,
+      result: log.result,
+      deny_reason: log.denyReason ?? null,
+      is_cross_sandbox: log.isCrossSandbox ?? false,
+      client_ip: log.clientIp ?? null,
+      user_agent: log.userAgent ?? null,
+      request_id: log.requestId ?? null,
+      occurred_at: log.occurredAt,
+      detail: log.detail ?? {},
+    },
+  },
+})
+
 export const api = {
   setActiveSandboxId: (sandboxId: string) => {
     activeSandboxId = sandboxId
@@ -324,6 +375,7 @@ export const api = {
     standardPricingLocked?: boolean
     erpIntegrationEnabled?: boolean
     erpApiEndpoint?: string
+    metadataCatalog?: Record<string, unknown>
   }) => request<EntityItemLike>('/api/v1/org/brands', {
     method: 'POST',
     body: JSON.stringify(input),
@@ -359,6 +411,7 @@ export const api = {
     areaSqm?: number
     businessHours?: string
     projectId: string
+    metadataCatalog?: Record<string, unknown>
   }) => request<EntityItemLike>('/api/v1/org/stores', {
     method: 'POST',
     body: JSON.stringify(input),
@@ -728,7 +781,50 @@ export const api = {
     permissionName: string
     permissionType?: string
     platformId?: string
+    permissionSource?: string
+    permissionDescription?: string | null
+    scopeType?: string
+    module?: string
+    resource?: string
+    resourceType?: string
+    action?: string
+    isSystem?: boolean
+    parentPermissionId?: string | null
+    permissionGroupId?: string | null
+    featureFlag?: string | null
+    highRisk?: boolean
+    requireApproval?: boolean
   }) => request<EntityItemLike>('/api/v1/permissions', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  }),
+  getIdentityProviderConfigs: (query?: PageQuery) => requestPage<EntityItemLike>(buildPageUrl('/api/v1/iam/idp-configs', query ?? {size: CUSTOMER_PAGE_SIZE})),
+  createIdentityProviderConfig: (input: Record<string, unknown>) => request<EntityItemLike>('/api/v1/iam/idp-configs', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  }),
+  getPermissionGroups: (query?: PageQuery) => requestPage<EntityItemLike>(buildPageUrl('/api/v1/iam/permission-groups', query ?? {size: CUSTOMER_PAGE_SIZE})),
+  createPermissionGroup: (input: Record<string, unknown>) => request<EntityItemLike>('/api/v1/iam/permission-groups', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  }),
+  getRoleTemplates: (query?: PageQuery) => requestPage<EntityItemLike>(buildPageUrl('/api/v1/iam/role-templates', query ?? {size: CUSTOMER_PAGE_SIZE})),
+  createRoleTemplate: (input: Record<string, unknown>) => request<EntityItemLike>('/api/v1/iam/role-templates', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  }),
+  getFeaturePoints: (query?: PageQuery) => requestPage<EntityItemLike>(buildPageUrl('/api/v1/iam/feature-points', query ?? {size: CUSTOMER_PAGE_SIZE})),
+  createFeaturePoint: (input: Record<string, unknown>) => request<EntityItemLike>('/api/v1/iam/feature-points', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  }),
+  getPlatformFeatureSwitches: (query?: PageQuery) => requestPage<EntityItemLike>(buildPageUrl('/api/v1/iam/platform-feature-switches', query ?? {size: CUSTOMER_PAGE_SIZE})),
+  upsertPlatformFeatureSwitch: (input: Record<string, unknown>) => request<EntityItemLike>('/api/v1/iam/platform-feature-switches', {
+    method: 'PUT',
+    body: JSON.stringify(input),
+  }),
+  getResourceTags: (query?: PageQuery) => requestPage<EntityItemLike>(buildPageUrl('/api/v1/iam/resource-tags', query ?? {size: CUSTOMER_PAGE_SIZE})),
+  createResourceTag: (input: Record<string, unknown>) => request<EntityItemLike>('/api/v1/iam/resource-tags', {
     method: 'POST',
     body: JSON.stringify(input),
   }),
@@ -746,11 +842,17 @@ export const api = {
     permissionIds: string[]
     platformId?: string
     roleType?: string
+    roleDescription?: string | null
+    applicableUserTypes?: string[]
   }) => request<EntityItemLike>('/api/v1/roles', {
     method: 'POST',
     body: JSON.stringify(input),
   }),
   activateRole: (roleId: string) => request<EntityItemLike>(`/api/v1/roles/${roleId}/activate`, {
+    method: 'POST',
+    body: JSON.stringify({}),
+  }),
+  deprecateRole: (roleId: string) => request<EntityItemLike>(`/api/v1/roles/${roleId}/deprecate`, {
     method: 'POST',
     body: JSON.stringify({}),
   }),
@@ -772,6 +874,37 @@ export const api = {
     status: string
     payload: Record<string, unknown>
   }>(buildPageUrl('/api/v1/user-role-bindings', query ?? {size: CUSTOMER_PAGE_SIZE})),
+  getPrincipalGroups: (query?: PageQuery) => requestPage<EntityItemLike>(buildPageUrl('/api/v1/iam/principal-groups', query ?? {size: CUSTOMER_PAGE_SIZE})),
+  createPrincipalGroup: (input: Record<string, unknown>) => request<EntityItemLike>('/api/v1/iam/principal-groups', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  }),
+  getGroupMembers: (query?: PageQuery) => requestPage<EntityItemLike>(buildPageUrl('/api/v1/iam/group-members', query ?? {size: CUSTOMER_PAGE_SIZE})),
+  addGroupMember: (input: Record<string, unknown>) => request<EntityItemLike>('/api/v1/iam/group-members', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  }),
+  getGroupRoleBindings: (query?: PageQuery) => requestPage<EntityItemLike>(buildPageUrl('/api/v1/iam/group-role-bindings', query ?? {size: CUSTOMER_PAGE_SIZE})),
+  createGroupRoleBinding: (input: Record<string, unknown>) => request<EntityItemLike>('/api/v1/iam/group-role-bindings', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  }),
+  getAuthorizationSessions: (query?: PageQuery) => requestPage<EntityItemLike>(buildPageUrl('/api/v1/iam/authorization-sessions', query ?? {size: CUSTOMER_PAGE_SIZE})),
+  getSeparationOfDutyRules: (query?: PageQuery) => requestPage<EntityItemLike>(buildPageUrl('/api/v1/iam/sod-rules', query ?? {size: CUSTOMER_PAGE_SIZE})),
+  createSeparationOfDutyRule: (input: Record<string, unknown>) => request<EntityItemLike>('/api/v1/iam/sod-rules', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  }),
+  getHighRiskPermissionPolicies: (query?: PageQuery) => requestPage<EntityItemLike>(buildPageUrl('/api/v1/iam/high-risk-policies', query ?? {size: CUSTOMER_PAGE_SIZE})),
+  createHighRiskPermissionPolicy: (input: Record<string, unknown>) => request<EntityItemLike>('/api/v1/iam/high-risk-policies', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  }),
+  getAuthAuditLogs: (query?: PageQuery) => requestPage<AuthAuditLogLike>(buildPageUrl('/api/v1/audit-logs', query ?? {size: CUSTOMER_PAGE_SIZE}))
+    .then(page => ({
+      ...page,
+      data: page.data.map(authAuditLogToEntity),
+    })),
   getStoreEffectiveIam: (storeId: string) => request<StoreEffectiveIam>(`/api/v1/stores/${storeId}/effective-iam`),
   getUserEffectivePermissions: (userId: string, storeId: string) => request<UserEffectivePermissions>(
     `/api/v1/users/${userId}/effective-permissions?storeId=${encodeURIComponent(storeId)}`,
@@ -780,7 +913,16 @@ export const api = {
     userCode: string
     displayName: string
     mobile?: string
-    storeId: string
+    username?: string
+    email?: string | null
+    phone?: string | null
+    userType?: string
+    identitySource?: string
+    externalUserId?: string | null
+    passwordHash?: string | null
+    storeId?: string | null
+    platformId?: string
+    createdBy?: string | null
   }) => request<EntityItemLike>('/api/v1/users', {
     method: 'POST',
     body: JSON.stringify(input),
@@ -799,9 +941,15 @@ export const api = {
     storeId?: string
     scopeType?: string
     scopeId?: string
+    resourceScope?: Record<string, unknown>
+    scopeSelector?: Record<string, unknown>
     effectiveFrom?: string
     effectiveTo?: string | null
     reason?: string | null
+    policyEffect?: 'ALLOW' | 'DENY'
+    policyConditions?: Record<string, unknown> | null
+    approvalId?: string | null
+    grantedBy?: string | null
   }) => request<EntityItemLike>('/api/v1/user-role-bindings', {
     method: 'POST',
     body: JSON.stringify(input),
@@ -900,6 +1048,26 @@ export const api = {
   restoreProduct: (productId: string, input: {
     storeId: string
   }) => request<EntityItemLike>(`/api/v1/products/${productId}/restore`, {
+    method: 'POST',
+    body: JSON.stringify(input),
+  }),
+  getProductInheritances: (query?: PageQuery) => requestPage<{
+    aggregateId: string
+    entityId: string
+    title: string
+    status: string
+    payload: Record<string, unknown>
+  }>(buildPageUrl('/api/v1/product-inheritances', query ?? {size: CUSTOMER_PAGE_SIZE})),
+  createProductInheritance: (input: {
+    inheritanceId?: string
+    brandProductId: string
+    storeProductId: string
+    storeId: string
+    overrideFields?: Array<Record<string, unknown>>
+    lockedFields?: string[]
+    syncStatus?: string
+    lastSyncAt?: string | null
+  }) => request<EntityItemLike>('/api/v1/product-inheritances', {
     method: 'POST',
     body: JSON.stringify(input),
   }),
@@ -1064,6 +1232,52 @@ export const api = {
     body: JSON.stringify(input),
   }),
   disablePriceRule: (ruleId: string, input: {reason?: string} = {}) => request<EntityItemLike>(`/api/v1/price-rules/${ruleId}/disable`, {
+    method: 'POST',
+    body: JSON.stringify(input),
+  }),
+  getBundlePriceRules: (query?: PageQuery) => requestPage<{
+    aggregateId: string
+    entityId: string
+    title: string
+    status: string
+    payload: Record<string, unknown>
+  }>(buildPageUrl('/api/v1/bundle-price-rules', query ?? {size: CUSTOMER_PAGE_SIZE})),
+  createBundlePriceRule: (input: {
+    ruleId?: string
+    storeId: string
+    ruleName: string
+    triggerProducts: Array<Record<string, unknown>>
+    discountType?: string
+    discountValue?: number
+    maxApplications?: number
+    priority?: number
+    effectiveFrom?: string | null
+    effectiveTo?: string | null
+    isActive?: boolean
+  }) => request<EntityItemLike>('/api/v1/bundle-price-rules', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  }),
+  getChannelProductMappings: (query?: PageQuery) => requestPage<{
+    aggregateId: string
+    entityId: string
+    title: string
+    status: string
+    payload: Record<string, unknown>
+  }>(buildPageUrl('/api/v1/channel-product-mappings', query ?? {size: CUSTOMER_PAGE_SIZE})),
+  createChannelProductMapping: (input: {
+    mappingId?: string
+    storeId: string
+    productId: string
+    channelType: string
+    externalProductId?: string | null
+    externalSkuId?: string | null
+    mappingStatus?: string
+    syncStatus?: string
+    lastSyncAt?: string | null
+    syncErrorMessage?: string | null
+    fieldMappingConfig?: Record<string, unknown>
+  }) => request<EntityItemLike>('/api/v1/channel-product-mappings', {
     method: 'POST',
     body: JSON.stringify(input),
   }),

@@ -1,5 +1,5 @@
 import React from 'react'
-import TestRenderer from 'react-test-renderer'
+import TestRenderer, {act} from 'react-test-renderer'
 import {Provider} from 'react-redux'
 import type {
     KernelRuntimeAppV2,
@@ -77,10 +77,16 @@ export const renderWithStore = (
     store: EnhancedStore,
     runtime?: KernelRuntimeV2,
 ): TestRenderer.ReactTestRenderer =>
-    TestRenderer.create(
-        <Provider store={store}>
-            <UiRuntimeProvider runtime={runtime ?? ((store as any).runtime as KernelRuntimeV2)}>
-                {element}
-            </UiRuntimeProvider>
-        </Provider>,
-    )
+{
+    let tree!: TestRenderer.ReactTestRenderer
+    act(() => {
+        tree = TestRenderer.create(
+            <Provider store={store}>
+                <UiRuntimeProvider runtime={runtime ?? ((store as any).runtime as KernelRuntimeV2)}>
+                    {element}
+                </UiRuntimeProvider>
+            </Provider>,
+        )
+    })
+    return tree
+}

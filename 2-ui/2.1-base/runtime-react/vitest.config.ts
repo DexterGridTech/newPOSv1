@@ -9,5 +9,6 @@ export default createWorkspaceVitestConfig('ui-base-runtime-react', {
     test: {
         environment: 'node',
         include: ['test/**/*.spec.ts', 'test/**/*.spec.tsx'],
+        setupFiles: ['test/setup.ts'],
     },
 })

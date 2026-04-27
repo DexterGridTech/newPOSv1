@@ -24,10 +24,12 @@ import {nativeDevice} from '../turbomodules/device'
 import {nativeScriptExecutor} from '../turbomodules/scripts'
 import {nativeTopologyHost} from '../turbomodules/topologyHost'
 import {createAssemblyStateStorage} from '../platform-ports/stateStorage'
+import {createAssemblyHotUpdatePort} from '../platform-ports/hotUpdate'
 import {
     AssemblyTopologyBindingSource,
     AssemblyTopologyStorageGateSnapshot,
 } from './topology'
+import {getHostRuntimeReleaseInfo} from './releaseInfoContext'
 
 const ADAPTER_KEY_DEVICE = 'device'
 const ADAPTER_KEY_LOGGER = 'logger'
@@ -373,6 +375,10 @@ export const createAssemblyAdminConsoleInput = (
             },
         ],
         topology: createAssemblyAdminTopologyHost(input.topology),
+        version: {
+            hotUpdate: createAssemblyHotUpdatePort(),
+            embeddedRelease: getHostRuntimeReleaseInfo(),
+        },
     }),
     adapterDiagnosticScenarios: createAdapterDiagnosticScenarios(),
 })

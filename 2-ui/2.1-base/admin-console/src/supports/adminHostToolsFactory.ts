@@ -2,6 +2,7 @@ import type {
     AppControlPort,
     ConnectorPort,
     DevicePort,
+    HotUpdatePort,
     PlatformPorts,
 } from '@next/kernel-base-platform-ports'
 import type {
@@ -18,6 +19,8 @@ import type {
     AdminStatusItem,
     AdminStatusTone,
     AdminTopologyHost,
+    AdminVersionHost,
+    AdminVersionSnapshot,
 } from '../types'
 
 export interface AdminDeviceHostSource extends Partial<DevicePort> {
@@ -62,6 +65,11 @@ export interface AdminConnectorHostSource extends Partial<ConnectorPort> {
     getAvailableTargets?(type: string): Promise<readonly string[]>
 }
 
+export interface AdminVersionHostSource {
+    hotUpdate?: Partial<HotUpdatePort>
+    embeddedRelease?: unknown
+}
+
 export interface CreateAdminConnectorHostInput {
     connector: AdminConnectorHostSource
     channels?: readonly AdminConnectorChannelDefinition[]
@@ -75,6 +83,7 @@ export interface CreateAdminHostToolsInput {
     connector?: AdminConnectorHostSource
     connectorChannels?: readonly AdminConnectorChannelDefinition[]
     topology?: AdminTopologyHost
+    version?: AdminVersionHostSource | AdminVersionHost
 }
 
 const toRecord = (value: unknown): Record<string, unknown> =>
@@ -139,6 +148,17 @@ const compactStatuses = (
     items: readonly (AdminStatusItem | undefined)[],
 ): readonly AdminStatusItem[] =>
     items.filter((item): item is AdminStatusItem => Boolean(item))
+
+const createCapabilityStatus = (
+    key: string,
+    label: string,
+    supported: boolean,
+): AdminStatusItem => ({
+    key,
+    label,
+    tone: supported ? 'ok' : 'neutral',
+    value: supported ? '已支持' : '未提供',
+})
 
 const buildStatusDetails = (
     status: Record<string, unknown>,
@@ -390,12 +410,79 @@ export const createAdminConnectorHost = (
     },
 })
 
+const isAdminVersionHost = (
+    source: AdminVersionHostSource | AdminVersionHost,
+): source is AdminVersionHost =>
+    typeof (source as AdminVersionHost).getSnapshot === 'function'
+
+const createReleaseDetail = (
+    value: unknown,
+): readonly AdminDetailItem[] | undefined => {
+    const release = toRecord(value)
+    if (!release || Object.keys(release).length === 0) {
+        return undefined
+    }
+    const git = toRecord(release.git)
+    return compactDetails([
+        detail('appId', 'App ID', readString(release, 'appId')),
+        detail('platform', '平台', readString(release, 'platform')),
+        detail('assemblyVersion', 'Assembly 版本', readString(release, 'assemblyVersion')),
+        detail('buildNumber', 'Build Number', readNumber(release, 'buildNumber')),
+        detail('runtimeVersion', 'Runtime 版本', readString(release, 'runtimeVersion')),
+        detail('bundleVersion', 'Bundle 版本', readString(release, 'bundleVersion')),
+        detail('channel', '发布通道', readString(release, 'channel')),
+        detail('minSupportedAppVersion', '最低支持版本', readString(release, 'minSupportedAppVersion')),
+        detail('gitCommit', 'Git Commit', readString(git, 'commit')),
+        detail('gitBranch', 'Git Branch', readString(git, 'branch')),
+        detail('updatedAt', '生成时间', readString(release, 'updatedAt') ?? readString(release, 'generatedAt')),
+    ])
+}
+
+export const createAdminVersionHost = (
+    source: AdminVersionHostSource,
+): AdminVersionHost => {
+    const hotUpdate = source.hotUpdate
+
+    return {
+        async getSnapshot(): Promise<AdminVersionSnapshot> {
+            const [boot, active, rollback] = await Promise.all([
+                hotUpdate?.readBootMarker?.() ?? Promise.resolve(null),
+                hotUpdate?.readActiveMarker?.() ?? Promise.resolve(null),
+                hotUpdate?.readRollbackMarker?.() ?? Promise.resolve(null),
+            ])
+
+            return {
+                embeddedRelease: createReleaseDetail(source.embeddedRelease),
+                nativeMarkers: {
+                    boot,
+                    active,
+                    rollback,
+                },
+                capabilities: compactStatuses([
+                    createCapabilityStatus('readBootMarker', '读取 Boot Marker', Boolean(hotUpdate?.readBootMarker)),
+                    createCapabilityStatus('readActiveMarker', '读取 Active Marker', Boolean(hotUpdate?.readActiveMarker)),
+                    createCapabilityStatus('readRollbackMarker', '读取 Rollback Marker', Boolean(hotUpdate?.readRollbackMarker)),
+                    createCapabilityStatus('clearBootMarker', '清除 Boot Marker', Boolean(hotUpdate?.clearBootMarker)),
+                    createCapabilityStatus('confirmLoadComplete', '确认加载完成', Boolean(hotUpdate?.confirmLoadComplete)),
+                    createCapabilityStatus('reportLoadComplete', '上报加载完成', Boolean(hotUpdate?.reportLoadComplete)),
+                ]),
+            }
+        },
+        clearBootMarker: hotUpdate?.clearBootMarker
+            ? () => hotUpdate.clearBootMarker?.() ?? Promise.resolve()
+            : undefined,
+    }
+}
+
 export const createAdminHostTools = (
     input: CreateAdminHostToolsInput,
 ): AdminHostTools => {
     const device = input.device ?? input.platformPorts?.device
     const control = input.control ?? input.platformPorts?.appControl
     const connector = input.connector ?? input.platformPorts?.connector
+    const versionSource = input.version ?? (input.platformPorts?.hotUpdate
+        ? {hotUpdate: input.platformPorts.hotUpdate}
+        : undefined)
 
     return {
         device: device ? createAdminDeviceHost(device) : undefined,
@@ -406,5 +493,10 @@ export const createAdminHostTools = (
             channels: input.connectorChannels,
         }) : undefined,
         topology: input.topology,
+        version: versionSource
+            ? isAdminVersionHost(versionSource)
+                ? versionSource
+                : createAdminVersionHost(versionSource)
+            : undefined,
     }
 }

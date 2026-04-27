@@ -1,0 +1,47 @@
+{
+  "name": "@next/ui-base-test-support",
+  "version": "1.0.0",
+  "description": "Expo Web and UI runtime test support ports for UI packages",
+  "author": "DexterYang",
+  "license": "ISC",
+  "exports": {
+    ".": "./src/index.ts",
+    "./expoConfig": "./src/expoConfig/index.ts",
+    "./logger": "./src/logger/index.ts",
+    "./platform": "./src/platform/index.ts",
+    "./shell": "./src/shell/index.tsx",
+    "./storage": "./src/storage/index.ts",
+    "./tcpControl": "./src/tcpControl/index.ts",
+    "./topology": "./src/topology/index.ts",
+    "./transport": "./src/transport/index.ts",
+    "./ui": "./src/ui/index.tsx"
+  },
+  "react-native": "./src/index.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json --noEmit",
+    "build-for-product": "rm -rf dist && tsc -p tsconfig.json",
+    "clean": "rm -rf dist",
+    "type-check": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@next/kernel-base-platform-ports": "workspace:*",
+    "@next/kernel-base-runtime-shell-v2": "workspace:*",
+    "@next/kernel-base-tcp-control-runtime-v2": "workspace:*",
+    "@next/kernel-base-topology-runtime-v3": "workspace:*",
+    "@next/kernel-base-transport-runtime": "workspace:*",
+    "@next/kernel-base-ui-runtime-v2": "workspace:*",
+    "@next/kernel-server-config-v2": "workspace:*",
+    "@next/ui-base-automation-runtime": "workspace:*",
+    "@next/ui-base-runtime-react": "workspace:*",
+    "@reduxjs/toolkit": "^2.10.0"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-native": ">=0.77",
+    "react-redux": "^9.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.9",
+    "typescript": "^5.9.3"
+  }
+}

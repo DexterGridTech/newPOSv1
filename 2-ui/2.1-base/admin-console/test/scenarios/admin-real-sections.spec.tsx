@@ -8,6 +8,10 @@ import {
     tcpControlV2CommandDefinitions,
     tcpControlV2StateActions,
 } from '@next/kernel-base-tcp-control-runtime-v2'
+import {
+    createTdpSyncRuntimeModuleV2,
+    tdpHotUpdateActions,
+} from '@next/kernel-base-tdp-sync-runtime-v2'
 import {createAppError} from '@next/kernel-base-contracts'
 import {
     topologyRuntimeV3CommandDefinitions,
@@ -20,6 +24,7 @@ import {
     AdapterDiagnosticsScreen,
     AdminTerminalSection,
     AdminTopologySection,
+    AdminVersionSection,
     adminConsoleCommandDefinitions,
     adminConsoleStateActions,
 } from '../../src'
@@ -117,10 +122,78 @@ describe('admin built-in sections', () => {
             harness.runtime,
         )
 
-        await topologyTree.press('ui-base-admin-section:topology:set-master')
+        await expect(topologyTree.getNode('ui-base-admin-section:topology:set-master')).resolves.toMatchObject({
+            enabled: false,
+            availableActions: [],
+        })
         await topologyTree.press('ui-base-admin-section:topology:start')
 
-        expect(dispatchSpy.mock.calls.length).toBeGreaterThanOrEqual(2)
+        expect(dispatchSpy).toHaveBeenCalledWith(createCommand(
+            topologyRuntimeV3CommandDefinitions.startTopologyConnection,
+            {},
+        ))
+        expect(dispatchSpy.mock.calls.map(call => call[0]?.definition?.commandName)).not.toContain(
+            topologyRuntimeV3CommandDefinitions.setInstanceMode.commandName,
+        )
+    })
+
+    it('derives topology pairing button availability from current topology state', async () => {
+        const harness = await createAdminConsoleHarness()
+        const topologyTree = renderWithAutomation(
+            <AdminTopologySection runtime={harness.runtime} store={harness.store} />,
+            harness.store,
+            harness.runtime,
+        )
+
+        await expect(topologyTree.getNode('ui-base-admin-section:topology:set-master')).resolves.toMatchObject({
+            enabled: false,
+        })
+        await expect(topologyTree.getNode('ui-base-admin-section:topology:disable-slave')).resolves.toMatchObject({
+            enabled: false,
+        })
+        await expect(topologyTree.getNode('ui-base-admin-section:topology:stop')).resolves.toMatchObject({
+            enabled: false,
+        })
+        await expect(topologyTree.getNode('ui-base-admin-section:topology:restart')).resolves.toMatchObject({
+            enabled: false,
+        })
+        await expect(topologyTree.getNode('ui-base-admin-section:topology:clear-master')).resolves.toMatchObject({
+            enabled: false,
+        })
+
+        await topologyTree.dispatch(() => {
+            harness.store.dispatch(topologyRuntimeV3StateActions.patchConfigState({
+                enableSlave: true,
+                masterLocator: {
+                    masterDeviceId: 'MASTER-001',
+                    serverAddress: [{address: 'ws://127.0.0.1:5810/ws'}],
+                    addedAt: Date.now() as any,
+                },
+            }))
+            harness.store.dispatch(topologyRuntimeV3StateActions.patchConnectionState({
+                serverConnectionStatus: 'CONNECTED',
+            }))
+        })
+
+        await expect(topologyTree.getNode('ui-base-admin-section:topology:enable-slave')).resolves.toMatchObject({
+            enabled: false,
+        })
+        await expect(topologyTree.getNode('ui-base-admin-section:topology:disable-slave')).resolves.toMatchObject({
+            enabled: true,
+            availableActions: ['press'],
+        })
+        await expect(topologyTree.getNode('ui-base-admin-section:topology:start')).resolves.toMatchObject({
+            enabled: false,
+        })
+        await expect(topologyTree.getNode('ui-base-admin-section:topology:stop')).resolves.toMatchObject({
+            enabled: true,
+        })
+        await expect(topologyTree.getNode('ui-base-admin-section:topology:restart')).resolves.toMatchObject({
+            enabled: true,
+        })
+        await expect(topologyTree.getNode('ui-base-admin-section:topology:clear-master')).resolves.toMatchObject({
+            enabled: true,
+        })
     })
 
     it('dispatches admin clear-master command instead of mixing host/runtime calls inline', async () => {
@@ -145,6 +218,15 @@ describe('admin built-in sections', () => {
             harness.runtime,
         )
 
+        await topologyTree.dispatch(() => {
+            harness.store.dispatch(topologyRuntimeV3StateActions.patchConfigState({
+                masterLocator: {
+                    masterDeviceId: 'MASTER-001',
+                    serverAddress: [{address: 'ws://127.0.0.1:5810/ws'}],
+                    addedAt: Date.now() as any,
+                },
+            }))
+        })
         await topologyTree.press('ui-base-admin-section:topology:clear-master')
 
         expect(dispatchSpy).toHaveBeenCalledWith(createCommand(
@@ -334,6 +416,114 @@ describe('admin built-in sections', () => {
         await expect(topologyTree.queryNodesByText('对端节点')).resolves.toHaveLength(1)
         await expect(topologyTree.queryNodesByText('PEER-DEVICE-001')).resolves.toHaveLength(1)
         await expect(topologyTree.queryNodesByText('重连次数')).resolves.toHaveLength(1)
+    })
+
+    it('renders version state from tdp hot update runtime and native markers', async () => {
+        const readBootMarker = vi.fn(async () => ({
+            releaseId: 'release-admin-001',
+            packageId: 'package-admin-001',
+            bundleVersion: '1.0.0+ota.8',
+        }))
+        const readActiveMarker = vi.fn(async () => ({
+            releaseId: 'release-active-001',
+            packageId: 'package-active-001',
+            bundleVersion: '1.0.0+ota.7',
+        }))
+        const clearBootMarker = vi.fn(async () => {})
+        const harness = await createAdminConsoleHarness({
+            modules: [
+                createTcpControlRuntimeModuleV2(),
+                createTdpSyncRuntimeModuleV2(),
+            ],
+        })
+        harness.store.dispatch(tdpHotUpdateActions.reportVersion({
+            current: {
+                source: 'hot-update',
+                appId: 'assembly-android-mixc-catering-rn84',
+                assemblyVersion: '1.0.0',
+                buildNumber: 8,
+                runtimeVersion: 'android-mixc-catering-rn84@1.0',
+                bundleVersion: '1.0.0+ota.8',
+                packageId: 'package-admin-001',
+                releaseId: 'release-admin-001',
+                installDir: '/data/user/0/next/hot-updates/package-admin-001',
+                appliedAt: 1_776_000_000_000,
+            },
+            at: 1_776_000_000_000,
+        }))
+        harness.store.dispatch(tdpHotUpdateActions.markReady({
+            releaseId: 'release-admin-002',
+            packageId: 'package-admin-002',
+            bundleVersion: '1.0.0+ota.9',
+            installDir: '/data/user/0/next/hot-updates/package-admin-002',
+            entryFile: 'index.android.bundle',
+            packageSha256: 'sha-package',
+            manifestSha256: 'sha-manifest',
+            readyAt: 1_776_000_100_000,
+        }))
+        const tree = renderWithAutomation(
+            <AdminVersionSection
+                store={harness.store}
+                host={{
+                    getSnapshot: async () => ({
+                        embeddedRelease: [
+                            {key: 'bundleVersion', label: 'Bundle 版本', value: '1.0.0+ota.0'},
+                        ],
+                        nativeMarkers: {
+                            boot: await readBootMarker(),
+                            active: await readActiveMarker(),
+                            rollback: null,
+                        },
+                        capabilities: [
+                            {key: 'clearBootMarker', label: '清除 Boot Marker', value: '已支持', tone: 'ok'},
+                        ],
+                    }),
+                    clearBootMarker,
+                }}
+            />,
+            harness.store,
+            harness.runtime,
+        )
+
+        await tree.act(async () => {
+            await Promise.resolve()
+        })
+        await expect(tree.getNode('ui-base-admin-section:version')).resolves.toBeTruthy()
+        await expect(tree.waitForText('1.0.0+ota.8')).resolves.toBeTruthy()
+        await expect(tree.queryNodesByText('热更新包')).resolves.not.toHaveLength(0)
+        await expect(tree.queryNodesByText('package-admin-001')).resolves.not.toHaveLength(0)
+        await expect(tree.queryNodesByText('package-admin-002')).resolves.not.toHaveLength(0)
+        await expect(tree.queryNodesByTextContains('release-active-001')).resolves.not.toHaveLength(0)
+        await expect(tree.getNode('ui-base-admin-section:version:clear-boot-marker')).resolves.toMatchObject({
+            enabled: true,
+            availableActions: ['press'],
+        })
+
+        await tree.press('ui-base-admin-section:version:clear-boot-marker')
+
+        expect(clearBootMarker).toHaveBeenCalledTimes(1)
+    })
+
+    it('keeps version marker actions disabled when native host is unavailable', async () => {
+        const harness = await createAdminConsoleHarness({
+            modules: [
+                createTcpControlRuntimeModuleV2(),
+                createTdpSyncRuntimeModuleV2(),
+            ],
+        })
+        const tree = renderWithAutomation(
+            <AdminVersionSection store={harness.store} />,
+            harness.store,
+            harness.runtime,
+        )
+
+        await expect(tree.getNode('ui-base-admin-section:version:refresh')).resolves.toMatchObject({
+            enabled: false,
+        })
+        await expect(tree.getNode('ui-base-admin-section:version:clear-boot-marker')).resolves.toMatchObject({
+            enabled: false,
+        })
+        await expect(tree.queryNodesByText('当前版本宿主能力未安装。')).resolves.toHaveLength(1)
     })
 
     it('renders master pairing qr after share payload is generated', async () => {

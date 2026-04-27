@@ -406,7 +406,7 @@ export const AdminActionButton: React.FC<{
             visible: true,
             enabled: !disabled,
             persistent: true,
-            availableActions: ['press'],
+            availableActions: disabled ? [] : ['press'],
             onAutomationAction: () => {
                 if (!disabled) {
                     onPress()

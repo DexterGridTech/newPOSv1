@@ -27,6 +27,7 @@ export function CustomerAdminApp() {
   const [selectedStoreId, setSelectedStoreId] = useState('')
   const [selectedRecord, setSelectedRecord] = useState<CustomerEntity | null>(null)
   const [modal, setModal] = useState<'create' | 'edit' | 'permissions' | 'grantRole' | 'menuProducts' | null>(null)
+  const [relationModalOrigin, setRelationModalOrigin] = useState<'detail' | 'row' | null>(null)
   const [filters, setFilters] = useState<Record<PageKey, FilterState>>({} as Record<PageKey, FilterState>)
   const [toast, setToast] = useState<string>('')
   const [error, setError] = useState<string>('')
@@ -34,7 +35,19 @@ export function CustomerAdminApp() {
 
   const activeFilter = filters[page] ?? emptyFilter
   const activeStoreId = selectedStoreId || collections.stores[0]?.entityId || 'store-kernel-base-test'
+  const activeStore = collections.stores.find(store => store.entityId === activeStoreId) ?? collections.stores[0]
+  const activeBrand = collections.brands.find(brand => brand.entityId === selectedBrandId)
+    ?? collections.brands.find(brand => brand.entityId === asText(dataOf(activeStore).brand_id, ''))
+    ?? collections.brands[0]
+  const activeProject = collections.projects.find(project => project.entityId === selectedProjectId)
+    ?? collections.projects.find(project => project.entityId === asText(dataOf(activeStore).project_id, ''))
+    ?? collections.projects[0]
   const activePlatform = collections.platforms.find(platform => platform.entityId === selectedPlatformId)
+    ?? collections.platforms.find(platform => platform.entityId === asText(dataOf(activeBrand).platform_id, ''))
+    ?? collections.platforms.find(platform => platform.entityId === asText(dataOf(activeStore).platform_id, ''))
+    ?? collections.platforms.find(platform => platform.entityId === asText(dataOf(activeProject).platform_id, ''))
+    ?? collections.platforms.find(platform => platform.entityId === DEFAULT_PLATFORM_ID)
+    ?? collections.platforms[0]
 
   const loadAll = async () => {
     setLoading(true)
@@ -58,7 +71,21 @@ export function CustomerAdminApp() {
         roles,
         users,
         roleBindings,
+        identityProviderConfigs,
+        permissionGroups,
+        roleTemplates,
+        featurePoints,
+        platformFeatureSwitches,
+        resourceTags,
+        principalGroups,
+        groupMembers,
+        groupRoleBindings,
+        authorizationSessions,
+        sodRules,
+        highRiskPolicies,
+        authAuditLogs,
         products,
+        productInheritances,
         brandMenus,
         storeMenus,
       ] = await Promise.all([
@@ -74,26 +101,58 @@ export function CustomerAdminApp() {
         api.getRoles(),
         api.getUsers(),
         api.getUserRoleBindings(),
+        api.getIdentityProviderConfigs(),
+        api.getPermissionGroups(),
+        api.getRoleTemplates(),
+        api.getFeaturePoints(),
+        api.getPlatformFeatureSwitches(),
+        api.getResourceTags(),
+        api.getPrincipalGroups(),
+        api.getGroupMembers(),
+        api.getGroupRoleBindings(),
+        api.getAuthorizationSessions(),
+        api.getSeparationOfDutyRules(),
+        api.getHighRiskPermissionPolicies(),
+        api.getAuthAuditLogs(),
         api.getProducts(),
+        api.getProductInheritances(),
         api.getMenus(),
         api.getStoreMenus(),
       ])
 
-      const nextPlatformId = selectedPlatformId || platforms.data.find(item => item.entityId === DEFAULT_PLATFORM_ID)?.entityId || platforms.data[0]?.entityId || ''
-      const nextProjectId = selectedProjectId || projects.data.find(item => item.entityId === DEFAULT_PROJECT_ID)?.entityId || projects.data.find(item => dataOf(item as CustomerEntity).platform_id === nextPlatformId)?.entityId || projects.data[0]?.entityId || ''
-      const nextBrandId = selectedBrandId || brands.data.find(item => item.entityId === DEFAULT_BRAND_ID)?.entityId || brands.data.find(item => dataOf(item as CustomerEntity).platform_id === nextPlatformId)?.entityId || brands.data[0]?.entityId || ''
-      const nextStoreId = selectedStoreId || stores.data.find(item => item.entityId === DEFAULT_STORE_ID)?.entityId || stores.data.find(item => dataOf(item as CustomerEntity).project_id === nextProjectId)?.entityId || 'store-kernel-base-test'
-      if (!selectedPlatformId && nextPlatformId) setSelectedPlatformId(nextPlatformId)
-      if (!selectedProjectId && nextProjectId) setSelectedProjectId(nextProjectId)
-      if (!selectedBrandId && nextBrandId) setSelectedBrandId(nextBrandId)
-      if (!selectedStoreId && nextStoreId) setSelectedStoreId(nextStoreId)
+      const platformItems = platforms.data as CustomerEntity[]
+      const projectItems = projects.data as CustomerEntity[]
+      const brandItems = brands.data as CustomerEntity[]
+      const storeItems = stores.data as CustomerEntity[]
+      const nextPlatformId = platformItems.some(item => item.entityId === selectedPlatformId)
+        ? selectedPlatformId
+        : platformItems.find(item => item.entityId === DEFAULT_PLATFORM_ID)?.entityId || platformItems[0]?.entityId || ''
+      const nextProjectId = projectItems.some(item => item.entityId === selectedProjectId)
+        ? selectedProjectId
+        : projectItems.find(item => item.entityId === DEFAULT_PROJECT_ID)?.entityId || projectItems.find(item => dataOf(item).platform_id === nextPlatformId)?.entityId || projectItems[0]?.entityId || ''
+      const nextBrandId = brandItems.some(item => item.entityId === selectedBrandId)
+        ? selectedBrandId
+        : brandItems.find(item => item.entityId === DEFAULT_BRAND_ID)?.entityId || brandItems.find(item => dataOf(item).platform_id === nextPlatformId)?.entityId || brandItems[0]?.entityId || ''
+      const fallbackStoreId = storeItems.find(item => item.entityId === DEFAULT_STORE_ID)?.entityId
+        || storeItems.find(item => dataOf(item).brand_id === nextBrandId)?.entityId
+        || storeItems.find(item => dataOf(item).project_id === nextProjectId)?.entityId
+        || 'store-kernel-base-test'
+      const nextStoreId = storeItems.some(item => item.entityId === selectedStoreId)
+        ? selectedStoreId
+        : fallbackStoreId
+      if (selectedPlatformId !== nextPlatformId && nextPlatformId) setSelectedPlatformId(nextPlatformId)
+      if (selectedProjectId !== nextProjectId && nextProjectId) setSelectedProjectId(nextProjectId)
+      if (selectedBrandId !== nextBrandId && nextBrandId) setSelectedBrandId(nextBrandId)
+      if (selectedStoreId !== nextStoreId && nextStoreId) setSelectedStoreId(nextStoreId)
 
-      const [tables, workstations, storeConfig, stock, priceRules, availabilityRules, availability, projectionItems, logs] = await Promise.all([
+      const [tables, workstations, storeConfig, stock, priceRules, bundlePriceRules, channelProductMappings, availabilityRules, availability, projectionItems, logs] = await Promise.all([
         api.getTables(),
         api.getWorkstations(),
         api.getStoreConfigs(),
         api.getInventories(),
         api.getPriceRules(),
+        api.getBundlePriceRules(),
+        api.getChannelProductMappings(),
         api.getAvailabilityRules(),
         api.getMenuAvailability(),
         api.getProjectionOutbox(),
@@ -115,8 +174,22 @@ export function CustomerAdminApp() {
         roles: roles.data as CustomerEntity[],
         users: users.data as CustomerEntity[],
         roleBindings: roleBindings.data as CustomerEntity[],
+        identityProviderConfigs: identityProviderConfigs.data as CustomerEntity[],
+        permissionGroups: permissionGroups.data as CustomerEntity[],
+        roleTemplates: roleTemplates.data as CustomerEntity[],
+        featurePoints: featurePoints.data as CustomerEntity[],
+        platformFeatureSwitches: platformFeatureSwitches.data as CustomerEntity[],
+        resourceTags: resourceTags.data as CustomerEntity[],
+        principalGroups: principalGroups.data as CustomerEntity[],
+        groupMembers: groupMembers.data as CustomerEntity[],
+        groupRoleBindings: groupRoleBindings.data as CustomerEntity[],
+        authorizationSessions: authorizationSessions.data as CustomerEntity[],
+        sodRules: sodRules.data as CustomerEntity[],
+        highRiskPolicies: highRiskPolicies.data as CustomerEntity[],
+        authAuditLogs: authAuditLogs.data as CustomerEntity[],
         productCategories: productCategories.data as CustomerEntity[],
         products: products.data as CustomerEntity[],
+        productInheritances: productInheritances.data as CustomerEntity[],
         brandMenus: brandMenus.data as CustomerEntity[],
         storeMenus: storeMenus.data as CustomerEntity[],
         storeConfig: storeConfig.data as CustomerEntity[],
@@ -124,6 +197,8 @@ export function CustomerAdminApp() {
         availability: availability.data as CustomerEntity[],
         priceRules: priceRules.data as CustomerEntity[],
         availabilityRules: availabilityRules.data as CustomerEntity[],
+        bundlePriceRules: bundlePriceRules.data as CustomerEntity[],
+        channelProductMappings: channelProductMappings.data as CustomerEntity[],
       })
       setOutbox(projectionItems.data)
       setPublishLog(logs.data)
@@ -185,6 +260,15 @@ export function CustomerAdminApp() {
     setPage(nextPage)
     setSelectedRecord(null)
     setModal(null)
+    setRelationModalOrigin(null)
+  }
+
+  const closeModal = () => {
+    if (relationModalOrigin === 'row') {
+      setSelectedRecord(null)
+    }
+    setModal(null)
+    setRelationModalOrigin(null)
   }
 
   const refreshAfterMutation = async (message: string) => {
@@ -253,14 +337,26 @@ export function CustomerAdminApp() {
             ? (
               <BusinessDictionariesPage
                 platform={activePlatform}
+                brand={activeBrand}
+                store={activeStore}
+                brands={collections.brands}
+                stores={collections.stores}
+                selectedBrandId={selectedBrandId}
+                selectedStoreId={selectedStoreId}
                 loading={loading}
-                onSave={async catalog => {
-                  if (!activePlatform) return
-                  await api.updateCustomerEntity('platform', activePlatform.entityId, {
-                    title: activePlatform.title,
-                    status: activePlatform.status,
-                    data: {...dataOf(activePlatform), metadata_catalog: catalog},
-                    expectedRevision: activePlatform.sourceRevision,
+                onSelectBrand={setSelectedBrandId}
+                onSelectStore={setSelectedStoreId}
+                onSave={async (scope, owner, catalog) => {
+                  const entityType = scope === 'BRAND' ? 'brand' : scope === 'STORE' ? 'store' : 'platform'
+                  const ownerData = dataOf(owner)
+                  const existingCatalog = typeof ownerData.metadata_catalog === 'object' && ownerData.metadata_catalog !== null && !Array.isArray(ownerData.metadata_catalog)
+                    ? ownerData.metadata_catalog as Record<string, unknown>
+                    : {}
+                  await api.updateCustomerEntity(entityType, owner.entityId, {
+                    title: owner.title,
+                    status: owner.status,
+                    data: {...ownerData, metadata_catalog: {...existingCatalog, ...catalog}},
+                    expectedRevision: owner.sourceRevision,
                   })
                   await refreshAfterMutation('业务字典已保存')
                 }}
@@ -279,6 +375,7 @@ export function CustomerAdminApp() {
                 collections={collections}
                 selectedPlatformId={selectedPlatformId}
                 selectedStoreId={activeStoreId}
+                selectedBrandId={selectedBrandId}
                 setFilter={next => setFilters(prev => ({...prev, [page]: next}))}
                 openCreate={() => setModal('create')}
                 openDetail={setSelectedRecord}
@@ -289,14 +386,17 @@ export function CustomerAdminApp() {
                 }}
                 openPermissions={item => {
                   setSelectedRecord(item)
+                  setRelationModalOrigin('row')
                   setModal('permissions')
                 }}
                 openGrantRole={item => {
                   setSelectedRecord(item)
+                  setRelationModalOrigin('row')
                   setModal('grantRole')
                 }}
                 openMenuProducts={item => {
                   setSelectedRecord(item)
+                  setRelationModalOrigin('row')
                   setModal('menuProducts')
                 }}
                 performAction={performAction}
@@ -311,9 +411,18 @@ export function CustomerAdminApp() {
           collections={collections}
           onClose={() => setSelectedRecord(null)}
           onEdit={() => setModal('edit')}
-          onPermissions={() => setModal('permissions')}
-          onGrantRole={() => setModal('grantRole')}
-          onMenuProducts={() => setModal('menuProducts')}
+          onPermissions={() => {
+            setRelationModalOrigin('detail')
+            setModal('permissions')
+          }}
+          onGrantRole={() => {
+            setRelationModalOrigin('detail')
+            setModal('grantRole')
+          }}
+          onMenuProducts={() => {
+            setRelationModalOrigin('detail')
+            setModal('menuProducts')
+          }}
           performAction={performAction}
         />
       ) : null}
@@ -327,7 +436,7 @@ export function CustomerAdminApp() {
           selectedStoreId={activeStoreId}
           selectedProjectId={selectedProjectId}
           selectedBrandId={selectedBrandId}
-          onClose={() => setModal(null)}
+          onClose={closeModal}
           onSubmit={async values => {
             try {
               if (modal === 'create') {
@@ -336,6 +445,7 @@ export function CustomerAdminApp() {
                 await updateEntity(page, selectedRecord, values, collections, selectedPlatformId, activeStoreId, selectedProjectId, selectedBrandId)
               }
               setModal(null)
+              setRelationModalOrigin(null)
               if (page === 'environment') {
                 await refreshAfterLocalMutation(modal === 'create' ? '沙箱已创建，可在顶部沙箱选择器切换。' : '沙箱已保存。')
               } else {
@@ -351,7 +461,8 @@ export function CustomerAdminApp() {
         <RolePermissionModal
           role={selectedRecord}
           permissions={collections.permissions}
-          onClose={() => setModal(null)}
+          highRiskPolicies={collections.highRiskPolicies}
+          onClose={closeModal}
           onSave={async permissionIds => {
             try {
               await api.updateRolePermissions(selectedRecord.entityId, {
@@ -359,6 +470,7 @@ export function CustomerAdminApp() {
                 expectedRevision: selectedRecord.sourceRevision,
               })
               setModal(null)
+              setRelationModalOrigin(null)
               await refreshAfterMutation('角色权限已保存')
             } catch (saveError) {
               setError(saveError instanceof Error ? saveError.message : '保存失败')
@@ -369,14 +481,13 @@ export function CustomerAdminApp() {
       {modal === 'grantRole' && selectedRecord ? (
         <GrantRoleModal
           user={selectedRecord}
-          roles={collections.roles}
-          projects={collections.projects}
-          stores={collections.stores}
-          onClose={() => setModal(null)}
+          collections={collections}
+          onClose={closeModal}
           onSave={async values => {
             try {
               await api.createUserRoleBinding(values)
               setModal(null)
+              setRelationModalOrigin(null)
               await refreshAfterMutation('角色已授予')
             } catch (saveError) {
               setError(saveError instanceof Error ? saveError.message : '授予失败')
@@ -388,7 +499,7 @@ export function CustomerAdminApp() {
         <MenuProductsModal
           menu={selectedRecord}
           products={collections.products}
-          onClose={() => setModal(null)}
+          onClose={closeModal}
           onSave={async sections => {
             try {
               await api.updateCustomerEntity(pageToEntityType[page] ?? 'brand_menu', selectedRecord.entityId, {
@@ -396,6 +507,7 @@ export function CustomerAdminApp() {
                 expectedRevision: selectedRecord.sourceRevision,
               })
               setModal(null)
+              setRelationModalOrigin(null)
               await refreshAfterMutation('菜单商品已保存')
             } catch (saveError) {
               setError(saveError instanceof Error ? saveError.message : '保存失败')

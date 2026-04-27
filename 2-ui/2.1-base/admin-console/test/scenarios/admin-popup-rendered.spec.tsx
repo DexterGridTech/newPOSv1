@@ -168,6 +168,7 @@ describe('AdminPopup', () => {
         await enterPin(automation, verifierPassword)
         await automation.press('ui-base-admin-popup:submit')
         await automation.press('ui-base-admin-popup:tab:adapter')
+        await automation.waitForNode('ui-base-admin-adapter-diagnostics')
 
         await expect(automation.queryNodesByText('系统状态读取')).resolves.toHaveLength(1)
         await expect(automation.queryNodesByText('系统状态失败')).resolves.toHaveLength(1)

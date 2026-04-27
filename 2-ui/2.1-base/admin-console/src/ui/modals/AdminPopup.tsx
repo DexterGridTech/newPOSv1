@@ -1,9 +1,12 @@
-import React, {useMemo} from 'react'
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react'
 import {Pressable, ScrollView, Text, View, useWindowDimensions} from 'react-native'
 import QRCode from 'react-native-qrcode-svg'
+import type {KernelRuntimeV2} from '@next/kernel-base-runtime-shell-v2'
 import {InputField} from '@next/ui-base-input-runtime'
 import {useOptionalInputRuntime} from '@next/ui-base-input-runtime'
 import {
+    ScreenContainer,
+    createUiNavigationBridge,
     useOptionalUiAutomationBridge,
     useOptionalUiAutomationRuntimeId,
     useOptionalUiAutomationTarget,
@@ -12,10 +15,15 @@ import {
 import {useStore} from 'react-redux'
 import type {EnhancedStore} from '@reduxjs/toolkit'
 import {adminConsoleGroups, adminConsoleTabs} from '../../foundations'
+import {
+    adminConsoleScreenContainers,
+    getAdminConsoleTabScreenPart,
+} from '../../foundations/adminScreenParts'
 import {createAdminPasswordVerifier} from '../../supports/adminPasswordVerifier'
 import {getAdminHostTools} from '../../supports/adminHostToolsRegistry'
-import {getAdminConsoleSectionRegistry} from '../../supports/adminSectionRegistry'
 import {useAdminPopupState} from '../../hooks'
+import {AdminPanelProvider} from '../../contexts'
+import type {AdminConsoleTab, AdminHostTools} from '../../types'
 
 export interface AdminPopupProps {
     deviceId: string
@@ -44,8 +52,8 @@ const selectedTabShadowStyle = {
 
 const PANEL_WIDTH = '96%'
 const PANEL_MAX_WIDTH = 1380
-const SIDEBAR_WIDTH = 228
-const COMPACT_SIDEBAR_WIDTH = 208
+const SIDEBAR_WIDTH = 274
+const COMPACT_SIDEBAR_WIDTH = 250
 const PANEL_BREAKPOINT = 980
 
 const Shell: React.FC<{
@@ -120,6 +128,100 @@ const Action: React.FC<{
     </Pressable>
 )
 
+type AdminTabDescriptor = (typeof adminConsoleTabs)[number]
+
+const AdminTabButton = React.memo(({
+    groupTitle,
+    tab,
+    selected,
+    onPressIn,
+    onPress,
+}: {
+    groupTitle: string
+    tab: AdminTabDescriptor
+    selected: boolean
+    onPressIn: (tab: AdminConsoleTab) => void
+    onPress: (tab: AdminConsoleTab) => void
+}) => (
+    <Pressable
+        testID={`ui-base-admin-popup:tab:${tab.key}`}
+        onPressIn={() => {
+            onPressIn(tab.key)
+        }}
+        onPress={() => {
+            onPress(tab.key)
+        }}
+        style={{
+            borderRadius: 16,
+            paddingHorizontal: 12,
+            paddingVertical: 11,
+            backgroundColor: selected ? colors.primary : '#ffffff',
+            borderWidth: 1,
+            borderColor: selected ? colors.primary : colors.borderStrong,
+            gap: 3,
+            ...(selected ? selectedTabShadowStyle : {}),
+        }}
+    >
+        <Text
+            style={{
+                color: selected ? '#bfdbfe' : colors.primary,
+                fontSize: 10,
+                fontWeight: '800',
+                letterSpacing: 0.6,
+            }}
+        >
+            {groupTitle}
+        </Text>
+        <Text style={{
+            color: selected ? '#ffffff' : colors.text,
+            fontWeight: '800',
+            fontSize: 14,
+        }}
+        >
+            {tab.title}
+        </Text>
+        <Text style={{
+            color: selected ? '#dbeafe' : colors.muted,
+            fontSize: 11,
+            lineHeight: 16,
+        }}
+        >
+            {tab.hint}
+        </Text>
+    </Pressable>
+))
+
+AdminTabButton.displayName = 'AdminTabButton'
+
+const AdminScreenHost = React.memo(({
+    runtime,
+    store,
+    closePanel,
+    hostTools,
+    automationTarget,
+}: {
+    runtime: KernelRuntimeV2
+    store: EnhancedStore
+    closePanel: () => void
+    hostTools: Readonly<AdminHostTools>
+    automationTarget: 'primary' | 'secondary'
+}) => (
+    <AdminPanelProvider
+        runtime={runtime}
+        store={store}
+        closePanel={closePanel}
+        hostTools={hostTools}
+    >
+        <ScreenContainer
+            containerPart={adminConsoleScreenContainers.tabContent}
+            automationTarget={automationTarget}
+            cacheSize={adminConsoleTabs.length}
+        />
+    </AdminPanelProvider>
+))
+
+AdminScreenHost.displayName = 'AdminScreenHost'
+
 export const AdminPopup: React.FC<AdminPopupProps> = ({
     deviceId,
     onClose,
@@ -142,9 +244,20 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
         return `开发密码提示：${verifier.deriveFor(new Date())}`
     }, [runtime.environmentMode, verifier])
     const isCompactPanel = windowWidth < PANEL_BREAKPOINT
-    const sections = getAdminConsoleSectionRegistry().list()
     const hostTools = getAdminHostTools(runtime.localNodeId)
-    const activeSection = sections.find(section => section.tab === popupState.selectedTab)
+    const navigation = useMemo(() => createUiNavigationBridge(runtime), [runtime])
+    const [visualTab, setVisualTab] = useState<AdminConsoleTab>(popupState.selectedTab)
+    const requestedScreenTabRef = useRef<AdminConsoleTab | null>(null)
+    const closePanel = useCallback(() => {
+        inputRuntime?.deactivateInput()
+        onClose()
+    }, [inputRuntime, onClose])
+
+    const markTabPressIn = useCallback((tab: AdminConsoleTab) => {
+        if (visualTab !== tab) {
+            setVisualTab(tab)
+        }
+    }, [visualTab])
 
     const handleSubmit = () => {
         if (!verifier.verify(popupState.password)) {
@@ -155,6 +268,41 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
         popupState.setError('')
         popupState.setScreen('panel')
     }
+
+    const showAdminContentScreen = useCallback(async (tab: AdminConsoleTab) => {
+        const part = getAdminConsoleTabScreenPart(tab)
+        await navigation.navigateTo({
+            target: part,
+            props: {tab},
+            source: 'ui-base-admin-console.tab',
+        })
+    }, [navigation])
+
+    const handleAdminTabPress = useCallback((tab: AdminConsoleTab, input: {waitForContent?: boolean} = {}) => {
+        if (tab === visualTab && popupState.selectedTab === tab) {
+            return input.waitForContent ? Promise.resolve() : undefined
+        }
+        setVisualTab(tab)
+        requestedScreenTabRef.current = tab
+        const transition = showAdminContentScreen(tab)
+        return input.waitForContent ? transition.then(() => undefined) : undefined
+    }, [
+        popupState.selectedTab,
+        showAdminContentScreen,
+        visualTab,
+    ])
+
+    useEffect(() => {
+        if (popupState.screen !== 'panel') {
+            return
+        }
+        if (requestedScreenTabRef.current === popupState.selectedTab) {
+            return
+        }
+        requestedScreenTabRef.current = popupState.selectedTab
+        setVisualTab(popupState.selectedTab)
+        void showAdminContentScreen(popupState.selectedTab)
+    }, [popupState.screen, popupState.selectedTab, showAdminContentScreen])
 
     React.useEffect(() => {
         if (!automationBridge) {
@@ -248,8 +396,8 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
                     testID: 'ui-base-admin-popup:selected-tab',
                     semanticId: 'ui-base-admin-popup:selected-tab',
                     role: 'text',
-                    text: popupState.selectedTab,
-                    value: popupState.selectedTab,
+                    text: visualTab,
+                    value: visualTab,
                     visible: true,
                     enabled: true,
                     persistent: true,
@@ -290,8 +438,8 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
                     enabled: true,
                     persistent: true,
                     availableActions: ['press'],
-                    onAutomationAction: () => {
-                        popupState.setSelectedTab(tab.key)
+                    onAutomationAction: async () => {
+                        await handleAdminTabPress(tab.key, {waitForContent: true})
                         return {ok: true}
                     },
                 })),
@@ -310,7 +458,8 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
         onClose,
         popupState.screen,
         popupState.selectedTab,
-        popupState.setSelectedTab,
+        handleAdminTabPress,
+        visualTab,
     ])
 
     if (popupState.screen === 'login') {
@@ -451,10 +600,7 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
                     <Action
                         testID="ui-base-admin-popup:close-panel"
                         label="关闭"
-                        onPress={() => {
-                            inputRuntime?.deactivateInput()
-                            onClose()
-                        }}
+                        onPress={closePanel}
                     />
                 </View>
                 <View
@@ -497,68 +643,44 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
                                 <View
                                     testID={`ui-base-admin-popup:group:${group.key}`}
                                     style={{
-                                        borderRadius: 16,
-                                        backgroundColor: group.key === 'runtime' ? '#eff6ff' : '#fff7ed',
-                                        padding: 12,
-                                        gap: 6,
+                                        paddingHorizontal: 4,
+                                        paddingVertical: 4,
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        gap: 8,
                                     }}
                                 >
+                                    <View
+                                        style={{
+                                            width: 3,
+                                            height: 16,
+                                            borderRadius: 999,
+                                            backgroundColor: group.key === 'runtime' ? colors.primary : '#f59e0b',
+                                        }}
+                                    />
                                     <Text style={{color: colors.text, fontWeight: '800', fontSize: 16}}>
                                         {group.title}
                                     </Text>
-                                    <Text style={{color: colors.muted, fontSize: 12, lineHeight: 17}}>
-                                        {group.hint}
-                                    </Text>
+                                    <View
+                                        style={{
+                                            height: 1,
+                                            flex: 1,
+                                            backgroundColor: colors.border,
+                                        }}
+                                    />
                                 </View>
                                 {adminConsoleTabs
                                     .filter(tab => tab.group === group.key)
-                                    .map(tab => {
-                                        const selected = tab.key === popupState.selectedTab
-                                        return (
-                                            <Pressable
-                                                key={tab.key}
-                                                testID={`ui-base-admin-popup:tab:${tab.key}`}
-                                                onPress={() => popupState.setSelectedTab(tab.key)}
-                                                style={{
-                                                    borderRadius: 16,
-                                                    paddingHorizontal: 12,
-                                                    paddingVertical: 11,
-                                                    backgroundColor: selected ? colors.primary : '#ffffff',
-                                                    borderWidth: 1,
-                                                    borderColor: selected ? colors.primary : colors.borderStrong,
-                                                    gap: 3,
-                                                    ...(selected ? selectedTabShadowStyle : {}),
-                                                }}
-                                            >
-                                                <Text
-                                                    style={{
-                                                        color: selected ? '#bfdbfe' : colors.primary,
-                                                        fontSize: 10,
-                                                        fontWeight: '800',
-                                                        letterSpacing: 0.6,
-                                                    }}
-                                                >
-                                                    {group.title}
-                                                </Text>
-                                                <Text style={{
-                                                    color: selected ? '#ffffff' : colors.text,
-                                                    fontWeight: '800',
-                                                    fontSize: 14,
-                                                }}
-                                                >
-                                                    {tab.title}
-                                                </Text>
-                                                <Text style={{
-                                                    color: selected ? '#dbeafe' : colors.muted,
-                                                    fontSize: 11,
-                                                    lineHeight: 16,
-                                                }}
-                                                >
-                                                    {tab.hint}
-                                                </Text>
-                                            </Pressable>
-                                        )
-                                    })}
+                                    .map(tab => (
+                                        <AdminTabButton
+                                            key={tab.key}
+                                            groupTitle={group.title}
+                                            tab={tab}
+                                            selected={tab.key === visualTab}
+                                            onPressIn={markTabPressIn}
+                                            onPress={handleAdminTabPress}
+                                        />
+                                    ))}
                             </View>
                         ))}
                     </ScrollView>
@@ -575,17 +697,15 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
                             testID="ui-base-admin-popup:selected-tab"
                             style={{color: colors.primaryDeep, fontWeight: '800'}}
                         >
-                            {popupState.selectedTab}
+                            {visualTab}
                         </Text>
-                        {activeSection?.render({
-                            runtime,
-                            store,
-                            closePanel: () => {
-                                inputRuntime?.deactivateInput()
-                                onClose()
-                            },
-                            hostTools,
-                        }) ?? null}
+                        <AdminScreenHost
+                            runtime={runtime}
+                            store={store}
+                            closePanel={closePanel}
+                            hostTools={hostTools}
+                            automationTarget={automationTarget}
+                        />
                     </ScrollView>
                 </View>
             </View>

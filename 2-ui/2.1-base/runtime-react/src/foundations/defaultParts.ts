@@ -1,6 +1,7 @@
 import {DefaultAlert} from '../ui/components/DefaultAlert'
 import {EmptyScreen} from '../ui/components/EmptyScreen'
 import {HotUpdateProgressModal} from '../ui/components/HotUpdateProgressModal'
+import {LoadingScreen} from '../ui/components/LoadingScreen'
 import {defineUiAlertPart} from './defineUiAlertPart'
 import {defineUiModalPart} from './defineUiModalPart'
 import {defineUiScreenPart} from './defineUiScreenPart'
@@ -18,6 +19,18 @@ export const runtimeReactDefaultParts = {
         workspaces: ['main', 'branch'],
         instanceModes: ['MASTER', 'SLAVE'],
         component: EmptyScreen,
+    }),
+    loadingScreen: defineUiScreenPart<{label?: string; testID?: string}>({
+        partKey: 'ui.base.loading-screen',
+        rendererKey: 'ui.base.loading-screen',
+        name: 'loadingScreen',
+        title: 'Loading Screen',
+        description: 'Fallback loading screen for deferred containers',
+        containerKey: uiRuntimeRootVariables.primaryRootContainer.key,
+        screenModes: ['DESKTOP', 'MOBILE'],
+        workspaces: ['main', 'branch'],
+        instanceModes: ['MASTER', 'SLAVE'],
+        component: LoadingScreen,
     }),
     defaultAlert: defineUiAlertPart({
         partKey: 'ui.base.default-alert',

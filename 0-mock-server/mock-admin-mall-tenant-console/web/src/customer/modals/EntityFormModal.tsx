@@ -3,8 +3,8 @@ import {api} from '../../api'
 import {pageMeta, pageToEntityType} from '../constants'
 import type {CollectionState, CustomerEntity, FieldDef, PageKey} from '../types'
 import {Modal} from '../components/common'
-import {asText, dataOf} from '../domain'
-import {formatOptionLines, metadataOptions, optionLabel, parseOptionLines, platformMetadataOptions, type MetadataOption} from '../metadata'
+import {asText, dataOf, scopeSelectorLabel} from '../domain'
+import {businessMetadataOptions, formatOptionLines, metadataOptions, optionLabel, parseOptionLines, platformMetadataOptions, type MetadataOption} from '../metadata'
 
 const createInitialValues = (fields: FieldDef[], selected: CustomerEntity | null) => {
   const data = dataOf(selected)
@@ -38,6 +38,11 @@ const writeFieldValue = (data: Record<string, unknown>, path: string, value: unk
   target[last] = value
 }
 
+const displayFieldValue = (field: FieldDef, value: string) => {
+  if (field.type === 'select') return field.options?.find(option => option.value === value)?.label ?? value
+  return value
+}
+
 const parseFieldValue = (field: FieldDef, value: string) => {
   if (value === '') {
     if (field.type === 'number') return undefined
@@ -52,7 +57,7 @@ const parseFieldValue = (field: FieldDef, value: string) => {
     ...phase,
     phase_id: index === 0 ? 'phase-default' : normalizePhaseId(phase.phase_name, index),
   }))
-  if (field.type === 'json') {
+  if (field.type === 'json' || field.type === 'scope-selector') {
     try {
       return JSON.parse(value)
     } catch {
@@ -246,6 +251,86 @@ const defaultRuleConfig = (ruleType = 'MANUAL') => jsonText({
 
 const defaultIngredientConsumption = () => jsonText([])
 
+const defaultOverrideFields = () => jsonText([])
+
+const defaultFieldMappingConfig = () => jsonText({
+  name: 'external.name',
+  price: 'external.price',
+  sku: 'external.sku_id',
+})
+
+const defaultScopeSelector = (scopeType = 'STORE', scopeKey = '') => jsonText({
+  scope_type: scopeType,
+  scope_key: scopeKey,
+})
+
+const splitList = (value: string) =>
+  value.split(/[,\n，、]/).map(item => item.trim()).filter(Boolean)
+
+const buildScopeSelectorValue = (
+  field: FieldDef,
+  value: string,
+  _collections: CollectionState,
+  platformId: string,
+  storeId: string,
+  projectId: string,
+) => {
+  const parsedValue = parseFieldValue(field, value)
+  const parsed = typeof parsedValue === 'object' && parsedValue !== null
+    ? parsedValue as Record<string, unknown>
+    : {}
+  const scopeType = asText(parsed.scope_type, 'STORE')
+  if (scopeType === 'PLATFORM') return {scope_type: 'PLATFORM', scope_key: platformId}
+  if (scopeType === 'PROJECT') return {scope_type: 'PROJECT', scope_key: asText(parsed.scope_key, projectId)}
+  if (scopeType === 'STORE') return {scope_type: 'STORE', scope_key: asText(parsed.scope_key, storeId)}
+  if (scopeType === 'TAG') return {scope_type: 'TAG', tags: splitList(asText(parsed.tags, ''))}
+  if (scopeType === 'ORG_NODE') return {
+    scope_type: 'ORG_NODE',
+    org_node_type: asText(parsed.org_node_type, 'store'),
+    org_node_ids: splitList(asText(parsed.org_node_ids, storeId)),
+  }
+  if (scopeType === 'RESOURCE_IDS') return {
+    scope_type: 'RESOURCE_IDS',
+    resource_type: asText(parsed.resource_type, 'store').toLowerCase(),
+    resource_ids: splitList(asText(parsed.resource_ids, storeId)),
+  }
+  if (scopeType === 'COMPOSITE') return {
+    scope_type: 'COMPOSITE',
+    selectors: [
+      {scope_type: 'ORG_NODE', org_node_type: 'project', org_node_ids: splitList(asText(parsed.project_ids, projectId))},
+      {scope_type: 'TAG', tags: splitList(asText(parsed.tags, ''))},
+    ],
+  }
+  return {scope_type: scopeType, scope_key: asText(parsed.scope_key, platformId)}
+}
+
+const stringifyScopeSelectorValue = (
+  field: FieldDef,
+  value: string,
+  collections: CollectionState,
+  platformId: string,
+  storeId: string,
+  projectId: string,
+) => JSON.stringify(buildScopeSelectorValue(field, value, collections, platformId, storeId, projectId), null, 2)
+
+const scopeTargetOptions = (
+  scopeType: string,
+  collections: CollectionState,
+  platformId: string,
+  projectId: string,
+  storeId: string,
+) => {
+  const platformProjects = collections.projects.filter(project => !platformId || dataOf(project).platform_id === platformId)
+  const projectIds = new Set(platformProjects.map(project => project.entityId))
+  const platformStores = collections.stores.filter(store => !platformId || projectIds.has(asText(dataOf(store).project_id, '')))
+  if (scopeType === 'PROJECT') return platformProjects.map(project => ({label: project.title, value: project.entityId}))
+  if (scopeType === 'STORE') return platformStores.map(store => ({label: store.title, value: store.entityId}))
+  if (scopeType === 'ORG_NODE') return platformStores.map(store => ({label: store.title, value: store.entityId}))
+  if (scopeType === 'RESOURCE_IDS') return platformStores.map(store => ({label: store.title, value: store.entityId}))
+  if (scopeType === 'COMPOSITE') return platformProjects.map(project => ({label: project.title, value: project.entityId}))
+  return [{label: platformId || projectId || storeId, value: platformId || projectId || storeId}]
+}
+
 export function EntityFormModal(props: {
   mode: 'create' | 'edit'
   page: PageKey
@@ -269,6 +354,7 @@ export function EntityFormModal(props: {
       return {
         ...field,
         readonly: true,
+        helper: '由乙方门店所属项目带出；如需变更请先切换乙方门店',
         defaultValue: project?.entityId ?? props.selectedProjectId,
         options: project ? [{label: project.title, value: project.entityId}] : field.options,
       }
@@ -300,8 +386,11 @@ export function EntityFormModal(props: {
     event.preventDefault()
     const normalizedValues = {...values}
     visibleFields.forEach(field => {
-      if (normalizedValues[field.name] === undefined && field.defaultValue !== undefined) {
-        normalizedValues[field.name] = field.defaultValue
+    if (normalizedValues[field.name] === undefined && field.defaultValue !== undefined) {
+      normalizedValues[field.name] = field.defaultValue
+    }
+      if (field.type === 'scope-selector') {
+        normalizedValues[field.name] = stringifyScopeSelectorValue(field, normalizedValues[field.name] ?? '', props.collections, props.selectedPlatformId, props.selectedStoreId, props.selectedProjectId)
       }
     })
     void props.onSubmit(normalizedValues)
@@ -448,10 +537,117 @@ export function EntityFormModal(props: {
               </div>
             )
           }
+          if (field.type === 'scope-selector') {
+            const parsed: Record<string, unknown> = buildScopeSelectorValue(field, currentValue, props.collections, props.selectedPlatformId, props.selectedStoreId, props.selectedProjectId)
+            const scopeType = asText(parsed.scope_type, 'STORE')
+            const targetOptions = scopeTargetOptions(scopeType, props.collections, props.selectedPlatformId, props.selectedProjectId, props.selectedStoreId)
+            const updateScopePatch = (patch: Record<string, unknown>) => {
+              let next = {...parsed, ...patch}
+              const nextScopeType = asText(patch.scope_type, scopeType)
+              if (patch.scope_type && ['PLATFORM', 'PROJECT', 'STORE'].includes(nextScopeType)) {
+                next = {
+                  scope_type: nextScopeType,
+                  scope_key: nextScopeType === 'PLATFORM'
+                    ? props.selectedPlatformId
+                    : nextScopeType === 'PROJECT'
+                    ? props.selectedProjectId
+                    : props.selectedStoreId,
+                }
+              }
+              setValues(prev => ({...prev, [field.name]: JSON.stringify(next, null, 2)}))
+            }
+            const selectedTarget = asText(parsed.scope_key ?? parsed.org_node_ids ?? parsed.resource_ids ?? parsed.project_ids, targetOptions[0]?.value ?? '')
+            return (
+              <div key={field.name} className="customer-v3-field customer-v3-scope-builder wide">
+                {fieldLabel}
+                <div className="customer-v3-scope-builder-grid">
+                  <label>
+                    <span>范围类型</span>
+                    <select value={scopeType} disabled={field.readonly} onChange={event => updateScopePatch({scope_type: event.target.value})}>
+                      {metadataOptions.scopeTypes.map(scope => <option key={scope.value} value={scope.value}>{scope.label}</option>)}
+                    </select>
+                  </label>
+                  {scopeType === 'PROJECT' || scopeType === 'STORE' ? (
+                    <label>
+                      <span>{scopeType === 'PROJECT' ? '项目' : '门店'}</span>
+                      <select value={asText(parsed.scope_key, targetOptions[0]?.value ?? '')} disabled={field.readonly} onChange={event => updateScopePatch({scope_key: event.target.value})}>
+                        {targetOptions.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+                      </select>
+                    </label>
+                  ) : null}
+                  {scopeType === 'TAG' ? (
+                    <label>
+                      <span>标签</span>
+                      <input value={asText(parsed.tags, '')} readOnly={field.readonly} onChange={event => updateScopePatch({tags: event.target.value})} placeholder="region:south, store-type:flagship" />
+                    </label>
+                  ) : null}
+                  {scopeType === 'ORG_NODE' ? (
+                    <>
+                      <label>
+                        <span>组织节点类型</span>
+                        <select value={asText(parsed.org_node_type, 'store')} disabled={field.readonly} onChange={event => updateScopePatch({org_node_type: event.target.value})}>
+                          <option value="project">项目</option>
+                          <option value="store">门店</option>
+                          <option value="brand">品牌</option>
+                        </select>
+                      </label>
+                      <label>
+                        <span>组织节点</span>
+                        <select value={selectedTarget} disabled={field.readonly} onChange={event => updateScopePatch({org_node_ids: event.target.value})}>
+                          {targetOptions.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+                        </select>
+                      </label>
+                    </>
+                  ) : null}
+                  {scopeType === 'RESOURCE_IDS' ? (
+                    <>
+                      <label>
+                        <span>资源类型</span>
+                        <select value={asText(parsed.resource_type, 'store').toUpperCase()} disabled={field.readonly} onChange={event => updateScopePatch({resource_type: event.target.value.toLowerCase()})}>
+                          {metadataOptions.resourceTypes.map(resource => <option key={resource.value} value={resource.value}>{resource.label}</option>)}
+                        </select>
+                      </label>
+                      <label>
+                        <span>资源对象</span>
+                        <select value={selectedTarget} disabled={field.readonly} onChange={event => updateScopePatch({resource_ids: event.target.value})}>
+                          {targetOptions.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+                        </select>
+                      </label>
+                    </>
+                  ) : null}
+                  {scopeType === 'COMPOSITE' ? (
+                    <>
+                      <label>
+                        <span>项目</span>
+                        <select value={asText(parsed.project_ids, props.selectedProjectId)} disabled={field.readonly} onChange={event => updateScopePatch({project_ids: event.target.value})}>
+                          {scopeTargetOptions('PROJECT', props.collections, props.selectedPlatformId, props.selectedProjectId, props.selectedStoreId).map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+                        </select>
+                      </label>
+                      <label>
+                        <span>标签</span>
+                        <input value={asText(parsed.tags, '')} readOnly={field.readonly} onChange={event => updateScopePatch({tags: event.target.value})} placeholder="region:south" />
+                      </label>
+                    </>
+                  ) : null}
+                </div>
+                <div className="customer-v3-scope-preview">
+                  <strong>生效范围</strong>
+                  <span>{scopeSelectorLabel(buildScopeSelectorValue(field, currentValue, props.collections, props.selectedPlatformId, props.selectedStoreId, props.selectedProjectId), props.collections)}</span>
+                </div>
+                <textarea
+                  value={stringifyScopeSelectorValue(field, currentValue, props.collections, props.selectedPlatformId, props.selectedStoreId, props.selectedProjectId)}
+                  readOnly
+                  rows={4}
+                />
+              </div>
+            )
+          }
           return (
             <label key={field.name} className={field.type === 'textarea' || field.type === 'json' || field.type === 'option-list' ? 'wide' : ''}>
               {fieldLabel}
-              {field.type === 'select' ? (
+              {field.readonly && field.type === 'select' ? (
+                <span className="customer-v3-readonly-value">{displayFieldValue(field, currentValue) || '--'}</span>
+              ) : field.type === 'select' ? (
               <select value={currentValue} disabled={field.readonly} onChange={event => updateFieldValue(field, event.target.value)}>
                 {field.options?.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
               </select>
@@ -493,6 +689,8 @@ function formFieldsFor(page: PageKey, collections: CollectionState, platformId: 
   const contractProject = page === 'contracts' && asText(itemData.lessor_project_id ?? itemData.project_id, '')
     ? collections.projects.find(project => project.entityId === asText(itemData.lessor_project_id ?? itemData.project_id, ''))
     : storeProject(collections, contractStore?.entityId ?? storeId, projectId)
+  const contextStore = selectedStore(collections, storeId) ?? contractStore
+  const contextBrand = collections.brands.find(brand => brand.entityId === (brandId || asText(dataOf(contextStore).brand_id, ''))) ?? platformBrands[0]
   const contractPhaseOptions = phaseOptionsForProject(contractProject)
   const defaultContractTenantId = asText(dataOf(contractStore).tenant_id, tenantOptions[0]?.value ?? '')
   const defaultContractBrandId = asText(dataOf(contractStore).brand_id, brandOptions[0]?.value ?? '')
@@ -500,19 +698,28 @@ function formFieldsFor(page: PageKey, collections: CollectionState, platformId: 
   const projectTypeOptions = platformMetadataOptions(selectedPlatform, 'project_business_modes')
   const regionOptions = mergeExistingProjectRegions(platformMetadataOptions(selectedPlatform, 'regions'), platformProjects)
   const storeTypeOptions = platformMetadataOptions(selectedPlatform, 'store_cooperation_modes')
-  const storeScenarioOptions = platformMetadataOptions(selectedPlatform, 'store_business_scenarios')
+  const storeScenarioOptions = businessMetadataOptions({platform: selectedPlatform, store: contextStore, key: 'store_business_scenarios'})
   const brandCategoryOptions = platformMetadataOptions(selectedPlatform, 'brand_categories')
-  const productTypeOptions = platformMetadataOptions(selectedPlatform, 'product_types')
-  const productCategoryTemplateOptions = platformMetadataOptions(selectedPlatform, 'product_categories')
-  const tableAreaOptions = platformMetadataOptions(selectedPlatform, 'table_areas')
-  const tableTypeOptions = platformMetadataOptions(selectedPlatform, 'table_types')
-  const workstationTypeOptions = platformMetadataOptions(selectedPlatform, 'workstation_types')
-  const productionCategoryOptions = platformMetadataOptions(selectedPlatform, 'production_categories')
-  const priceTypeOptions = platformMetadataOptions(selectedPlatform, 'price_types')
-  const channelOptions = platformMetadataOptions(selectedPlatform, 'channel_types')
-  const discountOptions = platformMetadataOptions(selectedPlatform, 'discount_types')
-  const memberTierOptions = platformMetadataOptions(selectedPlatform, 'member_tiers')
-  const availabilityRuleTypeOptions = platformMetadataOptions(selectedPlatform, 'availability_rule_types')
+  const productTypeOptions = businessMetadataOptions({platform: selectedPlatform, brand: contextBrand, key: 'product_types'})
+  const productCategoryTemplateOptions = businessMetadataOptions({platform: selectedPlatform, brand: contextBrand, key: 'product_categories'})
+  const tableAreaOptions = businessMetadataOptions({platform: selectedPlatform, store: contextStore, key: 'table_areas'})
+  const tableTypeOptions = businessMetadataOptions({platform: selectedPlatform, store: contextStore, key: 'table_types'})
+  const workstationTypeOptions = businessMetadataOptions({platform: selectedPlatform, store: contextStore, key: 'workstation_types'})
+  const productionCategoryOptions = businessMetadataOptions({platform: selectedPlatform, brand: contextBrand, key: 'production_categories'})
+  const priceTypeOptions = businessMetadataOptions({platform: selectedPlatform, store: contextStore, key: 'price_types'})
+  const channelOptions = businessMetadataOptions({platform: selectedPlatform, store: contextStore, key: 'channel_types'})
+  const discountOptions = businessMetadataOptions({platform: selectedPlatform, store: contextStore, key: 'discount_types'})
+  const lockableProductFieldOptions = [
+    {label: '名称', value: 'product_name'},
+    {label: '基础价格', value: 'base_price'},
+    {label: '商品图片', value: 'image_url'},
+    {label: '商品分类', value: 'category_id'},
+    {label: '规格变体', value: 'variants'},
+    {label: '加料组', value: 'modifier_groups'},
+    {label: '制作画像', value: 'production_profile'},
+  ]
+  const memberTierOptions = businessMetadataOptions({platform: selectedPlatform, store: contextStore, key: 'member_tiers'})
+  const availabilityRuleTypeOptions = businessMetadataOptions({platform: selectedPlatform, store: contextStore, key: 'availability_rule_types'})
   const productCategoryOptions = collections.productCategories
     .filter(category => {
       const data = dataOf(category)
@@ -527,12 +734,29 @@ function formFieldsFor(page: PageKey, collections: CollectionState, platformId: 
   const scopeOptions = metadataOptions.scopeTypes
   const reviewOptions = metadataOptions.reviewStatuses
   const isvStatusOptions = metadataOptions.isvStatuses
+  const permissionGroupOptions = [{label: '不归属分组', value: ''}, ...option(collections.permissionGroups)]
+  const permissionOptions = option(collections.permissions)
+  const roleOptions = option(collections.roles)
+  const userOptions = option(collections.users)
+  const principalGroupOptions = option(collections.principalGroups)
+  const featureCodeOptions = collections.featurePoints.map(feature => ({label: feature.title, value: asText(dataOf(feature).feature_code, feature.entityId)}))
+  const permissionCodeOptions = collections.permissions.map(permission => ({label: permission.title, value: asText(dataOf(permission).permission_code, permission.entityId)}))
+  const roleCodeOptions = collections.roles.map(role => ({label: role.title, value: asText(dataOf(role).role_code, role.entityId)}))
   const settlementCycleOptions = [
     {label: '月结', value: 'MONTHLY'},
     {label: '季度结', value: 'QUARTERLY'},
     {label: '半月结', value: 'BI_MONTHLY'},
     {label: '现结', value: 'ON_DEMAND'},
   ]
+  const idpStatus: FieldDef = {name: 'status', label: '状态', type: 'select', options: metadataOptions.idpStatuses}
+  const roleStatus: FieldDef = {name: 'status', label: '状态', type: 'select', options: metadataOptions.roleStatuses}
+  const userStatus: FieldDef = {
+    name: 'status',
+    label: '状态',
+    type: 'select',
+    options: metadataOptions.userStatuses,
+    helper: 'DELETED 是软删除终态，保存后不能恢复',
+  }
   if (mode === 'edit') {
     const editFields: Partial<Record<PageKey, FieldDef[]>> = {
       platforms: [{name: 'platform_code', label: '平台编码', readonly: true, helper: '创建后不可修改'}, {name: 'platform_name', label: '平台名称', required: true}, {name: 'description', label: '描述', type: 'textarea'}, {name: 'contact_name', label: '联系人'}, {name: 'contact_phone', label: '联系电话'}, {name: 'isv_config.provider_type', label: 'ISV 接入方'}, {name: 'isv_config.channel_status', label: 'ISV 状态', type: 'select', options: isvStatusOptions}, {name: 'isv_config.token_expire_at', label: 'Token 到期时间'}, {name: 'isv_config.app_key_masked', label: 'App Key', readonly: true, helper: '仅展示掩码'}, {name: 'isv_config.isv_token_masked', label: 'ISV Token', readonly: true, helper: '仅展示掩码'}, commonStatus],
@@ -540,15 +764,29 @@ function formFieldsFor(page: PageKey, collections: CollectionState, platformId: 
       tenants: [{name: 'tenant_code', label: '租户编码', readonly: true, helper: '创建后不可修改'}, {name: 'tenant_name', label: '租户名称', required: true}, {name: 'company_name', label: '公司名称'}, {name: 'tenant_type', label: '租户类型', type: 'select', options: platformMetadataOptions(selectedPlatform, 'tenant_types')}, {name: 'business_model', label: '经营模式', type: 'select', options: platformMetadataOptions(selectedPlatform, 'tenant_business_models')}, {name: 'social_credit_code', label: '统一社会信用代码', readonly: true, helper: '如需变更请走审批'}, {name: 'legal_representative', label: '法定代表人'}, {name: 'contact_name', label: '联系人'}, {name: 'contact_phone', label: '联系电话'}, {name: 'contact_email', label: '联系邮箱'}, {name: 'invoice_title', label: '发票抬头'}, {name: 'settlement_cycle', label: '结算周期', type: 'select', options: settlementCycleOptions}, {name: 'billing_email', label: '账单邮箱'}, commonStatus],
       brands: [{name: 'brand_code', label: '品牌编码', readonly: true, helper: '创建后不可修改'}, {name: 'brand_name', label: '品牌名称', required: true}, {name: 'brand_name_en', label: '英文名称'}, {name: 'brand_category', label: '品牌品类', type: 'select', options: brandCategoryOptions}, {name: 'brand_logo_url', label: '品牌图标', type: 'asset', assetKind: 'brand-logo', helper: '用于品牌列表和门店识别'}, {name: 'brand_description', label: '品牌说明', type: 'textarea'}, {name: 'standard_menu_enabled', label: '启用标准菜单', type: 'select', options: yesNoOptions}, {name: 'standard_pricing_locked', label: '锁定标准价格', type: 'select', options: yesNoOptions}, {name: 'erp_integration_enabled', label: 'ERP 对接', type: 'select', options: yesNoOptions}, {name: 'erp_api_endpoint', label: 'ERP 接口地址'}, commonStatus],
       contracts: [{name: 'contract_code', label: '合同编号', readonly: true, helper: '创建后不可修改'}, {name: 'lessor_project_name', label: '甲方项目', readonly: true, helper: '合同创建时快照'}, {name: 'lessor_phase_name', label: '甲方分期', readonly: true, helper: '合同创建时快照'}, {name: 'lessor_owner_name', label: '甲方业主方', readonly: true, helper: '合同创建时快照'}, {name: 'lessee_store_name', label: '乙方门店', readonly: true}, {name: 'lessee_tenant_name', label: '乙方租户', readonly: true}, {name: 'lessee_brand_name', label: '乙方品牌', readonly: true}, {name: 'start_date', label: '开始日期', type: 'date'}, {name: 'end_date', label: '到期日期', type: 'date'}, {name: 'commission_type', label: '计费模式'}, {name: 'commission_rate', label: '扣点/费率', type: 'number'}, {name: 'deposit_amount', label: '保证金', type: 'number'}, commonStatus],
-      stores: [{name: 'store_code', label: '门店编码', readonly: true, helper: '创建后不可修改'}, {name: 'store_name', label: '门店名称', required: true}, {name: 'project_id', label: '所属项目', type: 'select', options: projectOptions, readonly: true}, {name: 'unit_code', label: '铺位编码'}, {name: 'floor', label: '楼层'}, {name: 'area_sqm', label: '面积', type: 'number'}, {name: 'store_type', label: '合作模式', type: 'select', options: storeTypeOptions}, {name: 'store_formats', label: '经营场景配置', type: 'multi-select', options: storeScenarioOptions, helper: '来自集团业务字典，可多选'}, {name: 'business_hours', label: '营业时间', type: 'time'}, {name: 'operating_status', label: '营业状态', type: 'select', options: metadataOptions.storeOperatingStatuses}, {name: 'tenant_id', label: '当前租户', type: 'select', options: tenantOptions, readonly: true, helper: '由合同生效写入'}, {name: 'brand_id', label: '当前品牌', type: 'select', options: brandOptions, readonly: true, helper: '由合同生效写入'}, commonStatus],
+      stores: [{name: 'store_code', label: '门店编码', readonly: true, helper: '创建后不可修改'}, {name: 'store_name', label: '门店名称', required: true}, {name: 'project_id', label: '所属项目', type: 'select', options: projectOptions, readonly: true}, {name: 'unit_code', label: '铺位编码'}, {name: 'floor', label: '楼层'}, {name: 'area_sqm', label: '面积', type: 'number'}, {name: 'store_type', label: '合作模式', type: 'select', options: storeTypeOptions}, {name: 'store_formats', label: '经营场景配置', type: 'multi-select', options: storeScenarioOptions, helper: '来自门店字典，可多选'}, {name: 'business_hours', label: '营业时间', type: 'time'}, {name: 'operating_status', label: '营业状态', type: 'select', options: metadataOptions.storeOperatingStatuses}, {name: 'tenant_id', label: '当前租户', type: 'select', options: tenantOptions, readonly: true, helper: '由合同生效写入'}, {name: 'brand_id', label: '当前品牌', type: 'select', options: brandOptions, readonly: true, helper: '由合同生效写入'}, commonStatus],
       businessEntities: [{name: 'entity_code', label: '主体编码', readonly: true, helper: '创建后不可修改'}, {name: 'entity_name', label: '主体名称', required: true}, {name: 'tenant_id', label: '所属租户', type: 'select', options: tenantOptions, readonly: true}, {name: 'company_name', label: '公司名称'}, {name: 'entity_type', label: '主体类型', type: 'select', options: metadataOptions.entityTypes}, {name: 'unified_social_credit_code', label: '统一社会信用代码', readonly: true, helper: '如需变更请走审批'}, {name: 'legal_representative', label: '法定代表人'}, {name: 'taxpayer_type', label: '纳税人类型', type: 'select', options: metadataOptions.taxpayerTypes}, {name: 'tax_rate', label: '税率', type: 'number'}, {name: 'bank_name', label: '开户银行'}, {name: 'bank_account_name', label: '银行户名'}, {name: 'bank_account_no_masked', label: '银行账号', readonly: true, helper: '仅展示掩码'}, {name: 'bank_branch', label: '开户支行'}, {name: 'settlement_cycle', label: '结算周期', type: 'select', options: settlementCycleOptions}, {name: 'settlement_day', label: '结算日', type: 'number'}, {name: 'auto_settlement_enabled', label: '自动结算', type: 'select', options: yesNoOptions}, commonStatus],
       tables: [{name: 'store_id', label: '所属门店', type: 'select', options: storeOptions, readonly: true}, {name: 'table_no', label: '桌台号', readonly: true}, {name: 'table_name', label: '桌台名称'}, {name: 'area', label: '桌台区域', type: 'select', options: tableAreaOptions}, {name: 'table_type', label: '桌台类型', type: 'select', options: tableTypeOptions}, {name: 'capacity', label: '座位数', type: 'number'}, {name: 'reservable', label: '可预订配置', type: 'select', options: yesNoOptions, helper: '仅维护是否支持预订，不维护预订流程'}, {name: 'consumer_description', label: '消费者展示说明', type: 'textarea'}, {name: 'minimum_spend', label: '最低消费', type: 'number'}, {name: 'sort_order', label: '展示排序', type: 'number'}, {name: 'table_status', label: '主数据状态', type: 'select', options: metadataOptions.tableStatuses}],
-      workstations: [{name: 'store_id', label: '所属门店', type: 'select', options: storeOptions, readonly: true}, {name: 'workstation_code', label: '工作站编码', readonly: true}, {name: 'workstation_name', label: '工作站名称'}, {name: 'workstation_type', label: '工作站类型', type: 'select', options: workstationTypeOptions}, {name: 'responsible_categories', label: '负责出品品类', type: 'multi-select', options: productionCategoryOptions, helper: '来自集团业务字典，可多选；仅定义路由能力，不承载出品任务队列'}, {name: 'description', label: '说明', type: 'textarea'}, commonStatus],
-      permissions: [{name: 'permission_code', label: '权限编码', readonly: true, helper: '创建后不可修改'}, {name: 'permission_name', label: '权限名称'}, {name: 'permission_type', label: '权限类型', type: 'select', options: metadataOptions.permissionTypes}, commonStatus],
-      roles: [{name: 'role_code', label: '角色编码', readonly: true, helper: '创建后不可修改'}, {name: 'role_name', label: '角色名称'}, {name: 'role_type', label: '角色来源', type: 'select', options: metadataOptions.roleTypes}, {name: 'scope_type', label: '授权范围', type: 'select', options: scopeOptions}, {name: 'permission_ids', label: '权限集合', type: 'json', helper: '也可用“权限”按钮维护'}, commonStatus],
-      users: [{name: 'user_code', label: '用户编码', readonly: true, helper: '创建后不可修改'}, {name: 'display_name', label: '姓名'}, {name: 'mobile', label: '手机号'}, {name: 'store_id', label: '所属门店', type: 'select', options: storeOptions}, commonStatus],
+      workstations: [{name: 'store_id', label: '所属门店', type: 'select', options: storeOptions, readonly: true}, {name: 'workstation_code', label: '工作站编码', readonly: true}, {name: 'workstation_name', label: '工作站名称'}, {name: 'workstation_type', label: '工作站类型', type: 'select', options: workstationTypeOptions}, {name: 'responsible_categories', label: '负责出品品类', type: 'multi-select', options: productionCategoryOptions, helper: '来自品牌字典，可多选；仅定义路由能力，不承载出品任务队列'}, {name: 'description', label: '说明', type: 'textarea'}, commonStatus],
+      permissions: [{name: 'permission_code', label: '权限编码', readonly: true, helper: '创建后不可修改'}, {name: 'permission_name', label: '权限名称'}, {name: 'permission_type', label: '权限类型', type: 'select', options: metadataOptions.permissionTypes, readonly: true, helper: '创建后不可修改；系统权限由平台内置维护'}, {name: 'permission_source', label: '权限来源', type: 'select', options: metadataOptions.permissionSources, readonly: true, helper: '创建后不可修改'}, {name: 'scope_type', label: '默认范围', type: 'select', options: scopeOptions}, {name: 'permission_group_id', label: '权限分组', type: 'select', options: permissionGroupOptions}, {name: 'resource_type', label: '资源类型', type: 'select', options: metadataOptions.resourceTypes}, {name: 'resource', label: '资源标识'}, {name: 'action', label: '动作', type: 'select', options: metadataOptions.permissionActions}, {name: 'feature_flag', label: '功能点', type: 'select', options: [{label: '不关联功能点', value: ''}, ...featureCodeOptions]}, {name: 'high_risk', label: '高风险权限', type: 'select', options: yesNoOptions}, {name: 'require_approval', label: '需要审批', type: 'select', options: yesNoOptions}, {name: 'permission_description', label: '权限说明', type: 'textarea'}, commonStatus],
+      roles: [{name: 'role_code', label: '角色编码', readonly: true, helper: '创建后不可修改'}, {name: 'role_name', label: '角色名称'}, {name: 'role_type', label: '角色来源', type: 'select', options: metadataOptions.roleTypes, readonly: true, helper: '创建后不可修改；系统角色由平台内置维护'}, {name: 'scope_type', label: '授权范围', type: 'select', options: scopeOptions}, {name: 'applicable_user_types', label: '适用用户类型', type: 'multi-select', options: metadataOptions.userTypes}, {name: 'permission_ids', label: '权限集合', type: 'multi-select', options: permissionOptions, helper: '可直接勾选，也可用“权限”按钮集中维护'}, {name: 'role_description', label: '角色说明', type: 'textarea'}, roleStatus],
+      users: [{name: 'user_code', label: '用户编码', readonly: true, helper: '创建后不可修改'}, {name: 'username', label: '登录名'}, {name: 'display_name', label: '姓名'}, {name: 'email', label: '邮箱'}, {name: 'phone', label: '联系电话'}, {name: 'mobile', label: '手机号'}, {name: 'user_type', label: '用户类型', type: 'select', options: metadataOptions.userTypes}, {name: 'identity_source', label: '身份来源', type: 'select', options: metadataOptions.identitySources}, {name: 'external_user_id', label: '外部用户 ID'}, {name: 'store_id', label: '所属门店', type: 'select', options: [{label: '不绑定门店', value: ''}, ...storeOptions]}, userStatus],
+      roleBindings: [{name: 'user_id', label: '用户', type: 'select', options: userOptions}, {name: 'role_id', label: '角色', type: 'select', options: roleOptions}, {name: 'scope_selector', label: '授权范围', type: 'scope-selector', helper: '用业务对象表达 ScopeSelector，保存时仍写入标准 JSON'}, {name: 'policy_effect', label: '策略效果', type: 'select', options: metadataOptions.policyEffects}, {name: 'policy_conditions', label: '策略条件', type: 'json'}, {name: 'approval_id', label: '审批单号'}, {name: 'granted_by', label: '授权人'}, {name: 'effective_from', label: '生效时间'}, {name: 'effective_to', label: '失效时间'}, {name: 'grant_reason', label: '授权原因', type: 'textarea'}, commonStatus],
+      identityProviderConfigs: [{name: 'idp_name', label: '身份源名称'}, {name: 'idp_type', label: '身份源类型', type: 'select', options: metadataOptions.idpTypes}, {name: 'applicable_user_types', label: '适用用户类型', type: 'multi-select', options: metadataOptions.userTypes}, {name: 'priority', label: '优先级', type: 'number'}, {name: 'sync_enabled', label: '启用同步', type: 'select', options: yesNoOptions}, {name: 'sync_cron', label: '同步 Cron'}, {name: 'ldap_url', label: 'LDAP 地址'}, {name: 'base_dn', label: 'Base DN'}, {name: 'bind_dn', label: '绑定账号 DN'}, {name: 'bind_password_encrypted', label: '绑定密码密文'}, {name: 'user_search_filter', label: '用户搜索过滤器'}, {name: 'username_attr', label: '用户名属性'}, {name: 'email_attr', label: '邮箱属性'}, {name: 'display_name_attr', label: '显示名属性'}, {name: 'issuer_url', label: 'OIDC/SAML Issuer'}, {name: 'client_id', label: 'Client ID'}, {name: 'client_secret_encrypted', label: '客户端密钥密文'}, {name: 'scopes', label: 'OIDC Scopes', type: 'json'}, {name: 'user_info_endpoint', label: 'UserInfo 端点'}, {name: 'redirect_uri', label: '回调地址'}, {name: 'corp_id', label: '企业 ID'}, {name: 'agent_id', label: '应用 AgentID'}, {name: 'app_secret_encrypted', label: '应用密钥密文'}, idpStatus],
+      permissionGroups: [{name: 'group_code', label: '分组编码', readonly: true}, {name: 'group_name', label: '分组名称'}, {name: 'group_icon', label: '图标'}, {name: 'parent_group_id', label: '上级分组', type: 'select', options: permissionGroupOptions}, {name: 'sort_order', label: '排序', type: 'number'}, commonStatus],
+      roleTemplates: [{name: 'template_code', label: '模板编码', readonly: true}, {name: 'template_name', label: '模板名称'}, {name: 'recommended_scope_type', label: '推荐范围', type: 'select', options: scopeOptions}, {name: 'base_permission_ids', label: '基础权限', type: 'multi-select', options: permissionOptions}, {name: 'industry_tags', label: '行业标签', type: 'json'}, {name: 'template_description', label: '模板说明', type: 'textarea'}, {name: 'is_active', label: '是否启用', type: 'select', options: yesNoOptions}, commonStatus],
+      featurePoints: [{name: 'feature_code', label: '功能点编码', readonly: true}, {name: 'feature_name', label: '功能点名称'}, {name: 'feature_description', label: '功能说明', type: 'textarea'}, {name: 'is_enabled_globally', label: '全局启用', type: 'select', options: yesNoOptions}, {name: 'default_enabled', label: '平台默认启用', type: 'select', options: yesNoOptions}, commonStatus],
+      platformFeatureSwitches: [{name: 'feature_code', label: '功能点', type: 'select', options: featureCodeOptions}, {name: 'is_enabled', label: '是否启用', type: 'select', options: yesNoOptions}, {name: 'enabled_by', label: '操作人'}, commonStatus],
+      resourceTags: [{name: 'tag_key', label: '标签键'}, {name: 'tag_value', label: '标签值'}, {name: 'tag_label', label: '标签名称'}, {name: 'resource_type', label: '资源类型', type: 'select', options: metadataOptions.resourceTypes}, {name: 'resource_id', label: '资源 ID'}, {name: 'created_by', label: '创建人'}, commonStatus],
+      principalGroups: [{name: 'group_code', label: '用户组编码', readonly: true}, {name: 'group_name', label: '用户组名称'}, {name: 'group_type', label: '用户组类型', type: 'select', options: metadataOptions.principalGroupTypes}, {name: 'ldap_group_dn', label: 'LDAP Group DN'}, {name: 'oidc_claim_key', label: 'OIDC Claim Key'}, {name: 'oidc_claim_value', label: 'OIDC Claim Value'}, commonStatus],
+      groupMembers: [{name: 'group_id', label: '用户组', type: 'select', options: principalGroupOptions}, {name: 'user_id', label: '用户', type: 'select', options: userOptions}, {name: 'source', label: '来源', type: 'select', options: metadataOptions.groupMemberSources}, {name: 'joined_by', label: '加入人'}, commonStatus],
+      groupRoleBindings: [{name: 'group_id', label: '用户组', type: 'select', options: principalGroupOptions}, {name: 'role_id', label: '角色', type: 'select', options: roleOptions}, {name: 'scope_selector', label: '授权范围', type: 'scope-selector'}, {name: 'policy_effect', label: '策略效果', type: 'select', options: metadataOptions.policyEffects}, {name: 'policy_conditions', label: '策略条件', type: 'json'}, {name: 'approval_id', label: '审批单号'}, {name: 'granted_by', label: '授权人'}, {name: 'effective_from', label: '生效时间'}, {name: 'effective_to', label: '失效时间'}, commonStatus],
+      authorizationSessions: [{name: 'user_id', label: '用户', type: 'select', options: userOptions}, {name: 'working_scope', label: '工作范围', type: 'scope-selector'}, {name: 'activated_binding_ids', label: '激活授权', type: 'json'}, {name: 'session_token_masked', label: '会话 Token', readonly: true, helper: '仅展示掩码，不暴露原始 token'}, {name: 'expires_at', label: '过期时间'}, {name: 'last_active_at', label: '最后活跃时间'}, {name: 'mfa_verified_at', label: 'MFA 验证时间'}, {name: 'mfa_expires_at', label: 'MFA 过期时间'}, {name: 'mfa_method', label: 'MFA 方式'}, commonStatus],
+      sodRules: [{name: 'rule_name', label: '规则名称'}, {name: 'rule_description', label: '规则说明', type: 'textarea'}, {name: 'conflicting_role_codes', label: '冲突角色编码', type: 'multi-select', options: roleCodeOptions}, {name: 'conflicting_perm_codes', label: '冲突权限编码', type: 'multi-select', options: permissionCodeOptions}, {name: 'scope_type', label: '适用范围', type: 'select', options: scopeOptions}, {name: 'is_active', label: '是否启用', type: 'select', options: yesNoOptions}, commonStatus],
+      highRiskPolicies: [{name: 'permission_code', label: '权限编码', type: 'select', options: permissionCodeOptions}, {name: 'require_approval', label: '需要审批', type: 'select', options: yesNoOptions}, {name: 'approver_role_code', label: '审批角色', type: 'select', options: [{label: '不指定审批角色', value: ''}, ...roleCodeOptions]}, {name: 'max_duration_days', label: '最长授权天数', type: 'number'}, {name: 'require_mfa', label: '需要 MFA', type: 'select', options: yesNoOptions}, {name: 'mfa_validity_minutes', label: 'MFA 有效分钟', type: 'number'}, {name: 'is_active', label: '是否启用', type: 'select', options: yesNoOptions}, commonStatus],
       productCategories: [{name: 'category_code', label: '分类编码', readonly: true, helper: '创建后不可修改'}, {name: 'category_name', label: '分类名称'}, {name: 'ownership_scope', label: '归属范围', type: 'select', options: metadataOptions.ownershipScopes, readonly: true}, {name: 'brand_id', label: '归属品牌', type: 'select', options: brandOptions, readonly: true}, {name: 'store_id', label: '归属门店', type: 'select', options: storeOptions, readonly: true}, {name: 'parent_category_id', label: '上级分类', type: 'select', options: [{label: '无上级分类', value: ''}, ...option(collections.productCategories)]}, {name: 'sort_order', label: '排序', type: 'number'}, commonStatus],
       products: [{name: 'product_code', label: '商品编码', readonly: true, helper: '创建后不可修改'}, {name: 'product_name', label: '商品名称'}, {name: 'ownership_scope', label: '归属范围', type: 'select', options: metadataOptions.ownershipScopes, readonly: true}, {name: 'brand_id', label: '品牌', type: 'select', options: brandOptions, readonly: true}, {name: 'store_id', label: '门店', type: 'select', options: storeOptions, readonly: true}, {name: 'category_id', label: '商品分类', type: 'select', options: [{label: '未分类', value: ''}, ...productCategoryOptions]}, {name: 'product_type', label: '商品类型', type: 'select', options: productTypeOptions}, {name: 'image_url', label: '商品图片', type: 'asset', assetKind: 'product-image', helper: '用于商品列表和菜单展示'}, {name: 'product_description', label: '商品说明', type: 'textarea'}, {name: 'base_price', label: '基础价格', type: 'number'}, {name: 'variants', label: '规格变体', type: 'json'}, {name: 'modifier_groups', label: '加料组', type: 'json'}, {name: 'production_profile', label: '出品路由画像', type: 'json', helper: '主数据：供履约域读取，不在此执行生产'}, {name: 'production_steps', label: '出品步骤配置', type: 'json'}, {name: 'combo_item_groups', label: '套餐组成', type: 'json'}, {name: 'combo_items', label: '套餐固定商品', type: 'json'}, commonStatus],
+      productInheritances: [{name: 'inheritance_id', label: '继承关系', readonly: true}, {name: 'store_id', label: '门店', type: 'select', options: storeOptions, readonly: true}, {name: 'brand_product_id', label: '品牌商品', type: 'select', options: productOptions}, {name: 'store_product_id', label: '门店商品', type: 'select', options: productOptions}, {name: 'override_fields', label: '覆盖字段', type: 'json', helper: '门店覆盖的字段和值，保存为主数据配置'}, {name: 'locked_fields', label: '锁定字段', type: 'multi-select', options: lockableProductFieldOptions}, {name: 'sync_status', label: '同步状态', type: 'select', options: metadataOptions.syncStatuses}, {name: 'last_sync_at', label: '最后同步时间'}, commonStatus],
       brandMenus: [{name: 'brand_id', label: '品牌', type: 'select', options: brandOptions, readonly: true}, {name: 'menu_name', label: '菜单名称'}, {name: 'channel_type', label: '售卖渠道', type: 'select', options: channelOptions}, {name: 'effective_from', label: '生效日期', type: 'date'}, {name: 'effective_to', label: '失效日期', type: 'date'}, {name: 'review_status', label: '审核状态', type: 'select', options: reviewOptions}, {name: 'sections', label: '分区与商品', type: 'json'}, commonStatus],
       storeMenus: [{name: 'store_id', label: '门店', type: 'select', options: storeOptions, readonly: true}, {name: 'menu_name', label: '菜单名称'}, {name: 'brand_menu_id', label: '来源品牌菜单', type: 'select', options: [{label: '不继承品牌菜单', value: ''}, ...option(collections.brandMenus)]}, {name: 'channel_type', label: '售卖渠道', type: 'select', options: channelOptions}, {name: 'menu_type', label: '菜单类型', type: 'select', options: metadataOptions.menuTypes}, {name: 'inherit_mode', label: '继承方式', type: 'select', options: metadataOptions.inheritModes}, {name: 'effective_from', label: '生效日期', type: 'date'}, {name: 'effective_to', label: '失效日期', type: 'date'}, {name: 'sections', label: '分区与商品', type: 'json'}, {name: 'version_hash', label: '版本哈希', readonly: true, helper: '系统生成'}, commonStatus],
       storeConfig: [{name: 'store_id', label: '门店', type: 'select', options: storeOptions, readonly: true}, {name: 'business_status', label: '营业状态配置', type: 'select', options: metadataOptions.storeBusinessStatuses}, {name: 'accept_order', label: '渠道入口策略', type: 'select', options: yesNoOptions, helper: '交易前置配置，不在此处理订单'}, {name: 'auto_accept_enabled', label: '入口自动确认策略', type: 'select', options: yesNoOptions}, {name: 'accept_timeout_seconds', label: '入口确认等待（秒）', type: 'number'}, {name: 'preparation_buffer_minutes', label: '备餐缓冲配置（分钟）', type: 'number'}, {name: 'max_concurrent_orders', label: '渠道入口容量上限', type: 'number'}, {name: 'operating_hours', label: '营业时间', type: 'json'}, {name: 'special_operating_days', label: '特殊营业日', type: 'json'}, {name: 'channel_operating_hours', label: '渠道营业时间', type: 'json'}, {name: 'auto_open_close_enabled', label: '自动营业状态策略', type: 'select', options: yesNoOptions}, {name: 'extra_charge_rules', label: '附加费用规则', type: 'json'}, {name: 'refund_stock_policy', label: '退款返库存配置'}],
@@ -556,6 +794,8 @@ function formFieldsFor(page: PageKey, collections: CollectionState, platformId: 
       availabilityRules: [{name: 'rule_code', label: '规则编码', readonly: true, helper: '创建后不可修改'}, {name: 'store_id', label: '门店', type: 'select', options: storeOptions, readonly: true}, {name: 'product_id', label: '适用商品', type: 'select', options: [{label: '全部商品', value: ''}, ...productOptions]}, {name: 'rule_type', label: '规则类型', type: 'select', options: availabilityRuleTypeOptions}, {name: 'channel_type', label: '售卖渠道', type: 'select', options: channelOptions}, {name: 'time_slot', label: '适用时段', type: 'json'}, {name: 'daily_quota', label: '每日限量', type: 'number'}, {name: 'priority', label: '优先级', type: 'number'}, {name: 'enabled', label: '是否启用', type: 'select', options: yesNoOptions}, {name: 'available', label: '是否可售', type: 'select', options: yesNoOptions}, {name: 'rule_config', label: '规则配置', type: 'json'}, commonStatus],
       availability: [{name: 'store_id', label: '门店', type: 'select', options: storeOptions, readonly: true}, {name: 'product_id', label: '商品', type: 'select', options: productOptions, readonly: true}, {name: 'available', label: '可售状态', type: 'select', options: metadataOptions.availability}, {name: 'sold_out_reason', label: '不可售原因'}, {name: 'effective_from', label: '生效时间'}],
       priceRules: [{name: 'rule_code', label: '规则编码', readonly: true, helper: '创建后不可修改'}, {name: 'rule_name', label: '规则名称'}, {name: 'product_id', label: '指定商品', type: 'select', options: [{label: '全部适用商品', value: ''}, ...productOptions]}, {name: 'store_id', label: '门店', type: 'select', options: storeOptions, readonly: true}, {name: 'price_type', label: '价格类型', type: 'select', options: priceTypeOptions}, {name: 'channel_type', label: '渠道类型', type: 'select', options: channelOptions}, {name: 'price_value', label: '价格值', type: 'number'}, {name: 'price_delta', label: '调价金额', type: 'number'}, {name: 'time_slot', label: '时间段', type: 'json'}, {name: 'member_tier', label: '会员等级', type: 'select', options: memberTierOptions}, {name: 'priority', label: '优先级', type: 'number'}, {name: 'discount_type', label: '优惠类型', type: 'select', options: discountOptions}, {name: 'discount_value', label: '优惠值', type: 'number'}, {name: 'applicable_product_ids', label: '适用商品', type: 'json'}, {name: 'effective_from', label: '生效时间'}, {name: 'effective_to', label: '失效时间'}, commonStatus],
+      bundlePriceRules: [{name: 'rule_id', label: '规则编号', readonly: true}, {name: 'store_id', label: '门店', type: 'select', options: storeOptions, readonly: true}, {name: 'rule_name', label: '规则名称'}, {name: 'trigger_products', label: '触发商品', type: 'json', helper: '格式为 [{\"product_id\":\"...\",\"min_quantity\":1}]'}, {name: 'discount_type', label: '优惠类型', type: 'select', options: discountOptions}, {name: 'discount_value', label: '优惠值', type: 'number'}, {name: 'max_applications', label: '最大触发次数', type: 'number'}, {name: 'priority', label: '优先级', type: 'number'}, {name: 'effective_from', label: '生效时间'}, {name: 'effective_to', label: '失效时间'}, {name: 'is_active', label: '是否启用', type: 'select', options: yesNoOptions}, commonStatus],
+      channelProductMappings: [{name: 'mapping_id', label: '映射记录', readonly: true}, {name: 'store_id', label: '门店', type: 'select', options: storeOptions, readonly: true}, {name: 'product_id', label: '内部商品', type: 'select', options: productOptions}, {name: 'channel_type', label: '售卖渠道', type: 'select', options: channelOptions}, {name: 'external_product_id', label: '外部商品 ID'}, {name: 'external_sku_id', label: '外部 SKU ID'}, {name: 'mapping_status', label: '映射状态', type: 'select', options: metadataOptions.mappingStatuses}, {name: 'sync_status', label: '同步状态', type: 'select', options: metadataOptions.syncStatuses}, {name: 'last_sync_at', label: '最后同步时间'}, {name: 'sync_error_message', label: '同步失败原因', type: 'textarea'}, {name: 'field_mapping_config', label: '字段映射配置', type: 'json'}, commonStatus],
     }
     return editFields[page] ?? [{name: 'title', label: '名称'}, commonStatus, {name: 'description', label: '描述', type: 'textarea'}]
   }
@@ -567,15 +807,27 @@ function formFieldsFor(page: PageKey, collections: CollectionState, platformId: 
     brands: [{name: 'brandCode', label: '品牌编码', required: true, helper: '创建后不可修改'}, {name: 'brandName', label: '品牌名称', required: true}, {name: 'brandNameEn', label: '英文名称'}, {name: 'brandCategory', label: '品牌品类', type: 'select', options: brandCategoryOptions, defaultValue: brandCategoryOptions[0]?.value ?? 'OTHER'}, {name: 'brandLogoUrl', label: '品牌图标', type: 'asset', assetKind: 'brand-logo', helper: '用于品牌列表和门店识别'}, {name: 'brandDescription', label: '品牌说明', type: 'textarea'}, {name: 'standardMenuEnabled', label: '启用标准菜单', type: 'select', options: yesNoOptions, defaultValue: 'false'}, {name: 'standardPricingLocked', label: '锁定标准价格', type: 'select', options: yesNoOptions, defaultValue: 'false'}, {name: 'erpIntegrationEnabled', label: 'ERP 对接', type: 'select', options: yesNoOptions, defaultValue: 'false'}, {name: 'erpApiEndpoint', label: 'ERP 接口地址'}],
     contracts: [{name: 'storeId', label: '乙方门店', type: 'select', options: storeOptions, defaultValue: contractStore?.entityId ?? storeId}, {name: 'lessorProjectId', label: '甲方项目', type: 'select', options: projectOptions, defaultValue: contractProject?.entityId ?? projectId}, {name: 'lessorPhaseId', label: '甲方分期 / 业主方', type: 'select', options: contractPhaseOptions, defaultValue: defaultPhaseIdForProject(contractProject), helper: '保存后成为合同快照'}, {name: 'tenantId', label: '乙方租户', type: 'select', options: tenantOptions, defaultValue: defaultContractTenantId}, {name: 'brandId', label: '乙方品牌', type: 'select', options: brandOptions, defaultValue: defaultContractBrandId}, {name: 'entityId', label: '乙方签约主体', type: 'select', options: businessEntityOptions, defaultValue: businessEntityOptions.find(option => dataOf(collections.businessEntities.find(entity => entity.entityId === option.value)).tenant_id === defaultContractTenantId)?.value ?? businessEntityOptions[0]?.value ?? defaultContractTenantId, helper: '保存后成为合同签署快照'}, {name: 'contractCode', label: '合同编号', required: true, helper: '创建后不可修改'}, {name: 'contractType', label: '合同类型', defaultValue: 'OPERATING'}, {name: 'externalContractNo', label: '外部合同号'}, {name: 'startDate', label: '开始日期', type: 'date'}, {name: 'endDate', label: '到期日期', type: 'date'}, {name: 'commissionType', label: '计费模式', defaultValue: 'FIXED_RATE'}, {name: 'commissionRate', label: '扣点/费率', type: 'number'}, {name: 'depositAmount', label: '保证金', type: 'number'}, {name: 'attachmentUrl', label: '合同附件'}],
     businessEntities: [{name: 'tenantId', label: '所属租户', type: 'select', options: tenantOptions}, {name: 'entityCode', label: '主体编码', required: true, helper: '创建后不可修改'}, {name: 'entityName', label: '主体名称', required: true}, {name: 'companyName', label: '公司名称'}, {name: 'entityType', label: '主体类型', type: 'select', options: metadataOptions.entityTypes, defaultValue: 'COMPANY'}, {name: 'unifiedSocialCreditCode', label: '统一社会信用代码'}, {name: 'legalRepresentative', label: '法定代表人'}, {name: 'taxpayerType', label: '纳税人类型', type: 'select', options: metadataOptions.taxpayerTypes, defaultValue: 'GENERAL_TAXPAYER'}, {name: 'taxRate', label: '税率', type: 'number', defaultValue: '0.06'}, {name: 'bankName', label: '开户银行'}, {name: 'bankAccountName', label: '银行户名'}, {name: 'bankAccountNo', label: '银行账号'}, {name: 'bankBranch', label: '开户支行'}, {name: 'taxRegistrationNo', label: '税务登记号'}, {name: 'settlementCycle', label: '结算周期', type: 'select', options: settlementCycleOptions, defaultValue: 'MONTHLY'}, {name: 'settlementDay', label: '结算日', type: 'number', defaultValue: '5'}, {name: 'autoSettlementEnabled', label: '自动结算', type: 'select', options: yesNoOptions, defaultValue: 'false'}],
-    stores: [{name: 'projectId', label: '所属项目', type: 'select', options: projectOptions, defaultValue: projectId}, {name: 'storeCode', label: '门店编码', required: true, helper: '创建后不可修改'}, {name: 'storeName', label: '门店名称', required: true}, {name: 'unitCode', label: '铺位编码', required: true}, {name: 'floor', label: '楼层'}, {name: 'areaSqm', label: '面积', type: 'number'}, {name: 'addressDetail', label: '铺位地址'}, {name: 'storeType', label: '合作模式', type: 'select', options: storeTypeOptions}, {name: 'businessFormat', label: '门店业态', type: 'select', options: platformMetadataOptions(selectedPlatform, 'store_business_formats')}, {name: 'businessScenarios', label: '经营场景', type: 'multi-select', options: storeScenarioOptions, defaultValue: 'DINE_IN,TAKEAWAY', helper: '来自集团业务字典，可多选'}, {name: 'storePhone', label: '门店电话'}, {name: 'storeManager', label: '店长'}, {name: 'managerPhone', label: '店长电话'}, {name: 'seatCount', label: '座位数', type: 'number'}, {name: 'businessHours', label: '营业时间', type: 'time', defaultValue: '10:00-22:00'}],
+    stores: [{name: 'projectId', label: '所属项目', type: 'select', options: projectOptions, defaultValue: projectId}, {name: 'storeCode', label: '门店编码', required: true, helper: '创建后不可修改'}, {name: 'storeName', label: '门店名称', required: true}, {name: 'unitCode', label: '铺位编码', required: true}, {name: 'floor', label: '楼层'}, {name: 'areaSqm', label: '面积', type: 'number'}, {name: 'addressDetail', label: '铺位地址'}, {name: 'storeType', label: '合作模式', type: 'select', options: storeTypeOptions}, {name: 'businessFormat', label: '门店业态', type: 'select', options: platformMetadataOptions(selectedPlatform, 'store_business_formats')}, {name: 'businessScenarios', label: '经营场景', type: 'multi-select', options: storeScenarioOptions, defaultValue: 'DINE_IN,TAKEAWAY', helper: '来自门店字典，可多选'}, {name: 'storePhone', label: '门店电话'}, {name: 'storeManager', label: '店长'}, {name: 'managerPhone', label: '店长电话'}, {name: 'seatCount', label: '座位数', type: 'number'}, {name: 'businessHours', label: '营业时间', type: 'time', defaultValue: '10:00-22:00'}],
     tables: [{name: 'storeId', label: '门店', type: 'select', options: storeOptions, defaultValue: storeId}, {name: 'tableNo', label: '桌台号', required: true}, {name: 'tableName', label: '桌台名称'}, {name: 'area', label: '桌台区域', type: 'select', options: tableAreaOptions, defaultValue: tableAreaOptions[0]?.value ?? 'HALL'}, {name: 'tableType', label: '桌台类型', type: 'select', options: tableTypeOptions, defaultValue: tableTypeOptions[0]?.value ?? 'HALL'}, {name: 'capacity', label: '座位数', type: 'number', defaultValue: '4'}, {name: 'reservable', label: '可预订配置', type: 'select', options: yesNoOptions, defaultValue: 'false', helper: '仅维护是否支持预订，不维护预订流程'}, {name: 'consumerDescription', label: '消费者展示说明', type: 'textarea'}, {name: 'minimumSpend', label: '最低消费', type: 'number'}, {name: 'sortOrder', label: '展示排序', type: 'number', defaultValue: '100'}],
-    workstations: [{name: 'storeId', label: '门店', type: 'select', options: storeOptions, defaultValue: storeId}, {name: 'workstationCode', label: '工作站编码', required: true}, {name: 'workstationName', label: '工作站名称', required: true}, {name: 'workstationType', label: '工作站类型', type: 'select', options: workstationTypeOptions, defaultValue: workstationTypeOptions[0]?.value ?? 'PRODUCTION'}, {name: 'responsibleCategories', label: '负责出品品类', type: 'multi-select', options: productionCategoryOptions, defaultValue: productionCategoryOptions[0]?.value ?? 'HOT_DISH', helper: '来自集团业务字典，可多选；仅定义路由能力，不承载出品任务队列'}, {name: 'description', label: '说明', type: 'textarea'}],
-    permissions: [{name: 'permissionCode', label: '权限编码', required: true, helper: '创建后不可修改'}, {name: 'permissionName', label: '权限名称', required: true}, {name: 'permissionType', label: '权限类型', type: 'select', options: metadataOptions.permissionTypes}],
-    roles: [{name: 'roleCode', label: '角色编码', required: true, helper: '创建后不可修改'}, {name: 'roleName', label: '角色名称', required: true}, {name: 'roleType', label: '角色来源', type: 'select', options: metadataOptions.roleTypes, defaultValue: 'CUSTOM'}, {name: 'scopeType', label: '授权范围', type: 'select', options: scopeOptions}, {name: 'permissionIds', label: '初始权限', type: 'json', defaultValue: '[]'}],
-    users: [{name: 'userCode', label: '用户编码', required: true}, {name: 'displayName', label: '姓名', required: true}, {name: 'mobile', label: '手机号'}, {name: 'storeId', label: '所属门店', type: 'select', options: storeOptions, defaultValue: storeId}],
-    roleBindings: [{name: 'userId', label: '用户', type: 'select', options: option(collections.users)}, {name: 'roleId', label: '角色', type: 'select', options: option(collections.roles)}, {name: 'scopeType', label: '授权范围', type: 'select', options: scopeOptions}, {name: 'scopeId', label: '授权对象', defaultValue: storeId}, {name: 'storeId', label: '门店', type: 'select', options: storeOptions, defaultValue: storeId}, {name: 'effectiveFrom', label: '生效时间'}, {name: 'effectiveTo', label: '失效时间'}, {name: 'reason', label: '授权原因'}],
+    workstations: [{name: 'storeId', label: '门店', type: 'select', options: storeOptions, defaultValue: storeId}, {name: 'workstationCode', label: '工作站编码', required: true}, {name: 'workstationName', label: '工作站名称', required: true}, {name: 'workstationType', label: '工作站类型', type: 'select', options: workstationTypeOptions, defaultValue: workstationTypeOptions[0]?.value ?? 'PRODUCTION'}, {name: 'responsibleCategories', label: '负责出品品类', type: 'multi-select', options: productionCategoryOptions, defaultValue: productionCategoryOptions[0]?.value ?? 'HOT_DISH', helper: '来自品牌字典，可多选；仅定义路由能力，不承载出品任务队列'}, {name: 'description', label: '说明', type: 'textarea'}],
+    permissions: [{name: 'permissionCode', label: '权限编码', required: true, helper: '创建后不可修改'}, {name: 'permissionName', label: '权限名称', required: true}, {name: 'permissionType', label: '权限类型', type: 'select', options: [{label: '自定义权限', value: 'CUSTOM'}], defaultValue: 'CUSTOM', readonly: true, helper: '系统权限由平台内置维护'}, {name: 'permissionSource', label: '权限来源', type: 'select', options: [{label: '自定义', value: 'CUSTOM'}], defaultValue: 'CUSTOM', readonly: true}, {name: 'resourceType', label: '资源类型', type: 'select', options: metadataOptions.resourceTypes, defaultValue: 'STORE'}, {name: 'resource', label: '资源标识', defaultValue: 'store'}, {name: 'action', label: '动作', type: 'select', options: metadataOptions.permissionActions, defaultValue: 'READ'}, {name: 'scopeType', label: '默认范围', type: 'select', options: scopeOptions, defaultValue: 'STORE'}, {name: 'permissionGroupId', label: '权限分组', type: 'select', options: permissionGroupOptions}, {name: 'featureFlag', label: '功能点', type: 'select', options: [{label: '不关联功能点', value: ''}, ...featureCodeOptions]}, {name: 'highRisk', label: '高风险权限', type: 'select', options: yesNoOptions, defaultValue: 'false'}, {name: 'requireApproval', label: '需要审批', type: 'select', options: yesNoOptions, defaultValue: 'false'}, {name: 'permissionDescription', label: '权限说明', type: 'textarea'}],
+    roles: [{name: 'roleCode', label: '角色编码', required: true, helper: '创建后不可修改'}, {name: 'roleName', label: '角色名称', required: true}, {name: 'roleType', label: '角色来源', type: 'select', options: [{label: '自定义角色', value: 'CUSTOM'}], defaultValue: 'CUSTOM', readonly: true, helper: '系统角色由平台内置维护'}, {name: 'scopeType', label: '授权范围', type: 'select', options: scopeOptions, defaultValue: 'STORE'}, {name: 'applicableUserTypes', label: '适用用户类型', type: 'multi-select', options: metadataOptions.userTypes, defaultValue: 'STORE_STAFF'}, {name: 'permissionIds', label: '初始权限', type: 'multi-select', options: permissionOptions, defaultValue: permissionOptions.slice(0, 1).map(permission => permission.value).join(',')}, {name: 'roleDescription', label: '角色说明', type: 'textarea'}],
+    users: [{name: 'userCode', label: '用户编码', required: true}, {name: 'username', label: '登录名', required: true}, {name: 'displayName', label: '姓名', required: true}, {name: 'email', label: '邮箱'}, {name: 'phone', label: '联系电话'}, {name: 'mobile', label: '手机号'}, {name: 'userType', label: '用户类型', type: 'select', options: metadataOptions.userTypes, defaultValue: 'STORE_STAFF'}, {name: 'identitySource', label: '身份来源', type: 'select', options: metadataOptions.identitySources, defaultValue: 'LOCAL'}, {name: 'externalUserId', label: '外部用户 ID'}, {name: 'storeId', label: '所属门店', type: 'select', options: [{label: '不绑定门店', value: ''}, ...storeOptions], defaultValue: storeId}],
+    roleBindings: [{name: 'userId', label: '用户', type: 'select', options: userOptions}, {name: 'roleId', label: '角色', type: 'select', options: roleOptions}, {name: 'scopeSelector', label: '授权范围', type: 'scope-selector', defaultValue: defaultScopeSelector('STORE', storeId), helper: '支持平台、项目、门店、标签、组织节点、资源清单和组合范围'}, {name: 'policyEffect', label: '策略效果', type: 'select', options: metadataOptions.policyEffects, defaultValue: 'ALLOW'}, {name: 'policyConditions', label: '策略条件', type: 'json', defaultValue: '{}'}, {name: 'approvalId', label: '审批单号'}, {name: 'grantedBy', label: '授权人', defaultValue: 'mock-admin-operator'}, {name: 'effectiveFrom', label: '生效时间'}, {name: 'effectiveTo', label: '失效时间'}, {name: 'reason', label: '授权原因', type: 'textarea'}],
+    identityProviderConfigs: [{name: 'idpName', label: '身份源名称', required: true}, {name: 'idpType', label: '身份源类型', type: 'select', options: metadataOptions.idpTypes, defaultValue: 'LOCAL'}, {name: 'applicableUserTypes', label: '适用用户类型', type: 'multi-select', options: metadataOptions.userTypes, defaultValue: 'STORE_STAFF'}, {name: 'priority', label: '优先级', type: 'number', defaultValue: '100'}, {name: 'syncEnabled', label: '启用同步', type: 'select', options: yesNoOptions, defaultValue: 'false'}, {name: 'syncCron', label: '同步 Cron'}, {name: 'ldapUrl', label: 'LDAP 地址'}, {name: 'baseDn', label: 'Base DN'}, {name: 'bindDn', label: '绑定账号 DN'}, {name: 'bindPasswordEncrypted', label: '绑定密码密文'}, {name: 'userSearchFilter', label: '用户搜索过滤器'}, {name: 'usernameAttr', label: '用户名属性', defaultValue: 'uid'}, {name: 'emailAttr', label: '邮箱属性', defaultValue: 'mail'}, {name: 'displayNameAttr', label: '显示名属性', defaultValue: 'cn'}, {name: 'issuerUrl', label: 'OIDC/SAML Issuer'}, {name: 'clientId', label: 'Client ID'}, {name: 'clientSecretEncrypted', label: '客户端密钥密文'}, {name: 'scopes', label: 'OIDC Scopes', type: 'json', defaultValue: '[]'}, {name: 'userInfoEndpoint', label: 'UserInfo 端点'}, {name: 'redirectUri', label: '回调地址'}, {name: 'corpId', label: '企业 ID'}, {name: 'agentId', label: '应用 AgentID'}, {name: 'appSecretEncrypted', label: '应用密钥密文'}],
+    permissionGroups: [{name: 'groupCode', label: '分组编码', required: true}, {name: 'groupName', label: '分组名称', required: true}, {name: 'groupIcon', label: '图标'}, {name: 'parentGroupId', label: '上级分组', type: 'select', options: permissionGroupOptions}, {name: 'sortOrder', label: '排序', type: 'number', defaultValue: '100'}],
+    roleTemplates: [{name: 'templateCode', label: '模板编码', required: true}, {name: 'templateName', label: '模板名称', required: true}, {name: 'templateDescription', label: '模板说明', type: 'textarea'}, {name: 'basePermissionIds', label: '基础权限', type: 'multi-select', options: permissionOptions, defaultValue: permissionOptions.slice(0, 1).map(permission => permission.value).join(',')}, {name: 'recommendedScopeType', label: '推荐范围', type: 'select', options: scopeOptions, defaultValue: 'STORE'}, {name: 'industryTags', label: '行业标签', type: 'json', defaultValue: '[]'}, {name: 'isActive', label: '是否启用', type: 'select', options: yesNoOptions, defaultValue: 'true'}],
+    featurePoints: [{name: 'featureCode', label: '功能点编码', required: true}, {name: 'featureName', label: '功能点名称', required: true}, {name: 'featureDescription', label: '功能说明', type: 'textarea'}, {name: 'isEnabledGlobally', label: '全局启用', type: 'select', options: yesNoOptions, defaultValue: 'true'}, {name: 'defaultEnabled', label: '平台默认启用', type: 'select', options: yesNoOptions, defaultValue: 'false'}],
+    platformFeatureSwitches: [{name: 'featureCode', label: '功能点', type: 'select', options: featureCodeOptions}, {name: 'isEnabled', label: '是否启用', type: 'select', options: yesNoOptions, defaultValue: 'true'}, {name: 'enabledBy', label: '操作人', defaultValue: 'mock-admin-operator'}],
+    resourceTags: [{name: 'tagKey', label: '标签键', required: true}, {name: 'tagValue', label: '标签值', required: true}, {name: 'tagLabel', label: '标签名称'}, {name: 'resourceType', label: '资源类型', type: 'select', options: metadataOptions.resourceTypes, defaultValue: 'STORE'}, {name: 'resourceId', label: '资源 ID', required: true}, {name: 'createdBy', label: '创建人', defaultValue: 'mock-admin-operator'}],
+    principalGroups: [{name: 'groupCode', label: '用户组编码', required: true}, {name: 'groupName', label: '用户组名称', required: true}, {name: 'groupType', label: '用户组类型', type: 'select', options: metadataOptions.principalGroupTypes, defaultValue: 'MANUAL'}, {name: 'ldapGroupDn', label: 'LDAP Group DN'}, {name: 'oidcClaimKey', label: 'OIDC Claim Key'}, {name: 'oidcClaimValue', label: 'OIDC Claim Value'}],
+    groupMembers: [{name: 'groupId', label: '用户组', type: 'select', options: principalGroupOptions}, {name: 'userId', label: '用户', type: 'select', options: userOptions}, {name: 'source', label: '来源', type: 'select', options: metadataOptions.groupMemberSources, defaultValue: 'MANUAL'}, {name: 'joinedBy', label: '加入人', defaultValue: 'mock-admin-operator'}],
+    groupRoleBindings: [{name: 'groupId', label: '用户组', type: 'select', options: principalGroupOptions}, {name: 'roleId', label: '角色', type: 'select', options: roleOptions}, {name: 'scopeSelector', label: '授权范围', type: 'scope-selector', defaultValue: defaultScopeSelector('STORE', storeId)}, {name: 'policyEffect', label: '策略效果', type: 'select', options: metadataOptions.policyEffects, defaultValue: 'ALLOW'}, {name: 'policyConditions', label: '策略条件', type: 'json', defaultValue: '{}'}, {name: 'approvalId', label: '审批单号'}, {name: 'grantedBy', label: '授权人', defaultValue: 'mock-admin-operator'}, {name: 'effectiveFrom', label: '生效时间'}, {name: 'effectiveTo', label: '失效时间'}],
+    sodRules: [{name: 'ruleName', label: '规则名称', required: true}, {name: 'ruleDescription', label: '规则说明', type: 'textarea'}, {name: 'conflictingRoleCodes', label: '冲突角色编码', type: 'multi-select', options: roleCodeOptions}, {name: 'conflictingPermCodes', label: '冲突权限编码', type: 'multi-select', options: permissionCodeOptions}, {name: 'scopeType', label: '适用范围', type: 'select', options: scopeOptions, defaultValue: 'PLATFORM'}, {name: 'isActive', label: '是否启用', type: 'select', options: yesNoOptions, defaultValue: 'true'}],
+    highRiskPolicies: [{name: 'permissionCode', label: '权限编码', type: 'select', options: permissionCodeOptions}, {name: 'requireApproval', label: '需要审批', type: 'select', options: yesNoOptions, defaultValue: 'true'}, {name: 'approverRoleCode', label: '审批角色', type: 'select', options: [{label: '不指定审批角色', value: ''}, ...roleCodeOptions]}, {name: 'maxDurationDays', label: '最长授权天数', type: 'number', defaultValue: '30'}, {name: 'requireMfa', label: '需要 MFA', type: 'select', options: yesNoOptions, defaultValue: 'true'}, {name: 'mfaValidityMinutes', label: 'MFA 有效分钟', type: 'number', defaultValue: '30'}, {name: 'isActive', label: '是否启用', type: 'select', options: yesNoOptions, defaultValue: 'true'}],
     productCategories: [{name: 'categoryCode', label: '分类编码', required: true, helper: '创建后不可修改'}, {name: 'categoryName', label: '分类名称', required: true}, {name: 'categoryTemplate', label: '分类模板', type: 'select', options: [{label: '不使用模板', value: ''}, ...productCategoryTemplateOptions]}, {name: 'ownershipScope', label: '归属范围', type: 'select', options: metadataOptions.ownershipScopes, defaultValue: 'BRAND'}, {name: 'brandId', label: '归属品牌', type: 'select', options: brandOptions, defaultValue: brandId}, {name: 'storeId', label: '归属门店', type: 'select', options: storeOptions, defaultValue: storeId}, {name: 'parentCategoryId', label: '上级分类', type: 'select', options: [{label: '无上级分类', value: ''}, ...option(collections.productCategories)]}, {name: 'sortOrder', label: '排序', type: 'number', defaultValue: '100'}],
     products: [{name: 'productCode', label: '商品编码', required: true, helper: '创建后不可修改'}, {name: 'productName', label: '商品名称', required: true}, {name: 'ownershipScope', label: '归属范围', type: 'select', options: metadataOptions.ownershipScopes, defaultValue: 'BRAND'}, {name: 'brandId', label: '品牌', type: 'select', options: brandOptions, defaultValue: brandId}, {name: 'storeId', label: '门店', type: 'select', options: storeOptions, defaultValue: storeId}, {name: 'categoryId', label: '商品分类', type: 'select', options: [{label: '未分类', value: ''}, ...productCategoryOptions]}, {name: 'productType', label: '商品类型', type: 'select', options: productTypeOptions, defaultValue: productTypeOptions[0]?.value ?? 'SINGLE'}, {name: 'imageUrl', label: '商品图片', type: 'asset', assetKind: 'product-image', helper: '用于商品列表和菜单展示'}, {name: 'productDescription', label: '商品说明', type: 'textarea'}, {name: 'basePrice', label: '基础价格', type: 'number', defaultValue: '18'}, {name: 'variants', label: '规格变体', type: 'json', defaultValue: defaultVariantRows()}, {name: 'modifierGroups', label: '加料组', type: 'json', defaultValue: defaultModifierGroups()}, {name: 'productionProfile', label: '出品路由画像', type: 'json', defaultValue: defaultProductionProfile(productionCategoryOptions.map(option => option.value).slice(0, 1)), helper: '主数据：供履约域读取，不在此执行生产'}, {name: 'productionSteps', label: '出品步骤配置', type: 'json', defaultValue: defaultProductionSteps()}, {name: 'comboItemGroups', label: '套餐组成', type: 'json', defaultValue: defaultComboGroups()}, {name: 'comboItems', label: '套餐固定商品', type: 'json', defaultValue: '[]'}],
+    productInheritances: [{name: 'storeId', label: '门店', type: 'select', options: storeOptions, defaultValue: storeId}, {name: 'brandProductId', label: '品牌商品', type: 'select', options: productOptions}, {name: 'storeProductId', label: '门店商品', type: 'select', options: productOptions}, {name: 'overrideFields', label: '覆盖字段', type: 'json', defaultValue: defaultOverrideFields(), helper: '门店覆盖的字段和值，保存为主数据配置'}, {name: 'lockedFields', label: '锁定字段', type: 'multi-select', options: lockableProductFieldOptions}, {name: 'syncStatus', label: '同步状态', type: 'select', options: metadataOptions.syncStatuses, defaultValue: 'SYNCED'}, {name: 'lastSyncAt', label: '最后同步时间'}],
     brandMenus: [{name: 'brandId', label: '品牌', type: 'select', options: brandOptions, defaultValue: brandId}, {name: 'menuName', label: '菜单名称', required: true}, {name: 'channelType', label: '售卖渠道', type: 'select', options: channelOptions, defaultValue: 'ALL'}, {name: 'effectiveFrom', label: '生效日期', type: 'date'}, {name: 'effectiveTo', label: '失效日期', type: 'date'}, {name: 'reviewStatus', label: '审核状态', type: 'select', options: reviewOptions, defaultValue: 'NONE'}, {name: 'sections', label: '分区与商品', type: 'json', defaultValue: defaultMenuSections('招牌菜品')}],
     storeMenus: [{name: 'storeId', label: '门店', type: 'select', options: storeOptions, defaultValue: storeId}, {name: 'menuName', label: '菜单名称', required: true}, {name: 'brandMenuId', label: '来源品牌菜单', type: 'select', options: [{label: '不继承品牌菜单', value: ''}, ...option(collections.brandMenus)]}, {name: 'channelType', label: '售卖渠道', type: 'select', options: channelOptions, defaultValue: 'ALL'}, {name: 'menuType', label: '菜单类型', type: 'select', options: metadataOptions.menuTypes, defaultValue: 'FULL_DAY'}, {name: 'inheritMode', label: '继承方式', type: 'select', options: metadataOptions.inheritModes, defaultValue: 'PARTIAL'}, {name: 'effectiveFrom', label: '生效日期', type: 'date'}, {name: 'effectiveTo', label: '失效日期', type: 'date'}, {name: 'versionHash', label: '版本哈希', helper: '不填则系统生成'}, {name: 'sections', label: '分区与商品', type: 'json', defaultValue: defaultMenuSections('热销菜品')}],
     storeConfig: [{name: 'storeId', label: '门店', type: 'select', options: storeOptions, defaultValue: storeId}, {name: 'businessStatus', label: '营业状态配置', type: 'select', options: metadataOptions.storeBusinessStatuses, defaultValue: 'PREPARING'}, {name: 'acceptOrder', label: '渠道入口策略', type: 'select', options: yesNoOptions, defaultValue: 'true', helper: '交易前置配置，不在此处理订单'}, {name: 'autoAcceptEnabled', label: '入口自动确认策略', type: 'select', options: yesNoOptions, defaultValue: 'false'}, {name: 'acceptTimeoutSeconds', label: '入口确认等待（秒）', type: 'number', defaultValue: '120'}, {name: 'preparationBufferMinutes', label: '备餐缓冲配置（分钟）', type: 'number', defaultValue: '15'}, {name: 'maxConcurrentOrders', label: '渠道入口容量上限', type: 'number', defaultValue: '30'}, {name: 'operatingHours', label: '营业时间', type: 'json', defaultValue: defaultOperatingHours()}, {name: 'specialOperatingDays', label: '特殊营业日', type: 'json', defaultValue: '[]'}, {name: 'channelOperatingHours', label: '渠道营业时间', type: 'json', defaultValue: '[]'}, {name: 'autoOpenCloseEnabled', label: '自动营业状态策略', type: 'select', options: yesNoOptions, defaultValue: 'false'}, {name: 'extraChargeRules', label: '附加费用规则', type: 'json', defaultValue: defaultExtraChargeRules()}, {name: 'refundStockPolicy', label: '退款返库存配置', defaultValue: 'RETURN_TO_STOCK'}],
@@ -583,6 +835,8 @@ function formFieldsFor(page: PageKey, collections: CollectionState, platformId: 
     availability: [{name: 'storeId', label: '门店', type: 'select', options: storeOptions, defaultValue: storeId}, {name: 'productId', label: '商品', type: 'select', options: productOptions}, {name: 'available', label: '可售状态', type: 'select', options: metadataOptions.availability}, {name: 'soldOutReason', label: '不可售原因'}, {name: 'effectiveFrom', label: '生效时间'}],
     availabilityRules: [{name: 'storeId', label: '门店', type: 'select', options: storeOptions, defaultValue: storeId}, {name: 'ruleCode', label: '规则编码', required: true, helper: '创建后不可修改'}, {name: 'productId', label: '适用商品', type: 'select', options: [{label: '全部商品', value: ''}, ...productOptions]}, {name: 'ruleType', label: '规则类型', type: 'select', options: availabilityRuleTypeOptions, defaultValue: 'MANUAL'}, {name: 'channelType', label: '售卖渠道', type: 'select', options: channelOptions, defaultValue: 'ALL'}, {name: 'timeSlot', label: '适用时段', type: 'json', defaultValue: defaultTimeSlot()}, {name: 'dailyQuota', label: '每日限量', type: 'number'}, {name: 'priority', label: '优先级', type: 'number', defaultValue: '100'}, {name: 'enabled', label: '是否启用', type: 'select', options: yesNoOptions, defaultValue: 'true'}, {name: 'available', label: '是否可售', type: 'select', options: yesNoOptions, defaultValue: 'true'}, {name: 'ruleConfig', label: '规则配置', type: 'json', defaultValue: defaultRuleConfig()}],
     priceRules: [{name: 'ruleCode', label: '规则编码', required: true, helper: '创建后不可修改'}, {name: 'ruleName', label: '规则名称', required: true}, {name: 'storeId', label: '门店', type: 'select', options: storeOptions, defaultValue: storeId}, {name: 'productId', label: '指定商品', type: 'select', options: [{label: '全部适用商品', value: ''}, ...productOptions]}, {name: 'priceType', label: '价格类型', type: 'select', options: priceTypeOptions, defaultValue: priceTypeOptions[0]?.value ?? 'FIXED'}, {name: 'channelType', label: '渠道类型', type: 'select', options: channelOptions, defaultValue: channelOptions[0]?.value ?? 'ALL'}, {name: 'priceValue', label: '价格值', type: 'number', defaultValue: '0'}, {name: 'priceDelta', label: '调价金额', type: 'number', defaultValue: '0'}, {name: 'timeSlot', label: '时间段', type: 'json', defaultValue: defaultTimeSlot()}, {name: 'memberTier', label: '会员等级', type: 'select', options: memberTierOptions, defaultValue: memberTierOptions[0]?.value ?? 'NONE'}, {name: 'priority', label: '优先级', type: 'number', defaultValue: '10'}, {name: 'discountType', label: '优惠类型', type: 'select', options: discountOptions, defaultValue: discountOptions[0]?.value ?? 'AMOUNT_OFF'}, {name: 'discountValue', label: '优惠值', type: 'number', defaultValue: '0'}, {name: 'applicableProductIds', label: '适用商品', type: 'json', defaultValue: '[]'}, {name: 'effectiveFrom', label: '生效时间'}, {name: 'effectiveTo', label: '失效时间'}],
+    bundlePriceRules: [{name: 'storeId', label: '门店', type: 'select', options: storeOptions, defaultValue: storeId}, {name: 'ruleName', label: '规则名称', required: true}, {name: 'triggerProductIds', label: '触发商品', type: 'multi-select', options: productOptions, helper: '勾选后保存为 triggerProducts，默认每个商品最小数量为 1'}, {name: 'triggerProducts', label: '触发商品明细', type: 'json', defaultValue: '[]', helper: '高级配置：可填写 min_quantity'}, {name: 'discountType', label: '优惠类型', type: 'select', options: discountOptions, defaultValue: 'TOTAL_DISCOUNT'}, {name: 'discountValue', label: '优惠值', type: 'number', defaultValue: '0'}, {name: 'maxApplications', label: '最大触发次数', type: 'number', defaultValue: '0'}, {name: 'priority', label: '优先级', type: 'number', defaultValue: '10'}, {name: 'effectiveFrom', label: '生效时间'}, {name: 'effectiveTo', label: '失效时间'}, {name: 'isActive', label: '是否启用', type: 'select', options: yesNoOptions, defaultValue: 'true'}],
+    channelProductMappings: [{name: 'storeId', label: '门店', type: 'select', options: storeOptions, defaultValue: storeId}, {name: 'productId', label: '内部商品', type: 'select', options: productOptions}, {name: 'channelType', label: '售卖渠道', type: 'select', options: channelOptions, defaultValue: channelOptions[0]?.value ?? 'DINE_IN'}, {name: 'externalProductId', label: '外部商品 ID'}, {name: 'externalSkuId', label: '外部 SKU ID'}, {name: 'mappingStatus', label: '映射状态', type: 'select', options: metadataOptions.mappingStatuses, defaultValue: 'PENDING'}, {name: 'syncStatus', label: '同步状态', type: 'select', options: metadataOptions.syncStatuses, defaultValue: 'NOT_SYNCED'}, {name: 'lastSyncAt', label: '最后同步时间'}, {name: 'syncErrorMessage', label: '同步失败原因', type: 'textarea'}, {name: 'fieldMappingConfig', label: '字段映射配置', type: 'json', defaultValue: defaultFieldMappingConfig()}],
   }
   return fields[page] ?? []
 }
@@ -592,7 +846,23 @@ export async function createEntity(page: PageKey, rawValues: Record<string, stri
   const selectedPlatform = collections.platforms.find(platform => platform.entityId === platformId)
   const regionOptions = mergeExistingProjectRegions(platformMetadataOptions(selectedPlatform, 'regions'), collections.projects.filter(project => dataOf(project).platform_id === platformId))
   const values: Record<string, unknown> = buildCreatePayload(page, Object.fromEntries(fields.map(field => [field.name, parseFieldValue(field, rawValues[field.name] ?? field.defaultValue ?? '')])), regionOptions)
-  if (['projects', 'tenants', 'brands', 'permissions', 'roles'].includes(page) && !values.platformId) {
+  if ([
+    'projects',
+    'tenants',
+    'brands',
+    'permissions',
+    'roles',
+    'users',
+    'identityProviderConfigs',
+    'permissionGroups',
+    'roleTemplates',
+    'featurePoints',
+    'platformFeatureSwitches',
+    'resourceTags',
+    'principalGroups',
+    'sodRules',
+    'highRiskPolicies',
+  ].includes(page) && !values.platformId) {
     values.platformId = platformId
   }
   if (page === 'environment') return api.createSandbox(values as Parameters<typeof api.createSandbox>[0])
@@ -606,11 +876,23 @@ export async function createEntity(page: PageKey, rawValues: Record<string, stri
   if (page === 'tables') return api.createTable(asText(values.storeId, storeId), values as Parameters<typeof api.createTable>[1])
   if (page === 'workstations') return api.createWorkstation(asText(values.storeId, storeId), values as Parameters<typeof api.createWorkstation>[1])
   if (page === 'permissions') return api.createPermission(values as Parameters<typeof api.createPermission>[0])
+  if (page === 'identityProviderConfigs') return api.createIdentityProviderConfig(values)
+  if (page === 'permissionGroups') return api.createPermissionGroup(values)
+  if (page === 'roleTemplates') return api.createRoleTemplate(values)
+  if (page === 'featurePoints') return api.createFeaturePoint(values)
+  if (page === 'platformFeatureSwitches') return api.upsertPlatformFeatureSwitch(values)
+  if (page === 'resourceTags') return api.createResourceTag(values)
   if (page === 'roles') return api.createRole(values as Parameters<typeof api.createRole>[0])
   if (page === 'users') return api.createUser(values as Parameters<typeof api.createUser>[0])
   if (page === 'roleBindings') return api.createUserRoleBinding(values as Parameters<typeof api.createUserRoleBinding>[0])
+  if (page === 'principalGroups') return api.createPrincipalGroup(values)
+  if (page === 'groupMembers') return api.addGroupMember(values)
+  if (page === 'groupRoleBindings') return api.createGroupRoleBinding(values)
+  if (page === 'sodRules') return api.createSeparationOfDutyRule(values)
+  if (page === 'highRiskPolicies') return api.createHighRiskPermissionPolicy(values)
   if (page === 'productCategories') return api.createProductCategory(normalizeProductCategoryPayload(values) as Parameters<typeof api.createProductCategory>[0])
   if (page === 'products') return api.createProduct(normalizeProductPayload(values) as Parameters<typeof api.createProduct>[0])
+  if (page === 'productInheritances') return api.createProductInheritance(values as Parameters<typeof api.createProductInheritance>[0])
   if (page === 'brandMenus') return api.createBrandMenu(values as Parameters<typeof api.createBrandMenu>[0])
   if (page === 'storeMenus') return api.createStoreMenu(values as Parameters<typeof api.createStoreMenu>[0])
   if (page === 'storeConfig') return api.updateStoreConfig(asText(values.storeId, storeId), values as Parameters<typeof api.updateStoreConfig>[1])
@@ -618,6 +900,8 @@ export async function createEntity(page: PageKey, rawValues: Record<string, stri
   if (page === 'availability') return api.updateMenuAvailability(asText(values.storeId, storeId), asText(values.productId), values as Parameters<typeof api.updateMenuAvailability>[2])
   if (page === 'availabilityRules') return api.createAvailabilityRule(asText(values.storeId, storeId), values as Parameters<typeof api.createAvailabilityRule>[1])
   if (page === 'priceRules') return api.createPriceRule(values as Parameters<typeof api.createPriceRule>[0])
+  if (page === 'bundlePriceRules') return api.createBundlePriceRule(normalizeBundlePriceRulePayload(values) as Parameters<typeof api.createBundlePriceRule>[0])
+  if (page === 'channelProductMappings') return api.createChannelProductMapping(values as Parameters<typeof api.createChannelProductMapping>[0])
   throw new Error('当前页面不支持创建')
 }
 
@@ -641,6 +925,19 @@ function normalizeProductCategoryPayload(values: Record<string, unknown>) {
   } else {
     delete next.storeId
   }
+  return next
+}
+
+function normalizeBundlePriceRulePayload(values: Record<string, unknown>) {
+  const selectedProducts = Array.isArray(values.triggerProductIds)
+    ? values.triggerProductIds.map(item => asText(item, '')).filter(Boolean)
+    : []
+  const configuredProducts = Array.isArray(values.triggerProducts) ? values.triggerProducts : []
+  const triggerProducts = configuredProducts.length > 0
+    ? configuredProducts
+    : selectedProducts.map(productId => ({product_id: productId, min_quantity: 1}))
+  const next: Record<string, unknown> = {...values, triggerProducts}
+  delete next.triggerProductIds
   return next
 }
 
@@ -768,12 +1065,28 @@ function titleFieldFor(page: PageKey) {
     tenants: 'tenant_name',
     brands: 'brand_name',
     stores: 'store_name',
+    permissions: 'permission_name',
+    identityProviderConfigs: 'idp_name',
+    permissionGroups: 'group_name',
+    roleTemplates: 'template_name',
+    featurePoints: 'feature_name',
+    platformFeatureSwitches: 'feature_code',
+    resourceTags: 'tag_label',
+    principalGroups: 'group_name',
+    groupMembers: 'member_id',
+    groupRoleBindings: 'group_binding_id',
+    authorizationSessions: 'session_id',
+    sodRules: 'rule_name',
+    highRiskPolicies: 'permission_code',
     roles: 'role_name',
     users: 'display_name',
     products: 'product_name',
+    productInheritances: 'inheritance_id',
     brandMenus: 'menu_name',
     storeMenus: 'menu_name',
     priceRules: 'rule_name',
+    bundlePriceRules: 'rule_name',
+    channelProductMappings: 'mapping_id',
   }
   return fieldByPage[page] ?? 'name'
 }

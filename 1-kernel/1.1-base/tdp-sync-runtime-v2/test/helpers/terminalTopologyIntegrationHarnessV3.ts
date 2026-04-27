@@ -97,6 +97,14 @@ const fetchPlatformJson = async <T>(url: string, init?: RequestInit): Promise<T>
     return payload.data
 }
 
+const withAdminAuth = (adminToken: string, init?: RequestInit): RequestInit => ({
+    ...init,
+    headers: {
+        ...(init?.headers ?? {}),
+        authorization: `Bearer ${adminToken}`,
+    },
+})
+
 const createFetchTransport = (): HttpTransport => ({
     async execute<TPath, TQuery, TBody, TResponse>(
         request: HttpTransportRequest<TPath, TQuery, TBody>,
@@ -127,6 +135,7 @@ export const createTerminalTopologyIntegrationHarnessV3 = async (input?: {
     const terminalPlatform = createMockTerminalPlatformTestServer()
     await terminalPlatform.start()
     const terminalBaseUrl = terminalPlatform.getHttpBaseUrl()
+    const adminToken = terminalPlatform.getAdminToken()
     const preparedSandbox = await fetchPlatformJson<{
         sandboxId: string
         preparedAt: number
@@ -279,17 +288,20 @@ export const createTerminalTopologyIntegrationHarnessV3 = async (input?: {
             if (!terminalId) {
                 throw new Error('missing terminal id before upsert projection')
             }
-            return await fetchPlatformJson<any>(`${terminalBaseUrl}/api/v1/admin/tdp/projections/upsert`, {
-                method: 'POST',
-                body: JSON.stringify({
-                    sandboxId: preparedSandbox.sandboxId,
-                    topicKey: inputValue.topicKey,
-                    scopeType: 'TERMINAL',
-                    scopeKey: terminalId,
-                    itemKey: inputValue.itemKey,
-                    payload: inputValue.payload,
+            return await fetchPlatformJson<any>(
+                `${terminalBaseUrl}/api/v1/admin/tdp/projections/upsert`,
+                withAdminAuth(adminToken, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        sandboxId: preparedSandbox.sandboxId,
+                        topicKey: inputValue.topicKey,
+                        scopeType: 'TERMINAL',
+                        scopeKey: terminalId,
+                        itemKey: inputValue.itemKey,
+                        payload: inputValue.payload,
+                    }),
                 }),
-            })
+            )
         },
         async mirrorProjectionToTopologyBridge(inputValue: {
             topic: string
@@ -310,13 +322,13 @@ export const createTerminalTopologyIntegrationHarnessV3 = async (input?: {
             }
             await fetchPlatformJson<any>(
                 `${terminalBaseUrl}/api/v1/admin/tdp/sessions/${sessionId}/force-close`,
-                {
+                withAdminAuth(adminToken, {
                     method: 'POST',
                     body: JSON.stringify({
                         code: inputValue?.code ?? 1012,
                         reason: inputValue?.reason ?? 'terminal-topology-bridge-force-close',
                     }),
-                },
+                }),
             )
             return sessionId
         },

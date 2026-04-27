@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useCallback, useState} from 'react'
 import {
     createCommand,
     type KernelRuntimeV2,
@@ -18,6 +18,10 @@ import {
     AdminSummaryCard,
     AdminSummaryGrid,
 } from './AdminSectionPrimitives'
+import {
+    useAdminMountedRef,
+    useAdminRefreshWhileScreenActive,
+} from './useAdminScreenActivity'
 
 export interface AdminControlSectionProps {
     runtime?: KernelRuntimeV2
@@ -28,11 +32,12 @@ export const AdminControlSection: React.FC<AdminControlSectionProps> = ({
     runtime,
     host,
 }) => {
+    const mountedRef = useAdminMountedRef()
     const [snapshot, setSnapshot] = useState<AdminControlSnapshot | undefined>()
     const [message, setMessage] = useState('')
     const [loading, setLoading] = useState(false)
 
-    useEffect(() => {
+    const refresh = useCallback((errorMessage: string) => {
         if (!host) {
             return
         }
@@ -40,14 +45,26 @@ export const AdminControlSection: React.FC<AdminControlSectionProps> = ({
             setLoading(true)
             setMessage('')
             try {
-                setSnapshot(await host.getSnapshot())
+                const nextSnapshot = await host.getSnapshot()
+                if (mountedRef.current) {
+                    setSnapshot(nextSnapshot)
+                }
             } catch (error) {
-                setMessage(error instanceof Error ? error.message : '控制状态读取失败')
+                if (mountedRef.current) {
+                    setMessage(error instanceof Error ? error.message : errorMessage)
+                }
             } finally {
-                setLoading(false)
+                if (mountedRef.current) {
+                    setLoading(false)
+                }
             }
         })()
-    }, [host])
+    }, [host, mountedRef])
+
+    useAdminRefreshWhileScreenActive(
+        () => refresh('控制状态刷新失败'),
+        host ? 'host-ready' : 'host-missing',
+    )
 
     if (!host) {
         return (
@@ -65,14 +82,21 @@ export const AdminControlSection: React.FC<AdminControlSectionProps> = ({
             setMessage('')
             try {
                 await action()
-                setSnapshot(await host.getSnapshot())
-                if (successMessage) {
-                    setMessage(successMessage)
+                const nextSnapshot = await host.getSnapshot()
+                if (mountedRef.current) {
+                    setSnapshot(nextSnapshot)
+                    if (successMessage) {
+                        setMessage(successMessage)
+                    }
                 }
             } catch (error) {
-                setMessage(error instanceof Error ? error.message : '宿主控制执行失败')
+                if (mountedRef.current) {
+                    setMessage(error instanceof Error ? error.message : '宿主控制执行失败')
+                }
             } finally {
-                setLoading(false)
+                if (mountedRef.current) {
+                    setLoading(false)
+                }
             }
         })()
     }
@@ -172,7 +196,6 @@ export const AdminControlSection: React.FC<AdminControlSectionProps> = ({
                                         if (result.status !== 'COMPLETED') {
                                             throw new Error(result.actorResults[0]?.error?.message ?? '空间切换失败')
                                         }
-                                        setSnapshot(await host.getSnapshot())
                                     },
                                     `已切换到 ${space} 空间`,
                                 )}

@@ -416,6 +416,7 @@ export const createAlignedRouter = () => {
       erpIntegrationEnabled: req.body.erpIntegrationEnabled,
       erpApiEndpoint: req.body.erpApiEndpoint,
       erpAuthConfig: req.body.erpAuthConfig,
+      metadataCatalog: req.body.metadataCatalog,
       externalBrandId: req.body.externalBrandId,
       syncedAt: req.body.syncedAt,
       version: req.body.version,
@@ -487,6 +488,7 @@ export const createAlignedRouter = () => {
       externalStoreId: req.body.externalStoreId,
       syncedAt: req.body.syncedAt,
       version: req.body.version,
+      metadataCatalog: req.body.metadataCatalog,
       mutation: res.locals.requestContext,
     }))
   }))
@@ -785,6 +787,7 @@ export const createAlignedRouter = () => {
   router.post('/api/v1/iam/permission-groups', wrapRoute((req, res) => {
     created(res, createPermissionGroup({
       permissionGroupId: req.body.permissionGroupId,
+      platformId: req.body.platformId,
       groupCode: req.body.groupCode,
       groupName: req.body.groupName,
       groupIcon: req.body.groupIcon,
@@ -800,6 +803,7 @@ export const createAlignedRouter = () => {
   router.post('/api/v1/iam/role-templates', wrapRoute((req, res) => {
     created(res, createRoleTemplate({
       templateId: req.body.templateId,
+      platformId: req.body.platformId,
       templateCode: req.body.templateCode,
       templateName: req.body.templateName,
       templateDescription: req.body.templateDescription,
@@ -817,6 +821,7 @@ export const createAlignedRouter = () => {
   router.post('/api/v1/iam/feature-points', wrapRoute((req, res) => {
     created(res, createFeaturePoint({
       featurePointId: req.body.featurePointId,
+      platformId: req.body.platformId,
       featureCode: req.body.featureCode,
       featureName: req.body.featureName,
       featureDescription: req.body.featureDescription,
@@ -883,12 +888,21 @@ export const createAlignedRouter = () => {
       mutation: res.locals.requestContext,
     }))
   }))
+  router.post('/api/v1/roles/:roleId/deprecate', wrapRoute((req, res) => {
+    ok(res, changeEntityStatus({
+      entityType: 'role',
+      entityId: param(req.params.roleId),
+      status: 'DEPRECATED',
+      eventType: 'RoleDeprecated',
+      mutation: res.locals.requestContext,
+    }))
+  }))
   router.post('/api/v1/roles/:roleId/suspend', wrapRoute((req, res) => {
     ok(res, changeEntityStatus({
       entityType: 'role',
       entityId: param(req.params.roleId),
-      status: 'SUSPENDED',
-      eventType: 'RoleSuspended',
+      status: 'DEPRECATED',
+      eventType: 'RoleDeprecated',
       mutation: res.locals.requestContext,
     }))
   }))

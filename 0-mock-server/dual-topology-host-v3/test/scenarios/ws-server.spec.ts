@@ -82,6 +82,11 @@ describe('dual-topology-host-v3 ws server', () => {
             }
 
             expect(server.getStats().sessionCount).toBe(1)
+            await expect(fetchJson<{sessionCount: number}>(
+                `${server.getAddressInfo().httpBaseUrl}/status`,
+            )).resolves.toMatchObject({
+                sessionCount: 1,
+            })
         } finally {
             await Promise.all([master.close(), slave.close()])
         }

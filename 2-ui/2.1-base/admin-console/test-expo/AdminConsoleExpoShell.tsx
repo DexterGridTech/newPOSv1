@@ -124,7 +124,6 @@ const createExpoHarness = async (): Promise<RuntimeReactHarness> => {
                     async setFullScreen() {},
                     async setAppLocked() {},
                     async restartApp() {},
-                    async switchServerSpace() {},
                     async clearCache() {},
                 },
                 connector: {
@@ -212,9 +211,15 @@ export const AdminConsoleExpoShell: React.FC = () => {
         if (!harness) {
             return undefined
         }
+        ;(globalThis as typeof globalThis & {
+            __ADMIN_CONSOLE_EXPO_HARNESS__?: RuntimeReactHarness
+        }).__ADMIN_CONSOLE_EXPO_HARNESS__ = harness
         automationHost.start()
         return () => {
             automationHost.stop()
+            delete (globalThis as typeof globalThis & {
+                __ADMIN_CONSOLE_EXPO_HARNESS__?: RuntimeReactHarness
+            }).__ADMIN_CONSOLE_EXPO_HARNESS__
         }
     }, [automationHost, harness])
 

@@ -27,6 +27,12 @@ const writeJson = (response: http.ServerResponse, statusCode: number, payload: u
     response.end(JSON.stringify(payload))
 }
 
+const writeCorsHeaders = (response: http.ServerResponse) => {
+    response.setHeader('access-control-allow-origin', '*')
+    response.setHeader('access-control-allow-methods', 'GET,POST,DELETE,OPTIONS')
+    response.setHeader('access-control-allow-headers', 'content-type')
+}
+
 const resolveTargetNodeId = (message: DualTopologyHostV3IncomingMessage): string | undefined => {
     if (message.type === 'hello') {
         return undefined
@@ -224,6 +230,13 @@ export const createDualTopologyHostV3Server = (
     }
 
     const server = http.createServer((request, response) => {
+        writeCorsHeaders(response)
+        if (request.method === 'OPTIONS') {
+            response.statusCode = 204
+            response.end()
+            return
+        }
+
         if (!request.url) {
             writeJson(response, 400, {error: 'missing_url'})
             return
@@ -234,7 +247,10 @@ export const createDualTopologyHostV3Server = (
         const pathname = requestUrl.pathname
 
         if (request.method === 'GET' && pathname === `${config.basePath}/status`) {
-            writeJson(response, 200, host.getSnapshot())
+            writeJson(response, 200, {
+                ...host.getSnapshot(),
+                sessionCount: getStats().sessionCount,
+            })
             return
         }
 

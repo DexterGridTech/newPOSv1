@@ -193,7 +193,7 @@ async function main() {
   })
   await ensureService({
     name: 'metro',
-    scriptName: 'assembly:android-mixc-retail-rn84:metro',
+    scriptName: 'assembly:android-mixc-catering-rn84:metro',
     port: 8081,
     logPath: `${logDir}/assembly-android-metro.log`,
     timeoutMs: options.timeoutMs,

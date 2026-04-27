@@ -91,7 +91,7 @@ The reusable scripts wrap these underlying commands:
 ```bash
 corepack yarn mock:platform:dev
 corepack yarn mock:admin-mall-tenant-console:dev
-corepack yarn assembly:android-mixc-retail-rn84:metro
+corepack yarn assembly:android-mixc-catering-rn84:metro
 ANDROID_TOPOLOGY_HOST_DEVICE_ID=emulator-5554 node scripts/setup-android-port-forwarding.mjs --topology-host
 ```
 

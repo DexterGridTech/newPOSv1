@@ -18,10 +18,10 @@ const testExpoDir = dirname(fileURLToPath(import.meta.url))
 const packageDir = resolve(testExpoDir, '..')
 const repoRoot = resolve(packageDir, '../../..')
 const expoCli = resolve(repoRoot, 'node_modules/expo/bin/cli')
-const preferredPort = Number(process.env.RETAIL_SHELL_EXPO_PORT ?? '8095')
-const headed = process.env.RETAIL_SHELL_EXPO_HEADED === '1'
-const slowMs = Number(process.env.RETAIL_SHELL_EXPO_SLOW_MS ?? '0')
-const finalPauseMs = Number(process.env.RETAIL_SHELL_EXPO_FINAL_PAUSE_MS ?? '0')
+const preferredPort = Number(process.env.CATERING_SHELL_EXPO_PORT ?? '8095')
+const headed = process.env.CATERING_SHELL_EXPO_HEADED === '1'
+const slowMs = Number(process.env.CATERING_SHELL_EXPO_SLOW_MS ?? '0')
+const finalPauseMs = Number(process.env.CATERING_SHELL_EXPO_FINAL_PAUSE_MS ?? '0')
 
 const {runAgent, callAutomation} = createCommandRunner({repoRoot, headed})
 
@@ -69,13 +69,17 @@ const readState = async session => {
     const nodeMap = toAutomationNodeMap(nodes)
     return {
         ready: hasNode(nodeMap, 'ui-integration-catering-shell-expo:ready'),
+        sandboxId: readText(nodeMap, 'ui-integration-catering-shell-expo:sandbox-id'),
         activationCode: readText(nodeMap, 'ui-integration-catering-shell-expo:activation-code'),
         activationStatus: readText(nodeMap, 'ui-integration-catering-shell-expo:activation-status'),
         terminalId: readText(nodeMap, 'ui-integration-catering-shell-expo:terminal-id'),
+        sandboxInputValue: readText(nodeMap, 'ui-base-terminal-activate-device:sandbox-value'),
         activationMessage: readText(nodeMap, 'ui-base-terminal-activate-device:message'),
         activationInputValue: readText(nodeMap, 'ui-base-terminal-activate-device:value'),
         welcomeVisible: hasNode(nodeMap, 'ui-integration-catering-shell:welcome'),
         welcomeTerminalId: readText(nodeMap, 'ui-integration-catering-shell:welcome:terminal-id'),
+        workbenchVisible: hasNode(nodeMap, 'ui-business-catering-master-data-workbench:root'),
+        workbenchTerminalId: readText(nodeMap, 'ui-business-catering-master-data-workbench:terminal-id'),
         adminLoginVisible: hasNode(nodeMap, 'ui-base-admin-popup:login'),
         adminPanelVisible: hasNode(nodeMap, 'ui-base-admin-popup:panel'),
         selectedTab: readText(nodeMap, 'ui-base-admin-popup:selected-tab'),
@@ -117,7 +121,8 @@ const createMockPlatform = async () => {
         if (!response.ok) {
           throw new Error('prepare sandbox failed: ' + response.status);
         }
-        console.log(JSON.stringify({baseUrl}));
+        const payload = await response.json();
+        console.log(JSON.stringify({baseUrl, sandboxId: payload.data.sandboxId}));
         process.on('SIGTERM', async () => { await server.close(); process.exit(0); });
         process.on('SIGINT', async () => { await server.close(); process.exit(0); });
         setInterval(() => {}, 1000);
@@ -131,17 +136,17 @@ const createMockPlatform = async () => {
         stdio: ['ignore', 'pipe', 'pipe'],
     })
     const lines = []
-    const baseUrl = await new Promise((resolvePromise, reject) => {
+    const ready = await new Promise((resolvePromise, reject) => {
         const timeout = setTimeout(() => {
             reject(new Error(`Timed out waiting for mock platform boot: ${lines.join('')}`))
         }, 30000)
         const onData = chunk => {
             const text = chunk.toString()
             lines.push(text)
-            const match = text.match(/\{\"baseUrl\":\"([^\"]+)\"\}/)
-            if (match?.[1]) {
+            const match = text.match(/\{\"baseUrl\":\"[^\"]+\",\"sandboxId\":\"[^\"]+\"\}/)
+            if (match?.[0]) {
                 clearTimeout(timeout)
-                resolvePromise(match[1])
+                resolvePromise(JSON.parse(match[0]))
             }
         }
         child.stdout.on('data', onData)
@@ -149,7 +154,8 @@ const createMockPlatform = async () => {
         child.once('error', reject)
     })
     return {
-        baseUrl,
+        baseUrl: ready.baseUrl,
+        sandboxId: ready.sandboxId,
         child,
         async stop() {
             try {
@@ -174,6 +180,9 @@ const main = async () => {
         expoCli,
         env: {
             EXPO_PUBLIC_MOCK_PLATFORM_BASE_URL: mockPlatform.baseUrl,
+            EXPO_PUBLIC_MOCK_PLATFORM_SANDBOX_ID: mockPlatform.sandboxId,
+            EXPO_PUBLIC_SERVER_CONFIG_PROFILE: 'test',
+            EXPO_PUBLIC_CATERING_SHELL_STORAGE_MODE: 'memory',
         },
     })
     const baseUrl = `http://localhost:${expo.port}`
@@ -196,11 +205,28 @@ const main = async () => {
             ready: true,
             activationStatus: 'UNACTIVATED',
             welcomeVisible: false,
+            workbenchVisible: false,
             adminLoginVisible: false,
         }, 'boot')
 
-        if (!initial.activationCode) {
+        if (!initial.activationCode || !initial.sandboxId) {
             throw new Error(`missing activation code on boot: ${JSON.stringify(initial)}`)
+        }
+
+        await clickTestId(session, 'ui-base-terminal-activate-device:sandbox')
+        expectState(await readState(session), {
+            keyboardVisible: true,
+            keyboardTitle: '标识键盘',
+        }, 'sandbox keyboard open')
+
+        for (const char of initial.sandboxId.toUpperCase().split('')) {
+            await clickTestId(session, `ui-base-virtual-keyboard:key:${char}`)
+        }
+        await clickTestId(session, 'ui-base-virtual-keyboard:key:enter')
+
+        const sandboxReady = await readState(session)
+        if (!sandboxReady.sandboxInputValue?.includes(initial.sandboxId)) {
+            throw new Error(`sandbox input did not receive id: ${JSON.stringify(sandboxReady)}`)
         }
 
         await clickTestId(session, 'ui-base-terminal-activate-device:input')
@@ -223,12 +249,12 @@ const main = async () => {
 
         const activated = await waitForState(
             session,
-            state => state.activationStatus === 'ACTIVATED' && state.welcomeVisible === true,
-            'activation success and welcome switch',
+            state => state.activationStatus === 'ACTIVATED' && state.workbenchVisible === true,
+            'activation success and workbench switch',
         )
 
-        if (!activated.welcomeTerminalId || activated.welcomeTerminalId === 'terminal:unactivated') {
-            throw new Error(`welcome terminal id missing after activation: ${JSON.stringify(activated)}`)
+        if (!activated.workbenchTerminalId || activated.workbenchTerminalId === '终端未激活') {
+            throw new Error(`workbench terminal id missing after activation: ${JSON.stringify(activated)}`)
         }
 
         await rapidClickRootLauncher(session)
@@ -274,7 +300,7 @@ const main = async () => {
 
         expectState(await waitForState(
             session,
-            state => state.activationStatus === 'UNACTIVATED' && state.welcomeVisible === false,
+            state => state.activationStatus === 'UNACTIVATED' && state.workbenchVisible === false,
             'deactivation returns activation screen',
         ), {
             activationStatus: 'UNACTIVATED',

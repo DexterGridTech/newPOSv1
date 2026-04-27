@@ -5,6 +5,7 @@ export {packageVersion}
 export {createModule, adminConsolePreSetup} from './application/createModule'
 export {adminConsoleModuleManifest} from './application/moduleManifest'
 export * from './application'
+export * from './contexts'
 export * from './features/commands'
 export * from './selectors'
 export * from './features/slices'

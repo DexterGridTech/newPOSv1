@@ -1,18 +1,48 @@
 import type {RootState} from '@next/kernel-base-state-runtime'
 import {createSelector} from '@reduxjs/toolkit'
+import {
+    selectUiCurrentScreenOrFirstReady,
+} from '@next/kernel-base-ui-runtime-v2'
 import {adminConsoleStateKeys} from '../foundations/stateKeys'
+import {
+    adminConsoleScreenContainers,
+    getAdminConsoleTabScreenPartKey,
+    isAdminConsoleTab,
+} from '../foundations/adminScreenMetadata'
+import {adminConsoleTabs} from '../foundations/adminTabs'
 import type {
     AdapterDiagnosticSummary,
     AdminConsoleState,
     AdminConsoleTab,
 } from '../types'
 
+const readAdminConsoleTabFromScreenEntry = (entry: {
+    partKey?: string
+    props?: unknown
+} | null | undefined): AdminConsoleTab | undefined => {
+    const propsTab = (entry?.props as {tab?: unknown} | undefined)?.tab
+    if (isAdminConsoleTab(propsTab)) {
+        return propsTab
+    }
+    return adminConsoleTabs.find(tab => getAdminConsoleTabScreenPartKey(tab.key) === entry?.partKey)?.key
+}
+
 const selectAdminConsoleState = (state: RootState): AdminConsoleState | undefined =>
     state[adminConsoleStateKeys.console as keyof RootState] as AdminConsoleState | undefined
 
 export const selectAdminConsoleSelectedTab = createSelector(
-    [selectAdminConsoleState],
-    (state): AdminConsoleTab => state?.selectedTab ?? 'terminal',
+    [(state: RootState) => selectUiCurrentScreenOrFirstReady(state, adminConsoleScreenContainers.tabContent)],
+    (entry): AdminConsoleTab => {
+        const entryWithProps = entry && 'props' in entry
+            ? {
+                partKey: entry.partKey,
+                props: entry.props,
+            }
+            : {
+                partKey: entry?.partKey,
+            }
+        return readAdminConsoleTabFromScreenEntry(entryWithProps) ?? 'terminal'
+    },
 )
 
 export const selectLatestAdapterSummary = createSelector(

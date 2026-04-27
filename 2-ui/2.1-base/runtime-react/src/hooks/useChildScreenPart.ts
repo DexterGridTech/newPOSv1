@@ -45,6 +45,9 @@ export const useChildScreenPartResolution = <TProps = unknown>(
                 missing: {
                     partKey: entry.partKey,
                     rendererKey: entry.rendererKey,
+                    id: entry.id,
+                    source: entry.source,
+                    operation: entry.operation,
                     name: entry.name,
                     title: entry.title,
                     description: entry.description,
@@ -58,6 +61,9 @@ export const useChildScreenPartResolution = <TProps = unknown>(
             child: {
                 partKey: entry.partKey,
                 rendererKey: entry.rendererKey,
+                id: entry.id,
+                source: entry.source,
+                operation: entry.operation,
                 Component,
                 props: entry.props,
             },

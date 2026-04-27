@@ -917,7 +917,7 @@ export function useAdminConsoleState() {
     }
   }
 
-  const changeIamRoleStatus = async (nextStatus: 'ACTIVE' | 'SUSPENDED') => {
+  const changeIamRoleStatus = async (nextStatus: 'ACTIVE' | 'DEPRECATED') => {
     setIamActionLoading(true)
     setMessage('')
     setError('')
@@ -928,7 +928,7 @@ export function useAdminConsoleState() {
       }
       const payload = nextStatus === 'ACTIVE'
         ? await api.activateRole(targetRoleId)
-        : await api.suspendRole(targetRoleId)
+        : await api.deprecateRole(targetRoleId)
       setMessage(`角色生命周期已更新：${payload.title} -> ${nextStatus}`)
       await load()
       if (lastIamResult?.userId) {

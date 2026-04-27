@@ -4,7 +4,11 @@ import {fetchJson} from '../helpers/http'
 
 describe('dual-topology-host-v3 http server', () => {
     it('exposes status and stats endpoints', async () => {
-        const server = createDualTopologyHostV3Server()
+        const server = createDualTopologyHostV3Server({
+            config: {
+                port: 0,
+            },
+        })
         await server.start()
 
         const status = await fetch(`${server.getAddressInfo().httpBaseUrl}/status`).then(response => response.json())

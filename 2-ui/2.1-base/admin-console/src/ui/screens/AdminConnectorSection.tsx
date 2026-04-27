@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useCallback, useState} from 'react'
 import type {
     AdminConnectorChannelSnapshot,
     AdminConnectorHost,
@@ -14,6 +14,10 @@ import {
     AdminSummaryGrid,
     AdminDetailList,
 } from './AdminSectionPrimitives'
+import {
+    useAdminMountedRef,
+    useAdminRefreshWhileScreenActive,
+} from './useAdminScreenActivity'
 
 export interface AdminConnectorSectionProps {
     host?: AdminConnectorHost
@@ -22,12 +26,13 @@ export interface AdminConnectorSectionProps {
 export const AdminConnectorSection: React.FC<AdminConnectorSectionProps> = ({
     host,
 }) => {
+    const mountedRef = useAdminMountedRef()
     const [channels, setChannels] = useState<readonly AdminConnectorChannelSnapshot[]>([])
     const [results, setResults] = useState<Record<string, AdminConnectorProbeResult>>({})
     const [message, setMessage] = useState('')
     const [loading, setLoading] = useState(false)
 
-    useEffect(() => {
+    const refresh = useCallback((errorMessage: string) => {
         if (!host) {
             return
         }
@@ -35,14 +40,26 @@ export const AdminConnectorSection: React.FC<AdminConnectorSectionProps> = ({
             setLoading(true)
             setMessage('')
             try {
-                setChannels(await host.getChannels())
+                const nextChannels = await host.getChannels()
+                if (mountedRef.current) {
+                    setChannels(nextChannels)
+                }
             } catch (error) {
-                setMessage(error instanceof Error ? error.message : '连接器能力读取失败')
+                if (mountedRef.current) {
+                    setMessage(error instanceof Error ? error.message : errorMessage)
+                }
             } finally {
-                setLoading(false)
+                if (mountedRef.current) {
+                    setLoading(false)
+                }
             }
         })()
-    }, [host])
+    }, [host, mountedRef])
+
+    useAdminRefreshWhileScreenActive(
+        () => refresh('连接器能力刷新失败'),
+        host ? 'host-ready' : 'host-missing',
+    )
 
     if (!host) {
         return (
@@ -54,34 +71,26 @@ export const AdminConnectorSection: React.FC<AdminConnectorSectionProps> = ({
         )
     }
 
-    const handleRefresh = () => {
-        void (async () => {
-            setLoading(true)
-            setMessage('')
-            try {
-                setChannels(await host.getChannels())
-            } catch (error) {
-                setMessage(error instanceof Error ? error.message : '连接器能力刷新失败')
-            } finally {
-                setLoading(false)
-            }
-        })()
-    }
-
     const handleProbe = (channelKey: string) => {
         void (async () => {
             setLoading(true)
             setMessage('')
             try {
                 const result = await host.probe(channelKey)
-                setResults(current => ({
-                    ...current,
-                    [channelKey]: result,
-                }))
+                if (mountedRef.current) {
+                    setResults(current => ({
+                        ...current,
+                        [channelKey]: result,
+                    }))
+                }
             } catch (error) {
-                setMessage(error instanceof Error ? error.message : '连接器探测失败')
+                if (mountedRef.current) {
+                    setMessage(error instanceof Error ? error.message : '连接器探测失败')
+                }
             } finally {
-                setLoading(false)
+                if (mountedRef.current) {
+                    setLoading(false)
+                }
             }
         })()
     }
@@ -97,7 +106,7 @@ export const AdminConnectorSection: React.FC<AdminConnectorSectionProps> = ({
                 label={loading ? '刷新中' : '刷新连接器'}
                 tone="primary"
                 disabled={loading}
-                onPress={handleRefresh}
+                onPress={() => refresh('连接器能力刷新失败')}
             />
             <AdminSectionMessage message={message || undefined} />
             <AdminSummaryGrid>

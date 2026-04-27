@@ -21,6 +21,7 @@ import type {CateringRootScreenProps} from '../../types'
 
 export const RootScreen: React.FC<CateringRootScreenProps> = ({
     deviceId = 'UNKNOWN-DEVICE',
+    virtualKeyboardBottomInset,
 }) => {
     const runtime = useUiRuntime()
     const automationBridge = useOptionalUiAutomationBridge()
@@ -118,7 +119,7 @@ export const RootScreen: React.FC<CateringRootScreenProps> = ({
                         onClose={() => setShowAdminPopup(false)}
                     />
                 ) : null}
-                <VirtualKeyboardOverlay />
+                <VirtualKeyboardOverlay bottomInset={virtualKeyboardBottomInset} />
             </View>
         </InputRuntimeProvider>
     )

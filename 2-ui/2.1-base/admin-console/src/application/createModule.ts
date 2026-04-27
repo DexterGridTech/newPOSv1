@@ -4,11 +4,18 @@ import type {
     RuntimeModulePreSetupContextV2,
 } from '@next/kernel-base-runtime-shell-v2'
 import {
+    createCommand,
     createRuntimeModuleLifecycleLogger,
     defineKernelRuntimeModuleV2,
 } from '@next/kernel-base-runtime-shell-v2'
+import {uiRuntimeV2CommandDefinitions} from '@next/kernel-base-ui-runtime-v2'
+import {registerUiRendererParts} from '@next/ui-base-runtime-react'
 import {createAdminTopologyActor} from '../features/actors'
 import {moduleName} from '../moduleName'
+import {
+    adminConsoleScreenDefinitions,
+    adminConsoleScreenParts,
+} from '../foundations/adminScreenParts'
 import {createAdminHostTools} from '../supports/adminHostToolsFactory'
 import {installAdminHostTools} from '../supports/adminHostToolsRegistry'
 import {installAdminAdapterDiagnosticsScenarios} from '../supports/adapterDiagnosticsRuntime'
@@ -27,6 +34,7 @@ export interface CreateAdminConsoleModuleInput {
 export const adminConsolePreSetup = async (
     context: RuntimeModulePreSetupContextV2,
 ): Promise<void> => {
+    registerUiRendererParts(Object.values(adminConsoleScreenParts))
     createRuntimeModuleLifecycleLogger({moduleName, context}).logPreSetup()
 }
 
@@ -37,7 +45,7 @@ export const createModule = (
         ...adminConsoleModuleManifest,
         actorDefinitions: [createAdminTopologyActor()],
         preSetup: adminConsolePreSetup,
-        install(context: RuntimeModuleContextV2) {
+        async install(context: RuntimeModuleContextV2) {
             if (input.adapterDiagnosticScenarios) {
                 installAdminAdapterDiagnosticsScenarios(input.adapterDiagnosticScenarios)
             }
@@ -54,6 +62,9 @@ export const createModule = (
             if (input.sections) {
                 installAdminConsoleSections(input.sections)
             }
+            await context.dispatchCommand(createCommand(uiRuntimeV2CommandDefinitions.registerScreenDefinitions, {
+                definitions: adminConsoleScreenDefinitions,
+            }))
             createRuntimeModuleLifecycleLogger({moduleName, context}).logInstall()
         },
     })
