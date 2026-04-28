@@ -1,10 +1,12 @@
 import React from 'react'
 import {Text, View} from 'react-native'
-import {describe, expect, it} from 'vitest'
+import {afterEach, describe, expect, it} from 'vitest'
 import {
     defineUiScreenPart,
     ScreenContainer,
     clearUiRendererRegistry,
+    createUiNavigationBridge,
+    useScreenReady,
     useUiRuntimeScreenGatedStoreSubscription,
     useOptionalUiAutomationBridge,
     registerUiRendererParts,
@@ -13,13 +15,18 @@ import {
 import {
     createCommand,
     runtimeShellV2CommandDefinitions,
+    type KernelRuntimeV2,
 } from '@next/kernel-base-runtime-shell-v2'
 import {uiRuntimeV2CommandDefinitions} from '@next/kernel-base-ui-runtime-v2'
 import {createRuntimeReactHarness, renderWithAutomation} from '../support/runtimeReactHarness'
 import {runtimeReactScenarioParts} from '../support/runtimeReactScenarioParts'
 
 const flush = () => new Promise(resolve => setTimeout(resolve, 0))
-
+const flushScreenContainerTransition = async () => {
+    for (let index = 0; index < 12; index += 1) {
+        await flush()
+    }
+}
 describe('ScreenContainer', () => {
     it('renders an empty screen fallback when no child screen is resolved', async () => {
         const harness = await createRuntimeReactHarness()
@@ -63,7 +70,7 @@ describe('ScreenContainer', () => {
         await expect(tree.queryNodesByTextContains(runtimeReactScenarioParts.detail.definition.partKey)).resolves.not.toHaveLength(0)
     })
 
-    it('shows loading until a new screen commits, then reuses cached screens without loading', async () => {
+    it('shows loading until a new screen commits, then briefly overlays cached screen switches', async () => {
         const screenEvents: string[] = []
         const renderEvents: string[] = []
         const makePart = (name: string) => defineUiScreenPart<{label: string}>({
@@ -121,8 +128,7 @@ describe('ScreenContainer', () => {
 
         await expect(tree.getNode('ui-base-screen-container:primary:loading')).resolves.toBeTruthy()
         await tree.act(async () => {
-            await flush()
-            await flush()
+            await flushScreenContainerTransition()
         })
         await expect(tree.queryNodes('ui-base-screen-container:primary:loading')).resolves.toHaveLength(0)
         await expect(tree.getNode('ui-base-runtime-react-test:cache:first')).resolves.toBeTruthy()
@@ -151,13 +157,19 @@ describe('ScreenContainer', () => {
                 source: 'runtime-react-screen-container.spec',
             },
         ))
+        await expect(tree.getNode('ui-base-screen-container:primary:loading')).resolves.toBeTruthy()
+        await expect(tree.getNode('ui-base-runtime-react-test:cache:first')).resolves.toBeTruthy()
+        await tree.act(async () => {
+            await flush()
+            await flush()
+        })
         await expect(tree.queryNodes('ui-base-screen-container:primary:loading')).resolves.toHaveLength(0)
         await expect(tree.getNode('ui-base-runtime-react-test:cache:first')).resolves.toBeTruthy()
         expect(screenEvents.filter(event => event === 'mount:first')).toHaveLength(1)
         expect(renderEvents.filter(event => event === 'render:first')).toHaveLength(1)
     })
 
-    it('switches back to a cached screen without loading while another screen is still pending', async () => {
+    it('briefly overlays loading when switching back to a cached screen while another screen is still pending', async () => {
         const screenEvents: string[] = []
         const makePart = (name: string) => defineUiScreenPart<{label: string}>({
             partKey: `ui.base.runtime-react.test.pending-cache.${name}`,
@@ -211,8 +223,7 @@ describe('ScreenContainer', () => {
             harness.runtime,
         )
         await tree.act(async () => {
-            await flush()
-            await flush()
+            await flushScreenContainerTransition()
         })
         await expect(tree.getNode('ui-base-runtime-react-test:pending-cache:first')).resolves.toBeTruthy()
 
@@ -234,10 +245,434 @@ describe('ScreenContainer', () => {
                 source: 'runtime-react-screen-container.spec',
             },
         ))
-        await expect(tree.queryNodes('ui-base-screen-container:primary:loading')).resolves.toHaveLength(0)
+        await expect(tree.getNode('ui-base-screen-container:primary:loading')).resolves.toBeTruthy()
         await expect(tree.getNode('ui-base-runtime-react-test:pending-cache:first')).resolves.toBeTruthy()
+        await expect(tree.queryNodes('ui-base-screen-container:primary:loading')).resolves.toHaveLength(0)
         await expect(tree.queryNodes('ui-base-runtime-react-test:pending-cache:second')).resolves.toHaveLength(0)
         expect(screenEvents).not.toContain('mount:second')
+    })
+
+    it('navigateTo dispatches immediately while ScreenContainer gates the new content behind loading', async () => {
+        const screenEvents: string[] = []
+        const makePart = (name: string) => defineUiScreenPart<{label: string}>({
+            partKey: `ui.base.runtime-react.test.intent-cold.${name}`,
+            rendererKey: `ui.base.runtime-react.test.intent-cold.${name}`,
+            name: `intentCold${name}`,
+            title: `Intent cold ${name}`,
+            description: `Intent cold navigation test screen ${name}`,
+            containerKey: uiRuntimeRootVariables.primaryRootContainer.key,
+            screenModes: ['DESKTOP', 'MOBILE'],
+            workspaces: ['main', 'MAIN'],
+            instanceModes: ['MASTER', 'SLAVE'],
+            component: ({label}) => {
+                React.useEffect(() => {
+                    screenEvents.push(`commit:${label}`)
+                }, [label])
+
+                return (
+                    <View testID={`ui-base-runtime-react-test:intent-cold:${label}`}>
+                        <Text>{label}</Text>
+                    </View>
+                )
+            },
+        })
+        const first = makePart('first')
+        const second = makePart('second')
+        registerUiRendererParts([first, second])
+        const harness = await createRuntimeReactHarness()
+        await harness.runtime.dispatchCommand(createCommand(
+            uiRuntimeV2CommandDefinitions.registerScreenDefinitions,
+            {
+                definitions: [
+                    first.definition,
+                    second.definition,
+                ],
+            },
+        ))
+        await harness.runtime.dispatchCommand(createCommand(
+            uiRuntimeV2CommandDefinitions.replaceScreen,
+            {
+                definition: first.definition,
+                props: {label: 'first'},
+                source: 'runtime-react-screen-container.spec.intent-cold',
+            },
+        ))
+        let showScreenDispatchCount = 0
+        const runtimeWithCountingShow: KernelRuntimeV2 = {
+            ...harness.runtime,
+            dispatchCommand(command) {
+                if (command.definition.commandName === uiRuntimeV2CommandDefinitions.showScreen.commandName) {
+                    showScreenDispatchCount += 1
+                }
+                return harness.runtime.dispatchCommand(command)
+            },
+        }
+        const tree = renderWithAutomation(
+            <ScreenContainer containerPart={uiRuntimeRootVariables.primaryRootContainer} />,
+            harness.store,
+            runtimeWithCountingShow,
+        )
+        await tree.act(async () => {
+            await flush()
+            await flush()
+        })
+        await expect(tree.queryNodes('ui-base-screen-container:primary:loading')).resolves.toHaveLength(0)
+        await expect(tree.getNode('ui-base-runtime-react-test:intent-cold:first')).resolves.toBeTruthy()
+
+        await tree.act(async () => {
+            const bridge = createUiNavigationBridge(runtimeWithCountingShow)
+            void bridge.navigateTo({
+                target: second,
+                props: {label: 'second'},
+                source: 'runtime-react-screen-container.spec.intent-cold',
+            })
+        })
+        expect(showScreenDispatchCount).toBe(1)
+        await expect(tree.getNode('ui-base-screen-container:primary:loading')).resolves.toBeTruthy()
+        await expect(tree.getNode('ui-base-runtime-react-test:intent-cold:first')).resolves.toBeTruthy()
+        await expect(tree.queryNodes('ui-base-runtime-react-test:intent-cold:second')).resolves.toHaveLength(0)
+        await tree.act(async () => {
+            await flushScreenContainerTransition()
+        })
+        await expect(tree.getNode('ui-base-runtime-react-test:intent-cold:second')).resolves.toBeTruthy()
+        await expect(tree.queryNodes('ui-base-screen-container:primary:loading')).resolves.toHaveLength(0)
+        expect(screenEvents).toContain('commit:second')
+    })
+
+    it('keeps loading visible until a screen using useScreenReady reports ready', async () => {
+        let resolveReady: (() => void) | null = null
+        const first = defineUiScreenPart<{label: string}>({
+            partKey: 'ui.base.runtime-react.test.ready.first',
+            rendererKey: 'ui.base.runtime-react.test.ready.first',
+            name: 'readyFirst',
+            title: 'Ready First',
+            description: 'Ready protocol first screen',
+            containerKey: uiRuntimeRootVariables.primaryRootContainer.key,
+            screenModes: ['DESKTOP', 'MOBILE'],
+            workspaces: ['main', 'MAIN'],
+            instanceModes: ['MASTER', 'SLAVE'],
+            component: ({label}) => (
+                <View testID={`ui-base-runtime-react-test:ready:${label}`}>
+                    <Text>{label}</Text>
+                </View>
+            ),
+        })
+        const second = defineUiScreenPart<{label: string}>({
+            partKey: 'ui.base.runtime-react.test.ready.second',
+            rendererKey: 'ui.base.runtime-react.test.ready.second',
+            name: 'readySecond',
+            title: 'Ready Second',
+            description: 'Ready protocol second screen',
+            containerKey: uiRuntimeRootVariables.primaryRootContainer.key,
+            screenModes: ['DESKTOP', 'MOBILE'],
+            workspaces: ['main', 'MAIN'],
+            instanceModes: ['MASTER', 'SLAVE'],
+            component: ({label}) => {
+                const markReady = useScreenReady(false)
+                React.useEffect(() => {
+                    resolveReady = markReady
+                    return () => {
+                        resolveReady = null
+                    }
+                }, [markReady])
+
+                return (
+                    <View testID={`ui-base-runtime-react-test:ready:${label}`}>
+                        <Text>{label}</Text>
+                    </View>
+                )
+            },
+        })
+        registerUiRendererParts([first, second])
+        const harness = await createRuntimeReactHarness()
+        await harness.runtime.dispatchCommand(createCommand(
+            uiRuntimeV2CommandDefinitions.registerScreenDefinitions,
+            {
+                definitions: [
+                    first.definition,
+                    second.definition,
+                ],
+            },
+        ))
+        await harness.runtime.dispatchCommand(createCommand(
+            uiRuntimeV2CommandDefinitions.replaceScreen,
+            {
+                definition: first.definition,
+                props: {label: 'first'},
+                source: 'runtime-react-screen-container.spec.ready',
+            },
+        ))
+        const tree = renderWithAutomation(
+            <ScreenContainer containerPart={uiRuntimeRootVariables.primaryRootContainer} />,
+            harness.store,
+            harness.runtime,
+        )
+        await tree.act(async () => {
+            await flushScreenContainerTransition()
+        })
+
+        await tree.dispatchCommand(createCommand(
+            uiRuntimeV2CommandDefinitions.replaceScreen,
+            {
+                definition: second.definition,
+                props: {label: 'second'},
+                source: 'runtime-react-screen-container.spec.ready',
+            },
+        ))
+        await expect(tree.getNode('ui-base-screen-container:primary:loading')).resolves.toBeTruthy()
+        await tree.act(async () => {
+            await flushScreenContainerTransition()
+        })
+        await expect(tree.getNode('ui-base-runtime-react-test:ready:second')).resolves.toBeTruthy()
+        await expect(tree.getNode('ui-base-screen-container:primary:loading')).resolves.toBeTruthy()
+
+        await tree.act(async () => {
+            resolveReady?.()
+            await flush()
+        })
+        await expect(tree.queryNodes('ui-base-screen-container:primary:loading')).resolves.toHaveLength(0)
+    })
+
+    it('does not keep waiting for a manual-ready screen after switching away before it reports ready', async () => {
+        const first = defineUiScreenPart<{label: string}>({
+            partKey: 'ui.base.runtime-react.test.ready-switch.first',
+            rendererKey: 'ui.base.runtime-react.test.ready-switch.first',
+            name: 'readySwitchFirst',
+            title: 'Ready Switch First',
+            description: 'Ready switch first screen',
+            containerKey: uiRuntimeRootVariables.primaryRootContainer.key,
+            screenModes: ['DESKTOP', 'MOBILE'],
+            workspaces: ['main', 'MAIN'],
+            instanceModes: ['MASTER', 'SLAVE'],
+            component: ({label}) => (
+                <View testID={`ui-base-runtime-react-test:ready-switch:${label}`}>
+                    <Text>{label}</Text>
+                </View>
+            ),
+        })
+        const second = defineUiScreenPart<{label: string}>({
+            partKey: 'ui.base.runtime-react.test.ready-switch.second',
+            rendererKey: 'ui.base.runtime-react.test.ready-switch.second',
+            name: 'readySwitchSecond',
+            title: 'Ready Switch Second',
+            description: 'Ready switch second screen',
+            containerKey: uiRuntimeRootVariables.primaryRootContainer.key,
+            screenModes: ['DESKTOP', 'MOBILE'],
+            workspaces: ['main', 'MAIN'],
+            instanceModes: ['MASTER', 'SLAVE'],
+            component: ({label}) => {
+                useScreenReady(false)
+                return (
+                    <View testID={`ui-base-runtime-react-test:ready-switch:${label}`}>
+                        <Text>{label}</Text>
+                    </View>
+                )
+            },
+        })
+        const third = defineUiScreenPart<{label: string}>({
+            partKey: 'ui.base.runtime-react.test.ready-switch.third',
+            rendererKey: 'ui.base.runtime-react.test.ready-switch.third',
+            name: 'readySwitchThird',
+            title: 'Ready Switch Third',
+            description: 'Ready switch third screen',
+            containerKey: uiRuntimeRootVariables.primaryRootContainer.key,
+            screenModes: ['DESKTOP', 'MOBILE'],
+            workspaces: ['main', 'MAIN'],
+            instanceModes: ['MASTER', 'SLAVE'],
+            component: ({label}) => (
+                <View testID={`ui-base-runtime-react-test:ready-switch:${label}`}>
+                    <Text>{label}</Text>
+                </View>
+            ),
+        })
+        registerUiRendererParts([first, second, third])
+        const harness = await createRuntimeReactHarness()
+        await harness.runtime.dispatchCommand(createCommand(
+            uiRuntimeV2CommandDefinitions.registerScreenDefinitions,
+            {
+                definitions: [
+                    first.definition,
+                    second.definition,
+                    third.definition,
+                ],
+            },
+        ))
+        await harness.runtime.dispatchCommand(createCommand(
+            uiRuntimeV2CommandDefinitions.replaceScreen,
+            {
+                definition: first.definition,
+                props: {label: 'first'},
+                source: 'runtime-react-screen-container.spec.ready-switch',
+            },
+        ))
+        const tree = renderWithAutomation(
+            <ScreenContainer containerPart={uiRuntimeRootVariables.primaryRootContainer} />,
+            harness.store,
+            harness.runtime,
+        )
+        await tree.act(async () => {
+            await flushScreenContainerTransition()
+        })
+        await expect(tree.getNode('ui-base-runtime-react-test:ready-switch:first')).resolves.toBeTruthy()
+
+        await tree.dispatchCommand(createCommand(
+            uiRuntimeV2CommandDefinitions.replaceScreen,
+            {
+                definition: second.definition,
+                props: {label: 'second'},
+                source: 'runtime-react-screen-container.spec.ready-switch',
+            },
+        ))
+        await tree.act(async () => {
+            await flushScreenContainerTransition()
+        })
+        await expect(tree.getNode('ui-base-runtime-react-test:ready-switch:second')).resolves.toBeTruthy()
+        await expect(tree.getNode('ui-base-screen-container:primary:loading')).resolves.toBeTruthy()
+
+        await tree.dispatchCommand(createCommand(
+            uiRuntimeV2CommandDefinitions.replaceScreen,
+            {
+                definition: third.definition,
+                props: {label: 'third'},
+                source: 'runtime-react-screen-container.spec.ready-switch',
+            },
+        ))
+        await tree.act(async () => {
+            await flushScreenContainerTransition()
+        })
+        await expect(tree.getNode('ui-base-runtime-react-test:ready-switch:third')).resolves.toBeTruthy()
+        await expect(tree.queryNodes('ui-base-screen-container:primary:loading')).resolves.toHaveLength(0)
+    })
+
+    it('does not show loading when navigateTo repeats the active screenPartKey', async () => {
+        const part = defineUiScreenPart<{label: string}>({
+            partKey: 'ui.base.runtime-react.test.same-target',
+            rendererKey: 'ui.base.runtime-react.test.same-target',
+            name: 'sameTarget',
+            title: 'Same target',
+            description: 'Same target navigation test screen',
+            containerKey: uiRuntimeRootVariables.primaryRootContainer.key,
+            screenModes: ['DESKTOP', 'MOBILE'],
+            workspaces: ['main', 'MAIN'],
+            instanceModes: ['MASTER', 'SLAVE'],
+            component: ({label}) => (
+                <View testID={`ui-base-runtime-react-test:same-target:${label}`}>
+                    <Text>{label}</Text>
+                </View>
+            ),
+        })
+        registerUiRendererParts([part])
+        const harness = await createRuntimeReactHarness()
+        await harness.runtime.dispatchCommand(createCommand(
+            uiRuntimeV2CommandDefinitions.registerScreenDefinitions,
+            {
+                definitions: [part.definition],
+            },
+        ))
+        await harness.runtime.dispatchCommand(createCommand(
+            uiRuntimeV2CommandDefinitions.replaceScreen,
+            {
+                definition: part.definition,
+                props: {label: 'active'},
+                source: 'runtime-react-screen-container.spec.same-target',
+            },
+        ))
+        let showScreenDispatchCount = 0
+        const runtimeWithCountingShow: KernelRuntimeV2 = {
+            ...harness.runtime,
+            dispatchCommand(command) {
+                if (command.definition.commandName === uiRuntimeV2CommandDefinitions.showScreen.commandName) {
+                    showScreenDispatchCount += 1
+                }
+                return harness.runtime.dispatchCommand(command)
+            },
+        }
+        const tree = renderWithAutomation(
+            <ScreenContainer containerPart={uiRuntimeRootVariables.primaryRootContainer} />,
+            harness.store,
+            runtimeWithCountingShow,
+        )
+        await tree.act(async () => {
+            await flushScreenContainerTransition()
+        })
+        await expect(tree.getNode('ui-base-runtime-react-test:same-target:active')).resolves.toBeTruthy()
+        await expect(tree.queryNodes('ui-base-screen-container:primary:loading')).resolves.toHaveLength(0)
+
+        await tree.act(async () => {
+            const bridge = createUiNavigationBridge(runtimeWithCountingShow)
+            void bridge.navigateTo({
+                target: part,
+                props: {label: 'active'},
+                source: 'runtime-react-screen-container.spec.same-target',
+            })
+        })
+        expect(showScreenDispatchCount).toBe(1)
+        await tree.act(async () => {
+            await flushScreenContainerTransition()
+        })
+        await expect(tree.queryNodes('ui-base-screen-container:primary:loading')).resolves.toHaveLength(0)
+        await expect(tree.getNode('ui-base-runtime-react-test:same-target:active')).resolves.toBeTruthy()
+    })
+
+    it('updates same screenPartKey content without loading when the screen id changes', async () => {
+        const part = defineUiScreenPart<{label: string}>({
+            partKey: 'ui.base.runtime-react.test.same-part-new-id',
+            rendererKey: 'ui.base.runtime-react.test.same-part-new-id',
+            name: 'samePartNewId',
+            title: 'Same part new id',
+            description: 'Same part new id navigation test screen',
+            containerKey: uiRuntimeRootVariables.primaryRootContainer.key,
+            screenModes: ['DESKTOP', 'MOBILE'],
+            workspaces: ['main', 'MAIN'],
+            instanceModes: ['MASTER', 'SLAVE'],
+            component: ({label}) => (
+                <View testID={`ui-base-runtime-react-test:same-part-new-id:${label}`}>
+                    <Text>{label}</Text>
+                </View>
+            ),
+        })
+        registerUiRendererParts([part])
+        const harness = await createRuntimeReactHarness()
+        await harness.runtime.dispatchCommand(createCommand(
+            uiRuntimeV2CommandDefinitions.registerScreenDefinitions,
+            {
+                definitions: [part.definition],
+            },
+        ))
+        await harness.runtime.dispatchCommand(createCommand(
+            uiRuntimeV2CommandDefinitions.replaceScreen,
+            {
+                definition: part.definition,
+                id: 'first',
+                props: {label: 'first'},
+                source: 'runtime-react-screen-container.spec.same-part-new-id',
+            },
+        ))
+        const tree = renderWithAutomation(
+            <ScreenContainer containerPart={uiRuntimeRootVariables.primaryRootContainer} />,
+            harness.store,
+            harness.runtime,
+        )
+        await tree.act(async () => {
+            await flushScreenContainerTransition()
+        })
+        await expect(tree.getNode('ui-base-runtime-react-test:same-part-new-id:first')).resolves.toBeTruthy()
+
+        await tree.dispatchCommand(createCommand(
+            uiRuntimeV2CommandDefinitions.replaceScreen,
+            {
+                definition: part.definition,
+                id: 'second',
+                props: {label: 'second'},
+                source: 'runtime-react-screen-container.spec.same-part-new-id',
+            },
+        ))
+        await tree.act(async () => {
+            await flushScreenContainerTransition()
+        })
+        await expect(tree.queryNodes('ui-base-screen-container:primary:loading')).resolves.toHaveLength(0)
+        await expect(tree.queryNodes('ui-base-runtime-react-test:same-part-new-id:first')).resolves.toHaveLength(0)
+        await expect(tree.getNode('ui-base-runtime-react-test:same-part-new-id:second')).resolves.toBeTruthy()
     })
 
     it('destroys least-recently-used cached screens after the parameter limit is exceeded', async () => {
@@ -428,6 +863,11 @@ describe('ScreenContainer', () => {
             })
         }
 
+        await expect(tree.getNode('ui-base-screen-container:primary:loading')).resolves.toBeTruthy()
+        await tree.act(async () => {
+            await flush()
+            await flush()
+        })
         await expect(tree.queryNodes('ui-base-screen-container:primary:loading')).resolves.toHaveLength(0)
         expect(screenEvents.filter(event => event === 'mount:first')).toHaveLength(1)
         expect(screenEvents).not.toContain('unmount:first')
@@ -649,8 +1089,13 @@ describe('ScreenContainer', () => {
                 source: 'runtime-react-screen-container.spec',
             },
         ))
-        await expect(tree.queryNodes('ui-base-screen-container:primary:loading')).resolves.toHaveLength(0)
+        await expect(tree.getNode('ui-base-screen-container:primary:loading')).resolves.toBeTruthy()
+        await expect(tree.getText('ui-base-runtime-react-test:gated-store:first')).resolves.toBe('first:two')
+        await tree.act(async () => {
+            await flushScreenContainerTransition()
+        })
         await expect(tree.getText('ui-base-runtime-react-test:gated-store:first')).resolves.toBe('first:three')
+        await expect(tree.queryNodes('ui-base-screen-container:primary:loading')).resolves.toHaveLength(0)
         expect(subscriptionCounts.get('first')).toBe(1)
         expect(subscriptionCounts.get('second')).toBeUndefined()
     })

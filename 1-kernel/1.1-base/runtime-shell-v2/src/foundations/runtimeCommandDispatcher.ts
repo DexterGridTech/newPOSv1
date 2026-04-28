@@ -70,31 +70,6 @@ const aggregateStatus = (
     return 'PARTIAL_FAILED'
 }
 
-const shouldTraceUiScreenCommand = (commandName: string) =>
-    commandName === 'kernel.base.ui-runtime-v2.show-screen'
-    || commandName === 'kernel.base.ui-runtime-v2.replace-screen'
-
-const parseUiPerfSource = (source?: unknown) => {
-    if (typeof source !== 'string') {
-        return {}
-    }
-    const traceId = source.match(/(?:^|;)traceId=([^;]+)/)?.[1]
-    const startedAtRaw = source.match(/(?:^|;)startedAt=(\d+)/)?.[1]
-    const startedAt = startedAtRaw ? Number(startedAtRaw) : undefined
-    return {
-        source,
-        traceId,
-        startedAt: Number.isFinite(startedAt) ? startedAt : undefined,
-    }
-}
-
-const traceRuntimeCommandPerf = (
-    event: string,
-    data: Record<string, unknown>,
-) => {
-    console.info(`[ui-perf][runtime-shell-v2] ${event} ${JSON.stringify(data)}`)
-}
-
 interface CreateRuntimeCommandDispatcherInput {
     runtimeId: RuntimeInstanceId
     localNodeId: NodeId
@@ -131,7 +106,6 @@ export const createRuntimeCommandDispatcher = (
         commandIntent: CommandIntent<TPayload>,
         options: DispatchOptions = {},
     ): Promise<CommandAggregateResult> => {
-        const dispatchStartedAt = Date.now()
         const requestId = options.requestId ?? createRequestId()
         const commandId = options.commandId ?? createCommandId()
         const dispatched: DispatchedCommand<TPayload> = {
@@ -144,21 +118,6 @@ export const createRuntimeCommandDispatcher = (
             target: options.target ?? commandIntent.definition.defaultTarget,
             routeContext: options.routeContext,
             dispatchedAt: nowTimestampMs(),
-        }
-        const traceSource = parseUiPerfSource((dispatched.payload as {source?: unknown} | undefined)?.source)
-        const shouldTrace = shouldTraceUiScreenCommand(dispatched.commandName) && Boolean(traceSource.traceId)
-        if (shouldTrace) {
-            traceRuntimeCommandPerf('dispatch-start', {
-                runtimeId: input.runtimeId,
-                requestId,
-                commandId,
-                commandName: dispatched.commandName,
-                target: dispatched.target,
-                parentCommandId: dispatched.parentCommandId,
-                traceId: traceSource.traceId,
-                source: traceSource.source,
-                traceElapsedMs: traceSource.startedAt ? Date.now() - traceSource.startedAt : undefined,
-            })
         }
 
         if (dispatched.target === 'peer') {
@@ -231,7 +190,6 @@ export const createRuntimeCommandDispatcher = (
         }
 
         const actorResults = await Promise.all(handlers.map(async handler => {
-            const actorTraceStartedAt = Date.now()
             const reentryKey = `${dispatched.requestId}:${dispatched.commandName}:${handler.actor.actorKey}`
             const inStack = executionStack.some(entry =>
                 entry.requestId === dispatched.requestId
@@ -251,18 +209,6 @@ export const createRuntimeCommandDispatcher = (
             }
 
             input.ledger.markActorStarted(requestId, commandId, handler.actor.actorKey)
-            if (shouldTrace) {
-                traceRuntimeCommandPerf('actor-start', {
-                    runtimeId: input.runtimeId,
-                    requestId,
-                    commandId,
-                    commandName: dispatched.commandName,
-                    actorKey: handler.actor.actorKey,
-                    traceId: traceSource.traceId,
-                    traceElapsedMs: traceSource.startedAt ? Date.now() - traceSource.startedAt : undefined,
-                    queuedBeforeActorMs: Date.now() - actorTraceStartedAt,
-                })
-            }
             const startedAt = nowTimestampMs()
             const stackEntry = {
                 requestId: dispatched.requestId,
@@ -336,19 +282,6 @@ export const createRuntimeCommandDispatcher = (
                     clearTimeout(timeoutId)
                 }
                 input.ledger.markActorCompleted(requestId, commandId, actorResult)
-                if (shouldTrace) {
-                    traceRuntimeCommandPerf('actor-done', {
-                        runtimeId: input.runtimeId,
-                        requestId,
-                        commandId,
-                        commandName: dispatched.commandName,
-                        actorKey: handler.actor.actorKey,
-                        status: actorResult.status,
-                        actorDurationMs: Date.now() - actorTraceStartedAt,
-                        traceId: traceSource.traceId,
-                        traceElapsedMs: traceSource.startedAt ? Date.now() - traceSource.startedAt : undefined,
-                    })
-                }
                 return actorResult
             } finally {
                 const index = executionStack.indexOf(stackEntry)
@@ -364,19 +297,6 @@ export const createRuntimeCommandDispatcher = (
             aggregateStatus(actorResults, commandIntent.definition.allowNoActor),
             actorResults,
         )
-        if (shouldTrace) {
-            traceRuntimeCommandPerf('dispatch-done', {
-                runtimeId: input.runtimeId,
-                requestId,
-                commandId,
-                commandName: dispatched.commandName,
-                status: aggregateResult.status,
-                actorCount: actorResults.length,
-                dispatchDurationMs: Date.now() - dispatchStartedAt,
-                traceId: traceSource.traceId,
-                traceElapsedMs: traceSource.startedAt ? Date.now() - traceSource.startedAt : undefined,
-            })
-        }
 
         if (options.parentCommandId == null) {
             const pendingReset = pendingResetByRequestId.get(requestId)

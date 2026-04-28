@@ -267,7 +267,6 @@ const main = async () => {
         }
 
         await assertRuntimeLogsAbsent(session, [
-            '[ui-perf]',
             'console.error',
             'console.warn',
             'Unhandled',

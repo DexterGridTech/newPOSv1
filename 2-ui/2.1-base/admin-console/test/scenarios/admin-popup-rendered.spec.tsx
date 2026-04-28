@@ -4,6 +4,7 @@ import {
     AdminPopup,
     adminConsoleStateActions,
     createAdminPasswordVerifier,
+    selectAdminConsoleSelectedTab,
 } from '../../src'
 import {
     createAdminConsoleHarness,
@@ -22,11 +23,16 @@ vi.mock('react-native-qrcode-svg', async () => {
     }
 })
 
+const flush = () => new Promise(resolve => setTimeout(resolve, 0))
+
 describe('AdminPopup', () => {
     const enterPin = async (
         automation: ReturnType<typeof renderAdminWithAutomation>,
         value: string,
     ) => await automation.typeVirtualValue('ui-base-admin-popup:password', value)
+
+    const readSelectedRuntimeTab = (harness: Awaited<ReturnType<typeof createAdminConsoleHarness>>) =>
+        selectAdminConsoleSelectedTab(harness.store.getState())
 
     it('renders the protected login view by default', async () => {
         const harness = await createAdminConsoleHarness()
@@ -102,10 +108,51 @@ describe('AdminPopup', () => {
         await expect(automation.getNode('ui-base-admin-popup:group:runtime')).resolves.toBeTruthy()
         await expect(automation.getNode('ui-base-admin-popup:group:adapter')).resolves.toBeTruthy()
         await expect(automation.getText('ui-base-admin-popup:selected-tab')).resolves.toBe('terminal')
+        const adapterTab = automation.tree.root.findByProps({
+            testID: 'ui-base-admin-popup:tab:adapter',
+        })
+        expect(adapterTab.props.onPressIn).toBeUndefined()
+        expect(adapterTab.props.onPressOut).toBeUndefined()
+        await expect(automation.queryNodes('ui-base-admin-adapter-diagnostics')).resolves.toHaveLength(0)
 
         await automation.press('ui-base-admin-popup:tab:adapter')
         await automation.waitForNode('ui-base-admin-adapter-diagnostics')
         await expect(automation.queryNodesByText('等待业务注入测试场景')).resolves.toHaveLength(1)
+    })
+
+    it('updates the selected tab from ui-runtime immediately while ScreenContainer gates content', async () => {
+        const harness = await createAdminConsoleHarness()
+        const automation = renderAdminWithAutomation(
+            <AdminPopup deviceId="DEVICE-001" onClose={() => {}} />,
+            harness,
+        )
+        const verifierPassword = createAdminPasswordVerifier({
+            deviceIdProvider: () => 'DEVICE-001',
+        }).deriveFor(new Date())
+
+        await enterPin(automation, verifierPassword)
+        await automation.press('ui-base-admin-popup:submit')
+        await automation.waitForNode('ui-base-admin-popup:panel')
+        await automation.waitForNode('ui-base-admin-section:terminal')
+
+        const logsTab = automation.tree.root.findByProps({
+            testID: 'ui-base-admin-popup:tab:logs',
+        })
+        await automation.act(async () => {
+            logsTab.props.onPress()
+        })
+
+        await expect(automation.getText('ui-base-admin-popup:selected-tab')).resolves.toBe('logs')
+        await expect(automation.getNode('ui-base-screen-container:primary:loading')).resolves.toBeTruthy()
+        await expect(automation.queryNodes('ui-base-admin-section:logs')).resolves.toHaveLength(0)
+        expect(readSelectedRuntimeTab(harness)).toBe('logs')
+
+        await automation.waitForNode('ui-base-admin-section:logs')
+        await automation.act(async () => {
+            await flush()
+            await flush()
+        })
+        await expect(automation.queryNodes('ui-base-screen-container:primary:loading')).resolves.toHaveLength(0)
     })
 
     it('renders scenario-level adapter diagnostic results after a run summary is stored', async () => {

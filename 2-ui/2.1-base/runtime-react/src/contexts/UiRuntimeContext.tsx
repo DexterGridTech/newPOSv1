@@ -1,4 +1,4 @@
-import React, {createContext, useContext, useCallback, useEffect, useRef, useState, useSyncExternalStore} from 'react'
+import React, {createContext, useContext, useCallback, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore} from 'react'
 import type {KernelRuntimeV2} from '@next/kernel-base-runtime-shell-v2'
 import type {RuntimeReactAutomationBridge} from '../types'
 
@@ -12,6 +12,16 @@ export interface UiRuntimeScreenActivityController {
     subscribe(listener: () => void): () => void
 }
 
+export interface UiRuntimeScreenReadyController {
+    getSnapshot(): boolean
+    getGeneration(): number
+    reset(): number
+    registerReadyGate(generation?: number): () => void
+    markReady(generation?: number): boolean
+    markReadyIfNoGate(generation?: number): boolean
+    subscribe(listener: () => void): () => void
+}
+
 const defaultScreenActivityController: UiRuntimeScreenActivityController = {
     getSnapshot: () => true,
     setActive: () => {},
@@ -20,6 +30,17 @@ const defaultScreenActivityController: UiRuntimeScreenActivityController = {
 }
 
 const UiRuntimeScreenActivityContext = createContext<UiRuntimeScreenActivityController>(defaultScreenActivityController)
+const defaultScreenReadyController: UiRuntimeScreenReadyController = {
+    getSnapshot: () => true,
+    getGeneration: () => 0,
+    reset: () => 0,
+    registerReadyGate: () => () => {},
+    markReady: () => true,
+    markReadyIfNoGate: () => true,
+    subscribe: () => () => {},
+}
+
+const UiRuntimeScreenReadyContext = createContext<UiRuntimeScreenReadyController>(defaultScreenReadyController)
 const UiRuntimeAutomationActionContext = createContext<((input: {
     nodeId: string
     action: string
@@ -63,11 +84,91 @@ export const createUiRuntimeScreenActivityController = (
     }
 }
 
+export const createUiRuntimeScreenReadyController = (
+    initiallyReady = false,
+): UiRuntimeScreenReadyController => {
+    let ready = Boolean(initiallyReady)
+    let generation = 0
+    let readyGateCount = 0
+    const listeners = new Set<() => void>()
+
+    const notify = () => {
+        for (const listener of [...listeners]) {
+            if (listeners.has(listener)) {
+                listener()
+            }
+        }
+    }
+
+    const generationMatches = (inputGeneration = generation) => inputGeneration === generation
+    const markReady = (inputGeneration = generation) => {
+        if (!generationMatches(inputGeneration)) {
+            return false
+        }
+        if (ready) {
+            return true
+        }
+        ready = true
+        notify()
+        return true
+    }
+
+    return {
+        getSnapshot: () => ready,
+        getGeneration: () => generation,
+        reset() {
+            generation += 1
+            ready = false
+            readyGateCount = 0
+            notify()
+            return generation
+        },
+        registerReadyGate(inputGeneration = generation) {
+            if (!generationMatches(inputGeneration)) {
+                return () => {}
+            }
+            readyGateCount += 1
+            notify()
+            let disposed = false
+            return () => {
+                if (disposed) {
+                    return
+                }
+                disposed = true
+                if (!generationMatches(inputGeneration)) {
+                    return
+                }
+                readyGateCount = Math.max(0, readyGateCount - 1)
+                notify()
+            }
+        },
+        markReady,
+        markReadyIfNoGate(inputGeneration = generation) {
+            if (!generationMatches(inputGeneration) || readyGateCount > 0) {
+                return false
+            }
+            return markReady(inputGeneration)
+        },
+        subscribe(listener) {
+            listeners.add(listener)
+            let disposed = false
+            return () => {
+                if (disposed) {
+                    return
+                }
+                disposed = true
+                listeners.delete(listener)
+            }
+        },
+    }
+}
+
 export interface UiRuntimeProviderProps {
     runtime: KernelRuntimeV2
     automationBridge?: RuntimeReactAutomationBridge
     automationRuntimeId?: string
     screenActivityController?: UiRuntimeScreenActivityController
+    screenReadyController?: UiRuntimeScreenReadyController
     performAutomationAction?: (input: {
         nodeId: string
         action: string
@@ -81,18 +182,21 @@ export const UiRuntimeProvider: React.FC<UiRuntimeProviderProps> = ({
     automationBridge,
     automationRuntimeId,
     screenActivityController,
+    screenReadyController,
     performAutomationAction,
     children,
 }) => (
     <UiRuntimeContext.Provider value={runtime}>
         <UiRuntimeScreenActivityContext.Provider value={screenActivityController ?? defaultScreenActivityController}>
-            <UiRuntimeAutomationContext.Provider value={automationBridge ?? null}>
-                <UiRuntimeAutomationRuntimeIdContext.Provider value={automationRuntimeId}>
-                    <UiRuntimeAutomationActionContext.Provider value={performAutomationAction ?? null}>
-                        {children}
-                    </UiRuntimeAutomationActionContext.Provider>
-                </UiRuntimeAutomationRuntimeIdContext.Provider>
-            </UiRuntimeAutomationContext.Provider>
+            <UiRuntimeScreenReadyContext.Provider value={screenReadyController ?? defaultScreenReadyController}>
+                <UiRuntimeAutomationContext.Provider value={automationBridge ?? null}>
+                    <UiRuntimeAutomationRuntimeIdContext.Provider value={automationRuntimeId}>
+                        <UiRuntimeAutomationActionContext.Provider value={performAutomationAction ?? null}>
+                            {children}
+                        </UiRuntimeAutomationActionContext.Provider>
+                    </UiRuntimeAutomationRuntimeIdContext.Provider>
+                </UiRuntimeAutomationContext.Provider>
+            </UiRuntimeScreenReadyContext.Provider>
         </UiRuntimeScreenActivityContext.Provider>
     </UiRuntimeContext.Provider>
 )
@@ -108,6 +212,31 @@ export const useUiRuntimeScreenActive = (): boolean => {
 
 export const useUiRuntimeScreenActivityController = (): UiRuntimeScreenActivityController =>
     useContext(UiRuntimeScreenActivityContext)
+
+export const useUiRuntimeScreenReadyController = (): UiRuntimeScreenReadyController =>
+    useContext(UiRuntimeScreenReadyContext)
+
+export const useScreenReady = (ready = true): (() => void) => {
+    const controller = useUiRuntimeScreenReadyController()
+    const generation = useSyncExternalStore(
+        controller.subscribe,
+        controller.getGeneration,
+        controller.getGeneration,
+    )
+    const markReady = useCallback(() => {
+        controller.markReady(generation)
+    }, [controller, generation])
+
+    useLayoutEffect(() => controller.registerReadyGate(generation), [controller, generation])
+
+    useEffect(() => {
+        if (ready) {
+            markReady()
+        }
+    }, [markReady, ready])
+
+    return markReady
+}
 
 export const useOnUiRuntimeScreenActivated = (
     callback: () => void,

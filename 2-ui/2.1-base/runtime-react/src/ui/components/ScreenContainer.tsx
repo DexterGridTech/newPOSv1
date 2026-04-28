@@ -16,6 +16,7 @@ import {useChildScreenPartResolution} from '../../hooks'
 import {
     UiRuntimeProvider,
     createUiRuntimeScreenActivityController,
+    createUiRuntimeScreenReadyController,
     useOptionalUiAutomationBridge,
     useOptionalUiAutomationAction,
     useOptionalUiAutomationRuntimeId,
@@ -86,10 +87,21 @@ type ScreenCacheItem = {
     screenKey: string
     source?: string
     child: ResolvedUiScreenPart
+    controllers: ScreenRuntimeControllers
 }
 
 type PendingScreen = ScreenCacheItem & {
     token: number
+}
+
+type ScreenRuntimeControllers = {
+    screenActivityController: ReturnType<typeof createUiRuntimeScreenActivityController>
+    screenReadyController: ReturnType<typeof createUiRuntimeScreenReadyController>
+}
+
+type ScreenTransition = {
+    key: string
+    phase: 'loading' | 'content'
 }
 
 const createScreenCacheKey = (
@@ -128,6 +140,27 @@ const canReuseScreenCacheItem = (
     && cached.child.rendererKey === nextItem.child.rendererKey
     && cached.child.id === nextItem.child.id
     && areScreenPropsEqual(cached.child.props, nextItem.child.props)
+
+const createScreenRuntimeControllers = (): ScreenRuntimeControllers => ({
+    screenActivityController: createUiRuntimeScreenActivityController(false),
+    screenReadyController: createUiRuntimeScreenReadyController(false),
+})
+
+const createScreenCacheItem = (
+    key: string,
+    child: ResolvedUiScreenPart,
+    previous?: ScreenCacheItem,
+): ScreenCacheItem => ({
+    key,
+    screenKey: child.partKey,
+    source: child.source,
+    child,
+    controllers: previous?.controllers ?? createScreenRuntimeControllers(),
+})
+
+const activateScreenCacheItem = (item: ScreenCacheItem) => {
+    item.controllers.screenReadyController.reset()
+}
 
 const trimScreenCache = (
     items: readonly ScreenCacheItem[],
@@ -219,6 +252,39 @@ const visibleScreenStyle = {
     flex: 1,
     minHeight: 0,
 } as const
+
+const screenContainerStyle = {
+    flex: 1,
+    minHeight: 180,
+    position: 'relative',
+} as const
+
+const loadingOverlayStyle = {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    zIndex: 20,
+    elevation: 20,
+} as const
+
+const LoadingOverlay: React.FC<{
+    testID: string
+    transitionKey: string
+    onCommitted: () => void
+}> = ({testID, transitionKey, onCommitted}) => {
+    useEffect(() => scheduleAfterPaint(onCommitted), [onCommitted, transitionKey])
+
+    return (
+        <View
+            testID={`${testID}-overlay`}
+            style={loadingOverlayStyle}
+        >
+            <LoadingScreen testID={`${testID}:surface`} />
+        </View>
+    )
+}
 
 type SlotAutomationBridge = RuntimeReactAutomationBridge & {
     setActive(active: boolean): void
@@ -355,7 +421,6 @@ const ScreenLifecycleContent: React.FC<{
     runtime: KernelRuntimeV2
     automationBridge?: RuntimeReactAutomationBridge
     automationRuntimeId: string
-    screenActivityController: ReturnType<typeof createUiRuntimeScreenActivityController>
     performAutomationAction?: (input: {
         nodeId: string
         action: string
@@ -366,10 +431,10 @@ const ScreenLifecycleContent: React.FC<{
     runtime,
     automationBridge,
     automationRuntimeId,
-    screenActivityController,
     performAutomationAction,
 }) => {
     const Component = item.child.Component
+    const {screenActivityController, screenReadyController} = item.controllers
 
     return (
         <UiRuntimeProvider
@@ -377,6 +442,7 @@ const ScreenLifecycleContent: React.FC<{
             automationBridge={automationBridge}
             automationRuntimeId={automationRuntimeId}
             screenActivityController={screenActivityController}
+            screenReadyController={screenReadyController}
             performAutomationAction={performAutomationAction}
         >
             <Component {...(item.child.props as object)} />
@@ -399,6 +465,7 @@ const ScreenLifecycleSlot: React.FC<{
         value?: unknown
     }) => Promise<unknown> | unknown
     onCommitted?: (key: string) => void
+    onReady?: (key: string) => void
 }> = ({
     item,
     active,
@@ -408,11 +475,9 @@ const ScreenLifecycleSlot: React.FC<{
     automationRuntimeId,
     performAutomationAction,
     onCommitted,
+    onReady,
 }) => {
-    const screenActivityController = useMemo(
-        () => createUiRuntimeScreenActivityController(active),
-        [],
-    )
+    const {screenActivityController, screenReadyController} = item.controllers
     const slotAutomationBridge = useMemo(
         () => createSlotAutomationBridge(automationBridge, active, item.screenKey),
         [automationBridge, item.screenKey],
@@ -436,6 +501,25 @@ const ScreenLifecycleSlot: React.FC<{
         onCommitted?.(item.key)
     }, [item.key, onCommitted])
 
+    useEffect(() => {
+        if (active) {
+            screenReadyController.markReadyIfNoGate()
+        }
+    }, [active, screenReadyController])
+
+    useEffect(() => {
+        if (!active) {
+            return undefined
+        }
+        const notifyReady = () => {
+            if (screenReadyController.getSnapshot()) {
+                onReady?.(item.key)
+            }
+        }
+        notifyReady()
+        return screenReadyController.subscribe(notifyReady)
+    }, [active, item.key, onReady, screenReadyController])
+
     return (
         <View
             testID={testID}
@@ -446,7 +530,6 @@ const ScreenLifecycleSlot: React.FC<{
                 runtime={runtime}
                 automationBridge={slotAutomationBridge}
                 automationRuntimeId={automationRuntimeId}
-                screenActivityController={screenActivityController}
                 performAutomationAction={performAutomationAction}
             />
         </View>
@@ -491,6 +574,8 @@ export const ScreenContainer: React.FC<ScreenContainerProps> = ({
     const [pendingScreen, setPendingScreen] = useState<PendingScreen | null>(null)
     const pendingScreenRef = useRef<PendingScreen | null>(null)
     const [shouldMountPendingScreen, setShouldMountPendingScreen] = useState(false)
+    const [transition, setTransition] = useState<ScreenTransition | null>(null)
+    const transitionRef = useRef<ScreenTransition | null>(null)
     const requestedKeyRef = useRef<string | null>(null)
     const cacheRecencyRef = useRef(new Map<string, number>())
     const tokenRef = useRef(0)
@@ -508,29 +593,73 @@ export const ScreenContainer: React.FC<ScreenContainerProps> = ({
         })
     }, [])
 
+    const syncTransition = useCallback((nextTransition: ScreenTransition | null) => {
+        transitionRef.current = nextTransition
+        setTransition(nextTransition)
+    }, [])
+
+    const startTransitionForKey = useCallback((key: string): ScreenTransition => {
+        const current = transitionRef.current
+        if (current?.key === key) {
+            return current
+        }
+        const nextTransition: ScreenTransition = {
+            key,
+            phase: 'loading',
+        }
+        syncTransition(nextTransition)
+        return nextTransition
+    }, [syncTransition])
+
+    const clearTransitionForKey = useCallback((key: string) => {
+        if (transitionRef.current?.key === key) {
+            syncTransition(null)
+        }
+    }, [syncTransition])
+
+    const clearTransition = useCallback(() => {
+        const current = transitionRef.current
+        if (current) {
+            syncTransition(null)
+        }
+    }, [syncTransition])
+
+    const releaseTransitionContent = useCallback((key: string) => {
+        const current = transitionRef.current
+        if (!current || current.key !== key || current.phase === 'content') {
+            return
+        }
+        syncTransition({
+            ...current,
+            phase: 'content',
+        })
+    }, [syncTransition])
+
     const requestedCacheKey = resolution.status === 'ready'
         ? createScreenCacheKey(resolution.containerKey, resolution.child)
         : null
-    const requestedCachedScreen = requestedCacheKey
-        ? cachedScreens.find(item => item.key === requestedCacheKey)
-        : undefined
-    const effectivePendingScreen = pendingScreen
-        && pendingScreen.key === requestedCacheKey
-        && !requestedCachedScreen
+    const effectivePendingScreen = pendingScreen && pendingScreen.key === requestedCacheKey
         ? pendingScreen
         : null
-    const effectiveActiveKey = requestedCachedScreen?.key ?? activeKey
-    const activeCachedScreen = effectiveActiveKey
-        ? cachedScreens.find(item => item.key === effectiveActiveKey)
+    const activeCachedScreen = activeKey
+        ? cachedScreens.find(item => item.key === activeKey)
         : undefined
+    const activeScreenPartKey = activeCachedScreen?.child.partKey
     const requestedScreenKey = resolution.status === 'ready'
         ? resolution.child.partKey
         : resolution.status === 'missing-renderer'
             ? resolution.missing.partKey
             : 'empty'
-    const visibleScreenKey = effectivePendingScreen
+    const requestedLoadingKey = resolution.status === 'ready'
+        && activeScreenPartKey !== resolution.child.partKey
+        ? requestedCacheKey
+        : null
+    const visibleLoadingKey = transition?.key ?? requestedLoadingKey
+    const shouldShowLoadingOverlay = Boolean(visibleLoadingKey)
+    const baseVisibleScreenKey = activeCachedScreen?.screenKey ?? requestedScreenKey
+    const visibleScreenKey = shouldShowLoadingOverlay
         ? 'loading'
-        : activeCachedScreen?.screenKey ?? requestedScreenKey
+        : baseVisibleScreenKey
     const renderedScreens = useMemo(() => {
         if (!effectivePendingScreen || !shouldMountPendingScreen) {
             return cachedScreens
@@ -540,6 +669,13 @@ export const ScreenContainer: React.FC<ScreenContainerProps> = ({
         }
         return [effectivePendingScreen, ...cachedScreens]
     }, [cachedScreens, effectivePendingScreen, shouldMountPendingScreen])
+    const visibleContextKeys = useMemo(() => {
+        const keys = new Set(['runtime-root', 'overlay', 'alert', visibleScreenKey])
+        if (shouldShowLoadingOverlay) {
+            keys.add(baseVisibleScreenKey)
+        }
+        return [...keys]
+    }, [baseVisibleScreenKey, shouldShowLoadingOverlay, visibleScreenKey])
 
     useEffect(() => {
         updateCachedScreens(items => {
@@ -558,6 +694,7 @@ export const ScreenContainer: React.FC<ScreenContainerProps> = ({
             requestedKeyRef.current = null
             pendingScreenRef.current = null
             cacheRecencyRef.current.clear()
+            clearTransition()
             cachedScreensRef.current = []
             setCachedScreens([])
             setPendingScreen(null)
@@ -567,15 +704,57 @@ export const ScreenContainer: React.FC<ScreenContainerProps> = ({
         }
 
         const key = createScreenCacheKey(resolution.containerKey, resolution.child)
-        const nextItem: ScreenCacheItem = {
-            key,
-            screenKey: resolution.child.partKey,
-            source: resolution.child.source,
-            child: resolution.child,
+        const activeScreenPartKey = activeKey
+            ? cachedScreensRef.current.find(item => item.key === activeKey)?.child.partKey
+            : undefined
+        const sameScreenAlreadyActive = activeScreenPartKey === resolution.child.partKey
+        if (sameScreenAlreadyActive) {
+            requestedKeyRef.current = key
+            pendingScreenRef.current = null
+            setPendingScreen(null)
+            setShouldMountPendingScreen(false)
+            if (transitionRef.current && transitionRef.current.key !== key) {
+                clearTransition()
+            }
+            const cached = cachedScreensRef.current.find(item => item.key === key)
+            const nextItem = createScreenCacheItem(key, resolution.child, cached)
+            const cacheItem = cached && canReuseScreenCacheItem(cached, nextItem)
+                ? cached
+                : nextItem
+            if (!cached || cacheItem !== cached) {
+                cacheRecencyRef.current.set(key, Date.now())
+                updateCachedScreens(items => upsertScreenCacheItem(
+                    items,
+                    cacheItem,
+                    maxCacheSize,
+                    cacheRecencyRef.current,
+                ))
+            }
+            if (activeKey !== key) {
+                activateScreenCacheItem(cacheItem)
+                setActiveKey(key)
+            }
+            return
         }
+
         requestedKeyRef.current = key
+        if (pendingScreenRef.current && pendingScreenRef.current.key !== key) {
+            pendingScreenRef.current = null
+            setPendingScreen(null)
+            setShouldMountPendingScreen(false)
+        }
+
+        const currentTransition = startTransitionForKey(key)
+        const transitionForKey = transitionRef.current?.key === key
+            ? transitionRef.current
+            : currentTransition
+        if (transitionForKey.phase !== 'content') {
+            return
+        }
 
         const cached = cachedScreensRef.current.find(item => item.key === key)
+        const nextItem = createScreenCacheItem(key, resolution.child, cached)
+
         if (cached) {
             const cacheItem = canReuseScreenCacheItem(cached, nextItem)
                 ? cached
@@ -590,7 +769,15 @@ export const ScreenContainer: React.FC<ScreenContainerProps> = ({
                 maxCacheSize,
                 cacheRecencyRef.current,
             ))
+            activateScreenCacheItem(cacheItem)
             setActiveKey(key)
+            return
+        }
+
+        if (pendingScreenRef.current?.key === key) {
+            if (!shouldMountPendingScreen) {
+                setShouldMountPendingScreen(true)
+            }
             return
         }
 
@@ -601,25 +788,28 @@ export const ScreenContainer: React.FC<ScreenContainerProps> = ({
         }
         pendingScreenRef.current = nextPendingScreen
         setPendingScreen(nextPendingScreen)
-        setShouldMountPendingScreen(false)
-        setActiveKey(null)
-    }, [containerPart, maxCacheSize, resolution, updateCachedScreens])
-
-    useEffect(() => {
-        if (!pendingScreen) {
-            return undefined
-        }
-        const pendingToken = pendingScreen.token
-        return scheduleAfterPaint(() => {
-            if (pendingScreenRef.current?.token === pendingToken) {
-                setShouldMountPendingScreen(true)
-            }
-        })
-    }, [pendingScreen])
+        setShouldMountPendingScreen(true)
+    }, [
+        activeKey,
+        clearTransition,
+        maxCacheSize,
+        resolution,
+        shouldMountPendingScreen,
+        startTransitionForKey,
+        transition?.phase,
+        transition?.key,
+        updateCachedScreens,
+    ])
 
     const completePendingScreen = useCallback((key: string) => {
         const current = pendingScreenRef.current
-        if (!current || current.key !== key || requestedKeyRef.current !== key) {
+        if (
+            !current
+            || current.key !== key
+            || requestedKeyRef.current !== key
+            || transitionRef.current?.key !== key
+            || transitionRef.current.phase !== 'content'
+        ) {
             return
         }
         cacheRecencyRef.current.set(key, Date.now())
@@ -632,14 +822,31 @@ export const ScreenContainer: React.FC<ScreenContainerProps> = ({
         pendingScreenRef.current = null
         setPendingScreen(null)
         setShouldMountPendingScreen(false)
+        activateScreenCacheItem(current)
         setActiveKey(key)
     }, [maxCacheSize, updateCachedScreens])
+
+    const completeActiveScreenReady = useCallback((key: string) => {
+        if (transitionRef.current?.key !== key || transitionRef.current.phase !== 'content') {
+            return
+        }
+        cacheRecencyRef.current.set(key, Date.now())
+        clearTransitionForKey(key)
+    }, [clearTransitionForKey])
+
+    const handleLoadingCommitted = useCallback(() => {
+        const currentTransition = transitionRef.current
+        if (!currentTransition) {
+            return
+        }
+        releaseTransitionContent(currentTransition.key)
+    }, [releaseTransitionContent])
 
     useEffect(() => {
         if (!automationBridge) {
             return undefined
         }
-        automationBridge.clearVisibleContexts(automationTarget, [visibleScreenKey, 'runtime-root', 'overlay', 'alert'])
+        automationBridge.clearVisibleContexts(automationTarget, visibleContextKeys)
         const unregisters: Array<() => void> = [
             automationBridge.registerNode({
                 target: automationTarget,
@@ -656,7 +863,7 @@ export const ScreenContainer: React.FC<ScreenContainerProps> = ({
                 availableActions: [],
             }),
         ]
-        if (effectivePendingScreen) {
+        if (shouldShowLoadingOverlay) {
             unregisters.push(automationBridge.registerNode({
                 target: automationTarget,
                 runtimeId: automationRuntimeId,
@@ -679,48 +886,63 @@ export const ScreenContainer: React.FC<ScreenContainerProps> = ({
         automationBridge,
         automationRuntimeId,
         automationTarget,
-        effectivePendingScreen,
+        shouldShowLoadingOverlay,
+        visibleContextKeys,
         visibleScreenKey,
     ])
 
+    const renderLoadingOverlay = () => {
+        if (!visibleLoadingKey) {
+            return null
+        }
+        return (
+            <LoadingOverlay
+                testID={`ui-base-screen-container:${automationTarget}:loading`}
+                transitionKey={visibleLoadingKey}
+                onCommitted={handleLoadingCommitted}
+            />
+        )
+    }
+
     if (resolution.status === 'empty') {
         return (
-            <View testID={`ui-base-screen-container:${automationTarget}`} style={{flex: 1}}>
+            <View testID={`ui-base-screen-container:${automationTarget}`} style={screenContainerStyle}>
                 <EmptyScreen />
+                {renderLoadingOverlay()}
             </View>
         )
     }
     if (resolution.status === 'missing-renderer') {
         return (
-            <View testID={`ui-base-screen-container:${automationTarget}`} style={{flex: 1}}>
+            <View testID={`ui-base-screen-container:${automationTarget}`} style={screenContainerStyle}>
                 <MissingRendererScreen
                     containerKey={resolution.containerKey}
                     partKey={resolution.missing.partKey}
                     id={resolution.missing.id}
                     rendererKey={resolution.missing.rendererKey}
                 />
+                {renderLoadingOverlay()}
             </View>
         )
     }
 
     return (
-        <View testID={`ui-base-screen-container:${automationTarget}`} style={{flex: 1}}>
+        <View testID={`ui-base-screen-container:${automationTarget}`} style={screenContainerStyle}>
             {renderedScreens.map(item => (
                 <ScreenLifecycleSlot
                     key={item.key}
                     item={item}
-                    active={!effectivePendingScreen && item.key === effectiveActiveKey}
+                    active={item.key === activeKey}
                     testID={`ui-base-screen-container:${automationTarget}:slot:${item.key}`}
                     runtime={runtime}
                     automationBridge={automationBridge}
                     automationRuntimeId={automationRuntimeId}
                     performAutomationAction={performAutomationAction}
-                    onCommitted={effectivePendingScreen?.key === item.key ? completePendingScreen : undefined}
+                    onCommitted={pendingScreen?.key === item.key ? completePendingScreen : undefined}
+                    onReady={completeActiveScreenReady}
                 />
             ))}
-            {effectivePendingScreen ? (
-                <LoadingScreen testID={`ui-base-screen-container:${automationTarget}:loading`} />
-            ) : null}
+            {renderLoadingOverlay()}
         </View>
     )
 }

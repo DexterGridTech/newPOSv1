@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react'
+import React, {useCallback, useEffect, useMemo} from 'react'
 import {Pressable, ScrollView, Text, View, useWindowDimensions} from 'react-native'
 import QRCode from 'react-native-qrcode-svg'
 import type {KernelRuntimeV2} from '@next/kernel-base-runtime-shell-v2'
@@ -134,23 +134,16 @@ const AdminTabButton = React.memo(({
     groupTitle,
     tab,
     selected,
-    onPressIn,
     onPress,
 }: {
     groupTitle: string
     tab: AdminTabDescriptor
     selected: boolean
-    onPressIn: (tab: AdminConsoleTab) => void
     onPress: (tab: AdminConsoleTab) => void
 }) => (
     <Pressable
         testID={`ui-base-admin-popup:tab:${tab.key}`}
-        onPressIn={() => {
-            onPressIn(tab.key)
-        }}
-        onPress={() => {
-            onPress(tab.key)
-        }}
+        onPress={() => onPress(tab.key)}
         style={{
             borderRadius: 16,
             paddingHorizontal: 12,
@@ -246,18 +239,10 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
     const isCompactPanel = windowWidth < PANEL_BREAKPOINT
     const hostTools = getAdminHostTools(runtime.localNodeId)
     const navigation = useMemo(() => createUiNavigationBridge(runtime), [runtime])
-    const [visualTab, setVisualTab] = useState<AdminConsoleTab>(popupState.selectedTab)
-    const requestedScreenTabRef = useRef<AdminConsoleTab | null>(null)
     const closePanel = useCallback(() => {
         inputRuntime?.deactivateInput()
         onClose()
     }, [inputRuntime, onClose])
-
-    const markTabPressIn = useCallback((tab: AdminConsoleTab) => {
-        if (visualTab !== tab) {
-            setVisualTab(tab)
-        }
-    }, [visualTab])
 
     const handleSubmit = () => {
         if (!verifier.verify(popupState.password)) {
@@ -269,38 +254,29 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
         popupState.setScreen('panel')
     }
 
-    const showAdminContentScreen = useCallback(async (tab: AdminConsoleTab) => {
+    const showAdminContentScreen = useCallback((tab: AdminConsoleTab) => {
         const part = getAdminConsoleTabScreenPart(tab)
-        await navigation.navigateTo({
+        return navigation.navigateTo({
             target: part,
             props: {tab},
             source: 'ui-base-admin-console.tab',
         })
     }, [navigation])
 
-    const handleAdminTabPress = useCallback((tab: AdminConsoleTab, input: {waitForContent?: boolean} = {}) => {
-        if (tab === visualTab && popupState.selectedTab === tab) {
-            return input.waitForContent ? Promise.resolve() : undefined
+    const handleAdminTabPress = useCallback((tab: AdminConsoleTab) => {
+        if (tab === popupState.selectedTab) {
+            return
         }
-        setVisualTab(tab)
-        requestedScreenTabRef.current = tab
-        const transition = showAdminContentScreen(tab)
-        return input.waitForContent ? transition.then(() => undefined) : undefined
+        void showAdminContentScreen(tab)
     }, [
         popupState.selectedTab,
         showAdminContentScreen,
-        visualTab,
     ])
 
     useEffect(() => {
         if (popupState.screen !== 'panel') {
             return
         }
-        if (requestedScreenTabRef.current === popupState.selectedTab) {
-            return
-        }
-        requestedScreenTabRef.current = popupState.selectedTab
-        setVisualTab(popupState.selectedTab)
         void showAdminContentScreen(popupState.selectedTab)
     }, [popupState.screen, popupState.selectedTab, showAdminContentScreen])
 
@@ -396,8 +372,8 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
                     testID: 'ui-base-admin-popup:selected-tab',
                     semanticId: 'ui-base-admin-popup:selected-tab',
                     role: 'text',
-                    text: visualTab,
-                    value: visualTab,
+                    text: popupState.selectedTab,
+                    value: popupState.selectedTab,
                     visible: true,
                     enabled: true,
                     persistent: true,
@@ -438,8 +414,8 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
                     enabled: true,
                     persistent: true,
                     availableActions: ['press'],
-                    onAutomationAction: async () => {
-                        await handleAdminTabPress(tab.key, {waitForContent: true})
+                    onAutomationAction: () => {
+                        handleAdminTabPress(tab.key)
                         return {ok: true}
                     },
                 })),
@@ -459,7 +435,6 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
         popupState.screen,
         popupState.selectedTab,
         handleAdminTabPress,
-        visualTab,
     ])
 
     if (popupState.screen === 'login') {
@@ -676,8 +651,7 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
                                             key={tab.key}
                                             groupTitle={group.title}
                                             tab={tab}
-                                            selected={tab.key === visualTab}
-                                            onPressIn={markTabPressIn}
+                                            selected={tab.key === popupState.selectedTab}
                                             onPress={handleAdminTabPress}
                                         />
                                     ))}
@@ -697,7 +671,7 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
                             testID="ui-base-admin-popup:selected-tab"
                             style={{color: colors.primaryDeep, fontWeight: '800'}}
                         >
-                            {visualTab}
+                            {popupState.selectedTab}
                         </Text>
                         <AdminScreenHost
                             runtime={runtime}
