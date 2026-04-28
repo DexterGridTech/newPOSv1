@@ -32,8 +32,28 @@ export interface TdpTopicDataChangedPayload {
 }
 
 export interface TdpSyncHttpServiceV2 {
-    getSnapshot(sandboxId: string, terminalId: string): Promise<TdpSnapshotResponse['data']>
-    getChanges(sandboxId: string, terminalId: string, cursor?: number, limit?: number): Promise<TdpChangesResponse['data']>
+    getSnapshot(
+        sandboxId: string,
+        terminalId: string,
+        options?: {
+            subscribedTopics?: readonly string[]
+            subscriptionHash?: string
+        },
+    ): Promise<TdpSnapshotResponse['data']>
+    getChanges(
+        sandboxId: string,
+        terminalId: string,
+        cursor?: number,
+        limit?: number,
+        options?: {
+            subscribedTopics?: readonly string[]
+            subscriptionHash?: string
+        },
+    ): Promise<TdpChangesResponse['data']>
+}
+
+export interface TdpSyncHttpServiceRefV2 {
+    current?: TdpSyncHttpServiceV2
 }
 
 export interface TdpSyncSocketBindingV2 {
@@ -55,6 +75,12 @@ export interface TdpSessionConnectionRuntimeV2 {
         topic?: string
         itemKey?: string
         instanceId?: string
+    }): void
+    sendBatchAck(payload: {
+        nextCursor: number
+        batchId?: string
+        processingLagMs?: number
+        subscriptionHash?: string
     }): void
     sendStateReport(payload: {
         cursor: number

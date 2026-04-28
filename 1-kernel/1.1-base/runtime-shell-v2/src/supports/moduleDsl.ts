@@ -20,6 +20,7 @@ export interface DefineKernelRuntimeModuleManifestV2Input {
     commandDefinitions?: KernelRuntimeModuleV2['commandDefinitions']
     errorDefinitions?: KernelRuntimeModuleV2['errorDefinitions']
     parameterDefinitions?: KernelRuntimeModuleV2['parameterDefinitions']
+    tdpTopicInterests?: KernelRuntimeModuleV2['tdpTopicInterests']
 }
 
 export interface KernelRuntimeModuleManifestV2 {
@@ -31,6 +32,7 @@ export interface KernelRuntimeModuleManifestV2 {
     commandDefinitions: NonNullable<KernelRuntimeModuleV2['commandDefinitions']>
     errorDefinitions: NonNullable<KernelRuntimeModuleV2['errorDefinitions']>
     parameterDefinitions: NonNullable<KernelRuntimeModuleV2['parameterDefinitions']>
+    tdpTopicInterests: NonNullable<KernelRuntimeModuleV2['tdpTopicInterests']>
     stateSliceNames: readonly string[]
     commandNames: readonly string[]
     errorKeys: readonly string[]
@@ -73,6 +75,7 @@ export const defineKernelRuntimeModuleManifestV2 = (
     const commandDefinitions = [...(input.commandDefinitions ?? [])]
     const errorDefinitions = [...(input.errorDefinitions ?? [])]
     const parameterDefinitions = [...(input.parameterDefinitions ?? [])]
+    const tdpTopicInterests = [...(input.tdpTopicInterests ?? [])]
 
     return {
         moduleName: input.moduleName,
@@ -83,6 +86,7 @@ export const defineKernelRuntimeModuleManifestV2 = (
         commandDefinitions,
         errorDefinitions,
         parameterDefinitions,
+        tdpTopicInterests,
         stateSliceNames: stateSlices.map(slice => slice.name),
         commandNames: commandDefinitions.map(definition => definition.commandName),
         errorKeys: errorDefinitions.map(definition => definition.key),

@@ -17,7 +17,7 @@ export const describeKernelRuntimeModuleV2 = (
     ),
     errorKeys: (module.errorDefinitions ?? []).map(definition => definition.key),
     parameterKeys: (module.parameterDefinitions ?? []).map(definition => definition.key),
+    tdpTopicInterests: [...(module.tdpTopicInterests ?? [])],
     hasInstall: typeof module.install === 'function',
     hasPreSetup: typeof module.preSetup === 'function',
 })
-

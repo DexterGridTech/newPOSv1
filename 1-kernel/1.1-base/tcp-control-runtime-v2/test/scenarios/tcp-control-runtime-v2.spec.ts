@@ -23,6 +23,7 @@ import {
     selectTcpRuntimeState,
     selectTcpTerminalId,
     tcpControlV2CommandDefinitions,
+    type TerminalAssemblyCapabilityManifestV1,
 } from '../../src'
 import {
     tcpBindingV2SliceDescriptor,
@@ -73,6 +74,7 @@ const createMockTransport = (
             expiresIn: number
             refreshExpiresIn: number
         }
+        onActivateBody?: (body: unknown) => void
     },
 ): HttpTransport => ({
     async execute(request) {
@@ -82,6 +84,7 @@ const createMockTransport = (
             expect(request.input.body).toMatchObject({
                 sandboxId: 'sandbox-test-001',
             })
+            options?.onActivateBody?.(request.input.body)
             return {
                 data: {
                     success: true,
@@ -184,6 +187,7 @@ const createRuntime = (input: {
     secureStateStorage: ReturnType<typeof createMemoryStorage>
     calls?: string[]
     transportOptions?: Parameters<typeof createMockTransport>[1]
+    clientRuntime?: TerminalAssemblyCapabilityManifestV1
 }) => {
     const calls = input.calls ?? []
 
@@ -205,6 +209,9 @@ const createRuntime = (input: {
         modules: [
             createTcpControlRuntimeModuleV2({
                 assembly: {
+                    resolveClientRuntimeCapability() {
+                        return input.clientRuntime
+                    },
                     createHttpRuntime(context: RuntimeModuleContextV2) {
                         return createHttpRuntime({
                             logger: context.platformPorts.logger.scope({
@@ -580,6 +587,49 @@ describe('tcp-control-runtime-v2', () => {
         })
         expect(selectTcpRuntimeState(restartedRuntime.getState())?.lastActivationRequestId).toBeUndefined()
         expect(selectTcpSandboxId(restartedRuntime.getState())).toBe('sandbox-test-001')
+    })
+
+    it('sends assembly capability manifest during activation when provided by assembly', async () => {
+        const stateStorage = createMemoryStorage()
+        const secureStateStorage = createMemoryStorage()
+        const activationBodies: unknown[] = []
+        const clientRuntime: TerminalAssemblyCapabilityManifestV1 = {
+            protocolVersion: 'terminal-activation-capability-v1',
+            assemblyId: 'mixc-pos-assembly-rn84',
+            assemblyVersion: '1.0.0',
+            supportedProfileCodes: ['KERNEL_BASE_ANDROID_POS'],
+            supportedCapabilities: ['printer', 'scanner'],
+            supportedTemplateCodes: ['KERNEL_BASE_ANDROID_POS_STANDARD'],
+        }
+        const runtime = createRuntime({
+            localNodeId: 'node_tcp_v2_activation_capability',
+            stateStorage,
+            secureStateStorage,
+            clientRuntime,
+            transportOptions: {
+                onActivateBody(body) {
+                    activationBodies.push(body)
+                },
+            },
+        })
+
+        await runtime.start()
+        await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.bootstrapTcpControl, {
+            deviceInfo: {
+                id: 'device-activation-capability',
+                model: 'Mock POS',
+            },
+        }))
+        const result = await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.activateTerminal, {
+            sandboxId: 'sandbox-test-001',
+            activationCode: 'ACT-KERNEL-BASE-CAPABILITY-001',
+        }))
+
+        expect(result.status).toBe('COMPLETED')
+        expect(activationBodies[0]).toMatchObject({
+            sandboxId: 'sandbox-test-001',
+            clientRuntime,
+        })
     })
 
     it('deactivates terminal remotely and clears local activation recovery state', async () => {

@@ -17,5 +17,14 @@ export default createHostApp({
         logTag: 'assembly.android.mixc-catering-rn84.boot',
         releaseInfo,
         adbSocketDebugEnabled: true,
+        activationCapability: {
+            supportedProfileCodes: ['KERNEL_BASE_ANDROID_POS'],
+            supportedTemplateCodes: ['KERNEL_BASE_ANDROID_POS_STANDARD'],
+            supportedCapabilities: [
+                'android.rn84',
+                'product.mixc-catering',
+                'profile.kernel-base-android-pos',
+            ],
+        },
     },
 })

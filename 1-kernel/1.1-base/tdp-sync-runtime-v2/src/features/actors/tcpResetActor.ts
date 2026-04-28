@@ -32,6 +32,8 @@ export const createTdpTcpResetActorDefinitionV2 = (): ActorDefinition => defineA
             context.dispatchAction(tdpSyncV2StateActions.setLastDeliveredCursor(undefined))
             context.dispatchAction(tdpSyncV2StateActions.setLastAckedCursor(undefined))
             context.dispatchAction(tdpSyncV2StateActions.setLastAppliedCursor(undefined))
+            context.dispatchAction(tdpSyncV2StateActions.setActiveSubscription({}))
+            context.dispatchAction(tdpSyncV2StateActions.setRequestedSubscription({}))
             return {
                 reset: true,
                 scope: `${moduleName}.tcp-reset`,

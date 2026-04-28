@@ -33,7 +33,10 @@ import {
 import {tdpHotUpdateActions} from '../features/slices'
 import {tdpSyncV2CommandDefinitions} from '../features/commands'
 import {SERVER_NAME_MOCK_TERMINAL_PLATFORM} from '@next/kernel-server-config-v2'
-import type {CreateTdpSyncRuntimeModuleV2Input} from '../types'
+import type {
+    CreateTdpSyncRuntimeModuleV2Input,
+    TdpSyncHttpServiceRefV2,
+} from '../types'
 import {tdpSyncRuntimeV2ModuleManifest} from './moduleManifest'
 import {tdpSyncV2ParameterDefinitions} from '../supports/parameters'
 
@@ -53,6 +56,7 @@ export const createTdpSyncRuntimeModuleV2 = (
 ): KernelRuntimeModuleV2 => {
     const fingerprintRef = createTopicChangePublisherFingerprintV2()
     const connectionRuntimeRef = {}
+    const httpServiceRef: TdpSyncHttpServiceRefV2 = {}
     const installingPackageIds = new Set<string>()
     const restartingPackageIds = new Set<string>()
     let idleRestartTimer: ReturnType<typeof setTimeout> | null = null
@@ -76,6 +80,7 @@ export const createTdpSyncRuntimeModuleV2 = (
         actorDefinitions: createTdpSyncActorDefinitionsV2(
             fingerprintRef,
             connectionRuntimeRef,
+            httpServiceRef,
             input,
         ),
         preSetup: tdpSyncRuntimeV2PreSetup,
@@ -180,7 +185,7 @@ export const createTdpSyncRuntimeModuleV2 = (
                 }, delay)
             }
 
-            createTdpSyncHttpServiceV2(httpRuntime)
+            httpServiceRef.current = createTdpSyncHttpServiceV2(httpRuntime)
             installTdpSessionConnectionRuntimeV2({
                 context,
                 moduleInput: input,

@@ -57,6 +57,7 @@ export const createTcpActivationActorDefinitionV2 = (
                 activationCode: actorContext.command.payload.activationCode,
                 deviceFingerprint,
                 deviceInfo,
+                clientRuntime: actorContext.command.payload.clientRuntime ?? serviceRef.clientRuntime,
             })
             const now = nowTimestampMs()
             const expiresAt = (now + result.expiresIn * 1_000) as any

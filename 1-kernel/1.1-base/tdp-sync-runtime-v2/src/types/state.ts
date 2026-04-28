@@ -25,7 +25,23 @@ export interface TdpProjectionEnvelope {
 }
 
 export type TdpProjectionId = string
-export type TdpProjectionState = Record<TdpProjectionId, TdpProjectionEnvelope>
+export type TdpProjectionEntryMap = Record<TdpProjectionId, TdpProjectionEnvelope>
+
+export interface TdpProjectionState {
+    activeBufferId: string
+    stagedBufferId?: string
+    activeEntries: TdpProjectionEntryMap
+    stagedEntries?: TdpProjectionEntryMap
+}
+
+export interface TdpSessionSubscriptionStateV1 {
+    version: 1
+    mode: 'explicit' | 'legacy-all'
+    hash?: string
+    acceptedTopics: string[]
+    rejectedTopics: string[]
+    requiredMissingTopics: string[]
+}
 
 export interface TdpCommandInboxItem {
     commandId: string
@@ -49,15 +65,25 @@ export interface TdpSessionState {
     lastPongAt?: TimestampMs
     alternativeEndpoints?: string[]
     disconnectReason?: string | null
+    subscription?: TdpSessionSubscriptionStateV1
 }
 
 export interface TdpSyncState {
-    snapshotStatus: 'idle' | 'loading' | 'ready' | 'error'
+    snapshotStatus: 'idle' | 'loading' | 'applying' | 'ready' | 'error'
     changesStatus: 'idle' | 'catching-up' | 'ready' | 'error'
     lastCursor?: number
     lastDeliveredCursor?: number
     lastAckedCursor?: number
     lastAppliedCursor?: number
+    activeSubscriptionHash?: string
+    activeSubscribedTopics?: readonly string[]
+    lastRequestedSubscriptionHash?: string
+    lastRequestedSubscribedTopics?: readonly string[]
+    lastAcceptedSubscriptionHash?: string
+    lastAcceptedSubscribedTopics?: readonly string[]
+    applyingSnapshotId?: string
+    applyingSnapshotTotalItems?: number
+    applyingSnapshotAppliedItems?: number
 }
 
 export interface TdpCommandInboxState {

@@ -21,6 +21,7 @@ export interface HostRuntimeProductConfig {
     appRegistryName: string
     logTag: string
     releaseInfo?: Parameters<typeof createApp>[1]['releaseInfo']
+    activationCapability?: Parameters<typeof createApp>[1]['activationCapability']
     adbSocketDebugEnabled?: boolean
 }
 
@@ -115,6 +116,7 @@ export const createHostApp = (options: CreateHostAppOptions) => {
                         extraKernelModules: options.extraKernelModules,
                         productId: options.productConfig.productId,
                         releaseInfo: options.productConfig.releaseInfo,
+                        activationCapability: options.productConfig.activationCapability,
                         adbSocketDebugEnabled: options.productConfig.adbSocketDebugEnabled,
                     })
                     logStage('create-app:done')

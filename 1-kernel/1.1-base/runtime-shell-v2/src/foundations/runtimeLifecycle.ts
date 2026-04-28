@@ -1,6 +1,7 @@
 import type {EnhancedStore, UnknownAction} from '@reduxjs/toolkit'
 import {runtimeShellV2CommandDefinitions} from '../features/commands'
 import type {
+    KernelRuntimeModuleDescriptorV2,
     KernelRuntimeModuleV2,
     PeerDispatchGateway,
     RuntimeModuleContextV2,
@@ -12,12 +13,14 @@ interface CreateRuntimeLifecycleInput {
     runtimeId: import('@next/kernel-base-contracts').RuntimeInstanceId
     localNodeId: import('@next/kernel-base-contracts').NodeId
     modules: readonly KernelRuntimeModuleV2[]
+    moduleDescriptors: readonly KernelRuntimeModuleDescriptorV2[]
     store: EnhancedStore
     platformPorts: RuntimeModuleContextV2['platformPorts']
     displayContext: RuntimeModuleContextV2['displayContext']
     stateRuntime: {
         hydratePersistence(): Promise<void>
         resetState(): Promise<void>
+        flushPersistence(): Promise<unknown>
     }
     dispatchAction: (action: UnknownAction) => UnknownAction
     subscribeState: (listener: () => void) => () => void
@@ -39,9 +42,13 @@ const createRuntimeModuleInstallContext = (input: CreateRuntimeLifecycleInput) =
         localNodeId: input.localNodeId,
         platformPorts: input.platformPorts,
         displayContext: input.displayContext,
+        descriptors: input.moduleDescriptors,
         getState: () => input.store.getState() as any,
         getStore: () => input.store,
         dispatchAction: input.dispatchAction,
+        async flushPersistence() {
+            await input.stateRuntime.flushPersistence()
+        },
         subscribeState: input.subscribeState,
         dispatchCommand: input.dispatchCommand,
         installPeerDispatchGateway: gateway => {

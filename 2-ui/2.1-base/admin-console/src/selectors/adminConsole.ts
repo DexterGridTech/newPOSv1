@@ -1,7 +1,7 @@
 import type {RootState} from '@next/kernel-base-state-runtime'
 import {createSelector} from '@reduxjs/toolkit'
 import {
-    selectUiCurrentScreenOrFirstReady,
+    selectUiScreen,
 } from '@next/kernel-base-ui-runtime-v2'
 import {adminConsoleStateKeys} from '../foundations/stateKeys'
 import {
@@ -30,9 +30,9 @@ const readAdminConsoleTabFromScreenEntry = (entry: {
 const selectAdminConsoleState = (state: RootState): AdminConsoleState | undefined =>
     state[adminConsoleStateKeys.console as keyof RootState] as AdminConsoleState | undefined
 
-export const selectAdminConsoleSelectedTab = createSelector(
-    [(state: RootState) => selectUiCurrentScreenOrFirstReady(state, adminConsoleScreenContainers.tabContent)],
-    (entry): AdminConsoleTab => {
+export const selectAdminConsoleRuntimeTab = createSelector(
+    [(state: RootState) => selectUiScreen(state, adminConsoleScreenContainers.tabContent)],
+    (entry): AdminConsoleTab | undefined => {
         const entryWithProps = entry && 'props' in entry
             ? {
                 partKey: entry.partKey,
@@ -41,8 +41,13 @@ export const selectAdminConsoleSelectedTab = createSelector(
             : {
                 partKey: entry?.partKey,
             }
-        return readAdminConsoleTabFromScreenEntry(entryWithProps) ?? 'terminal'
+        return readAdminConsoleTabFromScreenEntry(entryWithProps)
     },
+)
+
+export const selectAdminConsoleSelectedTab = createSelector(
+    [selectAdminConsoleRuntimeTab],
+    (tab): AdminConsoleTab => tab ?? adminConsoleTabs[0]?.key ?? 'terminal',
 )
 
 export const selectLatestAdapterSummary = createSelector(

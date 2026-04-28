@@ -32,6 +32,7 @@ export interface ActorExecutionContext<TPayload = unknown> {
     readonly actor: ActorInfo
     getState(): RootState
     dispatchAction(action: UnknownAction): UnknownAction
+    flushPersistence(): Promise<void>
     subscribeState(listener: () => void): () => void
     dispatchCommand<TChildPayload = unknown>(
         command: CommandIntent<TChildPayload>,

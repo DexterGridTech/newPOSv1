@@ -1,4 +1,9 @@
-import type {TcpBindingContext, TcpDeviceInfo, TcpTaskResultReportRuntimePayload} from './state'
+import type {
+    TcpBindingContext,
+    TcpDeviceInfo,
+    TcpTaskResultReportRuntimePayload,
+    TerminalAssemblyCapabilityManifestV1,
+} from './state'
 
 export interface TcpPlatformEnvelope<T> {
     success: boolean
@@ -14,6 +19,7 @@ export interface ActivateTerminalApiRequest {
     activationCode: string
     deviceFingerprint: string
     deviceInfo: TcpDeviceInfo
+    clientRuntime?: TerminalAssemblyCapabilityManifestV1
 }
 
 export interface ActivateTerminalApiResponse {
@@ -23,6 +29,13 @@ export interface ActivateTerminalApiResponse {
     expiresIn: number
     refreshExpiresIn?: number
     binding?: TcpBindingContext
+    activationCompatibility?: {
+        assemblyId?: string
+        acceptedProfileCode: string
+        acceptedTemplateCode?: string
+        acceptedCapabilities?: string[]
+        warnings?: string[]
+    }
 }
 
 export interface RefreshTerminalCredentialApiRequest {

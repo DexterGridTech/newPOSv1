@@ -17,11 +17,18 @@ export interface OnlineTdpSession {
   lastAckedRevision?: number
   lastAppliedRevision?: number
   subscribedTopics: string[]
+  subscriptionHash?: string
+  subscriptionMode: 'explicit' | 'legacy-all'
+  acceptedTopics: string[]
+  rejectedTopics: string[]
+  requiredMissingTopics: string[]
   capabilities: string[]
   socket: WebSocket
   connectedAt: number
   batchQueue?: TdpProjectionEnvelope[]
   batchTimer?: ReturnType<typeof setTimeout>
+  inflightBatchCount?: number
+  deferredBatchFlush?: boolean
 }
 
 const sessionsById = new Map<string, OnlineTdpSession>()

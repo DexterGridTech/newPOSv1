@@ -5,6 +5,7 @@ import type {
     HotUpdateEmbeddedReleaseFacts,
     TdpCommandInboxItem,
     TdpProjectionEnvelope,
+    TdpSessionSubscriptionStateV1,
     TdpServerMessage,
     TdpTopicDataChangedPayload,
 } from '../../types'
@@ -24,6 +25,13 @@ export const tdpSyncV2CommandDefinitions = {
         itemKey?: string
         instanceId?: string
     }>('acknowledge-cursor'),
+    acknowledgeProjectionBatch: defineModuleCommand<{
+        nextCursor: number
+        batchId?: string
+        processingLagMs?: number
+    }>('acknowledge-projection-batch', {
+        visibility: 'internal',
+    }),
     reportAppliedCursor: defineModuleCommand<{
         cursor: number
     }>('report-applied-cursor'),
@@ -58,6 +66,65 @@ export const tdpSyncV2CommandDefinitions = {
             visibility: 'internal',
         },
     ),
+    recomputeChangedTopicChanges: defineModuleCommand<{
+        topics: string[]
+    }>(
+        'recompute-changed-topic-changes',
+        {
+            visibility: 'internal',
+        },
+    ),
+    fetchMoreChanges: defineModuleCommand<{
+        cursor: number
+        highWatermark: number
+        limit?: number
+    }>('fetch-more-changes', {
+        visibility: 'internal',
+        allowReentry: true,
+    }),
+    snapshotApplyCompleted: defineModuleCommand<{
+        highWatermark: number
+    }>('snapshot-apply-completed', {
+        visibility: 'internal',
+    }),
+    beginSnapshotApply: defineModuleCommand<{
+        snapshotId: string
+        highWatermark: number
+        totalItems: number
+    }>('begin-snapshot-apply', {
+        visibility: 'internal',
+    }),
+    applySnapshotChunk: defineModuleCommand<{
+        snapshotId: string
+        chunkIndex: number
+        items: TdpProjectionEnvelope[]
+    }>('apply-snapshot-chunk', {
+        visibility: 'internal',
+    }),
+    commitSnapshotApply: defineModuleCommand<{
+        snapshotId: string
+        highWatermark: number
+    }>('commit-snapshot-apply', {
+        visibility: 'internal',
+    }),
+    changesApplyCompleted: defineModuleCommand<{
+        nextCursor: number
+        highWatermark: number
+        hasMore?: boolean
+    }>('changes-apply-completed', {
+        visibility: 'internal',
+        allowReentry: true,
+    }),
+    projectionApplyCompleted: defineModuleCommand<{
+        cursor: number
+    }>('projection-apply-completed', {
+        visibility: 'internal',
+    }),
+    projectionBatchApplyCompleted: defineModuleCommand<{
+        nextCursor: number
+    }>('projection-batch-apply-completed', {
+        visibility: 'internal',
+    }),
     tdpSnapshotLoaded: defineModuleCommand<{
         snapshot: TdpProjectionEnvelope[]
         highWatermark: number
@@ -68,8 +135,10 @@ export const tdpSyncV2CommandDefinitions = {
         changes: TdpProjectionEnvelope[]
         nextCursor: number
         highWatermark: number
+        hasMore?: boolean
     }>('changes-loaded', {
         visibility: 'internal',
+        allowReentry: true,
     }),
     tdpProjectionReceived: defineModuleCommand<{
         cursor: number
@@ -78,6 +147,8 @@ export const tdpSyncV2CommandDefinitions = {
         visibility: 'internal',
     }),
     tdpProjectionBatchReceived: defineModuleCommand<{
+        batchId?: string
+        receivedAt?: number
         nextCursor: number
         changes: TdpProjectionEnvelope[]
     }>('projection-batch-received', {
@@ -96,6 +167,7 @@ export const tdpSyncV2CommandDefinitions = {
         highWatermark: number
         syncMode: 'incremental' | 'full'
         alternativeEndpoints: string[]
+        subscription?: TdpSessionSubscriptionStateV1
     }>('session-ready', {
         visibility: 'internal',
     }),
@@ -138,6 +210,7 @@ export const tdpSyncV2CommandNames = {
     connectTdpSession: tdpSyncV2CommandDefinitions.connectTdpSession.commandName,
     disconnectTdpSession: tdpSyncV2CommandDefinitions.disconnectTdpSession.commandName,
     acknowledgeCursor: tdpSyncV2CommandDefinitions.acknowledgeCursor.commandName,
+    acknowledgeProjectionBatch: tdpSyncV2CommandDefinitions.acknowledgeProjectionBatch.commandName,
     reportAppliedCursor: tdpSyncV2CommandDefinitions.reportAppliedCursor.commandName,
     sendPing: tdpSyncV2CommandDefinitions.sendPing.commandName,
     recordUserOperation: tdpSyncV2CommandDefinitions.recordUserOperation.commandName,
@@ -146,6 +219,15 @@ export const tdpSyncV2CommandNames = {
     requestHotUpdateRestartPreparation: tdpSyncV2CommandDefinitions.requestHotUpdateRestartPreparation.commandName,
     tdpTopicDataChanged: tdpSyncV2CommandDefinitions.tdpTopicDataChanged.commandName,
     recomputeResolvedTopicChanges: tdpSyncV2CommandDefinitions.recomputeResolvedTopicChanges.commandName,
+    recomputeChangedTopicChanges: tdpSyncV2CommandDefinitions.recomputeChangedTopicChanges.commandName,
+    fetchMoreChanges: tdpSyncV2CommandDefinitions.fetchMoreChanges.commandName,
+    snapshotApplyCompleted: tdpSyncV2CommandDefinitions.snapshotApplyCompleted.commandName,
+    beginSnapshotApply: tdpSyncV2CommandDefinitions.beginSnapshotApply.commandName,
+    applySnapshotChunk: tdpSyncV2CommandDefinitions.applySnapshotChunk.commandName,
+    commitSnapshotApply: tdpSyncV2CommandDefinitions.commitSnapshotApply.commandName,
+    changesApplyCompleted: tdpSyncV2CommandDefinitions.changesApplyCompleted.commandName,
+    projectionApplyCompleted: tdpSyncV2CommandDefinitions.projectionApplyCompleted.commandName,
+    projectionBatchApplyCompleted: tdpSyncV2CommandDefinitions.projectionBatchApplyCompleted.commandName,
     tdpSnapshotLoaded: tdpSyncV2CommandDefinitions.tdpSnapshotLoaded.commandName,
     tdpChangesLoaded: tdpSyncV2CommandDefinitions.tdpChangesLoaded.commandName,
     tdpProjectionReceived: tdpSyncV2CommandDefinitions.tdpProjectionReceived.commandName,

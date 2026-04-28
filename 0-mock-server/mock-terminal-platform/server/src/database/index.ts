@@ -257,7 +257,13 @@ export const initializeDatabase = (): void => {
       last_heartbeat_at INTEGER,
       last_delivered_revision INTEGER,
       last_acked_revision INTEGER,
-      last_applied_revision INTEGER
+      last_applied_revision INTEGER,
+      subscription_mode TEXT,
+      subscription_hash TEXT,
+      subscribed_topics_json TEXT,
+      accepted_topics_json TEXT,
+      rejected_topics_json TEXT,
+      required_missing_topics_json TEXT
     );
     CREATE TABLE IF NOT EXISTS tdp_topics (
       topic_id TEXT PRIMARY KEY,
@@ -316,6 +322,47 @@ export const initializeDatabase = (): void => {
       scope_metadata_json TEXT,
       created_at INTEGER NOT NULL
     );
+    CREATE TABLE IF NOT EXISTS tdp_terminal_projection_access (
+      access_id TEXT PRIMARY KEY,
+      sandbox_id TEXT NOT NULL,
+      target_terminal_id TEXT NOT NULL,
+      topic_key TEXT NOT NULL,
+      operation TEXT NOT NULL DEFAULT 'upsert',
+      scope_type TEXT NOT NULL,
+      scope_key TEXT NOT NULL,
+      item_key TEXT NOT NULL,
+      revision INTEGER NOT NULL,
+      payload_json TEXT NOT NULL,
+      source_release_id TEXT,
+      occurred_at INTEGER,
+      scope_metadata_json TEXT,
+      last_cursor INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_tdp_terminal_projection_access_identity
+      ON tdp_terminal_projection_access (
+        sandbox_id,
+        target_terminal_id,
+        topic_key,
+        scope_type,
+        scope_key,
+        item_key
+      );
+    CREATE INDEX IF NOT EXISTS idx_tdp_terminal_projection_access_topic
+      ON tdp_terminal_projection_access (sandbox_id, target_terminal_id, topic_key, last_cursor);
+    CREATE TABLE IF NOT EXISTS tdp_terminal_cursors (
+      cursor_id TEXT PRIMARY KEY,
+      sandbox_id TEXT NOT NULL,
+      target_terminal_id TEXT NOT NULL,
+      high_watermark INTEGER NOT NULL DEFAULT 0,
+      updated_at INTEGER NOT NULL
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_tdp_terminal_cursors_identity
+      ON tdp_terminal_cursors (sandbox_id, target_terminal_id);
+    CREATE INDEX IF NOT EXISTS idx_tdp_change_logs_terminal_cursor
+      ON tdp_change_logs (sandbox_id, target_terminal_id, cursor);
+    CREATE INDEX IF NOT EXISTS idx_tdp_change_logs_terminal_topic_cursor
+      ON tdp_change_logs (sandbox_id, target_terminal_id, topic_key, cursor);
     CREATE TABLE IF NOT EXISTS selector_groups (
       group_id TEXT PRIMARY KEY,
       sandbox_id TEXT NOT NULL,
@@ -502,6 +549,12 @@ export const initializeDatabase = (): void => {
   ensureColumn('tdp_projections', 'item_key', `TEXT NOT NULL DEFAULT ''`)
   ensureColumn('tdp_change_logs', 'item_key', `TEXT NOT NULL DEFAULT ''`)
   ensureColumn('tdp_change_logs', 'target_terminal_id', `TEXT NOT NULL DEFAULT ''`)
+  ensureColumn('tdp_terminal_projection_access', 'operation', `TEXT NOT NULL DEFAULT 'upsert'`)
+  ensureColumn('tdp_terminal_projection_access', 'source_release_id', 'TEXT')
+  ensureColumn('tdp_terminal_projection_access', 'occurred_at', 'INTEGER')
+  ensureColumn('tdp_terminal_projection_access', 'scope_metadata_json', 'TEXT')
+  ensureColumn('tdp_terminal_projection_access', 'last_cursor', 'INTEGER NOT NULL DEFAULT 0')
+  ensureColumn('tdp_terminal_projection_access', 'updated_at', 'INTEGER NOT NULL DEFAULT 0')
   ensureColumn('tdp_projection_source_events', 'scope_type', `TEXT NOT NULL DEFAULT 'TERMINAL'`)
   ensureColumn('tdp_projection_source_events', 'scope_key', `TEXT NOT NULL DEFAULT ''`)
   ensureColumn('tdp_projection_source_events', 'item_key', `TEXT NOT NULL DEFAULT ''`)
@@ -523,9 +576,17 @@ export const initializeDatabase = (): void => {
   ensureColumn('tdp_sessions', 'display_count', 'INTEGER')
   ensureColumn('tdp_sessions', 'instance_mode', 'TEXT')
   ensureColumn('tdp_sessions', 'display_mode', 'TEXT')
+  ensureColumn('tdp_sessions', 'subscription_mode', 'TEXT')
+  ensureColumn('tdp_sessions', 'subscription_hash', 'TEXT')
+  ensureColumn('tdp_sessions', 'subscribed_topics_json', 'TEXT')
+  ensureColumn('tdp_sessions', 'accepted_topics_json', 'TEXT')
+  ensureColumn('tdp_sessions', 'rejected_topics_json', 'TEXT')
+  ensureColumn('tdp_sessions', 'required_missing_topics_json', 'TEXT')
   migrateTdpProjectionIdentity()
   migrateTdpChangeLogIdentity()
   migrateTdpChangeLogCursor()
+  migrateTdpTerminalProjectionAccess()
+  migrateTdpTerminalCursors()
   migrateTdpProjectionSourceEventsIdentity()
   migratePlatformScopedMasterData()
   migrateMasterDataToIndependentModel()
@@ -633,6 +694,144 @@ const migrateTdpChangeLogIdentity = () => {
           ? item.scope_key
           : ''
       update.run(itemKey, targetTerminalId, item.change_id)
+    })
+  })
+  transaction(rows)
+}
+
+const migrateTdpTerminalProjectionAccess = () => {
+  const existing = sqlite.prepare('SELECT COUNT(*) as total FROM tdp_terminal_projection_access').get() as { total: number }
+  if (existing.total > 0) {
+    return
+  }
+
+  const rows = sqlite.prepare(`
+    SELECT *
+    FROM (
+      SELECT
+        c.sandbox_id,
+        c.target_terminal_id,
+        c.topic_key,
+        c.operation,
+        c.scope_type,
+        c.scope_key,
+        c.item_key,
+        c.revision,
+        c.payload_json,
+        c.source_release_id,
+        c.occurred_at,
+        c.scope_metadata_json,
+        c.cursor,
+        c.created_at,
+        ROW_NUMBER() OVER (
+          PARTITION BY c.sandbox_id, c.target_terminal_id, c.topic_key, c.scope_type, c.scope_key, c.item_key
+          ORDER BY c.cursor DESC, c.created_at DESC, c.rowid DESC
+        ) as row_num
+      FROM tdp_change_logs c
+      WHERE c.target_terminal_id != ''
+    )
+    WHERE row_num = 1
+  `).all() as Array<{
+    sandbox_id: string
+    target_terminal_id: string
+    topic_key: string
+    operation: string
+    scope_type: string
+    scope_key: string
+    item_key: string
+    revision: number
+    payload_json: string
+    source_release_id: string | null
+    occurred_at: number | null
+    scope_metadata_json: string | null
+    cursor: number
+    created_at: number
+  }>
+
+  const insert = sqlite.prepare(`
+    INSERT INTO tdp_terminal_projection_access (
+      access_id,
+      sandbox_id,
+      target_terminal_id,
+      topic_key,
+      operation,
+      scope_type,
+      scope_key,
+      item_key,
+      revision,
+      payload_json,
+      source_release_id,
+      occurred_at,
+      scope_metadata_json,
+      last_cursor,
+      updated_at
+    )
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `)
+  const transaction = sqlite.transaction((items: typeof rows) => {
+    items.forEach(item => {
+      insert.run(
+        createId('access'),
+        item.sandbox_id,
+        item.target_terminal_id,
+        item.topic_key,
+        item.operation || 'upsert',
+        item.scope_type,
+        item.scope_key,
+        item.item_key,
+        item.revision,
+        item.payload_json || '{}',
+        item.source_release_id,
+        item.occurred_at,
+        item.scope_metadata_json,
+        item.cursor,
+        item.created_at,
+      )
+    })
+  })
+  transaction(rows)
+}
+
+const migrateTdpTerminalCursors = () => {
+  const rows = sqlite.prepare(`
+    SELECT sandbox_id, target_terminal_id, MAX(cursor) as high_watermark, MAX(created_at) as updated_at
+    FROM tdp_change_logs
+    WHERE target_terminal_id != ''
+    GROUP BY sandbox_id, target_terminal_id
+  `).all() as Array<{
+    sandbox_id: string
+    target_terminal_id: string
+    high_watermark: number
+    updated_at: number
+  }>
+
+  const upsert = sqlite.prepare(`
+    INSERT INTO tdp_terminal_cursors (
+      cursor_id,
+      sandbox_id,
+      target_terminal_id,
+      high_watermark,
+      updated_at
+    )
+    VALUES (?, ?, ?, ?, ?)
+    ON CONFLICT(sandbox_id, target_terminal_id)
+    DO UPDATE SET
+      high_watermark = CASE
+        WHEN excluded.high_watermark > tdp_terminal_cursors.high_watermark
+        THEN excluded.high_watermark
+        ELSE tdp_terminal_cursors.high_watermark
+      END,
+      updated_at = excluded.updated_at
+  `)
+  const transaction = sqlite.transaction((items: typeof rows) => {
+    items.forEach(item => {
+      upsert.run(
+        createId('cursor'),
+        item.sandbox_id,
+        item.target_terminal_id,
+        item.high_watermark ?? 0,
+        item.updated_at ?? now(),
+      )
     })
   })
   transaction(rows)
@@ -1381,7 +1580,7 @@ const seedDefaultData = (): void => {
 }
 
 export const resetDatabase = (): void => {
-  for (const tableName of ['audit_logs', 'fault_rules', 'tdp_change_logs', 'tdp_projection_source_events', 'tdp_projections', 'tdp_topics', 'tdp_sessions', 'task_instances', 'task_releases', 'terminal_credentials', 'activation_codes', 'terminal_instances', 'terminal_templates', 'terminal_profiles', 'stores', 'projects', 'brands', 'tenants', 'platform_runtime_context', 'sandboxes']) {
+  for (const tableName of ['audit_logs', 'fault_rules', 'tdp_change_logs', 'tdp_terminal_projection_access', 'tdp_terminal_cursors', 'tdp_projection_source_events', 'tdp_projections', 'tdp_topics', 'tdp_sessions', 'task_instances', 'task_releases', 'terminal_credentials', 'activation_codes', 'terminal_instances', 'terminal_templates', 'terminal_profiles', 'stores', 'projects', 'brands', 'tenants', 'platform_runtime_context', 'sandboxes']) {
     sqlite.exec(`DELETE FROM ${tableName};`)
   }
   seedDefaultData()

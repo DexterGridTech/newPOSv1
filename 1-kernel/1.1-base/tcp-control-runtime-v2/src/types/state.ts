@@ -20,6 +20,18 @@ export interface TcpDeviceInfo {
     [key: string]: unknown
 }
 
+export interface TerminalAssemblyCapabilityManifestV1 {
+    protocolVersion: 'terminal-activation-capability-v1'
+    assemblyId: string
+    assemblyVersion?: string
+    appId?: string
+    appVersion?: string
+    bundleVersion?: string
+    supportedProfileCodes: string[]
+    supportedCapabilities?: string[]
+    supportedTemplateCodes?: string[]
+}
+
 export interface TcpBindingContext {
     platformId?: string
     tenantId?: string

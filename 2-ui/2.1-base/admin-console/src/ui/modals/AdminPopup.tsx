@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo} from 'react'
+import React, {useCallback, useMemo} from 'react'
 import {Pressable, ScrollView, Text, View, useWindowDimensions} from 'react-native'
 import QRCode from 'react-native-qrcode-svg'
 import type {KernelRuntimeV2} from '@next/kernel-base-runtime-shell-v2'
@@ -10,6 +10,7 @@ import {
     useOptionalUiAutomationBridge,
     useOptionalUiAutomationRuntimeId,
     useOptionalUiAutomationTarget,
+    useUiScreenOrSetDefault,
     useUiRuntime,
 } from '@next/ui-base-runtime-react'
 import {useStore} from 'react-redux'
@@ -55,6 +56,7 @@ const PANEL_MAX_WIDTH = 1380
 const SIDEBAR_WIDTH = 274
 const COMPACT_SIDEBAR_WIDTH = 250
 const PANEL_BREAKPOINT = 980
+const DEFAULT_ADMIN_TAB: AdminConsoleTab = adminConsoleTabs[0]?.key ?? 'terminal'
 
 const Shell: React.FC<{
     testID: string
@@ -239,6 +241,14 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
     const isCompactPanel = windowWidth < PANEL_BREAKPOINT
     const hostTools = getAdminHostTools(runtime.localNodeId)
     const navigation = useMemo(() => createUiNavigationBridge(runtime), [runtime])
+    const defaultAdminTabScreenPart = getAdminConsoleTabScreenPart(DEFAULT_ADMIN_TAB)
+    useUiScreenOrSetDefault({
+        containerPart: adminConsoleScreenContainers.tabContent,
+        defaultTarget: defaultAdminTabScreenPart,
+        defaultProps: {tab: DEFAULT_ADMIN_TAB},
+        enabled: popupState.screen === 'panel',
+        source: 'ui-base-admin-console.tab.default',
+    })
     const closePanel = useCallback(() => {
         inputRuntime?.deactivateInput()
         onClose()
@@ -272,13 +282,6 @@ export const AdminPopup: React.FC<AdminPopupProps> = ({
         popupState.selectedTab,
         showAdminContentScreen,
     ])
-
-    useEffect(() => {
-        if (popupState.screen !== 'panel') {
-            return
-        }
-        void showAdminContentScreen(popupState.selectedTab)
-    }, [popupState.screen, popupState.selectedTab, showAdminContentScreen])
 
     React.useEffect(() => {
         if (!automationBridge) {

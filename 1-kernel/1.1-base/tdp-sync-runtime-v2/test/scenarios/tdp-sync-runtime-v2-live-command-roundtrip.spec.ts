@@ -1,5 +1,5 @@
 import {afterEach, describe, expect, it} from 'vitest'
-import {createCommand} from '@next/kernel-base-runtime-shell-v2'
+import {createCommand, type KernelRuntimeModuleV2} from '@next/kernel-base-runtime-shell-v2'
 import {createRequestId} from '@next/kernel-base-contracts'
 import {tcpControlV2CommandDefinitions, selectTcpTerminalId} from '@next/kernel-base-tcp-control-runtime-v2'
 import {
@@ -17,6 +17,19 @@ import {
 
 const platforms: Array<Awaited<ReturnType<typeof createLivePlatform>>> = []
 
+const remoteControlTopicModule: KernelRuntimeModuleV2 = {
+    moduleName: 'kernel.base.tdp-sync-runtime-v2.live-test.remote-control-topic',
+    packageVersion: '0.0.1',
+    tdpTopicInterests: [
+        {
+            topicKey: 'remote.control',
+            category: 'command',
+            required: false,
+            reason: 'live command roundtrip test consumes remote control commands',
+        },
+    ],
+}
+
 afterEach(async () => {
     await Promise.all(platforms.splice(0).map(platform => platform.close()))
 })
@@ -28,6 +41,7 @@ describe('tdp-sync-runtime-v2 live command roundtrip', () => {
 
         const {runtime} = createLiveRuntime({
             baseUrl: platform.baseUrl,
+            extraModules: [remoteControlTopicModule],
         })
 
         await runtime.start()

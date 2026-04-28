@@ -2,6 +2,7 @@ import {createCommand, createKernelRuntimeApp} from '@next/kernel-base-runtime-s
 import {
     selectTcpIsActivated,
     selectTcpTerminalId,
+    type TerminalAssemblyCapabilityManifestV1,
 } from '@next/kernel-base-tcp-control-runtime-v2'
 import {
     createTopologyRuntimeModuleV3,
@@ -72,6 +73,40 @@ export interface AssemblyRuntimeApp {
     start(): Promise<import('@next/kernel-base-runtime-shell-v2').KernelRuntimeV2>
 }
 
+export interface HostRuntimeActivationCapabilityConfig {
+    readonly supportedProfileCodes: readonly string[]
+    readonly supportedTemplateCodes?: readonly string[]
+    readonly supportedCapabilities?: readonly string[]
+}
+
+const normalizeUniqueValues = (values: readonly string[] | undefined) =>
+    Array.from(new Set((values ?? []).map(item => item.trim()).filter(Boolean)))
+
+const createTerminalActivationCapability = (
+    productReleaseInfo: HostRuntimeReleaseInfo,
+    activationCapability: HostRuntimeActivationCapabilityConfig | undefined,
+): TerminalAssemblyCapabilityManifestV1 | undefined => {
+    const supportedProfileCodes = normalizeUniqueValues(activationCapability?.supportedProfileCodes)
+    if (supportedProfileCodes.length === 0) {
+        return undefined
+    }
+
+    const supportedTemplateCodes = normalizeUniqueValues(activationCapability?.supportedTemplateCodes)
+    const supportedCapabilities = normalizeUniqueValues(activationCapability?.supportedCapabilities)
+
+    return {
+        protocolVersion: 'terminal-activation-capability-v1',
+        assemblyId: productReleaseInfo.appId,
+        assemblyVersion: productReleaseInfo.assemblyVersion,
+        appId: productReleaseInfo.appId,
+        appVersion: productReleaseInfo.runtimeVersion,
+        bundleVersion: productReleaseInfo.bundleVersion,
+        supportedProfileCodes,
+        supportedTemplateCodes: supportedTemplateCodes.length > 0 ? supportedTemplateCodes : undefined,
+        supportedCapabilities: supportedCapabilities.length > 0 ? supportedCapabilities : undefined,
+    }
+}
+
 const createStoreEnhancers = (
     props: AppProps,
 ): readonly StoreEnhancer[] => {
@@ -101,6 +136,7 @@ const createKernelRuntimeAppForAssembly = (
         extraKernelModules?: readonly KernelRuntimeModuleV2[]
         releaseInfo?: HostRuntimeReleaseInfo
         productId?: string
+        activationCapability?: HostRuntimeActivationCapabilityConfig
     },
 ): KernelRuntimeAppV2 => {
     const httpTransport = createAssemblyFetchTransport()
@@ -121,6 +157,10 @@ const createKernelRuntimeAppForAssembly = (
     }
     setHostRuntimeReleaseInfo(options.releaseInfo)
     const productReleaseInfo = getHostRuntimeReleaseInfo()
+    const terminalActivationCapability = createTerminalActivationCapability(
+        productReleaseInfo,
+        options.activationCapability,
+    )
     const tdpSyncAssembly = createAssemblyTdpSyncRuntimeAssembly({
         logger: platformPorts.logger,
         mockTerminalPlatformBaseUrl: options.mockTerminalPlatformBaseUrl,
@@ -157,6 +197,9 @@ const createKernelRuntimeAppForAssembly = (
                                 failoverStrategy: 'ordered',
                             },
                         })
+                    },
+                    resolveClientRuntimeCapability() {
+                        return terminalActivationCapability
                     },
                 },
             }),
@@ -288,6 +331,7 @@ export interface CreateHostRuntimeAppOptions {
     readonly mockTerminalPlatformBaseUrl?: string
     readonly extraKernelModules?: readonly KernelRuntimeModuleV2[]
     readonly adbSocketDebugEnabled?: boolean
+    readonly activationCapability?: HostRuntimeActivationCapabilityConfig
 }
 
 

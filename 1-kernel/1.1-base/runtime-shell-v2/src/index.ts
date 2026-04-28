@@ -71,5 +71,6 @@ export type {
     RequestQueryStatus,
     RuntimeModuleContextV2,
     RuntimeModulePreSetupContextV2,
+    TdpTopicInterestDeclarationV1,
 } from './types'
 export type {KernelRuntimeModuleManifestV2} from './supports/moduleDsl'

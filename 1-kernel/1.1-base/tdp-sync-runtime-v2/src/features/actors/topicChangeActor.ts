@@ -34,4 +34,17 @@ export const createTdpTopicChangeActorDefinitionV2 = (
             changedTopics: summary.changedTopics,
         }
     }),
+    onCommand(tdpSyncV2CommandDefinitions.recomputeChangedTopicChanges, async context => {
+        const topics = Array.from(new Set(
+            context.command.payload.topics.map(topic => topic.trim()).filter(Boolean),
+        ))
+        const summary = await publishTopicDataChangesV2(context, fingerprintRef, {
+            currentFacts: moduleInput.hotUpdate?.getCurrentFacts?.(context),
+            topics,
+        })
+        return {
+            changedTopicCount: summary.changedTopicCount,
+            changedTopics: summary.changedTopics,
+        }
+    }),
 ])

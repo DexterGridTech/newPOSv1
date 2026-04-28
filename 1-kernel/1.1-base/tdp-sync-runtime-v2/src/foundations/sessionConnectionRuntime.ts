@@ -25,6 +25,12 @@ import {tdpSyncV2StateActions} from '../features/slices'
 import {TDP_SYNC_V2_SOCKET_PROFILE_NAME, tdpSyncV2SocketProfile} from './socketBinding'
 import {selectTdpSessionState, selectTdpSyncState} from '../selectors'
 import {tdpSyncV2ErrorDefinitions, tdpSyncV2ParameterDefinitions} from '../supports'
+import {
+    resolveTdpSubscriptionFromDescriptors,
+    TDP_SNAPSHOT_CHUNK_CAPABILITY_V1,
+    TDP_SUBSCRIPTION_HASH_CAPABILITY_V1,
+    TDP_TOPIC_SUBSCRIPTION_CAPABILITY_V1,
+} from './topicSubscription'
 import type {
     CreateTdpSyncRuntimeModuleV2Input,
     TdpClientMessage,
@@ -136,6 +142,18 @@ const resolveReconnectDelayMs = (
     return tdpSyncV2ParameterDefinitions.tdpReconnectIntervalMs.defaultValue
 }
 
+const hasSameTopicSet = (
+    left: readonly string[] | undefined,
+    right: readonly string[],
+) => {
+    if (!left || left.length !== right.length) {
+        return false
+    }
+    const normalizedLeft = [...left].sort()
+    const normalizedRight = [...right].sort()
+    return normalizedLeft.every((topic, index) => topic === normalizedRight[index])
+}
+
 export const installTdpSessionConnectionRuntimeV2 = (input: {
     context: RuntimeModuleContextV2
     moduleInput: CreateTdpSyncRuntimeModuleV2Input
@@ -145,6 +163,7 @@ export const installTdpSessionConnectionRuntimeV2 = (input: {
     if (!socketBinding) {
         return
     }
+    const resolvedSubscription = resolveTdpSubscriptionFromDescriptors(input.context.descriptors)
 
     const profile = socketBinding.profile ?? {
         ...tdpSyncV2SocketProfile,
@@ -164,6 +183,19 @@ export const installTdpSessionConnectionRuntimeV2 = (input: {
         const terminalId = selectTcpTerminalId(state)
         const accessToken = selectTcpAccessToken(state)
         const topologyContext = selectTopologyRuntimeV3Context(state)
+        const syncState = selectTdpSyncState(state)
+        const requestedSubscriptionUnchanged =
+            syncState?.lastRequestedSubscriptionHash === resolvedSubscription.hash
+            || hasSameTopicSet(syncState?.lastRequestedSubscribedTopics, resolvedSubscription.topics)
+            || (
+                syncState?.lastRequestedSubscriptionHash == null
+                && syncState?.lastRequestedSubscribedTopics == null
+                && (
+                    syncState?.activeSubscriptionHash === resolvedSubscription.hash
+                    || hasSameTopicSet(syncState?.activeSubscribedTopics, resolvedSubscription.topics)
+                )
+            )
+        const canReuseCursor = Boolean(syncState?.lastCursor && requestedSubscriptionUnchanged)
         if (!sandboxId || !terminalId || !accessToken) {
             throw createAppError(tdpSyncV2ErrorDefinitions.credentialMissing, {
                 args: {error: !sandboxId ? 'sandboxId is missing' : 'tcp credential is missing'},
@@ -180,8 +212,26 @@ export const installTdpSessionConnectionRuntimeV2 = (input: {
                 sandboxId,
                 terminalId,
                 appVersion: packageVersion,
-                lastCursor: selectTdpSyncState(state)?.lastCursor,
+                lastCursor: canReuseCursor
+                    ? syncState?.lastCursor
+                    : undefined,
                 protocolVersion,
+                capabilities: [
+                    TDP_TOPIC_SUBSCRIPTION_CAPABILITY_V1,
+                    TDP_SUBSCRIPTION_HASH_CAPABILITY_V1,
+                    TDP_SNAPSHOT_CHUNK_CAPABILITY_V1,
+                ],
+                subscribedTopics: [...resolvedSubscription.topics],
+                requiredTopics: [...resolvedSubscription.requiredTopics],
+                subscriptionHash: resolvedSubscription.hash,
+                previousAcceptedSubscriptionHash: canReuseCursor
+                    ? syncState?.lastAcceptedSubscriptionHash ?? syncState?.activeSubscriptionHash
+                    : undefined,
+                previousAcceptedTopics: canReuseCursor
+                    ? [...(syncState?.lastAcceptedSubscribedTopics ?? syncState?.activeSubscribedTopics ?? [])]
+                    : undefined,
+                subscriptionMode: resolvedSubscription.mode,
+                subscriptionVersion: resolvedSubscription.version,
                 runtimeIdentity: {
                     localNodeId: String(input.context.localNodeId),
                     displayIndex: input.context.displayContext.displayIndex ?? topologyContext?.displayIndex ?? 0,
@@ -193,6 +243,10 @@ export const installTdpSessionConnectionRuntimeV2 = (input: {
         }
 
         socketBinding.socketRuntime.send(socketBinding.profileName, handshakeMessage)
+        input.context.dispatchAction(tdpSyncV2StateActions.setRequestedSubscription({
+            hash: resolvedSubscription.hash,
+            topics: resolvedSubscription.topics,
+        }))
         input.context.dispatchAction(tdpSyncV2StateActions.setStatus('HANDSHAKING'))
     }
 
@@ -340,6 +394,17 @@ export const installTdpSessionConnectionRuntimeV2 = (input: {
         sendAck(payload: {cursor: number; topic?: string; itemKey?: string; instanceId?: string}) {
             socketBinding.socketRuntime.send(socketBinding.profileName, {
                 type: 'ACK',
+                data: payload,
+            })
+        },
+        sendBatchAck(payload: {
+            nextCursor: number
+            batchId?: string
+            processingLagMs?: number
+            subscriptionHash?: string
+        }) {
+            socketBinding.socketRuntime.send(socketBinding.profileName, {
+                type: 'BATCH_ACK',
                 data: payload,
             })
         },

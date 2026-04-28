@@ -1,7 +1,6 @@
 import {createCommand} from '@next/kernel-base-runtime-shell-v2'
 import {tdpSyncV2CommandDefinitions} from '../features/commands'
-import {selectTdpResolvedProjectionByTopic} from '../selectors'
-import {selectTdpProjectionState} from '../selectors'
+import {selectTdpActiveProjectionEntries, selectTdpResolvedProjectionByTopic} from '../selectors'
 import {reconcileHotUpdateDesiredFromResolvedProjection} from './hotUpdateProjectionReducer'
 import {TDP_HOT_UPDATE_TOPIC} from './hotUpdateTopic'
 import type {
@@ -21,7 +20,7 @@ export interface TopicChangePublisherFingerprintV2 {
     resolvedByTopic: Record<string, Record<string, TdpProjectionEnvelope>>
 }
 
-const toTopicFingerprint = (entries: Record<string, TdpProjectionEnvelope>) =>
+export const toTopicFingerprintV2 = (entries: Record<string, TdpProjectionEnvelope>) =>
     Object.values(entries)
         .map(item => [
             item.itemKey,
@@ -29,7 +28,6 @@ const toTopicFingerprint = (entries: Record<string, TdpProjectionEnvelope>) =>
             item.scopeId,
             item.revision,
             item.operation,
-            JSON.stringify(item.payload),
         ].join(':'))
         .sort()
         .join('|')
@@ -82,8 +80,18 @@ const toChangeItems = (
             continue
         }
 
-        const currentFingerprint = `${currentEntry.revision}:${JSON.stringify(currentEntry.payload)}`
-        const previousFingerprint = `${previousEntry.revision}:${JSON.stringify(previousEntry.payload)}`
+        const currentFingerprint = [
+            currentEntry.revision,
+            currentEntry.operation,
+            currentEntry.scopeType,
+            currentEntry.scopeId,
+        ].join(':')
+        const previousFingerprint = [
+            previousEntry.revision,
+            previousEntry.operation,
+            previousEntry.scopeType,
+            previousEntry.scopeId,
+        ].join(':')
         if (currentFingerprint === previousFingerprint) {
             continue
         }
@@ -123,21 +131,24 @@ export const publishTopicDataChangesV2 = async (
     fingerprintRef: TopicChangePublisherFingerprintV2,
     options: {
         currentFacts?: HotUpdateCurrentFacts
+        topics?: readonly string[]
     } = {},
 ): Promise<{
     changedTopicCount: number
     changedTopics: string[]
 }> => {
     const state = runtime.getState() as any
-    const topics = new Set<string>([
-        ...Object.values(selectTdpProjectionState(state) ?? {}).map(item => item.topic),
-        ...Object.keys(fingerprintRef.byTopic),
-    ])
+    const topics = options.topics == null
+        ? new Set<string>([
+            ...Object.values(selectTdpActiveProjectionEntries(state)).map(item => item.topic),
+            ...Object.keys(fingerprintRef.byTopic),
+        ])
+        : new Set(options.topics)
     const changedTopics: string[] = []
 
     for (const topic of topics) {
         const resolved = selectTdpResolvedProjectionByTopic(state, topic)
-        const fingerprint = toTopicFingerprint(resolved)
+        const fingerprint = toTopicFingerprintV2(resolved)
         const previousFingerprint = fingerprintRef.byTopic[topic] ?? ''
         if (fingerprint === previousFingerprint) {
             continue

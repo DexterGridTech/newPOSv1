@@ -65,4 +65,5 @@ export type {
     TcpPlatformEnvelope,
     TcpRuntimeState,
     TcpSandboxState,
+    TerminalAssemblyCapabilityManifestV1,
 } from './types'

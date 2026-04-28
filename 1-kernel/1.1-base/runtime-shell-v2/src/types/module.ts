@@ -26,9 +26,11 @@ export interface RuntimeModuleContextV2 {
     readonly localNodeId: NodeId
     readonly platformPorts: PlatformPorts
     readonly displayContext: RuntimeDisplayContextV2
+    readonly descriptors: readonly KernelRuntimeModuleDescriptorV2[]
     getState(): RootState
     getStore(): EnhancedStore
     dispatchAction(action: UnknownAction): UnknownAction
+    flushPersistence(): Promise<void>
     subscribeState(listener: () => void): () => void
     dispatchCommand<TPayload = unknown>(
         command: CommandIntent<TPayload>,
@@ -59,6 +61,13 @@ export interface RuntimeModuleContextV2 {
     applyStateSyncDiff(envelope: StateSyncDiffEnvelope): void
 }
 
+export interface TdpTopicInterestDeclarationV1 {
+    topicKey: string
+    category?: 'projection' | 'command' | 'system'
+    required?: boolean
+    reason?: string
+}
+
 export interface KernelRuntimeModuleV2 extends AppModule {
     dependencies?: readonly AppModuleDependency[]
     stateSlices?: readonly StateRuntimeSliceDescriptor<any>[]
@@ -66,6 +75,7 @@ export interface KernelRuntimeModuleV2 extends AppModule {
     actorDefinitions?: readonly ActorDefinition[]
     errorDefinitions?: readonly ErrorDefinition[]
     parameterDefinitions?: readonly ParameterDefinition<any>[]
+    tdpTopicInterests?: readonly TdpTopicInterestDeclarationV1[]
     install?: (context: RuntimeModuleContextV2) => Promise<void> | void
     onApplicationReset?: (
         context: RuntimeModuleContextV2,
@@ -87,6 +97,7 @@ export interface KernelRuntimeModuleDescriptorV2 {
     actorKeys: readonly string[]
     errorKeys: readonly string[]
     parameterKeys: readonly string[]
+    tdpTopicInterests: readonly TdpTopicInterestDeclarationV1[]
     hasInstall: boolean
     hasPreSetup: boolean
 }

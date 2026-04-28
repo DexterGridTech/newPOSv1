@@ -32,6 +32,13 @@
 5. **不要用 `lastUpdatedAt` 作为同步游标**；可选的 per-topic cursor 可以作为诊断、补偿和未来优化，但不作为第一阶段主协议。
 6. **大数据量处理必须和订阅改造同步设计**。订阅变化会更频繁触发 full snapshot，因此必须补齐 snapshot 分片、changes 分页续拉、服务端背压、批量 cursor、终端分批落库与 ACK/APPLIED 时序，否则按需订阅会把原有“大快照单帧传输”的隐患放大。
 
+关键一致性约定：
+
+- **TCP 激活阶段**只做终端身份、激活码授权、TerminalProfile/TerminalTemplate 与 assembly capability 的兼容性校验，不在这里订阅 TDP topic。
+- **TDP handshake 阶段**才发送 `subscribedTopics + subscriptionHash + capabilities`，服务端也只在这一阶段建立 session subscription。
+- 终端可以在启动 runtime 时汇总当前模块的 `tdpTopicInterests`；“启动时汇总”是本地准备动作，“handshake 时发送”才是协议订阅动作。
+- `TerminalAssemblyCapabilityManifestV1` 与 `TdpTopicInterestDeclarationV1` 分离：前者用于激活兼容性，后者用于 TDP topic 订阅。
+
 ## 2. 设计目标
 
 ### 2.1 功能目标
@@ -186,7 +193,7 @@ flowchart LR
 
 ```ts
 export interface TdpTopicInterestDeclarationV1 {
-  topic: string
+  topicKey: string
   category?: 'projection' | 'command' | 'system'
   required?: boolean
   reason?: string
@@ -212,7 +219,7 @@ export interface KernelRuntimeModuleDescriptorV2 {
 
 - topic interest 是包契约，不是 assembly 临时配置。
 - descriptor 必须包含 topic interest，这样 TDP runtime 可以从当前安装的模块自动汇总。
-- `required` 表示该 topic 对模块运行是必需能力；服务器如果拒绝该 topic，需要在 handshake response 中回报。
+- `required` 表示该 topic 对模块运行是必需能力；未声明时默认 `false`。服务器如果拒绝 required topic，需要在 handshake response 中回报。
 - `category` 只用于终端和服务端可观测性，不作为服务端授权依据。
 - `reason` 只用于文档和诊断展示，不参与 subscriptionHash 计算，避免注释性文字变化导致 hash 抖动。
 
@@ -242,7 +249,7 @@ export interface KernelRuntimeModuleDescriptorV2 {
 
 ```ts
 tdpTopicInterests: organizationIamTopicList.map(topic => ({
-  topic,
+  topicKey: topic,
   category: 'projection',
   required: true,
   reason: 'organization iam master data read model',
@@ -253,7 +260,7 @@ tdpTopicInterests: organizationIamTopicList.map(topic => ({
 
 ```ts
 tdpTopicInterests: cateringProductTopicList.map(topic => ({
-  topic,
+  topicKey: topic,
   category: 'projection',
   required: true,
   reason: 'catering product master data read model',
@@ -264,7 +271,7 @@ tdpTopicInterests: cateringProductTopicList.map(topic => ({
 
 ```ts
 tdpTopicInterests: cateringStoreOperatingTopicList.map(topic => ({
-  topic,
+  topicKey: topic,
   category: 'projection',
   required: true,
   reason: 'catering store operating read model',
@@ -285,7 +292,7 @@ export interface ResolvedTdpSubscriptionV1 {
   hash: string
   sources: readonly {
     moduleName: string
-    topic: string
+    topicKey: string
     category: 'projection' | 'command' | 'system'
     required: boolean
   }[]
@@ -606,8 +613,8 @@ explicit 行为：
 
 ```text
 isTerminalReachableByScope(sandboxId, terminalId, projection.scope)
-AND isTopicSubscribed(session, projection.topic)
-AND isTopicAllowedForTerminalType(session, projection.topic)
+AND isTopicSubscribed(session, projection.topicKey)
+AND isTopicAllowedForTerminalType(session, projection.topicKey)
 ```
 
 其中：
@@ -721,7 +728,7 @@ projection accepted
 
 ```ts
 for (const session of listOnlineSessionsByTerminalId(sandboxId, terminalId)) {
-  if (!isTopicSubscribed(session, change.topic)) {
+  if (!isTopicSubscribed(session, change.topicKey)) {
     continue
   }
   session.batchQueue.push({cursor, change})
@@ -790,36 +797,53 @@ data: {
 
 目标要求：
 
-- HTTP 补偿必须和 WS session 使用同一份 subscription。
+- HTTP 补偿必须和当前 TDP subscription 语义一致。
 - 不能在 WS 按需过滤后，HTTP fallback 又返回全量。
+- 不同场景要分开处理，不能把 session-aware 当成唯一优先方案。
 
-推荐改造：
+场景一：正常 WS 断线重连。
 
-方案 A，session-aware endpoint：
+```text
+重新建立 WS
+  -> 重新 TDP handshake
+  -> 按当前 subscriptionHash 判断 full 或 incremental
+```
+
+此时不建议用 HTTP 代替重连，因为 WS handshake 会重新建立 session subscription、capability negotiation 与后续 realtime push 状态。
+
+场景二：WS 仍在线，但握手返回的 `CHANGESET.hasMore = true` 需要补页。
+
+```text
+HTTP getChanges(cursor, subscriptionHash, topics)
+```
+
+这里优先使用 HTTP changes 分页拉取，避免为了下一页 changes 再发一次 WS handshake。请求必须绑定当前订阅，可以显式携带 `subscriptionHash + topics`，也可以引用当前仍有效的 `sessionId`。
+
+场景三：特殊环境 WS 不可用或调试接口。
+
+```text
+HTTP getSnapshot/getChanges with explicit subscriptionHash + topics
+```
+
+这种场景不能依赖一个可能不存在或已失效的 WS session，必须显式携带 subscription 参数，或先创建独立的 server-side sync session。
+
+可选 endpoint 形态 A，session-aware endpoint：
 
 ```text
 GET /api/v1/tdp/sessions/:sessionId/snapshot
 GET /api/v1/tdp/sessions/:sessionId/changes?cursor=...
 ```
 
-服务端从 session 读取 subscription。
+服务端从仍有效的 session 读取 subscription，适合“WS 在线、HTTP 只做分页补页”的场景。
 
-方案 B，显式 query：
+可选 endpoint 形态 B，显式 query：
 
 ```text
 GET /api/v1/tdp/terminals/:terminalId/snapshot?sandboxId=...&subscriptionHash=...&topics=...
 GET /api/v1/tdp/terminals/:terminalId/changes?sandboxId=...&cursor=...&subscriptionHash=...&topics=...
 ```
 
-终端每次 HTTP fallback 都带上当前订阅。
-
-更推荐方案 A，因为：
-
-- query 不会变得很长。
-- 服务端可以保证 HTTP 与当前 WS session 一致。
-- 避免客户端重复提交大 topic list。
-
-保留方案 B 作为无 session 补偿或调试接口。
+终端每次 HTTP fallback 都带上当前订阅，适合“无 WS session、调试、特殊网络环境”的场景。
 
 ## 7. 大数据量同步、分页与流控设计
 
@@ -1516,7 +1540,7 @@ topicCursors: Record<string, number>
 2. 三个业务包声明 topic interest。
 3. `tdp-sync-runtime-v2` 增加 resolver、hash、handshake 字段。
 4. 终端增加本地防御过滤。
-5. 先让 handshake 带 `capabilities: []` 或基础 capabilities，为服务端 negotiation 铺路。
+5. 如果需要拆批，可以先让 handshake 带基础 `capabilities` 为 negotiation 铺路；但正式验收必须发送真实 `subscribedTopics` 和 `subscriptionHash`，不能把空订阅作为完成状态。
 
 第二阶段：服务端按需过滤与大数据基础能力
 

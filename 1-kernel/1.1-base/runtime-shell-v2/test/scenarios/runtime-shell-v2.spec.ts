@@ -189,7 +189,35 @@ const createModule = (events: string[], beforeActorBody?: () => void): KernelRun
     }
 }
 
+const topicModuleName = `${testModuleName}.topic-module`
+
+const createTopicInterestModule = (observed: string[][]): KernelRuntimeModuleV2 => ({
+    moduleName: topicModuleName,
+    packageVersion: '0.0.1',
+    tdpTopicInterests: [
+        {
+            topicKey: 'org.store.profile',
+            category: 'projection',
+            required: true,
+            reason: 'test topic interest',
+        },
+    ],
+    install(context) {
+        const descriptor = context.descriptors.find(item => item.moduleName === topicModuleName)
+        observed.push(descriptor?.tdpTopicInterests.map(item => `${item.topicKey}:${item.required === true ? '1' : '0'}`) ?? [])
+    },
+})
+
 describe('runtime-shell-v2', () => {
+    it('exposes TDP topic interests through module descriptors', async () => {
+        const observed: string[][] = []
+        const runtime = createKernelRuntimeV2({modules: [createTopicInterestModule(observed)]})
+
+        await runtime.start()
+
+        expect(observed).toEqual([['org.store.profile:1']])
+    })
+
     it('broadcasts one command to multiple actors and aggregates results', async () => {
         const events: string[] = []
         const runtime = createKernelRuntimeV2({modules: [createModule(events)]})

@@ -47,6 +47,7 @@ import {
   listScopes,
   listSessions,
   listTopics,
+  pruneTdpChangeLogs,
   sendEdgeDegradedToSession,
   sendProtocolErrorToSession,
   sendSessionRehomeRequired,
@@ -84,6 +85,11 @@ import {
   getTerminalTopicDecision,
   previewPolicyImpact,
 } from '../tdp/decisionService.js'
+import {
+  normalizeSubscription,
+  readTerminalTopicPolicy,
+  TDP_TOPIC_SUBSCRIPTION_CAPABILITY_V1,
+} from '../tdp/subscriptionPolicy.js'
 import { createFaultRule, applyMockResult, listFaultRules, simulateFaultHit, updateFaultRule } from '../fault/service.js'
 import { listSceneTemplates, runSceneTemplate } from '../scene/service.js'
 import { appendAuditLog } from './audit.js'
@@ -149,6 +155,35 @@ import {
   requestTerminalLogUpload,
 } from '../terminal-log/service.js'
 import { TDP_ADMIN_TOKEN } from '../../shared/constants.js'
+
+const resolveHttpTdpSubscription = (
+  sandboxId: string,
+  terminalId: string,
+  query: Record<string, unknown>,
+) => {
+  if (typeof query.subscribedTopics !== 'string') {
+    return undefined
+  }
+  const topicPolicy = readTerminalTopicPolicy(sandboxId, terminalId)
+  const subscription = normalizeSubscription({
+    capabilities: [TDP_TOPIC_SUBSCRIPTION_CAPABILITY_V1],
+    subscribedTopics: query.subscribedTopics.split(',').map(topic => topic.trim()).filter(Boolean),
+    allowedTopics: topicPolicy.allowedTopics,
+  })
+  const subscriptionHash = typeof query.subscriptionHash === 'string'
+    ? query.subscriptionHash.trim()
+    : ''
+  if (!subscriptionHash) {
+    throw new Error('HTTP TDP fallback with subscribedTopics requires subscriptionHash')
+  }
+  if (subscription.hash !== subscriptionHash) {
+    throw new Error('HTTP TDP fallback subscriptionHash does not match server accepted subscription')
+  }
+  return {
+    mode: subscription.mode,
+    acceptedTopics: subscription.acceptedTopics,
+  } as const
+}
 
 export const createRouter = () => {
   const router = Router()
@@ -666,10 +701,23 @@ export const createRouter = () => {
     try {
       requireBodySandboxId(req.body)
       const result = activateTerminal(req.body)
-      appendAuditLog({ domain: 'TCP', action: 'ACTIVATE_TERMINAL', targetId: result.terminalId, detail: req.body, operator: 'terminal-client' })
+      appendAuditLog({
+        domain: 'TCP',
+        action: 'ACTIVATE_TERMINAL',
+        targetId: result.terminalId,
+        detail: {
+          request: req.body,
+          activationCompatibility: result.activationCompatibility,
+        },
+        operator: 'terminal-client',
+      })
       return created(res, result)
     } catch (error) {
-      return fail(res, error instanceof Error ? error.message : '激活失败')
+      const message = error instanceof Error ? error.message : '激活失败'
+      const details = typeof error === 'object' && error !== null && 'details' in error
+        ? (error as { details?: unknown }).details
+        : undefined
+      return fail(res, message, 400, details)
     }
   })
 
@@ -1116,11 +1164,27 @@ export const createRouter = () => {
   })
   router.get('/api/v1/admin/tdp/projections', withBadRequest((req, res) => ok(res, listProjections(requireQuerySandboxId(req.query as Record<string, unknown>)))))
   router.get('/api/v1/admin/tdp/change-logs', withBadRequest((req, res) => ok(res, listChangeLogs(requireQuerySandboxId(req.query as Record<string, unknown>)))))
+  router.post('/api/v1/admin/tdp/change-logs/prune', (req, res) => {
+    try {
+      const sandboxId = requireBodySandboxId(req.body)
+      const retainRecentCursors = typeof req.body.retainRecentCursors === 'number'
+        ? req.body.retainRecentCursors
+        : undefined
+      const result = pruneTdpChangeLogs(sandboxId, retainRecentCursors)
+      appendAuditLog({ domain: 'TDP', action: 'PRUNE_CHANGE_LOGS', targetId: sandboxId, detail: result })
+      return ok(res, result)
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '清理 TDP change logs 失败', 400)
+    }
+  })
   router.get('/api/v1/admin/tdp/commands', withBadRequest((req, res) => ok(res, listCommandOutbox(requireQuerySandboxId(req.query as Record<string, unknown>)))))
   router.get('/api/v1/tdp/terminals/:terminalId/snapshot', (req, res) => {
     try {
       const sandboxId = requireQuerySandboxId(req.query as Record<string, unknown>)
-      return ok(res, getTerminalSnapshot(sandboxId, req.params.terminalId))
+      const subscription = resolveHttpTdpSubscription(sandboxId, req.params.terminalId, req.query as Record<string, unknown>)
+      return ok(res, subscription == null
+        ? getTerminalSnapshot(sandboxId, req.params.terminalId)
+        : getTerminalSnapshot(sandboxId, req.params.terminalId, subscription))
     } catch (error) {
       return fail(res, error instanceof Error ? error.message : '查询 TDP snapshot 失败')
     }
@@ -1130,14 +1194,16 @@ export const createRouter = () => {
       const sandboxId = requireQuerySandboxId(req.query as Record<string, unknown>)
       const cursor = Math.max(0, Number(req.query.cursor ?? 0))
       const limit = Math.max(1, Math.min(100, Number(req.query.limit ?? 100)))
-      const changes = getTerminalChangesSince(sandboxId, req.params.terminalId, cursor, limit)
+      const subscription = resolveHttpTdpSubscription(sandboxId, req.params.terminalId, req.query as Record<string, unknown>)
+      const changesPage = getTerminalChangesSince(sandboxId, req.params.terminalId, cursor, limit, subscription)
+      const changes = changesPage.changes
       const nextCursor = changes.length ? changes[changes.length - 1].cursor : cursor
-      const highWatermark = getHighWatermarkForTerminal(sandboxId, req.params.terminalId)
+      const highWatermark = getHighWatermarkForTerminal(sandboxId, req.params.terminalId, subscription)
       return ok(res, {
         terminalId: req.params.terminalId,
         changes: changes.map(item => item.change),
         nextCursor,
-        hasMore: nextCursor < highWatermark,
+        hasMore: changesPage.hasMore,
         highWatermark,
       })
     } catch (error) {

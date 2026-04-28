@@ -76,6 +76,7 @@ interface CreateRuntimeCommandDispatcherInput {
     platformPorts: PlatformPorts
     store: EnhancedStore
     dispatchAction: (action: UnknownAction) => UnknownAction
+    flushPersistence: RuntimeModuleContextV2['flushPersistence']
     subscribeState: (listener: () => void) => () => void
     ledger: ReturnType<typeof createRequestLedger>
     handlersByCommand: Map<string, RegisteredActorHandler[]>
@@ -228,6 +229,7 @@ export const createRuntimeCommandDispatcher = (
                     actor: handler.actor,
                     getState: () => input.store.getState() as any,
                     dispatchAction: input.dispatchAction,
+                    flushPersistence: input.flushPersistence,
                     subscribeState: input.subscribeState,
                     dispatchCommand: childCommand => dispatchLocal(childCommand, {
                         requestId,

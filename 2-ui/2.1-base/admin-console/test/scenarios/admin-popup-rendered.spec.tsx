@@ -1,9 +1,14 @@
 import React from 'react'
 import {describe, expect, it, vi} from 'vitest'
 import {
+    uiRuntimeV2CommandDefinitions,
+} from '@next/kernel-base-ui-runtime-v2'
+import type {KernelRuntimeV2} from '@next/kernel-base-runtime-shell-v2'
+import {
     AdminPopup,
     adminConsoleStateActions,
     createAdminPasswordVerifier,
+    selectAdminConsoleRuntimeTab,
     selectAdminConsoleSelectedTab,
 } from '../../src'
 import {
@@ -25,6 +30,23 @@ vi.mock('react-native-qrcode-svg', async () => {
 
 const flush = () => new Promise(resolve => setTimeout(resolve, 0))
 
+const countShowScreenDispatches = (runtime: KernelRuntimeV2) => {
+    let count = 0
+    const countedRuntime: KernelRuntimeV2 = {
+        ...runtime,
+        dispatchCommand(command, options) {
+            if (command.definition.commandName === uiRuntimeV2CommandDefinitions.showScreen.commandName) {
+                count += 1
+            }
+            return runtime.dispatchCommand(command, options)
+        },
+    }
+    return {
+        runtime: countedRuntime,
+        getCount: () => count,
+    }
+}
+
 describe('AdminPopup', () => {
     const enterPin = async (
         automation: ReturnType<typeof renderAdminWithAutomation>,
@@ -33,6 +55,9 @@ describe('AdminPopup', () => {
 
     const readSelectedRuntimeTab = (harness: Awaited<ReturnType<typeof createAdminConsoleHarness>>) =>
         selectAdminConsoleSelectedTab(harness.store.getState())
+
+    const readRawRuntimeTab = (harness: Awaited<ReturnType<typeof createAdminConsoleHarness>>) =>
+        selectAdminConsoleRuntimeTab(harness.store.getState())
 
     it('renders the protected login view by default', async () => {
         const harness = await createAdminConsoleHarness()
@@ -153,6 +178,42 @@ describe('AdminPopup', () => {
             await flush()
         })
         await expect(automation.queryNodes('ui-base-screen-container:primary:loading')).resolves.toHaveLength(0)
+    })
+
+    it('initializes the first tab once and does not re-dispatch for selected tab presses', async () => {
+        const harness = await createAdminConsoleHarness()
+        const counted = countShowScreenDispatches(harness.runtime)
+        const automation = renderAdminWithAutomation(
+            <AdminPopup deviceId="DEVICE-001" onClose={() => {}} />,
+            {
+                ...harness,
+                runtime: counted.runtime,
+            },
+        )
+        const verifierPassword = createAdminPasswordVerifier({
+            deviceIdProvider: () => 'DEVICE-001',
+        }).deriveFor(new Date())
+
+        expect(readRawRuntimeTab(harness)).toBeUndefined()
+        await enterPin(automation, verifierPassword)
+        await automation.press('ui-base-admin-popup:submit')
+        await automation.waitForNode('ui-base-admin-popup:panel')
+        await automation.waitForNode('ui-base-admin-section:terminal')
+        expect(counted.getCount()).toBe(1)
+        expect(readRawRuntimeTab(harness)).toBe('terminal')
+
+        await automation.press('ui-base-admin-popup:tab:logs')
+        await automation.waitForNode('ui-base-admin-section:logs')
+        expect(counted.getCount()).toBe(2)
+        expect(readRawRuntimeTab(harness)).toBe('logs')
+
+        await automation.press('ui-base-admin-popup:tab:logs')
+        await automation.act(async () => {
+            await flush()
+            await flush()
+        })
+        expect(counted.getCount()).toBe(2)
+        expect(readRawRuntimeTab(harness)).toBe('logs')
     })
 
     it('renders scenario-level adapter diagnostic results after a run summary is stored', async () => {

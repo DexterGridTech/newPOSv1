@@ -1,6 +1,10 @@
 import {createModuleCommandFactory} from '@next/kernel-base-runtime-shell-v2'
 import {moduleName} from '../../moduleName'
-import type {TcpDeviceInfo, TcpTaskResultReportRuntimePayload} from '../../types'
+import type {
+    TcpDeviceInfo,
+    TcpTaskResultReportRuntimePayload,
+    TerminalAssemblyCapabilityManifestV1,
+} from '../../types'
 
 const defineModuleCommand = createModuleCommandFactory(moduleName)
 
@@ -20,6 +24,7 @@ export const tcpControlV2CommandDefinitions = {
         activationCode: string
         deviceInfo?: TcpDeviceInfo
         deviceFingerprint?: string
+        clientRuntime?: TerminalAssemblyCapabilityManifestV1
     }>('activate-terminal'),
     activateTerminalSucceeded: defineModuleCommand<{
         terminalId: string

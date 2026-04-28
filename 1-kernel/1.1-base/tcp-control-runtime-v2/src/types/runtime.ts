@@ -24,6 +24,9 @@ export interface TcpControlHttpService {
 
 export interface TcpControlRuntimeAssemblyV2 {
     createHttpRuntime(context: RuntimeModuleContextV2): HttpRuntime
+    resolveClientRuntimeCapability?(
+        context: RuntimeModuleContextV2,
+    ): import('./state').TerminalAssemblyCapabilityManifestV1 | undefined
 }
 
 export interface CreateTcpControlRuntimeModuleV2Input {

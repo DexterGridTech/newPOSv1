@@ -27,6 +27,7 @@ const slice = createSlice({
                 highWatermark: number
                 syncMode: 'incremental' | 'full'
                 alternativeEndpoints: string[]
+                subscription?: TdpSessionState['subscription']
                 connectedAt: number
             }>,
         ) {
@@ -38,6 +39,7 @@ const slice = createSlice({
             state.highWatermark = action.payload.highWatermark
             state.syncMode = action.payload.syncMode
             state.alternativeEndpoints = action.payload.alternativeEndpoints
+            state.subscription = action.payload.subscription
             state.connectedAt = action.payload.connectedAt as any
             state.disconnectReason = null
         },
@@ -76,6 +78,7 @@ const slice = createSlice({
                 state.highWatermark = action.payload.highWatermark
                 state.syncMode = action.payload.syncMode
                 state.alternativeEndpoints = action.payload.alternativeEndpoints
+                state.subscription = action.payload.subscription
                 state.connectedAt = action.payload.connectedAt as any
                 state.disconnectReason = null
             })

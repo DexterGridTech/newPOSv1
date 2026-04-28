@@ -518,6 +518,8 @@ const deleteSandboxRows = (sandboxId: string) => {
     'fault_rules',
     'tdp_command_outbox',
     'tdp_change_logs',
+    'tdp_terminal_projection_access',
+    'tdp_terminal_cursors',
     'tdp_projection_source_events',
     'tdp_projections',
     'projection_policies',

@@ -288,6 +288,15 @@ const createProductApp = (props: Parameters<typeof createApp>[0], options: Parti
     createShellModule: createCateringShellModuleMock,
     productId: 'mixc-catering',
     releaseInfo,
+    activationCapability: {
+        supportedProfileCodes: ['KERNEL_BASE_ANDROID_POS'],
+        supportedTemplateCodes: ['KERNEL_BASE_ANDROID_POS_STANDARD'],
+        supportedCapabilities: [
+            'android.rn84',
+            'product.mixc-catering',
+            'profile.kernel-base-android-pos',
+        ],
+    },
     ...options,
 })
 
@@ -424,6 +433,22 @@ describe('assembly createApp', () => {
         expect(tcpControlCall).toBeDefined()
         const tcpControlInput = tcpControlCall![0] as any
         expect(typeof tcpControlInput?.assembly?.createHttpRuntime).toBe('function')
+        expect(typeof tcpControlInput?.assembly?.resolveClientRuntimeCapability).toBe('function')
+        expect(tcpControlInput.assembly.resolveClientRuntimeCapability()).toEqual({
+            protocolVersion: 'terminal-activation-capability-v1',
+            assemblyId: releaseInfo.appId,
+            assemblyVersion: releaseInfo.assemblyVersion,
+            appId: releaseInfo.appId,
+            appVersion: releaseInfo.runtimeVersion,
+            bundleVersion: releaseInfo.bundleVersion,
+            supportedProfileCodes: ['KERNEL_BASE_ANDROID_POS'],
+            supportedTemplateCodes: ['KERNEL_BASE_ANDROID_POS_STANDARD'],
+            supportedCapabilities: [
+                'android.rn84',
+                'product.mixc-catering',
+                'profile.kernel-base-android-pos',
+            ],
+        })
 
         const scopedLogger = {kind: 'scoped-logger'}
         const scope = vi.fn(() => scopedLogger)

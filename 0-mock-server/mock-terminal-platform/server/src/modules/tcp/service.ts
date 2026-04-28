@@ -15,6 +15,59 @@ import type { DeliveryStatus, ReleaseStatus, TaskType } from '../../shared/types
 import { assertSandboxUsable } from '../sandbox/service.js'
 import { fanoutExistingProjectionToTerminalIds } from '../tdp/service.js'
 
+export interface TerminalAssemblyCapabilityManifestV1 {
+  protocolVersion: 'terminal-activation-capability-v1'
+  assemblyId: string
+  assemblyVersion?: string
+  appId?: string
+  appVersion?: string
+  bundleVersion?: string
+  supportedProfileCodes: string[]
+  supportedCapabilities?: string[]
+  supportedTemplateCodes?: string[]
+}
+
+const isStringArray = (value: unknown): value is string[] =>
+  Array.isArray(value) && value.every(item => typeof item === 'string')
+
+const parseClientRuntime = (value: unknown): TerminalAssemblyCapabilityManifestV1 | undefined => {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    return undefined
+  }
+  const record = value as Record<string, unknown>
+  if (
+    record.protocolVersion !== 'terminal-activation-capability-v1'
+    || typeof record.assemblyId !== 'string'
+    || !record.assemblyId.trim()
+    || !isStringArray(record.supportedProfileCodes)
+  ) {
+    return undefined
+  }
+  return {
+    protocolVersion: 'terminal-activation-capability-v1',
+    assemblyId: record.assemblyId.trim(),
+    assemblyVersion: typeof record.assemblyVersion === 'string' ? record.assemblyVersion : undefined,
+    appId: typeof record.appId === 'string' ? record.appId : undefined,
+    appVersion: typeof record.appVersion === 'string' ? record.appVersion : undefined,
+    bundleVersion: typeof record.bundleVersion === 'string' ? record.bundleVersion : undefined,
+    supportedProfileCodes: record.supportedProfileCodes.map(item => item.trim()).filter(Boolean),
+    supportedCapabilities: isStringArray(record.supportedCapabilities)
+      ? record.supportedCapabilities.map(item => item.trim()).filter(Boolean)
+      : undefined,
+    supportedTemplateCodes: isStringArray(record.supportedTemplateCodes)
+      ? record.supportedTemplateCodes.map(item => item.trim()).filter(Boolean)
+      : undefined,
+  }
+}
+
+const normalizeCode = (value: string | null | undefined) => value?.trim().toUpperCase()
+
+const readRequiredTemplateCapabilities = (templatePresetConfigJson: string | null | undefined) => {
+  const presetConfig = parseJson<Record<string, unknown>>(templatePresetConfigJson, {})
+  const required = presetConfig.requiredCapabilities
+  return isStringArray(required) ? required.map(item => item.trim()).filter(Boolean) : []
+}
+
 export const listTerminals = (sandboxId: string) => {
   assertSandboxUsable(sandboxId)
   return db.select().from(terminalsTable).where(eq(terminalsTable.sandboxId, sandboxId)).orderBy(desc(terminalsTable.updatedAt)).all().map((item) => ({
@@ -128,6 +181,7 @@ export const activateTerminal = (input: {
   activationCode: string
   deviceFingerprint: string
   deviceInfo: Record<string, unknown>
+  clientRuntime?: unknown
 }) => {
   const sandboxId = input.sandboxId
   assertSandboxUsable(sandboxId)
@@ -140,9 +194,69 @@ export const activateTerminal = (input: {
   if (!store) {
     throw new Error('激活码关联门店不存在')
   }
+  const profile = db.select().from(terminalProfilesTable).where(and(eq(terminalProfilesTable.profileId, activation.profileId), eq(terminalProfilesTable.sandboxId, sandboxId))).get()
+  if (!profile) {
+    throw new Error('激活码关联终端 Profile 不存在')
+  }
+  const templateId = activation.templateId ?? 'terminal-template-retail-default'
+  const template = db.select().from(terminalTemplatesTable).where(and(eq(terminalTemplatesTable.templateId, templateId), eq(terminalTemplatesTable.sandboxId, sandboxId))).get()
+  const clientRuntime = parseClientRuntime(input.clientRuntime)
+  const warnings: string[] = []
+  if (!clientRuntime) {
+    warnings.push('CLIENT_RUNTIME_MISSING')
+  } else {
+    const requestedProfileCode = normalizeCode(profile.profileCode)
+    const supportedProfileCodes = clientRuntime.supportedProfileCodes.map(normalizeCode)
+    if (!requestedProfileCode || !supportedProfileCodes.includes(requestedProfileCode)) {
+      const error = new Error('TERMINAL_PROFILE_NOT_SUPPORTED')
+      ;(error as Error & {details?: unknown}).details = {
+        assemblyId: clientRuntime.assemblyId,
+        requestedProfileCode: profile.profileCode,
+        supportedProfileCodes: clientRuntime.supportedProfileCodes,
+      }
+      throw error
+    }
+
+    if (template && clientRuntime.supportedTemplateCodes && clientRuntime.supportedTemplateCodes.length > 0) {
+      const requestedTemplateCode = normalizeCode(template.templateCode)
+      const supportedTemplateCodes = clientRuntime.supportedTemplateCodes.map(normalizeCode)
+      if (!requestedTemplateCode || !supportedTemplateCodes.includes(requestedTemplateCode)) {
+        const error = new Error('TERMINAL_TEMPLATE_NOT_SUPPORTED')
+        ;(error as Error & {details?: unknown}).details = {
+          assemblyId: clientRuntime.assemblyId,
+          requestedTemplateCode: template.templateCode,
+          supportedTemplateCodes: clientRuntime.supportedTemplateCodes,
+        }
+        throw error
+      }
+    }
+
+    const requiredCapabilities = template ? readRequiredTemplateCapabilities(template.presetConfigJson) : []
+    const supportedCapabilities = new Set((clientRuntime.supportedCapabilities ?? []).map(normalizeCode))
+    const missingCapabilities = requiredCapabilities.filter(capability => !supportedCapabilities.has(normalizeCode(capability)))
+    if (missingCapabilities.length > 0) {
+      const error = new Error('TERMINAL_CAPABILITY_NOT_SATISFIED')
+      ;(error as Error & {details?: unknown}).details = {
+        assemblyId: clientRuntime.assemblyId,
+        missingCapabilities,
+      }
+      throw error
+    }
+  }
 
   const terminalId = createId('terminal')
   const timestamp = now()
+  const deviceInfoWithRuntime = clientRuntime
+    ? {
+        ...input.deviceInfo,
+        runtimeInfo: {
+          ...(typeof input.deviceInfo.runtimeInfo === 'object' && input.deviceInfo.runtimeInfo
+            ? input.deviceInfo.runtimeInfo as Record<string, unknown>
+            : {}),
+          activationCapability: clientRuntime,
+        },
+      }
+    : input.deviceInfo
 
   db.insert(terminalsTable).values({
     terminalId,
@@ -153,7 +267,7 @@ export const activateTerminal = (input: {
     projectId: activation.projectId,
     storeId: activation.storeId,
     profileId: activation.profileId,
-    templateId: activation.templateId ?? 'terminal-template-retail-default',
+    templateId,
     lifecycleStatus: 'ACTIVE',
     presenceStatus: 'ONLINE',
     healthStatus: 'HEALTHY',
@@ -161,7 +275,7 @@ export const activateTerminal = (input: {
     currentBundleVersion: 'bundle-2026.04.06',
     currentConfigVersion: 'config-2026.04.01',
     deviceFingerprint: input.deviceFingerprint,
-    deviceInfoJson: JSON.stringify(input.deviceInfo),
+    deviceInfoJson: JSON.stringify(deviceInfoWithRuntime),
     sourceMode: 'STANDARD',
     activatedAt: timestamp,
     lastSeenAt: timestamp,
@@ -211,7 +325,14 @@ export const activateTerminal = (input: {
       projectId: activation.projectId,
       storeId: activation.storeId,
       profileId: activation.profileId,
-      templateId: activation.templateId ?? 'terminal-template-retail-default',
+      templateId,
+    },
+    activationCompatibility: {
+      assemblyId: clientRuntime?.assemblyId,
+      acceptedProfileCode: profile.profileCode,
+      acceptedTemplateCode: template?.templateCode,
+      acceptedCapabilities: clientRuntime?.supportedCapabilities,
+      warnings,
     },
   }
 }

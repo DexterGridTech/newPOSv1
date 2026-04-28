@@ -18,6 +18,7 @@ import {createRuntimeCommandDispatcher} from './runtimeCommandDispatcher'
 import {createRuntimeLifecycle} from './runtimeLifecycle'
 import {createRuntimeParameterResolver} from './runtimeParameterResolver'
 import {createRuntimeStateSync} from './runtimeStateSync'
+import {describeKernelRuntimeModuleV2} from '../application/moduleDescriptor'
 
 /**
  * 设计意图：
@@ -35,6 +36,7 @@ export const createKernelRuntimeV2 = (
         createRuntimeShellInternalModuleV2(),
         ...(input.modules ?? []),
     ]
+    const moduleDescriptors = modules.map(describeKernelRuntimeModuleV2)
     const stateRuntime = createStateRuntime({
         runtimeName: moduleName,
         logger: platformPorts.logger.scope({moduleName, subsystem: 'state-runtime'}),
@@ -50,6 +52,9 @@ export const createKernelRuntimeV2 = (
     const stateSync = createRuntimeStateSync(stateRuntime)
     const store = stateRuntime.getStore() as EnhancedStore
     const dispatchAction = (action: UnknownAction) => store.dispatch(action)
+    const flushPersistence = async () => {
+        await stateRuntime.flushPersistence()
+    }
     const subscribeState = (listener: () => void) => store.subscribe(listener)
     const queryRequest = (requestId: string) => ledger.query(requestId as any)
     const resolveParameter = createRuntimeParameterResolver(store)
@@ -72,6 +77,7 @@ export const createKernelRuntimeV2 = (
         platformPorts,
         store,
         dispatchAction,
+        flushPersistence,
         subscribeState,
         ledger,
         handlersByCommand: actorRegistry.handlersByCommand,
@@ -89,6 +95,7 @@ export const createKernelRuntimeV2 = (
         runtimeId,
         localNodeId,
         modules,
+        moduleDescriptors,
         store,
         platformPorts,
         displayContext,
@@ -150,7 +157,7 @@ export const createKernelRuntimeV2 = (
             peerDispatchGateway = gateway
         },
         async flushPersistence() {
-            await stateRuntime.flushPersistence()
+            await flushPersistence()
         },
         async resetApplicationState(input) {
             ledger.clear()

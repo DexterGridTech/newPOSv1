@@ -17,9 +17,19 @@ const TDP_SYNC_V2_CHANGES_FALLBACK_MESSAGE = 'tdp changes request failed'
 
 const defineEndpoint = createModuleHttpEndpointFactory(moduleName, SERVER_NAME_MOCK_TERMINAL_PLATFORM)
 
+const toSubscriptionQuery = (options?: {
+    subscribedTopics?: readonly string[]
+    subscriptionHash?: string
+}) => ({
+    subscribedTopics: options?.subscribedTopics == null
+        ? undefined
+        : [...options.subscribedTopics].sort().join(','),
+    subscriptionHash: options?.subscriptionHash,
+})
+
 const snapshotEndpoint = defineEndpoint<
     {terminalId: string},
-    {sandboxId: string},
+    {sandboxId: string; subscribedTopics?: string; subscriptionHash?: string},
     void,
     TdpSnapshotResponse
 >('get-snapshot', {
@@ -33,7 +43,7 @@ const snapshotEndpoint = defineEndpoint<
 
 const changesEndpoint = defineEndpoint<
     {terminalId: string},
-    {sandboxId: string; cursor?: number; limit?: number},
+    {sandboxId: string; cursor?: number; limit?: number; subscribedTopics?: string; subscriptionHash?: string},
     void,
     TdpChangesResponse
 >('get-changes', {
@@ -49,19 +59,27 @@ export const createTdpSyncHttpServiceV2 = (runtime: HttpRuntime): TdpSyncHttpSer
     const http = createHttpServiceBinder(runtime)
 
     return {
-        async getSnapshot(sandboxId, terminalId) {
+        async getSnapshot(sandboxId, terminalId, options) {
             return http.envelope(snapshotEndpoint, {
                 path: {terminalId},
-                query: {sandboxId},
+                query: {
+                    sandboxId,
+                    ...toSubscriptionQuery(options),
+                },
             }, {
                 errorDefinition: tdpSyncV2ErrorDefinitions.protocolError,
                 fallbackMessage: TDP_SYNC_V2_SNAPSHOT_FALLBACK_MESSAGE,
             })
         },
-        async getChanges(sandboxId, terminalId, cursor = 0, limit) {
+        async getChanges(sandboxId, terminalId, cursor = 0, limit, options) {
             return http.envelope(changesEndpoint, {
                 path: {terminalId},
-                query: {sandboxId, cursor, limit},
+                query: {
+                    sandboxId,
+                    cursor,
+                    limit,
+                    ...toSubscriptionQuery(options),
+                },
             }, {
                 errorDefinition: tdpSyncV2ErrorDefinitions.protocolError,
                 fallbackMessage: TDP_SYNC_V2_CHANGES_FALLBACK_MESSAGE,

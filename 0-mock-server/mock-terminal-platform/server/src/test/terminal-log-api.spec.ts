@@ -54,6 +54,99 @@ const createTerminal = async (baseUrl: string, sandboxId: string) => {
 }
 
 describe('mock-terminal-platform terminal log api', () => {
+  it('delivers remote-control commands only to sessions subscribed to the command topic', async () => {
+    const server = createMockTerminalPlatformTestServer()
+    servers.push(server)
+    await server.start()
+
+    const baseUrl = server.getHttpBaseUrl()
+    const sandboxId = 'sandbox-default'
+    const {terminalId, token} = await createTerminal(baseUrl, sandboxId)
+    const wsBaseUrl = baseUrl.replace('http://', 'ws://')
+
+    const connectSession = async (subscribedTopics: string[]) => {
+      const socket = new WebSocket(`${wsBaseUrl}/api/v1/tdp/ws/connect?sandboxId=${sandboxId}&terminalId=${terminalId}&token=${token}`)
+      const messages: Array<{type?: string; data?: Record<string, unknown>}> = []
+      socket.on('message', raw => {
+        messages.push(JSON.parse(raw.toString()) as {type?: string; data?: Record<string, unknown>})
+      })
+      await new Promise<void>((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          socket.close()
+          reject(new Error('timed out waiting for subscribed session ready'))
+        }, 3_000)
+        socket.once('open', () => {
+          socket.send(JSON.stringify({
+            type: 'HANDSHAKE',
+            data: {
+              sandboxId,
+              terminalId,
+              appVersion: 'test-app',
+              protocolVersion: '1.0',
+              lastCursor: 999_999,
+              capabilities: [
+                'tdp.topic-subscription.v1',
+              ],
+              subscribedTopics,
+              subscriptionMode: 'explicit',
+              subscriptionVersion: 1,
+            },
+          }))
+        })
+        socket.on('message', raw => {
+          const payload = JSON.parse(raw.toString()) as {type?: string}
+          if (payload.type === 'SESSION_READY') {
+            clearTimeout(timeout)
+            resolve()
+          }
+        })
+        socket.once('error', error => {
+          clearTimeout(timeout)
+          reject(error)
+        })
+      })
+      return {
+        socket,
+        messages,
+      }
+    }
+
+    const subscribed = await connectSession(['remote.control'])
+    const unsubscribed = await connectSession(['org.store.profile'])
+
+    const requestResponse = await fetch(`${baseUrl}/api/v1/admin/terminals/${terminalId}/log-fetches`, {
+      method: 'POST',
+      headers: {'content-type': 'application/json'},
+      body: JSON.stringify({
+        sandboxId,
+        logDate: '2026-04-23',
+        overwrite: true,
+      }),
+    })
+    expect(requestResponse.status).toBe(201)
+    const requestPayload = await requestResponse.json() as {
+      data: {
+        instanceId?: string
+      }
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 100))
+    expect(subscribed.messages.some(message => message.type === 'COMMAND_DELIVERED')).toBe(true)
+    expect(unsubscribed.messages.some(message => message.type === 'COMMAND_DELIVERED')).toBe(false)
+
+    const instancesResponse = await fetch(`${baseUrl}/api/v1/admin/tasks/instances?sandboxId=${sandboxId}`)
+    const instancesPayload = await instancesResponse.json() as {
+      data: Array<{
+        instanceId: string
+        deliveryStatus: string
+      }>
+    }
+    expect(instancesPayload.data.find(item => item.instanceId === requestPayload.data.instanceId)?.deliveryStatus).toBe('DELIVERED')
+
+    subscribed.socket.close()
+    unsubscribed.socket.close()
+  })
+
   it('creates remote-control release for terminal log fetch and records uploaded log metadata', async () => {
     const server = createMockTerminalPlatformTestServer()
     servers.push(server)

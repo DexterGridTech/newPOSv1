@@ -635,6 +635,112 @@ export const ScreenContainer: React.FC<ScreenContainerProps> = ({
         })
     }, [syncTransition])
 
+    const resetContainerRuntimeState = useCallback(() => {
+        requestedKeyRef.current = null
+        pendingScreenRef.current = null
+        cacheRecencyRef.current.clear()
+        clearTransition()
+        cachedScreensRef.current = []
+        setCachedScreens([])
+        setPendingScreen(null)
+        setShouldMountPendingScreen(false)
+        setActiveKey(null)
+    }, [clearTransition])
+
+    const activateSameScreenPart = useCallback((
+        key: string,
+        child: ResolvedUiScreenPart,
+    ) => {
+        requestedKeyRef.current = key
+        pendingScreenRef.current = null
+        setPendingScreen(null)
+        setShouldMountPendingScreen(false)
+        if (transitionRef.current && transitionRef.current.key !== key) {
+            clearTransition()
+        }
+        const cached = cachedScreensRef.current.find(item => item.key === key)
+        const nextItem = createScreenCacheItem(key, child, cached)
+        const cacheItem = cached && canReuseScreenCacheItem(cached, nextItem)
+            ? cached
+            : nextItem
+        if (!cached || cacheItem !== cached) {
+            cacheRecencyRef.current.set(key, Date.now())
+            updateCachedScreens(items => upsertScreenCacheItem(
+                items,
+                cacheItem,
+                maxCacheSize,
+                cacheRecencyRef.current,
+            ))
+        }
+        setActiveKey(currentActiveKey => {
+            if (currentActiveKey !== key) {
+                activateScreenCacheItem(cacheItem)
+            }
+            return key
+        })
+    }, [clearTransition, maxCacheSize, updateCachedScreens])
+
+    const prepareTargetTransition = useCallback((key: string): ScreenTransition => {
+        requestedKeyRef.current = key
+        if (pendingScreenRef.current && pendingScreenRef.current.key !== key) {
+            pendingScreenRef.current = null
+            setPendingScreen(null)
+            setShouldMountPendingScreen(false)
+        }
+        const currentTransition = startTransitionForKey(key)
+        return transitionRef.current?.key === key
+            ? transitionRef.current
+            : currentTransition
+    }, [startTransitionForKey])
+
+    const activateCachedScreen = useCallback((
+        key: string,
+        child: ResolvedUiScreenPart,
+    ): boolean => {
+        const cached = cachedScreensRef.current.find(item => item.key === key)
+        if (!cached) {
+            return false
+        }
+        const nextItem = createScreenCacheItem(key, child, cached)
+        const cacheItem = canReuseScreenCacheItem(cached, nextItem)
+            ? cached
+            : nextItem
+        cacheRecencyRef.current.set(key, Date.now())
+        pendingScreenRef.current = null
+        setPendingScreen(null)
+        setShouldMountPendingScreen(false)
+        updateCachedScreens(items => upsertScreenCacheItem(
+            items,
+            cacheItem,
+            maxCacheSize,
+            cacheRecencyRef.current,
+        ))
+        activateScreenCacheItem(cacheItem)
+        setActiveKey(key)
+        return true
+    }, [maxCacheSize, updateCachedScreens])
+
+    const mountPendingScreenAfterLoading = useCallback((
+        key: string,
+        child: ResolvedUiScreenPart,
+    ) => {
+        if (pendingScreenRef.current?.key === key) {
+            if (!shouldMountPendingScreen) {
+                setShouldMountPendingScreen(true)
+            }
+            return
+        }
+
+        tokenRef.current += 1
+        const nextPendingScreen: PendingScreen = {
+            ...createScreenCacheItem(key, child),
+            token: tokenRef.current,
+        }
+        pendingScreenRef.current = nextPendingScreen
+        setPendingScreen(nextPendingScreen)
+        setShouldMountPendingScreen(true)
+    }, [shouldMountPendingScreen])
+
     const requestedCacheKey = resolution.status === 'ready'
         ? createScreenCacheKey(resolution.containerKey, resolution.child)
         : null
@@ -691,15 +797,7 @@ export const ScreenContainer: React.FC<ScreenContainerProps> = ({
 
     useLayoutEffect(() => {
         if (resolution.status !== 'ready') {
-            requestedKeyRef.current = null
-            pendingScreenRef.current = null
-            cacheRecencyRef.current.clear()
-            clearTransition()
-            cachedScreensRef.current = []
-            setCachedScreens([])
-            setPendingScreen(null)
-            setShouldMountPendingScreen(false)
-            setActiveKey(null)
+            resetContainerRuntimeState()
             return
         }
 
@@ -709,96 +807,30 @@ export const ScreenContainer: React.FC<ScreenContainerProps> = ({
             : undefined
         const sameScreenAlreadyActive = activeScreenPartKey === resolution.child.partKey
         if (sameScreenAlreadyActive) {
-            requestedKeyRef.current = key
-            pendingScreenRef.current = null
-            setPendingScreen(null)
-            setShouldMountPendingScreen(false)
-            if (transitionRef.current && transitionRef.current.key !== key) {
-                clearTransition()
-            }
-            const cached = cachedScreensRef.current.find(item => item.key === key)
-            const nextItem = createScreenCacheItem(key, resolution.child, cached)
-            const cacheItem = cached && canReuseScreenCacheItem(cached, nextItem)
-                ? cached
-                : nextItem
-            if (!cached || cacheItem !== cached) {
-                cacheRecencyRef.current.set(key, Date.now())
-                updateCachedScreens(items => upsertScreenCacheItem(
-                    items,
-                    cacheItem,
-                    maxCacheSize,
-                    cacheRecencyRef.current,
-                ))
-            }
-            if (activeKey !== key) {
-                activateScreenCacheItem(cacheItem)
-                setActiveKey(key)
-            }
+            activateSameScreenPart(key, resolution.child)
             return
         }
 
-        requestedKeyRef.current = key
-        if (pendingScreenRef.current && pendingScreenRef.current.key !== key) {
-            pendingScreenRef.current = null
-            setPendingScreen(null)
-            setShouldMountPendingScreen(false)
-        }
-
-        const currentTransition = startTransitionForKey(key)
-        const transitionForKey = transitionRef.current?.key === key
-            ? transitionRef.current
-            : currentTransition
+        const transitionForKey = prepareTargetTransition(key)
         if (transitionForKey.phase !== 'content') {
             return
         }
 
-        const cached = cachedScreensRef.current.find(item => item.key === key)
-        const nextItem = createScreenCacheItem(key, resolution.child, cached)
-
-        if (cached) {
-            const cacheItem = canReuseScreenCacheItem(cached, nextItem)
-                ? cached
-                : nextItem
-            cacheRecencyRef.current.set(key, Date.now())
-            pendingScreenRef.current = null
-            setPendingScreen(null)
-            setShouldMountPendingScreen(false)
-            updateCachedScreens(items => upsertScreenCacheItem(
-                items,
-                cacheItem,
-                maxCacheSize,
-                cacheRecencyRef.current,
-            ))
-            activateScreenCacheItem(cacheItem)
-            setActiveKey(key)
+        if (activateCachedScreen(key, resolution.child)) {
             return
         }
 
-        if (pendingScreenRef.current?.key === key) {
-            if (!shouldMountPendingScreen) {
-                setShouldMountPendingScreen(true)
-            }
-            return
-        }
-
-        tokenRef.current += 1
-        const nextPendingScreen: PendingScreen = {
-            ...nextItem,
-            token: tokenRef.current,
-        }
-        pendingScreenRef.current = nextPendingScreen
-        setPendingScreen(nextPendingScreen)
-        setShouldMountPendingScreen(true)
+        mountPendingScreenAfterLoading(key, resolution.child)
     }, [
         activeKey,
-        clearTransition,
-        maxCacheSize,
+        activateCachedScreen,
+        activateSameScreenPart,
+        mountPendingScreenAfterLoading,
+        prepareTargetTransition,
+        resetContainerRuntimeState,
         resolution,
-        shouldMountPendingScreen,
-        startTransitionForKey,
         transition?.phase,
         transition?.key,
-        updateCachedScreens,
     ])
 
     const completePendingScreen = useCallback((key: string) => {

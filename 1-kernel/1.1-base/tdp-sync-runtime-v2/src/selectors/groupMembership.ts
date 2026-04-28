@@ -10,7 +10,7 @@ export const selectTerminalGroupMembership = (state: RootState) => {
         return undefined
     }
     const projectionState = state[TDP_PROJECTION_STATE_KEY as keyof RootState] as TdpProjectionState | undefined
-    const projection = Object.values(projectionState ?? {}).find(item =>
+    const projection = Object.values(projectionState?.activeEntries ?? {}).find(item =>
         item.topic === 'terminal.group.membership'
         && item.scopeType === 'TERMINAL'
         && item.scopeId === terminalId

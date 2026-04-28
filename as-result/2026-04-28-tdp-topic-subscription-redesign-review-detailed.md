@@ -42,6 +42,16 @@
 
 **但有一个重要前提**：现有实现中存在若干独立于订阅改造的结构性 bug 和性能问题，其中部分问题会被订阅改造放大。建议在推进改造的同时，将这些问题纳入修复计划。
 
+### 1.3 本轮一致性校准结论
+
+本轮复核后，需要把两个阶段的语义固定下来，避免文档和后续实现混淆：
+
+- **TCP 激活阶段**只解决“这台设备能不能被激活成激活码绑定的 TerminalProfile/TerminalTemplate”。终端在这里可以上报 `clientRuntime` / assembly capability，用于 profile/template 兼容性校验，但不在这里订阅 TDP topic。
+- **TDP handshake 阶段**才解决“这台已激活终端当前代码关心哪些 topic”。终端在启动 runtime 时汇总各模块的 `tdpTopicInterests`，并在 TDP `HANDSHAKE` 中发送 `subscribedTopics + subscriptionHash + capabilities`。
+- `TerminalAssemblyCapabilityManifestV1` 与 `TdpTopicInterestDeclarationV1` 必须分开。前者属于 TCP 激活兼容性，后者属于 TDP 订阅声明。不要把 `supportedTopicKeys` 放进 TCP 激活请求作为订阅依据。
+- 本文统一使用 `tdpTopicInterests` 作为 module manifest 字段名，使用 `topicKey` 作为单条声明字段名；协议层继续使用已经存在的 `subscribedTopics: string[]`。
+- `required` 在声明中为可选字段，默认 `false`；`required` 只用于缺失 topic 的降级/阻断决策，不参与 `subscriptionHash`。`subscriptionHash` 只绑定规范化后的 topic key 集合，保证服务端可以仅凭 `subscribedTopics` 独立计算同一个 hash。
+
 ---
 
 ## 二、设计合理性逐条评审
@@ -74,21 +84,21 @@ const session = {
 // 建议的类型定义
 interface TdpTopicInterestDeclarationV1 {
   topicKey: string
-  required: boolean
+  required?: boolean
   reason?: string  // 可选，仅用于文档/调试，不参与 subscriptionHash 计算
 }
 
-// hash 计算时排除 reason
+// hash 计算时排除 reason / required / module source，只绑定真实数据范围
 const computeSubscriptionHash = (topics: TdpTopicInterestDeclarationV1[]): string => {
   const normalized = topics
-    .map(t => `${t.topicKey}:${t.required ? '1' : '0'}`)  // 不包含 reason
+    .map(t => t.topicKey)
     .sort()
     .join('|')
   return sha256(normalized).slice(0, 16)
 }
 ```
 
-**理由**：`reason` 是注释性文字，开发者可能随时修改措辞，如果参与 hash 计算，会导致 subscriptionHash 抖动，触发不必要的全量 snapshot。
+**理由**：`reason` 是注释性文字，开发者可能随时修改措辞；`required` 是本地/服务端能力决策语义，不改变数据范围。如果这些字段参与 hash，会导致 subscriptionHash 抖动，触发不必要的全量 snapshot；同时服务端无法仅凭 `subscribedTopics` 独立复算客户端 hash。
 
 ---
 
@@ -257,16 +267,24 @@ sendMessage(socket, { type: 'FULL_SNAPSHOT', data: snapshotData })
 
 **建议协议约定**：
 
-严格模式（有 `requiredMissingTopics` 时）：
+严格模式（有 `requiredMissingTopics` 时，推荐第一阶段默认）：
 ```
 服务端 → 客户端: SESSION_READY { requiredMissingTopics: ["iam.role.definition"] }
-服务端: 等待，不发送 snapshot
-客户端: 检测到 requiredMissingTopics，进入 DEGRADED 状态
-客户端 → 服务端: SESSION_DEGRADED_ACK { acceptDegradedMode: true }
-服务端: 发送按 acceptedTopics 过滤的 snapshot
+服务端: 不发送 snapshot / changes / chunk
+服务端: 发送 ERROR 或等待客户端主动关闭
+客户端: 检测到 requiredMissingTopics，进入 FAILED 或不可营业状态
 ```
 
-兼容模式（无 `requiredMissingTopics` 时）：
+降级兼容模式（仅灰度或显式允许时）：
+```
+服务端 → 客户端: SESSION_READY { requiredMissingTopics: ["iam.role.definition"], mode: "degraded" }
+服务端: 不立即发送 snapshot
+客户端: 检测到 requiredMissingTopics，进入 DEGRADED 状态
+客户端 → 服务端: SESSION_DEGRADED_ACK { acceptDegradedMode: true }
+服务端: 只发送按 acceptedTopics 过滤的 snapshot
+```
+
+正常模式（无 `requiredMissingTopics` 时）：
 ```
 服务端 → 客户端: SESSION_READY { acceptedTopics: [...], rejectedTopics: [] }
 服务端: 立即发送 snapshot（当前行为，无需等待）
@@ -327,7 +345,7 @@ const validateAllTopics = (topics: string[]): void => {
 
 ### 3.5 低风险：HTTP fallback 的 session-aware 方案
 
-**风险描述**：设计文档第 6.10 节推荐方案 A（session-aware endpoint），但当前代码中 snapshot 和 changes 是在 WS 握手内联返回的。
+**风险描述**：原设计文档第 6.10 节曾偏向方案 A（session-aware endpoint），但当前代码中 snapshot 和 changes 是在 WS 握手内联返回的。本轮一致性复核后，主设计已改为按场景选择：WS 断线走重新握手，WS 在线补页可用 session-aware 或显式订阅，特殊 HTTP/调试场景必须显式携带 subscription。
 
 **代码现状**：
 
@@ -344,8 +362,8 @@ GET /api/v1/tdp/terminals/{terminalId}/changes?cursor={cursor}&limit={limit}
 **建议**：
 
 - 如果是 WS 断线后的补偿，应该重新建立 WS 连接（重新握手），而不是走 HTTP。
-- 如果是特殊场景（如 WS 不可用），HTTP endpoint 应该接受 `subscriptionHash + topics` 参数（方案 B），而不是依赖已失效的 sessionId。
-- **分页补偿场景**（`hasMore = true` 时）：应该使用已有的 HTTP changes 接口，而不是重新握手。这是最合理的设计，避免了 WS 握手的开销。
+- 如果是特殊场景（如 WS 不可用），HTTP endpoint 应该接受 `subscriptionHash + topics` 参数（显式订阅），而不是依赖已失效的 sessionId。
+- **分页补偿场景**（`hasMore = true` 时）：应该使用已有的 HTTP changes 接口，而不是重新握手。请求可以绑定仍有效的 session，也可以显式携带 `subscriptionHash + topics`，但不能回退为全量 terminal changes。
 
 ---
 
@@ -428,20 +446,20 @@ Redux reducer 本身是同步的，在单个 reducer 执行期间不会有其他
 
 **在"终端增加本地防御过滤"之前，建议先做**：
 
-在 `tdp-sync-runtime-v2` 的 handshake 中加入 `capabilities: []`（空数组），让服务端可以识别新客户端，即使 `subscribedTopics` 还没有填充。
+在 `tdp-sync-runtime-v2` 的 handshake 中加入 `capabilities`，让服务端可以识别新客户端。这里不要把 `subscribedTopics` 长期设计成空数组；空订阅只适合作为极短的 bootstrap shim，真正进入 AC-1.2 后必须发送已解析的 `subscribedTopics` 和稳定的 `subscriptionHash`。
 
 ```typescript
 // 第一阶段 handshake 扩展（最小改动）
 interface TdpHandshakeV2 {
   terminalId: string
   lastCursor: number
-  subscribedTopics: string[]  // 暂时为空数组
-  subscriptionHash: string    // 暂时为空字符串
-  capabilities: string[]      // 新增：['topic-subscription-v1']
+  subscribedTopics: string[]  // 来自 tdpTopicInterests resolver 的有效 topicKey 列表
+  subscriptionHash: string    // 基于规范化订阅集合计算
+  capabilities: string[]      // 例如 ['tdp.topic-subscription.v1']
 }
 ```
 
-这样服务端可以提前准备 capability negotiation 逻辑，不影响现有功能。
+如果需要拆批落地，可以先只发送 `capabilities` 来铺服务端 negotiation，但该过渡状态不能进入验收口径；验收口径必须是 handshake 携带真实订阅集合。
 
 **第一阶段可以独立完成的优化**（与订阅改造无关）：
 
@@ -461,9 +479,9 @@ interface TdpHandshakeV2 {
 
 ### 5.4 第三阶段注意
 
-"HTTP fallback session-aware"这一步需要先明确 HTTP fallback 的触发场景（见风险 3.5），再决定实现方案 A 还是方案 B。
+"HTTP fallback session-aware"这一步需要先明确 HTTP fallback 的触发场景（见风险 3.5），不能默认选单一方案。
 
-**建议优先实现**：`hasMore = true` 时的 HTTP 分页拉取（使用已有的 `httpService.ts` 接口），这比 session-aware endpoint 更紧迫，且实现更简单。
+**建议优先实现**：`hasMore = true` 时的 HTTP 分页拉取（使用已有的 `httpService.ts` 接口），这比 session-aware snapshot endpoint 更紧迫，且实现更简单。分页请求必须绑定当前 subscription，可以使用仍有效的 session，也可以显式携带 `subscriptionHash + topics`。
 
 ---
 
@@ -645,9 +663,11 @@ interface TdpProjectionState {
 ```
 
 **关键优势**：
-- 每片消息小，网络中断只丢失当前片，重连后从 `SNAPSHOT_BEGIN` 重新开始（WS 重连后服务端重新发送完整序列，不是断点续传）
+- 每片消息小，网络中断后重连，服务端重新发送完整分片序列，比重传单条巨型消息更可靠；这不是天然断点续传。
 - JS 线程每次只处理 50 条，不阻塞 UI
 - 现有数据在 `SNAPSHOT_END` 前保持可用，用户不会看到空白状态
+
+如果未来要做真正的 chunk 断点续传，需要终端在重连 handshake 中带上 `snapshotId + lastChunkIndex`，且服务端缓存同一次 snapshot 的分片结果。复杂度较高，第一阶段不建议做。
 
 ---
 
@@ -828,9 +848,11 @@ const updateTopicFingerprintIncremental = (
 - `TdpProjectionRepositoryActor`：写入 projection state，然后触发 `recomputeResolvedTopicChanges`
 - `TdpCursorFeedbackActor`：发送 ACK 和 STATE_REPORT 给服务端
 
-**竞态风险**：
+**顺序风险**：
 
 actor 系统中，同一命令的多个 handler 的执行顺序取决于注册顺序和调度策略。cursor ACK 可能在 projection 数据实际写入 Redux state **之前**就发送给服务端。
+
+这个结论需要结合当前 actor runtime 核实：如果 actor 系统保证同一 command 的多个 handler 串行执行，且注册顺序稳定，那么这里不一定存在真实并发竞态。但即便当前实现是串行的，ACK 顺序也不应依赖 actor 注册顺序这种隐式约定；设计上仍应引入显式的 apply completed 事件，把“已接收消息”和“已应用并可推进 cursor”拆开。
 
 ```
 时序 A（正确）：
@@ -1047,7 +1069,7 @@ const toTopicFingerprint = (entries: Record<string, TdpProjectionEnvelope>) =>
         .join('|')
 ```
 
-`revision` 是服务端生成的单调递增序列，同一条数据的 revision 不变则内容不变。这样既避免了 `JSON.stringify` 的性能开销，也消除了属性顺序导致的 fingerprint 抖动。
+`revision` 是服务端生成的单调递增序列。采用该方案的前提是服务端必须保证同一 `topic + scope + itemKey + revision` 的 payload 内容不可变；幂等重放、重试投递或 `IDEMPOTENT_REPLAY` 不能以相同 revision 携带不同 payload。这样既避免了 `JSON.stringify` 的性能开销，也消除了属性顺序导致的 fingerprint 抖动。
 
 **边界情况**：`operation = 'DELETE'` 时 revision 可能为 0 或特殊值，需要确认服务端在删除时是否正确设置 revision。如果不确定，可以用 `${item.itemKey}:${item.revision}:${item.operation}` 作为 fingerprint key，operation 变化（如从 UPSERT 变为 DELETE）也会触发变更通知。
 
@@ -1234,24 +1256,19 @@ KDS assembly 拿到了收银 POS 的激活码
 
 #### 9.4.2 设计原则
 
-1. **一切数据推送以终端 topic interest 为准**  
-   服务端不应该因为 profile/template 推导出一大堆终端没有声明的 topic。终端启动后由已安装包汇总 `topicInterests`，TDP handshake 中上报，服务端按需推送。
+1. **一切 TDP 数据订阅以终端 `tdpTopicInterests` 为准**：服务端不应该因为 profile/template 推导出一大堆终端没有声明的 topic。终端启动 runtime 后由已安装包汇总 `tdpTopicInterests`，并在 TDP handshake 中上报，服务端按需推送。
 
-2. **激活身份必须由服务端授权**  
-   终端不能自己决定“我要成为哪个 profile”。激活码仍然是服务端给出的授权载体，决定这次激活的目标 `profileId/templateId`。
+2. **激活身份必须由服务端授权**：终端不能自己决定“我要成为哪个 profile”。激活码仍然是服务端给出的授权载体，决定这次激活的目标 `profileId/templateId`。
 
-3. **Assembly 只声明自己能支持什么，不声明自己要成为什么**  
-   一个 4-assembly 包可以支持多个 profile，例如同一个 Android POS assembly 同时支持 `cashier-pos` 和 `self-service-pos`。但最终激活成哪个 profile，仍由激活码决定。
+3. **Assembly 只声明自己能支持什么，不声明自己要成为什么**：一个 4-assembly 包可以支持多个 profile，例如同一个 Android POS assembly 同时支持 `cashier-pos` 和 `self-service-pos`。但最终激活成哪个 profile，仍由激活码决定。
 
-4. **激活时做交集校验**  
-   服务端用激活码上的目标 profile/template，与终端上报的 assembly 能力声明做兼容性检查。不匹配则拒绝激活。
+4. **激活时做交集校验**：服务端用激活码上的目标 profile/template，与终端上报的 assembly 能力声明做兼容性检查。不匹配则拒绝激活。
 
-5. **暂不引入 effective runtime config**  
-   本阶段不需要让服务端基于 profile/template 计算终端最终运行配置。profile/template 只作为激活角色和能力边界，数据同步仍以终端声明的 topic interest 为准。
+5. **暂不引入 effective runtime config**：本阶段不需要让服务端基于 profile/template 计算终端最终运行配置。profile/template 只作为激活角色和能力边界，数据同步仍以终端声明的 topic interest 为准。
 
 #### 9.4.3 终端侧 Assembly 能力声明
 
-建议每个 4-assembly 包提供一个稳定的能力 manifest，作为 TCP 激活请求和 TDP topic interest 汇总的输入之一。
+建议每个 4-assembly 包提供一个稳定的能力 manifest，作为 TCP 激活请求的 `clientRuntime` 输入。它只表达“这个 assembly 能支持哪些终端角色和基础能力”，不表达 TDP 订阅集合。
 
 ```typescript
 interface TerminalAssemblyCapabilityManifestV1 {
@@ -1274,10 +1291,6 @@ interface TerminalAssemblyCapabilityManifestV1 {
   // 可选：如果某些 template 与 assembly 强绑定，可声明允许的 template code。
   // 第一阶段建议不强制使用，避免把部署模板和工程包耦合太死。
   supportedTemplateCodes?: string[]
-
-  // 当前 assembly / 已安装业务包声明的 topic interest。
-  // 这是 TDP 按需订阅的输入，不能替代 profile 校验。
-  supportedTopicKeys?: string[]
 }
 ```
 
@@ -1294,13 +1307,38 @@ const kdsAssemblyCapability: TerminalAssemblyCapabilityManifestV1 = {
     'production-task-view',
     'production-status-update',
   ],
-  supportedTopicKeys: [
-    'org.store.profile',
-    'org.workstation.profile',
-    'catering.production.work-unit',
-  ],
 }
 ```
+
+TDP topic interest 由 runtime module manifest 单独声明：
+
+```typescript
+interface TdpTopicInterestDeclarationV1 {
+  topicKey: string
+  category?: 'projection' | 'command' | 'system'
+  required?: boolean
+  reason?: string
+}
+
+interface KernelRuntimeModuleV2 {
+  tdpTopicInterests?: readonly TdpTopicInterestDeclarationV1[]
+}
+```
+
+启动时的关系是：
+
+```
+4-assembly capability manifest
+  -> TCP activation clientRuntime
+  -> profile/template 兼容性校验
+
+runtime module descriptors
+  -> TDP subscription resolver
+  -> TDP HANDSHAKE subscribedTopics/subscriptionHash
+  -> 服务端按需过滤
+```
+
+如果未来希望在 activation audit 中记录该 assembly 理论上会安装哪些 topic，可以作为诊断快照写入审计表，但不能作为激活阶段的订阅依据，也不能替代 TDP handshake。
 
 #### 9.4.4 TCP 激活协议扩展
 
@@ -1323,7 +1361,6 @@ interface ActivateTerminalApiRequestV2 {
     supportedProfileCodes: string[]
     supportedCapabilities?: string[]
     supportedTemplateCodes?: string[]
-    supportedTopicKeys?: string[]
   }
 }
 ```
@@ -1480,14 +1517,15 @@ TDP handshake:
 #### AC-1.1：manifest 声明 topic interest
 
 **功能验收**：
-- [ ] `KernelRuntimeModuleV2` 类型中包含 `topicInterests?: TdpTopicInterestDeclarationV1[]` 字段
-- [ ] `TdpTopicInterestDeclarationV1` 包含 `topicKey`、`required`、`reason?` 字段
-- [ ] `reason` 字段不参与 `subscriptionHash` 计算（修改 reason 不改变 hash）
+- [ ] `KernelRuntimeModuleV2` 类型中包含 `tdpTopicInterests?: TdpTopicInterestDeclarationV1[]` 字段
+- [ ] `TdpTopicInterestDeclarationV1` 包含 `topicKey`、`required?`、`reason?` 字段
+- [ ] `required` 未声明时按 `false` 规范化
+- [ ] `reason` / `required` 字段不参与 `subscriptionHash` 计算（修改 reason 或 required 不改变 hash；hash 只绑定 topic key 集合）
 - [ ] runtime-shell 能正确汇总所有已安装模块的 topic interest
 - [ ] 汇总结果去重，相同 topicKey 的多个声明合并（required 取 OR）
 
 **兼容验收**：
-- [ ] 没有声明 `topicInterests` 的老模块，runtime 不报错，视为空声明
+- [ ] 没有声明 `tdpTopicInterests` 的老模块，runtime 不报错，视为空声明
 
 ---
 
@@ -1496,7 +1534,7 @@ TDP handshake:
 **功能验收**：
 - [ ] `HANDSHAKE` 消息包含 `subscribedTopics: string[]`（已汇总的 topic key 列表）
 - [ ] `HANDSHAKE` 消息包含 `subscriptionHash: string`（基于 sorted topic keys 的 hash）
-- [ ] `HANDSHAKE` 消息包含 `capabilities: ['topic-subscription-v1']`
+- [ ] `HANDSHAKE` 消息包含 `capabilities: ['tdp.topic-subscription.v1']`
 - [ ] subscriptionHash 计算稳定：相同 topic 集合，多次计算结果相同
 - [ ] subscriptionHash 计算不受 topic 声明顺序影响（排序后计算）
 
@@ -1697,9 +1735,14 @@ change_log：
 - [ ] `requiredMissingTopics` 包含 `required = true` 但服务端无法提供的 topic
 
 **严格模式验收**（有 `requiredMissingTopics` 时）：
-- [ ] 服务端在 `SESSION_READY` 中返回 `requiredMissingTopics` 时，不立即发送 snapshot
-- [ ] 终端收到 `requiredMissingTopics` 时，进入 `DEGRADED` 状态
-- [ ] 终端在 `DEGRADED` 状态下，业务包收到降级通知
+- [ ] 服务端在 `SESSION_READY` 中返回 `requiredMissingTopics` 时，不发送 snapshot/chunk/changes
+- [ ] 服务端发送 `ERROR` 并关闭，或等待终端关闭；不能继续投递数据
+- [ ] 终端收到 `requiredMissingTopics` 时，进入 FAILED 或不可营业状态
+
+**降级兼容模式验收**（仅灰度或显式允许时）：
+- [ ] 终端收到 degraded `SESSION_READY` 时进入 `DEGRADED` 状态
+- [ ] 只有终端发送 `SESSION_DEGRADED_ACK { acceptDegradedMode: true }` 后，服务端才按 `acceptedTopics` 投递数据
+- [ ] 业务包收到降级通知，且不能读取缺失 required topic 的业务视图
 
 ---
 
@@ -1842,7 +1885,8 @@ change_log：
 
 #### AC-SYS-5：Assembly 与 TerminalProfile/Template 激活兼容性
 
-- [ ] 每个 4-assembly 包提供稳定的 capability manifest，包含 `assemblyId`、`supportedProfileCodes`、`supportedCapabilities?`、`supportedTopicKeys?`
+- [ ] 每个 4-assembly 包提供稳定的 capability manifest，包含 `assemblyId`、`supportedProfileCodes`、`supportedCapabilities?`
+- [ ] capability manifest 不包含 TDP 订阅字段；TDP 订阅只来自 module manifest 的 `tdpTopicInterests`
 - [ ] TCP 激活请求可携带 `clientRuntime`
 - [ ] 服务端激活时读取激活码绑定的 `profileId/templateId`，并解析对应 `profileCode/templateCode`
 - [ ] 新终端传入 `clientRuntime` 时，服务端校验 `profileCode in supportedProfileCodes`

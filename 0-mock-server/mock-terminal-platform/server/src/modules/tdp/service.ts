@@ -1,10 +1,34 @@
 import { and, desc, eq, inArray } from 'drizzle-orm'
 import { db, sqlite } from '../../database/index.js'
-import { changeLogsTable, commandOutboxTable, projectionSourceEventsTable, projectionsTable, sessionsTable, taskInstancesTable, terminalsTable, topicsTable } from '../../database/schema.js'
+import {
+  changeLogsTable,
+  commandOutboxTable,
+  projectionSourceEventsTable,
+  projectionsTable,
+  sessionsTable,
+  taskInstancesTable,
+  terminalCursorsTable,
+  terminalProjectionAccessTable,
+  terminalsTable,
+  topicsTable,
+} from '../../database/schema.js'
 import { createId, now, parseJson } from '../../shared/utils.js'
 import { assertSandboxUsable } from '../sandbox/service.js'
 import { forceCloseOnlineSession, getOnlineSessionById, listOnlineMasterSessionsByTerminalId, listOnlineSessionsByTerminalId } from './wsSessionRegistry.js'
 import type { TdpProjectionEnvelope, TdpServerMessage } from './wsProtocol.js'
+
+export interface TdpServerSubscriptionFilter {
+  mode: 'explicit' | 'legacy-all'
+  acceptedTopics?: readonly string[]
+}
+
+export interface TdpTerminalChangesPage {
+  changes: Array<{
+    cursor: number
+    change: TdpProjectionEnvelope
+  }>
+  hasMore: boolean
+}
 
 const toIsoTime = (timestamp: number) => new Date(timestamp).toISOString()
 
@@ -37,6 +61,254 @@ const ALLOWLIST_CLASSIFICATION_KEYS = [
 
 const TERMINAL_ALLOWED_POLICIES = new Set(['TERMINAL_DIRECT', 'TERMINAL_DERIVED'])
 
+const shouldFilterBySubscriptionTopics = (subscription?: TdpServerSubscriptionFilter) =>
+  subscription?.mode === 'explicit'
+
+const normalizeSubscriptionTopics = (subscription?: TdpServerSubscriptionFilter) =>
+  Array.from(new Set(subscription?.acceptedTopics ?? [])).filter(topic => topic.trim().length > 0).sort()
+
+const buildTopicFilterSql = (
+  subscription?: TdpServerSubscriptionFilter,
+  columnName = 'topic_key',
+) => {
+  if (!shouldFilterBySubscriptionTopics(subscription)) {
+    return {
+      clause: '',
+      params: [] as string[],
+      empty: false,
+    }
+  }
+  const topics = normalizeSubscriptionTopics(subscription)
+  if (topics.length === 0) {
+    return {
+      clause: '',
+      params: [] as string[],
+      empty: true,
+    }
+  }
+  return {
+    clause: ` AND ${columnName} IN (${topics.map(() => '?').join(', ')})`,
+    params: topics,
+    empty: false,
+  }
+}
+
+const acceptsTopicForSubscription = (
+  subscription: TdpServerSubscriptionFilter | undefined,
+  topic: string,
+) => {
+  if (!shouldFilterBySubscriptionTopics(subscription)) {
+    return true
+  }
+  return normalizeSubscriptionTopics(subscription).includes(topic)
+}
+
+const CHANGE_LOG_RETAIN_RECENT_CURSORS = 10_000
+
+const getCurrentCursorForTerminal = (sandboxId: string, terminalId: string) => {
+  const row = sqlite.prepare(`
+    SELECT high_watermark
+    FROM tdp_terminal_cursors
+    WHERE sandbox_id = ? AND target_terminal_id = ?
+    LIMIT 1
+  `).get(sandboxId, terminalId) as { high_watermark: number } | undefined
+  if (row) {
+    return row.high_watermark
+  }
+  const legacyRow = sqlite.prepare(`
+    SELECT COALESCE(MAX(cursor), 0) as high_watermark
+    FROM tdp_change_logs
+    WHERE sandbox_id = ? AND target_terminal_id = ?
+  `).get(sandboxId, terminalId) as { high_watermark: number } | undefined
+  return legacyRow?.high_watermark ?? 0
+}
+
+const preallocateCursorsByTerminal = (
+  sandboxId: string,
+  terminalCounts: Map<string, number>,
+  timestamp: number,
+) => {
+  const allocated = new Map<string, number[]>()
+  if (terminalCounts.size === 0) {
+    return allocated
+  }
+  const upsertCursor = sqlite.prepare(`
+    INSERT INTO tdp_terminal_cursors (
+      cursor_id,
+      sandbox_id,
+      target_terminal_id,
+      high_watermark,
+      updated_at
+    )
+    VALUES (?, ?, ?, ?, ?)
+    ON CONFLICT(sandbox_id, target_terminal_id)
+    DO UPDATE SET
+      high_watermark = excluded.high_watermark,
+      updated_at = excluded.updated_at
+  `)
+
+  terminalCounts.forEach((count, terminalId) => {
+    if (count <= 0) {
+      return
+    }
+    const start = getCurrentCursorForTerminal(sandboxId, terminalId) + 1
+    const cursors = Array.from({ length: count }, (_item, index) => start + index)
+    allocated.set(terminalId, cursors)
+    upsertCursor.run(
+      createId('cursor'),
+      sandboxId,
+      terminalId,
+      start + count - 1,
+      timestamp,
+    )
+  })
+
+  return allocated
+}
+
+const takePreallocatedCursor = (
+  allocated: Map<string, number[]>,
+  terminalId: string,
+) => {
+  const cursors = allocated.get(terminalId)
+  const cursor = cursors?.shift()
+  if (cursor == null) {
+    throw new Error(`TDP_CURSOR_PREALLOCATION_EXHAUSTED:${terminalId}`)
+  }
+  return cursor
+}
+
+const upsertTerminalProjectionAccess = (input: {
+  sandboxId: string
+  targetTerminalId: string
+  topicKey: string
+  operation: 'upsert' | 'delete'
+  scopeType: string
+  scopeKey: string
+  itemKey: string
+  revision: number
+  payloadJson: string
+  sourceReleaseId?: string | null
+  occurredAt?: number | null
+  scopeMetadataJson?: string | null
+  cursor: number
+  timestamp: number
+}) => {
+  sqlite.prepare(`
+    INSERT INTO tdp_terminal_projection_access (
+      access_id,
+      sandbox_id,
+      target_terminal_id,
+      topic_key,
+      operation,
+      scope_type,
+      scope_key,
+      item_key,
+      revision,
+      payload_json,
+      source_release_id,
+      occurred_at,
+      scope_metadata_json,
+      last_cursor,
+      updated_at
+    )
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ON CONFLICT(sandbox_id, target_terminal_id, topic_key, scope_type, scope_key, item_key)
+    DO UPDATE SET
+      operation = excluded.operation,
+      revision = excluded.revision,
+      payload_json = excluded.payload_json,
+      source_release_id = excluded.source_release_id,
+      occurred_at = excluded.occurred_at,
+      scope_metadata_json = excluded.scope_metadata_json,
+      last_cursor = excluded.last_cursor,
+      updated_at = excluded.updated_at
+  `).run(
+    createId('access'),
+    input.sandboxId,
+    input.targetTerminalId,
+    input.topicKey,
+    input.operation,
+    input.scopeType,
+    input.scopeKey,
+    input.itemKey,
+    input.revision,
+    input.payloadJson,
+    input.sourceReleaseId ?? null,
+    input.occurredAt ?? null,
+    input.scopeMetadataJson ?? null,
+    input.cursor,
+    input.timestamp,
+  )
+}
+
+export const pruneTdpChangeLogs = (
+  sandboxId: string,
+  retainRecentCursors = CHANGE_LOG_RETAIN_RECENT_CURSORS,
+) => {
+  assertSandboxUsable(sandboxId)
+  const retain = Math.max(1, Math.trunc(retainRecentCursors))
+  const result = sqlite.prepare(`
+    DELETE FROM tdp_change_logs
+    WHERE sandbox_id = ?
+      AND change_id IN (
+        SELECT change_id
+        FROM (
+          SELECT
+            change_id,
+            ROW_NUMBER() OVER (
+              PARTITION BY sandbox_id, target_terminal_id
+              ORDER BY cursor DESC, created_at DESC, change_id DESC
+            ) AS retained_rank
+          FROM tdp_change_logs
+          WHERE sandbox_id = ?
+        )
+        WHERE retained_rank > ?
+      )
+  `).run(sandboxId, sandboxId, retain)
+  return {
+    sandboxId,
+    retainRecentCursors: retain,
+    deleted: result.changes,
+  }
+}
+
+export const getOldestRetainedCursorForTerminal = (
+  sandboxId: string,
+  terminalId: string,
+  subscription?: TdpServerSubscriptionFilter,
+) => {
+  assertSandboxUsable(sandboxId)
+  const topicFilter = buildTopicFilterSql(subscription)
+  if (topicFilter.empty) {
+    return undefined
+  }
+  const row = sqlite.prepare(
+    `SELECT MIN(cursor) as oldest_cursor FROM tdp_change_logs WHERE sandbox_id = ? AND target_terminal_id = ?${topicFilter.clause}`
+  ).get(sandboxId, terminalId, ...topicFilter.params) as { oldest_cursor: number | null } | undefined
+  return row?.oldest_cursor ?? undefined
+}
+
+export const isTerminalCursorStale = (
+  sandboxId: string,
+  terminalId: string,
+  cursor: number,
+  subscription?: TdpServerSubscriptionFilter,
+) => {
+  if (cursor <= 0) {
+    return true
+  }
+  const highWatermark = getHighWatermarkForTerminal(sandboxId, terminalId, subscription)
+  if (cursor >= highWatermark) {
+    return false
+  }
+  const oldestCursor = getOldestRetainedCursorForTerminal(sandboxId, terminalId, subscription)
+  if (oldestCursor == null) {
+    return highWatermark > cursor
+  }
+  return cursor < oldestCursor
+}
+
 const assertProjectionPayloadAllowedForTdp = (payload: Record<string, unknown>) => {
   for (const key of ALLOWLIST_CLASSIFICATION_KEYS) {
     if (key in payload) {
@@ -63,12 +335,62 @@ const assertProjectionPayloadAllowedForTdp = (payload: Record<string, unknown>) 
 }
 
 const getNextCursorForTerminal = (sandboxId: string, terminalId: string) => {
-  const row = sqlite.prepare(`
-    SELECT COALESCE(MAX(cursor), 0) as high_watermark
-    FROM tdp_change_logs
-    WHERE sandbox_id = ? AND target_terminal_id = ?
-  `).get(sandboxId, terminalId) as { high_watermark: number } | undefined
-  return (row?.high_watermark ?? 0) + 1
+  const timestamp = now()
+  return takePreallocatedCursor(
+    preallocateCursorsByTerminal(sandboxId, new Map([[terminalId, 1]]), timestamp),
+    terminalId,
+  )
+}
+
+const recordTerminalChange = (input: {
+  sandboxId: string
+  terminalId: string
+  cursor: number
+  topicKey: string
+  operation: 'upsert' | 'delete'
+  scopeType: string
+  scopeKey: string
+  itemKey: string
+  revision: number
+  payloadJson: string
+  sourceReleaseId?: string | null
+  occurredAt?: number | null
+  scopeMetadataJson?: string | null
+  timestamp: number
+}) => {
+  db.insert(changeLogsTable).values({
+    changeId: createId('change'),
+    sandboxId: input.sandboxId,
+    cursor: input.cursor,
+    topicKey: input.topicKey,
+    operation: input.operation,
+    scopeType: input.scopeType,
+    scopeKey: input.scopeKey,
+    itemKey: input.itemKey,
+    targetTerminalId: input.terminalId,
+    revision: input.revision,
+    payloadJson: input.payloadJson,
+    sourceReleaseId: input.sourceReleaseId ?? null,
+    occurredAt: input.occurredAt ?? null,
+    scopeMetadataJson: input.scopeMetadataJson ?? null,
+    createdAt: input.timestamp,
+  }).run()
+  upsertTerminalProjectionAccess({
+    sandboxId: input.sandboxId,
+    targetTerminalId: input.terminalId,
+    topicKey: input.topicKey,
+    operation: input.operation,
+    scopeType: input.scopeType,
+    scopeKey: input.scopeKey,
+    itemKey: input.itemKey,
+    revision: input.revision,
+    payloadJson: input.payloadJson,
+    sourceReleaseId: input.sourceReleaseId ?? null,
+    occurredAt: input.occurredAt ?? null,
+    scopeMetadataJson: input.scopeMetadataJson ?? null,
+    cursor: input.cursor,
+    timestamp: input.timestamp,
+  })
 }
 
 const buildItemKey = (input: {
@@ -184,6 +506,7 @@ const pushToOnlineTerminal = (sandboxId: string, terminalId: string, message: Td
 }
 
 const BATCH_WINDOW_MS = 120
+const MAX_INFLIGHT_BATCHES_PER_SESSION = 3
 
 const queueProjectionChangeToOnlineTerminal = (terminalId: string, input: {
   sandboxId: string
@@ -191,14 +514,18 @@ const queueProjectionChangeToOnlineTerminal = (terminalId: string, input: {
   cursor: number
 }) => {
   const sessions = listOnlineSessionsByTerminalId(input.sandboxId, terminalId)
-  for (const session of sessions) {
+  const acceptingSessions = sessions.filter(session => acceptsTopicForSubscription({
+    mode: session.subscriptionMode,
+    acceptedTopics: session.acceptedTopics,
+  }, input.change.topic))
+  for (const session of acceptingSessions) {
     session.lastDeliveredRevision = input.cursor
     db.update(sessionsTable)
       .set({ lastDeliveredRevision: input.cursor })
       .where(eq(sessionsTable.sessionId, session.sessionId))
       .run()
   }
-  for (const session of sessions) {
+  for (const session of acceptingSessions) {
     if (session.socket.readyState !== 1) continue
     const queue = session.batchQueue ?? []
     queue.push(input.change)
@@ -211,8 +538,13 @@ const flushProjectionQueueToOnlineTerminal = (sandboxId: string, terminalId: str
   for (const session of sessions) {
     if (session.socket.readyState !== 1) continue
     const batch = session.batchQueue ?? []
-    session.batchQueue = []
     if (batch.length === 0) continue
+    if ((session.inflightBatchCount ?? 0) >= MAX_INFLIGHT_BATCHES_PER_SESSION) {
+      session.deferredBatchFlush = true
+      continue
+    }
+    session.batchQueue = []
+    session.deferredBatchFlush = false
     if (session.batchTimer) {
       clearTimeout(session.batchTimer)
       session.batchTimer = undefined
@@ -229,15 +561,49 @@ const flushProjectionQueueToOnlineTerminal = (sandboxId: string, terminalId: str
       } satisfies TdpServerMessage))
       continue
     }
+    const batchId = createId('batch')
+    session.inflightBatchCount = (session.inflightBatchCount ?? 0) + 1
     session.socket.send(JSON.stringify({
       type: 'PROJECTION_BATCH',
-      eventId: createId('batch'),
+      eventId: batchId,
       timestamp: now(),
       data: {
+        batchId,
         changes: batch,
         nextCursor: session.lastDeliveredRevision ?? 0,
       },
     } satisfies TdpServerMessage))
+  }
+}
+
+export const acknowledgeProjectionBatchForSession = (input: {
+  sandboxId: string
+  sessionId: string
+  nextCursor: number
+  batchId?: string
+  processingLagMs?: number
+  subscriptionHash?: string
+}) => {
+  assertSandboxUsable(input.sandboxId)
+  const session = getOnlineSessionById(input.sessionId)
+  if (!session) {
+    throw new Error('目标 session 当前不在线')
+  }
+  session.inflightBatchCount = Math.max(0, (session.inflightBatchCount ?? 0) - 1)
+  const timestamp = now()
+  db.update(sessionsTable)
+    .set({ lastAckedRevision: input.nextCursor, lastAppliedRevision: input.nextCursor, lastHeartbeatAt: timestamp })
+    .where(and(eq(sessionsTable.sessionId, input.sessionId), eq(sessionsTable.sandboxId, input.sandboxId)))
+    .run()
+  if (session.deferredBatchFlush) {
+    session.deferredBatchFlush = false
+    flushProjectionQueueToOnlineTerminal(session.sandboxId, session.terminalId)
+  }
+  return {
+    sessionId: input.sessionId,
+    nextCursor: input.nextCursor,
+    batchId: input.batchId,
+    inflightBatchCount: session.inflightBatchCount,
   }
 }
 
@@ -288,11 +654,28 @@ export const listSessions = (sandboxId: string) => {
   assertSandboxUsable(sandboxId)
   const rows = db.select().from(sessionsTable).where(eq(sessionsTable.sandboxId, sandboxId)).orderBy(desc(sessionsTable.connectedAt)).all()
   return rows.map((item) => {
-    const highWatermark = getHighWatermarkForTerminal(sandboxId, item.terminalId)
     const lastAckedRevision = item.lastAckedRevision ?? 0
     const lastAppliedRevision = item.lastAppliedRevision ?? 0
+    const subscriptionMode = item.subscriptionMode ?? undefined
+    const acceptedTopics = parseJson<string[]>(item.acceptedTopicsJson, [])
+    const highWatermark = getHighWatermarkForTerminal(sandboxId, item.terminalId, subscriptionMode === 'explicit'
+      ? {
+        mode: 'explicit',
+        acceptedTopics,
+      }
+      : undefined)
     return {
       ...item,
+      subscription: subscriptionMode
+        ? {
+          mode: subscriptionMode,
+          hash: item.subscriptionHash ?? undefined,
+          subscribedTopics: parseJson<string[]>(item.subscribedTopicsJson, []),
+          acceptedTopics,
+          rejectedTopics: parseJson<string[]>(item.rejectedTopicsJson, []),
+          requiredMissingTopics: parseJson<string[]>(item.requiredMissingTopicsJson, []),
+        }
+        : undefined,
       highWatermark,
       ackLag: Math.max(0, highWatermark - lastAckedRevision),
       applyLag: Math.max(0, highWatermark - lastAppliedRevision),
@@ -310,6 +693,12 @@ export const connectSession = (input: {
   displayCount?: number | null
   instanceMode?: 'MASTER' | 'SLAVE' | null
   displayMode?: 'PRIMARY' | 'SECONDARY' | null
+  subscriptionMode?: 'explicit' | 'legacy-all'
+  subscriptionHash?: string
+  subscribedTopics?: readonly string[]
+  acceptedTopics?: readonly string[]
+  rejectedTopics?: readonly string[]
+  requiredMissingTopics?: readonly string[]
 }) => {
   const sandboxId = input.sandboxId
   assertSandboxUsable(sandboxId)
@@ -333,6 +722,12 @@ export const connectSession = (input: {
     lastDeliveredRevision: null,
     lastAckedRevision: null,
     lastAppliedRevision: null,
+    subscriptionMode: input.subscriptionMode ?? null,
+    subscriptionHash: input.subscriptionHash ?? null,
+    subscribedTopicsJson: input.subscribedTopics ? JSON.stringify([...input.subscribedTopics]) : null,
+    acceptedTopicsJson: input.acceptedTopics ? JSON.stringify([...input.acceptedTopics]) : null,
+    rejectedTopicsJson: input.rejectedTopics ? JSON.stringify([...input.rejectedTopics]) : null,
+    requiredMissingTopicsJson: input.requiredMissingTopics ? JSON.stringify([...input.requiredMissingTopics]) : null,
   }).run()
   db.update(terminalsTable)
     .set({ presenceStatus: 'ONLINE', healthStatus: 'HEALTHY', lastSeenAt: timestamp, updatedAt: timestamp })
@@ -540,8 +935,7 @@ export const dispatchTaskReleaseToDataPlane = (input: { sandboxId: string; relea
       }).run()
     }
 
-    db.insert(changeLogsTable).values({
-      changeId: createId('change'),
+    recordTerminalChange({
       sandboxId,
       cursor,
       topicKey: 'tcp.task.release',
@@ -549,12 +943,12 @@ export const dispatchTaskReleaseToDataPlane = (input: { sandboxId: string; relea
       scopeType: 'TERMINAL',
       scopeKey: instance.terminal_id,
       itemKey: instance.instance_id,
-      targetTerminalId: instance.terminal_id,
+      terminalId: instance.terminal_id,
       revision,
       payloadJson: snapshotPayload,
       sourceReleaseId: releaseId,
-      createdAt: timestamp,
-    }).run()
+      timestamp,
+    })
     pushProjectionChangeToOnlineTerminal(instance.terminal_id, {
       sandboxId,
       cursor,
@@ -623,7 +1017,13 @@ const dispatchRemoteControlRelease = (sandboxId: string, releaseId: string) => {
     const sessions = commandType === 'UPLOAD_TERMINAL_LOGS'
       ? listOnlineMasterSessionsByTerminalId(sandboxId, instance.terminal_id)
       : listOnlineSessionsByTerminalId(sandboxId, instance.terminal_id)
-    for (const session of sessions) {
+    const deliverableSessions = sessions.filter(session => acceptsTopicForSubscription({
+      mode: session.subscriptionMode,
+      acceptedTopics: session.acceptedTopics,
+    }, topicKey))
+    const delivered = deliverableSessions.length > 0
+
+    for (const session of deliverableSessions) {
       session.socket.send(JSON.stringify({
         type: 'COMMAND_DELIVERED',
         eventId: createId('evt'),
@@ -640,8 +1040,21 @@ const dispatchRemoteControlRelease = (sandboxId: string, releaseId: string) => {
       session.lastDeliveredRevision = session.lastDeliveredRevision ?? 0
     }
 
+    db.update(commandOutboxTable)
+      .set({
+        status: delivered ? 'DELIVERED' : 'PENDING',
+        deliveredAt: delivered ? timestamp : null,
+        updatedAt: timestamp,
+      })
+      .where(eq(commandOutboxTable.commandId, commandId))
+      .run()
+
     db.update(taskInstancesTable)
-      .set({ deliveryStatus: 'DELIVERED', deliveredAt: timestamp, updatedAt: timestamp })
+      .set({
+        deliveryStatus: delivered ? 'DELIVERED' : 'PENDING',
+        deliveredAt: delivered ? timestamp : null,
+        updatedAt: timestamp,
+      })
       .where(eq(taskInstancesTable.instanceId, instance.instance_id))
       .run()
   }
@@ -649,18 +1062,31 @@ const dispatchRemoteControlRelease = (sandboxId: string, releaseId: string) => {
   return { totalInstances: instances.length }
 }
 
-export const getTerminalSnapshot = (sandboxId: string, terminalId: string) => {
-  return getTerminalSnapshotEnvelope(sandboxId, terminalId)
+export const getTerminalSnapshot = (
+  sandboxId: string,
+  terminalId: string,
+  subscription?: TdpServerSubscriptionFilter,
+) => {
+  return getTerminalSnapshotEnvelope(sandboxId, terminalId, subscription)
 }
 
-export const getTerminalSnapshotEnvelope = (sandboxId: string, terminalId: string) => {
+export const getTerminalSnapshotEnvelope = (
+  sandboxId: string,
+  terminalId: string,
+  subscription?: TdpServerSubscriptionFilter,
+) => {
   assertSandboxUsable(sandboxId)
+  const topicFilter = buildTopicFilterSql(subscription)
+  if (topicFilter.empty) {
+    return []
+  }
   const rows = sqlite.prepare(
-    'SELECT DISTINCT p.topic_key, p.scope_key, p.scope_type, p.item_key, p.revision, p.payload_json, p.updated_at, c.source_release_id, c.occurred_at, c.scope_metadata_json FROM tdp_projections p JOIN tdp_change_logs c ON c.sandbox_id = p.sandbox_id AND c.topic_key = p.topic_key AND c.scope_type = p.scope_type AND c.scope_key = p.scope_key AND c.item_key = p.item_key AND c.revision = p.revision WHERE p.sandbox_id = ? AND c.target_terminal_id = ? ORDER BY p.updated_at DESC'
-  ).all(sandboxId, terminalId) as Array<{ topic_key: string; scope_key: string; scope_type: string; item_key: string; revision: number; payload_json: string; updated_at: number; source_release_id: string | null; occurred_at: number | null; scope_metadata_json: string | null }>
+    `SELECT topic_key, scope_key, scope_type, item_key, operation, revision, payload_json, updated_at, source_release_id, occurred_at, scope_metadata_json FROM tdp_terminal_projection_access WHERE sandbox_id = ? AND target_terminal_id = ? AND operation != 'delete'${topicFilter.clause} ORDER BY updated_at DESC`
+  ).all(sandboxId, terminalId, ...topicFilter.params) as Array<{ topic_key: string; scope_key: string; scope_type: string; item_key: string; operation: 'upsert' | 'delete'; revision: number; payload_json: string; updated_at: number; source_release_id: string | null; occurred_at: number | null; scope_metadata_json: string | null }>
 
   return rows.map((item) => toProjectionEnvelope({
     topicKey: item.topic_key,
+    operation: item.operation,
     scopeKey: item.scope_key,
     itemKey: item.item_key,
     scopeType: item.scope_type,
@@ -694,35 +1120,59 @@ export const getTerminalChanges = (sandboxId: string, terminalId: string) => {
   }))
 }
 
-export const getTerminalChangesSince = (sandboxId: string, terminalId: string, cursor: number, limit = 100) => {
+export const getTerminalChangesSince = (
+  sandboxId: string,
+  terminalId: string,
+  cursor: number,
+  limit = 100,
+  subscription?: TdpServerSubscriptionFilter,
+): TdpTerminalChangesPage => {
   assertSandboxUsable(sandboxId)
+  const topicFilter = buildTopicFilterSql(subscription)
+  if (topicFilter.empty) {
+    return {
+      changes: [],
+      hasMore: false,
+    }
+  }
   const rows = sqlite.prepare(
-    'SELECT change_id, cursor, topic_key, operation, scope_type, scope_key, item_key, revision, payload_json, source_release_id, occurred_at, scope_metadata_json, created_at FROM tdp_change_logs WHERE sandbox_id = ? AND target_terminal_id = ? AND cursor > ? ORDER BY cursor ASC LIMIT ?'
-  ).all(sandboxId, terminalId, cursor, limit) as Array<{ change_id: string; cursor: number; topic_key: string; operation: "upsert" | "delete"; scope_type: string; scope_key: string; item_key: string; revision: number; payload_json: string; source_release_id: string | null; occurred_at: number | null; scope_metadata_json: string | null; created_at: number }>
+    `SELECT change_id, cursor, topic_key, operation, scope_type, scope_key, item_key, revision, payload_json, source_release_id, occurred_at, scope_metadata_json, created_at FROM tdp_change_logs WHERE sandbox_id = ? AND target_terminal_id = ? AND cursor > ?${topicFilter.clause} ORDER BY cursor ASC LIMIT ?`
+  ).all(sandboxId, terminalId, cursor, ...topicFilter.params, limit + 1) as Array<{ change_id: string; cursor: number; topic_key: string; operation: "upsert" | "delete"; scope_type: string; scope_key: string; item_key: string; revision: number; payload_json: string; source_release_id: string | null; occurred_at: number | null; scope_metadata_json: string | null; created_at: number }>
 
-  return rows.map((item) => ({
-    cursor: item.cursor,
-    change: toProjectionEnvelope({
-      topicKey: item.topic_key,
-      operation: item.operation,
-      scopeType: item.scope_type,
-      scopeKey: item.scope_key,
-      itemKey: item.item_key,
-      revision: item.revision,
-      payloadJson: item.payload_json,
-      createdAt: item.created_at,
-      occurredAt: item.occurred_at ?? undefined,
-      sourceReleaseId: item.source_release_id,
-      scopeMetadata: parseJson(item.scope_metadata_json, null),
-    }),
-  }))
+  return {
+    changes: rows.slice(0, limit).map((item) => ({
+      cursor: item.cursor,
+      change: toProjectionEnvelope({
+        topicKey: item.topic_key,
+        operation: item.operation,
+        scopeType: item.scope_type,
+        scopeKey: item.scope_key,
+        itemKey: item.item_key,
+        revision: item.revision,
+        payloadJson: item.payload_json,
+        createdAt: item.created_at,
+        occurredAt: item.occurred_at ?? undefined,
+        sourceReleaseId: item.source_release_id,
+        scopeMetadata: parseJson(item.scope_metadata_json, null),
+      }),
+    })),
+    hasMore: rows.length > limit,
+  }
 }
 
-export const getHighWatermarkForTerminal = (sandboxId: string, terminalId: string) => {
+export const getHighWatermarkForTerminal = (
+  sandboxId: string,
+  terminalId: string,
+  subscription?: TdpServerSubscriptionFilter,
+) => {
   assertSandboxUsable(sandboxId)
+  const topicFilter = buildTopicFilterSql(subscription)
+  if (topicFilter.empty) {
+    return 0
+  }
   const row = sqlite.prepare(
-    'SELECT COALESCE(MAX(cursor), 0) as high_watermark FROM tdp_change_logs WHERE sandbox_id = ? AND target_terminal_id = ?'
-  ).get(sandboxId, terminalId) as { high_watermark: number } | undefined
+    `SELECT COALESCE(MAX(last_cursor), 0) as high_watermark FROM tdp_terminal_projection_access WHERE sandbox_id = ? AND target_terminal_id = ?${topicFilter.clause}`
+  ).get(sandboxId, terminalId, ...topicFilter.params) as { high_watermark: number } | undefined
   return row?.high_watermark ?? 0
 }
 
@@ -820,6 +1270,20 @@ export const upsertProjectionBatch = (input: {
   assertSandboxUsable(sandboxId)
   const timestamp = now()
   const queuedByTerminal = new Map<string, Array<{cursor: number; change: TdpProjectionEnvelope}>>()
+  const acceptedItems: Array<{
+    item: typeof input.projections[number]
+    operation: 'upsert' | 'delete'
+    scopeType: string
+    scopeKey: string
+    itemKey: string
+    payloadJson: string
+    revision: number
+    sourceEventId?: string
+    sourceRevision?: number
+    occurredAt: number
+    scopeMetadata?: Record<string, unknown>
+    targetTerminalIds: string[]
+  }> = []
 
   const items = input.projections.map(item => {
     const scopeType = item.scopeType ?? 'TERMINAL'
@@ -948,43 +1412,19 @@ export const upsertProjectionBatch = (input: {
       scopeType,
       scopeKey: item.scopeKey,
     })
-
-    targetTerminalIds.forEach(terminalId => {
-      const cursor = getNextCursorForTerminal(sandboxId, terminalId)
-      db.insert(changeLogsTable).values({
-        changeId: createId('change'),
-        sandboxId,
-        cursor,
-        topicKey: item.topicKey,
-        operation,
-        scopeType,
-        scopeKey: item.scopeKey,
-        itemKey,
-        targetTerminalId: terminalId,
-        revision,
-        payloadJson,
-        sourceReleaseId: item.sourceReleaseId ?? null,
-        occurredAt,
-        scopeMetadataJson: scopeMetadata ? JSON.stringify(scopeMetadata) : null,
-        createdAt: timestamp,
-      }).run()
-      const change = toProjectionEnvelope({
-        topicKey: item.topicKey,
-        operation,
-        scopeType,
-        scopeKey: item.scopeKey,
-        itemKey,
-        revision,
-        payloadJson,
-        createdAt: timestamp,
-        occurredAt,
-        sourceReleaseId: item.sourceReleaseId ?? null,
-        scopeMetadata,
-      })
-      const queue = queuedByTerminal.get(terminalId) ?? []
-      queue.push({cursor, change})
-      queuedByTerminal.set(terminalId, queue)
-      queueProjectionChangeToOnlineTerminal(terminalId, { sandboxId, cursor, change })
+    acceptedItems.push({
+      item,
+      operation,
+      scopeType,
+      scopeKey: item.scopeKey,
+      itemKey,
+      payloadJson,
+      revision,
+      sourceEventId: sourceEventId?.trim() || undefined,
+      sourceRevision,
+      occurredAt,
+      scopeMetadata,
+      targetTerminalIds,
     })
 
     return {
@@ -1002,6 +1442,54 @@ export const upsertProjectionBatch = (input: {
       status: 'ACCEPTED' as const,
       targetTerminalIds,
     }
+  })
+
+  const terminalChangeCounts = new Map<string, number>()
+  acceptedItems.forEach(item => {
+    item.targetTerminalIds.forEach(terminalId => {
+      terminalChangeCounts.set(terminalId, (terminalChangeCounts.get(terminalId) ?? 0) + 1)
+    })
+  })
+  const allocatedCursors = preallocateCursorsByTerminal(sandboxId, terminalChangeCounts, timestamp)
+
+  acceptedItems.forEach(accepted => {
+    const scopeMetadataJson = accepted.scopeMetadata ? JSON.stringify(accepted.scopeMetadata) : null
+    accepted.targetTerminalIds.forEach(terminalId => {
+      const cursor = takePreallocatedCursor(allocatedCursors, terminalId)
+      recordTerminalChange({
+        sandboxId,
+        cursor,
+        topicKey: accepted.item.topicKey,
+        operation: accepted.operation,
+        scopeType: accepted.scopeType,
+        scopeKey: accepted.scopeKey,
+        itemKey: accepted.itemKey,
+        terminalId,
+        revision: accepted.revision,
+        payloadJson: accepted.payloadJson,
+        sourceReleaseId: accepted.item.sourceReleaseId ?? null,
+        occurredAt: accepted.occurredAt,
+        scopeMetadataJson,
+        timestamp,
+      })
+      const change = toProjectionEnvelope({
+        topicKey: accepted.item.topicKey,
+        operation: accepted.operation,
+        scopeType: accepted.scopeType,
+        scopeKey: accepted.scopeKey,
+        itemKey: accepted.itemKey,
+        revision: accepted.revision,
+        payloadJson: accepted.payloadJson,
+        createdAt: timestamp,
+        occurredAt: accepted.occurredAt,
+        sourceReleaseId: accepted.item.sourceReleaseId ?? null,
+        scopeMetadata: accepted.scopeMetadata,
+      })
+      const queue = queuedByTerminal.get(terminalId) ?? []
+      queue.push({cursor, change})
+      queuedByTerminal.set(terminalId, queue)
+      queueProjectionChangeToOnlineTerminal(terminalId, { sandboxId, cursor, change })
+    })
   })
 
   queuedByTerminal.forEach((_changes, terminalId) => {
@@ -1031,11 +1519,15 @@ export const fanoutExistingProjectionToTerminalIds = (input: {
   const payloadJson = JSON.stringify(input.payload)
   const targetTerminalIds = Array.from(new Set(input.targetTerminalIds.filter(terminalId => terminalId.trim().length > 0)))
   const queuedByTerminal = new Map<string, Array<{cursor: number; change: TdpProjectionEnvelope}>>()
+  const allocatedCursors = preallocateCursorsByTerminal(
+    sandboxId,
+    new Map(targetTerminalIds.map(terminalId => [terminalId, 1])),
+    timestamp,
+  )
 
   targetTerminalIds.forEach(terminalId => {
-    const cursor = getNextCursorForTerminal(sandboxId, terminalId)
-    db.insert(changeLogsTable).values({
-      changeId: createId('change'),
+    const cursor = takePreallocatedCursor(allocatedCursors, terminalId)
+    recordTerminalChange({
       sandboxId,
       cursor,
       topicKey: input.topicKey,
@@ -1043,12 +1535,12 @@ export const fanoutExistingProjectionToTerminalIds = (input: {
       scopeType: input.scopeType,
       scopeKey: input.scopeKey,
       itemKey: input.itemKey,
-      targetTerminalId: terminalId,
+      terminalId,
       revision: input.revision,
       payloadJson,
       sourceReleaseId: input.sourceReleaseId ?? null,
-      createdAt: timestamp,
-    }).run()
+      timestamp,
+    })
     const change = toProjectionEnvelope({
       topicKey: input.topicKey,
       operation: 'upsert',

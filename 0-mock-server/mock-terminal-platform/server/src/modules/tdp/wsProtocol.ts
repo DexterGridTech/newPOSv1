@@ -9,6 +9,12 @@ export type TdpClientMessage =
         protocolVersion?: string
         capabilities?: string[]
         subscribedTopics?: string[]
+        requiredTopics?: string[]
+        subscriptionHash?: string
+        previousAcceptedSubscriptionHash?: string
+        previousAcceptedTopics?: string[]
+        subscriptionMode?: 'explicit'
+        subscriptionVersion?: 1
         runtimeIdentity?: {
           localNodeId?: string
           displayIndex?: number
@@ -38,6 +44,15 @@ export type TdpClientMessage =
         instanceId?: string
       }
     }
+  | {
+      type: 'BATCH_ACK'
+      data: {
+        nextCursor: number
+        batchId?: string
+        processingLagMs?: number
+        subscriptionHash?: string
+      }
+    }
 
 export interface TdpProjectionEnvelope {
   topic: string
@@ -62,6 +77,14 @@ export type TdpServerMessage =
         highWatermark: number
         syncMode: 'incremental' | 'full'
         alternativeEndpoints: string[]
+        subscription?: {
+          version: 1
+          mode: 'explicit' | 'legacy-all'
+          hash?: string
+          acceptedTopics: string[]
+          rejectedTopics: string[]
+          requiredMissingTopics: string[]
+        }
       }
     }
   | {
@@ -70,6 +93,32 @@ export type TdpServerMessage =
         terminalId: string
         snapshot: TdpProjectionEnvelope[]
         highWatermark: number
+      }
+    }
+  | {
+      type: 'SNAPSHOT_BEGIN'
+      data: {
+        terminalId: string
+        snapshotId: string
+        totalChunks: number
+        totalItems: number
+        highWatermark: number
+        subscriptionHash?: string
+      }
+    }
+  | {
+      type: 'SNAPSHOT_CHUNK'
+      data: {
+        snapshotId: string
+        chunkIndex: number
+        items: TdpProjectionEnvelope[]
+      }
+    }
+  | {
+      type: 'SNAPSHOT_END'
+      data: {
+        snapshotId: string
+        checksum?: string
       }
     }
   | {
@@ -96,6 +145,7 @@ export type TdpServerMessage =
       eventId: string
       timestamp: number
       data: {
+        batchId?: string
         changes: TdpProjectionEnvelope[]
         nextCursor: number
       }

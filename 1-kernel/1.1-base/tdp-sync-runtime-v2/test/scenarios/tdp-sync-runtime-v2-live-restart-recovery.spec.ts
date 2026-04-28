@@ -4,8 +4,8 @@ import {createRequestId} from '@next/kernel-base-contracts'
 import {selectTcpTerminalId} from '@next/kernel-base-tcp-control-runtime-v2'
 import {
     selectTdpCommandInboxState,
+    selectTdpActiveProjectionEntries,
     selectTdpProjectionByTopicAndBucket,
-    selectTdpProjectionState,
     selectTdpSessionState,
     selectTdpSyncState,
     tdpSyncV2CommandDefinitions,
@@ -155,7 +155,7 @@ describe('tdp-sync-runtime-v2 live restart recovery', () => {
             scopeId: terminalId,
             itemKey: 'config.delta.v2.restart-001',
         })?.payload.configVersion).toBe('restart-v2-seed-v2')
-        expect(Object.keys(selectTdpProjectionState(secondRuntimeHarness.runtime.getState()) ?? {}).length).toBeGreaterThan(0)
+        expect(Object.keys(selectTdpActiveProjectionEntries(secondRuntimeHarness.runtime.getState())).length).toBeGreaterThan(0)
         expect(selectTdpCommandInboxState(secondRuntimeHarness.runtime.getState())?.orderedIds ?? []).toEqual([])
     }, 20_000)
 })

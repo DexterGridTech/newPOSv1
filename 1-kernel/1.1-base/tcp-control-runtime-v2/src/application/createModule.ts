@@ -103,6 +103,7 @@ export const createTcpControlRuntimeModuleV2 = (
             const httpRuntime = input.assembly?.createHttpRuntime(context)
                 ?? createDefaultTcpControlHttpRuntimeV2(context)
             serviceRef.current = createTcpControlHttpServiceV2(httpRuntime)
+            serviceRef.clientRuntime = input.assembly?.resolveClientRuntimeCapability?.(context)
 
             createRuntimeModuleLifecycleLogger({moduleName, context}).logInstall({
                 stateSlices: tcpControlRuntimeV2ModuleManifest.stateSliceNames,

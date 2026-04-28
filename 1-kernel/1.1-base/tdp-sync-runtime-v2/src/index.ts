@@ -48,6 +48,14 @@ export {
     createDefaultTdpSyncHttpRuntimeV2,
     installTdpSessionConnectionRuntimeV2,
 } from './foundations/sessionConnectionRuntime'
+export {
+    computeTdpSubscriptionHash,
+    resolveTdpSubscriptionFromDescriptors,
+    TDP_SNAPSHOT_CHUNK_CAPABILITY_V1,
+    TDP_SUBSCRIPTION_HASH_CAPABILITY_V1,
+    TDP_TOPIC_SUBSCRIPTION_CAPABILITY_V1,
+} from './foundations/topicSubscription'
+export {toTopicFingerprintV2} from './foundations/topicChangePublisher'
 export {createTdpSyncHttpServiceV2} from './foundations/httpService'
 export {
     selectTdpHotUpdateCandidate,
@@ -60,6 +68,8 @@ export {
     selectTerminalGroupMembership,
     selectTdpCommandInboxState,
     selectTdpControlSignalsState,
+    selectTdpActiveProjectionEntries,
+    selectTdpActiveProjectionEntriesByTopic,
     selectTdpProjectionByTopicAndBucket,
     selectTdpProjectionEntriesByTopic,
     selectTdpResolvedProjection,
@@ -88,6 +98,7 @@ export type {
     TdpSessionConnectionRuntimeRefV2,
     TdpSessionConnectionRuntimeV2,
     TdpSessionState,
+    TdpSyncHttpServiceRefV2,
     TdpSnapshotResponse,
     TdpSyncHttpServiceV2,
     TdpSyncRuntimeAssemblyV2,

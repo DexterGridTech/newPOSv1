@@ -14,6 +14,12 @@ export interface TdpSessionConnectionRuntimeV2 {
     startSocketConnection(options?: {isReconnect?: boolean}): Promise<Record<string, unknown>>
     disconnect(reason?: string): void
     sendAck(payload: {cursor: number; topic?: string; itemKey?: string; instanceId?: string}): void
+    sendBatchAck(payload: {
+        nextCursor: number
+        batchId?: string
+        processingLagMs?: number
+        subscriptionHash?: string
+    }): void
     sendStateReport(payload: {
         cursor: number
         connectionMetrics?: Record<string, unknown>

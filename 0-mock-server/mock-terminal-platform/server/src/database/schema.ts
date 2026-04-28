@@ -237,6 +237,12 @@ export const sessionsTable = sqliteTable('tdp_sessions', {
   lastDeliveredRevision: integer('last_delivered_revision'),
   lastAckedRevision: integer('last_acked_revision'),
   lastAppliedRevision: integer('last_applied_revision'),
+  subscriptionMode: text('subscription_mode'),
+  subscriptionHash: text('subscription_hash'),
+  subscribedTopicsJson: text('subscribed_topics_json'),
+  acceptedTopicsJson: text('accepted_topics_json'),
+  rejectedTopicsJson: text('rejected_topics_json'),
+  requiredMissingTopicsJson: text('required_missing_topics_json'),
 })
 
 export const topicsTable = sqliteTable('tdp_topics', {
@@ -298,6 +304,32 @@ export const changeLogsTable = sqliteTable('tdp_change_logs', {
   occurredAt: integer('occurred_at'),
   scopeMetadataJson: text('scope_metadata_json'),
   createdAt: integer('created_at').notNull()
+})
+
+export const terminalProjectionAccessTable = sqliteTable('tdp_terminal_projection_access', {
+  accessId: text('access_id').primaryKey(),
+  sandboxId: text('sandbox_id').notNull(),
+  targetTerminalId: text('target_terminal_id').notNull(),
+  topicKey: text('topic_key').notNull(),
+  operation: text('operation').notNull(),
+  scopeType: text('scope_type').notNull(),
+  scopeKey: text('scope_key').notNull(),
+  itemKey: text('item_key').notNull(),
+  revision: integer('revision').notNull(),
+  payloadJson: text('payload_json').notNull(),
+  sourceReleaseId: text('source_release_id'),
+  occurredAt: integer('occurred_at'),
+  scopeMetadataJson: text('scope_metadata_json'),
+  lastCursor: integer('last_cursor').notNull(),
+  updatedAt: integer('updated_at').notNull()
+})
+
+export const terminalCursorsTable = sqliteTable('tdp_terminal_cursors', {
+  cursorId: text('cursor_id').primaryKey(),
+  sandboxId: text('sandbox_id').notNull(),
+  targetTerminalId: text('target_terminal_id').notNull(),
+  highWatermark: integer('high_watermark').notNull(),
+  updatedAt: integer('updated_at').notNull()
 })
 
 export const selectorGroupsTable = sqliteTable('selector_groups', {

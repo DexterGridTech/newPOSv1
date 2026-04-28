@@ -51,6 +51,20 @@
 
 这样做可以避免两个状态源竞争：缓存页面激活、主副屏同步、重启恢复和自动化验证都只围绕同一个 screen truth source 展开。
 
+### 0.2 容器默认页初始化必须走 runtime-react helper
+
+当 UI 调用方需要“读取某个 ScreenContainer 当前 screen；如果还没有 runtime screen，就写入一个默认 screen”时，必须使用 `@next/ui-base-runtime-react` 暴露的 `useUiScreenOrSetDefault`。
+
+开发约束：
+
+1. selector 保持纯读，不允许在 `1-kernel/1.1-base/ui-runtime-v2/src/selectors/index.ts` 中做默认写入。
+2. 业务组件不得手写 `selectUiScreen + useEffect + navigateTo(default)` 这类初始化逻辑。
+3. 调用方只声明 `containerPart`、`defaultTarget`、`defaultProps` 和 `enabled` 条件；由 helper 负责空值判断、容器匹配保护和防重复派发。
+4. 已经有 runtime screen 时，helper 不覆盖当前 screen；点击已选中的 tab / screen 也不得再次 `navigateTo`。
+5. `ScreenContainer` 内部的 loading、pending、ready、cache 等中间态仍然只在容器内部维护，不写入 `ui-runtime-v2` state。
+
+这样可以把“默认页初始化”固化成可复用协议：业务调用方保持简单，`ui-runtime-v2` 继续只保存目标 screen 真相，`runtime-react` 统一承担渲染层 helper 和防重复细节。
+
 ### 1. 按运行职责拆 slice，不按“都属于 UI”硬塞到一起
 
 `ui-runtime` 这次验证下来的合理拆分是：

@@ -8,6 +8,7 @@ import {packageVersion} from '../generated/packageVersion'
 import {moduleName} from '../moduleName'
 import {cateringStoreOperatingMasterDataCommandDefinitions} from '../features/commands'
 import {cateringStoreOperatingMasterDataStateSlices} from '../features/slices'
+import {cateringStoreOperatingTopicList} from '../foundations/topics'
 
 export const cateringStoreOperatingMasterDataModuleManifest: KernelRuntimeModuleManifestV2 =
     defineKernelRuntimeModuleManifestV2({
@@ -19,4 +20,10 @@ export const cateringStoreOperatingMasterDataModuleManifest: KernelRuntimeModule
         ],
         stateSlices: cateringStoreOperatingMasterDataStateSlices,
         commandDefinitions: Object.values(cateringStoreOperatingMasterDataCommandDefinitions),
+        tdpTopicInterests: cateringStoreOperatingTopicList.map(topicKey => ({
+            topicKey,
+            category: 'projection',
+            required: true,
+            reason: 'catering store operating master-data projection',
+        })),
     })

@@ -1,11 +1,15 @@
 import {useMemo, useState} from 'react'
 import {useSelector} from 'react-redux'
-import {selectAdminConsoleSelectedTab} from '../selectors'
+import {
+    selectAdminConsoleRuntimeTab,
+    selectAdminConsoleSelectedTab,
+} from '../selectors'
 import type {
     AdminConsoleScreen,
 } from '../types'
 
 export const useAdminPopupState = () => {
+    const runtimeTab = useSelector(selectAdminConsoleRuntimeTab)
     const selectedTab = useSelector(selectAdminConsoleSelectedTab)
     const [screen, setScreen] = useState<AdminConsoleScreen>('login')
     const [password, setPassword] = useState('')
@@ -14,10 +18,11 @@ export const useAdminPopupState = () => {
     return useMemo(() => ({
         screen,
         setScreen,
+        runtimeTab,
         selectedTab,
         password,
         setPassword,
         error,
         setError,
-    }), [error, password, screen, selectedTab])
+    }), [error, password, runtimeTab, screen, selectedTab])
 }

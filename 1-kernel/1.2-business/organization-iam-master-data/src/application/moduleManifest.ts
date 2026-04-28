@@ -7,6 +7,7 @@ import {packageVersion} from '../generated/packageVersion'
 import {moduleName} from '../moduleName'
 import {organizationIamMasterDataCommandDefinitions} from '../features/commands'
 import {organizationIamMasterDataStateSlices} from '../features/slices'
+import {organizationIamTopicList} from '../foundations/topics'
 
 export const organizationIamMasterDataModuleManifest: KernelRuntimeModuleManifestV2 =
     defineKernelRuntimeModuleManifestV2({
@@ -19,4 +20,10 @@ export const organizationIamMasterDataModuleManifest: KernelRuntimeModuleManifes
         ],
         stateSlices: organizationIamMasterDataStateSlices,
         commandDefinitions: Object.values(organizationIamMasterDataCommandDefinitions),
+        tdpTopicInterests: organizationIamTopicList.map(topicKey => ({
+            topicKey,
+            category: 'projection',
+            required: true,
+            reason: 'organization and IAM master-data projection',
+        })),
     })

@@ -4,6 +4,7 @@ import {createLoggerPort, createPlatformPorts} from '@next/kernel-base-platform-
 import {
     createKernelRuntimeV2,
     type RuntimeModuleContextV2,
+    type KernelRuntimeModuleV2,
 } from '@next/kernel-base-runtime-shell-v2'
 import {
     kernelBaseTestServerConfig,
@@ -221,6 +222,7 @@ export const createLiveRuntime = (input: {
         parameterCatalog?: Record<string, ParameterCatalogEntry>
     }
     tdp?: Pick<CreateTdpSyncRuntimeModuleV2Input, 'socket'>
+    extraModules?: readonly KernelRuntimeModuleV2[]
 }) => {
     const stateStorage = input.stateStorage ?? createMemoryStorage()
     const secureStateStorage = input.secureStateStorage ?? createMemoryStorage()
@@ -302,6 +304,7 @@ export const createLiveRuntime = (input: {
                     },
                 },
             }),
+            ...(input.extraModules ?? []),
         ],
     })
 

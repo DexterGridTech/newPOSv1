@@ -5,7 +5,11 @@ import {createTdpInitializeActorDefinitionV2} from './initializeActor'
 import {createTdpBootstrapActorDefinitionV2} from './bootstrapActor'
 import {createTdpMessageActorDefinitionV2} from './messageActor'
 import {createTdpProjectionRepositoryActorDefinitionV2} from './projectionRepositoryActor'
-import {createTdpCursorFeedbackActorDefinitionV2} from './cursorFeedbackActor'
+import {
+    createTdpBatchFeedbackActorDefinitionV2,
+    createTdpCursorFeedbackActorDefinitionV2,
+} from './cursorFeedbackActor'
+import {createTdpChangesFetchActorDefinitionV2} from './changesFetchActor'
 import {createTdpCommandInboxActorDefinitionV2} from './commandInboxActor'
 import {createTdpCommandAckActorDefinitionV2} from './commandAckActor'
 import {
@@ -19,7 +23,7 @@ import {createTdpSystemCatalogBridgeActorDefinitionV2} from './systemCatalogBrid
 import {createTdpUserOperationActorDefinitionV2} from './userOperationActor'
 import {createTdpHotUpdateNativeBootActorDefinitionV2} from './hotUpdateNativeBootActor'
 import {createTdpTcpResetActorDefinitionV2} from './tcpResetActor'
-import type {CreateTdpSyncRuntimeModuleV2Input} from '../../types'
+import type {CreateTdpSyncRuntimeModuleV2Input, TdpSyncHttpServiceRefV2} from '../../types'
 
 export * from './initializeActor'
 export * from './autoConnectActor'
@@ -27,6 +31,7 @@ export * from './bootstrapActor'
 export * from './messageActor'
 export * from './projectionRepositoryActor'
 export * from './cursorFeedbackActor'
+export * from './changesFetchActor'
 export * from './commandInboxActor'
 export * from './commandAckActor'
 export * from './sessionConnectionActor'
@@ -41,6 +46,7 @@ export * from './tcpResetActor'
 export const createTdpSyncActorDefinitionsV2 = (
     fingerprintRef: TopicChangePublisherFingerprintV2,
     connectionRuntimeRef: TdpSessionConnectionRuntimeRefV2,
+    httpServiceRef: TdpSyncHttpServiceRefV2,
     moduleInput: CreateTdpSyncRuntimeModuleV2Input,
 ): ActorDefinition[] => [
     createTdpInitializeActorDefinitionV2(moduleInput),
@@ -50,6 +56,8 @@ export const createTdpSyncActorDefinitionsV2 = (
     createTdpMessageActorDefinitionV2(),
     createTdpProjectionRepositoryActorDefinitionV2(),
     createTdpCursorFeedbackActorDefinitionV2(),
+    createTdpBatchFeedbackActorDefinitionV2(connectionRuntimeRef),
+    createTdpChangesFetchActorDefinitionV2(httpServiceRef),
     createTdpCommandInboxActorDefinitionV2(),
     createTdpCommandAckActorDefinitionV2(),
     createTdpTcpResetActorDefinitionV2(),
