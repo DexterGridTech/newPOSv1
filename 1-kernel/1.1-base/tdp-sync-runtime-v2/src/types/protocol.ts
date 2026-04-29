@@ -68,6 +68,8 @@ export type TdpServerMessage =
             highWatermark: number
             syncMode: 'incremental' | 'full'
             alternativeEndpoints: string[]
+            serverTime?: string
+            serverTimestamp?: number
             subscription?: TdpSessionSubscriptionStateV1
         }
     }

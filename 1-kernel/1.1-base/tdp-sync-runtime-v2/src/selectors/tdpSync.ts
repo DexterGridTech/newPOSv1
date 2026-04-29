@@ -5,6 +5,10 @@ import {
     selectTcpTerminalId,
 } from '@next/kernel-base-tcp-control-runtime-v2'
 import {
+    estimateTdpServerNow,
+    isTdpProjectionExpiredForLocalDefense,
+} from '../foundations/projectionExpiry'
+import {
     TDP_COMMAND_INBOX_STATE_KEY,
     TDP_CONTROL_SIGNALS_STATE_KEY,
     TDP_PROJECTION_STATE_KEY,
@@ -60,8 +64,63 @@ export const selectTdpSyncState = (state: RootState) =>
 export const selectTdpProjectionState = (state: RootState) =>
     state[TDP_PROJECTION_STATE_KEY as keyof RootState] as TdpProjectionState | undefined
 
-export const selectTdpActiveProjectionEntries = (state: RootState) =>
-    selectTdpProjectionState(state)?.activeEntries ?? {}
+const EMPTY_PROJECTION_ENTRIES: Record<string, TdpProjectionEnvelope> = {}
+
+let activeProjectionEntriesCache:
+    | {
+        entries: Record<string, TdpProjectionEnvelope>
+        serverClockOffsetMs: number | undefined
+        nowBucketMs: number
+        result: Record<string, TdpProjectionEnvelope>
+    }
+    | undefined
+
+const getProjectionExpiryNowBucketMs = () =>
+    Math.floor(Date.now() / 1000) * 1000
+
+const filterActiveProjectionEntries = (
+    entries: Record<string, TdpProjectionEnvelope>,
+    estimatedServerNow: number,
+) => {
+    let hasExpiredEntry = false
+    const filteredEntries: Record<string, TdpProjectionEnvelope> = {}
+    Object.entries(entries).forEach(([key, entry]) => {
+        if (isTdpProjectionExpiredForLocalDefense(entry.expiresAt, estimatedServerNow)) {
+            hasExpiredEntry = true
+            return
+        }
+        filteredEntries[key] = entry
+    })
+
+    return hasExpiredEntry
+        ? filteredEntries
+        : entries
+}
+
+export const selectTdpActiveProjectionEntries = (state: RootState) => {
+    const entries = selectTdpProjectionState(state)?.activeEntries ?? EMPTY_PROJECTION_ENTRIES
+    const serverClockOffsetMs = selectTdpSyncState(state)?.serverClockOffsetMs
+    const nowBucketMs = getProjectionExpiryNowBucketMs()
+    if (
+        activeProjectionEntriesCache?.entries === entries
+        && activeProjectionEntriesCache.serverClockOffsetMs === serverClockOffsetMs
+        && activeProjectionEntriesCache.nowBucketMs === nowBucketMs
+    ) {
+        return activeProjectionEntriesCache.result
+    }
+
+    const result = filterActiveProjectionEntries(
+        entries,
+        estimateTdpServerNow(nowBucketMs, serverClockOffsetMs),
+    )
+    activeProjectionEntriesCache = {
+        entries,
+        serverClockOffsetMs,
+        nowBucketMs,
+        result,
+    }
+    return result
+}
 
 const sameProjectionEntryArray = (
     left: readonly TdpProjectionEnvelope[] | undefined,

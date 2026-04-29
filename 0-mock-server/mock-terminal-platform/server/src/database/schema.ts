@@ -254,6 +254,13 @@ export const topicsTable = sqliteTable('tdp_topics', {
   schemaJson: text('schema_json').notNull(),
   scopeType: text('scope_type').notNull(),
   retentionHours: integer('retention_hours').notNull(),
+  lifecycle: text('lifecycle').notNull().default('persistent'),
+  deliveryType: text('delivery_type').notNull().default('projection'),
+  defaultTtlMs: integer('default_ttl_ms'),
+  minTtlMs: integer('min_ttl_ms'),
+  maxTtlMs: integer('max_ttl_ms'),
+  expiryAction: text('expiry_action').notNull().default('tombstone'),
+  deliveryGuarantee: text('delivery_guarantee').notNull().default('retained-until-deleted'),
   createdAt: integer('created_at').notNull(),
   updatedAt: integer('updated_at').notNull()
 })
@@ -267,6 +274,13 @@ export const projectionsTable = sqliteTable('tdp_projections', {
   itemKey: text('item_key').notNull(),
   revision: integer('revision').notNull(),
   payloadJson: text('payload_json').notNull(),
+  lifecycle: text('lifecycle').notNull().default('persistent'),
+  expiresAt: integer('expires_at'),
+  expiredAt: integer('expired_at'),
+  expiryReason: text('expiry_reason'),
+  expiryStatus: text('expiry_status'),
+  expiryClaimedBy: text('expiry_claimed_by'),
+  expiryClaimedAt: integer('expiry_claimed_at'),
   updatedAt: integer('updated_at').notNull()
 })
 
@@ -285,6 +299,8 @@ export const projectionSourceEventsTable = sqliteTable('tdp_projection_source_ev
   sourceReleaseId: text('source_release_id'),
   occurredAt: integer('occurred_at'),
   scopeMetadataJson: text('scope_metadata_json'),
+  lifecycle: text('lifecycle').notNull().default('persistent'),
+  expiresAt: integer('expires_at'),
   acceptedAt: integer('accepted_at').notNull()
 })
 
@@ -303,6 +319,10 @@ export const changeLogsTable = sqliteTable('tdp_change_logs', {
   sourceReleaseId: text('source_release_id'),
   occurredAt: integer('occurred_at'),
   scopeMetadataJson: text('scope_metadata_json'),
+  expiresAt: integer('expires_at'),
+  changeReason: text('change_reason'),
+  sourceProjectionId: text('source_projection_id'),
+  tombstoneKey: text('tombstone_key'),
   createdAt: integer('created_at').notNull()
 })
 
@@ -320,6 +340,10 @@ export const terminalProjectionAccessTable = sqliteTable('tdp_terminal_projectio
   sourceReleaseId: text('source_release_id'),
   occurredAt: integer('occurred_at'),
   scopeMetadataJson: text('scope_metadata_json'),
+  lifecycle: text('lifecycle').notNull().default('persistent'),
+  expiresAt: integer('expires_at'),
+  expiredAt: integer('expired_at'),
+  expiryReason: text('expiry_reason'),
   lastCursor: integer('last_cursor').notNull(),
   updatedAt: integer('updated_at').notNull()
 })

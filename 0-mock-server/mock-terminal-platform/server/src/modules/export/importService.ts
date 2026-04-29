@@ -11,7 +11,19 @@ const ensureNonEmptyString = (value: unknown, fieldName: string) => {
 
 export interface ImportPayload {
   sandboxId?: string
-  topics?: Array<{ key: string; name: string; scopeType?: string; payloadMode?: string; schema?: Record<string, unknown>; retentionHours?: number }>
+  topics?: Array<{
+    key: string
+    name: string
+    scopeType?: string
+    payloadMode?: string
+    schema?: Record<string, unknown>
+    retentionHours?: number
+    lifecycle?: 'persistent' | 'expiring'
+    deliveryType?: 'projection' | 'command-outbox'
+    defaultTtlMs?: number
+    minTtlMs?: number
+    maxTtlMs?: number
+  }>
   faultRules?: Array<{ name: string; targetType: string; matcher: Record<string, unknown>; action: Record<string, unknown> }>
 }
 
@@ -57,6 +69,13 @@ export const importMockTemplates = (input: ImportPayload & { sandboxId: string }
       schemaJson: JSON.stringify(topic.schema ?? { type: 'object', additionalProperties: true }),
       scopeType: topic.scopeType ?? 'TERMINAL',
       retentionHours: topic.retentionHours ?? 72,
+      lifecycle: topic.lifecycle ?? 'persistent',
+      deliveryType: topic.deliveryType ?? (topic.payloadMode === 'EPHEMERAL_COMMAND' ? 'command-outbox' : 'projection'),
+      defaultTtlMs: topic.defaultTtlMs ?? null,
+      minTtlMs: topic.minTtlMs ?? null,
+      maxTtlMs: topic.maxTtlMs ?? null,
+      expiryAction: 'tombstone',
+      deliveryGuarantee: topic.lifecycle === 'expiring' ? 'retained-until-expired' : 'retained-until-deleted',
       createdAt: timestamp,
       updatedAt: timestamp,
     }).run()

@@ -3,6 +3,11 @@ import { createMockTerminalPlatformTestServer } from './createMockTerminalPlatfo
 
 const servers: Array<ReturnType<typeof createMockTerminalPlatformTestServer>> = []
 
+const tdpAdminHeaders = (server: ReturnType<typeof createMockTerminalPlatformTestServer>) => ({
+  'content-type': 'application/json',
+  authorization: `Bearer ${server.getAdminToken()}`,
+})
+
 afterEach(async () => {
   await Promise.all(servers.splice(0).map(server => server.close()))
 })
@@ -485,6 +490,17 @@ describe('mock-terminal-platform TDP dynamic group', () => {
     }
     expect(groupResponse.status).toBe(201)
 
+    const recomputeFirstAfterPolicy = await fetch(`${server.getHttpBaseUrl()}/api/v1/admin/tdp/groups/recompute-by-scope`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        sandboxId,
+        scopeType: 'TERMINAL',
+        scopeKeys: [terminalOne.data.terminalId],
+      }),
+    })
+    expect(recomputeFirstAfterPolicy.status).toBe(200)
+
     const policyResponse = await fetch(`${server.getHttpBaseUrl()}/api/v1/admin/tdp/policies`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
@@ -572,6 +588,170 @@ describe('mock-terminal-platform TDP dynamic group', () => {
       && item.scopeType === 'GROUP'
       && item.itemKey === 'config.dynamic.join',
     )).toBe(true)
+  })
+
+  it('preserves projection expiresAt when an existing group projection fans out to a newly joined terminal', async () => {
+    const server = createMockTerminalPlatformTestServer()
+    servers.push(server)
+    await server.start()
+
+    const prepareResponse = await fetch(`${server.getHttpBaseUrl()}/mock-debug/kernel-base-test/prepare`, {
+      method: 'POST',
+    })
+    const preparePayload = await prepareResponse.json() as {
+      data: { sandboxId: string }
+    }
+    const sandboxId = preparePayload.data.sandboxId
+
+    const activate = async (activationCode: string, deviceId: string) => {
+      const response = await fetch(`${server.getHttpBaseUrl()}/api/v1/terminals/activate`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          sandboxId,
+          activationCode,
+          deviceFingerprint: deviceId,
+          deviceInfo: {
+            id: deviceId,
+            model: 'Mixc Retail Android RN84',
+            osVersion: 'Android 14',
+          },
+        }),
+      })
+      return response.json() as Promise<{
+        data: {
+          terminalId: string
+          binding: {
+            templateId: string
+          }
+        }
+      }>
+    }
+
+    const terminalOne = await activate('200000000003', 'device-kernel-base-group-ttl-101')
+    const terminalTwo = await activate('200000000004', 'device-kernel-base-group-ttl-102')
+    const topicKey = 'order.payment.completed.dynamic-group'
+
+    const importedTopic = await fetch(`${server.getHttpBaseUrl()}/api/v1/admin/import/templates`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        sandboxId,
+        topics: [{
+          key: topicKey,
+          name: 'Dynamic Group Payment Completed',
+          scopeType: 'GROUP',
+          payloadMode: 'FLEXIBLE_JSON',
+          schema: {type: 'object', additionalProperties: true},
+          retentionHours: 48,
+          lifecycle: 'expiring',
+          deliveryType: 'projection',
+          defaultTtlMs: 60_000,
+          minTtlMs: 1_000,
+          maxTtlMs: 120_000,
+        }],
+      }),
+    })
+    expect(importedTopic.status).toBe(201)
+
+    const groupResponse = await fetch(`${server.getHttpBaseUrl()}/api/v1/admin/tdp/groups`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        sandboxId,
+        groupCode: 'shared-payment-ttl-policy',
+        name: 'Shared Payment TTL Policy',
+        description: 'shared expiring group policy for dynamic join test',
+        enabled: true,
+        priority: 100,
+        selectorDslJson: {
+          match: {
+            templateId: [terminalOne.data.binding.templateId],
+          },
+        },
+      }),
+    })
+    const groupPayload = await groupResponse.json() as {
+      data: { groupId: string }
+    }
+    expect(groupResponse.status).toBe(201)
+
+    const recomputeFirst = await fetch(`${server.getHttpBaseUrl()}/api/v1/admin/tdp/groups/recompute-by-scope`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        sandboxId,
+        scopeType: 'TERMINAL',
+        scopeKeys: [terminalOne.data.terminalId],
+      }),
+    })
+    expect(recomputeFirst.status).toBe(200)
+
+    const policyResponse = await fetch(`${server.getHttpBaseUrl()}/api/v1/admin/tdp/policies`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        sandboxId,
+        topicKey,
+        itemKey: 'payment-dynamic-group-ttl',
+        scopeType: 'GROUP',
+        scopeKey: groupPayload.data.groupId,
+        enabled: true,
+        payloadJson: {
+          orderId: 'order-dynamic-group-ttl',
+          paid: true,
+        },
+        description: 'dynamic join TTL metadata preservation',
+      }),
+    })
+    expect(policyResponse.status).toBe(201)
+
+    const snapshotFirst = await fetch(
+      `${server.getHttpBaseUrl()}/api/v1/tdp/terminals/${terminalOne.data.terminalId}/snapshot?sandboxId=${sandboxId}`,
+    )
+    const snapshotFirstPayload = await snapshotFirst.json() as {
+      data: Array<{
+        topic: string
+        itemKey: string
+        expiresAt?: string | null
+      }>
+    }
+    const firstProjection = snapshotFirstPayload.data.find(item =>
+      item.topic === topicKey
+      && item.itemKey === 'payment-dynamic-group-ttl')
+    const expiresAt = firstProjection?.expiresAt
+    expect(expiresAt).toMatch(/^\d{4}-\d{2}-\d{2}T/)
+
+    const recomputeSecond = await fetch(`${server.getHttpBaseUrl()}/api/v1/admin/tdp/groups/recompute-by-scope`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        sandboxId,
+        scopeType: 'TERMINAL',
+        scopeKeys: [terminalTwo.data.terminalId],
+      }),
+    })
+    expect(recomputeSecond.status).toBe(200)
+
+    const snapshotSecondAfter = await fetch(
+      `${server.getHttpBaseUrl()}/api/v1/tdp/terminals/${terminalTwo.data.terminalId}/snapshot?sandboxId=${sandboxId}`,
+    )
+    const snapshotSecondAfterPayload = await snapshotSecondAfter.json() as {
+      data: Array<{
+        topic: string
+        itemKey: string
+        lifecycle?: string | null
+        expiresAt?: string | null
+      }>
+    }
+    expect(snapshotSecondAfterPayload.data).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        topic: topicKey,
+        itemKey: 'payment-dynamic-group-ttl',
+        lifecycle: 'expiring',
+        expiresAt,
+      }),
+    ]))
   })
 
   it('recompute-all recalculates memberships for every terminal in a sandbox', async () => {
@@ -980,7 +1160,7 @@ describe('mock-terminal-platform TDP dynamic group', () => {
 
     const storeProjectionResponse = await fetch(`${server.getHttpBaseUrl()}/api/v1/admin/tdp/projections/upsert`, {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: tdpAdminHeaders(server),
       body: JSON.stringify({
         sandboxId,
         topicKey: 'config.delta',
@@ -1094,7 +1274,7 @@ describe('mock-terminal-platform TDP dynamic group', () => {
 
     await fetch(`${server.getHttpBaseUrl()}/api/v1/admin/tdp/projections/upsert`, {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: tdpAdminHeaders(server),
       body: JSON.stringify({
         sandboxId,
         topicKey: 'config.delta',

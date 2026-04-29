@@ -2018,6 +2018,341 @@ describe('tdp-sync-runtime-v2', () => {
         })
     })
 
+    it('filters expired projection upserts locally while advancing cursor and applying TTL tombstones', async () => {
+        const stateStorage = createMemoryStorage()
+        const secureStateStorage = createMemoryStorage()
+        const runtime = createRuntime({
+            localNodeId: 'node_tdp_v2_projection_lifecycle',
+            stateStorage,
+            secureStateStorage,
+        })
+
+        await runtime.start()
+        await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.activateTerminal, {
+            sandboxId: 'sandbox-test-001',
+            activationCode: 'ACT-TDP-V2-LIFECYCLE-001',
+            deviceFingerprint: 'device-projection-lifecycle',
+            deviceInfo: {
+                id: 'device-projection-lifecycle',
+                model: 'Mock POS',
+            },
+        }))
+        await runtime.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.tdpMessageReceived, {
+            type: 'SESSION_READY',
+            data: {
+                sessionId: 'session-projection-lifecycle-001',
+                nodeId: 'mock-tdp-node-lifecycle',
+                nodeState: 'healthy',
+                highWatermark: 20,
+                syncMode: 'incremental',
+                alternativeEndpoints: [],
+                serverTimestamp: Date.parse('2026-04-29T10:10:00.000Z'),
+            },
+        }))
+
+        await runtime.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.tdpMessageReceived, {
+            type: 'CHANGESET',
+            data: {
+                terminalId: 'terminal-test-001',
+                nextCursor: 21,
+                highWatermark: 21,
+                hasMore: false,
+                changes: [
+                    {
+                        topic: 'order.payment.completed',
+                        itemKey: 'payment-expired-upsert',
+                        operation: 'upsert' as const,
+                        scopeType: 'TERMINAL',
+                        scopeId: 'terminal-test-001',
+                        revision: 1,
+                        payload: {orderId: 'order-expired-upsert'},
+                        occurredAt: '2026-04-29T10:00:00.000Z',
+                        lifecycle: 'expiring',
+                        expiresAt: '2026-04-29T10:04:00.000Z',
+                    },
+                ],
+            },
+        }))
+
+        expect(selectTdpProjectionByTopicAndBucket(runtime.getState(), {
+            topic: 'order.payment.completed',
+            scopeType: 'TERMINAL',
+            scopeId: 'terminal-test-001',
+            itemKey: 'payment-expired-upsert',
+        })).toBeUndefined()
+        expect(selectTdpSyncState(runtime.getState())).toMatchObject({
+            lastCursor: 21,
+            lastAppliedCursor: 21,
+        })
+
+        await runtime.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.tdpProjectionReceived, {
+            cursor: 22,
+            serverClockOffsetMs: Date.parse('2026-04-29T10:10:00.000Z') - Date.now(),
+            change: {
+                topic: 'order.payment.completed',
+                itemKey: 'payment-active',
+                operation: 'upsert' as const,
+                scopeType: 'TERMINAL',
+                scopeId: 'terminal-test-001',
+                revision: 1,
+                payload: {orderId: 'order-active'},
+                occurredAt: '2026-04-29T10:05:00.000Z',
+                lifecycle: 'expiring',
+                expiresAt: '2026-04-29T10:20:00.000Z',
+            },
+        }))
+
+        expect(selectTdpProjectionByTopicAndBucket(runtime.getState(), {
+            topic: 'order.payment.completed',
+            scopeType: 'TERMINAL',
+            scopeId: 'terminal-test-001',
+            itemKey: 'payment-active',
+        })).toMatchObject({
+            payload: {orderId: 'order-active'},
+            expiresAt: '2026-04-29T10:20:00.000Z',
+        })
+
+        await runtime.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.tdpProjectionReceived, {
+            cursor: 23,
+            change: {
+                topic: 'order.payment.completed',
+                itemKey: 'payment-active',
+                operation: 'delete' as const,
+                scopeType: 'TERMINAL',
+                scopeId: 'terminal-test-001',
+                revision: 1,
+                payload: {orderId: 'order-active'},
+                occurredAt: '2026-04-29T10:20:01.000Z',
+                lifecycle: 'expiring',
+                expiresAt: '2026-04-29T10:20:00.000Z',
+                expiryReason: 'TTL_EXPIRED',
+            },
+        }))
+
+        expect(selectTdpProjectionByTopicAndBucket(runtime.getState(), {
+            topic: 'order.payment.completed',
+            scopeType: 'TERMINAL',
+            scopeId: 'terminal-test-001',
+            itemKey: 'payment-active',
+        })).toBeUndefined()
+        expect(selectTdpSyncState(runtime.getState())).toMatchObject({
+            lastCursor: 23,
+            lastAppliedCursor: 23,
+        })
+    })
+
+    it('hides persisted expired projections and cleanup physically removes them with topic changed rebuild', async () => {
+        const stateStorage = createMemoryStorage()
+        const secureStateStorage = createMemoryStorage()
+        const runtime = createRuntime({
+            localNodeId: 'node_tdp_v2_projection_lifecycle_cleanup',
+            stateStorage,
+            secureStateStorage,
+        })
+
+        await runtime.start()
+        await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.activateTerminal, {
+            sandboxId: 'sandbox-test-001',
+            activationCode: 'ACT-TDP-V2-LIFECYCLE-CLEANUP-001',
+            deviceFingerprint: 'device-projection-lifecycle-cleanup',
+            deviceInfo: {
+                id: 'device-projection-lifecycle-cleanup',
+                model: 'Mock POS',
+            },
+        }))
+
+        await runtime.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.tdpSnapshotLoaded, {
+            highWatermark: 1,
+            snapshot: [
+                {
+                    topic: 'order.payment.completed',
+                    itemKey: 'payment-cleanup',
+                    operation: 'upsert' as const,
+                    scopeType: 'TERMINAL',
+                    scopeId: 'terminal-test-001',
+                    revision: 1,
+                    payload: {orderId: 'order-cleanup'},
+                    occurredAt: '2026-04-29T10:00:00.000Z',
+                    lifecycle: 'expiring',
+                    expiresAt: '2026-04-29T10:10:00.000Z',
+                },
+            ],
+            serverClockOffsetMs: Date.parse('2026-04-29T10:12:00.000Z') - Date.now(),
+        }))
+
+        expect(selectTdpProjectionByTopicAndBucket(runtime.getState(), {
+            topic: 'order.payment.completed',
+            scopeType: 'TERMINAL',
+            scopeId: 'terminal-test-001',
+            itemKey: 'payment-cleanup',
+        })).toMatchObject({
+            payload: {orderId: 'order-cleanup'},
+        })
+
+        const hiddenAt = Date.parse('2026-04-29T10:16:00.000Z')
+        await runtime.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.tdpSessionReady, {
+            sessionId: 'session-projection-lifecycle-cleanup',
+            nodeId: 'mock-tdp-node-lifecycle-cleanup',
+            nodeState: 'healthy',
+            highWatermark: 1,
+            syncMode: 'incremental',
+            alternativeEndpoints: [],
+            serverClockOffsetMs: hiddenAt - Date.now(),
+        }))
+
+        expect(selectTdpProjectionByTopicAndBucket(runtime.getState(), {
+            topic: 'order.payment.completed',
+            scopeType: 'TERMINAL',
+            scopeId: 'terminal-test-001',
+            itemKey: 'payment-cleanup',
+        })).toBeUndefined()
+        expect(Object.values(selectTdpProjectionState(runtime.getState())?.activeEntries ?? {})).toHaveLength(1)
+
+        const initialChangeCount = selectRecordedTopicChanges(runtime.getState()).length
+        const cleanupResult = await runtime.dispatchCommand(createCommand(
+            tdpSyncV2CommandDefinitions.cleanupExpiredTdpProjections,
+            {now: hiddenAt},
+        ))
+
+        expect(runtime.queryRequest(cleanupResult.requestId)?.commands.map(item => item.commandName)).toContain(
+            tdpSyncV2CommandDefinitions.recomputeChangedTopicChanges.commandName,
+        )
+        expect(Object.values(selectTdpProjectionState(runtime.getState())?.activeEntries ?? {})).toHaveLength(0)
+        expect(selectRecordedTopicChanges(runtime.getState()).slice(initialChangeCount)).toEqual([
+            expect.objectContaining({
+                topic: 'order.payment.completed',
+                changes: [
+                    expect.objectContaining({
+                        operation: 'delete',
+                        itemKey: 'payment-cleanup',
+                    }),
+                ],
+            }),
+        ])
+    })
+
+    it('cleans expired persisted projections during runtime initialize', async () => {
+        const stateStorage = createMemoryStorage()
+        const secureStateStorage = createMemoryStorage()
+        const localNodeId = 'node_tdp_v2_projection_lifecycle_startup_cleanup'
+        const projectionId = 'order.payment.completed:TERMINAL:terminal-test-001:payment-startup-cleanup'
+        const persistenceKey = `kernel-runtime-v2:${localNodeId}:app-state`
+        const projectionRecordPrefix = `${persistenceKey}:kernel.base.tdp-sync-runtime-v2.projection:entries`
+        stateStorage.saved.set(
+            `${projectionRecordPrefix}:__manifest__`,
+            JSON.stringify({entries: [projectionId]}),
+        )
+        stateStorage.saved.set(
+            `${projectionRecordPrefix}:${projectionId}`,
+            JSON.stringify({
+                topic: 'order.payment.completed',
+                itemKey: 'payment-startup-cleanup',
+                operation: 'upsert',
+                scopeType: 'TERMINAL',
+                scopeId: 'terminal-test-001',
+                revision: 1,
+                payload: {orderId: 'order-startup-cleanup'},
+                occurredAt: '2026-04-29T10:00:00.000Z',
+                lifecycle: 'expiring',
+                expiresAt: '2026-04-29T10:10:00.000Z',
+            }),
+        )
+        stateStorage.saved.set(
+            `${persistenceKey}:kernel.base.tdp-sync-runtime-v2.sync:serverClockOffsetMs`,
+            JSON.stringify(Date.parse('2026-04-29T10:16:00.000Z') - Date.now()),
+        )
+        const runtime = createRuntime({
+            localNodeId,
+            stateStorage,
+            secureStateStorage,
+        })
+
+        await runtime.start()
+
+        expect(Object.values(selectTdpProjectionState(runtime.getState())?.activeEntries ?? {})).toHaveLength(0)
+        expect(selectRecordedTopicChanges(runtime.getState())).toEqual([
+            expect.objectContaining({
+                topic: 'order.payment.completed',
+                changes: [
+                    expect.objectContaining({
+                        operation: 'delete',
+                        itemKey: 'payment-startup-cleanup',
+                    }),
+                ],
+            }),
+        ])
+    })
+
+    it('resolves to a lower-priority projection when the higher-priority projection is expired', async () => {
+        const runtime = createRuntime({
+            localNodeId: 'node_tdp_v2_projection_lifecycle_resolve',
+            stateStorage: createMemoryStorage(),
+            secureStateStorage: createMemoryStorage(),
+        })
+
+        await runtime.start()
+        await runtime.dispatchCommand(createCommand(tcpControlV2CommandDefinitions.activateTerminal, {
+            sandboxId: 'sandbox-test-001',
+            activationCode: 'ACT-TDP-V2-LIFECYCLE-RESOLVE-001',
+            deviceFingerprint: 'device-projection-lifecycle-resolve',
+            deviceInfo: {
+                id: 'device-projection-lifecycle-resolve',
+                model: 'Mock POS',
+            },
+        }))
+
+        await runtime.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.tdpSnapshotLoaded, {
+            highWatermark: 2,
+            snapshot: [
+                {
+                    topic: 'order.payment.completed',
+                    itemKey: 'payment-resolve',
+                    operation: 'upsert' as const,
+                    scopeType: 'STORE',
+                    scopeId: 'store-test',
+                    revision: 1,
+                    payload: {source: 'store-fallback'},
+                    occurredAt: '2026-04-29T10:00:00.000Z',
+                    lifecycle: 'expiring',
+                    expiresAt: '2026-04-29T10:30:00.000Z',
+                },
+                {
+                    topic: 'order.payment.completed',
+                    itemKey: 'payment-resolve',
+                    operation: 'upsert' as const,
+                    scopeType: 'TERMINAL',
+                    scopeId: 'terminal-test-001',
+                    revision: 1,
+                    payload: {source: 'terminal-expired'},
+                    occurredAt: '2026-04-29T10:00:01.000Z',
+                    lifecycle: 'expiring',
+                    expiresAt: '2026-04-29T10:10:00.000Z',
+                },
+            ],
+            serverClockOffsetMs: Date.parse('2026-04-29T10:16:00.000Z') - Date.now(),
+        }))
+
+        expect(selectTdpResolvedProjection(runtime.getState(), {
+            topic: 'order.payment.completed',
+            itemKey: 'payment-resolve',
+        })).toMatchObject({
+            scopeType: 'STORE',
+            payload: {source: 'store-fallback'},
+        })
+        expect(selectTdpProjectionByTopicAndBucket(runtime.getState(), {
+            topic: 'order.payment.completed',
+            scopeType: 'TERMINAL',
+            scopeId: 'terminal-test-001',
+            itemKey: 'payment-resolve',
+        })).toBeUndefined()
+        expect(Object.values(selectTdpProjectionState(runtime.getState())?.activeEntries ?? {})).toEqual([
+            expect.objectContaining({
+                scopeType: 'STORE',
+                payload: {source: 'store-fallback'},
+            }),
+        ])
+    })
+
     it('records a protocol failure when SESSION_READY reports required missing topics', async () => {
         const runtime = createRuntime({
             localNodeId: 'node_tdp_v2_required_missing_topics',

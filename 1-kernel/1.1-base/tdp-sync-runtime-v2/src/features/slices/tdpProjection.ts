@@ -7,6 +7,10 @@ import type {
     TdpProjectionState,
 } from '../../types'
 import {TDP_PROJECTION_STATE_KEY} from '../../foundations/stateKeys'
+import {
+    estimateTdpServerNow,
+    isTdpProjectionExpiredForLocalDefense,
+} from '../../foundations/projectionExpiry'
 import {tdpSyncV2DomainActions} from './domainActions'
 
 export const toProjectionId = (input: TdpProjectionEnvelope): TdpProjectionId =>
@@ -45,6 +49,7 @@ const isProjectionEnvelope = (value: unknown): value is TdpProjectionEnvelope =>
 const applyProjectionToEntries = (
     entries: TdpProjectionEntryMap,
     item: TdpProjectionEnvelope,
+    estimatedServerNow?: number,
 ) => {
     const projectionId = toProjectionId(item)
     if (item.operation === 'delete') {
@@ -52,7 +57,30 @@ const applyProjectionToEntries = (
         return
     }
 
+    if (
+        estimatedServerNow != null
+        && isTdpProjectionExpiredForLocalDefense(item.expiresAt, estimatedServerNow)
+    ) {
+        delete entries[projectionId]
+        return
+    }
+
     entries[projectionId] = item
+}
+
+const removeExpiredEntries = (
+    entries: TdpProjectionEntryMap,
+    estimatedServerNow: number,
+) => {
+    const removedTopics = new Set<string>()
+    Object.entries(entries).forEach(([projectionId, entry]) => {
+        if (!isTdpProjectionExpiredForLocalDefense(entry.expiresAt, estimatedServerNow)) {
+            return
+        }
+        removedTopics.add(entry.topic)
+        delete entries[projectionId]
+    })
+    return [...removedTopics]
 }
 
 const clearEntries = (entries: TdpProjectionEntryMap) => {
@@ -115,8 +143,9 @@ const slice = createSlice({
                 clearEntries(state.activeEntries)
                 state.stagedBufferId = undefined
                 state.stagedEntries = undefined
+                const estimatedServerNow = estimateTdpServerNow(Date.now(), action.payload.serverClockOffsetMs)
                 action.payload.snapshot.forEach(item => {
-                    applyProjectionToEntries(state.activeEntries, item)
+                    applyProjectionToEntries(state.activeEntries, item, estimatedServerNow)
                 })
             })
             .addCase(tdpSyncV2DomainActions.beginSnapshotApply, (state, action) => {
@@ -129,8 +158,9 @@ const slice = createSlice({
                 if (state.stagedBufferId !== action.payload.snapshotId || state.stagedEntries == null) {
                     return
                 }
+                const estimatedServerNow = estimateTdpServerNow(Date.now(), action.payload.serverClockOffsetMs)
                 action.payload.items.forEach(item => {
-                    applyProjectionToEntries(state.stagedEntries!, item)
+                    applyProjectionToEntries(state.stagedEntries!, item, estimatedServerNow)
                 })
             })
             .addCase(tdpSyncV2DomainActions.commitSnapshotApply, (state, action) => {
@@ -145,19 +175,26 @@ const slice = createSlice({
             })
             .addCase(tdpSyncV2DomainActions.applyChangesLoaded, (state, action) => {
                 normalizeHydratedRecordEntries(state)
+                const estimatedServerNow = estimateTdpServerNow(Date.now(), action.payload.serverClockOffsetMs)
                 action.payload.changes.forEach(item => {
-                    applyProjectionToEntries(state.activeEntries, item)
+                    applyProjectionToEntries(state.activeEntries, item, estimatedServerNow)
                 })
             })
             .addCase(tdpSyncV2DomainActions.applyProjectionReceived, (state, action) => {
                 normalizeHydratedRecordEntries(state)
-                applyProjectionToEntries(state.activeEntries, action.payload.change)
+                const estimatedServerNow = estimateTdpServerNow(Date.now(), action.payload.serverClockOffsetMs)
+                applyProjectionToEntries(state.activeEntries, action.payload.change, estimatedServerNow)
             })
             .addCase(tdpSyncV2DomainActions.applyProjectionBatchReceived, (state, action) => {
                 normalizeHydratedRecordEntries(state)
+                const estimatedServerNow = estimateTdpServerNow(Date.now(), action.payload.serverClockOffsetMs)
                 action.payload.changes.forEach(item => {
-                    applyProjectionToEntries(state.activeEntries, item)
+                    applyProjectionToEntries(state.activeEntries, item, estimatedServerNow)
                 })
+            })
+            .addCase(tdpSyncV2DomainActions.cleanupExpiredProjectionsCompleted, (state, action) => {
+                normalizeHydratedRecordEntries(state)
+                removeExpiredEntries(state.activeEntries, action.payload.cleanedAt)
             })
             .addDefaultCase(state => {
                 normalizeHydratedRecordEntries(state)

@@ -274,6 +274,13 @@ export const initializeDatabase = (): void => {
       schema_json TEXT NOT NULL,
       scope_type TEXT NOT NULL,
       retention_hours INTEGER NOT NULL,
+      lifecycle TEXT NOT NULL DEFAULT 'persistent',
+      delivery_type TEXT NOT NULL DEFAULT 'projection',
+      default_ttl_ms INTEGER,
+      min_ttl_ms INTEGER,
+      max_ttl_ms INTEGER,
+      expiry_action TEXT NOT NULL DEFAULT 'tombstone',
+      delivery_guarantee TEXT NOT NULL DEFAULT 'retained-until-deleted',
       created_at INTEGER NOT NULL,
       updated_at INTEGER NOT NULL
     );
@@ -286,6 +293,13 @@ export const initializeDatabase = (): void => {
       item_key TEXT NOT NULL DEFAULT '',
       revision INTEGER NOT NULL,
       payload_json TEXT NOT NULL,
+      lifecycle TEXT NOT NULL DEFAULT 'persistent',
+      expires_at INTEGER,
+      expired_at INTEGER,
+      expiry_reason TEXT,
+      expiry_status TEXT,
+      expiry_claimed_by TEXT,
+      expiry_claimed_at INTEGER,
       updated_at INTEGER NOT NULL
     );
     CREATE TABLE IF NOT EXISTS tdp_projection_source_events (
@@ -303,6 +317,8 @@ export const initializeDatabase = (): void => {
       source_release_id TEXT,
       occurred_at INTEGER,
       scope_metadata_json TEXT,
+      lifecycle TEXT NOT NULL DEFAULT 'persistent',
+      expires_at INTEGER,
       accepted_at INTEGER NOT NULL
     );
     CREATE TABLE IF NOT EXISTS tdp_change_logs (
@@ -320,6 +336,10 @@ export const initializeDatabase = (): void => {
       source_release_id TEXT,
       occurred_at INTEGER,
       scope_metadata_json TEXT,
+      expires_at INTEGER,
+      change_reason TEXT,
+      source_projection_id TEXT,
+      tombstone_key TEXT,
       created_at INTEGER NOT NULL
     );
     CREATE TABLE IF NOT EXISTS tdp_terminal_projection_access (
@@ -336,6 +356,10 @@ export const initializeDatabase = (): void => {
       source_release_id TEXT,
       occurred_at INTEGER,
       scope_metadata_json TEXT,
+      lifecycle TEXT NOT NULL DEFAULT 'persistent',
+      expires_at INTEGER,
+      expired_at INTEGER,
+      expiry_reason TEXT,
       last_cursor INTEGER NOT NULL,
       updated_at INTEGER NOT NULL
     );
@@ -582,6 +606,40 @@ export const initializeDatabase = (): void => {
   ensureColumn('tdp_sessions', 'accepted_topics_json', 'TEXT')
   ensureColumn('tdp_sessions', 'rejected_topics_json', 'TEXT')
   ensureColumn('tdp_sessions', 'required_missing_topics_json', 'TEXT')
+  ensureColumn('tdp_topics', 'lifecycle', `TEXT NOT NULL DEFAULT 'persistent'`)
+  ensureColumn('tdp_topics', 'delivery_type', `TEXT NOT NULL DEFAULT 'projection'`)
+  ensureColumn('tdp_topics', 'default_ttl_ms', 'INTEGER')
+  ensureColumn('tdp_topics', 'min_ttl_ms', 'INTEGER')
+  ensureColumn('tdp_topics', 'max_ttl_ms', 'INTEGER')
+  ensureColumn('tdp_topics', 'expiry_action', `TEXT NOT NULL DEFAULT 'tombstone'`)
+  ensureColumn('tdp_topics', 'delivery_guarantee', `TEXT NOT NULL DEFAULT 'retained-until-deleted'`)
+  ensureColumn('tdp_projections', 'lifecycle', `TEXT NOT NULL DEFAULT 'persistent'`)
+  ensureColumn('tdp_projections', 'expires_at', 'INTEGER')
+  ensureColumn('tdp_projections', 'expired_at', 'INTEGER')
+  ensureColumn('tdp_projections', 'expiry_reason', 'TEXT')
+  ensureColumn('tdp_projections', 'expiry_status', 'TEXT')
+  ensureColumn('tdp_projections', 'expiry_claimed_by', 'TEXT')
+  ensureColumn('tdp_projections', 'expiry_claimed_at', 'INTEGER')
+  ensureColumn('tdp_terminal_projection_access', 'lifecycle', `TEXT NOT NULL DEFAULT 'persistent'`)
+  ensureColumn('tdp_terminal_projection_access', 'expires_at', 'INTEGER')
+  ensureColumn('tdp_terminal_projection_access', 'expired_at', 'INTEGER')
+  ensureColumn('tdp_terminal_projection_access', 'expiry_reason', 'TEXT')
+  ensureColumn('tdp_change_logs', 'expires_at', 'INTEGER')
+  ensureColumn('tdp_change_logs', 'change_reason', 'TEXT')
+  ensureColumn('tdp_change_logs', 'source_projection_id', 'TEXT')
+  ensureColumn('tdp_change_logs', 'tombstone_key', 'TEXT')
+  ensureColumn('tdp_projection_source_events', 'lifecycle', `TEXT NOT NULL DEFAULT 'persistent'`)
+  ensureColumn('tdp_projection_source_events', 'expires_at', 'INTEGER')
+  sqlite.exec(`
+    CREATE INDEX IF NOT EXISTS idx_tdp_terminal_access_snapshot_visible
+      ON tdp_terminal_projection_access (sandbox_id, target_terminal_id, topic_key, operation, expires_at);
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_tdp_change_logs_tombstone_key
+      ON tdp_change_logs (sandbox_id, target_terminal_id, tombstone_key)
+      WHERE tombstone_key IS NOT NULL;
+    CREATE INDEX IF NOT EXISTS idx_tdp_projection_expiry
+      ON tdp_projections (sandbox_id, expires_at)
+      WHERE expires_at IS NOT NULL;
+  `)
   migrateTdpProjectionIdentity()
   migrateTdpChangeLogIdentity()
   migrateTdpChangeLogCursor()
@@ -1459,6 +1517,33 @@ const seedDefaultData = (): void => {
     JSON.stringify({ type: 'object', required: ['membershipVersion', 'groups'] }),
     'TERMINAL',
     168,
+    timestamp,
+    timestamp,
+  )
+
+  sqlite.prepare(`
+    INSERT INTO tdp_topics (
+      topic_id, sandbox_id, key, name, payload_mode, schema_json, scope_type, retention_hours,
+      lifecycle, delivery_type, default_ttl_ms, min_ttl_ms, max_ttl_ms, expiry_action, delivery_guarantee,
+      created_at, updated_at
+    )
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    createId('topic'),
+    DEFAULT_SANDBOX_ID,
+    'order.payment.completed',
+    '订单支付完成通知',
+    'FLEXIBLE_JSON',
+    JSON.stringify({ type: 'object', additionalProperties: true }),
+    'TERMINAL',
+    48,
+    'expiring',
+    'projection',
+    2 * 24 * 60 * 60 * 1000,
+    1_000,
+    2 * 24 * 60 * 60 * 1000,
+    'tombstone',
+    'retained-until-expired',
     timestamp,
     timestamp,
   )

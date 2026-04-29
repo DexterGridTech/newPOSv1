@@ -13,4 +13,10 @@ export const cateringShellModuleManifest: KernelRuntimeModuleManifestV2 =
         commandDefinitions: [],
         errorDefinitions: [],
         parameterDefinitions: [],
+        tdpTopicInterests: [{
+            topicKey: 'order.payment.completed',
+            category: 'projection',
+            required: false,
+            reason: 'catering terminal handles payment completion notifications during active order workflows',
+        }],
     })

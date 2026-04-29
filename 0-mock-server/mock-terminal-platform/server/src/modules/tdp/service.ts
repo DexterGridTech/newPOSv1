@@ -16,6 +16,11 @@ import { createId, now, parseJson } from '../../shared/utils.js'
 import { assertSandboxUsable } from '../sandbox/service.js'
 import { forceCloseOnlineSession, getOnlineSessionById, listOnlineMasterSessionsByTerminalId, listOnlineSessionsByTerminalId } from './wsSessionRegistry.js'
 import type { TdpProjectionEnvelope, TdpServerMessage } from './wsProtocol.js'
+import {
+  readTdpTopicLifecyclePolicy,
+  validateAndComputeTdpProjectionLifecycle,
+  type TdpProjectionLifecycle,
+} from './lifecyclePolicy.js'
 
 export interface TdpServerSubscriptionFilter {
   mode: 'explicit' | 'legacy-all'
@@ -191,6 +196,10 @@ const upsertTerminalProjectionAccess = (input: {
   sourceReleaseId?: string | null
   occurredAt?: number | null
   scopeMetadataJson?: string | null
+  lifecycle?: TdpProjectionLifecycle
+  expiresAt?: number | null
+  expiredAt?: number | null
+  expiryReason?: string | null
   cursor: number
   timestamp: number
 }) => {
@@ -209,10 +218,14 @@ const upsertTerminalProjectionAccess = (input: {
       source_release_id,
       occurred_at,
       scope_metadata_json,
+      lifecycle,
+      expires_at,
+      expired_at,
+      expiry_reason,
       last_cursor,
       updated_at
     )
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ON CONFLICT(sandbox_id, target_terminal_id, topic_key, scope_type, scope_key, item_key)
     DO UPDATE SET
       operation = excluded.operation,
@@ -221,6 +234,10 @@ const upsertTerminalProjectionAccess = (input: {
       source_release_id = excluded.source_release_id,
       occurred_at = excluded.occurred_at,
       scope_metadata_json = excluded.scope_metadata_json,
+      lifecycle = excluded.lifecycle,
+      expires_at = excluded.expires_at,
+      expired_at = excluded.expired_at,
+      expiry_reason = excluded.expiry_reason,
       last_cursor = excluded.last_cursor,
       updated_at = excluded.updated_at
   `).run(
@@ -237,6 +254,10 @@ const upsertTerminalProjectionAccess = (input: {
     input.sourceReleaseId ?? null,
     input.occurredAt ?? null,
     input.scopeMetadataJson ?? null,
+    input.lifecycle ?? 'persistent',
+    input.expiresAt ?? null,
+    input.expiredAt ?? null,
+    input.expiryReason ?? null,
     input.cursor,
     input.timestamp,
   )
@@ -356,6 +377,13 @@ const recordTerminalChange = (input: {
   sourceReleaseId?: string | null
   occurredAt?: number | null
   scopeMetadataJson?: string | null
+  lifecycle?: TdpProjectionLifecycle
+  expiresAt?: number | null
+  changeReason?: string | null
+  sourceProjectionId?: string | null
+  tombstoneKey?: string | null
+  expiredAt?: number | null
+  expiryReason?: string | null
   timestamp: number
 }) => {
   db.insert(changeLogsTable).values({
@@ -373,6 +401,10 @@ const recordTerminalChange = (input: {
     sourceReleaseId: input.sourceReleaseId ?? null,
     occurredAt: input.occurredAt ?? null,
     scopeMetadataJson: input.scopeMetadataJson ?? null,
+    expiresAt: input.expiresAt ?? null,
+    changeReason: input.changeReason ?? (input.operation === 'delete' ? 'PUBLISHER_DELETE' : 'PUBLISHER_UPSERT'),
+    sourceProjectionId: input.sourceProjectionId ?? null,
+    tombstoneKey: input.tombstoneKey ?? null,
     createdAt: input.timestamp,
   }).run()
   upsertTerminalProjectionAccess({
@@ -388,6 +420,10 @@ const recordTerminalChange = (input: {
     sourceReleaseId: input.sourceReleaseId ?? null,
     occurredAt: input.occurredAt ?? null,
     scopeMetadataJson: input.scopeMetadataJson ?? null,
+    lifecycle: input.lifecycle,
+    expiresAt: input.expiresAt ?? null,
+    expiredAt: input.expiredAt ?? null,
+    expiryReason: input.expiryReason ?? (input.operation === 'delete' ? input.changeReason ?? 'PUBLISHER_DELETE' : null),
     cursor: input.cursor,
     timestamp: input.timestamp,
   })
@@ -421,7 +457,7 @@ const findAcceptedProjectionSourceEvent = (input: {
   scopeKey: string
   itemKey: string
 }) => sqlite.prepare(`
-  SELECT operation, source_revision, tdp_revision, payload_json, source_release_id, occurred_at, scope_metadata_json, accepted_at
+  SELECT operation, source_revision, tdp_revision, payload_json, source_release_id, occurred_at, scope_metadata_json, lifecycle, expires_at, accepted_at
   FROM tdp_projection_source_events
   WHERE source_event_id = ?
     AND sandbox_id = ?
@@ -445,6 +481,8 @@ const findAcceptedProjectionSourceEvent = (input: {
   source_release_id: string | null
   occurred_at: number | null
   scope_metadata_json: string | null
+  lifecycle: TdpProjectionLifecycle
+  expires_at: number | null
   accepted_at: number
 } | undefined
 
@@ -484,6 +522,9 @@ const toProjectionEnvelope = (input: {
   sourceReleaseId?: string | null
   occurredAt?: number
   scopeMetadata?: Record<string, unknown> | null
+  expiresAt?: number | null
+  lifecycle?: TdpProjectionLifecycle
+  expiryReason?: 'TTL_EXPIRED' | 'PUBLISHER_DELETE' | null
 }): TdpProjectionEnvelope => ({
   topic: input.topicKey,
   itemKey: buildItemKey(input),
@@ -495,6 +536,9 @@ const toProjectionEnvelope = (input: {
   occurredAt: toIsoTime(input.occurredAt ?? input.createdAt ?? input.updatedAt ?? now()),
   sourceReleaseId: input.sourceReleaseId ?? null,
   scopeMetadata: input.scopeMetadata ?? undefined,
+  expiresAt: input.expiresAt == null ? null : toIsoTime(input.expiresAt),
+  lifecycle: input.lifecycle ?? 'persistent',
+  expiryReason: input.expiryReason ?? null,
 })
 
 const pushToOnlineTerminal = (sandboxId: string, terminalId: string, message: TdpServerMessage) => {
@@ -607,7 +651,7 @@ export const acknowledgeProjectionBatchForSession = (input: {
   }
 }
 
-const pushProjectionChangeToOnlineTerminal = (terminalId: string, input: {
+export const pushProjectionChangeToOnlineTerminal = (terminalId: string, input: {
   sandboxId: string
   change: TdpProjectionEnvelope
   cursor: number
@@ -622,6 +666,13 @@ const pushProjectionChangeToOnlineTerminal = (terminalId: string, input: {
     }, BATCH_WINDOW_MS)
   }
 }
+
+export const toTdpProjectionEnvelope = toProjectionEnvelope
+
+export const allocateTdpCursorForTerminal = (sandboxId: string, terminalId: string) =>
+  getNextCursorForTerminal(sandboxId, terminalId)
+
+export const upsertTdpTerminalProjectionAccessForScheduler = upsertTerminalProjectionAccess
 
 const resolveTargetTerminalIds = (input: {
   sandboxId: string
@@ -852,6 +903,8 @@ export const listTopics = (sandboxId: string) => {
   assertSandboxUsable(sandboxId)
   return db.select().from(topicsTable).where(eq(topicsTable.sandboxId, sandboxId)).orderBy(desc(topicsTable.updatedAt)).all().map((item) => ({
     ...item,
+    lifecycle: item.lifecycle ?? 'persistent',
+    deliveryType: item.deliveryType ?? (item.payloadMode === 'EPHEMERAL_COMMAND' ? 'command-outbox' : 'projection'),
     schema: parseJson(item.schemaJson, {}),
   }))
 }
@@ -860,6 +913,9 @@ export const listProjections = (sandboxId: string) => {
   assertSandboxUsable(sandboxId)
   return db.select().from(projectionsTable).where(eq(projectionsTable.sandboxId, sandboxId)).orderBy(desc(projectionsTable.updatedAt)).all().map((item) => ({
     ...item,
+    lifecycle: item.lifecycle ?? 'persistent',
+    expiresAt: item.expiresAt == null ? null : toIsoTime(item.expiresAt),
+    expiredAt: item.expiredAt == null ? null : toIsoTime(item.expiredAt),
     payload: parseJson(item.payloadJson, {}),
   }))
 }
@@ -1080,9 +1136,17 @@ export const getTerminalSnapshotEnvelope = (
   if (topicFilter.empty) {
     return []
   }
+  const timestamp = now()
   const rows = sqlite.prepare(
-    `SELECT topic_key, scope_key, scope_type, item_key, operation, revision, payload_json, updated_at, source_release_id, occurred_at, scope_metadata_json FROM tdp_terminal_projection_access WHERE sandbox_id = ? AND target_terminal_id = ? AND operation != 'delete'${topicFilter.clause} ORDER BY updated_at DESC`
-  ).all(sandboxId, terminalId, ...topicFilter.params) as Array<{ topic_key: string; scope_key: string; scope_type: string; item_key: string; operation: 'upsert' | 'delete'; revision: number; payload_json: string; updated_at: number; source_release_id: string | null; occurred_at: number | null; scope_metadata_json: string | null }>
+    `SELECT topic_key, scope_key, scope_type, item_key, operation, revision, payload_json, lifecycle, expires_at, expiry_reason, updated_at, source_release_id, occurred_at, scope_metadata_json
+     FROM tdp_terminal_projection_access
+     WHERE sandbox_id = ?
+       AND target_terminal_id = ?
+       AND operation != 'delete'
+       AND (expires_at IS NULL OR expires_at > ?)
+       ${topicFilter.clause}
+     ORDER BY updated_at DESC`
+  ).all(sandboxId, terminalId, timestamp, ...topicFilter.params) as Array<{ topic_key: string; scope_key: string; scope_type: string; item_key: string; operation: 'upsert' | 'delete'; revision: number; payload_json: string; lifecycle: TdpProjectionLifecycle | null; expires_at: number | null; expiry_reason: 'TTL_EXPIRED' | 'PUBLISHER_DELETE' | null; updated_at: number; source_release_id: string | null; occurred_at: number | null; scope_metadata_json: string | null }>
 
   return rows.map((item) => toProjectionEnvelope({
     topicKey: item.topic_key,
@@ -1096,14 +1160,17 @@ export const getTerminalSnapshotEnvelope = (
     sourceReleaseId: item.source_release_id,
     occurredAt: item.occurred_at ?? undefined,
     scopeMetadata: parseJson(item.scope_metadata_json, null),
+    lifecycle: item.lifecycle ?? 'persistent',
+    expiresAt: item.expires_at,
+    expiryReason: item.expiry_reason,
   }))
 }
 
 export const getTerminalChanges = (sandboxId: string, terminalId: string) => {
   assertSandboxUsable(sandboxId)
   const rows = sqlite.prepare(
-    'SELECT change_id, cursor, topic_key, operation, item_key, revision, payload_json, source_release_id, occurred_at, scope_metadata_json, created_at FROM tdp_change_logs WHERE sandbox_id = ? AND target_terminal_id = ? ORDER BY created_at DESC LIMIT 50'
-  ).all(sandboxId, terminalId) as Array<{ change_id: string; cursor: number; topic_key: string; operation: "upsert" | "delete"; item_key: string; revision: number; payload_json: string; source_release_id: string | null; occurred_at: number | null; scope_metadata_json: string | null; created_at: number }>
+    'SELECT change_id, cursor, topic_key, operation, item_key, revision, payload_json, source_release_id, occurred_at, scope_metadata_json, expires_at, change_reason, source_projection_id, tombstone_key, created_at FROM tdp_change_logs WHERE sandbox_id = ? AND target_terminal_id = ? ORDER BY created_at DESC LIMIT 50'
+  ).all(sandboxId, terminalId) as Array<{ change_id: string; cursor: number; topic_key: string; operation: "upsert" | "delete"; item_key: string; revision: number; payload_json: string; source_release_id: string | null; occurred_at: number | null; scope_metadata_json: string | null; expires_at: number | null; change_reason: string | null; source_projection_id: string | null; tombstone_key: string | null; created_at: number }>
 
   return rows.map((item) => ({
     changeId: item.change_id,
@@ -1114,6 +1181,10 @@ export const getTerminalChanges = (sandboxId: string, terminalId: string) => {
     revision: item.revision,
     payload: parseJson(item.payload_json, {}),
     sourceReleaseId: item.source_release_id,
+    expiresAt: item.expires_at == null ? null : toIsoTime(item.expires_at),
+    changeReason: item.change_reason,
+    sourceProjectionId: item.source_projection_id,
+    tombstoneKey: item.tombstone_key,
     occurredAt: item.occurred_at ? toIsoTime(item.occurred_at) : undefined,
     scopeMetadata: parseJson(item.scope_metadata_json, null),
     createdAt: item.created_at,
@@ -1136,8 +1207,11 @@ export const getTerminalChangesSince = (
     }
   }
   const rows = sqlite.prepare(
-    `SELECT change_id, cursor, topic_key, operation, scope_type, scope_key, item_key, revision, payload_json, source_release_id, occurred_at, scope_metadata_json, created_at FROM tdp_change_logs WHERE sandbox_id = ? AND target_terminal_id = ? AND cursor > ?${topicFilter.clause} ORDER BY cursor ASC LIMIT ?`
-  ).all(sandboxId, terminalId, cursor, ...topicFilter.params, limit + 1) as Array<{ change_id: string; cursor: number; topic_key: string; operation: "upsert" | "delete"; scope_type: string; scope_key: string; item_key: string; revision: number; payload_json: string; source_release_id: string | null; occurred_at: number | null; scope_metadata_json: string | null; created_at: number }>
+    `SELECT change_id, cursor, topic_key, operation, scope_type, scope_key, item_key, revision, payload_json, source_release_id, occurred_at, scope_metadata_json, expires_at, change_reason, created_at
+     FROM tdp_change_logs
+     WHERE sandbox_id = ? AND target_terminal_id = ? AND cursor > ?${topicFilter.clause}
+     ORDER BY cursor ASC LIMIT ?`
+  ).all(sandboxId, terminalId, cursor, ...topicFilter.params, limit + 1) as Array<{ change_id: string; cursor: number; topic_key: string; operation: "upsert" | "delete"; scope_type: string; scope_key: string; item_key: string; revision: number; payload_json: string; source_release_id: string | null; occurred_at: number | null; scope_metadata_json: string | null; expires_at: number | null; change_reason: 'TTL_EXPIRED' | 'PUBLISHER_DELETE' | null; created_at: number }>
 
   return {
     changes: rows.slice(0, limit).map((item) => ({
@@ -1154,6 +1228,9 @@ export const getTerminalChangesSince = (
         occurredAt: item.occurred_at ?? undefined,
         sourceReleaseId: item.source_release_id,
         scopeMetadata: parseJson(item.scope_metadata_json, null),
+        lifecycle: item.expires_at == null ? 'persistent' : 'expiring',
+        expiresAt: item.expires_at,
+        expiryReason: item.operation === 'delete' ? item.change_reason ?? 'PUBLISHER_DELETE' : null,
       }),
     })),
     hasMore: rows.length > limit,
@@ -1184,6 +1261,11 @@ export const createTopic = (input: {
   schema?: Record<string, unknown>
   scopeType?: string
   retentionHours?: number
+  lifecycle?: TdpProjectionLifecycle
+  deliveryType?: 'projection' | 'command-outbox'
+  defaultTtlMs?: number
+  minTtlMs?: number
+  maxTtlMs?: number
 }) => {
   const sandboxId = input.sandboxId
   assertSandboxUsable(sandboxId)
@@ -1198,6 +1280,13 @@ export const createTopic = (input: {
     schemaJson: JSON.stringify(input.schema ?? { type: 'object', additionalProperties: true }),
     scopeType: input.scopeType ?? 'TERMINAL',
     retentionHours: input.retentionHours ?? 72,
+    lifecycle: input.lifecycle ?? 'persistent',
+    deliveryType: input.deliveryType ?? (input.payloadMode === 'EPHEMERAL_COMMAND' ? 'command-outbox' : 'projection'),
+    defaultTtlMs: input.defaultTtlMs ?? null,
+    minTtlMs: input.minTtlMs ?? null,
+    maxTtlMs: input.maxTtlMs ?? null,
+    expiryAction: 'tombstone',
+    deliveryGuarantee: input.lifecycle === 'expiring' ? 'retained-until-expired' : 'retained-until-deleted',
     createdAt: timestamp,
     updatedAt: timestamp,
   }).run()
@@ -1261,6 +1350,10 @@ export const upsertProjectionBatch = (input: {
     source_revision?: number
     occurredAt?: string | number
     occurred_at?: string | number
+    ttlMs?: number
+    ttl_ms?: number
+    expiresAt?: string | number
+    expires_at?: string | number
     scopeMetadata?: Record<string, unknown>
     scope_metadata?: Record<string, unknown>
     targetTerminalIds?: string[]
@@ -1282,6 +1375,9 @@ export const upsertProjectionBatch = (input: {
     sourceRevision?: number
     occurredAt: number
     scopeMetadata?: Record<string, unknown>
+    lifecycle: TdpProjectionLifecycle
+    expiresAt: number | null
+    expiryStatus: 'pending' | null
     targetTerminalIds: string[]
   }> = []
 
@@ -1327,12 +1423,25 @@ export const upsertProjectionBatch = (input: {
           sourceReleaseId: acceptedEvent.source_release_id,
           occurredAt: acceptedEvent.occurred_at ? toIsoTime(acceptedEvent.occurred_at) : undefined,
           scopeMetadata: parseJson(acceptedEvent.scope_metadata_json, null),
+          lifecycle: acceptedEvent.lifecycle ?? 'persistent',
+          expiresAt: acceptedEvent.expires_at == null ? null : toIsoTime(acceptedEvent.expires_at),
           status: 'IDEMPOTENT_REPLAY' as const,
           acceptedAt: acceptedEvent.accepted_at,
           targetTerminalIds: [] as string[],
         }
       }
     }
+    const lifecycle = validateAndComputeTdpProjectionLifecycle({
+      sandboxId,
+      topicKey: item.topicKey,
+      operation,
+      occurredAt,
+      ttlMs: item.ttlMs,
+      ttl_ms: item.ttl_ms,
+      expiresAt: item.expiresAt,
+      expires_at: item.expires_at,
+      serverNow: timestamp,
+    })
     const existingProjection = sqlite.prepare(
       'SELECT projection_id, revision FROM tdp_projections WHERE sandbox_id = ? AND topic_key = ? AND scope_type = ? AND scope_key = ? AND item_key = ? LIMIT 1'
     ).get(sandboxId, item.topicKey, scopeType, item.scopeKey, itemKey) as { projection_id: string; revision: number } | undefined
@@ -1372,8 +1481,28 @@ export const upsertProjectionBatch = (input: {
           .run(existingProjection.projection_id)
       }
     } else if (existingProjection) {
-      sqlite.prepare('UPDATE tdp_projections SET revision = ?, payload_json = ?, updated_at = ? WHERE projection_id = ?')
-        .run(revision, payloadJson, timestamp, existingProjection.projection_id)
+      sqlite.prepare(`
+        UPDATE tdp_projections
+        SET revision = ?,
+            payload_json = ?,
+            lifecycle = ?,
+            expires_at = ?,
+            expired_at = NULL,
+            expiry_reason = NULL,
+            expiry_status = ?,
+            expiry_claimed_by = NULL,
+            expiry_claimed_at = NULL,
+            updated_at = ?
+        WHERE projection_id = ?
+      `).run(
+        revision,
+        payloadJson,
+        lifecycle.lifecycle,
+        lifecycle.expiresAt,
+        lifecycle.expiryStatus,
+        timestamp,
+        existingProjection.projection_id,
+      )
     } else {
       db.insert(projectionsTable).values({
         projectionId: createId('projection'),
@@ -1384,6 +1513,13 @@ export const upsertProjectionBatch = (input: {
         itemKey,
         revision,
         payloadJson,
+        lifecycle: lifecycle.lifecycle,
+        expiresAt: lifecycle.expiresAt,
+        expiredAt: null,
+        expiryReason: null,
+        expiryStatus: lifecycle.expiryStatus,
+        expiryClaimedBy: null,
+        expiryClaimedAt: null,
         updatedAt: timestamp,
       }).run()
     }
@@ -1403,6 +1539,8 @@ export const upsertProjectionBatch = (input: {
         sourceReleaseId: item.sourceReleaseId ?? null,
         occurredAt,
         scopeMetadataJson: scopeMetadata ? JSON.stringify(scopeMetadata) : null,
+        lifecycle: lifecycle.lifecycle,
+        expiresAt: lifecycle.expiresAt,
         acceptedAt: timestamp,
       }).run()
     }
@@ -1424,6 +1562,9 @@ export const upsertProjectionBatch = (input: {
       sourceRevision,
       occurredAt,
       scopeMetadata,
+      lifecycle: lifecycle.lifecycle,
+      expiresAt: lifecycle.expiresAt,
+      expiryStatus: lifecycle.expiryStatus,
       targetTerminalIds,
     })
 
@@ -1439,6 +1580,8 @@ export const upsertProjectionBatch = (input: {
       sourceReleaseId: item.sourceReleaseId ?? null,
       occurredAt: toIsoTime(occurredAt),
       scopeMetadata: scopeMetadata ?? null,
+      lifecycle: lifecycle.lifecycle,
+      expiresAt: lifecycle.expiresAt == null ? null : toIsoTime(lifecycle.expiresAt),
       status: 'ACCEPTED' as const,
       targetTerminalIds,
     }
@@ -1470,6 +1613,9 @@ export const upsertProjectionBatch = (input: {
         sourceReleaseId: accepted.item.sourceReleaseId ?? null,
         occurredAt: accepted.occurredAt,
         scopeMetadataJson,
+        lifecycle: accepted.lifecycle,
+        expiresAt: accepted.expiresAt,
+        changeReason: accepted.operation === 'delete' ? 'PUBLISHER_DELETE' : 'PUBLISHER_UPSERT',
         timestamp,
       })
       const change = toProjectionEnvelope({
@@ -1484,6 +1630,9 @@ export const upsertProjectionBatch = (input: {
         occurredAt: accepted.occurredAt,
         sourceReleaseId: accepted.item.sourceReleaseId ?? null,
         scopeMetadata: accepted.scopeMetadata,
+        lifecycle: accepted.lifecycle,
+        expiresAt: accepted.expiresAt,
+        expiryReason: accepted.operation === 'delete' ? 'PUBLISHER_DELETE' : null,
       })
       const queue = queuedByTerminal.get(terminalId) ?? []
       queue.push({cursor, change})
@@ -1511,11 +1660,20 @@ export const fanoutExistingProjectionToTerminalIds = (input: {
   revision: number
   payload: Record<string, unknown>
   sourceReleaseId?: string | null
+  lifecycle?: TdpProjectionLifecycle | null
+  expiresAt?: number | null
+  expiryReason?: 'TTL_EXPIRED' | 'PUBLISHER_DELETE' | null
   targetTerminalIds: string[]
 }) => {
   const sandboxId = input.sandboxId
   assertSandboxUsable(sandboxId)
   const timestamp = now()
+  if (input.expiresAt != null && input.expiresAt <= timestamp) {
+    return {
+      total: 0,
+      targetTerminalIds: [] as string[],
+    }
+  }
   const payloadJson = JSON.stringify(input.payload)
   const targetTerminalIds = Array.from(new Set(input.targetTerminalIds.filter(terminalId => terminalId.trim().length > 0)))
   const queuedByTerminal = new Map<string, Array<{cursor: number; change: TdpProjectionEnvelope}>>()
@@ -1539,6 +1697,9 @@ export const fanoutExistingProjectionToTerminalIds = (input: {
       revision: input.revision,
       payloadJson,
       sourceReleaseId: input.sourceReleaseId ?? null,
+      lifecycle: input.lifecycle ?? readTdpTopicLifecyclePolicy(sandboxId, input.topicKey).lifecycle,
+      expiresAt: input.expiresAt ?? null,
+      expiryReason: input.expiryReason ?? null,
       timestamp,
     })
     const change = toProjectionEnvelope({
@@ -1551,6 +1712,9 @@ export const fanoutExistingProjectionToTerminalIds = (input: {
       payloadJson,
       createdAt: timestamp,
       sourceReleaseId: input.sourceReleaseId ?? null,
+      lifecycle: input.lifecycle ?? readTdpTopicLifecyclePolicy(sandboxId, input.topicKey).lifecycle,
+      expiresAt: input.expiresAt ?? null,
+      expiryReason: input.expiryReason ?? null,
     })
     const queue = queuedByTerminal.get(terminalId) ?? []
     queue.push({cursor, change})

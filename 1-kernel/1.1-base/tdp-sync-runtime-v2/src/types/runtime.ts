@@ -97,6 +97,10 @@ export interface TdpSessionConnectionRuntimeRefV2 {
 export interface CreateTdpSyncRuntimeModuleV2Input {
     assembly?: TdpSyncRuntimeAssemblyV2
     autoConnectOnActivation?: boolean
+    projectionExpiryCleanup?: {
+        enabled?: boolean
+        intervalMs?: number
+    }
     socket?: {
         reconnectAttempts?: number
         reconnectIntervalMs?: number

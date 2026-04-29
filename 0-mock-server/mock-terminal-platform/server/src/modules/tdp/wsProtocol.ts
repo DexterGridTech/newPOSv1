@@ -65,6 +65,9 @@ export interface TdpProjectionEnvelope {
   occurredAt: string
   sourceReleaseId?: string | null
   scopeMetadata?: Record<string, unknown>
+  expiresAt?: string | null
+  lifecycle?: 'persistent' | 'expiring'
+  expiryReason?: 'TTL_EXPIRED' | 'PUBLISHER_DELETE' | null
 }
 
 export type TdpServerMessage =
@@ -77,6 +80,8 @@ export type TdpServerMessage =
         highWatermark: number
         syncMode: 'incremental' | 'full'
         alternativeEndpoints: string[]
+        serverTime?: string
+        serverTimestamp?: number
         subscription?: {
           version: 1
           mode: 'explicit' | 'legacy-all'

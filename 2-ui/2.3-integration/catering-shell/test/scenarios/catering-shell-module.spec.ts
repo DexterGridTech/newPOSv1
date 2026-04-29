@@ -5,10 +5,20 @@ import {
     selectUiScreenDefinition,
 } from '@next/kernel-base-ui-runtime-v2'
 import {tdpSyncV2CommandDefinitions} from '@next/kernel-base-tdp-sync-runtime-v2'
+import {cateringShellModuleManifest} from '../../src/application/moduleManifest'
 import {CATERING_SHELL_HOT_UPDATE_RESTART_OVERLAY_ID} from '../../src/features'
 import {createCateringShellHarness} from '../support/cateringShellHarness'
 
 describe('catering-shell module', () => {
+    it('declares payment completion topic interest for TDP handshake', () => {
+        expect(cateringShellModuleManifest.tdpTopicInterests).toContainEqual({
+            topicKey: 'order.payment.completed',
+            category: 'projection',
+            required: false,
+            reason: 'catering terminal handles payment completion notifications during active order workflows',
+        })
+    })
+
     it('registers the catering welcome screen definition', async () => {
         await createCateringShellHarness()
 

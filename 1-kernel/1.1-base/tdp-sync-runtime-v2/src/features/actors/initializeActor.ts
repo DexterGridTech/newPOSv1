@@ -19,6 +19,9 @@ export const createTdpInitializeActorDefinitionV2 = (
     [
         onCommand(runtimeShellV2CommandDefinitions.initialize, async context => {
             await context.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.bootstrapTdpSync, {}))
+            if (input.projectionExpiryCleanup?.enabled !== false) {
+                await context.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.cleanupExpiredTdpProjections, {}))
+            }
             if (input.autoConnectOnActivation !== false && selectTcpIsActivated(context.getState())) {
                 await context.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.connectTdpSession, {}))
             }

@@ -258,6 +258,8 @@ const handleHandshake = (socket: WebSocket, req: IncomingMessage, payload: {
       highWatermark,
       syncMode,
       alternativeEndpoints: [],
+      serverTime: new Date(now()).toISOString(),
+      serverTimestamp: now(),
       subscription,
     },
   })

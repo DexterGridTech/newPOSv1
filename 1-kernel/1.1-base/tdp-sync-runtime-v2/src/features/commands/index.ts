@@ -74,6 +74,9 @@ export const tdpSyncV2CommandDefinitions = {
             visibility: 'internal',
         },
     ),
+    cleanupExpiredTdpProjections: defineModuleCommand<{
+        now?: number
+    }>('cleanup-expired-projections'),
     fetchMoreChanges: defineModuleCommand<{
         cursor: number
         highWatermark: number
@@ -91,6 +94,7 @@ export const tdpSyncV2CommandDefinitions = {
         snapshotId: string
         highWatermark: number
         totalItems: number
+        serverClockOffsetMs?: number
     }>('begin-snapshot-apply', {
         visibility: 'internal',
     }),
@@ -98,6 +102,7 @@ export const tdpSyncV2CommandDefinitions = {
         snapshotId: string
         chunkIndex: number
         items: TdpProjectionEnvelope[]
+        serverClockOffsetMs?: number
     }>('apply-snapshot-chunk', {
         visibility: 'internal',
     }),
@@ -128,6 +133,7 @@ export const tdpSyncV2CommandDefinitions = {
     tdpSnapshotLoaded: defineModuleCommand<{
         snapshot: TdpProjectionEnvelope[]
         highWatermark: number
+        serverClockOffsetMs?: number
     }>('snapshot-loaded', {
         visibility: 'internal',
     }),
@@ -136,6 +142,7 @@ export const tdpSyncV2CommandDefinitions = {
         nextCursor: number
         highWatermark: number
         hasMore?: boolean
+        serverClockOffsetMs?: number
     }>('changes-loaded', {
         visibility: 'internal',
         allowReentry: true,
@@ -143,6 +150,7 @@ export const tdpSyncV2CommandDefinitions = {
     tdpProjectionReceived: defineModuleCommand<{
         cursor: number
         change: TdpProjectionEnvelope
+        serverClockOffsetMs?: number
     }>('projection-received', {
         visibility: 'internal',
     }),
@@ -151,6 +159,7 @@ export const tdpSyncV2CommandDefinitions = {
         receivedAt?: number
         nextCursor: number
         changes: TdpProjectionEnvelope[]
+        serverClockOffsetMs?: number
     }>('projection-batch-received', {
         visibility: 'internal',
     }),
@@ -168,6 +177,7 @@ export const tdpSyncV2CommandDefinitions = {
         syncMode: 'incremental' | 'full'
         alternativeEndpoints: string[]
         subscription?: TdpSessionSubscriptionStateV1
+        serverClockOffsetMs?: number
     }>('session-ready', {
         visibility: 'internal',
     }),
@@ -220,6 +230,7 @@ export const tdpSyncV2CommandNames = {
     tdpTopicDataChanged: tdpSyncV2CommandDefinitions.tdpTopicDataChanged.commandName,
     recomputeResolvedTopicChanges: tdpSyncV2CommandDefinitions.recomputeResolvedTopicChanges.commandName,
     recomputeChangedTopicChanges: tdpSyncV2CommandDefinitions.recomputeChangedTopicChanges.commandName,
+    cleanupExpiredTdpProjections: tdpSyncV2CommandDefinitions.cleanupExpiredTdpProjections.commandName,
     fetchMoreChanges: tdpSyncV2CommandDefinitions.fetchMoreChanges.commandName,
     snapshotApplyCompleted: tdpSyncV2CommandDefinitions.snapshotApplyCompleted.commandName,
     beginSnapshotApply: tdpSyncV2CommandDefinitions.beginSnapshotApply.commandName,

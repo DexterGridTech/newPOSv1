@@ -88,6 +88,7 @@ const slice = createSlice({
                 state.lastAcceptedSubscribedTopics = action.payload.subscription == null
                     ? undefined
                     : [...action.payload.subscription.acceptedTopics]
+                state.serverClockOffsetMs = action.payload.serverClockOffsetMs
             })
             .addCase(tdpSyncV2DomainActions.applySnapshotLoaded, (state, action) => {
                 state.snapshotStatus = 'ready'
@@ -99,6 +100,9 @@ const slice = createSlice({
                 state.applyingSnapshotId = undefined
                 state.applyingSnapshotTotalItems = undefined
                 state.applyingSnapshotAppliedItems = undefined
+                if (action.payload.serverClockOffsetMs !== undefined) {
+                    state.serverClockOffsetMs = action.payload.serverClockOffsetMs
+                }
             })
             .addCase(tdpSyncV2DomainActions.beginSnapshotApply, (state, action) => {
                 state.snapshotStatus = 'applying'
@@ -106,6 +110,9 @@ const slice = createSlice({
                 state.applyingSnapshotId = action.payload.snapshotId
                 state.applyingSnapshotTotalItems = action.payload.totalItems
                 state.applyingSnapshotAppliedItems = 0
+                if (action.payload.serverClockOffsetMs !== undefined) {
+                    state.serverClockOffsetMs = action.payload.serverClockOffsetMs
+                }
             })
             .addCase(tdpSyncV2DomainActions.applySnapshotChunk, (state, action) => {
                 if (state.applyingSnapshotId !== action.payload.snapshotId) {
@@ -133,16 +140,28 @@ const slice = createSlice({
                 state.lastCursor = action.payload.nextCursor
                 state.lastDeliveredCursor = action.payload.nextCursor
                 state.lastAppliedCursor = action.payload.nextCursor
+                if (action.payload.serverClockOffsetMs !== undefined) {
+                    state.serverClockOffsetMs = action.payload.serverClockOffsetMs
+                }
             })
             .addCase(tdpSyncV2DomainActions.applyProjectionReceived, (state, action) => {
                 state.lastCursor = action.payload.cursor
                 state.lastDeliveredCursor = action.payload.cursor
                 state.lastAppliedCursor = action.payload.cursor
+                if (action.payload.serverClockOffsetMs !== undefined) {
+                    state.serverClockOffsetMs = action.payload.serverClockOffsetMs
+                }
             })
             .addCase(tdpSyncV2DomainActions.applyProjectionBatchReceived, (state, action) => {
                 state.lastCursor = action.payload.nextCursor
                 state.lastDeliveredCursor = action.payload.nextCursor
                 state.lastAppliedCursor = action.payload.nextCursor
+                if (action.payload.serverClockOffsetMs !== undefined) {
+                    state.serverClockOffsetMs = action.payload.serverClockOffsetMs
+                }
+            })
+            .addCase(tdpSyncV2DomainActions.cleanupExpiredProjectionsCompleted, (state, action) => {
+                state.lastExpiredProjectionCleanupAt = action.payload.cleanedAt as any
             })
     },
 })
@@ -193,6 +212,11 @@ export const tdpSyncV2SliceDescriptor: StateRuntimeSliceDescriptor<TdpSyncState>
         {
             kind: 'field',
             stateKey: 'lastAcceptedSubscribedTopics',
+            flushMode: 'immediate',
+        },
+        {
+            kind: 'field',
+            stateKey: 'serverClockOffsetMs',
             flushMode: 'immediate',
         },
     ],

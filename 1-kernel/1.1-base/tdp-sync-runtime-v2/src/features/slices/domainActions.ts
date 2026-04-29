@@ -15,6 +15,7 @@ export const tdpSyncV2DomainActions = {
     applySnapshotLoaded: createAction<{
         snapshot: TdpProjectionEnvelope[]
         highWatermark: number
+        serverClockOffsetMs?: number
     }>(
         `${moduleName}/apply-snapshot-loaded`,
     ),
@@ -22,6 +23,7 @@ export const tdpSyncV2DomainActions = {
         snapshotId: string
         highWatermark: number
         totalItems: number
+        serverClockOffsetMs?: number
     }>(
         `${moduleName}/begin-snapshot-apply`,
     ),
@@ -29,6 +31,7 @@ export const tdpSyncV2DomainActions = {
         snapshotId: string
         chunkIndex: number
         items: TdpProjectionEnvelope[]
+        serverClockOffsetMs?: number
     }>(
         `${moduleName}/apply-snapshot-chunk`,
     ),
@@ -43,18 +46,21 @@ export const tdpSyncV2DomainActions = {
         nextCursor: number
         highWatermark: number
         hasMore?: boolean
+        serverClockOffsetMs?: number
     }>(
         `${moduleName}/apply-changes-loaded`,
     ),
     applyProjectionReceived: createAction<{
         cursor: number
         change: TdpProjectionEnvelope
+        serverClockOffsetMs?: number
     }>(
         `${moduleName}/apply-projection-received`,
     ),
     applyProjectionBatchReceived: createAction<{
         nextCursor: number
         changes: TdpProjectionEnvelope[]
+        serverClockOffsetMs?: number
     }>(
         `${moduleName}/apply-projection-batch-received`,
     ),
@@ -70,8 +76,16 @@ export const tdpSyncV2DomainActions = {
         alternativeEndpoints: string[]
         subscription?: TdpSessionSubscriptionStateV1
         connectedAt: number
+        serverClockOffsetMs?: number
     }>(
         `${moduleName}/apply-session-ready`,
+    ),
+    cleanupExpiredProjectionsCompleted: createAction<{
+        removedTopics: string[]
+        removedCount: number
+        cleanedAt: number
+    }>(
+        `${moduleName}/cleanup-expired-projections-completed`,
     ),
     applyPongReceived: createAction<{
         timestamp: number

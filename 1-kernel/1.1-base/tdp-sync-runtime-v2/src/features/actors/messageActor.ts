@@ -13,6 +13,7 @@ import {
     shouldAcceptTdpProjectionTopic,
     type TdpMessageSubscriptionGuardV1,
 } from '../../foundations/reduceServerMessage'
+import {computeTdpServerClockOffsetMs} from '../../foundations/projectionExpiry'
 
 const defineActor = createModuleActorFactory(moduleName)
 
@@ -46,6 +47,14 @@ export const createTdpMessageActorDefinitionV2 = (): ActorDefinition => defineAc
         return [
             onCommand(tdpSyncV2CommandDefinitions.tdpMessageReceived, async context => {
             const message = context.command.payload
+            const serverClockOffsetMs = 'timestamp' in message
+                ? computeTdpServerClockOffsetMs(message.timestamp, Date.now())
+                : message.type === 'SESSION_READY'
+                    ? computeTdpServerClockOffsetMs(
+                        message.data.serverTimestamp ?? message.data.serverTime,
+                        Date.now(),
+                    )
+                    : undefined
             const sessionSubscription = selectTdpSessionState(context.getState())?.subscription
             const subscriptionGuard: TdpMessageSubscriptionGuardV1 = {
                 mode: sessionSubscription?.mode,
@@ -68,7 +77,10 @@ export const createTdpMessageActorDefinitionV2 = (): ActorDefinition => defineAc
             switch (message.type) {
                 case 'SESSION_READY':
                     if ((message.data.subscription?.requiredMissingTopics.length ?? 0) > 0) {
-                        await context.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.tdpSessionReady, message.data))
+                        await context.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.tdpSessionReady, {
+                            ...message.data,
+                            serverClockOffsetMs,
+                        }))
                         await context.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.tdpProtocolFailed, {
                             code: 'TDP_REQUIRED_TOPICS_REJECTED',
                             message: 'Required TDP topics were rejected by server subscription policy',
@@ -79,7 +91,10 @@ export const createTdpMessageActorDefinitionV2 = (): ActorDefinition => defineAc
                         }))
                         return {type: message.type, requiredMissingTopics: true}
                     }
-                    await context.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.tdpSessionReady, message.data))
+                    await context.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.tdpSessionReady, {
+                        ...message.data,
+                        serverClockOffsetMs,
+                    }))
                     return {type: message.type}
                 case 'FULL_SNAPSHOT':
                     pendingSnapshot = undefined
@@ -90,6 +105,7 @@ export const createTdpMessageActorDefinitionV2 = (): ActorDefinition => defineAc
                             subscriptionGuard,
                         ),
                         highWatermark: message.data.highWatermark,
+                        serverClockOffsetMs,
                     }))
                     return {type: message.type}
                 case 'SNAPSHOT_BEGIN':
@@ -225,6 +241,7 @@ export const createTdpMessageActorDefinitionV2 = (): ActorDefinition => defineAc
                         await context.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.tdpSnapshotLoaded, {
                             snapshot,
                             highWatermark,
+                            serverClockOffsetMs,
                         }))
                         return {
                             type: message.type,
@@ -242,6 +259,7 @@ export const createTdpMessageActorDefinitionV2 = (): ActorDefinition => defineAc
                         nextCursor: message.data.nextCursor,
                         highWatermark: message.data.highWatermark,
                         hasMore: message.data.hasMore,
+                        serverClockOffsetMs,
                     }))
                     return {type: message.type}
                 case 'PROJECTION_CHANGED':
@@ -251,6 +269,7 @@ export const createTdpMessageActorDefinitionV2 = (): ActorDefinition => defineAc
                     await context.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.tdpProjectionReceived, {
                         cursor: message.data.cursor,
                         change: message.data.change,
+                        serverClockOffsetMs,
                     }))
                     return {type: message.type}
                 case 'PROJECTION_BATCH':
@@ -263,6 +282,7 @@ export const createTdpMessageActorDefinitionV2 = (): ActorDefinition => defineAc
                             subscriptionGuard,
                         ),
                         nextCursor: message.data.nextCursor,
+                        serverClockOffsetMs,
                     }))
                     return {type: message.type}
                 case 'COMMAND_DELIVERED':

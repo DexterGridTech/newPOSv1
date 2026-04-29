@@ -131,6 +131,7 @@ describe('catering-shell root screen', () => {
             primaryHarness.store,
             primaryHarness.runtime,
         )
+        await primaryAutomation.waitForNode('ui-business-catering-master-data-workbench:title')
         await expect(
             primaryAutomation.getText('ui-business-catering-master-data-workbench:title'),
         ).resolves.toContain('PRIMARY')
@@ -155,6 +156,7 @@ describe('catering-shell root screen', () => {
             secondaryHarness.store,
             secondaryHarness.runtime,
         )
+        await secondaryAutomation.waitForNode('ui-business-catering-master-data-workbench:title')
         await expect(
             secondaryAutomation.getText('ui-business-catering-master-data-workbench:title'),
         ).resolves.toContain('SECONDARY')

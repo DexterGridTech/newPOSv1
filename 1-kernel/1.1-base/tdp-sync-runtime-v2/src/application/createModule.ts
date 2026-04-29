@@ -61,6 +61,7 @@ export const createTdpSyncRuntimeModuleV2 = (
     const restartingPackageIds = new Set<string>()
     let idleRestartTimer: ReturnType<typeof setTimeout> | null = null
     let downloadRetryTimer: ReturnType<typeof setTimeout> | null = null
+    let projectionExpiryCleanupTimer: ReturnType<typeof setInterval> | null = null
 
     const clearIdleRestartTimer = () => {
         if (idleRestartTimer) {
@@ -72,6 +73,12 @@ export const createTdpSyncRuntimeModuleV2 = (
         if (downloadRetryTimer) {
             clearTimeout(downloadRetryTimer)
             downloadRetryTimer = null
+        }
+    }
+    const clearProjectionExpiryCleanupTimer = () => {
+        if (projectionExpiryCleanupTimer) {
+            clearInterval(projectionExpiryCleanupTimer)
+            projectionExpiryCleanupTimer = null
         }
     }
 
@@ -191,6 +198,20 @@ export const createTdpSyncRuntimeModuleV2 = (
                 moduleInput: input,
                 connectionRuntimeRef,
             })
+            clearProjectionExpiryCleanupTimer()
+            if (input.projectionExpiryCleanup?.enabled !== false) {
+                const cleanupIntervalMs = Math.max(
+                    1,
+                    input.projectionExpiryCleanup?.intervalMs ?? 5 * 60 * 1000,
+                )
+                projectionExpiryCleanupTimer = setInterval(() => {
+                    void context.dispatchCommand(createCommand(
+                        tdpSyncV2CommandDefinitions.cleanupExpiredTdpProjections,
+                        {},
+                    ))
+                }, cleanupIntervalMs)
+                projectionExpiryCleanupTimer.unref?.()
+            }
             context.subscribeState(() => {
                 if (!hotUpdatePort) {
                     return

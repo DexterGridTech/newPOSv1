@@ -22,6 +22,9 @@ export interface TdpProjectionEnvelope {
     occurredAt: string
     sourceReleaseId?: string | null
     scopeMetadata?: Record<string, unknown>
+    expiresAt?: string | null
+    lifecycle?: 'persistent' | 'expiring'
+    expiryReason?: 'TTL_EXPIRED' | 'PUBLISHER_DELETE' | null
 }
 
 export type TdpProjectionId = string
@@ -81,6 +84,8 @@ export interface TdpSyncState {
     lastRequestedSubscribedTopics?: readonly string[]
     lastAcceptedSubscriptionHash?: string
     lastAcceptedSubscribedTopics?: readonly string[]
+    serverClockOffsetMs?: number
+    lastExpiredProjectionCleanupAt?: TimestampMs
     applyingSnapshotId?: string
     applyingSnapshotTotalItems?: number
     applyingSnapshotAppliedItems?: number

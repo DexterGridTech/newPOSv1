@@ -7,11 +7,25 @@ import {
 import {moduleName} from '../../moduleName'
 import {tdpSyncV2CommandDefinitions} from '../commands'
 import {tdpSyncV2DomainActions} from '../slices'
+import {estimateTdpServerNow, isTdpProjectionExpiredForLocalDefense} from '../../foundations/projectionExpiry'
+import {selectTdpProjectionState, selectTdpSyncState} from '../../selectors'
+import type {TdpProjectionEnvelope, TdpTopicDataChangeItem} from '../../types'
 
 const defineActor = createModuleActorFactory(moduleName)
 
 const uniqueTopics = (changes: readonly {topic: string}[]) =>
     Array.from(new Set(changes.map(item => item.topic)))
+
+const toExpiredProjectionDeleteChange = (entry: TdpProjectionEnvelope): TdpTopicDataChangeItem => ({
+    operation: 'delete',
+    itemKey: entry.itemKey,
+    revision: entry.revision,
+    scopeType: entry.scopeType,
+    scopeId: entry.scopeId,
+    sourceReleaseId: entry.sourceReleaseId ?? null,
+    occurredAt: entry.occurredAt,
+    scopeMetadata: entry.scopeMetadata,
+})
 
 const shouldRecomputeAllForChangedTopics = (topics: readonly string[]) =>
     topics.includes('terminal.group.membership')
@@ -48,12 +62,14 @@ export const createTdpProjectionRepositoryActorDefinitionV2 = (): ActorDefinitio
                 snapshotId,
                 highWatermark: payload.highWatermark,
                 totalItems: payload.snapshot.length,
+                serverClockOffsetMs: payload.serverClockOffsetMs,
             }))
             for (let index = 0; index < payload.snapshot.length; index += DEFAULT_SNAPSHOT_APPLY_CHUNK_SIZE) {
                 await context.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.applySnapshotChunk, {
                     snapshotId,
                     chunkIndex: Math.floor(index / DEFAULT_SNAPSHOT_APPLY_CHUNK_SIZE),
                     items: payload.snapshot.slice(index, index + DEFAULT_SNAPSHOT_APPLY_CHUNK_SIZE),
+                    serverClockOffsetMs: payload.serverClockOffsetMs,
                 }))
             }
             await context.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.commitSnapshotApply, {
@@ -144,6 +160,52 @@ export const createTdpProjectionRepositoryActorDefinitionV2 = (): ActorDefinitio
             return {
                 count: payload.changes.length,
                 nextCursor: payload.nextCursor,
+            }
+        }),
+        onCommand(tdpSyncV2CommandDefinitions.cleanupExpiredTdpProjections, async context => {
+            const state = context.getState() as any
+            const cleanedAt = context.command.payload.now
+                ?? estimateTdpServerNow(Date.now(), selectTdpSyncState(state)?.serverClockOffsetMs)
+            const expiredEntries = Object.values(selectTdpProjectionState(state)?.activeEntries ?? {})
+                .filter(entry => isTdpProjectionExpiredForLocalDefense(entry.expiresAt, cleanedAt))
+            const removedTopics = Array.from(new Set(expiredEntries.map(entry => entry.topic)))
+            context.dispatchAction(tdpSyncV2DomainActions.cleanupExpiredProjectionsCompleted({
+                removedTopics,
+                removedCount: expiredEntries.length,
+                cleanedAt,
+            }))
+            if (removedTopics.length > 0) {
+                const recomputeResult = await context.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.recomputeChangedTopicChanges, {
+                    topics: removedTopics,
+                }))
+                const changedTopics = new Set<string>()
+                recomputeResult.actorResults.forEach(result => {
+                    const topics = result.result?.changedTopics
+                    if (Array.isArray(topics)) {
+                        topics.forEach(topic => {
+                            if (typeof topic === 'string') {
+                                changedTopics.add(topic)
+                            }
+                        })
+                    }
+                })
+                for (const topic of removedTopics.filter(item => !changedTopics.has(item))) {
+                    const changes = expiredEntries
+                        .filter(entry => entry.topic === topic)
+                        .map(toExpiredProjectionDeleteChange)
+                    if (changes.length > 0) {
+                        await context.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.tdpTopicDataChanged, {
+                            topic,
+                            changes,
+                        }))
+                    }
+                }
+                await context.flushPersistence()
+            }
+            return {
+                removedTopicCount: removedTopics.length,
+                removedTopics,
+                cleanedAt,
             }
         }),
     ],

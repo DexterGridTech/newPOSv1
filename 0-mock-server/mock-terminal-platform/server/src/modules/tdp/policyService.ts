@@ -3,6 +3,7 @@ import { db, sqlite } from '../../database/index.js'
 import { projectionPoliciesTable, projectionsTable, selectorGroupMembershipsTable } from '../../database/schema.js'
 import { createId, now, parseJson } from '../../shared/utils.js'
 import { assertSandboxUsable } from '../sandbox/service.js'
+import type { TdpProjectionLifecycle } from './lifecyclePolicy.js'
 import { fanoutExistingProjectionToTerminalIds, upsertProjectionBatch } from './service.js'
 
 const getTargetTerminalIdsForPolicy = (input: {
@@ -22,6 +23,9 @@ const getTargetTerminalIdsForPolicy = (input: {
   )).all()
   return Array.from(new Set(rows.map(item => item.terminalId)))
 }
+
+const normalizeProjectionLifecycle = (value: string | null | undefined): TdpProjectionLifecycle =>
+  value === 'expiring' ? 'expiring' : 'persistent'
 
 export const createProjectionPolicy = (input: {
   sandboxId: string
@@ -252,6 +256,9 @@ export const materializeEnabledGroupPoliciesForTerminal = (input: {
       itemKey: projection.itemKey,
       revision: projection.revision,
       payload: parseJson<Record<string, unknown>>(projection.payloadJson, {}),
+      lifecycle: normalizeProjectionLifecycle(projection.lifecycle),
+      expiresAt: projection.expiresAt,
+      expiryReason: projection.expiryReason as 'TTL_EXPIRED' | 'PUBLISHER_DELETE' | null,
       targetTerminalIds: [input.terminalId],
     })
   })

@@ -42,6 +42,19 @@ const getHotUpdateStorageRoot = () => {
 
 export type SandboxCreationMode = 'EMPTY' | 'CLONE_BASELINE'
 
+type SeedTdpTopic = {
+  key: string
+  name: string
+  payloadMode: string
+  schema: Record<string, unknown>
+  retentionHours: number
+  lifecycle?: 'persistent' | 'expiring'
+  deliveryType?: 'projection' | 'command-outbox'
+  defaultTtlMs?: number
+  minTtlMs?: number
+  maxTtlMs?: number
+}
+
 interface SandboxRecord {
   sandboxId: string
   name: string
@@ -728,7 +741,7 @@ const seedKernelBaseTestSandboxData = (timestamp: number) => {
     )
   }
 
-  const topics = [
+  const topics: SeedTdpTopic[] = [
     {
       key: 'tcp.task.release',
       name: 'TCP Task Release',
@@ -778,7 +791,19 @@ const seedKernelBaseTestSandboxData = (timestamp: number) => {
       schema: {type: 'object', required: ['commandType']},
       retentionHours: 1,
     },
-  ] as const
+    {
+      key: 'order.payment.completed',
+      name: 'Order Payment Completed',
+      payloadMode: 'FLEXIBLE_JSON',
+      schema: {type: 'object', additionalProperties: true},
+      retentionHours: 48,
+      lifecycle: 'expiring',
+      deliveryType: 'projection',
+      defaultTtlMs: 2 * 24 * 60 * 60 * 1000,
+      minTtlMs: 1_000,
+      maxTtlMs: 2 * 24 * 60 * 60 * 1000,
+    },
+  ]
 
   topics.forEach(topic => {
     db.insert(topicsTable).values({
@@ -790,6 +815,13 @@ const seedKernelBaseTestSandboxData = (timestamp: number) => {
       schemaJson: serializeJson(topic.schema),
       scopeType: 'TERMINAL',
       retentionHours: topic.retentionHours,
+      lifecycle: topic.lifecycle ?? 'persistent',
+      deliveryType: topic.deliveryType ?? (topic.payloadMode === 'EPHEMERAL_COMMAND' ? 'command-outbox' : 'projection'),
+      defaultTtlMs: topic.defaultTtlMs ?? null,
+      minTtlMs: topic.minTtlMs ?? null,
+      maxTtlMs: topic.maxTtlMs ?? null,
+      expiryAction: 'tombstone',
+      deliveryGuarantee: topic.lifecycle === 'expiring' ? 'retained-until-expired' : 'retained-until-deleted',
       createdAt: timestamp,
       updatedAt: timestamp,
     }).run()

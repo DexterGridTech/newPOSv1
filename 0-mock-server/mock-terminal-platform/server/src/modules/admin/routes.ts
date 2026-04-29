@@ -55,6 +55,10 @@ import {
   upsertProjectionBatch,
 } from '../tdp/service.js'
 import {
+  getTdpProjectionExpiryStats,
+  runTdpProjectionExpiryOnce,
+} from '../tdp/expiryScheduler.js'
+import {
   createSelectorGroup,
   deleteSelectorGroup,
   getSelectorGroupMemberships,
@@ -1163,6 +1167,30 @@ export const createRouter = () => {
     }
   })
   router.get('/api/v1/admin/tdp/projections', withBadRequest((req, res) => ok(res, listProjections(requireQuerySandboxId(req.query as Record<string, unknown>)))))
+  router.post('/api/v1/admin/tdp/projections/expire/run-once', (req, res) => {
+    try {
+      requireTdpAdminToken(req)
+      const sandboxId = requireBodySandboxId(req.body)
+      const result = runTdpProjectionExpiryOnce({
+        sandboxId,
+        batchSize: typeof req.body.batchSize === 'number' ? req.body.batchSize : undefined,
+        maxTombstonesPerRun: typeof req.body.maxTombstonesPerRun === 'number' ? req.body.maxTombstonesPerRun : undefined,
+      })
+      appendAuditLog({ domain: 'TDP', action: 'EXPIRE_PROJECTIONS_RUN_ONCE', targetId: sandboxId, detail: result })
+      return ok(res, result)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'TDP projection expiry failed'
+      const status = message === 'TDP_ADMIN_TOKEN_REQUIRED' || message === 'TDP_ADMIN_TOKEN_INVALID' ? 401 : 400
+      return fail(res, message, status)
+    }
+  })
+  router.get('/api/v1/admin/tdp/projections/expiry-stats', (req, res) => {
+    try {
+      return ok(res, getTdpProjectionExpiryStats(requireQuerySandboxId(req.query as Record<string, unknown>)))
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '查询 TDP expiry stats 失败', 400)
+    }
+  })
   router.get('/api/v1/admin/tdp/change-logs', withBadRequest((req, res) => ok(res, listChangeLogs(requireQuerySandboxId(req.query as Record<string, unknown>)))))
   router.post('/api/v1/admin/tdp/change-logs/prune', (req, res) => {
     try {

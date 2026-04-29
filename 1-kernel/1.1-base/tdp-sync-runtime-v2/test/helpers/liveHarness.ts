@@ -209,6 +209,17 @@ export const createLivePlatform = async () => {
             getChanges: (terminalId: string, cursor = 0, limit?: number) => fetchJson<any>(
                 `${baseUrl}/api/v1/tdp/terminals/${terminalId}/changes?sandboxId=${encodeURIComponent(prepare.sandboxId)}&cursor=${cursor}${limit == null ? '' : `&limit=${limit}`}`,
             ),
+            runProjectionExpiryOnce: (body?: Record<string, unknown>) => fetchJson<any>(
+                `${baseUrl}/api/v1/admin/tdp/projections/expire/run-once`,
+                withAdminAuth({baseUrl, adminToken: server.getAdminToken()}, {
+                    method: 'POST',
+                    body: JSON.stringify({sandboxId: prepare.sandboxId, ...(body ?? {})}),
+                }),
+            ),
+            getProjectionExpiryStats: () => fetchJson<any>(
+                `${baseUrl}/api/v1/admin/tdp/projections/expiry-stats?sandboxId=${encodeURIComponent(prepare.sandboxId)}`,
+                withAdminAuth({baseUrl, adminToken: server.getAdminToken()}),
+            ),
         },
     }
 }
