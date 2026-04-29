@@ -1,11 +1,11 @@
 import React, {useCallback, useState} from 'react'
-import {Text, View} from 'react-native'
 import type {AdminLogFileSummary, AdminLogHost} from '../../types'
 import {
     AdminActionGroup,
     AdminActionButton,
     AdminBlock,
-    AdminDetailList,
+    AdminPagedList,
+    AdminPagedText,
     AdminSectionMessage,
     AdminSectionShell,
     AdminSectionUnavailable,
@@ -189,52 +189,60 @@ export const AdminLogsSection: React.FC<AdminLogsSectionProps> = ({
                 />
             </AdminSummaryGrid>
             <AdminSectionMessage message={message || undefined} />
-            {files.map((file, index) => (
-                <AdminBlock
-                    key={file.fileName}
-                    title={file.fileName}
-                    description="单个日志文件的读取与删除操作。"
-                >
-                    <AdminSummaryGrid>
-                        <AdminSummaryCard
-                            label="文件大小"
-                            value={`${file.fileSizeBytes ?? 0}`}
-                            detail="日志文件字节大小。"
-                            tone="neutral"
-                        />
-                    </AdminSummaryGrid>
-                    <AdminActionGroup>
-                        <AdminActionButton
-                            testID={`ui-base-admin-section:logs:open:${index}`}
-                            label="查看内容"
-                            disabled={loading}
-                            onPress={() => handleOpen(file.fileName)}
-                        />
-                        <AdminActionButton
-                            testID={`ui-base-admin-section:logs:delete:${index}`}
-                            label="删除文件"
-                            tone="danger"
-                            disabled={loading}
-                            onPress={() => handleDelete(file.fileName)}
-                        />
-                    </AdminActionGroup>
-                </AdminBlock>
-            ))}
+            <AdminPagedList
+                items={files}
+                pageSize={5}
+                itemLabel="个日志文件"
+                testIDPrefix="ui-base-admin-section:logs:files"
+                emptyMessage="当前没有可读取的日志文件。"
+                keyExtractor={file => file.fileName}
+                renderItem={(file, index) => (
+                    <AdminBlock
+                        title={file.fileName}
+                        description="单个日志文件的读取与删除操作。"
+                    >
+                        <AdminSummaryGrid>
+                            <AdminSummaryCard
+                                label="文件大小"
+                                value={`${file.fileSizeBytes ?? 0}`}
+                                detail="日志文件字节大小。"
+                                tone="neutral"
+                            />
+                            <AdminSummaryCard
+                                label="修改时间"
+                                value={file.lastModifiedAt ? new Date(file.lastModifiedAt).toLocaleString() : '未提供'}
+                                detail="用于判断文件是否仍在持续写入。"
+                                tone={file.lastModifiedAt ? 'primary' : 'neutral'}
+                            />
+                        </AdminSummaryGrid>
+                        <AdminActionGroup>
+                            <AdminActionButton
+                                testID={`ui-base-admin-section:logs:open:${index}`}
+                                label="查看内容"
+                                disabled={loading}
+                                onPress={() => handleOpen(file.fileName)}
+                            />
+                            <AdminActionButton
+                                testID={`ui-base-admin-section:logs:delete:${index}`}
+                                label="删除文件"
+                                tone="danger"
+                                disabled={loading}
+                                onPress={() => handleDelete(file.fileName)}
+                            />
+                        </AdminActionGroup>
+                    </AdminBlock>
+                )}
+            />
             {content ? (
                 <AdminBlock
                     title={selectedFileName ?? '日志内容'}
-                    description="当前文件的原始日志内容。"
+                    description="当前文件按字符分页展示，避免一次性渲染大日志。"
                 >
-                    <AdminDetailList
-                        items={[
-                            {
-                                key: 'log-content',
-                                label: '日志内容',
-                                value: content,
-                            },
-                        ]}
+                    <AdminPagedText
+                        value={content}
+                        pageSize={5_000}
+                        testIDPrefix="ui-base-admin-section:logs:content"
                     />
-                    <Text selectable>{content}</Text>
                 </AdminBlock>
             ) : null}
         </AdminSectionShell>

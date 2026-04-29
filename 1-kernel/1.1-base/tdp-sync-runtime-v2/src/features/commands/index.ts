@@ -102,6 +102,8 @@ export const tdpSyncV2CommandDefinitions = {
         snapshotId: string
         chunkIndex: number
         items: TdpProjectionEnvelope[]
+        receivedAt?: number
+        appliedAt?: number
         serverClockOffsetMs?: number
     }>('apply-snapshot-chunk', {
         visibility: 'internal',
@@ -133,6 +135,7 @@ export const tdpSyncV2CommandDefinitions = {
     tdpSnapshotLoaded: defineModuleCommand<{
         snapshot: TdpProjectionEnvelope[]
         highWatermark: number
+        receivedAt?: number
         serverClockOffsetMs?: number
     }>('snapshot-loaded', {
         visibility: 'internal',
@@ -142,6 +145,7 @@ export const tdpSyncV2CommandDefinitions = {
         nextCursor: number
         highWatermark: number
         hasMore?: boolean
+        receivedAt?: number
         serverClockOffsetMs?: number
     }>('changes-loaded', {
         visibility: 'internal',
@@ -150,6 +154,7 @@ export const tdpSyncV2CommandDefinitions = {
     tdpProjectionReceived: defineModuleCommand<{
         cursor: number
         change: TdpProjectionEnvelope
+        receivedAt?: number
         serverClockOffsetMs?: number
     }>('projection-received', {
         visibility: 'internal',

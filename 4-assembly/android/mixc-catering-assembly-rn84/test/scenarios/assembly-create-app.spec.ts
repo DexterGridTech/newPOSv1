@@ -419,6 +419,7 @@ describe('assembly createApp', () => {
         expect(createAssemblyAdminConsoleInputMock).toHaveBeenCalledWith(
             expect.objectContaining({
                 topology: expect.any(Object),
+                mockTerminalPlatformBaseUrl: 'http://127.0.0.1:9100',
             }),
         )
         expect(createAdminConsoleModuleMock).toHaveBeenCalledWith({kind: 'assembly-admin-console-input'})
@@ -570,6 +571,7 @@ describe('assembly createApp', () => {
         expect(createAssemblyAdminConsoleInputMock).toHaveBeenCalledWith(
             expect.objectContaining({
                 topology: expect.any(Object),
+                mockTerminalPlatformBaseUrl: undefined,
             }),
         )
     })

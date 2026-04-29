@@ -144,14 +144,22 @@ export const AdminDeviceSection: React.FC<AdminDeviceSectionProps> = ({
                         title="宿主运行信息"
                         description="宿主环境和系统运行时采集结果。"
                     >
-                        <AdminDetailList items={snapshot.runtime} />
+                        <AdminDetailList
+                            items={snapshot.runtime}
+                            pageSize={8}
+                            testIDPrefix="ui-base-admin-section:device:runtime"
+                        />
                     </AdminBlock>
                     {snapshot.peripherals?.length ? (
                         <AdminBlock
                             title="资源摘要"
                             description="当前宿主可枚举到的外设与资源数量摘要。"
                         >
-                            <AdminStatusList items={snapshot.peripherals} />
+                            <AdminStatusList
+                                items={snapshot.peripherals}
+                                pageSize={6}
+                                testIDPrefix="ui-base-admin-section:device:peripherals"
+                            />
                         </AdminBlock>
                     ) : null}
                     {resourceDetails?.usbDevices?.length ? (
@@ -160,6 +168,8 @@ export const AdminDeviceSection: React.FC<AdminDeviceSectionProps> = ({
                             description="当前宿主识别到的 USB 设备。"
                         >
                             <AdminStatusList
+                                pageSize={6}
+                                testIDPrefix="ui-base-admin-section:device:usb"
                                 items={formatResourceRows(resourceDetails.usbDevices, (item, index) => ({
                                     title: readString(item.name) ?? `USB 设备 ${index + 1}`,
                                     status: readString(item.deviceClass) ?? '已识别',
@@ -178,6 +188,8 @@ export const AdminDeviceSection: React.FC<AdminDeviceSectionProps> = ({
                             description="蓝牙扫描结果与当前连接状态。"
                         >
                             <AdminStatusList
+                                pageSize={6}
+                                testIDPrefix="ui-base-admin-section:device:bluetooth"
                                 items={formatResourceRows(resourceDetails.bluetoothDevices, (item, index) => ({
                                     title: readString(item.name) ?? `蓝牙设备 ${index + 1}`,
                                     status: item.connected === true ? '已连接' : '未连接',
@@ -192,6 +204,8 @@ export const AdminDeviceSection: React.FC<AdminDeviceSectionProps> = ({
                             description="串口路径、波特率和打开状态。"
                         >
                             <AdminStatusList
+                                pageSize={6}
+                                testIDPrefix="ui-base-admin-section:device:serial"
                                 items={formatResourceRows(resourceDetails.serialDevices, (item, index) => ({
                                     title: readString(item.name) ?? `串口设备 ${index + 1}`,
                                     status: item.isOpen === true ? '已打开' : '未打开',
@@ -209,6 +223,8 @@ export const AdminDeviceSection: React.FC<AdminDeviceSectionProps> = ({
                             description="当前宿主报告的网络接口与地址。"
                         >
                             <AdminStatusList
+                                pageSize={6}
+                                testIDPrefix="ui-base-admin-section:device:network"
                                 items={formatResourceRows(resourceDetails.networks, (item, index) => ({
                                     title: readString(item.name) ?? readString(item.type) ?? `网络 ${index + 1}`,
                                     status: readString(item.status) ?? '已识别',
@@ -227,7 +243,9 @@ export const AdminDeviceSection: React.FC<AdminDeviceSectionProps> = ({
                             description="宿主枚举到的本机应用，用于确认业务依赖是否安装齐全。"
                         >
                             <AdminStatusList
-                                items={formatResourceRows(resourceDetails.installedApps.slice(0, 12), (item, index) => ({
+                                pageSize={6}
+                                testIDPrefix="ui-base-admin-section:device:apps"
+                                items={formatResourceRows(resourceDetails.installedApps, (item, index) => ({
                                     title: readString(item.appName) ?? `应用 ${index + 1}`,
                                     status: item.isSystemApp === true ? '系统应用' : '普通应用',
                                     description: [

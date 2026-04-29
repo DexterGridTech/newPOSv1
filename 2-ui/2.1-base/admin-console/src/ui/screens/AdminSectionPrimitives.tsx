@@ -57,7 +57,7 @@ const createAutomationTestId = (
     hint: string,
 ): string => `${prefix}:${sanitizeAutomationHint(hint)}`
 
-const useAdminAutomationNode = (
+export const useAdminAutomationNode = (
     input: Omit<
         RuntimeReactAutomationNodeRegistration,
         'target' | 'runtimeId' | 'screenKey' | 'mountId' | 'visible' | 'enabled' | 'availableActions'
@@ -439,18 +439,249 @@ export const AdminActionButton: React.FC<{
     )
 }
 
+const AdminPagerControls: React.FC<{
+    page: number
+    totalPages: number
+    totalItems: number
+    pageSize: number
+    itemLabel?: string
+    testIDPrefix?: string
+    onPrevious: () => void
+    onNext: () => void
+}> = ({
+    page,
+    totalPages,
+    totalItems,
+    pageSize,
+    itemLabel = '项',
+    testIDPrefix,
+    onPrevious,
+    onNext,
+}) => {
+    const start = totalItems === 0 ? 0 : page * pageSize + 1
+    const end = Math.min(totalItems, (page + 1) * pageSize)
+    return (
+        <View style={{gap: 8}}>
+            <Text style={{fontSize: 12, color: '#64748b', lineHeight: 18}}>
+                第 {page + 1}/{totalPages} 页 · 显示 {start}-{end} / {totalItems} {itemLabel}
+            </Text>
+            <AdminActionGroup>
+                <AdminActionButton
+                    testID={testIDPrefix ? `${testIDPrefix}:prev` : undefined}
+                    label="上一页"
+                    disabled={page <= 0}
+                    onPress={onPrevious}
+                />
+                <AdminActionButton
+                    testID={testIDPrefix ? `${testIDPrefix}:next` : undefined}
+                    label="下一页"
+                    disabled={page >= totalPages - 1}
+                    onPress={onNext}
+                />
+            </AdminActionGroup>
+        </View>
+    )
+}
+
+export function AdminPagedList<T>({
+    items,
+    pageSize,
+    renderItem,
+    keyExtractor,
+    emptyMessage,
+    itemLabel,
+    testIDPrefix,
+    resetKey,
+}: {
+    items: readonly T[]
+    pageSize: number
+    renderItem: (item: T, index: number) => React.ReactNode
+    keyExtractor: (item: T, index: number) => string
+    emptyMessage?: string
+    itemLabel?: string
+    testIDPrefix?: string
+    resetKey?: string | number
+}) {
+    const [page, setPage] = React.useState(0)
+    const safePageSize = Math.max(1, pageSize)
+    const totalPages = Math.max(1, Math.ceil(items.length / safePageSize))
+    const currentPage = Math.min(page, totalPages - 1)
+    const pageItems = items.slice(
+        currentPage * safePageSize,
+        currentPage * safePageSize + safePageSize,
+    )
+
+    React.useEffect(() => {
+        setPage(0)
+    }, [resetKey])
+
+    React.useEffect(() => {
+        if (page > totalPages - 1) {
+            setPage(totalPages - 1)
+        }
+    }, [page, totalPages])
+
+    if (items.length === 0) {
+        return emptyMessage ? <AdminSectionMessage message={emptyMessage} /> : null
+    }
+
+    return (
+        <View style={{gap: 10}}>
+            {items.length > safePageSize ? (
+                <AdminPagerControls
+                    page={currentPage}
+                    totalPages={totalPages}
+                    totalItems={items.length}
+                    pageSize={safePageSize}
+                    itemLabel={itemLabel}
+                    testIDPrefix={testIDPrefix}
+                    onPrevious={() => setPage(value => Math.max(0, value - 1))}
+                    onNext={() => setPage(value => Math.min(totalPages - 1, value + 1))}
+                />
+            ) : null}
+            <View style={{gap: 10}}>
+                {pageItems.map((item, index) => {
+                    const absoluteIndex = currentPage * safePageSize + index
+                    return (
+                        <React.Fragment key={keyExtractor(item, absoluteIndex)}>
+                            {renderItem(item, absoluteIndex)}
+                        </React.Fragment>
+                    )
+                })}
+            </View>
+        </View>
+    )
+}
+
+export const AdminPagedText: React.FC<{
+    value: string
+    pageSize?: number
+    emptyMessage?: string
+    testIDPrefix?: string
+}> = ({
+    value,
+    pageSize = 6_000,
+    emptyMessage = '暂无内容',
+    testIDPrefix,
+}) => {
+    const [page, setPage] = React.useState(0)
+    const safePageSize = Math.max(500, pageSize)
+    const totalPages = Math.max(1, Math.ceil(value.length / safePageSize))
+    const currentPage = Math.min(page, totalPages - 1)
+    const currentText = value.slice(
+        currentPage * safePageSize,
+        currentPage * safePageSize + safePageSize,
+    )
+    const contentTestID = testIDPrefix ? `${testIDPrefix}:text` : undefined
+    const fallbackContentNodeId = useStableAutomationNodeId('ui-base-admin-paged-text', 'content')
+
+    useAdminAutomationNode({
+        nodeId: contentTestID ?? fallbackContentNodeId,
+        testID: contentTestID,
+        role: 'text',
+        text: currentText,
+        value: currentText,
+        visible: Boolean(value),
+        enabled: Boolean(value),
+    })
+
+    React.useEffect(() => {
+        setPage(0)
+    }, [value])
+
+    React.useEffect(() => {
+        if (page > totalPages - 1) {
+            setPage(totalPages - 1)
+        }
+    }, [page, totalPages])
+
+    if (!value) {
+        return <AdminSectionMessage message={emptyMessage} />
+    }
+
+    return (
+        <View style={{gap: 10}}>
+            {value.length > safePageSize ? (
+                <AdminPagerControls
+                    page={currentPage}
+                    totalPages={totalPages}
+                    totalItems={value.length}
+                    pageSize={safePageSize}
+                    itemLabel="字符"
+                    testIDPrefix={testIDPrefix}
+                    onPrevious={() => setPage(current => Math.max(0, current - 1))}
+                    onNext={() => setPage(current => Math.min(totalPages - 1, current + 1))}
+                />
+            ) : null}
+            <View
+                style={{
+                    borderRadius: 14,
+                    backgroundColor: '#0f172a',
+                    paddingHorizontal: 12,
+                    paddingVertical: 10,
+                }}
+            >
+                <Text
+                    testID={contentTestID}
+                    selectable
+                    style={{
+                        color: '#e2e8f0',
+                        fontSize: 12,
+                        lineHeight: 18,
+                        fontFamily: 'monospace',
+                    }}
+                >
+                    {currentText}
+                </Text>
+            </View>
+        </View>
+    )
+}
+
 export const AdminDetailList: React.FC<{
     items: readonly AdminDetailItem[]
-}> = ({items}) => (
-    <View style={{gap: 10}}>
-        {items.map(item => <AdminDetailRow key={item.key} item={item} />)}
-    </View>
-)
+    pageSize?: number
+    testIDPrefix?: string
+}> = ({items, pageSize, testIDPrefix}) => {
+    if (pageSize && items.length > pageSize) {
+        return (
+            <AdminPagedList
+                items={items}
+                pageSize={pageSize}
+                itemLabel="项"
+                testIDPrefix={testIDPrefix}
+                keyExtractor={item => item.key}
+                renderItem={item => <AdminDetailRow item={item} />}
+            />
+        )
+    }
+    return (
+        <View style={{gap: 10}}>
+            {items.map(item => <AdminDetailRow key={item.key} item={item} />)}
+        </View>
+    )
+}
 
 export const AdminStatusList: React.FC<{
     items: readonly AdminStatusItem[]
-}> = ({items}) => (
-    <View style={{gap: 10}}>
-        {items.map(item => <AdminStatusRow key={item.key} item={item} />)}
-    </View>
-)
+    pageSize?: number
+    testIDPrefix?: string
+}> = ({items, pageSize, testIDPrefix}) => {
+    if (pageSize && items.length > pageSize) {
+        return (
+            <AdminPagedList
+                items={items}
+                pageSize={pageSize}
+                itemLabel="项"
+                testIDPrefix={testIDPrefix}
+                keyExtractor={item => item.key}
+                renderItem={item => <AdminStatusRow item={item} />}
+            />
+        )
+    }
+    return (
+        <View style={{gap: 10}}>
+            {items.map(item => <AdminStatusRow key={item.key} item={item} />)}
+        </View>
+    )
+}

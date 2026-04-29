@@ -3,6 +3,8 @@ import {
 } from '@next/ui-base-admin-console/supports'
 import type {
     AdapterDiagnosticScenario,
+    AdminTdpHost,
+    AdminTdpServerOperationsSnapshot,
     AdminTopologyHost,
     AdminTopologySharePayload,
 } from '@next/ui-base-admin-console/types'
@@ -17,6 +19,13 @@ import {
     createTopologyV3SharePayload,
     topologyRuntimeV3CommandDefinitions,
 } from '@next/kernel-base-topology-runtime-v3'
+import {
+    resolveTransportServers,
+    selectTransportSelectedServerSpace,
+} from '@next/kernel-base-transport-runtime'
+import {
+    SERVER_NAME_MOCK_TERMINAL_PLATFORM,
+} from '@next/kernel-server-config-v2'
 import {nativeLogger} from '../turbomodules/logger'
 import {nativeAppControl} from '../turbomodules/appControl'
 import {nativeConnector} from '../turbomodules/connector'
@@ -48,6 +57,7 @@ export interface AssemblyAdminTopologyInput {
 interface CreateAssemblyAdminConsoleInputOptions {
     topology?: AssemblyAdminTopologyInput
     getRuntime?: () => KernelRuntimeV2 | undefined
+    mockTerminalPlatformBaseUrl?: string
 }
 
 type TopologyDiagnosticsSnapshot = {
@@ -167,6 +177,85 @@ const createAssemblyAdminTopologyHost = (
         },
     }
 }
+
+const unwrapMockPlatformResponse = <T,>(payload: unknown): T => {
+    const record = payload && typeof payload === 'object'
+        ? payload as Record<string, unknown>
+        : undefined
+    if (record && 'success' in record && 'data' in record) {
+        if (record.success === false) {
+            const message = typeof record.error === 'string'
+                ? record.error
+                : typeof record.message === 'string'
+                    ? record.message
+                    : 'TDP operations snapshot request failed'
+            throw new Error(message)
+        }
+        return record.data as T
+    }
+    return payload as T
+}
+
+const resolveMockTerminalPlatformBaseUrls = (
+    input: CreateAssemblyAdminConsoleInputOptions,
+): readonly string[] => {
+    if (input.mockTerminalPlatformBaseUrl?.trim()) {
+        return [input.mockTerminalPlatformBaseUrl.trim()]
+    }
+    const runtime = input.getRuntime?.()
+    const selectedSpace = runtime?.getState
+        ? selectTransportSelectedServerSpace(runtime.getState())
+        : undefined
+    const servers = resolveTransportServers(kernelBaseDevServerConfig, {
+        selectedSpace: selectedSpace ?? kernelBaseDevServerConfig.selectedSpace,
+    })
+    const mockTerminalPlatform = servers.find(server => server.serverName === SERVER_NAME_MOCK_TERMINAL_PLATFORM)
+    return mockTerminalPlatform?.addresses.map(address => address.baseUrl) ?? []
+}
+
+const createAssemblyAdminTdpHost = (
+    input: CreateAssemblyAdminConsoleInputOptions,
+): AdminTdpHost => ({
+    async getOperationsSnapshot({sandboxId, terminalId}) {
+        const baseUrls = resolveMockTerminalPlatformBaseUrls(input)
+        let lastError: unknown
+        for (const baseUrl of baseUrls) {
+            try {
+                const url = new URL(
+                    `/api/v1/admin/tdp/terminals/${encodeURIComponent(terminalId)}/operations-snapshot`,
+                    baseUrl,
+                )
+                url.searchParams.set('sandboxId', sandboxId)
+                const response = await fetch(url.toString(), {
+                    method: 'GET',
+                    headers: {
+                        accept: 'application/json',
+                    },
+                })
+                const text = await response.text()
+                const payload = text ? JSON.parse(text) : null
+                if (!response.ok) {
+                    const record = payload && typeof payload === 'object'
+                        ? payload as Record<string, unknown>
+                        : undefined
+                    throw new Error(
+                        typeof record?.message === 'string'
+                            ? record.message
+                            : typeof record?.error === 'string'
+                                ? record.error
+                                : `TDP operations snapshot request failed: ${response.status}`,
+                    )
+                }
+                return unwrapMockPlatformResponse<AdminTdpServerOperationsSnapshot>(payload)
+            } catch (error) {
+                lastError = error
+            }
+        }
+        throw lastError instanceof Error
+            ? lastError
+            : new Error('No mock terminal platform address available for TDP operations snapshot')
+    },
+})
 
 const createAdapterDiagnosticScenarios = (): readonly AdapterDiagnosticScenario[] => {
     const stateStorage = createAssemblyStateStorage('state')
@@ -375,6 +464,7 @@ export const createAssemblyAdminConsoleInput = (
             },
         ],
         topology: createAssemblyAdminTopologyHost(input.topology),
+        tdp: createAssemblyAdminTdpHost(input),
         version: {
             hotUpdate: createAssemblyHotUpdatePort(),
             embeddedRelease: getHostRuntimeReleaseInfo(),

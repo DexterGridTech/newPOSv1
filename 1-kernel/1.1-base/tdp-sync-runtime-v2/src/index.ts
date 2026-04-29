@@ -77,6 +77,7 @@ export {
     selectTdpProjectionState,
     selectTdpSessionState,
     selectTdpSyncState,
+    selectTdpOperationsSnapshot,
 } from './selectors'
 export type {
     CreateTdpSyncRuntimeModuleV2Input,
@@ -92,6 +93,9 @@ export type {
     TdpChangesResponse,
     TdpClientMessage,
     TdpCommandInboxItem,
+    TdpOperationsFinding,
+    TdpOperationsSnapshot,
+    TdpOperationsTopicSnapshot,
     TdpProjectionEnvelope,
     TdpProjectionState,
     TdpServerMessage,

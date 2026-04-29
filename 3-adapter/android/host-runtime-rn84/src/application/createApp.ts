@@ -244,6 +244,7 @@ const createKernelRuntimeAppForAssembly = (
             createAdminConsoleModule(createAssemblyAdminConsoleInput({
                 topology: options.topologyAdminInput,
                 getRuntime: options.getRuntime,
+                mockTerminalPlatformBaseUrl: options.mockTerminalPlatformBaseUrl,
             })),
             createTerminalConsoleModule(),
             ...(options.extraKernelModules ?? []),

@@ -67,6 +67,7 @@ export const createTdpChangesFetchActorDefinitionV2 = (
                 nextCursor: result.nextCursor,
                 highWatermark: result.highWatermark,
                 hasMore: result.hasMore,
+                receivedAt: Date.now(),
             }))
             return {
                 count: result.changes.length,

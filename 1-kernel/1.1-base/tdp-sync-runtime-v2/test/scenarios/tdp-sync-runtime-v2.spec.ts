@@ -42,8 +42,10 @@ import {
     selectTdpProjectionState,
     selectTdpResolvedProjection,
     selectTdpResolvedProjectionByTopic,
+    selectTdpOperationsSnapshot,
     selectTdpSessionState,
     selectTdpSyncState,
+    tdpSyncV2StateActions,
     tdpSyncV2CommandDefinitions,
     computeTdpSubscriptionHash,
     TDP_SUBSCRIPTION_HASH_CAPABILITY_V1,
@@ -3112,5 +3114,124 @@ describe('tdp-sync-runtime-v2', () => {
             topic: 'config.delta',
             itemKey: 'main',
         })?.payload.version).toBe('group-b')
+    })
+
+    it('aggregates local TDP operations snapshot for admin diagnostics', async () => {
+        const runtime = createRuntime({
+            localNodeId: 'node_tdp_v2_operations_snapshot',
+            stateStorage: createMemoryStorage(),
+            secureStateStorage: createMemoryStorage(),
+        })
+
+        await runtime.start()
+        runtime.getStore().dispatch(tdpSyncV2StateActions.setReady({
+            sessionId: 'session-ops',
+            nodeId: 'node-ops',
+            nodeState: 'healthy',
+            highWatermark: 12,
+            syncMode: 'incremental',
+            alternativeEndpoints: [],
+            connectedAt: 1_700_000_000_000,
+            subscription: {
+                version: 1,
+                mode: 'explicit',
+                hash: 'hash-accepted',
+                acceptedTopics: ['catalog.item'],
+                rejectedTopics: ['price.policy'],
+                requiredMissingTopics: ['terminal.group.membership'],
+            },
+        }))
+        runtime.getStore().dispatch(tdpSyncV2StateActions.setRequestedSubscription({
+            hash: 'hash-requested',
+            topics: ['catalog.item', 'price.policy', 'terminal.group.membership'],
+        }))
+        runtime.getStore().dispatch(tdpSyncV2StateActions.setLastCursor(12))
+        runtime.getStore().dispatch(tdpSyncV2StateActions.setLastDeliveredCursor(12))
+        runtime.getStore().dispatch(tdpSyncV2StateActions.setLastAckedCursor(10))
+        runtime.getStore().dispatch(tdpSyncV2StateActions.setLastAppliedCursor(9))
+        runtime.getStore().dispatch(tdpSyncV2StateActions.applyProjection({
+            topic: 'catalog.item',
+            itemKey: 'sku-001',
+            operation: 'upsert',
+            scopeType: 'STORE',
+            scopeId: 'store-ops',
+            revision: 10,
+            payload: {name: 'item'},
+            occurredAt: '2026-04-29T00:00:00.000Z',
+            lifecycle: 'persistent',
+        }))
+        runtime.getStore().dispatch(tdpSyncV2StateActions.recordTopicActivity({
+            topic: 'catalog.item',
+            source: 'snapshot',
+            count: 2,
+            receivedAt: 60_000,
+            appliedAt: 60_000,
+        }))
+        runtime.getStore().dispatch(tdpSyncV2StateActions.recordTopicActivity({
+            topic: 'catalog.item',
+            source: 'changes',
+            count: 1,
+            receivedAt: 120_000,
+            appliedAt: 120_000,
+        }))
+        runtime.getStore().dispatch(tdpSyncV2StateActions.recordTopicActivity({
+            topic: 'price.policy',
+            source: 'realtime',
+            count: 1,
+            receivedAt: 120_000,
+            appliedAt: 120_000,
+        }))
+
+        const snapshot = selectTdpOperationsSnapshot(runtime.getState())
+
+        expect(snapshot.session.status).toBe('READY')
+        expect(snapshot.pipeline.watermarkLag).toBe(3)
+        expect(snapshot.pipeline.ackLag).toBe(2)
+        expect(snapshot.pipeline.applyLag).toBe(1)
+        expect(snapshot.subscription.localHashMismatch).toBe(true)
+        expect(snapshot.activity.totalReceivedCount).toBe(4)
+        expect(snapshot.activity.totalAppliedCount).toBe(4)
+        expect(snapshot.activity.lastReceivedAt).toBe(120_000)
+        expect(snapshot.activity.hottestTopics[0]).toMatchObject({
+            topic: 'catalog.item',
+            recentAppliedPerMinute: 1.5,
+        })
+        expect(snapshot.findings.map(item => item.key)).toEqual(expect.arrayContaining([
+            'required-missing-topics',
+            'rejected-topics',
+            'local-hash-mismatch',
+            'watermark-lag',
+        ]))
+        expect(snapshot.topics.find(topic => topic.topic === 'catalog.item')).toMatchObject({
+            accepted: true,
+            localEntryCount: 1,
+            maxRevision: 10,
+            status: 'accepted',
+            activity: expect.objectContaining({
+                receivedCount: 3,
+                appliedCount: 3,
+                snapshotAppliedCount: 2,
+                changesAppliedCount: 1,
+                recentAppliedPerMinute: 1.5,
+                lastAppliedAt: 120_000,
+            }),
+        })
+        expect(snapshot.topics.find(topic => topic.topic === 'price.policy')).toMatchObject({
+            rejected: true,
+            status: 'rejected',
+            activity: expect.objectContaining({
+                realtimeAppliedCount: 1,
+            }),
+        })
+        expect(snapshot.topics.find(topic => topic.topic === 'terminal.group.membership')).toMatchObject({
+            requiredMissing: true,
+            status: 'required-missing',
+        })
+
+        runtime.getStore().dispatch(tdpSyncV2StateActions.setStatus('DISCONNECTED'))
+        const disconnectedSnapshot = selectTdpOperationsSnapshot(runtime.getState())
+        expect(disconnectedSnapshot.session.highWatermarkStale).toBe(true)
+        expect(disconnectedSnapshot.pipeline.canJudgeWatermarkLag).toBe(false)
+        expect(disconnectedSnapshot.findings.map(item => item.key)).toContain('session-not-ready')
     })
 })

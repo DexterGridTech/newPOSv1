@@ -58,6 +58,7 @@ export const createTdpProjectionRepositoryActorDefinitionV2 = (): ActorDefinitio
         onCommand(tdpSyncV2CommandDefinitions.tdpSnapshotLoaded, async context => {
             const payload = context.command.payload
             const snapshotId = createSnapshotApplyId()
+            const appliedAt = Date.now()
             await context.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.beginSnapshotApply, {
                 snapshotId,
                 highWatermark: payload.highWatermark,
@@ -69,6 +70,8 @@ export const createTdpProjectionRepositoryActorDefinitionV2 = (): ActorDefinitio
                     snapshotId,
                     chunkIndex: Math.floor(index / DEFAULT_SNAPSHOT_APPLY_CHUNK_SIZE),
                     items: payload.snapshot.slice(index, index + DEFAULT_SNAPSHOT_APPLY_CHUNK_SIZE),
+                    receivedAt: payload.receivedAt,
+                    appliedAt,
                     serverClockOffsetMs: payload.serverClockOffsetMs,
                 }))
             }
@@ -113,7 +116,10 @@ export const createTdpProjectionRepositoryActorDefinitionV2 = (): ActorDefinitio
         }),
         onCommand(tdpSyncV2CommandDefinitions.tdpChangesLoaded, async context => {
             const payload = context.command.payload
-            context.dispatchAction(tdpSyncV2DomainActions.applyChangesLoaded(payload))
+            context.dispatchAction(tdpSyncV2DomainActions.applyChangesLoaded({
+                ...payload,
+                appliedAt: Date.now(),
+            }))
             await context.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.recomputeResolvedTopicChanges, {}))
             await context.flushPersistence()
             await context.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.changesApplyCompleted, {
@@ -128,7 +134,10 @@ export const createTdpProjectionRepositoryActorDefinitionV2 = (): ActorDefinitio
         }),
         onCommand(tdpSyncV2CommandDefinitions.tdpProjectionReceived, async context => {
             const payload = context.command.payload
-            context.dispatchAction(tdpSyncV2DomainActions.applyProjectionReceived(payload))
+            context.dispatchAction(tdpSyncV2DomainActions.applyProjectionReceived({
+                ...payload,
+                appliedAt: Date.now(),
+            }))
             const changedTopics = uniqueTopics([payload.change])
             await dispatchChangedTopicRecompute(context, changedTopics)
             await context.flushPersistence()
@@ -143,7 +152,10 @@ export const createTdpProjectionRepositoryActorDefinitionV2 = (): ActorDefinitio
         }),
         onCommand(tdpSyncV2CommandDefinitions.tdpProjectionBatchReceived, async context => {
             const payload = context.command.payload
-            context.dispatchAction(tdpSyncV2DomainActions.applyProjectionBatchReceived(payload))
+            context.dispatchAction(tdpSyncV2DomainActions.applyProjectionBatchReceived({
+                ...payload,
+                appliedAt: Date.now(),
+            }))
             const changedTopics = uniqueTopics(payload.changes)
             await dispatchChangedTopicRecompute(context, changedTopics)
             await context.flushPersistence()

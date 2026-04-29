@@ -9,6 +9,7 @@ import type {AdapterDiagnosticsRegistry} from '../../types'
 import {
     AdminActionButton,
     AdminBlock,
+    AdminPagedList,
     AdminSectionMessage,
     AdminSectionShell,
     AdminSummaryCard,
@@ -115,84 +116,91 @@ export const AdapterDiagnosticsScreen: React.FC<AdapterDiagnosticsScreenProps> =
                     </AdminSummaryGrid>
                 </AdminBlock>
             ) : null}
-            {controller.listAdapters().map(adapterKey => (
-                <AdminBlock
-                    key={adapterKey}
-                    title={adapterKey}
-                    description="按适配器聚合显示已注册的测试场景数量和执行覆盖。"
-                >
-                    <AdminSummaryGrid>
-                        <AdminSummaryCard
-                            label="场景数量"
-                            value={`${controller.listScenarios(adapterKey).length}`}
-                            detail="当前适配器下已配置的诊断场景。"
-                            tone="primary"
-                        />
-                        <AdminSummaryCard
-                            label="最近结果"
-                            value={formatAdapterDiagnosticStatus(
-                                latestSummary?.results.find(item => item.adapterKey === adapterKey)?.status
-                                ?? 'idle',
-                            )}
-                            detail="最近一次执行中，该适配器的最后一条场景结果。"
-                            tone={
-                                latestSummary?.results.find(item => item.adapterKey === adapterKey)?.status === 'passed'
-                                    ? 'ok'
-                                    : latestSummary?.results.find(item => item.adapterKey === adapterKey)?.status === 'failed'
-                                        ? 'danger'
-                                        : 'neutral'
-                            }
-                        />
-                        <AdminSummaryCard
-                            label="最近完成"
-                            value={formatAdminTimestamp(
-                                latestSummary?.results.find(item => item.adapterKey === adapterKey)?.finishedAt,
-                            )}
-                            detail="最近一次该适配器场景执行完成时间。"
-                            tone={
-                                latestSummary?.results.find(item => item.adapterKey === adapterKey)?.finishedAt
-                                    ? 'primary'
-                                    : 'neutral'
-                            }
-                        />
-                    </AdminSummaryGrid>
-                    {(latestSummary?.results.filter(item => item.adapterKey === adapterKey) ?? [])
-                        .map(result => (
-                            <AdminBlock
-                                key={`${result.adapterKey}:${result.scenarioKey}`}
-                                title={result.title}
-                                description={result.message}
-                            >
-                                <AdminSummaryGrid>
-                                    <AdminSummaryCard
-                                        label="场景标识"
-                                        value={result.scenarioKey}
-                                        detail="适配器场景唯一标识。"
-                                        tone="neutral"
-                                    />
-                                    <AdminSummaryCard
-                                        label="执行结果"
-                                        value={formatAdapterDiagnosticStatus(result.status)}
-                                        detail={`耗时 ${result.durationMs}ms`}
-                                        tone={
-                                            result.status === 'passed'
-                                                ? 'ok'
-                                                : result.status === 'failed'
-                                                    ? 'danger'
-                                                    : 'warn'
-                                        }
-                                    />
-                                    <AdminSummaryCard
-                                        label="完成时间"
-                                        value={formatAdminTimestamp(result.finishedAt)}
-                                        detail="最近一次场景执行完成时间。"
-                                        tone={result.finishedAt ? 'primary' : 'neutral'}
-                                    />
-                                </AdminSummaryGrid>
-                            </AdminBlock>
-                        ))}
-                </AdminBlock>
-            ))}
+            <AdminPagedList
+                items={controller.listAdapters()}
+                pageSize={4}
+                itemLabel="个适配器"
+                testIDPrefix="ui-base-admin-adapter-diagnostics:adapters"
+                keyExtractor={adapterKey => adapterKey}
+                renderItem={adapterKey => {
+                    const adapterResults = latestSummary?.results.filter(item => item.adapterKey === adapterKey) ?? []
+                    const latestAdapterResult = adapterResults[0]
+                    return (
+                        <AdminBlock
+                            title={adapterKey}
+                            description="按适配器聚合显示已注册的测试场景数量和执行覆盖。"
+                        >
+                            <AdminSummaryGrid>
+                                <AdminSummaryCard
+                                    label="场景数量"
+                                    value={`${controller.listScenarios(adapterKey).length}`}
+                                    detail="当前适配器下已配置的诊断场景。"
+                                    tone="primary"
+                                />
+                                <AdminSummaryCard
+                                    label="最近结果"
+                                    value={formatAdapterDiagnosticStatus(latestAdapterResult?.status ?? 'idle')}
+                                    detail="最近一次执行中，该适配器的最后一条场景结果。"
+                                    tone={
+                                        latestAdapterResult?.status === 'passed'
+                                            ? 'ok'
+                                            : latestAdapterResult?.status === 'failed'
+                                                ? 'danger'
+                                                : 'neutral'
+                                    }
+                                />
+                                <AdminSummaryCard
+                                    label="最近完成"
+                                    value={formatAdminTimestamp(latestAdapterResult?.finishedAt)}
+                                    detail="最近一次该适配器场景执行完成时间。"
+                                    tone={latestAdapterResult?.finishedAt ? 'primary' : 'neutral'}
+                                />
+                            </AdminSummaryGrid>
+                            <AdminPagedList
+                                items={adapterResults}
+                                pageSize={3}
+                                itemLabel="条结果"
+                                testIDPrefix={`ui-base-admin-adapter-diagnostics:results:${adapterKey}`}
+                                emptyMessage="该适配器还没有最近测试结果。"
+                                keyExtractor={result => `${result.adapterKey}:${result.scenarioKey}`}
+                                renderItem={result => (
+                                    <AdminBlock
+                                        title={result.title}
+                                        description={result.message}
+                                    >
+                                        <AdminSummaryGrid>
+                                            <AdminSummaryCard
+                                                label="场景标识"
+                                                value={result.scenarioKey}
+                                                detail="适配器场景唯一标识。"
+                                                tone="neutral"
+                                            />
+                                            <AdminSummaryCard
+                                                label="执行结果"
+                                                value={formatAdapterDiagnosticStatus(result.status)}
+                                                detail={`耗时 ${result.durationMs}ms`}
+                                                tone={
+                                                    result.status === 'passed'
+                                                        ? 'ok'
+                                                        : result.status === 'failed'
+                                                            ? 'danger'
+                                                            : 'warn'
+                                                }
+                                            />
+                                            <AdminSummaryCard
+                                                label="完成时间"
+                                                value={formatAdminTimestamp(result.finishedAt)}
+                                                detail="最近一次场景执行完成时间。"
+                                                tone={result.finishedAt ? 'primary' : 'neutral'}
+                                            />
+                                        </AdminSummaryGrid>
+                                    </AdminBlock>
+                                )}
+                            />
+                        </AdminBlock>
+                    )
+                }}
+            />
         </AdminSectionShell>
     )
 }

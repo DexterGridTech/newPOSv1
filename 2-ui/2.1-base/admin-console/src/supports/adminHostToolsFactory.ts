@@ -18,6 +18,7 @@ import type {
     AdminLogHost,
     AdminStatusItem,
     AdminStatusTone,
+    AdminTdpHost,
     AdminTopologyHost,
     AdminVersionHost,
     AdminVersionSnapshot,
@@ -83,6 +84,7 @@ export interface CreateAdminHostToolsInput {
     connector?: AdminConnectorHostSource
     connectorChannels?: readonly AdminConnectorChannelDefinition[]
     topology?: AdminTopologyHost
+    tdp?: AdminTdpHost
     version?: AdminVersionHostSource | AdminVersionHost
 }
 
@@ -493,6 +495,7 @@ export const createAdminHostTools = (
             channels: input.connectorChannels,
         }) : undefined,
         topology: input.topology,
+        tdp: input.tdp,
         version: versionSource
             ? isAdminVersionHost(versionSource)
                 ? versionSource

@@ -47,12 +47,13 @@ export const createTdpMessageActorDefinitionV2 = (): ActorDefinition => defineAc
         return [
             onCommand(tdpSyncV2CommandDefinitions.tdpMessageReceived, async context => {
             const message = context.command.payload
+            const receivedAt = Date.now()
             const serverClockOffsetMs = 'timestamp' in message
-                ? computeTdpServerClockOffsetMs(message.timestamp, Date.now())
+                ? computeTdpServerClockOffsetMs(message.timestamp, receivedAt)
                 : message.type === 'SESSION_READY'
                     ? computeTdpServerClockOffsetMs(
                         message.data.serverTimestamp ?? message.data.serverTime,
-                        Date.now(),
+                        receivedAt,
                     )
                     : undefined
             const sessionSubscription = selectTdpSessionState(context.getState())?.subscription
@@ -105,6 +106,7 @@ export const createTdpMessageActorDefinitionV2 = (): ActorDefinition => defineAc
                             subscriptionGuard,
                         ),
                         highWatermark: message.data.highWatermark,
+                        receivedAt,
                         serverClockOffsetMs,
                     }))
                     return {type: message.type}
@@ -241,6 +243,7 @@ export const createTdpMessageActorDefinitionV2 = (): ActorDefinition => defineAc
                         await context.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.tdpSnapshotLoaded, {
                             snapshot,
                             highWatermark,
+                            receivedAt,
                             serverClockOffsetMs,
                         }))
                         return {
@@ -259,6 +262,7 @@ export const createTdpMessageActorDefinitionV2 = (): ActorDefinition => defineAc
                         nextCursor: message.data.nextCursor,
                         highWatermark: message.data.highWatermark,
                         hasMore: message.data.hasMore,
+                        receivedAt,
                         serverClockOffsetMs,
                     }))
                     return {type: message.type}
@@ -269,13 +273,14 @@ export const createTdpMessageActorDefinitionV2 = (): ActorDefinition => defineAc
                     await context.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.tdpProjectionReceived, {
                         cursor: message.data.cursor,
                         change: message.data.change,
+                        receivedAt,
                         serverClockOffsetMs,
                     }))
                     return {type: message.type}
                 case 'PROJECTION_BATCH':
                     await context.dispatchCommand(createCommand(tdpSyncV2CommandDefinitions.tdpProjectionBatchReceived, {
                         batchId: message.data.batchId,
-                        receivedAt: message.timestamp,
+                        receivedAt,
                         changes: filterTdpProjectionChangesBySubscription(
                             message.data.changes,
                             message.type,

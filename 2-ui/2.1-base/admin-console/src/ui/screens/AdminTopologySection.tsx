@@ -32,6 +32,7 @@ import {
     AdminActionGroup,
     AdminActionButton,
     AdminBlock,
+    AdminPagedText,
     AdminSectionMessage,
     AdminSectionShell,
     AdminSummaryCard,
@@ -573,7 +574,7 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
                     <AdminSummaryCard
                         label="分享格式"
                         value={sharePayload?.formatVersion ?? '未生成'}
-                        detail={sharePayload ? JSON.stringify(sharePayload) : '主机点击“生成分享”后可展示二维码，副机扫码后会记录当前结果。'}
+                        detail={sharePayload ? '分享 payload 已生成，详情在下方分页预览。' : '主机点击“生成分享”后可展示二维码，副机扫码后会记录当前结果。'}
                         tone={sharePayload ? 'ok' : 'neutral'}
                     />
                     <AdminSummaryCard
@@ -585,10 +586,24 @@ export const AdminTopologySection: React.FC<AdminTopologySectionProps> = ({
                     <AdminSummaryCard
                         label="诊断快照"
                         value={hostDiagnostics ? '已读取' : '未读取'}
-                        detail={hostDiagnostics ? JSON.stringify(hostDiagnostics) : 'host 可选提供 diagnostics。'}
+                        detail={hostDiagnostics ? 'host diagnostics 已读取，详情在下方分页预览。' : 'host 可选提供 diagnostics。'}
                         tone={hostDiagnostics ? 'primary' : 'neutral'}
                     />
                 </AdminSummaryGrid>
+                {sharePayload ? (
+                    <AdminPagedText
+                        value={JSON.stringify(sharePayload, null, 2)}
+                        pageSize={3_000}
+                        testIDPrefix="ui-base-admin-section:topology:share-payload-json"
+                    />
+                ) : null}
+                {hostDiagnostics ? (
+                    <AdminPagedText
+                        value={JSON.stringify(hostDiagnostics, null, 2)}
+                        pageSize={3_000}
+                        testIDPrefix="ui-base-admin-section:topology:diagnostics-json"
+                    />
+                ) : null}
                 {instanceMode === 'MASTER' && qrValue ? (
                     <View style={{gap: 8}}>
                         <Text style={{fontSize: 13, color: '#526072', fontWeight: '700'}}>

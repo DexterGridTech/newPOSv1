@@ -839,6 +839,87 @@ describe('mock-terminal-platform TDP projection publisher contract', () => {
       acceptedTopics: ['org.store.profile'],
       rejectedTopics: ['catering.product', 'invalid*topic'],
     })
+
+    const operationsResponse = await fetch(
+      `${server.getHttpBaseUrl()}/api/v1/admin/tdp/terminals/${terminalId}/operations-snapshot?sandboxId=${sandboxId}`,
+      {
+        headers: publishHeaders(server),
+      },
+    )
+    expect(operationsResponse.status).toBe(200)
+    const operationsPayload = await operationsResponse.json() as {
+      data: {
+        mode: string
+        terminal: {
+          terminalId: string
+          profileCode?: string
+          profileName?: string
+          templateCode?: string
+          templateName?: string
+        }
+        topicRegistry: {
+          total: number
+        }
+        policy: {
+          allowedTopics?: string[]
+          policySources: string[]
+        }
+        resolvedTopics: {
+          availableTopics: string[]
+        }
+        sessions: {
+          currentSessionId?: string
+          current?: {
+            subscription?: {
+              acceptedTopics: string[]
+              rejectedTopics: string[]
+            }
+          }
+        }
+        subscription: {
+          requestedTopics: string[]
+          acceptedTopics: string[]
+          rejectedTopics: string[]
+          serverAvailableTopics: string[]
+        }
+        findings: Array<{
+          key: string
+          tone: string
+          title: string
+          detail: string
+        }>
+      }
+    }
+    expect(operationsPayload.data.mode).toBe('server-enhanced')
+    expect(operationsPayload.data.terminal).toMatchObject({
+      terminalId,
+      profileCode: 'TOPIC_LIMITED_PROFILE',
+      profileName: 'Topic Limited Profile',
+      templateCode: 'TOPIC_LIMITED_TEMPLATE',
+      templateName: 'Topic Limited Template',
+    })
+    expect(operationsPayload.data.policy).toMatchObject({
+      allowedTopics: ['org.store.profile'],
+      policySources: [
+        'terminal_profile.capabilities.allowedTopics',
+        'terminal_template.presetConfig.allowedTopics',
+      ],
+    })
+    expect(operationsPayload.data.subscription).toMatchObject({
+      requestedTopics: ['org.store.profile', 'catering.product', 'invalid*topic'],
+      acceptedTopics: ['org.store.profile'],
+      rejectedTopics: ['catering.product', 'invalid*topic'],
+      serverAvailableTopics: [],
+    })
+    expect(operationsPayload.data.sessions.currentSessionId).toBeTruthy()
+    expect(operationsPayload.data.sessions.current?.subscription?.acceptedTopics).toEqual(['org.store.profile'])
+    expect(operationsPayload.data.subscription.serverAvailableTopics).not.toContain('catering.product')
+    expect(operationsPayload.data.resolvedTopics.availableTopics).not.toContain('org.store.profile')
+    expect(operationsPayload.data.findings).toContainEqual(expect.objectContaining({
+      key: 'accepted-topic-unavailable:org.store.profile',
+      tone: 'warn',
+    }))
+    expect(operationsPayload.data.topicRegistry.total).toBeGreaterThan(0)
   })
 
   it('rejects HTTP TDP fallback when subscription hash does not match server accepted topics', async () => {

@@ -14,14 +14,19 @@ import {
     TDP_PROJECTION_STATE_KEY,
     TDP_SESSION_STATE_KEY,
     TDP_SYNC_STATE_KEY,
+    TDP_TOPIC_ACTIVITY_STATE_KEY,
 } from '../foundations/stateKeys'
 import type {
     TdpCommandInboxState,
     TdpControlSignalsState,
+    TdpOperationsFinding,
+    TdpOperationsSnapshot,
+    TdpOperationsTopicSnapshot,
     TdpProjectionEnvelope,
     TdpProjectionState,
     TdpSessionState,
     TdpSyncState,
+    TdpTopicActivityState,
 } from '../types'
 import {selectTerminalGroupMembership} from './groupMembership'
 
@@ -249,3 +254,433 @@ export const selectTdpCommandInboxState = (state: RootState) =>
 
 export const selectTdpControlSignalsState = (state: RootState) =>
     state[TDP_CONTROL_SIGNALS_STATE_KEY as keyof RootState] as TdpControlSignalsState | undefined
+
+export const selectTdpTopicActivityState = (state: RootState) =>
+    state[TDP_TOPIC_ACTIVITY_STATE_KEY as keyof RootState] as TdpTopicActivityState | undefined
+
+const toUniqueSortedTopics = (
+    ...topicGroups: Array<readonly string[] | undefined>
+) => Array.from(new Set(
+    topicGroups
+        .flatMap(topics => [...(topics ?? [])])
+        .filter(topic => topic.length > 0),
+)).sort()
+
+const maxDefinedNumber = (...values: Array<number | undefined>) =>
+    values.reduce<number | undefined>((current, value) => {
+        if (typeof value !== 'number' || !Number.isFinite(value)) {
+            return current
+        }
+        if (current == null || value > current) {
+            return value
+        }
+        return current
+    }, undefined)
+
+const positiveLag = (
+    high: number | undefined,
+    low: number | undefined,
+) => Math.max(0, (high ?? 0) - (low ?? 0))
+
+const sumRecentWindowCounts = (
+    activity: TdpTopicActivityState['topics'][string] | undefined,
+    kind: 'receivedCount' | 'appliedCount',
+) => (activity?.recentWindows ?? [])
+    .reduce((total, window) => total + window[kind], 0)
+
+const perMinuteRate = (
+    count: number,
+    windowSizeMs: number,
+    windowCount: number,
+) => {
+    const durationMs = Math.max(1, windowSizeMs * Math.max(1, windowCount))
+    return Math.round((count / durationMs) * 60_000 * 100) / 100
+}
+
+const computeSnapshotProgress = (sync?: TdpSyncState) => {
+    const totalItems = sync?.applyingSnapshotTotalItems
+    const appliedItems = sync?.applyingSnapshotAppliedItems
+    if (typeof totalItems !== 'number' || totalItems <= 0) {
+        return undefined
+    }
+    const safeAppliedItems = Math.max(0, Math.min(appliedItems ?? 0, totalItems))
+    return {
+        appliedItems: safeAppliedItems,
+        totalItems,
+        percent: Math.round((safeAppliedItems / totalItems) * 100),
+    }
+}
+
+const createTopicSnapshot = (
+    topic: string,
+    input: {
+        requestedTopics: ReadonlySet<string>
+        acceptedTopics: ReadonlySet<string>
+        rejectedTopics: ReadonlySet<string>
+        requiredMissingTopics: ReadonlySet<string>
+        activeEntries: readonly TdpProjectionEnvelope[]
+        stagedEntries: readonly TdpProjectionEnvelope[]
+        estimatedServerNow: number
+    },
+): Omit<TdpOperationsTopicSnapshot, 'activity'> => {
+    const allEntries = [...input.activeEntries, ...input.stagedEntries]
+    const requested = input.requestedTopics.has(topic)
+    const accepted = input.acceptedTopics.has(topic)
+    const rejected = input.rejectedTopics.has(topic)
+    const requiredMissing = input.requiredMissingTopics.has(topic)
+    const localEntryCount = input.activeEntries.length
+    const stagedEntryCount = input.stagedEntries.length
+    const scopeCounts: Record<string, number> = {}
+    const lifecycleCounts: Record<string, number> = {}
+    let maxRevision: number | undefined
+    let lastOccurredAt: string | undefined
+    let expiredEntryCount = 0
+
+    allEntries.forEach(entry => {
+        scopeCounts[entry.scopeType] = (scopeCounts[entry.scopeType] ?? 0) + 1
+        const lifecycle = entry.lifecycle ?? 'persistent'
+        lifecycleCounts[lifecycle] = (lifecycleCounts[lifecycle] ?? 0) + 1
+        maxRevision = maxDefinedNumber(maxRevision, entry.revision)
+        if (!lastOccurredAt || entry.occurredAt > lastOccurredAt) {
+            lastOccurredAt = entry.occurredAt
+        }
+        if (isTdpProjectionExpiredForLocalDefense(entry.expiresAt, input.estimatedServerNow)) {
+            expiredEntryCount += 1
+        }
+    })
+
+    const localResidual = !accepted && localEntryCount > 0
+    const status = requiredMissing
+        ? 'required-missing'
+        : rejected
+            ? 'rejected'
+            : accepted
+                ? 'accepted'
+                : localResidual
+                    ? 'local-residual'
+                    : requested
+                        ? 'local-only'
+                        : 'inactive'
+
+    return {
+        topic,
+        requested,
+        accepted,
+        rejected,
+        requiredMissing,
+        localResidual,
+        status,
+        localEntryCount,
+        stagedEntryCount,
+        maxRevision,
+        lastOccurredAt,
+        scopeCounts,
+        lifecycleCounts,
+        expiredEntryCount,
+    }
+}
+
+const createFinding = (
+    key: string,
+    tone: TdpOperationsFinding['tone'],
+    title: string,
+    detail: string,
+): TdpOperationsFinding => ({
+    key,
+    tone,
+    title,
+    detail,
+})
+
+const selectTdpOperationsSnapshotMemo = createSelector(
+    [
+        selectTdpSessionState,
+        selectTdpSyncState,
+        selectTdpProjectionState,
+        selectTdpCommandInboxState,
+        selectTdpControlSignalsState,
+        selectTdpTopicActivityState,
+    ],
+    (session, sync, projection, commandInbox, controlSignals, topicActivity): TdpOperationsSnapshot => {
+        const sessionStatus = session?.status ?? 'IDLE'
+        const acceptedTopics = session?.subscription?.acceptedTopics ?? sync?.lastAcceptedSubscribedTopics ?? []
+        const requestedTopics = sync?.lastRequestedSubscribedTopics ?? sync?.activeSubscribedTopics ?? acceptedTopics
+        const rejectedTopics = session?.subscription?.rejectedTopics ?? []
+        const requiredMissingTopics = session?.subscription?.requiredMissingTopics ?? []
+        const activeTopics = sync?.activeSubscribedTopics ?? acceptedTopics
+        const acceptedHash = session?.subscription?.hash ?? sync?.lastAcceptedSubscriptionHash
+        const requestedHash = sync?.lastRequestedSubscriptionHash
+        const activeHash = sync?.activeSubscriptionHash
+        const localHashMismatch = Boolean(
+            requestedHash
+            && acceptedHash
+            && requestedHash !== acceptedHash,
+        ) || Boolean(
+            activeHash
+            && acceptedHash
+            && activeHash !== acceptedHash,
+        )
+        const activeEntries = Object.values(projection?.activeEntries ?? {})
+        const stagedEntries = Object.values(projection?.stagedEntries ?? {})
+        const activeEntriesByTopic = activeEntries.reduce<Record<string, TdpProjectionEnvelope[]>>((result, entry) => {
+            result[entry.topic] ??= []
+            result[entry.topic]!.push(entry)
+            return result
+        }, {})
+        const stagedEntriesByTopic = stagedEntries.reduce<Record<string, TdpProjectionEnvelope[]>>((result, entry) => {
+            result[entry.topic] ??= []
+            result[entry.topic]!.push(entry)
+            return result
+        }, {})
+        const allTopics = toUniqueSortedTopics(
+            requestedTopics,
+            acceptedTopics,
+            rejectedTopics,
+            requiredMissingTopics,
+            activeEntries.map(entry => entry.topic),
+            stagedEntries.map(entry => entry.topic),
+            Object.keys(topicActivity?.topics ?? {}),
+        )
+        const estimatedServerNow = estimateTdpServerNow(Date.now(), sync?.serverClockOffsetMs)
+        const requestedTopicSet = new Set(requestedTopics)
+        const acceptedTopicSet = new Set(acceptedTopics)
+        const rejectedTopicSet = new Set(rejectedTopics)
+        const requiredMissingTopicSet = new Set(requiredMissingTopics)
+        const activityWindowSizeMs = topicActivity?.windowSizeMs ?? 60_000
+        const topics = allTopics.map(topic => {
+            const activity = topicActivity?.topics[topic]
+            const windowCount = activity?.recentWindows.length ?? 0
+            const recentReceivedCount = sumRecentWindowCounts(activity, 'receivedCount')
+            const recentAppliedCount = sumRecentWindowCounts(activity, 'appliedCount')
+            return {
+                ...createTopicSnapshot(topic, {
+                    requestedTopics: requestedTopicSet,
+                    acceptedTopics: acceptedTopicSet,
+                    rejectedTopics: rejectedTopicSet,
+                    requiredMissingTopics: requiredMissingTopicSet,
+                    activeEntries: activeEntriesByTopic[topic] ?? [],
+                    stagedEntries: stagedEntriesByTopic[topic] ?? [],
+                    estimatedServerNow,
+                }),
+                activity: {
+                    receivedCount: activity?.receivedCount ?? 0,
+                    appliedCount: activity?.appliedCount ?? 0,
+                    snapshotAppliedCount: activity?.snapshotAppliedCount ?? 0,
+                    changesAppliedCount: activity?.changesAppliedCount ?? 0,
+                    realtimeAppliedCount: activity?.realtimeAppliedCount ?? 0,
+                    lastReceivedAt: activity?.lastReceivedAt,
+                    lastAppliedAt: activity?.lastAppliedAt,
+                    lastSource: activity?.lastSource,
+                    recentReceivedPerMinute: perMinuteRate(recentReceivedCount, activityWindowSizeMs, windowCount),
+                    recentAppliedPerMinute: perMinuteRate(recentAppliedCount, activityWindowSizeMs, windowCount),
+                },
+            }
+        })
+        const expiredEntryCount = topics.reduce((count, topic) => count + topic.expiredEntryCount, 0)
+        const totalReceivedCount = Object.values(topicActivity?.topics ?? {})
+            .reduce((count, activity) => count + activity.receivedCount, 0)
+        const totalAppliedCount = Object.values(topicActivity?.topics ?? {})
+            .reduce((count, activity) => count + activity.appliedCount, 0)
+        const lastReceivedAt = maxDefinedNumber(
+            ...Object.values(topicActivity?.topics ?? {}).map(activity => activity.lastReceivedAt),
+        )
+        const lastAppliedAt = maxDefinedNumber(
+            ...Object.values(topicActivity?.topics ?? {}).map(activity => activity.lastAppliedAt),
+        )
+        const hottestTopics = [...topics]
+            .sort((left, right) =>
+                right.activity.recentAppliedPerMinute - left.activity.recentAppliedPerMinute
+                || right.activity.recentReceivedPerMinute - left.activity.recentReceivedPerMinute
+                || left.topic.localeCompare(right.topic),
+            )
+            .filter(topic =>
+                topic.activity.recentAppliedPerMinute > 0
+                || topic.activity.recentReceivedPerMinute > 0,
+            )
+            .slice(0, 5)
+            .map(topic => ({
+                topic: topic.topic,
+                recentAppliedPerMinute: topic.activity.recentAppliedPerMinute,
+                recentReceivedPerMinute: topic.activity.recentReceivedPerMinute,
+            }))
+        const highWatermarkStale = sessionStatus !== 'READY'
+        const watermarkLag = session?.highWatermark == null
+            ? undefined
+            : positiveLag(session.highWatermark, sync?.lastAppliedCursor)
+        const deliveredLag = positiveLag(sync?.lastCursor, sync?.lastDeliveredCursor)
+        const ackLag = positiveLag(sync?.lastDeliveredCursor, sync?.lastAckedCursor)
+        const applyLag = positiveLag(sync?.lastAckedCursor, sync?.lastAppliedCursor)
+        const orderedCommandIds = commandInbox?.orderedIds ?? []
+        const latestCommand = orderedCommandIds.length === 0
+            ? undefined
+            : commandInbox?.itemsById[orderedCommandIds[orderedCommandIds.length - 1]!]
+        const findings: TdpOperationsFinding[] = []
+
+        if (sessionStatus === 'ERROR' || sessionStatus === 'REHOME_REQUIRED') {
+            findings.push(createFinding(
+                'session-error',
+                'error',
+                'TDP 会话不可用',
+                `当前状态为 ${sessionStatus}，需要查看事件与告警。`,
+            ))
+        } else if (sessionStatus !== 'READY') {
+            findings.push(createFinding(
+                'session-not-ready',
+                'warn',
+                'TDP 会话未就绪',
+                `当前状态为 ${sessionStatus}，游标水位可能是断连前快照。`,
+            ))
+        }
+        if (requiredMissingTopics.length > 0) {
+            findings.push(createFinding(
+                'required-missing-topics',
+                'error',
+                '存在 required topic 缺失',
+                requiredMissingTopics.join(', '),
+            ))
+        }
+        if (rejectedTopics.length > 0) {
+            findings.push(createFinding(
+                'rejected-topics',
+                'warn',
+                '存在被拒绝 topic',
+                rejectedTopics.join(', '),
+            ))
+        }
+        if (localHashMismatch) {
+            findings.push(createFinding(
+                'local-hash-mismatch',
+                'warn',
+                '本地订阅 Hash 不一致',
+                'requested / active / accepted subscription hash 不一致，需要确认是否处于订阅切换或旧 session。',
+            ))
+        }
+        if (!highWatermarkStale && watermarkLag != null && watermarkLag > 0) {
+            findings.push(createFinding(
+                'watermark-lag',
+                'warn',
+                '游标仍有延迟',
+                `lastAppliedCursor 落后 highWatermark ${watermarkLag} 个 revision。`,
+            ))
+        }
+        if (ackLag > 0) {
+            findings.push(createFinding(
+                'ack-lag',
+                'neutral',
+                'ACK 差值待观察',
+                `lastDeliveredCursor 比 lastAckedCursor 高 ${ackLag}。Phase 1 仅展示差值，不直接判错。`,
+            ))
+        }
+        if (applyLag > 0) {
+            findings.push(createFinding(
+                'apply-lag',
+                'neutral',
+                'Apply 差值待观察',
+                `lastAckedCursor 比 lastAppliedCursor 高 ${applyLag}。Phase 1 仅展示差值，不直接判错。`,
+            ))
+        }
+        if (expiredEntryCount > 0) {
+            findings.push(createFinding(
+                'expired-local-projections',
+                'warn',
+                '存在过期本地 projection',
+                `${expiredEntryCount} 条 projection 已过期但仍在本地 active/staged entries 中。`,
+            ))
+        }
+        if (controlSignals?.lastProtocolError) {
+            findings.push(createFinding(
+                'protocol-error',
+                'error',
+                '最近发生协议错误',
+                controlSignals.lastProtocolError.message,
+            ))
+        }
+        if (findings.length === 0) {
+            findings.push(createFinding(
+                'healthy-local',
+                'ok',
+                '本地 TDP 状态未发现明显异常',
+                'Phase 1 仅覆盖本地和握手视角；服务端策略对比需要服务端诊断增强。',
+            ))
+        }
+
+        return {
+            session: {
+                status: sessionStatus,
+                sessionId: session?.sessionId,
+                nodeId: session?.nodeId,
+                nodeState: session?.nodeState,
+                syncMode: session?.syncMode,
+                highWatermark: session?.highWatermark,
+                connectedAt: session?.connectedAt,
+                lastPongAt: session?.lastPongAt,
+                reconnectAttempt: session?.reconnectAttempt,
+                disconnectReason: session?.disconnectReason,
+                highWatermarkStale,
+            },
+            sync: {
+                snapshotStatus: sync?.snapshotStatus ?? 'idle',
+                changesStatus: sync?.changesStatus ?? 'idle',
+                lastCursor: sync?.lastCursor,
+                lastDeliveredCursor: sync?.lastDeliveredCursor,
+                lastAckedCursor: sync?.lastAckedCursor,
+                lastAppliedCursor: sync?.lastAppliedCursor,
+                activeSubscriptionHash: sync?.activeSubscriptionHash,
+                lastRequestedSubscriptionHash: sync?.lastRequestedSubscriptionHash,
+                lastAcceptedSubscriptionHash: sync?.lastAcceptedSubscriptionHash,
+                serverClockOffsetMs: sync?.serverClockOffsetMs,
+                applyingSnapshotId: sync?.applyingSnapshotId,
+                applyingSnapshotTotalItems: sync?.applyingSnapshotTotalItems,
+                applyingSnapshotAppliedItems: sync?.applyingSnapshotAppliedItems,
+                lastExpiredProjectionCleanupAt: sync?.lastExpiredProjectionCleanupAt,
+            },
+            subscription: {
+                mode: session?.subscription?.mode,
+                hash: session?.subscription?.hash,
+                requestedTopics: [...requestedTopics],
+                acceptedTopics: [...acceptedTopics],
+                rejectedTopics: [...rejectedTopics],
+                requiredMissingTopics: [...requiredMissingTopics],
+                activeTopics: [...activeTopics],
+                requestedHash,
+                acceptedHash,
+                localHashMismatch,
+            },
+            pipeline: {
+                deliveredLag,
+                ackLag,
+                applyLag,
+                watermarkLag,
+                canJudgeWatermarkLag: !highWatermarkStale && watermarkLag != null,
+                snapshotProgress: computeSnapshotProgress(sync),
+            },
+            projection: {
+                activeBufferId: projection?.activeBufferId ?? 'active',
+                stagedBufferId: projection?.stagedBufferId,
+                activeEntryCount: activeEntries.length,
+                stagedEntryCount: stagedEntries.length,
+                expiredEntryCount,
+                topicCount: topics.length,
+            },
+            activity: {
+                windowSizeMs: activityWindowSizeMs,
+                totalReceivedCount,
+                totalAppliedCount,
+                lastReceivedAt,
+                lastAppliedAt,
+                hottestTopics,
+            },
+            commandInbox: {
+                count: orderedCommandIds.length,
+                latestTopic: latestCommand?.topic,
+                latestReceivedAt: latestCommand?.receivedAt,
+            },
+            controlSignals,
+            topics,
+            findings,
+        }
+    },
+)
+
+export const selectTdpOperationsSnapshot = (state: RootState): TdpOperationsSnapshot =>
+    selectTdpOperationsSnapshotMemo(state)

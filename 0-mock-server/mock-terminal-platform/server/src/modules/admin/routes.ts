@@ -90,6 +90,9 @@ import {
   previewPolicyImpact,
 } from '../tdp/decisionService.js'
 import {
+  getTerminalOperationsSnapshot,
+} from '../tdp/operationsSnapshotService.js'
+import {
   normalizeSubscription,
   readTerminalTopicPolicy,
   TDP_TOPIC_SUBSCRIPTION_CAPABILITY_V1,
@@ -1057,6 +1060,14 @@ export const createRouter = () => {
       return ok(res, getTerminalResolvedTopics({ sandboxId, terminalId: req.params.terminalId }))
     } catch (error) {
       return fail(res, error instanceof Error ? error.message : '查询 terminal resolved topics 失败', 400)
+    }
+  })
+  router.get('/api/v1/admin/tdp/terminals/:terminalId/operations-snapshot', (req, res) => {
+    try {
+      const sandboxId = requireQuerySandboxId(req.query as Record<string, unknown>)
+      return ok(res, getTerminalOperationsSnapshot({ sandboxId, terminalId: req.params.terminalId }))
+    } catch (error) {
+      return fail(res, error instanceof Error ? error.message : '查询 terminal operations snapshot 失败', 400)
     }
   })
   router.get('/api/v1/admin/tdp/terminals/:terminalId/decision-trace', (req, res) => {

@@ -9,6 +9,7 @@ import {AdminControlSection} from '../ui/screens/AdminControlSection'
 import {AdminDeviceSection} from '../ui/screens/AdminDeviceSection'
 import {AdminLogsSection} from '../ui/screens/AdminLogsSection'
 import {AdminTerminalSection} from '../ui/screens/AdminTerminalSection'
+import {AdminTdpSection} from '../ui/screens/AdminTdpSection'
 import {AdminTopologySection} from '../ui/screens/AdminTopologySection'
 import {AdminVersionSection} from '../ui/screens/AdminVersionSection'
 import {getAdminAdapterDiagnosticsRegistry} from './adapterDiagnosticsRuntime'
@@ -32,6 +33,14 @@ const createDefaultAdminConsoleSections = (): readonly AdminConsoleSection[] => 
         title: '终端管理',
         render: ({runtime, store}) => (
             <AdminTerminalSection runtime={runtime} store={store} />
+        ),
+    },
+    {
+        tab: 'tdp',
+        group: 'runtime',
+        title: 'TDP 数据平面',
+        render: ({store, hostTools}) => (
+            <AdminTdpSection store={store} host={hostTools.tdp} />
         ),
     },
     {

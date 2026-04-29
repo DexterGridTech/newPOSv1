@@ -13,6 +13,7 @@ import {
     AdminSummaryCard,
     AdminSummaryGrid,
     AdminDetailList,
+    AdminPagedList,
 } from './AdminSectionPrimitives'
 import {
     useAdminMountedRef,
@@ -117,59 +118,66 @@ export const AdminConnectorSection: React.FC<AdminConnectorSectionProps> = ({
                     tone={channels.length > 0 ? 'ok' : 'warn'}
                 />
             </AdminSummaryGrid>
-            {channels.map(channel => (
-                <AdminBlock
-                    key={channel.key}
-                    title={channel.title}
-                    description={channel.detail ?? '该通道可用于连接器能力探测。'}
-                >
-                    <AdminSummaryGrid>
-                        <AdminSummaryCard
-                            label="通道标识"
-                            value={channel.key}
-                            detail="连接器内部唯一标识。"
-                            tone="primary"
+            <AdminPagedList
+                items={channels}
+                pageSize={6}
+                itemLabel="个通道"
+                testIDPrefix="ui-base-admin-section:connector:channels"
+                emptyMessage="当前没有可探测的连接器通道。"
+                keyExtractor={channel => channel.key}
+                renderItem={channel => (
+                    <AdminBlock
+                        title={channel.title}
+                        description={channel.detail ?? '该通道可用于连接器能力探测。'}
+                    >
+                        <AdminSummaryGrid>
+                            <AdminSummaryCard
+                                label="通道标识"
+                                value={channel.key}
+                                detail="连接器内部唯一标识。"
+                                tone="primary"
+                            />
+                            <AdminSummaryCard
+                                label="目标"
+                                value={channel.target ?? '未提供'}
+                                detail="当前宿主识别到的通道目标。"
+                                tone={channel.target ? 'neutral' : 'warn'}
+                            />
+                            <AdminSummaryCard
+                                label="最近探测"
+                                value={results[channel.key]?.message ?? '未执行'}
+                                detail="最近一次连接器探测结果。"
+                                tone={
+                                    results[channel.key]?.tone === 'error'
+                                        ? 'danger'
+                                        : results[channel.key]?.tone === 'warn'
+                                            ? 'warn'
+                                            : results[channel.key]?.tone === 'ok'
+                                                ? 'ok'
+                                                : 'neutral'
+                                }
+                            />
+                        </AdminSummaryGrid>
+                        <AdminActionButton
+                            testID={`ui-base-admin-section:connector:probe:${channel.key}`}
+                            label="执行探测"
+                            disabled={loading}
+                            onPress={() => handleProbe(channel.key)}
                         />
-                        <AdminSummaryCard
-                            label="目标"
-                            value={channel.target ?? '未提供'}
-                            detail="当前宿主识别到的通道目标。"
-                            tone={channel.target ? 'neutral' : 'warn'}
-                        />
-                        <AdminSummaryCard
-                            label="最近探测"
-                            value={results[channel.key]?.message ?? '未执行'}
-                            detail="最近一次连接器探测结果。"
-                            tone={
-                                results[channel.key]?.tone === 'error'
-                                    ? 'danger'
-                                    : results[channel.key]?.tone === 'warn'
-                                        ? 'warn'
-                                        : results[channel.key]?.tone === 'ok'
-                                            ? 'ok'
-                                            : 'neutral'
-                            }
-                        />
-                    </AdminSummaryGrid>
-                    <AdminActionButton
-                        testID={`ui-base-admin-section:connector:probe:${channel.key}`}
-                        label="执行探测"
-                        disabled={loading}
-                        onPress={() => handleProbe(channel.key)}
-                    />
-                    {results[channel.key] ? (
-                        <AdminDetailList
-                            items={[
-                                {
-                                    key: `${channel.key}:probe-message`,
-                                    label: '探测消息',
-                                    value: results[channel.key]?.message,
-                                },
-                            ]}
-                        />
-                    ) : null}
-                </AdminBlock>
-            ))}
+                        {results[channel.key] ? (
+                            <AdminDetailList
+                                items={[
+                                    {
+                                        key: `${channel.key}:probe-message`,
+                                        label: '探测消息',
+                                        value: results[channel.key]?.message,
+                                    },
+                                ]}
+                            />
+                        ) : null}
+                    </AdminBlock>
+                )}
+            />
         </AdminSectionShell>
     )
 }

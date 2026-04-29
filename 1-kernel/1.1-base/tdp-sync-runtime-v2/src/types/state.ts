@@ -113,6 +113,35 @@ export interface TdpControlSignalsState {
     lastDisconnectReason?: string | null
 }
 
+export type TdpTopicActivitySource = 'snapshot' | 'changes' | 'realtime'
+
+export interface TdpTopicActivityWindow {
+    bucketStartedAt: TimestampMs
+    receivedCount: number
+    appliedCount: number
+}
+
+export interface TdpTopicActivityStats {
+    receivedCount: number
+    appliedCount: number
+    snapshotReceivedCount: number
+    snapshotAppliedCount: number
+    changesReceivedCount: number
+    changesAppliedCount: number
+    realtimeReceivedCount: number
+    realtimeAppliedCount: number
+    lastReceivedAt?: TimestampMs
+    lastAppliedAt?: TimestampMs
+    lastSource?: TdpTopicActivitySource
+    recentWindows: TdpTopicActivityWindow[]
+}
+
+export interface TdpTopicActivityState {
+    topics: Record<string, TdpTopicActivityStats>
+    windowSizeMs: number
+    maxWindows: number
+}
+
 export interface TdpTerminalGroupMembershipPayload {
     membershipVersion: number
     groups: Array<{
@@ -121,4 +150,134 @@ export interface TdpTerminalGroupMembershipPayload {
         priority: number
         matchedBy: Record<string, string | undefined>
     }>
+}
+
+export type TdpOperationsHealthTone = 'ok' | 'warn' | 'error' | 'neutral'
+
+export type TdpOperationsTopicStatus =
+    | 'accepted'
+    | 'rejected'
+    | 'required-missing'
+    | 'local-residual'
+    | 'local-only'
+    | 'inactive'
+
+export interface TdpOperationsTopicSnapshot {
+    topic: string
+    requested: boolean
+    accepted: boolean
+    rejected: boolean
+    requiredMissing: boolean
+    localResidual: boolean
+    status: TdpOperationsTopicStatus
+    localEntryCount: number
+    stagedEntryCount: number
+    maxRevision?: number
+    lastOccurredAt?: string
+    scopeCounts: Record<string, number>
+    lifecycleCounts: Record<string, number>
+    expiredEntryCount: number
+    activity: {
+        receivedCount: number
+        appliedCount: number
+        snapshotAppliedCount: number
+        changesAppliedCount: number
+        realtimeAppliedCount: number
+        lastReceivedAt?: TimestampMs
+        lastAppliedAt?: TimestampMs
+        lastSource?: TdpTopicActivitySource
+        recentReceivedPerMinute: number
+        recentAppliedPerMinute: number
+    }
+}
+
+export interface TdpOperationsFinding {
+    key: string
+    tone: TdpOperationsHealthTone
+    title: string
+    detail: string
+}
+
+export interface TdpOperationsSnapshot {
+    session: {
+        status: TdpSessionState['status']
+        sessionId?: string
+        nodeId?: string
+        nodeState?: TdpSessionState['nodeState']
+        syncMode?: TdpSessionState['syncMode']
+        highWatermark?: number
+        connectedAt?: TimestampMs
+        lastPongAt?: TimestampMs
+        reconnectAttempt?: number
+        disconnectReason?: string | null
+        highWatermarkStale: boolean
+    }
+    sync: {
+        snapshotStatus: TdpSyncState['snapshotStatus']
+        changesStatus: TdpSyncState['changesStatus']
+        lastCursor?: number
+        lastDeliveredCursor?: number
+        lastAckedCursor?: number
+        lastAppliedCursor?: number
+        activeSubscriptionHash?: string
+        lastRequestedSubscriptionHash?: string
+        lastAcceptedSubscriptionHash?: string
+        serverClockOffsetMs?: number
+        applyingSnapshotId?: string
+        applyingSnapshotTotalItems?: number
+        applyingSnapshotAppliedItems?: number
+        lastExpiredProjectionCleanupAt?: TimestampMs
+    }
+    subscription: {
+        mode?: TdpSessionSubscriptionStateV1['mode']
+        hash?: string
+        requestedTopics: string[]
+        acceptedTopics: string[]
+        rejectedTopics: string[]
+        requiredMissingTopics: string[]
+        activeTopics: string[]
+        requestedHash?: string
+        acceptedHash?: string
+        localHashMismatch: boolean
+    }
+    pipeline: {
+        deliveredLag: number
+        ackLag: number
+        applyLag: number
+        watermarkLag?: number
+        canJudgeWatermarkLag: boolean
+        snapshotProgress?: {
+            appliedItems: number
+            totalItems: number
+            percent: number
+        }
+    }
+    projection: {
+        activeBufferId: string
+        stagedBufferId?: string
+        activeEntryCount: number
+        stagedEntryCount: number
+        expiredEntryCount: number
+        topicCount: number
+    }
+    activity: {
+        windowSizeMs: number
+        totalReceivedCount: number
+        totalAppliedCount: number
+        lastReceivedAt?: TimestampMs
+        lastAppliedAt?: TimestampMs
+        hottestTopics: Array<{
+            topic: string
+            recentAppliedPerMinute: number
+            recentReceivedPerMinute: number
+        }>
+    }
+    commandInbox: {
+        count: number
+        latestTopic?: string
+        latestReceivedAt?: TimestampMs
+    }
+    controlSignals: TdpControlSignalsState | undefined
+    topics: TdpOperationsTopicSnapshot[]
+    findings: TdpOperationsFinding[]
 }

@@ -17,6 +17,7 @@ import {
     AdminActionGroup,
     AdminBlock,
     AdminDetailList,
+    AdminPagedText,
     AdminSectionMessage,
     AdminSectionShell,
     AdminStatusList,
@@ -455,7 +456,11 @@ export const AdminVersionSection: React.FC<AdminVersionSectionProps> = ({
                 title="期望发布"
                 description="平台下发的 desired release 以及兼容、发布、重启和安全策略。"
             >
-                <AdminDetailList items={buildDesiredDetails(state)} />
+                <AdminDetailList
+                    items={buildDesiredDetails(state)}
+                    pageSize={8}
+                    testIDPrefix="ui-base-admin-section:version:desired"
+                />
             </AdminBlock>
 
             <AdminBlock
@@ -463,7 +468,13 @@ export const AdminVersionSection: React.FC<AdminVersionSectionProps> = ({
                 description="候选包、ready 包、applying 状态和重启意图。"
             >
                 <AdminStatusList items={buildCandidateStatuses(state)} />
-                {readyDetails.length ? <AdminDetailList items={readyDetails} /> : null}
+                {readyDetails.length ? (
+                    <AdminDetailList
+                        items={readyDetails}
+                        pageSize={8}
+                        testIDPrefix="ui-base-admin-section:version:ready"
+                    />
+                ) : null}
             </AdminBlock>
 
             <AdminBlock
@@ -501,6 +512,13 @@ export const AdminVersionSection: React.FC<AdminVersionSectionProps> = ({
                     title="Rollback Marker"
                     items={markerDetails('rollback', hostSnapshot?.nativeMarkers?.rollback)}
                 />
+                {hostSnapshot?.nativeMarkers ? (
+                    <AdminPagedText
+                        value={JSON.stringify(hostSnapshot.nativeMarkers, null, 2)}
+                        pageSize={4_000}
+                        testIDPrefix="ui-base-admin-section:version:native-markers-json"
+                    />
+                ) : null}
             </AdminBlock>
 
             {historyItems.length ? (
@@ -508,7 +526,11 @@ export const AdminVersionSection: React.FC<AdminVersionSectionProps> = ({
                     title="历史事件"
                     description="最近 10 条 hot-update 状态机事件。"
                 >
-                    <AdminStatusList items={historyItems} />
+                    <AdminStatusList
+                        items={historyItems}
+                        pageSize={5}
+                        testIDPrefix="ui-base-admin-section:version:history"
+                    />
                 </AdminBlock>
             ) : null}
         </AdminSectionShell>

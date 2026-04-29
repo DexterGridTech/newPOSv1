@@ -1,4 +1,4 @@
-import {beforeEach, describe, expect, it, vi} from 'vitest'
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
 
 const {
     createCommandMock,
@@ -12,6 +12,7 @@ const {
     nativeAppControlSetFullScreenMock,
     nativeAppControlSetAppLockedMock,
     createAssemblyStateStorageMock,
+    createAssemblyHotUpdatePortMock,
     selectTransportServerSpaceStateMock,
 } = vi.hoisted(() => ({
     createCommandMock: vi.fn((definition, payload) => ({
@@ -46,6 +47,12 @@ const {
     nativeAppControlSetAppLockedMock: vi.fn(async () => undefined),
     createAssemblyStateStorageMock: vi.fn(() => ({
         clear: vi.fn(async () => undefined),
+    })),
+    createAssemblyHotUpdatePortMock: vi.fn(() => ({
+        readBootMarker: vi.fn(async () => null),
+        readActiveMarker: vi.fn(async () => null),
+        readRollbackMarker: vi.fn(async () => null),
+        clearBootMarker: vi.fn(async () => undefined),
     })),
     selectTransportServerSpaceStateMock: vi.fn((state: any) => state?.transportServerSpace),
 }))
@@ -129,11 +136,20 @@ vi.mock('../../src/platform-ports/stateStorage', () => ({
     createAssemblyStateStorage: createAssemblyStateStorageMock,
 }))
 
+vi.mock('../../src/platform-ports/hotUpdate', () => ({
+    createAssemblyHotUpdatePort: createAssemblyHotUpdatePortMock,
+}))
+
 import {createAssemblyAdminConsoleInput} from '../../src/application/adminConsoleConfig'
 
 describe('assembly admin console config', () => {
     beforeEach(() => {
         vi.clearAllMocks()
+        vi.unstubAllGlobals()
+    })
+
+    afterEach(() => {
+        vi.unstubAllGlobals()
     })
 
     it('imports topology share payload by switching to slave before writing master locator', async () => {
@@ -220,5 +236,47 @@ describe('assembly admin console config', () => {
             selectedSpace: 'kernel-base-dev',
             availableSpaces: ['kernel-base-dev', 'kernel-base-uat'],
         })
+    })
+
+    it('exposes a TDP operations host backed by the mock terminal platform base url', async () => {
+        const fetchMock = vi.fn(async (url: string) => ({
+            ok: true,
+            status: 200,
+            text: async () => JSON.stringify({
+                success: true,
+                data: {
+                    mode: 'server-enhanced',
+                    terminal: {
+                        terminalId: 'terminal-001',
+                        sandboxId: 'sandbox-001',
+                    },
+                },
+            }),
+        }))
+        vi.stubGlobal('fetch', fetchMock)
+        const input = createAssemblyAdminConsoleInput({
+            mockTerminalPlatformBaseUrl: 'http://127.0.0.1:5810',
+        })
+
+        await expect(input.hostToolSources?.tdp?.getOperationsSnapshot({
+            sandboxId: 'sandbox-001',
+            terminalId: 'terminal-001',
+        })).resolves.toMatchObject({
+            mode: 'server-enhanced',
+            terminal: {
+                terminalId: 'terminal-001',
+                sandboxId: 'sandbox-001',
+            },
+        })
+
+        expect(fetchMock).toHaveBeenCalledWith(
+            'http://127.0.0.1:5810/api/v1/admin/tdp/terminals/terminal-001/operations-snapshot?sandboxId=sandbox-001',
+            {
+                method: 'GET',
+                headers: {
+                    accept: 'application/json',
+                },
+            },
+        )
     })
 })

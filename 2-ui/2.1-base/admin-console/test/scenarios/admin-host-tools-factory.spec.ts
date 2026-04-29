@@ -153,4 +153,13 @@ describe('admin host tools factory', () => {
         expect(tools.logs).toBeTruthy()
         expect(tools.connector).toBeUndefined()
     })
+
+    it('passes the TDP host through the host tool factory', () => {
+        const tdp = {
+            getOperationsSnapshot: vi.fn(),
+        }
+        const tools = createAdminHostTools({tdp})
+
+        expect(tools.tdp).toBe(tdp)
+    })
 })

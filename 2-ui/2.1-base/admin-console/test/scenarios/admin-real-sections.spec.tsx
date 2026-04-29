@@ -11,6 +11,7 @@ import {
 import {
     createTdpSyncRuntimeModuleV2,
     tdpHotUpdateActions,
+    tdpSyncV2StateActions,
 } from '@next/kernel-base-tdp-sync-runtime-v2'
 import {createAppError} from '@next/kernel-base-contracts'
 import {
@@ -23,10 +24,15 @@ import {
 import {
     AdapterDiagnosticsScreen,
     AdminTerminalSection,
+    AdminTdpSection,
     AdminTopologySection,
     AdminVersionSection,
     adminConsoleCommandDefinitions,
     adminConsoleStateActions,
+} from '../../src'
+import type {
+    AdminTdpHost,
+    AdminTdpServerOperationsSnapshot,
 } from '../../src'
 import {
     createAdminConsoleHarness,
@@ -709,5 +715,373 @@ describe('admin built-in sections', () => {
             dispatchSpy.mockRestore()
             consoleErrorSpy.mockRestore()
         }
+    })
+
+    it('renders local-only TDP data plane diagnostics', async () => {
+        const harness = await createAdminConsoleHarness({
+            modules: [
+                createTcpControlRuntimeModuleV2(),
+                createTdpSyncRuntimeModuleV2(),
+            ],
+        })
+        harness.store.dispatch(tcpControlV2StateActions.setActivatedIdentity({
+            terminalId: 'terminal-tdp-admin',
+            activatedAt: Date.now(),
+        }))
+        harness.store.dispatch(tcpControlV2StateActions.setSandbox({
+            sandboxId: 'sandbox-tdp-admin',
+            updatedAt: Date.now(),
+        }))
+        harness.store.dispatch(tcpControlV2StateActions.replaceBinding({
+            platformId: 'platform-tdp',
+            projectId: 'project-tdp',
+            brandId: 'brand-tdp',
+            tenantId: 'tenant-tdp',
+            storeId: 'store-tdp',
+            profileId: 'profile-android-pos',
+            templateId: 'terminal-template-android-pos-standard',
+        }))
+        harness.store.dispatch(tdpSyncV2StateActions.setReady({
+            sessionId: 'session-tdp-admin',
+            nodeId: 'node-tdp-admin',
+            nodeState: 'healthy',
+            highWatermark: 12,
+            syncMode: 'incremental',
+            alternativeEndpoints: [],
+            connectedAt: 1_700_000_000_000,
+            subscription: {
+                version: 1,
+                mode: 'explicit',
+                hash: 'hash-accepted',
+                acceptedTopics: ['catalog.item'],
+                rejectedTopics: ['price.policy'],
+                requiredMissingTopics: ['terminal.group.membership'],
+            },
+        }))
+        harness.store.dispatch(tdpSyncV2StateActions.setRequestedSubscription({
+            hash: 'hash-requested',
+            topics: ['catalog.item', 'price.policy', 'terminal.group.membership'],
+        }))
+        harness.store.dispatch(tdpSyncV2StateActions.setLastAppliedCursor(9))
+        harness.store.dispatch(tdpSyncV2StateActions.applyProjection({
+            topic: 'catalog.item',
+            itemKey: 'sku-001',
+            operation: 'upsert',
+            scopeType: 'STORE',
+            scopeId: 'store-tdp',
+            revision: 10,
+            payload: {name: 'item'},
+            occurredAt: '2026-04-29T00:00:00.000Z',
+        }))
+        harness.store.dispatch(tdpSyncV2StateActions.recordTopicActivity({
+            topic: 'catalog.item',
+            source: 'snapshot',
+            count: 2,
+            receivedAt: 60_000,
+            appliedAt: 60_000,
+        }))
+        harness.store.dispatch(tdpSyncV2StateActions.recordTopicActivity({
+            topic: 'catalog.item',
+            source: 'changes',
+            count: 1,
+            receivedAt: 120_000,
+            appliedAt: 120_000,
+        }))
+        harness.store.dispatch(tdpSyncV2StateActions.recordTopicActivity({
+            topic: 'price.policy',
+            source: 'realtime',
+            count: 1,
+            receivedAt: 120_000,
+            appliedAt: 120_000,
+        }))
+
+        const tree = renderWithAutomation(
+            <AdminTdpSection store={harness.store} />,
+            harness.store,
+            harness.runtime,
+        )
+
+        await expect(tree.getNode('ui-base-admin-section:tdp')).resolves.toBeTruthy()
+        await expect(tree.queryNodesByText('存在 required topic 缺失')).resolves.not.toHaveLength(0)
+        await expect(tree.queryNodesByText('profile-android-pos')).resolves.toHaveLength(1)
+        await expect(tree.queryNodesByText('terminal-template-android-pos-standard')).resolves.toHaveLength(1)
+        await tree.press('ui-base-admin-section:tdp:copy-diagnostics')
+        await expect(tree.queryNodesByTextContains('诊断摘要已生成')).resolves.not.toHaveLength(0)
+
+        await tree.press('ui-base-admin-section:tdp:subtab:topics')
+        await expect(tree.queryNodesByText('catalog.item')).resolves.not.toHaveLength(0)
+        await expect(tree.queryNodesByText('price.policy')).resolves.not.toHaveLength(0)
+        await expect(tree.queryNodesByText('terminal.group.membership')).resolves.not.toHaveLength(0)
+        await expect(tree.queryNodesByTextContains('服务端诊断未连接')).resolves.not.toHaveLength(0)
+        await expect(tree.queryNodesByTextContains('activity 3')).resolves.not.toHaveLength(0)
+        await tree.press('ui-base-admin-section:tdp:topic-filter:abnormal')
+        await expect(tree.queryNodesByText('catalog.item')).resolves.toHaveLength(0)
+        await expect(tree.queryNodesByText('price.policy')).resolves.not.toHaveLength(0)
+
+        await tree.press('ui-base-admin-section:tdp:subtab:topicDetails')
+        await expect(tree.queryNodesByText('Topic 活动明细')).resolves.not.toHaveLength(0)
+        await expect(tree.queryNodesByTextContains('snapshot 0 · changes 0 · realtime 1')).resolves.not.toHaveLength(0)
+        await tree.press('ui-base-admin-section:tdp:topic-filter:all')
+        await expect(tree.queryNodesByTextContains('snapshot 2 · changes 1 · realtime 0')).resolves.not.toHaveLength(0)
+
+        await tree.press('ui-base-admin-section:tdp:subtab:server')
+        await expect(tree.queryNodesByText('serverDiagnostics: unavailable')).resolves.toHaveLength(1)
+    })
+
+    it('refreshes server-enhanced TDP operations diagnostics from host', async () => {
+        const harness = await createAdminConsoleHarness({
+            modules: [
+                createTcpControlRuntimeModuleV2(),
+                createTdpSyncRuntimeModuleV2(),
+            ],
+        })
+        harness.store.dispatch(tcpControlV2StateActions.setActivatedIdentity({
+            terminalId: 'terminal-tdp-admin',
+            activatedAt: Date.now(),
+        }))
+        harness.store.dispatch(tcpControlV2StateActions.setSandbox({
+            sandboxId: 'sandbox-tdp-admin',
+            updatedAt: Date.now(),
+        }))
+        harness.store.dispatch(tcpControlV2StateActions.replaceBinding({
+            platformId: 'platform-tdp',
+            projectId: 'project-tdp',
+            brandId: 'brand-tdp',
+            tenantId: 'tenant-tdp',
+            storeId: 'store-tdp',
+            profileId: 'profile-android-pos',
+            templateId: 'terminal-template-android-pos-standard',
+        }))
+        harness.store.dispatch(tdpSyncV2StateActions.setReady({
+            sessionId: 'session-tdp-admin',
+            nodeId: 'node-tdp-admin',
+            nodeState: 'healthy',
+            highWatermark: 12,
+            syncMode: 'incremental',
+            alternativeEndpoints: [],
+            connectedAt: 1_700_000_000_000,
+            subscription: {
+                version: 1,
+                mode: 'explicit',
+                hash: 'hash-accepted',
+                acceptedTopics: ['catalog.item', 'terminal.group.membership'],
+                rejectedTopics: ['price.policy'],
+                requiredMissingTopics: ['terminal.group.membership'],
+            },
+        }))
+        harness.store.dispatch(tdpSyncV2StateActions.setRequestedSubscription({
+            hash: 'hash-requested',
+            topics: ['catalog.item', 'price.policy', 'terminal.group.membership'],
+        }))
+
+        const serverSnapshot = {
+            mode: 'server-enhanced',
+            sampledAt: 1_775_000_000_000,
+            terminal: {
+                terminalId: 'terminal-tdp-admin',
+                sandboxId: 'sandbox-tdp-admin',
+                profileId: 'profile-android-pos',
+                profileCode: 'ANDROID_POS',
+                profileName: '安卓 POS 终端',
+                templateId: 'terminal-template-android-pos-standard',
+                templateCode: 'ANDROID_POS_STANDARD',
+                templateName: '安卓 POS 标准模板',
+                presenceStatus: 'ONLINE',
+                healthStatus: 'HEALTHY',
+                currentAppVersion: '1.2.3',
+                currentBundleVersion: 'bundle.9',
+                currentConfigVersion: 'config.7',
+                lastSeenAt: 1_775_000_000_000,
+            },
+            topicRegistry: {
+                total: 2,
+                topics: [
+                    {key: 'catalog.item', name: '商品档案'},
+                    {key: 'price.policy', name: '价格策略'},
+                ],
+            },
+            policy: {
+                allowedTopics: ['catalog.item', 'price.policy'],
+                policySources: ['profile:ANDROID_POS', 'template:ANDROID_POS_STANDARD'],
+            },
+            resolvedTopics: {
+                availableTopics: ['catalog.item', 'price.policy'],
+                resolvedItemCounts: {
+                    'catalog.item': 3,
+                    'price.policy': 1,
+                },
+            },
+            sessions: {
+                total: 1,
+                currentSessionId: 'session-tdp-admin',
+                onlineSessions: [{sessionId: 'session-tdp-admin'}],
+                current: {
+                    sessionId: 'session-tdp-admin',
+                    status: 'ONLINE',
+                    highWatermark: 12,
+                    ackLag: 2,
+                    applyLag: 3,
+                    connectedAt: 1_775_000_000_000,
+                    lastHeartbeatAt: 1_775_000_010_000,
+                    subscription: {
+                        mode: 'explicit',
+                        hash: 'hash-accepted',
+                        subscribedTopics: ['catalog.item', 'terminal.group.membership'],
+                        acceptedTopics: ['catalog.item', 'terminal.group.membership'],
+                        rejectedTopics: ['price.policy'],
+                        requiredMissingTopics: ['terminal.group.membership'],
+                    },
+                },
+            },
+            subscription: {
+                requestedTopics: ['catalog.item', 'price.policy', 'terminal.group.membership'],
+                acceptedTopics: ['catalog.item', 'terminal.group.membership'],
+                rejectedTopics: ['price.policy'],
+                requiredMissingTopics: ['terminal.group.membership'],
+                acceptedHash: 'hash-accepted',
+                serverAvailableTopics: ['catalog.item', 'price.policy'],
+            },
+            decisionTrace: {
+                runtimeFacts: {terminalId: 'terminal-tdp-admin'},
+                membershipSnapshot: {storeId: 'store-tdp'},
+                topics: [
+                    {
+                        topicKey: 'catalog.item',
+                        itemKey: 'sku-001',
+                        candidateCount: 1,
+                        winner: {
+                            scopeType: 'STORE',
+                            scopeKey: 'store-tdp',
+                            revision: 12,
+                            source: 'projection',
+                            policyId: 'policy-store',
+                            reason: 'scope-match',
+                        },
+                    },
+                ],
+            },
+            findings: [
+                {
+                    key: 'accepted-topic-unavailable:terminal.group.membership',
+                    tone: 'warn',
+                    title: 'accepted topic 服务端不可给',
+                    detail: 'terminal.group.membership 已被 handshake accepted，但当前服务端 registry/resolved topics 未列出。',
+                },
+            ],
+        } satisfies AdminTdpServerOperationsSnapshot
+        const getOperationsSnapshot = vi.fn<AdminTdpHost['getOperationsSnapshot']>()
+        getOperationsSnapshot
+            .mockResolvedValueOnce(serverSnapshot)
+            .mockRejectedValueOnce(new Error('server down'))
+        const host: AdminTdpHost = {
+            getOperationsSnapshot,
+        }
+
+        const tree = renderWithAutomation(
+            <AdminTdpSection store={harness.store} host={host} />,
+            harness.store,
+            harness.runtime,
+        )
+
+        await tree.press('ui-base-admin-section:tdp:refresh-server')
+
+        expect(host.getOperationsSnapshot).toHaveBeenCalledWith({
+            sandboxId: 'sandbox-tdp-admin',
+            terminalId: 'terminal-tdp-admin',
+        })
+        await expect(tree.queryNodesByTextContains('服务端诊断已刷新：')).resolves.not.toHaveLength(0)
+        await expect(tree.queryNodesByText('安卓 POS 终端')).resolves.not.toHaveLength(0)
+        await expect(tree.queryNodesByText('安卓 POS 标准模板')).resolves.not.toHaveLength(0)
+
+        await tree.press('ui-base-admin-section:tdp:subtab:topics')
+        await expect(tree.queryNodesByTextContains('服务端可给')).resolves.not.toHaveLength(0)
+        await expect(tree.queryNodesByTextContains('服务端能力：服务端可给')).resolves.not.toHaveLength(0)
+        await expect(tree.queryNodesByTextContains('服务端能力：服务端缺失')).resolves.not.toHaveLength(0)
+
+        await tree.press('ui-base-admin-section:tdp:subtab:server')
+        await expect(tree.queryNodesByText('server-enhanced')).resolves.not.toHaveLength(0)
+        await expect(tree.queryNodesByTextContains('serverDiagnostics: available')).resolves.not.toHaveLength(0)
+        await expect(tree.queryNodesByText('profile:ANDROID_POS, template:ANDROID_POS_STANDARD')).resolves.toHaveLength(1)
+        await expect(tree.queryNodesByText('accepted topic 服务端不可给')).resolves.not.toHaveLength(0)
+        await expect(tree.queryNodesByTextContains('terminal.group.membership 已被 handshake accepted')).resolves.not.toHaveLength(0)
+
+        await tree.press('ui-base-admin-section:tdp:refresh-server')
+
+        expect(host.getOperationsSnapshot).toHaveBeenCalledTimes(2)
+        await expect(tree.queryNodesByTextContains('服务端诊断失败：server down；继续展示上次成功快照')).resolves.not.toHaveLength(0)
+        await expect(tree.queryNodesByText('安卓 POS 终端')).resolves.not.toHaveLength(0)
+        await expect(tree.queryNodesByText('安卓 POS 标准模板')).resolves.not.toHaveLength(0)
+        await expect(tree.queryNodesByTextContains('serverDiagnostics: stale')).resolves.not.toHaveLength(0)
+        await expect(tree.queryNodesByTextContains('最近刷新失败：server down')).resolves.not.toHaveLength(0)
+
+        await tree.press('ui-base-admin-section:tdp:copy-diagnostics')
+        await expect(tree.queryNodesByTextContains('诊断摘要已生成')).resolves.not.toHaveLength(0)
+    })
+
+    it('does not reuse a server TDP snapshot after terminal identity changes', async () => {
+        const harness = await createAdminConsoleHarness({
+            modules: [
+                createTcpControlRuntimeModuleV2(),
+                createTdpSyncRuntimeModuleV2(),
+            ],
+        })
+        harness.store.dispatch(tcpControlV2StateActions.setActivatedIdentity({
+            terminalId: 'terminal-tdp-admin-a',
+            activatedAt: Date.now(),
+        }))
+        harness.store.dispatch(tcpControlV2StateActions.setSandbox({
+            sandboxId: 'sandbox-tdp-admin-a',
+            updatedAt: Date.now(),
+        }))
+        harness.store.dispatch(tcpControlV2StateActions.replaceBinding({
+            profileId: 'profile-local-a',
+            templateId: 'template-local-a',
+        }))
+
+        const getOperationsSnapshot = vi.fn<AdminTdpHost['getOperationsSnapshot']>()
+            .mockResolvedValue({
+                mode: 'server-enhanced',
+                sampledAt: 1_775_000_000_000,
+                terminal: {
+                    terminalId: 'terminal-tdp-admin-a',
+                    sandboxId: 'sandbox-tdp-admin-a',
+                    profileName: 'A 终端服务端 Profile',
+                    templateName: 'A 终端服务端 Template',
+                },
+                subscription: {
+                    serverAvailableTopics: ['catalog.item'],
+                },
+            })
+        const tree = renderWithAutomation(
+            <AdminTdpSection
+                store={harness.store}
+                host={{getOperationsSnapshot}}
+            />,
+            harness.store,
+            harness.runtime,
+        )
+
+        await tree.press('ui-base-admin-section:tdp:refresh-server')
+        await expect(tree.queryNodesByText('A 终端服务端 Profile')).resolves.toHaveLength(1)
+
+        await tree.dispatch(() => {
+            harness.store.dispatch(tcpControlV2StateActions.setActivatedIdentity({
+                terminalId: 'terminal-tdp-admin-b',
+                activatedAt: Date.now(),
+            }))
+            harness.store.dispatch(tcpControlV2StateActions.setSandbox({
+                sandboxId: 'sandbox-tdp-admin-b',
+                updatedAt: Date.now(),
+            }))
+            harness.store.dispatch(tcpControlV2StateActions.replaceBinding({
+                profileId: 'profile-local-b',
+                templateId: 'template-local-b',
+            }))
+        })
+
+        await expect(tree.queryNodesByText('A 终端服务端 Profile')).resolves.toHaveLength(0)
+        await expect(tree.queryNodesByText('profile-local-b')).resolves.toHaveLength(1)
+        await tree.press('ui-base-admin-section:tdp:subtab:server')
+        await expect(tree.queryNodesByText('serverDiagnostics: unavailable')).resolves.toHaveLength(1)
     })
 })

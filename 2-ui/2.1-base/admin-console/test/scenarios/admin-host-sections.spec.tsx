@@ -98,15 +98,55 @@ describe('admin host-backed sections', () => {
 
         await tree.press('ui-base-admin-section:logs:open:0')
         expect(logHost.readFile).toHaveBeenCalledWith('app.log')
-        await expect(tree.queryNodes('ui-base-admin-detail:log-content')).resolves.toEqual([
-            expect.objectContaining({value: 'hello-log'}),
-        ])
+        await expect(tree.getNode('ui-base-admin-section:logs:content:text')).resolves.toMatchObject({
+            value: 'hello-log',
+        })
+        await expect(tree.queryNodesByTextContains('hello-log')).resolves.not.toHaveLength(0)
 
         await tree.press('ui-base-admin-section:logs:delete:0')
         expect(logHost.deleteFile).toHaveBeenCalledWith('app.log')
 
         await tree.press('ui-base-admin-section:logs:clear')
         expect(logHost.clearAll).toHaveBeenCalledTimes(1)
+    })
+
+    it('paginates log files and large log content', async () => {
+        const logFiles = Array.from({length: 6}, (_, index) => ({
+            fileName: `app-${index + 1}.log`,
+            fileSizeBytes: (index + 1) * 100,
+            lastModifiedAt: 1_800_000_000_000 + index,
+        }))
+        const longLogContent = `${'A'.repeat(5_000)}TAIL-LOG-CONTENT`
+        const logHost = {
+            listFiles: vi.fn().mockResolvedValue(logFiles),
+            readFile: vi.fn().mockResolvedValue(longLogContent),
+            deleteFile: vi.fn().mockResolvedValue(undefined),
+            clearAll: vi.fn().mockResolvedValue(undefined),
+            getDirectoryPath: vi.fn().mockResolvedValue('/tmp/logs'),
+        }
+        const harness = await createAdminConsoleHarness({
+            hostTools: {logs: logHost},
+        })
+        const tree = renderWithAutomation(<AdminLogsSection host={logHost} />, harness.store, harness.runtime)
+
+        await tree.waitForText('app-1.log')
+        await expect(tree.queryNodesByText('app-6.log')).resolves.toHaveLength(0)
+
+        await tree.press('ui-base-admin-section:logs:files:next')
+
+        await expect(tree.queryNodesByText('app-6.log')).resolves.toHaveLength(1)
+        await tree.press('ui-base-admin-section:logs:open:5')
+        await expect(tree.getNode('ui-base-admin-section:logs:content:text')).resolves.toMatchObject({
+            value: 'A'.repeat(5_000),
+        })
+        await expect(tree.queryNodesByTextContains('TAIL-LOG-CONTENT')).resolves.toHaveLength(0)
+
+        await tree.press('ui-base-admin-section:logs:content:next')
+
+        await expect(tree.getNode('ui-base-admin-section:logs:content:text')).resolves.toMatchObject({
+            value: 'TAIL-LOG-CONTENT',
+        })
+        await expect(tree.queryNodesByTextContains('TAIL-LOG-CONTENT')).resolves.not.toHaveLength(0)
     })
 
     it('executes control host actions and refreshes snapshot', async () => {

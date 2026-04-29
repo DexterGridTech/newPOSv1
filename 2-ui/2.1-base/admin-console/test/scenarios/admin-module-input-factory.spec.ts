@@ -22,18 +22,23 @@ describe('admin console module input factory', () => {
             isAvailable: vi.fn(),
             getAvailableTargets: vi.fn(),
         }
+        const tdp = {
+            getOperationsSnapshot: vi.fn(),
+        }
 
         const moduleInput = createAdminConsoleModuleInputFromHost({
             device,
             logs,
             control,
             connector,
+            tdp,
         })
 
         expect(moduleInput.hostToolSources?.device).toBe(device)
         expect(moduleInput.hostToolSources?.logs).toBe(logs)
         expect(moduleInput.hostToolSources?.control).toBe(control)
         expect(moduleInput.hostToolSources?.connector).toBe(connector)
+        expect(moduleInput.hostToolSources?.tdp).toBe(tdp)
         expect(moduleInput.hostToolSources?.connectorChannels).toEqual(adminConsoleDefaultConnectorChannels)
     })
 

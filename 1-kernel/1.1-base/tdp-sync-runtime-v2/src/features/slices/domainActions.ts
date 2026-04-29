@@ -15,6 +15,8 @@ export const tdpSyncV2DomainActions = {
     applySnapshotLoaded: createAction<{
         snapshot: TdpProjectionEnvelope[]
         highWatermark: number
+        receivedAt?: number
+        appliedAt?: number
         serverClockOffsetMs?: number
     }>(
         `${moduleName}/apply-snapshot-loaded`,
@@ -31,6 +33,8 @@ export const tdpSyncV2DomainActions = {
         snapshotId: string
         chunkIndex: number
         items: TdpProjectionEnvelope[]
+        receivedAt?: number
+        appliedAt?: number
         serverClockOffsetMs?: number
     }>(
         `${moduleName}/apply-snapshot-chunk`,
@@ -46,6 +50,8 @@ export const tdpSyncV2DomainActions = {
         nextCursor: number
         highWatermark: number
         hasMore?: boolean
+        receivedAt?: number
+        appliedAt?: number
         serverClockOffsetMs?: number
     }>(
         `${moduleName}/apply-changes-loaded`,
@@ -53,6 +59,8 @@ export const tdpSyncV2DomainActions = {
     applyProjectionReceived: createAction<{
         cursor: number
         change: TdpProjectionEnvelope
+        receivedAt?: number
+        appliedAt?: number
         serverClockOffsetMs?: number
     }>(
         `${moduleName}/apply-projection-received`,
@@ -60,6 +68,8 @@ export const tdpSyncV2DomainActions = {
     applyProjectionBatchReceived: createAction<{
         nextCursor: number
         changes: TdpProjectionEnvelope[]
+        receivedAt?: number
+        appliedAt?: number
         serverClockOffsetMs?: number
     }>(
         `${moduleName}/apply-projection-batch-received`,

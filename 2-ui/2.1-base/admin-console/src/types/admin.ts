@@ -6,6 +6,7 @@ export type AdminConsoleTab =
     | 'device'
     | 'connector'
     | 'logs'
+    | 'tdp'
     | 'topology'
     | 'version'
     | 'control'
@@ -198,6 +199,106 @@ export interface AdminVersionHost {
     clearBootMarker?(): Promise<void>
 }
 
+export interface AdminTdpServerOperationsSnapshot {
+    mode?: 'server-enhanced' | string
+    sampledAt?: number
+    terminal?: {
+        terminalId?: string
+        sandboxId?: string
+        profileId?: string
+        profileCode?: string
+        profileName?: string
+        templateId?: string
+        templateCode?: string
+        templateName?: string
+        presenceStatus?: string
+        healthStatus?: string
+        currentAppVersion?: string | null
+        currentBundleVersion?: string | null
+        currentConfigVersion?: string | null
+        lastSeenAt?: number | null
+    }
+    topicRegistry?: {
+        total?: number
+        topics?: readonly {
+            key: string
+            name?: string
+            payloadMode?: string
+            scopeType?: string
+            lifecycle?: string
+            deliveryType?: string
+        }[]
+    }
+    policy?: {
+        allowedTopics?: readonly string[]
+        policySources?: readonly string[]
+    }
+    resolvedTopics?: {
+        availableTopics?: readonly string[]
+        resolvedItemCounts?: Record<string, number>
+    }
+    sessions?: {
+        total?: number
+        currentSessionId?: string
+        onlineSessions?: readonly Record<string, unknown>[]
+        current?: {
+            sessionId?: string
+            status?: string
+            highWatermark?: number
+            ackLag?: number
+            applyLag?: number
+            connectedAt?: number
+            lastHeartbeatAt?: number
+            subscription?: {
+                mode?: string
+                hash?: string
+                subscribedTopics?: readonly string[]
+                acceptedTopics?: readonly string[]
+                rejectedTopics?: readonly string[]
+                requiredMissingTopics?: readonly string[]
+            }
+        }
+    }
+    subscription?: {
+        requestedTopics?: readonly string[]
+        acceptedTopics?: readonly string[]
+        rejectedTopics?: readonly string[]
+        requiredMissingTopics?: readonly string[]
+        acceptedHash?: string
+        serverAvailableTopics?: readonly string[]
+    }
+    decisionTrace?: {
+        runtimeFacts?: Record<string, unknown>
+        membershipSnapshot?: Record<string, unknown>
+        topics?: readonly {
+            topicKey: string
+            itemKey: string
+            candidateCount: number
+            winner?: {
+                scopeType?: string
+                scopeKey?: string
+                revision?: number
+                source?: string
+                policyId?: string
+                reason?: string
+            } | null
+        }[]
+    }
+    findings?: readonly {
+        key: string
+        tone: AdminStatusTone
+        title: string
+        detail: string
+    }[]
+}
+
+export interface AdminTdpHost {
+    getOperationsSnapshot(input: {
+        sandboxId: string
+        terminalId: string
+    }): Promise<AdminTdpServerOperationsSnapshot>
+}
+
 export interface AdminHostTools {
     device?: AdminDeviceHost
     logs?: AdminLogHost
@@ -205,6 +306,7 @@ export interface AdminHostTools {
     connector?: AdminConnectorHost
     topology?: AdminTopologyHost
     version?: AdminVersionHost
+    tdp?: AdminTdpHost
 }
 
 export interface AdminHostToolsResolver {
