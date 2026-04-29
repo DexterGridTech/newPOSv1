@@ -44,6 +44,7 @@ export const createSemanticRegistry = (): SemanticRegistry => {
         queryNodes(query) {
             return [...liveNodes.values()].filter(node => {
                 if (node.target !== query.target) return false
+                if (query.nodeId && node.nodeId !== query.nodeId) return false
                 if (!node.visible) return false
                 if (query.testID && node.testID !== query.testID) return false
                 if (query.semanticId && node.semanticId !== query.semanticId) return false

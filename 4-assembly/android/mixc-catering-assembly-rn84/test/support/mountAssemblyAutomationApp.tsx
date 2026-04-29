@@ -32,6 +32,8 @@ export interface MountedAssemblyAutomationApp {
     unmount(): Promise<void>
 }
 
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+
 export const mountAssemblyAutomationApp = async (
     runtimeApp: RuntimeAppLike<RuntimeLike>,
     element: React.ReactElement,
@@ -39,6 +41,38 @@ export const mountAssemblyAutomationApp = async (
     const runtime = await runtimeApp.start()
     const client = createAutomationJsonRpcClient(runtimeApp.automation!.controller)
     const target = (runtime as any).displayContext?.displayIndex > 0 ? 'secondary' : 'primary'
+    const performAction = async (
+        nodeId: string,
+        action: string,
+        timeoutMs = 3_000,
+    ): Promise<unknown> => {
+        const startedAt = Date.now()
+        let lastError: unknown
+        while (Date.now() - startedAt < timeoutMs) {
+            try {
+                await client.call('wait.forNode', {
+                    target,
+                    nodeId,
+                    timeoutMs: Math.min(500, timeoutMs),
+                })
+                return await client.call('ui.performAction', {
+                    target,
+                    nodeId,
+                    action,
+                })
+            } catch (error) {
+                lastError = error
+                if (!(error instanceof Error) || error.message !== 'STALE_NODE') {
+                    throw error
+                }
+                await sleep(25)
+            }
+        }
+        if (lastError instanceof Error) {
+            throw lastError
+        }
+        throw new Error(`ACTION_TIMEOUT:${nodeId}`)
+    }
 
     let tree!: TestRenderer.ReactTestRenderer
     await TestRenderer.act(async () => {
@@ -74,26 +108,13 @@ export const mountAssemblyAutomationApp = async (
         async press(nodeId, action = 'press') {
             let result: unknown
             await TestRenderer.act(async () => {
-                await client.call('wait.forNode', {
-                    target,
-                    nodeId,
-                    timeoutMs: 3_000,
-                })
-                result = await client.call('ui.performAction', {
-                    target,
-                    nodeId,
-                    action,
-                })
+                result = await performAction(nodeId, action)
             })
             return result
         },
         async typeVirtualValue(fieldNodeId, value, options = {}) {
             await TestRenderer.act(async () => {
-                await client.call('ui.performAction', {
-                    target,
-                    nodeId: fieldNodeId,
-                    action: 'press',
-                })
+                await performAction(fieldNodeId, 'press')
             })
             await client.call('wait.forNode', {
                 target,
@@ -102,43 +123,16 @@ export const mountAssemblyAutomationApp = async (
             })
             if (options.clear !== false) {
                 await TestRenderer.act(async () => {
-                    await client.call('wait.forNode', {
-                        target,
-                        nodeId: 'ui-base-virtual-keyboard:key:clear',
-                        timeoutMs: 3_000,
-                    })
-                    await client.call('ui.performAction', {
-                        target,
-                        nodeId: 'ui-base-virtual-keyboard:key:clear',
-                        action: 'press',
-                    })
+                    await performAction('ui-base-virtual-keyboard:key:clear', 'press')
                 })
             }
             for (const key of value.toUpperCase().split('')) {
                 await TestRenderer.act(async () => {
-                    await client.call('wait.forNode', {
-                        target,
-                        nodeId: `ui-base-virtual-keyboard:key:${key}`,
-                        timeoutMs: 3_000,
-                    })
-                    await client.call('ui.performAction', {
-                        target,
-                        nodeId: `ui-base-virtual-keyboard:key:${key}`,
-                        action: 'press',
-                    })
+                    await performAction(`ui-base-virtual-keyboard:key:${key}`, 'press')
                 })
             }
             await TestRenderer.act(async () => {
-                await client.call('wait.forNode', {
-                    target,
-                    nodeId: 'ui-base-virtual-keyboard:key:enter',
-                    timeoutMs: 3_000,
-                })
-                await client.call('ui.performAction', {
-                    target,
-                    nodeId: 'ui-base-virtual-keyboard:key:enter',
-                    action: 'press',
-                })
+                await performAction('ui-base-virtual-keyboard:key:enter', 'press')
             })
         },
         async unmount() {

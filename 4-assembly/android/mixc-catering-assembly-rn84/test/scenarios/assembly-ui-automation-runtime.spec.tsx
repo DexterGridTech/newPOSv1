@@ -40,6 +40,7 @@ vi.mock('react-native', async () => {
     return {
         View: createHost('mock-view'),
         Text: createHost('mock-text'),
+        ActivityIndicator: createHost('mock-activity-indicator'),
         Pressable: createHost('mock-pressable'),
         ScrollView: createHost('mock-scroll-view'),
         TouchableOpacity: createHost('mock-touchable-opacity'),

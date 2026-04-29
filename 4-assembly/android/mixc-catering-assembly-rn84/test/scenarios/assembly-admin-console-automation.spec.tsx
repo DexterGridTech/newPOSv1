@@ -37,6 +37,7 @@ vi.mock('react-native', async () => {
     return {
         View: createHost('mock-view'),
         Text: createHost('mock-text'),
+        ActivityIndicator: createHost('mock-activity-indicator'),
         Pressable: createHost('mock-pressable'),
         ScrollView: createHost('mock-scroll-view'),
         TouchableOpacity: createHost('mock-touchable-opacity'),
@@ -376,9 +377,28 @@ describe('assembly admin console automation', () => {
             })
 
             await mounted.press('ui-base-admin-popup:tab:adapter')
+            await expect(mounted.client.call('wait.forState', {
+                target: 'primary',
+                path: [
+                    'kernel.base.ui-runtime-v2.screen.main',
+                    'ui.base.admin-console.tab-content.container',
+                    'value',
+                    'partKey',
+                ],
+                equals: 'ui.base.admin-console.tab.adapter',
+                timeoutMs: 3_000,
+            })).resolves.toMatchObject({
+                value: 'ui.base.admin-console.tab.adapter',
+            })
             await expect(mounted.client.call('runtime.selectState', {
                 target: 'primary',
-                path: ['ui.base.admin-console.console', 'selectedTab'],
+                path: [
+                    'kernel.base.ui-runtime-v2.screen.main',
+                    'ui.base.admin-console.tab-content.container',
+                    'value',
+                    'props',
+                    'tab',
+                ],
             })).resolves.toBe('adapter')
             await expect(mounted.client.call('wait.forNode', {
                 target: 'primary',

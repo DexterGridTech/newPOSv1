@@ -603,6 +603,7 @@ export const createBrowserAutomationHost = (
     }
 
     const queryNodes = (params: Record<string, unknown>): readonly (BrowserAutomationNodeSnapshot | AutomationNodeSnapshot)[] => {
+        const nodeId = typeof params.nodeId === 'string' ? params.nodeId : undefined
         const testID = typeof params.testID === 'string' ? params.testID : undefined
         const semanticId = typeof params.semanticId === 'string' ? params.semanticId : undefined
         const role = typeof params.role === 'string' ? params.role : undefined
@@ -610,13 +611,16 @@ export const createBrowserAutomationHost = (
         const screen = typeof params.screen === 'string' ? params.screen : undefined
         const semanticNodes = queryEngine.queryNodes({
             target,
+            nodeId,
             testID,
             semanticId,
             role,
             text,
             screen,
         })
-        const candidates = testID
+        const candidates = nodeId
+            ? [queryByTestId(nodeId)].filter((value): value is DomLikeElement => value != null)
+            : testID
             ? [queryByTestId(testID)].filter((value): value is DomLikeElement => value != null)
             : queryAllTestIdNodes()
         const domNodes = candidates
@@ -628,6 +632,9 @@ export const createBrowserAutomationHost = (
                 nodeId: getAttribute(element, 'data-testid') ?? '',
             }))
             .filter(node => {
+                if (nodeId && node.nodeId !== nodeId) {
+                    return false
+                }
                 if (semanticId && node.semanticId !== semanticId) {
                     return false
                 }

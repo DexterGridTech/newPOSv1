@@ -39,6 +39,7 @@ export interface AutomationNodeSnapshot {
 
 export interface AutomationNodeQuery {
     readonly target: Exclude<AutomationTarget, 'all' | 'host'>
+    readonly nodeId?: string
     readonly testID?: string
     readonly semanticId?: string
     readonly text?: string

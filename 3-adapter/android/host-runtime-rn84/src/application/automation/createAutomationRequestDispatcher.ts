@@ -411,8 +411,10 @@ export const createAutomationRequestDispatcher = (input: {
                     if (target === 'host' || target === 'all') {
                         throw new Error('ui.queryNodes requires a runtime target')
                     }
+                    const nodeId = typeof params.nodeId === 'string' ? params.nodeId : undefined
                     return toJsonRpcResult(request.id, queryEngine.queryNodes({
                         target,
+                        nodeId,
                         testID: typeof params.testID === 'string' ? params.testID : undefined,
                         semanticId: typeof params.semanticId === 'string' ? params.semanticId : undefined,
                         text: typeof params.text === 'string' ? params.text : undefined,
@@ -483,6 +485,7 @@ export const createAutomationRequestDispatcher = (input: {
                         throw new Error('wait.forNode requires a runtime target')
                     }
                     const timeoutMs = Number(params.timeoutMs ?? 3_000)
+                    const nodeId = typeof params.nodeId === 'string' ? params.nodeId : undefined
                     const testID = typeof params.testID === 'string' ? params.testID : undefined
                     const semanticId = typeof params.semanticId === 'string' ? params.semanticId : undefined
                     const role = typeof params.role === 'string' ? params.role : undefined
@@ -492,10 +495,10 @@ export const createAutomationRequestDispatcher = (input: {
                         'wait.forNode',
                         timeoutMs,
                         () => {
-                            const nodes = registry.queryNodes({target, testID, semanticId, role, text, screen})
+                            const nodes = registry.queryNodes({target, nodeId, testID, semanticId, role, text, screen})
                             return nodes[0]
                         },
-                        () => `WAIT_FOR_NODE_TIMEOUT:${JSON.stringify({target, testID, semanticId, role, text, screen})}`,
+                        () => `WAIT_FOR_NODE_TIMEOUT:${JSON.stringify({target, nodeId, testID, semanticId, role, text, screen})}`,
                     ))
                 }
                 case 'wait.forScreen': {

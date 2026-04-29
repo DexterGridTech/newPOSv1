@@ -39,6 +39,7 @@ vi.mock('react-native', async () => {
     return {
         View: createHost('mock-view'),
         Text: createHost('mock-text'),
+        ActivityIndicator: createHost('mock-activity-indicator'),
         Pressable: createHost('mock-pressable'),
         ScrollView: createHost('mock-scroll-view'),
         TouchableOpacity: createHost('mock-touchable-opacity'),
@@ -327,6 +328,27 @@ describe('assembly live admin automation loop', () => {
                 runtimeShellV2CommandDefinitions.initialize,
                 {},
             ))
+            await expect(mounted.client.call('wait.forNode', {
+                target: 'primary',
+                testID: 'ui-integration-catering-shell:root:primary',
+                timeoutMs: 3_000,
+            })).resolves.toMatchObject({
+                testID: 'ui-integration-catering-shell:root:primary',
+            })
+            await expect(mounted.client.call('wait.forNode', {
+                target: 'primary',
+                testID: 'ui-base-terminal-activate-device',
+                timeoutMs: 3_000,
+            })).resolves.toMatchObject({
+                testID: 'ui-base-terminal-activate-device',
+            })
+            await expect(mounted.client.call('wait.forNode', {
+                target: 'primary',
+                nodeId: 'ui-base-terminal-activate-device:sandbox',
+                timeoutMs: 3_000,
+            })).resolves.toMatchObject({
+                nodeId: 'ui-base-terminal-activate-device:sandbox',
+            })
 
             await mounted.typeVirtualValue(
                 'ui-base-terminal-activate-device:sandbox',

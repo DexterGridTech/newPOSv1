@@ -53,6 +53,35 @@ describe('semantic registry lifecycle', () => {
         expect(registry.queryNodes({target: 'primary', testID: 'global.overlay'})).toHaveLength(1)
     })
 
+    it('filters live nodes by node id', () => {
+        const registry = createSemanticRegistry()
+        registry.registerNode({
+            target: 'primary',
+            runtimeId: 'primary-1',
+            screenKey: 'home',
+            mountId: 'mount-1',
+            nodeId: 'node-1',
+            testID: 'shared.button',
+            visible: true,
+            enabled: true,
+            availableActions: ['press'],
+        })
+        registry.registerNode({
+            target: 'primary',
+            runtimeId: 'primary-1',
+            screenKey: 'home',
+            mountId: 'mount-2',
+            nodeId: 'node-2',
+            testID: 'shared.button',
+            visible: true,
+            enabled: true,
+            availableActions: ['press'],
+        })
+
+        expect(registry.queryNodes({target: 'primary', nodeId: 'node-2'}))
+            .toEqual([expect.objectContaining({nodeId: 'node-2'})])
+    })
+
     it('marks old node ids stale after target reset', () => {
         const registry = createSemanticRegistry()
         registry.registerNode({
