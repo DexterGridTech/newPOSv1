@@ -39,6 +39,8 @@ import {
     selectTdpControlSignalsState,
     selectTdpActiveProjectionEntries,
     selectTdpProjectionByTopicAndBucket,
+    selectTdpProjectionEntriesByTopic,
+    selectTdpProjectionEntriesByTopicReadonly,
     selectTdpProjectionState,
     selectTdpResolvedProjection,
     selectTdpResolvedProjectionByTopic,
@@ -911,6 +913,22 @@ describe('tdp-sync-runtime-v2', () => {
         expect(selectTdpResolvedProjectionByTopic(runtime.getState(), 'workflow.definition')).toBe(
             resolvedWorkflowBeforeUnrelatedChange,
         )
+        const readonlyWorkflowEntries = selectTdpProjectionEntriesByTopicReadonly(
+            runtime.getState(),
+            'workflow.definition',
+        )
+        expect(selectTdpProjectionEntriesByTopicReadonly(
+            runtime.getState(),
+            'workflow.definition',
+        )).toBe(readonlyWorkflowEntries)
+        expect(selectTdpProjectionEntriesByTopic(
+            runtime.getState(),
+            'workflow.definition',
+        )).not.toBe(readonlyWorkflowEntries)
+        expect(selectTdpProjectionEntriesByTopic(
+            runtime.getState(),
+            'workflow.definition',
+        )).toEqual(readonlyWorkflowEntries)
         const observedTopicChanges = selectRecordedTopicChanges(runtime.getState())
         expect(observedTopicChanges.length).toBeGreaterThan(0)
         const workflowChanges = observedTopicChanges

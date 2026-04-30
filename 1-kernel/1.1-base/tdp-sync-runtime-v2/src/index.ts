@@ -72,6 +72,7 @@ export {
     selectTdpActiveProjectionEntriesByTopic,
     selectTdpProjectionByTopicAndBucket,
     selectTdpProjectionEntriesByTopic,
+    selectTdpProjectionEntriesByTopicReadonly,
     selectTdpResolvedProjection,
     selectTdpResolvedProjectionByTopic,
     selectTdpProjectionState,

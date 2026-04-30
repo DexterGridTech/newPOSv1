@@ -557,12 +557,32 @@ export const MasterDataWorkbenchScreen: React.FC<MasterDataWorkbenchScreenProps>
                 enabled: true,
                 availableActions: [],
             }),
+            ...(Object.keys(domainLabels) as DomainKey[]).map(key => automationBridge.registerNode({
+                target: automationTarget,
+                runtimeId: automationRuntimeId,
+                screenKey,
+                mountId: `${screenKey}:domain:${key}`,
+                nodeId: `ui-business-catering-master-data-workbench:domain:${key}`,
+                testID: `ui-business-catering-master-data-workbench:domain:${key}`,
+                semanticId: `ui-business-catering-master-data-workbench:domain:${key}`,
+                role: 'button',
+                text: domainLabels[key],
+                value: domain === key ? 'selected' : 'idle',
+                visible: true,
+                enabled: true,
+                availableActions: ['press'],
+                onAutomationAction: () => {
+                    setDomain(key)
+                    return {ok: true}
+                },
+            })),
         ]
         return () => unregisters.forEach(unregister => unregister())
     }, [
         automationBridge,
         automationRuntimeId,
         automationTarget,
+        domain,
         displayTitle,
         displayMode,
         liveMenu?.menuId,

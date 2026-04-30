@@ -425,6 +425,26 @@ describe('assembly ui automation runtime', () => {
                 typeof node.text === 'string'
                 && node.text.includes('主数据'),
             )
+            await expect(mounted.client.call('ui.getNode', {
+                target: 'primary',
+                nodeId: 'ui-business-catering-master-data-workbench:domain:product',
+            })).resolves.toMatchObject({
+                availableActions: ['press'],
+                value: 'idle',
+            })
+
+            await mounted.press('ui-business-catering-master-data-workbench:domain:product')
+            await mounted.client.call('wait.forIdle', {
+                target: 'primary',
+                timeoutMs: 500,
+            })
+
+            await expect(mounted.client.call('ui.getNode', {
+                target: 'primary',
+                nodeId: 'ui-business-catering-master-data-workbench:domain:product',
+            })).resolves.toMatchObject({
+                value: 'selected',
+            })
         } finally {
             await mounted.unmount()
         }

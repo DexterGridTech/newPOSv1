@@ -163,11 +163,24 @@ const selectTdpActiveProjectionEntriesByTopicMemo = createSelector(
 export const selectTdpActiveProjectionEntriesByTopic = (state: RootState) =>
     selectTdpActiveProjectionEntriesByTopicMemo(state)
 
+const EMPTY_TOPIC_ENTRIES: readonly TdpProjectionEnvelope[] = []
+
+export const selectTdpProjectionEntriesByTopicReadonly = (
+    state: RootState,
+    topic: string,
+): readonly TdpProjectionEnvelope[] =>
+    selectTdpActiveProjectionEntriesByTopic(state)[topic] ?? EMPTY_TOPIC_ENTRIES
+
+/**
+ * Compatibility selector for actor paths that sort or otherwise mutate the returned array locally.
+ * React consumers should prefer selectTdpProjectionEntriesByTopicReadonly to keep references stable.
+ */
 export const selectTdpProjectionEntriesByTopic = (
     state: RootState,
     topic: string,
-): TdpProjectionEnvelope[] =>
-    [...(selectTdpActiveProjectionEntriesByTopic(state)[topic] ?? [])]
+): TdpProjectionEnvelope[] => [
+    ...selectTdpProjectionEntriesByTopicReadonly(state, topic),
+]
 
 export const selectTdpProjectionByTopicAndBucket = (
     state: RootState,
@@ -194,8 +207,6 @@ export const selectTdpResolvedProjectionByTopic = (
     const scopeChain = selectScopePriorityChain(state)
     return resolveTdpProjectionByTopic(entries, scopeChain)
 }
-
-const EMPTY_TOPIC_ENTRIES: readonly TdpProjectionEnvelope[] = []
 
 const resolvedProjectionCache = new WeakMap<readonly TdpProjectionEnvelope[], {
     scopeChain: TdpScopePriorityItem[]

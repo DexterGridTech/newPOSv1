@@ -14,11 +14,28 @@ const matchesContext = (
     && definition.workspaces.includes(context.workspace)
     && definition.instanceModes.includes(context.instanceMode)
 
+const createContainerCacheKey = (
+    containerKey: string,
+    context: UiScreenRegistryContext,
+) => [
+    containerKey,
+    context.screenMode,
+    context.workspace,
+    context.instanceMode,
+].join('\u0000')
+
 export const createUiScreenRegistry = (): UiRuntimeScreenRegistry => {
     const definitions = new Map<string, UiScreenDefinition>()
+    const listByContainerCache = new Map<string, readonly UiScreenDefinition[]>()
+
+    const invalidateDerivedCache = () => {
+        listByContainerCache.clear()
+    }
+
     const registerDefinition = (definition: UiScreenDefinition) => {
         const key = createDefinitionKey(definition)
         definitions.set(key, definition)
+        invalidateDerivedCache()
         return definition
     }
 
@@ -42,12 +59,19 @@ export const createUiScreenRegistry = (): UiRuntimeScreenRegistry => {
             return [...definitions.values()]
         },
         listByContainer(containerKey, context) {
-            return [...definitions.values()]
+            const cacheKey = createContainerCacheKey(containerKey, context)
+            const cached = listByContainerCache.get(cacheKey)
+            if (cached) {
+                return cached
+            }
+            const result = [...definitions.values()]
                 .filter(definition =>
                     definition.containerKey === containerKey
                     && matchesContext(definition, context),
                 )
                 .sort((left, right) => (left.indexInContainer ?? 0) - (right.indexInContainer ?? 0))
+            listByContainerCache.set(cacheKey, result)
+            return result
         },
         findFirstReady(containerKey, fromIndex, context) {
             return this.listByContainer(containerKey, context)

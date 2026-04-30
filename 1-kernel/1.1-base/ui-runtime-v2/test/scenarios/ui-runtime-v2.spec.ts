@@ -17,6 +17,7 @@ import {
     selectUiScreenRendererKey,
     selectUiScreen,
     selectUiScreenDefinition,
+    selectUiScreenDefinitionsByContainer,
     selectUiVariable,
     uiRuntimeV2CommandDefinitions,
     type UiScreenDefinition,
@@ -71,6 +72,61 @@ const tertiaryReadyScreen: UiScreenDefinition = {
 }
 
 describe('ui-runtime-v2', () => {
+    it('keeps screen definition list references stable until registry definitions change', async () => {
+        const containerKey = 'stable-container'
+        const firstScreen: UiScreenDefinition = {
+            ...checkoutScreen,
+            partKey: 'stable.checkout.first',
+            rendererKey: 'ui.stable.checkout.first',
+            containerKey,
+            indexInContainer: 0,
+        }
+        const secondScreen: UiScreenDefinition = {
+            ...checkoutScreen,
+            partKey: 'stable.checkout.second',
+            rendererKey: 'ui.stable.checkout.second',
+            containerKey,
+            indexInContainer: 1,
+        }
+
+        registerUiScreenDefinition(firstScreen)
+
+        const runtime = createKernelRuntimeV2({
+            displayContext: {
+                displayIndex: 0,
+                displayCount: 1,
+            },
+            platformPorts: createPlatformPorts({
+                environmentMode: 'TEST',
+                logger: createTestLogger('kernel.base.ui-runtime-v2.test.registry-cache'),
+            }),
+            modules: [
+                createTopologyRuntimeModuleV3(),
+                createUiRuntimeModuleV2(),
+            ],
+        })
+
+        await runtime.start()
+        await runtime.dispatchCommand(createCommand(topologyRuntimeV3CommandDefinitions.setInstanceMode, {
+            instanceMode: 'MASTER',
+        }))
+
+        const firstList = selectUiScreenDefinitionsByContainer(runtime.getState(), containerKey)
+        const secondList = selectUiScreenDefinitionsByContainer(runtime.getState(), containerKey)
+        expect(secondList).toBe(firstList)
+        expect(secondList.map(definition => definition.partKey)).toEqual(['stable.checkout.first'])
+
+        registerUiScreenDefinition(secondScreen)
+
+        const thirdList = selectUiScreenDefinitionsByContainer(runtime.getState(), containerKey)
+        expect(thirdList).not.toBe(firstList)
+        expect(thirdList.map(definition => definition.partKey)).toEqual([
+            'stable.checkout.first',
+            'stable.checkout.second',
+        ])
+        expect(selectUiScreenDefinitionsByContainer(runtime.getState(), containerKey)).toBe(thirdList)
+    })
+
     it('registers screen definitions and drives screen/overlay/ui-variable state through commands', async () => {
         registerUiScreenDefinitions([checkoutScreen, secondaryAlertScreen])
         registerUiScreenDefinition(tertiaryReadyScreen)
