@@ -243,8 +243,9 @@ export interface Money {
 说明：
 
 1. `amount` 使用最小货币单位，例如人民币分。
-2. 所有计算器不得使用浮点金额直接相加、相减、相乘。
-3. 不同 `currency` 的金额不能在同一次计算中直接合并。
+2. 虽然 TypeScript 类型是 `number`，但所有 `amount` 值必须是整数，不得出现小数。
+3. 所有计算器不得使用浮点金额直接相加、相减、相乘；需要比例运算时必须使用整数运算和明确舍入策略。
+4. 不同 `currency` 的金额不能在同一次计算中直接合并。
 
 ### `BenefitRef`
 
@@ -275,6 +276,50 @@ export interface EntryIdentityCredential {
 1. 入口凭证只表达本次识别消费者的方式。
 2. 后台根据入口凭证解析入口身份和绑定身份。
 3. 前端不需要知道各身份系统的私有登录协议。
+
+### `ProductScopeRule`
+
+```ts
+export interface ProductScopeRule {
+  mode: 'all' | 'include' | 'exclude'
+  identityMatchers?: ProductIdentityMatcher[]
+}
+
+export interface ProductIdentityMatcher {
+  identityType: 'skuId' | 'spuId' | 'categoryId' | 'saleProductType' | string
+  values: string[]
+  ownerScope?: string
+}
+```
+
+规则：
+
+1. `mode = all` 表示不限制商品范围。
+2. `mode = include` 表示只命中指定商品身份。
+3. `mode = exclude` 表示排除指定商品身份。
+4. 商品行级 `benefitParticipation.excludeAllBenefits` 优先级高于任何 `ProductScopeRule`。
+
+### `ReservationSubjectRef`
+
+```ts
+export interface ReservationSubjectRef {
+  subjectType:
+    | 'entryIdentity'
+    | 'identity'
+    | 'membership'
+    | 'paymentAccount'
+    | 'benefitLine'
+    | 'custom'
+  subjectKey: string
+  identitySystemCode?: string
+}
+```
+
+说明：
+
+1. `subjectType` 必须与 `ReservationPolicy.subject` 可映射。
+2. `subjectKey` 是占用和配额合成的稳定 key。
+3. 自定义主体必须由后台权益中心标准化后返回，前端计算器不拼私有 key。
 
 ## 身份模型
 
@@ -369,7 +414,8 @@ export interface BenefitTemplate {
   basisPolicy: BasisPolicy
   selectionPolicy: SelectionPolicy
   reservationPolicy: ReservationPolicy
-  stackingPolicy: StackingPolicy | TransactionStackingPolicy
+  stackingPolicy: StackingPolicy
+  transactionStackingPolicy?: TransactionStackingPolicy
   allocationPolicy: AllocationPolicy
   settlementPolicy: SettlementPolicy
   fulfillmentPolicy?: FulfillmentPolicy
@@ -424,6 +470,8 @@ export interface BenefitLine {
 2. `BenefitReservation.state` 是当前终端权益会话维护的占用状态，例如被购物车占用、提升到订单、支付阶段占用、释放、过期。
 3. 计算包同时读取两类事实，但职责不同：`BenefitLine.status` 决定资产本身是否仍可用，`BenefitReservation.state` 决定当前上下文是否已经占用、是否被其他上下文占用。
 4. 当前端占用成功后，不要求立即改写 `BenefitLine.status = reserved`；占用以 `BenefitReservation` 为准，避免 line 快照和会话占用双写冲突。
+5. 当 `BenefitLine.status = consumed | expired | voided` 时，计算器直接判定该权益行不可用，不需要再检查 reservation 状态。
+6. `BenefitLine.availableFrom/availableTo` 和模板级 `LifecyclePolicy.validFrom/validTo` 都必须满足才可用；权益行过期则不可用，即使模板仍在有效期内。
 
 ## 十个策略维度
 
@@ -535,6 +583,8 @@ export interface NthItemDiscountEffectPolicy {
   targetSelection?: BenefitTargetSelection
 }
 ```
+
+`discountRatio` 和 `discountAmount` 必须且只能配置一个。折扣比例和固定减额不能同时存在，也不能同时为空。
 
 该结构用于覆盖：
 
@@ -717,6 +767,7 @@ export interface TransactionStackingRule {
 3. 当两者冲突时，以 `TransactionStackingPolicy.rules` 的高优先级规则为准。
 4. 后台组装权益快照时，应尽量把模板默认 `StackingPolicy` 展开成交易关系图；前端计算器只在没有关系图规则命中时回退模板默认配置。
 5. 运行时规则只允许收紧或诊断，不应悄悄放宽后台返回的强互斥规则。
+6. 类型上不使用 union。`stackingPolicy` 始终表达模板默认策略，`transactionStackingPolicy` 可选表达后台组装后的交易最终关系图。
 
 ### 7. `allocationPolicy`
 
@@ -862,7 +913,7 @@ export interface BenefitSnapshot {
 1. `templates` 包含非个人交易权益模板、个人权益模板和动态激活模板。
 2. `lines` 包含个人券、账户型权益、兑换资格、动态券码返回的权益行。
 3. `reservations` 是当前权益 session 维护的占用事实。
-4. `completedSettlements` 是支付中心或订单中心返回的已完成事实；如果业务包已经放在 `CommerceSubjectSnapshot.completedSettlements`，两处必须保持同一事实源，不应各自拼接。
+4. `completedSettlements` 是支付中心或订单中心返回的已完成事实冗余副本。权威来源是 `CommerceSubjectSnapshot.completedSettlements`，由业务包基于订单/支付事实组装；两者同时存在时，计算器以 `CommerceSubjectSnapshot.completedSettlements` 为准。
 5. `quotaFacts` 是后端标准化后的配额事实输入。
 
 ### `BenefitContextRef`
@@ -876,6 +927,12 @@ export interface BenefitContextRef {
 ```
 
 `contextId` 只用于占用、释放、诊断和多购物车归属，不用于让权益包反查购物车数据。
+
+阶段与上下文的关系：
+
+1. `stage = cart` 时，`contextRef.contextType = cart`。
+2. `stage = orderConfirm` 时，`contextRef.contextType = order`，表示购物车已准备提升为订单，占用需要提升到订单级。
+3. `stage = payment` 时，`contextRef.contextType = payment` 或 `order`。如果一次订单存在多个支付尝试，建议使用 `payment` 并用 `paymentAttemptId` 作为 `contextId`。
 
 ### `CommerceSubjectSnapshot`
 
@@ -1042,6 +1099,65 @@ export interface BenefitEvaluationResult {
   settlementLines: SettlementLineCandidate[]
   allocations: BenefitAllocation[]
   diagnostics: BenefitEvaluationDiagnostic[]
+}
+```
+
+### `BenefitAllocation`
+
+```ts
+export interface BenefitAllocation {
+  allocationId: string
+  benefitRef: BenefitRef
+  applicationId?: string
+  targetLineId: string
+  allocatedAmount: Money
+  allocatedQuantity?: number
+  allocationRatio?: number
+}
+```
+
+说明：
+
+1. `allocatedAmount` 表达分摊到商品行的金额影响。
+2. `allocatedQuantity` 表达积分、次数、件数等数量型分摊。
+3. `allocationRatio` 只用于解释分摊比例，不作为金额权威值。
+
+### `BenefitEffectPreview`
+
+```ts
+export interface BenefitEffectPreview {
+  effectKind: string
+  estimatedAmount?: Money
+  estimatedQuantity?: number
+  descriptionKey?: string
+}
+```
+
+### `BenefitUnavailableReason`
+
+```ts
+export type BenefitUnavailableReason =
+  | { code: 'reservedByOtherContext'; contextRef: BenefitContextRef }
+  | { code: 'quotaExhausted'; bucketKey: string }
+  | { code: 'eligibilityNotMet'; failedRequirements: string[] }
+  | { code: 'lineExpired' }
+  | { code: 'lineConsumed' }
+  | { code: 'thresholdNotMet'; required: Money; current: Money }
+  | { code: 'stackingConflict'; conflictingBenefitRef: BenefitRef }
+  | { code: 'stageNotApplicable'; applicableStages: BenefitEvaluationStage[] }
+  | { code: 'productExcluded'; lineIds: string[] }
+```
+
+### `BenefitEvaluationDiagnostic`
+
+```ts
+export interface BenefitEvaluationDiagnostic {
+  diagnosticId: string
+  level: 'info' | 'warn' | 'error'
+  code: string
+  benefitRef?: BenefitRef
+  message?: string
+  trace?: PolicyExecutionTrace[]
 }
 ```
 
@@ -1972,6 +2088,8 @@ interface PersonalBenefitQueryResponse {
 }
 ```
 
+`PersonalBenefitQueryResponse` 是一次性一致快照。`benefitSnapshot.lines.ownerIdentityKey` 和 `ownerMembershipKey` 引用同一响应里的 `identitySnapshot`。如果身份发生变化，例如会员升级、绑定新身份、解绑身份或入口身份切换，业务包必须重新发起 `PersonalBenefitQueryRequest` 获取新快照，不能只更新 `identitySnapshot` 而沿用旧 `benefitSnapshot`。
+
 ### 占用
 
 ```ts
@@ -2166,3 +2284,47 @@ dispatch(evaluateBenefitContext({ contextRef, subject }))
 2. 6 待压测问题优先级建议。
    - 处理：不直接复制优先级表。
    - 原因：其中 P1 “支付方式优惠主/子支付单归属”与用户要求忽略 3.5 有重叠；其余内容保留在“需要继续压测的问题”中，后续进入实现计划时再排序。
+
+## 外部评审处理记录 v2
+
+参考：`ai-result/2026-04-30-commercial-benefit-identity-framework-design-review-v2.md`
+
+### 已采纳
+
+1. `BenefitTemplate.stackingPolicy` union 类型歧义。
+   - 处理：拆成 `stackingPolicy: StackingPolicy` 和 `transactionStackingPolicy?: TransactionStackingPolicy`。
+   - 决策：模板默认策略始终存在，交易关系图可选；有交易关系图时优先使用，否则回退模板默认策略。
+2. `BenefitSnapshot.completedSettlements` 权威来源不清。
+   - 处理：明确权威来源是 `CommerceSubjectSnapshot.completedSettlements`。
+   - 决策：`BenefitSnapshot.completedSettlements` 只作为冗余副本或特殊场景输入；两者同时存在时以业务包组装的 `CommerceSubjectSnapshot` 为准。
+3. `LifecyclePolicy.validFrom/validTo` 与 `BenefitLine.availableFrom/availableTo` 校验顺序。
+   - 处理：补充到 `BenefitLine` 状态边界。
+   - 决策：模板有效期和权益行有效期都必须满足；权益行过期直接不可用。
+4. `BenefitContextRef.contextType` 与 `BenefitEvaluationStage` 关系。
+   - 处理：补充阶段与上下文映射。
+   - 决策：`orderConfirm` 阶段使用 `contextType = order`。
+5. `PersonalBenefitQueryResponse` 中 identity 与 benefit 快照一致性。
+   - 处理：补充一次性一致快照说明。
+   - 决策：身份变化必须重新查询，不能沿用旧权益快照。
+6. 缺失类型：`BenefitAllocation`。
+   - 处理：已补充。
+7. 缺失类型：`ReservationSubjectRef`。
+   - 处理：已补充。
+8. 缺失类型：`BenefitEffectPreview`。
+   - 处理：已补充。
+9. 缺失类型：`BenefitUnavailableReason`。
+   - 处理：已补充。
+10. 缺失类型：`BenefitEvaluationDiagnostic`。
+    - 处理：已补充。
+11. 缺失类型：`ProductScopeRule`。
+    - 处理：已补充。
+12. `Money.amount` 虽为 `number` 但必须是整数。
+    - 处理：已补充整数金额约束。
+13. `NthItemDiscountEffectPolicy.discountRatio/discountAmount` 约束。
+    - 处理：已补充二者必须且只能配置一个。
+14. `BenefitLine.status = consumed/expired/voided` 时是否还查 reservation。
+    - 处理：已补充直接不可用规则。
+
+### 未采纳
+
+无。第二轮评审主要是类型补齐和歧义消除，均与当前交易阶段边界一致。

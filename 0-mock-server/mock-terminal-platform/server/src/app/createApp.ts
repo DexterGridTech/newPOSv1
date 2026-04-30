@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import { createRouter } from '../modules/admin/routes.js'
+import { createBenefitCenterRouter } from '../modules/benefit-center/routes.js'
 
 export const createApp = () => {
   const app = express()
@@ -9,6 +10,7 @@ export const createApp = () => {
   app.get('/health', (_req, res) => {
     res.json({ success: true, data: { status: 'ok' } })
   })
+  app.use(createBenefitCenterRouter())
   app.use(createRouter())
   return app
 }

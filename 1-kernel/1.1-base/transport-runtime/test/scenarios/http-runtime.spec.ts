@@ -12,6 +12,7 @@ import {
     callHttpResult,
     createHttpRuntime,
     createHttpServiceBinder,
+    createFetchHttpTransport,
     createModuleHttpEndpointFactory,
     defineHttpEndpoint,
     normalizeTransportError,
@@ -286,6 +287,80 @@ describe('transport-runtime http', () => {
         expect(result).toEqual({
             echoedName: 'boss',
         })
+    })
+
+    it('provides a reusable fetch transport for business HTTP runtimes', async () => {
+        const calls: Array<{
+            url: string
+            init: RequestInit | undefined
+        }> = []
+        const transport = createFetchHttpTransport({
+            defaultHeaders: {
+                'x-default': 'default-value',
+            },
+            fetchImpl: (async (url: string | URL | Request, init?: RequestInit) => {
+                calls.push({
+                    url: String(url),
+                    init,
+                })
+                return new Response(JSON.stringify({ok: true}), {
+                    status: 201,
+                    statusText: 'Created',
+                    headers: {
+                        'x-response': 'response-value',
+                    },
+                })
+            }) as typeof fetch,
+        })
+
+        const response = await transport.execute<void, void, {name: string}, {ok: boolean}>({
+            endpoint: defineHttpEndpoint<void, void, {name: string}, {ok: boolean}>({
+                name: 'demo.http.fetch-transport',
+                serverName: SERVER_NAME_KERNEL_BASE_HTTP_DEMO_TEST,
+                method: 'POST',
+                pathTemplate: '/fetch-transport',
+                request: {
+                    body: typed<{name: string}>('demo.http.fetch-transport.body'),
+                },
+                response: typed<{ok: boolean}>('demo.http.fetch-transport.response'),
+            }),
+            input: {
+                body: {name: 'alice'},
+                headers: {
+                    'x-request': 'request-value',
+                },
+            },
+            url: 'http://demo.local/fetch-transport',
+            selectedAddress: {
+                addressName: 'primary',
+                baseUrl: 'http://demo.local',
+            },
+            attemptIndex: 1,
+            roundIndex: 0,
+        })
+
+        expect(response).toMatchObject({
+            data: {ok: true},
+            status: 201,
+            statusText: 'Created',
+            headers: {
+                'x-response': 'response-value',
+            },
+        })
+        expect(calls).toMatchObject([
+            {
+                url: 'http://demo.local/fetch-transport',
+                init: {
+                    method: 'POST',
+                    headers: {
+                        'content-type': 'application/json',
+                        'x-default': 'default-value',
+                        'x-request': 'request-value',
+                    },
+                    body: JSON.stringify({name: 'alice'}),
+                },
+            },
+        ])
     })
 
     it('enforces maxConcurrent queueing and never exceeds the configured parallelism', async () => {

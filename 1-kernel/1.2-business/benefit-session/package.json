@@ -1,0 +1,38 @@
+{
+  "name": "@next/kernel-business-benefit-session",
+  "version": "1.0.0",
+  "description": "Runtime session state and commands for transaction benefit evaluation",
+  "author": "DexterYang",
+  "license": "ISC",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "react-native": "./src/index.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json --noEmit",
+    "build-for-product": "rm -rf dist && tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist",
+    "type-check": "tsc -p tsconfig.json --noEmit",
+    "check:circular": "madge --circular --extensions ts --warning src/"
+  },
+  "dependencies": {
+    "@next/kernel-base-contracts": "workspace:*",
+    "@next/kernel-base-runtime-shell-v2": "workspace:*",
+    "@next/kernel-base-state-runtime": "workspace:*",
+    "@next/kernel-base-tdp-sync-runtime-v2": "workspace:*",
+    "@next/kernel-base-transport-runtime": "workspace:*",
+    "@next/kernel-business-benefit-calculation": "workspace:*",
+    "@next/kernel-business-benefit-types": "workspace:*",
+    "@next/kernel-server-config-v2": "workspace:*",
+    "@reduxjs/toolkit": "^2.10.0"
+  },
+  "devDependencies": {
+    "@next/kernel-base-platform-ports": "workspace:*",
+    "@types/node": "^25.0.9",
+    "madge": "^8.0.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  }
+}

@@ -3071,6 +3071,50 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@next/kernel-business-benefit-calculation@workspace:*, @next/kernel-business-benefit-calculation@workspace:1-kernel/1.2-business/benefit-calculation":
+  version: 0.0.0-use.local
+  resolution: "@next/kernel-business-benefit-calculation@workspace:1-kernel/1.2-business/benefit-calculation"
+  dependencies:
+    "@next/kernel-business-benefit-types": "workspace:*"
+    "@types/node": ^25.0.9
+    madge: ^8.0.0
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  languageName: unknown
+  linkType: soft
+
+"@next/kernel-business-benefit-session@workspace:1-kernel/1.2-business/benefit-session":
+  version: 0.0.0-use.local
+  resolution: "@next/kernel-business-benefit-session@workspace:1-kernel/1.2-business/benefit-session"
+  dependencies:
+    "@next/kernel-base-contracts": "workspace:*"
+    "@next/kernel-base-platform-ports": "workspace:*"
+    "@next/kernel-base-runtime-shell-v2": "workspace:*"
+    "@next/kernel-base-state-runtime": "workspace:*"
+    "@next/kernel-base-tdp-sync-runtime-v2": "workspace:*"
+    "@next/kernel-base-transport-runtime": "workspace:*"
+    "@next/kernel-business-benefit-calculation": "workspace:*"
+    "@next/kernel-business-benefit-types": "workspace:*"
+    "@next/kernel-server-config-v2": "workspace:*"
+    "@reduxjs/toolkit": ^2.10.0
+    "@types/node": ^25.0.9
+    madge: ^8.0.0
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  languageName: unknown
+  linkType: soft
+
+"@next/kernel-business-benefit-types@workspace:*, @next/kernel-business-benefit-types@workspace:1-kernel/1.2-business/benefit-types":
+  version: 0.0.0-use.local
+  resolution: "@next/kernel-business-benefit-types@workspace:1-kernel/1.2-business/benefit-types"
+  dependencies:
+    "@types/node": ^25.0.9
+    madge: ^8.0.0
+    typescript: ^5.9.3
+    vitest: ^3.2.4
+  languageName: unknown
+  linkType: soft
+
 "@next/kernel-business-catering-product-master-data@workspace:*, @next/kernel-business-catering-product-master-data@workspace:1-kernel/1.2-business/catering-product-master-data":
   version: 0.0.0-use.local
   resolution: "@next/kernel-business-catering-product-master-data@workspace:1-kernel/1.2-business/catering-product-master-data"

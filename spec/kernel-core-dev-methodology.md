@@ -16,6 +16,16 @@
 2. 需要在本地维护客户端状态并支持重启恢复。
 3. 需要在 `dev/index.ts` 中完成可执行的端到端闭环验证。
 
+## 前置公共能力巡检
+
+新增任何功能、包或跨层逻辑前，必须先完成公共能力巡检。这是硬性入口，不是建议项。
+
+1. 先读同层与下层已有包：`1-kernel/1.1-base`、同目录相邻业务包、相关 `2-ui`/`3-adapter`/`4-assembly` 组合点，以及 `0-mock-server` 中对应服务端实现。
+2. 搜索已有能力和使用范式，包括 command/actor、selector、slice、transport endpoint/service、state persistence、TDP topic、error/parameter definition、server config、测试 harness、dev 验证脚本。
+3. 新增 HTTP、WebSocket、状态、持久化、日志、错误、参数、ID、时间、重启恢复、mock server 对接能力时，必须优先复用基础包；只有现有框架缺少能力时，才补齐对应基础层契约。
+4. 不允许因为业务包推进更快，就在业务包内私造一套与基础层平行的 fetch、storage、event bus、global manager、error string catalog、manual retry、manual URL 拼接或手写跨包状态修改。
+5. 如果确实需要新抽象，先说明它不能由现有基础能力表达的原因，并放到拥有该概念的层中，而不是放到当前业务实现里。
+
 ## 一、状态设计方法
 
 ### 1. 先区分“恢复真相源”和“运行时缓存”

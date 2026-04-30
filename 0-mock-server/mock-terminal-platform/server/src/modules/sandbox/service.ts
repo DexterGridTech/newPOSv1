@@ -803,6 +803,24 @@ const seedKernelBaseTestSandboxData = (timestamp: number) => {
       minTtlMs: 1_000,
       maxTtlMs: 2 * 24 * 60 * 60 * 1000,
     },
+    {
+      key: 'commercial.benefit-template.profile',
+      name: 'Commercial Benefit Template Profile',
+      payloadMode: 'FLEXIBLE_JSON',
+      schema: {type: 'object', required: ['templateKey', 'templateCode', 'version']},
+      retentionHours: 168,
+      lifecycle: 'persistent',
+      deliveryType: 'projection',
+    },
+    {
+      key: 'commercial.benefit-activity.profile',
+      name: 'Commercial Benefit Activity Profile',
+      payloadMode: 'FLEXIBLE_JSON',
+      schema: {type: 'object', additionalProperties: true},
+      retentionHours: 168,
+      lifecycle: 'persistent',
+      deliveryType: 'projection',
+    },
   ]
 
   topics.forEach(topic => {

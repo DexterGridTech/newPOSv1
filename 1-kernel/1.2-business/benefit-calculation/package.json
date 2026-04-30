@@ -1,0 +1,29 @@
+{
+  "name": "@next/kernel-business-benefit-calculation",
+  "version": "1.0.0",
+  "description": "Pure transaction benefit calculation engine",
+  "author": "DexterYang",
+  "license": "ISC",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "react-native": "./src/index.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json --noEmit",
+    "build-for-product": "rm -rf dist && tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist",
+    "type-check": "tsc -p tsconfig.json --noEmit",
+    "check:circular": "madge --circular --extensions ts --warning src/"
+  },
+  "dependencies": {
+    "@next/kernel-business-benefit-types": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.9",
+    "madge": "^8.0.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  }
+}

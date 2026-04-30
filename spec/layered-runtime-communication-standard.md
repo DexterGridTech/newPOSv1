@@ -19,6 +19,28 @@ The current scope is:
 4. `3-adapter/android/host-runtime-rn84`
 5. Product assemblies such as `4-assembly/android/mixc-catering-assembly-rn84`
 
+## Mandatory Reuse Review
+
+Before adding a new feature, package, transport path, state machine, server
+adapter, or cross-layer workflow, inspect the existing terminal codebase first.
+The review must cover reusable capabilities, established call patterns, naming
+conventions, test harnesses, and dependency boundaries in the owning layer and
+the lower layers.
+
+New logic must fit the existing architecture instead of creating a parallel
+mechanism. Examples:
+
+1. HTTP and WebSocket communication use `transport-runtime`.
+2. Kernel state uses `state-runtime`, package slices, and selectors.
+3. Cross-package writes use public commands and actors.
+4. Platform facts use `platform-ports`.
+5. Errors and parameters use package `supports` definitions.
+6. Server addresses use server config rather than ad hoc localhost wiring.
+
+If an existing layer lacks the required capability, extend that layer's public
+contract. Do not hide the missing capability inside the business package,
+assembly, UI component, or mock-specific helper.
+
 ## Layer Contract
 
 ### Adapter
